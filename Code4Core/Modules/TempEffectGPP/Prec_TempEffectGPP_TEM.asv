@@ -1,0 +1,9 @@
+function [fe,fx,d]=Prec_TempEffectGPP_TEM(f,fe,fx,s,d,p,info);
+
+
+  term1=f.TairDay-p.TempEffectGPP.TminTEM;
+  term2=fi.TairC-p.TempEffectGPP.TmaxTEM;
+  
+  fe.TempEffectGPP.TempScGPP=max(term1.*term2./((term1.*term2)-(fi.TairC-p.TempEffectGPP.Topt).^2),0);
+
+end

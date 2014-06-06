@@ -1,0 +1,11 @@
+function [fei]=Prec_TempEffectGPP_MOD17(fi,fei,fxi,si,di,p);
+
+
+td=p.TempEffectGPP.Tmax-p.Tmin;
+tsc=TairC./td +1 -Tmax./td;
+tsc(tsc<0)=0;
+tsc(tsc>1)=1;
+
+fei.TempScGPP=max(term1.*term2./((term1.*term2)-(fi.TairC-p.TempEffectGPP.Topt).^2),0);
+
+end
