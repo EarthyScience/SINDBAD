@@ -41,6 +41,15 @@ ms=info.ms;
 % Pre-allocate s, fx,d, di, fxi  (could be out-sourced to the TEM and used as an input)
 % -------------------------------------------------------------------------
 
+
+%do precompo
+    for i=1:length(info.prcA)
+        [fe,fx,d,p]=info.prcA(i).fun(f,fe,fx,s,d,p,info);
+    end
+
+
+
+
 % -------------------------------------------------------------------------
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------

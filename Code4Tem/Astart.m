@@ -66,18 +66,18 @@ tim=[num2str(ctim(1)) '_' num2str(ctim(2)) '_' num2str(ctim(3)) '_' num2str(ctim
 info.msi.core=funh_core;
 info.msi.prc=funh_prcO;
 
-% 
+%
 % %write code
 % CodePth=[pthCodeGen 'Prec_Once_' tim '.m'];
 % DoAlways=0;
 % [PrecOnce_funh]=WriteCode(CodePth,precsGen,precs,DoAlways);
 % info.prciO.fun=PrecOnce_funh;
-% 
+%
 % CodePth=[pthCodeGen 'Prec_Always_' tim '.m'];
 % DoAlways=1;
 % [PrecAlways_funh]=WriteCode(CodePth,precsGen,precs,DoAlways);
 % info.prciA.fun=PrecAlways_funh;
-% 
+%
 % CodePth=[pthCodeGen 'Modules_' tim '.m'];
 % DoAlways=1;
 % IsCore=1;
@@ -90,7 +90,7 @@ for i=1:length(modules)
     
     eval(['ms.' char(ModuleNames(i)) '=modules(i);'])
 end
-info.ms=ms;    
+info.ms=ms;
 
 prcA=struct;
 prcO=struct;
@@ -98,22 +98,22 @@ cntA=1;
 cntO=1;
 for i=1:length(precsGen)
     if precsGen(i).DoAlways
-       prcA(cntA).fun=precsGen(i).fun; 
-       cntA=cntA+1;
+        prcA(cntA).fun=precsGen(i).fun;
+        cntA=cntA+1;
     else
-       prcO(cntO).fun=precsGen(i).fun; 
-       cntO=cntO+1;                        
-    end    
+        prcO(cntO).fun=precsGen(i).fun;
+        cntO=cntO+1;
+    end
 end
 
 for i=1:length(precs)
     if precs(i).DoAlways
-       prcA(cntA).fun=precs(i).fun; 
-       cntA=cntA+1;
+        prcA(cntA).fun=precs(i).fun;
+        cntA=cntA+1;
     else
-       prcO(cntO).fun=precs(i).fun; 
-       cntO=cntO+1;                        
-    end    
+        prcO(cntO).fun=precs(i).fun;
+        cntO=cntO+1;
+    end
 end
 
 info.prcA=prcA;
@@ -125,14 +125,17 @@ info.prcO=prcO;
 
 %run model
 if info.flags.GenCode
-   %do precompo
-   [fe,fx,d,p]=info.msi.prc(f,fe,fx,s,d,p,info);
-   %do core
-   [s, fx, d] = info.msi.core(s, f, fe, d, p,info);
+    %do precompo
+    [fe,fx,d,p]=info.msi.prc(f,fe,fx,s,d,p,info);
+    %do core
+    [s, fx, d] = info.msi.core(s, f, fe, d, p,info);
     
 else
     
     %do precompo
+    for i=1:length(info.prcO)
+        [fe,fx,d,p]=info.prcO(i).fun(f,fe,fx,s,d,p,info);
+    end
     
     [s, fx, d] = core(s, f, fe, d,  p,info);
     
@@ -143,7 +146,7 @@ end
 
 %checks:
 %- all required forcing available?
-%compatibility of modules 
+%compatibility of modules
 
 %write inlined core and precomps
 
