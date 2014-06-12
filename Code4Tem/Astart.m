@@ -148,8 +148,13 @@ info.prcA=prcA;
 info.prcO=prcO;
 
 
+
 %get the forcing
 %[f]=info.Forcing.ImportFun(info);
+
+%Preallocate fe,fx,s,d
+%[fe,fx,s,d]=PreAllocateModelStructs(info);
+
 
 %run model
 if info.flags.GenCode
