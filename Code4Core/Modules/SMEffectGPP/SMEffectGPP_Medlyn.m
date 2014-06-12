@@ -8,7 +8,7 @@ function [fx,s,d]=SMEffectGPP_Medlyn(f,fe,fx,s,d,p,info,i);
 d.SMEffectGPP.gppS(:,i)   = d.SupplyTransp.TranspS(:,i) .* fe.AoE(:,i);   
 
 %calc SM stress scalar
-d.SMEffectGPP.SMScGPP(:,i)=min(d.TranspGPP.gppS(:,i)./d.DemandGPP.gppE(:,i),1);
+d.SMEffectGPP.SMScGPP(:,i) = min( d.TranspGPP.gppS(:,i) ./ d.DemandGPP.gppE(:,i) ,1);
 
 
 end

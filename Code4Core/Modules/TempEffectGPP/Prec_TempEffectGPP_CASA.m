@@ -1,4 +1,4 @@
-function [fe,fx,d]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
 
 
 
@@ -15,8 +15,8 @@ function [fe,fx,d]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
 %     
 % end
 % 
-TOPT=p.TempEffectGPP.ToptCASA;
-AIRT=f.TairDay;
+TOPT = p.TempEffectGPP.ToptCASA;
+AIRT = f.TairDay;
     A       = p.TempEffectGPP.ToptA;    % original = 0.2
     B       = p.TempEffectGPP.ToptB;       % original = 0.3
 % CALCULATE T1: account for effects of temperature stress;

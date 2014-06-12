@@ -4,6 +4,6 @@ function [fx,s,d]=Interception_simple(f,fe,fx,s,d,p,info,i);
 
 
 %update the available water
-d.WBdum(:,i)=d.WBdum(:,i)-fx.EvapInt(:,i);
+d.Temp.WBdum(:,i) = d.Temp.WBdum(:,i) - fx.ECanop(:,i);
 
 end

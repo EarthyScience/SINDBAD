@@ -1,4 +1,4 @@
-function [s, fx, d] = core(si, f, fe, p,info);
+function [s, fx, d] = core(s, f, fe, d,  p,info);
 % CORE - ...
 %
 % DESCRIPTION:
@@ -41,29 +41,14 @@ ms=info.ms;
 % Pre-allocate s, fx,d, di, fxi  (could be out-sourced to the TEM and used as an input)
 % -------------------------------------------------------------------------
 
-
-
 % -------------------------------------------------------------------------
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------
 
 % LOOP : loop through the whole length of of the forcing dataset
-for i=1:info.Forcing.Length
-    
-    
-    
-    % functions assume that everything which needs to be precomputed is
-    % precomputed
-    % function handles that need to be executed are collected in
-    % 'info.Precompute.handles' (the TEM has to take care of collecting and defining the
-    % right ones)
-    %%do the neccessary pre-computations here if not already done (if
-    %%everything is already precomputed then
-    %%length(info.Precompute.handles)=0;
-    for prc=1:length(info.Precompute.handles)        
-        [fe,fx,d]=info.Precompute.handles(prc).fun(f,fe,fx,s,d,p,info,i);        
-    end
-    
+for i=1:info.Forcing.Size(1)
+           
+        
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
@@ -151,10 +136,7 @@ for i=1:info.Forcing.Length
     % calculate carbon cycle/decomposition/respiration in soil
     
     
-    % ---------------------------------------------------------------------
-    % Gather all variables that are desired from fxi,si,di and insert them
-    % in fx,s,d
-    % ---------------------------------------------------------------------
+   
     
     
     % END LOOP

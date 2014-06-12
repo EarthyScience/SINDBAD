@@ -1,4 +1,4 @@
-function [fe,fx,d]=Prec_Sublimation_GLEAM_PTterm(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p]=Prec_Sublimation_GLEAM_PTterm(f,fe,fx,s,d,p,info);
 
 %precompute PT term
 
@@ -7,11 +7,11 @@ function [fe,fx,d]=Prec_Sublimation_GLEAM_PTterm(f,fe,fx,s,d,p,info);
 
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
 
-T=f.Tair+273.15;
+T = f.TairDay + 273.15;
 %from Diego miralles
 %The majority of the parameters I use in GLEAM come from the equations in Murphy and Koop (2005) here attached.
 %The slope of the vapour pressure over ice versus temperature curve (Delta) is obtained from eq. (7). You may want to do this derivative yourself because my calculus is not as good as it used to; what I get is:
-Delta = (5723.265./T.^2 + 3.53068./(T-0.00728332)).* exp(9.550426-5723.265./T + 3.53068*log(T) - 0.00728332.*T);
+Delta = (5723.265./T.^2 + 3.53068./(T-0.00728332)).* exp(9.550426-5723.265./T + 3.53068.*log(T) - 0.00728332.*T);
 %;That you can convert from [Pa/K] to [kPa/K] by multiplying times 0.001.
 Delta=Delta.*0.001;
 
@@ -25,8 +25,8 @@ Lambda=Lambda.*0.000001./(18.01528.*0.001);
 %Where P is the air pressure in [kPa], which I consider as a function of the elevation (DEM) but can otherwise be set to 101.3, and ca is the specific heat of air which I assume 0.001 MJ/kg/K.
 %ca=101.3
 pa=0.001; %MJ/kg/K
-Gamma = f.PsurfDay.* pa./(0.622.*Lambda);
+Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 
-fe.PTtermSub=p.Sublimation.alpha.*(Delta./(Delta+Gamma))./Lambda;
+fe.PTtermSub = p.Sublimation.alpha .*(Delta./(Delta+Gamma))./Lambda;
 
 end

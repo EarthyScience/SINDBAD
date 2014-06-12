@@ -1,4 +1,4 @@
-function [fe,fx,d]=Prec_Interception_Gash_interceptionEvap(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p]=Prec_Interception_Gash_interceptionEvap(f,fe,fx,s,d,p,info);
 
 %works per rain event. here we assume that we have one rain event per day
 
@@ -16,31 +16,31 @@ function [fe,fx,d]=Prec_Interception_Gash_interceptionEvap(f,fe,fx,s,d,p,info);
 
 
 %Pgc: amount of gross rainfall necessary to saturate the canopy
-Pgc=-1.*(f.RainInt.*p.Interception.CanopyStorage./((1-p.Interception.fte).*p.Interception.EvapRate)).*log(1-((1-p.Interception.fte).*p.Interception.EvapRate./f.RainInt));
+Pgc=-1.*( f.RainInt .* p.Interception.CanopyStorage ./ ((1- p.Interception.fte ) .* p.Interception.EvapRate )).*log(1-((1- p.Interception.fte ) .* p.Interception.EvapRate ./ f.RainInt ));
 
 %Pgt: amount of gross rainfall necessary to saturate the trunks
-Pgt=Pgc + f.RainInt.*p.Interception.St./(p.Interception.pd.*f.FAPAR.*(f.RainInt-p.Interception.EvapRate.*(1-p.Interception.fte)));
+Pgt=Pgc + f.RainInt .* p.Interception.St ./ ( p.Interception.pd .* f.FAPAR .* ( f.RainInt - p.Interception.EvapRate .* (1 - p.Interception.fte )));
 
 %Ic: Interception loss from canopy
-Ic1=f.FAPAR.*f.Rain; %Pg < Pgc
-Ic2 = f.FAPAR.*(Pgc+((1-p.Interception.fte).*p.Interception.EvapRate./f.RainInt).*(f.Rain-Pgc)); %Pg > Pgc
+Ic1 = f.FAPAR .* f.Rain; %Pg < Pgc
+Ic2 = f.FAPAR .* (Pgc+((1- p.Interception.fte ) .* p.Interception.EvapRate ./ f.RainInt ) .* ( f.Rain - Pgc)); %Pg > Pgc
 
 Ic = zeros(info.Forcing.Size);
-v=f.Rain <= Pgc;
+v= f.Rain <= Pgc;
 Ic(v)=Ic1(v);
 Ic(v==0)=Ic2(v==0);
 
 %It: interception loss from trunks
 
 %It1 = St;% Pg < Pgt
-It2 = p.Interception.pd.*f.FAPAR.*(1-(1-p.Interception.fte).*p.Interception.EvapRate./f.RainInt).*(f.Rain-Pgc);%Pg > Pgt
+It2 = p.Interception.pd .* f.FAPAR .* (1-(1 - p.Interception.fte ) .* p.Interception.EvapRate ./ f.RainInt ).*( f.Rain - Pgc);%Pg > Pgt
 
-It=f.Rain.*0;
-v=f.Rain <= Pgt;
-It(v)=p.Interception.St;
+It = f.Rain .* 0;
+v= f.Rain <= Pgt;
+It(v) = p.Interception.St;
 It(v==0)=It2(v==0);
 
-fx.ECanop=Ic+It;
+fx.ECanop = Ic+It;
 
 
 end

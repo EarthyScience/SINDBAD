@@ -1,4 +1,4 @@
-function [fe,fx,d]=Prec_DemandGPP_min(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p]=Prec_DemandGPP_min(f,fe,fx,s,d,p,info);
 
 %stress scalers are combined as the minimum (which limits most)
 
@@ -6,17 +6,17 @@ function [fe,fx,d]=Prec_DemandGPP_min(f,fe,fx,s,d,p,info);
 if info.Forcing.Size(2)>1
     %is spatial
     scall=zeros(info.Forcing.Size(1),info.Forcing.Size(2),3);
-    scall(:,:,1)=d.TempEffectGPP.TempScGPP;
-    scall(:,:,2)=d.VPDEffectGPP.VPDScGPP;
-    scall(:,:,3)=d.LightEffectGPP.LightScGPP;
+    scall(:,:,1) = d.TempEffectGPP.TempScGPP;
+    scall(:,:,2) = d.VPDEffectGPP.VPDScGPP;
+    scall(:,:,3) = d.LightEffectGPP.LightScGPP;
     
-    d.DemandGPP.AllScGPP=min(scall,[],3);
+    d.DemandGPP.AllScGPP = min(scall,[],3);
 else
     %is time series
-    scall=vertcat(d.TempEffectGPP.TempScGPP,d.VPDEffectGPP.VPDScGPP,d.LightEffectGPP.LightScGPP);
-    d.DemandGPP.AllScGPP=min(scall,[],1);
+    scall=vertcat( d.TempEffectGPP.TempScGPP , d.VPDEffectGPP.VPDScGPP , d.LightEffectGPP.LightScGPP );
+    d.DemandGPP.AllScGPP = min(scall,[],1);
 end
 
-d.DemandGPP.gppE=fi.FAPAR.*fi.PAR.*d.RdiffEffectGPP.rueGPP.*d.DemandGPP.AllScGPP;
+d.DemandGPP.gppE = f.FAPAR .* f.PAR .* d.RdiffEffectGPP.rueGPP .* d.DemandGPP.AllScGPP;
 
 end
