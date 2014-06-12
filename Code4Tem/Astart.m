@@ -27,7 +27,10 @@ info.paths.GenCode=pthCodeGen;
 info.opt.Pnames=paramsOpt;
 
 %set up p struct
+%should read the params from an excel file and the VEG and SOIL etc params
+%from somewhere ales
 %[p]=info.params.ImportFun(info);
+
 
 %get list of params to be optimised
 
@@ -92,26 +95,51 @@ for i=1:length(modules)
 end
 info.ms=ms;
 
+
+%to be done: copy all fields
 prcA=struct;
 prcO=struct;
 cntA=1;
 cntO=1;
 for i=1:length(precsGen)
+    fn=fieldnames(precsGen(i));
     if precsGen(i).DoAlways
-        prcA(cntA).fun=precsGen(i).fun;
+        
+        for j=1:length(fn)
+            eval(['prcA(cntA).' char(fn(j)) '=precsGen(i).' char(fn(j)) ';']);
+        end
+        
+        
+        %prcA(cntA).fun=precsGen(i).fun;
         cntA=cntA+1;
     else
-        prcO(cntO).fun=precsGen(i).fun;
+        
+        for j=1:length(fn)
+            eval(['prcO(cntO).' char(fn(j)) '=precsGen(i).' char(fn(j)) ';']);
+        end
+        
+        %prcO(cntO).fun=precsGen(i).fun;
         cntO=cntO+1;
     end
 end
 
 for i=1:length(precs)
+    fn=fieldnames(precs(i));
     if precs(i).DoAlways
-        prcA(cntA).fun=precs(i).fun;
+        
+        for j=1:length(fn)
+            eval(['prcA(cntA).' char(fn(j)) '=precs(i).' char(fn(j)) ';']);
+        end
+        
+        %prcA(cntA).fun=precs(i).fun;
         cntA=cntA+1;
     else
-        prcO(cntO).fun=precs(i).fun;
+        
+        for j=1:length(fn)
+            eval(['prcO(cntO).' char(fn(j)) '=precs(i).' char(fn(j)) ';']);
+        end
+        
+        %prcO(cntO).fun=precs(i).fun;
         cntO=cntO+1;
     end
 end
