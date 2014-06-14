@@ -11,7 +11,7 @@ fid = fopen(CodePth, 'wt');
 %write the core
 DoAlways=1;
 
-str=['function [s, fx, d] = ' name '(s, f, fe, d, p,info);'];
+str=['function [s, fx, d] = ' name '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
 
 %do the precomp always here

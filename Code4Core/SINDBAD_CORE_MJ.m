@@ -1,4 +1,4 @@
-function [s, fx, d] = core(s, f, fe, d,  p,info);
+function [s, fx, d] = core(f,fe,fx,s,d,p,info);
 % CORE - ...
 %
 % DESCRIPTION:
@@ -63,71 +63,71 @@ for i=1:info.Forcing.Size(1)
     % 1 - Snow
     % ---------------------------------------------------------------------
     % add snow fall and calculate SnowCoverFraction
-    [fx,s,d]=ms.SnowCover.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SnowCover.fun(f,fe,fx,s,d,p,info,i);
     
     %calculate sublimation and update swe
-    [fx,s,d]=ms.Sublimation.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.Sublimation.fun(f,fe,fx,s,d,p,info,i);
     
     %calculate snowmelt and update SWE
-    [fx,s,d]=ms.SnowMelt.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SnowMelt.fun(f,fe,fx,s,d,p,info,i);
     
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
     %interception evaporation
-    [fx,s,d]=ms.Interception.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.Interception.fun(f,fe,fx,s,d,p,info,i);
     %this should be precomputed a dummy will just copy from fei to fxi
             
     %infiltration excess runoff
-    [fx,s,d]=ms.RunoffInfE.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.RunoffInfE.fun(f,fe,fx,s,d,p,info,i);
     
     %saturation runoff
-    [fx,s,d]=ms.SaturatedFraction.handle(f,fe,fx,s,d,p,info,i);
-    [fx,s,d]=ms.RunoffSat.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SaturatedFraction.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.RunoffSat.fun(f,fe,fx,s,d,p,info,i);
     
     %recharge the soil
-    [fx,s,d]=ms.RechargeSoil.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.RechargeSoil.fun(f,fe,fx,s,d,p,info,i);
     
     %interflow
-    [fx,s,d]=ms.RunoffInt.handle(f,fe,fx,s,d,p,info,i);    
+    [fx,s,d]=ms.RunoffInt.fun(f,fe,fx,s,d,p,info,i);    
     %if e.g. infiltration excess runoff and or saturation runoff are not
-    %explicitly modelled then assign a dummy handle that returnes zeros and
+    %explicitly modelled then assign a dummy fun that returnes zeros and
     %lumb the FastRunoff into interflow
     
     %recharge the groundwater 
-    [fx,s,d]=ms.RechargeGW.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.RechargeGW.fun(f,fe,fx,s,d,p,info,i);
     
     %baseflow
-    [fx,s,d]=ms.BaseFlow.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.BaseFlow.fun(f,fe,fx,s,d,p,info,i);
     
     %Groundwater soil moisture interactions (e.g. capilary flux, water
     %table in root zone etc)
-    [fx,s,d]=ms.SoilMoistureGW.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SoilMoistureGW.fun(f,fe,fx,s,d,p,info,i);
     
     %soil evaporation
-    [fx,s,d]=ms.SoilEvap.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SoilEvap.fun(f,fe,fx,s,d,p,info,i);
             
     % ---------------------------------------------------------------------
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------
     
     %supply limited Transpiration
-    [fx,s,d]=ms.SupplyTransp.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.SupplyTransp.fun(f,fe,fx,s,d,p,info,i);
        
     %demand limited GPP (all should be precomputed, i.e. use dummies here that copy stuff from fei to di)
     %compute 'stress' scalars
-    [fx,s,d]=ms.LightEffectGPP.handle(f,fe,fx,s,d,p,info,i); 
-    [fx,s,d]=ms.RdiffEffectGPP.handle(f,fe,fx,s,d,p,info,i);%effect of diffuse radiation   
-    [fx,s,d]=ms.TempEffectGPP.handle(f,fe,fx,s,d,p,info,i);
-    [fx,s,d]=ms.VPDEffectGPP.handle(f,fe,fx,s,d,p,info,i);     
-    [fx,s,d]=ms.DemandGPP.handle(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum
+    [fx,s,d]=ms.LightEffectGPP.fun(f,fe,fx,s,d,p,info,i); 
+    [fx,s,d]=ms.RdiffEffectGPP.fun(f,fe,fx,s,d,p,info,i);%effect of diffuse radiation   
+    [fx,s,d]=ms.TempEffectGPP.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.VPDEffectGPP.fun(f,fe,fx,s,d,p,info,i);     
+    [fx,s,d]=ms.DemandGPP.fun(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum
     
-    [fx,s,d]=ms.SMEffectGPP.handle(f,fe,fx,s,d,p,info,i); %if 'coupled' requires access to iwue param    
-    [fx,s,d]=ms.ActualGPP.handle(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum    
-    [fx,s,d]=ms.Transp.handle(f,fe,fx,s,d,p,info,i);%if coupled computed from GPP
+    [fx,s,d]=ms.SMEffectGPP.fun(f,fe,fx,s,d,p,info,i); %if 'coupled' requires access to iwue param    
+    [fx,s,d]=ms.ActualGPP.fun(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum    
+    [fx,s,d]=ms.Transp.fun(f,fe,fx,s,d,p,info,i);%if coupled computed from GPP
     
     %root water uptake (extract water from soil)
-    [fx,s,d]=ms.RootUptake.handle(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]=ms.RootUptake.fun(f,fe,fx,s,d,p,info,i);
     
     % ---------------------------------------------------------------------
     % 4 - Allocation of C within plant organs

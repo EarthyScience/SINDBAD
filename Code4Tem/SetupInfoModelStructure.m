@@ -1,13 +1,28 @@
 function [info]=SetupInfoModelStructure(info)
 
+%this needs to be changed!!!!
+DefaultApproaches={'SnowCover_HTESSEL','Sublimation_GLEAM','SnowMelt_simple','Interception_Gash','RunoffInfE_MJ',...
+    'SaturatedFraction_none','RunoffSat_Zhang','RechargeSoil_TopBottom','RunoffInt_simple','RechargeGW_simple',...
+    'BaseFlow_simple','SoilMoistureGW_none','SoilEvap_simple','SupplyTransp_Federer',...
+    'LightEffectGPP_Maekelae2008','RdiffEffectGPP_Turner','TempEffectGPP_CASA','VPDEffectGPP_Medlyn','DemandGPP_mult',...
+    'SMEffectGPP_Medlyn','ActualGPP_mult','Transp_Medlyn','RootUptake_TopBottom'};
+
+
 pthPrecsGen=info.paths.PrecGen;
 pthModules=info.paths.Modules;
-ModuleNames=
-Approaches=
+pthCore=info.paths.Core;
 paramsOpt=info.opt.Pnames;
 pthCodeGen=info.paths.GenCode;
 
+NonDefaultApproaches=info.NonDefaultApproaches;
 
+[ModuleNames]=GetModuleNamesFromCore(pthCore);
+
+%overwrite the default approaches and make sure everything is in correct
+%order
+[info]=SortOutApproaches(info,ModuleNames,DefaultApproaches,NonDefaultApproaches);
+
+Approaches=info.Approaches;
 %collect related Prec and module stuff (do in correct order)
 [precsGen,precs,modules]=ImportPrecsModules(pthPrecsGen,pthModules,ModuleNames,Approaches);
 
@@ -15,6 +30,7 @@ pthCodeGen=info.paths.GenCode;
 [precs]=GetInputOutputFromCode(precs);
 [modules]=GetInputOutputFromCode(modules);
 
+[IsCompatible]=CheckModelIntegrity(precsGen,precs,modules);
 
 %check which precomputations need to be done always and which only once
 %(relevant for optimisation)
@@ -30,14 +46,11 @@ info.msi.prc=funh_prcO;
 
 %define info model structure
 ms=struct;
-for i=1:length(modules)
-    
+for i=1:length(modules)    
     eval(['ms.' char(ModuleNames(i)) '=modules(i);'])
 end
 info.ms=ms;
 
-
-%to be done: copy all fields
 prcA=struct;
 prcO=struct;
 cntA=1;

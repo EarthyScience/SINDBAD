@@ -15,7 +15,7 @@ end
 
 cntP=1;
 cntM=1;
-for i=1:length(Approaches);
+for i=1:length(ModuleNames);
     cpth=[pthModules char(ModuleNames(i)) '/'];
     
     Pxl=dir([cpth '/Prec_' char(Approaches(i)) '*.m']);

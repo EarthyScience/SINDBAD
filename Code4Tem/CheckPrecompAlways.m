@@ -13,17 +13,21 @@ for i=1:length(precsGen)
         %check if any other prec down in the sequence requires an input which
         %is the output of this prec; if so --> flag for DEPENDENT prec (precomp always)
         for j=i+1:length(precsGen)
-            a= ismember(precsGen(j).Input,precsGen(i).Output);
-            if sum(a)>0
-                precsGen(j).DoAlways=1;
+            if ~isempty(precsGen(j).Input)
+                a= ismember(precsGen(j).Input,precsGen(i).Output);
+                if sum(a)>0
+                    precsGen(j).DoAlways=1;
+                end
             end
         end
         
         %now additionally loop over precs
         for j=1:length(precs)
-            a= ismember(precs(j).Input,precsGen(i).Output);
-            if sum(a)>0
-                precs(j).DoAlways=1;
+            if ~isempty(precs(j).Input)
+                a= ismember(precs(j).Input,precsGen(i).Output);
+                if sum(a)>0
+                    precs(j).DoAlways=1;
+                end
             end
         end
         
@@ -44,20 +48,23 @@ for i=1:length(precs)
     %if input is a param that is optimised --> flag (precomp always)
     
     %a= ismember(precs(i).params.Names,paramsOpt);
-    a= ismember(precs(i).Input,paramsOpt);
-    if sum(a)>0
-        precs(i).DoAlways=1;
-        
-        %check if any other prec down in the sequence requires an input which
-        %is the output of this prec; if so --> flag for DEPENDENT prec (precomp always)
-        for j=i+1:length(precs)
-            a= ismember(precs(j).Input,precs(i).Output);
-            if sum(a)>0
-                precs(j).DoAlways=1;
+    if ~isempty(precs(i).Input)
+        a= ismember(precs(i).Input,paramsOpt);
+        if sum(a)>0
+            precs(i).DoAlways=1;
+            
+            %check if any other prec down in the sequence requires an input which
+            %is the output of this prec; if so --> flag for DEPENDENT prec (precomp always)
+            for j=i+1:length(precs)
+                if ~isempty(precs(j).Input)
+                    a= ismember(precs(j).Input,precs(i).Output);
+                    if sum(a)>0
+                        precs(j).DoAlways=1;
+                    end
+                end
             end
         end
     end
-    
     %find all precs where and input from d,fx,fe is their output
     %if in any of them an optimised param --> flag (precomp always)
 end
