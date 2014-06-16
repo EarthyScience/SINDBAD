@@ -8,6 +8,6 @@ fx.Qsnow(:,i) = min( s.wSWE(:,i) , fe.snowmeltterm(:,i) .* d.SnowCover.frSnow(:,
 s.wSWE(:,i) = s.wSWE(:,i) - fx.Qsnow(:,i);
 
 %a dummy that tracks how much water is still 'available'
-d.Temp.WBdum(:,i) = f.Rain(:,i) + fx.Qsnow;
+d.Temp.WBdum(:,i) = f.Rain(:,i) + fx.Qsnow(:,i);
 
 end
