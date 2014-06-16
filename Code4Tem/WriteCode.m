@@ -36,7 +36,7 @@ for j=1:length(precs)
     end
 end
 
-str='for i=1:info.Forcing.Size(1)';
+str='for i=1:info.Forcing.Size(2)';
 fprintf(fid, '%s\n', str);
 
 for j=1:length(modules)

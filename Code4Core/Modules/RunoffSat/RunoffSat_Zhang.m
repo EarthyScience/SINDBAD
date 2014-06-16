@@ -9,7 +9,7 @@ X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1(:,i) + s.wSM2(:,i) ));
 P = d.Temp.WBdum(:,i);
 %p.RunoffSat.alpha default ~0.5
 
-fx.Qsat(:,i) = P - P.*(1+X0./P - ( 1+(X0./P).^(1/ p.RunoffSat.alpha ) ).^ p.RunoffSat.alpha );
+fx.Qsat(:,i) = P - P.*(1+X0./P - ( 1+(X0./P).^(1./ p.RunoffSat.alpha ) ).^ p.RunoffSat.alpha );
 
 d.Temp.WBdum(:,i) = d.Temp.WBdum(:,i) - fx.Qsat(:,i);
 

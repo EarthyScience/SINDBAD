@@ -1,7 +1,7 @@
 function [fe,fx,d,p]=Prec_VPDEffectGPP_MOD17(f,fe,fx,s,d,p,info);
 
-td = p.VPDEffectGPP.VPDmax - p.VPDEffectGPP.VPDmin;
-vsc=- f.VPDDay ./ td + p.VPDEffectGPP.VPDmax ./ td;
+td = repmat( p.VPDEffectGPP.VPDmax - p.VPDEffectGPP.VPDmin ,1,info.Forcing.Size(2));
+vsc=- f.VPDDay ./ td + repmat( p.VPDEffectGPP.VPDmax ,1,info.Forcing.Size(2)) ./ td;
 
 vsc(vsc<0)=0;
 vsc(vsc>1)=1;

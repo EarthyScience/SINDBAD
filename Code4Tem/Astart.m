@@ -161,7 +161,7 @@ info.Forcing.Size=[nspace ntime];
 %if info.flags.GenCode == 1
     %do precompo
     tic
-for i=1:100    
+for i=1:10    
     
     
     [fe,fx,d,p]=info.msi.prc(f,fe,fx,s,d,p,info);
@@ -171,7 +171,7 @@ for i=1:100
 end
    toc
  tic
-for i=1:100
+for i=1:10
     %else
    
     %do precompo
