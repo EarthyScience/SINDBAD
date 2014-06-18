@@ -30,7 +30,12 @@ Approaches=info.Approaches;
 [precs]=GetInputOutputFromCode(precs);
 [modules]=GetInputOutputFromCode(modules);
 
-[IsCompatible]=CheckModelIntegrity(precsGen,precs,modules);
+[AllInputs,AllOutputs]=GetAllInputsOutputs(precsGen,precs,modules);
+
+info.Variables.Input=AllInputs;
+info.Variables.Output=AllOutputs;
+info.Variables.All=unique(vertcat(AllInputs,AllOutputs));
+%[IsCompatible]=check_ModelIntegrity(AllInputs,AllOutputs);
 
 %check which precomputations need to be done always and which only once
 %(relevant for optimisation)

@@ -1,10 +1,11 @@
-function [IsCompatible]=check_ModelIntegrity(precsGen,precs,modules)
+function [IsCompatible]=check_ModelIntegrity(info)
 
 %Compatibilty is here simply assessed by checking if all inputs from
 %fe,fx,d,s are also some output of the same or another function (order of
 %computations is not checked);
 
-[AllInputs,AllOutputs]=GetAllInputsOutputs(precsGen,precs,modules);
+AllInputs=info.Variables.Input;
+AllOutputs=info.Variables.Output;
 
 %get rid of the ones that start with 'p.','f.'
 k=strfind(AllInputs,'p.');
