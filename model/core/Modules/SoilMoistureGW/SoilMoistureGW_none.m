@@ -7,7 +7,7 @@ function [fx,s,d]=SoilMoistureGW_none(f,fe,fx,s,d,p,info,i);
 % table depth
 
 %assume no GW in the root zone
-s.wGWR = zeros(info.forcing.size);
+% s.wGWR = zeros(info.forcing.size);
 
 
 end

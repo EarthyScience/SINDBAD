@@ -15,7 +15,7 @@ function [fe,fx,d,p]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
 %     
 % end
 % 
-TOPT = repmat( p.TempEffectGPP.ToptCASA ,1,info.forcing.size(2));
+TOPT = repmat( p.TempEffectGPP.Topt ,1,info.forcing.size(2));
 AIRT = f.TairDay;
     A       = repmat( p.TempEffectGPP.ToptA ,1,info.forcing.size(2));    % original = 0.2
     B       = repmat( p.TempEffectGPP.ToptB ,1,info.forcing.size(2));       % original = 0.3

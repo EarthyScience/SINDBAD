@@ -1,0 +1,39 @@
+function [fe] = Pre_AutoResp_ATC(f,fe,fx,s,d,p,info)
+
+% calculate temperature effect on plant maintenance respiration (1 and 2
+% corresponds to roots; 3 and 4 corresponds to wood and leafs)
+fT(1).value	= p.AutoResp.Q10_RM .^ ((f.Tsoil - p.AutoResp.Tref_RM) ./ 10);
+fT(2).value	= p.AutoResp.Q10_RM .^ ((f.Tsoil - p.AutoResp.Tref_RM) ./ 10);
+fT(3).value = p.AutoResp.Q10_RM .^ ((f.Tair - p.AutoResp.Tref_RM) ./ 10);
+fT(4).value	= p.AutoResp.Q10_RM .^ ((f.Tair - p.AutoResp.Tref_RM) ./ 10);
+
+% adjust nitrogen efficiency rate of maintenance respiration
+RMN     = p.AutoResp.RMN ./ info.Forcing.StepsPerDay;
+
+% scalars of maintenance respiration for models A, B and C
+% km is the maintenance respiration coefficient (d-1)
+switch upper(info.AutoResp.ModelType)
+    case {'A','B'}
+        for ii = 1:4 % for all the vegetation pools
+            fe.AutoResp.km(ii).value	= 1 ./ p.AutoResp.C2N(ii).value .* RMN .* fT(ii).value;
+        end
+    case {'C'}
+        for ii = 1:4 % for all the vegetation pools
+            km                          = 1 ./ p.AutoResp.C2N(ii).value .* RMN .* fT(ii).value;
+            kd                          = p.AutoResp.Fd(ii).value;
+            fe.AutoResp.km(ii).value	= km .* kd;
+        end
+    otherwise
+        error(['Pre_AutoResp_Amthor : ModelType not known : ' info.AutoResp.ModelType])
+end
+
+end % function
+%{
+make a function that is TempEffectAutoResp
+move fT calculations there (can all be done in precomputation
+
+
+
+
+
+%}

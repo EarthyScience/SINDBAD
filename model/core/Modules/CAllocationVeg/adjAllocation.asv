@@ -1,0 +1,28 @@
+function fe = adjAllocation(f,fe,fx,s,d,p,info)
+% adjust the allocation coefficients according to the fraction of
+% trees to herbaceous and fine to coarse root partitioning
+
+% TreeCover and fine to coarse root ratio
+tc      = info.TreeCover;
+rf2rc	= p.CAllocationVeg.Rf2Rc;
+
+% the allocation fractions according to the partitioning to root/wood/leaf
+% - represents plant level allocation
+r0	= fe.CAllocationVeg.cf2Root; % this is to below ground root fine+coarse
+s0	= fe.CAllocationVeg.cf2Wood;
+l0	= fe.CAllocationVeg.cf2Leaf;
+
+% adjust for spatial consideration of TreeCover and plant level
+% partitioning between fine and coarse roots
+rf1 = r0 .* tc .* rf2rc + (r0 + s0 .* (r0 ./ (r0 + l0))) .* (1 - tc);
+rc1 = r0 .* tc .* (1 - rf2rc);
+s1  = s0 .* tc + 0;
+l1	= l0 .* tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
+
+% feed it to fe
+fe.CAllocationVeg.c2pool(1).value	= rf1;
+fe.CAllocationVeg.c2pool(2).value   = rc1;
+fe.CAllocationVeg.c2pool(3).value   = s1;
+fe.CAllocationVeg.c2pool(4).value	= l1;
+
+end % function

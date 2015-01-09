@@ -6,7 +6,7 @@ s.wSWE(:,i) = s.wSWE(:,i) + f.Snow(:,i);
 
 %suggested by Sujan (after HTESSEL GHM)
 %default of p.Snow.CoverParam=15
-d.SnowCover.frSnow(:,i) = min(1, s.wSWE(:,i) ./ p.SnowCover.Param );
+d.SnowCover.frSnow(:,i) = min(1, s.wSWE(:,i) ./ p.SnowCover.CoverParam );
 
 
 end

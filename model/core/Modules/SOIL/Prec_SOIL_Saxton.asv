@@ -1,0 +1,15 @@
+function [fe,fx,d]=Prec_SOIL_Saxton(f,fe,fx,s,d,p,info)
+
+
+WPT     = calc_soilm_prms(info.CLAY, info.SAND, info.SLDP, 'wpt');
+FC      = calc_soilm_prms(info.CLAY, info.SAND, info.SLDP, 'fc');
+AWC     = FC - WPT;
+
+d.SOIL.
+
+
+
+
+
+
+end % function

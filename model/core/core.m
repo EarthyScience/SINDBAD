@@ -1,4 +1,5 @@
 function [s, fx, d] = core(f,fe,fx,s,d,p,info);
+tic
 % CORE - ...
 %
 % DESCRIPTION:
@@ -6,7 +7,8 @@ function [s, fx, d] = core(f,fe,fx,s,d,p,info);
 % INPUTS:
 %   si	: structure variable with all initial ecosystem states inside
 %   f   : forcing variables
-%   fe  : pre-computed extra 'forcing'
+%   fe  : pre-computed extra 'forcing' - whatever is exclusively computed
+%       from precomputations should be in fe
 %   p   : parameter structure
 %   
 %   si contains the initial state
@@ -14,7 +16,9 @@ function [s, fx, d] = core(f,fe,fx,s,d,p,info);
 % OUTPUTS:
 %   s   : structure variable with all the ecosystem states inside
 %   fx	: flux variables
-%   d   : diagnostics (where the stressors are also
+%   d   : diagnostics (where the stressors are also) - stressors that are
+%   exclusively computed in precomputations should be in fe, and can be
+%   updated in the end to d - could be used for double checks
 
 % alternative names for info could be brain or sindbad
 
@@ -33,124 +37,102 @@ function [s, fx, d] = core(f,fe,fx,s,d,p,info);
 %to make copies)
 
 % -------------------------------------------------------------------------
-% slice out the model structure
-% -------------------------------------------------------------------------
-ms=info.ms;
-
-% -------------------------------------------------------------------------
 % Pre-allocate s, fx,d, di, fxi  (could be out-sourced to the TEM and used as an input)
 % -------------------------------------------------------------------------
 
 
 %do precompo
-    for i=1:length(info.prcA)
-        [fe,fx,d,p]=info.prcA(i).fun(f,fe,fx,s,d,p,info);
+for prc = 1:numel(info.code.preComp)
+    if info.code.preComp(prc).doAlways == 1
+        tmp         = info.code.preComp(prc).fun;   % no idea why this way
+        [fe,fx,d,p]	= tmp(f,fe,fx,s,d,p,info);      % works but not inline
     end
-
+end
 
 
 
 % -------------------------------------------------------------------------
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------
-
+% get the model structure
+ms	= info.code.ms;
+ttt = NaN(1,info.forcing.size(2));% just to count time, to delete...
 % LOOP : loop through the whole length of of the forcing dataset
-for i=1:info.forcing.size(2)
- 
-           
-        
+for i = 1:info.forcing.size(2)
+tic
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
-    % add snow fall and calculate SnowCoverFraction
-    [fx,s,d]=ms.SnowCover.fun(f,fe,fx,s,d,p,info,i);
-    
-    %calculate sublimation and update swe
-    [fx,s,d]=ms.Sublimation.fun(f,fe,fx,s,d,p,info,i);
-    
-    %calculate snowmelt and update SWE
-    [fx,s,d]=ms.SnowMelt.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]	= ms.SnowCover.fun(f,fe,fx,s,d,p,info,i);    % add snow fall and calculate SnowCoverFraction
+    [fx,s,d]    = ms.Sublimation.fun(f,fe,fx,s,d,p,info,i);  % calculate sublimation and update swe
+    [fx,s,d]    = ms.SnowMelt.fun(f,fe,fx,s,d,p,info,i);     % calculate snowmelt and update SWE
     
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
-    %interception evaporation
-    [fx,s,d]=ms.Interception.fun(f,fe,fx,s,d,p,info,i);
-    %this should be precomputed a dummy will just copy from fei to fxi
-            
-    %infiltration excess runoff
-    [fx,s,d]=ms.RunoffInfE.fun(f,fe,fx,s,d,p,info,i);
-    
-    %saturation runoff
-    [fx,s,d]=ms.SaturatedFraction.fun(f,fe,fx,s,d,p,info,i);
-    [fx,s,d]=ms.RunoffSat.fun(f,fe,fx,s,d,p,info,i);
-    
-    %recharge the soil
-    [fx,s,d]=ms.RechargeSoil.fun(f,fe,fx,s,d,p,info,i);
-    
-    %interflow
-    [fx,s,d]=ms.RunoffInt.fun(f,fe,fx,s,d,p,info,i);    
-    %if e.g. infiltration excess runoff and or saturation runoff are not
-    %explicitly modelled then assign a dummy fun that returnes zeros and
-    %lumb the FastRunoff into interflow
-    
-    %recharge the groundwater 
-    [fx,s,d]=ms.RechargeGW.fun(f,fe,fx,s,d,p,info,i);
-    
-    %baseflow
-    [fx,s,d]=ms.BaseFlow.fun(f,fe,fx,s,d,p,info,i);
-    
-    %Groundwater soil moisture interactions (e.g. capilary flux, water
-    %table in root zone etc)
-    [fx,s,d]=ms.SoilMoistureGW.fun(f,fe,fx,s,d,p,info,i);
-    
-    %soil evaporation
-    [fx,s,d]=ms.SoilEvap.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]    = ms.Interception.fun(f,fe,fx,s,d,p,info,i);         % interception evaporation
+    [fx,s,d]    = ms.RunoffInfE.fun(f,fe,fx,s,d,p,info,i);           % infiltration excess runoff
+    [fx,s,d]    = ms.SaturatedFraction.fun(f,fe,fx,s,d,p,info,i);    % saturation runoff
+    [fx,s,d]    = ms.RunoffSat.fun(f,fe,fx,s,d,p,info,i);            % saturation runoff
+    [fx,s,d]    = ms.RechargeSoil.fun(f,fe,fx,s,d,p,info,i);         % recharge the soil
+    [fx,s,d]    = ms.RunoffInt.fun(f,fe,fx,s,d,p,info,i);            % interflow
+                                                                        % if e.g. infiltration excess runoff and or saturation runoff are not
+                                                                        % explicitly modelled then assign a dummy handle that returnes zeros and
+                                                                        % lumb the FastRunoff into interflow
+    [fx,s,d]    = ms.RechargeGW.fun(f,fe,fx,s,d,p,info,i);           % recharge the groundwater 
+    [fx,s,d]    = ms.BaseFlow.fun(f,fe,fx,s,d,p,info,i);             % baseflow
+    [fx,s,d]    = ms.SoilMoistureGW.fun(f,fe,fx,s,d,p,info,i);       % Groundwater soil moisture interactions (e.g. capilary flux, water
+                                                                        % table in root zone etc)
+    [fx,s,d]    = ms.SoilEvap.fun(f,fe,fx,s,d,p,info,i);             % soil evaporation
             
     % ---------------------------------------------------------------------
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------
-    
-    %supply limited Transpiration
-    [fx,s,d]=ms.SupplyTransp.fun(f,fe,fx,s,d,p,info,i);
-       
-    %demand limited GPP (all should be precomputed, i.e. use dummies here that copy stuff from fei to di)
-    %compute 'stress' scalars
-    [fx,s,d]=ms.LightEffectGPP.fun(f,fe,fx,s,d,p,info,i); 
-    [fx,s,d]=ms.RdiffEffectGPP.fun(f,fe,fx,s,d,p,info,i);%effect of diffuse radiation   
-    [fx,s,d]=ms.TempEffectGPP.fun(f,fe,fx,s,d,p,info,i);
-    [fx,s,d]=ms.VPDEffectGPP.fun(f,fe,fx,s,d,p,info,i);     
-    [fx,s,d]=ms.DemandGPP.fun(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum
-    
-    [fx,s,d]=ms.SMEffectGPP.fun(f,fe,fx,s,d,p,info,i); %if 'coupled' requires access to iwue param    
-    [fx,s,d]=ms.ActualGPP.fun(f,fe,fx,s,d,p,info,i);%combine effects as multiplicative or minimum    
-    [fx,s,d]=ms.Transp.fun(f,fe,fx,s,d,p,info,i);%if coupled computed from GPP
-    
-    %root water uptake (extract water from soil)
-    [fx,s,d]=ms.RootUptake.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]    = ms.SupplyTransp.fun(f,fe,fx,s,d,p,info,i);     % supply limited Transpiration
+    [fx,s,d]    = ms.LightEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % compute 'stress' scalars
+    [fx,s,d]    = ms.RdiffEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % effect of diffuse radiation   
+    [fx,s,d]    = ms.TempEffectGPP.fun(f,fe,fx,s,d,p,info,i);    % effect of temperature
+    [fx,s,d]    = ms.VPDEffectGPP.fun(f,fe,fx,s,d,p,info,i);     % VPD effect
+    [fx,s,d]    = ms.DemandGPP.fun(f,fe,fx,s,d,p,info,i);        % combine effects as multiplicative or minimum
+    [fx,s,d]    = ms.SMEffectGPP.fun(f,fe,fx,s,d,p,info,i);      % if 'coupled' requires access to iwue param    
+    [fx,s,d]    = ms.ActualGPP.fun(f,fe,fx,s,d,p,info,i);        % combine effects as multiplicative or minimum    
+    [fx,s,d]    = ms.Transp.fun(f,fe,fx,s,d,p,info,i);           % if coupled computed from GPP
+    [fx,s,d]    = ms.RootUptake.fun(f,fe,fx,s,d,p,info,i);       % root water uptake (extract water from soil)
     
     % ---------------------------------------------------------------------
-    % 4 - Allocation of C within plant organs
+    % 4 - Climate effects on metabolic processes
+    % ---------------------------------------------------------------------
+    [fx,s,d]    = ms.SoilMoistEffectRH.fun(f,fe,fx,s,d,p,info,i);    % effect of soil moisture on decomposition
+    [fx,s,d]    = ms.TempEffectRH.fun(f,fe,fx,s,d,p,info,i);         % effect of temperature on decomposition
+    [fx,s,d]    = ms.TempEffectAutoResp.fun(f,fe,fx,s,d,p,info,i);   % temperature effect on autotrophic maintenance respiration
+
+    % ---------------------------------------------------------------------
+    % 5 - Allocation of C within plant organs
+    % ---------------------------------------------------------------------
+    [fx,s,d]	= ms.CAllocationVeg.fun(f,fe,fx,s,d,p,info,i);       % carbon allocation factors
+    
+    % ---------------------------------------------------------------------
+    % 6 - Autotrophic respiration
+    % ---------------------------------------------------------------------
+    [fx,s,d]    = ms.AutoResp.fun(f,fe,fx,s,d,p,info,i);             % determine growth and maintenance respiration -> NPP
+    
+    % ---------------------------------------------------------------------
+    % 7 - Carbon transfers to soil pools
+    % ---------------------------------------------------------------------
+    [fx,s,d]    = ms.CCycle.fun(f,fe,fx,s,d,p,info,i);               % allocate carbon to vegetation components
+                                                                        % litterfall and litter scalars
+                                                                        % calculate carbon cycle/decomposition/respiration in soil
+	
+    % ---------------------------------------------------------------------
+    % Gather all variables that are desired and insert them
+    % in fx,s,d
     % ---------------------------------------------------------------------
     
-    % determine growth and maintenance respiration -> NPP
-    
-    % allocate carbon to vegetation components
-    
-    % ---------------------------------------------------------------------
-    % 5 - Carbon transfers to soil pools
-    % ---------------------------------------------------------------------
-    
-    % litterfall and litter scalars
-    
-    % calculate carbon cycle/decomposition/respiration in soil
-    
-    
-   
-    
-    
-    % END LOOP
-end
+% jsut to count time    
+ttt(i)=toc    ;
+end % END LOOP
+
+end % function
 %{
 NOTES:
 A) In this code, we should use the following strategy, e.g. for ET:

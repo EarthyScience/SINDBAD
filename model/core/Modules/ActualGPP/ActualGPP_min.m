@@ -1,4 +1,18 @@
 function [fx,s,d]=ActualGPP_min(f,fe,fx,s,d,p,info,i);
+% #########################################################################
+% FUNCTION	: 
+% 
+% PURPOSE	: 
+% 
+% REFERENCES:
+% 
+% CONTACT	: Martin
+% 
+% INPUT     :
+% 
+% OUTPUT    :
+% 
+% #########################################################################
 
 
 %calculate the minimum of all stress scalers 

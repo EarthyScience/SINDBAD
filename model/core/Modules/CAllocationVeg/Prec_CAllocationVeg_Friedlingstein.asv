@@ -1,0 +1,55 @@
+function fe = Prec_CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info)
+% #########################################################################
+% Reference:
+% Friedlingstein, P., Joel, G., Field, C. B., and Fung, I. Y., Toward an
+% allocation scheme for global terrestrial carbon models, Global Change
+% Biology, 5, 755-770, 1999
+% #########################################################################
+
+% constants
+ro      = p.CAllocationVeg.ro;
+kext	= p.CAllocationVeg.kext;
+minL    = p.CAllocationVeg.minL;
+maxL    = p.CAllocationVeg.maxL;
+minL_fT = p.CAllocationVeg.minL_fT;
+maxL_fT = p.CAllocationVeg.maxL_fT;
+RelY    = p.CAllocationVeg.RelY;
+
+% light limitation (LL) calculation
+LL              = exp (-kext * fi.LAI); 
+LL(LL <= minL)	= minL;
+LL(LL >= maxL)	= maxL;
+
+% send it to fe
+fe.CAllocationVeg.LL            = LL;
+
+% pseudo-nutrient limitation (NL) calculation: 
+% "There is no explicit estimate of soil mineral nitrogen in the version of
+% CASA used for these simulations. As a surrogate, we assume that spatial
+% variability in nitrogen mineralization and soil organic matter
+% decomposition are identical (Townsend et al. 1995). Nitrogen
+% availability, N, is calculated as the product of the temperature and
+% moisture abiotic factors used in CASA for the calculation of microbial
+% respiration (Potter et al. 1993)." in Friedlingstein et al., 1999.
+
+% partial computation for the temperature effect on
+% decomposition/mineralization
+NL_fT                   = fe.SoilDecomposition.fTemp;
+NL_fT(NL_fT >= maxL_fT)	= maxL_fT;
+NL_fT(NL_fT <= minL_fT) = minL_fT;
+
+% 
+NL              = zeros(size(f.PET));
+NL(f.PET == 0)	= minL;
+% send it to fe
+fe.CAllocationVeg.LL            = LL;
+
+% partial computation for the temperature effect on
+% decomposition/mineralization
+
+% numerator of the root allocation function
+fe.CAllocationVeg.RootNumerator	= ro .* (RelY + 1) .* LL;
+
+% denominator of the water limitation fuction
+fe.CAllocationVeg.WLDenominator	= p.SOIL.AWC1 + p.SOIL.AWC2;
+
