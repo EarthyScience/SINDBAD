@@ -3,7 +3,7 @@ function [info]=SetupInfoModelStructure(info)
 %pthPrecsGen=info.paths.PrecGen;
 pthModules=info.paths.core;
 %pthCore=[pthModules 'core.m'];
-paramsOpt=info.opti.ParNames;
+paramsOpt=info.opti.parNames;
 pthCodeGen=info.paths.genCode;
 
 %[ModuleNames]=GetModuleNamesFromCore(pthCore);
