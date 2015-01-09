@@ -2,11 +2,12 @@ function [info]=SetupInfoModelStructure(info)
 
 %pthPrecsGen=info.paths.PrecGen;
 pthModules=info.paths.core;
-pthCore=[pthModules 'core.m'];
+%pthCore=[pthModules 'core.m'];
 paramsOpt=info.opti.ParNames;
 pthCodeGen=info.paths.genCode;
 
-[ModuleNames]=GetModuleNamesFromCore(pthCore);
+%[ModuleNames]=GetModuleNamesFromCore(pthCore);
+ModuleNames=info.modules;
 
 Approaches=info.approaches;
 %collect related Prec and module stuff (do in correct order)
