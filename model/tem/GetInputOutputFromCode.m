@@ -1,7 +1,7 @@
 function [precs]=GetInputOutputFromCode(precs)
 
 
-sstr={'p\.\w*\.\w*','d\.\w*\.\w*','f\.\w*','fe\.\w*','fx\.\w*','s\.\w*'};
+sstr={'p\.\w[\w\d_]*\.\w[\w\d_]*','d\.\w[\w\d_]*\.\w[\w\d_]*','f\.\w[\w\d_]*','fe\.\w[\w\d_]*','fx\.\w[\w\d_]*','s\.\w[\w\d_]*'};
 
 for i=1:length(precs)
     Output={[]};
@@ -12,7 +12,8 @@ for i=1:length(precs)
     [starteq] =regexp(precs(i).funCont,'=');
     for j=1:length(sstr)
         
-        [matchstart,matchend,tokenindices,matchstring,tokenstring, tokenname,splitstring] =regexp(precs(i).funCont,sstr(j));
+%         [matchstart,matchend,tokenindices,matchstring,tokenstring, tokenname,splitstring] =regexp(precs(i).funCont,sstr(j));
+        [matchstart,matchend,tokenindices,matchstring,tokenstring, tokenname] =regexp(precs(i).funCont,sstr(j));
         
         v=find(cellfun(@isempty,matchstart)==0);
         for k=1:length(v)

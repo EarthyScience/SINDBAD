@@ -16,10 +16,10 @@ modules=struct;
 cntP=1;
 cntM=1;
 for i=1:length(ModuleNames);
-    cpth=[pthModules char(ModuleNames(i)) '/'];
+    cpth=[pthModules char(ModuleNames(i)) filesep];
     
-    Pxl=dir([cpth '/Prec_' char(Approaches(i)) '*.m']);
-    Mxl=dir([cpth '/' char(Approaches(i)) '*.m']);
+    Pxl=dir([cpth filesep 'Prec_' char(Approaches(i)) '*.m']);
+    Mxl=dir([cpth filesep char(Approaches(i)) '*.m']);
     
     
     %Pxl=dir([cpth '/Prec_' char(Approaches(i)) '*.xl*']);

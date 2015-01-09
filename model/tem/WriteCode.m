@@ -4,6 +4,8 @@ function [funh_core,funh_prcO]=WriteCode(pthCodeGen,namestr,precs,modules)
 
 %precsGen precs
 
+if~exist(pthCodeGen,'dir'),mkdir(pthCodeGen);end
+
 CodePth=[pthCodeGen 'core_' namestr '.m'];
 [pathstr, name, ext] = fileparts(CodePth);
 fid = fopen(CodePth, 'wt');

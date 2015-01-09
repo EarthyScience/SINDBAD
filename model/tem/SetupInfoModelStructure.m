@@ -1,7 +1,7 @@
 function [info]=SetupInfoModelStructure(info)
 
 %pthPrecsGen=info.paths.PrecGen;
-pthModules=info.paths.core;
+pthModules=[info.paths.core 'Modules' filesep];
 %pthCore=[pthModules 'core.m'];
 paramsOpt=info.opti.parNames;
 pthCodeGen=info.paths.genCode;
@@ -33,7 +33,7 @@ info.variables.all=unique(vertcat(AllInputs,AllOutputs));
 %tim=[num2str(ctim(1)) '_' num2str(ctim(2)) '_' num2str(ctim(3)) '_' num2str(ctim(4)) '_' num2str(ctim(5)) '_' num2str(round(ctim(6)))];
 tim=info.experimentName;
 
-[funh_core,funh_prcO]=WriteCode(pthCodeGen,tim,precsGen,precs,modules);
+[funh_core,funh_prcO]=WriteCode(pthCodeGen,tim,precs,modules);
 info.code.msi.core=funh_core;
 info.code.msi.preComp=funh_prcO;
 

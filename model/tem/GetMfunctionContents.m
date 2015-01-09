@@ -14,7 +14,7 @@ end
 [pathstr,name,ext] = fileparts(mpth);
 
 %find mfunctions in directory
-mf=dir([pathstr '*.m']);
+mf=dir([pathstr filesep '*.m']);
 
 %check if you find it in C
 for ii=1:length(mf)
