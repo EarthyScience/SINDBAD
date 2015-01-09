@@ -1,15 +1,15 @@
-function [precsGen,precs,modules]=ImportPrecsModules(pthPrecsGen,pthModules,ModuleNames,Approaches);
+function [precs,modules]=ImportPrecsModules(pthModules,ModuleNames,Approaches);
 
 precs=struct;
 modules=struct;
-precsGen=struct;
+%precsGen=struct;
 
-Pxl=dir([pthPrecsGen '/Prec_Gen*.m']);
-
-for j=1:length(Pxl);
-    precsGen(j).DoAlways=0;
-    [precsGen]=GatherCode([pthPrecsGen Pxl(j).name],precsGen,j);       
-end
+% Pxl=dir([pthPrecsGen '/Prec_Gen*.m']);
+% 
+% for j=1:length(Pxl);
+%     precsGen(j).DoAlways=0;
+%     [precsGen]=GatherCode([pthPrecsGen Pxl(j).name],precsGen,j);       
+% end
 
 
 

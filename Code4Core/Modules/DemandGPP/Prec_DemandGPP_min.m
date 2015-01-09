@@ -3,9 +3,9 @@ function [fe,fx,d,p]=Prec_DemandGPP_min(f,fe,fx,s,d,p,info);
 %stress scalers are combined as the minimum (which limits most)
 
 %check if time series or spatial
-if info.Forcing.Size(2)>1
+if info.forcing.size(2)>1
     %is spatial
-    scall=zeros(info.Forcing.Size(1),info.Forcing.Size(2),3);
+    scall=zeros(info.forcing.size(1),info.forcing.size(2),3);
     scall(:,:,1) = d.TempEffectGPP.TempScGPP;
     scall(:,:,2) = d.VPDEffectGPP.VPDScGPP;
     scall(:,:,3) = d.LightEffectGPP.LightScGPP;

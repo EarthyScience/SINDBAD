@@ -13,11 +13,11 @@ function [fe,fx,d,p]=Prec_Interception_Gash_interceptionEvap(f,fe,fx,s,d,p,info)
 %c: canopy cover [0-1]
 
 
-CanopyStorage = repmat( p.Interception.CanopyStorage ,1,info.Forcing.Size(2)); %repmat(CanopyStorage,1,info.Forcing.Size(2))
-fte = repmat( p.Interception.fte ,1, info.Forcing.Size(2)); 
-EvapRate = repmat( p.Interception.EvapRate ,1, info.Forcing.Size(2));
-St = repmat( p.Interception.St ,1,info.Forcing.Size(2));
-pd = repmat( p.Interception.pd ,1,info.Forcing.Size(2));
+CanopyStorage = repmat( p.Interception.CanopyStorage ,1,info.forcing.size(2)); %repmat(CanopyStorage,1,info.Forcing.Size(2))
+fte = repmat( p.Interception.fte ,1, info.forcing.size(2)); 
+EvapRate = repmat( p.Interception.EvapRate ,1, info.forcing.size(2));
+St = repmat( p.Interception.St ,1,info.forcing.size(2));
+pd = repmat( p.Interception.pd ,1,info.forcing.size(2));
 
 %Pgc: amount of gross rainfall necessary to saturate the canopy
 Pgc=-1.*( f.RainInt .* CanopyStorage ./ ((1- fte ) .* EvapRate )).*log(1-((1- fte ) .* EvapRate ./ f.RainInt ));
@@ -29,7 +29,7 @@ Pgt=Pgc + f.RainInt .* St ./ ( pd .* f.FAPAR .* ( f.RainInt - EvapRate .* (1 - f
 Ic1 = f.FAPAR .* f.Rain; %Pg < Pgc
 Ic2 = f.FAPAR .* (Pgc+((1- fte ) .* EvapRate ./ f.RainInt ) .* ( f.Rain - Pgc)); %Pg > Pgc
 
-Ic = zeros(info.Forcing.Size);
+Ic = zeros(info.forcing.size);
 v= f.Rain <= Pgc;
 Ic(v)=Ic1(v);
 Ic(v==0)=Ic2(v==0);

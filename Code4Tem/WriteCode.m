@@ -1,4 +1,4 @@
-function [funh_core,funh_prcO]=WriteCode(pthCodeGen,namestr,precsGen,precs,modules)
+function [funh_core,funh_prcO]=WriteCode(pthCodeGen,namestr,precs,modules)
 
 %write two functions: precomp once and core (contains precomp always)
 
@@ -14,18 +14,6 @@ DoAlways=1;
 str=['function [s, fx, d] = ' name '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
 
-%do the precomp always here
-
-if ~isempty(precsGen)
-    for j=1:length(precsGen)
-        if precsGen(j).DoAlways==DoAlways
-            
-            for i=1:length(precsGen(j).funCont)
-                fprintf(fid, '%s\n', precsGen(j).funCont{i});
-            end
-        end
-    end
-end
 
 for j=1:length(precs)
     if precs(j).DoAlways==DoAlways
@@ -36,7 +24,7 @@ for j=1:length(precs)
     end
 end
 
-str='for i=1:info.Forcing.Size(2)';
+str='for i=1:info.forcing.size(2)';
 fprintf(fid, '%s\n', str);
 
 for j=1:length(modules)
@@ -68,15 +56,6 @@ str=['function [fe,fx,d,p]=' name '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
 
 DoAlways=0;
-
-for j=1:length(precsGen)
-    if precsGen(j).DoAlways==DoAlways
-        
-        for i=1:length(precsGen(j).funCont)
-            fprintf(fid, '%s\n', precsGen(j).funCont{i});
-        end
-    end
-end
 
 
 for j=1:length(precs)

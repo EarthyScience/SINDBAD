@@ -38,10 +38,10 @@ for i=1:length(precs)
         
     end
     if ~isempty(Input{1})
-        precs(i).Input=unique(Input);
+        precs(i).funInput=unique(Input);
     end
     if ~isempty(Output{1})
-        precs(i).Output=unique(Output);
+        precs(i).funOutput=unique(Output);
     end
     
 end

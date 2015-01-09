@@ -23,6 +23,9 @@ if length(c)==length(AllInputs)
     IsCompatible=1;
 else
     IsCompatible=0;
+    
+    error('Model Structure Error: Mismatch of Inputs and Ouputs')
+    
 end
 %setdiff(AllInputs,AllOutputs)
 end

@@ -6,7 +6,7 @@ function [fe,fx,d,p]=Prec_VPDEffectGPP_Medlyn(f,fe,fx,s,d,p,info);
 Tparam=0.0512;
 CompPointRef= 42.75;
 CO2CompPoint = CompPointRef .* exp(Tparam .* ( f.TairDay - 25));
-g1 = repmat( p.Transp.g1 ,1,info.Forcing.Size(2));
+g1 = repmat( p.Transp.g1 ,1,info.forcing.size(2));
 
 %calc ci according to medlyn
 ci= f.ca .* g1 ./ ( g1 + sqrt( f.VPDDay ));
