@@ -6,8 +6,8 @@ pthModules=[info.paths.core 'Modules' filesep];
 paramsOpt=info.opti.parNames;
 pthCodeGen=info.paths.genCode;
 
-%[ModuleNames]=GetModuleNamesFromCore(pthCore);
-ModuleNames=info.modules;
+[ModuleNames]=GetModuleNamesFromCore(pthCore);
+%ModuleNames=info.modules;
 
 Approaches=info.approaches;
 %collect related Prec and module stuff (do in correct order)

@@ -26,7 +26,7 @@ f.Year      = nc_varget(fn,'year')';
 %% get the full setup of tem
 NYears      = 10;
 ForcingSize	= size(f.Tair);
-info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',0);
+info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1);
 %% things to do before running the TEM
 
 
