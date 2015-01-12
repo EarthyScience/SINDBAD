@@ -1,7 +1,7 @@
 %% add the tem to the paths of matlab
-addpath('D:\SOL\projects\_SINDBAD\tools\dataproc\','-begin')
-addpath('D:\SOL\projects\_SINDBAD\tools\temSetUp\','-begin')
-addpath('D:\SOL\projects\_SINDBAD\model\TEM\','-begin')
+addpath([pwd filesep '..' filesep 'tools' filesep 'dataproc' filesep],'-begin')
+addpath([pwd filesep '..' filesep 'tools' filesep 'temSetUp' filesep],'-begin')
+addpath([pwd filesep '..' filesep 'model' filesep 'tem' filesep],'-begin')
 
 %% load 1 year of data from a fluxnet site
 fn          = [pwd filesep 'JunkData' filesep 'FR-Hes.1997.2006.daily.nc'];
