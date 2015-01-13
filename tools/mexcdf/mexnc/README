@@ -1,0 +1,131 @@
+The Short And Sweet Of It...
+============================
+Add this directory to your MATLAB path, and you are now setup to use
+mexnc.  Check the READMEs for SNCTOOLS for further instructions.  
+
+Please note that mexnc is NOT the same as the "NetCDF Toolbox",
+which is something that I did not write and therefore cannot support.
+I strongly recommend that you not use the NetCDF Toolbox.
+
+Some Efficiency Considerations
+==============================
+Mexnc can currently use two different backends for accessing your
+netcdf data, the old mexnc mex-file, and the new MATLAB netcdf package.
+Choosing between them may be determined by as simple a factor as what
+version of MATLAB you have, or by more complex criterion such as access
+to password-protected opendap datasets.  If you have 2008a or earlier,
+you must use the mexnc mex-file.  If you have 2008b or later,
+you have the choice of using the original mex-file (which may be
+opendap-enabled) or using MathWork's netcdf package (the netcdf package
+is the default).  Mexnc determines all this by looking at your MATLAB
+version and a preference called USE_TMW.  If you wish mexnc to >>NOT USE<<
+MATLAB's native netcdf package (this might make sense if you have netcdf-4
+files) you may force the issue with
+
+    >> setpref('MEXNC','USE_TMW',false);
+
+So mexnc is pretty flexible about things, but all this flexibility comes
+at a cost of performance.  If If you know for certain that you want to
+ONLY one backend or the other, then you may wish to examine the source
+code for mexnc.m starting at line 546.  Therein lies an explanation of
+a way to speed up the execution of mexnc IF YOU KNOW EXACTLY WHAT YOU
+ARE DOING.  Specifically, you would be hardcoding the backend by which
+mexnc accesses your netcdf data.  Anyway, just go look at line 546 and
+make your own decision.
+
+Just keep in mind that if you do this, you may not be able to easily
+share your code with someone else whose configuration differs from your
+configuration.
+
+Regarding Official Mathworks Support
+=======================================================================
+Beginning with R2008b, the MathWorks is shipping MATLAB with official
+support for netCDF.  The interface looks somewhat different than mexnc,
+but mexnc has been augmented to be able to use the native MathWorks
+support instead of the mexnc mex-file.  Just think, all you windows
+users, no more fooling around with getting the netcdf.dll installed 
+into the proper location!
+
+The first question that may arise here is "will my old code continue
+to work?"  The answer is a qualified "yes".  Just about everything 
+works as before (so far as I know), but there are a couple of 
+exceptions.
+
+    1.  Writing attributes with NaN or Inf does not result in the same
+	    datatype as it did with the mexnc-2 interface.  Since I cannot
+		think of a good reason why one would want to do this in the
+		first place, I haven't much sympathy for anyone who has a 
+		problem with this.
+
+    2.  The memory-mapped I/O routines are not supported by the 
+	    MathWorks native mex-file.  For example, one cannot use
+
+		mexnc('PUT_VARM_DOUBLE',...)
+
+		anymore.  I do not believe this to be much of an issue because
+		the main thing that these routines was good for was to permute
+		data, and MATLAB is much faster at this than the netCDF library
+		anyway.
+
+
+
+R2008a and Earlier
+=======================================================================
+Mexnc is only supported on versions R14 and later.  R13 will not pass
+all of the mexnc test suite, but that is due more to the way the 
+test suite is written than the code itself.  If you want to use mexnc
+on R13 or below, you are welcome to do so, but you are on your own.
+
+If you have MATLAB versions R2008a or earlier, then you need to 
+realize that you still need the mex-file "mexnc".  This is not included
+in this download.  You need to either retrieve it from another download
+at sourceforge or compile it yourself (the source code IS still 
+included).  You can find the source code in the src subdirectory.
+
+If you are using windows, then you also need to place the netcdf.dll 
+file somewhere on your SYSTEM path (not your matlab path, but your
+system path).  Something like either 
+
+    [matlabroot '/bin'] or [matlabroot '/bin/win32']
+
+would be good choices.  You might have to reboot.
+
+SUPPORT
+=======================================================================
+Please note, mexnc is NOT supported by The MathWorks, so please do
+not ask them questions about it.  If you encounter problems with
+mexnc, you should continue to use the same contact email address
+that is listed on the sourceforge web site.
+
+
+OPeNDAP
+=======================================================================
+If you wish to use an opendap-enabled version of mexnc, then you have to
+compile your mex-file yourself.  Take a look at the online notes at 
+http://mexcdf.sourceforge.net/opendap/ for further details.  You can 
+also look at the various mexopts files in the src directory to try to
+get a sense out of what you need to grok in order to get this done.  
+
+Depending upon which release you have, you should try something like
+the following.  Suppose you have R2008a.  In order to compile an opendap-
+enabled mex-file, you would have to invoke
+
+    make R2008a
+
+If you have R2008b and higher and you want to use the native matlab 
+functionality along with opendap, then you should first look at how
+SNCTOOLS manages this.  It can use a java backend for all URLs while
+using the native netcdf package for local I/O.  If you do not wish to
+use SNCTOOLS, then you need to do a careful two-step dance with a 
+preference.  When you are doing your opendap work, set this preference
+
+    >> setpref('MEXNC','USE_TMW',false);
+
+This will cause ALL I/O to go thru the opendap-enabled mex-file (that 
+you have to compile), so remember to turn the preference back on when 
+you are done with it.
+
+Problems?  
+========================================================================
+I don't have a lot of time for mexnc anymore, but you can still email me
+at johne.g.evans.ne@gmail.com

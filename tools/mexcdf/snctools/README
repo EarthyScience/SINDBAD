@@ -1,0 +1,117 @@
+The Short And Sweet Of It...
++-----------------------------------------------------------------------
+Please add this directory to your matlab path.  You must also have 
+mexnc on your path in order for snctools to work.
+
+SNCTOOLS is only supported on R14 or higher.  It will not work on
+MATLAB versions below R14.
+
+
++-----------------------------------------------------------------------
+SNCTOOLS Preferences
+
+USE_JAVA 
+    If you have the toolsUI jar file on your javapath, then enabling
+	this preference allows the java backend to work.  You may find this
+	useful in reading OPeNDAP URLs, GRIB2 files, or netCDF-4 files 
+    (see below).  
+	
+	    setpref('SNCTOOLS','USE_JAVA',true);
+
+	If you wish to use an opendap-enabled version of mexnc, you should
+	set this preference to false.
+
+PRESERVE_FVD
+	Way back in the old days, when mexnc/mexcdf was the only game
+	in town, data was always transposed when reading/writing netCDF
+	data thru MATLAB.  The reason for this was seemingly to make the
+	data look consistent with the way that the netcdf tools such as
+	"ncdump" presented the metadata.  "ncdump" is compiled in C, so
+	it is therefore a row-major-order application, whereas MATLAB 
+	presents data in column-major order.
+	
+	Transposing large datasets can be a costly operation, however, and
+	it really isn't necessary in all cases.  SNCTOOLS can be told to
+	not transpose data by setting the PRESERVE_FVD preference
+
+	>> setpref('SNCTOOLS','PRESERVE_FVD',true);
+
+	By default this preference is false.  If you set it to true,
+	you may see a big performance boost for large datasets, but you
+	might also end up breaking existing code that expected the data
+	to be permuted to row-major order, so you need to be careful
+	when using this.
+
+
++-----------------------------------------------------------------------
+SNCTOOLS and NetCDF-4
+
+SNCTOOLS supports netCDF-4 files under certain conditions...
+
+If you have a netcdf4-enabled mexnc mex-file, SNCTOOLS will 
+automatically use it.  Otherwise you can read netCDF-4 files by using 
+the java interface.  You will need the netcdf-java jar file from Unidata.
+Go to http://www.unidata.ucar.edu/software/netcdf-java/ and make sure
+you download version 4.1 or higher.  Add the jar file to your MATLAB
+path with 
+
+		>> javaaddpath ( '/path/to/toolsUI-4.1.jar' );
+
+You should then set the needed preference to tell SNCTOOLS to default
+to java for netCDF-4 files
+
+		>> setpref ( 'SNCTOOLS', 'USE_JAVA', true );
+
+
++-----------------------------------------------------------------------
+SNCTOOLS and HDF4
+
+Differences between the two formats as far as SNCTOOLS is concerned:
+1)  Creating a dimension will result in a coordinate variable being 
+    created as well.
+
++-----------------------------------------------------------------------
+BUG Reports You Should Know About
+
+1)  Experimental GRIB2 Support
+
+     If you have the netcdf-java jar file on your matlab javaclasspath,
+     you can try read GRIB2 files as if they were netcdf files.  This is
+     a bit experimental, though.  And if your version of MATLAB is R2008a
+     or below, you should take a look at Technical Solution 1-2Z4RS7 on
+     the Mathworks web site, http://www.mathworks.com.  This describes a
+     workaround for dealing with a conflict with the ucarunits.jar file
+     that used to ship with MATLAB until R2008b.  As of March 25, 2010,
+     the URL for this technical solution was at
+
+     http://www.mathworks.com/support/solutions/en/data/1-2Z4RS7/?solution=1-2Z4RS7
+
+2)  Empty Attributes
+
+    MATLAB versions R2008b thru R2009b incorrectly disallowed the creation
+    of empty attributes, which are quite clearly legal.  The bug is
+    fixed in 2010a, but fixes for 2008b thru 2009b are available.
+    Please consult this URL
+
+    http://www.mathworks.com/support/bugreports/609383
+
+
+
++-----------------------------------------------------------------------
+Of all the routines in this m-file collection, the most useful (in my
+humble opinion) are as follows
+	
+	1. nc_varget    - reads a netcdf variable
+	2. nc_varput    - writes to a netcdf variable
+	3. nc_attget    - reads a netcdf attribute
+	4. nc_attput    - writes a netcdf attribute
+	5. nc_padheader - pads header section of large netCDF-3 files 
+	6. nc_dump      - prints netcdf metadata
+
+There is a subdirectory called "tests" which has routines that test
+the m-files of SNCTOOLS.  You really don't need to worry about this
+unless you are convinced that there is something wrong with one of
+the m-files.  In that case, you can run the test suite by changing
+directories into "tests" and running "test_snctools" from the matlab
+command line.   You should not run the test suite unless you have matlab
+version 2007b or later.
