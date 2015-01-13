@@ -4,12 +4,16 @@ fid = fopen(mpth);
 C = textscan(fid, '%s', 'delimiter', '§','CommentStyle','%');
 fclose(fid);
 C=C{1};
-%check if last line is 'end' or 'return'
-if strcmp(C(end),'return') || strcmp(C(end),'end')
-    C=C(2:end-1);
-else
-    C=C(2:end);
-end
+
+%check if last line is 'end' or 'return'; 
+
+ if strncmp(C(end),'return',6) || strncmp(C(end),'end',3)
+     C=C(2:end-1);
+ else
+     C=C(2:end);
+ end
+
+%C=C(2:end); %dirty!! assumes last line is and 'end' or 'return'
 
 [pathstr,name,ext] = fileparts(mpth);
 
@@ -20,7 +24,7 @@ mf=dir([pathstr filesep '*.m']);
 for ii=1:length(mf)
    [pathstr2,name,ext] = fileparts(mf(ii).name);
 
-    tmp=strfind(C,name);
+    tmp=strfind(C,[name '(']); %added '(' to make sure its a function call and not e.g. confused with an error message
     
     for iii=1:length(tmp)
         
