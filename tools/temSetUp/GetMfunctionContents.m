@@ -22,9 +22,10 @@ mf=dir([pathstr filesep '*.m']);
 
 %check if you find it in C
 for ii=1:length(mf)
+    %Comment: on Linux, the following line will only work for absolute paths
    [pathstr2,name,ext] = fileparts(mf(ii).name);
 
-    tmp=strfind(C,[name '(']); %added '(' to make sure its a function call and not e.g. confused with an error message
+    tmp=regexp(C,[name '\s*(']); %added '(' to make sure its a function call and not e.g. confused with an error message
     
     for iii=1:length(tmp)
         
