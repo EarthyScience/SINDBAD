@@ -24,8 +24,8 @@ UserInputs      = varargin;
 % the standards for the TEM
 StandardApproaches  = {...
     'Terrain'           , 'none'            ,...    % ? - elevation properties
-    'VEG'               , 'none'            ,...    % ? - vegetation properties
     'SOIL'              , 'Saxton'          ,...    % ? - soil properties
+    'VEG'               , 'none'            ,...    % ? - vegetation properties
     'SnowCover'         , 'HTESSEL'         ,...	% 1 - Snow
     'Sublimation'       , 'GLEAM'           ,...    % 1 - Snow
     'SnowMelt'          , 'simple'          ,...    % 1 - Snow
@@ -54,7 +54,8 @@ StandardApproaches  = {...
     'TempEffectAutoResp', 'Q10'             ,...    % 4 - Climate effects on metabolic processes
     'CAllocationVeg'    , 'Friedlingstein'  ,...    % 5 - Allocation of C within plant organs
     'AutoResp'          , 'ATC_A'           ,...    % 6 - Autotrophic respiration
-    'CCycle'            , 'CASA'            ...     % 7 - Carbon Cycle / Heteroptrophic Respiration
+    'CCycle'            , 'CASA'            , ...   % 7 - Carbon Cycle / Heteroptrophic Respiration
+    'Update'            , 'States'          ...
     };
 %% build the structure handles: NOT ANYMORE! THIS IS DONE AFTERWARDS NOW...
 % get the core and TEM folder paths

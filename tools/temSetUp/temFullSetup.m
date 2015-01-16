@@ -21,12 +21,18 @@ function info = temFullSetup(varargin)
 
 if nargin == 0
     % if no arguments, just get the standard values
-    [appr, modu]    = temApproaches;    % get a standard ms (model structure) for SINDBAD
-    info            = temInfo;          % get a standard info (information structure) for SINDBAD
-    info.approaches = appr;       % merge them
-    info.modules    = modu;       % merge them
-    pars            = temParams(info);  % get the standard parameters of SINDBAD
-    info.params     = pars;             % set it into info
+    [appr, modu, psCode]	= temApproaches;    % get a standard ms (model structure) for SINDBAD
+    info                    = temInfo;          % get a standard info (information structure) for SINDBAD
+    info.approaches         = appr;             % merge them
+    info.modules            = modu;             % merge them
+    info.code               = psCode;
+    % get the standard parameters of SINDBAD
+    info	= temParams(info);
+    % make the model structure
+    if info.flags.genCode
+        info    = rmfield(info,'code');
+        info	= SetupInfoModelStructure(info);
+    end
     return
 else
     % otherwise get the different inputs
@@ -62,14 +68,14 @@ else                        info    = temInfo;
 end
 info.approaches = appr;       % merge them
 info.modules    = modu;       % merge them
-pars            = temParams(info);  % get the standard parameters of SINDBAD
-info.params 	= pars;             % set it into info
-
+info.code       = psCode;
+% get the standard parameters of SINDBAD
+info	= temParams(info);
 % make the model structure
 if info.flags.genCode
-    info        = SetupInfoModelStructure(info);
-else
-    info.code	= psCode;
+    info    = rmfield(info,'code');
+    info	= SetupInfoModelStructure(info);
 end
+
 
 end % function

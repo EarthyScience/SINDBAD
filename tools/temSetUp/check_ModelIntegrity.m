@@ -18,6 +18,8 @@ kk=strfind(AllOutputs,'f.');
 tf=cellfun(@isempty,k) & cellfun(@isempty,kk);
 AllOutputs=AllOutputs(tf);
 
+% to debug: setdiff(AllInputs,AllOutputs) ;)
+
 [c,ia,ib]=intersect(AllInputs,AllOutputs);
 if length(c)==length(AllInputs)
     IsCompatible=1;
