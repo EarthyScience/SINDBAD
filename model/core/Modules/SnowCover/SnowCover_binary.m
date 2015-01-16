@@ -1,10 +1,29 @@
 function [fx,s,d]=SnowCover_binary(f,fe,fx,s,d,p,info,i);
+% #########################################################################
+% PURPOSE	: compute the snow pack and fraction of snow cover.
+% 
+% REFERENCES:
+% 
+% CONTACT	: mjung
+% 
+% INPUT
+% Snow      : snow fall [mm/time]
+%           (f.Snow)
+% pwSWE     : snow water equivalent of the previous time step [mm of H2O]
+%           (d.Temp.pwSWE)
+% wSWE      : snow water equivalent pool [mm of H2O]
+%           (s.wSWE)
+% 
+% OUTPUT
+% 
+% NOTES:
+% 
+% #########################################################################
 
-%first update the snow pack
+% first update the snow pack
 s.wSWE(:,i) = s.wSWE(:,i) + f.Snow(:,i);
 
-%if there is snow snow fraction is 1, otherwise 0
+% if there is snow, then snow fraction is 1, otherwise 0
 d.SnowCover.frSnow(:,i) = double(s.wSWE(:,i) > 0);
 
-
-end
+end % function

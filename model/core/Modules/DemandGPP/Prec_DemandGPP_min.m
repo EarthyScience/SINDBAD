@@ -1,5 +1,10 @@
 function [fe,fx,d,p]=Prec_DemandGPP_min(f,fe,fx,s,d,p,info);
 
+% FAPAR     : fraction of absorbed photosynthetically active radiation
+%           [] (equivalent to "canopy cover" in Gash and Miralles)
+%           (f.FAPAR)
+
+
 %stress scalers are combined as the minimum (which limits most)
 
 %check if time series or spatial

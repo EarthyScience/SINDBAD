@@ -12,3 +12,13 @@ d.SoilMoistEffectRH.pBGME   = S0(:,1);
 
 d.Temp.pwSM1    = S0(:,1);
 d.Temp.pwSM2	= S0(:,1);
+
+
+
+d.Temp.pwGW    = S0(:,1);
+d.Temp.pwGWR   = S0(:,1);
+d.Temp.pwSWE   = S0(:,1);
+d.Temp.pwWTD   = S0(:,1);
+
+
+end

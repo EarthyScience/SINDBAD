@@ -9,6 +9,9 @@ function [fx,s,d]=ActualGPP_min(f,fe,fx,s,d,p,info,i);
 % CONTACT	: Martin
 % 
 % INPUT     :
+% FAPAR     : fraction of absorbed photosynthetically active radiation
+%           [] (equivalent to "canopy cover" in Gash and Miralles)
+%           (f.FAPAR)
 % 
 % OUTPUT    :
 % 

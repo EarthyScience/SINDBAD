@@ -1,17 +1,43 @@
 function [fe,fx,d,p]=Prec_Interception_Gash(f,fe,fx,s,d,p,info);
-
-%works per rain event. here we assume that we have one rain event per day
-
-%defaults in square brackets from Mirales et al 2010
-%fi.Rainfall: gross precip [mm]
-%fi.RainInt: rainfall rate (mm/hr) [1.5 or 5.6 for synoptic or convective]
-%p.Interception.CanopyStorage: Canopy storage (mm) [1.2]
-%p.Interception.fte: fraction of trunk evaporation [0.02]
-%p.Interception.EvapRate: mean evaporation rate (mm/hr) [0.3]
-%p.Interception.St: trunk capacity (mm) [0.02]
-%p.Interception.pd: fraction rain to trunks [0.02]
-%c: canopy cover [0-1]
-
+% #########################################################################
+% PURPOSE	: compute canopy interception evaporation according to the Gash
+% model.
+% 
+% REFERENCES: ??
+% 
+% CONTACT	: mjung
+% 
+% INPUT
+% Rain      : rain fall [mm]
+%           (f.Rain)
+% RainInt   : rainfall intensity [mm/hr] {1.5 or 5.6 for synoptic or
+%           convective}
+%           (f.RainInt)
+% CanopyStorage : Canopy storage [mm] {1.2}
+%               (p.Interception.CanopyStorage)
+% fte           : fraction of trunk evaporation [] {0.02}
+%               (p.Interception.fte)
+% EvapRate      : mean evaporation rate [mm/hr] {0.3}
+%               (p.Interception.EvapRate)
+% St            : trunk capacity [mm] {0.02}
+%               (p.Interception.St)
+% pd            : fraction rain to trunks [] {0.02}
+%               (p.Interception.pd)
+% FAPAR         : fraction of absorbed photosynthetically active radiation
+%               [] (equivalent to "canopy cover" in Gash and Miralles)
+%               (f.FAPAR)
+% 
+% OUTPUT
+% ECanop    : canopy interception evaporation [mm/time]
+%           (fx.ECanop)
+% 
+% NOTES: Works per rain event. Here we assume that we have one rain event
+% per day - this approach should not be used for timeSteps very different
+% to daily.
+%        Parameters above, defaults in curly brackets from Mirales et al
+%        2010
+% 
+% #########################################################################
 
 CanopyStorage = repmat( p.Interception.CanopyStorage ,1,info.forcing.size(2)); %repmat(CanopyStorage,1,info.Forcing.Size(2))
 fte = repmat( p.Interception.fte ,1, info.forcing.size(2)); 

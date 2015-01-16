@@ -1,3 +1,0 @@
-function [fx,s,d]=SoilProperties_Saxton(f,fe,fx,s,d,p,info,i)
-% this is a 
-end % function

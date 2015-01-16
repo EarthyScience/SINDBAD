@@ -105,8 +105,7 @@ for i = 1:numel(fields2rm)
     prc	= strmatch(['Prec_' fields2rm{i} '_'],{info.code.preComp(:).funName});
     if isempty(prc); continue; end
     % run the precomputations
-    tmp                 = info.code.preComp(prc).fun;   % no idea why this way
-    [fe,fx,d,params]	= tmp(f,fe,fx,s,d,params,info);      % works but not inline
+    [fe,fx,d,params]	= info.code.preComp(prc).fun(f,fe,fx,s,d,params,info);
     ndx2                = [ndx2 prc];
 end
 % remove the fields
