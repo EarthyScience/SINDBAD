@@ -55,7 +55,7 @@ info.code.preComp=precs;
 % cntO=1;
 % for i=1:length(precsGen)
 %     fn=fieldnames(precsGen(i));
-%     if precsGen(i).DoAlways
+%     if precsGen(i).doAlways
 %         
 %         for j=1:length(fn)
 %             eval(['prcA(cntA).' char(fn(j)) '=precsGen(i).' char(fn(j)) ';']);
@@ -74,7 +74,7 @@ info.code.preComp=precs;
 % 
 % for i=1:length(precs)
 %     fn=fieldnames(precs(i));
-%     if precs(i).DoAlways
+%     if precs(i).doAlways
 %         
 %         for j=1:length(fn)
 %             eval(['prcA(cntA).' char(fn(j)) '=precs(i).' char(fn(j)) ';']);

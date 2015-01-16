@@ -38,8 +38,12 @@ toc
 
 %%
 info    = temFullSetup(...
-        'info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',0,...
+        'info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1,...
         'ms','CCycle','none','AutoResp','none','CAllocationVeg','none');
+
+    
+% put previous time step pools in the diagnostics (e.g.
+% d.sdfjkashkljgdfjl.wpSM1)
     
 tic
 tem(f,info);

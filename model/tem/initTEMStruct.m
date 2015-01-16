@@ -22,8 +22,6 @@ if nargin == 3
     s.wSWE(:,1)     = sSU.wSWE(:,end);
     s.wSM1(:,1)     = sSU.wSM1(:,end);
     s.wSM2(:,1)     = sSU.wSM2(:,end);
-    s.wpSM1(:,1)    = sSU.wpSM1(:,end);
-    s.wpSM2(:,1)    = sSU.wpSM2(:,end);
     s.wGW(:,1)      = sSU.wGW(:,end);
     s.wGWR(:,1)     = sSU.wGWR(:,end);
     s.wWTD(:,1)     = sSU.wWTD(:,end);

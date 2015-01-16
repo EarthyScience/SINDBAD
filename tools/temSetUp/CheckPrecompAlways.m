@@ -8,7 +8,7 @@ for i=1:length(precs)
     if ~isempty(precs(i).funInput)
         a= ismember(precs(i).funInput,paramsOpt);
         if sum(a)>0
-            precs(i).DoAlways=1;
+            precs(i).doAlways=1;
             
             %check if any other prec down in the sequence requires an input which
             %is the output of this prec; if so --> flag for DEPENDENT prec (precomp always)
@@ -16,7 +16,7 @@ for i=1:length(precs)
                 if ~isempty(precs(j).funInput)
                     a= ismember(precs(j).funInput,precs(i).funOutput);
                     if sum(a)>0
-                        precs(j).DoAlways=1;
+                        precs(j).doAlways=1;
                     end
                 end
             end

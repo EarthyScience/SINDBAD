@@ -27,10 +27,10 @@ function [fx,s,d] = SoilMoistEffectRH_CASA(f,fe,fx,s,d,p,info,i)
 %               (fi.PET)
 % Rainfall      : rainfall (mm)
 %               (fi.Rainfall)
-% wpSM1         : soil moisture of top soil in the previous time step(mm)
-%               (s.wpSM1)
-% wpSM2         : soil moisture of lower soil in the previous time step (mm)
-%               (s.wpSM2)
+% pwSM1         : soil moisture of top soil in the previous time step(mm)
+%               (d.Temp.pwSM1)
+% pwSM2         : soil moisture of lower soil in the previous time step (mm)
+%               (d.Temp.pwSM2)
 % Aws           : curve (expansion/contraction) controlling parameter
 %               (p.SoilMoistEffectRH.Aws)
 % pBGME         : BGME of previous timestep
@@ -63,7 +63,7 @@ pBGME	= d.SoilMoistEffectRH.pBGME;
 ndx = (f.PET(:,i) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= ((s.wpSM1(ndx,i) + s.wpSM2(ndx,i)) ./ TSPM  + f.Rainfall(ndx,i)) ./ f.PET(ndx,i);
+BGRATIO(ndx)	= ((d.Temp.pwSM1(ndx,1) + d.Temp.pwSM2(ndx,1)) ./ TSPM  + f.Rainfall(ndx,i)) ./ f.PET(ndx,i);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.SoilMoistEffectRH.Aws;

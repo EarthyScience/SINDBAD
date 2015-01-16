@@ -25,12 +25,14 @@ if nargin == 0
     info                    = temInfo;          % get a standard info (information structure) for SINDBAD
     info.approaches         = appr;             % merge them
     info.modules            = modu;             % merge them
-    % make the model structure
-    if info.flags.genCode;  info        = SetupInfoModelStructure(info);
-    else                    info.code	= psCode;
-    end
+    info.code               = psCode;
     % get the standard parameters of SINDBAD
     info	= temParams(info);
+    % make the model structure
+    if info.flags.genCode
+        info    = rmfield(info,'code');
+        info	= SetupInfoModelStructure(info);
+    end
     return
 else
     % otherwise get the different inputs
@@ -66,12 +68,14 @@ else                        info    = temInfo;
 end
 info.approaches = appr;       % merge them
 info.modules    = modu;       % merge them
-% make the model structure
-if info.flags.genCode;  info        = SetupInfoModelStructure(info);
-else                    info.code	= psCode;
-end
+info.code       = psCode;
 % get the standard parameters of SINDBAD
 info	= temParams(info);
+% make the model structure
+if info.flags.genCode
+    info    = rmfield(info,'code');
+    info	= SetupInfoModelStructure(info);
+end
 
 
 end % function

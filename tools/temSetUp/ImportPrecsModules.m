@@ -7,7 +7,7 @@ modules=struct;
 % Pxl=dir([pthPrecsGen '/Prec_Gen*.m']);
 % 
 % for j=1:length(Pxl);
-%     precsGen(j).DoAlways=0;
+%     precsGen(j).doAlways=0;
 %     [precsGen]=GatherCode([pthPrecsGen Pxl(j).name],precsGen,j);       
 % end
 
@@ -26,7 +26,7 @@ for i=1:length(ModuleNames);
     %Mxl=dir([cpth '/' char(Approaches(i)) '*.xl*']);
     
     for j=1:length(Pxl);
-        precs(cntP).DoAlways=0;
+        precs(cntP).doAlways=0;
         %do for Prec
         %get the code and stuff
         [precs]=GatherCode([cpth Pxl(j).name],precs,cntP);
@@ -36,7 +36,7 @@ for i=1:length(ModuleNames);
     end
     %do for Modules
     for j=1:length(Mxl);
-        modules(cntM).DoAlways=1;
+        modules(cntM).doAlways=1;
         %get the code and stuff
         [modules]=GatherCode([cpth Mxl(j).name],modules,cntM);
         %xlsfile contents

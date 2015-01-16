@@ -133,6 +133,7 @@ for i = 1:info.forcing.size(2)
     % Gather all variables that are desired and insert them
     % in fx,s,d
     % ---------------------------------------------------------------------
+    [fx,s,d]	= ms.Update.fun(f,fe,fx,s,d,p,info,i);
     
 % jsut to count time    
 ttt(i)=toc    ;

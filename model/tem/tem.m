@@ -188,10 +188,10 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     % run the model for spin-up for soil C pools @ equilibrium
     % ---------------------------------------------------------------------
-    if~isempty(strmatch(info.approaches,'CCycle_CASA','exact'))
+    if~isempty(strmatch('CCycle_CASA',info.approaches,'exact'))
         [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-    elseif isempty(strmatch(info.approaches,'CCycle_none','exact'))
-        error(['No spinUp definition for current setup'])
+    elseif isempty(strmatch('CCycle_none',info.approaches,'exact'))
+        error('No spinUp definition for current setup.')
     end
     
     % ---------------------------------------------------------------------
