@@ -1,7 +1,8 @@
 %% add the tem to the paths of matlab
-addpath([pwd filesep '..' filesep 'tools' filesep 'dataproc' filesep],'-begin')
-addpath([pwd filesep '..' filesep 'tools' filesep 'temSetUp' filesep],'-begin')
-addpath([pwd filesep '..' filesep 'model' filesep 'tem' filesep],'-begin')
+addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'dataproc' filesep],['simpletests' filesep '..' filesep],''),'-begin')
+addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'temSetUp' filesep],['simpletests' filesep '..' filesep],''),'-begin')
+addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'mexcdf' filesep 'snctools' filesep],['simpletests' filesep '..' filesep],''),'-begin')
+addpath(strrep([pwd filesep '..' filesep 'model' filesep 'tem' filesep],['simpletests' filesep '..' filesep],''),'-begin')
 
 %% load 1 year of data from a fluxnet site
 fn          = [pwd filesep 'JunkData' filesep 'FR-Hes.1997.2006.daily.nc'];
@@ -26,9 +27,22 @@ f.Year      = nc_varget(fn,'year')';
 %% get the full setup of tem
 NYears      = 10;
 ForcingSize	= size(f.Tair);
-info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1);
+info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',0);
 %% things to do before running the TEM
 
 
 %% run tem
+tic
 tem(f,info);
+toc
+
+%%
+info    = temFullSetup(...
+        'info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',0,...
+        'ms','CCycle','none','AutoResp','none','CAllocationVeg','none');
+    
+tic
+tem(f,info);
+toc
+
+

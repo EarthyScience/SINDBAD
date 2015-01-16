@@ -24,8 +24,8 @@ UserInputs      = varargin;
 % the standards for the TEM
 StandardApproaches  = {...
     'Terrain'           , 'none'            ,...    % ? - elevation properties
-    'VEG'               , 'none'            ,...    % ? - vegetation properties
     'SOIL'              , 'Saxton'          ,...    % ? - soil properties
+    'VEG'               , 'none'            ,...    % ? - vegetation properties
     'SnowCover'         , 'HTESSEL'         ,...	% 1 - Snow
     'Sublimation'       , 'GLEAM'           ,...    % 1 - Snow
     'SnowMelt'          , 'simple'          ,...    % 1 - Snow

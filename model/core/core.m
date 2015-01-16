@@ -1,5 +1,5 @@
 function [s, fx, d] = core(f,fe,fx,s,d,p,info);
-tic
+% tic
 % CORE - ...
 %
 % DESCRIPTION:
@@ -59,7 +59,13 @@ ms	= info.code.ms;
 ttt = NaN(1,info.forcing.size(2));% just to count time, to delete...
 % LOOP : loop through the whole length of of the forcing dataset
 for i = 1:info.forcing.size(2)
-tic
+% tic
+
+    % ---------------------------------------------------------------------
+    % 0 - VEG
+    % ---------------------------------------------------------------------
+    [fx,s,d]	= ms.VEG.fun(f,fe,fx,s,d,p,info,i);
+
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------

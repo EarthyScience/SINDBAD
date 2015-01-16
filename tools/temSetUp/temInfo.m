@@ -66,6 +66,13 @@ end
 for i = 1:2:nargin
     eval(['info.' varargin{i} ' = varargin{i+1};'])
 end
+%% remove any spaces from experimentName
+ndx	= strfind(info.experimentName,' ');
+if ~isempty(ndx)
+    info.experimentName = strrep(info.experimentName,' ','');
+    disp(['temInfo : removing any white spaces in experimentName! info.experimentName = ' info.experimentName])
+end
+
 %% some more additional settings that depend on the inputs as well...
 % time scale variables
 info.timeScale.stepsPerDay	= 1 / info.timeScale.timeStep;
