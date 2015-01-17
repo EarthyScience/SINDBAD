@@ -1,4 +1,4 @@
-function [fx,s,d]=SnowCover_HTESSEL(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = SnowCover_HTESSEL(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 

@@ -152,7 +152,7 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-    [s, fx, d] = core(f,fe,fx,s,d,p,info);
+    [fx,s,d] = core(f,fe,fx,s,d,p,info);
     
     % -----------------------------------------------------------------
     % 6.4. - OUTPUTS

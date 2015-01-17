@@ -1,10 +1,13 @@
-function [fe,fx,d,p]=Prec_VPDEffectGPP_MOD17(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_VPDEffectGPP_MOD17(f,fe,fx,s,d,p,info)
 
-td = repmat( p.VPDEffectGPP.VPDmax - p.VPDEffectGPP.VPDmin ,1,info.forcing.size(2));
-vsc=- f.VPDDay ./ td + repmat( p.VPDEffectGPP.VPDmax ,1,info.forcing.size(2)) ./ td;
+tmp     = ones(1,info.forcing.size(2));
+td      = (p.VPDEffectGPP.VPDmax - p.VPDEffectGPP.VPDmin)   * tmp;
+pVPDmax = p.VPDEffectGPP.VPDmax                             * tmp;
 
-vsc(vsc<0)=0;
-vsc(vsc>1)=1;
+vsc     = - f.VPDDay ./ td + pVPDmax ./ td;
+
+vsc(vsc<0)  = 0;
+vsc(vsc>1)  = 1;
 
 d.VPDEffectGPP.VPDScGPP = vsc;
 

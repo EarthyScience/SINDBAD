@@ -1,4 +1,4 @@
-function [fx,s,d]=Interception_Gash(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = Interception_Gash(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: for interception according to Gash everything (ECanop) is
 % precomputed. This function only updates the WBP variable.

@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_SoilEvap_simple(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_SoilEvap_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -23,6 +23,7 @@ function [fe,fx,d,p]=Prec_SoilEvap_simple(f,fe,fx,s,d,p,info);
 % 
 % #########################################################################
 
-fe.SoilEvap.PETsoil = f.PET .* repmat( p.SoilEvap.alpha ,1,info.forcing.size(2)) .* (1 - f.FAPAR );
+palpha              = p.SoilEvap.alpha * ones(1,info.forcing.size(2));
+fe.SoilEvap.PETsoil = f.PET .* palpha .* (1 - f.FAPAR);
 
 end

@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_Interception_simple(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = Prec_Interception_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute canopy interception evaporation according to the Gash
 % model.
@@ -32,6 +32,7 @@ function [fe,fx,d,p]=Prec_Interception_simple(f,fe,fx,s,d,p,info)
 
 % interception evaporation is simply the minimum of the fapar dependent
 % storage and the rainfall
-fx.ECanop = min( repmat( p.Interception.isp ,1,info.forcing.size(2)) .* f.FAPAR , f.Rain );
+tmp         = (p.Interception.isp * ones(1,info.forcing.size(2))).* f.FAPAR;
+fx.ECanop   = min(tmp,f.Rain);
 
 end

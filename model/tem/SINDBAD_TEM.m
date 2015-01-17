@@ -164,7 +164,7 @@ function ()
 		
 			% 2D -> (space,time)
 		
-            [s, fx, d] = core(s, f, p, settings/options);
+            [fx,s,d] = core(s, f, p, settings/options);
             
         % if spin-up 2 (the forcing of this function is actually the
         % stressors in the diagnostics structure)

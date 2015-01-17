@@ -1,4 +1,4 @@
-function [fx,s,d]=SaturatedFraction_WTD(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = SaturatedFraction_WTD(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: 
 % 

@@ -52,6 +52,7 @@ pa = 0.001; %MJ/kg/K
 Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
-fe.Sublimation.PTtermSub = repmat( p.Sublimation.alpha ,1,info.forcing.size(2)) .*(Delta./(Delta+Gamma))./Lambda;
+palpha                      = p.Sublimation.alpha * ones(1,info.forcing.size(2));
+fe.Sublimation.PTtermSub    = palpha .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 
 end

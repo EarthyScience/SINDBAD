@@ -47,7 +47,7 @@ if info.flags.doSpinUp
     % run the model for spin-up for NPP and soil water pools @ equilibrium
     % ---------------------------------------------------------------------
     for ij = 1:info.spinUp.wPools
-        [sSU, fxSU, dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        [fxSU,sSU,dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
     end
     
     % ---------------------------------------------------------------------

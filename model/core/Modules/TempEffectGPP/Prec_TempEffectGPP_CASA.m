@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info)
 
 
 
@@ -15,10 +15,11 @@ function [fe,fx,d,p]=Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info);
 %     
 % end
 % 
-TOPT = repmat( p.TempEffectGPP.Topt ,1,info.forcing.size(2));
-AIRT = f.TairDay;
-    A       = repmat( p.TempEffectGPP.ToptA ,1,info.forcing.size(2));    % original = 0.2
-    B       = repmat( p.TempEffectGPP.ToptB ,1,info.forcing.size(2));       % original = 0.3
+AIRT    = f.TairDay;
+tmp     = ones(1,info.forcing.size(2));
+TOPT    = p.TempEffectGPP.Topt  * tmp;
+A       = p.TempEffectGPP.ToptA * tmp;    % original = 0.2
+B       = p.TempEffectGPP.ToptB * tmp;    % original = 0.3
 % CALCULATE T1: account for effects of temperature stress;
 % reflects the empirical observation that plants in very
 % cold habitats typically have low maximum rates

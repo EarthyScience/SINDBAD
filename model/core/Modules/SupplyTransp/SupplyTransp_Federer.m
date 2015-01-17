@@ -1,4 +1,4 @@
-function [fx,s,d]=SupplyTransp_Federer(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = SupplyTransp_Federer(f,fe,fx,s,d,p,info,i)
 
 % wSM1      : soil moisture of top layer [mm]
 %           (s.wSM1)

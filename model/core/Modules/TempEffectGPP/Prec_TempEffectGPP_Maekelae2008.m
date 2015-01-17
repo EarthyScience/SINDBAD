@@ -1,12 +1,15 @@
-function [fe,fx,d,p]=Prec_TempEffectGPP_Maekelae2008(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_TempEffectGPP_Maekelae2008(f,fe,fx,s,d,p,info)
 
 %p.TempEffectGPP.TimConst between 1 and 20 days; guessed median =5
 %p.TempEffectGPP.X0 [-15 1]; median ~-5
 %p.TempEffectGPP.Smax between 11 and 30, median ~20
 
-TimConst = repmat( p.TempEffectGPP.TimConst ,1,info.forcing.size(2));
-X0 = repmat( p.TempEffectGPP.X0 ,1,info.forcing.size(2));
-Smax = repmat( p.TempEffectGPP.Smax ,1,info.forcing.size(2));
+tmp = ones(1,info.forcing.size(2));
+
+TimConst    = p.TempEffectGPP.TimConst  * tmp;
+X0          = p.TempEffectGPP.X0        * tmp;
+Smax        = p.TempEffectGPP.Smax      * tmp;
+
 %acclimation
 X = f.TairDay;
 for ii=2:length(X(1,:));

@@ -1,4 +1,4 @@
-function [fx,s,d]=Interception_simple(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = Interception_simple(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: for canopy interception evaporation (ECanop) everything is
 % precomputed. This function only updates the WBP variable.

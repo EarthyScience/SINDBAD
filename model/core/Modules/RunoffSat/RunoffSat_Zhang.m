@@ -1,4 +1,4 @@
-function [fx,s,d]=RunoffSat_Zhang(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 

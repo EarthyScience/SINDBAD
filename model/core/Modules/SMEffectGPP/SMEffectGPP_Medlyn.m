@@ -1,4 +1,4 @@
-function [fx,s,d]=SMEffectGPP_Medlyn(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = SMEffectGPP_Medlyn(f,fe,fx,s,d,p,info,i)
 
 %precomputed: AoE   	= ca .* PsurfDay  ./ (1.6 .* (VPDDay + g1 .* sqrt(VPDDay)));    
 

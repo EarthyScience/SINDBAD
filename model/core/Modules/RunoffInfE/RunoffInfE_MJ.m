@@ -1,4 +1,4 @@
-function [fx,s,d]=RunoffInfE_MJ(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = RunoffInfE_MJ(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: 
 % 

@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_RunoffInfE_MJ(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_RunoffInfE_MJ(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the runoff from infiltration excess.
 % 
@@ -37,7 +37,8 @@ function [fe,fx,d,p]=Prec_RunoffInfE_MJ(f,fe,fx,s,d,p,info);
 % duration (P/R)
 
 % Qinf=P-(P.*fpar+(1-fpar).*min(P,min(I,R).*P./R));
-fx.Qinf = f.Rain -( f.Rain .* f.FAPAR + (1 - f.FAPAR ) .* min( f.Rain ,min( repmat( p.SOIL.InfCapacity ,1,info.forcing.size(2)) , f.RainInt ) .* f.Rain ./ f.RainInt ));
+pInfCapacity	= p.SOIL.InfCapacity * ones(1,info.forcing.size(2));
+fx.Qinf         = f.Rain - (f.Rain .* f.FAPAR + (1 - f.FAPAR) .* min(f.Rain,min(pInfCapacity,f.RainInt) .* f.Rain ./ f.RainInt));
 
 end
 

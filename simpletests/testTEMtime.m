@@ -41,8 +41,6 @@ info    = temFullSetup(...
         'ms','CCycle','none','AutoResp','none','CAllocationVeg','none','SoilMoistEffectRH','none');
 
     
-% put previous time step pools in the diagnostics (e.g.
-% d.sdfjkashkljgdfjl.wpSM1)
     
 tic
 tem(f,info);

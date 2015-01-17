@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_SnowMelt_simple(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = Prec_SnowMelt_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: precompute the snow melt term
 % 
@@ -24,6 +24,7 @@ function [fe,fx,d,p]=Prec_SnowMelt_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % effect of temperature on snow melt = SnowMeltRate * Tair
-fe.SnowMelt.Tterm	= max( repmat( p.SnowMelt.Rate .* info.timeScale.timeStep,1,info.forcing.size(2)) .* f.Tair ,0);
+pRate               = (p.SnowMelt.Rate .* info.timeScale.timeStep) * ones(1,info.forcing.size(2));
+fe.SnowMelt.Tterm	= max(pRate .* f.Tair,0);
 
 end

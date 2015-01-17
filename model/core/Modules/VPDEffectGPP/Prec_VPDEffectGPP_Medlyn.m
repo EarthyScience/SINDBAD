@@ -1,16 +1,18 @@
-function [fe,fx,d,p]=Prec_VPDEffectGPP_Medlyn(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_VPDEffectGPP_Medlyn(f,fe,fx,s,d,p,info)
 
 %proposed by Wang-Prentice
 
-%calculate co2 compensation point after Bernacci (C3 photosynthesis)
-Tparam=0.0512;
-CompPointRef= 42.75;
-CO2CompPoint = CompPointRef .* exp(Tparam .* ( f.TairDay - 25));
-g1 = repmat( p.Transp.g1 ,1,info.forcing.size(2));
+% many params in function, are all physical constants??
 
-%calc ci according to medlyn
-ci= f.ca .* g1 ./ ( g1 + sqrt( f.VPDDay ));
+% calculate co2 compensation point after Bernacci (C3 photosynthesis)
+Tparam          = 0.0512;
+CompPointRef    = 42.75;
+CO2CompPoint    = CompPointRef .* exp(Tparam .* (f.TairDay - 25));
+g1              = p.Transp.g1 * ones(1,info.forcing.size(2));
 
-d.VPDEffectGPP.VPDScGPP = (ci-CO2CompPoint)./(ci+2.*CO2CompPoint);
+% calc ci according to medlyn
+ci                      = f.ca .* g1 ./ (g1 + sqrt(f.VPDDay));
+
+d.VPDEffectGPP.VPDScGPP = (ci - CO2CompPoint) ./ (ci + 2 .* CO2CompPoint);
 
 end

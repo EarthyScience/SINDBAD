@@ -1,4 +1,4 @@
-function [fe,fx,d,p]=Prec_Interception_Gash(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_Interception_Gash(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute canopy interception evaporation according to the Gash
 % model.
@@ -39,11 +39,12 @@ function [fe,fx,d,p]=Prec_Interception_Gash(f,fe,fx,s,d,p,info);
 % 
 % #########################################################################
 
-CanopyStorage = repmat( p.Interception.CanopyStorage ,1,info.forcing.size(2)); %repmat(CanopyStorage,1,info.Forcing.Size(2))
-fte = repmat( p.Interception.fte ,1, info.forcing.size(2)); 
-EvapRate = repmat( p.Interception.EvapRate ,1, info.forcing.size(2));
-St = repmat( p.Interception.St ,1,info.forcing.size(2));
-pd = repmat( p.Interception.pd ,1,info.forcing.size(2));
+tmp             = ones(1,info.forcing.size(2));
+CanopyStorage   = p.Interception.CanopyStorage  * tmp;
+fte             = p.Interception.fte            * tmp; 
+EvapRate        = p.Interception.EvapRate       * tmp;
+St              = p.Interception.St             * tmp;
+pd              = p.Interception.pd             * tmp;
 
 %Pgc: amount of gross rainfall necessary to saturate the canopy
 Pgc=-1.*( f.RainInt .* CanopyStorage ./ ((1- fte ) .* EvapRate )).*log(1-((1- fte ) .* EvapRate ./ f.RainInt ));

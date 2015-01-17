@@ -1,4 +1,4 @@
-function [fx,s,d] = Sublimation_GLEAM(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = Sublimation_GLEAM(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: estimate sublimation
 % 

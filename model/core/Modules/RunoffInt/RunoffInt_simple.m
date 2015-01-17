@@ -1,4 +1,4 @@
-function [fx,s,d]=RunoffInt_simple(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = RunoffInt_simple(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: 
 % 

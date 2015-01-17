@@ -1,4 +1,4 @@
-function [fx,s,d]=RechargeSoil_TopBottom(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = RechargeSoil_TopBottom(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: estimate recharge of available water content 
 % 
