@@ -1,4 +1,4 @@
-function varargout = tem(f,info)
+function varargout = tem(f,info,SUData)
 % Terrestrial Ecosystem Model of SINDBAD
 % 
 % DESCRIPTION:
@@ -115,9 +115,6 @@ p   = info.params;
 
 % check compatibility with the settings, the forcing and the parameters
 
-%% 
-
-
 % here end of if optimization or not
 
 % if it is in optmization mode , we need a flag that says if we need to scale the paraetmers
@@ -127,94 +124,10 @@ p   = info.params;
 % -------------------------------------------------------------------------
 % 5 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
-
-    % ---------------------------------------------------------------------
-    % 5.1. - SETUP SPIN-UP /TRANSIENT RUNS
-    % ---------------------------------------------------------------------
-	% here it is checked if we are in spin-up or transient mode
-%     switch wstep
-% 		% organize forcing
-%         case 1 % SpinUp the model
-% 			% spin-up for NPP and soil water pools
-% 
-% 			% spin-up 2
-%             [s] = calc_cflux_fast(s, p, d);
-				% we just need the stressors
-			% transient
-		% initial model states
-			% spin-up
-				% initialize model states
-			% spin-up 2
-			% transient
-				% adjust states? how? (NO! This should be used inside the
-				% core!!)
-        % set up the looping variables
+% do the SpinUp
+if~exist('SUData','var');SUData=[];end
+[sSU,dSU]   = doSpinUp(f,p,info,SUData);
         
-        
-        
-if info.flags.doSpinUp
-    % ---------------------------------------------------------------------
-    % Make the spinup data - this should be done before?
-    % ---------------------------------------------------------------------
-    fSU	= mkSpinUpData(f,info);
-    
-    % ---------------------------------------------------------------------
-    % Adjust the info structure
-    % ---------------------------------------------------------------------
-    infoSpin                    = info;
-    infoSpin.forcing.size(2)    = floor(info.timeScale.stepsPerYear);
-    infoSpin.timeScale.nYears   = 1;
-    
-    % ---------------------------------------------------------------------
-    % Pre-allocate fx,fe,d,s for the spinup runs
-    % ---------------------------------------------------------------------
-    [fxSU,feSU,dSU,sSU]	= initTEMStruct(infoSpin);
-
-    % ---------------------------------------------------------------------
-    % Precomputations
-    % ---------------------------------------------------------------------
-    for prc = 1:numel(infoSpin.code.preComp)
-        tmp                 = infoSpin.code.preComp(prc).fun;     % no idea why this way
-        [feSU,fxSU,dSU,p]	= tmp(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);  % works but not inline
-    end
-    
-    % ---------------------------------------------------------------------
-    % run the model for spin-up for NPP and soil water pools @ equilibrium
-    % ---------------------------------------------------------------------
-    for ij = 1:info.spinUp.wPools
-        [sSU, fxSU, dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-    end
-    
-    % ---------------------------------------------------------------------
-    % run the model for spin-up for soil C pools @ equilibrium
-    % ---------------------------------------------------------------------
-    if~isempty(strmatch('CCycle_CASA',info.approaches,'exact'))
-        [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-    elseif isempty(strmatch('CCycle_none',info.approaches,'exact'))
-        error('No spinUp definition for current setup.')
-    end
-    
-    % ---------------------------------------------------------------------
-    % save the spinup output?
-    % ---------------------------------------------------------------------
-    if ~isempty(info.outputs.saveSpinUp)
-    end
-else
-    % ---------------------------------------------------------------------
-    % steady state pools have to loaded from memory or from a restart file
-    % ---------------------------------------------------------------------
-    if info.flags.loadSpinUp
-        % load the spinup file "restart.mat" inside the run path
-        
-    elseif ~isempty(info.spinUp.sSpinUp) && ~isempty(info.spinUp.dSpinUp)
-        % get the initial conditions from memory
-        sSU	= info.spinUp.sSpinUp;
-        dSU	= info.spinUp.dSpinUp;
-    else
-        error('what to do for the spin up?!')
-    end
-end
-
 % get initial conditions for the model run
 [fx,fe,d,s]	= initTEMStruct(info,sSU,dSU);
 
@@ -231,8 +144,7 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     for prc = 1:numel(info.code.preComp)
         if info.code.preComp(prc).doAlways == 0
-            tmp         = info.code.preComp(prc).fun;   % no idea why this way
-            [fe,fx,d,p] = tmp(f,fe,fx,s,d,p,info);      % works but not inline
+            [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
         end
     end
 
@@ -240,7 +152,7 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-    [s, fx, d] = core(f,fe,fx,s,d,p,info);
+    [fx,s,d] = core(f,fe,fx,s,d,p,info);
     
     % -----------------------------------------------------------------
     % 6.4. - OUTPUTS

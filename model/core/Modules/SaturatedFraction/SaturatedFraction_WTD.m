@@ -1,8 +1,32 @@
-function [fx,s,d]=SaturatedFraction_WTD(f,fe,fx,s,d,p,info,i);
-%CritDepth [m] should be a global variable; maybe 0.5 (i.e. where wtd is
-%less than 0.5 m is considered saturated)
+function [fx,s,d] = SaturatedFraction_WTD(f,fe,fx,s,d,p,info,i)
+% #########################################################################
+% PURPOSE	: 
+% 
+% REFERENCES: ??
+% 
+% CONTACT	: mjung
+% 
+% INPUT
+% wWTD      : water table depth [m]
+%           (s.wWTD)
+% meanElev  : mean elevation [m]
+%           (p.Terrain.meanElev)
+% percElev  : pdf of the elevation [m] dimensions must be [nspace 100] 
+%           (p.Terrain.percElev)
+% CritDepth : critical depth [m]. should be a global variable; maybe 0.5
+%           (i.e. where wtd is less than 0.5 m is considered saturated) 
+%           (p.SaturatedFraction.CritDepth)
+% 
+% OUTPUT
+% frSat     : saturated fraction of soil [] (from 0 to 1)
+%           (d.SaturatedFraction.frSat)
+% 
+% NOTES: NOT TESTED!!! 
+% 
+% #########################################################################
 
-sc = s.wWTD ./ p.Terrain.meanElev;
+sc = s.wWTD(:,i) ./ p.Terrain.meanElev;
 dum = p.Terrain.percElev.*sc <= p.SaturatedFraction.CritDepth;
 d.SaturatedFraction.frSat(:,i) = sum(dum,3)./100;
+
 end

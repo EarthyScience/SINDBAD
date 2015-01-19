@@ -1,23 +1,50 @@
-function [fe,fx,d,p]=Prec_Interception_Gash(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_Interception_Gash(f,fe,fx,s,d,p,info)
+% #########################################################################
+% PURPOSE	: compute canopy interception evaporation according to the Gash
+% model.
+% 
+% REFERENCES: ??
+% 
+% CONTACT	: mjung
+% 
+% INPUT
+% Rain      : rain fall [mm]
+%           (f.Rain)
+% RainInt   : rainfall intensity [mm/hr] {1.5 or 5.6 for synoptic or
+%           convective}
+%           (f.RainInt)
+% CanopyStorage : Canopy storage [mm] {1.2}
+%               (p.Interception.CanopyStorage)
+% fte           : fraction of trunk evaporation [] {0.02}
+%               (p.Interception.fte)
+% EvapRate      : mean evaporation rate [mm/hr] {0.3}
+%               (p.Interception.EvapRate)
+% St            : trunk capacity [mm] {0.02}
+%               (p.Interception.St)
+% pd            : fraction rain to trunks [] {0.02}
+%               (p.Interception.pd)
+% FAPAR         : fraction of absorbed photosynthetically active radiation
+%               [] (equivalent to "canopy cover" in Gash and Miralles)
+%               (f.FAPAR)
+% 
+% OUTPUT
+% ECanop    : canopy interception evaporation [mm/time]
+%           (fx.ECanop)
+% 
+% NOTES: Works per rain event. Here we assume that we have one rain event
+% per day - this approach should not be used for timeSteps very different
+% to daily.
+%        Parameters above, defaults in curly brackets from Mirales et al
+%        2010
+% 
+% #########################################################################
 
-%works per rain event. here we assume that we have one rain event per day
-
-%defaults in square brackets from Mirales et al 2010
-%fi.Rainfall: gross precip [mm]
-%fi.RainInt: rainfall rate (mm/hr) [1.5 or 5.6 for synoptic or convective]
-%p.Interception.CanopyStorage: Canopy storage (mm) [1.2]
-%p.Interception.fte: fraction of trunk evaporation [0.02]
-%p.Interception.EvapRate: mean evaporation rate (mm/hr) [0.3]
-%p.Interception.St: trunk capacity (mm) [0.02]
-%p.Interception.pd: fraction rain to trunks [0.02]
-%c: canopy cover [0-1]
-
-
-CanopyStorage = repmat( p.Interception.CanopyStorage ,1,info.forcing.size(2)); %repmat(CanopyStorage,1,info.Forcing.Size(2))
-fte = repmat( p.Interception.fte ,1, info.forcing.size(2)); 
-EvapRate = repmat( p.Interception.EvapRate ,1, info.forcing.size(2));
-St = repmat( p.Interception.St ,1,info.forcing.size(2));
-pd = repmat( p.Interception.pd ,1,info.forcing.size(2));
+tmp             = ones(1,info.forcing.size(2));
+CanopyStorage   = p.Interception.CanopyStorage  * tmp;
+fte             = p.Interception.fte            * tmp; 
+EvapRate        = p.Interception.EvapRate       * tmp;
+St              = p.Interception.St             * tmp;
+pd              = p.Interception.pd             * tmp;
 
 %Pgc: amount of gross rainfall necessary to saturate the canopy
 Pgc=-1.*( f.RainInt .* CanopyStorage ./ ((1- fte ) .* EvapRate )).*log(1-((1- fte ) .* EvapRate ./ f.RainInt ));

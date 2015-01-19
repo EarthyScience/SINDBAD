@@ -1,5 +1,29 @@
-function [fe,fx,d,p]=Prec_SoilEvap_simple(f,fe,fx,s,d,p,info);
+function [fe,fx,d,p] = Prec_SoilEvap_simple(f,fe,fx,s,d,p,info)
+% #########################################################################
+% PURPOSE	: 
+% 
+% REFERENCES: ??
+% 
+% CONTACT	: mjung
+% 
+% INPUT
+% PET       : potential evapotranspiration [mm/time]
+%           (f.PET)
+% alpha     : Priestley-Taylor coefficient []
+%           (p.SoilEvap.alpha)
+% FAPAR     : fraction of absorbed photosynthetically active radiation
+%           [] (equivalent to "canopy cover" in Gash and Miralles)
+%           (f.FAPAR)
+% 
+% OUTPUT
+% PETsoil   : potential evaporation from the soil surface [mm/time]
+%           (fe.SoilEvap.PETsoil)
+% 
+% NOTES:
+% 
+% #########################################################################
 
-fe.PETsoil = f.PET .* repmat( p.SoilEvap.alpha ,1,info.forcing.size(2)) .* (1 - f.FAPAR );
+palpha              = p.SoilEvap.alpha * ones(1,info.forcing.size(2));
+fe.SoilEvap.PETsoil = f.PET .* palpha .* (1 - f.FAPAR);
 
 end

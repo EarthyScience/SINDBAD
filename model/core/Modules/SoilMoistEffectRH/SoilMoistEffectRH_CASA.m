@@ -63,7 +63,7 @@ pBGME	= d.SoilMoistEffectRH.pBGME;
 ndx = (f.PET(:,i) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= ((d.Temp.pwSM1(ndx,1) + d.Temp.pwSM2(ndx,1)) ./ TSPM  + f.Rainfall(ndx,i)) ./ f.PET(ndx,i);
+BGRATIO(ndx)	= ((d.Temp.pwSM1(ndx,1) + d.Temp.pwSM2(ndx,1)) ./ TSPM  + f.Rain(ndx,i)) ./ f.PET(ndx,i);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.SoilMoistEffectRH.Aws;

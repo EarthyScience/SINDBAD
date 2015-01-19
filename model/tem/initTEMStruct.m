@@ -5,6 +5,7 @@ function [fx,fe,d,s] = initTEMStruct(info,varargin)
 fe	= struct;
 fx  = struct;
 fx  = initCflux(fx,info);
+fx  = initWflux(fx,info);
 d   = struct;
 d   = initWd(d,info);
 d   = initCd(d,info);
@@ -32,3 +33,9 @@ if nargin == 3
     d.SaturatedFraction.frSat(:,1)	= dSU.SaturatedFraction.frSat(:,end);
     d.SoilMoistEffectRH.pBGME       = dSU.SoilMoistEffectRH.BGME(:,end);
 end
+
+
+% note: check : IniDummyVariables4Test
+
+
+end % function

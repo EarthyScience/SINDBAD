@@ -6,6 +6,13 @@ function [fe,fx,d,p] = Prec_CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info)
 % different plant organs following the scheme of Friedlingstein et al 1999.
 % Check CAllocationVeg_Friedlingstein for details.
 % 
+% INPUT
+% PET       : potential evapotranspiration [mm/time]
+%           (f.PET)
+% AWC1      : maximum plant available water content in the top layer [mm]
+%           (p.SOIL.AWC1)
+% AWC2      : maximum plant available water content in the bottom layer [mm]
+%           (p.SOIL.AWC2)
 % #########################################################################
 
 % constants

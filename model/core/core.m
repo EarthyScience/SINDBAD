@@ -1,4 +1,4 @@
-function [s, fx, d] = core(f,fe,fx,s,d,p,info);
+function [fx,s,d] = core(f,fe,fx,s,d,p,info);
 % tic
 % CORE - ...
 %
@@ -37,32 +37,27 @@ function [s, fx, d] = core(f,fe,fx,s,d,p,info);
 %to make copies)
 
 % -------------------------------------------------------------------------
-% Pre-allocate s, fx,d, di, fxi  (could be out-sourced to the TEM and used as an input)
+% Do precomputations
 % -------------------------------------------------------------------------
-
-
-%do precompo
 for prc = 1:numel(info.code.preComp)
     if info.code.preComp(prc).doAlways == 1
-        tmp         = info.code.preComp(prc).fun;   % no idea why this way
-        [fe,fx,d,p]	= tmp(f,fe,fx,s,d,p,info);      % works but not inline
+        [fe,fx,d,p]	= info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
     end
 end
-
-
 
 % -------------------------------------------------------------------------
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------
 % get the model structure
 ms	= info.code.ms;
-ttt = NaN(1,info.forcing.size(2));% just to count time, to delete...
+
 % LOOP : loop through the whole length of of the forcing dataset
 for i = 1:info.forcing.size(2)
-% tic
-
+    % get states from previous time step
+    [fx,s,d]	= ms.GetStates.fun(f,fe,fx,s,d,p,info,i);
+    
     % ---------------------------------------------------------------------
-    % 0 - VEG
+    % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
     [fx,s,d]	= ms.VEG.fun(f,fe,fx,s,d,p,info,i);
 
@@ -133,10 +128,10 @@ for i = 1:info.forcing.size(2)
     % Gather all variables that are desired and insert them
     % in fx,s,d
     % ---------------------------------------------------------------------
-    [fx,s,d]	= ms.Update.fun(f,fe,fx,s,d,p,info,i);
     
-% jsut to count time    
-ttt(i)=toc    ;
+    % store current states in previous state variables
+    [fx,s,d]	= ms.PutStates.fun(f,fe,fx,s,d,p,info,i);
+    
 end % END LOOP
 
 end % function

@@ -1,0 +1,28 @@
+function [fx,s,d] = GetStates_simple(f,fe,fx,s,d,p,info,i)
+% #########################################################################
+% PURPOSE	: initialize the states for the current time steps from the
+% d.wTemp....
+% 
+% REFERENCES:
+% 
+% CONTACT	: ncarval; mjung
+% 
+% INPUT
+% 
+% OUTPUT
+% 
+% NOTES:
+% 
+% #########################################################################
+% water pools
+s.wSM1(:,i)	= d.Temp.pwSM1;
+s.wSM2(:,i)	= d.Temp.pwSM2;
+s.wGW(:,i)     = d.Temp.pwGW;
+s.wGWR(:,i)    = d.Temp.pwGWR;
+s.wSWE(:,i)    = d.Temp.pwSWE;
+s.wWTD(:,i)    = d.Temp.pwWTD;
+
+d.Temp.WBdum = f.Rain(:,i);
+
+end % function
+

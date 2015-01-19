@@ -21,7 +21,18 @@ function [fx,s,d] = CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info,i)
 % via Eddy Covariance and Biometric Constraints, Glob. Change Biol., 16,
 % 2813–2829, doi: 10.1111/j.1365-2486.2009.2173.x, 2010.
 % 
-% CONTACT	: Nuno
+% INPUT
+% PET       : potential evapotranspiration [mm/time]
+%           (f.PET)
+% wSM1      : soil moisture of top layer [mm]
+%           (s.wSM1)
+% wSM2      : soil moisture of bottom layer [mm]
+%           (s.wSM2)
+% 
+% 
+% CONTACT	: ncarval
+% 
+% 
 % 
 % #########################################################################
 

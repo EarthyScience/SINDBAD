@@ -1,4 +1,4 @@
-function [fx,s,d]=ActualGPP_mult(f,fe,fx,s,d,p,info,i);
+function [fx,s,d] = ActualGPP_mult(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % FUNCTION	: 
 % 
