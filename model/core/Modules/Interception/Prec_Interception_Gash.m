@@ -46,27 +46,37 @@ EvapRate        = p.Interception.EvapRate       * tmp;
 St              = p.Interception.St             * tmp;
 pd              = p.Interception.pd             * tmp;
 
+
+%catch for division by zero
+valids = f.RainInt > 0 & f.FAPAR > 0;
+Pgc = zeros(info.forcing.size);
+Pgt = zeros(info.forcing.size);
+Ic = zeros(info.forcing.size);
+Ic1 = zeros(info.forcing.size);
+Ic2 = zeros(info.forcing.size);
+It2 = zeros(info.forcing.size);
+It = zeros(info.forcing.size);
+
 %Pgc: amount of gross rainfall necessary to saturate the canopy
-Pgc=-1.*( f.RainInt .* CanopyStorage ./ ((1- fte ) .* EvapRate )).*log(1-((1- fte ) .* EvapRate ./ f.RainInt ));
+Pgc(valids)=-1.*( f.RainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids) ) .* EvapRate(valids) )).*log(1-((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ));
 
 %Pgt: amount of gross rainfall necessary to saturate the trunks
-Pgt=Pgc + f.RainInt .* St ./ ( pd .* f.FAPAR .* ( f.RainInt - EvapRate .* (1 - fte )));
+Pgt(valids)=Pgc(valids) + f.RainInt(valids) .* St(valids) ./ ( pd(valids) .* f.FAPAR(valids) .* ( f.RainInt(valids) - EvapRate(valids) .* (1 - fte(valids) )));
 
 %Ic: Interception loss from canopy
-Ic1 = f.FAPAR .* f.Rain; %Pg < Pgc
-Ic2 = f.FAPAR .* (Pgc+((1- fte ) .* EvapRate ./ f.RainInt ) .* ( f.Rain - Pgc)); %Pg > Pgc
+Ic1(valids) = f.FAPAR(valids) .* f.Rain(valids); %Pg < Pgc
+Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ) .* ( f.Rain(valids) - Pgc(valids))); %Pg > Pgc
 
-Ic = zeros(info.forcing.size);
-v= f.Rain <= Pgc;
+
+v= f.Rain <= Pgc & valids==1;
 Ic(v)=Ic1(v);
 Ic(v==0)=Ic2(v==0);
 
 %It: interception loss from trunks
 
 %It1 = St;% Pg < Pgt
-It2 = pd .* f.FAPAR .* (1-(1 - fte ) .* EvapRate ./ f.RainInt ).*( f.Rain - Pgc);%Pg > Pgt
+It2(valids) = pd(valids) .* f.FAPAR(valids) .* (1-(1 - fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ).*( f.Rain(valids) - Pgc(valids));%Pg > Pgt
 
-It = f.Rain .* 0;
 v= f.Rain <= Pgt;
 It(v) = St(v);
 It(v==0)=It2(v==0);
