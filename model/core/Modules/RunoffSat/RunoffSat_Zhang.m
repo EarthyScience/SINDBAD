@@ -2,7 +2,9 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 
-% REFERENCES: Zhang et al ????
+% REFERENCES: Zhang et al 2008, Water balance modeling over variable time scales
+%based on the Budyko framework – Model
+%development and testing, Journal of Hydrology
 % 
 % CONTACT	: mjung
 % 
@@ -27,20 +29,35 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
 % 
-% NOTES: is supposed to work over multiple time scales
+% NOTES: is supposed to work over multiple time scales. it represents the
+% 'fast' or 'direct' runoff and thus it's conceptually not really
+% consistent with 'saturation runoff'. it basically lumps saturation runoff
+% and interflow, i.e. if using this approach for saturation runoff it would
+% be consistent to set interflow to none
 % 
 % #########################################################################
 
 % this is a supply / demand limit concept cf Budyko
-% it's conceptually not really consistent with 'saturation runoff'
+% 
 % calc demand limit (X0)
 X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1(:,i) + s.wSM2(:,i) ));
 
 % calc supply limit (P) (modified)
+%Zhang et al use precipitation as supply limit. we here use precip +snow
+%melt - interception - infliltration excess runoff (i.e. the water that
+%arrives at the ground) - this is more consistent with the budyko logic
+%than just using precip
+
 P = d.Temp.WBP;
+%catch for division by zero
+valids = P > 0;
+Qsat=zeros(info.forcing.size);
+
 % p.RunoffSat.alpha default ~0.5
 
-fx.Qsat(:,i) = P - P.*(1+X0./P - ( 1+(X0./P).^(1./ p.RunoffSat.alpha ) ).^ p.RunoffSat.alpha );
+Qsat(valids) = P(valids) - P(valids) .*(1 + X0(valids) ./P(valids) - ( 1 + (X0(valids) ./P(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+
+fx.Qsat(:,i) =Qsat;
 
 d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
 
