@@ -1,7 +1,9 @@
 %% add the tem to the paths of matlab
 addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'dataproc' filesep],['simpletests' filesep '..' filesep],''),'-begin')
+addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'timeutils' filesep],['simpletests' filesep '..' filesep],''),'-begin')
 addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'temSetUp' filesep],['simpletests' filesep '..' filesep],''),'-begin')
 addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'mexcdf' filesep 'snctools' filesep],['simpletests' filesep '..' filesep],''),'-begin')
+addpath(strrep([pwd filesep '..' filesep 'tools' filesep 'mexcdf' filesep 'mexnc' filesep],['simpletests' filesep '..' filesep],''),'-begin')
 addpath(strrep([pwd filesep '..' filesep 'model' filesep 'tem' filesep],['simpletests' filesep '..' filesep],''),'-begin')
 
 %% load 1 year of data from a fluxnet site
