@@ -1,28 +1,47 @@
 function [fe,fx,d,p] = Prec_DemandGPP_mult(f,fe,fx,s,d,p,info)
-
+% #########################################################################
+% PURPOSE	: compute the demand GPP: stress scalars are in a
+% multiplicative way 
+% 
+% REFERENCES: SINDABD ;)
+% 
+% CONTACT	: mjung, ncarval
+% 
+% INPUT
+% rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
+%           (d.RdiffEffectGPP.rueGPP)
+% PAR       : photosynthetically active radiation [MJ/m2/time]
+%           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (f.FAPAR)
+% TempScGPP : temperature effect on GPP [] dimensionless, between 0-1
+%           (d.TempEffectGPP.TempScGPP)
+% VPDScGPP  : VPD effect on GPP [] dimensionless, between 0-1
+%           (d.VPDEffectGPP.VPDScGPP)
+% LightScGPP: light saturation scalar [] dimensionless
+%           (d.LightEffectGPP.LightScGPP)
+% 
+% OUTPUT
+% gppE      : demand GPP [gC/m2/time]
+%           (d.DemandGPP.gppE)
+% 
+% DEPENDENCIES  :
+% 
+% NOTES:
+% 
+% #########################################################################
 
+% make 3D matrix 
+scall           = zeros(info.forcing.size(1),info.forcing.size(2),3);
+scall(:,:,1)    = d.TempEffectGPP.TempScGPP;
+scall(:,:,2)    = d.VPDEffectGPP.VPDScGPP;
+scall(:,:,3)    = d.LightEffectGPP.LightScGPP;
 
-%stress scalers are combined in a multiplicative way
+% compute the product of all the scalars
+d.DemandGPP.AllScGPP    = prod(scall,3);
 
-
-%check if time series or spatial
-if info.forcing.size(2)>1
-    %is spatial
-    scall=zeros(info.forcing.size(1),info.forcing.size(2),3);
-    scall(:,:,1)= d.TempEffectGPP.TempScGPP;
-    scall(:,:,2)= d.VPDEffectGPP.VPDScGPP;
-    scall(:,:,3)= d.LightEffectGPP.LightScGPP;
-    
-    d.DemandGPP.AllScGPP =prod(scall,3);
-else
-    %is time series
-    scall=vertcat( d.TempEffectGPP.TempScGPP , d.VPDEffectGPP.VPDScGPP , d.LightEffectGPP.LightScGPP );
-    d.DemandGPP.AllScGPP=prod(scall,1);
-end
-
-d.DemandGPP.gppE = f.FAPAR .* f.PAR .* d.RdiffEffectGPP.rueGPP .* d.DemandGPP.AllScGPP;
+% compute demand GPP
+d.DemandGPP.gppE        = f.FAPAR .* f.PAR .* d.RdiffEffectGPP.rueGPP .* d.DemandGPP.AllScGPP;
 
 end

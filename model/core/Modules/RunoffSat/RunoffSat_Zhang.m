@@ -42,22 +42,18 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % calc demand limit (X0)
 X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1(:,i) + s.wSM2(:,i) ));
 
-% calc supply limit (P) (modified)
+% calc supply limit (d.Temp.WBP) (modified)
 %Zhang et al use precipitation as supply limit. we here use precip +snow
 %melt - interception - infliltration excess runoff (i.e. the water that
 %arrives at the ground) - this is more consistent with the budyko logic
 %than just using precip
 
-P = d.Temp.WBP;
 %catch for division by zero
-valids = P > 0;
-Qsat=zeros(info.forcing.size);
+valids = d.Temp.WBP > 0;
 
 % p.RunoffSat.alpha default ~0.5
 
-Qsat(valids) = P(valids) - P(valids) .*(1 + X0(valids) ./P(valids) - ( 1 + (X0(valids) ./P(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
-
-fx.Qsat(:,i) =Qsat;
+fx.Qsat(valids,i) =d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
 
 d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
 

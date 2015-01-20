@@ -13,18 +13,28 @@ f.Rain      = nc_varget(fn,'precip_f')';        % dayly rainfall mm/day
 f.RainInt   = nc_varget(fn,'precip_f')' ./ 10;  % rainfall intensity [mm/h]
 f.Snow      = nc_varget(fn,'precip_f')' .* 0;   % snow fall [mm/day]
 f.PsurfDay  = ones(size(f.Tair)) .* 100;        % atmospheric pressure during the daytime [kPa]
-f.ca        = ones(size(f.Tair)) .* 360;
-f.Rg        = nc_varget(fn,'Rg_f')';
-f.RgPot     = nc_varget(fn,'Rg_pot')';
-f.PAR       = nc_varget(fn,'Rg_f')' ./ 2;
+f.ca        = ones(size(f.Tair)) .* 360;        % atmospheric co2 concentration [ppm]
+f.Rg        = nc_varget(fn,'Rg_f')';            % incoming global radiation [MJ/m2/day]
+f.RgPot     = nc_varget(fn,'Rg_pot')';          % potential incoming global radiation [MJ/m2/day]
+f.Rg(f.Rg<0)= f.RgPot(f.Rg<0);
+f.PAR       = nc_varget(fn,'Rg_f')' ./ 2;       % incoming photosynthetically active radiation [MJ/m2/day]
 f.Rn        = nc_varget(fn,'Rn_f')';            % net radiation [MJ/m2/day]
-f.VPDDay    = nc_varget(fn,'VPD_f')';
+f.VPDDay    = nc_varget(fn,'VPD_f')';           % vapor pressure deficit [kPa]
 f.PET       = nc_varget(fn,'Epot_f')';
-f.FAPAR     = nc_varget(fn,'FAPAR')';
-f.LAI       = nc_varget(fn,'FAPAR')' .* 4;
+f.PET(f.PET<0)= 0;
+f.FAPAR     = ones(size(nc_varget(fn,'FAPAR')))';
+f.LAI       = f.FAPAR .* 4;
 f.Year      = nc_varget(fn,'year')';
+%% 
+g=fieldnames(f);
+for i = 1:numel(g)
+    tmp = getfield(f,g{i});
+    tmp = tmp(1:365);
+    eval(['f.' g{i} ' = tmp;'])
+end
+
 %% get the full setup of tem
-NYears      = 10;
+NYears      = 1;
 ForcingSize	= size(f.Tair);
 info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',0);
 %% things to do before running the TEM
@@ -32,7 +42,7 @@ info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'f
 
 %% run tem
 tic
-tem(f,info);
+[fx,s,d] = tem(f,info);
 toc
 
 %%
@@ -40,10 +50,23 @@ info    = temFullSetup(...
         'info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1,'experimentName','expCodeGen01',...
         'ms','CCycle','none','AutoResp','none','CAllocationVeg','none','SoilMoistEffectRH','none');
 
-    
+%%    
     
 tic
-tem(f,info);
+[fx,s,d] = tem(f,info);
 toc
-
+%%
+g=fieldnames(fx);
+for i = 1:numel(g)
+    tmp = getfield(fx,g{i});
+    if isstruct(tmp),continue,end
+    figure,plot(tmp),title(strrep(g{i},'_','\_'))
+end
+%%
+g=fieldnames(f);
+for i = 1:numel(g)
+    tmp = getfield(f,g{i});
+    if isstruct(tmp),continue,end
+    figure,plot(tmp),title(strrep(g{i},'_','\_'))
+end
 

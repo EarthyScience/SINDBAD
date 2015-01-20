@@ -40,15 +40,16 @@ StandardApproaches  = {...
     'BaseFlow'          , 'simple'          ,...    % 2 - Water 
     'SoilMoistureGW'    , 'none'            ,...    % 2 - Water 
     'SoilEvap'          , 'simple'          ,...    % 2 - Water 
+    'WUE'               , 'Medlyn'          ,...    % 2 - Water 
     'SupplyTransp'      , 'Federer'         ,...    % 3 - Transpiration and GPP
     'LightEffectGPP'    , 'Maekelae2008'    ,...    % 3 - Transpiration and GPP
     'RdiffEffectGPP'    , 'Turner'          ,...    % 3 - Transpiration and GPP
     'TempEffectGPP'     , 'CASA'            ,...    % 3 - Transpiration and GPP
-    'VPDEffectGPP'      , 'Medlyn'          ,...    % 3 - Transpiration and GPP
+    'VPDEffectGPP'      , 'Wang'            ,...    % 3 - Transpiration and GPP
     'DemandGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
-    'SMEffectGPP'       , 'Medlyn'          ,...    % 3 - Transpiration and GPP
+    'SMEffectGPP'       , 'Supply'          ,...    % 3 - Transpiration and GPP
     'ActualGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
-    'Transp'            , 'Medlyn'          ,...    % 3 - Transpiration and GPP
+    'Transp'            , 'Coupled'         ,...    % 3 - Transpiration and GPP
     'RootUptake'        , 'TopBottom'       ,...    % 3 - Transpiration and GPP
     'SoilMoistEffectRH' , 'CASA'            ,...    % 4 - Climate effects on metabolic processes
     'TempEffectRH'      , 'Q10'             ,...    % 4 - Climate effects on metabolic processes

@@ -89,6 +89,7 @@ for i = 1:info.forcing.size(2)
     % ---------------------------------------------------------------------
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------
+	[fx,s,d]    = ms.WUE.fun(f,fe,fx,s,d,p,info,i);              % estimate WUE
     [fx,s,d]    = ms.SupplyTransp.fun(f,fe,fx,s,d,p,info,i);     % supply limited Transpiration
     [fx,s,d]    = ms.LightEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % compute 'stress' scalars
     [fx,s,d]    = ms.RdiffEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % effect of diffuse radiation   

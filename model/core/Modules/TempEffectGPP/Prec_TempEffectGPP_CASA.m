@@ -1,5 +1,20 @@
 function [fe,fx,d,p] = Prec_TempEffectGPP_CASA(f,fe,fx,s,d,p,info)
-
+% #########################################################################
+% PURPOSE	: 
+% 
+% REFERENCES: Potter et al 2003; Carvalhais et al 2008
+% 
+% CONTACT	: ncarval, mjung
+% 
+% INPUT
+% 
+% OUTPUT
+% 
+% DEPENDENCIES  :
+% 
+% NOTES:
+% 
+% #########################################################################
 
 
 % % DEFINE TOPT ARRAY
