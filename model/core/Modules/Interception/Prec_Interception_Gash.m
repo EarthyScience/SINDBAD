@@ -57,6 +57,11 @@ Ic2 = zeros(info.forcing.size);
 It2 = zeros(info.forcing.size);
 It = zeros(info.forcing.size);
 
+%Rainintensity must be larger than evap rate
+%adjusting evap rate:
+v=f.RainInt < EvapRate & valids==1;
+EvapRate(v)=f.RainInt(v);
+
 %Pgc: amount of gross rainfall necessary to saturate the canopy
 Pgc(valids)=-1.*( f.RainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids) ) .* EvapRate(valids) )).*log(1-((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ));
 

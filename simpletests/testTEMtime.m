@@ -22,7 +22,7 @@ f.Rn        = nc_varget(fn,'Rn_f')';            % net radiation [MJ/m2/day]
 f.VPDDay    = nc_varget(fn,'VPD_f')';           % vapor pressure deficit [kPa]
 f.PET       = nc_varget(fn,'Epot_f')';
 f.PET(f.PET<0)= 0;
-f.FAPAR     = ones(size(nc_varget(fn,'FAPAR')))';
+f.FAPAR     = ones(size(nc_varget(fn,'FAPAR')))'-0.1;
 f.LAI       = f.FAPAR .* 4;
 f.Year      = nc_varget(fn,'year')';
 %% 
