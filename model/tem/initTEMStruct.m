@@ -20,12 +20,13 @@ if nargin == 3
     % carbon
     s.cPools = sSU.cPools;
     % water
-    s.wSWE(:,1)     = sSU.wSWE(:,end);
-    s.wSM1(:,1)     = sSU.wSM1(:,end);
-    s.wSM2(:,1)     = sSU.wSM2(:,end);
-    s.wGW(:,1)      = sSU.wGW(:,end);
-    s.wGWR(:,1)     = sSU.wGWR(:,end);
-    s.wWTD(:,1)     = sSU.wWTD(:,end);
+    d.Temp.pwSWE(:,1)     = sSU.wSWE(:,end);
+    d.Temp.pwSM1(:,1)     = sSU.wSM1(:,end);
+    d.Temp.pwSM2(:,1)     = sSU.wSM2(:,end);
+    d.Temp.pwGW(:,1)      = sSU.wGW(:,end);
+    d.Temp.pwGWR(:,1)     = sSU.wGWR(:,end);
+    d.Temp.pwWTD(:,1)     = sSU.wWTD(:,end);
+    
     % inherit the diagnostics
     % carbon
     d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;

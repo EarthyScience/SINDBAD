@@ -171,11 +171,18 @@ for iStep = 1:info.temSteps
 
 end
 
-if nargout == 3
+if nargout >= 3
     varargout{1} = fx;
     varargout{2} = s;
     varargout{3} = d;
 end
+
+if nargout >= 5
+    varargout{4} = sSU;
+    varargout{5} = dSU;
+end
+
+
 
 % -------------------------------------------------------------------------
 % 7 - GLOBAL OUTPUTS

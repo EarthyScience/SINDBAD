@@ -9,7 +9,7 @@ addpath(strrep([pwd filesep '..' filesep 'model' filesep 'tem' filesep],['simple
 %% load 1 year of data from a fluxnet site
 fn          = [pwd filesep 'JunkData' filesep 'FR-Hes.1997.2006.daily.nc'];
 f.Tair      = nc_varget(fn,'Tair_f')';          % daily temperature [ºC]
-f.Tsoil     = nc_varget(fn,'Tsoil_f')';
+f.Tsoil     = nc_varget(fn,'Tsoil_f')';         % daily soil temperature [ºC]
 f.TairDay   = nc_varget(fn,'Tair_f')';          % daytime temperature [ºC]
 f.Rain      = nc_varget(fn,'precip_f')';        % dayly rainfall mm/day
 f.RainInt   = nc_varget(fn,'precip_f')' ./ 10;  % rainfall intensity [mm/h]
@@ -22,7 +22,7 @@ f.Rg(f.Rg<0)= f.RgPot(f.Rg<0);
 f.PAR       = nc_varget(fn,'Rg_f')' ./ 2;       % incoming photosynthetically active radiation [MJ/m2/day]
 f.Rn        = nc_varget(fn,'Rn_f')';            % net radiation [MJ/m2/day]
 f.VPDDay    = nc_varget(fn,'VPD_f')';           % vapor pressure deficit [kPa]
-f.PET       = nc_varget(fn,'Epot_f')';
+f.PET       = nc_varget(fn,'Epot_f')';          % potential evapotraspiration [mm/day]
 f.PET(f.PET<0)= 0;
 f.FAPAR     = ones(size(nc_varget(fn,'FAPAR')))'-0.1;
 f.LAI       = f.FAPAR .* 4;
@@ -44,7 +44,7 @@ info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'f
 
 %% run tem
 tic
-[fx,s,d] = tem(f,info);
+[fx,s,d,sSU,dDU] = tem(f,info);
 toc
 
 %%
@@ -55,7 +55,7 @@ info    = temFullSetup(...
 %%    
     
 tic
-[fx,s,d] = tem(f,info);
+[fx,s,d,sSU,dDU] = tem(f,info);
 toc
 %%
 g=fieldnames(fx);
