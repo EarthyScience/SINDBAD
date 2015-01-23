@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_TempEffectAutoResp_Q10(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = Prec_TempEffectAutoResp_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: Prec_TempEffectAutoResp_Q10
 % 
@@ -32,11 +32,8 @@ function [fe,fx,d,p] = Prec_TempEffectAutoResp_Q10(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-% calculate temperature effect on plant maintenance respiration (1 and 2
-% corresponds to roots; 3 and 4 corresponds to wood and leafs)
-d.TempEffectAutoResp.fT(1).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(2).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(3).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(4).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
+
+% just copy
+d.TempEffectAutoResp	= ones(info.forcing.size);
 
 end % function

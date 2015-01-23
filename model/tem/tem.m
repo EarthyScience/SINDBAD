@@ -180,6 +180,7 @@ end
 if nargout >= 5
     varargout{4} = sSU;
     varargout{5} = dSU;
+    varargout{6} = fe;
 end
 
 

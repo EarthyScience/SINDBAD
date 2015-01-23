@@ -13,7 +13,7 @@ function [fx,s,d] = ActualGPP_mult(f,fe,fx,s,d,p,info,i)
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (f.FAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.RdiffEffectGPP.rueGPP)
+%           (d.MaxRUE.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -28,7 +28,7 @@ function [fx,s,d] = ActualGPP_mult(f,fe,fx,s,d,p,info,i)
 % 
 % DEPENDENCIES  :
 % 
-% NOTES:
+% NOTES: we don't actually need FAPAR, rueGPP, PAR. ---
 % 
 % #########################################################################
 

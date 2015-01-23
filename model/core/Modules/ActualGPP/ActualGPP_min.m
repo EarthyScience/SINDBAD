@@ -13,7 +13,7 @@ function [fx,s,d] = ActualGPP_min(f,fe,fx,s,d,p,info,i)
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (f.FAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.RdiffEffectGPP.rueGPP)
+%           (d.MaxRUE.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -37,6 +37,6 @@ function [fx,s,d] = ActualGPP_min(f,fe,fx,s,d,p,info,i)
 d.ActualGPP.AllScGPP(:,i)	= min(d.DemandGPP.AllScGPP(:,i),d.SMEffectGPP.SMScGPP(:,i));
 
 % ... and multiply with apar and rue
-fx.gpp(:,i) = f.FAPAR(:,i) .* f.PAR(:,i) .* d.RdiffEffectGPP.rueGPP(:,i) .* d.ActualGPP.AllScGPP(:,i);
+fx.gpp(:,i) = f.FAPAR(:,i) .* f.PAR(:,i) .* d.MaxRUE.rueGPP(:,i) .* d.ActualGPP.AllScGPP(:,i);
 
 end

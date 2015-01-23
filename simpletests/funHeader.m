@@ -3,7 +3,7 @@
 % 
 % REFERENCES:
 % 
-% CONTACT	: ncarval
+% CONTACT	: 
 % 
 % INPUT
 % 

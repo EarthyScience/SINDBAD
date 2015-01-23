@@ -9,5 +9,7 @@ d.Temp.pwSWE    = s.wSWE(:,i);
 d.Temp.pwWTD    = s.wWTD(:,i);
 
 
+d.Temp.pSMScGPP = d.SMEffectGPP.SMScGPP(:,i);
+
 end % function
 

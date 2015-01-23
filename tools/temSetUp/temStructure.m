@@ -39,7 +39,7 @@ StandardApproaches  = {...
     'SoilEvap'          , 'simple'          ,...    % 2 - Water 
     'SupplyTransp'      , 'Federer'         ,...    % 3 - Transpiration and GPP
     'LightEffectGPP'    , 'Maekelae2008'    ,...    % 3 - Transpiration and GPP
-    'RdiffEffectGPP'    , 'Turner'          ,...    % 3 - Transpiration and GPP
+    'MaxRUE'            , 'Turner'          ,...    % 3 - Transpiration and GPP
     'TempEffectGPP'     , 'CASA'            ,...    % 3 - Transpiration and GPP
     'VPDEffectGPP'      , 'Medlyn'          ,...    % 3 - Transpiration and GPP
     'DemandGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP

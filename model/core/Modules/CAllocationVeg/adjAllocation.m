@@ -19,7 +19,7 @@ rc1 = r0 .* tc .* (1 - rf2rc);
 s1  = s0 .* tc + 0;
 l1	= l0 .* tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
 
-% feed it to fe
+% feed it to d
 d.CAllocationVeg.c2pool(1).value(:,i)	= rf1;
 d.CAllocationVeg.c2pool(2).value(:,i)  = rc1;
 d.CAllocationVeg.c2pool(3).value(:,i)  = s1;

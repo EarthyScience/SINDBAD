@@ -13,9 +13,6 @@ fe.CCycle.DecayRate - AS LONG AS THE TIMESERIES OF npp
 % years) that will be used as the recycling dataset for the determination
 % of C pools at equilibrium
 
-% TIME STEPS PER YEAR
-TSPY	= floor(info.timeScale.stepsPerYear);
-
 % NUMBER OF ITERATIONS UNTIL POOLS IN EQUILIBRIUM
 NI2E	= info.spinUp.cPools;
 
@@ -24,7 +21,7 @@ BGME = d.SoilMoistEffectRH.BGME;
 MTF	= fe.CCycle.MTF;
 
 % START fCt
-fCt	= struct('value', repmat({zeros(info.forcing.size(1),TSPY)},1,numel(s.cPools)));
+fCt	= struct('value', repmat({zeros(info.forcing.size(1),info.forcing.size(2))},1,numel(s.cPools)));
 
 % ORDER OF CALCULATIONS
 j_vec	= 1:14; % @NC: we need to recheck the order once implicit versus explicit are analysed.
@@ -250,8 +247,8 @@ for j = j_vec
     piA1        = (prod(At,2)) .^ (NI2E);
     At2         = [At ones(size(At,1),1)];
     sumB_piA    = NaN(size(f.Tair));
-    for ii = 1:TSPY
-        sumB_piA(:,ii) = Bt(:,ii) .* prod(At2(:,ii+1:TSPY+1),2);
+    for ii = 1:info.forcing.size(2)
+        sumB_piA(:,ii) = Bt(:,ii) .* prod(At2(:,ii+1:info.forcing.size(2)+1),2);
     end
     sumB_piA    = sum(sumB_piA,2);
     T2          = 0:1:NI2E - 1;
@@ -264,7 +261,7 @@ for j = j_vec
     
     % CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
     % POOLS CALCULATIONS
-    for ii = 1:TSPY
+    for ii = 1:info.forcing.size(2)
 
         % CALCULATE CARBON FLUXES
         [fx,s,d] = CCycle_CASA(f,fe,fx,s,d,p,info,ii);

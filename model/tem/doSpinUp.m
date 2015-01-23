@@ -21,14 +21,19 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     % Make the spinup data - this should be done before?
     % ---------------------------------------------------------------------
-    fSU	= mkSpinUpData(f,info);
-    
+    if info.spinUp.cycleMSC
+        fSU	= mkSpinUpData(f,info);
+    else
+        fSU	= f;
+    end
     % ---------------------------------------------------------------------
     % Adjust the info structure
     % ---------------------------------------------------------------------
     infoSpin                    = info;
-    infoSpin.forcing.size(2)    = floor(info.timeScale.stepsPerYear);
-    infoSpin.timeScale.nYears   = 1;
+    if info.spinUp.cycleMSC
+        infoSpin.forcing.size(2)    = floor(info.timeScale.stepsPerYear);
+        infoSpin.timeScale.nYears   = 1;
+    end
     
     % ---------------------------------------------------------------------
     % Pre-allocate fx,fe,d,s for the spinup runs

@@ -47,8 +47,9 @@ info.flags.doSpinUp     = 1;
 info.flags.loadSpinUp   = 0;
 info.flags.genCode      = 1;
 % how to do the spinUp
-info.spinUp.wPools      = 5;    % number of years until w pools in equilibrium
-info.spinUp.cPools      = 2000; % number of years until c pools in equilibrium
+info.spinUp.cycleMSC    = 1;
+info.spinUp.wPools      = 5;    % number of cycles until w pools in equilibrium
+info.spinUp.cPools      = 2000; % number of cycles until c pools in equilibrium
 % variables related to temporal scale / dimensions and stuff
 info.timeScale.timeStep	= 1;    % in days
 info.timeScale.nYears	= Inf;  % just a dummy

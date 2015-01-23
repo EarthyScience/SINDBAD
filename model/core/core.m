@@ -79,7 +79,7 @@ for i = 1:info.forcing.size(2)
     [fx,s,d]    = ms.RunoffInt.fun(f,fe,fx,s,d,p,info,i);            % interflow
                                                                         % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                         % explicitly modelled then assign a dummy handle that returnes zeros and
-                                                                        % lumb the FastRunoff into interflow
+                                                                        % lump the FastRunoff into interflow
     [fx,s,d]    = ms.RechargeGW.fun(f,fe,fx,s,d,p,info,i);           % recharge the groundwater 
     [fx,s,d]    = ms.BaseFlow.fun(f,fe,fx,s,d,p,info,i);             % baseflow
     [fx,s,d]    = ms.SoilMoistureGW.fun(f,fe,fx,s,d,p,info,i);       % Groundwater soil moisture interactions (e.g. capilary flux, water
@@ -92,7 +92,7 @@ for i = 1:info.forcing.size(2)
 	[fx,s,d]    = ms.WUE.fun(f,fe,fx,s,d,p,info,i);              % estimate WUE
     [fx,s,d]    = ms.SupplyTransp.fun(f,fe,fx,s,d,p,info,i);     % supply limited Transpiration
     [fx,s,d]    = ms.LightEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % compute 'stress' scalars
-    [fx,s,d]    = ms.RdiffEffectGPP.fun(f,fe,fx,s,d,p,info,i);   % effect of diffuse radiation   
+    [fx,s,d]    = ms.MaxRUE.fun(f,fe,fx,s,d,p,info,i);           % maximum instantaneous radiation use efficiency
     [fx,s,d]    = ms.TempEffectGPP.fun(f,fe,fx,s,d,p,info,i);    % effect of temperature
     [fx,s,d]    = ms.VPDEffectGPP.fun(f,fe,fx,s,d,p,info,i);     % VPD effect
     [fx,s,d]    = ms.DemandGPP.fun(f,fe,fx,s,d,p,info,i);        % combine effects as multiplicative or minimum

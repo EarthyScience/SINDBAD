@@ -31,11 +31,13 @@ function [fe,fx,d,p] = Prec_CAllocationVeg_Fix(f,fe,fx,s,d,p,info)
 %     d.CAllocationVeg.(ii{1})	= p.CAllocationVeg.(ii{1}) .* ones(size(f.Tair));
 % end
 
-% adjust allocation
-fe	= adjAllocation(f,fe,fx,s,d,p,info);
+for ii = 1:info.forcing.size(2)
+    % adjust allocation
+    d	= adjAllocation(f,fe,fx,s,d,p,info,ii);
 
-% check allocation
-checkCAllocationVeg(f,fe,fx,s,d,p,info);
+    % check allocation
+    checkCAllocationVeg(f,fe,fx,s,d,p,info,ii);
+end
 
 % check allocation again:
 % only makes sense for fixed allocation scheme - dynamic allocation may not
