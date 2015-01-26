@@ -24,6 +24,8 @@ function [fe,fx,d,p] = Prec_SoilEvap_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 palpha              = p.SoilEvap.alpha * ones(1,info.forcing.size(2));
-fe.SoilEvap.PETsoil = f.PET .* palpha .* (1 - f.FAPAR);
+tmp                 = f.PET .* palpha .* (1 - f.FAPAR);
+tmp(tmp<0)          = 0;
+fe.SoilEvap.PETsoil = tmp;
 
 end

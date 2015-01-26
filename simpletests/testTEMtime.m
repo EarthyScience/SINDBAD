@@ -31,12 +31,12 @@ f.FAPAR     = ones(size(nc_varget(fn,'FAPAR')))'-0.1;
 f.LAI       = f.FAPAR .* 4;
 f.Year      = nc_varget(fn,'year')';
 %% 
-% g=fieldnames(f);
-% for i = 1:numel(g)
-%     tmp = getfield(f,g{i});
-%     tmp = tmp(1:365);
-%     eval(['f.' g{i} ' = tmp;'])
-% end
+g=fieldnames(f);
+for i = 1:numel(g)
+    tmp = getfield(f,g{i});
+    tmp = tmp(1:365);
+    eval(['f.' g{i} ' = tmp;'])
+end
 
 %% get the full setup of tem
 NYears      = 10;
@@ -62,28 +62,28 @@ info    = temFullSetup(...
         'info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1,'experimentName','expCodeGen01',...
         'ms',...
         'SnowCover'         , 'binary'          ,...
-        'Sublimation'       , 'none'            ,...
+        'Sublimation'       , 'GLEAM'            ,...
         'SnowMelt'          , 'simple'          ,...
-        'Interception'      , 'none'            ,...    % 2 - Water 
+        'Interception'      , 'Gash'            ,...    % 2 - Water 
         'RunoffInfE'        , 'none'            ,...    % 2 - Water 
         'SaturatedFraction' , 'none'            ,...    % 2 - Water 
-        'RunoffSat'         , 'none'            ,...    % 2 - Water 
+        'RunoffSat'         , 'Zhang'            ,...    % 2 - Water 
         'RechargeSoil'      , 'TopBottom'       ,...    % 2 - Water 
-        'RunoffInt'         , 'simple'          ,...    % 2 - Water 
-        'RechargeGW'        , 'none'            ,...    % 2 - Water 
-        'BaseFlow'          , 'none'            ,...    % 2 - Water 
+        'RunoffInt'         , 'none'          ,...    % 2 - Water 
+        'RechargeGW'        , 'simple'            ,...    % 2 - Water 
+        'BaseFlow'          , 'simple'            ,...    % 2 - Water 
         'SoilMoistureGW'    , 'none'            ,...    % 2 - Water 
-        'SoilEvap'          , 'none'            ,...    % 2 - Water 
-        'WUE'               , 'none'            ,...    % 2 - Water 
-        'SupplyTransp'      , 'CASA'            ,...    % 3 - Transpiration and GPP
+        'SoilEvap'          , 'simple'            ,...    % 2 - Water 
+        'WUE'               , 'Medlyn'            ,...    % 2 - Water 
+        'SupplyTransp'      , 'Federer'            ,...    % 3 - Transpiration and GPP
         'LightEffectGPP'    , 'none'            ,...    % 3 - Transpiration and GPP
         'MaxRUE'            , 'Monteith'        ,...    % 3 - Transpiration and GPP
         'TempEffectGPP'     , 'CASA'            ,...    % 3 - Transpiration and GPP
         'VPDEffectGPP'      , 'none'            ,...    % 3 - Transpiration and GPP
         'DemandGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
-        'SMEffectGPP'       , 'CASA'            ,...    % 3 - Transpiration and GPP
+        'SMEffectGPP'       , 'Supply'            ,...    % 3 - Transpiration and GPP
         'ActualGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
-        'Transp'            , 'CASA'            ,...    % 3 - Transpiration and GPP
+        'Transp'            , 'Coupled'            ,...    % 3 - Transpiration and GPP
         'RootUptake'        , 'TopBottom'       ,...    % 3 - Transpiration and GPP
         'SoilMoistEffectRH' , 'none'            ,...    % 4 - Climate effects on metabolic processes
         'TempEffectRH'      , 'none'            ,...    % 4 - Climate effects on metabolic processes
@@ -100,10 +100,16 @@ info.params.RunoffInt.rc = 1;
 % f.PET = calc_pet_Thornthwaite(f.Tair, jday, f.Year, lat, 'casa', '1day');
 
 %
-    
+    %%
 tic
 [fx,s,d,sSU,dDU] = tem(f,info);
 toc
+%%
+tic
+[fe,fx,d,p]=info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
+[s, fx, d] = info.code.msi.core(f,fe,fx,s,d,info.params,info);
+toc
+%%
 %
 %
 gpp= nc_varget(fn,'GPP_f')';
@@ -118,6 +124,7 @@ for i = 1:numel(g)
     if isstruct(tmp),continue,end
     figure,plot(tmp),title(strrep(g{i},'_','\_'))
 end
+
 g=fieldnames(s);
 for i = 1:numel(g)
     tmp = getfield(s,g{i});

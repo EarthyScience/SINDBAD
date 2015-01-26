@@ -33,14 +33,16 @@ function [fx,s,d] = RechargeSoil_TopBottom(f,fe,fx,s,d,p,info,i)
 
 % water refill from top to bottom
 % upper layer
-ip = min( p.SOIL.AWC1 - s.wSM1(:,i) , d.Temp.WBP);
-s.wSM1(:,i) = s.wSM1(:,i) + ip;
+
+ip = min( p.SOIL.AWC1 - s.wSM1 , d.Temp.WBP);
+s.wSM1 = s.wSM1 + ip;
 d.Temp.WBP = d.Temp.WBP - ip;
 
 
+
 % lower layer
-ip=min( p.SOIL.AWC2 - s.wSM2(:,i) , d.Temp.WBP );
-s.wSM2(:,i) = s.wSM2(:,i) + ip;
+ip=min( p.SOIL.AWC2 - s.wSM2 , d.Temp.WBP );
+s.wSM2 = s.wSM2 + ip;
 d.Temp.WBP = d.Temp.WBP - ip;
 
 end

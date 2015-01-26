@@ -4,8 +4,10 @@ function d = initWd(d,info)
 % S   = ones(info.forcing.size) .* 1E-10;
 S0	= zeros(info.forcing.size);
 
+%MJ:
+%s.wFrSat	= S0(:,1);
 
-d.SaturatedFraction.frSat	= S0;
+%d.SaturatedFraction.frSat	= S0;
 
 d.SoilMoistEffectRH.BGME    = S0;
 d.SoilMoistEffectRH.pBGME   = S0(:,1);

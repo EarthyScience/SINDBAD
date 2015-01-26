@@ -31,7 +31,11 @@ if nargin == 3
     % carbon
     d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;
     % water
-    d.SaturatedFraction.frSat(:,1)	= dSU.SaturatedFraction.frSat(:,end);
+    
+    %MJ:
+%    s.wFrSat	= sSU.frSat;
+    %d.SaturatedFraction.frSat(:,1)	= dSU.SaturatedFraction.frSat(:,end);
+    
     d.SoilMoistEffectRH.pBGME       = dSU.SoilMoistEffectRH.BGME(:,end);
 end
 

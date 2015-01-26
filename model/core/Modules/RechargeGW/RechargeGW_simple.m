@@ -30,6 +30,6 @@ function [fx,s,d] = RechargeGW_simple(f,fe,fx,s,d,p,info,i)
 % evap, infiltration excess runoff, saturation runoff, interflow, soil
 % moisture recharge from (rainfall+snowmelt)) water goes to GW  
 fx.Qgwrec(:,i) = d.Temp.WBP;
-s.wGW(:,i) = s.wGW(:,i) + fx.Qgwrec(:,i);
+s.wGW = s.wGW + fx.Qgwrec(:,i);
 
 end

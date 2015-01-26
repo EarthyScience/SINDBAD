@@ -19,14 +19,14 @@ function [fx,s,d] = SaturatedFraction_WTD(f,fe,fx,s,d,p,info,i)
 % 
 % OUTPUT
 % frSat     : saturated fraction of soil [] (from 0 to 1)
-%           (d.SaturatedFraction.frSat)
+%           (s.wFrSat)
 % 
 % NOTES: NOT TESTED!!! 
 % 
 % #########################################################################
 
-sc = s.wWTD(:,i) ./ p.Terrain.meanElev;
+sc = s.wWTD ./ p.Terrain.meanElev;
 dum = p.Terrain.percElev.*sc <= p.SaturatedFraction.CritDepth;
-d.SaturatedFraction.frSat(:,i) = sum(dum,3)./100;
+s.wFrSat = sum(dum,3)./100;
 
 end

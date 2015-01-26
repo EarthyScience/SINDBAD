@@ -26,8 +26,8 @@ function [fx,s,d] = BaseFlow_simple(f,fe,fx,s,d,p,info,i)
 % scale: p.BaseFlow.bc
 
 % simply assume that a fraction of the GW pool is baseflow
-fx.Qb(:,i) = p.BaseFlow.bc .* s.wGW(:,i);
+fx.Qb(:,i) = p.BaseFlow.bc .* s.wGW;
 
 % update the GW pool
-s.wGW(:,i) = s.wGW(:,i) - fx.Qb(:,i);
+s.wGW = s.wGW - fx.Qb(:,i);
 end

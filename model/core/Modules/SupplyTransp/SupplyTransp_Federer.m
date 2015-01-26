@@ -27,6 +27,6 @@ function [fx,s,d] = SupplyTransp_Federer(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % T = maxRate*(SM1+SM2)/AWC12
-d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* ( s.wSM1(:,i) + s.wSM2(:,i) ) ./ ( p.SOIL.AWC12 );
+d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* ( s.wSM1 + s.wSM2 ) ./ ( p.SOIL.AWC12 );
 
 end

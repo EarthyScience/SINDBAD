@@ -14,7 +14,7 @@ function [fx,s,d] = SnowMelt_simple(f,fe,fx,s,d,p,info,i)
 % Tterm     : effect of temperature on snow melt [mm/time]
 %           (fe.SnowMelt.Tterm)
 % frSnow    : snow fraction [] (dimensionless)
-%           (d.SnowCover.frSnow)
+%           (s.wFrSnow)
 % 
 % OUTPUT
 % Qsnow     : snow melt [mm/time]
@@ -28,13 +28,14 @@ function [fx,s,d] = SnowMelt_simple(f,fe,fx,s,d,p,info,i)
 
 % Then snow melt (mm/day) is calculated as a simple function of temperature
 % and scaled with the snow covered fraction
-fx.Qsnow(:,i) = min( s.wSWE(:,i) , fe.SnowMelt.Tterm(:,i) .* d.SnowCover.frSnow(:,i) );
+fx.Qsnow(:,i) = min( s.wSWE , fe.SnowMelt.Tterm(:,i) .* s.wFrSnow );
 
 % update the snow pack
-s.wSWE(:,i) = s.wSWE(:,i) - fx.Qsnow(:,i);
+s.wSWE = s.wSWE - fx.Qsnow(:,i);
 
 % a Water Balance Pool variable that tracks how much water is still
 % 'available'
 d.Temp.WBP = d.Temp.WBP + fx.Qsnow(:,i);
+
 
 end

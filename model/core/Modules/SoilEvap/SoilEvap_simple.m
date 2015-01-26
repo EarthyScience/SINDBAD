@@ -27,9 +27,9 @@ function [fx,s,d] = SoilEvap_simple(f,fe,fx,s,d,p,info,i)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
-fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.wSM1(:,i) ./ p.SOIL.AWC1 , s.wSM1(:,i) );
+fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.wSM1 ./ p.SOIL.AWC1 , s.wSM1 );
 
 % update soil moisture of upper layer
-s.wSM1(:,i) = s.wSM1(:,i) - fx.ESoil(:,i);
+s.wSM1 = s.wSM1 - fx.ESoil(:,i);
 
 end

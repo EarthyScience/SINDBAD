@@ -6,7 +6,7 @@ wAvail                           = (f.Rain(:,i) + fx.Qsnow(:,i));
 
 
 % CALCULATE VMC: Volumetric Moisture Content
-VMC = (s.wSM1(:,i) + s.wSM2(:,i) + p.SOIL.WPT) ./ p.SOIL.FC;
+VMC = (s.wSM1 + s.wSM2 + p.SOIL.WPT) ./ p.SOIL.FC;
 % VMC = (s.wSM1(:,i) + s.wSM2(:,i)) ./ p.SOIL.AWC12;
 
 % compute relative drying rate

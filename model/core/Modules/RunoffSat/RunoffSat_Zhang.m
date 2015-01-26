@@ -40,7 +40,7 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % this is a supply / demand limit concept cf Budyko
 % 
 % calc demand limit (X0)
-X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1(:,i) + s.wSM2(:,i) ));
+X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1 + s.wSM2 ));
 
 % calc supply limit (d.Temp.WBP) (modified)
 %Zhang et al use precipitation as supply limit. we here use precip +snow

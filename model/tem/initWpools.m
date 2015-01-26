@@ -10,7 +10,7 @@ function s = initWpools(s,info)
 % 
 % #########################################################################
 % initial value for pools
-S = zeros(info.forcing.size);
+S = zeros(info.forcing.size(1),1);
 
 s.wSWE  = S;
 

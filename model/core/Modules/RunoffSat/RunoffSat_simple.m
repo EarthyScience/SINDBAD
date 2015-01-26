@@ -8,7 +8,7 @@ function [fx,s,d] = RunoffSat_simple(f,fe,fx,s,d,p,info,i)
 % 
 % INPUT
 % frSat     : saturated fraction of soil [] (from 0 to 1)
-%           (d.SaturatedFraction.frSat)
+%           (s.wFrSat)
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
 % 
@@ -24,7 +24,7 @@ function [fx,s,d] = RunoffSat_simple(f,fe,fx,s,d,p,info,i)
 
 
 % this is a dummy
-fx.Qsat(:,i) = d.Temp.WBP .* d.SaturatedFraction.frSat(:,i);
+fx.Qsat(:,i) = d.Temp.WBP .* s.wFrSat;
 
 % update the WBP
 d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);

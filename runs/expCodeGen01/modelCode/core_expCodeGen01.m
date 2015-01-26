@@ -1,57 +1,58 @@
 function [s, fx, d] = core_expCodeGen01(f,fe,fx,s,d,p,info);
 for i=1:info.forcing.size(2)
-s.wSM1(:,i) = d.Temp.pwSM1;
-s.wSM2(:,i) = d.Temp.pwSM2;
-s.wGW(:,i)  = d.Temp.pwGW;
-s.wGWR(:,i) = d.Temp.pwGWR;
-s.wSWE(:,i) = d.Temp.pwSWE;
-s.wWTD(:,i) = d.Temp.pwWTD;
 d.Temp.WBP  = f.Rain(:,i);
-s.wSWE(:,i) = s.wSWE(:,i) + f.Snow(:,i);
-d.SnowCover.frSnow(:,i) = double(s.wSWE(:,i) > 0);
-fx.Qsnow(:,i) = min( s.wSWE(:,i) , fe.SnowMelt.Tterm(:,i) .* d.SnowCover.frSnow(:,i) );
-s.wSWE(:,i) = s.wSWE(:,i) - fx.Qsnow(:,i);
+s.wSWE = s.wSWE + f.Snow(:,i);
+s.wFrSnow = double(s.wSWE > 0);
+fx.Subl(:,i) = min(s.wSWE, fe.Sublimation.PTtermSub(:,i) .* f.Rn(:,i) .* s.wFrSnow );
+s.wSWE = s.wSWE - fx.Subl(:,i);
+fx.Qsnow(:,i) = min( s.wSWE , fe.SnowMelt.Tterm(:,i) .* s.wFrSnow );
+s.wSWE = s.wSWE - fx.Qsnow(:,i);
 d.Temp.WBP = d.Temp.WBP + fx.Qsnow(:,i);
-ip = min( p.SOIL.AWC1 - s.wSM1(:,i) , d.Temp.WBP);
-s.wSM1(:,i) = s.wSM1(:,i) + ip;
+d.Temp.WBP = d.Temp.WBP - fx.ECanop(:,i);
+X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1 + s.wSM2 ));
+valids = d.Temp.WBP > 0;
+fx.Qsat(valids,i) =d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
+if d.Temp.WBP < 0
+hallo=1
+end
+ip = min( p.SOIL.AWC1 - s.wSM1 , d.Temp.WBP);
+s.wSM1 = s.wSM1 + ip;
 d.Temp.WBP = d.Temp.WBP - ip;
-ip=min( p.SOIL.AWC2 - s.wSM2(:,i) , d.Temp.WBP );
-s.wSM2(:,i) = s.wSM2(:,i) + ip;
+ip=min( p.SOIL.AWC2 - s.wSM2 , d.Temp.WBP );
+s.wSM2 = s.wSM2 + ip;
 d.Temp.WBP = d.Temp.WBP - ip;
-fx.Qint(:,i) = p.RunoffInt.rc .* d.Temp.WBP;
-d.Temp.WBP = d.Temp.WBP - fx.Qint(:,i);
-wAvail                           = (f.Rain(:,i) + fx.Qsnow(:,i));
-VMC = (s.wSM1(:,i) + s.wSM2(:,i) + p.SOIL.WPT) ./ p.SOIL.FC;
-RDR                             = zeros(info.forcing.size(1),1);
-RDR(wAvail(:,1) > f.PET(:,i))   = 1;
-ndx                             = (f.Rain(:,i) + fx.Qsnow(:,i)) <= f.PET(:,i);
-RDR(ndx)                        = (1 + p.SOIL.Alpha(ndx)) ./ (1 + p.SOIL.Alpha(ndx) .* (VMC(ndx) .^ p.SOIL.Beta(ndx)));
-ndx                             = wAvail >= f.PET(:,i);
-d.SupplyTransp.TranspS(ndx,i)   = f.PET(ndx,i);
-ndx                             = wAvail < f.PET(:,i);
-EETa                            = wAvail(ndx,1) + (f.PET(ndx,i) - wAvail(ndx,1)) .* RDR(ndx,1);
-EETb                            = wAvail(ndx,1) + (d.Temp.pwSM1(ndx,1) + d.Temp.pwSM2(ndx,1));
-d.SupplyTransp.TranspS(ndx,i)	= min(EETa, EETb);
-We      = d.Temp.pSMScGPP;
-ndx     = f.Tair(:,i) > 0 & f.PET(:,i) > 0;
-We(ndx) = p.SMEffectGPP.Bwe(ndx,1) + d.SMEffectGPP.OmBweOPET(ndx,i) .* d.SupplyTransp.TranspS(ndx,i);
-d.SMEffectGPP.SMScGPP(:,i)	= We;
+fx.Qgwrec(:,i) = d.Temp.WBP;
+s.wGW = s.wGW + fx.Qgwrec(:,i);
+fx.Qb(:,i) = p.BaseFlow.bc .* s.wGW;
+s.wGW = s.wGW - fx.Qb(:,i);
+fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.wSM1 ./ p.SOIL.AWC1 , s.wSM1 );
+s.wSM1 = s.wSM1 - fx.ESoil(:,i);
+d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* ( s.wSM1 + s.wSM2 ) ./ ( p.SOIL.AWC12 );
+d.SMEffectGPP.gppS(:,i)   = d.SupplyTransp.TranspS(:,i) .* d.WUE.AoE(:,i);   
+ndx                             = d.DemandGPP.gppE(:,i) > 0;
+ndxn                            = ~(d.DemandGPP.gppE(:,i) > 0);
+d.SMEffectGPP.SMScGPP(ndx,i)    = min( d.SMEffectGPP.gppS(ndx,i) ./ d.DemandGPP.gppE(ndx,i) ,1);
+d.SMEffectGPP.SMScGPP(ndxn,i)	= 0;
 d.ActualGPP.AllScGPP(:,i)	= d.DemandGPP.AllScGPP(:,i) .* d.SMEffectGPP.SMScGPP(:,i);
 fx.gpp(:,i) = d.DemandGPP.gppE(:,i) .* d.SMEffectGPP.SMScGPP(:,i);
-fx.Transp(:,i)	= d.SupplyTransp.TranspS(:,i);
-ET1         = min(fx.Transp(:,i),s.wSM1(:,i));
-s.wSM1(:,i) = s.wSM1(:,i) - ET1;
+fx.Transp(:,i)	= fx.gpp(:,i) ./ d.WUE.AoE(:,i);
+ET1         = min(fx.Transp(:,i),s.wSM1);
+s.wSM1 = s.wSM1 - ET1;
 ET          = fx.Transp(:,i) - ET1;
-ET1         = min(ET,s.wGWR(:,i));
-s.wGWR(:,i) = s.wGWR(:,i) - ET1;
+ET1         = min(ET,s.wGWR);
+s.wGWR = s.wGWR - ET1;
 ET          = ET - ET1;
-s.wSM2(:,i) = s.wSM2(:,i) - ET;
-d.Temp.pwSM1	= s.wSM1(:,i);
-d.Temp.pwSM2	= s.wSM2(:,i);
-d.Temp.pwGW     = s.wGW(:,i);
-d.Temp.pwGWR    = s.wGWR(:,i);
-d.Temp.pwSWE    = s.wSWE(:,i);
-d.Temp.pwWTD    = s.wWTD(:,i);
-d.Temp.pSMScGPP = d.SMEffectGPP.SMScGPP(:,i);
+s.wSM2 = s.wSM2 - ET;
+cvars = info.variables.rememberState;
+for ii=1:length(cvars)
+cvar = char(cvars(ii));
+tmp = strsplit(cvar,'.');
+if strncmp(cvar,'s.',2)
+eval(['d.Temp.p' char(tmp(end)) ' = ' cvar ';'])
+else
+eval(['d.Temp.p' char(tmp(end)) ' = ' cvar '(:,i);'])
+end
+end
 end
 end

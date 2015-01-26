@@ -16,12 +16,12 @@ function [fx,s,d] = GetStates_simple(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % water pools
-s.wSM1(:,i) = d.Temp.pwSM1;
-s.wSM2(:,i) = d.Temp.pwSM2;
-s.wGW(:,i)  = d.Temp.pwGW;
-s.wGWR(:,i) = d.Temp.pwGWR;
-s.wSWE(:,i) = d.Temp.pwSWE;
-s.wWTD(:,i) = d.Temp.pwWTD;
+% s.wSM1(:,i) = d.Temp.pwSM1;
+% s.wSM2(:,i) = d.Temp.pwSM2;
+% s.wGW(:,i)  = d.Temp.pwGW;
+% s.wGWR(:,i) = d.Temp.pwGWR;
+% s.wSWE(:,i) = d.Temp.pwSWE;
+% s.wWTD(:,i) = d.Temp.pwWTD;
 
 % Water Balance Pool
 d.Temp.WBP  = f.Rain(:,i);

@@ -69,7 +69,7 @@ NL(NL <= minL)	= minL;
 NL(NL >= maxL)	= maxL;
 
 % water limitation calculation
-WL              = (s.wSM1(:,i) + s.wSM2(:,i)) ./ d.CAllocationVeg.WLDenominator;
+WL              = (s.wSM1 + s.wSM2) ./ d.CAllocationVeg.WLDenominator;
 WL(WL <= minL)	= minL;
 WL(WL >= maxL)  = maxL;
 

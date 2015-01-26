@@ -86,7 +86,10 @@ v= f.Rain <= Pgt;
 It(v) = St(v);
 It(v==0)=It2(v==0);
 
-fx.ECanop = Ic+It;
+tmp = Ic+It;
+tmp(f.Rain == 0) = 0;
+
+fx.ECanop = tmp;
 
 
 end
