@@ -12,6 +12,9 @@ function [fe,fx,d,p] = Prec_WUE_Medlyn(f,fe,fx,s,d,p,info)
 % g1        : conductance parameter of Medly et al [kPA^0.5] ranging
 %           between [0.9 7]; median ~3.5
 %           (p.WUE.g1)
+% ca        : ambient CO2 concentration [ppm]
+%           (f.ca)
+%
 % 
 % OUTPUT
 % AoE       : water use efficiency - ratio of assimilation and
