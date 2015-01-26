@@ -23,6 +23,11 @@ Approaches=info.approaches;
 info.variables.input=AllInputs;
 info.variables.output=AllOutputs;
 info.variables.all=unique(vertcat(AllInputs,AllOutputs));
+
+[info]=GetVariablesToRemember(info);
+
+%info.variables.rememberState
+
 %[IsCompatible]=check_ModelIntegrity(AllInputs,AllOutputs);
 
 %check which precomputations need to be done always and which only once
