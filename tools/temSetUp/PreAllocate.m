@@ -9,6 +9,7 @@ fe=struct;
 fx=struct;
 
 tmp=NaN(info.forcing.size);
+tmp2=NaN(info.forcing.size(1),1);
 
 %loop over d, fe, fx
 for ii=1:length(sstr)
@@ -20,8 +21,13 @@ for ii=1:length(sstr)
     %loop over respective variables
     for jj=1:length(v)
         
-        eval([char(AllVars(v(jj))) '=tmp;'])
+        cVar=char(AllVars(v(jj)));
         
+        if strncmp(cVar,'d.Temp',length('d.Temp'))
+            eval([cVar ' = tmp2;'])
+        else
+            eval([cVar ' = tmp;'])
+        end
     end
     
 end
