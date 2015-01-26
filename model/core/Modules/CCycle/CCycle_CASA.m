@@ -63,13 +63,13 @@ end
 % COMPUTE CARBON FLUXES IN THE SOIL
 flux_order  = [9 8 11 2 1 12 4 3 6 5 16 15 7 14 13 10];
 for ij = 1:numel(flux_order)
-    ii = flux_order(ij); % this saves, like, 1/3 of the time in the function...
-    idonor                          	= fe.CCycle.ctransfer(ii).donor;
-    ireceiver                       	= fe.CCycle.ctransfer(ii).receiver;
-    cOUT                            	= POTcOUT(:,idonor) .* fe.CCycle.ctransfer(ii).xtrEFF;
+    ii                              = flux_order(ij); % this saves, like, 1/3 of the time in the function...
+    idonor                          = fe.CCycle.ctransfer(ii).donor;
+    ireceiver                       = fe.CCycle.ctransfer(ii).receiver;
+    cOUT                            = POTcOUT(:,idonor) .* fe.CCycle.ctransfer(ii).xtrEFF;
     s.cPools(idonor).value          = s.cPools(idonor).value    - cOUT;
     s.cPools(ireceiver).value       = s.cPools(ireceiver).value + cOUT .* fe.CCycle.ctransfer(ii).effFLUX;
-    fx.cEfflux(idonor).value(:,i)    = fx.cEfflux(idonor).value(:,i)  + cOUT .* (1 - fe.CCycle.ctransfer(ii).effFLUX);
+    fx.cEfflux(idonor).value(:,i)   = fx.cEfflux(idonor).value(:,i)  + cOUT .* (1 - fe.CCycle.ctransfer(ii).effFLUX);
 end
 
 % feed the time varying pool variable

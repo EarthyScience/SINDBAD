@@ -28,7 +28,7 @@ RelY    = p.CAllocationVeg.RelY;
 LL                      = exp (-kext * f.LAI); 
 LL(LL <= minL)          = minL;
 LL(LL >= maxL)          = maxL;
-% send it to fe
+% send it to d
 d.CAllocationVeg.LL	= LL;
 
 % pseudo-nutrient limitation (NL) calculation: 

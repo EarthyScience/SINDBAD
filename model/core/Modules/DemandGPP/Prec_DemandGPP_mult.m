@@ -9,7 +9,7 @@ function [fe,fx,d,p] = Prec_DemandGPP_mult(f,fe,fx,s,d,p,info)
 % 
 % INPUT
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.RdiffEffectGPP.rueGPP)
+%           (d.MaxRUE.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -42,6 +42,6 @@ scall(:,:,3)    = d.LightEffectGPP.LightScGPP;
 d.DemandGPP.AllScGPP    = prod(scall,3);
 
 % compute demand GPP
-d.DemandGPP.gppE        = f.FAPAR .* f.PAR .* d.RdiffEffectGPP.rueGPP .* d.DemandGPP.AllScGPP;
+d.DemandGPP.gppE        = f.FAPAR .* f.PAR .* d.MaxRUE.rueGPP .* d.DemandGPP.AllScGPP;
 
 end

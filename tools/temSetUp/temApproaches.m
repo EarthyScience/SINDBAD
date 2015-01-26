@@ -43,7 +43,7 @@ StandardApproaches  = {...
     'WUE'               , 'Medlyn'          ,...    % 2 - Water 
     'SupplyTransp'      , 'Federer'         ,...    % 3 - Transpiration and GPP
     'LightEffectGPP'    , 'Maekelae2008'    ,...    % 3 - Transpiration and GPP
-    'RdiffEffectGPP'    , 'Turner'          ,...    % 3 - Transpiration and GPP
+    'MaxRUE'            , 'Turner'          ,...    % 3 - Transpiration and GPP
     'TempEffectGPP'     , 'CASA'            ,...    % 3 - Transpiration and GPP
     'VPDEffectGPP'      , 'Wang'            ,...    % 3 - Transpiration and GPP
     'DemandGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
@@ -86,6 +86,10 @@ for i = 1:2:numel(StandardApproaches)
     end
     coremodule	= [StandardApproaches{i} '_' coremodule];
     modDir      = [path_core 'Modules' filesep StandardApproaches{i} filesep];
+    % check that the module exists
+    if~exist([modDir coremodule '.m'],'file')
+        error(['temApproaches : MODULE : ' coremodule ' does not exist'])
+    end
     % add the path of the module to the beginning
     addpath(modDir,'-begin')
     % feed the output

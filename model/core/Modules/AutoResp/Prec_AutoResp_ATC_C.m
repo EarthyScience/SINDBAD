@@ -24,9 +24,9 @@ function [fe,fx,d,p] = Prec_AutoResp_ATC_C(f,fe,fx,s,d,p,info)
 % INPUTS
 % 
 % fT            : temperature effect on autrotrophic respiration (deltaT-1)
-%               (fe.TempEffectAutoResp.fT)
+%               (d.TempEffectAutoResp.fT)
 %               example
-%               fe.TempEffectAutoResp.fT(1).value - temperature effect of
+%               d.TempEffectAutoResp.fT(1).value - temperature effect of
 %               RespAuto of fine roots (pool (1)). 
 % RMN           : nitrogen efficiency rate of maintenance respiration
 %               (gC.gN-1.deltaT-1) 
@@ -78,7 +78,7 @@ end
 % scalars of maintenance respiration for models A, B and C
 % km is the maintenance respiration coefficient (d-1)
 for ii = 1:4 % for all the vegetation pools
-    km                          = 1 ./ p.AutoResp.C2N(ii).value .* RMN .* fe.TempEffectAutoResp.fT(ii).value;
+    km                          = 1 ./ p.AutoResp.C2N(ii).value .* RMN .* d.TempEffectAutoResp.fT(ii).value;
     kd                          = p.AutoResp.Fd(ii).value;
     fe.AutoResp.km(ii).value	= km .* kd;
     fe.AutoResp.kmYG(ii).value	= fe.AutoResp.km(ii).value .* (1 - p.AutoResp.YG);
