@@ -1,7 +1,7 @@
 function [precs]=GetInputOutputFromCode(precs)
 
 
-sstr={'p\.\w[\w\d_]*\.\w[\w\d_]*','d\.\w[\w\d_]*\.\w[\w\d_]*','f\.\w[\w\d_]*','fe\.\w[\w\d_]*','fx\.\w[\w\d_]*','s\.\w[\w\d_]*'};
+sstr={'\<p\.\w[\w\d_]*\.\w[\w\d_]*','\<d\.\w[\w\d_]*\.\w[\w\d_]*','\<f\.\w[\w\d_]*','\<fe\.\w[\w\d_]*','\<fx\.\w[\w\d_]*','\<s\.\w[\w\d_]*'};
 
 for i=1:length(precs)
     Output={[]};
