@@ -9,14 +9,16 @@ function [fx,s,d] = SoilEvap_simple(f,fe,fx,s,d,p,info,i)
 % INPUT
 % PETsoil   : potential evaporation from the soil surface [mm/time]
 %           (fe.SoilEvap.PETsoil)
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% AWC1      : maximum plant available water content in the top layer [mm]
-%           (p.SOIL.AWC1)
+%s.smPools :  soil moisture per layer [mm]
+% wSM      : soil moisture sum of all layers [mm]
+% AWC      : maximum plant available water content per layer [mm]
+%           (p.SOIL.AWC)
 % 
 % OUTPUT
 % ESoil     : bare soil evaporation [mm/time]
 %           (fx.ESoil)
+%s.smPools :  soil moisture per layer [mm]
+% wSM      : soil moisture sum of all layers [mm]
 % 
 % NOTES:
 % 
@@ -27,9 +29,9 @@ function [fx,s,d] = SoilEvap_simple(f,fe,fx,s,d,p,info,i)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
-fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.wSM1 ./ p.SOIL.AWC1 , s.wSM1 );
+fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.smPools(1).value ./ p.SOIL.AWC(1).value , s.smPools(1).value );
 
 % update soil moisture of upper layer
-s.wSM1 = s.wSM1 - fx.ESoil(:,i);
-
+s.smPools(1).value = s.smPools(1).value - fx.ESoil(:,i);
+s.wSM = s.wSM - fx.ESoil(:,i)
 end

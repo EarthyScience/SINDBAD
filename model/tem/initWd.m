@@ -26,7 +26,10 @@ d.Temp.pwWTD   = S0(:,1);
 
 
 d.Temp.pSMScGPP = S0(:,1) + 1;
+
 d.SMEffectGPP.SMScGPP = S0 + 1;
 
+d.SOIL.fSM = S0 + 1;
+d.Temp.pfSM = S0(:,1) + 1;
 
 end

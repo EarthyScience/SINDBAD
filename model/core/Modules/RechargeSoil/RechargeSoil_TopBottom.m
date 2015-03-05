@@ -1,48 +1,45 @@
 function [fx,s,d] = RechargeSoil_TopBottom(f,fe,fx,s,d,p,info,i)
 % #########################################################################
-% PURPOSE	: estimate recharge of available water content 
-% 
+% PURPOSE	: estimate recharge of available water content
+%
 % REFERENCES: ??
-% 
+%
 % CONTACT	: mjung
-% 
+%
 % INPUT
-% AWC1      : maximum plant available water content in the top layer [mm]
-%           (p.SOIL.AWC1)
-% AWC2      : maximum plant available water content in the bottom layer [mm]
-%           (p.SOIL.AWC2)
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+%s.smPools  : soil moisture content of layers [mm]
+%p.SOIL.AWC : maximum plant available water content of layers
+% wSM      : soil moisture sum of all layers [mm]
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
-% 
+%
 % OUTPUT
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+% s.smPools : soil moisture content of layers [mm]
+% wSM      : soil moisture sum of all layers [mm]
+%
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
-% 
+%
 % NOTES:
-% 
+%
 % #########################################################################
 
 
 % water refill from top to bottom
 % upper layer
 
-ip = min( p.SOIL.AWC1 - s.wSM1 , d.Temp.WBP);
-s.wSM1 = s.wSM1 + ip;
-d.Temp.WBP = d.Temp.WBP - ip;
+
+for ii=1:length(s.smPools)
+    
+    ip = min( p.SOIL.AWC(ii).value - s.smPools(ii).value , d.Temp.WBP);
+    s.smPools(ii).value = s.smPools(ii).value + ip;
+    d.Temp.WBP = d.Temp.WBP - ip;
+    
+    s.wSM = s.wSM + ip;
+end
 
 
 
-% lower layer
-ip=min( p.SOIL.AWC2 - s.wSM2 , d.Temp.WBP );
-s.wSM2 = s.wSM2 + ip;
-d.Temp.WBP = d.Temp.WBP - ip;
+
 
 end

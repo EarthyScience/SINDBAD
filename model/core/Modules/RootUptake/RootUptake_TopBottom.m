@@ -7,18 +7,17 @@ function [fx,s,d] = RootUptake_TopBottom(f,fe,fx,s,d,p,info,i)
 % CONTACT	: mjung, ncarval
 % 
 % INPUT
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+%
+% INPUT
+%s.smPools  : soil moisture content of layers [mm]
+% wSM      : soil moisture sum of all layers [mm]
+%p.SOIL.AWC : maximum plant available water content of layers
 % wGWR      : ground water recharge pool [mm] 
 %           (s.wGWR)
-% 
+%fx.Transp  : transpiration [mm]
 % OUTPUT
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+%s.smPools  : soil moisture content of layers [mm]
+% wSM      : soil moisture sum of all layers [mm]
 % wGWR      : ground water recharge pool [mm] 
 %           (s.wGWR)
 % 
@@ -27,19 +26,26 @@ function [fx,s,d] = RootUptake_TopBottom(f,fe,fx,s,d,p,info,i)
 % NOTES:
 % 
 % #########################################################################
-% first deplete the upper layer
-ET1         = min(fx.Transp(:,i),s.wSM1);
-s.wSM1 = s.wSM1 - ET1;
+% first extract it from ground water in the root zone
 
-
-
-% then extract it from the ground water that is in the root zone
-ET          = fx.Transp(:,i) - ET1;
+ET          = fx.Transp(:,i);
 ET1         = min(ET,s.wGWR);
 s.wGWR = s.wGWR - ET1;
+ET=ET-ET1;
 
-% then extract if from lower layer
-ET          = ET - ET1;
-s.wSM2 = s.wSM2 - ET;
+%extract from top to bottom
+for ii=1:length(s.smPools)
+    
+    ET1         = min(ET,s.smPools(ii).value);
+    s.smPools(ii).value = s.smPools(ii).value - ET1;
+    ET=ET-ET1;
+    
+   s.wSM = s.wSM - ET1;
+end
+
+
+
+
+
 
 end
