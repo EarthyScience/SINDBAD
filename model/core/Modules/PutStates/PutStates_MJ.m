@@ -13,7 +13,17 @@ for ii=1:length(cvars)
     else
         eval(['d.Temp.p' char(tmp(end)) ' = ' cvar '(:,i);'])
     end
-    %should be changed to s.!!!!!!
+    
+end
+
+cvars = info.variables.saveState;
+for ii=1:length(cvars)
+    cvar = char(cvars(ii));
+    tmp = strsplit(cvar,'.');
+    if strncmp(cvar,'s.',2) 
+        eval(['d.statesOut.' char(tmp(end)) '(:,i) = ' cvar ';'])
+    end
+    
 end
 
 
