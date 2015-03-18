@@ -1,4 +1,6 @@
-function [s]=InitialiseStates(info,p)
+function [s]=InitialiseStates(info,p,forcingSize)
+
+%forcingSize [nspace ntime]; usually info.forcing.size
 
 AllVars=info.variables.all;
 
@@ -6,7 +8,7 @@ csstr='s.';
 
 s=struct;
 
-tmp0=zeros(info.forcing.size(1),1);
+tmp0=zeros(forcingSize(1),1);
 
 %find respective variables
 v=find(strncmp(AllVars,csstr,length(csstr)));
