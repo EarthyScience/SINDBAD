@@ -1,4 +1,6 @@
-function [fx,fe,d]=PreAllocate(info)
+function [fx,fe,d]=PreAllocate(info,forcingSize)
+
+%forcingSize [nspace ntime]; usually info.forcing.size
 
 AllVars=info.variables.all;
 
@@ -8,8 +10,10 @@ d=struct;
 fe=struct;
 fx=struct;
 
-tmp=NaN(info.forcing.size);
-tmp2=NaN(info.forcing.size(1),1);
+tmp=NaN(forcingSize);
+tmp2=NaN(forcingSize(1),1);
+
+
 
 %loop over d, fe, fx
 for ii=1:length(sstr)
@@ -30,6 +34,17 @@ for ii=1:length(sstr)
         end
     end
     
+end
+
+%preallocate d.statesOut.
+cvars = info.variables.saveState;
+
+for ii=1:length(cvars)
+    cvar = char(cvars(ii));
+    tmp = strsplit(cvar,'.');
+    if strncmp(cvar,'s.',2) 
+        eval(['d.statesOut.' char(tmp(end)) '(:,i) = tmp;'])
+    end    
 end
 
 

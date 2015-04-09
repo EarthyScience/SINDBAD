@@ -7,14 +7,11 @@ function [fx,s,d] = SupplyTransp_Federer(f,fe,fx,s,d,p,info,i)
 % CONTACT	: mjung
 % 
 % INPUT
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+% wSM      : soil moisture sum of all layers [mm]
 % maxRate   : maximum transpiration rate [mm/day]
 %           (p.SupplyTransp.maxRate)
-% AWC12     : maximum available water content for plants [mm]
-%           (p.SOIL.AWC12)
+% tAWC12     : maximum available water content for plants (sum of all layers) [mm]
+%           (p.SOIL.tAWC)
 % 
 % OUTPUT
 % TranspS   : Supply limited transpiration [mm/time]
@@ -27,6 +24,6 @@ function [fx,s,d] = SupplyTransp_Federer(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % T = maxRate*(SM1+SM2)/AWC12
-d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* ( s.wSM1 + s.wSM2 ) ./ ( p.SOIL.AWC12 );
+d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* s.wSM  ./ p.SOIL.tAWC;
 
 end

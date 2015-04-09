@@ -42,7 +42,7 @@ end
 NYears      = 10;
 ForcingSize	= size(f.Tair);
 %%
-info        = temFullSetup('info','timeScale.nYears',NYears,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1,'spinUp.cycleMSC',1);
+info        = temFullSetup('info','timeScale.nYears',1,'spinUp.wPools',5,'forcing.size',ForcingSize,'spinUp.cPools',5000,'flags.genCode',1,'spinUp.cycleMSC',1);
 tic
 [fx,s,d,sSU,dDU,fe] = tem(f,info);
 toc

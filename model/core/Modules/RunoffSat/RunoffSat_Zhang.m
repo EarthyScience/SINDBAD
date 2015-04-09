@@ -11,12 +11,8 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
-% AWC12     : maximum plant available water content [mm]
-%           (p.SOIL.AWC12)
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+% p.SOIL.tAWC     : maximum plant available water content (sum over all layers) [mm]
+% wSM      : soil moisture sum of all layers [mm]
 % alpha     : an empirical Budiko parameter []
 %           (p.RunoffSat.alpha)
 % WBP       : water balance pool [mm]
@@ -40,7 +36,8 @@ function [fx,s,d] = RunoffSat_Zhang(f,fe,fx,s,d,p,info,i)
 % this is a supply / demand limit concept cf Budyko
 % 
 % calc demand limit (X0)
-X0 = f.PET(:,i) + ( p.SOIL.AWC12 - ( s.wSM1 + s.wSM2 ));
+
+X0 = f.PET(:,i) + p.SOIL.tAWC - s.wSM;
 
 % calc supply limit (d.Temp.WBP) (modified)
 %Zhang et al use precipitation as supply limit. we here use precip +snow
