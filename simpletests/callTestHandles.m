@@ -1,2 +1,0 @@
-% call test Handles
-testHandles
