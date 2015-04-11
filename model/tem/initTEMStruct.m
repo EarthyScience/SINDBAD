@@ -15,6 +15,8 @@ CheckInitialisedStates(info,s,d)
 if nargin == 3
     sSU	= varargin{1};
     dSU = varargin{2};
+    
+    % this should also be automatized...
     % inherit the state variables
     % carbon
     s.cPools = sSU.cPools;
@@ -26,8 +28,8 @@ if nargin == 3
 %     d.Temp.pwWTD(:,1)     = sSU.wWTD(:,end);
     
     % inherit the diagnostics
-    % carbon
-    d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;
+%     % carbon
+%     d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;
     % water
     
     %MJ:
