@@ -29,11 +29,12 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     % Adjust the info structure
     % ---------------------------------------------------------------------
-    infoSpin                    = info;
+    infoSpin    = info;
     if info.spinUp.cycleMSC
         infoSpin.forcing.size(2)    = floor(info.timeScale.stepsPerYear);
         infoSpin.timeScale.nYears   = 1;
     end
+    infoSpin    = temHelpers(infoSpin);
     
     % ---------------------------------------------------------------------
     % Pre-allocate fx,fe,d,s for the spinup runs

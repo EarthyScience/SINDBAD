@@ -1,35 +1,19 @@
 function d = initWd(d,info)
 
-% initial value for pools
-% S   = ones(info.forcing.size) .* 1E-10;
-S0	= zeros(info.forcing.size);
+% initialize to full capacity
+d.Temp.pwSM	= info.params.SOIL.tAWC;
 
-%MJ:
-%s.wFrSat	= S0(:,1);
+% no initial water stress in soil microbial decomposition
+d.SoilMoistEffectRH.pBGME   = info.helper.ones1d;
 
-%d.SaturatedFraction.frSat	= S0;
+% no initial water stress in GPP
+d.Temp.pSMScGPP         = info.helper.ones1d;
+d.SMEffectGPP.SMScGPP   = info.helper.ones2d;
 
-d.SoilMoistEffectRH.BGME    = S0;
-d.SoilMoistEffectRH.pBGME   = S0(:,1);
+% previous time steps in water
+d.Temp.pwGW    = info.params.SOIL.tAWC;
+d.Temp.pwGWR   = info.helper.zeros1d;
+d.Temp.pwSWE   = info.helper.zeros1d;
+% d.Temp.pwWTD   = info.helper.zeros1d;
 
-d.SupplyTransp.TranspS      = S0;
-
-d.Temp.pwSM1    = S0(:,1);
-d.Temp.pwSM2	= S0(:,1);
-
-
-
-d.Temp.pwGW    = S0(:,1);
-d.Temp.pwGWR   = S0(:,1);
-d.Temp.pwSWE   = S0(:,1);
-d.Temp.pwWTD   = S0(:,1);
-
-
-d.Temp.pSMScGPP = S0(:,1) + 1;
-
-d.SMEffectGPP.SMScGPP = S0 + 1;
-
-d.SOIL.fSM = S0 + 1;
-d.Temp.pfSM = S0(:,1) + 1;
-
-end
+end % function

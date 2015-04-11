@@ -1,4 +1,4 @@
-function s = initSMpools(s,info)
+function s = initSMpools(info,s)
 % #########################################################################
 % FUNCTION	: initWpools
 % 
@@ -14,8 +14,8 @@ N           = numel(info.params.SOIL.AWC);
 % start the structure
 s.smPools	= struct;
 for ij = 1:N
-    s.smPools(ij).value = info.params.SOIL.AWC(ij);
-    s.smPools(ij).name = ['SMLayer' num2str(ij)];
+    s.smPools(ij).value = info.params.SOIL.AWC(ij).value;
+    s.smPools(ij).name	= ['SMLayer' num2str(ij)];
 end
 
 end % function

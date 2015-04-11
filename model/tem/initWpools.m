@@ -10,18 +10,11 @@ function s = initWpools(s,info)
 % 
 % #########################################################################
 % initial value for pools
-S = zeros(info.forcing.size(1),1);
-
-s.wSWE  = S;
-
-s.wSM1	= S;
-s.wSM2  = S;
-
-
-s.wGW   = S;    
-s.wGWR  = S;
-
-s.wWTD  = S;
-
+s.wSM       = info.params.SOIL.tAWC;
+s.wSWE      = info.helper.zeros1d;
+s.wGW       = info.helper.zeros1d;    
+s.wGWR      = info.helper.zeros1d;
+s.wWTD      = info.helper.zeros1d;
+s.wFrSnow	= info.helper.zeros1d;
 end % function
 

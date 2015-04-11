@@ -9,15 +9,14 @@ function fx = initWflux(fx,info)
 % CONTACT	: Nuno
 % 
 % #########################################################################
-% initial value for pools
-S           = zeros(info.forcing.size);
-fx.Qinf     = S;
-fx.Qint     = S;
-fx.Qsat     = S;
-fx.Qb       = S;
-fx.Qgwrec   = S;
-fx.Qsnow    = S;
-fx.Transp   = S;
-fx.ESoil    = S;
-fx.Subl     = S;
+% initial value for fluxes - is this the preallocate???
+fx.Qinf     = info.helper.zeros2d;
+fx.Qint     = info.helper.zeros2d;
+fx.Qsat     = info.helper.zeros2d;
+fx.Qb       = info.helper.zeros2d;
+fx.Qgwrec   = info.helper.zeros2d;
+fx.Qsnow    = info.helper.zeros2d;
+fx.Transp   = info.helper.zeros2d;
+fx.ESoil    = info.helper.zeros2d;
+fx.Subl     = info.helper.zeros2d;
 end % function

@@ -9,37 +9,17 @@ function fx = initCflux(fx,info)
 % CONTACT	: Nuno
 % 
 % #########################################################################
-% initial value for pools
-S = zeros(info.forcing.size);
-SN = NaN(info.forcing.size);
 
 % pool names
 % oldpoolname	= {'ROOT',          'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD', 'LiRoot'};
 % oldpoolid     = [      1               2       3         4         5         6         7        8            9          10      11     12        13];
 poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
 % newpoolid     = [      1       2       3       4         5         6         7         8         9        10          11          12      13     14];
-startvalues     = repmat({S},1,numel(poolname));
+startvalues     = repmat({info.helper.zeros2d},1,numel(poolname));
 fx.cEfflux      = struct('value', startvalues,'maintenance',startvalues,'growth',startvalues);
-fx.gpp          = SN;
-startvalues     = repmat({SN},1,4);
+fx.gpp          = info.helper.nan2d;
+startvalues     = repmat({info.helper.nan2d},1,4);
 fx.npp          = struct('value', startvalues);
-
-
-% % pool names
-% % oldpoolname	= {'ROOT',          'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD', 'LiRoot'};
-% % oldpoolid     = [      1               2       3         4         5         6         7        8            9          10      11     12        13];
-% poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
-% % newpoolid     = [      1       2       3       4         5         6         7         8         9        10          11          12      13     14];
-% 
-% % initial value for pools
-% S   = zeros([info.forcing.size numel(poolname)]);
-% S2	= zeros([info.forcing.size 4]); % for vegetation pools
-% 
-% fx.cEfflux       = S;
-% fx.cEfflux_main	= S2;
-% fx.cEfflux_grow	= S2;
-% fx.ECO.cOUT         = S;
-
 
 end % function
 

@@ -1,17 +1,16 @@
 function [fx,fe,d,s] = initTEMStruct(info,varargin)
-% initialize model states
-    % carbon and water pools
-    % maybe also all outputs...
-fe	= struct;
-fx  = struct;
-fx  = initCflux(fx,info);
-fx  = initWflux(fx,info);
-d   = struct;
-d   = initWd(d,info);
-d   = initCd(d,info);
-s   = struct;
-s   = initCpools(s,info);
-s   = initWpools(s,info);
+% initialize model states and flux matrices
+% carbon and water pools
+
+% set up all the variables as NaN matrices...    
+[fx,fe,d]	= PreAllocate(info);
+
+% initialize carbon and water states
+s       = struct;
+[d,s]	= InitializeVariables(info,d,s);
+
+% check the initialized states and diagnostics
+CheckInitialisedStates(info,s,d)
 
 if nargin == 3
     sSU	= varargin{1};
@@ -21,11 +20,10 @@ if nargin == 3
     s.cPools = sSU.cPools;
     % water
     d.Temp.pwSWE(:,1)     = sSU.wSWE(:,end);
-    d.Temp.pwSM1(:,1)     = sSU.wSM1(:,end);
-    d.Temp.pwSM2(:,1)     = sSU.wSM2(:,end);
+    d.Temp.pwSM(:,1)      = sSU.wSM(:,end);
     d.Temp.pwGW(:,1)      = sSU.wGW(:,end);
     d.Temp.pwGWR(:,1)     = sSU.wGWR(:,end);
-    d.Temp.pwWTD(:,1)     = sSU.wWTD(:,end);
+%     d.Temp.pwWTD(:,1)     = sSU.wWTD(:,end);
     
     % inherit the diagnostics
     % carbon
@@ -37,6 +35,9 @@ if nargin == 3
     %d.SaturatedFraction.frSat(:,1)	= dSU.SaturatedFraction.frSat(:,end);
     
     d.SoilMoistEffectRH.pBGME       = dSU.SoilMoistEffectRH.BGME(:,end);
+    
+    % do we also need to inherit other states or factors!?!?
+    
 end
 
 
