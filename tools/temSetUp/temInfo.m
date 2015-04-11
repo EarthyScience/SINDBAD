@@ -46,6 +46,7 @@ info.flags.checkForcing	= 1;
 info.flags.doSpinUp     = 1;
 info.flags.loadSpinUp   = 0;
 info.flags.genCode      = 1;
+info.flags.saveStates   = 2;
 % how to do the spinUp
 info.spinUp.cycleMSC    = 1;
 info.spinUp.wPools      = 5;    % number of cycles until w pools in equilibrium
@@ -89,5 +90,21 @@ end % function
 
 
 
+%{
+simple(cmip5)
+cVeg
+cLitter
+cSoil
 
+cLeaf
+cWood
+cRoot
+cMisc - Carbon Mass in Other Living Compartments on Land
+cCwd
+cLitterAbove
+cLitterBelow
+cSoilFast - fast is meant as lifetime of less than 10 years for  reference climate conditions (20 C, no water limitations).
+cSoilMedium - medium is meant as lifetime of more than than 10 years and less than 100 years for  reference climate conditions (20 C, no water limitations)
+cSoilSlow - fast is meant as lifetime of more than 100 years for  reference climate conditions (20 C, no water limitations)
+%}
 
