@@ -18,7 +18,6 @@ function info = temFullSetup(varargin)
 % info = temFullSetup('info','PFT',1,...)
 % info = temFullSetup('info','PFT',1,...,'ms','RunoffSat','none',...)
 
-
 if nargin == 0
     % if no arguments, just get the standard values
     [appr, modu, psCode]	= temApproaches;    % get a standard ms (model structure) for SINDBAD
@@ -28,6 +27,10 @@ if nargin == 0
     info.code               = psCode;
     % get the standard parameters of SINDBAD
     info	= temParams(info);
+    % what to save and not
+    info    = temToSave(info);
+    % helpers
+    info = temHelpers(info);
     % make the model structure
     if info.flags.genCode
         info    = rmfield(info,'code');
@@ -71,6 +74,10 @@ info.modules    = modu;       % merge them
 info.code       = psCode;
 % get the standard parameters of SINDBAD
 info	= temParams(info);
+% what to save and not
+info    = temToSave(info);
+% helpers
+info    = temHelpers(info);
 % make the model structure
 if info.flags.genCode
     info    = rmfield(info,'code');
@@ -79,3 +86,4 @@ end
 
 
 end % function
+
