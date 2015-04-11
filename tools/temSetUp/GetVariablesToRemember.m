@@ -11,7 +11,7 @@ for ii=1:length(AllVars)
     
     if ~strncmp(cvar,'p.',2)
     %only keep the last bit
-    tmp = strsplit(cvar,'.');
+    tmp = splitZstr(cvar,'.');
     AllVarsShort(ii)=cellstr(tmp(end));
 
     end
