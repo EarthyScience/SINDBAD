@@ -28,15 +28,20 @@ if nargin == 3
 %     d.Temp.pwWTD(:,1)     = sSU.wWTD(:,end);
     
     % inherit the diagnostics
-%     % carbon
-%     d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;
+    % carbon
+    % this is ungly....
+    if~isempty(strmatch('CAllocationVeg',fieldnames(d),'exact'))
+        d.CAllocationVeg.c2pool     = dSU.CAllocationVeg.c2pool;
+    end
     % water
     
     %MJ:
 %    s.wFrSat	= sSU.frSat;
     %d.SaturatedFraction.frSat(:,1)	= dSU.SaturatedFraction.frSat(:,end);
-    
-    d.SoilMoistEffectRH.pBGME       = dSU.SoilMoistEffectRH.BGME(:,end);
+    % this is ungly....
+    if~isempty(strmatch('SoilMoistEffectRH',fieldnames(d),'exact'))
+        d.SoilMoistEffectRH.pBGME       = dSU.SoilMoistEffectRH.BGME(:,end);
+    end
     
     % do we also need to inherit other states or factors!?!?
     
