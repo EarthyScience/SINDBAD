@@ -24,10 +24,8 @@ function [fx,s,d] = CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info,i)
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
-% wSM1      : soil moisture of top layer [mm]
-%           (s.wSM1)
-% wSM2      : soil moisture of bottom layer [mm]
-%           (s.wSM2)
+% wSM      : soil moisture sum of all layers [mm]
+%           (s.wSM)
 % 
 % 
 % CONTACT	: ncarval
@@ -69,7 +67,7 @@ NL(NL <= minL)	= minL;
 NL(NL >= maxL)	= maxL;
 
 % water limitation calculation
-WL              = (s.wSM1 + s.wSM2) ./ d.CAllocationVeg.WLDenominator;
+WL              = s.wSM ./ d.CAllocationVeg.WLDenominator;
 WL(WL <= minL)	= minL;
 WL(WL >= maxL)  = maxL;
 

@@ -56,7 +56,7 @@ s.cPools(8).value   = s.cPools(8).value + POTcOUT(:,1) .* (1 - MTF);
 s.cPools(10).value	= s.cPools(10).value + POTcOUT(:,2);
 
 % DETERMINE MAXIMUM FLUXES FROM EACH CARBON POOL
-for ii = 5:13
+for ii = 5:14
     POTcOUT(:,ii)   = s.cPools(ii).value .* fe.CCycle.kfEnvTs(ii).value(:,i) .* BGME;
 end
 
@@ -72,9 +72,9 @@ for ij = 1:numel(flux_order)
     fx.cEfflux(idonor).value(:,i)   = fx.cEfflux(idonor).value(:,i)  + cOUT .* (1 - fe.CCycle.ctransfer(ii).effFLUX);
 end
 
-% feed the time varying pool variable
-for ii = 1:13
-	s.cPools(ii).ts(:,i)	= s.cPools(ii).value;
-end
+% % feed the time varying pool variable
+% for ii = 1:14
+% 	s.cPools(ii).ts(:,i)	= s.cPools(ii).value;
+% end
 
 end % function

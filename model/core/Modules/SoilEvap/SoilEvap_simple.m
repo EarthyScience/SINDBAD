@@ -33,5 +33,5 @@ fx.ESoil(:,i) = min( fe.SoilEvap.PETsoil(:,i) .* s.smPools(1).value ./ p.SOIL.AW
 
 % update soil moisture of upper layer
 s.smPools(1).value = s.smPools(1).value - fx.ESoil(:,i);
-s.wSM = s.wSM - fx.ESoil(:,i)
+s.wSM = s.wSM - fx.ESoil(:,i);
 end

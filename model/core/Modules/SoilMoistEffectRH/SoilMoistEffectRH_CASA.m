@@ -27,10 +27,8 @@ function [fx,s,d] = SoilMoistEffectRH_CASA(f,fe,fx,s,d,p,info,i)
 %               (fi.PET)
 % Rainfall      : rainfall (mm)
 %               (fi.Rainfall)
-% pwSM1         : soil moisture of top soil in the previous time step(mm)
-%               (d.Temp.pwSM1)
-% pwSM2         : soil moisture of lower soil in the previous time step (mm)
-%               (d.Temp.pwSM2)
+% pwSM          : soil moisture sum of all layers of previous time step [mm] 
+%               (d.Temp.pwSM)
 % Aws           : curve (expansion/contraction) controlling parameter
 %               (p.SoilMoistEffectRH.Aws)
 % pBGME         : BGME of previous timestep
@@ -42,9 +40,10 @@ function [fx,s,d] = SoilMoistEffectRH_CASA(f,fe,fx,s,d,p,info,i)
 %               calculation ([])
 % 
 % NOTES: the BGME is used as a scalar dependent on soil moisture, as the
-% sum of soil moisture for all layers. This can be partitioned into BGME1
-% and BGME2, for wSM1 and wSM2, and affect independently the decomposition
-% processes of pools that are at the surface and deeper in the soils.
+% sum of soil moisture for all layers. This can be partitioned into
+% different soil layers in the soil and affect independently the
+% decomposition processes of pools that are at the surface and deeper in
+% the soils.   
 % 
 % #########################################################################
 
@@ -63,7 +62,7 @@ pBGME	= d.SoilMoistEffectRH.pBGME;
 ndx = (f.PET(:,i) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= ((d.Temp.pwSM1(ndx,1) + d.Temp.pwSM2(ndx,1)) ./ TSPM  + f.Rain(ndx,i)) ./ f.PET(ndx,i);
+BGRATIO(ndx)	= (d.Temp.pwSM(ndx,1) ./ TSPM  + f.Rain(ndx,i)) ./ f.PET(ndx,i);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.SoilMoistEffectRH.Aws;
