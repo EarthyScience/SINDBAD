@@ -10,7 +10,7 @@ function [fx,s,d] = SupplyTransp_Federer(f,fe,fx,s,d,p,info,i)
 % wSM      : soil moisture sum of all layers [mm]
 % maxRate   : maximum transpiration rate [mm/day]
 %           (p.SupplyTransp.maxRate)
-% tAWC12     : maximum available water content for plants (sum of all layers) [mm]
+% tAWC     : maximum available water content for plants (sum of all layers) [mm]
 %           (p.SOIL.tAWC)
 % 
 % OUTPUT

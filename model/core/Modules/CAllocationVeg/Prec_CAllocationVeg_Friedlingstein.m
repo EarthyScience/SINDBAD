@@ -9,10 +9,8 @@ function [fe,fx,d,p] = Prec_CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info)
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
-% AWC1      : maximum plant available water content in the top layer [mm]
-%           (p.SOIL.AWC1)
-% AWC2      : maximum plant available water content in the bottom layer [mm]
-%           (p.SOIL.AWC2)
+% tAWC      : total maximum plant available water content [mm]
+%           (p.SOIL.tAWC)
 % #########################################################################
 
 % constants
@@ -57,6 +55,6 @@ d.CAllocationVeg.NL	= NL;
 d.CAllocationVeg.RootNumerator	= ro .* (RelY + 1) .* LL;
 
 % denominator of the water limitation fuction
-d.CAllocationVeg.WLDenominator	= p.SOIL.AWC1 + p.SOIL.AWC2;
+d.CAllocationVeg.WLDenominator	= p.SOIL.tAWC;
 
 end % function
