@@ -20,11 +20,65 @@ AllOutputs=AllOutputs(tf);
 
 % to debug: setdiff(AllInputs,AllOutputs) ;)
 
+
+
 [c,ia,ib]=intersect(AllInputs,AllOutputs);
 if length(c)==length(AllInputs)
     IsCompatible=1;
 else
     IsCompatible=0;
+    
+    
+    ProblemVars=setdiff(AllInputs,AllOutputs);
+    %IsIn=false(length(ProblemVars),1);
+    modules=fieldnames(info.code.ms);
+    
+    for ii=1:length(ProblemVars)
+        tmp=strcmp(ProblemVars(ii),AllInputs);
+        if sum(tmp)>0
+            %IsIn(ii)=1;
+            %is an input
+            
+            for iii=1:length(modules)
+                eval(['tmp2=strcmp(ProblemVars(ii),info.code.ms.' char(modules(iii)) '.funInput);'])
+                if sum(tmp2)>0
+                    disp([char(ProblemVars(ii)) ' is input to ' char(modules(iii)) ' but is no output'])
+                end
+            end
+            
+            %precomps
+            for iii=1:length(info.code.preComp)
+                tmp2=strcmp(ProblemVars(ii),info.code.preComp(iii).funInput);
+                if sum(tmp2)>0
+                    disp([char(ProblemVars(ii)) ' is input to ' info.code.preComp(iii).funName ' but is no output'])
+                end
+                
+            end
+            
+        else
+            %is an output
+            for iii=1:length(modules)
+                eval(['tmp2=strcmp(ProblemVars(ii),info.code.ms.' char(modules(iii)) '.funOutput);'])
+                if sum(tmp2)>0
+                    disp([char(ProblemVars(ii)) ' is output of ' char(modules(iii)) ' but is no input'])
+                end
+            end
+            
+             %precomps
+            for iii=1:length(info.code.preComp)
+                tmp2=strcmp(ProblemVars(ii),info.code.preComp(iii).funOutput);
+                if sum(tmp2)>0
+                    disp([char(ProblemVars(ii)) ' is output of ' info.code.preComp(iii).funName ' but is no input'])
+                end
+                
+            end
+            
+        end
+        
+        
+    end
+    
+    
     
     %error('Model Structure Error: Mismatch of Inputs and Ouputs')
     warning('Model Structure Error: Mismatch of Inputs and Ouputs')
