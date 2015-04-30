@@ -36,13 +36,16 @@ function [fx,s,d] = updNPPRa(f,fe,fx,s,d,p,info,i)
 % 
 % #########################################################################
 
-% compute total respiration and npp for each vegetation pool
+% compute total respiration and npp for each vegetation pool and for the
+% total fluxes
 for ii = 1:4
-    % total respiration: R_a = R_m + R_g
+    % total respiration per pool: R_a = R_m + R_g
     fx.cEfflux(ii).value(:,i)	= fx.cEfflux(ii).maintenance(:,i) + fx.cEfflux(ii).growth(:,i);
     
     % net primary production: NPP = GPP * allocationToPool - R_a
     fx.npp(ii).value(:,i)	= fx.gpp(:,i) .* d.CAllocationVeg.c2pool(ii).value(:,i) - fx.cEfflux(ii).value(:,i);
+    
+    % npp/ra
     
 end
 

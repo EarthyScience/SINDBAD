@@ -47,6 +47,14 @@ info.flags.doSpinUp     = 1;
 info.flags.loadSpinUp   = 0;
 info.flags.genCode      = 1;
 info.flags.saveStates   = 2;
+info.flags.CheckWBalance= 1;
+info.flags.CheckCBalance= 1;
+info.flags.WBalanceOK   = 1;
+info.flags.CBalanceOK   = 1;
+info.flags.RanOK        = 1;
+% checks...
+info.checks.WBVioFrac   = 0;
+info.checks.CBVioFrac   = 0;
 % how to do the spinUp
 info.spinUp.cycleMSC    = 1;
 info.spinUp.wPools      = 5;    % number of cycles until w pools in equilibrium
