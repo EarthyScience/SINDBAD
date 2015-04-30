@@ -39,9 +39,9 @@ scall(:,:,2)    = d.VPDEffectGPP.VPDScGPP;
 scall(:,:,3)    = d.LightEffectGPP.LightScGPP;
 
 % compute the minumum of all the scalars
-d.DemandGPP.AllScGPP = min(scall,[],3);
+d.DemandGPP.AllDemScGPP = min(scall,[],3);
 
 % compute demand GPP
-d.DemandGPP.gppE	= f.FAPAR .* f.PAR .* d.MaxRUE.rueGPP .* d.DemandGPP.AllScGPP;
+d.DemandGPP.gppE	= f.FAPAR .* f.PAR .* d.MaxRUE.rueGPP .* d.DemandGPP.AllDemScGPP;
 
 end

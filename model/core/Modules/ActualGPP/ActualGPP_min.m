@@ -34,7 +34,7 @@ function [fx,s,d] = ActualGPP_min(f,fe,fx,s,d,p,info,i)
 
 % calculate the minimum of all the stress scalars from demand GPP and the
 % supply GPP
-d.ActualGPP.AllScGPP(:,i)	= min(d.DemandGPP.AllScGPP(:,i),d.SMEffectGPP.SMScGPP(:,i));
+d.ActualGPP.AllScGPP(:,i)	= min(d.DemandGPP.AllDemScGPP(:,i),d.SMEffectGPP.SMScGPP(:,i));
 
 % ... and multiply with apar and rue
 fx.gpp(:,i) = f.FAPAR(:,i) .* f.PAR(:,i) .* d.MaxRUE.rueGPP(:,i) .* d.ActualGPP.AllScGPP(:,i);

@@ -39,9 +39,9 @@ scall(:,:,2)    = d.VPDEffectGPP.VPDScGPP;
 scall(:,:,3)    = d.LightEffectGPP.LightScGPP;
 
 % compute the product of all the scalars
-d.DemandGPP.AllScGPP    = prod(scall,3);
+d.DemandGPP.AllDemScGPP    = prod(scall,3);
 
 % compute demand GPP
-d.DemandGPP.gppE        = f.FAPAR .* f.PAR .* d.MaxRUE.rueGPP .* d.DemandGPP.AllScGPP;
+d.DemandGPP.gppE        = f.FAPAR .* f.PAR .* d.MaxRUE.rueGPP .* d.DemandGPP.AllDemScGPP;
 
 end

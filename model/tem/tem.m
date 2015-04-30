@@ -168,6 +168,8 @@ for iStep = 1:info.temSteps
     % with minimal adjustments)
 
     % deal with restart files and have everything ones needs just to restart where we left from
+    
+    % do the aggregation of the cPools here, if needed, of course
 
 end
 

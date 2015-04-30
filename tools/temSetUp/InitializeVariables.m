@@ -44,7 +44,11 @@ for ii = 1:length(sstr)
 end
 
 % the carbon and water pools
-s   = initCpools(info,s);
-s   = initSMpools(info,s);
+if ~(isempty(strmatch('s.cPools',AllVars,'exact')))
+    s   = initCpools(info,s);
+end
+if ~(isempty(strmatch('s.smPools',AllVars,'exact')))
+    s   = initSMpools(info,s);
+end
 
 end % function

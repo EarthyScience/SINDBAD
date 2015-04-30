@@ -34,7 +34,8 @@ if info.flags.doSpinUp
         infoSpin.forcing.size(2)    = floor(info.timeScale.stepsPerYear);
         infoSpin.timeScale.nYears   = 1;
     end
-    infoSpin    = temHelpers(infoSpin);
+    infoSpin                        = temHelpers(infoSpin);
+    infoSpin.variables.saveState	= {};
     
     % ---------------------------------------------------------------------
     % Pre-allocate fx,fe,d,s for the spinup runs
