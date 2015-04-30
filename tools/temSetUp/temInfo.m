@@ -35,10 +35,23 @@ tmp             = mfilename('fullpath');
 ndx             = strfind(tmp,'temInfo');
 info.paths.tem	= strrep(tmp(1:ndx(end)-1),['tools' filesep 'temSetUp'],['model' filesep 'tem']);
 info.paths.core = strrep(tmp(1:ndx(end)-1),['tools' filesep 'temSetUp'],['model' filesep 'core']);
+
 % data and model structure checks
-info.checks.numeric     = 1;
-info.checks.bounds      = 1;
-info.checks.ms          = 1;
+%info.checks.numeric     = 1; %should be a cellstr like 'all', or better {fe,fx,s,d'}
+info.checks.numeric     = {'fe','fx','s','d'}; %should be a cellstr like 'all', or better {fe,fx,s,d'}
+%info.checks.bounds      = 1; %should be a cellstr like 'all', or better {fe,fx,s,d'}
+info.checks.bounds      = {'fe','fx','s','d'}; % requires 'info.variables.bounds' see CheckBounds.m
+%info.checks.ms          = 1; %not needed? will always be done during code interpretation
+%info.flags.CheckWBalance= 1; %
+
+info.checks.WBalance= 1; % need to make sure that all necessary wPools are given in info.variables.saveState - needs to checked in temToSave!!!
+info.checks.CBalance= 1;
+%info.flags.WBalanceOK   = 1;
+%info.flags.CBalanceOK   = 1;
+%info.checks.WBVioFrac   = 0;
+%info.checks.CBVioFrac   = 0;
+%info.flags.RanOK        = 1;
+
 % flags for "how to run the model"
 info.flags.opti         = 1;
 info.flags.forwardRun	= 0;
@@ -46,15 +59,10 @@ info.flags.checkForcing	= 1;
 info.flags.doSpinUp     = 1;
 info.flags.loadSpinUp   = 0;
 info.flags.genCode      = 1;
-info.flags.saveStates   = 0;
-info.flags.CheckWBalance= 1;
-info.flags.CheckCBalance= 1;
-info.flags.WBalanceOK   = 1;
-info.flags.CBalanceOK   = 1;
-info.flags.RanOK        = 1;
+info.flags.saveStates   = 0; %not needed? we have 'info.variables.saveStates'
+
 % checks...
-info.checks.WBVioFrac   = 0;
-info.checks.CBVioFrac   = 0;
+
 % how to do the spinUp
 info.spinUp.cycleMSC    = 1;
 info.spinUp.wPools      = 5;    % number of cycles until w pools in equilibrium

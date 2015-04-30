@@ -2,7 +2,8 @@ function [info] = CheckWaterBalance(f,fe,fx,s,d,p,info)
 %Checks Water Balance
 %assumes that water pools are stored in d.statesOut
 
-if info.flags.CheckWBalance
+%if info.flags.CheckWBalance
+if info.checks.WBalance
 
     %precision
     preci = 1E-5; % this could be in the info and be the same for all the variables
@@ -27,10 +28,11 @@ if info.flags.CheckWBalance
 
     WBCheck = WB > preci;
 
-    info.checks.WBVioFrac = sum(sum(double(WBCheck)))/numel(WBCheck);
+    %info.checks.WBVioFrac = sum(sum(double(WBCheck)))/numel(WBCheck);
+    WBvioFrac = sum(sum(double(WBCheck)))/numel(WBCheck);
 
     if WBvioFrac > 0
-        info.flags.WBalanceOK =0;
+        %info.flags.WBalanceOK =0;
         mmsg=['Water balance not closed in ' num2str(WBvioFrac*100) ' % of cases'];
         warning(mmsg);
     end
