@@ -41,10 +41,10 @@ function [fx,s,d] = AutoResp_ATC_B(f,fe,fx,s,d,p,info,i)
 %           fx.cEfflux(3).growth - growth respiration of woody biomass.
 %           fx.cEfflux(4).value - total (growth + maintenance)
 %           respiration of leaf pools
-% npp       : net primary production for each plant pool (gC.m-2.deltaT-1)
-%           (fx.npp)
+% cNpp      : net primary production for each plant pool (gC.m-2.deltaT-1)
+%           (fx.cNpp)
 %           example
-%           fx.npp(3).value - npp that goes to woody biomass.
+%           fx.cNpp(3).value - npp that goes to woody biomass.
 % 
 % #########################################################################
 

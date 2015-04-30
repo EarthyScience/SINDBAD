@@ -38,7 +38,7 @@ for j = j_vec
             LtX_extra                   = 1 - fe.AutoResp.kmYG(j).value;
             LtX_extra(LtX_extra > 1)	= 1;
             % GAINS IN THE SAME POOL FROM NPP
-            GtX	= fx.npp(j).value .* p.AutoResp.YG;
+            GtX	= fx.cNpp(j).value .* p.AutoResp.YG;
             % ATTRIBUTE
             eval(['Lt' num2str(j) '         = LtX;'])
             eval(['Lt' num2str(j) '_extra	= LtX_extra;'])

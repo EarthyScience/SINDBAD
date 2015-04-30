@@ -22,26 +22,10 @@ for ii = 1:length(cvars)
     if strcmp(tmpVN,'value');
         tmpVN   = [char(tmp(end-1)) '.' char(tmp(end))];
     end
-%     if strncmp(cvar,'s.',2) && strcmpi(cvar(3),'c') && ~strncmp(cvar(3:end),'cPools',6)
-% %         poolname                    = cvar(3:end);
-% %         x                           = CMIP5cPools(info,s,poolname);
-% %         d.statesOut.(tmpVN)(:,i)    = x;
-%         % do nothing. this needs to use the PutStates_AggcPools
-%     else
     if strncmp(cvar,'s.',2)
         eval(['d.statesOut.' tmpVN '(:,i) = ' cvar ';'])
     end
 end
-
-% % water pools
-% d.Temp.pwSM	    = s.wSM;
-% d.Temp.pwGW     = s.wGW;
-% d.Temp.pwGWR    = s.wGWR;
-% d.Temp.pwSWE    = s.wSWE;
-% %d.Temp.pwWTD    = s.wWTD;
-
-
-% d.Temp.pSMScGPP = d.SMEffectGPP.SMScGPP(:,i);
 
 end % function
 

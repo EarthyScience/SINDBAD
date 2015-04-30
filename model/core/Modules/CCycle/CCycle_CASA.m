@@ -31,7 +31,7 @@ BGME	= d.SoilMoistEffectRH.BGME(:,i);
 
 % ALLOCATION NPP TO VEGETATION POOLS
 for ii = 1:4
-    s.cPools(ii).value	= s.cPools(ii).value + fx.npp(ii).value(:,i);
+    s.cPools(ii).value	= s.cPools(ii).value + fx.cNpp(ii).value(:,i);
 end
 
 POTcOUT	= zeros(info.forcing.size(1),numel(s.cPools));
@@ -72,9 +72,9 @@ for ij = 1:numel(flux_order)
     fx.cEfflux(idonor).value(:,i)   = fx.cEfflux(idonor).value(:,i)  + cOUT .* (1 - fe.CCycle.ctransfer(ii).effFLUX);
 end
 
-% % feed the time varying pool variable
-% for ii = 1:14
-% 	s.cPools(ii).ts(:,i)	= s.cPools(ii).value;
-% end
+% feed the rh fluxes
+for ii = 5:14
+	fx.rh(:,i)	= fx.rh(:,i) + fx.cEfflux(ii).value(:,i);
+end
 
 end % function

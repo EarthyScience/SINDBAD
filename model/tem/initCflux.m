@@ -18,8 +18,11 @@ poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT'
 startvalues     = repmat({info.helper.zeros2d},1,numel(poolname));
 fx.cEfflux      = struct('value', startvalues,'maintenance',startvalues,'growth',startvalues);
 fx.gpp          = info.helper.nan2d;
+fx.npp          = info.helper.zeros2d;
+fx.ra           = info.helper.zeros2d;
+fx.rh           = info.helper.zeros2d;
 startvalues     = repmat({info.helper.nan2d},1,4);
-fx.npp          = struct('value', startvalues);
+fx.cNpp         = struct('value', startvalues);
 
 end % function
 

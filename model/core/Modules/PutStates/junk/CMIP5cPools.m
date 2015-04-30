@@ -1,7 +1,7 @@
 function x = CMIP5cPools(info,s,poolname)
 switch poolname
     case 'cVeg'         , poolid	= 1:4;
-    case 'cLitter'      , poolid	= 1:10;
+    case 'cLitter'      , poolid	= 5:10;
     case 'cSoil'        , poolid	= 11:14;
     case 'cLeaf'        , poolid	= 4;
     case 'cWood'        , poolid	= 3;            %including sapwood and hardwood.
@@ -27,7 +27,7 @@ end%function
 
 
 % info.helper.cPoolsID4.cVeg          = 1:4;
-% info.helper.cPoolsID4.cLitter       = 1:10;
+% info.helper.cPoolsID4.cLitter       = 5:10;
 % info.helper.cPoolsID4.cSoil         = 11:14;
 % info.helper.cPoolsID4.cLeaf         = 4;
 % info.helper.cPoolsID4.cWood         = 3;            %including sapwood and hardwood.

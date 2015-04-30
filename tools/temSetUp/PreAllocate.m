@@ -50,7 +50,7 @@ for ii = 1:length(sstr)
             fe.CCycle.ctransfer = struct('value', startvalues);
             
 %% CCycle - vegetation...
-        elseif strncmp(cVar,'fx.npp',length('fx.npp'))
+        elseif strncmp(cVar,'fx.cNpp',length('fx.cNpp'))
             startvalues     = repmat({info.helper.nan2d},1,4);
             fx.npp          = struct('value', startvalues);
             

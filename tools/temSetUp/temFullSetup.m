@@ -52,10 +52,10 @@ info.modules    = modu;       % merge them
 info.code       = psCode;
 % get the standard parameters of SINDBAD
 info	= temParams(info);
-% what to save and not
-info    = temToSave(info);
 % helpers
 info    = temHelpers(info);
+% what to save and not
+info    = temStatesToSave(info);
 % make the model structure
 if ~info.flags.genCode
     disp('code is always generated!')

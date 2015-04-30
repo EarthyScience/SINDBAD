@@ -45,18 +45,25 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     % Precomputations
     % ---------------------------------------------------------------------
-    for prc = 1:numel(infoSpin.code.preComp)
-%         tmp                 = infoSpin.code.preComp(prc).fun;     % no idea why this way
-        [feSU,fxSU,dSU,p]	= infoSpin.code.preComp(prc).fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);  % works but not inline
+    if info.flags.runGenCode
+        [feSU,fxSU,dSU,p]	= infoSpin.code.msi.preComp(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    else
+        for prc = 1:numel(infoSpin.code.preComp)
+            [feSU,fxSU,dSU,p]	= infoSpin.code.preComp(prc).fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        end
     end
-    
     % ---------------------------------------------------------------------
     % run the model for spin-up for NPP and soil water pools @ equilibrium
     % ---------------------------------------------------------------------
-    for ij = 1:info.spinUp.wPools
-        [fxSU,sSU,dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-    end
-    
+    if info.flags.runGenCode
+        for ij = 1:info.spinUp.wPools
+            [fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        end
+    else
+        for ij = 1:info.spinUp.wPools
+            [fxSU,sSU,dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        end
+    end    
     % ---------------------------------------------------------------------
     % run the model for spin-up for soil C pools @ equilibrium
     % ---------------------------------------------------------------------

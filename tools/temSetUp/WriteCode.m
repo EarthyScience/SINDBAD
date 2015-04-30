@@ -13,7 +13,7 @@ fid = fopen(CodePth, 'wt');
 %write the core
 doAlways=1;
 
-str=['function [s, fx, d] = ' name '(f,fe,fx,s,d,p,info);'];
+str=['function [fx,s,d] = ' name '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
 
 

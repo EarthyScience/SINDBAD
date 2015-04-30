@@ -27,10 +27,13 @@ function [fx,s,d] = updNPPRa(f,fe,fx,s,d,p,info,i)
 %           (d.CAllocationVeg.c2pool)
 % 
 % OUTPUTS
-% npp       : net primary production for each plant pool (gC.m-2.deltaT-1)
+% cNpp      : net primary production for each plant pool (gC.m-2.deltaT-1)
+%           (fx.cNpp)
+%           example
+%           fx.cNpp(3).value - npp that goes to woody biomass.
+% npp       : net primary production (gC.m-2.deltaT-1)
 %           (fx.npp)
 %           example
-%           fx.npp(3).value - npp that goes to woody biomass.
 % efflux    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
 %           (fx.cEfflux.value)
 % 
@@ -43,9 +46,11 @@ for ii = 1:4
     fx.cEfflux(ii).value(:,i)	= fx.cEfflux(ii).maintenance(:,i) + fx.cEfflux(ii).growth(:,i);
     
     % net primary production: NPP = GPP * allocationToPool - R_a
-    fx.npp(ii).value(:,i)	= fx.gpp(:,i) .* d.CAllocationVeg.c2pool(ii).value(:,i) - fx.cEfflux(ii).value(:,i);
+    fx.cNpp(ii).value(:,i)	= fx.gpp(:,i) .* d.CAllocationVeg.c2pool(ii).value(:,i) - fx.cEfflux(ii).value(:,i);
     
     % npp/ra
+    fx.npp(:,i)	= fx.npp(:,i) + fx.cNpp(ii).value(:,i);
+    fx.ra(:,i)	= fx.ra(:,i) + fx.cEfflux(ii).value(:,i);
     
 end
 

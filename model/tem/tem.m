@@ -142,36 +142,58 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     % 5.1 - PRECOMPUTATIONS
     % ---------------------------------------------------------------------
-    for prc = 1:numel(info.code.preComp)
-        if info.code.preComp(prc).doAlways == 0
-            [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
+    if info.flags.runGenCode
+        [fe,fx,d,p] = info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
+    else
+        for prc = 1:numel(info.code.preComp)
+            if info.code.preComp(prc).doAlways == 0
+                [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
+            end
         end
     end
-
 	
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-    [fx,s,d] = core(f,fe,fx,s,d,p,info);
+    if info.flags.runGenCode
+        [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
+    else
+        [fx,s,d]    = core(f,fe,fx,s,d,p,info);
+    end
+    
+    % ---------------------------------------------------------------------
+    % X.X - DO AGGREGATIONS
+    % ---------------------------------------------------------------------
+    % do the aggregation of the cPools here
+    if info.flags.saveStates >= 1 || info.checks.CBalance
+        d	= temAggStates(info,d);
+    end
+    
+    % ---------------------------------------------------------------------
+    % X.X - CHECK BALANCES
+    % ---------------------------------------------------------------------
+    info	= CheckCarbonBalance(f,fe,fx,s,d,p,info);
+    info	= CheckWaterBalance(f,fe,fx,s,d,p,info);
+    
+    
     
     % -----------------------------------------------------------------
     % 6.4. - OUTPUTS
     % -----------------------------------------------------------------
         
-    % outputs for file in spinup mode (step 1)
-
-    % outputs for file in spinup mode (step 2)
 
     % outputs for file or memory in transient mode (note, this way
     % should also have the option to be consistent with the previous
     % CASA code output, so that the optimization algorithms can be used
     % with minimal adjustments)
 
-    % deal with restart files and have everything ones needs just to restart where we left from
+    % deal with restart files and have everything ones needs just to
+    % restart where we left from 
     
-    % do the aggregation of the cPools here, if needed, of course
+    
 
 end
+
 
 if nargout >= 3
     varargout{1} = fx;
