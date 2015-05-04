@@ -19,6 +19,7 @@ for ii = 1:length(sstr)
 %% d.Temp. ...
         if strncmp(cVar,'d.Temp.',length('d.Temp.'))
             eval([cVar ' = info.helper.nan1d;'])
+            
 %% CCycle - all pools
         elseif strncmp(cVar,'fx.cEfflux',length(cVar))
             poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
@@ -58,7 +59,6 @@ for ii = 1:length(sstr)
             startvalues             = repmat({info.helper.nan2d},1,4);
             d.CAllocationVeg.c2pool	= struct('value', startvalues);
             
-            
         elseif strncmp(cVar,'fe.AutoResp.km',length(cVar))
             startvalues     = repmat({info.helper.nan2d},1,4);
             fe.AutoResp.km	= struct('value', startvalues);
@@ -70,6 +70,7 @@ for ii = 1:length(sstr)
         elseif strncmp(cVar,'d.TempEffectAutoResp.fT',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);
             d.TempEffectAutoResp.fT	= struct('value', startvalues);
+            
 %% CCycle - respiratory fluxes
         elseif strncmp(cVar,'fx.ra',length(cVar)) || strncmp(cVar,'fx.rh',length(cVar)) || strncmp(cVar,'fx.npp',length(cVar))
             eval([cVar ' = info.helper.zeros2d;'])
