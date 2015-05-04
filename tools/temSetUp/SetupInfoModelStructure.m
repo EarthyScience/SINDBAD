@@ -4,7 +4,7 @@ function [info]=SetupInfoModelStructure(info)
 pthModules=[info.paths.core 'Modules' filesep];
 pthCore=[info.paths.core 'core.m'];
 paramsOpt=info.opti.parNames;
-pthCodeGen=info.paths.genCode;
+
 
 [ModuleNames]=GetModuleNamesFromCore(pthCore);
 %ModuleNames=info.modules;
@@ -34,15 +34,6 @@ info.variables.all=unique(vertcat(AllInputs,AllOutputs));
 %(relevant for optimisation)
 [precs]=CheckPrecompAlways(precs,paramsOpt);
 
-
-%ctim=datevec(now);
-%tim=[num2str(ctim(1)) '_' num2str(ctim(2)) '_' num2str(ctim(3)) '_' num2str(ctim(4)) '_' num2str(ctim(5)) '_' num2str(round(ctim(6)))];
-tim=info.experimentName;
-
-[funh_core,funh_prcO]=WriteCode(pthCodeGen,tim,precs,modules);
-info.code.msi.core=funh_core;
-info.code.msi.preComp=funh_prcO;
-
 %define info model structure
 ms=struct;
 for i=1:length(modules)    
@@ -50,6 +41,17 @@ for i=1:length(modules)
 end
 info.code.ms=ms;
 info.code.preComp=precs;
+
+%ctim=datevec(now);
+%tim=[num2str(ctim(1)) '_' num2str(ctim(2)) '_' num2str(ctim(3)) '_' num2str(ctim(4)) '_' num2str(ctim(5)) '_' num2str(round(ctim(6)))];
+
+%pthCodeGen=info.paths.genCode;
+%tim=info.experimentName;
+%[funh_core,funh_prcO]=WriteCode(pthCodeGen,tim,precs,modules);
+%info.code.msi.core=funh_core;
+%info.code.msi.preComp=funh_prcO;
+
+[info]=WriteCode(precs,modules,info);
 
 [IsCompatible]=check_ModelIntegrity(info);
 

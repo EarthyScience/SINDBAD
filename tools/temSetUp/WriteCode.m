@@ -1,4 +1,7 @@
-function [funh_core,funh_prcO]=WriteCode(pthCodeGen,namestr,precs,modules)
+function [funh_core,funh_prcO]=WriteCode(precs,modules,info)
+
+pthCodeGen=info.paths.genCode;
+namestr=info.experimentName;
 
 %write two functions: precomp once and core (contains precomp always)
 
@@ -30,8 +33,7 @@ str='for i=1:info.forcing.size(2)';
 fprintf(fid, '%s\n', str);
 
 for j=1:length(modules)
-    if modules(j).doAlways==doAlways
-        
+    if modules(j).doAlways==doAlways        
         for i=1:length(modules(j).funCont)
             fprintf(fid, '%s\n', modules(j).funCont{i});
         end
@@ -48,6 +50,7 @@ fclose(fid);
 
 funh_core=str2func(name);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %write the precomp once
 CodePth=[pthCodeGen 'PrecO_' namestr '.m'];
@@ -76,5 +79,8 @@ fclose(fid);
 
 path(path,pthCodeGen);
 funh_prcO=str2func(name);
+
+info.code.msi.core=funh_core;
+info.code.msi.preComp=funh_prcO;
 
 end

@@ -46,11 +46,15 @@ X0 = f.PET(:,i) + p.SOIL.tAWC - s.wSM;
 %than just using precip
 
 %catch for division by zero
+Qsat = info.helper.zeros1d;
 valids = d.Temp.WBP > 0;
 
 % p.RunoffSat.alpha default ~0.5
 
-fx.Qsat(valids,i) =d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+%fx.Qsat(valids,i) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+Qsat(valids) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+
+fx.Qsat(:,i)=Qsat;
 
 d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
 

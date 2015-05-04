@@ -38,7 +38,10 @@ function [fe,fx,d,p] = Prec_RunoffInfE_MJ(f,fe,fx,s,d,p,info)
 
 % Qinf=P-(P.*fpar+(1-fpar).*min(P,min(I,R).*P./R));
 pInfCapacity	= p.SOIL.InfCapacity * ones(1,info.forcing.size(2));
-fx.Qinf         = f.Rain - (f.Rain .* f.FAPAR + (1 - f.FAPAR) .* min(f.Rain,min(pInfCapacity,f.RainInt) .* f.Rain ./ f.RainInt));
 
+Qinf            =     info.helper.zeros2d;
+tmp             =     f.RainInt > 0;
+Qinf(tmp)            = f.Rain(tmp) - (f.Rain(tmp) .* f.FAPAR(tmp) + (1 - f.FAPAR(tmp)) .* min(f.Rain(tmp),min(pInfCapacity(tmp),f.RainInt(tmp)) .* f.Rain(tmp) ./ f.RainInt(tmp)));
+fx.Qinf =Qinf;
 end
 
