@@ -20,57 +20,59 @@ for ii = 1:length(sstr)
         if strncmp(cVar,'d.Temp.',length('d.Temp.'))
             eval([cVar ' = info.helper.nan1d;'])
 %% CCycle - all pools
-        elseif strncmp(cVar,'fx.cEfflux',length('fx.cEfflux'))
+        elseif strncmp(cVar,'fx.cEfflux',length(cVar))
             poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
             startvalues     = repmat({info.helper.nan2d},1,numel(poolname));
             fx.cEfflux      = struct('value', startvalues,'maintenance',startvalues,'growth',startvalues);
             
-        elseif strncmp(cVar,'fe.CCycle.annkpool',length('fe.CCycle.annkpool'))
+        elseif strncmp(cVar,'fe.CCycle.annkpool',length(cVar))
             poolname            = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
             startvalues         = repmat({info.helper.nan2d},1,numel(poolname));
             fe.CCycle.annkpool  = struct('value', startvalues);
             
-        elseif strncmp(cVar,'fe.CCycle.kpool',length('fe.CCycle.kpool'))
+        elseif strncmp(cVar,'fe.CCycle.kpool',length(cVar))
             poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
             startvalues     = repmat({info.helper.nan2d},1,numel(poolname));
             fe.CCycle.kpool = struct('value', startvalues);
             
-        elseif strncmp(cVar,'fe.CCycle.DecayRate',length('fe.CCycle.DecayRate'))
+        elseif strncmp(cVar,'fe.CCycle.DecayRate',length(cVar))
             poolname            = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
             startvalues         = repmat({info.helper.nan2d},1,numel(poolname));
             fe.CCycle.DecayRate = struct('value', startvalues);
             
-        elseif strncmp(cVar,'fe.CCycle.kfEnvTs',length('fe.CCycle.kfEnvTs'))
+        elseif strncmp(cVar,'fe.CCycle.kfEnvTs',length(cVar))
             poolname            = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
             startvalues         = repmat({info.helper.nan2d},1,numel(poolname));
             fe.CCycle.kfEnvTs   = struct('effFLUX',startvalues,'xrtEFF',startvalues);
 %% CCycle - tranfers...
-        elseif strncmp(cVar,'fe.CCycle.ctransfer',length('fe.CCycle.ctransfer'))
+        elseif strncmp(cVar,'fe.CCycle.ctransfer',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,16);
             fe.CCycle.ctransfer = struct('value', startvalues);
             
 %% CCycle - vegetation...
-        elseif strncmp(cVar,'fx.cNpp',length('fx.cNpp'))
+        elseif strncmp(cVar,'fx.cNpp',length(cVar))
             startvalues     = repmat({info.helper.nan2d},1,4);
             fx.npp          = struct('value', startvalues);
             
-        elseif strncmp(cVar,'d.CAllocationVeg.c2pool',length('d.CAllocationVeg.c2pool'))
+        elseif strncmp(cVar,'d.CAllocationVeg.c2pool',length(cVar))
             startvalues             = repmat({info.helper.nan2d},1,4);
             d.CAllocationVeg.c2pool	= struct('value', startvalues);
             
             
-        elseif strncmp(cVar,'fe.AutoResp.km',length('fe.AutoResp.km'))
+        elseif strncmp(cVar,'fe.AutoResp.km',length(cVar))
             startvalues     = repmat({info.helper.nan2d},1,4);
             fe.AutoResp.km	= struct('value', startvalues);
             
-        elseif strncmp(cVar,'fe.AutoResp.kmYG',length('fe.AutoResp.kmYG'))
+        elseif strncmp(cVar,'fe.AutoResp.kmYG',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);
             fe.AutoResp.kmYG	= struct('value', startvalues);
             
-        elseif strncmp(cVar,'d.TempEffectAutoResp.fT',length('d.TempEffectAutoResp.fT'))
+        elseif strncmp(cVar,'d.TempEffectAutoResp.fT',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);
             d.TempEffectAutoResp.fT	= struct('value', startvalues);
-            
+%% CCycle - respiratory fluxes
+        elseif strncmp(cVar,'fx.ra',length(cVar)) || strncmp(cVar,'fx.rh',length(cVar))
+            eval([cVar ' = info.helper.zeros2d;'])
 %% all the rest...
         else
             % disp([cVar ' = info.helper.nan2d;'])
