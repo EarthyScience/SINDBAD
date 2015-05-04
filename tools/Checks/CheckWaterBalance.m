@@ -21,8 +21,8 @@ if info.checks.WBalance
     dS = diff(S,1,2);
 
     %subset I and O
-    I = I(:,1:end-1);
-    O = O(:,1:end-1);
+    I = I(:,2:end);
+    O = O(:,2:end);
 
     WB = abs(I - O - dS);
 

@@ -59,6 +59,7 @@ info.flags.checkForcing	= 1;
 info.flags.doSpinUp     = 1;
 info.flags.loadSpinUp   = 0;
 info.flags.genCode      = 1;
+info.flags.runGenCode   = 1;
 info.flags.saveStates   = 0; %not needed? we have 'info.variables.saveStates'
 
 % checks...

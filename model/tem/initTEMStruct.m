@@ -19,7 +19,9 @@ if nargin == 3
     % this should also be automatized...
     % inherit the state variables
     % carbon
-    s.cPools = sSU.cPools;
+    if~isempty(strmatch('cPools',fieldnames(sSU),'exact'))
+        s.cPools = sSU.cPools;
+    end
     % water
     d.Temp.pwSWE(:,1)     = sSU.wSWE(:,end);
     d.Temp.pwSM(:,1)      = sSU.wSM(:,end);
