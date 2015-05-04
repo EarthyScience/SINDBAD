@@ -1,4 +1,4 @@
-function [funh_core,funh_prcO]=WriteCode(precs,modules,info)
+function [info]=WriteCode(info)
 
 pthCodeGen=info.paths.genCode;
 namestr=info.experimentName;
@@ -19,7 +19,7 @@ doAlways=1;
 str=['function [fx,s,d] = ' name '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
 
-
+precs=info.code.preComp;
 for j=1:length(precs)
     if precs(j).doAlways==doAlways
         
@@ -32,10 +32,54 @@ end
 str='for i=1:info.forcing.size(2)';
 fprintf(fid, '%s\n', str);
 
-for j=1:length(modules)
-    if modules(j).doAlways==doAlways        
-        for i=1:length(modules(j).funCont)
-            fprintf(fid, '%s\n', modules(j).funCont{i});
+modules_fn=fieldnames(info.code.ms);
+for j=1:length(modules_fn)
+    eval(['cmodule=info.code.ms.' char(modules_fn(j)) ';']);
+    %if modules(j).doAlways==doAlways
+    if cmodule.doAlways==doAlways
+        
+        if strcmp(cmodule.funName,'PutStates_simple')
+            %%%%
+            cvars	= info.variables.rememberState;
+            for ii = 1:length(cvars)
+                cvar	= char(cvars(ii));
+                tmp     = splitZstr(cvar,'.');
+                if strncmp(cvar,'s.',2) || strncmp(cvar,'d.Temp.',7)
+                    sstr=['d.Temp.p' char(tmp(end)) ' = ' cvar ';'];
+                    %eval(['d.Temp.p' char(tmp(end)) ' = ' cvar ';'])
+                else
+                    %eval(['d.Temp.p' char(tmp(end)) ' = ' cvar '(:,i);'])
+                    sstr=['d.Temp.p' char(tmp(end)) ' = ' cvar '(:,i);'];
+                end
+                fprintf(fid, '%s\n', sstr);
+            end
+            
+            cvars = info.variables.saveState;
+            for ii = 1:length(cvars)
+                cvar    = char(cvars(ii));
+                tmp     = splitZstr(cvar,'.');
+                tmpVN   = char(tmp(end));
+                
+                if strcmp(tmpVN,'value');
+                    tmpVN   = [char(tmp(end-1)) '.' char(tmp(end))];
+                end
+                
+                if strncmp(cvar,'s.',2)
+                    %eval(['d.statesOut.' tmpVN '(:,i) = ' cvar ';'])
+                    sstr=['d.statesOut.' tmpVN '(:,i) = ' cvar ';'];
+                    fprintf(fid, '%s\n', sstr);
+                end
+                
+                
+            end
+            %%%%%
+        else
+            
+            %for i=1:length(modules(j).funCont)
+            for i=1:length(cmodule.funCont)
+                %fprintf(fid, '%s\n', modules(j).funCont{i});
+                fprintf(fid, '%s\n', cmodule.funCont{i});
+            end
         end
     end
 end

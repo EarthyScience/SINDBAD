@@ -42,6 +42,7 @@ It(v==0)=It2(v==0);
 tmp = Ic+It;
 tmp(f.Rain == 0) = 0;
 fx.ECanop = tmp;
+fx.Qinf = info.helper.zeros2d;
 palpha              = p.SoilEvap.alpha * ones(1,info.forcing.size(2));
 tmp                 = f.PET .* palpha .* (1 - f.FAPAR);
 tmp(tmp<0)          = 0;

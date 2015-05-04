@@ -51,7 +51,7 @@ info.code.preComp=precs;
 %info.code.msi.core=funh_core;
 %info.code.msi.preComp=funh_prcO;
 
-[info]=WriteCode(precs,modules,info);
+[info]=WriteCode(info);
 
 [IsCompatible]=check_ModelIntegrity(info);
 

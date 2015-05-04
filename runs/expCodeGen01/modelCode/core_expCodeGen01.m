@@ -160,27 +160,24 @@ end
 for ii = 5:14
 fx.rh(:,i)	= fx.rh(:,i) + fx.cEfflux(ii).value(:,i);
 end
-cvars	= info.variables.rememberState;
-for ii = 1:length(cvars)
-cvar	= char(cvars(ii));
-tmp     = splitZstr(cvar,'.');
-if strncmp(cvar,'s.',2) || strncmp(cvar,'d.Temp.',7)
-eval(['d.Temp.p' char(tmp(end)) ' = ' cvar ';'])
-else
-eval(['d.Temp.p' char(tmp(end)) ' = ' cvar '(:,i);'])
-end
-end
-cvars = info.variables.saveState;
-for ii = 1:length(cvars)
-cvar    = char(cvars(ii));
-tmp     = splitZstr(cvar,'.');
-tmpVN   = char(tmp(end));
-if strcmp(tmpVN,'value');
-tmpVN   = [char(tmp(end-1)) '.' char(tmp(end))];
-end
-if strncmp(cvar,'s.',2)
-eval(['d.statesOut.' tmpVN '(:,i) = ' cvar ';'])
-end
-end
+d.Temp.pBGME = d.SoilMoistEffectRH.BGME(:,i);
+d.Temp.pwSM = s.wSM;
+d.statesOut.wGW(:,i) = s.wGW;
+d.statesOut.wSM(:,i) = s.wSM;
+d.statesOut.wSWE(:,i) = s.wSWE;
+d.statesOut.cPools(1).value(:,i) = s.cPools(1).value;
+d.statesOut.cPools(2).value(:,i) = s.cPools(2).value;
+d.statesOut.cPools(3).value(:,i) = s.cPools(3).value;
+d.statesOut.cPools(4).value(:,i) = s.cPools(4).value;
+d.statesOut.cPools(5).value(:,i) = s.cPools(5).value;
+d.statesOut.cPools(6).value(:,i) = s.cPools(6).value;
+d.statesOut.cPools(7).value(:,i) = s.cPools(7).value;
+d.statesOut.cPools(8).value(:,i) = s.cPools(8).value;
+d.statesOut.cPools(9).value(:,i) = s.cPools(9).value;
+d.statesOut.cPools(10).value(:,i) = s.cPools(10).value;
+d.statesOut.cPools(11).value(:,i) = s.cPools(11).value;
+d.statesOut.cPools(12).value(:,i) = s.cPools(12).value;
+d.statesOut.cPools(13).value(:,i) = s.cPools(13).value;
+d.statesOut.cPools(14).value(:,i) = s.cPools(14).value;
 end
 end
