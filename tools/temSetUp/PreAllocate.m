@@ -19,10 +19,11 @@ for ii = 1:length(sstr)
 %% d.Temp. ...
         if strncmp(cVar,'d.Temp.',length('d.Temp.'))
             eval([cVar ' = info.helper.nan1d;'])
+            
 %% CCycle - all pools
         elseif strncmp(cVar,'fx.cEfflux',length(cVar))
             poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
-            startvalues     = repmat({info.helper.nan2d},1,numel(poolname));
+            startvalues     = repmat({info.helper.zeros2d},1,numel(poolname));
             fx.cEfflux      = struct('value', startvalues,'maintenance',startvalues,'growth',startvalues);
             
         elseif strncmp(cVar,'fe.CCycle.annkpool',length(cVar))
@@ -51,13 +52,12 @@ for ii = 1:length(sstr)
             
 %% CCycle - vegetation...
         elseif strncmp(cVar,'fx.cNpp',length(cVar))
-            startvalues     = repmat({info.helper.nan2d},1,4);
-            fx.npp          = struct('value', startvalues);
+            startvalues     = repmat({info.helper.zeros2d},1,4);
+            fx.cNpp         = struct('value', startvalues);
             
         elseif strncmp(cVar,'d.CAllocationVeg.c2pool',length(cVar))
             startvalues             = repmat({info.helper.nan2d},1,4);
             d.CAllocationVeg.c2pool	= struct('value', startvalues);
-            
             
         elseif strncmp(cVar,'fe.AutoResp.km',length(cVar))
             startvalues     = repmat({info.helper.nan2d},1,4);
@@ -70,8 +70,9 @@ for ii = 1:length(sstr)
         elseif strncmp(cVar,'d.TempEffectAutoResp.fT',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);
             d.TempEffectAutoResp.fT	= struct('value', startvalues);
+            
 %% CCycle - respiratory fluxes
-        elseif strncmp(cVar,'fx.ra',length(cVar)) || strncmp(cVar,'fx.rh',length(cVar))
+        elseif strncmp(cVar,'fx.ra',length(cVar)) || strncmp(cVar,'fx.rh',length(cVar)) || strncmp(cVar,'fx.npp',length(cVar))
             eval([cVar ' = info.helper.zeros2d;'])
 %% all the rest...
         else
