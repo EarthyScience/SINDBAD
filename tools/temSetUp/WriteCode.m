@@ -11,6 +11,11 @@ if~exist(pthCodeGen,'dir'),mkdir(pthCodeGen);end
 
 CodePth=[pthCodeGen 'core_' namestr '.m'];
 [pathstr, name, ext] = fileparts(CodePth);
+
+if exist(CodePth,'file')
+    delete(CodePth);
+end
+
 fid = fopen(CodePth, 'wt');
 
 %write the core
@@ -99,6 +104,12 @@ funh_core=str2func(name);
 %write the precomp once
 CodePth=[pthCodeGen 'PrecO_' namestr '.m'];
 [pathstr, name, ext] = fileparts(CodePth);
+
+if exist(CodePth,'file')
+    delete(CodePth);
+end
+
+
 fid = fopen(CodePth, 'wt');
 
 str=['function [fe,fx,d,p]=' name '(f,fe,fx,s,d,p,info);'];

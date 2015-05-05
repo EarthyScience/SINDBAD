@@ -29,7 +29,7 @@ if info.flags.saveStates == 2
 end
 
 if info.checks.WBalance
-    wbp                         = {'s.wGW','s.wSWE','s.wSM'};
+    wbp                         = {'s.wGW','s.wSWE','s.wSM','s.wGWR'};
     tmp                         = unique(horzcat(wbp,info.variables.saveState));
     info.variables.saveState	= tmp;
 end

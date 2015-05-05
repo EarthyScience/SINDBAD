@@ -89,6 +89,9 @@ It(v==0)=It2(v==0);
 tmp = Ic+It;
 tmp(f.Rain == 0) = 0;
 
+v=tmp > f.Rain;
+tmp(v) = f.Rain(v);
+
 fx.ECanop = tmp;
 
 
