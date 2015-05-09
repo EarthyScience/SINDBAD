@@ -42,7 +42,7 @@ else
             for iii=1:length(modules)
                 eval(['tmp2=strcmp(ProblemVars(ii),info.code.ms.' char(modules(iii)) '.funInput);'])
                 if sum(tmp2)>0
-                    disp([char(ProblemVars(ii)) ' is input to ' char(modules(iii)) ' but is no output'])
+                    disp([ProblemVars{ii} ' is input to ' modules{iii} ' but is no output'])
                 end
             end
             
@@ -50,7 +50,7 @@ else
             for iii=1:length(info.code.preComp)
                 tmp2=strcmp(ProblemVars(ii),info.code.preComp(iii).funInput);
                 if sum(tmp2)>0
-                    disp([char(ProblemVars(ii)) ' is input to ' info.code.preComp(iii).funName ' but is no output'])
+                    disp([ProblemVars{ii} ' is input to ' info.code.preComp(iii).funName{1} ' but is no output'])
                 end
                 
             end
@@ -58,9 +58,9 @@ else
         else
             %is an output
             for iii=1:length(modules)
-                eval(['tmp2=strcmp(ProblemVars(ii),info.code.ms.' char(modules(iii)) '.funOutput);'])
+                eval(['tmp2=strcmp(ProblemVars(ii),info.code.ms.' modules{iii} '.funOutput);'])
                 if sum(tmp2)>0
-                    disp([char(ProblemVars(ii)) ' is output of ' char(modules(iii)) ' but is no input'])
+                    disp([ProblemVars{ii} ' is output of ' modules{iii} ' but is no input'])
                 end
             end
             
@@ -68,7 +68,7 @@ else
             for iii=1:length(info.code.preComp)
                 tmp2=strcmp(ProblemVars(ii),info.code.preComp(iii).funOutput);
                 if sum(tmp2)>0
-                    disp([char(ProblemVars(ii)) ' is output of ' info.code.preComp(iii).funName ' but is no input'])
+                    disp([ProblemVars{ii} ' is output of ' info.code.preComp(iii).funName{1} ' but is no input'])
                 end
                 
             end

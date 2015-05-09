@@ -68,11 +68,41 @@ if info.flags.doSpinUp
     % run the model for spin-up for soil C pools @ equilibrium
     % ---------------------------------------------------------------------
     if~isempty(strmatch('CCycle_CASA',info.approaches,'exact'))
-        [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        if info.spinUp.cPools > 0
+            if info.flags.doSpinUpFast == 1
+                [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+            elseif info.flags.doSpinUpFast == 0
+                if info.flags.runGenCode
+                    error('doSpinUp : not implemented yet!')
+                else
+                    for ij = 1:info.spinUp.cPools
+                        for ii = 1:infoSpin.forcing.size(2)
+                            [fxSU,sSU,dSU]    = infoSpin.code.ms.AutoResp.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+                            [fxSU,sSU,dSU]    = infoSpin.code.ms.CCycle.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+                        end
+                    end
+                end
+            end
+        end
+        % force equilibrium
+        % @NC: for spatial runs this can be optimized by subsampling the
+        % data only for gridcells where equilibrium is not achieved...
+        if info.flags.forceNullNEP == 1
+            NEP_LIM = info.flags.spinUpLimNEP;
+            MAXITER = info.flags.spinUpMaxIter;
+            fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
+            k       = 0;
+            % disp(num2str([k min(fNEP) max(fNEP)]))
+            while max(abs(fNEP)) > NEP_LIM && k <= MAXITER % @NC: double check this when optimizing...
+                k               = k + 1;
+                [fxSU,sSU,dSU]  = CASA_forceEquilibrium(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+                fNEP            = sum(fxSU.npp,2)-sum(fxSU.rh,2);
+                % disp(num2str([k min(fNEP) max(fNEP)]))
+            end
+        end
     elseif isempty(strmatch('CCycle_none',info.approaches,'exact'))
         error('No spinUp definition for current setup.')
     end
-    
     % ---------------------------------------------------------------------
     % save the spinup output?
     % ---------------------------------------------------------------------

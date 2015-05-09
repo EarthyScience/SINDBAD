@@ -5,9 +5,9 @@ function [fx,s,d] = PutStates_AggcPools(f,fe,fx,s,d,p,info,i)
 
 cvars = info.variables.saveState;
 for ii = 1:length(cvars)
-    cvar    = char(cvars(ii));
+    cvar    = cvars{ii};
     tmp     = splitZstr(cvar,'.');
-    tmpVN   = char(tmp(end));
+    tmpVN   = tmp{end};
     if strncmp(cvar,'s.',2) && strcmpi(cvar(3),'c') && ~strncmp(cvar(3:end),'cPools',6)
         poolname                    = cvar(3:end);
         x                           = CMIP5cPools(info,s,poolname);

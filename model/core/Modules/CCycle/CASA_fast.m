@@ -23,8 +23,12 @@ MTF	= fe.CCycle.MTF;
 % START fCt
 fCt	= struct('value', repmat({zeros(info.forcing.size(1),info.forcing.size(2))},1,numel(s.cPools)));
 
+% helpers...
+sT  = s;
+fxT = fx;
+
 % ORDER OF CALCULATIONS
-j_vec	= 1:14; % @NC: we need to recheck the order once implicit versus explicit are analysed.
+j_vec   = [1:11 13 12 14];
 % SOLVE FOR EQUILIBRIUM
 for j = j_vec
     % CALCULATE LOSSES AND GAINS
@@ -35,10 +39,11 @@ for j = j_vec
             LtX             = fe.CCycle.DecayRate(j).value;
             LtX(LtX > 1)	= 1;
             % EXTRA LOSSES THAT DO NOT GO TO THE LITTER SOIL POOLS (RA)
-            LtX_extra                   = 1 - fe.AutoResp.kmYG(j).value;
+            LtX_extra                   = 1 - fe.AutoResp.km4su(j).value;
             LtX_extra(LtX_extra > 1)	= 1;
             % GAINS IN THE SAME POOL FROM NPP
-            GtX	= fx.cNpp(j).value .* p.AutoResp.YG;
+            GtX	= d.CAllocationVeg.c2pool(j).value .* fx.gpp .* p.AutoResp.YG;
+                        
             % ATTRIBUTE
             eval(['Lt' num2str(j) '         = LtX;'])
             eval(['Lt' num2str(j) '_extra	= LtX_extra;'])
@@ -256,20 +261,32 @@ for j = j_vec
     piA2        = sum(piA2, 2);
     
     % FINAL CARBON AT POOL j
-    Ct              = Co .* piA1 + sumB_piA .* piA2;
-    cPools(j).value	= Ct;
+    Ct                  = Co .* piA1 + sumB_piA .* piA2;
+    s.cPools(j).value	= Ct;
+%     sT.cPools(j).value	= s.cPools(j).value;
+    sT.cPools	= s.cPools;
     
     % CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
     % POOLS CALCULATIONS
     for ii = 1:info.forcing.size(2)
 
         % CALCULATE CARBON FLUXES
-        [fx,s,d] = CCycle_CASA(f,fe,fx,s,d,p,info,ii);
+        [fxT,sT]    = info.code.ms.AutoResp.fun(f,fe,fxT,sT,d,p,info,ii);
+        [fxT,sT]    = info.code.ms.CCycle.fun(f,fe,fxT,sT,d,p,info,ii);
+        
         
         % CHECK CARBON POOLS
         
         % FEED fCt
-        fCt(j).value(:,ii)	= s.cPools(j).value;
+        fCt(j).value(:,ii)	= sT.cPools(j).value;
     end
 end
 
+% make the fx consistent with the pools
+for ii = 1:info.forcing.size(2)
+    [fx,s,d]    = info.code.ms.AutoResp.fun(f,fe,fx,s,d,p,info,ii);
+    [fx,s,d]    = info.code.ms.CCycle.fun(f,fe,fx,s,d,p,info,ii);
+end
+
+
+end % function

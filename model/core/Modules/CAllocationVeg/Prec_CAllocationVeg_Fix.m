@@ -30,6 +30,9 @@ function [fe,fx,d,p] = Prec_CAllocationVeg_Fix(f,fe,fx,s,d,p,info)
 % for ii = {'cf2Root','cf2Wood','cf2Leaf'}
 %     d.CAllocationVeg.(ii{1})	= p.CAllocationVeg.(ii{1}) .* ones(size(f.Tair));
 % end
+d.CAllocationVeg.cf2Root	= p.CAllocationVeg.cf2Root .* ones(size(f.Tair));
+d.CAllocationVeg.cf2Wood	= p.CAllocationVeg.cf2Wood .* ones(size(f.Tair));
+d.CAllocationVeg.cf2Leaf	= p.CAllocationVeg.cf2Leaf .* ones(size(f.Tair));
 
 for ii = 1:info.forcing.size(2)
     % adjust allocation
@@ -52,6 +55,5 @@ end
 if any(p.CAllocationVeg.cf2Wood(p.VEG.TreeCover == 0) > 0)
     error('SINDBAD : Prec_CAllocationVeg_Fix : TreeCover == 0 & CAllocationVeg.cf2Wood > 0')
 end
-
 
 end % function

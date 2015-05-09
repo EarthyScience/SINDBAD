@@ -15,14 +15,14 @@ if info.checks.CBalance
     O = fx.ra + fx.rh;
 
     %pools
-    S = [info.helper.zeros1d d.statesOut.cTotal];
+    S = d.statesOut.cTotal;
 
     %calc diff
     dS = diff(S,1,2);
 
-%     %subset I and O
-%     I = I(:,1:end-1);
-%     O = O(:,1:end-1);
+    %subset I and O
+    I = I(:,2:end);
+    O = O(:,2:end);
 
     CB = abs(I - O - dS);
 

@@ -11,10 +11,10 @@ function s = initCpools(info,s)
 % #########################################################################
 
 % pool names
-% oldpoolname	= {'ROOT',          'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD', 'LiRoot'};
-% oldpoolid     = [      1               2       3         4         5         6         7        8            9          10      11     12        13];
+% oldpoolname	= {'ROOT',          'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiRoot','LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
+% oldpoolid     = [      1               2       3         4         5         6         7        8        13           9          10      11     12];
 poolname        = {'ROOT', 'ROOTC', 'WOOD', 'LEAF', 'M_LEAF', 'S_LEAF', 'M_ROOT', 'S_ROOT', 'LiWOOD', 'LiROOT', 'LEAF_MIC', 'SOIL_MIC', 'SLOW', 'OLD'};
-% newpoolid     = [      1       2       3       4         5         6         7         8         9        10          11          12      13     14];
+% newpoolid     = [      1       2       3       4         5         6         7         8        9        10          11          12      13     14];
 startvalues     = repmat({info.helper.zeros1d},1,numel(poolname));
 s.cPools        = struct('value', startvalues);
 

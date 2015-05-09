@@ -154,7 +154,7 @@ fe.CCycle.kfEnvTs(13).value	= fe.CCycle.kpool(13).value .* fe.TempEffectRH.fT;
 fe.CCycle.kfEnvTs(14).value	= fe.CCycle.kpool(14).value	.* fe.TempEffectRH.fT;
 
 for ii = 5:14
-    fe.CCycle.kfEnvTs(5).value	= max(min(fe.CCycle.kfEnvTs(ii).value,1),0);
+    fe.CCycle.kfEnvTs(ii).value	= max(min(fe.CCycle.kfEnvTs(ii).value,1),0);
 end
 
 end % function

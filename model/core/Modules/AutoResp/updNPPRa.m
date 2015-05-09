@@ -41,6 +41,8 @@ function [fx,s,d] = updNPPRa(f,fe,fx,s,d,p,info,i)
 
 % compute total respiration and npp for each vegetation pool and for the
 % total fluxes
+fx.npp(:,i) = 0;
+fx.ra(:,i)  = 0;
 for ii = 1:4
     % total respiration per pool: R_a = R_m + R_g
     fx.cEfflux(ii).value(:,i)	= fx.cEfflux(ii).maintenance(:,i) + fx.cEfflux(ii).growth(:,i);

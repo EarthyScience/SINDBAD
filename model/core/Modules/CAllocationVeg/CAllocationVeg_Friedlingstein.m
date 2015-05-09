@@ -86,5 +86,4 @@ d	= adjAllocation(f,fe,fx,s,d,p,info,i);
 % check allocation
 checkCAllocationVeg(f,fe,fx,s,d,p,info,i);
 
-
 end % function

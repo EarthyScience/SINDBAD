@@ -63,9 +63,9 @@ for ii = 1:length(sstr)
             startvalues     = repmat({info.helper.nan2d},1,4);
             fe.AutoResp.km	= struct('value', startvalues);
             
-        elseif strncmp(cVar,'fe.AutoResp.kmYG',length(cVar))
+        elseif strncmp(cVar,'fe.AutoResp.km4su',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);
-            fe.AutoResp.kmYG	= struct('value', startvalues);
+            fe.AutoResp.km4su	= struct('value', startvalues);
             
         elseif strncmp(cVar,'d.TempEffectAutoResp.fT',length(cVar))
             startvalues         = repmat({info.helper.nan2d},1,4);

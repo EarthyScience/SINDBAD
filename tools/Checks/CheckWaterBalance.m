@@ -15,7 +15,7 @@ if info.checks.WBalance
     O = fx.ECanop + fx.ESoil + fx.Transp + fx.Subl + fx.Qb + fx.Qinf + fx.Qint + fx.Qsat;
 
     %sum pools
-    S = d.statesOut.wGWR + d.statesOut.wGW + d.statesOut.wSWE + d.statesOut.wSM;
+	S = d.statesOut.wGWR + d.statesOut.wGW + d.statesOut.wSWE + d.statesOut.wSM;
 
     %calc diff
     dS = diff(S,1,2);

@@ -39,7 +39,7 @@ POTcOUT	= zeros(info.forcing.size(1),numel(s.cPools));
 % CALCULATE FOLIAGE AND ROOT CARBON LOST AS LITTER AND DECREMENT PLANT
 % CARBON POOLS
 for ii = 1:4
-    POTcOUT(:,ii)  = s.cPools(ii).value .* fe.CCycle.DecayRate(ii).value(:,i);
+    POTcOUT(:,ii)  = min(s.cPools(ii).value,s.cPools(ii).value .* fe.CCycle.DecayRate(ii).value(:,i));
     s.cPools(ii).value	= s.cPools(ii).value - POTcOUT(:,ii);
 end
 
@@ -57,7 +57,9 @@ s.cPools(10).value	= s.cPools(10).value + POTcOUT(:,2);
 
 % DETERMINE MAXIMUM FLUXES FROM EACH CARBON POOL
 for ii = 5:14
-    POTcOUT(:,ii)   = s.cPools(ii).value .* fe.CCycle.kfEnvTs(ii).value(:,i) .* BGME;
+    POTcOUT(:,ii)   = min(s.cPools(ii).value, s.cPools(ii).value .* fe.CCycle.kfEnvTs(ii).value(:,i) .* BGME);
+    % make sure the soil respiratory fluxes are 0
+	fx.cEfflux(ii).value(:,i)	= 0;
 end
 
 % COMPUTE CARBON FLUXES IN THE SOIL
@@ -73,6 +75,7 @@ for ij = 1:numel(flux_order)
 end
 
 % feed the rh fluxes
+fx.rh(:,i)  = 0;
 for ii = 5:14
 	fx.rh(:,i)	= fx.rh(:,i) + fx.cEfflux(ii).value(:,i);
 end

@@ -18,7 +18,7 @@ else
     p_o=struct;
     
     for i=1:length(SBvariablesSave)
-        cstr=char(SBvariablesSave(i));
+        cstr=SBvariablesSave{i};
         
         %find the first'.'
         a=strfind(cstr,'.');

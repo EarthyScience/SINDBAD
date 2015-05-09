@@ -81,7 +81,7 @@ for ii = 1:4 % for all the vegetation pools
     km                          = 1 ./ p.AutoResp.C2N(ii).value .* RMN .* d.TempEffectAutoResp.fT(ii).value;
     kd                          = p.AutoResp.Fd(ii).value;
     fe.AutoResp.km(ii).value	= km .* kd;
-    fe.AutoResp.kmYG(ii).value	= fe.AutoResp.km(ii).value .* (1 - p.AutoResp.YG);
+    fe.AutoResp.km4su(ii).value	= fe.AutoResp.km(ii).value .* (1 - p.AutoResp.YG);
 end
 
 end % function

@@ -55,7 +55,7 @@ RMN     = p.AutoResp.RMN ./ info.timeScale.stepsPerDay;
 % km is the maintenance respiration coefficient (d-1)
 for ii = 1:4 % for all the vegetation pools
     fe.AutoResp.km(ii).value	= 1 ./ p.AutoResp.C2N(ii).value .* RMN .* d.TempEffectAutoResp.fT(ii).value;
-    fe.AutoResp.kmYG(ii).value	= fe.AutoResp.km(ii).value;
+    fe.AutoResp.km4su(ii).value	= fe.AutoResp.km(ii).value;
 end
 
 end % function
