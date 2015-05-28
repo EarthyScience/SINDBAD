@@ -1,14 +1,15 @@
 function x2 = mkSpinUpYear(x,years,info)
-
 x2      = zeros(info.forcing.size(1),floor(info.timeScale.stepsPerYear));
-yearvec	= mkHvec(years);
-
+den     = x2;
+yearvec	= mkHvec(unique(years));
 for i = yearvec
     tmp = x(:,years == i);
     if isleapyear(i)
         tmp(:,29+31)  = [];
     end
-    x2 = x2 + tmp;
+    den                 = den + double(isnan(tmp)==0);
+    tmp(isnan(tmp)==1)  = 0;
+    x2                  = x2+tmp;
 end
-x2 = x2 ./ numel(yearvec);
+x2	= x2 ./ den;
 end % function

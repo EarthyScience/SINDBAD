@@ -28,7 +28,7 @@ info.experimentName	= ctim(1:end-1);
 info.forcing.importFun  = '';
 info.forcing.size       = [Inf Inf];
 % optimization stuff
-info.opti.parNames      = {};
+info.optem.params.names      = {};
 % get the path to the core and to the tem - the function temInfo as to be
 % in the same folder as the tem itself
 tmp             = mfilename('fullpath');
@@ -40,7 +40,7 @@ info.paths.core = strrep(tmp(1:ndx(end)-1),['tools' filesep 'temSetUp'],['model'
 %info.checks.numeric     = 1; %should be a cellstr like 'all', or better {fe,fx,s,d'}
 info.checks.numeric     = {'fe','fx','s','d'}; %should be a cellstr like 'all', or better {fe,fx,s,d'}
 %info.checks.bounds      = 1; %should be a cellstr like 'all', or better {fe,fx,s,d'}
-info.checks.bounds      = {'fe','fx','s','d'}; % requires 'info.variables.bounds' see CheckBounds.m
+info.checks.bounds      = {'fe','fx','s','d'}; % requires 'info.variables.bounds' see CheckBoundZ.m
 %info.checks.ms          = 1; %not needed? will always be done during code interpretation
 %info.flags.CheckWBalance= 1; %
 
@@ -53,7 +53,7 @@ info.checks.CBalance= 1;
 %info.flags.RanOK        = 1;
 
 % flags for "how to run the model"
-info.flags.opti         = 1;
+info.flags.opti         = 0;
 info.flags.forwardRun	= 0;
 info.flags.checkForcing	= 1;
 info.flags.doSpinUp     = 1;
@@ -65,6 +65,7 @@ info.flags.spinUpMaxIter= 1000;
 info.flags.genCode      = 1;
 info.flags.runGenCode   = 1;
 info.flags.saveStates   = 0; %not needed? we have 'info.variables.saveStates'
+info.flags.savePriors   = 0;
 
 % checks...
 
@@ -104,7 +105,7 @@ info.timeScale.stepsPerYear	= 365.25 / info.timeScale.timeStep;
 info.paths.run      = strrep(info.paths.core,['model' filesep 'core'],['runs' filesep info.experimentName]);
 info.paths.genCode	= [info.paths.run 'modelCode' filesep];
 % restart files
-info.SpinUpFile     = [info.paths.run 'output' filesep 'restart.mat'];
+info.paths.SpinUpFile     = [info.paths.run 'output' filesep 'restart.mat'];
 
 end % function
 

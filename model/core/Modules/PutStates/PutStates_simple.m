@@ -27,5 +27,10 @@ for ii = 1:length(cvars)
     end
 end
 
+% dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty
+fx.reco(:,i) = fx.rh(:,i) + fx.ra(:,i);
+fx.nee(:,i)	= fx.gpp(:,i) - fx.reco(:,i);
+
+
 end % function
 

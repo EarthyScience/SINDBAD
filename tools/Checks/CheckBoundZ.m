@@ -1,4 +1,4 @@
-function [BNDcheckFlag] = CheckBounds(f,fe,fx,s,d,p,info)
+function [BNDcheckFlag] = CheckBoundZ(f,fe,fx,s,d,p,info)
 
 %checks if variables are within predefined bounds. it checks the variables
 %provided in info.checks.bounds which can either be:
