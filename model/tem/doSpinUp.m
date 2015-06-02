@@ -43,7 +43,7 @@ if info.flags.doSpinUp
     [fxSU,feSU,dSU,sSU]	= initTEMStruct(infoSpin);
 
     % ---------------------------------------------------------------------
-    % Precomputations
+    % Precomputations DO ONLY PRECOMP ALWAYS HERE
     % ---------------------------------------------------------------------
     if info.flags.runGenCode
         [feSU,fxSU,dSU,p]	= infoSpin.code.msi.preComp(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
