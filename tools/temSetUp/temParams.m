@@ -108,30 +108,30 @@ end
 
 % run precomputations of Terrain and SOIL and remove them from the model
 % structure
-fields2rm       = {'Terrain','SOIL'};
-ndx             = [];
-ndx2            = [];
-f               = [];
-fe              = [];
-fx              = [];
-s               = [];
-d               = [];
-for i = 1:numel(fields2rm)
-    % identify the module
-    prc = strmatch(fields2rm{i},info.modules,'exact');
-    ndx	= [ndx prc];
-    % indentify the precomputation
-    prc	= strmatch(['Prec_' fields2rm{i} '_'],{info.code.preComp(:).funName});
-    if isempty(prc); continue; end
-    % run the precomputations
-    [fe,fx,d,params]	= info.code.preComp(prc).fun(f,fe,fx,s,d,params,info);
-    ndx2                = [ndx2 prc];
-end
+% fields2rm       = {'Terrain','SOIL'};
+% ndx             = [];
+% ndx2            = [];
+% f               = [];
+% fe              = [];
+% fx              = [];
+% s               = [];
+% d               = [];
+% for i = 1:numel(fields2rm)
+%     % identify the module
+%     prc = strmatch(fields2rm{i},info.modules,'exact');
+%     ndx	= [ndx prc];
+%     % indentify the precomputation
+%     prc	= strmatch(['Prec_' fields2rm{i} '_'],{info.code.preComp(:).funName});
+%     if isempty(prc); continue; end
+%     % run the precomputations
+%     [fe,fx,d,params]	= info.code.preComp(prc).fun(f,fe,fx,s,d,params,info);
+%     ndx2                = [ndx2 prc];
+% end
 % remove the fields
-info.code.ms            = rmfield(info.code.ms, fields2rm);
-info.code.preComp(ndx2) = [];
-info.approaches(ndx)    = [];
-info.modules(ndx)       = [];
+% info.code.ms            = rmfield(info.code.ms, fields2rm);
+% info.code.preComp(ndx2) = [];
+% info.approaches(ndx)    = [];
+% info.modules(ndx)       = [];
 info.params             = params; % set the parameters
 info.params.priors      = info4optem;
 end % function

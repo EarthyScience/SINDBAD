@@ -158,7 +158,7 @@ fprintf(fid, '%s\n', str);
 precs=info.code.preComp;
 for j=1:length(precs)
     cn=precs(j).funName;
-    tmp=strsplit(cn,'_');
+    tmp=strsplit(char(cn),'_');
     cn=tmp(2);
     tf=strcmp(cn,tmodules);
     if precs(j).doAlways==doAlways && max(tf)==1
@@ -256,7 +256,7 @@ doAlways=0;
 for j=1:length(precs)
     
     cn=precs(j).funName;
-    tmp=strsplit(cn,'_');
+    tmp=strsplit(char(cn),'_');
     cn=tmp(2);
     tf=strcmp(cn,tmodules);
     if precs(j).doAlways==doAlways && max(tf)==1

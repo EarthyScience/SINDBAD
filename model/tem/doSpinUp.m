@@ -1,20 +1,20 @@
-function [sSU,dSU] = doSpinUp(f,p,info,SUData)
+function [sSU,dSU] = doSpinUp(f,p,info,SUData,precOdata)
 % #########################################################################
 % PURPOSE	: do the spinup of the tem (carbon and water pools):
-% 
+%
 % REFERENCES:
-% 
+%
 % CONTACT	: ncarval
-% 
+%
 % INPUT
-% info      : structure info 
-% 
+% info      : structure info
+%
 % OUTPUT
-% sSU       : state variables 
+% sSU       : state variables
 % dSU       : diagnostics
-% 
+%
 % NOTES:
-% 
+%
 % #########################################################################
 
 if info.flags.doSpinUp
@@ -41,49 +41,82 @@ if info.flags.doSpinUp
     % Pre-allocate fx,fe,d,s for the spinup runs
     % ---------------------------------------------------------------------
     [fxSU,feSU,dSU,sSU]	= initTEMStruct(infoSpin);
-
+    
     % ---------------------------------------------------------------------
     % Precomputations DO ONLY PRECOMP ALWAYS HERE
     % ---------------------------------------------------------------------
-    if info.flags.runGenCode
-        [feSU,fxSU,dSU,p]	= infoSpin.code.msi.preComp(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-    else
-        for prc = 1:numel(infoSpin.code.preComp)
-            [feSU,fxSU,dSU,p]	= infoSpin.code.preComp(prc).fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-        end
-    end
+    DoPrecO=1;
+    DoCore=0;
+    Use4SpinUp=0;
+    [fxSU,tmp,dSU,feSU,p]=RunModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,DoPrecO,DoCore,Use4SpinUp);
+    
+    
+    %     if info.flags.runGenCode
+    %         [feSU,fxSU,dSU,p]	= infoSpin.code.msi.preComp(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    %     else
+    %         for prc = 1:numel(infoSpin.code.preComp)
+    %             [feSU,fxSU,dSU,p]	= infoSpin.code.preComp(prc).fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    %         end
+    %     end
     % ---------------------------------------------------------------------
     % run the model for spin-up for NPP and soil water pools @ equilibrium
     % ---------------------------------------------------------------------
-    if info.flags.runGenCode
-        for ij = 1:info.spinUp.wPools
-            [fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-        end
-    else
-        for ij = 1:info.spinUp.wPools
-            [fxSU,sSU,dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
-        end
-    end    
+    DoPrecO=0;
+    DoCore=1;
+    Use4SpinUp=0;
+    for ij = 1:info.spinUp.wPools
+        [fxSU,sSU,dSU,feSU,p]=RunModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,DoPrecO,DoCore,Use4SpinUp);
+        %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    end
+    
+    %
+    %     if info.flags.runGenCode
+    %         for ij = 1:info.spinUp.wPools
+    %             [fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    %         end
+    %     else
+    %         for ij = 1:info.spinUp.wPools
+    %             [fxSU,sSU,dSU] = core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+    %         end
+    %     end
     % ---------------------------------------------------------------------
     % run the model for spin-up for soil C pools @ equilibrium
     % ---------------------------------------------------------------------
+         DoPrecO=0;
+         DoCore=1;
+         Use4SpinUp=1;
+    
     if~isempty(strmatch('CCycle_CASA',info.approaches,'exact'))
         if info.spinUp.cPools > 0
             if info.flags.doSpinUpFast == 1
                 [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
             elseif info.flags.doSpinUpFast == 0
-                if info.flags.runGenCode
-                    error('doSpinUp : not implemented yet!')
-                else
-                    for ij = 1:info.spinUp.cPools
-                        for ii = 1:infoSpin.forcing.size(2)
-                            [fxSU,sSU,dSU]    = infoSpin.code.ms.AutoResp.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
-                            [fxSU,sSU,dSU]    = infoSpin.code.ms.CCycle.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
-                        end
-                    end
+                for ij = 1:info.spinUp.cPools
+                    [fxSU,sSU,dSU,feSU,p]=RunModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,DoPrecO,DoCore,Use4SpinUp);
+                    %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
                 end
             end
         end
+        
+        
+        % if~isempty(strmatch('CCycle_CASA',info.approaches,'exact'))
+        %         if info.spinUp.cPools > 0
+        %             if info.flags.doSpinUpFast == 1
+        %                 [fxSU,sSU,dSU]	= CASA_fast(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+        %             elseif info.flags.doSpinUpFast == 0
+        %                 if info.flags.runGenCode
+        %                     error('doSpinUp : not implemented yet!')
+        %                 else
+        %                     for ij = 1:info.spinUp.cPools
+        %
+        %                         for ii = 1:infoSpin.forcing.size(2)
+        %                             [fxSU,sSU,dSU]    = infoSpin.code.ms.AutoResp.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+        %                             [fxSU,sSU,dSU]    = infoSpin.code.ms.CCycle.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+        %                         end
+        %                     end
+        %                 end
+        %             end
+        %         end
         % force equilibrium
         % @NC: for spatial runs this can be optimized by subsampling the
         % data only for gridcells where equilibrium is not achieved...
@@ -124,4 +157,4 @@ else
     end
 end
 
-end % function 
+end % function
