@@ -24,21 +24,21 @@ function varargout = tem(f,info,SUData,precOdata)
 
 % parameter - controls response functions of model structure
 % surface variables
-% soil
-% vegetatioon
+	 % soil
+	 % vegetatioon 
 % estimates of memory checks
 
 
 
 % load the model settings
-% how to do the spinup
-% how to compute fpar
-% which GPP/W coupling scheme to use
-% compute diagnostics
-% working in optimization mode?
-% check surface properties
-% ... (etc)
-% eg of a handle function for the calculation of et
+	% how to do the spinup
+	% how to compute fpar
+	% which GPP/W coupling scheme to use
+	% compute diagnostics
+	% working in optimization mode?
+	% check surface properties
+	% ... (etc)
+	% eg of a handle function for the calculation of et
 
 
 %%
@@ -47,78 +47,78 @@ function varargout = tem(f,info,SUData,precOdata)
 % -------------------------------------------------------------------------
 
 % flags for input-output (io) operations
-% from memory or from files?
-% depending on the forcing (f) input. Folder names means from
-% files, matrices means memory
-% output
-% save spin-up results?
-% save transient simulations outputs?
-% save diagnostics
-% how to save them? every day? month? year?
-% messages on model running
-% ignore messages
-% display messages during model run
-% save them in an output file somewhere
-% restart files?
-%
+	% from memory or from files?
+		% depending on the forcing (f) input. Folder names means from
+		% files, matrices means memory
+	% output
+		% save spin-up results?
+		% save transient simulations outputs?
+		% save diagnostics
+		% how to save them? every day? month? year?
+	% messages on model running
+		% ignore messages
+		% display messages during model run
+		% save them in an output file somewhere
+	% restart files?
+	% 
 
-% -----------------------------------------------------------------
-% 6.1. - DEAL WITH MODEL FORCING
-% -----------------------------------------------------------------
+            % -----------------------------------------------------------------
+        % 6.1. - DEAL WITH MODEL FORCING
+        % -----------------------------------------------------------------
+        
+        % switch 
+            % load from file 
+                % spin up 
+                    % we only need to load it once
+                % transient 
+                    % get the file named as the year 
+                    
+            % load from memory
+                % spin up
+                    % adjust time vector every year (we are basically
+                    % repeating the same year over and over...
+                % transient
+                    % sample the yearly data from the complete time series
+                    % (we always assume that from memory, we have all the
+                    % data at the same time)
+        % -----------------------------------------------------------------
+        % 6.2. - EXTRA FORCING REQUIREMENTS -this should be up!!!
+        % -----------------------------------------------------------------
+        
+        % special forcing, like soil temperature, PET, lálálá - this can be
+        % fed into the forcing structure
+        
 
-% switch
-% load from file
-% spin up
-% we only need to load it once
-% transient
-% get the file named as the year
 
-% load from memory
-% spin up
-% adjust time vector every year (we are basically
-% repeating the same year over and over...
-% transient
-% sample the yearly data from the complete time series
-% (we always assume that from memory, we have all the
-% data at the same time)
-% -----------------------------------------------------------------
-% 6.2. - EXTRA FORCING REQUIREMENTS -this should be up!!!
-% -----------------------------------------------------------------
-
-% special forcing, like soil temperature, PET, lálálá - this can be
-% fed into the forcing structure
-
-
-
-
-%%
+    
+%% 
 % -------------------------------------------------------------------------
 % 3 - MODEL PARAMETERS
 % -------------------------------------------------------------------------
 % NO!! THIS NEEDS TO BE TAKEN CARE BEFORE AND ONLY DONE IF THE RunFlag==0
 % load model parameters
-% if in optimization mode, load the standard parametrization and
-% multiply the delta_parameters * parameter_standard
-% check if parameters are within accepted bounds (or should this be
-% done outside?)
+	% if in optimization mode, load the standard parametrization and
+	% multiply the delta_parameters * parameter_standard
+		% check if parameters are within accepted bounds (or should this be
+		% done outside?) 
 
 p   = info.params;
-
-
-%%
+        
+        
+%% 
 % -------------------------------------------------------------------------
 % 4 - CONSISTENCY CHECKS
 % -------------------------------------------------------------------------
 
 % consistency checks in the way to run the model and the needed variables
-% we need a time stamp vector in there now!
+    % we need a time stamp vector in there now!
 
 % check compatibility with the settings, the forcing and the parameters
 
 % here end of if optimization or not
 
 % if it is in optmization mode , we need a flag that says if we need to scale the paraetmers
-% scale paraemtres
+	% scale paraemtres
 % 	p.et.alpha = inip.et.alpha .* scalp.et.alpha;
 
 % -------------------------------------------------------------------------
@@ -127,7 +127,7 @@ p   = info.params;
 % do the SpinUp
 if~exist('SUData','var');SUData=[];end
 [sSU,dSU]   = doSpinUp(f,p,info,SUData);
-
+        
 % get initial conditions for the model run
 [fx,fe,d,s]	= initTEMStruct(info,sSU,dSU);
 
@@ -142,41 +142,37 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     % 5.1 - PRECOMPUTATIONS (ONCE)
     % ---------------------------------------------------------------------
+%    if info.flags.runGenCode
+%        [fe,fx,d,p] = info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
+%    else
+%        for prc = 1:numel(info.code.preComp)
+%            if info.code.preComp(prc).doAlways == 0
+%                [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
+%            end
+%        end
+%    end
     if ~exist('precOdata','var')
         [fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,1,0,0);
-%         
-%         if info.flags.runGenCode
-%             [fe,fx,d,p] = info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
-%         else
-%             for prc = 1:numel(info.code.preComp)
-%                 if info.code.preComp(prc).doAlways == 0
-%                     [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
-%                 end
-%             end
-%         end
-        
         precOdata.fe=fe;
         precOdata.fx=fx;
         precOdata.d=d;
         precOdata.p=p;
-        
     else
-        
         fe=precOdata.fe;
         d=precOdata.d;
         p=precOdata.p;
         fx=precOdata.fx;
     end
+	
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-    [fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,0,1,0);
-%     
-%     if info.flags.runGenCode
-%         [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
-%     else
-%         [fx,s,d]    = core(f,fe,fx,s,d,p,info);
-%     end
+	[fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,0,1,0);
+%   if info.flags.runGenCode
+%       [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
+%   else
+%       [fx,s,d]    = core(f,fe,fx,s,d,p,info);
+%   end
     
     % ---------------------------------------------------------------------
     % X.X - DO AGGREGATIONS
@@ -197,16 +193,15 @@ for iStep = 1:info.temSteps
     % -----------------------------------------------------------------
     % 6.4. - OUTPUTS
     % -----------------------------------------------------------------
-    
-    
+        
+
     % outputs for file or memory in transient mode (note, this way
     % should also have the option to be consistent with the previous
     % CASA code output, so that the optimization algorithms can be used
     % with minimal adjustments)
-    
+
     % deal with restart files and have everything ones needs just to
-    % restart where we left from
-    
+    % restart where we left from 
     
     
 end

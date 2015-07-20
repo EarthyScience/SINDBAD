@@ -1,20 +1,20 @@
 function [sSU,dSU] = doSpinUp(f,p,info,SUData,precOdata)
 % #########################################################################
 % PURPOSE	: do the spinup of the tem (carbon and water pools):
-%
+% 
 % REFERENCES:
-%
+% 
 % CONTACT	: ncarval
-%
+% 
 % INPUT
-% info      : structure info
-%
+% info      : structure info 
+% 
 % OUTPUT
-% sSU       : state variables
+% sSU       : state variables 
 % dSU       : diagnostics
-%
+% 
 % NOTES:
-%
+% 
 % #########################################################################
 
 if info.flags.doSpinUp
@@ -41,7 +41,7 @@ if info.flags.doSpinUp
     % Pre-allocate fx,fe,d,s for the spinup runs
     % ---------------------------------------------------------------------
     [fxSU,feSU,dSU,sSU]	= initTEMStruct(infoSpin);
-    
+
     % ---------------------------------------------------------------------
     % Precomputations DO ONLY PRECOMP ALWAYS HERE
     % ---------------------------------------------------------------------
@@ -93,8 +93,18 @@ if info.flags.doSpinUp
             elseif info.flags.doSpinUpFast == 0
                 for ij = 1:info.spinUp.cPools
                     [fxSU,sSU,dSU,feSU,p]=RunModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,DoPrecO,DoCore,Use4SpinUp);
-                    %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
                 end
+%                if info.flags.runGenCode
+%                    error('doSpinUp : not implemented yet!')
+%                else
+%                    for ij = 1:info.spinUp.cPools
+%                        for ii = 1:infoSpin.forcing.size(2)
+%							 %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
+%                            [fxSU,sSU,dSU]    = infoSpin.code.ms.AutoResp.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+%                            [fxSU,sSU,dSU]    = infoSpin.code.ms.CCycle.fun(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,ii);
+%                        end
+%                    end
+%                end
             end
         end
         
@@ -117,6 +127,7 @@ if info.flags.doSpinUp
         %                 end
         %             end
         %         end
+		% end
         % force equilibrium
         % @NC: for spatial runs this can be optimized by subsampling the
         % data only for gridcells where equilibrium is not achieved...
@@ -157,4 +168,4 @@ else
     end
 end
 
-end % function
+end % function 
