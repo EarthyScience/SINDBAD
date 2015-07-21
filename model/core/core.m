@@ -55,10 +55,15 @@ ms	= info.code.ms;
 for i = 1:info.forcing.size(2)
     % get states from previous time step
     [fx,s,d]	= ms.GetStates.fun(f,fe,fx,s,d,p,info,i);
-    
+              
+        
     % ---------------------------------------------------------------------
+    % 0 - Terrain - to get the terrain params ...    
+    % 0 - SOIL - to get the soil related params ...
     % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
+    [fx,s,d]	= ms.Terrain.fun(f,fe,fx,s,d,p,info,i);
+    [fx,s,d]	= ms.SOIL.fun(f,fe,fx,s,d,p,info,i);
     [fx,s,d]	= ms.VEG.fun(f,fe,fx,s,d,p,info,i);
 
     % ---------------------------------------------------------------------

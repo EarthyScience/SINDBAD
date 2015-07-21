@@ -39,18 +39,19 @@ for i = 1:numel(varargin)
     end
 end
 
-% model structure
-if ~isempty(varsOutMs);     [appr, modu, psCode]	= temApproaches(varsOutMs{:});
-else                        [appr, modu, psCode]	= temApproaches;
-end
 % info
 if ~isempty(varsOutInfo);   info	= temInfo(varsOutInfo{:});
 else                        info    = temInfo;
 end
+
+% model structure
+if ~isempty(varsOutMs);     [appr, modu]	= temApproaches(info,varsOutMs{:});
+else                        [appr, modu]	= temApproaches(info);
+end
 % merge the infos...
 info.approaches = appr;
 info.modules    = modu;
-info.code       = psCode;
+%info.code       = psCode;
 % get the standard parameters of SINDBAD
 info	= temParams(info);
 % helpers
@@ -61,7 +62,7 @@ info    = temStatesToSave(info);
 if ~info.flags.genCode
     disp('MSG : temFullSetup : code is always generated!')
 end
-info    = rmfield(info,'code');
+%info    = rmfield(info,'code');
 % optem
 if info.flags.opti
     info	= temOptimization(info);

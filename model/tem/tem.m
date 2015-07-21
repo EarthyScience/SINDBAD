@@ -1,16 +1,16 @@
-function varargout = tem(f,info,SUData)
+function varargout = tem(f,info,SUData,precOdata)
 % Terrestrial Ecosystem Model of SINDBAD
-% 
+%
 % DESCRIPTION:
-% 
+%
 % INPUTS:
 % fSpin
 % f
-% 
+%
 % CONTRIBUTORS:
-% 
+%
 % CONTACT:
-%% 
+%%
 % -------------------------------------------------------------------------
 % 1 - MODEL SETTINGS
 % -------------------------------------------------------------------------
@@ -20,7 +20,7 @@ function varargout = tem(f,info,SUData)
 
 % forcing - climate, fpar, ...
 
-% check the units 
+% check the units
 
 % parameter - controls response functions of model structure
 % surface variables
@@ -40,8 +40,8 @@ function varargout = tem(f,info,SUData)
 	% ... (etc)
 	% eg of a handle function for the calculation of et
 
-    
-%% 
+
+%%
 % -------------------------------------------------------------------------
 % 2 - IO SETUP
 % -------------------------------------------------------------------------
@@ -140,26 +140,39 @@ for iStep = 1:info.temSteps
     % changes, ................
     
     % ---------------------------------------------------------------------
-    % 5.1 - PRECOMPUTATIONS
+    % 5.1 - PRECOMPUTATIONS (ONCE)
     % ---------------------------------------------------------------------
-    if info.flags.runGenCode
-        [fe,fx,d,p] = info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
+%    if info.flags.runGenCode
+%        [fe,fx,d,p] = info.code.msi.preComp(f,fe,fx,s,d,info.params,info);
+%    else
+%        for prc = 1:numel(info.code.preComp)
+%            if info.code.preComp(prc).doAlways == 0
+%                [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
+%            end
+%        end
+%    end
+    if ~exist('precOdata','var')
+        [fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,1,0,0);
+        precOdata.fe=fe;
+        precOdata.fx=fx;
+        precOdata.d=d;
+        precOdata.p=p;
     else
-        for prc = 1:numel(info.code.preComp)
-            if info.code.preComp(prc).doAlways == 0
-                [fe,fx,d,p] = info.code.preComp(prc).fun(f,fe,fx,s,d,p,info);
-            end
-        end
+        fe=precOdata.fe;
+        d=precOdata.d;
+        p=precOdata.p;
+        fx=precOdata.fx;
     end
 	
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-    if info.flags.runGenCode
-        [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
-    else
-        [fx,s,d]    = core(f,fe,fx,s,d,p,info);
-    end
+	[fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,0,1,0);
+%   if info.flags.runGenCode
+%       [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
+%   else
+%       [fx,s,d]    = core(f,fe,fx,s,d,p,info);
+%   end
     
     % ---------------------------------------------------------------------
     % X.X - DO AGGREGATIONS
@@ -191,7 +204,6 @@ for iStep = 1:info.temSteps
     % restart where we left from 
     
     
-
 end
 
 
@@ -206,6 +218,7 @@ if nargout >= 5
     varargout{4} = sSU;
     varargout{5} = dSU;
     varargout{6} = fe;
+    varargout{7} = precOdata;
 end
 
 

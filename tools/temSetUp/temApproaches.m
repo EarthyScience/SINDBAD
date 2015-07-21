@@ -1,4 +1,4 @@
-function [approaches,modules,modStruct] = temApproaches(varargin)
+function [approaches,modules] = temApproaches(info,varargin)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -15,14 +15,14 @@ function [approaches,modules,modStruct] = temApproaches(varargin)
 % #########################################################################
 % defaults
 %% number of arguments must be even
-if rem(nargin,2)~=0
-    error(['number of arguments must be even: nargin = ' num2str(nargin)])
+if rem(nargin-1,2)~=0
+    error(['number of arguments must be even: varargin = ' num2str(nargin-1)])
 end
 %% set the defaults model structures for precomputations
 % the inputs to this function
 UserInputs      = varargin;
 % the standards for the TEM
-StandardApproaches  = {...
+StandardApproaches_tmp  = {...
     'GetStates'         , 'simple'          ,...
     'Terrain'           , 'none'            ,...    % ? - elevation properties
     'SOIL'              , 'Saxton'          ,...    % ? - soil properties
@@ -59,6 +59,24 @@ StandardApproaches  = {...
     'CCycle'            , 'CASA'            , ...   % 7 - Carbon Cycle / Heteroptrophic Respiration
     'PutStates'         , 'simple'          ...
     };
+%%
+pthCore=[info.paths.core 'core.m'];
+[ModuleNames]=GetModuleNamesFromCore(pthCore);
+
+StandardApproaches=cell(1,2*length(ModuleNames));
+for ii=1:length(ModuleNames)
+    StandardApproaches(1,ii*2-1)=ModuleNames(ii);
+    tf=strcmp(ModuleNames(ii),StandardApproaches_tmp);
+    vv=find(tf);
+    if isempty(vv)
+        mmsg=['No default approach for module ' char(ModuleNames(ii)) ' defined'];
+        error(mmsg)
+    else
+        StandardApproaches(1,ii*2)=StandardApproaches_tmp(vv+1);
+    end
+end
+
+
 %% build the structure handles: NOT ANYMORE! THIS IS DONE AFTERWARDS NOW...
 % get the core and TEM folder paths
 tmp         = mfilename('fullpath');
