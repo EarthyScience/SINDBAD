@@ -7,7 +7,7 @@ function [fe,fx,d,p] = Prec_SOIL_none(f,fe,fx,s,d,p,info)
 N     = numel(p.SOIL.HeightLayer);
 
 % total soil depth
-tSLDP = zeros(info.forcing.Size(1),1);
+tSLDP = zeros(info.forcing.size(1),1);
 for ij = 1:N
     tSLDP	= tSLDP + p.SOIL.HeightLayer(ij).value;
 end

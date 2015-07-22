@@ -50,7 +50,7 @@ switch soilm_prm
         g           = -3.484E-5;
         soilm_parm  = e + f1 .* CLAY .^ 2 + g .* SAND .^ 2 .* CLAY;
     otherwise
-        error(['Unkown soil moisture parameter: ' soil_prm])
+        error(['Unkown soil moisture parameter: ' soilm_prm])
 end
 
 end % function

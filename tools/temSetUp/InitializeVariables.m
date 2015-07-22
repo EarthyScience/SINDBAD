@@ -9,7 +9,7 @@ sstr    = {'d.','s.'};
 
 VarNameIniVal	= {...
             ... % states
-                's.wSM'                     , info.params.SOIL.tAWC ; % soil moisture at full capacity
+                's.wSM'                     , info.params.SOIL.iniAWC ; % soil moisture at full capacity
                 's.wSWE'                    , info.helper.zeros1d   ; % no SWE
                 's.wGW'                     , info.helper.zeros1d   ; % GW
                 's.wGWR'                    , info.helper.zeros1d   ; % no GWR
@@ -20,10 +20,10 @@ VarNameIniVal	= {...
                 'd.Temp.pSMScGPP'           , info.helper.ones1d    ; % no initial water stress in GPP
                 'd.SoilMoistEffectRH.pBGME' , info.helper.ones1d    ; % no initial water stress in soil microbial decomposition
             ... % previous time steps in water related variables
-                'd.Temp.pwGW'               , info.params.SOIL.tAWC ; % previous GW at full capacity
+                'd.Temp.pwGW'               , info.params.SOIL.iniAWC ; % soil moisture at full capacity
                 'd.Temp.pwGWR'              , info.helper.zeros1d   ; % 
                 'd.Temp.pwSWE'              , info.helper.zeros1d   ; % 
-                'd.Temp.pwSM'               , info.params.SOIL.tAWC	;  % initialize to full capacity
+                'd.Temp.pwSM'               , info.params.SOIL.iniAWC ; % soil moisture at full capacity
                 };
 
 % the advantage of doing it this way is that not used variables (because
