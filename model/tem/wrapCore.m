@@ -1,4 +1,4 @@
-function [fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
+function [fx,s,d,fe,p]=wrapCore(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
 
 
 %DoPrecO: logical flag if the PrecompOnce should be done; if set to 0 then
@@ -11,11 +11,11 @@ function [fx,s,d,fe,p]=RunModel(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
 
 
 if Use4SpinUp
-    myCore=info.code.msi.coreSpinUp;
-    myPrec=info.code.msi.preCompSpinUp;
+    hCore=info.code.msi.coreSpinUp;
+    hPrec=info.code.msi.preCompSpinUp;
 else
-    myCore=info.code.msi.core;
-    myPrec=info.code.msi.preComp;
+    hCore=info.code.msi.core;
+    hPrec=info.code.msi.preComp;
 end
 
 
@@ -24,11 +24,11 @@ end
 if info.flags.runGenCode
     
     if DoPrecO
-        [fe,fx,d,p]    = myPrec(f,fe,fx,s,d,p,info);
+        [fe,fx,d,p]    = hPrec(f,fe,fx,s,d,p,info);
     end
     
     if DoCore
-        [fx,s,d]    = myCore(f,fe,fx,s,d,p,info);
+        [fx,s,d]    = hCore(f,fe,fx,s,d,p,info);
     end
     
     
