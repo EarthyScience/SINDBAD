@@ -1,4 +1,4 @@
-function [fx,s,d,fe,p]=wrapCore(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
+function [fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
 
 
 %DoPrecO: logical flag if the PrecompOnce should be done; if set to 0 then

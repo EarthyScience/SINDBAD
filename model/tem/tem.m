@@ -152,7 +152,7 @@ for iStep = 1:info.temSteps
 %        end
 %    end
     if ~exist('precOdata','var')
-        [fx,s,d,fe,p]=wrapCore(f,fe,fx,s,d,p,info,1,0,0);
+        [fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,1,0,0);
         precOdata.fe=fe;
         precOdata.fx=fx;
         precOdata.d=d;
@@ -167,7 +167,7 @@ for iStep = 1:info.temSteps
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-	[fx,s,d,fe,p]=wrapCore(f,fe,fx,s,d,p,info,0,1,0);
+	[fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,0,1,0);
 %   if info.flags.runGenCode
 %       [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
 %   else

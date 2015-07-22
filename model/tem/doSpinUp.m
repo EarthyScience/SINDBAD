@@ -46,7 +46,7 @@ if info.flags.doSpinUp
     % Precomputations DO ONLY PRECOMP ALWAYS HERE
     % ---------------------------------------------------------------------
     % DoPrecO=1;DoCore=0;Use4SpinUp=0;
-    [fxSU,tmp,dSU,feSU,p]=wrapCore(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,1,0,0);
+    [fxSU,tmp,dSU,feSU,p]=runModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,1,0,0);
     
     
     %     if info.flags.runGenCode
@@ -61,7 +61,7 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     for ij = 1:info.spinUp.wPools
         % DoPrecO=0;DoCore=1;Use4SpinUp=0;
-        [fxSU,sSU,dSU,feSU,p]=wrapCore(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,0,1,0);
+        [fxSU,sSU,dSU,feSU,p]=runModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,0,1,0);
         %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
     end
     
@@ -85,7 +85,7 @@ if info.flags.doSpinUp
             elseif info.flags.doSpinUpFast == 0
                 for ij = 1:info.spinUp.cPools
                      % DoPrecO=0;DoCore=1;Use4SpinUp=1;
-                    [fxSU,sSU,dSU,feSU,p]=wrapCore(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,0,1,1);
+                    [fxSU,sSU,dSU,feSU,p]=runModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,0,1,1);
                 end
 %                if info.flags.runGenCode
 %                    error('doSpinUp : not implemented yet!')
