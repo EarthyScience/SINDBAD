@@ -4,8 +4,6 @@ function [fe,fx,d,p] = Prec_SOIL_Saxton(f,fe,fx,s,d,p,info)
 %           (p.SOIL.AWC(i).value)
 
 % we are assuming here that texture does not change with depth
-Alpha       = calc_soilm_prms(p.SOIL.CLAY, p.SOIL.SAND, [], 'alpha');
-Beta        = calc_soilm_prms(p.SOIL.CLAY, p.SOIL.SAND, [], 'beta');
 
 % number of layers
 N           = numel(p.SOIL.HeightLayer);
@@ -17,8 +15,8 @@ tAWC        = zeros(info.forcing.size(1),1);
 tWPT        = zeros(info.forcing.size(1),1);
 tFC         = zeros(info.forcing.size(1),1);
 for ij = 1:N
-    WPT                     = calc_soilm_prms(p.SOIL.CLAY, p.SOIL.SAND, p.SOIL.HeightLayer(ij).value, 'wpt');
-    FC                      = calc_soilm_prms(p.SOIL.CLAY, p.SOIL.SAND, p.SOIL.HeightLayer(ij).value, 'fc');
+    info.helper.SOIL.layer  = ij;
+    [Alpha,Beta,WPT,FC]     = calc_soilm_prms(p,info);
     AWC                     = FC - WPT;
     p.SOIL.AWC(ij).value    = AWC;
     tAWC                    = tAWC + AWC;
