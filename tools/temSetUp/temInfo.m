@@ -53,33 +53,33 @@ info.checks.CBalance= 1;
 %info.flags.RanOK        = 1;
 
 % flags for "how to run the model"
-info.flags.opti         = 0;
+info.flags.opti     = 0;
 info.flags.forwardRun	= 0;
 info.flags.checkForcing	= 1;
-info.flags.doSpinUp     = 1;
-info.flags.loadSpinUp   = 0;
-info.flags.doSpinUpFast = 1;
-info.flags.forceNullNEP = 1;
-info.flags.spinUpLimNEP = 0.1;
-info.flags.spinUpMaxIter= 1000;
-info.flags.genCode      = 1;
-info.flags.runGenCode   = 1;
-info.flags.saveStates   = 0; %not needed? we have 'info.variables.saveStates'
-info.flags.savePriors   = 0;
+info.flags.doSpinUp         = 1;
+info.flags.loadSpinUp    = 0;
+info.flags.doSpinUpFast  = 1;
+info.flags.forceNullNEP  = 1;
+info.flags.spinUpLimNEP  = 0.1;
+info.flags.spinUpMaxIter = 1000;
+info.flags.genCode       = 1;
+info.flags.runGenCode    = 1;
+info.flags.saveStates    = 0; %not needed? we have 'info.variables.saveStates'
+info.flags.savePriors    = 0;
 
 % checks...
 
 % how to do the spinUp
-info.spinUp.cycleMSC    = 1;
-info.spinUp.wPools      = 5;    % number of cycles until w pools in equilibrium
-info.spinUp.cPools      = 2000; % number of cycles until c pools in equilibrium
+info.spinUp.cycleMSC     = 1;
+info.spinUp.wPools       = 5;    % number of cycles until w pools in equilibrium
+info.spinUp.cPools       = 2000; % number of cycles until c pools in equilibrium
 % variables related to temporal scale / dimensions and stuff
 info.timeScale.timeStep	= 1;    % in days
 info.timeScale.nYears	= Inf;  % just a dummy
 % number of iterations in tem
-info.temSteps           = 1;    % number of iterations in the tem
+info.temSteps            = 1;    % number of iterations in the tem
 % how / what to output
-info.outputs.save       = {};   % variable names to save in files
+info.outputs.save        = {};   % variable names to save in files
 info.outputs.saveSpinUp	= {};   % variable names to save in files
 info.outputs.SpinUpVars	= {};   % variable names to output in memory
 %% conflicts in setup
@@ -108,9 +108,6 @@ info.paths.genCode	= [info.paths.run 'modelCode' filesep];
 info.paths.SpinUpFile     = [info.paths.run 'output' filesep 'restart.mat'];
 
 end % function
-
-
-
 
 %{
 simple(cmip5)

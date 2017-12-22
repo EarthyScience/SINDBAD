@@ -1,4 +1,4 @@
-function info = temFullSetup(varargin)
+function info                    = temFullSetup(varargin)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -19,9 +19,9 @@ function info = temFullSetup(varargin)
 % info = temFullSetup('info','PFT',1,...,'ms','RunoffSat','none',...)
 
 % initialize inputs for the temInfo, tempStruct and temParams
-varsOutInfo     = {};
-varsOutMs       = {};
-for i = 1:numel(varargin)
+varsOutInfo                      = {};
+varsOutMs                        = {};
+for i                            = 1:numel(varargin)
     if i == 1 && ...
             ~(strcmpi(varargin{i},'info') || strcmpi(varargin{i},'ms'))
         error('ERR : temFullSetup : first argument must select the type of structure information: info, ms or optem')
@@ -33,7 +33,7 @@ for i = 1:numel(varargin)
         case 'info'
             varsOutInfo{numel(varsOutInfo)+1}	= varargin{i};
         case 'ms'
-            varsOutMs{numel(varsOutMs)+1}       = varargin{i};
+            varsOutMs{numel(varsOutMs)+1}    = varargin{i};
         otherwise
             error(['ERR : temFullSetup : Not a known pS : ' pS])
     end
@@ -41,7 +41,7 @@ end
 
 % info
 if ~isempty(varsOutInfo);   info	= temInfo(varsOutInfo{:});
-else                        info    = temInfo;
+else                        info = temInfo;
 end
 
 % model structure
@@ -49,15 +49,15 @@ if ~isempty(varsOutMs);     [appr, modu]	= temApproaches(info,varsOutMs{:});
 else                        [appr, modu]	= temApproaches(info);
 end
 % merge the infos...
-info.approaches = appr;
-info.modules    = modu;
+info.approaches                  = appr;
+info.modules                     = modu;
 %info.code       = psCode;
 % get the standard parameters of SINDBAD
 info	= temParams(info);
 % helpers
-info    = temHelpers(info);
+info                             = temHelpers(info);
 % what to save and not
-info    = temStatesToSave(info);
+info                             = temStatesToSave(info);
 % make the model structure
 if ~info.flags.genCode
     disp('MSG : temFullSetup : code is always generated!')

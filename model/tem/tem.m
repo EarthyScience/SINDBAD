@@ -85,7 +85,7 @@ function varargout = tem(f,info,SUData,precOdata)
         % 6.2. - EXTRA FORCING REQUIREMENTS -this should be up!!!
         % -----------------------------------------------------------------
         
-        % special forcing, like soil temperature, PET, lálálá - this can be
+        % special forcing, like soil temperature, PET, l?l?l? - this can be
         % fed into the forcing structure
         
 
@@ -102,7 +102,7 @@ function varargout = tem(f,info,SUData,precOdata)
 		% check if parameters are within accepted bounds (or should this be
 		% done outside?) 
 
-p   = info.params;
+p                  = info.params;
         
         
 %% 
@@ -126,7 +126,7 @@ p   = info.params;
 % -------------------------------------------------------------------------
 % do the SpinUp
 if~exist('SUData','var');SUData=[];end
-[sSU,dSU]   = doSpinUp(f,p,info,SUData);
+[sSU,dSU]          = doSpinUp(f,p,info,SUData);
         
 % get initial conditions for the model run
 [fx,fe,d,s]	= initTEMStruct(info,sSU,dSU);
@@ -134,7 +134,7 @@ if~exist('SUData','var');SUData=[];end
 % -------------------------------------------------------------------------
 % 5.0 - RUN THE MODEL
 % -------------------------------------------------------------------------
-for iStep = 1:info.temSteps
+for iStep          = 1:info.temSteps
     % this is where we can change the way to run the model, like, loading
     % data for every year (useful for large runs), prescribe land cover
     % changes, ................
@@ -152,22 +152,22 @@ for iStep = 1:info.temSteps
 %        end
 %    end
     if ~exist('precOdata','var')
-        [fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,1,0,0);
-        precOdata.fe=fe;
-        precOdata.fx=fx;
-        precOdata.d=d;
-        precOdata.p=p;
+        [fx,s,d,fe,p] = runModel(f,fe,fx,s,d,p,info,1,0,0);
+        precOdata.fe  = fe;
+        precOdata.fx  = fx;
+        precOdata.d   = d;
+        precOdata.p   = p;
     else
-        fe=precOdata.fe;
-        d=precOdata.d;
-        p=precOdata.p;
-        fx=precOdata.fx;
+        fe            = precOdata.fe;
+        d             = precOdata.d;
+        p             = precOdata.p;
+        fx            = precOdata.fx;
     end
 	
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
-	[fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,0,1,0);
+	[fx,s,d,fe,p] = runModel(f,fe,fx,s,d,p,info,0,1,0);
 %   if info.flags.runGenCode
 %       [fx,s,d]	= info.code.msi.core(f,fe,fx,s,d,info.params,info);
 %   else
@@ -209,16 +209,16 @@ end
 
 
 if nargout >= 3
-    varargout{1} = fx;
-    varargout{2} = s;
-    varargout{3} = d;
+    varargout{1}       = fx;
+    varargout{2}       = s;
+    varargout{3}       = d;
 end
 
 if nargout >= 5
-    varargout{4} = sSU;
-    varargout{5} = dSU;
-    varargout{6} = fe;
-    varargout{7} = precOdata;
+    varargout{4}       = sSU;
+    varargout{5}       = dSU;
+    varargout{6}       = fe;
+    varargout{7}       = precOdata;
 end
 
 

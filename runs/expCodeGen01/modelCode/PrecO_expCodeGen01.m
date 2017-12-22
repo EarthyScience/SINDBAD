@@ -1,4 +1,12 @@
 function [fe,fx,d,p]=PrecO_expCodeGen01(f,fe,fx,s,d,p,info);
+N     = numel(p.SOIL.HeightLayer);
+tSLDP = zeros(info.forcing.size(1),1);
+for ij = 1:N
+tSLDP	= tSLDP + p.SOIL.HeightLayer(ij).value;
+end
+for ij = 1:N
+p.SOIL.AWC(ij).value    = p.SOIL.tAWC .* p.SOIL.HeightLayer(ij).value ./ tSLDP ;
+end
 T = f.TairDay + 273.15;
 Delta = (5723.265./T.^2 + 3.53068./(T-0.00728332)).* exp(9.550426-5723.265./T + 3.53068.*log(T) - 0.00728332.*T);
 Delta = Delta.*0.001;
@@ -96,41 +104,29 @@ d.TempEffectAutoResp.fT(1).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.
 d.TempEffectAutoResp.fT(2).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.TempEffectAutoResp.Tref_RM) ./ 10);
 d.TempEffectAutoResp.fT(3).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
 d.TempEffectAutoResp.fT(4).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.CAllocationVeg.cf2Root	= p.CAllocationVeg.cf2Root .* ones(size(f.Tair));
-d.CAllocationVeg.cf2Wood	= p.CAllocationVeg.cf2Wood .* ones(size(f.Tair));
-d.CAllocationVeg.cf2Leaf	= p.CAllocationVeg.cf2Leaf .* ones(size(f.Tair));
-for ii = 1:info.forcing.size(2)
-tc      = p.VEG.TreeCover;
-rf2rc	= p.CAllocationVeg.Rf2Rc;
-r0	= d.CAllocationVeg.cf2Root(:,i); % this is to below ground root fine+coarse
-s0	= d.CAllocationVeg.cf2Wood(:,i);
-l0	= d.CAllocationVeg.cf2Leaf(:,i);
-rf1 = r0 .* tc .* rf2rc + (r0 + s0 .* (r0 ./ (r0 + l0))) .* (1 - tc);
-rc1 = r0 .* tc .* (1 - rf2rc);
-s1  = s0 .* tc + 0;
-l1	= l0 .* tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
-d.CAllocationVeg.c2pool(1).value(:,i)	= rf1;
-d.CAllocationVeg.c2pool(2).value(:,i)  = rc1;
-d.CAllocationVeg.c2pool(3).value(:,i)  = s1;
-d.CAllocationVeg.c2pool(4).value(:,i)	= l1;
-dummy	= zeros(size(d.CAllocationVeg.cf2Root(:,i)));
-for ii = {'cf2Root','cf2Wood','cf2Leaf'}%,'cf2RootCoarse'
-if any(d.CAllocationVeg.(ii{1})(:,i) > 1) || ...
-any(d.CAllocationVeg.(ii{1})(:,i) < 0)
-error(['SINDBAD : checkCAllocationVeg : CAllocationVeg.' ii{1} ' < 0 | > 1'])
+ro      = p.CAllocationVeg.ro;
+kext	= p.CAllocationVeg.kext;
+minL    = p.CAllocationVeg.minL;
+maxL    = p.CAllocationVeg.maxL;
+minL_fT = p.CAllocationVeg.minL_fT;
+maxL_fT = p.CAllocationVeg.maxL_fT;
+RelY    = p.CAllocationVeg.RelY;
+LL                      = exp (-kext .* f.LAI); 
+for t=1:size(LL,2)
+LL(LL(:,t) <= minL,t)          = minL(LL(:,t) <= minL);
+LL(LL(:,t) >= maxL,t)          = maxL(LL(:,t) >= maxL);
 end
-dummy	= d.CAllocationVeg.(ii{1})(:,i) + dummy;
+d.CAllocationVeg.LL	= LL;
+NL_fT                   = fe.TempEffectRH.fT;
+for t=1:size(LL,2)
+NL_fT(NL_fT(:,t) >= maxL_fT,t)	= maxL_fT(NL_fT(:,t) >= maxL_fT);
+NL_fT(NL_fT(:,t) <= minL_fT,t) = minL_fT(NL_fT(:,t) <= minL_fT);
 end
-if any(abs(dummy-1)>1E-10)
-error('SINDBAD : checkCAllocationVeg : total CAllocationVeg ~= 1')
-end
-end
-if any(d.CAllocationVeg.cf2Wood(p.VEG.TreeCover > 0) == 0)
-error('SINDBAD : Prec_CAllocationVeg_Fix : TreeCover > 0 & CAllocationVeg.cf2Wood == 0')
-end
-if any(p.CAllocationVeg.cf2Wood(p.VEG.TreeCover == 0) > 0)
-error('SINDBAD : Prec_CAllocationVeg_Fix : TreeCover == 0 & CAllocationVeg.cf2Wood > 0')
-end
+d.CAllocationVeg.NL_fT	= NL_fT;
+NL                      = minL.*ones(size(f.PET));
+d.CAllocationVeg.NL	= NL;
+d.CAllocationVeg.RootNumerator	= ro .* (RelY + 1) .* LL;
+d.CAllocationVeg.WLDenominator	= p.SOIL.tAWC;
 RMN     = p.AutoResp.RMN ./ info.timeScale.stepsPerDay;
 for ii = 1:4 % for all the vegetation pools
 fe.AutoResp.km(ii).value	= 1 ./ p.AutoResp.C2N(ii).value .* RMN .* d.TempEffectAutoResp.fT(ii).value;
@@ -224,7 +220,7 @@ dLAIsum(dLAIsum < 0)	= 0;
 dLAIsum                 = sum(dLAIsum, 2);
 LAIave                      = mean(LAI13(:, 2:TSPY + 1), 2);
 LAImin                      = min(LAI13(:, 2:TSPY + 1), [], 2);
-LAImin(LAImin > maxMinLAI)	= maxMinLAI;
+LAImin(LAImin > maxMinLAI)	= maxMinLAI(LAImin > maxMinLAI);
 LAIsum                      = sum(LAI13(:, 2:TSPY + 1), 2);
 LTCON       = zeros(size(LAI13(:, 1)));
 ndx         = (LAIave > 0);

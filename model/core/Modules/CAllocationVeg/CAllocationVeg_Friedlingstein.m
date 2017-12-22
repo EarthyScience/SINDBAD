@@ -19,7 +19,7 @@ function [fx,s,d] = CAllocationVeg_Friedlingstein(f,fe,fx,s,d,p,info,i)
 % Montagnani, L., Papale, D., Rambal, S., and Seixas, J.: Identification of
 % Vegetation and Soil Carbon Pools out of Equilibrium in a Process Model
 % via Eddy Covariance and Biometric Constraints, Glob. Change Biol., 16,
-% 2813–2829, doi: 10.1111/j.1365-2486.2009.2173.x, 2010.
+% 2813?2829, doi: 10.1111/j.1365-2486.2009.2173.x, 2010.
 % 
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
@@ -55,21 +55,26 @@ NL_fT	= d.CAllocationVeg.NL_fT(:,i);
 % respiration (Potter et al. 1993)." in Friedlingstein et al., 1999.
 
 % computation for the moisture effect on decomposition/mineralization
+% for t=1:size(LL,2)
+%     LL(LL(:,t) <= minL,t)          = minL(LL(:,t) <= minL);
+%     LL(LL(:,t) >= maxL,t)          = maxL(LL(:,t) >= maxL);
+% end
 NL_fW                   = d.SoilMoistEffectRH.BGME(:,i);
-NL_fW(NL_fW >= maxL_fW)	= maxL_fW;
-NL_fW(NL_fW <= minL_fW) = minL_fW;
+NL_fW(NL_fW >= maxL_fW)	= maxL_fW(NL_fW >= maxL_fW);
+NL_fW(NL_fW <= minL_fW) = minL_fW(NL_fW <= minL_fW);
 
 % estimate NL
 NL              = d.CAllocationVeg.NL(:,i);
 ndx             = f.PET(:,i) > 0;
 NL(ndx)         = NL_fT(ndx) .* NL_fW(ndx);
-NL(NL <= minL)	= minL;
-NL(NL >= maxL)	= maxL;
+NL(NL <= minL)	= minL(NL <= minL);
+NL(NL >= maxL)	= maxL(NL >= maxL);
 
 % water limitation calculation
 WL              = s.wSM ./ d.CAllocationVeg.WLDenominator;
-WL(WL <= minL)	= minL;
-WL(WL >= maxL)  = maxL;
+WL(WL <= minL)	= minL(WL <= minL);
+WL(WL >= maxL)  = maxL(WL >= maxL); %% check if maxL and minL should used maxL_fW?
+
 
 % minimum of WL and NL
 minWLNL             = NL;

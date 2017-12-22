@@ -23,9 +23,11 @@ maxL_fT = p.CAllocationVeg.maxL_fT;
 RelY    = p.CAllocationVeg.RelY;
 
 % light limitation (LL) calculation
-LL                      = exp (-kext * f.LAI); 
-LL(LL <= minL)          = minL;
-LL(LL >= maxL)          = maxL;
+LL                      = exp (-kext .* f.LAI); 
+for t=1:size(LL,2)
+    LL(LL(:,t) <= minL,t)          = minL(LL(:,t) <= minL);
+    LL(LL(:,t) >= maxL,t)          = maxL(LL(:,t) >= maxL);
+end
 % send it to d
 d.CAllocationVeg.LL	= LL;
 
@@ -40,9 +42,12 @@ d.CAllocationVeg.LL	= LL;
 
 % partial computation for the temperature effect on
 % decomposition/mineralization
+
 NL_fT                   = fe.TempEffectRH.fT;
-NL_fT(NL_fT >= maxL_fT)	= maxL_fT;
-NL_fT(NL_fT <= minL_fT) = minL_fT;
+for t=1:size(LL,2)
+NL_fT(NL_fT(:,t) >= maxL_fT,t)	= maxL_fT(NL_fT(:,t) >= maxL_fT);
+NL_fT(NL_fT(:,t) <= minL_fT,t) = minL_fT(NL_fT(:,t) <= minL_fT);
+end
 % send it to d
 d.CAllocationVeg.NL_fT	= NL_fT;
 

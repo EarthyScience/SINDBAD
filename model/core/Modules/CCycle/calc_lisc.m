@@ -82,7 +82,7 @@ for iY = 1:NYears
         % CALCULATE LAI AVERAGE AND MINIMUM
         LAIave                      = mean(LAI13(:, 2:TSPY + 1), 2);
         LAImin                      = min(LAI13(:, 2:TSPY + 1), [], 2);
-        LAImin(LAImin > maxMinLAI)	= maxMinLAI;
+        LAImin(LAImin > maxMinLAI)	= maxMinLAI(LAImin > maxMinLAI);
         LAIsum                      = sum(LAI13(:, 2:TSPY + 1), 2);
 
         % CALCULATE LTCON: CONSTANT FRACTION OF LAI
