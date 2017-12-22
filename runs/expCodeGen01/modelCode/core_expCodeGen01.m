@@ -70,6 +70,53 @@ BGME(ndxn)	= pBGME(ndxn);
 BGME        = max(min(BGME,1),0);
 d.SoilMoistEffectRH.BGME(:,i)	= BGME;
 d.SoilMoistEffectRH.pBGME       = BGME;
+so      = p.CAllocationVeg.so;
+minL    = p.CAllocationVeg.minL;
+maxL    = p.CAllocationVeg.maxL;
+minL_fW = p.CAllocationVeg.minL_fW;
+maxL_fW = p.CAllocationVeg.maxL_fW;
+RelY    = p.CAllocationVeg.RelY;
+NL_fT	= d.CAllocationVeg.NL_fT(:,i);
+NL_fW                   = d.SoilMoistEffectRH.BGME(:,i);
+NL_fW(NL_fW >= maxL_fW)	= maxL_fW(NL_fW >= maxL_fW);
+NL_fW(NL_fW <= minL_fW) = minL_fW(NL_fW <= minL_fW);
+NL              = d.CAllocationVeg.NL(:,i);
+ndx             = f.PET(:,i) > 0;
+NL(ndx)         = NL_fT(ndx) .* NL_fW(ndx);
+NL(NL <= minL)	= minL(NL <= minL);
+NL(NL >= maxL)	= maxL(NL >= maxL);
+WL              = s.wSM ./ d.CAllocationVeg.WLDenominator;
+WL(WL <= minL)	= minL(WL <= minL);
+WL(WL >= maxL)  = maxL(WL >= maxL); %% check if maxL and minL should used maxL_fW?
+minWLNL             = NL;
+minWLNL(WL < NL)	= WL(WL < NL);
+d.CAllocationVeg.cf2Root(:,i)	= d.CAllocationVeg.RootNumerator(:,i) ./ (d.CAllocationVeg.LL(:,i) + RelY .* minWLNL);
+d.CAllocationVeg.cf2Wood(:,i)	= so .* (RelY + 1) .* minWLNL ./ (RelY .* d.CAllocationVeg.LL(:,i) + minWLNL);
+d.CAllocationVeg.cf2Leaf(:,i)	= 1 - d.CAllocationVeg.cf2Root(:,i) - d.CAllocationVeg.cf2Wood(:,i);
+tc      = p.VEG.TreeCover;
+rf2rc	= p.CAllocationVeg.Rf2Rc;
+r0	= d.CAllocationVeg.cf2Root(:,i); % this is to below ground root fine+coarse
+s0	= d.CAllocationVeg.cf2Wood(:,i);
+l0	= d.CAllocationVeg.cf2Leaf(:,i);
+rf1 = r0 .* tc .* rf2rc + (r0 + s0 .* (r0 ./ (r0 + l0))) .* (1 - tc);
+rc1 = r0 .* tc .* (1 - rf2rc);
+s1  = s0 .* tc + 0;
+l1	= l0 .* tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
+d.CAllocationVeg.c2pool(1).value(:,i)	= rf1;
+d.CAllocationVeg.c2pool(2).value(:,i)  = rc1;
+d.CAllocationVeg.c2pool(3).value(:,i)  = s1;
+d.CAllocationVeg.c2pool(4).value(:,i)	= l1;
+dummy	= zeros(size(d.CAllocationVeg.cf2Root(:,i)));
+for ii = {'cf2Root','cf2Wood','cf2Leaf'}%,'cf2RootCoarse'
+if any(d.CAllocationVeg.(ii{1})(:,i) > 1) || ...
+any(d.CAllocationVeg.(ii{1})(:,i) < 0)
+error(['SINDBAD : checkCAllocationVeg : CAllocationVeg.' ii{1} ' < 0 | > 1'])
+end
+dummy	= d.CAllocationVeg.(ii{1})(:,i) + dummy;
+end
+if any(abs(dummy-1)>1E-10)
+error('SINDBAD : checkCAllocationVeg : total CAllocationVeg ~= 1')
+end
 for ii = 1:4
 fx.cEfflux(ii).maintenance(:,i)	= fe.AutoResp.km(ii).value(:,i) .* s.cPools(ii).value;
 fx.cEfflux(ii).growth(:,i)	= (1 - p.AutoResp.YG) .* (fx.gpp(:,i) .* d.CAllocationVeg.c2pool(ii).value(:,i) - fx.cEfflux(ii).maintenance(:,i));

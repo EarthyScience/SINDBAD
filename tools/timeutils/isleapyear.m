@@ -18,11 +18,11 @@ function t = isleapyear(year)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(0, 1, nargin));
+   narginchk(0, 1);
 
    if nargin == 0               % If no input argument...
-      clk = clock;              % ...get current date and time...
-      year = clk(1);            % ...and extract year.
+      clk        = clock;              % ...get current date and time...
+      year       = clk(1);            % ...and extract year.
    end
 
-   t = ( ~rem(year, 4) & rem(year, 100) ) | ~rem(year, 400);
+   t          = ( ~rem(year, 4) & rem(year, 100) ) | ~rem(year, 400);
