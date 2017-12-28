@@ -55,7 +55,7 @@ function data = nc_varget(ncfile, varname, varargin )
 
 
 
-error(nargchk(2,5,nargin,'struct'));
+narginchk(2,5);
 
 [start, count, stride] = parse_and_validate_args(ncfile,varname,varargin{:});
 
