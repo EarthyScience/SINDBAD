@@ -9,8 +9,11 @@ if info.checks.WBalance
     preci = 1E-5; % this could be in the info and be the same for all the variables
 
     %sum inputs:
-    I = f.Rain + f.Snow;
-
+    if isfield(fe,'Snow')
+        I = f.Rain + fe.Snow;
+    else
+        I = f.Rain + f.Snow;
+    end
     %sum outputs
     O = fx.ECanop + fx.ESoil + fx.Transp + fx.Subl + fx.Qb + fx.Qinf + fx.Qint + fx.Qsat;
 
