@@ -151,13 +151,17 @@ else
     % ---------------------------------------------------------------------
     if info.flags.loadSpinUp
         % load the spinup file "restart.mat" inside the run path
+    elseif ~isempty(SUData)
+        if ~isempty(SUData.sSpinUp) && ~isempty(SUData.dSpinUp)
+            % get the initial conditions from memory
+            sSU	= SUData.sSpinUp;
+            dSU	= SUData.dSpinUp;
+        else
+            error('No SUData.sSpinUp and SUData.dSpinUp in memory!')
+        end
+    else %if SUData is empty, set all storages to zero
         
-    elseif ~isempty(SUData.sSpinUp) && ~isempty(SUData.dSpinUp)
-        % get the initial conditions from memory
-        sSU	= SUData.sSpinUp;
-        dSU	= SUData.dSpinUp;
-    else
-        error('what to do for the spin up?!')
+        
     end
 end
 

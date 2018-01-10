@@ -4,19 +4,20 @@ function info = temStatesToSave(info)
 % 1 simple; 
 % 2 full;
 % 3 cmip5 style;
+% 4 water storages only;
 
-% save nothing
+% 0 - save nothing
 info.variables.saveState	= {};
 info.variables.aggStates    = {};
 
-% save simple
+% 1 - save simple
 if info.flags.saveStates >= 1
     info.variables.aggStates	= {'cVeg' 'cLitter' 'cSoil'};
     info.variables.saveState	= [info.variables.saveState ...
         {'s.wGW' 's.wSWE' 's.wSM'}];
 end
 
-% save full
+% 2 - save full
 if info.flags.saveStates == 2
     for ij = 1:14
         info.variables.saveState	= [info.variables.saveState ...
@@ -27,6 +28,14 @@ if info.flags.saveStates == 2
             {['s.smPools(' num2str(ij) ').value']}];
     end
 end
+
+% 4 - save water storages only
+if info.flags.saveStates == 4
+    info.variables.aggStates	= { };
+    info.variables.saveState	= {'s.wGW' 's.wSWE' 's.wSM'};
+
+end
+
 
 if info.checks.WBalance
     wbp                         = {'s.wGW','s.wSWE','s.wSM','s.wGWR'};
