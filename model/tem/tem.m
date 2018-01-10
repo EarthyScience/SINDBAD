@@ -125,7 +125,7 @@ p                  = info.params;
 % 5 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
 % do the SpinUp
-if~exist('SUData','var');SUData=[];end
+if~exist('SUData','var');SUData=struct;end
 [sSU,dSU]          = doSpinUp(f,p,info,SUData);
         
 % get initial conditions for the model run
