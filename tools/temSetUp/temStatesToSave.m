@@ -31,7 +31,7 @@ end
 
 % 4 - save water storages only
 if info.flags.saveStates == 4
-    info.variables.aggStates	= { };
+    info.variables.aggStates	= {};
     info.variables.saveState	= {'s.wGW' 's.wSWE' 's.wSM'};
 
 end

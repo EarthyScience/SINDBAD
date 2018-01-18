@@ -17,7 +17,7 @@ Approaches=info.approaches;
 %[precsGen]=GetInputOutputFromCode(precsGen);
 [precs]=GetInputOutputFromCode(precs);
 [modules]=GetInputOutputFromCode(modules);
-
+%%
 [AllInputs,AllOutputs]=GetAllInputsOutputs(precs,modules);
 
 info.variables.input=AllInputs;

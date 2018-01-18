@@ -1,7 +1,7 @@
 function [C]=GetMfunctionContents(mpth)
 
 fid = fopen(mpth);
-C = textscan(fid, '%s', 'delimiter', '§','CommentStyle','%');
+C = textscan(fid, '%s', 'delimiter', '?','CommentStyle','%'); %%check if mlint does extract the comments (2018-01-18)
 fclose(fid);
 C=C{1};
 
@@ -13,7 +13,7 @@ C=C{1};
      C=C(2:end);
  end
 
-%C=C(2:end); %dirty!! assumes last line is and 'end' or 'return'
+%C=C(2:end); %dirty!! ALWAYS assumes last line is and 'end' or 'return'
 
 [pathstr,name,ext] = fileparts(mpth);
 

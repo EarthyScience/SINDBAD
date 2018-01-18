@@ -1,5 +1,5 @@
 function x = mkHvec(x,mkV)
-% make and horizontal vector, or vertical if(mkV)
+% make an horizontal vector, or vertical if(mkV)
 if isempty(x)
     return
 end
@@ -13,7 +13,7 @@ if size(x, 1) == 1
 elseif size(x, 2) == 1
     x	= x';
 else
-    error(['one of input dimensions must me 1! size(x)=' num2str(size(x))])
+    error(['one of input dimensions must be 1! size(x)=' num2str(size(x))])
 end
 
 if exist('mkV','var')

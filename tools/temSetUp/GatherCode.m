@@ -1,4 +1,4 @@
-function [precs]=GatherCode(xpth,precs,cnt);
+function [precs]=GatherCode(xpth,precs,cnt)
         
         [pathstr, FunName, ext] = fileparts(xpth);
         %set path
