@@ -1,4 +1,4 @@
-function [precs]=CheckPrecompAlways(precs,paramsOpt);
+function [precs]=CheckPrecompAlways(precs,paramsOpt)
 
 %loop from top to bottom
 for i=1:length(precs)

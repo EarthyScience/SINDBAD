@@ -90,7 +90,7 @@ k1  = 0;
 % output
 approaches	= cell(numel(StandardApproaches)/2,1);
 modules     = approaches;
-modStruct   = struct;
+modStruct   = struct; %check if modStruct is redundant, and check if everything commented out works
 % for every model component
 for i = 1:2:numel(StandardApproaches)
     % which is the module to use?

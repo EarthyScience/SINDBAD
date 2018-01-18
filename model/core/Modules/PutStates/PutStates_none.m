@@ -5,7 +5,7 @@ for ii = 1:length(cvars)
     cvar    = cvars{ii};
     tmp     = splitZstr(cvar,'.');
     tmpVN   = tmp{end};
-    if strcmp(tmpVN,'value');
+    if strcmp(tmpVN,'value')
         tmpVN   = [tmp{end-1} '.' tmp{end}];
     end
     if strncmp(cvar,'s.',2)
