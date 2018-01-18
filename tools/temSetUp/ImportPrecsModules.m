@@ -1,4 +1,4 @@
-function [precs,modules]=ImportPrecsModules(pthModules,ModuleNames,Approaches);
+function [precs,modules]=ImportPrecsModules(pthModules,ModuleNames,Approaches)
 
 precs=struct;
 modules=struct;
@@ -15,7 +15,7 @@ modules=struct;
 
 cntP=1;
 cntM=1;
-for i=1:length(ModuleNames);
+for i=1:length(ModuleNames)
     cpth=[pthModules char(ModuleNames(i)) filesep];
     
     Pxl=dir([cpth filesep 'Prec_' char(Approaches(i)) '*.m']);
@@ -25,7 +25,7 @@ for i=1:length(ModuleNames);
     %Pxl=dir([cpth '/Prec_' char(Approaches(i)) '*.xl*']);
     %Mxl=dir([cpth '/' char(Approaches(i)) '*.xl*']);
     
-    for j=1:length(Pxl);
+    for j=1:length(Pxl)
         precs(cntP).doAlways=0;
         %do for Prec
         %get the code and stuff
@@ -35,7 +35,7 @@ for i=1:length(ModuleNames);
         cntP=cntP+1;
     end
     %do for Modules
-    for j=1:length(Mxl);
+    for j=1:length(Mxl)
         modules(cntM).doAlways=1;
         %get the code and stuff
         [modules]=GatherCode([cpth Mxl(j).name],modules,cntM);

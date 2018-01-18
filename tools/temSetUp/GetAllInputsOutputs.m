@@ -3,7 +3,7 @@ function [AllInputs,AllOutputs]=GetAllInputsOutputs(precs,modules)
 AllInputs=[];
 AllOutputs=[];
 
-
+%%%
 for i=1:length(precs)
     AllInputs=vertcat(AllInputs,precs(i).funInput);
     AllOutputs=vertcat(AllOutputs,precs(i).funOutput);
