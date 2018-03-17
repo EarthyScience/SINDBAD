@@ -2,11 +2,15 @@
 % rootFolder = 'D:\Git\matRad\';
 % rootFunction = 'matRad.m';
 
-rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad/sandbox/TWS_Paper/';
-rootFunction = 'HowToRunTEM_TinasModel.m';
-
-% Output path for the JSON
-outputPath = 'callGraphSB2.JSON';
+rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad/sandbox/testOpti/';
+rootFunction = 'testSiteOpti.m';
+outputPath = 'callGraphSB_testOpti.JSON';
+% 
+% rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad/sandbox/TWS_Paper/';
+% rootFunction = 'HowToRunTEM_TinasModel.m';
+% 
+% % Output path for the JSON
+% outputPath = 'callGraphSB_TWS.JSON';
 
 % Add all sub directories to the path
 AddDirs(rootFolder);

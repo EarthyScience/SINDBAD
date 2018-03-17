@@ -46,6 +46,7 @@ if info.flags.doSpinUp
     % Precomputations DO ONLY PRECOMP ALWAYS HERE
     % ---------------------------------------------------------------------
     % DoPrecO=1;DoCore=0;Use4SpinUp=0;
+% function [fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
     [fxSU,tmp,dSU,feSU,p]=runModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,1,0,0);
     
     
@@ -59,7 +60,7 @@ if info.flags.doSpinUp
     % ---------------------------------------------------------------------
     % run the model for spin-up for NPP and soil water pools @ equilibrium
     % ---------------------------------------------------------------------
-    for ij = 1:info.spinUp.wPools
+    for ij = 1:info.spinUp.wPools %% number of years for spinup of water pools
         % DoPrecO=0;DoCore=1;Use4SpinUp=0;
         [fxSU,sSU,dSU,feSU,p]=runModel(fSU,feSU,fxSU,sSU,dSU,p,infoSpin,0,1,0);
         %[fxSU,sSU,dSU]	= infoSpin.code.msi.core(fSU,feSU,fxSU,sSU,dSU,p,infoSpin);
