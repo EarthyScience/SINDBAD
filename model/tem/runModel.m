@@ -1,13 +1,15 @@
 function [fx,s,d,fe,p]=runModel(f,fe,fx,s,d,p,info,DoPrecO,DoCore,Use4SpinUp)
 
 
-%DoPrecO: logical flag if the PrecompOnce should be done; if set to 0 then
-%fe,fx,d,p is assumed to contain the precomputations from a previous run
+% DoPrecO: logical flag if the PrecompOnce should be done; 
+% if set to 0 then
+% fe,fx,d,p is assumed to contain the precomputations 
+% from a previous run
 
-%DoCore: logical flag is the core should be run
+% DoCore: logical flag is the core should be run
 
-%Use4SpinUp: logical flag that if set to 1 then only the AutoResp and
-%CCycle are being run
+% Use4SpinUp: logical flag that if set to 1 then only 
+% the AutoResp and CCycle are being run
 
 
 if Use4SpinUp
