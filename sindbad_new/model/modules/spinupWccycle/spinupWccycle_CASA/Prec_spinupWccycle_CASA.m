@@ -15,7 +15,7 @@ function [fe,fx,d,p] = Prec_spinupWccycle_CASA(f,fe,fx,s,d,p,info)
 % CONTACT	: Nuno
 % 
 % INPUT
-% for calc_kcpools
+% for calcKcpools
 % annk?     : annual turnover rates of carbon for the different soil carbon
 %           pools (yr-1). ? is the name of the pool
 %           (p.CCycle.annk?)
@@ -27,7 +27,7 @@ function [fe,fx,d,p] = Prec_spinupWccycle_CASA(f,fe,fx,s,d,p,info)
 %           example
 %           p.CCycle.ROOT_AGE is the mean age of the fine roots
 % 
-% for calc_effflux
+% for calcEffFlux
 % LITC2N            :carbon-to-nitrogen ratio in litter (gC/gN)
 %                   (p.CCycle.LITC2N)
 % LIGNIN            : fraction of litter that is lignin ([])
@@ -68,7 +68,7 @@ function [fe,fx,d,p] = Prec_spinupWccycle_CASA(f,fe,fx,s,d,p,info)
 % TEXTEFFA          : 
 %                   (p.CCycle.TEXTEFFA)
 % 
-% for calc_lisc
+% for calcLisc
 % lai           : leaf area index (m2/m2)
 %               (f.LAI)
 % maxMinLAI     : parameter for the maximum value for the minimum LAI
@@ -96,7 +96,7 @@ function [fe,fx,d,p] = Prec_spinupWccycle_CASA(f,fe,fx,s,d,p,info)
 %               fe.CCycle.kfEnvTs(5).value - turnover rates of metabolic
 %               leaf litter pools.
 % 
-% from calc_effflux
+% from calcEffFlux
 % effFLUX           : microbial efficiency for each particular c transfer
 %                   ([])
 %                   example 
@@ -125,13 +125,13 @@ function [fe,fx,d,p] = Prec_spinupWccycle_CASA(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % CALCULATE THE TURNOVER RATES OF EACH POOL AT ANNUAL AND TIME STEP SCALES
-[fe] = calc_kcpools(f,fe,fx,s,d,p,info);
+[fe] = calcKcpools(f,fe,fx,s,d,p,info);
 
 % CREATE CARBON POOL FLUX EFFICIENCIES STRUCTURE ARRAY FOR EVERY FLOW
-[fe] = calc_effflux(f,fe,fx,s,d,p,info);
+[fe] = calcEffFlux(f,fe,fx,s,d,p,info);
 
 % DISTRIBUTE LITTERFALL AND ROOT"FALL" THROUGHOUT THE YEAR
-[fe] = calc_lisc(f,fe,fx,s,d,p,info);
+[fe] = calcLisc(f,fe,fx,s,d,p,info);
 
 % ADJUST THE DECAYRATES PER TIME STEP ACCORDINGLY
 fe.CCycle.DecayRate(1).value	= max(min(fe.CCycle.annkpool(1).value .* fe.CCycle.RTLAI,1),0);

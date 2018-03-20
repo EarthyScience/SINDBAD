@@ -36,7 +36,7 @@ d.CAllocationVeg.cf2Leaf	= p.CAllocationVeg.cf2Leaf .* ones(size(f.Tair));
 
 for ii = 1:info.forcing.size(2)
     % adjust allocation
-    d	= adjAllocation(f,fe,fx,s,d,p,info,ii);
+    d	= calcAdjAllocation(f,fe,fx,s,d,p,info,ii);
 
     % check allocation
     checkCAllocationVeg(f,fe,fx,s,d,p,info,ii);
