@@ -1,1 +1,38 @@
-{"Input":{"VariableName":[],"Name":[],"Unit":[],"Dimensions":[],"Source":[],"Comment":[]},"Params":{"VariableName":["meanElev","percElev"],"Name":[NaN,NaN],"Unit":["m",NaN],"Default":[0,0],"LowerBound":[-100,NaN],"UpperBound":[8000,NaN],"Distribution":[NaN,NaN],"p1":[NaN,NaN],"p2":[NaN,NaN],"p3":[NaN,NaN],"p4":[NaN,NaN],"p5":[NaN,NaN],"Comment":[NaN,NaN]},"Output":{"VariableName":[],"Name":[],"Unit":[],"Destiny":[],"KeepAlways":[],"Comment":[]},"Main":{"Purpose":[],"FunctionHandle":[],"Path":[]}}
+{
+	"Input": {
+		"VariableName": [],
+		"Name": [],
+		"Unit": [],
+		"Dimensions": [],
+		"Source": [],
+		"Comment": []
+	},
+	"Params": {
+		"VariableName": ["meanElev", "percElev"],
+		"Name": [NaN, NaN],
+		"Unit": ["m", NaN],
+		"Default": [0, 0],
+		"LowerBound": [-100, NaN],
+		"UpperBound": [8000, NaN],
+		"Distribution": [NaN, NaN],
+		"p1": [NaN, NaN],
+		"p2": [NaN, NaN],
+		"p3": [NaN, NaN],
+		"p4": [NaN, NaN],
+		"p5": [NaN, NaN],
+		"Comment": [NaN, NaN]
+	},
+	"Output": {
+		"VariableName": [],
+		"Name": [],
+		"Unit": [],
+		"Destiny": [],
+		"KeepAlways": [],
+		"Comment": []
+	},
+	"Main": {
+		"Purpose": [],
+		"FunctionHandle": [],
+		"Path": []
+	}
+}
