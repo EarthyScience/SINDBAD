@@ -1,1 +1,38 @@
-{"Input":{"VariableName":["TairC"],"Name":["air temperature"],"Unit":["°C"],"Dimensions":[],"Source":["f"],"Comment":[NaN]},"Params":{"VariableName":["CanopyStorage","fte","EvapRate","St","pd"],"Name":["Canopy storage","fraction of trunk evaporation","mean evaporation rate","trunk capacity","fraction rain to trunks"],"Unit":["mm","[]","mm/hr","mm","[]"],"Default":[1.2,0.02,0.3,0.02,0.02],"LowerBound":[0.4,0.02,0.1,0.02,0.02],"UpperBound":[2,0.02,0.5,0.02,0.02],"Distribution":[NaN,NaN,NaN,NaN,NaN],"p1":[NaN,NaN,NaN,NaN,NaN],"p2":[NaN,NaN,NaN,NaN,NaN],"p3":[NaN,NaN,NaN,NaN,NaN],"p4":[NaN,NaN,NaN,NaN,NaN],"p5":[NaN,NaN,NaN,NaN,NaN],"Comment":["from Miralles 2010","from Miralles 2010","from Miralles 2010","from Miralles 2010","from Miralles 2010"]},"Output":{"VariableName":["snowmeltterm"],"Name":["snow melt term"],"Unit":["mm/day"],"Destiny":["fe"],"KeepAlways":[0],"Comment":[NaN]},"Main":{"Purpose":["pre Compute term for snowmelt"],"FunctionHandle":[NaN],"Path":[NaN]}}
+{
+	"Input": {
+		"VariableName": ["TairC"],
+		"Name": ["air temperature"],
+		"Unit": ["°C"],
+		"Dimensions": [],
+		"Source": ["f"],
+		"Comment": [NaN]
+	},
+	"Params": {
+		"VariableName": ["CanopyStorage", "fte", "EvapRate", "St", "pd"],
+		"Name": ["Canopy storage", "fraction of trunk evaporation", "mean evaporation rate", "trunk capacity", "fraction rain to trunks"],
+		"Unit": ["mm", "[]", "mm/hr", "mm", "[]"],
+		"Default": [1.2, 0.02, 0.3, 0.02, 0.02],
+		"LowerBound": [0.4, 0.02, 0.1, 0.02, 0.02],
+		"UpperBound": [2, 0.02, 0.5, 0.02, 0.02],
+		"Distribution": [NaN, NaN, NaN, NaN, NaN],
+		"p1": [NaN, NaN, NaN, NaN, NaN],
+		"p2": [NaN, NaN, NaN, NaN, NaN],
+		"p3": [NaN, NaN, NaN, NaN, NaN],
+		"p4": [NaN, NaN, NaN, NaN, NaN],
+		"p5": [NaN, NaN, NaN, NaN, NaN],
+		"Comment": ["from Miralles 2010", "from Miralles 2010", "from Miralles 2010", "from Miralles 2010", "from Miralles 2010"]
+	},
+	"Output": {
+		"VariableName": ["snowmeltterm"],
+		"Name": ["snow melt term"],
+		"Unit": ["mm/day"],
+		"Destiny": ["fe"],
+		"KeepAlways": [0],
+		"Comment": [NaN]
+	},
+	"Main": {
+		"Purpose": ["pre Compute term for snowmelt"],
+		"FunctionHandle": [NaN],
+		"Path": [NaN]
+	}
+}

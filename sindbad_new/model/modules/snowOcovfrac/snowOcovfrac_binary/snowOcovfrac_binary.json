@@ -1,1 +1,38 @@
-{"Input":{"VariableName":["swe","snowfall"],"Name":["snow ater equivalent","snow fall"],"Unit":["mm","mm/day"],"Dimensions":[],"Source":["s","f"],"Comment":["mm of water equivalent","mm of water equivalent"]},"Params":{"VariableName":[],"Name":[],"Unit":[],"Default":[],"LowerBound":[],"UpperBound":[],"Distribution":[],"p1":[],"p2":[],"p3":[],"p4":[],"p5":[],"Comment":[]},"Output":{"VariableName":["snow","swe"],"Name":["Snow Cover Fraction","snow water equivalent"],"Unit":["none","mm"],"Destiny":["d","s"],"KeepAlways":[1,1],"Comment":[NaN,NaN]},"Main":{"Purpose":["Compute fractional land area covered by snow"],"FunctionHandle":[NaN],"Path":[NaN]}}
+{
+	"Input": {
+		"VariableName": ["swe", "snowfall"],
+		"Name": ["snow ater equivalent", "snow fall"],
+		"Unit": ["mm", "mm/day"],
+		"Dimensions": [],
+		"Source": ["s", "f"],
+		"Comment": ["mm of water equivalent", "mm of water equivalent"]
+	},
+	"Params": {
+		"VariableName": [],
+		"Name": [],
+		"Unit": [],
+		"Default": [],
+		"LowerBound": [],
+		"UpperBound": [],
+		"Distribution": [],
+		"p1": [],
+		"p2": [],
+		"p3": [],
+		"p4": [],
+		"p5": [],
+		"Comment": []
+	},
+	"Output": {
+		"VariableName": ["snow", "swe"],
+		"Name": ["Snow Cover Fraction", "snow water equivalent"],
+		"Unit": ["none", "mm"],
+		"Destiny": ["d", "s"],
+		"KeepAlways": [1, 1],
+		"Comment": [NaN, NaN]
+	},
+	"Main": {
+		"Purpose": ["Compute fractional land area covered by snow"],
+		"FunctionHandle": [NaN],
+		"Path": [NaN]
+	}
+}
