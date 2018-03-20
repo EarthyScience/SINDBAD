@@ -1,1 +1,38 @@
-{"Input":{"VariableName":[],"Name":[],"Unit":[],"Dimensions":[],"Source":[],"Comment":[]},"Params":{"VariableName":["TimConst","X0","Smax"],"Name":["?? Check with martin","?? Check with martin","?? Check with martin"],"Unit":["days",NaN,NaN],"Default":[5,-5,20],"LowerBound":[1,-15,10],"UpperBound":[20,1,30],"Distribution":[NaN,NaN,NaN],"p1":[NaN,NaN,NaN],"p2":[NaN,NaN,NaN],"p3":[NaN,NaN,NaN],"p4":[NaN,NaN,NaN],"p5":[NaN,NaN,NaN],"Comment":["from Mäkalä2008","from Mäkalä2008","from Mäkalä2008"]},"Output":{"VariableName":[],"Name":[],"Unit":[],"Destiny":[],"KeepAlways":[],"Comment":[]},"Main":{"Purpose":[],"FunctionHandle":[],"Path":[]}}
+{
+	"Input": {
+		"VariableName": [],
+		"Name": [],
+		"Unit": [],
+		"Dimensions": [],
+		"Source": [],
+		"Comment": []
+	},
+	"Params": {
+		"VariableName": ["TimConst", "X0", "Smax"],
+		"Name": ["?? Check with martin", "?? Check with martin", "?? Check with martin"],
+		"Unit": ["days", NaN, NaN],
+		"Default": [5, -5, 20],
+		"LowerBound": [1, -15, 10],
+		"UpperBound": [20, 1, 30],
+		"Distribution": [NaN, NaN, NaN],
+		"p1": [NaN, NaN, NaN],
+		"p2": [NaN, NaN, NaN],
+		"p3": [NaN, NaN, NaN],
+		"p4": [NaN, NaN, NaN],
+		"p5": [NaN, NaN, NaN],
+		"Comment": ["from Mäkalä2008", "from Mäkalä2008", "from Mäkalä2008"]
+	},
+	"Output": {
+		"VariableName": [],
+		"Name": [],
+		"Unit": [],
+		"Destiny": [],
+		"KeepAlways": [],
+		"Comment": []
+	},
+	"Main": {
+		"Purpose": [],
+		"FunctionHandle": [],
+		"Path": []
+	}
+}
