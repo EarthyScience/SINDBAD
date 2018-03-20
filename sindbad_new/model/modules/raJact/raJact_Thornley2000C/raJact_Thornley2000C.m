@@ -67,6 +67,6 @@ for ii = 1:4
 end
 
 % compute total respiration and npp for each vegetation pool
-[fx,s,d]	= updNPPRa(f,fe,fx,s,d,p,info,i);
+[fx,s,d]	= calcUpdNPPRa(f,fe,fx,s,d,p,info,i);
 
 end % function
