@@ -86,7 +86,7 @@ d.CAllocationVeg.cf2Wood(:,i)	= so .* (RelY + 1) .* minWLNL ./ (RelY .* d.CAlloc
 d.CAllocationVeg.cf2Leaf(:,i)	= 1 - d.CAllocationVeg.cf2Root(:,i) - d.CAllocationVeg.cf2Wood(:,i);
 
 % adjust allocation
-d	= adjAllocation(f,fe,fx,s,d,p,info,i);
+d	= calcAdjAllocation(f,fe,fx,s,d,p,info,i);
 
 % check allocation
 checkCAllocationVeg(f,fe,fx,s,d,p,info,i);
