@@ -1,0 +1,36 @@
+function [fx,s,d] = statesWstore_simple(f,fe,fx,s,d,p,info,i)
+
+% if we make that the default function i'll make it fast in the generated
+% code (avoiding the eval) and if and else ...
+
+cvars	= info.variables.rememberState;
+for ii = 1:length(cvars)
+    cvar	= cvars{ii};
+    tmp     = splitZstr(cvar,'.');
+    if strncmp(cvar,'s.',2) || strncmp(cvar,'d.Temp.',7)
+        eval(['d.Temp.p' tmp{end} ' = ' cvar ';'])
+    else
+        eval(['d.Temp.p' tmp{end} ' = ' cvar '(:,i);'])
+    end
+end
+
+cvars = info.variables.saveState;
+for ii = 1:length(cvars)
+    cvar    = cvars{ii};
+    tmp     = splitZstr(cvar,'.');
+    tmpVN   = tmp{end};
+    if strcmp(tmpVN,'value');
+        tmpVN   = [tmp{end-1} '.' tmp{end}];
+    end
+    if strncmp(cvar,'s.',2)
+        eval(['d.statesOut.' tmpVN '(:,i) = ' cvar ';'])
+    end
+end
+
+% dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty
+fx.reco(:,i) = fx.rh(:,i) + fx.ra(:,i);
+fx.nee(:,i)	= fx.gpp(:,i) - fx.reco(:,i);
+
+
+end % function
+
