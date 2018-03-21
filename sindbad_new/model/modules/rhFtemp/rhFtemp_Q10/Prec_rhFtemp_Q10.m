@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_rhFtemp_Q10(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_rhFtemp_Q10(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -17,14 +17,14 @@ function [fe,fx,d,p] = Prec_rhFtemp_Q10(f,fe,fx,s,d,p,info)
 % TrefPap = 30;
 % if ~exist('deltaTref', 'var')
 %     Tref    = mean(f.Tair(isnan(f.Tair) == 0));
-%     TsM     = iniQ10 .^ ((p.TempEffectRH.Tref - TrefPap) ./ 10);
+%     TsM     = iniQ10 .^ ((p.rhFtemp.Tref - TrefPap) ./ 10);
 % else
     TsM     = 1;
 % end
 
 
 
-% CALCULATE EFFECT OF TEMPERATURE ON SOIL CARBON FLUXES
-fe.TempEffectRH.fT	= p.TempEffectRH.Q10 .^ ((f.Tair - p.TempEffectRH.Tref) ./ 10) .* TsM; 
+% CALCULATE EFFECT OF TEMPERATURE ON psoilR CARBON FLUXES
+fe.rhFtemp.fT	= p.rhFtemp.Q10 .^ ((f.Tair - p.rhFtemp.Tref) ./ 10) .* TsM; 
 
 end % function

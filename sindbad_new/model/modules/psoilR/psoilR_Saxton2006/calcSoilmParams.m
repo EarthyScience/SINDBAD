@@ -1,6 +1,6 @@
 function [Alpha,Beta,WPT,FC] = calcSoilmParams(p,info)
 % #########################################################################
-% CALCULATE SOIL MOISTURE PARAMETERS
+% CALCULATE psoilR MOISTURE PARAMETERS
 % soilm_prm = calc_soilm_prms(CLAY, SAND, soilm_prm)
 % 
 % soilm_parm    : soil moisture parameter output array
@@ -19,16 +19,16 @@ function [Alpha,Beta,WPT,FC] = calcSoilmParams(p,info)
 % http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
 % #########################################################################
 
-% SOIL DEPTH
-SD  = p.SOIL.HeightLayer(info.helper.SOIL.layer).value;
+% psoilR DEPTH
+SD  = p.psoilR.HeightLayer(info.helper.psoilR.layer).value;
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
-CLAY    = p.SOIL.CLAY .* 100;
-SAND    = p.SOIL.SAND .* 100;
+CLAY    = p.psoilR.CLAY .* 100;
+SAND    = p.psoilR.SAND .* 100;
 
 % Equations
-A   = exp(p.SOIL.a + p.SOIL.b .* CLAY + p.SOIL.c .* SAND .^ 2 + p.SOIL.d1 .* SAND .^ 2 .* CLAY) * 100;
-B   = p.SOIL.e + p.SOIL.f1 .* CLAY .^ 2 + p.SOIL.g .* SAND .^ 2 .* CLAY;
+A   = exp(p.psoilR.a + p.psoilR.b .* CLAY + p.psoilR.c .* SAND .^ 2 + p.psoilR.d1 .* SAND .^ 2 .* CLAY) * 100;
+B   = p.psoilR.e + p.psoilR.f1 .* CLAY .^ 2 + p.psoilR.g .* SAND .^ 2 .* CLAY;
 
 % FC and WPT
 for WT = [33 1500]
@@ -53,10 +53,10 @@ for WT = [33 1500]
     % WATER POTENTIAL, Psi, kPa
     
     % WATER CONTENT AT SATURATION (m^3/m^3)
-    Theta_s = p.SOIL.h + p.SOIL.j .* SAND + p.SOIL.k .* log10(CLAY);
+    Theta_s = p.psoilR.h + p.psoilR.j .* SAND + p.psoilR.k .* log10(CLAY);
 
     % WATER POTENTIAL AT AIR ENTRY (kPa)
-    Psi_e   = 100 .* (p.SOIL.m + p.SOIL.n .* Theta_s);
+    Psi_e   = 100 .* (p.psoilR.m + p.psoilR.n .* Theta_s);
 
     Theta   = zeros(size(CLAY));
     ndx     = find(Psi >= 10 & Psi <= 1500);
@@ -93,7 +93,7 @@ for WT = [33 1500]
     %     CLAY .^ 2) .* (1 ./ Theta)));
     % -------------------------------------------------------------------------
 
-    % ACCOUNT FOR SOIL DEPTH
+    % ACCOUNT FOR psoilR DEPTH
     Theta = Theta .* SD .* 1000;
     
     if Psi == 33

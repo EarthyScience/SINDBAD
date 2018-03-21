@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFvpd_Maekelae2008(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFvpd_Maekelae2008(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the VPD effect on GPP according to Maekelae et al
 % 2008.
@@ -14,11 +14,11 @@ function [fe,fx,d,p] = Prec_gppFvpd_Maekelae2008(f,fe,fx,s,d,p,info)
 %           (f.VPDDay)
 % k         : parameter of the exponential decay function of GPP with VPD
 %           [] dimensionless [-0.06 -0.7]; median ~-0.4 
-%           (p.VPDEffectGPP.k)
+%           (p.gppFvpd.k)
 % 
 % OUTPUT
 % VPDScGPP  : VPD effect on GPP [] dimensionless, between 0-1
-%           (d.VPDEffectGPP.VPDScGPP)
+%           (d.gppFvpd.VPDScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -26,8 +26,8 @@ function [fe,fx,d,p] = Prec_gppFvpd_Maekelae2008(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-pk                      = p.VPDEffectGPP.k * ones(1,info.forcing.size(2));
+pk                      = p.gppFvpd.k * ones(1,info.forcing.size(2));
 VPDScGPP                = exp(pk .* f.VPDDay);
 VPDScGPP(VPDScGPP>1)    = 1;
-d.VPDEffectGPP.VPDScGPP = VPDScGPP;
+d.gppFvpd.VPDScGPP = VPDScGPP;
 end

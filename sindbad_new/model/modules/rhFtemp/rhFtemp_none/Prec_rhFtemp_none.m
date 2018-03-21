@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_rhFtemp_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_rhFtemp_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -10,6 +10,6 @@ function [fe,fx,d,p] = Prec_rhFtemp_none(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-fe.TempEffectRH.fT	= 1; 
+fe.rhFtemp.fT	= 1; 
 
 end % function

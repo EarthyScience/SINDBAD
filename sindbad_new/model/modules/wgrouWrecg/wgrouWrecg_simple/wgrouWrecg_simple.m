@@ -1,4 +1,4 @@
-function [fx,s,d] = wgrouWrecg_simple(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = wgrouWrecg_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -29,7 +29,7 @@ function [fx,s,d] = wgrouWrecg_simple(f,fe,fx,s,d,p,info,i)
 % simply assume that all remaining (after having subtracted interception
 % evap, infiltration excess runoff, saturation runoff, interflow, soil
 % moisture recharge from (rainfall+snowmelt)) water goes to GW  
-fx.Qgwrec(:,i) = d.Temp.WBP;
-s.wGW = s.wGW + fx.Qgwrec(:,i);
+fx.Qgwrec(:,tix) = d.Temp.WBP;
+s.wGW = s.wGW + fx.Qgwrec(:,tix);
 
 end

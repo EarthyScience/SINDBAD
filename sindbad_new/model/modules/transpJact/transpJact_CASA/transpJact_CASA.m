@@ -1,4 +1,4 @@
-function [fx,s,d] = transpJact_CASA(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = transpJact_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: estimate transpiration from GPP
 % 
@@ -11,11 +11,11 @@ function [fx,s,d] = transpJact_CASA(f,fe,fx,s,d,p,info,i)
 %           (fx.gpp)
 % AoE       : water use efficiency - ratio of assimilation and
 %           transpiration fluxes [gC/mmH2O]
-%           (d.WUE.AoE)
+%           (d.wue.AoE)
 % 
 % OUTPUT
-% Transp    : transpiration [mm/m2/time]
-%           (fx.Transp)
+% transpJact    : transpiration [mm/m2/time]
+%           (fx.transpJact)
 % 
 % DEPENDENCIES  :
 % 
@@ -24,6 +24,6 @@ function [fx,s,d] = transpJact_CASA(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % calculate transpiration
-fx.Transp(:,i)	= d.SupplyTransp.TranspS(:,i);
+fx.transpJact(:,tix)	= d.transpFwsoil.transpJactS(:,tix);
 
 end

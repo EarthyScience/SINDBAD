@@ -1,4 +1,4 @@
-function [fx,s,d] = transpFwsoil_Federer1982(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = transpFwsoil_Federer1982(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -9,13 +9,13 @@ function [fx,s,d] = transpFwsoil_Federer1982(f,fe,fx,s,d,p,info,i)
 % INPUT
 % wSM      : soil moisture sum of all layers [mm]
 % maxRate   : maximum transpiration rate [mm/day]
-%           (p.SupplyTransp.maxRate)
+%           (p.transpFwsoil.maxRate)
 % tAWC     : maximum available water content for plants (sum of all layers) [mm]
-%           (p.SOIL.tAWC)
+%           (p.psoilR.tAWC)
 % 
 % OUTPUT
-% TranspS   : Supply limited transpiration [mm/time]
-%           (d.SupplyTransp.TranspS)
+% transpJactS   : Supply limited transpiration [mm/time]
+%           (d.transpFwsoil.transpJactS)
 % 
 % DEPENDENCIES  :
 % 
@@ -24,6 +24,6 @@ function [fx,s,d] = transpFwsoil_Federer1982(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % T = maxRate*(SM1+SM2)/AWC12
-d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* s.wSM  ./ p.SOIL.tAWC;
+d.transpFwsoil.transpJactS(:,tix) = p.transpFwsoil.maxRate .* s.wSM  ./ p.psoilR.tAWC;
 
 end

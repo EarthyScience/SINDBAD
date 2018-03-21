@@ -1,4 +1,4 @@
-function [fx,s,d] = qCbase_simple_Zhang2008(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = qCbase_simple_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -8,7 +8,7 @@ function [fx,s,d] = qCbase_simple_Zhang2008(f,fe,fx,s,d,p,info,i)
 % 
 % INPUT
 % bc        : baseflow coefficient [1/time]
-%           (p.BaseFlow.bc)
+%           (p.qCbase.bc)
 % wGW       : ground water pool [mm] 
 %           (s.wGW)
 % 
@@ -23,11 +23,11 @@ function [fx,s,d] = qCbase_simple_Zhang2008(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % np = (1-(1-p).^time_res); % time resolution is in days
-% scale: p.BaseFlow.bc
+% scale: p.qCbase.bc
 
 % simply assume that a fraction of the GW pool is baseflow
-fx.Qb(:,i) = p.BaseFlow.bc .* s.wGW;
+fx.Qb(:,tix) = p.qCbase.bc .* s.wGW;
 
 % update the GW pool
-s.wGW = s.wGW - fx.Qb(:,i);
+s.wGW = s.wGW - fx.Qb(:,tix);
 end

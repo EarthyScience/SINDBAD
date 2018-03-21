@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_qCbase_Orth2013(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_qCbase_Orth2013(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: calculates the delay proportion for runoff
 % 
@@ -8,7 +8,7 @@ function [fe,fx,d,p] = Prec_qCbase_Orth2013(f,fe,fx,s,d,p,info)
 % 
 % INPUT
 % qt        : delay parameter [time]
-%           (p.BaseFlow.qt)
+%           (p.qCbase.qt)
 % Rain 		: to get size(1)
 %        	(f.Rain)
 % 
@@ -21,7 +21,7 @@ function [fe,fx,d,p] = Prec_qCbase_Orth2013(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % calculate delay function of previous days
-z           = exp(-(ones(info.forcing.size(1),1) * (0:60) ./ (p.BaseFlow.qt * ones(1,61)))) - exp(((ones(info.forcing.size(1),1) * (0:60)+1) ./ (p.BaseFlow.qt * ones(1,61)))); 
+z           = exp(-(ones(info.forcing.size(1),1) * (0:60) ./ (p.qCbase.qt * ones(1,61)))) - exp(((ones(info.forcing.size(1),1) * (0:60)+1) ./ (p.qCbase.qt * ones(1,61)))); 
 fe.Rdelay   = z./(sum(z,2) * ones(1,61));
 %   = repmat(z,[size(f.Rain,1),1]);
 

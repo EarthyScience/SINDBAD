@@ -19,10 +19,10 @@ function [fe] = calcLisc(f,fe,fx,s,d,p,info)
 %               (f.LAI)
 % maxMinLAI     : parameter for the maximum value for the minimum LAI
 %               (m2/m2)
-%               (p.CCycle.maxMinLAI)
+%               (p.spinupWccycle.maxMinLAI)
 % kRTLAI        : parameter for the constant fraction of root litter imputs
 %               to the soil ([])
-%               (p.CCycle.kRTLAI)
+%               (p.spinupWccycle.kRTLAI)
 % stepsPerYear	: number of time steps per year
 %               (info.timeScale.stepsPerYear)
 % NYears        : number of years of simulations
@@ -30,14 +30,14 @@ function [fe] = calcLisc(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % LTLAI         : litter scalar ([])
-%               (fe.CCycle.LTLAI)
+%               (fe.spinupWccycle.LTLAI)
 % RTLAI         : root litter scalar ([])
-%               (fe.CCycle.RTLAI)
+%               (fe.spinupWccycle.RTLAI)
 % #########################################################################
 
 % PARAMETERS
-maxMinLAI	= p.CCycle.maxMinLAI;
-kRTLAI      = p.CCycle.kRTLAI;
+maxMinLAI	= p.spinupWccycle.maxMinLAI;
+kRTLAI      = p.spinupWccycle.kRTLAI;
 
 % NUMBER OF TIME STEPS PER YEAR, AND TIME RECORDS
 TSPY	= info.timeScale.stepsPerYear;
@@ -55,8 +55,8 @@ LAI13(:, 2:TSPY + 1)	= flipdim(LAI(:,1:TSPY), 2);
 LAI13(:, 1)             = LAI(:, 1);
 
 % OUTPUTS
-fe.CCycle.LTLAI	= zeros(size(LAI));
-fe.CCycle.RTLAI	= zeros(size(LAI));
+fe.spinupWccycle.LTLAI	= zeros(size(LAI));
+fe.spinupWccycle.RTLAI	= zeros(size(LAI));
 
 % TIME COUNTER
 k       = 0;
@@ -111,8 +111,8 @@ for iY = 1:NYears
                     LAIsum(ndx)) ./ 2 + kRTLAI ./ TSPY;
 
         % FEED OUTPUTS
-        fe.CCycle.LTLAI(:,k)	= LTLAI; % leaf litter scalar
-        fe.CCycle.RTLAI(:,k)	= RTLAI; % root litter scalar
+        fe.spinupWccycle.LTLAI(:,k)	= LTLAI; % leaf litter scalar
+        fe.spinupWccycle.RTLAI(:,k)	= RTLAI; % root litter scalar
 
     end 
 end

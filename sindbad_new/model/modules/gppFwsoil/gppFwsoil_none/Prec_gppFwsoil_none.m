@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFwsoil_none(f,fe,fx,s,d,p,info,i)
+function [fe,fx,d,p] = prec_gppFwsoil_none(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: none
 % 
@@ -16,7 +16,7 @@ function [fe,fx,d,p] = Prec_gppFwsoil_none(f,fe,fx,s,d,p,info,i)
 % 
 % #########################################################################
 
-% d.SMEffectGPP.SMScGPP	= ones(info.forcing.size); %-> should be
+% d.gppFwsoil.SMScGPP	= ones(info.forcing.size); %-> should be
 % initialized in teh preallocation function
 
 end

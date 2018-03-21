@@ -1,4 +1,4 @@
-function [fx,s,d] = qCsat_Zhang2008(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = qCsat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 
@@ -11,10 +11,10 @@ function [fx,s,d] = qCsat_Zhang2008(f,fe,fx,s,d,p,info,i)
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
-% p.SOIL.tAWC     : maximum plant available water content (sum over all layers) [mm]
+% p.psoilR.tAWC     : maximum plant available water content (sum over all layers) [mm]
 % wSM      : soil moisture sum of all layers [mm]
 % alpha     : an empirical Budiko parameter []
-%           (p.RunoffSat.alpha)
+%           (p.qCsat.alpha)
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
 % 
@@ -37,7 +37,7 @@ function [fx,s,d] = qCsat_Zhang2008(f,fe,fx,s,d,p,info,i)
 % 
 % calc demand limit (X0)
 
-X0 = f.PET(:,i) + p.SOIL.tAWC - s.wSM;
+X0 = f.PET(:,tix) + p.psoilR.tAWC - s.wSM;
 
 % calc supply limit (d.Temp.WBP) (modified)
 %Zhang et al use precipitation as supply limit. we here use precip +snow
@@ -49,13 +49,13 @@ X0 = f.PET(:,i) + p.SOIL.tAWC - s.wSM;
 Qsat = info.helper.zeros1d;
 valids = d.Temp.WBP > 0;
 
-% p.RunoffSat.alpha default ~0.5
+% p.qCsat.alpha default ~0.5
 
-%fx.Qsat(valids,i) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
-Qsat(valids) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.RunoffSat.alpha(valids) ) ).^ p.RunoffSat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+%fx.Qsat(valids,tix) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.qCsat.alpha(valids) ) ).^ p.qCsat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
+Qsat(valids) = d.Temp.WBP(valids) - d.Temp.WBP(valids) .*(1 + X0(valids) ./d.Temp.WBP(valids) - ( 1 + (X0(valids) ./d.Temp.WBP(valids)).^(1./ p.qCsat.alpha(valids) ) ).^ p.qCsat.alpha(valids) ); % this is a combination of eq 14 and eq 15 in zhang et al 2008
 
-fx.Qsat(:,i)=Qsat;
+fx.Qsat(:,tix)=Qsat;
 
-d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
+d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,tix);
 
 end

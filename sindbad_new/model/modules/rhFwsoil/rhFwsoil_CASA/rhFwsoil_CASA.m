@@ -1,4 +1,4 @@
-function [fx,s,d] = rhFwsoil_CASA(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = rhFwsoil_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: rhFwsoil_CASA
 % 
@@ -30,7 +30,7 @@ function [fx,s,d] = rhFwsoil_CASA(f,fe,fx,s,d,p,info,i)
 % pwSM          : soil moisture sum of all layers of previous time step [mm] 
 %               (d.Temp.pwSM)
 % Aws           : curve (expansion/contraction) controlling parameter
-%               (p.SoilMoistEffectRH.Aws)
+%               (p.rhFwsoil.Aws)
 % pBGME         : BGME of previous timestep
 % 
 % OUTPUT
@@ -56,16 +56,16 @@ BGRATIO = zeros(info.forcing.size(1),1);
 BGME	= zeros(info.forcing.size(1),1);
 
 % PREVIOUS TIME STEP VALUES
-pBGME	= d.SoilMoistEffectRH.pBGME;
+pBGME	= d.rhFwsoil.pBGME;
 
 % FOR PET > 0
-ndx = (f.PET(:,i) > 0);
+ndx = (f.PET(:,tix) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= (d.Temp.pwSM(ndx,1) ./ TSPM  + f.Rain(ndx,i)) ./ f.PET(ndx,i);
+BGRATIO(ndx)	= (d.Temp.pwSM(ndx,1) ./ TSPM  + f.Rain(ndx,tix)) ./ f.PET(ndx,tix);
 
 % ADJUST ACCORDING TO Aws
-BGRATIO         = BGRATIO .* p.SoilMoistEffectRH.Aws;
+BGRATIO         = BGRATIO .* p.rhFwsoil.Aws;
 
 % COMPUTE BGME
 ndx1        = ndx & (BGRATIO >= 0 & BGRATIO < 1);
@@ -78,13 +78,13 @@ ndx4        = ndx & (BGRATIO > 30);
 BGME(ndx4)	= 0.5;
 
 % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
-ndxn        = (f.PET(:,i) <= 0);
+ndxn        = (f.PET(:,tix) <= 0);
 BGME(ndxn)	= pBGME(ndxn);
 
 BGME        = max(min(BGME,1),0);
 
 % FEED IT TO THE STRUCTURE
-d.SoilMoistEffectRH.BGME(:,i)	= BGME;
-d.SoilMoistEffectRH.pBGME       = BGME;
+d.rhFwsoil.BGME(:,tix)	= BGME;
+d.rhFwsoil.pBGME       = BGME;
 
 end % function

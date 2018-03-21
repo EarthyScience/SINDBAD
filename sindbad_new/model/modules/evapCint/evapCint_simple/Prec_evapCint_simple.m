@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_evapCint_simple(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_evapCint_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute canopy interception evaporation according to the Gash
 % model.
@@ -15,7 +15,7 @@ function [fe,fx,d,p] = Prec_evapCint_simple(f,fe,fx,s,d,p,info)
 %           (f.FAPAR)
 % isp       : maximum storage capacity for a fully developed
 %           canopy [mm] (warning: this is per rain event)
-%           (p.Interception.isp)
+%           (p.evapCint.isp)
 % 
 % OUTPUT
 % ECanop    : canopy interception evaporation [mm/time]
@@ -32,7 +32,7 @@ function [fe,fx,d,p] = Prec_evapCint_simple(f,fe,fx,s,d,p,info)
 
 % interception evaporation is simply the minimum of the fapar dependent
 % storage and the rainfall
-tmp         = (p.Interception.isp * ones(1,info.forcing.size(2))).* f.FAPAR;
+tmp         = (p.evapCint.isp * ones(1,info.forcing.size(2))).* f.FAPAR;
 fx.ECanop   = min(tmp,f.Rain);
 
 end

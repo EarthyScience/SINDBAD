@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFrad_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFrad_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: saturating light function
 % 
@@ -10,7 +10,7 @@ function [fe,fx,d,p] = Prec_gppFrad_none(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % LightScGPP: light saturation scalar [] dimensionless
-%           (d.LightEffectGPP.LightScGPP)
+%           (d.gppFrad.LightScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -19,6 +19,6 @@ function [fe,fx,d,p] = Prec_gppFrad_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % no effect (needs to be 1!)
-d.LightEffectGPP.LightScGPP = ones(info.forcing.size);
+d.gppFrad.LightScGPP = ones(info.forcing.size);
 
 end

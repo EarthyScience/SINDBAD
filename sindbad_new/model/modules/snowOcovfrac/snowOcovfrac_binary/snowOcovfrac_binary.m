@@ -1,4 +1,4 @@
-function [fx,s,d] = snowOcovfrac_binary(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = snowOcovfrac_binary(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 
@@ -19,7 +19,7 @@ function [fx,s,d] = snowOcovfrac_binary(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % first update the snow pack
-s.wSWE = s.wSWE + f.Snow(:,i);
+s.wSWE = s.wSWE + f.Snow(:,tix);
 
 % if there is snow, then snow fraction is 1, otherwise 0
 s.wFrSnow = double(s.wSWE > 0);
