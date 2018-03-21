@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_wue_Medlyn(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_wue_Medlyn(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -11,7 +11,7 @@ function [fe,fx,d,p] = Prec_wue_Medlyn(f,fe,fx,s,d,p,info)
 %           (f.VPDDay)
 % g1        : conductance parameter of Medly et al [kPA^0.5] ranging
 %           between [0.9 7]; median ~3.5
-%           (p.WUE.g1)
+%           (p.wue.g1)
 % ca        : ambient CO2 concentration [ppm]
 %           (f.ca)
 %
@@ -19,9 +19,9 @@ function [fe,fx,d,p] = Prec_wue_Medlyn(f,fe,fx,s,d,p,info)
 % OUTPUT
 % AoE       : water use efficiency - ratio of assimilation and
 %           transpiration fluxes [gC/mmH2O]
-%           (d.WUE.AoE)
+%           (d.wue.AoE)
 % ci        : internal CO2 concentration [ppm]
-%           (d.WUE.ci)
+%           (d.wue.ci)
 % 
 % DEPENDENCIES  :
 % 
@@ -31,11 +31,11 @@ function [fe,fx,d,p] = Prec_wue_Medlyn(f,fe,fx,s,d,p,info)
 
 VPDDay                  = f.VPDDay;
 VPDDay(f.VPDDay < 1E-4) = 1E-4;
-pg1                     = p.WUE.g1 * ones(1,info.forcing.size(2));
-d.WUE.AoE               = 6.6667e-004 .* f.ca .* f.PsurfDay ./ (1.6 .* (VPDDay + pg1 .* sqrt(VPDDay)));
+pg1                     = p.wue.g1 * ones(1,info.forcing.size(2));
+d.wue.AoE               = 6.6667e-004 .* f.ca .* f.PsurfDay ./ (1.6 .* (VPDDay + pg1 .* sqrt(VPDDay)));
 
 % Compute ci according to Medlyn et al 2012
-d.WUE.ci	= f.ca .* pg1 ./ (pg1 + sqrt(VPDDay));
+d.wue.ci	= f.ca .* pg1 ./ (pg1 + sqrt(VPDDay));
 
 
 end

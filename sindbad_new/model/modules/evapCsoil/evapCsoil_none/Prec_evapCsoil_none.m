@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_evapCsoil_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_evapCsoil_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 

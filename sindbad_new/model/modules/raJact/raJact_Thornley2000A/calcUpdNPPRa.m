@@ -1,4 +1,4 @@
-function [fx,s,d] = calcUpdNPPRa(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = calcUpdNPPRa(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: updNPPRa
 % 
@@ -24,7 +24,7 @@ function [fx,s,d] = calcUpdNPPRa(f,fe,fx,s,d,p,info,i)
 %           fx.cEfflux(4).value - total (growth + maintenance)
 %           respiration of leaf pools
 % c2pool    : carbon allocation in the different vegetation pools ([])
-%           (d.CAllocationVeg.c2pool)
+%           (d.callocationWveg.c2pool)
 % 
 % OUTPUTS
 % cNpp      : net primary production for each plant pool (gC.m-2.deltaT-1)
@@ -41,18 +41,18 @@ function [fx,s,d] = calcUpdNPPRa(f,fe,fx,s,d,p,info,i)
 
 % compute total respiration and npp for each vegetation pool and for the
 % total fluxes
-fx.npp(:,i) = 0;
-fx.ra(:,i)  = 0;
+fx.npp(:,tix) = 0;
+fx.ra(:,tix)  = 0;
 for ii = 1:4
     % total respiration per pool: R_a = R_m + R_g
-    fx.cEfflux(ii).value(:,i)	= fx.cEfflux(ii).maintenance(:,i) + fx.cEfflux(ii).growth(:,i);
+    fx.cEfflux(ii).value(:,tix)	= fx.cEfflux(ii).maintenance(:,tix) + fx.cEfflux(ii).growth(:,tix);
     
     % net primary production: NPP = GPP * allocationToPool - R_a
-    fx.cNpp(ii).value(:,i)	= fx.gpp(:,i) .* d.CAllocationVeg.c2pool(ii).value(:,i) - fx.cEfflux(ii).value(:,i);
+    fx.cNpp(ii).value(:,tix)	= fx.gpp(:,tix) .* d.callocationWveg.c2pool(ii).value(:,tix) - fx.cEfflux(ii).value(:,tix);
     
     % npp/ra
-    fx.npp(:,i)	= fx.npp(:,i) + fx.cNpp(ii).value(:,i);
-    fx.ra(:,i)	= fx.ra(:,i) + fx.cEfflux(ii).value(:,i);
+    fx.npp(:,tix)	= fx.npp(:,tix) + fx.cNpp(ii).value(:,tix);
+    fx.ra(:,tix)	= fx.ra(:,tix) + fx.cEfflux(ii).value(:,tix);
     
 end
 

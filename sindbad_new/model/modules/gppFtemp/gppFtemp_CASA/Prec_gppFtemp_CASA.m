@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFtemp_CASA(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFtemp_CASA(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the temperature scalar used in the CASA model
 % 
@@ -21,9 +21,9 @@ AIRT    = f.TairDay;
 
 % make it varying in space
 tmp     = ones(1,info.forcing.size(2));
-TOPT    = p.TempEffectGPP.Topt  * tmp;
-A       = p.TempEffectGPP.ToptA * tmp;    % original = 0.2
-B       = p.TempEffectGPP.ToptB * tmp;    % original = 0.3
+TOPT    = p.gppFtemp.Topt  * tmp;
+A       = p.gppFtemp.ToptA * tmp;    % original = 0.2
+B       = p.gppFtemp.ToptB * tmp;    % original = 0.3
 
 % CALCULATE T1: account for effects of temperature stress;
 % reflects the empirical observation that plants in very
@@ -50,6 +50,6 @@ T2      = T21;
 T2(v)   = T22(v);
 
 % SET IT ON d
-d.TempEffectGPP.TempScGPP = T2 .* T1;
+d.gppFtemp.TempScGPP = T2 .* T1;
 
 end

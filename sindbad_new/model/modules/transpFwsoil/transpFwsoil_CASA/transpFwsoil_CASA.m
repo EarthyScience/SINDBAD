@@ -1,30 +1,30 @@
-function [fx,s,d] = transpFwsoil_CASA(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = transpFwsoil_CASA(f,fe,fx,s,d,p,info,tix)
 
 % % T = maxRate*(wSM)/tAWC
-% d.SupplyTransp.TranspS(:,i) = p.SupplyTransp.maxRate .* ( s.wSM(:,i) ) ./ ( p.SOIL.tAWC );
-% wAvail                           = (f.Rain(:,i) + fx.Qsnow(:,i));
-wAvail                           = (f.Rain(:,i) + fx.Qsnow(:,i) - fx.ECanop(:,i) - fx.ESoil(:,i) - fx.Qinf(:,i) - fx.Qsat(:,i)); 
+% d.transpFwsoil.transpJactS(:,tix) = p.transpFwsoil.maxRate .* ( s.wSM(:,tix) ) ./ ( p.psoilR.tAWC );
+% wAvail                           = (f.Rain(:,tix) + fx.Qsnow(:,tix));
+wAvail                           = (f.Rain(:,tix) + fx.Qsnow(:,tix) - fx.ECanop(:,tix) - fx.ESoil(:,tix) - fx.Qinf(:,tix) - fx.Qsat(:,tix)); 
 
 % CALCULATE VMC: Volumetric Moisture Content
-VMC                             = (s.wSM + p.SOIL.WPT) ./ p.SOIL.FC;
-% VMC                           = (s.wSM(:,i)) ./ p.SOIL.tAWC;
+VMC                             = (s.wSM + p.psoilR.WPT) ./ p.psoilR.FC;
+% VMC                           = (s.wSM(:,tix)) ./ p.psoilR.tAWC;
 
 % compute relative drying rate
 RDR                             = zeros(info.forcing.size(1),1);
-RDR(wAvail(:,1) > f.PET(:,i))   = 1;
+RDR(wAvail(:,1) > f.PET(:,tix))   = 1;
 
-% ndx                             = (f.Rain(:,i) + fx.Qsnow(:,i)) <= f.PET(:,i);
-ndx                             = wAvail <= f.PET(:,i); 
-RDR(ndx)                        = (1 + p.SOIL.Alpha(ndx)) ./ (1 + p.SOIL.Alpha(ndx) .* (VMC(ndx) .^ p.SOIL.Beta(ndx)));
+% ndx                             = (f.Rain(:,tix) + fx.Qsnow(:,tix)) <= f.PET(:,tix);
+ndx                             = wAvail <= f.PET(:,tix); 
+RDR(ndx)                        = (1 + p.psoilR.Alpha(ndx)) ./ (1 + p.psoilR.Alpha(ndx) .* (VMC(ndx) .^ p.psoilR.Beta(ndx)));
 
 % when PRECIPITATION EXCEEDS PET THEN EET IS EQUAL TO PET
-ndx                             = wAvail >= f.PET(:,i);
-d.SupplyTransp.TranspS(ndx,i)   = f.PET(ndx,i);
+ndx                             = wAvail >= f.PET(:,tix);
+d.transpFwsoil.transpJactS(ndx,tix)   = f.PET(ndx,tix);
 
 % when not
-ndx                             = wAvail < f.PET(:,i);
-EETa                            = wAvail(ndx,1) + (f.PET(ndx,i) - wAvail(ndx,1)) .* RDR(ndx,1);
+ndx                             = wAvail < f.PET(:,tix);
+EETa                            = wAvail(ndx,1) + (f.PET(ndx,tix) - wAvail(ndx,1)) .* RDR(ndx,1);
 EETb                            = wAvail(ndx,1) + (d.Temp.pwSM(ndx,1));
-d.SupplyTransp.TranspS(ndx,i)	= min(EETa, EETb);
+d.transpFwsoil.transpJactS(ndx,tix)	= min(EETa, EETb);
 
 end % function

@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_evapCsoil_DemSup(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_evapCsoil_DemSup(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: calculates evaporation from soil based on a demand-supply limited approach
 % 
@@ -10,17 +10,17 @@ function [fe,fx,d,p] = Prec_evapCsoil_DemSup(f,fe,fx,s,d,p,info)
 % PET       : potential evaporation [mm/time]
 %           (f.PET)
 % ETalpha   : alpha factor of evapotranspiration [1/time]
-%           (p.SOIL.ETalpha) (=p_et)
+%           (p.psoilR.ETalpha) (=p_et)
 % 
 % OUTPUT
 % PETsoil   : potential evaporation from the soil surface [mm/time]
-%           (fe.SoilEvap.PETsoil)
+%           (fe.evapCsoil.PETsoil)
 %
-% NOTES: check usage of (:,i)
+% NOTES: check usage of (:,tix)
 % 
 % #########################################################################
 
 % calculate potential evaporation 
-fe.SoilEvap.PETsoil 	=	max(0, f.PET .* (p.SoilEvap.ETalpha * ones(1,info.forcing.size(2)))); 
+fe.evapCsoil.PETsoil 	=	max(0, f.PET .* (p.evapCsoil.ETalpha * ones(1,info.forcing.size(2)))); 
 
 end

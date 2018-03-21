@@ -1,6 +1,6 @@
-function [fe,fx,d,p] = Prec_raFtemp_Q10(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_raFtemp_Q10(f,fe,fx,s,d,p,info)
 % #########################################################################
-% FUNCTION	: Prec_raFtemp_Q10
+% FUNCTION	: prec_raFtemp_Q10
 % 
 % PURPOSE	: estimate the effect of temperature in autotrophic maintenance
 % respiration - q10 model.
@@ -25,18 +25,18 @@ function [fe,fx,d,p] = Prec_raFtemp_Q10(f,fe,fx,s,d,p,info)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
-%           (d.TempEffectAutoResp.fT)
+%           (d.TempEffectraJact.fT)
 %           example
-%           d.TempEffectAutoResp.fT(1).value - effect of temperature on
+%           d.TempEffectraJact.fT(1).value - effect of temperature on
 %           maintenance respiration of fine roots. 
 % 
 % #########################################################################
 
 % calculate temperature effect on plant maintenance respiration (1 and 2
 % corresponds to roots; 3 and 4 corresponds to wood and leafs)
-d.TempEffectAutoResp.fT(1).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(2).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tsoil - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(3).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
-d.TempEffectAutoResp.fT(4).value	= p.TempEffectAutoResp.Q10_RM .^ ((f.Tair - p.TempEffectAutoResp.Tref_RM) ./ 10);
+d.TempEffectraJact.fT(1).value	= p.TempEffectraJact.Q10_RM .^ ((f.Tsoil - p.TempEffectraJact.Tref_RM) ./ 10);
+d.TempEffectraJact.fT(2).value	= p.TempEffectraJact.Q10_RM .^ ((f.Tsoil - p.TempEffectraJact.Tref_RM) ./ 10);
+d.TempEffectraJact.fT(3).value	= p.TempEffectraJact.Q10_RM .^ ((f.Tair - p.TempEffectraJact.Tref_RM) ./ 10);
+d.TempEffectraJact.fT(4).value	= p.TempEffectraJact.Q10_RM .^ ((f.Tair - p.TempEffectraJact.Tref_RM) ./ 10);
 
 end % function

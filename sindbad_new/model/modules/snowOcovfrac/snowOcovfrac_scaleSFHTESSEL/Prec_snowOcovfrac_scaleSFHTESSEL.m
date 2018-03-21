@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_snowOcovfrac_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_snowOcovfrac_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the snow fall.
 % 
@@ -12,7 +12,7 @@ function [fe,fx,d,p] = Prec_snowOcovfrac_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 % Snow 		: unscaled snow fall [mm/time]
 %			(f.Snow)
 % SF_scale 	: scaling parameter for snow fall []
-%           (p.SnowCover.SF_scale)
+%           (p.snowOcovfrac.SF_scale)
 % 
 % OUTPUT
 % Snow      : snow fall [mm/time]
@@ -24,6 +24,6 @@ function [fe,fx,d,p] = Prec_snowOcovfrac_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 
 
 % compute snow fall
-fe.Snow  	 = (p.SnowCover.SF_scale * ones(1,info.forcing.size(2))) .* f.Snow; % *ones as parameter has one value for each pixel
+fe.Snow  	 = (p.snowOcovfrac.SF_scale * ones(1,info.forcing.size(2))) .* f.Snow; % *ones as parameter has one value for each pixel
 
 end

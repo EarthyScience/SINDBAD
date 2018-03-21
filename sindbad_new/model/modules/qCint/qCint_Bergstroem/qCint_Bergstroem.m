@@ -1,4 +1,4 @@
-function [fx,s,d] = qCint_Bergstroem(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = qCint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: calculates land surface runoff and infiltration
 % 
@@ -12,9 +12,9 @@ function [fx,s,d] = qCint_Bergstroem(f,fe,fx,s,d,p,info,i)
 % Qsnow 	: snow melt [mm/time]
 % 			(fx.Qsnow)
 % berg      : shape parameter of runoff-infiltration curve []
-%           (p.RunoffInt.berg)
+%           (p.qCint.berg)
 % smax 		: maximum woil wate rholding capacity [mm]
-% 			(p.SOIL.smax)
+% 			(p.psoilR.smax)
 % wSM      	: total soil moisture [mm]
 % 			(s.wSM)
 % WBP       : water balance pool [mm]
@@ -34,11 +34,11 @@ function [fx,s,d] = qCint_Bergstroem(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % calculate land runoff from incoming water and current soil moisture
-fx.Qint(:,i) = (f.Rain(:,i)+fx.Qsnow(:,i)) .* exp(p.RunoffInt.berg .* log(s.wSM./p.RunoffInt.smax));
+fx.Qint(:,tix) = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.qCint.berg .* log(s.wSM./p.qCint.smax));
 
 % update soil moisture and water balance
-s.wSM = s.wSM + ((f.Rain(:,i)+fx.Qsnow(:,i))-fx.Qint(:,i));
+s.wSM = s.wSM + ((f.Rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
 
-d.Temp.WBP = d.Temp.WBP - fx.Qint(:,i);
+d.Temp.WBP = d.Temp.WBP - fx.Qint(:,tix);
 
 end

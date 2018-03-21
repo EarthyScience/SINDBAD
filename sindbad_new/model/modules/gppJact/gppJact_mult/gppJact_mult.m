@@ -1,4 +1,4 @@
-function [fx,s,d] = gppJact_mult(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = gppJact_mult(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -13,7 +13,7 @@ function [fx,s,d] = gppJact_mult(f,fe,fx,s,d,p,info,i)
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (f.FAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.MaxRUE.rueGPP)
+%           (d.gppJruemax.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -34,11 +34,11 @@ function [fx,s,d] = gppJact_mult(f,fe,fx,s,d,p,info,i)
 
 % calculate the combined effect of all the stress scalars from demand GPP
 % and the supply GPP 
-d.ActualGPP.AllScGPP(:,i)	= d.DemandGPP.AllDemScGPP(:,i) .* d.SMEffectGPP.SMScGPP(:,i);
+d.gppJact.AllScGPP(:,tix)	= d.gppJdem.AllDemScGPP(:,tix) .* d.gppFwsoil.SMScGPP(:,tix);
 
-% multiply DemandGPP with soil moisture sress scaler (is the same as taking
-% the min of DemandGPP and SupplyGPP)
-fx.gpp(:,i) = d.DemandGPP.gppE(:,i) .* d.SMEffectGPP.SMScGPP(:,i);
+% multiply gppJdem with soil moisture sress scaler (is the same as taking
+% the min of gppJdem and SupplyGPP)
+fx.gpp(:,tix) = d.gppJdem.gppE(:,tix) .* d.gppFwsoil.SMScGPP(:,tix);
 
 
 end

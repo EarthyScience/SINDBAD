@@ -1,4 +1,4 @@
-function [fx,s,d] = gppJact_min(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = gppJact_min(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: 
 % 
@@ -13,7 +13,7 @@ function [fx,s,d] = gppJact_min(f,fe,fx,s,d,p,info,i)
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (f.FAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.MaxRUE.rueGPP)
+%           (d.gppJruemax.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -34,9 +34,9 @@ function [fx,s,d] = gppJact_min(f,fe,fx,s,d,p,info,i)
 
 % calculate the minimum of all the stress scalars from demand GPP and the
 % supply GPP
-d.ActualGPP.AllScGPP(:,i)	= min(d.DemandGPP.AllDemScGPP(:,i),d.SMEffectGPP.SMScGPP(:,i));
+d.gppJact.AllScGPP(:,tix)	= min(d.gppJdem.AllDemScGPP(:,tix),d.gppFwsoil.SMScGPP(:,tix));
 
 % ... and multiply with apar and rue
-fx.gpp(:,i) = f.FAPAR(:,i) .* f.PAR(:,i) .* d.MaxRUE.rueGPP(:,i) .* d.ActualGPP.AllScGPP(:,i);
+fx.gpp(:,tix) = f.FAPAR(:,tix) .* f.PAR(:,tix) .* d.gppJruemax.rueGPP(:,tix) .* d.gppJact.AllScGPP(:,tix);
 
 end
