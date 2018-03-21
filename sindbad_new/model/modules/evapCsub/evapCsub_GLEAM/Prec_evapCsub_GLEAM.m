@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_evapCsub_GLEAM(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_evapCsub_GLEAM(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: precompute the Priestley-Taylor term for sublimation
 % 
@@ -15,7 +15,7 @@ function [fe,fx,d,p] = Prec_evapCsub_GLEAM(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % PTtermSub : Priestley-Taylor term [mm/MJ]
-%           (fe.Sublimation.PTtermSub)
+%           (fe.evapCsub.PTtermSub)
 % 
 % NOTES:
 % 
@@ -52,10 +52,10 @@ pa = 0.001; %MJ/kg/K
 Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
-palpha                      = p.Sublimation.alpha * ones(1,info.forcing.size(2));
+palpha                      = p.evapCsub.alpha * ones(1,info.forcing.size(2));
 
 tmp                         = palpha .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 tmp(tmp<0)                  = 0;
-fe.Sublimation.PTtermSub    = tmp;
+fe.evapCsub.PTtermSub    = tmp;
 
 end

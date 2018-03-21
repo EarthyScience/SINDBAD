@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppJruemax_Turner(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppJruemax_Turner(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: diffuse radiation effect on GPP
 % 
@@ -19,7 +19,7 @@ function [fe,fx,d,p] = Prec_gppJruemax_Turner(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.MaxRUE.rueGPP)
+%           (d.gppJruemax.rueGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -28,10 +28,10 @@ function [fe,fx,d,p] = Prec_gppJruemax_Turner(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 tmp                     = ones(1,info.forcing.size(2));
-prue2                   = p.MaxRUE.rue2 * tmp;
-prue1                   = p.MaxRUE.rue1 * tmp;
-d.MaxRUE.rueGPP         = prue1;
+prue2                   = p.gppJruemax.rue2 * tmp;
+prue1                   = p.gppJruemax.rue1 * tmp;
+d.gppJruemax.rueGPP         = prue1;
 valid                   = f.RgPot > 0;
-d.MaxRUE.rueGPP(valid)	= (prue2(valid) - prue1(valid)) .* (1 - f.Rg(valid) ./ f.RgPot(valid) ) + prue1(valid);
+d.gppJruemax.rueGPP(valid)	= (prue2(valid) - prue1(valid)) .* (1 - f.Rg(valid) ./ f.RgPot(valid) ) + prue1(valid);
 
 end

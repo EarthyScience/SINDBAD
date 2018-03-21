@@ -1,4 +1,4 @@
-function [fx,s,d] = snowOcovfrac_HTESSEL(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = snowOcovfrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 
@@ -25,9 +25,9 @@ function [fx,s,d] = snowOcovfrac_HTESSEL(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % first update the snow pack
-s.wSWE = s.wSWE + f.Snow(:,i);
+s.wSWE = s.wSWE + f.Snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
-s.wFrSnow = min(1, s.wSWE ./ p.SnowCover.CoverParam );
+s.wFrSnow = min(1, s.wSWE ./ p.snowOcovfrac.CoverParam );
 
 end

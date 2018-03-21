@@ -1,6 +1,6 @@
-function [fe,fx,d,p] = Prec_raJact_Thornley2000C(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_raJact_Thornley2000C(f,fe,fx,s,d,p,info)
 % #########################################################################
-% FUNCTION	: Prec_raJact_Thornley2000C
+% FUNCTION	: prec_raJact_Thornley2000C
 % 
 % PURPOSE	: precomputations to estimate autotrophic respiration as
 % maintenance + growth respiration according to Thornley and Cannell
@@ -24,21 +24,21 @@ function [fe,fx,d,p] = Prec_raJact_Thornley2000C(f,fe,fx,s,d,p,info)
 % INPUTS
 % 
 % fT            : temperature effect on autrotrophic respiration (deltaT-1)
-%               (d.TempEffectAutoResp.fT)
+%               (d.TempEffectraJact.fT)
 %               example
-%               d.TempEffectAutoResp.fT(1).value - temperature effect of
+%               d.TempEffectraJact.fT(1).value - temperature effect of
 %               RespAuto of fine roots (pool (1)). 
 % RMN           : nitrogen efficiency rate of maintenance respiration
 %               (gC.gN-1.deltaT-1) 
-%               (p.AutoResp.RMN)
+%               (p.raJact.RMN)
 % C2N           : carbon to nitrogen ratio (gC.gN-1)
-%               (p.AutoResp.C2N)
+%               (p.raJact.C2N)
 %               example
-%               p.AutoResp.C2N(2).value - C2N ratio of coarse roots
+%               p.raJact.C2N(2).value - C2N ratio of coarse roots
 % MTF           : metabolic fraction ([])
-%               (fe.CCycle.MTF)
+%               (fe.spinupWccycle.MTF)
 % YG            : growth yield coefficient - or growth efficiency (gC.gC-1)
-%               (p.AutoResp.YG)
+%               (p.raJact.YG)
 % stepsPerDay	: number of time steps per day
 %               (info.timeScale.stepsPerDay)
 % 
@@ -46,7 +46,7 @@ function [fe,fx,d,p] = Prec_raJact_Thornley2000C(f,fe,fx,s,d,p,info)
 % km        : maintenance (respiration) coefficient - dependent on
 %           temperature and, depending on the models, degradable fraction
 %           (deltaT-1)
-%           (fe.AutoResp.km(ii).value)
+%           (fe.raJact.km(ii).value)
 % 
 % #########################################################################
 
@@ -54,7 +54,7 @@ function [fe,fx,d,p] = Prec_raJact_Thornley2000C(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % adjust nitrogen efficiency rate of maintenance respiration
-RMN     = p.AutoResp.RMN ./ info.timeScale.stepsPerDay;
+RMN     = p.raJact.RMN ./ info.timeScale.stepsPerDay;
 
 % Fd is the decomposable fraction from each plant pool (see Thornley and
 % Cannell 2000). Since we don't discriminate in the model, this should be
@@ -64,24 +64,24 @@ RMN     = p.AutoResp.RMN ./ info.timeScale.stepsPerDay;
 % approach and add a flag to model parameters to switch it off.
 % Another thing to consider is if this a double count, since we have C2N
 % ratios?
-if p.AutoResp.flagMTF
+if p.raJact.flagMTF
     for ii = 1:4 % for all the vegetation pools
         % make the Fd of each pool equal to the MTF
-        p.AutoResp.Fd(ii).value = fe.CCycle.MTF;
+        p.raJact.Fd(ii).value = fe.spinupWccycle.MTF;
     end
 else
     for ii = 1:4 % for all the vegetation pools
-        p.AutoResp.Fd(ii).value = 1;
+        p.raJact.Fd(ii).value = 1;
     end
 end
 
 % scalars of maintenance respiration for models A, B and C
 % km is the maintenance respiration coefficient (d-1)
 for ii = 1:4 % for all the vegetation pools
-    km                          = 1 ./ p.AutoResp.C2N(ii).value .* RMN .* d.TempEffectAutoResp.fT(ii).value;
-    kd                          = p.AutoResp.Fd(ii).value;
-    fe.AutoResp.km(ii).value	= km .* kd;
-    fe.AutoResp.km4su(ii).value	= fe.AutoResp.km(ii).value .* (1 - p.AutoResp.YG);
+    km                          = 1 ./ p.raJact.C2N(ii).value .* RMN .* d.TempEffectraJact.fT(ii).value;
+    kd                          = p.raJact.Fd(ii).value;
+    fe.raJact.km(ii).value	= km .* kd;
+    fe.raJact.km4su(ii).value	= fe.raJact.km(ii).value .* (1 - p.raJact.YG);
 end
 
 end % function

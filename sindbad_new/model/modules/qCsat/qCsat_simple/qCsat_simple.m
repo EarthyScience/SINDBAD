@@ -1,4 +1,4 @@
-function [fx,s,d] = qCsat_simple(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = qCsat_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 
@@ -24,9 +24,9 @@ function [fx,s,d] = qCsat_simple(f,fe,fx,s,d,p,info,i)
 
 
 % this is a dummy
-fx.Qsat(:,i) = d.Temp.WBP .* s.wFrSat;
+fx.Qsat(:,tix) = d.Temp.WBP .* s.wFrSat;
 
 % update the WBP
-d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,i);
+d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,tix);
 
 end

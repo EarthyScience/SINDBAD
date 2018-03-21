@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_evapCint_Gash_Miralles2010(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_evapCint_Gash_Miralles2010(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute canopy interception evaporation according to the Gash
 % model.
@@ -14,15 +14,15 @@ function [fe,fx,d,p] = Prec_evapCint_Gash_Miralles2010(f,fe,fx,s,d,p,info)
 %           convective}
 %           (f.RainInt)
 % CanopyStorage : Canopy storage [mm] {1.2}
-%               (p.Interception.CanopyStorage)
+%               (p.evapCint.CanopyStorage)
 % fte           : fraction of trunk evaporation [] {0.02}
-%               (p.Interception.fte)
+%               (p.evapCint.fte)
 % EvapRate      : mean evaporation rate [mm/hr] {0.3}
-%               (p.Interception.EvapRate)
+%               (p.evapCint.EvapRate)
 % St            : trunk capacity [mm] {0.02}
-%               (p.Interception.St)
+%               (p.evapCint.St)
 % pd            : fraction rain to trunks [] {0.02}
-%               (p.Interception.pd)
+%               (p.evapCint.pd)
 % FAPAR         : fraction of absorbed photosynthetically active radiation
 %               [] (equivalent to "canopy cover" in Gash and Miralles)
 %               (f.FAPAR)
@@ -40,11 +40,11 @@ function [fe,fx,d,p] = Prec_evapCint_Gash_Miralles2010(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 tmp             = ones(1,info.forcing.size(2));
-CanopyStorage   = p.Interception.CanopyStorage  * tmp;
-fte             = p.Interception.fte            * tmp; 
-EvapRate        = p.Interception.EvapRate       * tmp;
-St              = p.Interception.St             * tmp;
-pd              = p.Interception.pd             * tmp;
+CanopyStorage   = p.evapCint.CanopyStorage  * tmp;
+fte             = p.evapCint.fte            * tmp; 
+EvapRate        = p.evapCint.EvapRate       * tmp;
+St              = p.evapCint.St             * tmp;
+pd              = p.evapCint.pd             * tmp;
 
 
 %catch for division by zero
@@ -68,7 +68,7 @@ Pgc(valids)=-1.*( f.RainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids)
 %Pgt: amount of gross rainfall necessary to saturate the trunks
 Pgt(valids)=Pgc(valids) + f.RainInt(valids) .* St(valids) ./ ( pd(valids) .* f.FAPAR(valids) .* ( f.RainInt(valids) - EvapRate(valids) .* (1 - fte(valids) )));
 
-%Ic: Interception loss from canopy
+%Ic: evapCint loss from canopy
 Ic1(valids) = f.FAPAR(valids) .* f.Rain(valids); %Pg < Pgc
 Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ) .* ( f.Rain(valids) - Pgc(valids))); %Pg > Pgc
 

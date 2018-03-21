@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppJruemax_Monteith(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppJruemax_Monteith(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -10,7 +10,7 @@ function [fe,fx,d,p] = Prec_gppJruemax_Monteith(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.MaxRUE.rueGPP)
+%           (d.gppJruemax.rueGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -19,6 +19,6 @@ function [fe,fx,d,p] = Prec_gppJruemax_Monteith(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % just put here a single maximum radiation use efficiency
-d.MaxRUE.rueGPP = p.MaxRUE.rue * ones(1,info.forcing.size(2));
+d.gppJruemax.rueGPP = p.gppJruemax.rue * ones(1,info.forcing.size(2));
 
 end

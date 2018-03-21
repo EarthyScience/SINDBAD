@@ -1,6 +1,6 @@
-function [fe,fx,d,p] = Prec_raFtemp_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_raFtemp_none(f,fe,fx,s,d,p,info)
 % #########################################################################
-% FUNCTION	: Prec_TempEffectAutoResp_Q10
+% FUNCTION	: prec_TempEffectraJact_Q10
 % 
 % PURPOSE	: estimate the effect of temperature in autotrophic maintenance
 % respiration - q10 model.
@@ -25,15 +25,15 @@ function [fe,fx,d,p] = Prec_raFtemp_none(f,fe,fx,s,d,p,info)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
-%           (d.TempEffectAutoResp.fT)
+%           (d.TempEffectraJact.fT)
 %           example
-%           d.TempEffectAutoResp.fT(1).value - effect of temperature on
+%           d.TempEffectraJact.fT(1).value - effect of temperature on
 %           maintenance respiration of fine roots. 
 % 
 % #########################################################################
 
 
 % just copy
-d.TempEffectAutoResp	= ones(info.forcing.size);
+d.TempEffectraJact	= ones(info.forcing.size);
 
 end % function

@@ -1,4 +1,4 @@
-function [fx,s,d] = gppFwsoil_supply(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = gppFwsoil_supply(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: Supply Control
 % 
@@ -17,12 +17,12 @@ function [fx,s,d] = gppFwsoil_supply(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % calc GPP supply
-d.SMEffectGPP.gppS(:,i)   = d.SupplyTransp.TranspS(:,i) .* d.WUE.AoE(:,i);   
+d.gppFwsoil.gppS(:,tix)   = d.transpFwsoil.transpJactS(:,tix) .* d.wue.AoE(:,tix);   
 
 % calc SM stress scalar
-ndx                             = d.DemandGPP.gppE(:,i) > 0;
-ndxn                            = ~(d.DemandGPP.gppE(:,i) > 0);
-d.SMEffectGPP.SMScGPP(ndx,i)    = min( d.SMEffectGPP.gppS(ndx,i) ./ d.DemandGPP.gppE(ndx,i) ,1);
-d.SMEffectGPP.SMScGPP(ndxn,i)	= 0;
+ndx                             = d.gppJdem.gppE(:,tix) > 0;
+ndxn                            = ~(d.gppJdem.gppE(:,tix) > 0);
+d.gppFwsoil.SMScGPP(ndx,tix)    = min( d.gppFwsoil.gppS(ndx,tix) ./ d.gppJdem.gppE(ndx,tix) ,1);
+d.gppFwsoil.SMScGPP(ndxn,tix)	= 0;
 
 end

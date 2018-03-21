@@ -1,4 +1,4 @@
-function [fx,s,d] = statesWstore_simple(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = statesWstore_simple(f,fe,fx,s,d,p,info,tix)
 
 % if we make that the default function i'll make it fast in the generated
 % code (avoiding the eval) and if and else ...
@@ -10,7 +10,7 @@ for ii = 1:length(cvars)
     if strncmp(cvar,'s.',2) || strncmp(cvar,'d.Temp.',7)
         eval(['d.Temp.p' tmp{end} ' = ' cvar ';'])
     else
-        eval(['d.Temp.p' tmp{end} ' = ' cvar '(:,i);'])
+        eval(['d.Temp.p' tmp{end} ' = ' cvar '(:,tix);'])
     end
 end
 
@@ -23,13 +23,13 @@ for ii = 1:length(cvars)
         tmpVN   = [tmp{end-1} '.' tmp{end}];
     end
     if strncmp(cvar,'s.',2)
-        eval(['d.statesOut.' tmpVN '(:,i) = ' cvar ';'])
+        eval(['d.statesOut.' tmpVN '(:,tix) = ' cvar ';'])
     end
 end
 
 % dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty
-fx.reco(:,i) = fx.rh(:,i) + fx.ra(:,i);
-fx.nee(:,i)	= fx.gpp(:,i) - fx.reco(:,i);
+fx.reco(:,tix) = fx.rh(:,tix) + fx.ra(:,tix);
+fx.nee(:,tix)	= fx.gpp(:,tix) - fx.reco(:,tix);
 
 
 end % function

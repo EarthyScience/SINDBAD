@@ -1,4 +1,4 @@
-function [fx,s,d] = wsurfOsatfrac_WTD(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = wsurfOsatfrac_WTD(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -10,12 +10,12 @@ function [fx,s,d] = wsurfOsatfrac_WTD(f,fe,fx,s,d,p,info,i)
 % wWTD      : water table depth [m]
 %           (s.wWTD)
 % meanElev  : mean elevation [m]
-%           (p.Terrain.meanElev)
+%           (p.ptopoR.meanElev)
 % percElev  : pdf of the elevation [m] dimensions must be [nspace 100] 
-%           (p.Terrain.percElev)
+%           (p.ptopoR.percElev)
 % CritDepth : critical depth [m]. should be a global variable; maybe 0.5
 %           (i.e. where wtd is less than 0.5 m is considered saturated) 
-%           (p.SaturatedFraction.CritDepth)
+%           (p.wsurfOsatfrac.CritDepth)
 % 
 % OUTPUT
 % frSat     : saturated fraction of soil [] (from 0 to 1)
@@ -25,8 +25,8 @@ function [fx,s,d] = wsurfOsatfrac_WTD(f,fe,fx,s,d,p,info,i)
 % 
 % #########################################################################
 
-sc = s.wWTD ./ p.Terrain.meanElev;
-dum = p.Terrain.percElev.*sc <= p.SaturatedFraction.CritDepth;
+sc = s.wWTD ./ p.ptopoR.meanElev;
+dum = p.ptopoR.percElev.*sc <= p.wsurfOsatfrac.CritDepth;
 s.wFrSat = sum(dum,3)./100;
 
 end

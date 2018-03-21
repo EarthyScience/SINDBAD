@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFtemp_Maekelae2008(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFtemp_Maekelae2008(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: estimate temperature effect on GPP 
 % 
@@ -13,18 +13,18 @@ function [fe,fx,d,p] = Prec_gppFtemp_Maekelae2008(f,fe,fx,s,d,p,info)
 %           (f.TairDay)
 % TimConst  : time constant of the delay process [days] (between 1 and 20
 %           days; guessed median = 5)
-%           (p.TempEffectGPP.TimConst)
+%           (p.gppFtemp.TimConst)
 % X0        : is a threshold value of the delayed temperature [ºC], X0 [-15
 %           1]; median ~-5
-%           (p.TempEffectGPP.X0)
+%           (p.gppFtemp.X0)
 % Smax      : determines the value of Sk at which the temperature modifier
 %           attains its saturating level [ºC],  between 11 and 30, median
 %           ~20
-%           (p.TempEffectGPP.Smax)
+%           (p.gppFtemp.Smax)
 % 
 % OUTPUT
 % TempScGPP : temperature effect on GPP [] dimensionless, between 0-1
-%           (d.TempEffectGPP.TempScGPP)
+%           (d.gppFtemp.TempScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -35,9 +35,9 @@ function [fe,fx,d,p] = Prec_gppFtemp_Maekelae2008(f,fe,fx,s,d,p,info)
 
 tmp = ones(1,info.forcing.size(2));
 
-TimConst    = p.TempEffectGPP.TimConst;
-X0          = p.TempEffectGPP.X0    * tmp;
-Smax        = p.TempEffectGPP.Smax  * tmp;
+TimConst    = p.gppFtemp.TimConst;
+X0          = p.gppFtemp.X0    * tmp;
+Smax        = p.gppFtemp.Smax  * tmp;
 
 % acclimation
 X = f.TairDay;
@@ -48,6 +48,6 @@ end
 S   = max(X - X0 ,0);
 vsc = max(min(S ./ Smax,1),0);
 
-d.TempEffectGPP.TempScGPP = vsc;
+d.gppFtemp.TempScGPP = vsc;
 
 end

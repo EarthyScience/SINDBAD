@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFtemp_MOD17(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFtemp_MOD17(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: estimate temperature effect on GPP - MOD17 model
 % 
@@ -11,13 +11,13 @@ function [fe,fx,d,p] = Prec_gppFtemp_MOD17(f,fe,fx,s,d,p,info)
 % TairDay   : daytime temperature [ºC]
 %           (f.TairDay)
 % Tmin      : temperature below which GPP is zero [ºC]
-%           (p.TempEffectGPP.Tmin)
+%           (p.gppFtemp.Tmin)
 % Tmax      : temperature above which GPP is maximum [ºC]
-%           (p.TempEffectGPP.Tmax)
+%           (p.gppFtemp.Tmax)
 % 
 % OUTPUT
 % TempScGPP : temperature effect on GPP [] dimensionless, between 0-1
-%           (d.TempEffectGPP.TempScGPP)
+%           (d.gppFtemp.TempScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -26,12 +26,12 @@ function [fe,fx,d,p] = Prec_gppFtemp_MOD17(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 tmp     = ones(1,info.forcing.size(2));
-td      = (p.TempEffectGPP.Tmax - p.TempEffectGPP.Tmin) * tmp;
-tmax    = p.TempEffectGPP.Tmax * tmp;
+td      = (p.gppFtemp.Tmax - p.gppFtemp.Tmin) * tmp;
+tmax    = p.gppFtemp.Tmax * tmp;
 
 tsc                         = f.TairDay ./ td + 1 - tmax ./ td;
 tsc(tsc<0)                  = 0;
 tsc(tsc>1)                  = 1;
-d.TempEffectGPP.TempScGPP   = tsc;
+d.gppFtemp.TempScGPP   = tsc;
 
 end

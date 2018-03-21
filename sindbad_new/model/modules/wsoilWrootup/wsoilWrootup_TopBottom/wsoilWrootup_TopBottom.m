@@ -1,4 +1,4 @@
-function [fx,s,d] = wsoilWrootup_TopBottom(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = wsoilWrootup_TopBottom(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: extract the transpired water from the soil
 % 
@@ -11,10 +11,10 @@ function [fx,s,d] = wsoilWrootup_TopBottom(f,fe,fx,s,d,p,info,i)
 % INPUT
 %s.smPools  : soil moisture content of layers [mm]
 % wSM      : soil moisture sum of all layers [mm]
-%p.SOIL.AWC : maximum plant available water content of layers
+%p.psoilR.AWC : maximum plant available water content of layers
 % wGWR      : ground water recharge pool [mm] 
 %           (s.wGWR)
-%fx.Transp  : transpiration [mm]
+%fx.transpJact  : transpiration [mm]
 % OUTPUT
 %s.smPools  : soil moisture content of layers [mm]
 % wSM      : soil moisture sum of all layers [mm]
@@ -28,7 +28,7 @@ function [fx,s,d] = wsoilWrootup_TopBottom(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % first extract it from ground water in the root zone
 
-ET          = fx.Transp(:,i);
+ET          = fx.transpJact(:,tix);
 ET1         = min(ET,s.wGWR);
 s.wGWR = s.wGWR - ET1;
 ET=ET-ET1;

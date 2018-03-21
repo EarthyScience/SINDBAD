@@ -1,4 +1,4 @@
-function [fx,s,d] = wsoilWrecg_TopBottom(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = wsoilWrecg_TopBottom(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: estimate recharge of available water content
 %
@@ -8,7 +8,7 @@ function [fx,s,d] = wsoilWrecg_TopBottom(f,fe,fx,s,d,p,info,i)
 %
 % INPUT
 %s.smPools  : soil moisture content of layers [mm]
-%p.SOIL.AWC : maximum plant available water content of layers
+%p.psoilR.AWC : maximum plant available water content of layers
 % wSM      : soil moisture sum of all layers [mm]
 % WBP       : water balance pool [mm]
 %           (d.Temp.WBP)
@@ -31,7 +31,7 @@ function [fx,s,d] = wsoilWrecg_TopBottom(f,fe,fx,s,d,p,info,i)
 
 for ii=1:length(s.smPools)
     
-    ip = min( p.SOIL.AWC(ii).value - s.smPools(ii).value , d.Temp.WBP);
+    ip = min( p.psoilR.AWC(ii).value - s.smPools(ii).value , d.Temp.WBP);
     s.smPools(ii).value = s.smPools(ii).value + ip;
     d.Temp.WBP = d.Temp.WBP - ip;
     

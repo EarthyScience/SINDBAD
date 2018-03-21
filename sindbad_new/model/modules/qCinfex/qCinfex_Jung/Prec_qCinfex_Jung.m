@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_qCinfex_Jung(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_qCinfex_Jung(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the runoff from infiltration excess.
 % 
@@ -15,7 +15,7 @@ function [fe,fx,d,p] = Prec_qCinfex_Jung(f,fe,fx,s,d,p,info)
 % RainInt   : [mm/h]
 %           (f.RainInt)
 % InfCapacity   : infiltration capacity [mm/hour]
-%               (p.SOIL.InfCapacity)
+%               (p.psoilR.InfCapacity)
 % 
 % OUTPUT
 % Qinf      : infiltration excess runoff [mm/time] - what runs off because
@@ -37,7 +37,7 @@ function [fe,fx,d,p] = Prec_qCinfex_Jung(f,fe,fx,s,d,p,info)
 % duration (P/R)
 
 % Qinf=P-(P.*fpar+(1-fpar).*min(P,min(I,R).*P./R));
-pInfCapacity	= p.SOIL.InfCapacity * ones(1,info.forcing.size(2));
+pInfCapacity	= p.psoilR.InfCapacity * ones(1,info.forcing.size(2));
 
 Qinf            =     info.helper.zeros2d;
 tmp             =     f.RainInt > 0;

@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFrad_Maekelae2008(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFrad_Maekelae2008(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: saturating light function
 % 
@@ -15,11 +15,11 @@ function [fe,fx,d,p] = Prec_gppFrad_Maekelae2008(f,fe,fx,s,d,p,info)
 %           (f.PAR)
 % gamma     : light response curve parameter to account for light
 %           saturation [m2/MJ-1 of APAR]
-%           (p.LightEffectGPP.gamma)
+%           (p.gppFrad.gamma)
 % 
 % OUTPUT
 % LightScGPP: light saturation scalar [] dimensionless
-%           (d.LightEffectGPP.LightScGPP)
+%           (d.gppFrad.LightScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -29,7 +29,7 @@ function [fe,fx,d,p] = Prec_gppFrad_Maekelae2008(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-pgamma                      = p.LightEffectGPP.gamma * ones(1,info.forcing.size(2));
-d.LightEffectGPP.LightScGPP = 1 ./ (pgamma .* f.PAR .* f.FAPAR + 1);
+pgamma                      = p.gppFrad.gamma * ones(1,info.forcing.size(2));
+d.gppFrad.LightScGPP = 1 ./ (pgamma .* f.PAR .* f.FAPAR + 1);
 
 end

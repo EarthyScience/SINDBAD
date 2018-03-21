@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = Prec_gppFtemp_TEM(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_gppFtemp_TEM(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: estimate temperature effect on GPP
 % 
@@ -10,14 +10,14 @@ function [fe,fx,d,p] = Prec_gppFtemp_TEM(f,fe,fx,s,d,p,info)
 % TairDay   : daytime temperature [ºC]
 %           (f.TairDay)
 % Tmin      : temperature below which GPP is zero [ºC]
-%           (p.TempEffectGPP.Tmin)
+%           (p.gppFtemp.Tmin)
 % Tmax      : temperature above which GPP is zero [ºC]
-%           (p.TempEffectGPP.Tmax)
+%           (p.gppFtemp.Tmax)
 % Topt      : optimum temperature for GPP [ºC]
 % 
 % OUTPUT
 % TempScGPP : temperature effect on GPP [] dimensionless, between 0-1
-%           (d.TempEffectGPP.TempScGPP)
+%           (d.gppFtemp.TempScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -26,13 +26,13 @@ function [fe,fx,d,p] = Prec_gppFtemp_TEM(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 tmp     = ones(1,info.forcing.size(2));
-pTmin   = f.TairDay - (p.TempEffectGPP.Tmin * tmp);
-pTmax   = f.TairDay - (p.TempEffectGPP.Tmax * tmp);
-pTopt   = p.TempEffectGPP.Topt * tmp;
+pTmin   = f.TairDay - (p.gppFtemp.Tmin * tmp);
+pTmax   = f.TairDay - (p.gppFtemp.Tmax * tmp);
+pTopt   = p.gppFtemp.Topt * tmp;
 pTScGPP = pTmin .* pTmax ./ ((pTmin .* pTmax) - (f.TairDay - pTopt) .^ 2);
 
-d.TempEffectGPP.TempScGPP(f.TairDay>p.TempEffectGPP.Tmax)   = 0;
-d.TempEffectGPP.TempScGPP(f.TairDay<p.TempEffectGPP.Tmin)   = 0;
-d.TempEffectGPP.TempScGPP                                   = min(max(pTScGPP,0),1);
+d.gppFtemp.TempScGPP(f.TairDay>p.gppFtemp.Tmax)   = 0;
+d.gppFtemp.TempScGPP(f.TairDay<p.gppFtemp.Tmin)   = 0;
+d.gppFtemp.TempScGPP                                   = min(max(pTScGPP,0),1);
 
 end

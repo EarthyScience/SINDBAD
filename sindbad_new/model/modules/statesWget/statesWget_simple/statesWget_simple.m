@@ -1,4 +1,4 @@
-function [fx,s,d] = statesWget_simple(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = statesWget_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: initialize the states for the current time steps from the
 % d.Temp.... variable
@@ -16,14 +16,14 @@ function [fx,s,d] = statesWget_simple(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 
 % water pools
-% s.wSM(:,i)  = d.Temp.pwSM;
-% s.wGW(:,i)  = d.Temp.pwGW;
-% s.wGWR(:,i) = d.Temp.pwGWR;
-% s.wSWE(:,i) = d.Temp.pwSWE;
-% s.wWTD(:,i) = d.Temp.pwWTD;
+% s.wSM(:,tix)  = d.Temp.pwSM;
+% s.wGW(:,tix)  = d.Temp.pwGW;
+% s.wGWR(:,tix) = d.Temp.pwGWR;
+% s.wSWE(:,tix) = d.Temp.pwSWE;
+% s.wWTD(:,tix) = d.Temp.pwWTD;
 
 % Water Balance Pool
-d.Temp.WBP  = f.Rain(:,i);
+d.Temp.WBP  = f.Rain(:,tix);
 
 
 

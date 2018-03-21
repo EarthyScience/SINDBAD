@@ -1,4 +1,4 @@
-function [fx,s,d] = wsoilFwgrou_none(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = wsoilFwgrou_none(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
