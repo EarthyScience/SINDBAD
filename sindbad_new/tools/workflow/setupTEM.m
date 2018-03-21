@@ -1,4 +1,4 @@
-function info = setupTEM(expConfigFile)
+function info = setupTEM(expConfigFile,varargin)
 % needs to be run where the repository is 
 
 % read the experiment configuration file
@@ -23,7 +23,11 @@ if isfield(info.experiment.configFiles,'opti')
 end
 
 
-% 
+% edit the settings of the tem based on the function inputs
+info = editTEMSettings(info,vararing{:});
+
+% write the info in a json file
+writeJsonFile(pth, filename, info);
 
 
 end
