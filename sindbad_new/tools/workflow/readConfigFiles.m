@@ -20,9 +20,13 @@ end
 % e.g.:
 % the reading of the info.experiment.configFiles.spinup -> info.tem.spinup
 
-for ii = 1:numel(fldnms)
+for ii = 1:numel(fldnmsINFO)
     % feed the info with 
-    info.(whatWorkFlow).(fldnms{ii}) = readJsonFile(info.experiment.configFiles.(fldnms{ii}));
+    try 
+        info.(whatWorkFlow).(fldnmsINFO{ii}) = readJsonFile(info.experiment.configFiles.(fldnmsCONFIG{ii}));
+    catch
+        mmsg([fldnmsINFO{ii} 'is not in a configuration file!'])
+    end
 end
 
 end
