@@ -17,8 +17,11 @@ info = readConfigFiles(info,'tem');
 
 % read the optimization (if it exists)
 if isfield(info.experiment.configFiles,'opti')
-    if exist(info.experiment.configFiles.opti
-info = readConfigFiles(info,'opti');
+    if exist(info.experiment.configFiles.opti,'file')
+        info = readConfigFiles(info,'opti');
+    end
+end
+
 
 % 
 
