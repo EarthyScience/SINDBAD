@@ -1,6 +1,6 @@
-function data_json = readJsonFile(path, filename)
+function data_json = readJsonFile(filepath)
 
-    json_txt = fileread([path filename]);
+    json_txt = fileread(filepath);
 
     data_json = jsondecode(json_txt);
 

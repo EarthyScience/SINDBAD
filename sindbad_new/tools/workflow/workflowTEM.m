@@ -3,7 +3,7 @@ function workflowTEM(expConfigFile)
 
 % the experiment configuratio file
 if ~exist('expConfigFile','var')
-    expConfigFile = '..\..\settings\experiment_standard.json';
+    expConfigFile = '.\settings\experiment_standard.json';
 end
 
 % setup the TEM
