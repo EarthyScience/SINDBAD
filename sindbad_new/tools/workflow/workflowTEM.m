@@ -1,7 +1,14 @@
 function workflowTEM(expConfigFile)
-% workflow of the tem
+%% workflow of the tem
+% INPUT:    experiment configuration file OR info
+%
+% steps: 
+%   1) setupTEM
+%   2) prepTEM
+%   3) runTEM
+%   4) (postTEM)
 
-% the experiment configuratio file
+% the experiment configuration file
 if ~exist('expConfigFile','var')
     expConfigFile = '.\settings\experiment_standard.json';
 end
