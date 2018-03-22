@@ -2,7 +2,7 @@ function info = setupTEM(expConfigFile,varargin)
 % needs to be run where the repository is 
 
 % read the experiment configuration file
-expSettings	= jsondecode(fileread(expConfigFile));
+expSettings = readJsonFile(expConfigFile);
 
 % add additional information
 [expSettings.usedVersion,~] = system('git rev-parse HEAD');
