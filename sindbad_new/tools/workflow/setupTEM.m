@@ -24,10 +24,11 @@ end
 
 
 % edit the settings of the tem based on the function inputs
-info = editTEMSettings(info,varargin{:});
+% info = editTEMSettings(info,varargin{:});
 
 % write the info in a json file
-writeJsonFile(pth, filename, info);
+[pth,~,~] = fileparts(expConfigFile);
+writeJsonFile(pth, 'info.json', info);
 
 
 end

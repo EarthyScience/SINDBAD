@@ -3,7 +3,7 @@ function [info] = readConfigFiles(info,whatWorkFlow)
 switch lower(whatWorkFlow)
     case 'tem' %creates all the substructures (fieldnames) of info.tem
         %fldnmsCONFIG    = 
-        fldnmsINFO      = {'spinup','forcing','constants','params','modelStructure'};%,'modelRun'=model,'modelStructure'=model.approaches,'output'=model.variables.to};
+        fldnmsINFO      = {'modelStructure','spinup','forcing','constants','params'};
         
     case 'opti' %creates all the substructures (fieldnames) of info.opti
         fldnmsINFO = {}; %{'constraints','costFun','method','params', 'checks'}: %
@@ -39,13 +39,13 @@ for ii = 1:numel(fldnmsINFO)
                     info.(whatWorkFlow).model.modules.(modules{jj}).runFull = data_json{jj, 1}.runFull;
                 end    
             catch
-                msgbox([fldnmsINFO{ii} 'is not in a configuration file! or something else went wrong ;o) '])
+                disp([fldnmsINFO{ii} 'is not in a configuration file! or something else went wrong ;o) '])
             end
         otherwise
             try 
                 info.(whatWorkFlow).(fldnmsINFO{ii}) = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
             catch
-                 msgbox([fldnmsINFO{ii} 'is not in a configuration file!'])
+                 disp([fldnmsINFO{ii} 'is not in a configuration file!'])
            end
     end
 end
