@@ -3,7 +3,7 @@ function [info] = readConfigFiles(info,whatWorkFlow)
 switch lower(whatWorkFlow)
     case 'tem' %creates all the substructures (fieldnames) of info.tem
         %fldnmsCONFIG    = 
-        fldnmsINFO      = {'modelStructure','spinup','forcing','constants','params'};
+        fldnmsINFO      = {'modelRun','modelStructure','spinup','forcing','constants','params','output'};
         
     case 'opti' %creates all the substructures (fieldnames) of info.opti
         fldnmsINFO = {}; %{'constraints','costFun','method','params', 'checks'}: %
@@ -21,9 +21,17 @@ end
 % the reading of the info.experiment.configFiles.spinup -> info.tem.spinup
 
 for ii = 1:numel(fldnmsINFO)
-    % feed the info with 
+    %
     
     switch lower(fldnmsINFO{ii})
+        case 'modelrun'
+            try 
+                data_json = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
+                info.(whatWorkFlow).model = data_json;  
+            catch
+                disp([fldnmsINFO{ii} 'is not in a configuration file! or something else went wrong ;o) '])
+            end
+            
         case 'modelstructure'
             try 
                 data_json = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
@@ -41,6 +49,15 @@ for ii = 1:numel(fldnmsINFO)
             catch
                 disp([fldnmsINFO{ii} 'is not in a configuration file! or something else went wrong ;o) '])
             end
+            
+         case 'output'
+            try 
+                data_json = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
+                info.(whatWorkFlow).model = data_json;  
+            catch
+                disp([fldnmsINFO{ii} 'is not in a configuration file! or something else went wrong ;o) '])
+            end
+            
         otherwise
             try 
                 info.(whatWorkFlow).(fldnmsINFO{ii}) = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
