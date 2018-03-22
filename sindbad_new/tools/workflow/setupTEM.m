@@ -12,6 +12,9 @@ expSettings.runDate         = datestr(now);
 % feed the info
 info.experiment = expSettings;
 
+% create the output path if it not yet exists
+if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath);end
+
 % read the configuration files
 info = readConfigFiles(info,'tem');
 
