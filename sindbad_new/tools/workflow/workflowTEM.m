@@ -2,6 +2,8 @@ function workflowTEM(expConfigFile)
 %% workflow of the tem
 % INPUT:    experiment configuration file OR info
 %           + varargins (??)
+% OUTPUT:   info.m
+%           f.m
 %
 % steps: 
 %   1) setupTEM
@@ -14,12 +16,18 @@ if ~exist('expConfigFile','var')
     expConfigFile = '.\settings\experiment_standard.json';
 end
 
-% setup the TEM
+%% 1) setup the TEM
 info        = setupTEM(expConfigFile);
 
-% prepare the TEM runs
+%% 2) prepare the TEM runs
 [info, f]   = prepTEM(info);
 
-% run the model
+%% 3) run the model
 
-% post process the TEM outputs
+%% 4) post process the TEM outputs
+% save the info as mat file
+save([info.experiment.outputDirPath info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd') '_info.m'], 'info', '-v7.3')
+
+% save the f as mat file
+save([info.experiment.outputDirPath info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd')  '_f.m'], 'f', '-v7.3')
+
