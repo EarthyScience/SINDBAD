@@ -34,7 +34,9 @@ for ii = 1:numel(fldnmsINFO)
         case 'modelrun'
             try 
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
-                info.(whatWorkFlow).model = data_json;  
+                info.(whatWorkFlow).model = data_json; 
+                info.(whatWorkFlow).model.paths.genCode.coreTEM        = ['genCore_' info.experiment.name '_' info.experiment.runDate '_' info.experiment.usedVersion '.m']
+                info.(whatWorkFlow).model.paths.genCode.preCompOnce    = ['genPrecOnce_' info.experiment.name '_' info.experiment.runDate '_' info.experiment.usedVersion '.m']
             catch
                 disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) modelrun'])
             end
@@ -74,7 +76,8 @@ for ii = 1:numel(fldnmsINFO)
          case 'output'
             try 
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
-                info.(whatWorkFlow).model = data_json;  
+                info.(whatWorkFlow).model = data_json; %so far only includes the variables that need to be written
+                info.(whatWorkFlow).model.variables.to.store = info.(whatWorkFlow).model.variables.to.write; 
             catch
                 disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) output'])
             end
