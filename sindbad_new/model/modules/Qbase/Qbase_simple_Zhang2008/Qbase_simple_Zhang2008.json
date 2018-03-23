@@ -1,0 +1,13 @@
+{
+	"params": {
+		"bc": {
+			"Name": "base flow coefficient",
+			"Unit": "[]",
+			"Default": 0.01,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": NaN,
+			"Comment": "from Zhang2008"
+		}
+	}
+}

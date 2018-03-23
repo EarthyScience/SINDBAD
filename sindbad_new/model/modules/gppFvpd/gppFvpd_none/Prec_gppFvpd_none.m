@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_gppFvpd_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_GPPfVPD_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -10,7 +10,7 @@ function [fe,fx,d,p] = prec_gppFvpd_none(f,fe,fx,s,d,p,info)
 % 
 % OUTPU
 % VPDScGPP  : effect of VPD on GPP [] dimensionless between 0 - 1
-%           (d.gppFvpd.VPDScGPP)
+%           (d.GPPfVPD.VPDScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -19,6 +19,6 @@ function [fe,fx,d,p] = prec_gppFvpd_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % no effect = 1
-d.gppFvpd.VPDScGPP = ones(info.forcing.size);
+d.GPPfVPD.VPDScGPP = ones(info.forcing.size);
 
 end

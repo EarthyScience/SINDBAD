@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_gppFvpd_MOD17(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_GPPfVPD_MOD17(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the VPD effect on GPP according to the MOD17 model
 % 
@@ -11,13 +11,13 @@ function [fe,fx,d,p] = prec_gppFvpd_MOD17(f,fe,fx,s,d,p,info)
 % VPDDay    : daytime vapor pressure deficit [kPa]
 %           (f.VPDDay)
 % VPDmax    : VPD value above which GPP is 0 [kPa]
-%           (p.gppFvpd.VPDmax)
+%           (p.GPPfVPD.VPDmax)
 % VPDmin    : VPD value below which GPP is maximum [kPa]
-%           (p.gppFvpd.VPDmin)
+%           (p.GPPfVPD.VPDmin)
 % 
 % OUTPUT
 % VPDScGPP  : VPD effect on GPP [] dimensionless, between 0-1
-%           (d.gppFvpd.VPDScGPP)
+%           (d.GPPfVPD.VPDScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -26,14 +26,14 @@ function [fe,fx,d,p] = prec_gppFvpd_MOD17(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 tmp     = ones(1,info.forcing.size(2));
-td      = (p.gppFvpd.VPDmax - p.gppFvpd.VPDmin)   * tmp;
-pVPDmax = p.gppFvpd.VPDmax                             * tmp;
+td      = (p.GPPfVPD.VPDmax - p.GPPfVPD.VPDmin)   * tmp;
+pVPDmax = p.GPPfVPD.VPDmax                             * tmp;
 
 vsc     = - f.VPDDay ./ td + pVPDmax ./ td;
 
 vsc(vsc<0)  = 0;
 vsc(vsc>1)  = 1;
 
-d.gppFvpd.VPDScGPP = vsc;
+d.GPPfVPD.VPDScGPP = vsc;
 
 end

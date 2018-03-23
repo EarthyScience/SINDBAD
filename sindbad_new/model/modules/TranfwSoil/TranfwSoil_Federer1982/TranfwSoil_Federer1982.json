@@ -1,0 +1,13 @@
+{
+	"params": {
+		"maxRate": {
+			"Name": "?? Check with martin",
+			"Unit": "mm/day",
+			"Default": 5,
+			"LowerBound": 0.1,
+			"UpperBound": 20,
+			"Distribution": NaN,
+			"Comment": "very rough bounds"
+		}
+	}
+}

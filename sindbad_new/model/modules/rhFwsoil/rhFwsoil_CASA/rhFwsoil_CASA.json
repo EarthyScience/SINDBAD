@@ -1,38 +1,13 @@
 {
-	"Input": {
-		"VariableName": ["StepsPerYear", "PET", "Rainfall", "wpSM1", "wpSM2", "pBGME"],
-		"Name": ["number of time steps per year", "potential evapotranspiration", "rainfall", "soil moisture of top soil in the previous time step", "soil moisture of lower soil in the previous time step", "BGME of previous timestep"],
-		"Unit": [NaN, "mm.deltaT-1", "mm.deltaT-1", "mm", "mm", "[]"],
-		"Dimensions": [NaN, NaN, NaN, NaN, NaN, NaN],
-		"Source": [NaN, NaN, NaN, NaN, NaN, NaN],
-		"Comment": [NaN, NaN, NaN, NaN, NaN, NaN]
-	},
-	"Params": {
-		"VariableName": ["Aws"],
-		"Name": ["curve (expansion/contraction) controlling parameter"],
-		"Unit": ["[]"],
-		"Default": [1],
-		"LowerBound": [0.001],
-		"UpperBound": ["Inf"],
-		"Distribution": [NaN],
-		"p1": [NaN],
-		"p2": [NaN],
-		"p3": [NaN],
-		"p4": [NaN],
-		"p5": [NaN],
-		"Comment": [NaN]
-	},
-	"Output": {
-		"VariableName": [],
-		"Name": [],
-		"Unit": [],
-		"Destiny": [],
-		"KeepAlways": [],
-		"Comment": []
-	},
-	"Main": {
-		"Purpose": [],
-		"FunctionHandle": [],
-		"Path": []
+	"params": {
+		"Aws": {
+			"Name": "curve (expansion/contraction) controlling parameter",
+			"Unit": "[]",
+			"Default": 1,
+			"LowerBound": 0.001,
+			"UpperBound": "Inf",
+			"Distribution": NaN,
+			"Comment": NaN
+		}
 	}
 }
