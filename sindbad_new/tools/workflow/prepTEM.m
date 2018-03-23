@@ -21,7 +21,7 @@ for jj=1:numel(fun_fields)
 end
 
 % evaluate function handle in forcing
-f  = info.tem.forcing.funHandle.import(info)
+f  = info.tem.forcing.funHandle.import(info);
 
 
 end
