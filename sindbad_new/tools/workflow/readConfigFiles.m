@@ -89,7 +89,7 @@ for ii = 1:numel(fldnmsINFO)
          case 'output'
             try 
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
-                info.(whatWorkFlow).model.variables           = data_json.variables; %so far only includes the variables that need to be written
+                info.(whatWorkFlow).model.variables.to           = data_json.variables.to; %so far only includes the variables that need to be written
                 info.(whatWorkFlow).model.variables.to.store  = info.(whatWorkFlow).model.variables.to.write; 
             catch
                 disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) output'])
@@ -101,9 +101,9 @@ for ii = 1:numel(fldnmsINFO)
                 info.(whatWorkFlow).spinup.paths.genCode.coreTEM        = ['genCoreSpinup_' info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd') '.m'];
                 info.(whatWorkFlow).spinup.paths.genCode.preCompOnce    = ['genPrecOnceSpinup_' info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd') '.m'];
             catch
-                disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) modelrun'])
-            end
-            
+                disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) spinup'])
+            end            
+           
         otherwise
             try 
                 info.(whatWorkFlow).(fldnmsINFO{ii}) = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
