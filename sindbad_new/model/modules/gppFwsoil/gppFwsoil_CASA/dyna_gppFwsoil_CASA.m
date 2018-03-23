@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_gppFwsoil_CASA(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d] = dyna_GPPfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 
 
 % is not VPD effect, is the ET/PET effect 
@@ -8,8 +8,8 @@ We      = d.Temp.pSMScGPP;
 
 % otherwise, compute according to CASA
 ndx     = f.Tair(:,tix) > 0 & f.PET(:,tix) > 0;
-We(ndx) = p.gppFwsoil.Bwe(ndx,1) + d.gppFwsoil.OmBweOPET(ndx,tix) .* d.transpFwsoil.transpJactS(ndx,tix);
+We(ndx) = p.GPPfwSoil.Bwe(ndx,1) + d.GPPfwSoil.OmBweOPET(ndx,tix) .* d.TranfwSoil.TranActS(ndx,tix);
 
-d.gppFwsoil.SMScGPP(:,tix)	= We;
+d.GPPfwSoil.SMScGPP(:,tix)	= We;
 
 end

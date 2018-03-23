@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_gppFvpd_Wang2005(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_GPPfVPD_Wang2005(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute  the CO2 compensation point by Wang et al 2014
 % 
@@ -15,13 +15,13 @@ function [fe,fx,d,p] = prec_gppFvpd_Wang2005(f,fe,fx,s,d,p,info)
 %           (f.ca)
 % g1        : conductance parameter of Medly et al [kPA^0.5] ranging
 %           between [0.9 7]; median ~3.5
-%           (p.wue.g1)
+%           (p.WUE.g1)
 % ci        : internal CO2 concentration [ppm]
-%           (d.wue.ci)
+%           (d.WUE.ci)
 % 
 % OUTPUT
 % VPDScGPP  : VPD effect on GPP [] dimensionless, between 0-1
-%           (d.gppFvpd.VPDScGPP)
+%           (d.GPPfVPD.VPDScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -36,6 +36,6 @@ CompPointRef    = 42.75;    % avoid optimize
 CO2CompPoint    = CompPointRef .* exp(Tparam .* (f.TairDay - 25));
 
 % 
-d.gppFvpd.VPDScGPP = (d.wue.ci - CO2CompPoint) ./ (d.wue.ci + 2 .* CO2CompPoint);
+d.GPPfVPD.VPDScGPP = (d.WUE.ci - CO2CompPoint) ./ (d.WUE.ci + 2 .* CO2CompPoint);
 
 end

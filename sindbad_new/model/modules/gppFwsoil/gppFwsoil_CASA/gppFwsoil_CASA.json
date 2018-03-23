@@ -1,38 +1,13 @@
 {
-	"Input": {
-		"VariableName": [],
-		"Name": [],
-		"Unit": [],
-		"Dimensions": [],
-		"Source": [],
-		"Comment": []
-	},
-	"Params": {
-		"VariableName": ["Bwe"],
-		"Name": ["CASA We"],
-		"Unit": ["[]"],
-		"Default": [0.5],
-		"LowerBound": [NaN],
-		"UpperBound": [NaN],
-		"Distribution": [NaN],
-		"p1": [NaN],
-		"p2": [NaN],
-		"p3": [NaN],
-		"p4": [NaN],
-		"p5": [NaN],
-		"Comment": [NaN]
-	},
-	"Output": {
-		"VariableName": [],
-		"Name": [],
-		"Unit": [],
-		"Destiny": [],
-		"KeepAlways": [],
-		"Comment": []
-	},
-	"Main": {
-		"Purpose": [],
-		"FunctionHandle": [],
-		"Path": []
+	"params": {
+		"Bwe": {
+			"Name": "CASA We",
+			"Unit": "[]",
+			"Default": 0.5,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
 	}
 }
