@@ -1,0 +1,13 @@
+{
+	"params": {
+		"alpha": {
+			"Name": "Priestley Taylor Coefficient for Sublimation",
+			"Unit": "none",
+			"Default": 0.95,
+			"LowerBound": 0.1,
+			"UpperBound": 2,
+			"Distribution": NaN,
+			"Comment": "very rough bounds"
+		}
+	}
+}

@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_gppFrdiff_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p] = prec_GPPfRdiff_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: 
 % 
@@ -10,7 +10,7 @@ function [fe,fx,d,p] = prec_gppFrdiff_none(f,fe,fx,s,d,p,info)
 % 
 % OUTPUT
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.gppFrdiff.rueGPP)
+%           (d.GPPfRdiff.rueGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -19,6 +19,6 @@ function [fe,fx,d,p] = prec_gppFrdiff_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % just put here a single maximum radiation use efficiency
-d.gppFrdiff.rueGPP = p.gppFrdiff.rue * ones(1,info.forcing.size(2));
+d.GPPfRdiff.rueGPP = p.GPPfRdiff.rue * ones(1,info.forcing.size(2));
 
 end
