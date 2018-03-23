@@ -44,19 +44,25 @@ for ii = 1:numel(fldnmsINFO)
         case 'modelstructure'
             try 
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
-                modules     = fieldnames(data_json);
-                data_json   = struct2cell(data_json);
+                
+                % feed the states
+                states      = fieldnames(data_json.states);                
+                info.(whatworkflow).model.variables.states  = states;
+                
+                % feed the modules/approaches
+                modules     = fieldnames(data_json.modules);
+                %data_json   = struct2cell(data_json); needed?
                 
                 % loop over approaches
-                for jj = 1 : size(data_json, 1)                    
-                    approachName    = strsplit(data_json{jj, 1}.ApproachName{1},'_');
+                for jj = 1 : size(modules, 1)                    
+                    approachName    = strsplit(modules{jj, 1}.ApproachName{1},'_');
                     approachName    = approachName{1,2};
                     
                     info.(whatWorkFlow).model.modules.(modules{jj}).apprName    = approachName;
-                    info.(whatWorkFlow).model.modules.(modules{jj}).runFull     = data_json{jj, 1}.runFull;
+                    info.(whatWorkFlow).model.modules.(modules{jj}).runFull     = modules{jj, 1}.runFull;
                     
                     % read parameter information of the approaches
-                    file_json   = ['./model/modules/' char(modules{jj}) '/' char(data_json{jj}.ApproachName) '/' char(data_json{jj}.ApproachName) '.json'];
+                    file_json   = ['./model/modules/' char(modules{jj}) '/' char(modules{jj}.ApproachName) '/' char(modules{jj}.ApproachName) '.json'];
                     if exist(file_json,'file')
                         param_json    = readJsonFile(file_json);                  
                         paramName     = param_json.Params.VariableName;
