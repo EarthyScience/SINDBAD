@@ -35,8 +35,8 @@ for ii = 1:numel(fldnmsINFO)
             try 
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));                
                 info.(whatWorkFlow).model = data_json; 
-                info.(whatWorkFlow).model.paths.genCode.coreTEM        = ['genCore_' info.experiment.name '_' info.experiment.runDate '_' info.experiment.usedVersion '.m']
-                info.(whatWorkFlow).model.paths.genCode.preCompOnce    = ['genPrecOnce_' info.experiment.name '_' info.experiment.runDate '_' info.experiment.usedVersion '.m']
+                info.(whatWorkFlow).model.paths.genCode.coreTEM        = ['genCore_' info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd') '.m'];
+                info.(whatWorkFlow).model.paths.genCode.preCompOnce    = ['genPrecOnce_' info.experiment.name '_' datestr(info.experiment.runDate,'yyyy-mm-dd') '.m'];
             catch
                 disp([fldnmsINFO{ii} ' is not in a configuration file! or something else went wrong ;o) modelrun'])
             end
@@ -46,29 +46,31 @@ for ii = 1:numel(fldnmsINFO)
                 data_json   = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
                 
                 % feed the states
-                states      = fieldnames(data_json.states);                
-                info.(whatworkflow).model.variables.states  = states;
+                state_fields      = fieldnames(data_json.states); 
+                for jj=1:numel(state_fields)
+                    info.(whatWorkFlow).model.variables.states.(state_fields{jj})  = data_json.states.(state_fields{jj});
+                end
                 
                 % feed the modules/approaches
-                modules     = fieldnames(data_json.modules);
+                module_fields     = fieldnames(data_json.modules);
                 %data_json   = struct2cell(data_json); needed?
                 
                 % loop over approaches
-                for jj = 1 : size(modules, 1)                    
-                    approachName    = strsplit(modules{jj, 1}.ApproachName{1},'_');
+                for jj = 1 : size(module_fields, 1)                    
+                    approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).ApproachName{1},'_');
                     approachName    = approachName{1,2};
                     
-                    info.(whatWorkFlow).model.modules.(modules{jj}).apprName    = approachName;
-                    info.(whatWorkFlow).model.modules.(modules{jj}).runFull     = modules{jj, 1}.runFull;
+                    info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
+                    info.(whatWorkFlow).model.modules.(module_fields{jj}).runFull     = data_json.modules.(module_fields{jj, 1}).runFull;
                     
                     % read parameter information of the approaches
-                    file_json   = ['./model/modules/' char(modules{jj}) '/' char(modules{jj}.ApproachName) '/' char(modules{jj}.ApproachName) '.json'];
+                    file_json   = ['./model/modules/' module_fields{jj} '/' module_fields{jj} '_' approachName  '/' module_fields{jj} '_' approachName '.json'];
                     if exist(file_json,'file')
                         param_json    = readJsonFile(file_json);                  
-                        paramName     = param_json.Params.VariableName;
+                        paramName     = fieldnames(param_json.params);
                         % loop over the parameter of the approach & get the default value
                         for pp=1:numel(paramName)
-                            info.tem.params.(modules{jj}).(paramName{pp}) = param_json.Params.(paramName(pp)).Default;
+                            info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
                         end
                     else
                         disp(['no parameter config file (json) existing for approach: ' approachName]);
