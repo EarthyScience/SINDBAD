@@ -14,9 +14,14 @@ function [info, f]   = prepTEM(info)
 %   5) runPrec 
 
 %% 1) prepare forcing data
-% evaluate function handle in forcing
-f = info.tem.forcing.fun.import;
+% create function handles
+fun_fields = fieldnames(info.tem.forcing.funName);
+for jj=1:numel(fun_fields)
+    info.tem.forcing.funHandle.(fun_fields{jj}) = str2func(info.tem.forcing.funName.(fun_fields{jj}));
+end
 
+% evaluate function handle in forcing
+f  = info.tem.forcing.funHandle.import(info)
 
 
 end
