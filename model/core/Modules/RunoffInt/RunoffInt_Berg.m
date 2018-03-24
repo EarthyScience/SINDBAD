@@ -2,7 +2,7 @@ function [fx,s,d] = RunoffInt_Berg(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % PURPOSE	: calculates land surface runoff and infiltration
 % 
-% REFERENCES: Bergström 1992
+% REFERENCES: Bergstr??m 1992
 % 
 % CONTACT	: ttraut
 % 

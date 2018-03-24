@@ -1,5 +1,5 @@
 function workflowTEM(expConfigFile)
-%% workflow of the tem
+% %% workflow of the tem
 % INPUT:    experiment configuration file OR info
 %           + varargins (??)
 %
@@ -11,7 +11,8 @@ function workflowTEM(expConfigFile)
 
 % the experiment configuration file
 if ~exist('expConfigFile','var')
-    expConfigFile = '.\settings\experiment_standard.json';
+    expConfigFile = '/Volumes/Kaam/Matlab_Works/sindbad/sindbad_new/settings/experiment_standard.json';
+%     expConfigFile = '.\settings\experiment_standard.json';
 end
 
 % setup the TEM
