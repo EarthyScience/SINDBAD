@@ -1,8 +1,9 @@
-function [info] = readConfigFiles(info, whatWorkFlow)
+function [info] = editTEMSettings(info, varargin)
 %% reads configuration files for TEM, opti or postProcessing and puts them into the info
-% INPUT:    info
-%           whatworkflow:   tem OR opti OR postprocessing
-% OUTPUT:   info
+% INPUT:    info       :    info structure
+%           varargin{:}:	list of fields in info structure to change
+%                           ("Name" : new value)
+% OUTPUT:   info with changed values
 
 % steps:
 %   1) decide which workflow + which fieldnames in info are added to (or
