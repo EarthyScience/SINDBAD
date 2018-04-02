@@ -19,6 +19,11 @@ end
 %% 1) setup the TEM
 info        = setupTEM(expConfigFile);
 
+%% 1.5) edit the TEM (optional changing of fieldvalues in the info strucure)
+        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' to
+        % check functionality
+info        = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01, 'apprName', 'Bla', 'Fantasy', 'Einhorn');
+
 %% 2) prepare the TEM runs
 [info, f]   = prepTEM(info);
 
