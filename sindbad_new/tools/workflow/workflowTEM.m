@@ -7,6 +7,7 @@ function workflowTEM(expConfigFile)
 %
 % steps: 
 %   1) setupTEM
+%   ?1.5) editTEMSettings?
 %   2) prepTEM
 %   3) runTEM
 %   4) (postTEM)
@@ -20,7 +21,7 @@ end
 info        = setupTEM(expConfigFile);
 
 %% 1.5) edit the TEM (optional changing of fieldvalues in the info strucure)
-        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' to
+        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' and remove the 'Fantasy','Einhorn' pair to
         % check functionality
 info        = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01, 'apprName', 'Bla', 'Fantasy', 'Einhorn');
 
