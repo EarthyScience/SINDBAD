@@ -3,7 +3,7 @@ function [info] = readConfigFiles(info, whatWorkFlow)
 % INPUT:    info
 %           whatworkflow:   tem OR opti OR postprocessing
 % OUTPUT:   info
-%
+
 % steps:
 %   1) decide which workflow + which fieldnames in info are added to (or
 %   what are the config files?)

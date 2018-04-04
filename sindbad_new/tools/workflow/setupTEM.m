@@ -53,5 +53,4 @@ end
 [pth,~,~]   = fileparts(expConfigFile);
 writeJsonFile(pth, [char(expSettings.name) '_info.json'], info);
 
-
 end
