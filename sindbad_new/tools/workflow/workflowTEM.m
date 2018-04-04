@@ -13,7 +13,7 @@ function workflowTEM(expConfigFile)
 
 % the experiment configuration file
 if ~exist('expConfigFile','var')
-    expConfigFile = '/Volumes/Kaam/Matlab_Works/sindbad/sindbad_new/settings/experiment_standard.json';
+    expConfigFile = '/Volumes/Kaam/Matlab_Works/sindbad/sindbad_new/settings/experiment_BergBasic.json';
 %     expConfigFile = '.\settings\experiment_standard.json';
 end
 
