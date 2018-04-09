@@ -16,6 +16,7 @@ catch
     disp(['MSG : writeJsonFile : not possible to save it in a human readable way...' ...
         ' may be related to multiple records in cell array... needs checking... ' ...
         'Stick to internal functions'])
+    fid     = writeZfile(strcat(pth, filesep, filename),json_txt_created);
     return
 end
 % read what was writen
