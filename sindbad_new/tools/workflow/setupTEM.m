@@ -15,42 +15,41 @@ function info = setupTEM(expConfigFile,varargin)
 %
 
 %% 1) check what is the input
-if isstruct(expConfigFile)==1
-    info        = expConfigFile;
-elseif strcmp(expConfigFile(end-10:end),'_info.json')==1
-    info        = readJsonFile(expConfigFile);
-else
-%% 2) read the experiment configuration file(s)
-    expSettings = readJsonFile(expConfigFile);
-    
-    % add additional information
-    [expSettings.usedVersion,~] = system('git rev-parse HEAD');
-    expSettings.userName        = getenv('username');
-    expSettings.runDate         = datestr(now);
-    
-    % feed the info
-    info.experiment = expSettings;
-    
-    % create the output path if it not yet exists
-    if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath);end
-    
-    % read the configuration files
+if isstruct(expConfigFile) == 1
+    % is already a structure assume = info
+    info	= expConfigFile;
+    % store the old settings in a cell array called oldSettings ...
+    if isfield(info.experiment,'oldSettings')
+        k   = numel(info.experiment.oldSettings) + 1;
+    else
+        k	= 1;
+    end
+    info.experiment.oldSettings{k} = info.experiment;
+elseif exist(expConfigFile,'file')
+    % is a file, assume a standard configuration file and read it
+    info.experiment = readJsonFile(expConfigFile);
+    % read the TEM configurations
     info    = readConfigFiles(info,'tem');
-    
-    % % read the optimization (if it exists) ????
-    % if isfield(info.experiment.configFiles,'opti')
-    %     if exist(info.experiment.configFiles.opti,'file')
-    %         info = readConfigFiles(info,'opti');
-    %     end
-    % end
-    
+    % read the optimization configurations (if it exists)
+    if isfield(info.experiment.configFiles,'opti')
+        if exist(info.experiment.configFiles.opti,'file')
+            info = readConfigFiles(info,'opti');
+        end
+    end
 end
-
+%% 2) add additional information (stamp the experiment settings)
+info = stampExperiment(info);
+    
 %% 3) edit the settings of the TEM based on the function inputs
-% info = editTEMSettings(info,varargin{:});
+info = editTEMSettings(info,varargin{:});
 
 %% 4) write the info in a json file
-[pth,~,~]   = fileparts(expConfigFile);
-writeJsonFile(pth, [char(expSettings.name) '_info.json'], info);
+if isfield(info.experiment,'outputInfoFile')
+    [pth,name,ext]   = fileparts(info.experiment.outputInfoFile);
+    if~exist(pth,'dir'),mkdir(pth);end
+    writeJsonFile(pth, [name '.' ext], info);
+else
+    disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
+end
 
 end
