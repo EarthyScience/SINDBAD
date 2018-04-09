@@ -46,10 +46,13 @@ else
     
 end
 
-%% 3) edit the settings of the TEM based on the function inputs
-% info = editTEMSettings(info,varargin{:});
+%% 3) edit the TEM (optional changing of fieldvalues in the info strucure)
+        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' and remove the 'Fantasy','Einhorn' pair to check functionality
+%info        = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01, 'apprName', 'Bla', 'Fantasy', 'Einhorn');
 
-%% 4) write the info in a json file
+
+%% 4) genCode
+%% 5) write the info in a json file
 [pth,~,~]   = fileparts(expConfigFile);
 writeJsonFile(pth, [char(expSettings.name) '_info.json'], info);
 
