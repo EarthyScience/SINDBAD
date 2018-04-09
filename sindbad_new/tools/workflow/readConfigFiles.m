@@ -30,12 +30,6 @@ end
 
 %% 2) loop through the fieldnames
 
-% unique name for the generated code files according to
-% experiment name and to runDate.
-tmpStrName	= [info.experiment.name '_' info.experiment.domain '_' datestr(info.experiment.runDate,30)];
-tmpStrName  = strrep(strrep(tmpStrName,' ','_'),'-','_');
-
-
 % go through the fldnms that are in the info.experiment.configFiles
 % e.g. the reading of the info.experiment.configFiles.spinup -> info.tem.spinup
 
@@ -46,7 +40,8 @@ for ii = 1:numel(fldnmsINFO)
     catch
         isAllOK     = false;
         missFields  = [missFields ' ' fldnmsINFO{ii} ';'];
-        disp(['MSG: readConfigFiles : is not in a configuration file! issue reading configuration file for : ' whatWorkFlow ' : ' fldnmsINFO{ii} ' : ' info.experiment.configFiles.(fldnmsINFO{ii})])
+        disp(['MSG: readConfigFiles : is not in a configuration file! issue reading configuration file for : ' ...
+			whatWorkFlow ' : ' fldnmsINFO{ii} ' : ' info.experiment.configFiles.(fldnmsINFO{ii})])
         continue
     end
     
@@ -54,11 +49,6 @@ for ii = 1:numel(fldnmsINFO)
         case 'modelrun'
             % feed model run settings 
             info.(whatWorkFlow).model	= data_json;
-            % feed that into the structure
-            info.(whatWorkFlow).model.paths.genCode.coreTEM         = ['genCore_' tmpStrName '.m'];
-            info.(whatWorkFlow).model.paths.genCode.preCompOnce     = ['genPrecOnce_' tmpStrName '.m'];
-            info.(whatWorkFlow).spinup.paths.genCode.coreTEM        = ['genCoreSpinup_' tmpStrName '.m'];
-            info.(whatWorkFlow).spinup.paths.genCode.preCompOnce	= ['genPrecOnceSpinup_' tmpStrName '.m'];
             
         case 'modelstructure'
             % set the model structure and needed settings in general
@@ -100,14 +90,8 @@ for ii = 1:numel(fldnmsINFO)
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
             info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.write;
             
-        case 'spinup'
-            % spin upt settings and names
-            info.(whatWorkFlow).(fldnmsINFO{ii})                    = data_json;
-            info.(whatWorkFlow).spinup.paths.genCode.coreTEM        = ['genCoreSpinup_' tmpStrName '.m'];
-            info.(whatWorkFlow).spinup.paths.genCode.preCompOnce    = ['genPrecOnceSpinup_' tmpStrName '.m'];
-            
-        otherwise
-            info.(whatWorkFlow).(fldnmsINFO{ii}) = data_json;
+        otherwise % these include 'spinup' and all other cases
+            info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
     end
 end
 
