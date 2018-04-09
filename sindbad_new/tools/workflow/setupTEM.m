@@ -37,7 +37,7 @@ elseif exist(expConfigFile,'file')
         end
     end
 end
-<<<<<<< HEAD
+
 %% 2) add additional information (stamp the experiment settings)
 info = stampExperiment(info);
     
@@ -52,17 +52,4 @@ if isfield(info.experiment,'outputInfoFile')
 else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
-=======
-
-%% 3) edit the TEM (optional changing of fieldvalues in the info strucure)
-        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' and remove the 'Fantasy','Einhorn' pair to check functionality
-%info        = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01, 'apprName', 'Bla', 'Fantasy', 'Einhorn');
-
-
-%% 4) genCode
-%% 5) write the info in a json file
-[pth,~,~]   = fileparts(expConfigFile);
-writeJsonFile(pth, [char(expSettings.name) '_info.json'], info);
->>>>>>> a31533cadc2e46303ccd65f2d881a921b36e5c4f
-
 end
