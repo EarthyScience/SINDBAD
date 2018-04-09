@@ -7,11 +7,11 @@ function info = setupTEM(expConfigFile,varargin)
 %
 % steps:
 %   1) input = info or info.json file or experiment configuration file?
-%   2) if configuration file:
+%     if configuration file:
 %       - set info.experiment
 %       - readConfigFiles
-%   3) editTEMSettings
-%   4) writeJsonFile of info
+%   2) editTEMSettings
+%   3) writeJsonFile of info
 %
 
 %% 1) check what is the input
@@ -25,30 +25,37 @@ if isstruct(expConfigFile) == 1
         k	= 1;
     end
     info.experiment.oldSettings{k} = info.experiment;
+    % stamp the experiment settings
+    info = stampExperiment(info);
 elseif exist(expConfigFile,'file')
     % is a file, assume a standard configuration file and read it
     info.experiment = readJsonFile(expConfigFile);
+    % convert info.experiment.configFiles paths to absolute paths
+    info.experiment.configFiles     = convertToFullPaths(info.experiment.configFiles);
+    info.experiment.outputInfoFile	= convertToFullPaths(info.experiment.outputInfoFile);
+    info.experiment.outputDirPath	= convertToFullPaths(info.experiment.outputDirPath);
+    % stamp the experiment settings
+    info    = stampExperiment(info);
     % read the TEM configurations
-    info    = readConfigFiles(info,'tem');
+    info    = readConfigFiles(info,'tem',true);
     % read the optimization configurations (if it exists)
     if isfield(info.experiment.configFiles,'opti')
-        if exist(info.experiment.configFiles.opti,'file')
-            info = readConfigFiles(info,'opti');
+        if ~isempty(info.experiment.configFiles.opti)
+            info = readConfigFiles(info,'opti',false);
         end
     end
 end
 
-%% 2) add additional information (stamp the experiment settings)
-info = stampExperiment(info);
-    
-%% 3) edit the settings of the TEM based on the function inputs
+%% 2) edit the settings of the TEM based on the function inputs
 info = editTEMSettings(info,varargin{:});
 
-%% 4) write the info in a json file
+%% 3) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
-    [pth,name,ext]   = fileparts(info.experiment.outputInfoFile);
-    if~exist(pth,'dir'),mkdir(pth);end
-    writeJsonFile(pth, [name '.' ext], info);
+    if ~isempty(info.experiment.outputInfoFile)
+        [pth,name,ext]   = fileparts(info.experiment.outputInfoFile);
+        if~exist(pth,'dir'),mkdir(pth);end
+        writeJsonFile(pth, [name ext], info);
+    end
 else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
