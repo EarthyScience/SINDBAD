@@ -23,4 +23,10 @@ end
 % evaluate function handle in forcing
 f  = info.tem.forcing.funHandle.import(info);
 
+
+%% note: this was in the setupTEM
+% create the output path if it not yet exists
+if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath);end
+
+
 end

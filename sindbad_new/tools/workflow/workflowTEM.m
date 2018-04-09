@@ -1,4 +1,4 @@
-function workflowTEM(expConfigFile)
+function info = workflowTEM(expConfigFile)
 % %% workflow of the tem
 % INPUT:    experiment configuration file OR info
 %           + varargins (??)
