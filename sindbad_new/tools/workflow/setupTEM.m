@@ -38,12 +38,14 @@ elseif exist(expConfigFile,'file')
     info    = stampExperiment(info);
     % read the TEM configurations
     info    = readConfigFiles(info,'tem',true);
-    % read the optimization configurations (if it exists)
+    % read the OPTI configurations (if it exists)
     if isfield(info.experiment.configFiles,'opti')
         if ~isempty(info.experiment.configFiles.opti)
             info = readConfigFiles(info,'opti',false);
         end
     end
+	% set the generated code filenames into the info
+	info 	= setGenCodePaths(info);
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
