@@ -37,6 +37,7 @@ elseif exist(expConfigFile,'file')
         end
     end
 end
+<<<<<<< HEAD
 %% 2) add additional information (stamp the experiment settings)
 info = stampExperiment(info);
     
