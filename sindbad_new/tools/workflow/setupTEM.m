@@ -41,8 +41,11 @@ end
 %% 2) add additional information (stamp the experiment settings)
 info = stampExperiment(info);
     
-%% 3) edit the settings of the TEM based on the function inputs
-info = editTEMSettings(info,varargin{:});
+%% 3) edit the TEM (optional changing of fieldvalues in the info strucure)
+        % replace 'apprName' with 'info.tem.model.modules.Qsnw.apprName' to
+        % check functionality
+%info = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01, 'apprName', 'Bla', 'Fantasy', 'Einhorn');
+info = editTEMSettings(info, 'berg', 1.5, 'ETsup', 0.01);
 
 %% 4) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
