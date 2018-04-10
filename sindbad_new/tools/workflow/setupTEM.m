@@ -73,8 +73,11 @@ else
 end
 
 %% 4) generate code
+
 %% 5) check model structure integrity
+
 %% 6) create helpers
+
 %% 7) write the info structure in a mat file
 
 end
