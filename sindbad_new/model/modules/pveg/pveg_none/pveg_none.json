@@ -1,0 +1,22 @@
+{
+	"params": {
+		"PFT": {
+			"Name": NaN,
+			"Unit": "class",
+			"Default": 1,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		},
+		"TreeCover": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 1,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
+	}
+}

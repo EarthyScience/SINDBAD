@@ -1,0 +1,13 @@
+{
+	"params": {
+		"CritDepth": {
+			"Name": NaN,
+			"Unit": "m",
+			"Default": 0.5,
+			"LowerBound": 0,
+			"UpperBound": 2,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
+	}
+}

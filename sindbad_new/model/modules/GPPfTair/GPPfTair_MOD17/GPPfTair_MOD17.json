@@ -1,0 +1,22 @@
+{
+	"params": {
+		"Tmax": {
+			"Name": "?? Check with martin",
+			"Unit": "ºC",
+			"Default": 20,
+			"LowerBound": 10,
+			"UpperBound": 35,
+			"Distribution": NaN,
+			"Comment": NaN
+		},
+		"Tmin": {
+			"Name": "?? Check with martin",
+			"Unit": "ºC",
+			"Default": 5,
+			"LowerBound": 0,
+			"UpperBound": 15,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
+	}
+}
