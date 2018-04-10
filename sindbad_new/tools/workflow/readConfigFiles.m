@@ -48,11 +48,21 @@ for ii = 1:numel(fldnmsINFO)
     switch lower(fldnmsINFO{ii})
         case 'modelrun'
             % feed model run settings 
-            info.(whatWorkFlow).model	= data_json;
-            
-            % because paths can be set in modelRun and in modelStructure,
-            % we need to merge the structure for paths
-            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
+            % because "model" is set in 2 different instances (modelRun and
+            % in modelStructure), we need to merge them one by one...
+            loopIt = false;
+            if isfield(info,'tem')
+                if isfield(info.tem,'model')
+                    loopIt = true;
+                end
+            end
+            if loopIt
+                for fn = fieldnames(data_json)'
+                    info.(whatWorkFlow).model.(fn{1}) = mergeSubField(info.(whatWorkFlow).model,data_json,(fn{1}),'last');
+                end
+            else
+                info.(whatWorkFlow).model	= data_json;
+            end
             
         case 'modelstructure'
             % set the model structure and needed settings in general
