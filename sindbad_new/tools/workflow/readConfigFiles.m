@@ -48,10 +48,25 @@ for ii = 1:numel(fldnmsINFO)
     switch lower(fldnmsINFO{ii})
         case 'modelrun'
             % feed model run settings 
-            info.(whatWorkFlow).model	= data_json;
+            % because "model" is set in 2 different instances (modelRun and
+            % in modelStructure), we need to merge them one by one...
+            loopIt = false;
+            if isfield(info,'tem')
+                if isfield(info.tem,'model')
+                    loopIt = true;
+                end
+            end
+            if loopIt
+                for fn = fieldnames(data_json)'
+                    info.(whatWorkFlow).model.(fn{1}) = mergeSubField(info.(whatWorkFlow).model,data_json,(fn{1}),'last');
+                end
+            else
+                info.(whatWorkFlow).model	= data_json;
+            end
             
         case 'modelstructure'
             % set the model structure and needed settings in general
+            
             % feed the states
             state_fields      = fieldnames(data_json.states);
             for jj=1:numel(state_fields)
@@ -63,7 +78,7 @@ for ii = 1:numel(fldnmsINFO)
             
             % loop over approaches
             for jj = 1 : size(module_fields, 1)
-                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).ApproachName,'_');
+                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).apprName,'_');
                 approachName    = approachName{1,2};
                 
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
@@ -79,11 +94,12 @@ for ii = 1:numel(fldnmsINFO)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
                     end
                 else
-                    disp(['MSG: readConfigFiles : no parameter config file (json) existing for approach: ' approachName]);
-                    isAllOK     = false;
-                    missFields  = [missFields ' ' fldnmsINFO{ii} ' for ' approachName ];
+                    disp(['MSG : readConfigFiles : no parameter config file (json) existing for : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
                 end
             end
+            
+            % feed the paths
+            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
         case 'output'
             % set variables for output and storage
