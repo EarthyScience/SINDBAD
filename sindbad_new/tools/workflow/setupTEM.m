@@ -53,6 +53,8 @@ elseif exist(expConfigFile,'file')
     end
 	% set the generated code filenames into the info
 	info 	= setGenCodePaths(info);
+    
+    
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
