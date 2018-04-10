@@ -1,0 +1,40 @@
+{
+	"params": {
+		"cf2Root": {
+			"Name": "fraction of NPP to cRoot",
+			"Unit": "fractional",
+			"Default": 0.3,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": "uniform",
+			"Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0.5 - this is allocation to below ground (roots) which is then partitioned according to Rf2Rc"
+		},
+		"cf2Wood": {
+			"Name": "fraction of NPP to cWood",
+			"Unit": "fractional",
+			"Default": 0.3,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": "uniform",
+			"Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0"
+		},
+		"cf2Leaf": {
+			"Name": "fraction of NPP to cLeaf",
+			"Unit": "fractional",
+			"Default": 0.4,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": "uniform",
+			"Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.4; if isTree==0 then 0.5"
+		},
+		"Rf2Rc": {
+			"Name": "fine root to total root fraction",
+			"Unit": "fractional",
+			"Default": 1,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": "uniform",
+			"Comment": "if Rf2Rc == 1 -> no coarse roots; if Fr2Rc < 1  -> yes coarse roots"
+		}
+	}
+}
