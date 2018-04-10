@@ -1,4 +1,4 @@
-function info = workflowTEM(expConfigFile)
+function info = workflowTEM(expConfigFile,varargin)
 % %% workflow of the tem
 % INPUT:    experiment configuration file OR info
 %           + varargins (??)
@@ -13,12 +13,11 @@ function info = workflowTEM(expConfigFile)
 
 % the experiment configuration file
 if ~exist('expConfigFile','var')
-    expConfigFile = '/Volumes/Kaam/Matlab_Works/sindbad/sindbad_new/settings/experiment_BergBasic.json';
-%     expConfigFile = '.\settings\experiment_standard.json';
+    error('ERR : workflowTEM : configuration file or info structure is a required input')
 end
 
 %% 1) setup the TEM
-info        = setupTEM(expConfigFile);
+info        = setupTEM(expConfigFile,varargin{:});
 
 %% 2) prepare the TEM runs
 [info, f]   = prepTEM(info);
