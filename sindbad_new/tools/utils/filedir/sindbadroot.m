@@ -6,7 +6,7 @@ f2c = 'sindbadroot.m';
 str = which(f2c,'-all');
 % the sindbadroot should be 3 folders up
 str = [str{1}(1:end-numel(f2c)) '../../../'];
-str = getFullPath(str);
+str = strrep(getFullPath(str),'\','/');
 % check that the path exists
 if~exist(str,'dir'),error(['ERR : sindbadroot : not a valid path : ' str]),end
 % define the outputs
