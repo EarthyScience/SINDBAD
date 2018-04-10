@@ -52,7 +52,7 @@ for ii = 1:numel(fldnmsINFO)
             
             % because paths can be set in modelRun and in modelStructure,
             % we need to merge the structure for paths
-            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths');
+            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
         case 'modelstructure'
             % set the model structure and needed settings in general
@@ -68,7 +68,7 @@ for ii = 1:numel(fldnmsINFO)
             
             % loop over approaches
             for jj = 1 : size(module_fields, 1)
-                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).ApproachName,'_');
+                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).apprName,'_');
                 approachName    = approachName{1,2};
                 
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
@@ -84,14 +84,12 @@ for ii = 1:numel(fldnmsINFO)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
                     end
                 else
-                    disp(['MSG: readConfigFiles : no parameter config file (json) existing for approach: ' approachName]);
-                    isAllOK     = false;
-                    missFields  = [missFields ' ' fldnmsINFO{ii} ' for ' approachName ];
+                    disp(['MSG : readConfigFiles : no parameter config file (json) existing for : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
                 end
             end
             
             % feed the paths
-            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths');
+            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
         case 'output'
             % set variables for output and storage
