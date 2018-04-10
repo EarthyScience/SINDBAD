@@ -1,4 +1,4 @@
-function A = catstruct(varargin)
+function A = catstruct(priorityFlag,varargin)
 % CATSTRUCT   Concatenate or merge structures with different fieldnames
 %   X = CATSTRUCT(S1,S2,S3,...) merges the structures S1, S2, S3 ...
 %   into one new structure X. X contains all fields present in the various
@@ -70,7 +70,7 @@ try
 catch
     nargchk(1, Inf, nargin) ;
 end
-N = nargin ;
+N = nargin - 1;
 
 if ~isstruct(varargin{end}),
     if isequal(varargin{end},'sorted'),
@@ -137,10 +137,10 @@ else
     %[UFN,ind] = unique(FN, 'last') ;
     % If this line errors, due to your matlab version not having UNIQUE
     % accept the 'last' input, use the following line instead
-    [UFN,ind] = unique(FN,'last') ; % earlier ML versions, like 6.5
+    [UFN,ind] = unique(FN,priorityFlag) ; % earlier ML versions, like 6.5
     
     if numel(UFN) ~= numel(FN),
-        warning('catstruct:DuplicatesFound','Fieldnames are not unique between structures.') ;
+        disp(['MSG : catstruct : DuplicatesFound : fieldnames are not unique between structures. Using : ' priorityFlag]) ;
         sorted = 1 ;
     end
     
