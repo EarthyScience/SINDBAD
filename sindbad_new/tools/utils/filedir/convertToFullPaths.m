@@ -3,6 +3,8 @@ if isstruct(strPaths)
     for fn = fieldnames(strPaths)'
         if ischar(strPaths.(fn{1}))
             strPaths.(fn{1}) = strrep(getFullPath([sindbadroot strPaths.(fn{1})]),'\','/');
+        else
+            strPaths.(fn{1}) = convertToFullPaths(strPaths.(fn{1}));
         end
     end
 elseif ischar(strPaths)
@@ -14,6 +16,6 @@ elseif iscell(strPaths)
         end
     end
 else
-    error('ERR : strPaths : not a known datatype for strPaths')
+    disp(['MSG : convertToFullPaths : not a known datatype for strPaths : ' class(strPaths)])
 end
 end
