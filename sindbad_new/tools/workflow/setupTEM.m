@@ -71,4 +71,10 @@ if isfield(info.experiment,'outputInfoFile')
 else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
+
+%% 4) generate code
+%% 5) check model structure integrity
+%% 6) create helpers
+%% 7) write the info structure in a mat file
+
 end
