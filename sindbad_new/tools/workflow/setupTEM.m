@@ -12,7 +12,10 @@ function info = setupTEM(expConfigFile,varargin)
 %       - readConfigFiles
 %   2) editINFOSettings
 %   3) writeJsonFile of info
-%
+%   4) generate code
+%   5) check model structure integrity
+%   6) create helpers
+%   7) write the info structure in a mat file
 
 %% 1) check what is the input
 if isstruct(expConfigFile) == 1
@@ -28,6 +31,10 @@ if isstruct(expConfigFile) == 1
     % stamp the experiment settings
     info = stampExperiment(info);
 elseif exist(expConfigFile,'file')
+    %% 
+    % note: this part can be outsorced to a initINFOFromConfig in case this
+    % needs to be ran in other places 
+    
     % is a file, assume a standard configuration file and read it
     info.experiment = readJsonFile(expConfigFile);
     % convert info.experiment.configFiles paths to absolute paths
