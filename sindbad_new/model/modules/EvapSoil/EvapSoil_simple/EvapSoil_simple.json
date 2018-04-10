@@ -1,0 +1,13 @@
+{
+	"params": {
+		"alpha": {
+			"Name": "?? Check with martin",
+			"Unit": "-",
+			"Default": 1,
+			"LowerBound": 0.01,
+			"UpperBound": 2,
+			"Distribution": NaN,
+			"Comment": "very rough bounds"
+		}
+	}
+}
