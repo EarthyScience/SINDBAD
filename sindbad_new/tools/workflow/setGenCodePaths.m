@@ -5,9 +5,23 @@ tmpStrName	= [info.experiment.name '_' info.experiment.domain '_' datestr(info.e
 tmpStrName  = strrep(strrep(tmpStrName,' ','_'),'-','_');
 
 % feed that into the structure
-info.tem.model.paths.genCode.coreTEM        = ['genCore_' tmpStrName '.m'];
-info.tem.model.paths.genCode.preCompOnce    = ['genPrecOnce_' tmpStrName '.m'];
-info.tem.spinup.paths.genCode.coreTEM       = ['genCoreSpinup_' tmpStrName '.m'];
-info.tem.spinup.paths.genCode.preCompOnce	= ['genPrecOnceSpinup_' tmpStrName '.m'];
-info.tem.spinup.paths.genCode.coreTEM       = ['genCoreSpinup_' tmpStrName '.m'];
-info.tem.spinup.paths.genCode.preCompOnce   = ['genPrecOnceSpinup_' tmpStrName '.m'];
+for n1 = {'model','spinup'}
+    str1 = '';
+    if strcmp(n1{1},'spinup'),str1='_Spinup';end
+    for n2 = {'coreTEM','preCompOnce'}
+        str2 = 'Core';
+        if strcmp(n2{1},'preCompOnce'),str2='PrecOnce';end
+        feedIt = true;
+        if isfield(info.tem.(n1{1}).paths,'genCode')
+            if isfield(info.tem.(n1{1}).paths.genCode,n2{1})
+                if~isempty(info.tem.(n1{1}).paths.genCode.(n2{1}))
+                    feedIt = true;
+                end
+            end
+        end
+        if feedIt
+            info.tem.(n1{1}).paths.genCode.(n2{1})	= convertToFullPaths([sindbadroot info.tem.model.paths.runDir 'gen' str2 str1 '_' tmpStrName '.m']);
+        end
+    end
+end
+end
