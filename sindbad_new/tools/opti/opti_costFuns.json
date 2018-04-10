@@ -1,0 +1,28 @@
+{
+	"A": {
+		"funName": NaN,
+		"gpp": {
+			"CostMetric": "SquaredDifferencesVector",
+			"CostWeight": [1],
+			"Trimming": false,
+			"minQualityFlag": [0.85],
+			"maxQualityFlag": [1],
+			"TemporalScale": "daily",
+			"SpatialScale": NaN,
+			"MultiConstraintMethod": "cat"
+		},
+		"nee": {
+			"CostMetric": "SquaredDifferencesVector",
+			"CostWeight": [1],
+			"Trimming": false,
+			"minQualityFlag": [0.85],
+			"maxQualityFlag": [1],
+			"TemporalScale": "daily",
+			"SpatialScale": NaN,
+			"MultiConstraintMethod": "cat"
+		}
+	},
+	"CF9": {
+		"funName": "calc_MEFCost_CF9"
+	}
+}
