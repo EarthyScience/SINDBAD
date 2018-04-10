@@ -1,4 +1,4 @@
-function info = workflowTEM(expConfigFile)
+function info = workflowTEM(expConfigFile,varargin)
 % %% workflow of the tem
 % INPUT:    experiment configuration file OR info
 %           + varargins (??)
@@ -18,7 +18,7 @@ if ~exist('expConfigFile','var')
 end
 
 %% 1) setup the TEM
-info        = setupTEM(expConfigFile);
+info        = setupTEM(expConfigFile,varargin{:});
 
 %% 2) prepare the TEM runs
 [info, f]   = prepTEM(info);
