@@ -1,0 +1,22 @@
+{
+	"params": {
+		"rue1": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.6,
+			"LowerBound": 0.3,
+			"UpperBound": 1.8,
+			"Distribution": NaN,
+			"Comment": "check with martin!!!"
+		},
+		"rue2": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 1.2,
+			"LowerBound": 0.6,
+			"UpperBound": 3.6,
+			"Distribution": NaN,
+			"Comment": "check with martin!!!"
+		}
+	}
+}
