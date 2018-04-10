@@ -50,8 +50,13 @@ for ii = 1:numel(fldnmsINFO)
             % feed model run settings 
             info.(whatWorkFlow).model	= data_json;
             
+            % because paths can be set in modelRun and in modelStructure,
+            % we need to merge the structure for paths
+            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths');
+            
         case 'modelstructure'
             % set the model structure and needed settings in general
+            
             % feed the states
             state_fields      = fieldnames(data_json.states);
             for jj=1:numel(state_fields)
@@ -84,6 +89,9 @@ for ii = 1:numel(fldnmsINFO)
                     missFields  = [missFields ' ' fldnmsINFO{ii} ' for ' approachName ];
                 end
             end
+            
+            % feed the paths
+            info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths');
             
         case 'output'
             % set variables for output and storage
