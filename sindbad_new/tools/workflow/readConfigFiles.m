@@ -63,7 +63,7 @@ for ii = 1:numel(fldnmsINFO)
             
             % loop over approaches
             for jj = 1 : size(module_fields, 1)
-                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).ApproachName{1},'_');
+                approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).ApproachName,'_');
                 approachName    = approachName{1,2};
                 
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
