@@ -1,4 +1,4 @@
-function info = editTEMSettings(info, varargin)
+function info = editINFOSettings(info, varargin)
 %% reads configuration files for TEM, opti or postProcessing and puts them into the info
 % INPUT:    info       :    info structure
 %           varargin{:}:	list of fields in info structure to change
