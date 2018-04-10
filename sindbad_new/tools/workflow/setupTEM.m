@@ -59,8 +59,7 @@ elseif exist(expConfigFile,'file')
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
-info	= editINFOSettings(info,varargin{:});
-
+[info, ~]	= editINFOSettings(info,varargin{:});
 %% 3) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
     if ~isempty(info.experiment.outputInfoFile)
