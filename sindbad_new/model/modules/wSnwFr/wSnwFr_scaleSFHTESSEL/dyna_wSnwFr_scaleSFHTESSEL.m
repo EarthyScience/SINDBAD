@@ -25,7 +25,7 @@ function [fx,s,d] = dyna_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % first update the snow pack
-s.w.wSnow = s.w.wSnow + fe.Snow(:,tix);
+s.w.wSnow = s.w.wSnow + fe.wSnwFr.Snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
 s.wd.wFrSnow = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
