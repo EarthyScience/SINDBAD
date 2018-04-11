@@ -21,8 +21,8 @@ function [fx,s,d] = dyna_RAact_Thornley2000B(f,fe,fx,s,d,p,info,tix)
 % INPUTS
 % gpp       : substrate supply rate: Gross Primary Production (gC.m-2.deltaT-1)
 %           (fx.gpp) 
-% cPools	: carbon pools (gC.m-2) 
-%           (s.cPools)
+% cEco      : carbon pools (gC.m-2) 
+%           (s.c.cEco)
 % c2pool    : carbon allocation in the different vegetation pools ([])
 %           (d.cAlloc.c2pool)
 % YG        : growth yield coefficient - or growth efficiency (gC.gC-1)
@@ -55,12 +55,12 @@ function [fx,s,d] = dyna_RAact_Thornley2000B(f,fe,fx,s,d,p,info,tix)
 
 % compute maintenance and growth respiration terms for each vegetation pool
 % according to MODEL B - growth respiration is given priority
-for ii = 1:4
+for zix = info.tem.model.variables.states.c.cVeg.zix
     % growth respiration: R_g = (1 - YG) * GPP * allocationToPool
-    fx.cEfflux(ii).growth(:,tix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* d.cAlloc.c2pool(ii).value(:,tix);
+    fx.cEfflux(zix).growth(:,tix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* d.cAlloc.c2pool(zix).value(:,tix);
     
     % maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
-    fx.cEfflux(ii).maintenance(:,tix)	= fe.RAact.km(ii).value(:,tix) .* (s.cPools(ii).value + p.RAact.YG .* fx.gpp(:,tix) .* d.cAlloc.c2pool(ii).value(:,tix));
+    fx.cEfflux(zix).maintenance(:,tix)	= fe.RAact.km(zix).value(:,tix) .* (s.c.cEco(:,zix) + p.RAact.YG .* fx.gpp(:,tix) .* d.cAlloc.c2pool(zix).value(:,tix));
     
 end
 
