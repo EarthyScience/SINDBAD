@@ -21,7 +21,8 @@ for jj=1:numel(paramsList)
     
     try
         %read parameter info of the approaches
-        param_json    = readJsonFile(['./model/modules/' char(module) '/' char([module '_' apprName]) '/' char([module '_' apprName]) '.json' ]);    
+        paramFile       = convertToFullPaths(['./model/modules/' char(module) '/' char([module '_' apprName]) '/' char([module '_' apprName]) '.json']);
+        param_json      = readJsonFile(paramFile);    
         params.(module).(paramName)   = param_json.params.(paramName);
         % make sure at least that the ranges are -Inf and +Inf
         if isnan(params.(module).(paramName).LowerBound),   params.(module).(paramName).LowerBound    = -Inf; end
