@@ -1,522 +1,363 @@
 {
 	"params": {
-		"ROOT_AGEdotPFT1": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1.8,
+		"cEcoNames":["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
+		"annk": {
+			"Name": "turnover rate of ecosystem carbon pools",
+			"Unit": "yr-1",
+			"Default": [1,0.03,0.03,1,14.8,3.9,18.5,4.8,0.2424,0.2424,6,7.3,0.2,0.0045],
+			"LowerBound": [0.05,0.002,0.002,0.05,1.48,0.39,1.85,0.48,0.02424,0.02424,0.6,0.73,0.02,0.00045],
+			"UpperBound": [3.3,0.5,0.5,3.3,148.0,39.0,185.0,48.0,2.424,2.424,60.0,73.0,2.0,0.045],
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": ""
+		},
+		"cTransfer": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": [
+				[  -1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,   -1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,   -1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,   -1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,   -1,    0,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,    0,   -1,    0,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,    0,    0,   -1,    0,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,    0,    0,    0,   -1,    0,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,    0,    0,    0,    0,   -1,    0,    0,    0,    0,    0],
+				[	0,    0,    0,    0,    0,    0,    0,    0,    0,   -1,    0,    0,    0,    0],
+				[	0,    0,    0,    0, 0.40, 0.40,    0,    0, 0.40,    0,   -1,    0,    0,    0],
+				[	0,    0,    0,    0,    0,    0, 0.45, 0.45,    0, 0.40,    0,   -1, 0.45, 0.45],
+				[	0,    0,    0,    0,    0, 0.70,    0, 0.70, 0.70, 0.70, 0.40,    0,   -1,    0],
+				[	0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0, 0.45,   -1]
+			],
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+			},
+		"effA": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.85,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"effB": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.68,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"MTFA": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 0.85,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"MTFB": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 0.018,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"LIGEFFA": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 3,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"WOODLIGFRAC": {
+			"Name": "fraction of wood that is lignin",
+			"Unit": "[]",
+			"Default": 0.4,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"C2LIGNIN": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.65,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"NONSOL2SOLLIGNIN": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 2.22,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"effCLAYSOIL_MICA": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.003,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"effCLAYSOIL_MICB": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.032,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"effCLAYSLOWA": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.003,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"effCLAYSLOWB": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.009,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"TEXTEFFA": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.75,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"maxMinLAI": {
+			"Name": "maximum value for the minimum LAI for litter scalars",
+			"Unit": "m2/m2",
+			"Default": 12,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"kRTLAI": {
+			"Name": "constant fraction of root litter imputs",
+			"Unit": "[]",
+			"Default": 0.3,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"LIGNIN_per_PFT": {
+			"Name": "fraction of litter that is lignin",
+			"Unit": "[]",
+			"Default": [0.20,0.20,0.22,0.25,0.20,0.15,0.10,0.00,0.20,0.15,0.15,0.10],
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"ROOT_AGEdotPFT2": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1.2,
+		"LITC2N_per_PFT": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": [40.0,50.0,65.0,80.0,50.0,50.0,50.0, 0.0,65.0,50.0,50.0,40.0],
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"ROOT_AGEdotPFT3": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1.2,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT4": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 5,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT5": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT6": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT7": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT8": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT9": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT10": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 2.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT11": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOT_AGEdotPFT12": {
-			"Name": "mean age of fine roots",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT1": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 41,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT2": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 58,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT3": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 58,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT4": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 42,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT5": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 27,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT6": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 25,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT7": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 25,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT8": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT9": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 5.5,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"ROOTC_AGEdotPFT10": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
+		"LITC2NdotPFT1": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
 			"Default": 40,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"ROOTC_AGEdotPFT11": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 1,
+		"LITC2NdotPFT2": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"ROOTC_AGEdotPFT12": {
-			"Name": "mean age of coarse roots",
-			"Unit": "yr",
-			"Default": 40,
+		"LITC2NdotPFT3": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 65,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT1": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 41,
+		"LITC2NdotPFT4": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 80,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT2": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 58,
+		"LITC2NdotPFT5": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT3": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 58,
+		"LITC2NdotPFT6": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT4": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 42,
+		"LITC2NdotPFT7": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT5": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 27,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOOD_AGEdotPFT6": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 25,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOOD_AGEdotPFT7": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 25,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOOD_AGEdotPFT8": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
+		"LITC2NdotPFT8": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
 			"Default": 0,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT9": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 5.5,
+		"LITC2NdotPFT9": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 65,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"WOOD_AGEdotPFT10": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
+		"LITC2NdotPFT10": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		},
+		"LITC2NdotPFT11": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
+			"Default": 50,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		},
+		"LITC2NdotPFT12": {
+			"Name": "carbon-to-nitrogen ratio in litter",
+			"Unit": "[]",
 			"Default": 40,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOOD_AGEdotPFT11": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOOD_AGEdotPFT12": {
-			"Name": "mean age of wood",
-			"Unit": "yr",
-			"Default": 40,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT1": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT2": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1.2,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT3": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1.2,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT4": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 5,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT5": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT6": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT7": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT8": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT9": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT10": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 2.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT11": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LEAF_AGEdotPFT12": {
-			"Name": "mean age of leafs",
-			"Unit": "yr",
-			"Default": 1,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkM_LEAF": {
-			"Name": "turnover rate of metabolic leaf litter",
-			"Unit": "yr-1",
-			"Default": 14.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkS_LEAF": {
-			"Name": "turnover rate of structural leaf litter",
-			"Unit": "yr-1",
-			"Default": 3.9,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkM_ROOT": {
-			"Name": "turnover rate of metabolic fine root litter",
-			"Unit": "yr-1",
-			"Default": 18.5,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkS_ROOT": {
-			"Name": "turnover rate of structural fine root litter",
-			"Unit": "yr-1",
-			"Default": 4.8,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkLiWOOD": {
-			"Name": "turnover rate of coarse woody debris",
-			"Unit": "yr-1",
-			"Default": 0.2424,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkLiROOT": {
-			"Name": "turnover rate of coarse root " litter "",
-			"Unit": "yr-1",
-			"Default": 0.2424,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkLEAF_MIC": {
-			"Name": "turnover rate of surface microbial pool",
-			"Unit": "yr-1",
-			"Default": 6,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkSOIL_MIC": {
-			"Name": "turnover rate of soil microbial pool",
-			"Unit": "yr-1",
-			"Default": 7.3,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkSLOW": {
-			"Name": "turnover rate of slow carbon pool",
-			"Unit": "yr-1",
-			"Default": 0.2,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"annkOLD": {
-			"Name": "turnover rate of old carbon pool",
-			"Unit": "yr-1",
-			"Default": 0.0045,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": NaN,
@@ -648,24 +489,6 @@
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"effA": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.85,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"effB": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.68,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
 		"LIGNINdotPFT1": {
 			"Name": "fraction of litter that is lignin",
 			"Unit": "[]",
@@ -774,230 +597,60 @@
 			"Distribution": NaN,
 			"Comment": NaN
 		},
-		"LITC2NdotPFT1": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 40,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT2": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT3": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 65,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT4": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 80,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT5": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT6": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT7": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT8": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT9": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 65,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT10": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT11": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 50,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LITC2NdotPFT12": {
-			"Name": "carbon-to-nitrogen ratio in litter",
-			"Unit": "[]",
-			"Default": 40,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"MTFA": {
-			"Name": NaN,
-			"Unit": "[]",
-			"Default": 0.85,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"MTFB": {
-			"Name": NaN,
-			"Unit": "[]",
-			"Default": 0.018,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"LIGEFFA": {
-			"Name": NaN,
-			"Unit": "[]",
-			"Default": 3,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"WOODLIGFRAC": {
-			"Name": "fraction of wood that is lignin",
-			"Unit": "[]",
-			"Default": 0.4,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"C2LIGNIN": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.65,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"NONSOL2SOLLIGNIN": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 2.22,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"effCLAYSOIL_MICA": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.003,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"effCLAYSOIL_MICB": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.032,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"effCLAYSLOWA": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.003,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"effCLAYSLOWB": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.009,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"TEXTEFFA": {
-			"Name": NaN,
-			"Unit": NaN,
-			"Default": 0.75,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"maxMinLAI": {
-			"Name": "maximum value for the minimum LAI for litter scalars",
-			"Unit": "m2/m2",
-			"Default": 12,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
-		},
-		"kRTLAI": {
-			"Name": "constant fraction of root litter imputs",
-			"Unit": "[]",
-			"Default": 0.3,
-			"LowerBound": 0,
-			"UpperBound": 1,
-			"Distribution": NaN,
-			"Comment": NaN
+		"oldStuffThatWasNotAutomaticallyImported" : {
+			"ROOT_AGE_per_PFT": {
+				"Name": "mean age of fine roots",
+				"Unit": "yr",
+				"Default": [1.8,1.2,1.2,5.0,1.8,1.0,1.0,0.0,1.0,2.8,1.0,1.0],
+				"LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+				"UpperBound": [20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0],
+				"Distribution": {
+					"name": "uniform",
+					"funHandle" : "",
+					"params" : []
+				},
+				"Comment": ""
+			},
+			"ROOTC_AGE_per_PFT": {
+				"Name": "mean age of coarse roots",
+				"Unit": "yr",
+				"Default": [41.0,58.0,58.0,42.0,27.0,25.0,25.0,0.0,5.5,40.0,1.0,40.0],
+				"LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+				"UpperBound": [100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0],
+				"Distribution": {
+					"name": "uniform",
+					"funHandle" : "",
+					"params" : []
+				},
+				"Comment": ""
+			},
+			"WOOD_AGE_per_PFT": {
+				"Name": "mean age of wood",
+				"Unit": "yr",
+				"Default": 41,
+				"Default": [41.0,58.0,58.0,42.0,27.0,25.0,25.0,0.0,5.5,40.0,1.0,40.0],
+				"LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+				"UpperBound": [100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0],
+				"Distribution": {
+					"name": "uniform",
+					"funHandle" : "",
+					"params" : []
+				},
+				"Comment": ""
+			},
+			"LEAF_AGE_per_PFT": {
+				"Name": "mean age of leafs",
+				"Unit": "yr",
+				"Default": [1.8,1.2,1.2,5.0,1.8,1.0,1.0,0.0,1.0,2.8,1.0,1.0],
+				"LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+				"UpperBound": [20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0],
+				"Distribution": {
+					"name": "uniform",
+					"funHandle" : "",
+					"params" : []
+				},
+				"Comment": ""
+			}
 		}
 	}
 }
