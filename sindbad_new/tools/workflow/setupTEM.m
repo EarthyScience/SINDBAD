@@ -53,13 +53,13 @@ elseif exist(expConfigFile,'file')
     end
 	% set the generated code filenames into the info
 	info 	= setGenCodePaths(info);
-    
-    
+    % convert paths in info to absolute paths
+    info.tem.model.paths	= convertToFullPaths(info.tem.model.paths);
+    info.tem.spinup.paths   = convertToFullPaths(info.tem.spinup.paths);
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
-info	= editINFOSettings(info,varargin{:});
-
+[info, ~]	= editINFOSettings(info,varargin{:});
 %% 3) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
     if ~isempty(info.experiment.outputInfoFile)
@@ -70,4 +70,13 @@ if isfield(info.experiment,'outputInfoFile')
 else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
+
+%% 4) generate code
+
+%% 5) check model structure integrity
+
+%% 6) create helpers
+
+%% 7) write the info structure in a mat file
+
 end

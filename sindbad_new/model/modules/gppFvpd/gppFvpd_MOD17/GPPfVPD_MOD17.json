@@ -1,0 +1,22 @@
+{
+	"params": {
+		"VPDmax": {
+			"Name": "?? Check with martin",
+			"Unit": "kPa",
+			"Default": 2,
+			"LowerBound": 1,
+			"UpperBound": 10,
+			"Distribution": NaN,
+			"Comment": NaN
+		},
+		"VPDmin": {
+			"Name": "?? Check with martin",
+			"Unit": "kPa",
+			"Default": 1,
+			"LowerBound": 0,
+			"UpperBound": 5,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
+	}
+}
