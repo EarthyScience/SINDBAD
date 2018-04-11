@@ -1,4 +1,4 @@
-function [fx,s,d] = TranfwSoil_Federer1982(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = TranfwSoil_Federer1982(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

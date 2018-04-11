@@ -1,4 +1,4 @@
-function [fx,s,d] = Qsat_simple(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = Qsat_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 

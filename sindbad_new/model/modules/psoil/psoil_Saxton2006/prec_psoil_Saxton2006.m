@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_psoil_Saxton2006(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_psoil_Saxton2006(f,fe,fx,s,d,p,info)
 
 % AWC       : maximum plant available water content in the top layer [mm]
 %           (p.psoil.AWC(i).value)
