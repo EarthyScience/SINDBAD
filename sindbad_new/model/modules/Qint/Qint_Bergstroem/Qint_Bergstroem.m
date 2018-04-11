@@ -1,4 +1,4 @@
-function [fx,s,d] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: calculates land surface runoff and infiltration
 % 

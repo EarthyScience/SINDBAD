@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPfTair_TEM(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPfTair_TEM(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: estimate temperature effect on GPP
 % 

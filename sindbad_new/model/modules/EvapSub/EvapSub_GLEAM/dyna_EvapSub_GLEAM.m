@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_EvapSub_GLEAM(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_EvapSub_GLEAM(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: estimate sublimation
 % 

@@ -1,4 +1,4 @@
-function [fx,s,d] = wSnwFr_binary(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = wSnwFr_binary(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 

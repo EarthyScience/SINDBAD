@@ -1,4 +1,4 @@
-function [fx,s,d] = wG2wSoil_none(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = wG2wSoil_none(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 
