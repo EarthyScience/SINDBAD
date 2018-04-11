@@ -1,4 +1,4 @@
-function [fx,s,d] = calcUpdNPPRa(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = calcUpdNPPRa(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: updNPPRa
 % 

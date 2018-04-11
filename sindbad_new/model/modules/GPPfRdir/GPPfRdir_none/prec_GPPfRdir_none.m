@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPfRdir_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPfRdir_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: saturating light function
 % 

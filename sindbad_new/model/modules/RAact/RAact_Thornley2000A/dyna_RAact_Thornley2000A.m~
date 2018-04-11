@@ -1,11 +1,10 @@
-function [fx,s,d,f] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% FUNCTION	: dyna_RAact_Thornley2000C
+% FUNCTION	: dyna_RAact_Thornley2000A
 % 
 % PURPOSE	: estimate autotrophic respiration as maintenance + growth
-% respiration according to Thornley and Cannell (2000): MODEL C -
-% growth, degradation and resynthesis view of respiration (check Fig.1 of
-% the paper).
+% respiration according to Thornley and Cannell (2000): MODEL A -
+% maintenance respiration is given priority (check Fig.1 of the paper).
 % 
 % REFERENCES:
 % Amthor, J. S. (2000), The McCree-de Wit-Penning de Vries-Thornley
@@ -55,18 +54,21 @@ function [fx,s,d,f] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % compute maintenance and growth respiration terms for each vegetation pool
-% according to MODEL C - growth, degradation and resynthesis view of
-% respiration
+% according to MODEL A - maintenance respiration is given priority
 for zix = info.tem.model.variables.states.c.cVeg.zix
-    % maintenance respiration: R_m = km * (1 - YG) * C; km = km * MTF (before equivalent to kd)
-    fx.cEfflux(zix).maintenance(:,tix)	= fe.RAact.km(zix).value(:,tix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
     
-    % growth respiration: R_g = gpp * (1 - YG)
-    fx.cEfflux(zix).growth(:,tix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* d.cAlloc.c2pool(zix).value(:,tix);
+    % maintenance respiration first: R_m = km * C
+    fx.cEfflux(zix).maintenance(:,tix)	= fe.RAact.km(zix).value(:,tix) .* s.c.cEco(zix);
+    
+    % growth respiration: R_g = (1 - YG) * (GPP * allocationToPool - R_m)
+    fx.cEfflux(zix).growth(:,tix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* d.cAlloc.c2pool(zix).value(:,tix) - fx.cEfflux(zix).maintenance(:,tix));
+    
+    % no negative growth respiration
+    fx.cEfflux(zix).growth(fx.cEfflux(zix).growth(:,tix) < 0,tix)	= 0;
     
 end
 
 % compute total respiration and npp for each vegetation pool
-[fx,s,d,f]	= calcUpdNPPRa(f,fe,fx,s,d,p,info,tix);
+[fx,s,d]	= calcUpdNPPRa(f,fe,fx,s,d,p,info,tix);
 
 end % function

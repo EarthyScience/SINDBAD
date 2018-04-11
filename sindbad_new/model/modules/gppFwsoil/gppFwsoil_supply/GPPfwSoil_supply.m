@@ -1,4 +1,4 @@
-function [fx,s,d] = GPPfwSoil_supply(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = GPPfwSoil_supply(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: Supply Control
 % 

@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPdem_min(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPdem_min(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the demand GPP: stress scalars are combined as the
 %           minimum (which limits most)

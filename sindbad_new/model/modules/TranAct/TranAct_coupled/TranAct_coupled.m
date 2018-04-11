@@ -1,4 +1,4 @@
-function [fx,s,d] = TranAct_coupled(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = TranAct_coupled(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: estimate transpiration from GPP
 % 

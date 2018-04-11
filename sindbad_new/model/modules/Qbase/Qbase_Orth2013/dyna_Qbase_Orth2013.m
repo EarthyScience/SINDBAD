@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_Qbase_Orth2013(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_Qbase_Orth2013(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: calculates delayed runoff and 'ground water' storage
 % 
