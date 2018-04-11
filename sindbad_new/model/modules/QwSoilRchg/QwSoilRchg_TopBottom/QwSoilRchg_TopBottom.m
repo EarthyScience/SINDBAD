@@ -11,14 +11,14 @@ function [fx,s,d] = QwSoilRchg_TopBottom(f,fe,fx,s,d,p,info,tix)
 %p.psoil.AWC : maximum plant available water content of layers
 % wSM      : soil moisture sum of all layers [mm]
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 %
 % OUTPUT
 % s.smPools : soil moisture content of layers [mm]
 % wSM      : soil moisture sum of all layers [mm]
 %
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 %
 % NOTES:
 %
@@ -31,11 +31,11 @@ function [fx,s,d] = QwSoilRchg_TopBottom(f,fe,fx,s,d,p,info,tix)
 
 for ii=1:length(s.smPools)
     
-    ip = min( p.psoil.AWC(ii).value - s.smPools(ii).value , d.Temp.WBP);
+    ip = min( p.psoil.AWC(ii).value - s.smPools(ii).value , s.wd.WBP);
     s.smPools(ii).value = s.smPools(ii).value + ip;
-    d.Temp.WBP = d.Temp.WBP - ip;
+    s.wd.WBP = s.wd.WBP - ip;
     
-    s.wSM = s.wSM + ip;
+    s.w.wSoil = s.w.wSoil + ip;
 end
 
 

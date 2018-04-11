@@ -7,8 +7,8 @@ function [fx,s,d] = wSoilSatFr_WTD(f,fe,fx,s,d,p,info,tix)
 % CONTACT	: mjung
 % 
 % INPUT
-% wWTD      : water table depth [m]
-%           (s.wWTD)
+% WTD      : water table depth [m]
+%           (s.wd.WTD)
 % meanElev  : mean elevation [m]
 %           (p.ptopo.meanElev)
 % percElev  : pdf of the elevation [m] dimensions must be [nspace 100] 
@@ -19,14 +19,14 @@ function [fx,s,d] = wSoilSatFr_WTD(f,fe,fx,s,d,p,info,tix)
 % 
 % OUTPUT
 % frSat     : saturated fraction of soil [] (from 0 to 1)
-%           (s.wFrSat)
+%           (s.wd.wFrSat)
 % 
 % NOTES: NOT TESTED!!! 
 % 
 % #########################################################################
 
-sc = s.wWTD ./ p.ptopo.meanElev;
+sc = s.wd.WTD ./ p.ptopo.meanElev;
 dum = p.ptopo.percElev.*sc <= p.wSoilSatFr.CritDepth;
-s.wFrSat = sum(dum,3)./100;
+s.wd.wFrSat = sum(dum,3)./100;
 
 end
