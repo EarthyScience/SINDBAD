@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPdem_mult(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPdem_mult(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the demand GPP: stress scalars are in a
 % multiplicative way 

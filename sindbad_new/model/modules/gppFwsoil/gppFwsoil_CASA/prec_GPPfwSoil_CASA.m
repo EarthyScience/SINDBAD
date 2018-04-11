@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
+function [fe,fx,d,p,f] = prec_GPPfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 
 
 % 

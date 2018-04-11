@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_cAlloc_Fix(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_cAlloc_Fix(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: dyna_cAlloc_Fix
 % 

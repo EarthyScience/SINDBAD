@@ -1,4 +1,4 @@
-function [fx,s,d] = QwSoilRchg_TopBottom(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = QwSoilRchg_TopBottom(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: estimate recharge of available water content
 %
