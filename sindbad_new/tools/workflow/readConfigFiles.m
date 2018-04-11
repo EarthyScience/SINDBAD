@@ -19,7 +19,7 @@ switch lower(whatWorkFlow)
         fldnmsINFO      = {'modelRun','modelStructure','spinup','forcing','constants','output'};%'params'
         
     case 'opti' %creates all the substructures (fieldnames) of info.opti
-        fldnmsINFO = {}; %{'constraints','costFun','method','params', 'checks'}: %
+        fldnmsINFO = {'opti'};
         
     case 'postprocessing'
         fldnmsINFO = {};
@@ -105,6 +105,10 @@ for ii = 1:numel(fldnmsINFO)
             % set variables for output and storage
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
             info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.write;
+        case 'opti'
+            % read opti cofigurations
+             info.(whatWorkFlow)	= data_json;
+             info = readOpti(info);
             
         otherwise % these include 'spinup' and all other cases
             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
@@ -115,22 +119,6 @@ if stopIfMissField && isAllOK == false
     error(['MSG: readConfigFiles : missing necessary fields in configuration files : ' missFields])
 end
 
-% %% USEFUL FOR OPTIMIZATION CASE:
-% %read parameter info of the approaches
-% param_json    = readJsonFile(['./model/modules/' char(modules{jj}) '/' char(data_json{jj}.ApproachName) '/' char(data_json{jj}.ApproachName) '.json' ]);
-% paramName     = param_json.Params.VariableName;
-% % loop over the parameter of the approach & get the
-% % default value
-% for pp=1:numel(paramName)
-%     info.tem.params.(modules{jj}).(paramName{pp}) = param_json.Params.Default(pp);
-%
-%
-%     param_info    = fieldnames(param_json.Params);
-%     % loop over the parameter characteristics provided in the json
-%     for ppi = 1:numel(param_info)
-%         info.opti.params.(modules{jj}).(paramName{pp}).(param_info{ppi}) = param_json.Params.(param_info{ppi})(pp);
-%     end
-% end
 
 
 end
