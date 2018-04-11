@@ -4,6 +4,8 @@ function [IsCompatible]=check_ModelIntegrity(info)
 %fe,fx,d,s are also some output of the same or another function (order of
 %computations is not checked);
 
+
+
 AllInputs=info.variables.input;
 AllOutputs=info.variables.output;
 

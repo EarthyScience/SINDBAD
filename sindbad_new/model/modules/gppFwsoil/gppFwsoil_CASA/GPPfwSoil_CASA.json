@@ -1,0 +1,13 @@
+{
+	"params": {
+		"Bwe": {
+			"Name": "CASA We",
+			"Unit": "[]",
+			"Default": 0.5,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": NaN,
+			"Comment": NaN
+		}
+	}
+}
