@@ -1,6 +1,6 @@
-function [fe] = calcKcpools(f,fe,fx,s,d,p,info)
+function [fe] = calcKcEco(f,fe,fx,s,d,p,info)
 % #########################################################################
-% FUNCTION	: calcKcpools
+% FUNCTION	: calcKEco
 % 
 % PURPOSE	: calculate the turnover rates of the individual pools of the
 %           ecosystem (soil and vegetation) from parameters of annual
@@ -44,19 +44,19 @@ poolname	= {
     'LEAF_MIC', 'psoil_MIC', 'SLOW', 'OLD'};                     %   MICROBIAL AND SLOWER psoil
 
 % CALCULATE psoil DECOMPOSITION SCALARS AT APPROPRIATE TIME STEP
-for ii = 5:numel(poolname)
-    annk                           = p.cCycle.(['annk' poolname{ii}]);
-    fe.cCycle.annkpool(ii).value   = annk;
-    fe.cCycle.kpool(ii).value      = 1 - (exp(-annk) .^ (1 / TSPY));
+for zix = info.tem.model.variables.states.c.cSoil.zix
+    annk                           = p.cCycle.(['annk' poolname{zix}]);
+    fe.cCycle.annkpool(zix).value   = annk;
+    fe.cCycle.kpool(zix).value      = 1 - (exp(-annk) .^ (1 / TSPY));
 end
 
 % CALCULATE DECAY RATES FOR THE pvegETATION POOLS AT APPROPRIATE TIME STEPS
-for ii = 1:4
-    AGE                            = p.cCycle.([poolname{ii} '_AGE']);
+for zix = info.tem.model.variables.states.c.cSoil.zix
+    AGE                            = p.cCycle.([poolname{zix} '_AGE']);
     annk                           = 1e-40 .* ones(size(AGE));
     annk(AGE > 0)                  = 1 ./ AGE(AGE > 0);
-    fe.cCycle.annkpool(ii).value   = annk;
-    fe.cCycle.kpool(ii).value      = 1 - (exp(-annk) .^ (1 / TSPY));
+    fe.cCycle.annkpool(zix).value   = annk;
+    fe.cCycle.kpool(zix).value      = 1 - (exp(-annk) .^ (1 / TSPY));
 end
 
 end % function
