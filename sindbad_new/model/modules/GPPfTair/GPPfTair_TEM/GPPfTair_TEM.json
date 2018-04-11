@@ -6,7 +6,11 @@
 			"Default": 5,
 			"LowerBound": 0,
 			"UpperBound": 15,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"Tmax": {
@@ -15,7 +19,11 @@
 			"Default": 20,
 			"LowerBound": 10,
 			"UpperBound": 35,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"Topt": {
@@ -24,7 +32,11 @@
 			"Default": 15,
 			"LowerBound": 5,
 			"UpperBound": 30,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

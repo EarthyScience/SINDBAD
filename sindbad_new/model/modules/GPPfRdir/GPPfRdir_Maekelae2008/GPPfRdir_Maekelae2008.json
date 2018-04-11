@@ -6,7 +6,11 @@
 			"Default": 0.04,
 			"LowerBound": 0.001,
 			"UpperBound": 0.1,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Mäkalä2008; units ok?"
 		}
 	}
