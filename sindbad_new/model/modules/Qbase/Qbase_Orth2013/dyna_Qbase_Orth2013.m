@@ -33,7 +33,7 @@ function [fx,s,d] = dyna_Qbase_Orth2013(f,fe,fx,s,d,p,info,tix)
 % calculate Q from delay of previous days
 if i>60
 	tmin = max(i-60,1);
-	fx.Q(:,tix) = sum(fx.Qint(:,tmin:i) .* fe.Rdelay,2);		
+	fx.Q(:,tix) = sum(fx.Qint(:,tmin:i) .* fe.Qbase.Rdelay,2);		
 else % or accumulate land runoff in GW
 	fx.Q(:,tix) = 0;
 end
