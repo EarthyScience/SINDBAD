@@ -56,6 +56,7 @@ elseif exist(expConfigFile,'file')
     % convert paths in info to absolute paths
     info.tem.model.paths	= convertToFullPaths(info.tem.model.paths);
     info.tem.spinup.paths   = convertToFullPaths(info.tem.spinup.paths);
+    
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
