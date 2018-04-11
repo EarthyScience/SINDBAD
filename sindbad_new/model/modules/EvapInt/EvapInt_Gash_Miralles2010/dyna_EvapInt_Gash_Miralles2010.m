@@ -11,17 +11,17 @@ function [fx,s,d] = dyna_EvapInt_Gash_Miralles2010(f,fe,fx,s,d,p,info,tix)
 % ECanop    : canopy interception evaporation [mm/time]
 %           (fx.ECanop)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES:
 % 
 % #########################################################################
 
 % update the available water
-d.Temp.WBP = d.Temp.WBP - fx.ECanop(:,tix);
+s.wd.WBP = s.wd.WBP - fx.ECanop(:,tix);
 
 end

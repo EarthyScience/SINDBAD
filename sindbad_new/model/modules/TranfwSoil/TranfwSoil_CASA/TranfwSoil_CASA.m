@@ -1,13 +1,13 @@
 function [fx,s,d] = TranfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 
 % % T = maxRate*(wSM)/tAWC
-% d.TranfwSoil.TranActS(:,tix) = p.TranfwSoil.maxRate .* ( s.wSM(:,tix) ) ./ ( p.psoil.tAWC );
+% d.TranfwSoil.TranActS(:,tix) = p.TranfwSoil.maxRate .* ( s.w.wSoil(:,tix) ) ./ ( p.psoil.tAWC );
 % wAvail                           = (f.Rain(:,tix) + fx.Qsnow(:,tix));
 wAvail                           = (f.Rain(:,tix) + fx.Qsnow(:,tix) - fx.ECanop(:,tix) - fx.ESoil(:,tix) - fx.Qinf(:,tix) - fx.Qsat(:,tix)); 
 
 % CALCULATE VMC: Volumetric Moisture Content
-VMC                             = (s.wSM + p.psoil.WPT) ./ p.psoil.FC;
-% VMC                           = (s.wSM(:,tix)) ./ p.psoil.tAWC;
+VMC                             = (s.w.wSoil + p.psoil.WPT) ./ p.psoil.FC;
+% VMC                           = (s.w.wSoil(:,tix)) ./ p.psoil.tAWC;
 
 % compute relative drying rate
 RDR                             = zeros(info.forcing.size(1),1);
@@ -24,7 +24,7 @@ d.TranfwSoil.TranActS(ndx,tix)   = f.PET(ndx,tix);
 % when not
 ndx                             = wAvail < f.PET(:,tix);
 EETa                            = wAvail(ndx,1) + (f.PET(ndx,tix) - wAvail(ndx,1)) .* RDR(ndx,1);
-EETb                            = wAvail(ndx,1) + (d.Temp.pwSM(ndx,1));
+EETb                            = wAvail(ndx,1) + (s.prev.wSM(ndx,1));
 d.TranfwSoil.TranActS(ndx,tix)	= min(EETa, EETb);
 
 end % function

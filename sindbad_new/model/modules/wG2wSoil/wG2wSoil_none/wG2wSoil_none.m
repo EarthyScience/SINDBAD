@@ -19,7 +19,7 @@ function [fx,s,d] = wG2wSoil_none(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 %assume no GW in the root zone
-% s.wGWR = zeros(info.forcing.size);
+% s.wd.wGWR = zeros(info.forcing.size);
 
 
 

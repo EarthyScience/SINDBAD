@@ -25,7 +25,7 @@ function [fx,s,d] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
 % wSM      : soil moisture sum of all layers [mm]
-%           (s.wSM)
+%           (s.w.wSoil)
 % 
 % 
 % CONTACT	: ncarval
@@ -71,7 +71,7 @@ NL(NL <= minL)	= minL(NL <= minL);
 NL(NL >= maxL)	= maxL(NL >= maxL);
 
 % water limitation calculation
-WL              = s.wSM ./ d.cAlloc.WLDenominator;
+WL              = s.w.wSoil ./ d.cAlloc.WLDenominator;
 WL(WL <= minL)	= minL(WL <= minL);
 WL(WL >= maxL)  = maxL(WL >= maxL); %% check if maxL and minL should used maxL_fW?
 
