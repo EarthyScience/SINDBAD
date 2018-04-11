@@ -1,0 +1,13 @@
+{
+	"params": {
+		"k": {
+			"Name": "??Check with martin",
+			"Unit": "??",
+			"Default": -0.4,
+			"LowerBound": -0.01,
+			"UpperBound": 0.1,
+			"Distribution": NaN,
+			"Comment": "from Mäkalä2008"
+		}
+	}
+}
