@@ -6,7 +6,11 @@
 			"Default": 1,
 			"LowerBound": 0.001,
 			"UpperBound": "Inf",
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

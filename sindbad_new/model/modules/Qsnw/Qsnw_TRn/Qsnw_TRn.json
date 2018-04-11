@@ -6,7 +6,11 @@
 			"Default": 3,
 			"LowerBound": 0,
 			"UpperBound": 3,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: m_t"
 		},
 		"melt_Rn": {
@@ -15,7 +19,11 @@
 			"Default": 2,
 			"LowerBound": 0,
 			"UpperBound": 3,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: m_r"
 		}
 	}

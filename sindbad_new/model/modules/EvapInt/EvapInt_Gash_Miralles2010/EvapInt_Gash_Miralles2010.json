@@ -6,7 +6,11 @@
 			"Default": 1.2,
 			"LowerBound": 0.4,
 			"UpperBound": 2,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Miralles 2010"
 		},
 		"fte": {
@@ -24,7 +28,11 @@
 			"Default": 0.3,
 			"LowerBound": 0.1,
 			"UpperBound": 0.5,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Miralles 2010"
 		},
 		"St": {
@@ -33,7 +41,11 @@
 			"Default": 0.02,
 			"LowerBound": 0.02,
 			"UpperBound": 0.02,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Miralles 2010"
 		},
 		"pd": {
@@ -42,7 +54,11 @@
 			"Default": 0.02,
 			"LowerBound": 0.02,
 			"UpperBound": 0.02,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Miralles 2010"
 		}
 	}

@@ -6,7 +6,11 @@
 			"Default": 5,
 			"LowerBound": 1,
 			"UpperBound": 20,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Mäkalä2008"
 		},
 		"X0": {
@@ -15,7 +19,11 @@
 			"Default": -5,
 			"LowerBound": -15,
 			"UpperBound": 1,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Mäkalä2008"
 		},
 		"Smax": {
@@ -24,7 +32,11 @@
 			"Default": 20,
 			"LowerBound": 10,
 			"UpperBound": 30,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Mäkalä2008"
 		}
 	}

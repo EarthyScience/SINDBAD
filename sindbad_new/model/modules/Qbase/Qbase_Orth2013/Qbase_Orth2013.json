@@ -6,7 +6,11 @@
 			"Default": 2,
 			"LowerBound": 0.5,
 			"UpperBound": 100,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: q_t"
 		}
 	}

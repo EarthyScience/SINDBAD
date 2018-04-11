@@ -6,7 +6,11 @@
 			"Default": 0.3,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"SILT": {
@@ -15,7 +19,11 @@
 			"Default": 0.3,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"SAND": {
@@ -24,7 +32,11 @@
 			"Default": 0.4,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"InfCapacity": {
@@ -33,7 +45,11 @@
 			"Default": 15,
 			"LowerBound": 1,
 			"UpperBound": 30,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "to be consistent this should be computed from texture..."
 		},
 		"HeightLayer1": {
@@ -42,7 +58,11 @@
 			"Default": 0.25,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"HeightLayer2": {
@@ -51,7 +71,11 @@
 			"Default": 0.75,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"iniAWC": {
@@ -60,7 +84,11 @@
 			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"a": {
@@ -69,7 +97,11 @@
 			"Default": -4.396,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"b": {
@@ -78,7 +110,11 @@
 			"Default": -0.0715,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"c": {
@@ -87,7 +123,11 @@
 			"Default": -0.000488,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"d1": {
@@ -96,7 +136,11 @@
 			"Default": -4.285E-5,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"e": {
@@ -105,7 +149,11 @@
 			"Default": -3.14,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"f1": {
@@ -114,7 +162,11 @@
 			"Default": -0.00222,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"g": {
@@ -123,7 +175,11 @@
 			"Default": -3.484E-5,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"h": {
@@ -132,7 +188,11 @@
 			"Default": 0.332,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"j": {
@@ -141,7 +201,11 @@
 			"Default": -0.0007251,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"k": {
@@ -150,7 +214,11 @@
 			"Default": 0.1276,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"m": {
@@ -159,7 +227,11 @@
 			"Default": -0.108,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"n": {
@@ -168,7 +240,11 @@
 			"Default": 0.341,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"p": {
@@ -177,7 +253,11 @@
 			"Default": 12.012,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"q": {
@@ -186,7 +266,11 @@
 			"Default": -0.0755,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"r": {
@@ -195,7 +279,11 @@
 			"Default": -3.895,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"t": {
@@ -204,7 +292,11 @@
 			"Default": 0.03671,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"u": {
@@ -213,7 +305,11 @@
 			"Default": -0.1103,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"v": {
@@ -222,7 +318,11 @@
 			"Default": 0.00087546,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

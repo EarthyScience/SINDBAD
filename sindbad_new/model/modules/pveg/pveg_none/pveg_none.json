@@ -6,7 +6,11 @@
 			"Default": 1,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"TreeCover": {
@@ -15,7 +19,11 @@
 			"Default": 1,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

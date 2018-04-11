@@ -6,7 +6,11 @@
 			"Default": 0.6,
 			"LowerBound": 0.3,
 			"UpperBound": 1.8,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "check with martin!!!"
 		},
 		"rue2": {
@@ -15,7 +19,11 @@
 			"Default": 1.2,
 			"LowerBound": 0.6,
 			"UpperBound": 3.6,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "check with martin!!!"
 		}
 	}
