@@ -7,7 +7,7 @@ function [fe,fx,d,p] = prec_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 % CONTACT	: ttraut
 % 
 % INPUT
-% Tair 		: air temperature [°C]
+% Tair 		: air temperature [??C]
 % 			(f.Tair)
 % Snow 		: unscaled snow fall [mm/time]
 %			(f.Snow)
@@ -24,6 +24,6 @@ function [fe,fx,d,p] = prec_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 
 
 % compute snow fall
-fe.Snow  	 = (p.wSnwFr.SF_scale * ones(1,info.forcing.size(2))) .* f.Snow; % *ones as parameter has one value for each pixel
+fe.wSnwFr.Snow  	 = (p.wSnwFr.SF_scale * ones(1,info.forcing.size(2))) .* f.Snow; % *ones as parameter has one value for each pixel
 
 end

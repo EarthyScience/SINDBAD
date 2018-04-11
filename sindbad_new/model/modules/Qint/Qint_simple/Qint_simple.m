@@ -10,20 +10,20 @@ function [fx,s,d] = Qint_simple(f,fe,fx,s,d,p,info,tix)
 % rc        : interflow runoff coefficient []
 %           (p.Qint.rc)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % Qint      : interflow [mm/time]
 %           (fx.Qint)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES:
 % 
 % #########################################################################
 
 % simply assume that a fraction of the still available water runs off
-fx.Qint(:,tix) = p.Qint.rc .* d.Temp.WBP;
-d.Temp.WBP = d.Temp.WBP - fx.Qint(:,tix);
+fx.Qint(:,tix) = p.Qint.rc .* s.wd.WBP;
+s.wd.WBP = s.wd.WBP - fx.Qint(:,tix);
 
 end

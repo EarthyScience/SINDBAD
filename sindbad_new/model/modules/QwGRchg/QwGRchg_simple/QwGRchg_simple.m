@@ -8,17 +8,17 @@ function [fx,s,d] = QwGRchg_simple(f,fe,fx,s,d,p,info,tix)
 % 
 % INPUT
 % wGW       : ground water pool [mm] 
-%           (s.wGW)
+%           (s.w.wGW)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % Qgwrec    : ground water recharge [mm/time]
 %           (fx.Qgwrec)
 % wGW       : ground water pool [mm] 
-%           (s.wGW)
+%           (s.w.wGW)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES:
 % 
@@ -29,7 +29,7 @@ function [fx,s,d] = QwGRchg_simple(f,fe,fx,s,d,p,info,tix)
 % simply assume that all remaining (after having subtracted interception
 % evap, infiltration excess runoff, saturation runoff, interflow, soil
 % moisture recharge from (rainfall+snowmelt)) water goes to GW  
-fx.Qgwrec(:,tix) = d.Temp.WBP;
-s.wGW = s.wGW + fx.Qgwrec(:,tix);
+fx.Qgwrec(:,tix) = s.wd.WBP;
+s.w.wGW = s.w.wGW + fx.Qgwrec(:,tix);
 
 end
