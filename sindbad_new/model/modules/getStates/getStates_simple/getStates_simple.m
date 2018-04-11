@@ -1,7 +1,7 @@
 function [fx,s,d] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: initialize the states for the current time steps from the
-% d.Temp.... variable
+% d.tmp.... variable
 % 
 % REFERENCES:
 % 
@@ -16,14 +16,14 @@ function [fx,s,d] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % water pools
-% s.wSM(:,tix)  = d.Temp.pwSM;
-% s.wGW(:,tix)  = d.Temp.pwGW;
-% s.wGWR(:,tix) = d.Temp.pwGWR;
-% s.wSWE(:,tix) = d.Temp.pwSWE;
-% s.wWTD(:,tix) = d.Temp.pwWTD;
+% s.w.wSoil(:,tix)  = s.prev.wSM;
+% s.w.wGW(:,tix)  = s.prev.wGW;
+% s.wd.wGWR(:,tix) = s.prev.wGWR;
+% s.w.wSnow(:,tix) = s.prev.wSWE;
+% s.wd.WTD(:,tix) = s.prev.WTD;
 
 % Water Balance Pool
-d.Temp.WBP  = f.Rain(:,tix);
+s.wd.WBP  = f.Rain(:,tix);
 
 
 

@@ -12,11 +12,11 @@ function [fx,s,d] = dyna_QinfExc_Jung(f,fe,fx,s,d,p,info,tix)
 %           the soil.
 %           (fx.Qinf)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES: NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT
 % TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!!
@@ -26,6 +26,6 @@ function [fx,s,d] = dyna_QinfExc_Jung(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % everything is precomputed
-d.Temp.WBP = d.Temp.WBP - fx.Qinf(:,tix);
+s.wd.WBP = s.wd.WBP - fx.Qinf(:,tix);
 
 end

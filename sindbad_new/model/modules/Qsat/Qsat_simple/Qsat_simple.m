@@ -8,15 +8,15 @@ function [fx,s,d] = Qsat_simple(f,fe,fx,s,d,p,info,tix)
 % 
 % INPUT
 % frSat     : saturated fraction of soil [] (from 0 to 1)
-%           (s.wFrSat)
+%           (s.wd.wFrSat)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % Qsat      : saturation runoff [mm/time]
 %           (fx.Qsat)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES: is supposed to work over multiple time scales
 % 
@@ -24,9 +24,9 @@ function [fx,s,d] = Qsat_simple(f,fe,fx,s,d,p,info,tix)
 
 
 % this is a dummy
-fx.Qsat(:,tix) = d.Temp.WBP .* s.wFrSat;
+fx.Qsat(:,tix) = s.wd.WBP .* s.wd.wFrSat;
 
 % update the WBP
-d.Temp.WBP = d.Temp.WBP - fx.Qsat(:,tix);
+s.wd.WBP = s.wd.WBP - fx.Qsat(:,tix);
 
 end

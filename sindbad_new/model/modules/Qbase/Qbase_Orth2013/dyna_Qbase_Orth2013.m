@@ -12,9 +12,9 @@ function [fx,s,d] = dyna_Qbase_Orth2013(f,fe,fx,s,d,p,info,tix)
 % Rdelay 	: delay function of Qint as defined by qt parameter
 % 			(fe.Rdelay)
 % wGW       : ground water pool [mm] 
-%           (s.wGW)
+%           (s.w.wGW)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % Q         : final flow [mm/time]
@@ -22,9 +22,9 @@ function [fx,s,d] = dyna_Qbase_Orth2013(f,fe,fx,s,d,p,info,tix)
 % Qb        : base flow [mm/time]
 %           (fx.Qb)
 % wGW       : ground water pool [mm] 
-%           (s.wGW)
+%           (s.w.wGW)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 %
 % NOTES: how to handle 60days?!?!
 % 
@@ -39,7 +39,7 @@ else % or accumulate land runoff in GW
 end
 
 % update the GW pool
-s.wGW = s.wGW + fx.Qint(:,tix) - fx.Q(:,tix);
+s.w.wGW = s.w.wGW + fx.Qint(:,tix) - fx.Q(:,tix);
 
 % Qb for water balance check
 fx.Qb(:,tix) = fx.Q(:,tix) - fx.Qint(:,tix);

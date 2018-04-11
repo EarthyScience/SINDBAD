@@ -10,7 +10,7 @@ function [fx,s,d] = wSnwFr_binary(f,fe,fx,s,d,p,info,tix)
 % Snow      : snow fall [mm/time]
 %           (f.Snow)
 % wSWE      : snow water equivalent pool [mm of H2O]
-%           (s.wSWE)
+%           (s.w.wSnow)
 % 
 % OUTPUT
 % 
@@ -19,9 +19,9 @@ function [fx,s,d] = wSnwFr_binary(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % first update the snow pack
-s.wSWE = s.wSWE + f.Snow(:,tix);
+s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
 
 % if there is snow, then snow fraction is 1, otherwise 0
-s.wFrSnow = double(s.wSWE > 0);
+s.wd.wFrSnow = double(s.w.wSnow > 0);
 
 end % function
