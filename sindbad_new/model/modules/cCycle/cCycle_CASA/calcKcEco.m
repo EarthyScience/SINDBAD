@@ -50,8 +50,8 @@ for zix = info.tem.model.variables.states.c.cSoil.zix
     fe.cCycle.kpool(zix).value      = 1 - (exp(-annk) .^ (1 / TSPY));
 end
 
-% CALCULATE DECAY RATES FOR THE pvegETATION POOLS AT APPROPRIATE TIME STEPS
-for zix = info.tem.model.variables.states.c.cSoil.zix
+% CALCULATE DECAY RATES FOR THE VEGETATION POOLS AT APPROPRIATE TIME STEPS
+for zix = info.tem.model.variables.states.c.cVeg.zix
     AGE                            = p.cCycle.([poolname{zix} '_AGE']);
     annk                           = 1e-40 .* ones(size(AGE));
     annk(AGE > 0)                  = 1 ./ AGE(AGE > 0);
