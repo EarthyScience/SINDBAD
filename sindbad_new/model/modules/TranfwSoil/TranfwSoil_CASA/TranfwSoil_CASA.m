@@ -1,4 +1,4 @@
-function [fx,s,d] = TranfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = TranfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 
 % % T = maxRate*(wSM)/tAWC
 % d.TranfwSoil.TranActS(:,tix) = p.TranfwSoil.maxRate .* ( s.w.wSoil(:,tix) ) ./ ( p.psoil.tAWC );

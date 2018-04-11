@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 

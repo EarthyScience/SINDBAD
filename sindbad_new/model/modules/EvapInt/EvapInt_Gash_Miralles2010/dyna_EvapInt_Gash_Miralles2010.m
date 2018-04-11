@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_EvapInt_Gash_Miralles2010(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_EvapInt_Gash_Miralles2010(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: for interception according to Gash everything (ECanop) is
 % precomputed. This function only updates the WBP variable.

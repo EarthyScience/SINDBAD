@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_EvapSub_GLEAM(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_EvapSub_GLEAM(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: precompute the Priestley-Taylor term for sublimation
 % 
