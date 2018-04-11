@@ -15,7 +15,7 @@ function [fe,fx,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
 % CONTACT	: Nuno
 % 
 % INPUT
-% for calcKcpools
+% for calcKcEco
 % annk?     : annual turnover rates of carbon for the different soil carbon
 %           pools (yr-1). ? is the name of the pool
 %           (p.cCycle.annk?)
@@ -125,7 +125,7 @@ function [fe,fx,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % CALCULATE THE TURNOVER RATES OF EACH POOL AT ANNUAL AND TIME STEP SCALES
-[fe] = calcKcpools(f,fe,fx,s,d,p,info);
+[fe] = calcKcEco(f,fe,fx,s,d,p,info);
 
 % CREATE CARBON POOL FLUX EFFICIENCIES STRUCTURE ARRAY FOR EVERY FLOW
 [fe] = calcEffFlux(f,fe,fx,s,d,p,info);
