@@ -6,7 +6,11 @@
 			"Default": 25,
 			"LowerBound": 5,
 			"UpperBound": 35,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "loose bounds"
 		},
 		"ToptA": {
@@ -15,7 +19,11 @@
 			"Default": 0.2,
 			"LowerBound": 0.1,
 			"UpperBound": 0.3,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Sven"
 		},
 		"ToptB": {
@@ -24,7 +32,11 @@
 			"Default": 0.3,
 			"LowerBound": 0.15,
 			"UpperBound": 0.5,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "from Sven"
 		}
 	}

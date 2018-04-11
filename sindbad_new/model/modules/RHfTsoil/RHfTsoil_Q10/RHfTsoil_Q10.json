@@ -6,7 +6,11 @@
 			"Default": 2,
 			"LowerBound": 0,
 			"UpperBound": 10,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"Tref": {
@@ -15,7 +19,11 @@
 			"Default": 30,
 			"LowerBound": 0,
 			"UpperBound": 40,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

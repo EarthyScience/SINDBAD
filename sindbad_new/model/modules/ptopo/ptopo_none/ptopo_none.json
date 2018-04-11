@@ -6,7 +6,11 @@
 			"Default": 0,
 			"LowerBound": -100,
 			"UpperBound": 8000,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"percElev": {
@@ -15,7 +19,11 @@
 			"Default": 0,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

@@ -6,7 +6,11 @@
 			"Default": 1.1,
 			"LowerBound": 0.1,
 			"UpperBound": 5,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: s_exp"
 		},
 		"smax": {
@@ -15,7 +19,11 @@
 			"Default": 300,
 			"LowerBound": 10,
 			"UpperBound": 1000,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: s_max"
 		}
 	}

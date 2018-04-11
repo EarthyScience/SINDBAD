@@ -6,7 +6,11 @@
 			"Default": 0.3,
 			"LowerBound": 0,
 			"UpperBound": 0.9,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "very rough bounds, should depend on topography"
 		}
 	}

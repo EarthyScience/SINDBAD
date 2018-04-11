@@ -6,7 +6,11 @@
 			"Default": 0.0090857142857142855,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"C2N1": {
@@ -15,7 +19,11 @@
 			"Default": 25,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "Don't remember where I got this from (nuno)"
 		},
 		"C2N2": {
@@ -24,7 +32,11 @@
 			"Default": 260,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "Don't remember where I got this from (nuno)"
 		},
 		"C2N3": {
@@ -33,7 +45,11 @@
 			"Default": 260,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "Don't remember where I got this from (nuno)"
 		},
 		"C2N4": {
@@ -42,7 +58,11 @@
 			"Default": 25,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "Don't remember where I got this from (nuno)"
 		},
 		"YG": {
@@ -51,7 +71,11 @@
 			"Default": 0.75,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"flagMTF": {
@@ -60,7 +84,11 @@
 			"Default": 0,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

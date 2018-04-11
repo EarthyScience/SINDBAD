@@ -6,7 +6,11 @@
 			"Default": 20,
 			"LowerBound": 10,
 			"UpperBound": 35,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		},
 		"Tmin": {
@@ -15,7 +19,11 @@
 			"Default": 5,
 			"LowerBound": 0,
 			"UpperBound": 15,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": NaN
 		}
 	}

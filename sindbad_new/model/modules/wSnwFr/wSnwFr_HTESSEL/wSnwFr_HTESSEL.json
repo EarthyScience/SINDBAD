@@ -6,7 +6,11 @@
 			"Default": 15,
 			"LowerBound": 1,
 			"UpperBound": 100,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "very rough bounds"
 		}
 	}

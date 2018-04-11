@@ -6,7 +6,11 @@
 			"Default": 1,
 			"LowerBound": 0,
 			"UpperBound": 3,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: et_a"
 		},
 		"ETsup": {
@@ -15,7 +19,11 @@
 			"Default": 0.05,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
 			"Comment": "in Paper: et_sup"
 		}
 	}
