@@ -58,7 +58,7 @@ function [fx,s,d] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
 for zix = info.tem.model.variables.states.c.cVeg.zix
     
     % maintenance respiration first: R_m = km * C
-    fx.cEfflux(zix).maintenance(:,tix)	= fe.RAact.km(zix).value(:,tix) .* s.c.cEco(:,zix);
+    fx.cEfflux(zix).maintenance(:,tix)	= fe.RAact.km(zix).value(:,tix) .* s.c.cEco(zix);
     
     % growth respiration: R_g = (1 - YG) * (GPP * allocationToPool - R_m)
     fx.cEfflux(zix).growth(:,tix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* d.cAlloc.c2pool(zix).value(:,tix) - fx.cEfflux(zix).maintenance(:,tix));

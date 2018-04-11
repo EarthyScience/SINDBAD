@@ -28,7 +28,7 @@ function [fx,s,d] = RHfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % Rainfall      : rainfall (mm)
 %               (fi.Rainfall)
 % pwSM          : soil moisture sum of all layers of previous time step [mm] 
-%               (d.Temp.pwSM)
+%               (s.prev.wSM)
 % Aws           : curve (expansion/contraction) controlling parameter
 %               (p.RHfwSoil.Aws)
 % pBGME         : BGME of previous timestep
@@ -62,7 +62,7 @@ pBGME	= d.RHfwSoil.pBGME;
 ndx = (f.PET(:,tix) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= (d.Temp.pwSM(ndx,1) ./ TSPM  + f.Rain(ndx,tix)) ./ f.PET(ndx,tix);
+BGRATIO(ndx)	= (s.prev.wSM(ndx,1) ./ TSPM  + f.Rain(ndx,tix)) ./ f.PET(ndx,tix);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.RHfwSoil.Aws;

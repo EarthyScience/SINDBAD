@@ -1,4 +1,4 @@
-function [fx,s,d] = core(f,fe,fx,s,d,p,info)
+function [fx,s,d] = coreTEM(f,fe,fx,s,d,p,info)
 % tic
 % CORE - ...
 %
