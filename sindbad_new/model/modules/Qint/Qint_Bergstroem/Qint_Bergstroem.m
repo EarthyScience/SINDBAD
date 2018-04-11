@@ -16,17 +16,17 @@ function [fx,s,d] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % smax 		: maximum woil wate rholding capacity [mm]
 % 			(p.psoil.smax)
 % wSM      	: total soil moisture [mm]
-% 			(s.wSM)
+% 			(s.w.wSoil)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % OUTPUT
 % Qint      : runoff from land [mm/time]
 %           (fx.Qint)
 % wSM      	: total soil moisture [mm]
-% 			(s.wSM)
+% 			(s.w.wSoil)
 % WBP       : water balance pool [mm]
-%           (d.Temp.WBP)
+%           (s.wd.WBP)
 % 
 % NOTES: naming of rainfall/snow melt, rain fall as fx or as fe or f?
 % 	 	 update water balance?
@@ -34,11 +34,11 @@ function [fx,s,d] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calculate land runoff from incoming water and current soil moisture
-fx.Qint(:,tix) = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.wSM./p.Qint.smax));
+fx.Qint(:,tix) = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.w.wSoil./p.Qint.smax));
 
 % update soil moisture and water balance
-s.wSM = s.wSM + ((f.Rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
+s.w.wSoil = s.w.wSoil + ((f.Rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
 
-d.Temp.WBP = d.Temp.WBP - fx.Qint(:,tix);
+s.wd.WBP = s.wd.WBP - fx.Qint(:,tix);
 
 end

@@ -10,24 +10,24 @@ function [fx,s,d] = wSnwFr_HTESSEL(f,fe,fx,s,d,p,info,tix)
 % Snow      : snow fall [mm/time]
 %           (f.Snow)
 % pwSWE     : snow water equivalent of the previous time step [mm of H2O]
-%           (d.Temp.pwSWE)
+%           (s.prev.wSWE)
 % wSWE      : snow water equivalent pool [mm of H2O]
-%           (s.wSWE)
+%           (s.w.wSnow)
 % CoverParam: snow cover parameter [mm]. Default value = 15
 %           (p.Snow.CoverParam)
 % 
 % OUTPUT
 % frSnow    : fraction of the snow pack that is snow [] (fractional)
-%           (s.wFrSnow)
+%           (s.wd.wFrSnow)
 % 
 % NOTES: this needs better documentation, like references, (skoirala)
 % 
 % #########################################################################
 
 % first update the snow pack
-s.wSWE = s.wSWE + f.Snow(:,tix);
+s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
-s.wFrSnow = min(1, s.wSWE ./ p.wSnwFr.CoverParam );
+s.wd.wFrSnow = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
 
 end

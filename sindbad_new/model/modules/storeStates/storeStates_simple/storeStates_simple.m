@@ -7,10 +7,10 @@ cvars	= info.variables.rememberState;
 for ii = 1:length(cvars)
     cvar	= cvars{ii};
     tmp     = splitZstr(cvar,'.');
-    if strncmp(cvar,'s.',2) || strncmp(cvar,'d.Temp.',7)
-        eval(['d.Temp.p' tmp{end} ' = ' cvar ';'])
+    if strncmp(cvar,'s.',2) || strncmp(cvar,'d.tmp.',7)
+        eval(['s.prev.' tmp{end} ' = ' cvar ';'])
     else
-        eval(['d.Temp.p' tmp{end} ' = ' cvar '(:,tix);'])
+        eval(['s.prev.' tmp{end} ' = ' cvar '(:,tix);'])
     end
 end
 
