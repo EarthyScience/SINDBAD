@@ -1,4 +1,4 @@
-function [fx,s,d] = GPPact_min(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = GPPact_min(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: 
 % 

@@ -1,4 +1,4 @@
-function [fx,s,d] = storeStates_simple(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = storeStates_simple(f,fe,fx,s,d,p,info,tix)
 
 % if we make that the default function i'll make it fast in the generated
 % code (avoiding the eval) and if and else ...

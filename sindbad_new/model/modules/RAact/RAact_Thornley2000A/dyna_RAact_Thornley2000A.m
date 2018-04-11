@@ -1,4 +1,4 @@
-function [fx,s,d] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: dyna_RAact_Thornley2000A
 % 
@@ -69,6 +69,6 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
 end
 
 % compute total respiration and npp for each vegetation pool
-[fx,s,d]	= calcUpdNPPRa(f,fe,fx,s,d,p,info,tix);
+[fx,s,d,f]	= calcUpdNPPRa(f,fe,fx,s,d,p,info,tix);
 
 end % function

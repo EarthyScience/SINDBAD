@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_RHfTsoil_Q10(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_RHfTsoil_Q10(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: 
 % 

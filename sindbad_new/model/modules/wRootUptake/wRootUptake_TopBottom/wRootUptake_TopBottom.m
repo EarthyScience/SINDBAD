@@ -1,4 +1,4 @@
-function [fx,s,d] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: extract the transpired water from the soil
 % 

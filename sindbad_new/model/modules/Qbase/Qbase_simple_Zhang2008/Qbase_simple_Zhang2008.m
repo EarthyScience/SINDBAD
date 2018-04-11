@@ -1,4 +1,4 @@
-function [fx,s,d] = Qbase_simple_Zhang2008(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = Qbase_simple_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

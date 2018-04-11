@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPpot_Turner(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPpot_Turner(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: diffuse radiation effect on GPP
 % 

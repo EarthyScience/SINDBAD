@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_Qsnw_simple(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_Qsnw_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: precompute the snow melt term
 % 

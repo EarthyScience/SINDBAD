@@ -1,4 +1,4 @@
-function [fe,fx,d,p] = prec_GPPfVPD_Maekelae2008(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_GPPfVPD_Maekelae2008(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the VPD effect on GPP according to Maekelae et al
 % 2008.
