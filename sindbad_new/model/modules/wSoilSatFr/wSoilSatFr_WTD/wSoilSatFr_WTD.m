@@ -1,4 +1,4 @@
-function [fx,s,d,f] = wSoilSatFr_WTD(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wSoilSatFr_WTD(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

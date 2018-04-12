@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_RAact_Thornley2000C(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_RAact_Thornley2000C(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: prec_RAact_Thornley2000C
 % 

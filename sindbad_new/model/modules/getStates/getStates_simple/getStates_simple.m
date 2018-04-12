@@ -1,4 +1,4 @@
-function [fx,s,d,f] = getStates_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: initialize the states for the current time steps from the
 % d.tmp.... variable

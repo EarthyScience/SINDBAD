@@ -1,4 +1,4 @@
-function [fx,s,d,f] = dyna_EvapSoil_DemSup(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_EvapSoil_DemSup(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: calculates evaporation from soil based on a demand-supply limited approach
 % 

@@ -1,4 +1,4 @@
-function [fx,s,d,f] = dyna_EvapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_EvapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

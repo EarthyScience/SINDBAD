@@ -1,4 +1,4 @@
-function [fx,s,d,f] = storeStates_none(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = storeStates_none(f,fe,fx,s,d,p,info,tix)
 
 cvars = info.variables.saveState;
 for ii = 1:length(cvars)
