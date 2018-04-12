@@ -1,4 +1,4 @@
-function [fx,s,d,f] = Qint_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = Qint_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

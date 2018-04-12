@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_GPPfwSoil_none(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = prec_GPPfwSoil_none(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: none
 % 

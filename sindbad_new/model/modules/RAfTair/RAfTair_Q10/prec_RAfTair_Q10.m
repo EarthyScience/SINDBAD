@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_RAfTair_Q10(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_RAfTair_Q10(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: prec_RAfTair_Q10
 % 

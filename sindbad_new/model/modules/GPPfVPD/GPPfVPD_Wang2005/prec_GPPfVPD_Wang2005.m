@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_GPPfVPD_Wang2005(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_GPPfVPD_Wang2005(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute  the CO2 compensation point by Wang et al 2014
 % 

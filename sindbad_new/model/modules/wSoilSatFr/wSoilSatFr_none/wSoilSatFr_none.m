@@ -1,2 +1,2 @@
-function [fx,s,d,f] = wSoilSatFr_none(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wSoilSatFr_none(f,fe,fx,s,d,p,info,tix)
 end

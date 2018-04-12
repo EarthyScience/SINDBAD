@@ -1,4 +1,4 @@
-function [fx,s,d,f] = RHfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = RHfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: RHfwSoil_CASA
 % 

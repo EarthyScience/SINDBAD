@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_GPPfVPD_MOD17(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_GPPfVPD_MOD17(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the VPD effect on GPP according to the MOD17 model
 % 
