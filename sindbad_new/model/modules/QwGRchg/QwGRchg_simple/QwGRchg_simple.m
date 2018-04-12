@@ -1,4 +1,4 @@
-function [fx,s,d,f] = QwGRchg_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = QwGRchg_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: 
 % 

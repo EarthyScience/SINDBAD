@@ -1,4 +1,4 @@
-function [fx,s,d,f] = Qsat_Zhang2008(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = Qsat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute saturation runoff
 % 

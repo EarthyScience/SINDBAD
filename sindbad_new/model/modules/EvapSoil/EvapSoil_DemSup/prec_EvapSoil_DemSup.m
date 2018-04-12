@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_EvapSoil_DemSup(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_EvapSoil_DemSup(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: calculates evaporation from soil based on a demand-supply limited approach
 % 

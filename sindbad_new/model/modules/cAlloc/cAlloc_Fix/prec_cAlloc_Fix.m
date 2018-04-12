@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
 % #########################################################################
 % FUNCTION	: prec_cAlloc_Fix
 % 

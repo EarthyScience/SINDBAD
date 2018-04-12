@@ -1,4 +1,4 @@
-function [fx,s,d,f] = wSnwFr_HTESSEL(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wSnwFr_HTESSEL(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: compute the snow pack and fraction of snow cover.
 % 

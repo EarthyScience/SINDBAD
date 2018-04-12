@@ -1,4 +1,4 @@
-function [fe,fx,d,p,f] = prec_GPPfTair_CASA(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_GPPfTair_CASA(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute the temperature scalar used in the CASA model
 % 

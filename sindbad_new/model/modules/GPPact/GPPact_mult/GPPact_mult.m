@@ -1,4 +1,4 @@
-function [fx,s,d,f] = GPPact_mult(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = GPPact_mult(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: 
 % 
