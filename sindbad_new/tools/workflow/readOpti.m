@@ -44,7 +44,7 @@ methodName                      = info.opti.method.funName;
 
 try
 method_json                     = readJsonFile(info.opti.method.methodsFile);
-info.opti.method.(methodName)   = method_json.method.(methodName);
+info.opti.method.options        = method_json.method.(methodName);
 catch
     error(['MSG: readOpti : optimization method : ' methodName ' not existing in: ' info.opti.method.methodsFile ])
 end
