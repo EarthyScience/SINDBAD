@@ -46,6 +46,10 @@ for ii = 1:numel(fldnmsINFO)
     end
     
     switch lower(fldnmsINFO{ii})
+        case 'forcing'
+             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
+             % add all the forcing variables to forcingInput list
+             info.(whatWorkFlow).model.variables.forcingInput = strcat('f.' ,data_json.VariableNames)';
         case 'modelrun'
             % feed model run settings 
             % because "model" is set in 2 different instances (modelRun and
@@ -77,6 +81,7 @@ for ii = 1:numel(fldnmsINFO)
             module_fields     = fieldnames(data_json.modules);
             
             % loop over approaches
+            paramInput={};
             for jj = 1 : size(module_fields, 1)
                 approachName    = strsplit(data_json.modules.(module_fields{jj, 1}).apprName,'_');
                 approachName    = approachName{1,2};
@@ -92,12 +97,15 @@ for ii = 1:numel(fldnmsINFO)
                     % loop over the parameter of the approach & get the default value
                     for pp=1:numel(paramName)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
+                        paramInput = [paramInput ['p.', module_fields{jj}, '.', paramName{pp}]];
                     end
                 else
                     disp(['MSG : readConfigFiles : no parameter config file (json) existing for : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
                 end
             end
             
+            % feed list of params
+            info.(whatWorkFlow).model.variables.paramInput = paramInput;
             % feed the paths
             info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
