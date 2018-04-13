@@ -125,36 +125,21 @@ function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % CALCULATE THE TURNOVER RATES OF EACH POOL AT ANNUAL AND TIME STEP SCALES
-[fe] = calcKcEco(f,fe,fx,s,d,p,info);
+[p] = calcKcEco(f,fe,fx,s,d,p,info);
 
 % CREATE CARBON POOL FLUX EFFICIENCIES STRUCTURE ARRAY FOR EVERY FLOW
-[fe] = calcEffFlux(f,fe,fx,s,d,p,info);
+[p] = calcXtrEffOnCTransfer(f,fe,fx,s,d,p,info);
 
+
+%% this needs to go to dynamic mode...
 % DISTRIBUTE LITTERFALL AND ROOT"FALL" THROUGHOUT THE YEAR
-[fe] = calcLisc(f,fe,fx,s,d,p,info);
+[p] = calcLisc(f,fe,fx,s,d,p,info);
 
 % ADJUST THE DECAYRATES PER TIME STEP ACCORDINGLY
 fe.cCycle.DecayRate(1).value	= max(min(fe.cCycle.annkpool(1).value .* fe.cCycle.RTLAI,1),0);
 fe.cCycle.DecayRate(2).value	= max(min(fe.cCycle.kpool(2).value,1),0) * ones(1,info.forcing.size(2));
 fe.cCycle.DecayRate(3).value	= max(min(fe.cCycle.kpool(3).value,1),0) * ones(1,info.forcing.size(2));
 fe.cCycle.DecayRate(4).value	= max(min(fe.cCycle.annkpool(4).value .* fe.cCycle.RTLAI,1),0);
-
-% combine the different intrinsic turnover rates (kpools) with the
-% decomposition rates scalars depending on environmental conditions
-% (lignin, textures) and temperature.
-fe.cCycle.kfEnvTs(5).value  = fe.cCycle.kpool(5).value  .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(6).value  = fe.cCycle.kpool(6).value  .* fe.RHfTsoil.fT	.* fe.cCycle.LIGEFF;
-fe.cCycle.kfEnvTs(7).value  = fe.cCycle.kpool(7).value  .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(8).value  = fe.cCycle.kpool(8).value  .* fe.RHfTsoil.fT   .* fe.cCycle.LIGEFF;
-fe.cCycle.kfEnvTs(9).value  = fe.cCycle.kpool(9).value  .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(10).value	= fe.cCycle.kpool(10).value .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(11).value	= fe.cCycle.kpool(11).value .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(12).value	= fe.cCycle.kpool(12).value .* fe.RHfTsoil.fT	.* fe.cCycle.TEXTEFF;
-fe.cCycle.kfEnvTs(13).value	= fe.cCycle.kpool(13).value .* fe.RHfTsoil.fT;
-fe.cCycle.kfEnvTs(14).value	= fe.cCycle.kpool(14).value	.* fe.RHfTsoil.fT;
-
-for ii = 5:14
-    fe.cCycle.kfEnvTs(ii).value	= max(min(fe.cCycle.kfEnvTs(ii).value,1),0);
-end
+%%
 
 end % function

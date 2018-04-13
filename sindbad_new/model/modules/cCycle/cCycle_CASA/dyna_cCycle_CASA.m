@@ -14,7 +14,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 % 
 % INPUT
 % fe.cCycle.MTF
-% fe.RHfwSoil.BGME
+% fe.cTaufwSoil.BGME
 % d.cAlloc.c2pool
 % s.c.cEco(:,zix)
 % fe.cCycle.DecayRate(ii).value
@@ -27,7 +27,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 MTF     = fe.cCycle.MTF;
-BGME	= d.RHfwSoil.BGME(:,tix);
+BGME	= d.cTaufwSoil.BGME(:,tix);
 
 % ALLOCATION NPP TO pvegETATION POOLS
 for zix = info.tem.model.variables.states.c.cVeg.zix

@@ -127,8 +127,9 @@ for tix = 1:info.forcing.size(2)
     % ---------------------------------------------------------------------
     % 4 - Climate effects on metabolic processes
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]    = ms.RHfwSoil.fun(f,fe,fx,s,d,p,info,tix);    % effect of soil moisture on decomposition
-    [f,fe,fx,s,d,p]    = ms.RHfTsoil.fun(f,fe,fx,s,d,p,info,tix);         % effect of temperature on decomposition
+%% these names need to change... to cTaufwSoil and cTaufTsoil
+    [f,fe,fx,s,d,p]    = ms.cTaufTsoil.fun(f,fe,fx,s,d,p,info,tix);  % effect of soil temperature on decomposition rates
+    [f,fe,fx,s,d,p]    = ms.cTaufwSoil.fun(f,fe,fx,s,d,p,info,tix);  % effect of soil moisture on decomposition rates
     [f,fe,fx,s,d,p]    = ms.RAfTair.fun(f,fe,fx,s,d,p,info,tix);   % temperature effect on autotrophic maintenance respiration
 
     % ---------------------------------------------------------------------
@@ -144,6 +145,10 @@ for tix = 1:info.forcing.size(2)
     % ---------------------------------------------------------------------
     % 7 - Carbon transfers to soil pools
     % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]    = ms.cTaufpSoil.fun(f,fe,fx,s,d,p,info,tix);   % effect of soil texture on soil decomposition rates
+    [f,fe,fx,s,d,p]    = ms.cTaufpVeg.fun(f,fe,fx,s,d,p,info,tix);   % effect of vegetation properties on soil decomposition rates
+    [f,fe,fx,s,d,p]    = ms.cFlowfpSoil.fun(f,fe,fx,s,d,p,info,tix); % effect of soil texture on transfer between C pools
+    [f,fe,fx,s,d,p]    = ms.cFlowfpVeg.fun(f,fe,fx,s,d,p,info,tix);  % effect of vegetation properties on transfer between C pools
     [f,fe,fx,s,d,p]    = ms.cCycle.fun(f,fe,fx,s,d,p,info,tix);               % allocate carbon to vegetation components
                                                                         % litterfall and litter scalars
                                                                         % calculate carbon cycle/decomposition/respiration in soil
@@ -159,3 +164,21 @@ for tix = 1:info.forcing.size(2)
 end % END LOOP
 
 end % function
+%{
+NOTES:
+A) In this code, we should use the following strategy, e.g. for ET:
+if ET is not a forcing (~exist('f.ET','var'))
+    compute ET
+
+for ET and GPP - this allows us to force the model with different
+datastreams
+
+B) from 1->3 depends on the WAI flags (which we should start calling the
+
+C) check mass balance in all different calculations (at each iteration or
+in the end? In the end: saves time)
+
+D) don't forget to output the stressors for the spinup inside the
+diagnostics structure (d) to be used in the calc_cflux_fast
+
+%}
