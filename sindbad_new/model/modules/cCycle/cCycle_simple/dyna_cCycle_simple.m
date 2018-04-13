@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: dyna_cCycle_CASA
 % 
@@ -25,6 +25,24 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 % fx.efflux
 % 
 % #########################################################################
+
+
+% compute total respiration and npp for each vegetation pool and for the
+% total fluxes
+% zixVeg 
+fx.npp(:,tix) = 0;
+fx.ra(:,tix)  = 0;
+for zix = info.tem.model.variables.states.c.cVeg.zix
+    
+    % net primary production: NPP = GPP * allocationToPool - R_a
+    s.cd.cNPP(:,zix)	= fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+    
+    % npp/ra
+    fx.npp(:,tix)	= fx.npp(:,tix) + s.cd.cNPP(:,zix);
+    fx.ra(:,tix)	= fx.ra(:,tix) + s.cd.cEcoEfflux(:,zix);
+    
+end
+
 
 % loop to get inputs and outputs...
 for zix = info.tem.model.variables.states.c.cEco.zix

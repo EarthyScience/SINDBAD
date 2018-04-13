@@ -130,7 +130,6 @@ function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
 % CREATE CARBON POOL FLUX EFFICIENCIES STRUCTURE ARRAY FOR EVERY FLOW
 [p] = calcXtrEffOnCTransfer(f,fe,fx,s,d,p,info);
 
-
 %% this needs to go to dynamic mode...
 % DISTRIBUTE LITTERFALL AND ROOT"FALL" THROUGHOUT THE YEAR
 [p] = calcLisc(f,fe,fx,s,d,p,info);
