@@ -95,7 +95,7 @@ for tix = 1:info.forcing.size(2)
     % 2 - Water 
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]    = ms.EvapInt.fun(f,fe,fx,s,d,p,info,tix);         % interception evaporation
-    [f,fe,fx,s,d,p]    = ms.Qinf.fun(f,fe,fx,s,d,p,info,tix);           % infiltration excess runoff
+    [f,fe,fx,s,d,p]    = ms.QinfExc.fun(f,fe,fx,s,d,p,info,tix);           % infiltration excess runoff
     [f,fe,fx,s,d,p]    = ms.wSoilSatFr.fun(f,fe,fx,s,d,p,info,tix);    % saturation runoff
     [f,fe,fx,s,d,p]    = ms.Qsat.fun(f,fe,fx,s,d,p,info,tix);            % saturation runoff
     [f,fe,fx,s,d,p]    = ms.QwSoilRchg.fun(f,fe,fx,s,d,p,info,tix);         % recharge the soil
