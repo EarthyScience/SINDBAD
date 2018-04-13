@@ -43,7 +43,7 @@ d.cAlloc.LL	= LL;
 % partial computation for the temperature effect on
 % decomposition/mineralization
 
-NL_fT                   = fe.RHfTsoil.fT;
+NL_fT                   = fe.cTaufTsoil.fT;
 for t=1:size(LL,2)
 NL_fT(NL_fT(:,t) >= maxL_fT,t)	= maxL_fT(NL_fT(:,t) >= maxL_fT);
 NL_fT(NL_fT(:,t) <= minL_fT,t) = minL_fT(NL_fT(:,t) <= minL_fT);
