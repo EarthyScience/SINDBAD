@@ -1,7 +1,7 @@
 {
 	"params": {
 	
-		"cEcoNames":["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
+		"cEcoNames":["cVegRootF","cVegRootC","cVegWood","cVegLeaf","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
 		"annk": {
 			"Name": "turnover rate of ecosystem carbon pools",
 			"Unit": "yr-1",

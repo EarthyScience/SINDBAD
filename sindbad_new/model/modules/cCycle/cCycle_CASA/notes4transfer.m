@@ -1,5 +1,7 @@
-
-
+we need a script to check that 
+    all modules have a none (at least prec_(module)_none empty)
+    all modules that have a prec have a dyna
+    
 
 
 
@@ -16,31 +18,56 @@ x 0) runTEM/runCore/...
 
 
 
-cAlloc -> 
-cAllocfwSoil
-cAllocfTsoil
-cAllocfNut
-cAllocfTreeCover
+% cAlloc -> 
+% cAllocfwSoil
+% cAllocfTsoil
+% cAllocfNut
+% cAllocfTreeCover
 
-c.cEco -> c.c ...
 
 
 x s.cPools(ii).value -> s.c.cEco(:,zix)
 x    check that the indexing of s.c.cEco is zix
+x fx.cNpp(ii).value(:,tix)    -> s.cd.cNPP(:,zix) 
+x fx.cEfflux(ii).value(:,tix) -> s.cd.cEcoEfflux(:,zix)
+    flux out of the cCycle_simple
+        fx.RA
+        fx.RH
+        fx.NPP
+    calc update NPP goes away
+    
+x fx.cEfflux(ii).maintenance(:,tix) -> s.cd.RA_M(:,zix)
 
-fx.cNpp(ii).value(:,tix)    -> s.cd.cNPP(:,zix) 
+x fx.cEfflux(ii).growth(:,tix) -> s.cd.RA_G(:,zix)
+
+x d.cAlloc.c2pool(ii).value(:,tix) -> s.cd.cAlloc(:,zix)
+    needs to merge teh prec and dyna
+    
+calcAdjAllocation -> cAllocfTreeCover
+
+% C2N -> C2N_cRoot
+% C2N -> C2N(zix)
+
+make 
+c.Veg.Root.F
+c.Veg.Root.C
+
+
+x TempEffectRAact -> RAfTair
+x make all dependent on air temeprature for easy and merge stuff...
+
 
 same for RA)
 
 pSoil_global
 
 
-POTcOUT(:,2) -> s.cd.cOutPot
+x POTcOUT(:,2) -> s.cd.cOutPot
 
-fx.cEfflux(zix).value(:,tix)
-fx.cEfflux(idonor).value(:,tix)
+x fx.cEfflux(zix).value(:,tix)
+x fx.cEfflux(idonor).value(:,tix)
 
-fx.cEfflux
+x fx.cEfflux
 
 
 fe.cCycle.kpool(zix).value -> p.cCycle.k(:,zix)
@@ -55,6 +82,10 @@ most of fe.cCycle -> p.cCycle
 ctransfer -> cTransfer
 fe.cCycle.kfEnvTs(5).value -> disappears
     fe.cCycle.kpool(5).value  .* fe.cTaufTsoil.fT -> p.cCycle.k(5) .* fe.cTaufTsoil.fT
+    
+    
+    
+    check loops of all variables changed...
 
 compute LAI and compute fapr and read the fpar and lai streams s.cd.lai
 
@@ -68,9 +99,10 @@ when applying hte environemntal constraints use too fe.cCycle.kfEnvTs(ii).value	
         cTauBase
         cFlowBase
     
-    
+    dyna_RAact_Thornley2000A merge prec with dyna
 cCycle_simple
 
+info.timeScale.stepsPerDay
 
 fe.cCycle.kfEnvTs(6).value  = fe.cCycle.kpool(6).value  .* fe.RHfTsoil.fT	.* p.cCycle.LIGEFF;
 fe.cCycle.kfEnvTs(7).value  = fe.cCycle.kpool(7).value  .* fe.RHfTsoil.fT;
@@ -79,6 +111,9 @@ fe.cCycle.kfEnvTs(9).value  = fe.cCycle.kpool(9).value  .* fe.RHfTsoil.fT;
 fe.cCycle.kfEnvTs(10).value	= fe.cCycle.kpool(10).value .* fe.RHfTsoil.fT;
 fe.cCycle.kfEnvTs(11).value	= fe.cCycle.kpool(11).value .* fe.RHfTsoil.fT;
 fe.cCycle.kfEnvTs(12).value	= fe.cCycle.kpool(12).value .* fe.RHfTsoil.fT;;
+
+for the spinup store these ones somewhere:
+    d.cd.RAact_km4su
 
 
 % need to check the runCoreTEM for spinup conditions
