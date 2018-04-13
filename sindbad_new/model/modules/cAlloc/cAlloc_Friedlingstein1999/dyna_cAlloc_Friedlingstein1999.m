@@ -59,7 +59,7 @@ NL_fT	= d.cAlloc.NL_fT(:,tix);
 %     LL(LL(:,t) <= minL,t)          = minL(LL(:,t) <= minL);
 %     LL(LL(:,t) >= maxL,t)          = maxL(LL(:,t) >= maxL);
 % end
-NL_fW                   = d.RHfwSoil.BGME(:,tix);
+NL_fW                   = d.cTaufwSoil.BGME(:,tix);
 NL_fW(NL_fW >= maxL_fW)	= maxL_fW(NL_fW >= maxL_fW);
 NL_fW(NL_fW <= minL_fW) = minL_fW(NL_fW <= minL_fW);
 
