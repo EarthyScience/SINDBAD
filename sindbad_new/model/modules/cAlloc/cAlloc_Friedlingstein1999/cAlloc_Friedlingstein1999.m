@@ -34,4 +34,6 @@ if any(s.cd.cAlloc > 1) || any(s.cd.cAlloc < 0)
 end
 if any(abs(sum(s.cd.cAlloc,2)-1)>1E-10)
     error('SINDBAD : TEM : cAlloc : s.cd.cAlloc : sum(cAlloc) ~= 1')
+end
 end % function
+
