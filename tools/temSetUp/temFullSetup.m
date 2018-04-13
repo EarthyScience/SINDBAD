@@ -15,7 +15,7 @@ function info                    = temFullSetup(varargin)
 % #########################################################################
 
 % info = temFullSetup
-% info = temFullSetup('info','PFT',1,...)
+% info = temFullSetup('info','PFT',1)
 % info = temFullSetup('info','PFT',1,...,'ms','RunoffSat','none',...)
 
 % initialize inputs for the temInfo, tempStruct and temParams
