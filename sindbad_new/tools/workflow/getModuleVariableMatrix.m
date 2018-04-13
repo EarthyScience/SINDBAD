@@ -1,0 +1,59 @@
+function [ModuleVariableMatrix,moduleNames,variableNames] = getModuleVariableMatrix(info)
+
+varsConfig=vertcat(info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:));
+variableNames=unique(vertcat(varsConfig(:),info.tem.model.code.variables.moduleAll(:)));
+nvars=length(variableNames);
+
+nprecomps=length(info.tem.model.code.preComp);
+moduleNamesAll=fieldnames(info.tem.model.code.ms);
+
+ModuleVariableMatrix=zeros(1,nvars);
+
+moduleNames={'read'};
+
+[c,ia,ib]=intersect(variableNames,varsConfig);
+ModuleVariableMatrix(1,ia)=ModuleVariableMatrix(1,ia)+2;
+
+cnt=2;
+for ii=1:nprecomps
+    ModuleVariableMatrix(cnt,:)=0;
+    varsIn=info.tem.model.code.preComp(ii).funInput;
+    varsOut=info.tem.model.code.preComp(ii).funOutput;
+    
+    [c,ia,ib]=intersect(variableNames,varsIn);
+    ModuleVariableMatrix(cnt,ia)=1;
+    
+    [c,ia,ib]=intersect(variableNames,varsOut);
+    ModuleVariableMatrix(cnt,ia)=ModuleVariableMatrix(cnt,ia)+2;
+    
+    moduleNames(cnt)=cellstr(['pre-' info.tem.model.code.preComp(ii).moduleName]);
+    cnt=cnt+1;
+end
+
+for ii=1:length(moduleNamesAll)
+    ModuleVariableMatrix(cnt,:)=0;
+    varsIn=info.tem.model.code.ms.(moduleNamesAll{ii}).funInput;
+    varsOut=info.tem.model.code.ms.(moduleNamesAll{ii}).funOutput;
+    if ~isempty(varsIn)
+        [c,ia,ib]=intersect(variableNames,varsIn);
+        ModuleVariableMatrix(cnt,ia)=1;
+    end
+    if ~isempty(varsOut)
+        [c,ia,ib]=intersect(variableNames,varsOut);
+        ModuleVariableMatrix(cnt,ia)=ModuleVariableMatrix(cnt,ia)+2;
+    end
+    moduleNames(cnt)=moduleNamesAll(ii);
+    cnt=cnt+1;
+end
+
+%remove dummy modules
+tmp=sum(ModuleVariableMatrix,2);
+tf=tmp>0;
+moduleNames=moduleNames(tf);
+ModuleVariableMatrix=ModuleVariableMatrix(tf,:);
+
+%imagesc(ModuleVariableMatrix)
+%colormap(gray)
+%set(gca,'XTick',[1:nvars],'XTickLabel',variableNames,'XTickLabelRotation',45,'YTick',[1:length(moduleNames)],'YTickLabel',moduleNames)
+end
+
