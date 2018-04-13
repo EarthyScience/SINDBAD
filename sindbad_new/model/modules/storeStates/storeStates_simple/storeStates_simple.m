@@ -3,33 +3,24 @@ function [f,fe,fx,s,d,p] = storeStates_simple(f,fe,fx,s,d,p,info,tix)
 % if we make that the default function i'll make it fast in the generated
 % code (avoiding the eval) and if and else ...
 
-cvars	= info.variables.rememberState;
-for ii = 1:length(cvars)
-    cvar	= cvars{ii};
-    tmp     = splitZstr(cvar,'.');
-    if strncmp(cvar,'s.',2) || strncmp(cvar,'d.tmp.',7)
-        eval(['s.prev.' tmp{end} ' = ' cvar ';'])
-    else
-        eval(['s.prev.' tmp{end} ' = ' cvar '(:,tix);'])
-    end
+%variables to keep (previous time step)
+cvars_source	= info.tem.model.code.variables.to.keepSource;
+cvars_destination	= info.tem.model.code.variables.to.keepDestination;
+
+for ii=1:length(cvars_source)
+    sstr=[char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
+    eval(sstr);
 end
 
-cvars = info.variables.saveState;
-for ii = 1:length(cvars)
-    cvar    = cvars{ii};
-    tmp     = splitZstr(cvar,'.');
-    tmpVN   = tmp{end};
-    if strcmp(tmpVN,'value');
-        tmpVN   = [tmp{end-1} '.' tmp{end}];
-    end
-    if strncmp(cvar,'s.',2)
-        eval(['d.statesOut.' tmpVN '(:,tix) = ' cvar ';'])
-    end
+%states to store (previous time step)
+cvars_source	= info.tem.model.code.variables.to.storeStatesSource;
+cvars_destination	= info.tem.model.code.variables.to.storeStatesDestination;
+
+for ii=1:length(cvars_source)
+    sstr=[char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
+    eval(sstr);
 end
 
-% dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty dirty
-fx.reco(:,tix) = fx.rh(:,tix) + fx.ra(:,tix);
-fx.nee(:,tix)	= fx.gpp(:,tix) - fx.reco(:,tix);
 
 
 end % function
