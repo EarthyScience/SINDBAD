@@ -67,7 +67,7 @@ end
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------
 % get the model structure
-ms	= info.code.ms;
+ms	= info.tem.model.code.ms;
 
 % LOOP : loop through the whole length of of the forcing dataset
 for tix = 1:info.forcing.size(2)
