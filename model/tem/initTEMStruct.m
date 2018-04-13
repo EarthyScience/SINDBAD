@@ -1,4 +1,4 @@
-function [fx,fe,d,s] = initTEMStruct(info,varargin)
+function [fe,fx,s,d] = initTEMStruct(info,varargin)
 % initialize model states and flux matrices
 % carbon and water pools
 
@@ -11,7 +11,7 @@ s       = struct;
 
 % check the initialized states and diagnostics
 CheckInitialisedStates(info,s,d)
-%{
+
 if nargin == 3
     sSU	= varargin{1};
     dSU = varargin{2};
@@ -51,6 +51,6 @@ end
 
 
 % note: check : IniDummyVariables4Test
-%}
+
 
 end % function
