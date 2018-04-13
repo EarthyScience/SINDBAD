@@ -130,12 +130,18 @@ for tix = 1:info.forcing.size(2)
 %% these names need to change... to cTaufwSoil and cTaufTsoil
     [f,fe,fx,s,d,p]    = ms.cTaufTsoil.fun(f,fe,fx,s,d,p,info,tix);  % effect of soil temperature on decomposition rates
     [f,fe,fx,s,d,p]    = ms.cTaufwSoil.fun(f,fe,fx,s,d,p,info,tix);  % effect of soil moisture on decomposition rates
+    
     [f,fe,fx,s,d,p]    = ms.RAfTair.fun(f,fe,fx,s,d,p,info,tix);   % temperature effect on autotrophic maintenance respiration
+    
 
     % ---------------------------------------------------------------------
     % 5 - Allocation of C within plant organs
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]	= ms.cAlloc.fun(f,fe,fx,s,d,p,info,tix);       % carbon allocation factors
+    [f,fe,fx,s,d,p]	= ms.cAllocfwSoil.fun(f,fe,fx,s,d,p,info,tix);      % effect of soil moisture on carbon allocation 
+    [f,fe,fx,s,d,p]	= ms.cAllocfTsoil.fun(f,fe,fx,s,d,p,info,tix);      % effect of soil temperature on carbon allocation 
+    [f,fe,fx,s,d,p]	= ms.cAllocfNut.fun(f,fe,fx,s,d,p,info,tix);        % (pseudo)effect of nutrients on carbon allocation 
+    [f,fe,fx,s,d,p]	= ms.cAlloc.fun(f,fe,fx,s,d,p,info,tix);        % combine the different effects of carbon allocation 
+    [f,fe,fx,s,d,p]	= ms.cAllocfTreeCover.fun(f,fe,fx,s,d,p,info,tix);  % adjustment of carbon allocation according to tree cover
     
     % ---------------------------------------------------------------------
     % 6 - Autotrophic respiration
