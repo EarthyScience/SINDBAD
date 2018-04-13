@@ -1,6 +1,8 @@
 we need a script to check that 
     all modules have a none (at least prec_(module)_none empty)
     all modules that have a prec have a dyna
+psoil -> pSoil pSoil_global/pVeg_global
+suggest pEco (in addition to psoil)
     
 
 
@@ -10,10 +12,8 @@ x 0) runTEM/runCore/...
     CASA -> simple
 2) spinup modules...
 3) make cTauBase cFlowBase
-4) clean NPP and RA
-5) cAlloc
-6) psoil -> pSoil pSoil_global/pVeg_global
-7) suggest pEco
+x 4) clean NPP and RA
+x 5) cAlloc
 
 
 
@@ -29,6 +29,7 @@ x 0) runTEM/runCore/...
 x s.cPools(ii).value -> s.c.cEco(:,zix)
 x    check that the indexing of s.c.cEco is zix
 x fx.cNpp(ii).value(:,tix)    -> s.cd.cNPP(:,zix) 
+x    same for RA)
 x fx.cEfflux(ii).value(:,tix) -> s.cd.cEcoEfflux(:,zix)
 x    flux out of the cCycle_simple
 x        fx.RA
@@ -39,32 +40,24 @@ x fx.cEfflux(ii).maintenance(:,tix) -> s.cd.RA_M(:,zix)
 x fx.cEfflux(ii).growth(:,tix) -> s.cd.RA_G(:,zix)
 x d.cAlloc.c2pool(ii).value(:,tix) -> s.cd.cAlloc(:,zix)
 X    needs to merge teh prec and dyna
-    
-calcAdjAllocation -> cAllocfTreeCover
+x calcAdjAllocation -> cAllocfTreeCover
+x C2N -> C2N(zix)
+x TempEffectRAact -> RAfTair
+x make all dependent on air temeprature for easy and merge stuff...
+x pSoil_global :  no need there is already saxton
+x POTcOUT(:,2) -> s.cd.cOutPot
+x fx.cEfflux(zix).value(:,tix)
+x fx.cEfflux(idonor).value(:,tix)
+x fx.cEfflux
 
-% C2N -> C2N_cRoot
-% C2N -> C2N(zix)
-
-make 
+make with the funny lists...
 c.Veg.Root.F
 c.Veg.Root.C
 
 
-x TempEffectRAact -> RAfTair
-x make all dependent on air temeprature for easy and merge stuff...
 
 
-same for RA)
 
-pSoil_global
-
-
-x POTcOUT(:,2) -> s.cd.cOutPot
-
-x fx.cEfflux(zix).value(:,tix)
-x fx.cEfflux(idonor).value(:,tix)
-
-x fx.cEfflux
 
 
 fe.cCycle.kpool(zix).value -> p.cCycle.k(:,zix)
