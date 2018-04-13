@@ -30,18 +30,15 @@ x s.cPools(ii).value -> s.c.cEco(:,zix)
 x    check that the indexing of s.c.cEco is zix
 x fx.cNpp(ii).value(:,tix)    -> s.cd.cNPP(:,zix) 
 x fx.cEfflux(ii).value(:,tix) -> s.cd.cEcoEfflux(:,zix)
-    flux out of the cCycle_simple
-        fx.RA
-        fx.RH
-        fx.NPP
-    calc update NPP goes away
-    
+x    flux out of the cCycle_simple
+x        fx.RA
+x        fx.RH
+x        fx.NPP
+x    calc update NPP goes away
 x fx.cEfflux(ii).maintenance(:,tix) -> s.cd.RA_M(:,zix)
-
 x fx.cEfflux(ii).growth(:,tix) -> s.cd.RA_G(:,zix)
-
 x d.cAlloc.c2pool(ii).value(:,tix) -> s.cd.cAlloc(:,zix)
-    needs to merge teh prec and dyna
+X    needs to merge teh prec and dyna
     
 calcAdjAllocation -> cAllocfTreeCover
 
