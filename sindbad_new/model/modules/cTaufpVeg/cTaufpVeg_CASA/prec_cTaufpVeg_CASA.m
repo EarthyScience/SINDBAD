@@ -13,12 +13,15 @@ MTF(MTF < 0)    = 0;
 p.cCycle.MTF    = MTF;
 
 % DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
-p.cCycle.SCLIGNIN    = (p.cTaufpVeg.LIGNIN .* p.cTaufpVeg.C2LIGNIN .* p.cTaufpVeg.NONSOL2SOLLIGNIN) ./ (1 - MTF);
+p.cTaufpVeg.SCLIGNIN    = (p.cTaufpVeg.LIGNIN .* p.cTaufpVeg.C2LIGNIN .* p.cTaufpVeg.NONSOL2SOLLIGNIN) ./ (1 - MTF);
 
-% DETERMINE EFFECT OF LIGNIN CONTENT ON k OF S_LEAF AND S_ROOT
-p.cCycle.LIGEFF = exp(-p.cTaufpVeg.LIGEFFA .* p.cCycle.SCLIGNIN);
-p.cCycle.k(6)   = p.cCycle.k(6) .* p.cCycle.LIGEFF;
-p.cCycle.k(8)   = p.cCycle.k(8) .* p.cCycle.LIGEFF;
+% DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
+p.cTaufpVeg.LIGEFF = exp(-p.cTaufpVeg.LIGEFFA .* p.cTaufpVeg.SCLIGNIN);
+% feed the output
+p.cTaufpVeg.kfVeg 		= ones(nPix,nZix);
+p.cTaufpVeg.kfVeg(:,[6 8])	= p.cTaufpVeg.LIGEFF;
+
+
 
 
 end %function

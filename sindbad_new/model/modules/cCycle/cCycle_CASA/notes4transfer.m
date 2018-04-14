@@ -3,10 +3,41 @@ we need a script to check that
     all modules that have a prec have a dyna
 psoil -> pSoil pSoil_global/pVeg_global
 suggest pEco (in addition to psoil)
-    
+we need the handle to the coreTEMfile that is to be ran if we decide to run the model not using the generated code.
+
+I need helpers for some approaches (or some place to put stuff that does not fall in the convention, e.g. order of the carbon fluxes, or indexes of pools that are metabolic and so on
+
+everything that is [pix zix] but is a parameter we have two options p.(module).(parameterName) or d.cd.p_(module)_(parameterName) or d.wd.p_(module)_(parameterName)
+
+define an approach for the spinup (e.g. spin_module_approach to replace dyna_module_approach or module_approach)
+
+effCLAY
+    SOIL_MIC -> cMicSoil
+    SLOW -> cSoilSlow
+s.cd.cEcoEfflux(:,zix) needs to be zeros in the begining of each loop
+
+make a cTauAct
+make a cFlowAct
+cAlloc -> cAllocAct
+need checking the inputs and outputs of the functions that i did are correct - don't replace just, give warning...
+end %function
+am I doubling the place where I calculate RA?
+zix for cSoil won't work... we need to have a way ti say nonVeg...
+cTauf?_none must be ones(nPix,nZix)
+convert all BGME to kfwSoil
+
+p.cCycle.cTransfer -> p.cFlow.cTransfer
+
+
+the transfer matrix goes to cFlowAct
+the turnover rates go to cTauAct
+
+idea... the cCycle.cTransfer,k, override the parameters from the simple approach...
 
 
 
+d.cTaufwSoil.kfwSoil -> d.cTaufwSoil.kfwSoil
+fe.cTaufTsoil.fT -> fe.cTaufTsoil.kfTsoil
 x 0) runTEM/runCore/...
 1) clean the cCycle
     CASA -> simple
