@@ -33,8 +33,8 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
     % net primary production: NPP = GPP * allocationToPool - R_a
     s.cd.cNPP(:,zix)	= fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
     % npp/ra
-    fx.cNPP(:,tix)	= fx.npp(:,tix) + s.cd.cNPP(:,zix);
-    fx.cRA(:,tix)	= fx.ra(:,tix) + s.cd.cEcoEfflux(:,zix);
+    fx.cNPP(:,tix)      = fx.npp(:,tix) + s.cd.cNPP(:,zix);
+    fx.cRA(:,tix)       = fx.ra(:,tix) + s.cd.cEcoEfflux(:,zix);
 end
 
 
