@@ -16,7 +16,7 @@ x 4) clean NPP and RA
 x 5) cAlloc
 
 
-
+p.cCycle.cTransfer
 
 % cAlloc -> 
 % cAllocfwSoil
