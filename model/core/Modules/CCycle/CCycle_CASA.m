@@ -1,4 +1,4 @@
-function [fx,s,d] = CCycle_CASA(f,fe,fx,s,d,p,info,i)
+function [fx,s,d] = dyna_CCycle_CASA(f,fe,fx,s,d,p,info,i)
 % #########################################################################
 % FUNCTION	: CCycle_CASA
 % 
