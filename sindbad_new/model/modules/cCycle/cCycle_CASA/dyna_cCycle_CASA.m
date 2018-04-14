@@ -20,7 +20,15 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 % 
 % #########################################################################
 
+% get the photosynthesis inputs into the plant pools
+
+
+
+
+
+
 % MAKE SURE THAT THE INTERVALS OF kin (instantaneous turnover rates) ARE OK...
+% this shoudl go to the cTauAct
 p.cCycle.kin	= max(min(p.cCycle.k,1),0);
 for zix = info.tem.model.variables.states.c.cSoil.zix
     p.cCycle.kin(:,zix)	= max(min(p.cCycle.kin(:,zix).*fe.cTaufTsoil.fT(:,tix).*fe.cTaufwSoil.BGME(:,tix).*p.cTaufLAI.kfLAI,1),0);
@@ -81,7 +89,7 @@ s.c.cEco(:,10)	= s.c.cEco(:,10) + s.cd.cOutPot(:,2);
 for zix = info.tem.model.variables.states.c.cSoil.zix
     s.cd.cOutPot(:,zix)   = min(s.c.cEco(:,zix), s.c.cEco(:,zix) .* fe.cCycle.kfEnvTs(zix).value(:,tix) .* BGME);
     % make sure the soil respiratory fluxes are 0
-	s.cd.cEcoEfflux(:,zix)	= 0;
+	s.cd.cEcoEfflux(:,zix)	= 0; % very dangerous...
 end
 
 % COMPUTE CARBON FLUXES IN THE psoil

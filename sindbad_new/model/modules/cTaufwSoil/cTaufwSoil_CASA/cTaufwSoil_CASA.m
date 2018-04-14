@@ -86,5 +86,5 @@ BGME        = max(min(BGME,1),0);
 % FEED IT TO THE STRUCTURE
 d.cTaufwSoil.BGME(:,tix)	= BGME;
 d.cTaufwSoil.pBGME       = BGME;
-
+d.cTaufwSoil.fwSoil = d.cTaufwSoil.BGME(:,tix); 
 end % function
