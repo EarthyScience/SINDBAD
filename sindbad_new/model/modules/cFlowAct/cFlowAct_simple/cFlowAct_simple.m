@@ -27,4 +27,20 @@ ndx = p.cFlowAct.cTransfer <= 0 & ceff > 0;
 if~isempty(ndx)
 	p.cFlowAct.cTransfer(ndx) = ceff(ndx);
 end
+
+[taker,giver] = find(p.cFlowAct.cTransfer > 0);
+p.cFlowAct.taker=taker;
+p.cFlowAct.giver=giver;
+
+if ~isfield(p.cFlowAct,'fluxOrder')
+    p.cFlowAct.fluxOrder = 1:numel(taker);
+else
+    if numel(p.cFlowAct.fluxOrder)~=numel(taker)
+        error(['ERR : cFlowAct_simple : '...
+            'numel(p.cFlowAct.fluxOrder)~=numel(taker)'])
+    end
+end
+
+
+
 end %function
