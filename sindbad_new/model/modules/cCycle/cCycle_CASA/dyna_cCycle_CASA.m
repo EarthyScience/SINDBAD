@@ -20,24 +20,40 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 % 
 % #########################################################################
 
-% compute total respiration and npp for each vegetation pool and for the
-% total fluxes
+% MAKE SURE THAT THE INTERVALS OF kin (instantaneous turnover rates) ARE OK...
+p.cCycle.kin	= max(min(p.cCycle.k,1),0);
+for zix = info.tem.model.variables.states.c.cSoil.zix
+    p.cCycle.kin(:,zix)	= max(min(p.cCycle.kin(:,zix).*fe.cTaufTsoil.fT(:,tix).*fe.cTaufwSoil.BGME(:,tix).*p.cTaufLAI.kfLAI,1),0);
+end
+
+% COMPUTE TOTAL RESPIRATION AND NPP FOR EACH VEGETATION POOL AND FOR THE
+% TOTAL FLUXES
 fx.cNPP(:,tix)  = 0;
 fx.cRA(:,tix)   = 0;
 for zix = info.tem.model.variables.states.c.cVeg.zix
     % net primary production: NPP = GPP * allocationToPool - R_a
     s.cd.cNPP(:,zix)	= fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+    
+    
+    
+    
     % full NPP and GPPS
     fx.cNPP(:,tix)      = fx.cNPP(:,tix) + s.cd.cNPP(:,zix);
     fx.cRA(:,tix)       = fx.cRA(:,tix) + s.cd.cEcoEfflux(:,zix);
     % ALLOCATION NPP TO pvegETATION POOLS
-    s.c.cEco(:,zix)	= s.c.cEco(:,zix) + s.cd.cNPP(:,zix);
+    s.c.cEco(:,zix)	= s.c.cEco(:,zix) + s.cd.cNPP(:,zix); % WARNING, HERE ONE SHOULD USE PREVIOUS
+    
+    
+%     pool = previous pool + (gpp*allocation - already any calculated flux) + transfers to this pool - k * previous pool; this shoudl work for all!!
+    % waiting for sujan's notes on our codes.
+    
 end
 
-% MAKE SURE THAT THE INTERVALS OF kin (instantaneous turnover rates) ARE OK...
-p.cCycle.kin	= max(min(p.cCycle.k,1),0);
-for zix = info.tem.model.variables.states.c.cSoil.zix
-    p.cCycle.kin(:,zix)	= max(min(p.cCycle.kin(:,zix).*fe.cTaufTsoil.fT(:,tix).*fe.cTaufwSoil.BGME(:,tix),1),0);
+% CALCULATE FOLIAGE AND ROOT CARBON LOST AS LITTER AND DECREMENT PLANT
+% CARBON POOLS
+for zix = info.tem.model.variables.states.c.cVeg.zix
+    s.cd.cOutPot(:,zix)  = min(s.c.cEco(:,zix),s.c.cEco(:,zix) .* p.cCycle.kin(:,zix));
+    s.c.cEco(:,zix)	= s.c.cEco(:,zix) - s.cd.cOutPot(:,zix);
 end
 
 
@@ -46,12 +62,6 @@ MTF     = fe.cCycle.MTF;
 BGME	= d.cTaufwSoil.BGME(:,tix);
 %%
 
-% CALCULATE FOLIAGE AND ROOT CARBON LOST AS LITTER AND DECREMENT PLANT
-% CARBON POOLS
-for zix = info.tem.model.variables.states.c.cSoil.zix
-    s.cd.cOutPot(:,zix)  = min(s.c.cEco(:,zix),s.c.cEco(:,zix) .* p.cCycle.kin(:,zix));
-    s.c.cEco(:,zix)	= s.c.cEco(:,zix) - s.cd.cOutPot(:,zix);
-end
 
 %% check this shit
 % INCREMENT LITTER CARBON POOLS - out of leafs
