@@ -21,10 +21,10 @@ cF.cVegRoot     = cF.cVegRootF + cF.cVegRootC;
 cF.cVegWood     = tc;
 cF.cVegLeaf     = tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
 
-% check if there are fine and coarse wood pools...
+% check if there are fine and coarse root pools...
 if isfield(info.tem.model.variables.states.c,'cVegWoodC') && ...
         isfield(info.tem.model.variables.states.c,'cVegWoodF')
-    cpNames = {'cVegRoot','cVegWoodF','cVegWoodC','cVegLeaf'};
+    cpNames = {'cVegRootF','cVegRootC','cVegWood','cVegLeaf'};
 else
     cpNames = {'cVegRoot','cVegWood','cVegLeaf'};
 end
