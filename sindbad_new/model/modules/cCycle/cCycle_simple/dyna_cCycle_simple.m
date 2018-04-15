@@ -19,7 +19,7 @@ end
 % pools = previous + gains - losses
 s.c.cEco = s.prev.cEco + s.cd.cEcoInflux - s.cd.cEcoOut + s.cd.cEcoFlow;
 % compute RA and RH
-fx.cRH = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.cSoil.zix));
-fx.cRA = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.cVeg.zix));
+fx.cRH = sum(s.cd.cEcoEfflux(:,~info.tem.model.variables.states.c.cVeg.flag));
+fx.cRA = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.cVeg.flag));
 
 end % function
