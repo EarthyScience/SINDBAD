@@ -22,7 +22,7 @@ end
 % the inputs to this function
 UserInputs      = varargin;
 % the standards for the TEM
-StandardApproaches_tmp  = {...
+StandardApproaches_tmp0  = {...
     'GetStates'         , 'simple'          ,...
     'Terrain'           , 'none'            ,...    % ? - elevation properties
     'SOIL'              , 'none'            ,...    % ? - soil properties
@@ -58,6 +58,43 @@ StandardApproaches_tmp  = {...
     'AutoResp'          , 'none'            ,...    % 6 - Autotrophic respiration
     'CCycle'            , 'none'            ,...   % 7 - Carbon Cycle / Heteroptrophic Respiration
     'PutStates'         , 'none'          ...
+    };
+StandardApproaches_tmp  = {...
+    'GetStates'         , 'simple'          ,...
+    'Terrain'           , 'none'            ,...    % ? - elevation properties
+    'SOIL'              , 'Saxton'          ,...    % ? - soil properties
+    'VEG'               , 'none'            ,...    % ? - vegetation properties
+    'SnowCover'         , 'HTESSEL'         ,...	% 1 - Snow
+    'Sublimation'       , 'GLEAM'           ,...    % 1 - Snow
+    'SnowMelt'          , 'simple'          ,...    % 1 - Snow
+    'Interception'      , 'Gash'            ,...    % 2 - Water 
+    'RunoffInfE'        , 'none'            ,...    % 2 - Water 
+    'SaturatedFraction' , 'none'            ,...    % 2 - Water 
+    'RunoffSat'         , 'Zhang'           ,...    % 2 - Water 
+    'RechargeSoil'      , 'TopBottom'       ,...    % 2 - Water 
+    'RunoffInt'         , 'simple'          ,...    % 2 - Water 
+    'RechargeGW'        , 'simple'          ,...    % 2 - Water 
+    'BaseFlow'          , 'simple'          ,...    % 2 - Water 
+    'SoilMoistureGW'    , 'none'            ,...    % 2 - Water 
+    'SoilEvap'          , 'simple'          ,...    % 2 - Water 
+    'WUE'               , 'Medlyn'          ,...    % 2 - Water 
+    'SupplyTransp'      , 'Federer'         ,...    % 3 - Transpiration and GPP
+    'LightEffectGPP'    , 'Maekelae2008'    ,...    % 3 - Transpiration and GPP
+    'MaxRUE'            , 'Turner'          ,...    % 3 - Transpiration and GPP
+    'TempEffectGPP'     , 'CASA'            ,...    % 3 - Transpiration and GPP
+    'VPDEffectGPP'      , 'Wang'            ,...    % 3 - Transpiration and GPP
+    'DemandGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
+    'SMEffectGPP'       , 'Supply'          ,...    % 3 - Transpiration and GPP
+    'ActualGPP'         , 'mult'            ,...    % 3 - Transpiration and GPP
+    'Transp'            , 'Coupled'         ,...    % 3 - Transpiration and GPP
+    'RootUptake'        , 'TopBottom'       ,...    % 3 - Transpiration and GPP
+    'SoilMoistEffectRH' , 'CASA'            ,...    % 4 - Climate effects on metabolic processes
+    'TempEffectRH'      , 'Q10'             ,...    % 4 - Climate effects on metabolic processes
+    'TempEffectAutoResp', 'Q10'             ,...    % 4 - Climate effects on metabolic processes
+    'CAllocationVeg'    , 'Friedlingstein'  ,...    % 5 - Allocation of C within plant organs
+    'AutoResp'          , 'ATC_A'           ,...    % 6 - Autotrophic respiration
+    'CCycle'            , 'CASA'            , ...   % 7 - Carbon Cycle / Heteroptrophic Respiration
+    'PutStates'         , 'simple'          ...
     };
 %%
 pthCore=[info.paths.core 'core.m'];

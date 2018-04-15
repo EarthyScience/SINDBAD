@@ -1,7 +1,7 @@
-function [f,fe,fx,s,d,p] = prec_psoil_none(f,fe,fx,s,d,p,info)
+function [fe,fx,d,p,f] = prec_psoil_none(f,fe,fx,s,d,p,info)
 
 % AWC       : maximum plant available water content in the top layer [mm]
-%           (p.psoil.AWC(zix).value)
+%           (p.psoil.AWC(i).value)
 
 % number of layers
 N     = numel(p.psoil.HeightLayer);

@@ -6,11 +6,7 @@
 			"Default": 0,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"CLAY": {
@@ -19,11 +15,7 @@
 			"Default": 0.3,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"SILT": {
@@ -32,11 +24,7 @@
 			"Default": 0.3,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"SAND": {
@@ -45,11 +33,7 @@
 			"Default": 0.4,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"InfCapacity": {
@@ -58,11 +42,7 @@
 			"Default": 15,
 			"LowerBound": 1,
 			"UpperBound": 30,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"HeightLayer1": {
@@ -71,11 +51,7 @@
 			"Default": 0.05,
 			"LowerBound": 0.05,
 			"UpperBound": 0.05,
-				"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"HeightLayer2": {
@@ -84,11 +60,7 @@
 			"Default": 1,
 			"LowerBound": 0.1,
 			"UpperBound": 10,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		},
 		"iniAWC": {
@@ -97,11 +69,7 @@
 			"Default": 0,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
+			"Distribution": NaN,
 			"Comment": NaN
 		}
 	}
