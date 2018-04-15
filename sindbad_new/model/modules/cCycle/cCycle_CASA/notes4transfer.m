@@ -34,7 +34,7 @@ the turnover rates go to cTauAct
 
 idea... the cCycle.cTransfer,k, override the parameters from the simple approach...
 
-
+generated code for spinup and not...
 
 d.cTaufwSoil.kfwSoil -> d.cTaufwSoil.kfwSoil
 fe.cTaufTsoil.fT -> fe.cTaufTsoil.kfTsoil
