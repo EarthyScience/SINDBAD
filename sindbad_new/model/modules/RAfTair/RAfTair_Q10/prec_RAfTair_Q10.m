@@ -25,18 +25,12 @@ function [f,fe,fx,s,d,p] = prec_RAfTair_Q10(f,fe,fx,s,d,p,info)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
-%           (d.TempEffectRAact.fT)
-%           example
-%           d.TempEffectRAact.fT(1).value - effect of temperature on
-%           maintenance respiration of fine roots. 
+%           (d.RAfTair.fT)
 % 
 % #########################################################################
 
 % calculate temperature effect on plant maintenance respiration (1 and 2
 % corresponds to roots; 3 and 4 corresponds to wood and leafs)
-d.TempEffectRAact.fT(1).value	= p.TempEffectRAact.Q10_RM .^ ((f.Tsoil - p.TempEffectRAact.Tref_RM) ./ 10);
-d.TempEffectRAact.fT(2).value	= p.TempEffectRAact.Q10_RM .^ ((f.Tsoil - p.TempEffectRAact.Tref_RM) ./ 10);
-d.TempEffectRAact.fT(3).value	= p.TempEffectRAact.Q10_RM .^ ((f.Tair - p.TempEffectRAact.Tref_RM) ./ 10);
-d.TempEffectRAact.fT(4).value	= p.TempEffectRAact.Q10_RM .^ ((f.Tair - p.TempEffectRAact.Tref_RM) ./ 10);
+d.RAfTair.fT	= p.RAfTair.Q10_RM .^ ((f.Tair - p.RAfTair.Tref_RM) ./ 10);
 
 end % function

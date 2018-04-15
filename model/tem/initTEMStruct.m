@@ -1,4 +1,4 @@
-function [fx,fe,d,s] = initTEMStruct(info,varargin)
+function [fe,fx,s,d] = initTEMStruct(info,varargin)
 % initialize model states and flux matrices
 % carbon and water pools
 
