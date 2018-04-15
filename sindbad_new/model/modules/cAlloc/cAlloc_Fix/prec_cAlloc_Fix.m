@@ -30,30 +30,23 @@ function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
 % for ii = {'cf2Root','cf2Wood','cf2Leaf'}
 %     d.cAlloc.(ii{1})	= p.cAlloc.(ii{1}) .* ones(size(f.Tair));
 % end
-d.cAlloc.cf2Root	= p.cAlloc.cf2Root .* ones(size(f.Tair));
-d.cAlloc.cf2Wood	= p.cAlloc.cf2Wood .* ones(size(f.Tair));
-d.cAlloc.cf2Leaf	= p.cAlloc.cf2Leaf .* ones(size(f.Tair));
 
-for ii = 1:info.forcing.size(2)
-    % adjust allocation
-    d	= calcAdjAllocation(f,fe,fx,s,d,p,info,ii);
-
-    % check allocation
-    checkcAlloc(f,fe,fx,s,d,p,info,ii);
+% distribute the allocation according to pools...
+cpNames = {'cVegRoot','cVegWood','cVegLeaf'};
+for cpn = 1:numel(cpnames)
+    zixVec = info.tem.model.variables.states.c.(cpNames{cpn}).zix;
+    N      = numel(zixVec);
+    for zix = zixVec
+        s.cd.cAlloc(:,zix)	= p.cAlloc.(cpNames{cpn}) ./ N .* ones(size(f.Tair));
+    end
 end
 
 % check allocation again:
-% only makes sense for fixed allocation scheme - dynamic allocation may not
-% allocate to wood depending on resources or parameterization
-% check that is consistent with the vegetation form that is being simulated
-% if TreeCover is higher then 0 we need to allocate carbon to cWood -
-% hmmmmm do we really??? yes, because is the FIX allocation...
-if any(d.cAlloc.cf2Wood(p.pveg.TreeCover > 0) == 0)
-    error('SINDBAD : prec_cAlloc_Fix : TreeCover > 0 & cAlloc.cf2Wood == 0')
+% check allocation...
+if any(s.cd.cAlloc > 1) || any(s.cd.cAlloc < 0)
+    error('SINDBAD : TEM : cAlloc : s.cd.cAlloc < 0 | s.cd.cAlloc > 1')
 end
-% if Treecover is 0 we cannot allocate carbon to cWood
-if any(p.cAlloc.cf2Wood(p.pveg.TreeCover == 0) > 0)
-    error('SINDBAD : prec_cAlloc_Fix : TreeCover == 0 & cAlloc.cf2Wood > 0')
+if any(abs(sum(s.cd.cAlloc,2)-1)>1E-10)
+    error('SINDBAD : TEM : cAlloc : s.cd.cAlloc : sum(cAlloc) ~= 1')
 end
-
 end % function

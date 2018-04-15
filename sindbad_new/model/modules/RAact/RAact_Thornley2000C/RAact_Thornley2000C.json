@@ -13,10 +13,10 @@
 			},
 			"Comment": NaN
 		},
-		"C2N1": {
+		"C2N": {
 			"Name": "carbon to nitrogen ratio in fine roots",
 			"Unit": "gC/gN",
-			"Default": 25,
+			"Default": [25,260,260,25],
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": {
@@ -24,64 +24,12 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": "Don't remember where I got this from (nuno)"
-		},
-		"C2N2": {
-			"Name": "carbon to nitrogen ratio in coarse roots",
-			"Unit": "gC/gN",
-			"Default": 260,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "Don't remember where I got this from (nuno)"
-		},
-		"C2N3": {
-			"Name": "carbon to nitrogen ratio in coarse wood",
-			"Unit": "gC/gN",
-			"Default": 260,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "Don't remember where I got this from (nuno)"
-		},
-		"C2N4": {
-			"Name": "carbon to nitrogen ratio in fine roots",
-			"Unit": "gC/gN",
-			"Default": 25,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "Don't remember where I got this from (nuno)"
+			"Comment": "Don't remember where I got this from (nuno). Pools order assumptions cVegRootF,cVegRootC,cVegWood,cVegLeaf"
 		},
 		"YG": {
 			"Name": "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration",
 			"Unit": "gC/gC",
 			"Default": 0.75,
-			"LowerBound": 0,
-			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": NaN
-		},
-		"flagMTF": {
-			"Name": "use metabolic fraction as a proxy for degradable fraction of C pools in vegetation?",
-			"Unit": "[]",
-			"Default": 0,
 			"LowerBound": 0,
 			"UpperBound": 1,
 			"Distribution": {
