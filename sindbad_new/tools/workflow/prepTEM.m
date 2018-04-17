@@ -23,6 +23,11 @@ end
 % evaluate function handle in forcing
 f  = info.tem.forcing.funHandle.import(info);
 
+% get size of (1st) forcing variable for nPix and nTix
+tmp = fieldnames(f);
+info.tem.forcing.size = size(f.(tmp{1})); 
+info.tem.helpers.sizes.nPix     = info.tem.forcing.size(1); 
+info.tem.helpers.sizes.nTix     = info.tem.forcing.size(2);
 
 %% note: this was in the setupTEM
 % create the output path if it not yet exists
