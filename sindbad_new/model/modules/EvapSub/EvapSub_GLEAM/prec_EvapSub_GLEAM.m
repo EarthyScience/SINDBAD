@@ -7,7 +7,7 @@ function [f,fe,fx,s,d,p] = prec_EvapSub_GLEAM(f,fe,fx,s,d,p,info)
 % CONTACT	: mjung
 % 
 % INPUT
-% TairDay   : daytime temperature [ºC]
+% TairDay   : daytime temperature [?C]
 %           (f.TairDay)
 % 
 % PsurfDay  : atmospheric pressure during the daytime [kPa]
@@ -52,7 +52,7 @@ pa = 0.001; %MJ/kg/K
 Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
-palpha                      = p.EvapSub.alpha * ones(1,info.forcing.size(2));
+palpha                      = p.EvapSub.alpha * info.tem.helpers.arrays.onespix;
 
 tmp                         = palpha .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 tmp(tmp<0)                  = 0;
