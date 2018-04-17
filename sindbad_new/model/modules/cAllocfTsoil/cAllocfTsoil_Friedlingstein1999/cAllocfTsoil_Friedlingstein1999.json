@@ -1,0 +1,30 @@
+{
+	"params": {
+		"minL_fT": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.5,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "minimum limitation for the temperature function (for pseudo Nutrient Limitation estimations)"
+		},
+		"maxL_fT": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 1,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "maximum limitation for the temperature function (for pseudo Nutrient Limitation estimations)"
+		}
+	}
+}

@@ -12,10 +12,9 @@ function info = setupTEM(expConfigFile,varargin)
 %       - readConfigFiles
 %   2) editINFOSettings
 %   3) writeJsonFile of info
-%   4) generate code
-%   5) check model structure integrity
-%   6) create helpers
-%   7) write the info structure in a mat file
+%   4) generate code and check model structure integrity
+%   5) create helpers
+%   6) write the info structure in a mat file
 
 %% 1) check what is the input
 if isstruct(expConfigFile) == 1
@@ -61,6 +60,7 @@ end
 
 %% 2) edit the settings of the TEM based on the function inputs
 [info, ~]	= editINFOSettings(info,varargin{:});
+
 %% 3) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
     if ~isempty(info.experiment.outputInfoFile)
@@ -72,12 +72,11 @@ else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
 
-%% 4) generate code
+%% 4) generate code and check model structure integrity
+info = setupCode(info);
 
-%% 5) check model structure integrity
+%% 5) create helpers
 
-%% 6) create helpers
-
-%% 7) write the info structure in a mat file
+%% 6) write the info structure in a mat file
 
 end
