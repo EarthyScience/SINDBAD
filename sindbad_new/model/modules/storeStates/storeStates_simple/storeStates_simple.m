@@ -17,8 +17,12 @@ cvars_source	= info.tem.model.code.variables.to.storeStatesSource;
 cvars_destination	= info.tem.model.code.variables.to.storeStatesDestination;
 
 for ii=1:length(cvars_source)
+<<<<<<< HEAD
+    sstr=[char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
+=======
     sstr=[char(erase(cvars_destination{ii},';')) ' = ' char(cvars_source(ii)) ';'];
 %     sstr=[char(erase(cvars_destination(ii),';')) ' = ' char(cvars_source(ii))];
+>>>>>>> 3cef301d1b5d3fa9e7d8f974e6d6a565f3b9e986
     eval(sstr);
 end
 
