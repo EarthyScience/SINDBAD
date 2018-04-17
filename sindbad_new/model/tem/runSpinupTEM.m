@@ -122,7 +122,8 @@ end
 % -------------------------------------------------------------------------
 if info.tem.spinup.flags.runFastSpinup %&& ...
         % strcmp('CASA',info.tem.model.modules.cCycle.apprName)
-	handleToTheImplicitSolutionFunction = [];
+	for ij = 1:numel(info.tem.spinup.rules.fastSpinupFunctions)
+	eval(['handleToTheImplicitSolutionFunction = @' info.tem.spinup.rules.fastSpinupFunctions(ij) ';']);
     [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
 		handleToTheImplicitSolutionFunction(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
         % CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
@@ -161,4 +162,6 @@ if info.tem.spinup.flags.forceNullNEP
 		fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
 	end	
 end
+
+
 end % function 
