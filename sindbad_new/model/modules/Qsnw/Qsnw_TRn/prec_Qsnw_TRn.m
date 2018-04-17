@@ -24,12 +24,12 @@ function [f,fe,fx,s,d,p] = prec_Qsnw_TRn(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-% potential snow melt if T > 0°C
+% potential snow melt if T > 0 deg C
 idx 				= f.Tair > 0;
 
-tmp_mt              = p.Qsnw.melt_T * ones(1,info.forcing.size(2));
+tmp_mt              = p.Qsnw.melt_T * info.tem.helpers.arrays.onespixtix;
 tmp_T 				= f.Tair(idx) .* tmp_mt(idx);
-tmp_mr              = p.Qsnw.melt_Rn * ones(1,info.forcing.size(2));
+tmp_mr              = p.Qsnw.melt_Rn * info.tem.helpers.arrays.onespixtix;
 tmp_Rn 				= max(f.Rn(idx) .* tmp_mr(idx), 0);
 
 fe.Qsnw.potMelt 		= zeros(size(f.Tair));
