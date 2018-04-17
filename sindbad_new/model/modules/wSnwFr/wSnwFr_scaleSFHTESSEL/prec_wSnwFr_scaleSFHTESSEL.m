@@ -24,6 +24,6 @@ function [f,fe,fx,s,d,p] = prec_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 
 
 % compute snow fall
-fe.wSnwFr.Snow  	 = (p.wSnwFr.SF_scale * ones(1,info.forcing.size(2))) .* f.Snow; % *ones as parameter has one value for each pixel
+fe.wSnwFr.Snow  	 = (p.wSnwFr.SF_scale .* info.tem.helpers.arrays.onespix) .* f.Snow; % *ones as parameter has one value for each pixel
 
 end
