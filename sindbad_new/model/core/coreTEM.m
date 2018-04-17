@@ -57,9 +57,9 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 % -------------------------------------------------------------------------
 % Do precomputations
 % -------------------------------------------------------------------------
-for prc = 1:numel(info.code.preComp)
-    if info.code.preComp(prc).doAlways == 1
-        [f,fe,fx,s,d,p]	= info.code.preComp(prc).funHandle(f,fe,fx,s,d,p,info);
+for prc = 1:numel(info.tem.model.code.prec)
+    if info.tem.model.code.prec(prc).runAlways == 1
+        [f,fe,fx,s,d,p]	= info.tem.model.code.prec(prc).funHandle(f,fe,fx,s,d,p,info);
     end
 end
 
@@ -70,7 +70,7 @@ end
 ms	= info.tem.model.code.ms;
 
 % LOOP : loop through the whole length of of the forcing dataset
-for tix = 1:info.forcing.size(2)
+for tix = 1:info.tem.helpers.sizes.nTix
     % get states from previous time step
     [f,fe,fx,s,d,p]	= ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);
               
@@ -87,7 +87,7 @@ for tix = 1:info.forcing.size(2)
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]	= ms.wSnwFr.funHandle(f,fe,fx,s,d,p,info,tix);    % add snow fall and calculate SnowCoverFraction
+    [f,fe,fx,s,d,p]    = ms.wSnwFr.funHandle(f,fe,fx,s,d,p,info,tix);    % add snow fall and calculate SnowCoverFraction
     [f,fe,fx,s,d,p]    = ms.EvapSub.funHandle(f,fe,fx,s,d,p,info,tix);  % calculate sublimation and update swe
     [f,fe,fx,s,d,p]    = ms.Qsnw.funHandle(f,fe,fx,s,d,p,info,tix);     % calculate snowmelt and update SWE
     
@@ -172,7 +172,7 @@ for tix = 1:info.forcing.size(2)
     % ---------------------------------------------------------------------
     
     % store current states in previous state variables
-    [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);
+     [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);
     
 end % END LOOP
 
