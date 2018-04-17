@@ -73,9 +73,9 @@ if isempty(infoSU)
     % make a new info for spin up based on info...
     infoSU	= info;
     % adjust the nTix
-    tmp     = fieldnames(fSU);
-    newNTix = size(fSU.(tmp{1}),2);
-    infoSU.tem.helpers.sizes.nTix = newNTix;
+    tmp     						= fieldnames(fSU);
+    newNTix 						= size(fSU.(tmp{1}),2);
+    infoSU.tem.helpers.sizes.nTix 	= newNTix;
     if info.tem.spinup.flags.recycleMSC
         infoSU.tem.model.nYears	= 1;
     end
@@ -120,14 +120,16 @@ end
 % -------------------------------------------------------------------------
 % run the model for spin-up for soil C pools @ equilibrium
 % -------------------------------------------------------------------------
-if info.tem.spinup.flags.runFastSpinup && ...
-        strcmp('CASA',info.tem.model.modules.cCycle.apprName)
+if info.tem.spinup.flags.runFastSpinup %&& ...
+        % strcmp('CASA',info.tem.model.modules.cCycle.apprName)
+	handleToTheImplicitSolutionFunction = [];
     [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
-        CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+		handleToTheImplicitSolutionFunction(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+        % CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
 else
-    if info.tem.spinup.flags.runFastSpinup
-        disp('somehow notpossible todo the spin up fastt...')
-    end
+%    if info.tem.spinup.flags.runFastSpinup
+%        disp('somehow notpossible todo the spin up fastt...')
+%    end
     disp(['we need to check if here is the number of years, ' ...
         'or the number of times that the spinup is being recycled!!!'])
     for ij = 1:info.tem.spinup.nYears.carbon
@@ -140,20 +142,23 @@ end
 % -------------------------------------------------------------------------
 % @NC: for spatial runs this can be optimized by subsampling the
 % data only for gridcells where equilibrium is not achieved...
-if info.tem.spinup.flags.forceNullNEP && ...
-        strcmp('CASA',info.tem.model.modules.cCycle.apprName)
-    NEP_LIM = info.tem.spinup.rules.limitNullNEP;
-    MAXITER = info.tem.spinup.rules.maxIter;
-    fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
-    k       = 0;
-    % @NC: double check this when optimizing...
-    while max(abs(fNEP)) > NEP_LIM && k <= MAXITER
-        [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
-            CASA_forceEquilibrium(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
-        k       = k + 1;
-        fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
-    end
-elseif info.tem.spinup.flags.forceNullNEP
-    disp('somehow notpossible todo the forceNullNEP...')
+if info.tem.spinup.flags.forceNullNEP 
+	if info.tem.spinup.flags.runFastSpinup
+		error('needs translation of CASA_forceEquilibrium')
+		handleForceNullNEP	= CASA_forceEquilibrium;
+	else
+		handleForceNullNEP 	= @runCoreTEM;
+	end
+	NEP_LIM = info.tem.spinup.rules.limitNullNEP;
+	MAXITER = info.tem.spinup.rules.maxIter;
+	fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
+	k       = 0;
+	% @NC: double check this when optimizing...
+	while max(abs(fNEP)) > NEP_LIM && k <= MAXITER
+		[fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+			handleForceNullNEP(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+		k       = k + 1;
+		fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
+	end	
 end
 end % function 

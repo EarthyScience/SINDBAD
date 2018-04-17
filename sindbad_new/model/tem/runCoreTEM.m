@@ -3,16 +3,23 @@ function [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,flagDoPrecOnce,flagDoCo
 %% ------------------------------------------------------------------------
 % get the handles for core and precOnce
 % -------------------------------------------------------------------------
-if flagUse4SpinUp,  fn = 'spinup';
-else,               fn = 'model';
+if flagUse4SpinUp,  fn{1} = 'spinup';
+else,               fn{1} = 'model';
 end
-hCore	= info.tem.(fn).code.genMS.coreTEM.funHandle;
-hPrec   = info.tem.(fn).code.genMS.precOnce.funHandle;
+
+if info.flags.runGenCode, 	fn{2}	= 'genMS';
+else,						fn{2}	= 'rawMS';
+end
+
+hPrec   = info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle;
+hCore	= info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
 
 %% run the core and the precOnce
+if flagDoPrecOnce;  [f,fe,fx,s,d,p]	= hPrec(f,fe,fx,s,d,p,info); end
+if flagDoCore;      [f,fe,fx,s,d,p]	= hCore(f,fe,fx,s,d,p,info); end
+
+%{
 if info.flags.runGenCode % using the generated code
-    if flagDoPrecOnce;  [f,fe,fx,s,d,p]	= hPrec(f,fe,fx,s,d,p,info); end
-    if flagDoCore;      [f,fe,fx,s,d,p]	= hCore(f,fe,fx,s,d,p,info); end
 else % use the pure handles
     if flagUse4SpinUp
         if flagDoPrecOnce
@@ -48,5 +55,5 @@ else % use the pure handles
         end
     end
 end
-
+%}
 end %  function
