@@ -1,0 +1,123 @@
+diff --git a/sindbad_new/model/tem/runCoreTEM.m b/sindbad_new/model/tem/runCoreTEM.m
+index 5fb16d4..0be81d8 100644
+--- a/sindbad_new/model/tem/runCoreTEM.m
++++ b/sindbad_new/model/tem/runCoreTEM.m
+@@ -3,16 +3,23 @@
+ %% ------------------------------------------------------------------------
+ % get the handles for core and precOnce
+ % -------------------------------------------------------------------------
+-if flagUse4SpinUp,  fn = 'spinup';
+-else,               fn = 'model';
++if flagUse4SpinUp,  fn{1} = 'spinup';
++else,               fn{1} = 'model';
+ end
+-hCore	= info.tem.(fn).code.genMS.coreTEM.funHandle;
+-hPrec   = info.tem.(fn).code.genMS.precOnce.funHandle;
++
++if info.flags.runGenCode, 	fn{2}	= 'genMS';
++else,						fn{2}	= 'rawMS';
++end
++
++hPrec   = info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle;
++hCore	= info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
+ 
+ %% run the core and the precOnce
++if flagDoPrecOnce;  [f,fe,fx,s,d,p]	= hPrec(f,fe,fx,s,d,p,info); end
++if flagDoCore;      [f,fe,fx,s,d,p]	= hCore(f,fe,fx,s,d,p,info); end
++
++%{
+ if info.flags.runGenCode % using the generated code
+-    if flagDoPrecOnce;  [f,fe,fx,s,d,p]	= hPrec(f,fe,fx,s,d,p,info); end
+-    if flagDoCore;      [f,fe,fx,s,d,p]	= hCore(f,fe,fx,s,d,p,info); end
+ else % use the pure handles
+     if flagUse4SpinUp
+         if flagDoPrecOnce
+@@ -48,5 +55,5 @@
+         end
+     end
+ end
+-
++%}
+ end %  function
+diff --git a/sindbad_new/model/tem/runSpinupTEM.m b/sindbad_new/model/tem/runSpinupTEM.m
+index d497f30..97af512 100644
+--- a/sindbad_new/model/tem/runSpinupTEM.m
++++ b/sindbad_new/model/tem/runSpinupTEM.m
+@@ -73,9 +73,9 @@
+     % make a new info for spin up based on info...
+     infoSU	= info;
+     % adjust the nTix
+-    tmp     = fieldnames(fSU);
+-    newNTix = size(fSU.(tmp{1}),2);
+-    infoSU.tem.helpers.sizes.nTix = newNTix;
++    tmp     						= fieldnames(fSU);
++    newNTix 						= size(fSU.(tmp{1}),2);
++    infoSU.tem.helpers.sizes.nTix 	= newNTix;
+     if info.tem.spinup.flags.recycleMSC
+         infoSU.tem.model.nYears	= 1;
+     end
+@@ -120,14 +120,17 @@
+ % -------------------------------------------------------------------------
+ % run the model for spin-up for soil C pools @ equilibrium
+ % -------------------------------------------------------------------------
+-if info.tem.spinup.flags.runFastSpinup && ...
+-        strcmp('CASA',info.tem.model.modules.cCycle.apprName)
++if info.tem.spinup.flags.runFastSpinup %&& ...
++        % strcmp('CASA',info.tem.model.modules.cCycle.apprName)
++	for ij = 1:numel(info.tem.spinup.rules.fastSpinupFunctions)
++	eval(['handleToTheImplicitSolutionFunction = @' info.tem.spinup.rules.fastSpinupFunctions(ij) ';']);
+     [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+-        CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
++		handleToTheImplicitSolutionFunction(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
++        % CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+ else
+-    if info.tem.spinup.flags.runFastSpinup
+-        disp('somehow notpossible todo the spin up fastt...')
+-    end
++%    if info.tem.spinup.flags.runFastSpinup
++%        disp('somehow notpossible todo the spin up fastt...')
++%    end
+     disp(['we need to check if here is the number of years, ' ...
+         'or the number of times that the spinup is being recycled!!!'])
+     for ij = 1:info.tem.spinup.nYears.carbon
+@@ -140,20 +143,25 @@
+ % -------------------------------------------------------------------------
+ % @NC: for spatial runs this can be optimized by subsampling the
+ % data only for gridcells where equilibrium is not achieved...
+-if info.tem.spinup.flags.forceNullNEP && ...
+-        strcmp('CASA',info.tem.model.modules.cCycle.apprName)
+-    NEP_LIM = info.tem.spinup.rules.limitNullNEP;
+-    MAXITER = info.tem.spinup.rules.maxIter;
+-    fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
+-    k       = 0;
+-    % @NC: double check this when optimizing...
+-    while max(abs(fNEP)) > NEP_LIM && k <= MAXITER
+-        [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+-            CASA_forceEquilibrium(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+-        k       = k + 1;
+-        fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
+-    end
+-elseif info.tem.spinup.flags.forceNullNEP
+-    disp('somehow notpossible todo the forceNullNEP...')
++if info.tem.spinup.flags.forceNullNEP 
++	if info.tem.spinup.flags.runFastSpinup
++		error('needs translation of CASA_forceEquilibrium')
++		handleForceNullNEP	= CASA_forceEquilibrium;
++	else
++		handleForceNullNEP 	= @runCoreTEM;
++	end
++	NEP_LIM = info.tem.spinup.rules.limitNullNEP;
++	MAXITER = info.tem.spinup.rules.maxIter;
++	fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
++	k       = 0;
++	% @NC: double check this when optimizing...
++	while max(abs(fNEP)) > NEP_LIM && k <= MAXITER
++		[fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
++			handleForceNullNEP(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
++		k       = k + 1;
++		fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
++	end	
+ end
++
++
+ end % function 
