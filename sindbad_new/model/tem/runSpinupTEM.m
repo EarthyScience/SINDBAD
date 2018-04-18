@@ -108,6 +108,33 @@ else
         eval([v{1} ' = precOnceData.(i{1});']);
     end
 end
+
+% -------------------------------------------------------------------------
+% complete spinup sequence
+% -------------------------------------------------------------------------
+spinSequence = info.tem.spinup.sequence;
+for iss = 1:numel(spinSequence)
+    % get handles, inputs and number of loops
+    funHandleSpin	= spinSequence(iss).funHandleSpin;
+	addInpts        = spinSequence(iss).funAddInpts;
+    nLoops          = spinSequence(iss).nLoops;     % number of loops
+    funHandleStop   = spinSequence(iss).funHandleStop;
+    % funHandleStop   = @(x_fxSU,x_nepLim)~any(max(abs(sum(x_fxSU.npp,2)-sum(x_fxSU.rh,2)))>x_nepLim);
+    % go for it
+    for ij = 1:nLoops
+        % run spinup
+        [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+            funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInpts{:});
+        % stop it according to function criteria?
+        if ~isempty(funHandleStop)
+            % true is stop now, false continues
+            if funHandleStop(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU)
+                break
+            end
+        end
+    end
+end
+%{
 % -------------------------------------------------------------------------
 % run the model for spin-up for NPP and soil water pools @ equilibrium
 % -------------------------------------------------------------------------
@@ -127,6 +154,7 @@ if info.tem.spinup.flags.runFastSpinup %&& ...
     [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
 		handleToTheImplicitSolutionFunction(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
         % CASA_fast(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
+    end
 else
 %    if info.tem.spinup.flags.runFastSpinup
 %        disp('somehow notpossible todo the spin up fastt...')
@@ -150,18 +178,18 @@ if info.tem.spinup.flags.forceNullNEP
 	else
 		handleForceNullNEP 	= @runCoreTEM;
 	end
-	NEP_LIM = info.tem.spinup.rules.limitNullNEP;
-	MAXITER = info.tem.spinup.rules.maxIter;
+	nepLim = info.tem.spinup.rules.limitNullNEP;
+	maxIter = info.tem.spinup.rules.maxIter;
 	fNEP    = sum(fxSU.npp,2)-sum(fxSU.rh,2);
 	k       = 0;
 	% @NC: double check this when optimizing...
-	while max(abs(fNEP)) > NEP_LIM && k <= MAXITER
+	while max(abs(fNEP)) > nepLim && k <= maxIter
 		[fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
 			handleForceNullNEP(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU);
 		k       = k + 1;
 		fNEP	= sum(fxSU.npp,2)-sum(fxSU.rh,2);
 	end	
 end
-
+%}
 
 end % function 
