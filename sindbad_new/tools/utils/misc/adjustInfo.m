@@ -100,7 +100,6 @@ end
 checkParamBounds(info)
    
 
-
 %% 3) opti.params & tem.params
 if isfield(info, 'opti')
     idxError = find(~ismember(info.opti.paramsList, info.tem.model.variables.paramInput));

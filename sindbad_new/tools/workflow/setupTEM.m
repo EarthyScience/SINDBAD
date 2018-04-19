@@ -58,36 +58,27 @@ elseif exist(expConfigFile,'file')
 
 end
 
-<<<<<<< HEAD
 %% 2) edit the settings of the TEM based on the function inputs
 %[info, ~]       = editINFOSettings(info,varargin{:});
 [info, tree]	= editINFOSettings(info,varargin{:}) ;%'Orth2013'
 % check the edited changes + change dependent fields (e.g. parameter if the approach has changed)
 [info]      = adjustInfo(info, tree);
 
-% %% 3) write the info in a json file
-% if isfield(info.experiment,'outputInfoFile')
-%     if ~isempty(info.experiment.outputInfoFile)
-%         [pth,name,ext]   = fileparts(info.experiment.outputInfoFile);
-%         if~exist(pth,'dir'),mkdir(pth);end
-%         writeJsonFile(pth, [name ext], info);
-%     end
-% else
-%     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
-% end
-% 
-% %% 4) generate code and check model structure integrity
-% info = setupCode(info);
+%% 3) write the info in a json file
+if isfield(info.experiment,'outputInfoFile')
+    if ~isempty(info.experiment.outputInfoFile)
+        [pth,name,ext]   = fileparts(info.experiment.outputInfoFile);
+        if~exist(pth,'dir'),mkdir(pth);end
+        writeJsonFile(pth, [name ext], info);
+    end
+else
+    disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
+end
 
-%% 5) create helpers
-
-=======
 %% 4) generate code and check model structure integrity
 info = setupCode(info);
 
-%% 5) create helpers
 
->>>>>>> f52f58a22ac8627e24b616fe3ed0b39ae860334c
 %% 6) write the info structure in a mat file
 
 end
