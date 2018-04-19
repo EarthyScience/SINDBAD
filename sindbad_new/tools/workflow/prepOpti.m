@@ -27,8 +27,9 @@ obs = info.opti.constraints.funHandle.import(info);
 %% 2) check constraints (not implemented yet)
 % see checkData4TEM.m as reference -> this is very specific
 
-%% 3) create function handle for the cost function
 
+%% 3) create function handle for the cost function
+% see: costFromFile
 
 
 
