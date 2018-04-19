@@ -58,6 +58,7 @@ elseif exist(expConfigFile,'file')
 
 end
 
+<<<<<<< HEAD
 %% 2) edit the settings of the TEM based on the function inputs
 %[info, ~]       = editINFOSettings(info,varargin{:});
 [info, tree]	= editINFOSettings(info,varargin{:}) ;%'Orth2013'
@@ -80,6 +81,13 @@ end
 
 %% 5) create helpers
 
+=======
+%% 4) generate code and check model structure integrity
+info = setupCode(info);
+
+%% 5) create helpers
+
+>>>>>>> f52f58a22ac8627e24b616fe3ed0b39ae860334c
 %% 6) write the info structure in a mat file
 
 end

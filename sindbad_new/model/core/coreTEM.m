@@ -83,12 +83,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]	= ms.ptopo.funHandle(f,fe,fx,s,d,p,info,tix);
     [f,fe,fx,s,d,p]	= ms.psoil.funHandle(f,fe,fx,s,d,p,info,tix);
     [f,fe,fx,s,d,p]	= ms.pveg.funHandle(f,fe,fx,s,d,p,info,tix);
-<<<<<<< HEAD
     [f,fe,fx,s,d,p]	= ms.cCycleBase.funHandle(f,fe,fx,s,d,p,info,tix);
-    % MORE
-=======
-%     [f,fe,fx,s,d,p]	= ms.cCycleBase.funHandle(f,fe,fx,s,d,p,info,tix);
->>>>>>> 6668f8348a28b0e9089198ce52712ab9fa2ffbda
 
     % ---------------------------------------------------------------------
     % 1 - Snow
