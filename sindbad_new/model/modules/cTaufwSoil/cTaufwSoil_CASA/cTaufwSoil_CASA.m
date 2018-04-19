@@ -56,7 +56,7 @@ BGRATIO = zeros(info.forcing.size(1),1);
 BGME	= zeros(info.forcing.size(1),1);
 
 % PREVIOUS TIME STEP VALUES
-pBGME	= d.cTaufwSoil.pBGME;
+pBGME	= p.cTaufwSoil.pfwSoil;
 
 % FOR PET > 0
 ndx = (f.PET(:,tix) > 0);
@@ -80,11 +80,9 @@ BGME(ndx4)	= 0.5;
 % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
 ndxn        = (f.PET(:,tix) <= 0);
 BGME(ndxn)	= pBGME(ndxn);
-
 BGME        = max(min(BGME,1),0);
 
 % FEED IT TO THE STRUCTURE
-d.cTaufwSoil.BGME(:,tix)	= BGME;
-d.cTaufwSoil.pBGME       = BGME;
-d.cTaufwSoil.fwSoil = d.cTaufwSoil.BGME(:,tix); 
+p.cTaufwSoil.pfwSoil       = BGME;
+d.cTaufwSoil.fwSoil(:,tix) = BGME; 
 end % function
