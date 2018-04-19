@@ -63,7 +63,7 @@ RMN     = p.RAact.RMN ./ info.timeScale.stepsPerDay;
 for zix = info.tem.model.variables.states.c.cVeg.zix
     % make the Fd of each pool equal to the MTF
     if p.RAact.flagMTF
-        p.RAact.Fd(:,zix) = fe.cCycle.MTF;
+        p.RAact.Fd(:,zix) = fe.cTaufpVeg.MTF;
     else
         p.RAact.Fd(:,zix) = 1;
     end
