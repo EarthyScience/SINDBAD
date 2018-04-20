@@ -5,8 +5,8 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
 s.cd.cEcoInflux = zeros(nPix,nZix);
 s.cd.cEcoFlow   = zeros(nPix,nZix);
 % distribute the NPP to the veg pools
-zix                     = info.tem.model.variables.states.c.cVeg.zix;
-s.cd.cEcoInflux(:,zix)	= s.cd.cNPP(:,zix);
+s.cd.cNPP               = fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+s.cd.cEcoInflux(:,zix)	= s.cd.cNPP;
 % output fluxes
 s.cd.cEcoOut            = s.prev.cEco .* s.cd.p_cTauAct_k;
 % circulate carbon within cEco pools
@@ -19,7 +19,8 @@ end
 % pools = previous + gains - losses
 s.c.cEco = s.prev.cEco + s.cd.cEcoInflux - s.cd.cEcoOut + s.cd.cEcoFlow;
 % compute RA and RH
-fx.cRH = sum(s.cd.cEcoEfflux(:,~info.tem.model.variables.states.c.cVeg.flag));
-fx.cRA = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.cVeg.flag));
-
+fx.cRH(:,tix)   = sum(s.cd.cEcoEfflux(:,~info.tem.model.variables.states.c.cVeg.flag));
+fx.cRA(:,tix)   = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.cVeg.flag));
+fx.cRECO(:,tix) = fx.cRH + fx.cRA;
+fx.cNPP(:,tix)  = sum(s.cd.cNPP,2);
 end % function

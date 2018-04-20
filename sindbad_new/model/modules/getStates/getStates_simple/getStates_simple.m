@@ -25,7 +25,7 @@ function [f,fe,fx,s,d,p] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % Water Balance Pool
 s.wd.WBP  = f.Rain(:,tix);
 
-
+s.cd.cEcoEfflux = zeros(pix,zix);
 
 end % function
 
