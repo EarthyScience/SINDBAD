@@ -1,0 +1,17 @@
+{
+	"params": {
+		"TEXTEFFA": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0.75,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		}
+	}
+}

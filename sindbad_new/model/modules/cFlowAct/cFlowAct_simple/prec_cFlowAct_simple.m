@@ -2,7 +2,7 @@ function [fe,fx,d,p,f] = cFlowAct_simple(f,fe,fx,s,d,p,info,tix)
 % combine all the effects that change the transfer matrix
 
 % combine the soil and the veg scalars
-ceff 	= zeros(size(p.cFlowAct.cTransfer));
+ceff 	= zeros(size(p.cCycleBase.cTransfer));
 ndx		= p.cFlowfpSoil.fSoil > 0 & p.cFlowfpSoil.fVeg > 0;
 if~isempty(ndx)
 	ceff(ndx)= p.cFlowfpSoil.fSoil(ndx).*p.cFlowfpSoil.fVeg(ndx);
@@ -18,26 +18,26 @@ if~isempty(ndx)
 	ceff(ndx)= p.cFlowfpSoil.fVeg(ndx);
 end
 % combine the transfer with the pre-combined scalars
-ndx = p.cFlowAct.cTransfer > 0 & ceff > 0;
+ndx = p.cCycleBase.cTransfer > 0 & ceff > 0;
 if~isempty(ndx)
-	p.cFlowAct.cTransfer(ndx) = p.cFlowAct.cTransfer(ndx) .* ceff(ndx);
+	p.cCycleBase.cTransfer(ndx) = p.cCycleBase.cTransfer(ndx) .* ceff(ndx);
 end
 % combine the ~transfer with the pre-combined scalars
-ndx = p.cFlowAct.cTransfer <= 0 & ceff > 0;
+ndx = p.cCycleBase.cTransfer <= 0 & ceff > 0;
 if~isempty(ndx)
-	p.cFlowAct.cTransfer(ndx) = ceff(ndx);
+	p.cCycleBase.cTransfer(ndx) = ceff(ndx);
 end
 
-[taker,giver] = find(p.cFlowAct.cTransfer > 0);
-p.cFlowAct.taker=taker;
-p.cFlowAct.giver=giver;
+[taker,giver]       = find(p.cCycleBase.cTransfer > 0);
+p.cFlowAct.taker	= taker;
+p.cFlowAct.giver    = giver;
 
-if ~isfield(p.cFlowAct,'fluxOrder')
-    p.cFlowAct.fluxOrder = 1:numel(taker);
+if ~isfield(p.cCycleBase,'fluxOrder')
+    p.cCycleBase.fluxOrder = 1:numel(taker);
 else
-    if numel(p.cFlowAct.fluxOrder)~=numel(taker)
+    if numel(p.cCycleBase.fluxOrder)~=numel(taker)
         error(['ERR : cFlowAct_simple : '...
-            'numel(p.cFlowAct.fluxOrder)~=numel(taker)'])
+            'numel(p.cCycleBase.fluxOrder)~=numel(taker)'])
     end
 end
 
