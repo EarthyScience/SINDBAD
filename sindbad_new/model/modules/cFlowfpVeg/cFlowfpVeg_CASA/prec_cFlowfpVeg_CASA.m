@@ -6,20 +6,20 @@ p.cFlowfpVeg.fVeg = zeros(numel(info.tem.model.c.nZix));
 % ADJUST cTransfer BASED ON PARTICULAR PARAMETERS...
 %   SOURCE,TARGET,FACTOR
 aM	= {
-    'cVegLeaf',     'cLitLeafM',    p.cCycle.MTF;
-    'cVegLeaf',     'cLitLeafM',    1-p.cCycle.MTF;
+    'cVegLeaf',     'cLitLeafM',    p.cTaufpVeg.MTF;
+    'cVegLeaf',     'cLitLeafS',    1 - p.cTaufpVeg.MTF;
     'cVegWood',     'cLitWood',     1;
-    'cVefRootF',    'cLitRootFM',   p.cCycle.MTF;
-    'cVegRootF',    'cLitRootFS',   1 - p.cCycle.MTF;
+    'cVegRootF',    'cLitRootFM',   p.cTaufpVeg.MTF;
+    'cVegRootF',    'cLitRootFS',   1 - p.cTaufpVeg.MTF;
     'cVegRootC',    'cLitRootC',    1;
-    'cLitLeafS',    'cSoilSlow',    p.cCycle.SCLIGNIN;
-    'cLitLeafS',    'cMicSurf',     1 - p.cCycle.SCLIGNIN;
-    'cLitRootFS',   'cSoilSlow',    p.cCycle.SCLIGNIN;
-    'cLitRootFS',   'cMicSoil',     1 - p.cCycle.SCLIGNIN;
-    'cLitWood',     'cSoilSlow',    p.cCycle.WOODLIGFRAC;
-    'cLitWood',     'cMicSurf',     1 - p.cCycle.WOODLIGFRAC;
-    'cLitRootC',    'cSoilSlow',    p.cCycle.WOODLIGFRAC;
-    'cLitRootC',    'cMicSoil',     1 - p.cCycle.WOODLIGFRAC;
+    'cLitLeafS',    'cSoilSlow',    p.cTaufpVeg.SCLIGNIN;
+    'cLitLeafS',    'cMicSurf',     1 - p.cTaufpVeg.SCLIGNIN;
+    'cLitRootFS',   'cSoilSlow',    p.cTaufpVeg.SCLIGNIN;
+    'cLitRootFS',   'cMicSoil',     1 - p.cTaufpVeg.SCLIGNIN;
+    'cLitWood',     'cSoilSlow',    p.cFlowfpVeg.WOODLIGFRAC;
+    'cLitWood',     'cMicSurf',     1 - p.cFlowfpVeg.WOODLIGFRAC;
+    'cLitRootC',    'cSoilSlow',    p.cFlowfpVeg.WOODLIGFRAC;
+    'cLitRootC',    'cMicSoil',     1 - p.cFlowfpVeg.WOODLIGFRAC;
     'cSoilOld',     'cMicSoil',     1;
     'cLitLeafM',    'cMicSurf',     1;
     'cLitRootFM',   'cMicSoil',     1;
@@ -27,16 +27,12 @@ aM	= {
     };
 
 for ii = 1:size(aM,1)
-    ndxSrc = strcmp(aM{ii,1},p.cCycle.cEcoNames);
-    ndxTrg = strcmp(aM{ii,2},p.cCycle.cEcoNames);
-    if sum(ndxSrc)~=1||sum(ndxTrg)~=1||max(ndxSrc+ndxTrg)>1
-        error(['ERR : prec_cFlowfpVeg_CASA : ADJUST cTransfer : ' ...
-            'bad index      : ' aM{ii,1} ' -> ' aM{ii,2}])
-    elseif p.cCycle.cTransfer(ndxTrg,ndxSrc) <= 0
-        error(['ERR : prec_cFlowfpVeg_CASA : ADJUST cTransfer : ' ...
-            'cTranfer <= 0  : ' aM{ii,1} ' -> ' aM{ii,2}])
-    else
-        p.cFlowfpVeg.fVeg(ndxTrg,ndxSrc) = aM{ii,3};
+    ndxSrc = info.tem.model.variables.states.c.zix.(aM{ii,1});
+    ndxTrg = info.tem.model.variables.states.c.zix.(aM{ii,1});
+    for iSrc = 1:numel(ndxSrc)
+        for iTrg = 1:numel(ndxTrg)
+            p.cFlowfpVeg.fVeg(ndxTrg(iTrg),ndxSrc(iSrc)) = aM{ii,3};
+        end
     end
 end
 

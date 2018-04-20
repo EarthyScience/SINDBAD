@@ -30,16 +30,16 @@ if isstruct(expConfigFile) == 1
     % stamp the experiment settings
     info = stampExperiment(info);
 elseif exist(expConfigFile,'file')
-    %% 
+    %%
     % note: this part can be outsorced to a initINFOFromConfig in case this
-    % needs to be ran in other places 
-    
+    % needs to be ran in other places
+
     % is a file, assume a standard configuration file and read it
     info.experiment = readJsonFile(expConfigFile);
     % convert info.experiment.configFiles paths to absolute paths
     info.experiment.configFiles     = convertToFullPaths(info.experiment.configFiles);
     info.experiment.outputInfoFile	= convertToFullPaths(info.experiment.outputInfoFile);
-    info.experiment.outputDirPath	= convertToFullPaths(info.experiment.outputDirPath);
+    info.experiment.outputDirPath	  = convertToFullPaths(info.experiment.outputDirPath);
     % stamp the experiment settings
     info    = stampExperiment(info);
     % read the TEM configurations
@@ -54,12 +54,15 @@ elseif exist(expConfigFile,'file')
 	info 	= setGenCodePaths(info);
     % convert paths in info to absolute paths
     info.tem.model.paths	= convertToFullPaths(info.tem.model.paths);
-    info.tem.spinup.paths   = convertToFullPaths(info.tem.spinup.paths);
-    
+    info.tem.spinup.paths = convertToFullPaths(info.tem.spinup.paths);
+
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
-[info, ~]	= editINFOSettings(info,varargin{:});
+%[info, ~]       = editINFOSettings(info,varargin{:});
+[info, tree]	= editINFOSettings(info,varargin{:}) ;%'Orth2013'
+% check the edited changes + change dependent fields (e.g. parameter if the approach has changed)
+[info]      = adjustInfo(info, tree);
 
 %% 3) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
@@ -75,7 +78,6 @@ end
 %% 4) generate code and check model structure integrity
 info = setupCode(info);
 
-%% 5) create helpers
 
 %% 6) write the info structure in a mat file
 

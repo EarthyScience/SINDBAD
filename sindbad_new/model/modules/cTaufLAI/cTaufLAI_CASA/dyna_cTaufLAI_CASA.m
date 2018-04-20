@@ -48,12 +48,6 @@ if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
 % BUILD AN ANNUAL LAI MATRIX
 LAI13     = p.cTaufLAI.LAI13;
 
-% OUTPUTS
-fe.cCycle.LTLAI(:,tix)	= 0;
-fe.cCycle.RTLAI(:,tix)	= 0;
-
-        
-        
         % FEED LAI13
         LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY); 
         LAI13(:, 1) = f.LAI(:,tix);
@@ -96,14 +90,13 @@ fe.cCycle.RTLAI(:,tix)	= 0;
 
         % FEED OUTPUTS
 		zix 				= info.tem.model.variables.states.c.cVegLeaf.zix;
-        p.cTaufLAI.kfLAI(:,zix)	= p.cCycle.annk(:,zix) .* LTLAI; % leaf litter scalar
+        p.cTaufLAI.kfLAI(:,zix)	= p.cCycleBase.annk(:,zix) .* LTLAI; % leaf litter scalar
         if isfield(info.tem.model.variables.states.c,'cVegRootF')
-			zix 				= info.tem.model.variables.states.c.cVegRootF.zix;
-            p.cTaufLAI.kfLAI(:,info.tem.model.variables.states.c.cVegRootF.zix)	= p.cCycle.annk(:,zix) .* RTLAI; % root litter scalar
+			zix = info.tem.model.variables.states.c.cVegRootF.zix;
         else
-		zix 				= info.tem.model.variables.states.c.cVegRoot.zix;
-            p.cTaufLAI.kfLAI(:,info.tem.model.variables.states.c.cVegRoot.zix)	= p.cCycle.annk(:,zix) .* RTLAI; % root litter scalar
+            zix = info.tem.model.variables.states.c.cVegRoot.zix;
         end
+        p.cTaufLAI.kfLAI(:,zix)	= p.cCycleBase.annk(:,zix) .* RTLAI; % root litter scalar
 
 p.cTaufLAI.LAI13     = LAI13;
 end % function
