@@ -24,7 +24,7 @@ function [f,fe,fx,s,d,p] = RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 % INPUTS
 % 
 % fT            : temperature effect on autrotrophic respiration (deltaT-1)
-%               (d.RAfTair.fT)
+%               (fe.RAfTair.fT)
 % RMN           : nitrogen efficiency rate of maintenance respiration
 %               (gC.gN-1.deltaT-1) 
 %               (p.RAact.RMN)
@@ -70,16 +70,16 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
     
     % scalars of maintenance respiration for models A, B and C
     % km is the maintenance respiration coefficient (d-1)
-    km                      = 1 ./ p.RAact.C2N(:,zix) .* RMN .* d.RAfTair.fT(:,tix);
+    km                      = 1 ./ p.RAact.C2N(:,zix) .* RMN .* fe.RAfTair.fT(:,tix);
     kd                      = p.RAact.Fd(:,zix);
-    d.cd.RAact_km(:,zix)    = km .* kd;
-    d.cd.RAact_km4su(:,zix)	= d.cd.RAact_km(:,zix) .* (1 - p.RAact.YG);
+    s.cd.p_RAact_km(:,zix)    = km .* kd;
+    s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG);
     
     % compute maintenance and growth respiration terms for each vegetation pool
     % according to MODEL C - growth, degradation and resynthesis view of
     % respiration
     % maintenance respiration: R_m = km * (1 - YG) * C; km = km * MTF (before equivalent to kd)
-    s.cd.RA_M(:,zix)	= d.cd.RAact_km(:,zix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
+    s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = gpp * (1 - YG)
     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);

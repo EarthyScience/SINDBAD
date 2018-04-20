@@ -8,13 +8,13 @@ s.cd.cEcoFlow   = zeros(nPix,nZix);
 zix                     = info.tem.model.variables.states.c.cVeg.zix;
 s.cd.cEcoInflux(:,zix)	= s.cd.cNPP(:,zix);
 % output fluxes
-s.cd.cEcoOut            = s.prev.cEco .* p.cTauAct.k;
+s.cd.cEcoOut            = s.prev.cEco .* s.cd.p_cTauAct_k;
 % circulate carbon within cEco pools
 for jix = 1:numel(p.cCycleBase.fluxOrder)
-    taker                       = p.cFlowAct.taker(p.cCycleBase.fluxOrder(jix));
-    giver                       = p.cFlowAct.giver(p.cCycleBase.fluxOrder(jix));
-    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* p.cCycleBase.cTransfer(taker,giver);
-    s.cd.cEcoEfflux(:,giver)	= s.cd.cEcoEfflux(:,giver) + s.cd.cEcoOut(:,giver) .* (1 - p.cCycleBase.cTransfer(taker,giver));
+    taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
+    giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
+    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_cTransfer(taker,giver);
+    s.cd.cEcoEfflux(:,giver)	= s.cd.cEcoEfflux(:,giver) + s.cd.cEcoOut(:,giver) .* (1 - s.cd.p_cFlowAct_cTransfer(taker,giver));
 end
 % pools = previous + gains - losses
 s.c.cEco = s.prev.cEco + s.cd.cEcoInflux - s.cd.cEcoOut + s.cd.cEcoFlow;

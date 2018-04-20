@@ -3,5 +3,5 @@ function [f,fe,fx,s,d,p] = cAllocfLAI_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 LL                          = exp (-p.cAllocfLAI.kext .* f.LAI(:,tix)); 
 LL(LL <= p.cAllocfLAI.minL) = p.cAllocfLAI.minL(LL <= p.cAllocfLAI.minL);
 LL(LL >= p.cAllocfLAI.maxL) = p.cAllocfLAI.maxL(LL >= p.cAllocfLAI.maxL);
-fe.cAllocfLAI.LL(:,tix) = LL;
+d.cAllocfLAI.LL(:,tix) = LL;
 end % function

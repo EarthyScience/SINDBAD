@@ -1,4 +1,4 @@
-function [fx,s,d,f] = cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
+function [fx,s,d,f] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: cTaufwSoil_CASA
 % 
@@ -56,7 +56,7 @@ BGRATIO = zeros(info.forcing.size(1),1);
 BGME	= zeros(info.forcing.size(1),1);
 
 % PREVIOUS TIME STEP VALUES
-pBGME	= p.cTaufwSoil.pfwSoil;
+pBGME	= s.prev.cTaufwSoil_fwSoil;
 
 % FOR PET > 0
 ndx = (f.PET(:,tix) > 0);
@@ -83,6 +83,6 @@ BGME(ndxn)	= pBGME(ndxn);
 BGME        = max(min(BGME,1),0);
 
 % FEED IT TO THE STRUCTURE
-p.cTaufwSoil.pfwSoil       = BGME;
-d.cTaufwSoil.fwSoil(:,tix) = BGME; 
+s.prev.cTaufwSoil_fwSoil    = BGME;
+d.cTaufwSoil.fwSoil(:,tix)	= BGME; 
 end % function

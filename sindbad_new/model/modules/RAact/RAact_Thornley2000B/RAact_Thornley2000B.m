@@ -24,7 +24,7 @@ function [f,fe,fx,s,d,p] = RAact_Thornley2000B(f,fe,fx,s,d,p,info,tix)
 % INPUTS
 % 
 % fT            : temperature effect on autrotrophic respiration (deltaT-1)
-%               (d.RAfTair.fT)
+%               (fe.RAfTair.fT)
 % RMN           : nitrogen efficiency rate of maintenance respiration
 %               (gC.gN-1.deltaT-1) 
 %               (p.RAact.RMN)
@@ -52,8 +52,8 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
 
     % scalars of maintenance respiration for models A, B and C
     % km is the maintenance respiration coefficient (d-1)
-    d.cd.RAact_km(:,zix)    = 1 ./ p.RAact.C2N(:,zix) .* RMN .* d.RAfTair.fT;
-    d.cd.RAact_km4su(:,zix)	= d.cd.RAact_km(:,zix);
+    s.cd.p_RAact_km(:,zix)    = 1 ./ p.RAact.C2N(:,zix) .* RMN .* fe.RAfTair.fT;
+    s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix);
     
     % growth respiration: R_g = (1 - YG) * GPP * allocationToPool
     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);

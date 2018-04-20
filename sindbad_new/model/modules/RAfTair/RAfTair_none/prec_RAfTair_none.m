@@ -25,12 +25,12 @@ function [f,fe,fx,s,d,p] = prec_RAfTair_none(f,fe,fx,s,d,p,info)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
-%           (d.RAfTair.fT)
+%           (fe.RAfTair.fT)
 % 
 % #########################################################################
 
 
 % just copy
-d.RAfTair.fT	= ones(info.forcing.size);
+fe.RAfTair.fT	= ones(info.forcing.size);
 
 end % function
