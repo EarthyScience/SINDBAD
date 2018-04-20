@@ -145,6 +145,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]	= ms.cAllocfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);      % effect of soil moisture on carbon allocation
     [f,fe,fx,s,d,p]	= ms.cAllocfTsoil.funHandle(f,fe,fx,s,d,p,info,tix);      % effect of soil temperature on carbon allocation
     [f,fe,fx,s,d,p]	= ms.cAllocfNut.funHandle(f,fe,fx,s,d,p,info,tix);        % (pseudo)effect of nutrients on carbon allocation
+    [f,fe,fx,s,d,p]	= ms.cAllocfLAI.funHandle(f,fe,fx,s,d,p,info,tix);        % combine the different effects of carbon allocation
     [f,fe,fx,s,d,p]	= ms.cAlloc.funHandle(f,fe,fx,s,d,p,info,tix);        % combine the different effects of carbon allocation
     [f,fe,fx,s,d,p]	= ms.cAllocfTreeCover.funHandle(f,fe,fx,s,d,p,info,tix);  % adjustment of carbon allocation according to tree cover
 

@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: prec_cAlloc_Friedlingstein1999
 % 
@@ -14,8 +14,8 @@ function [f,fe,fx,s,d,p] = cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % allocation to root, wood and leaf
-cf2.cVegRoot	= p.cAlloc.ro .* (p.cAlloc.RelY + 1) .* fe.cAllocfLAI.LL(:,tix) ./ (fe.cAllocfLAI.LL(:,tix) + p.cAlloc.RelY .* fe.cAllocfNut.minWLNL(:,tix));
-cf2.cVegWood	= p.cAlloc.so .* (p.cAlloc.RelY + 1) .* fe.cAllocfNut.minWLNL(:,tix) ./ (p.cAlloc.RelY .* fe.cAllocfLAI.LL(:,tix) + fe.cAllocfNut.minWLNL(:,tix));
+cf2.cVegRoot	= p.cAlloc.ro .* (p.cAlloc.RelY + 1) .* d.cAllocfLAI.LL(:,tix) ./ (d.cAllocfLAI.LL(:,tix) + p.cAlloc.RelY .* fe.cAllocfNut.minWLNL(:,tix));
+cf2.cVegWood	= p.cAlloc.so .* (p.cAlloc.RelY + 1) .* fe.cAllocfNut.minWLNL(:,tix) ./ (p.cAlloc.RelY .* d.cAllocfLAI.LL(:,tix) + fe.cAllocfNut.minWLNL(:,tix));
 cf2.cVegLeaf	= 1 - cf2.cVegRoot - cf2.cVegWood;
 
 % distribute the allocation according to pools...

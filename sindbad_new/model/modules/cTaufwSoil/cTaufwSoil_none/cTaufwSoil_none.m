@@ -1,6 +1,0 @@
-function [f,fe,fx,s,d,p] = cTaufwSoil_none(f,fe,fx,s,d,p,info,tix)
-<<<<<<< HEAD
-=======
-d.cTaufwSoil.fwSoil(:)=1;
->>>>>>> f52f58a22ac8627e24b616fe3ed0b39ae860334c
-end % function

@@ -46,7 +46,7 @@ TSPY	= info.timeScale.stepsPerYear;
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
 
 % BUILD AN ANNUAL LAI MATRIX
-LAI13     = p.cTaufLAI.LAI13;
+LAI13     = s.cd.p_cTaufLAI_LAI13;
 
         % FEED LAI13
         LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY); 
@@ -89,14 +89,14 @@ LAI13     = p.cTaufLAI.LAI13;
                     LAIsum(ndx)) ./ 2 + kRTLAI ./ TSPY;
 
         % FEED OUTPUTS
-		zix 				= info.tem.model.variables.states.c.cVegLeaf.zix;
-        p.cTaufLAI.kfLAI(:,zix)	= p.cCycleBase.annk(:,zix) .* LTLAI; % leaf litter scalar
+		zix                             = info.tem.model.variables.states.c.cVegLeaf.zix;
+        s.cd.p_cTaufLAI_kfLAI(:,zix)	= s.cd.p_cCycleBase_annk(:,zix) .* LTLAI ./ s.cd.p_cCycleBase_k(:,zix); % leaf litter scalar
         if isfield(info.tem.model.variables.states.c,'cVegRootF')
 			zix = info.tem.model.variables.states.c.cVegRootF.zix;
         else
             zix = info.tem.model.variables.states.c.cVegRoot.zix;
         end
-        p.cTaufLAI.kfLAI(:,zix)	= p.cCycleBase.annk(:,zix) .* RTLAI; % root litter scalar
+        s.cd.p_cTaufLAI_kfLAI(:,zix)	= s.cd.p_cCycleBase_annk(:,zix) .* RTLAI ./ s.cd.p_cCycleBase_k(:,zix); % root litter scalar
 
-p.cTaufLAI.LAI13     = LAI13;
+s.cd.p_cTaufLAI_LAI13	= LAI13;
 end % function

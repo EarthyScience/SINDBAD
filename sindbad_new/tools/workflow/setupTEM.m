@@ -78,6 +78,7 @@ end
 %% 4) generate code and check model structure integrity
 info = setupCode(info);
 
+%% 5) create helpers
 
 %% 6) write the info structure in a mat file
 

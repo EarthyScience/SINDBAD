@@ -1,37 +1,38 @@
-function [fe,fx,d,p,f] = cFlowAct_simple(f,fe,fx,s,d,p,info,tix)
+function [fe,fx,d,p,f] = prec_cFlowAct_simple(f,fe,fx,s,d,p,info,tix)
 % combine all the effects that change the transfer matrix
 
 % combine the soil and the veg scalars
 ceff 	= zeros(size(p.cCycleBase.cTransfer));
-ndx		= p.cFlowfpSoil.fSoil > 0 & p.cFlowfpSoil.fVeg > 0;
+ndx		= s.cd.p_cFlowfpSoil_fSoil > 0 & s.cd.p_cFlowfpVeg_fVeg > 0;
 if~isempty(ndx)
-	ceff(ndx)= p.cFlowfpSoil.fSoil(ndx).*p.cFlowfpSoil.fVeg(ndx);
+	ceff(ndx)= s.cd.p_cFlowfpSoil_fSoil(ndx).*s.cd.p_cFlowfpVeg_fVeg(ndx);
 end
 % combine the soil and the ~veg scalars
-ndx		= p.cFlowfpSoil.fSoil > 0 & p.cFlowfpSoil.fVeg <= 0;
+ndx		= s.cd.p_cFlowfpSoil_fSoil > 0 & s.cd.p_cFlowfpVeg_fVeg <= 0;
 if~isempty(ndx)
-	ceff(ndx)= p.cFlowfpSoil.fSoil(ndx);
+	ceff(ndx)= s.cd.p_cFlowfpSoil_fSoil(ndx);
 end
 % combine the ~soil and the veg scalars
-ndx		= p.cFlowfpSoil.fSoil <= 0 & p.cFlowfpSoil.fVeg > 0;
+ndx		= s.cd.p_cFlowfpSoil_fSoil <= 0 & s.cd.p_cFlowfpVeg_fVeg > 0;
 if~isempty(ndx)
-	ceff(ndx)= p.cFlowfpSoil.fVeg(ndx);
+	ceff(ndx)= s.cd.p_cFlowfpVeg_fVeg(ndx);
 end
 % combine the transfer with the pre-combined scalars
+s.cd.p_cFlowAct_cTransfer = p.cCycleBase.cTransfer;
 ndx = p.cCycleBase.cTransfer > 0 & ceff > 0;
 if~isempty(ndx)
-	p.cCycleBase.cTransfer(ndx) = p.cCycleBase.cTransfer(ndx) .* ceff(ndx);
+	s.cd.p_cFlowAct_cTransfer(ndx) = s.cd.p_cFlowAct_cTransfer(ndx) .* ceff(ndx);
 end
 % combine the ~transfer with the pre-combined scalars
-ndx = p.cCycleBase.cTransfer <= 0 & ceff > 0;
+ndx = s.cd.p_cFlowAct_cTransfer <= 0 & ceff > 0;
 if~isempty(ndx)
-	p.cCycleBase.cTransfer(ndx) = ceff(ndx);
+	s.cd.p_cFlowAct_cTransfer(ndx) = ceff(ndx);
 end
-
-[taker,giver]       = find(p.cCycleBase.cTransfer > 0);
-p.cFlowAct.taker	= taker;
-p.cFlowAct.giver    = giver;
-
+% transfers
+[taker,giver]           = find(s.cd.p_cFlowAct_cTransfer > 0);
+s.cd.p_cFlowAct_taker	= taker;
+s.cd.p_cFlowAct_giver   = giver;
+% if there is flux order check that is consistent
 if ~isfield(p.cCycleBase,'fluxOrder')
     p.cCycleBase.fluxOrder = 1:numel(taker);
 else

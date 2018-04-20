@@ -1,3 +1,7 @@
 function [f,fe,fx,s,d,p] = cTaufwSoil_none(f,fe,fx,s,d,p,info,tix)
-d.cTaufwSoil.fwSoil(:)=1;
+
+% 
+d.cTaufwSoil.fwSoil 		= ones(pix,tix);
+s.prev.cTaufwSoil_fwSoil 	= ones(Npix,1);
+
 end % function

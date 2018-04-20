@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
 % for ii = {'cf2Root','cf2Wood','cf2Leaf'}
 %     d.cAlloc.(ii{1})	= p.cAlloc.(ii{1}) .* ones(size(f.Tair));
 % end
-
+s.cd.cAlloc=zeros(pix,zix);
 % distribute the allocation according to pools...
 cpNames = {'cVegRoot','cVegWood','cVegLeaf'};
 for cpn = 1:numel(cpnames)
