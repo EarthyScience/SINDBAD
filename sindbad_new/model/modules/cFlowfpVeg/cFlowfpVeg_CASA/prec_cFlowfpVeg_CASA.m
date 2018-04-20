@@ -1,21 +1,21 @@
 function [fe,fx,d,p,f] = prec_cFlowfpVeg_CASA(f,fe,fx,s,d,p,info)
 % effect of vegetation on transfer rates between pools (Potter et al 1993)
 
-p.cFlowfpVeg.fVeg = zeros(numel(info.tem.model.c.nZix));
+s.cd.p_cFlowfpVeg_fVeg = zeros(nPix,numel(info.tem.model.c.nZix));
 
 % ADJUST cTransfer BASED ON PARTICULAR PARAMETERS...
 %   SOURCE,TARGET,FACTOR
 aM	= {
-    'cVegLeaf',     'cLitLeafM',    p.cTaufpVeg.MTF;
-    'cVegLeaf',     'cLitLeafS',    1 - p.cTaufpVeg.MTF;
+    'cVegLeaf',     'cLitLeafM',    s.cd.p_cTaufpVeg_MTF;
+    'cVegLeaf',     'cLitLeafS',    1 - s.cd.p_cTaufpVeg_MTF;
     'cVegWood',     'cLitWood',     1;
-    'cVegRootF',    'cLitRootFM',   p.cTaufpVeg.MTF;
-    'cVegRootF',    'cLitRootFS',   1 - p.cTaufpVeg.MTF;
+    'cVegRootF',    'cLitRootFM',   s.cd.p_cTaufpVeg_MTF;
+    'cVegRootF',    'cLitRootFS',   1 - s.cd.p_cTaufpVeg_MTF;
     'cVegRootC',    'cLitRootC',    1;
-    'cLitLeafS',    'cSoilSlow',    p.cTaufpVeg.SCLIGNIN;
-    'cLitLeafS',    'cMicSurf',     1 - p.cTaufpVeg.SCLIGNIN;
-    'cLitRootFS',   'cSoilSlow',    p.cTaufpVeg.SCLIGNIN;
-    'cLitRootFS',   'cMicSoil',     1 - p.cTaufpVeg.SCLIGNIN;
+    'cLitLeafS',    'cSoilSlow',    s.cd.p_cTaufpVeg_SCLIGNIN;
+    'cLitLeafS',    'cMicSurf',     1 - s.cd.p_cTaufpVeg_SCLIGNIN;
+    'cLitRootFS',   'cSoilSlow',    s.cd.p_cTaufpVeg_SCLIGNIN;
+    'cLitRootFS',   'cMicSoil',     1 - s.cd.p_cTaufpVeg_SCLIGNIN;
     'cLitWood',     'cSoilSlow',    p.cFlowfpVeg.WOODLIGFRAC;
     'cLitWood',     'cMicSurf',     1 - p.cFlowfpVeg.WOODLIGFRAC;
     'cLitRootC',    'cSoilSlow',    p.cFlowfpVeg.WOODLIGFRAC;
@@ -31,7 +31,7 @@ for ii = 1:size(aM,1)
     ndxTrg = info.tem.model.variables.states.c.zix.(aM{ii,1});
     for iSrc = 1:numel(ndxSrc)
         for iTrg = 1:numel(ndxTrg)
-            p.cFlowfpVeg.fVeg(ndxTrg(iTrg),ndxSrc(iSrc)) = aM{ii,3};
+            s.cd.p_cFlowfpVeg_fVeg(ndxTrg(iTrg),ndxSrc(iSrc)) = aM{ii,3};
         end
     end
 end

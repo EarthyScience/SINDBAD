@@ -55,11 +55,11 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
     
     % scalars of maintenance respiration for models A, B and C
     % km is the maintenance respiration coefficient (d-1)
-    d.cd.RAact_km(:,zix)    = 1 ./ p.RAact.C2N(:,zix) .* RMN .* d.RAfTair.fT(:,tix);
-    d.cd.RAact_km4su(:,zix)	= d.cd.RAact_km(:,zix) .* p.RAact.YG;
+    s.cd.p_RAact_km(:,zix)    = 1 ./ p.RAact.C2N(:,zix) .* RMN .* fe.RAfTair.fT(:,tix);
+    s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix) .* p.RAact.YG;
     
     % maintenance respiration first: R_m = km * C
-    s.cd.RA_M(:,zix)	= d.cd.RAact_km(:,zix) .* s.c.cEco(:,zix);
+    s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = (1 - YG) * (GPP * allocationToPool - R_m)
     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.RA_M(:,zix));

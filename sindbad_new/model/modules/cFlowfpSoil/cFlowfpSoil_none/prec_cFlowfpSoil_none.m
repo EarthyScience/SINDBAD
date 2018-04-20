@@ -1,4 +1,3 @@
 function [fe,fx,d,p,f] = prec_cFlowfpSoil_none(f,fe,fx,s,d,p,info)
-% no effect = 1;
-s.cd.cFlowfpSoil = ones(info.tem.helpers.npix,info.tem.helpers.nzix.c);
+s.cd.p_cFlowfpSoil_fSoil = zeros(numel(info.tem.model.nPix),numel(info.tem.model.nZix));
 end %function

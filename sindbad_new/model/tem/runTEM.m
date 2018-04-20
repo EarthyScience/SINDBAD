@@ -78,7 +78,7 @@ p	= info.tem.params;
 % 3 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
 % if the required inputs for spin up don't exist as inputs to the runTEM
-% generate as empy
+% generate as empty
 vars4spinup = {'SUData','fSU','infoSU','precOnceDataSU',...
             'fxSU','feSU','dSU','sSU'};
 for v = vars4spinup

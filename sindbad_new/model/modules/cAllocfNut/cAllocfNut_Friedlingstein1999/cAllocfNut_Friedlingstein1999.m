@@ -14,12 +14,12 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % estimate NL
 NL                          = p.cAllocfNut.minL.*ones(size(f.PET(:,tix)));
 ndx                         = f.PET(:,tix) > 0;
-NL(ndx)                     = fe.cAllocfTsoil.NL_fT(ndx) .* fe.cAllocfwSoil.NL_fW(ndx);
+NL(ndx)                     = fe.cAllocfTsoil.NL_fT(ndx) .* d.cAllocfwSoil.NL_fW(ndx);
 NL(NL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL(NL <= p.cAllocfNut.minL);
 NL(NL >= p.cAllocfNut.maxL)	= p.cAllocfNut.maxL(NL >= p.cAllocfNut.maxL);
 
 % water limitation calculation
-WL                          = s.w.wSoil(:,tix) ./ p.psoil.tAWC;
+WL                          = s.w.wSoil(:,1) ./ p.psoil.tAWC;
 WL(WL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL(WL <= p.cAllocfNut.minL);
 WL(WL >= p.cAllocfNut.maxL) = p.cAllocfNut.maxL(WL >= p.cAllocfNut.maxL); %% check if p.cAlloc.maxL and p.cAlloc.minL should used p.cAlloc.maxL_fW?
 
