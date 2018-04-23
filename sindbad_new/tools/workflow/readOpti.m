@@ -52,20 +52,14 @@ end
 
 %% 3) read the cost function
 info.opti.costFun.costFunsFile	= convertToFullPaths(info.opti.costFun.costFunsFile);
-costFunName                     = info.opti.costFun.funName;
+costName                        = info.opti.costFun.costName;
 
 try
     costFun_json                     = readJsonFile(info.opti.costFun.costFunsFile);
-    
-    if ~isnan(costFun_json.(costFunName).funName)
-        info.opti.costFun.(costFunName).funName = costFun_json.(costFunName).funName;
-    else
-        info.opti.costFun.(costFunName)  = costFun_json.(costFunName);
-        info.opti.costFun.(costFunName)  = rmfield(info.opti.costFun.(costFunName),'funName');
-    end
-    
+    info.opti.costFun.(costName)     = costFun_json.(costName);
+   
 catch
-    error(['MSG: readOpti : cost function : ' costFunName ' not existing in: ' info.opti.costFun.costFunsFile ])
+    error(['MSG: readOpti : cost function : ' costName ' not existing in: ' info.opti.costFun.costFunsFile ])
 end
 
 

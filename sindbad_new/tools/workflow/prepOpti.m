@@ -22,6 +22,12 @@ obs = info.opti.constraints.funHandle.import(info);
 % config file and created here
 % obs.unc.(VariableName)
 
+% fun_fields = fieldnames(info.opti.constraints.funName);
+% for jj=1:numel(fun_fields)
+%    info.opti.constraints.funHandle.(fun_fields{jj}) = str2func(info.opti.constraints.funName.(fun_fields{jj})); 
+% end
+% 
+% obs = info.opti.constraints.funHandle.import(info);
 
 
 %% 2) check constraints (not implemented yet)
@@ -29,7 +35,9 @@ obs = info.opti.constraints.funHandle.import(info);
 
 
 %% 3) create function handle for the cost function
-% see: costFromFile
+info.opti.costFun.(info.opti.costFun.costName).funHandle = str2func(info.opti.costFun.(info.opti.costFun.costName).funName); 
+
+
 
 
 
