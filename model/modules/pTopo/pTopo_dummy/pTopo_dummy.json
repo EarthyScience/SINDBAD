@@ -1,0 +1,30 @@
+{
+	"params": {
+		"meanElev": {
+			"Name": NaN,
+			"Unit": "m",
+			"Default": 0,
+			"LowerBound": -100,
+			"UpperBound": 8000,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"percElev": {
+			"Name": NaN,
+			"Unit": NaN,
+			"Default": 0,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		}
+	}
+}

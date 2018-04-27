@@ -1,0 +1,191 @@
+# info
+## info
+### .experiment
+* .name
+* .domain
+* .gitVersion
+* .user
+* .runDate
+* configPaths
+    * forcing
+    * Subtopic 2
+### .tem
+* .model
+    * .approaches
+    * .modules
+    * .variables
+        * .input{36}
+        * .output{28}
+        * .all{47}
+        * .to
+            * .store
+            * .agg
+            * .keep
+            * .write
+        * .states
+            * .cPools
+            * .wPools
+    * .time
+        * .step
+        * sDate
+        * eDate
+        * .nYears
+        * .stepsPerDay
+        * .stepsPerYear
+    * .paths
+        * .coreTEM
+        * .tem
+        * .genCode
+        * .run
+    * .flags
+
+            The flags should always be 0 and 1
+        * .storeStates
+        * .storeFluxes
+        * .forwardRun
+        * .runGenCode
+        * .opti
+        * .generateCode
+        * .checks
+            * .massBalance
+                * .carbon
+                * .water
+            * .numeric
+            * .bounds
+    * .code
+        * .ms
+            * .getStates
+                * .runAlways
+                * .fun
+                * .funCont{1}
+                * .funPath{1}
+                * .funName{1}
+                * .funInput{1}
+                * .funOutput{1}
+            * Same for all modules
+        * .preComp(14)
+            * .runAlways
+            * .fun
+            * .funCont{8}
+            * .funPath{1}
+            * .funName{1}
+            * .funInput{2}
+            * .funOutput{1}
+        * .msGen
+            * .coreTEM
+            * .preComp
+* .forcing
+    * .fun
+        * .import
+        * .check
+    * .size
+* .params
+    * .module
+        * .param
+* .spinup
+    * .nYears
+        * .carbon
+        * .water
+    * .paths
+        * .restartFile
+    * .flags
+        * .recycleMSC
+        * .loadSpinup
+        * .runFastSpinup
+        * .forceNullNEP
+    * .rules
+        * .LimNEPSpinup
+        * .MaxIterSpinup
+    * .code
+        * .msGen
+            * .coreSpinUp
+            * .preCompSpinup
+* .postProcess
+* .helpers
+    * .Matrices
+        * .zeros2d
+        * .zeros1d
+        * .ones2d
+        * .ones1d
+        * .nan2d
+        * .nan1d
+### .opti
+* .constraints
+* .costFunction
+* .method
+* .params
+    * .Module.Name
+        * .Units
+        * .Default
+        * .LowerBound
+        * .UpperBound
+        * .Distribution
+            * .name
+            * .fun
+            * .parameters
+        * .Comment
+* .checks
+## controls the workflow of tem
+## how to optimize
+## don't know what is for
+## which parts of the info come from configuration files (the core is a configuration file) which are generated from the setup functions?
+## params
+### Terrain
+* meanElev
+* percElev
+### SOIL
+* tAWC
+* CLAY
+* SILT
+* SAND
+* InfCapacity
+* iniAWC
+* HeightLayer(2)
+    * value
+### VEG
+* PFT
+* TreeCover
+### SnowCover
+* CoverParam
+* SF_scale
+### Sublimation
+* alpha
+### SnowMelt
+* melt_T
+* melt_Rn
+### RunoffInt
+* berg
+* smax
+### BaseFlow
+* qt
+### SoilEvap
+* ETalpha
+* ETsup
+### priors
+* Terrain
+    * meanElev
+        * Unit
+        * Default
+        * LowerBound
+        * UpperBound
+        * Distribution
+        * p1
+        * p2
+        * p3
+        * p4
+        * p5
+        * Comment
+    * PercElev
+        * Unit
+        * Default
+        * LowerBound
+        * UpperBound
+        * Distribution
+        * p1
+        * p2
+        * p3
+        * p4
+        * p5
+        * Comment
+* Same for all parameters
+*XMind: ZEN - Trial Version*

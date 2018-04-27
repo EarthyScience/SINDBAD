@@ -1,0 +1,17 @@
+{
+	"params": {
+		"rc": {
+			"Name": "simply assume that a fraction of the still available water runs off",
+			"Unit": NaN,
+			"Default": 0.3,
+			"LowerBound": 0,
+			"UpperBound": 0.9,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds, should depend on topography"
+		}
+	}
+}

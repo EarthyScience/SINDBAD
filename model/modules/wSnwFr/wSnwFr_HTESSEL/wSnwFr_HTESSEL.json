@@ -1,0 +1,17 @@
+{
+	"params": {
+		"CoverParam": {
+			"Name": "Snow Cover Parameter",
+			"Unit": "mm",
+			"Default": 15,
+			"LowerBound": 1,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds"
+		}
+	}
+}

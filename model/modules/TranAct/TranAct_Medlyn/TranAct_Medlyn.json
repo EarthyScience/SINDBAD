@@ -1,0 +1,17 @@
+{
+	"params": {
+		"g1": {
+			"Name": "??? Check with martin",
+			"Unit": "kPa^0.5",
+			"Default": 3,
+			"LowerBound": 1.5,
+			"UpperBound": 9,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "from Sven"
+		}
+	}
+}
