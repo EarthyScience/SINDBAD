@@ -1,0 +1,329 @@
+{
+	"params": {
+		"CLAY": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 0.3,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"SILT": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 0.3,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"SAND": {
+			"Name": NaN,
+			"Unit": "[]",
+			"Default": 0.4,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"InfCapacity": {
+			"Name": NaN,
+			"Unit": "mm/hr",
+			"Default": 15,
+			"LowerBound": 1,
+			"UpperBound": 30,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "to be consistent this should be computed from texture..."
+		},
+		"HeightLayer1": {
+			"Name": "thickness of the layer",
+			"Unit": "m",
+			"Default": 0.25,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"HeightLayer2": {
+			"Name": "thickness of the layer",
+			"Unit": "m",
+			"Default": 0.75,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"iniAWC": {
+			"Name": NaN,
+			"Unit": "mm/m",
+			"Default": 50,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"a": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -4.396,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"b": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.0715,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"c": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.000488,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"d1": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -4.285E-5,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"e": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -3.14,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"f1": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.00222,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"g": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -3.484E-5,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"h": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 0.332,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"j": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.0007251,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"k": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 0.1276,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"m": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.108,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"n": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 0.341,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"p": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 12.012,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"q": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.0755,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"r": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -3.895,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"t": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 0.03671,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"u": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": -0.1103,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"v": {
+			"Name": "Saxton Parameters",
+			"Unit": "[]",
+			"Default": 0.00087546,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		}
+	}
+}

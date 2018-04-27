@@ -1,0 +1,17 @@
+{
+	"params": {
+		"isp": {
+			"Name": "fapar dependent storage",
+			"Unit": "[]",
+			"Default": 1,
+			"LowerBound": 0.1,
+			"UpperBound": 5,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds"
+		}
+	}
+}
