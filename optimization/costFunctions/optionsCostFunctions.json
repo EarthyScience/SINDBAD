@@ -1,0 +1,31 @@
+{
+	"A": {
+		"funName": "calcCostMultiConstraint",
+		"components": {
+			"GPP": {
+			"CostMetric": "SquaredDifferencesVector",
+			"CostWeight": [1],
+			"Trimming": false,
+			"minQualityFlag": [0.85],
+			"maxQualityFlag": [1],
+			"TemporalScale": "daily",
+			"SpatialScale": NaN,
+			"MultiConstraintMethod": "cat"
+		},
+		"NEE": {
+			"CostMetric": "SquaredDifferencesVector",
+			"CostWeight": [1],
+			"Trimming": false,
+			"minQualityFlag": [0.85],
+			"maxQualityFlag": [1],
+			"TemporalScale": "daily",
+			"SpatialScale": NaN,
+			"MultiConstraintMethod": "cat"
+		}
+		}
+	},
+	"CF9": {
+		"funName": "calcCostTWSPaper",
+		"SpatialScale": NaN
+	}
+}

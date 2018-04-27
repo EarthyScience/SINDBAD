@@ -1,0 +1,90 @@
+digraph {
+	graph [nodesep=0.2 pad=0.1 ranksep=1.2]
+	node [color=lightblue2 style=filled]
+	node [shape=box]
+	size="3,3"
+	fontsize=18
+	HowToRunTEM_TinasModel
+	tem
+	temFullSetup
+	doSpinUp
+	initTEMStruct
+	runModel
+	temAggStates
+	CheckCarbonBalance
+	CheckWaterBalance
+	CASA_fast
+	CASA_forceEquilibrium
+	mkSpinUpData
+	temHelpers
+	mkSpinUpYear
+	mkHvec
+	isleapyear
+	CheckInitialisedStates
+	InitializeVariables
+	PreAllocate
+	initCpools
+	initSMpools
+	splitZstr
+	core
+	SetupInfoModelStructure
+	temApproaches
+	temInfo
+	temParams
+	temStatesToSave
+	CheckPrecompAlways
+	GetAllInputsOutputs
+	GetInputOutputFromCode
+	GetModuleNamesFromCore
+	GetVariablesToRemember
+	ImportPrecsModules
+	WriteCode
+	check_ModelIntegrity
+	GetMfunctionContents
+	GatherCode
+	HowToRunTEM_TinasModel -> tem
+	HowToRunTEM_TinasModel -> temFullSetup
+	tem -> doSpinUp
+	tem -> initTEMStruct
+	tem -> runModel
+	tem -> temAggStates
+	tem -> CheckCarbonBalance
+	tem -> CheckWaterBalance
+	doSpinUp -> CASA_fast
+	doSpinUp -> CASA_forceEquilibrium
+	doSpinUp -> initTEMStruct
+	doSpinUp -> mkSpinUpData
+	doSpinUp -> runModel
+	doSpinUp -> temHelpers
+	mkSpinUpData -> mkSpinUpYear
+	mkSpinUpYear -> mkHvec
+	mkSpinUpYear -> isleapyear
+	initTEMStruct -> CheckInitialisedStates
+	initTEMStruct -> InitializeVariables
+	initTEMStruct -> PreAllocate
+	InitializeVariables -> initCpools
+	InitializeVariables -> initSMpools
+	PreAllocate -> splitZstr
+	runModel -> core
+	temFullSetup -> SetupInfoModelStructure
+	temFullSetup -> temApproaches
+	temFullSetup -> temHelpers
+	temFullSetup -> temInfo
+	temFullSetup -> temParams
+	temFullSetup -> temStatesToSave
+	SetupInfoModelStructure -> CheckPrecompAlways
+	SetupInfoModelStructure -> GetAllInputsOutputs
+	SetupInfoModelStructure -> GetInputOutputFromCode
+	SetupInfoModelStructure -> GetModuleNamesFromCore
+	SetupInfoModelStructure -> GetVariablesToRemember
+	SetupInfoModelStructure -> ImportPrecsModules
+	SetupInfoModelStructure -> WriteCode
+	SetupInfoModelStructure -> check_ModelIntegrity
+	GetModuleNamesFromCore -> GetMfunctionContents
+	GetVariablesToRemember -> splitZstr
+	ImportPrecsModules -> GatherCode
+	GatherCode -> GetMfunctionContents
+	WriteCode -> splitZstr
+	temApproaches -> GetModuleNamesFromCore
+	overlap=false
+}

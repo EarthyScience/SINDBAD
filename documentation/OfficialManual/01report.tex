@@ -1,0 +1,41 @@
+\documentclass[12pt,oneside]{practicum-report}
+\renewcommand{\baselinestretch}{1.5} 
+\renewcommand{\sfdefault}{cmss}
+\renewcommand{\familydefault}{\sfdefault}
+\begin{document}
+
+%% Use Roman numerals for the page numbers of the title pages and table of
+%% contents.
+\frontmatter
+
+\title[A Model Description]{SINDBAD Terrestrial Ecosystem Model}
+\author{Sujan Koirala}
+\affiliation{Max Planck Institute for Biogeochemistry}
+%\makecover
+
+%% Include an optional title page.
+\input{title}
+%\coverimage{Images/CUBoulder_1.png}
+
+\input{preface}
+
+\tableofcontents
+
+%% Use Arabic numerals for the page numbers of the chapters.
+%\renewcommand{\baselinestretch}{3.5}
+\mainmatter
+
+\input{chapter-1}
+\input{chapter-2}
+\input{chapter-3}
+\input{chapter-4}
+
+%% Use letters for the chapter numbers of the appendices.
+\appendix
+
+%\input{appendix-a}
+
+\bibliography{report}
+
+\end{document}
+
