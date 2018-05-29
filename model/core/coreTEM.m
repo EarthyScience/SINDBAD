@@ -174,7 +174,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     
     % store current states in previous state variables
      [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);
-    
+     
 end % END LOOP
 
 end % function
