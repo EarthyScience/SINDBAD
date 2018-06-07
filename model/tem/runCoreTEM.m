@@ -1,5 +1,7 @@
 function [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,doPrecOnce,doCore,doSpinUp)
 
+tstart = tic;
+
 %% ------------------------------------------------------------------------
 % get the handles for core and precOnce
 % -------------------------------------------------------------------------
@@ -26,7 +28,10 @@ if doCore
     hCore               =   info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
     [f,fe,fx,s,d,p]     =   hCore(f,fe,fx,s,d,p,info); 
 end
-% disp('endrunCoreTEM')
+disp(['    TIM : runCoreTEM : end : inputs : ' num2str([doPrecOnce,doCore,doSpinUp],'%1.0f|') ' : time : ' sec2som(toc(tstart))])
+
+
+
 end
 
 %{
