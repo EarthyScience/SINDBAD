@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_EvapInt_Gash_Miralles2010(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_EvapInt_Miralles2010(f,fe,fx,s,d,p,info)
 % #########################################################################
 % PURPOSE	: compute canopy interception evaporation according to the Gash
 % model.

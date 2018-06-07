@@ -271,7 +271,7 @@ for j = j_vec
     for ii = 1:info.forcing.size(2)
 
         % CALCULATE CARBON FLUXES
-        [fxT,sT]    = info.code.ms.AutoResp.fun(f,fe,fxT,sT,d,p,info,ii);
+        [fxT,sT]    = info.code.ms..fun(f,fe,fxT,sT,d,p,info,ii);
         [fxT,sT]    = info.code.ms.CCycle.fun(f,fe,fxT,sT,d,p,info,ii);
         
         
