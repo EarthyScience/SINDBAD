@@ -91,7 +91,7 @@ LAI13     = s.cd.p_cTaufLAI_LAI13;
         % FEED OUTPUTS
 		zix                             = info.tem.model.variables.states.c.zix.cVegLeaf;
         s.cd.p_cTaufLAI_kfLAI(:,zix)	= s.cd.p_cCycleBase_annk(:,zix) .* LTLAI ./ s.cd.p_cCycleBase_k(:,zix); % leaf litter scalar
-        if isfield(info.tem.model.variables.states.c,'cVegRootF')
+        if isfield(info.tem.model.variables.states.c.zix,'cVegRootF')
 			zix = info.tem.model.variables.states.c.zix.cVegRootF;
         else
             zix = info.tem.model.variables.states.c.zix.cVegRoot;
