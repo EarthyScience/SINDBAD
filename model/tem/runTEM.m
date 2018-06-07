@@ -1,4 +1,14 @@
-function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(info,f,varargin)
+function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(...
+    info,f,...          % minimal inputs
+    p,...               % variant #0
+    SUData,...          % variant #1
+    precOnceData,...    % variant #2
+    fx,fe,d,s, ...      % variant #3
+    infoSU,fSU,precOnceDataSU,...    % variant #4
+    fxSU,feSU,dSU,sSU)	% variant #5
+
+tstart = tic;
+
 % Terrestrial Ecosystem Model of SINDBAD
 %
 % types of calls
@@ -7,15 +17,20 @@ function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(info,f,varargin)
 %       f       : structure with the required forcing data
 %       info    : structure on how to run the model
 %
+% variant #0
+%   varargout   = runTEM(info,f,p)
+%       ... same as above +
+%       p       : parameter vector
+%
 % variant #1
-%   varargout   = runTEM(info,f,SUData)
+%   varargout   = runTEM(info,f,p,SUData)
 %       ... same as above +
 %       SUData  : structure with the subfields "sSpinUp" and "dSpinUp"
 %               which will be the initial conditions of the model if the
 %               flag info.tem.spinup.flags.runSpinup = false
 %
 % variant #2
-%   varargout   = runTEM(info,f,SUData,precOdata)
+%   varargout   = runTEM(info,f,p,SUData,precOdata)
 %       ... same as above +
 %       precOnceData    : structure with the subfields "fx", "fe", "d" and
 %                       "s" as coming out of the runCoreTEM precompute ONCE
@@ -29,16 +44,16 @@ function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(info,f,varargin)
 %       s   : initialized structure for states
 %
 % variant #4
-%   varargout	= runTEM(info,f,SUData,precOnceData,fx,fe,d,s, ...
-%               fSU)
+%   varargout	= runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s, ...
+%               infoSU, fSU)
 %       ... same as above +
+%       infoSU      : info for the spinup (analogous to info for TEM)
 %       fSU         : structure with the required forcing data for the
 %                   spinup
-%       infoSpin	: info for the spinup (analogous to info for TEM)
 %
 % variant #5
-%   varargout	= runTEM(info,f,SUData,precOnceData,fx,fe,d,s, ...
-%               fSU,infoSpin,fxSU,feSU,dSU,sSU)
+%   varargout	= runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s, ...
+%               infoSU,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU)
 %       ... same as above +
 %       fxSU	: initialized structure for fluxes during spinup
 %       feSU	: initialized structure for forcing extra during spinup
@@ -48,139 +63,96 @@ function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(info,f,varargin)
 %       NOTE    : this should be the version used during optimization. One
 %               can also run it like runTEM(info,f) ... but will give MSGs
 %               for inneficiency
+%       NOTE    : the logic is that only mandatory inputs are info and f.
+%               all the others are optional OR empty. When empty (or not
+%               given) they are created.
 %
 %% ------------------------------------------------------------------------
 % 1 - check TEM inputs
 % -------------------------------------------------------------------------
 % minimum requirements...
-% narginchk(2,14)
+minIn = 2;
+maxIn = 16;
+narginchk(minIn,maxIn)
 
-%--> sujan: parser of pairwise varargin
-nArgs = length(varargin);
-if round(nArgs/2)~=nArgs/2
-    errorMsg= ['runTEM has optional input arguments in pairs with the following variables :' ...
-        'SUData, ','precOnceData, ','fx, ','fe, ','d, ','s, ','p, ', ...
-        'fSU, ','infoSU, ','precOnceDataSU, ','fxSU, ','feSU, ','dSU, ','sSU'];
-    error(errorMsg)
+% input variable names
+inVarNames	= {'p','SUData','precOnceData','fx','fe','d','s',...
+            'infoSU','fSU','precOnceDataSU','fxSU','feSU','dSU','sSU'};
+
+% from last to first optional parameters, set them to [] when not included.
+for i = maxIn:-1:nargin+1
+    eval([inVarNames{i-minIn} ' = [];'])
 end
 
-inVarsAccepted      =   {'SUData','precOnceData','fx','fe','d','s','p'...
-    'fSU','infoSU','precOnceDataSU','fxSU','feSU','dSU','sSU'};
-
-for datPair     =   reshape(varargin,2,[]) % datPair is {varName:varData}
-    inpName      =   datPair{1};
-    eval([inpName ' = datPair{2};'])
-    if ~any(strcmp(inpName,inVarsAccepted))
-        error('%s is not a recognized variable of runTEM',inpName)
-    end
-end
-%<-- parser of pairwise varargin
-
-%sujan replaced the following with the above pair-wise
-% % get the inputs
-%
-% % inVarNames  = {'fx','fe','d','s','precOnceData','SUData',...
-% %             'fSU','infoSU','fxSU','feSU','dSU','sSU','precOnceDataSU'};
-% for i                   =   1:numel(varargin);eval([inVarNames{i} ' = varargin{i};']);end
-
-% flags needed to run the runTEM renamed runFlags.initialize to
-% runFlags.createStruct --> %sujan: might be better to put this flag as an
-% input to TEM to make sure that when runTEM is called during optimization
-% the objects and arrays are not always created
-
-runFlags.createStruct       =   false;
-runFlags.precompOnce        =   false;
+% flags needed to run the runTEM
+runFlags.createStruct	=   false;
+runFlags.precompOnce    =   false;
 
 % check the need for creating sindbad objects and arrays therein
-requirInitVars              =   {'fx','fe','d','s'};
+requirInitVars	= {'fx','fe','d','s'};
 if sum(cellfun(@(x)exist(x,'var'),requirInitVars)) < numel(requirInitVars)
-    runFlags.createStruct	=   true;
+    runFlags.createStruct	= true;
 end
 %% ------------------------------------------------------------------------
 % 2 - MODEL PARAMETERS
 % -------------------------------------------------------------------------
-disp('this needs checking because p becomes an output...')
-if ~exist('p','var')
-    p                           =   info.tem.params;
+if isempty(p)
+    p	=   info.tem.params;
 end
-% should I avoid creating  at any time?
-
-%%
-% ------------------------------------------------------------------------
+%% ------------------------------------------------------------------------
 % 3 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
-%--> if the required inputs for spin up don't exist as inputs to the runTEM
-% generate as empty
-vars4spinup             =   {'SUData','fSU','infoSU','precOnceDataSU',...
-    'fxSU','feSU','dSU','sSU'};
-for v   =	vars4spinup
-    if  ~exist(v{1},'var')
-        eval([v{1} ' = [];']);
-    end
+[sSU,dSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
+            fxSU,feSU,dSU,sSU);
+
+disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
+if isfield(sSU.prev,'s_c_cEco')
+disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+else
+disp('DBG : runSpinupTEM : cPools # / cEco  ')
+disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
 end
-% ----------------------------------------------------------------------------------------------
-%--> The SINDBAD is setup to always run a spinup.
-%    The rules for spinup and sequence are taken from spinup.json inside runSpinupTEM.
-%    The SINDBAD structures needed for spinup as per the size of spinup
-%    forcing is generated in there as well.
-%<--
-% -----------------------------------------------------------------------------------------------
-
-[sSU,dSU]               =   runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
-    fxSU,feSU,dSU,sSU);
-
 %% ------------------------------------------------------------------------
-% 4 - createStruct TEM structures
+% 4 - create TEM structures for the transient run
 % -------------------------------------------------------------------------
 if runFlags.createStruct 
-    disp('MSG : runTEM : creating SINDBAD objects and arrays ...')
-    [fe,fx,s,d,info]     =  createTEMStruct(info); %sujan
-    % should we set the runFlags.createStruct to false? %sujan
-        %--> the following might be unnecessary %sujan
-        if info.tem.model.flags.runOpti
-            disp(['MSG : runTEM :' ...
-                ' optiRun == ' num2str(info.tem.model.flags.runOpti) ...
-                ' but created SINDBAD objects with arrays are not provided : '...
-                ' The arrays will be created in every iteration of optimization'...
-                ' Extremely inefficient mode of running...'])
-        end
+    disp('MSG : runTEM : creating/initializing objects and arrays ...')
+    [fe,fx,s,d,info]	= createTEMStruct(info); %sujan
+    if info.tem.model.flags.runOpti
+        disp(['MSG : runTEM :' ...
+            ' optiRun == ' num2str(info.tem.model.flags.runOpti) ...
+            ' but created SINDBAD objects with arrays are not provided : '...
+            ' The arrays will be created in every iteration of optimization'...
+            ' Extremely inefficient mode of running...'])
+    end
 end
-
-disp('MSG : Spinup of runTEM : replacing default s and d.prev with Spinup output ...')
-% feed the end states of spinup to the initial condition of the forward
+% and feed the end states of spinup to the initial condition of the forward
 % model run
-%% spinup data
-if ~isempty(sSU), s=sSU; end
-if isempty(dSU), dSU = d; end
-if isfield(dSU,'prev')
-    d.prev       =  dSU.prev;
-end
-
-
-
+if ~isempty(sSU)        , s         = sSU;      end
+if isempty(dSU)         , dSU       = d;        end
+if isfield(dSU,'prev')  , d.prev	= dSU.prev;	end
 %% ------------------------------------------------------------------------
 % 5.0 - RUN THE MODEL
 % -------------------------------------------------------------------------
-% for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
+for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     % this is where we can change the way to run the model, like, loading
     % data for every year (useful for large runs)
     % ---------------------------------------------------------------------
     % 5.1 - PRECOMPUTATIONS (ONCE)
     % ---------------------------------------------------------------------
-    if ~exist('precOnceData','var')
-        [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false); %sujan make sure to replace this with runPrecOnceTEM --> nuno
+    if isempty(precOnceData)
+        [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
+        precOnceData	= struct;
         for v = {'f','fe','fx','s','d','p'}
             eval(['precOnceData.(v{1})	= ' v{1} ';']);
         end
     else
         for v = {'f','fe','fx','d','p'}
             eval([v{1} ' = precOnceData.(v{1});']);
-            if strcmp(v{1},'d') %&& iStep == 1
-                d.prev       =  dSU.prev;
-            end
         end
     end
-    
+    % the previous steps should come from the spinup
+    if iStep == 1,  d.prev	= dSU.prev; end
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
@@ -188,7 +160,11 @@ end
     % ---------------------------------------------------------------------
     % ?.? - DO WE AGGREGATE STATES AND CHECK BALANCES HERE AND WRITE OUTPUT
     % ---------------------------------------------------------------------
-% end
+end
+
+disp(['    TIM : runTEM : end : time : ' sec2som(toc(tstart))])
+
+
 end % function
 
 %%
