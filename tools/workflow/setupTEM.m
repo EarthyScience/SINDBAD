@@ -70,7 +70,7 @@ if isfield(info.experiment,'outputInfoFile')
     if ~isempty(info.experiment.outputInfoFile)
         [pth,name,ext]          =   fileparts(info.experiment.outputInfoFile);
         if~exist(pth,'dir'),mkdir(pth);end
-        writeJsonFile(pth, [name ext], info);
+        savejsonJL('',info,info.experiment.outputInfoFile);
 %sujan        writeJsonFile(pth, [name ext], info);
     end
 else
