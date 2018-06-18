@@ -36,31 +36,34 @@ if ~isempty(tree)
             apprField = strsplit(apprField,'.');
             module    = char(apprField(end-1));
             % get the new approachName from the info
-            appr        = info.tem.model.modules.(module).apprName
+            appr        = info.tem.model.modules.(module).apprName;
             
             % remove previous params of changed approach
             % in tem
-            paramRem        = strfind(paramInput,module);
+%             paramRem        = strfind(paramInput,module); % did not work before if it was a pasrtial match...
+            paramRem        = strfind(paramInput,['p.' module '.']); % did not work before if it was a pasrtial match...
             idxRem          = find(~cellfun(@isempty,paramRem)); %the param that is removed            
-            % remove param names under modules
-            info.tem.params = rmfield(info.tem.params,module);
-            % remove them in list
-            paramInput(idxRem) = [];
-            
-            % in opti
-            if isfield(info, 'opti')
-                paramOpti   = info.opti.paramsList;
-                paramScale      = info.opti.paramsScale;
-                paramRemOpti    = strfind(paramOpti,module);
-                idxRemOpti      = find(~cellfun(@isempty,paramRemOpti)); %the params that is removed
+            if ~isempty(idxRem)
                 % remove param names under modules
-                info.opti.params = rmfield(info.opti.params,module);
+                info.tem.params = rmfield(info.tem.params,module);
                 % remove them in list
-                paramOpti(idxRemOpti)  = [];
-                paramScale(idxRemOpti) = [];
-                info.opti.paramsList    = paramOpti;
-                info.opti.paramsScale   = paramScale;
-                
+                paramInput(idxRem) = [];
+                % in opti
+                if isfield(info, 'opti')
+                    paramOpti   = info.opti.paramsList;
+                    paramScale      = info.opti.paramsScale;
+                    % paramRemOpti    = strfind(paramOpti,module); % did not work before if it was a pasrtial match...
+                    paramRemOpti    = strfind(paramOpti,['p.' module '.']);
+                    idxRemOpti      = find(~cellfun(@isempty,paramRemOpti)); %the params that is removed
+                    % remove param names under modules
+                    info.opti.params = rmfield(info.opti.params,module);
+                    % remove them in list
+                    paramOpti(idxRemOpti)  = [];
+                    paramScale(idxRemOpti) = [];
+                    info.opti.paramsList    = paramOpti;
+                    info.opti.paramsScale   = paramScale;
+
+                end
             end
             
             % load default parameter value

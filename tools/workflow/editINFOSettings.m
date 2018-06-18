@@ -21,12 +21,21 @@ function [info, subtree] = editINFOSettings(info, varargin)
 %       [info, subtree]	= editINFOSettings(info,'paths');
 
 %% 1) Load, unfold and separate all fieldnames (endnodes) of Info structure
-[infoFieldnames, ~] = getAllFieldnames(info,false,{},1);
+[infoFieldnames,~,infoFieldnamesPure] = getAllFieldnames(info,false,{},1);
+%{
 infoFieldnamesParts{1,size(infoFieldnames, 2)} = []; infoFieldnamesEndnodes{1,size(infoFieldnames, 2)} = []; 
 for ii = 1 : size(infoFieldnames, 2)
     infoFieldnamesParts{ii} = strsplit(infoFieldnames{ii}, '.');
     infoFieldnamesEndnodes(ii) = infoFieldnamesParts{ii}(1, end);
 end
+%}
+infoFieldnamesParts{1,size(infoFieldnamesPure, 2)} = []; infoFieldnamesEndnodes{1,size(infoFieldnamesPure, 2)} = []; 
+for ii = 1 : size(infoFieldnamesPure, 2)
+    infoFieldnamesParts{ii} = strsplit(infoFieldnamesPure{ii}, '.');
+    infoFieldnamesEndnodes(ii) = infoFieldnamesParts{ii}(1, end);
+end
+
+
 %% 2) Check and read varargin
 if nargin == 2 && numel(varargin) ~= 0
     findPosInd = strfind(infoFieldnames, varargin{1});
@@ -58,7 +67,9 @@ for ii = 1 : size(keySet,2)
         case 1  
             subtree{ii} = infoFieldnames(1,findPosInd);
             info = setfield(info, infoFieldnamesParts{findPosInd}{2:end}, valueSet{ii}); %#ok<SFLD>            
-            disp([infoFieldnames{findPosInd} ' changed successfully to:']);disp(valueSet{ii});      
+            % disp([infoFieldnames{findPosInd} ' changed successfully to:']);disp(valueSet{ii});      
+            disp(['MSG : editINFOSettings : ' infoFieldnamesPure{findPosInd} ' changed successfully to:']);
+            disp(valueSet{ii});      
         otherwise
             %disp(infoFieldnames(1,findPosInd)');
             subtree{ii} = infoFieldnames(1,findPosInd);

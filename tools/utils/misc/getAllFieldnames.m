@@ -1,4 +1,4 @@
-function [allFieldnames, cnt_allFieldnames] = getAllFieldnames(SC,varargin)
+function [allFieldnames, cnt_allFieldnames,allFieldnamesPure] = getAllFieldnames(SC,varargin)
 %UNFOLD Unfolds a structure.
 %   UNFOLD(SC) displays the content of a variable. If SC is a structure it
 %   recursively shows the name of SC and the fieldnames of SC and their
@@ -126,6 +126,7 @@ else
     end
 end
 
+allFieldnamesPure = cellfun(@(x)strtok(x,'{'),allFieldnames,'UniformOutput',false);
 
 %local functions
 %--------------------------------------------------------------------------

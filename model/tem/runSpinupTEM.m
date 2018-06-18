@@ -19,21 +19,16 @@ function [sSU,dSU] = runSpinupTEM(f,info,p,SUData,fSU,infoSU,...
 %
 % #########################################################################
 %% ------------------------------------------------------------------------
-% 1 - LOAD THE SPINUP FROM MEMORY OR FILES
-% -------------------------------------------------------------------------%--> sujan: parser of pairwise varargin
-% nArgs = length(varargin);
-% if round(nArgs/2)~=nArgs/2
-%     errorMsg= ['runSpinupTEM has optional input arguments in pairs with the following variables :' ...
-%         'SUData, ','precOnceData, ','fx, ','fe, ','d, ','s, ','p, ', ...
-%         'fSU, ','infoSU, ','precOnceDataSU, ','fxSU, ','feSU, ','dSU, ','sSU'];
-%     error(errorMsg)
-% end
-
-
+% 1 - LOAD THE SPINUP FROM MEMORY OR FROM RESTART FILE
+% -------------------------------------------------------------------------
 if info.tem.spinup.flags.loadSpinup
     % load the spinup file "restart.mat" inside the run path
     load(info.tem.spinup.paths.restartFile)
     % this needs to output sSU and dSU
+    if sum(strcmp(who,'sSU')) ~= 1 || sum(strcmp(who,'dSU')) ~= 1
+        error('ERR : runSpinupTEM : restart file does not have sSU or dSU')
+    end
+    disp('MSG : runSpinupTEM : loaded sSU and dSU from restart file')
     return
 elseif~info.tem.spinup.flags.runSpinup
     % in this case we need to have SUData
@@ -42,13 +37,13 @@ elseif~info.tem.spinup.flags.runSpinup
             % get the initial conditions from memory
             sSU	= SUData.sSpinUp;
             dSU	= SUData.dSpinUp;
+            disp('MSG : runSpinupTEM : SUData.sSpinUp and SUData.dSpinUp from memory!')
         else
-            error('No SUData.sSpinUp and SUData.dSpinUp in memory!')
+            error('ERR : runSpinupTEM : no SUData.sSpinUp and SUData.dSpinUp in memory!')
         end
     end
     return
 end
-
 %% ------------------------------------------------------------------------
 % 2 - RUN THE SPINUP
 % -------------------------------------------------------------------------
@@ -63,13 +58,7 @@ end
 % -------------------------------------------------------------------------
 % Make the spinup data - only if it is an empty input
 % -------------------------------------------------------------------------
-if isempty(fSU)
-    if info.tem.spinup.flags.recycleMSC
-        fSU	= prepSpinupData(f,info);
-    else
-        fSU	= f;
-    end
-end
+if isempty(fSU), fSU	= prepSpinupData(f,info); end
 % -------------------------------------------------------------------------
 % Adjust the info structure - only if it is an empty input
 % -------------------------------------------------------------------------
@@ -83,24 +72,19 @@ if isempty(infoSU)
     if info.tem.spinup.flags.recycleMSC
         infoSU.tem.model.nYears	= 1; % should come from info.tem.s
     else
-        disp('using one forward run for model spinup');
-        
-%         error(['we need to code here the initialization of the tem ' ...
-%         'helpers for the spinup and maybe more things... ' ...
-%         'not save anything and so on...'])
+        disp('MSG : runSpinupTEM : using one forward run for model spinup')
     end
 end
 % -------------------------------------------------------------------------
 % Pre-allocate fx,fe,d,s for the spinup runs
 % -------------------------------------------------------------------------
 if runFlags.createStruct
- [feSU,fxSU,sSU,dSU,infoSU]	= createTEMStruct(infoSU);
+    [feSU,fxSU,sSU,dSU,infoSU]	= createTEMStruct(infoSU);
 end
 % -------------------------------------------------------------------------
 % the parameters
 % -------------------------------------------------------------------------
 pSU	= p;
-% pSU	= info.tem.params;
 % -------------------------------------------------------------------------
 % Precomputations DO ONLY PRECOMP ALWAYS HERE - if an empty input...
 % -------------------------------------------------------------------------
@@ -117,28 +101,29 @@ else
         eval([v{1} ' = precOnceData.(v{1});']);
     end
 end
-% runCoreTEM(f,fe,fx,s,d,p,info,doPrecOnce,doCore,doSpinUp)
 % -------------------------------------------------------------------------
 % complete spinup sequence
 % -------------------------------------------------------------------------
 spinSequence = info.tem.spinup.sequence;
 for iss = 1:numel(spinSequence)
     % get handles, inputs and number of loops
-    funHandleSpin	= str2func(spinSequence(iss).funHandleSpin)
-    addInputs       = spinSequence(iss).funAddInputs
-    nLoops          = spinSequence(iss).nLoops     % number of loops
+    funHandleSpin	= str2func(spinSequence(iss).funHandleSpin);
+    addInputs       = spinSequence(iss).funAddInputs;
+    nLoops          = spinSequence(iss).nLoops;
+    if ~iscell(addInputs),addInputs = num2cell(addInputs');end
+    disp(['MSG : runSpinupTEM : sequence : funHandleSpin    : ' spinSequence(iss).funHandleSpin])
+%     disp(['MSG : runSpinupTEM : sequence : funAddInputs     : ' spinSequence(iss).funAddInputs])
+    disp(['MSG : runSpinupTEM : sequence : nLoops           : ' num2str(spinSequence(iss).nLoops)])
     if ~isempty(spinSequence(iss).funHandleStop)
         funHandleStop   = str2func(spinSequence(iss).funHandleStop);
     else
         funHandleStop   = spinSequence(iss).funHandleStop;
     end
-    % funHandleStop   = @(x_fxSU,x_nepLim)~any(max(abs(sum(x_fxSU.npp,2)-sum(x_fxSU.rh,2)))>x_nepLim);
     % go for it
     for ij = 1:nLoops
         % run spinup
         [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
-            funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs(1),addInputs(2),addInputs(3));
-% sujan replaced the add input to separate ones            funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs(:));
+            funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs{:});
         % stop it according to function criteria?
         if ~isempty(funHandleStop)
             % true is stop now, false continues
@@ -146,9 +131,16 @@ for iss = 1:numel(spinSequence)
                 break
             end
         end
+%%
+disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
+if isfield(sSU.prev,'s_c_cEco')
+disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+else
+disp('DBG : runSpinupTEM : cPools # / cEco  ')
+disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
+end
     end
 end
-% disp('spinupend')
 %{
 % -------------------------------------------------------------------------
 % run the model for spin-up for NPP and soil water pools @ equilibrium
