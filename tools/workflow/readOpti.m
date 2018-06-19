@@ -8,7 +8,14 @@ function [info] = readOpti(info)
 %   2) read method to use for optimization
 
 %% 1) read params to optimize 
-paramsList = info.opti.params;
+paramsList  = info.opti.params2opti;
+info.opti        =   rmfield(info.opti,'params2opti');
+% paramsList  = info.opti.params;
+upbounds    =   [];
+lowbounds   =   [];
+pdefault    =   [];
+
+
 % parameter scalars to optimize
 info.opti.paramsScale   	= ones(size(paramsList));
 
@@ -29,25 +36,35 @@ for jj=1:numel(paramsList)
         if isnan(params.(module).(paramName).LowerBound),   params.(module).(paramName).LowerBound    = -Inf; end
         if isnan(params.(module).(paramName).UpperBound),   params.(module).(paramName).UpperBound    = +Inf; end
         % add the existing params to the list of params to optimize
-        paramsList{jj} = ['p.' paramsList{jj}];
+        paramsList{jj}              =   ['p.' paramsList{jj}];
+        lowbounds                   =   [lowbounds params.(module).(paramName).LowerBound];
+        upbounds                   =   [upbounds params.(module).(paramName).UpperBound];
+        pdefault                   =   [pdefault params.(module).(paramName).Default];
     catch
         error(['MSG: readOpti : module or parameter name not existing : ' mod_param])
     end
 end
 
-info.opti.params     = params;
-info.opti.paramsList = paramsList;
+info.opti.params.names          = paramsList;
+info.opti.params.uBounds        = upbounds;
+info.opti.params.uBoundsScaled  = upbounds ./ pdefault;
+info.opti.params.lBounds        = lowbounds;
+info.opti.params.lBoundsScaled  = lowbounds ./ pdefault;
+info.opti.params.defaults       = pdefault;
+info.opti.params.defScalars     = pdefault./pdefault;
+% info.opti.params     = params;
+info.opti.paramsList            = paramsList;
 
 %% 2) read method for optimization
 
-info.opti.method.methodsFile	= convertToFullPaths(info.opti.method.methodsFile);
+defOptionsFile                  = convertToFullPaths(info.opti.method.defaultOptimOptions);
 methodName                      = info.opti.method.funName;
 
+method_json                     = readJsonFile(defOptionsFile);
 try
-method_json                     = readJsonFile(info.opti.method.methodsFile);
 info.opti.method.options        = method_json.method.(methodName);
 catch
-    error(['MSG: readOpti : optimization method : ' methodName ' not existing in: ' info.opti.method.methodsFile ])
+    error(['MSG: readOpti : optimization method : ' methodName ' not existing in: ' defOptionsFile ])
 end
 
 %% 3) read the cost function
@@ -56,7 +73,7 @@ costName                        = info.opti.costFun.costName;
 
 try
     costFun_json                     = readJsonFile(info.opti.costFun.costFunsFile);
-    info.opti.costFun.(costName)     = costFun_json.(costName);
+    info.opti.costFun.funName     = costFun_json.(costName).funName;
    
 catch
     error(['MSG: readOpti : cost function : ' costName ' not existing in: ' info.opti.costFun.costFunsFile ])
