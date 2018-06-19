@@ -178,21 +178,3 @@ for tix = 1:info.tem.helpers.sizes.nTix
 end % END LOOP
 
 end % function
-%{
-NOTES:
-A) In this code, we should use the following strategy, e.g. for ET:
-if ET is not a forcing (~exist('f.ET','var'))
-    compute ET
-
-for ET and GPP - this allows us to force the model with different
-datastreams
-
-B) from 1->3 depends on the WAI flags (which we should start calling the
-
-C) check mass balance in all different calculations (at each iteration or
-in the end? In the end: saves time)
-
-D) don't forget to output the stressors for the spinup inside the
-diagnostics structure (d) to be used in the calc_cflux_fast
-
-%}
