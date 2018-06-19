@@ -23,12 +23,14 @@ obs = info.opti.constraints.funHandle.import(info);
 %% 2) check constraints 
 % so far based checkData4TEM.m 
 if isfield(info.opti.constraints.funHandle, 'check') && ~isempty(info.opti.constraints.funHandle.check)
-    [info,obs] = info.opti.constraints.funHandle.check(info,obs);
-    
+    [info,obs] = info.opti.constraints.funHandle.check(info,obs);    
 end
 
-%% 3) create function handle for the cost function
-info.opti.costFun.(info.opti.costFun.costName).funHandle = str2func(info.opti.costFun.(info.opti.costFun.costName).funName); 
+%% 3) create function handle for the cost function and optimizer
+info.opti.costFun.funHandle = str2func(info.opti.costFun.funName); 
+info.opti.method.funHandle = str2func(info.opti.method.funName); 
+% info.opti.costFun.(info.opti.costFun.costName).funHandle =
+% str2func(info.opti.costFun.(info.opti.costFun.costName).funName); %sujan
 
 
 

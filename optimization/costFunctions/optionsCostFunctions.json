@@ -24,7 +24,7 @@
 		}
 		}
 	},
-	"CF9": {
+	"calcCostTWSPaper": {
 		"funName": "calcCostTWSPaper",
 		"SpatialScale": NaN
 	}

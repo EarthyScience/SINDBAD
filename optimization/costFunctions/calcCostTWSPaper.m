@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p, cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
+function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
 
 % cost function used in the TWS Paper (Trautmann et al. 2018)
 % tVec      = vector with month (M)
@@ -21,20 +21,24 @@ xMonth      = [datetime(info.tem.model.time.sDate),datetime(info.tem.model.time.
 % function
 try
     TWSobs          = obs.TWSobs;
-    TWSobs_uncert   = obs.unc.TWSobs;
+    TWSobs_uncert   = 0.1 .* obs.TWSobs;
+%     TWSobs_uncert   = obs.unc.TWSobs; %sujan
     SWEobs          = obs.SWEobs;
     ETobs           = obs.Evapobs;
     Qobs            = obs.Qrobs;   
 catch
-    error('ERR: TWS, SWE, ET, Q or TWS uncertainty missing in observational constraints!');
+    warning('ERR: TWS, SWE, ET, Q or TWS uncertainty missing in observational constraints!');
 end
 
 % Monthly Aggregation of simulations
 try
-    TWSmod  = MonthlyAggregation(s.TWS,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    SWEmod  = MonthlyAggregation(s.SWE,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    ETmod   = MonthlyAggregation(fx.Evap,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    Qmod    = MonthlyAggregation(fx.Qr,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wGW);
+    
+%     ETmod_d     = fx.EvapSoil+fx.EvapSub;
+    TWSmod      = aggDay2Mon(squeeze(TWSmod_d),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    SWEmod      = aggDay2Mon(squeeze(d.storedStates.wSnow),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    ETmod       = aggDay2Mon(fx.ESoil,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    Qmod        = aggDay2Mon(fx.Q,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
 catch
     error('ERR: TWS, SWE, Evap or Qr  missing in model output!');
 end
@@ -45,7 +49,7 @@ end
 % valid data points
 v_tws = find(~isnan(TWSobs));
 v_swe = find(~isnan(SWEobs));
-v_q   = find(~isnan(Qrobs));
+v_q   = find(~isnan(Qobs));
 
 % TWS as time mean
 TWSmod(isnan(TWSobs)) = NaN;
@@ -72,10 +76,10 @@ Qmod(isnan(Qobs))  = NaN;
 sq_resid    =   sum((TWSobs(v_tws2)-TWSmod(v_tws2)).^2./(TWSobs_uncert(v_tws2).^2));
 sq_var      =   sum((TWSobs(v_tws2)-mean(TWSobs(v_tws2))).^2./(TWSobs_uncert(v_tws2).^2));
 
-aa1=sum((TWSobs(v_tws2)-TWSmod(v_tws2)).^2);
-aa2=sum((TWSobs(v_tws2)-mean(TWSobs(v_tws2))).^2);
+% aa1=sum((TWSobs(v_tws2)-TWSmod(v_tws2)).^2);
+% aa2=sum((TWSobs(v_tws2)-mean(TWSobs(v_tws2))).^2);
 
-aa=aa1/aa2;
+% aa=aa1/aa2;
 
 costTWS     =   sq_resid/sq_var;
 
@@ -92,8 +96,8 @@ sq_var                      =   sum((SWEobs(:)-mean(SWEobs(:))).^2./sig(:));
 costSWE     =   sq_resid/sq_var;
 
 %%%%% weighted MEF for MSC of ET with 10% uncertainty
-ETobs_MSC   =   CalcMSC(ETobs,tVec);
-ETmod_MSC   =   CalcMSC(ETmod,tVec);
+ETobs_MSC   =   calcMSC(ETobs,tVec);
+ETmod_MSC   =   calcMSC(ETmod,tVec);
 
 sig         =   max((0.1.*ETobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if ETobs = 0 0.1 mm 
 sq_resid    =   sum((ETobs_MSC(:)-ETmod_MSC(:)).^2./sig(:));
@@ -109,8 +113,8 @@ Qobs_v(v_q2)    =   Qobs(v_q2);
 Qmod_v(v_q2)    =   Qmod(v_q2);
 
 % calculate MSC
-Qobs_MSC        =   CalcMSC(Qobs_v,tVec);
-Qmod_MSC        =   CalcMSC(Qmod_v,tVec);
+Qobs_MSC        =   calcMSC(Qobs_v,tVec);
+Qmod_MSC        =   calcMSC(Qmod_v,tVec);
 
 % remove pixel with NaN in Qobs
 v_q3        =   find(~isnan(Qobs_MSC));
