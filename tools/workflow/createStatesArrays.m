@@ -1,5 +1,5 @@
 function [s,d,info] = createStatesArrays(info)
-
+% Creates the 
 % Usages:
 %   [s,d,info] = createStatesArrays(s,d,info)
 %
