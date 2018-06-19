@@ -27,7 +27,7 @@ info                 =  setupTEM(expConfigFile,varargin{:});
 [f,fe,fx,s,d,info]   =  prepTEM(info);
 
 
-[info, obs]          =  prepOpti(info);
+% [info, obs]          =  prepOpti(info);
 
 
 %% 3) run the model
