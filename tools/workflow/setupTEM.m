@@ -11,9 +11,10 @@ function info = setupTEM(expConfigFile,varargin)
 %       - set info.experiment
 %       - readConfigFiles
 %   2) editINFOSettings
-%   3) writeJsonFile of info
-%   4) generate code and check model structure integrity
-%   5) create helpers
+%   3) create the output folder structure
+%   4) writeJsonFile of info
+%   5) generate code and check model structure integrity
+%   x) create helpers -> done in prepTEM as also forcing etc is needed
 %   6) write the info structure in a mat file
 
 %% 1) check what is the input
@@ -29,8 +30,9 @@ if isstruct(expConfigFile) == 1
     info.experiment.oldSettings{k} = info.experiment;
     % stamp the experiment settings
     info = stampExperiment(info);
-    %sujan hack to avoid trying to save the full info in the json file
+    % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
+    
 elseif exist(expConfigFile,'file')
     %% 
     % note: this part can be outsorced to a initINFOFromConfig in case this
@@ -38,34 +40,43 @@ elseif exist(expConfigFile,'file')
     
     % is a file, assume a standard configuration file and read it
     info.experiment                 =   readJsonFile(expConfigFile);
-    % convert info.experiment.configFiles paths to absolute paths
+    % absolute paths of the config files
     info.experiment.configFiles     =   convertToFullPaths(info.experiment.configFiles);
-    info.experiment.outputInfoFile	=   convertToFullPaths(info.experiment.outputInfoFile);
-    info.experiment.outputDirPath	=   convertToFullPaths(info.experiment.outputDirPath);
+        
     % stamp the experiment settings
     info    = stampExperiment(info);
+    
     % read the TEM configurations
     info    = readConfigFiles(info,'tem',true);
+    
     % read the OPTI configurations (if it exists)
     if isfield(info.experiment.configFiles,'opti')
         if ~isempty(info.experiment.configFiles.opti)
             info = readConfigFiles(info,'opti',false);
         end
     end
-	% set the generated code filenames into the info
-	info 	= setGenCodePaths(info);
-    % convert paths in info to absolute paths
-    info.tem.model.paths	= convertToFullPaths(info.tem.model.paths);
-    info.tem.spinup.paths   = convertToFullPaths(info.tem.spinup.paths);
-    [info] = createStatesInfo(info);
+    
+    
+    [info]  = createStatesInfo(info);
     
 end
 
 %% 2) edit the settings of the TEM based on the function inputs
 [info, tree]	=   editINFOSettings(info,varargin{:});
-[info]      =   adjustInfo(info, tree);
+[info]          =   adjustInfo(info, tree);
 
-%% 3) write the info in a json file
+%% 3) paths & output folder structure
+% set the paths and output folder structure
+[info]  = setExperimentPaths(info);
+
+% create the output folder structure
+if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath); end
+% copy the settings there (assuming they are in the same folder as the
+% expConfigFile
+[pth,~,~] = fileparts(expConfigFile)
+copyfile(pth,[info.experiment.outputDirPath filesep 'settings' filesep])
+
+%% 4) write the info in a json file
 if isfield(info.experiment,'outputInfoFile')
     if ~isempty(info.experiment.outputInfoFile)
         [pth,name,ext]          =   fileparts(info.experiment.outputInfoFile);
@@ -77,20 +88,17 @@ else
     disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
 end
 
-%% 4) generate code and check model structure integrity
+%% 5) generate code and check model structure integrity
 [info] = setupCode(info);
+
 %% setup the information of states to info.tem.model.variables.states.
 % if isfield(info.tem.model.variables.states,'input')
 %     [info] = createStatesInfo(info);
 % end;
 %%
 
-
-%%
-
 % info.runPrecOnceTEM
-%% 5) create helpers
 
-%% 6) write the info structure in a mat file
+%% 6) write the info structure in a mat file ?
 
 end
