@@ -26,5 +26,6 @@ if numel(bf) <= numel(str)
         bf = '';
     end
 end
-str = strrep(getFullPath([bf str]),'\','/');
+%str = strrep(getFullPath([bf str]),'\','/');
+str = replace(getFullPath([bf str]),{'/','\'},filesep);
 end
