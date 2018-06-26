@@ -10,7 +10,7 @@ function [f,fe,fx,s,d,info]   =     prepTEM(info)
 %   1) prepForcing
 %   2) prepSpinup
 %   3) prepParams
-%   4) createArrays4Model
+%   4) createArrays4Model (helpers)
 %   5) runPrec
 
 %% 1) prepare forcing data
@@ -54,7 +54,8 @@ end
 
 %% note: this was in the setupTEM
 % create the output path if it not yet exists
-if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath);end
+if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath);
+elseif exist(info.experiment.outputDirPath, 'dir', ;end
 
 
 end
