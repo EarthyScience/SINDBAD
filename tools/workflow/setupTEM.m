@@ -66,27 +66,26 @@ end
 [info]          =   adjustInfo(info, tree);
 
 %% 3) paths & output folder structure
-% set the paths and output folder structure
+% set the paths
 [info]  = setExperimentPaths(info);
 
 % create the output folder structure
 if ~exist(info.experiment.outputDirPath, 'dir'), mkdir(info.experiment.outputDirPath); end
 % copy the settings there (assuming they are in the same folder as the
-% expConfigFile
-[pth,~,~] = fileparts(expConfigFile)
-copyfile(pth,[info.experiment.outputDirPath filesep 'settings' filesep])
+% expConfigFile)
+[pth,~,~] = fileparts(expConfigFile);
+copyfile(pth,[info.experiment.outputDirPath filesep 'settings' filesep]);
 
 %% 4) write the info in a json file
-if isfield(info.experiment,'outputInfoFile')
-    if ~isempty(info.experiment.outputInfoFile)
-        [pth,name,ext]          =   fileparts(info.experiment.outputInfoFile);
-        if~exist(pth,'dir'),mkdir(pth);end
-        savejsonJL('',info,info.experiment.outputInfoFile);
+savejsonJL('',info,info.experiment.outputInfoFile);
+% if isfield(info.experiment,'outputInfoFile')
+%     if ~isempty(info.experiment.outputInfoFile)
+%         [pth,name,ext]          =   fileparts(info.experiment.outputInfoFile);
+%         if~exist(pth,'dir'),mkdir(pth);end
+%         savejsonJL('',info,info.experiment.outputInfoFile);
+%     end
+% end
 %sujan        writeJsonFile(pth, [name ext], info);
-    end
-else
-    disp('MSG : setupTEM : no "outputInfoFile" was provided : the info structure will not be saved')
-end
 
 %% 5) generate code and check model structure integrity
 [info] = setupCode(info);
