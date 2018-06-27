@@ -107,13 +107,15 @@ for ii = 1:numel(fldnmsINFO)
             
             % feed list of params
             info.(whatWorkFlow).model.variables.paramInput = paramInput;
-            % feed the paths
+            
+            % feed the paths of the core and the modules
             info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
         case 'output'
             % set variables for output and storage
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
             info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.write;
+         
         case 'opti'
             % read opti cofigurations
              info.(whatWorkFlow)	= data_json;
