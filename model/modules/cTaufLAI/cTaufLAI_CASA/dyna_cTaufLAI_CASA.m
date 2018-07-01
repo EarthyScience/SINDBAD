@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % FUNCTION	: cTaufLAI_CASA
 % 
@@ -50,7 +50,7 @@ LAI13     = s.cd.p_cTaufLAI_LAI13;
 
         % FEED LAI13
         LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY); 
-        LAI13(:, 1) = f.LAI(:,tix);
+        LAI13(:, 1) = s.cd.LAI(:,tix);
 
         % CALCULATE DELTA LAI SUM
         dLAIsum                 = LAI13(:, 2:TSPY + 1) - LAI13(:, 1:TSPY);

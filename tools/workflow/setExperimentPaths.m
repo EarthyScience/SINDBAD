@@ -12,7 +12,7 @@ function [ info ] = setExperimentPaths(info)
 %   based on the outputDirPath in the experiment.json
 %       ++ if no/only whitespace for outputDirPath is given, a default name
 %       using the experiment name, domain and runDate is defined
-%       ++ if the output directory already exists, a new path using 
+%       ++ if the output directory already exists, a new path using
 %       the experiment name, domain and runDate is created as subfolder
 %   + checks if paths of forcing and constraints exists and converts them
 %   to absolute paths
@@ -35,13 +35,13 @@ if isfield(info.experiment, 'name')
     info.experiment.name(info.experiment.name == ' ') = [];
     name = info.experiment.name;
 else
-    name = 'unnamedExperiment';
+    name = 'SINDBAD_Experiment';
     info.experiment.name = name;
 end
 
 if isfield(info.experiment, 'domain')
     info.experiment.domain(info.experiment.domain== ' ') = [];
-    domain = info.experiment.domain;    
+    domain = info.experiment.domain;
 end
 
 % default for experiment / path name
@@ -51,52 +51,78 @@ default_tmp = [name '_' domain '_' info.experiment.runDate];
 if isfield(info.experiment, 'outputDirPath')
     info.experiment.outputDirPath(info.experiment.outputDirPath == ' ') = [];
     if ~isempty(info.experiment.outputDirPath)
-         info.experiment.outputDirPath  = replace(info.experiment.outputDirPath,{'/','\'},filesep);
+        info.experiment.outputDirPath  = replace(info.experiment.outputDirPath,{'/','\'},filesep);
         % check whether it is an absolute path
         if strcmp(getFullPath(info.experiment.outputDirPath), info.experiment.outputDirPath)==1
-            outputDirPath_full = info.experiment.outputDirPath;
+            outputDirPath_full = [info.experiment.outputDirPath];
+            %            outputDirPath_full = [info.experiment.outputDirPath filesep
+            %            default_tmp filesep]; %sujan
         else
             outputDirPath_full = convertToFullPaths(info.experiment.outputDirPath);
         end
     else
-        outputDirPath_def               = ['output' filesep default_tmp filesep];
+        outputDirPath_def               = ['data' filesep 'output'];
+        %         outputDirPath_def               = ['data' filesep 'output'
+        %         filesep default_tmp filesep]; %sujan
         outputDirPath_full              = convertToFullPaths(outputDirPath_def);
-        disp(['MSG : setupTEM : no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])     
+        disp(['WARN PATH: setExperimentPaths : no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
     end
 else
     % default output directory
-    outputDirPath_def               = ['output' filesep default_tmp filesep];
+    %     outputDirPath_def               = ['output' filesep default_tmp
+    %     filesep]; %sujan
+    outputDirPath_def               = ['data' filesep 'output'];
+    
     outputDirPath_full              = convertToFullPaths(outputDirPath_def);
-    disp(['MSG : setupTEM : no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
+    disp(['WARN PATH: setExperimentPaths: no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
 end
 
+outputDirPath_full = [outputDirPath_full filesep default_tmp filesep];
 
 
 %% check if the outputDirPath already exists -> if so, rename it
-ii = 0;
-outputDirPath_new = outputDirPath_full;
-while exist(outputDirPath_new, 'dir')
-    outputDirPath_new  =    [outputDirPath_full default_tmp '_v' num2str(ii) filesep];
-    ii = ii+1;
-end
-
-if ii > 0
-    outputDirPath_full =    outputDirPath_new;
-    default_tmp        =    [default_tmp '_v' num2str(ii)];
-    disp(['MSG : setupTEM : the outputDirPath: ' info.experiment.outputDirPath ' already exists' newline  'a default output path is created: ' outputDirPath_new  ]) 
-end
+% sujan... only create one folder per experiment per day.
+% ii = 0;
+% outputDirPath_new = outputDirPath_full;
+% while exist(outputDirPath_new, 'dir')
+%     outputDirPath_new  =    [outputDirPath_full default_tmp '_v' num2str(ii) filesep];
+%     ii = ii+1;
+% end
+%
+% if ii > 0
+%     outputDirPath_full =    outputDirPath_new;
+%     default_tmp        =    [default_tmp '_v' num2str(ii)];
+%     disp(['MSG : setupTEM : the outputDirPath: ' info.experiment.outputDirPath ' already exists' newline  'a default output path is created: ' outputDirPath_new  ])
+% end
 
 %% put the full outputDirPath in the info
 info.experiment.outputDirPath	=   outputDirPath_full;
 
 %% set the output info.json file -should this be a filename or absolute path?
-info.experiment.outputInfoFile =    [outputDirPath_full 'Info_' default_tmp '.json'];
+info.experiment.outputInfoFile          =    [outputDirPath_full filesep 'settings' filesep 'Info_' default_tmp '.json'];
+info.experiment.modelOutputDirPath      =    [outputDirPath_full filesep 'modelOutput' filesep];
+info.experiment.settingsOutputDirPath   =    [outputDirPath_full filesep 'settings' filesep];
+
+if ~exist(info.experiment.outputDirPath, 'dir')
+    mkdir(info.experiment.outputDirPath)
+end
+if ~exist(info.experiment.modelOutputDirPath, 'dir')
+    mkdir(info.experiment.modelOutputDirPath)
+end
+if ~exist(info.experiment.settingsOutputDirPath, 'dir')
+    mkdir(info.experiment.settingsOutputDirPath)
+end
 
 %% set the runDir path
 info.tem.model.paths.runDir    =    info.experiment.outputDirPath;
 
 %% set the generated code filenames into the info
 % info 	= setGenCodePaths(info);
+% unique name for the generated code files according to experiment name and to runDate.
+
+tmpStrName	= [info.experiment.name '_' info.experiment.domain '_' info.experiment.runDate];
+tmpStrName  = strrep(strrep(tmpStrName,' ','_'),'-','_');
+
 for n1 = {'model','spinup'}
     str1 = '';
     if strcmp(n1{1},'spinup'),str1='_Spinup';end
@@ -112,10 +138,11 @@ for n1 = {'model','spinup'}
             end
         end
         if feedIt
-            info.tem.(n1{1}).paths.genCode.(n2{1})	= [info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '.m'];
+            info.tem.(n1{1}).paths.genCode.(n2{1})	= [info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '_' tmpStrName '.m'];
         end
     end
 end
+info.experiment.modelrunLogFile     =    [info.experiment.modelOutputDirPath filesep 'log_ModelRun_' tmpStrName '.txt'];
 
 
 %% convert paths in info to absolute paths
@@ -128,39 +155,56 @@ info.tem.spinup.paths.restartFile      =   convertToFullPaths(info.tem.spinup.pa
 for ii=1:numel(info.tem.forcing.VariableNames)
     var_tmp = info.tem.forcing.VariableNames{ii};
     pth_tmp = info.tem.forcing.(var_tmp).DataPath;
-    if exist(pth_tmp)~= 0
-        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-            info.tem.forcing.(var_tmp).DataPath = convertToFullPaths(pth_tmp);
-        end
-    else
-        warning(['MSG: path for forcing variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+        info.tem.forcing.(var_tmp).DataPath = convertToFullPaths(pth_tmp);
+        pth_tmp = info.tem.forcing.(var_tmp).DataPath;
+    end
+    if exist(pth_tmp) == 0
+        warning(['PATH MISS: path for forcing variable ' var_tmp ': ' pth_tmp ' does not exist!']);
     end
 end
 
 %paths of constraints
 if isfield(info,'opti')
-    for ii=1:numel(info.opti.constraints.VariableNames)
-        var_tmp = info.opti.constraints.VariableNames{ii};
-        pth_tmp = info.opti.constraints.(var_tmp).DataPath;
-        if exist(pth_tmp)~= 0
+    if info.tem.model.flags.runOpti
+        for ii=1:numel(info.opti.constraints.VariableNames)
+            var_tmp = info.opti.constraints.VariableNames{ii};
+            pth_tmp = info.opti.constraints.(var_tmp).DataPath;
             if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
                 info.opti.constraints.(var_tmp).DataPath = convertToFullPaths(pth_tmp);
+                pth_tmp = info.opti.constraints.(var_tmp).DataPath;
             end
-        else
-            warning(['MSG: path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
-        end
-        %for observational uncertainties
-        if ~isempty(info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath)
-            pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
-            if exist(pth_tmp)~= 0
+            if exist(pth_tmp) == 0
+                warning(['PATH MISS: path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+            end
+            %for observational uncertainties
+            if ~isempty(info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath)
+                pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
                 if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
                     info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath = convertToFullPaths(pth_tmp);
+                    pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
+                end
+                if exist(pth_tmp) == 0
+                    warning(['PATH MISS: path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
                 end
             else
-                warning(['MSG: path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                disp(['PATH MISS: no uncertainty data for observational ' var_tmp ' provided']);
             end
-        else
-            disp(['MSG: no uncertainty data for observational ' var_tmp ' provided']);
+            %for Quality Flags
+            if isfield(info.opti.constraints.(var_tmp),'QualityFlag')
+                if ~isempty(info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath)
+                    pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
+                    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                        info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath = convertToFullPaths(pth_tmp);
+                        pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
+                    end
+                    if exist(pth_tmp) == 0
+                        warning(['PATH MISS: path for quality flag of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                    end
+                else
+                    disp(['WARN MISS: no quality flag data for observational ' var_tmp ' provided']);
+                end
+            end
         end
     end
 end
