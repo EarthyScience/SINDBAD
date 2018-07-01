@@ -5,6 +5,7 @@ pages:
     - Concept & Definitions: concept.md
     - SINDBAD info: info.md
     - SINDBAD Structures: structures.md
-    - Conventions: conventions.md
+    - Coding Conventions: conventions.md
     - Configuration Files: configuration.md
+    - SINDBAD Optimization: optimization.md 
 theme: readthedocs

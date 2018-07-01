@@ -1,8 +1,9 @@
 {
-	"A": {
 		"funName": "calcCostMultiConstraint",
-		"components": {
-			"GPP": {
+		"components": 
+		{
+		"gpp": 
+			{
 			"CostMetric": "SquaredDifferencesVector",
 			"CostWeight": [1],
 			"Trimming": false,
@@ -11,8 +12,9 @@
 			"TemporalScale": "daily",
 			"SpatialScale": NaN,
 			"MultiConstraintMethod": "cat"
-		},
-		"NEE": {
+			},
+		"NEE": 
+		{
 			"CostMetric": "SquaredDifferencesVector",
 			"CostWeight": [1],
 			"Trimming": false,
@@ -23,9 +25,4 @@
 			"MultiConstraintMethod": "cat"
 		}
 		}
-	},
-	"calcCostTWSPaper": {
-		"funName": "calcCostTWSPaper",
-		"SpatialScale": NaN
-	}
 }
