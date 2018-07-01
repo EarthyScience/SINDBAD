@@ -1,5 +1,5 @@
 function [info] = readConfigFiles(info, whatWorkFlow, stopIfMissField)
-%% reads configuration files for TEM, opti or postProcessing and puts them into the info
+%% reads configuration files for TEM, postProcessing and puts them into the info
 % INPUT:    info
 %           whatworkflow:   tem OR opti OR postprocessing
 % OUTPUT:   info
@@ -18,14 +18,15 @@ switch lower(whatWorkFlow)
     case 'tem' %creates all the substructures (fieldnames) of info.tem
         fldnmsINFO      = {'modelRun','modelStructure','spinup','forcing','constants','output'};%'params'
         
-    case 'opti' %creates all the substructures (fieldnames) of info.opti
-        fldnmsINFO = {'opti'};
+%     case 'opti' %creates all the substructures (fieldnames) of info.opti
+%         fldnmsINFO = {'opti'};
         
     case 'postprocessing'
         fldnmsINFO = {};
         
     otherwise
-        error(['ERR : readConfigFiles : not a known sindbad workflow : ' whatWorkFlow])
+        warning('CRIT CONCEPT: readConfigFiles only [modelRun,modelStructure,spinup,forcing,constants,output,params] are accepted')
+        error(['CRIT CONCEPT: readConfigFiles ' whatWorkFlow ' is not a known part of SINDBAD workflow (branch of opti)'])
 end
 
 %% 2) loop through the fieldnames
@@ -40,8 +41,8 @@ for ii = 1:numel(fldnmsINFO)
     catch
         isAllOK     = false;
         missFields  = [missFields ' ' fldnmsINFO{ii} ';'];
-        disp(['MSG: readConfigFiles : is not in a configuration file! issue reading configuration file for : ' ...
-			whatWorkFlow ' : ' fldnmsINFO{ii} ' : ' info.experiment.configFiles.(fldnmsINFO{ii})])
+        disp(['MISS: readConfigFiles : ' fldnmsINFO{ii} 'is missing in the configuration file for ' ...
+			whatWorkFlow ' : ' info.experiment.configFiles.(fldnmsINFO{ii})])
         continue
     end
     
@@ -88,9 +89,10 @@ for ii = 1:numel(fldnmsINFO)
                 
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).runFull     = data_json.modules.(module_fields{jj, 1}).runFull;
+                info.(whatWorkFlow).model.modules.(module_fields{jj}).use4spinup     = data_json.modules.(module_fields{jj, 1}).use4spinup;
                 
                 % read parameter information of the approaches
-                file_json   = convertToFullPaths(['./model/modules/' module_fields{jj} '/' module_fields{jj} '_' approachName  '/' module_fields{jj} '_' approachName '.json']);
+                file_json   = convertToFullPaths([filesep 'model' filesep 'modules' filesep module_fields{jj} filesep module_fields{jj} '_' approachName  filesep module_fields{jj} '_' approachName '.json']);
                 if exist(file_json,'file')
                     param_json    = readJsonFile(file_json);
                     paramName     = fieldnames(param_json.params);
@@ -101,33 +103,32 @@ for ii = 1:numel(fldnmsINFO)
                     end
                     
                 else
-                    disp(['MSG : readConfigFiles : no parameter config file (json) existing for : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
+                    disp(['MISS CONFIG: readConfigFiles : parameter config file (json) missing : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
                 end
             end
             
             % feed list of params
             info.(whatWorkFlow).model.variables.paramInput = paramInput;
-            
-            % feed the paths of the core and the modules
+            % feed the paths
             info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
             
         case 'output'
             % set variables for output and storage
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
             info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.write;
-         
-        case 'opti'
-            % read opti cofigurations
-             info.(whatWorkFlow)	= data_json;
-             info = readOpti(info);
-            
+%         case 'opti'
+%             if info.tem.model.flags.runOpti
+%                 % read opti cofigurations
+%                 info.(whatWorkFlow)	= data_json;
+%                 info = readOpti(info);
+%             end
         otherwise % these include 'spinup' and all other cases
             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
     end
 end
 
 if stopIfMissField && isAllOK == false
-    error(['MSG: readConfigFiles : missing necessary fields in configuration files : ' missFields])
+    error(['CRIT: readConfigFiles : necessary fields are missing in configuration files : ' missFields])
 end
 
 

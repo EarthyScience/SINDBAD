@@ -1,4 +1,4 @@
-function X = calc_cvp(Obs, Pre, parameter, varargin)
+function X = calcCVP(Obs, Pre, parameter, varargin)
 % #########################################################################
 % CALCULATE CALIBRATION AND VALIDATION PARAMETERS.
 % X = calc_cvp(Obs, Est, parameter)

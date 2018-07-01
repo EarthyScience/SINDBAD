@@ -2,9 +2,9 @@
 % rootFolder = 'D:\Git\matRad\';
 % rootFunction = 'matRad.m';
 
-rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad/sandbox/testOpti/';
-rootFunction = 'testSiteOpti.m';
-outputPath = 'callGraphSB_testOpti.JSON';
+rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad_playground/sandbox/sb_runOpti_regio/';
+rootFunction = 'run_Forward_FluxNet.m';
+outputPath = 'callGraphSB_run_Forward_FluxNet.JSON';
 % 
 % rootFolder = '/Volumes/Kaam/Matlab_Works/sindbad/sandbox/TWS_Paper/';
 % rootFunction = 'HowToRunTEM_TinasModel.m';
