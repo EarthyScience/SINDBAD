@@ -1,7 +1,5 @@
 function [fe,fx,d,info] = createVariablesArrays(d,info)
-
-% Usages: 
-%   [f,fe,fx,d,info] = createVariablesArrays(f,fe,fx,d,info)
+% Creates the arrays for non-state variables
 %
 % Requires: 
 %   + a list of variables to:
