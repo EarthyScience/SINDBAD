@@ -1,4 +1,4 @@
-function [info] = readOpti(info)
+function [info] = setupOpti(info)
 %% reads configuration files for opti  and puts them into the info
 % INPUT:    info
 % OUTPUT:   info
@@ -14,10 +14,10 @@ if ~isempty(info.experiment.configFiles.opti)
     try
         data_json	= readJsonFile(info.experiment.configFiles.opti);
     catch
-        error('CRIT: readOpti: opti configuration file is missing');
+        error('CRIT FILEMISS: setupOpti: The main optimization configuration (opti.json) is missing');
     end
 else
-    error('CRIT: setupTEM: runOpti in modelRun configuration file is set to true, the configuration for optimization (opti json file) is not provided in experimental setup');
+    error('CRIT MISMATCH: setupOpti: runOpti in modelRun configuration file is set to true, the configuration for optimization (opti json file) is not provided in experimental setup');
 end
 % read opti cofigurations
 info.opti	= data_json;
@@ -45,7 +45,7 @@ for jj=1:numel(paramsList)
     try
         %read parameter info of the approaches
         
-        paramFile       = convertToFullPaths([sindbadroot './model/modules/' char(module) '/' char([module '_' apprName]) '/' char([module '_' apprName]) '.json']);
+        paramFile       = convertToFullPaths(info,[info.experiment.sindbadroot './model/modules/' char(module) '/' char([module '_' apprName]) '/' char([module '_' apprName]) '.json']);
         param_json      = readJsonFile(paramFile);
         params.(module).(paramName)   = param_json.params.(paramName);
         % make sure at least that the ranges are -Inf and +Inf
