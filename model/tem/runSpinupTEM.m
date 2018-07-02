@@ -1,4 +1,4 @@
-function [sSU,dSU] = runSpinupTEM(f,info,p,SUData,fSU,infoSU,...
+function [fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU] = runSpinupTEM(f,info,p,SUData,fSU,infoSU,...
     precOnceDataSU,fxSU,feSU,dSU,sSU)
 % varargin
 % #########################################################################
@@ -52,9 +52,13 @@ end
 % -------------------------------------------------------------------------
 runFlags.createStruct = false;
 requirInitVars      = {'fxSU','feSU','dSU','sSU'};
-if sum(cellfun(@(x)exist(x,'var'),requirInitVars)) < numel(requirInitVars)
+if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
     runFlags.createStruct	= true;
 end
+%sujan
+% if sum(cellfun(@(x)exist(x,'var'),requirInitVars)) < numel(requirInitVars)
+%     runFlags.createStruct	= true;
+% end
 % -------------------------------------------------------------------------
 % Make the spinup data - only if it is an empty input
 % -------------------------------------------------------------------------
@@ -66,8 +70,11 @@ if isempty(infoSU)
     % make a new info for spin up based on info...
     infoSU	= info;
     % adjust the nTix
-    tmp     						= fieldnames(fSU);
+    tmp     						= fieldnames(fSU); % sujan the size of variable YEAR in fSU remains the same as original data. So, this variable should not be used to determine nTIX in next step
+    
+%     tmp     						= fieldnames(orderfields(fSU));
     newNTix 						= size(fSU.(tmp{1}),2);
+%     newNTix 						= size(fSU.(tmp{1}),2);
     infoSU.tem.helpers.sizes.nTix 	= newNTix;
     if info.tem.spinup.flags.recycleMSC
         infoSU.tem.model.nYears	= 1; % should come from info.tem.s
@@ -98,7 +105,8 @@ if isempty(precOnceDataSU)
     end
 else
     for v = {'fSU','feSU','fxSU','sSU','dSU','pSU'}
-        eval([v{1} ' = precOnceData.(v{1});']);
+        eval([v{1} ' = precOnceDataSU.(v{1});']);
+        %sujan added SU at the end of precOnceData
     end
 end
 % -------------------------------------------------------------------------
@@ -132,13 +140,13 @@ for iss = 1:numel(spinSequence)
             end
         end
 %%
-disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-if isfield(sSU.prev,'s_c_cEco')
-disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-else
-disp('DBG : runSpinupTEM : cPools # / cEco  ')
-disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
-end
+% disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
+% if isfield(sSU.prev,'s_c_cEco')
+% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+% else
+% disp('DBG : runSpinupTEM : cPools # / cEco  ')
+% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
+% end
     end
 end
 %{

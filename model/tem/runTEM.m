@@ -1,14 +1,10 @@
-function [f,fe,fx,s,d,p,precOnceData,sSU,dSU] = runTEM(...
-    info,f,...          % minimal inputs
-    p,...               % variant #0
-    SUData,...          % variant #1
-    precOnceData,...    % variant #2
-    fx,fe,d,s, ...      % variant #3
-    infoSU,fSU,precOnceDataSU,...    % variant #4
-    fxSU,feSU,dSU,sSU)	% variant #5
-
-tstart = tic;
-
+function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU] = runTEM(info,f,    ...                      % minimal inputs
+    p,...                           % variant #0
+    SUData,...                      % variant #1
+    precOnceData,...                % variant #2
+    fx,fe,d,s, ...                  % variant #3
+    infoSU,fSU,precOnceDataSU,...   % variant #4
+    fxSU,feSU,dSU,sSU)              % variant #5
 % Terrestrial Ecosystem Model of SINDBAD
 %
 % types of calls
@@ -71,6 +67,7 @@ tstart = tic;
 % 1 - check TEM inputs
 % -------------------------------------------------------------------------
 % minimum requirements...
+tstart = tic;
 minIn = 2;
 maxIn = 16;
 narginchk(minIn,maxIn)
@@ -81,8 +78,20 @@ inVarNames	= {'p','SUData','precOnceData','fx','fe','d','s',...
 
 % from last to first optional parameters, set them to [] when not included.
 for i = maxIn:-1:nargin+1
-    eval([inVarNames{i-minIn} ' = [];'])
+    inVar = inVarNames{i-minIn};
+    eval([inVar ' = [];'])
 end
+% for i = maxIn:-1:nargin+1
+%     inVar = inVarNames{i-minIn};
+%     if ~exist(inVar,'var')
+% % 
+% %         disp('variable exists')
+% %     else
+% % %         if ~isempty(eval(inVarNames{i-minIn}))
+%     eval([inVar ' = [];'])
+% %     end
+%     end
+% end
 
 % flags needed to run the runTEM
 runFlags.createStruct	=   false;
@@ -90,7 +99,23 @@ runFlags.precompOnce    =   false;
 
 % check the need for creating sindbad objects and arrays therein
 requirInitVars	= {'fx','fe','d','s'};
-if sum(cellfun(@(x)exist(x,'var'),requirInitVars)) < numel(requirInitVars)
+% sumRVars = numel(requirInitVars);
+% for rv = 1:numel(requirInitVars)
+%     if isempty(eval(requirInitVars{rv}))
+% %     if exist(char(requirInitVars{rv}),'var')
+%         sumRVars = sumRVars - 1;
+%     end
+% end
+%  
+% if sumRVars < numel(requirInitVars)
+% % if sumRVars <= numel(requirInitVars)
+%     runFlags.createStruct	= true;
+% end
+% % sujan
+% if sum(cellfun(@(x)exist('x','var'),requirInitVars)) < numel(requirInitVars)
+%     runFlags.createStruct	= true;
+% end
+if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
     runFlags.createStruct	= true;
 end
 %% ------------------------------------------------------------------------
@@ -102,16 +127,20 @@ end
 %% ------------------------------------------------------------------------
 % 3 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
-[sSU,dSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
+% sujan
+% [sSU,dSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
+%             fxSU,feSU,dSU,sSU);
+[fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
             fxSU,feSU,dSU,sSU);
 
-disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-if isfield(sSU.prev,'s_c_cEco')
-disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-else
-disp('DBG : runSpinupTEM : cPools # / cEco  ')
-disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
-end
+
+% disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
+% if isfield(sSU.prev,'s_c_cEco')
+% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+% else
+% disp('DBG : runSpinupTEM : cPools # / cEco  ')
+% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
+% end
 %% ------------------------------------------------------------------------
 % 4 - create TEM structures for the transient run
 % -------------------------------------------------------------------------
@@ -120,7 +149,7 @@ if runFlags.createStruct
     [fe,fx,s,d,info]	= createTEMStruct(info); %sujan
     if info.tem.model.flags.runOpti
         disp(['MSG : runTEM :' ...
-            ' optiRun == ' num2str(info.tem.model.flags.runOpti) ...
+            ' runOpti == ' num2str(info.tem.model.flags.runOpti) ...
             ' but created SINDBAD objects with arrays are not provided : '...
             ' The arrays will be created in every iteration of optimization'...
             ' Extremely inefficient mode of running...'])
@@ -152,7 +181,7 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
         end
     end
     % the previous steps should come from the spinup
-    if iStep == 1,  d.prev	= dSU.prev; end
+    if iStep == 1, if isfield(dSU,'prev'), d.prev	= dSU.prev; end; end %isfield added by sujan
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
@@ -162,7 +191,8 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     % ---------------------------------------------------------------------
 end
 
-disp(['    TIM : runTEM : end : time : ' sec2som(toc(tstart))])
+% disp(['    TIM : runTEM : end : time : ' sec2som(toc(tstart))])
+disp(['    TIME : runTEM : Total Time Needed: ' sec2som(toc(tstart))])
 
 
 end % function
