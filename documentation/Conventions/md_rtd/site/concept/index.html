@@ -62,10 +62,33 @@
     <a class="current" href="./">Concept & Definitions</a>
     <ul class="subnav">
             
-    <li class="toctree-l2"><a href="#main-components">Main Components</a></li>
+    <li class="toctree-l2"><a href="#sindbad-concepts">SINDBAD Concepts</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#info">info</a></li>
+        
+            <li><a class="toctree-l3" href="#tem">TEM</a></li>
+        
+            <li><a class="toctree-l3" href="#core">core</a></li>
+        
+            <li><a class="toctree-l3" href="#module">module</a></li>
+        
+            <li><a class="toctree-l3" href="#approach">approach</a></li>
+        
+            <li><a class="toctree-l3" href="#experiment">experiment</a></li>
+        
+            <li><a class="toctree-l3" href="#model-structure">model structure</a></li>
+        
+            <li><a class="toctree-l3" href="#precomputation">precomputation</a></li>
+        
+        </ul>
     
 
-    <li class="toctree-l2"><a href="#main-conceptual-terms">Main Conceptual Terms</a></li>
+    <li class="toctree-l2"><a href="#generated-code">generated code</a></li>
+    
+
+    <li class="toctree-l2"><a href="#reduced-memory">reduced memory</a></li>
     
 
     </ul>
@@ -83,12 +106,17 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../conventions/">Conventions</a>
+    <a class="" href="../conventions/">Coding Conventions</a>
 	    </li>
           
             <li class="toctree-l1">
 		
     <a class="" href="../configuration/">Configuration Files</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../optimization/">SINDBAD Optimization</a>
 	    </li>
           
         </ul>
@@ -123,50 +151,33 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="main-components">Main Components</h1>
-<p><img alt="" src="../media/simpleConcept.png" /></p>
-<p>Figure: A simple schematic of main SINDBAD components and conceptual
-flow (dotted arrows are the functional calls)</p>
-<p>The SINDBAD framework provides a seamless integration of model and
-multiple data streams using different optimization schemes. For that,
-modularity regarding model structure, input/output handling and model
-optimization are key. These information on selected approaches and
-options are provided through configuration files, and they are stored in
-a consistent way in different SINDBAD objects and structures, so that
-the model technically always sees the same information. Fundamentally,
-SINDBAD consists of the following components:</p>
+                <p><img alt="" src="../media/simpleConcept.png" /></p>
+<p>Figure: A simple schematic of main SINDBAD components and conceptual flow (dotted arrows are the functional calls)</p>
+<h1 id="sindbad-concepts">SINDBAD Concepts</h1>
+<p>The SINDBAD framework provides a seamless integration of model and multiple data streams using different optimization schemes. For that, modularity regarding model structure, input/output handling and model optimization are key. These information on selected approaches and options are provided through configuration files, and they are stored in a consistent way in different SINDBAD objects and structures, so that the model technically always sees the same information. Fundamentally, SINDBAD consists of the following components:</p>
+<h2 id="info">info</h2>
+<ul>
+<li>The info is essentially the brain of SINDBAD.</li>
+<li>Technically, it is a structure that stores all the information needed to read the data, run and/or optimize the model, and processthe output.</li>
+<li>This information together defines the experimental setup
+    and are read and processed from different configuration files.</li>
+</ul>
+<h2 id="tem">TEM</h2>
 <ul>
 <li>
-<p>The '<strong>info'</strong>: The info is essentially the brain of SINDBAD.
-    Technically, it is a structure that stores all the information
-    needed to read the data, run and/or optimize the model, and process
-    the output. This information together defines the experimental setup
-    and are read and processed from different configuration files.</p>
+<p>TEM stands for Terrestrial Ecosystem Model, and provides functionalities for running the model in several modes, such as for spinup, forward run, precomputation, etc.</p>
 </li>
-<li>
-<p>The '<strong>TEM</strong>': TEM stands for Terrestrial Ecosystem Model, and
-    provides functionalities for running the model in several modes,
-    such as for spinup, forward run, precomputation, etc.</p>
-<ul>
 <li>
 <p>TEM includes four functions:</p>
 <ul>
 <li>
-<p><strong><em>runTEM</em></strong>: The main function that runs the
-    precomputation, spinup. Both these functions execute
-    coreTEM.</p>
+<p><strong><em>runTEM</em></strong>: The main function that runs the precomputation, spinup. Both these functions execute coreTEM.</p>
 </li>
 <li>
-<p><strong><em>runPrecOnceTEM</em></strong>: Runs the precomputation "once". It
-    refers to precomputations that do not need to be redone in
-    every iteration of optimization because the outcome is
-    independent of the optimized parameter(s).</p>
+<p><strong><em>runPrecOnceTEM</em></strong>: Runs the precomputation "once". It refers to precomputations that do not need to be redone in every iteration of optimization because the outcome is independent of the optimized parameter(s).</p>
 </li>
 <li>
-<p><strong><em>runSpinupTEM</em></strong>: Runs the model in spinup mode. Only the
-    subset of modules that are needed for the spinup are run.
-    Unlike precomputations, the spin up is redone every time in
-    optimization.</p>
+<p><strong><em>runSpinupTEM</em></strong>: Runs the model in spinup mode. Only the subset of modules that are needed for the spinup are run. Unlike precomputations, the spin up is redone every time in optimization.</p>
 </li>
 <li>
 <p><strong><em>runCoreTEM</em></strong>: Runs the coreTEM.</p>
@@ -174,118 +185,85 @@ SINDBAD consists of the following components:</p>
 </ul>
 </li>
 <li>
-<p>The information about 'how' to run the TEM in different modes
-    are parsed through the configuration files.</p>
+<p>The information about 'how' to run the TEM in different modes are parsed through the configuration files.</p>
 </li>
 <li>
-<p>Different modes of model run are inferred from the set of inputs
-    that are passed while calling <em>runTEM</em> in <em>workflowTEM.m</em>.</p>
+<p>Different modes of model run are inferred from the set of inputs that are passed while calling <em>runTEM</em> in <em>workflowTEM.m</em>.</p>
 </li>
 <li>
-<p><strong>Do not rename or edit the functions in the tem directory. If
-    needed, consult the SINDBAD development team.</strong></p>
+<p><strong>Do not rename or edit the functions in the tem directory. If needed, consult the SINDBAD development team.</strong></p>
 </li>
+</ul>
+<h2 id="core">core</h2>
+<ul>
+<li>The core driver which loops over time and executes all the selected approaches for biogeochemical processes.</li>
+<li>
+<p>By design,the core can be modified by anyone to accommodate different ways to run the modules, e.g., different orders of modules, implicit time steps, etc.</p>
+</li>
+<li>
+<p>The default core is named coreTEM.m.</p>
+</li>
+<li>
+<p><strong>Never change/edit the default core.</strong></p>
+<ul>
+<li>In case the core is modified, a copy of the <em>coreTEM.m</em> should be created.</li>
+<li>Always follow a logical naming for the core such as <em>coreTEM_experiment.m</em>.</li>
+<li>To use the modified core, the path to the core for an experiment has to be changed in the <em>modelStructure[.json]</em> configuration file.</li>
+</ul>
+</li>
+</ul>
+<h2 id="module">module</h2>
+<p>The overarching process, response, or a variable that may be parameterized using different approaches, e.g., surface runoff or GPP. A module consists of different approaches.</p>
+<h2 id="approach">approach</h2>
+<p>A representation or a calculation function of one process, response, or a variable. For example, a function that calculates surface runoff using overflow method, or an equation to calculate GPP as a function of global radiation.</p>
+<ul>
+<li><strong><em>Carefully read and strictly follow the conventions on modules and approaches</em></strong> that are provided in the latter sections of this convention.</li>
+</ul>
+<h2 id="experiment">experiment</h2>
+<ul>
+<li>A set-up of a model simulation with a given forcing, parameter, optimization scheme, spinup, forward run, etc.</li>
+<li>The configuration files for each of the above steps should be provided in the <em>experiment*[.json]</em>.</li>
+</ul>
+<h2 id="model-structure">model structure</h2>
+<ul>
+<li>A set of information spanning selected modules and approaches from coreTEM with an associated core (i.e. sequence of modules, possibly nested time loops etc.). </li>
+<li>In the info, the fields related to model structure are identified by the string 'ms'.</li>
+</ul>
+<h2 id="precomputation">precomputation</h2>
+<ul>
+<li>Precomputation refers to computations of the core that can be executed outside the time loop. Essentially, these calculations are independent of state variables.</li>
+<li>Precomputations are particularly beneficial in terms of computational performance for a single time series or small spatial domains.</li>
+<li>
+<p>Precomputations are being separated automatically into "once" and "always".</p>
+<ul>
+<li>"Once" refers to precomputations that do not need to be done in every iteration of optimization because the outcome is independent of the optimized parameter(s).</li>
+<li>"Always" refers to precomputations that need to be done in every iteration of optimization because the outcome depends on optimized parameter(s). precAlways is executed every time the core is called, but outside the time loop.</li>
 </ul>
 </li>
 <li>
-<p>The '<strong>core</strong>': The core driver which loops over time and executes
-    all the selected approaches for biogeochemical processes. By design,
-    the core can be modified by anyone to accommodate different ways to
-    run the modules, e.g., different orders of modules, implicit time
-    steps, etc.</p>
+<p>Precomputation is represented by the string 'prec' throughout the code, info, and configuration files.</p>
+</li>
+</ul>
+<h1 id="generated-code">generated code</h1>
+<ul>
+<li>The generated code refers to the parsed matlab function that puts together all the executable code from all functional calls in the core.</li>
+<li>Given the options, the code for precomputation and the dynamic (core) are generated for forward run and spinup.</li>
+<li>The options in configuration and the fields of info related to code generation are identified by the string 'gen'.</li>
+<li>The execution time for generated core is usually faster than raw model.</li>
+<li><strong>In order for code generation to be correct, all conventions on variables and fields of the SINDBAD structures need to be strictly followed.</strong></li>
+</ul>
+<h1 id="reduced-memory">reduced memory</h1>
 <ul>
 <li>
-<p>The default core is named coreTEM.m. <strong>Never change/edit the
-    default core.</strong></p>
+<p>Reduced memory (redMem in configuration and info) refers to the execution of the model in a memory-efficient manner.</p>
 </li>
 <li>
-<p>In case the core is modified, a copy of the <em>coreTEM.m</em> should
-    be created.</p>
-<ul>
-<li>
-<p>Always follow a logical naming for the core such as
-    <em>coreTEM_experiment.m</em>.</p>
+<p>This mode is designed for simulations when the full time series of a variable is not needed.</p>
 </li>
 <li>
-<p>To use the modified core, the path to the core for an
-    experiment has to be changed in the
-    <em>modelStructure[.json]</em> configuration file.</p>
+<p>In this mode, all the variables that are not needed to be "stored" (see output configuration file) will be automatically changed to size <em>nPix</em>,1 instead of <em>nPix,nTix</em> sized arrays. This will significantly reduce the memory load of the model. </p>
 </li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>A '<strong>module'</strong>: The overarching process, response, or a variable
-    that may be parameterized using different approaches, e.g., surface
-    runoff or GPP. A module consists of different approaches.</p>
-</li>
-<li>
-<p>An '<strong>approach'</strong>: A representation or a calculation function of one
-    process, response, or a variable. For example, a function that
-    calculates surface runoff using overflow method, or an equation to
-    calculate GPP as a function of global radiation.</p>
-<ul>
-<li><strong><em>Carefully read and strictly follow the conventions on modules
-    and approaches</em></strong> that are provided in the latter sections of
-    this convention<em>.</em></li>
-</ul>
-</li>
-</ul>
-<h1 id="main-conceptual-terms">Main Conceptual Terms</h1>
-<ul>
-<li>
-<p>An '<strong>experiment'</strong>: A set-up of a model simulation with a given
-    forcing, parameter, optimization scheme, spinup, forward run, etc.
-    The configuration files for each of the above steps should be
-    provided in the <em>experiment*[.json]</em>.</p>
-</li>
-<li>
-<p>A '<strong>model structure'</strong>: A set of information spanning selected
-    modules and approaches from coreTEM with an associated core (i.e.
-    sequence of modules, possibly nested time loops etc.). In the info,
-    the fields related to model structure are identified by the string
-    'ms'.</p>
-</li>
-<li>
-<p>The '<strong>precomputation':</strong> Precomputation refers to computations of
-    the core that can be executed outside the time loop. Essentially,
-    these calculations are independent of state variables.
-    Precomputations are particularly beneficial in terms of
-    computational performance for a single time series or small spatial
-    domains. Precomputations are being separated automatically into
-    "once" and "always". "Once" refers to precomputations that do not
-    need to be done in every iteration of optimization because the
-    outcome is independent of the optimized parameter(s). "Always"
-    refers to precomputations that need to be done in every iteration of
-    optimization because the outcome depends on optimized parameter(s).
-    precAlways is executed every time the core is called, but outside
-    the time loop. Precomputation is represented by the string 'prec'
-    throughout the code, info, and configuration files.</p>
-</li>
-<li>
-<p>The <strong>'generated code':</strong> The generated code refers to the parsed
-    matlab function that puts together all the executable code from all
-    functional calls in the core. Given the options, the code for
-    precomputation and the dynamic (core) are generated for forward run
-    and spinup. The options in configuration and the fields of info
-    related to code generation are identified by the string 'gen'. The
-    execution time for generated core is usually faster than raw model.
-    <strong>In order for code generation to be correct, all conventions on
-    variables and fields of the SINDBAD structures need to be strictly
-    followed.</strong></p>
-</li>
-<li>
-<p>The '<strong>reduced memory</strong>': Reduced memory (redMem in configuration
-    and info) refers to the execution of the model in a memory-efficient
-    manner. This mode is designed for simulations when the full time
-    series of a variable is not needed. In this mode, all the variables
-    that are not needed to be "stored" (see output configuration file)
-    will be automatically changed to size <em>nPix</em>,1 instead of
-    <em>nPix,nTix</em> sized arrays. This will significantly reduce the memory
-    load of the model. Note that this feature is only available while
-    running the generated code.</p>
-</li>
+<li><strong>Note that this feature is only available while running the generated code.</strong></li>
 </ul>
               
             </div>

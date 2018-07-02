@@ -25,9 +25,9 @@ function [f,fe,fx,s,d,p] = dyna_EvapSoil_DemSup(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calculate soil evaporation depending of potential ET and soil moisture status
-fx.ESoil(:,tix) 	=	min(fe.EvapSoil.PETsoil(:,tix), p.EvapSoil.ETsup.*s.w.wSoil); 
+fx.EvapSoil(:,tix) 	=	min(fe.EvapSoil.PETsoil(:,tix), p.EvapSoil.ETsup.*s.w.wSoil); 
 
 % update soil moisture
-s.w.wSoil  = s.w.wSoil  - fx.ESoil(:,tix);
+s.w.wSoil  = s.w.wSoil  - fx.EvapSoil(:,tix);
 
 end

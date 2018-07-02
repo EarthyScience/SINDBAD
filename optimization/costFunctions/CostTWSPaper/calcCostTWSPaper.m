@@ -1,5 +1,4 @@
 function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
-
 % cost function used in the TWS Paper (Trautmann et al. 2018)
 % tVec      = vector with month (M)
 % cost      = costTWS + costSWE + costET + costQ
@@ -16,6 +15,22 @@ months      = calmonths(between(datetime(info.tem.model.time.sDate), datetime(in
 xMonth      = [datetime(info.tem.model.time.sDate),datetime(info.tem.model.time.sDate)+calmonths(1:months-1)];
 [~,tVec,~]  = datevec(xMonth);
 
+etComps = {'EvapSub', 'EvapSoil', 'EvapInt','TranAct'};
+ETmod_d = info.tem.helpers.arrays.zerospixtix;
+for etC = 1:numel(etComps)
+    compName = char(etComps{etC});
+    if isfield(fx,compName)
+        ETmod_d = ETmod_d + fx.(compName);
+    end
+end
+QComps = {'Qbase', 'Qint'};
+Qmod_d = info.tem.helpers.arrays.zerospixtix;
+for etC = 1:numel(QComps)
+    compName = char(QComps{etC});
+    if isfield(fx,compName)
+        Qmod_d = Qmod_d + fx.(compName);
+    end
+end
 %% get constraints, their uncertainties and simulations
 % except for TWS all uncertainties are still calculated within this
 % function
@@ -33,14 +48,24 @@ end
 % Monthly Aggregation of simulations
 try
     TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wGW);
-    
-%     ETmod_d     = fx.EvapSoil+fx.EvapSub;
-    TWSmod      = aggDay2Mon(squeeze(TWSmod_d),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    SWEmod      = aggDay2Mon(squeeze(d.storedStates.wSnow),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    ETmod       = aggDay2Mon(fx.ESoil,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
-    Qmod        = aggDay2Mon(fx.Q,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    TWSmod      = aggDay2Mon(TWSmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
 catch
-    error('ERR: TWS, SWE, Evap or Qr  missing in model output!');
+    error('ERR: TWS  missing in model output!');
+end
+try
+    SWEmod      = aggDay2Mon(squeeze(d.storedStates.wSnow),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+catch
+    error('ERR: SWE missing in model output!');
+end
+try
+    ETmod       = aggDay2Mon(ETmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+catch
+    error('ERR: Evap  missing in model output!');
+end
+try
+    Qmod        = aggDay2Mon(Qmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+catch
+    error('ERR: Qr  missing in model output!');
 end
 
 
