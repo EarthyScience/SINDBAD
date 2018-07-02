@@ -17,6 +17,9 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 %   x) create helpers -> done in prepTEM as also forcing etc is needed
 %   6) write the info structure in a mat file
 
+%% get the sindbad root directory
+info.experiment.sindbadroot         =   sindbadroot;
+
 %% 1) check what is the input
 if isstruct(expConfigFile)
     % is already a structure assume = info
@@ -33,17 +36,23 @@ if isstruct(expConfigFile)
     % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
     
-elseif exist([sindbadroot expConfigFile],'file')
-    expConfigFile = [sindbadroot expConfigFile] ;
+elseif exist([info.experiment.sindbadroot expConfigFile],'file')
+    expConfigFile = [info.experiment.sindbadroot expConfigFile] ;
     %% 
     % note: this part can be outsorced to a initINFOFromConfig in case this
     % needs to be ran in other places 
 %     expConfigFile                   =   getFullPath(expConfigFile);
     
     % is a file, assume a standard configuration file and read it
-    info.experiment                 =   readJsonFile(expConfigFile);
+% sujan: making sure than sindbad root in not overwritten
+    
+    exp_json                 =   readJsonFile(expConfigFile);
+    exp_json_fn              = fields(exp_json);
+    for exp = 1:numel(exp_json_fn)
+        info.experiment.(exp_json_fn{exp}) = exp_json.(exp_json_fn{exp});
+    end
     % absolute paths of the config files
-    info.experiment.configFiles     =   convertToFullPaths(info.experiment.configFiles);
+    info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
         
     % stamp the experiment settings
     info                            =   stampExperiment(info);
