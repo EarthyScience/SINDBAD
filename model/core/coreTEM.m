@@ -1,5 +1,4 @@
 function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
-% #########################################################################
 % tic
 % CORE - ...
 %
@@ -20,23 +19,18 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 %   d   : diagnostics (where the stressors are also) - stressors that are
 %   exclusively computed in precomputations should be in fe, and can be
 %   updated in the end to d - could be used for double checks
-
 % alternative names for info could be brain or sindbad
-
 % CONTRIBUTORS:
 %
 % CONTACT:
-
 % note, we should not need to do any checks here... this is operating as
 % the number crunching core. Anything related to checks on inputs and
 % consistency should be outside (before and afterwards!).
 % anything that can be outsourced should be done
-
-%MJ: i suggest to use an additional separate structure that contains pre-computed
-%stuff (or will be populated with it during the loop) 'fe' because at least for
-%site-level runs it will remain unchanged (efficient, matlab doesn't need
-%to make copies)
-
+% MJ: i suggest to use an additional separate structure that contains pre-computed
+% stuff (or will be populated with it during the loop) 'fe' because at least for
+% site-level runs it will remain unchanged (efficient, matlab doesn't need
+% to make copies)
 % NOTES: moved from the block comment at the end (sujan, 2018-04-12)
 % A) In this code, we should use the following strategy, e.g. for ET:
 % if ET is not a forcing (~exist('f.ET','var'))
@@ -52,8 +46,8 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 % 
 % D) don't forget to output the stressors for the spinup inside the
 % diagnostics structure (d) to be used in the calc_cflux_fast
-% #########################################################################
 
+%%
 % -------------------------------------------------------------------------
 % Do precomputations
 % -------------------------------------------------------------------------
@@ -117,8 +111,9 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
 	[f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
     [f,fe,fx,s,d,p]     =   ms.TranfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % supply limited Transpiration
-    [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % compute 'stress' scalars
     [f,fe,fx,s,d,p]     =   ms.GPPpot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
+    [f,fe,fx,s,d,p]     =   ms.GPPfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);          % compute 'stress' scalars
+    [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % compute 'stress' scalars
     [f,fe,fx,s,d,p]     =   ms.GPPfTair.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of temperature
     [f,fe,fx,s,d,p]     =   ms.GPPfVPD.funHandle(f,fe,fx,s,d,p,info,tix);           % VPD effect
     [f,fe,fx,s,d,p]     =   ms.GPPdem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum

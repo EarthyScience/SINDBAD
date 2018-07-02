@@ -20,7 +20,7 @@ for n1 = {'model','spinup'}
             end
         end
         if feedIt
-            info.tem.(n1{1}).paths.genCode.(n2{1})	= convertToFullPaths([sindbadroot info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '_' tmpStrName '.m']);
+            info.tem.(n1{1}).paths.genCode.(n2{1})	= convertToFullPaths([sindbadroot info.tem.model.paths.runDir 'gen' str2 str1 '_' tmpStrName '.m']);
         end
     end
 end
