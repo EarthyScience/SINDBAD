@@ -1,7 +1,5 @@
 function [fe,fx,s,d,info]     =  createTEMStruct(info)
-% fxSU,feSU,dSU,sSU,infoSU
-% Usages: 
-%   [s,f,fe,fx,d,p,info]     =  createTEMstructs(s,f,fe,fx,d,p,info)
+% Creates the SINDBAD structures 
 %
 % Requires: 
 %   + info and existence of all sindbad objects

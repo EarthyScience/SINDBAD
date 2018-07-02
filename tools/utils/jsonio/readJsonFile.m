@@ -12,9 +12,7 @@ while ~good2go
             case 2
                 data_json = jsondecode(strrep(json_txt,'\','\\'));
                 disp('MSG jsonFile is good to go: readJsonFile : replace \ by \\ ')
-                
             otherwise
-                
         end
         good2go = true;
     catch ME

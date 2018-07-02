@@ -1,46 +1,44 @@
 function [s,d,info] = createStatesArrays(info)
-% Creates the 
-% Usages:
-%   [s,d,info] = createStatesArrays(s,d,info)
+% Creates the arrays of state variables before the model run. 
 %
 % Requires:
-%   + a list of variables:
-%       ++ state variables: info.tem.model.variables.states.input
-%       ++ store in memory: info.tem.model.variables.to.store
-%       ++ keep in memory: Feeds to s.prev. info.tem.model.code.variables.to.keepShortName,
-%   + information on whether or not to combine the pool:
-%       ++ info.tem.model.variables.states.input.(sv).combine
-%           +++ first element: a logical on whether or not to combine the
+%	- a list of variables
+%       - state variables: info.tem.model.variables.states.input
+%       - store in memory: info.tem.model.variables.to.store
+%       - keep in memory: Feeds to s.prev. info.tem.model.code.variables.to.keepShortName,
+%	- information on whether or not to combine the pool
+%       - info.tem.model.variables.states.input.(sv).combine
+%       - first element: a logical on whether or not to combine the
 %               pools
-%           +++ second element: a string of the name of combined pool
+%       - second element: a string of the name of combined pool
 %
 % Purposes:
-%   + Creates the arrays for the state variables needed to run the model.
-%   + Creates the arrays in
-%       ++ s: for current
+%   - Creates the arrays for the state variables needed to run the model.
+%   - Creates the arrays in
+%       - s: for current
 %       (s.w.[VariableName],s.wd.[VariableName],s.c.[VariableName],s.cd.[VariableName])
 %       pix,zix
-%       ++ s.prev: previous (s.prev.[VariableName]) time step
-%       ++ d.storedStates: for storing storage variables to save or later
+%       - s.prev: previous (s.prev.[VariableName]) time step
+%       - d.storedStates: for storing storage variables to save or later
 %          write to a file
-%   + Saves the information of state variables in info.tem.model.variables.states.(w,wd,c,cd)
-%       ++
-%   + Saves the list of created variables to info.tem.model.variables.created
+%   - Saves the information of state variables in info.tem.model.variables.states.(w,wd,c,cd)
+%       -
+%   - Saves the list of created variables to info.tem.model.variables.created
 %
 % Conventions:
-%   + s.w.[VariableName]: nPix,nZix
-%   + s.prev.[VariableName]: nPix,nZix
-%   + d.storedStates.[VariableName]: nPix,nZix,nTix
+%   - s.w.[VariableName]: nPix,nZix
+%   - s.prev.[VariableName]: nPix,nZix
+%   - d.storedStates.[VariableName]: nPix,nZix,nTix
 %
 % Created by:
-%   + Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   + Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
 %
 % References:
-%   +
+%   -
 %
 % Versions:
-%   + 1.0 on 17.04.2018
+%   - 1.0 on 17.04.2018
 
 %%
 stateVars       =   fields(info.tem.model.variables.states);
