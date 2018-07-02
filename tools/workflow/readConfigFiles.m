@@ -25,8 +25,8 @@ switch lower(whatWorkFlow)
         fldnmsINFO = {};
         
     otherwise
-        warning('CRIT CONCEPT: readConfigFiles only [modelRun,modelStructure,spinup,forcing,constants,output,params] are accepted')
-        error(['CRIT CONCEPT: readConfigFiles ' whatWorkFlow ' is not a known part of SINDBAD workflow (branch of opti)'])
+        warning('CRIT CONCEPT: readConfigFiles : only [modelRun,modelStructure,spinup,forcing,constants,output,params] are accepted')
+        error(['CRIT CONCEPT: readConfigFiles : ' whatWorkFlow ' is not a known part of SINDBAD workflow (branch of opti)'])
 end
 
 %% 2) loop through the fieldnames
@@ -92,7 +92,7 @@ for ii = 1:numel(fldnmsINFO)
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).use4spinup     = data_json.modules.(module_fields{jj, 1}).use4spinup;
                 
                 % read parameter information of the approaches
-                file_json   = convertToFullPaths([filesep 'model' filesep 'modules' filesep module_fields{jj} filesep module_fields{jj} '_' approachName  filesep module_fields{jj} '_' approachName '.json']);
+                file_json   = convertToFullPaths(info,[filesep 'model' filesep 'modules' filesep module_fields{jj} filesep module_fields{jj} '_' approachName  filesep module_fields{jj} '_' approachName '.json']);
                 if exist(file_json,'file')
                     param_json    = readJsonFile(file_json);
                     paramName     = fieldnames(param_json.params);
@@ -103,7 +103,7 @@ for ii = 1:numel(fldnmsINFO)
                     end
                     
                 else
-                    disp(['MISS CONFIG: readConfigFiles : parameter config file (json) missing : ' fldnmsINFO{ii} ' : module : ' module_fields{jj} ' : approach: ' approachName]);
+                    disp(['WARN FILEMISS : readConfigFiles : Parameter config (json) missing : module : ' module_fields{jj} ' : approach: ' approachName]);
                 end
             end
             
@@ -128,7 +128,7 @@ for ii = 1:numel(fldnmsINFO)
 end
 
 if stopIfMissField && isAllOK == false
-    error(['CRIT: readConfigFiles : necessary fields are missing in configuration files : ' missFields])
+    error(['CRIT FIELDMISS: readConfigFiles : necessary fields are missing in configuration files : ' missFields])
 end
 
 
