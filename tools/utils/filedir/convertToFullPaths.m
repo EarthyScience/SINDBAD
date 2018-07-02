@@ -1,31 +1,32 @@
-function strPaths = convertToFullPaths(strPaths)
+function strPaths = convertToFullPaths(info,strPaths)
 % converts the 
 
 %%
 if isstruct(strPaths)
-    for fn = fieldnames(strPaths)'
+    for fn                      =   fieldnames(strPaths)'
         if ischar(strPaths.(fn{1}))
-            strPaths.(fn{1}) = setItUp(strPaths.(fn{1}));   %strrep(getFullPath([sindbadroot strPaths.(fn{1})]),'\','/');
+            strPaths.(fn{1})    =   setItUp(info,strPaths.(fn{1}));   
         else
-            strPaths.(fn{1}) = convertToFullPaths(strPaths.(fn{1}));
+            strPaths.(fn{1})    =   convertToFullPaths(info,strPaths.(fn{1}));
         end
     end
 elseif ischar(strPaths)
-    strPaths	= setItUp(strPaths);                        %strrep(getFullPath([sindbadroot strPaths]),'\','/');
+    strPaths                    =   setItUp(info,strPaths);                       
 elseif iscell(strPaths)
-    for i = 1:numel(strPaths)
+    for i                       =   1:numel(strPaths)
         if ischar(strPaths{i})
-            strPaths{i} = setItUp(strPaths{i});             %strrep(getFullPath([sindbadroot strPaths{i}]),'\','/');
+            strPaths{i}         =   setItUp(info,strPaths{i});           
         end
     end
 else
-    disp(['MSG : convertToFullPaths : not a known datatype for strPaths : ' class(strPaths)])
+    disp(['WARN PATH : convertToFullPaths : not a known string datatype for paths : ' class(strPaths)])
 end
 end
-function str = setItUp(str)
+function str = setItUp(info,str)
 % sets up the str 
 %%
-bf = sindbadroot;
+% bf = sindbadroot; % sujan. Avoid extra calls. Already set in stampExperiment
+bf = info.experiment.sindbadroot ;
 if numel(bf) <= numel(str)
     if strncmp(strrep(bf,'\','/'),strrep(str,'\','/'),numel(bf))
         bf = '';
