@@ -10,13 +10,13 @@ for ii=1:length(paramList)
     paramValue  = info.tem.params.(module).(paramName);
     if ischar(paramValue) paramValue = str2num(paramValue);end
     % load the json of the approach
-    file_json   = convertToFullPaths(['./model/modules/' module '/' module '_' appr  '/' module '_' appr '.json']);
+    file_json   = convertToFullPaths(info,['.' filesep 'model' filesep 'modules' filesep module filesep module '_' appr  filesep module '_' appr '.json']);
     if exist(file_json,'file')
         param_json    = readJsonFile(file_json);
         if paramValue < param_json.params.(paramName).LowerBound
-            warning(['Parameter value of: ' paramList{ii} ' (' num2str(paramValue) ') is below its lower bound of: ' num2str( param_json.params.(paramName).LowerBound) '!']);
+            warning(['WARN BNDS: checkParamBounds | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is smaller than lower bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
         elseif paramValue > param_json.params.(paramName).UpperBound
-            warning(['Parameter value of: ' paramList{ii} ' (' num2str(paramValue) ') is above its upper bound of: ' num2str(param_json.params.(paramName).UpperBound) '!']);            
+            warning(['WARN BNDS: checkParamBounds | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is larger than upper bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
         end
         
     end
