@@ -19,7 +19,10 @@ function [f,fe,fx,s,d,p,precOnceData,sSU,dSU,info] = workflowExperiment(expConfi
 %   - 1.0 on 01.07.2018
 
 %% create a temporary log file
-diary('tmpLogSINDBADrun____.txt')
+tstartwf = tic;
+tmpStrDate                          =   datestr(now,30);
+tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
+diary(tmpLogFile)
 disp('--------------------------------------')
 disp('START: Log of SINDBAD model experiment')
 disp('--------------------------------------')
@@ -41,7 +44,7 @@ if info.tem.model.flags.runOpti
     disp('----------------------------------')
     disp('Set up the optimization of SINDBAD')
     disp('----------------------------------')
-    [info]                                  =   readOpti(info);
+    [info]                                  =   setupOpti(info);
     [info]                                  =   editTEMInfo(info,varargin{:});
     infoLite                                =   info;
     [info, obs]                             =   prepOpti(info);
@@ -102,26 +105,57 @@ disp('----------------------------------------------------------------------')
 % create a copy of the configuration files of the experimentment to output directory
 [pth,~,~] = fileparts(expConfigFile);
 copyfile(pth,info.experiment.settingsOutputDirPath);
-disp('Saved a copy of the configuration files')
+disp(['Saved a copy of the configuration files at: ' info.experiment.settingsOutputDirPath])
 
 % save the light version of info with all configs and settings as a json
 % file
 savejsonJL('',infoLite,info.experiment.outputInfoFile);
-disp('Saved the light version of info in json format')
+disp(['Saved the light version of info in json format: ' info.experiment.outputInfoFile])
 
 % save the info as mat file
 save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
-disp('Saved the full version of info in .mat format')
+disp(['Saved the full version of info in .mat format: ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
 
 % save the f as mat file
 save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')
-disp('Saved the forcing for the experiment in .mat format')
+disp(['Saved the forcing for the experiment in .mat format: ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'])
 
 %% move the temporary log file to model output directory
+disp('---------------------------------------------------------------------------')
+disp(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configuration'])
+disp('---------------------------------------------------------------------------')
+if info.tem.model.flags.runOpti
+    disp('------Model Run in Optimization Mode--------')
+else
+    disp('------Model Run in Forward Mode (without Optimization)--------') 
+end
+disp('------Configuration Files--------')
+
+disp(['experiment : ' expConfigFile])
+confFN = fields(info.experiment.configFiles) ;
+for cfn = 1:numel(confFN)
+    if ~strcmp(confFN{cfn},'opti')
+        disp([confFN{cfn} ' : ' info.experiment.configFiles.(confFN{cfn})])
+    end
+end
+if info.tem.model.flags.runOpti
+    disp('------ Optimization Configurations--------')
+    disp(['Main Configuration: ' info.experiment.configFiles.opti])
+    disp(['Optimization Algorithm: ' info.opti.algorithm.funName])
+    disp(['Optimization Additional Options: ' info.opti.algorithm.nonDefOptFile])
+    disp(['Cost Function: ' info.opti.costFun.funName])
+    disp(['Cost Function Additional Options: ' info.opti.costFun.nonDefOptFile])
+    
+end
+disp('--------------------------------------')
+
+disp(['  TOTAL TIME | Experiment: ' info.experiment.name ' | ' sec2som(toc(tstartwf))])
+
 disp('--------------------------------------')
 disp('END: Log of SINDBAD model experiment')
 disp('--------------------------------------')
 
+
 diary
-movefile('tmpLogSINDBADrun____.txt',info.experiment.modelrunLogFile)
+movefile(tmpLogFile,info.experiment.modelrunLogFile)
 end

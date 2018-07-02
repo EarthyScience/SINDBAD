@@ -15,7 +15,7 @@ function [info, obs] = prepOpti(info)
 %%
 algorithmName                       =   info.opti.algorithm.funName;
 
-defOptionsFilePath                      =   convertToFullPaths(['optimization' filesep 'algorithms' filesep algorithmName filesep 'options_' algorithmName '.json']);
+defOptionsFilePath                      =   convertToFullPaths(info,['optimization' filesep 'algorithms' filesep algorithmName filesep 'options_' algorithmName '.json']);
 
 try
 info.opti.algorithm.options         =   readJsonFile(defOptionsFilePath);
@@ -25,20 +25,21 @@ end
 %--> Overwrite the default options when non-default options are provided
 nonDefOptionsFile   = info.opti.algorithm.nonDefOptFile;
 if ~isempty(nonDefOptionsFile)
-    nonDefOptionsFilePath           =   convertToFullPaths(nonDefOptionsFile);
+    nonDefOptionsFilePath           =   convertToFullPaths(info,nonDefOptionsFile);
     nonDefOptions                   =   readJsonFile(nonDefOptionsFilePath);
     fNamesND                        =   fields(nonDefOptions);
     for fnInd = 1:numel(fNamesND)
         fName = char(fNamesND(fnInd));
         info.opti.algorithm.options.(fName) = nonDefOptions.(fName);
     end
-    disp(['OVWR: prepOpti : optimization method ' algorithmName ': Overwriting non-default options using : ' nonDefOptionsFilePath])
+    info.opti.algorithm.nonDefOptFile = nonDefOptionsFilePath;
+    disp(['OVWR: prepOpti : optimization method ' algorithmName ': Overwriting default options using : ' nonDefOptionsFilePath])
 end
 
 %% 3) read the cost function and options
 costName                            =   info.opti.costFun.funName;
 info.opti.costFun.funName           =   ['calc' costName];
-defCostOptionsFilePath              =   convertToFullPaths(['optimization' filesep 'costFunctions' filesep costName filesep 'options_' costName '.json']);
+defCostOptionsFilePath              =   convertToFullPaths(info,['optimization' filesep 'costFunctions' filesep costName filesep 'options_' costName '.json']);
 
 try
     def_costOpt                    = readJsonFile(defCostOptionsFilePath);   
@@ -49,19 +50,20 @@ end
 %--> Overwrite the default options when non-default options are provided
 nonDefCostOptionsFile   = info.opti.costFun.nonDefOptFile;
 if ~isempty(nonDefCostOptionsFile)
-    nonDefCostOptionsFilePath           =   convertToFullPaths(nonDefCostOptionsFile);
+    nonDefCostOptionsFilePath           =   convertToFullPaths(info,nonDefCostOptionsFile);
     nonDefCostOptions                   =   readJsonFile(nonDefCostOptionsFilePath);
     fNamesNDCost                        =   fields(nonDefCostOptions);
     for fnIndC = 1:numel(fNamesNDCost)
         fNameC = char(fNamesNDCost(fnIndC));
         info.opti.costFun.options.(fNameC) = nonDefCostOptions.(fNameC);
     end
-    disp(['OVWR: prepOpti : cost Function ' costName ': Overwriting non-default options using : ' nonDefCostOptionsFilePath])
+    info.opti.costFun.nonDefOptFile     = nonDefCostOptionsFilePath;
+    disp(['OVWR: prepOpti : cost Function ' costName ': Overwriting default options using : ' nonDefCostOptionsFilePath])
 end
 
 %% create the output directory path for output files of the optimization
 if isfield(info.opti.algorithm.options,'outDirPath')
-    info.opti.algorithm.options.outDirPath=convertToFullPaths([info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
+    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
 end
 
 
