@@ -67,7 +67,7 @@ if ~isempty(tree)
             end
             
             % load default parameter value
-            file_json   = convertToFullPaths(['./model/modules/' module '/' module '_' appr  '/' module '_' appr '.json']);
+            file_json   = convertToFullPaths(info,['./model/modules/' module '/' module '_' appr  '/' module '_' appr '.json']);
             
             if exist(file_json,'file')
                 param_json    = readJsonFile(file_json);
