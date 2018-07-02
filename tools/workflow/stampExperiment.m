@@ -21,5 +21,5 @@ tmpStrDate                          =   datestr(now,30);
 
 info.experiment.runDate             =   tmpStrDate(1:end-7);
 
-info.experiment.sindbadroot         =   sindbadroot;
+% info.experiment.sindbadroot         =   sindbadroot;
 end
