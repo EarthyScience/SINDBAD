@@ -58,13 +58,13 @@ if isfield(info.experiment, 'outputDirPath')
             %            outputDirPath_full = [info.experiment.outputDirPath filesep
             %            default_tmp filesep]; %sujan
         else
-            outputDirPath_full = convertToFullPaths(info.experiment.outputDirPath);
+            outputDirPath_full = convertToFullPaths(info,info.experiment.outputDirPath);
         end
     else
         outputDirPath_def               = ['data' filesep 'output'];
         %         outputDirPath_def               = ['data' filesep 'output'
         %         filesep default_tmp filesep]; %sujan
-        outputDirPath_full              = convertToFullPaths(outputDirPath_def);
+        outputDirPath_full              = convertToFullPaths(info,outputDirPath_def);
         disp(['WARN PATH: setExperimentPaths : no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
     end
 else
@@ -73,7 +73,7 @@ else
     %     filesep]; %sujan
     outputDirPath_def               = ['data' filesep 'output'];
     
-    outputDirPath_full              = convertToFullPaths(outputDirPath_def);
+    outputDirPath_full              = convertToFullPaths(info,outputDirPath_def);
     disp(['WARN PATH: setExperimentPaths: no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
 end
 
@@ -146,17 +146,17 @@ info.experiment.modelrunLogFile     =    [info.experiment.modelOutputDirPath fil
 
 
 %% convert paths in info to absolute paths
-info.tem.model.paths.coreTEM           =   convertToFullPaths(info.tem.model.paths.coreTEM);
-info.tem.model.paths.modulesDir        =   convertToFullPaths(info.tem.model.paths.modulesDir);
+info.tem.model.paths.coreTEM           =   convertToFullPaths(info,info.tem.model.paths.coreTEM);
+info.tem.model.paths.modulesDir        =   convertToFullPaths(info,info.tem.model.paths.modulesDir);
 
-info.tem.spinup.paths.restartFile      =   convertToFullPaths(info.tem.spinup.paths);
+info.tem.spinup.paths.restartFile      =   convertToFullPaths(info,info.tem.spinup.paths);
 
 %paths of forcing
 for ii=1:numel(info.tem.forcing.VariableNames)
     var_tmp = info.tem.forcing.VariableNames{ii};
     pth_tmp = info.tem.forcing.(var_tmp).DataPath;
     if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-        info.tem.forcing.(var_tmp).DataPath = convertToFullPaths(pth_tmp);
+        info.tem.forcing.(var_tmp).DataPath = convertToFullPaths(info,pth_tmp);
         pth_tmp = info.tem.forcing.(var_tmp).DataPath;
     end
     if exist(pth_tmp) == 0
@@ -171,7 +171,7 @@ if isfield(info,'opti')
             var_tmp = info.opti.constraints.VariableNames{ii};
             pth_tmp = info.opti.constraints.(var_tmp).DataPath;
             if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                info.opti.constraints.(var_tmp).DataPath = convertToFullPaths(pth_tmp);
+                info.opti.constraints.(var_tmp).DataPath = convertToFullPaths(info,pth_tmp);
                 pth_tmp = info.opti.constraints.(var_tmp).DataPath;
             end
             if exist(pth_tmp) == 0
@@ -181,7 +181,7 @@ if isfield(info,'opti')
             if ~isempty(info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath)
                 pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
                 if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                    info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath = convertToFullPaths(pth_tmp);
+                    info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath = convertToFullPaths(info,pth_tmp);
                     pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
                 end
                 if exist(pth_tmp) == 0
@@ -195,7 +195,7 @@ if isfield(info,'opti')
                 if ~isempty(info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath)
                     pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
                     if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                        info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath = convertToFullPaths(pth_tmp);
+                        info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath = convertToFullPaths(info,pth_tmp);
                         pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
                     end
                     if exist(pth_tmp) == 0
