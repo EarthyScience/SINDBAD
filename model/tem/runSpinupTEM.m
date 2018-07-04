@@ -113,15 +113,16 @@ end
 % complete spinup sequence
 % -------------------------------------------------------------------------
 spinSequence = info.tem.spinup.sequence;
+disp('................. EXEC START: runSpinupTEM .................')
+
 for iss = 1:numel(spinSequence)
     % get handles, inputs and number of loops
     funHandleSpin	= str2func(spinSequence(iss).funHandleSpin);
     addInputs       = spinSequence(iss).funAddInputs;
     nLoops          = spinSequence(iss).nLoops;
     if ~iscell(addInputs),addInputs = num2cell(addInputs');end
-    disp(['MSG : runSpinupTEM : sequence : funHandleSpin    : ' spinSequence(iss).funHandleSpin])
+    disp(['EXEC MODRUN : runSpinupTEM | sequence : ' num2str(iss) ' of ' num2str(numel(spinSequence)) ' | funHandleSpin    : ' spinSequence(iss).funHandleSpin])
 %     disp(['MSG : runSpinupTEM : sequence : funAddInputs     : ' spinSequence(iss).funAddInputs])
-    disp(['MSG : runSpinupTEM : sequence : nLoops           : ' num2str(spinSequence(iss).nLoops)])
     if ~isempty(spinSequence(iss).funHandleStop)
         funHandleStop   = str2func(spinSequence(iss).funHandleStop);
     else
@@ -130,6 +131,7 @@ for iss = 1:numel(spinSequence)
     % go for it
     for ij = 1:nLoops
         % run spinup
+        disp(['     EXEC MODRUN : runSpinupTEM | nLoop : ' num2str(ij) ' of ' num2str(spinSequence(iss).nLoops)])
         [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
             funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs{:});
         % stop it according to function criteria?
@@ -149,6 +151,8 @@ for iss = 1:numel(spinSequence)
 % end
     end
 end
+disp('................. EXEC COMPLETE: runSpinupTEM .................')
+
 %{
 % -------------------------------------------------------------------------
 % run the model for spin-up for NPP and soil water pools @ equilibrium
