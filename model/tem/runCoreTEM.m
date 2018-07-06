@@ -22,14 +22,19 @@ end
 %--> run the handles
 if doPrecOnce 
     hPrec               =   info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle;
+    hPrec
     [f,fe,fx,s,d,p]     =   hPrec(f,fe,fx,s,d,p,info); 
 end
 if doCore
     hCore               =   info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
+    hCore
     [f,fe,fx,s,d,p]     =   hCore(f,fe,fx,s,d,p,info); 
 end
 % disp(['    TIME : runCoreTEM : end : inputs : ' num2str([doPrecOnce,doCore,doSpinUp],'%1.0f|') ' : time : ' sec2som(toc(tstart))])
-disp(['    TIME : runCoreTEM with [ doPrecOnce=' num2str(doPrecOnce) ' | doCore = ' num2str(doCore) ' | doSpinUp = ' num2str(doSpinUp) ' ]: ' sec2som(toc(tstart))])
+f
+
+disp(['     TIMERUN : runCoreTEM with [ doPrecOnce=' num2str(doPrecOnce) ' | doCore = ' num2str(doCore) ' | doSpinUp = ' num2str(doSpinUp) ' ]: ' sec2som(toc(tstart))])
+disp(' ')
 
 
 
