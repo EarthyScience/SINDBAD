@@ -192,7 +192,7 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
 end
 
 % disp(['    TIM : runTEM : end : time : ' sec2som(toc(tstart))])
-disp(['    TIME : runTEM : Total Time Needed: ' sec2som(toc(tstart))])
+disp(['TIMERUN : runTEM : Total Time Needed: ' sec2som(toc(tstart))])
 
 
 end % function
