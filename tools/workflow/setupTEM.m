@@ -63,5 +63,10 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     
 end
 
+%% add date helpers
+info.tem.helpers.dates.day   = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'd');
+info.tem.helpers.dates.month = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'm');
+
+
 %% 4) write the info in a json file
 end
