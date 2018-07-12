@@ -10,7 +10,9 @@ s.cd.cEcoFlow                   =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 %% vegetation
 zix                     =   info.tem.model.variables.states.c.flags.cVeg; 
 % DISTRIBUTE THE NPP TO VEGETATION POOLS
-s.cd.cNPP               =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+s.cd.cNPP               =   fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix) - s.cd.cEcoEfflux(:,zix);
+% s.cd.cNPP               =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix); %sujan moved cAlloc to d
+ 
 s.cd.cEcoInflux(:,zix)	=   s.cd.cNPP;
 s.c.cEco(:,zix)         =   s.c.cEco(:,zix) + s.cd.cEcoInflux(:,zix);
 

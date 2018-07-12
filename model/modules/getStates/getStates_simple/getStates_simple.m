@@ -23,8 +23,8 @@ function [f,fe,fx,s,d,p] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % s.wd.WTD(:,tix) = s.prev.WTD;
 
 % Water Balance Pool
-s.wd.WBP  = f.Rain(:,tix);
-
+s.wd.WBP    = f.Rain(:,tix);
+% s.cd.LAI    = f.LAI(:,tix);
 % s.cd.cEcoEfflux = info.tem.helpers.arrays.zerospixzix.c.cEco;
 
 end % function

@@ -19,6 +19,6 @@ function [f,fe,fx,s,d,p] = prec_GPPpot_Monteith(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % just put here a single maximum radiation use efficiency
-d.GPPpot.rueGPP = p.GPPpot.rue * info.tem.helpers.arrays.onestix;
+d.GPPpot.rueGPP = p.GPPpot.maxrue * info.tem.helpers.arrays.onestix;
 
 end
