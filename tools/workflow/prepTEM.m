@@ -17,7 +17,11 @@ function [f,fe,fx,s,d,info]   =     prepTEM(info)
 % create function handles
 fun_fields  =   fieldnames(info.tem.forcing.funName);
 for jj      =   1:numel(fun_fields)
+    try
     info.tem.forcing.funHandle.(fun_fields{jj})     =   str2func(info.tem.forcing.funName.(fun_fields{jj}));
+    catch
+        disp(['prepTEM : no valid function name for ' fun_fields{jj} ' given in forcing.json'])
+    end
 end
 
 % evaluate function handle in forcing

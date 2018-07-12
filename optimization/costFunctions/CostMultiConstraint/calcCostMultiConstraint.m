@@ -33,9 +33,9 @@ end
 for i = 1:numel(VariableNames)
     % get data
     varName = VariableNames{i};
-    obs_proc    = obs.(varName); 
-    obs_flag    = obs.flag.(varName); %!
-    obs_unc     = obs.unc.(varName); %!
+    obs_proc    = obs.(varName).data; 
+    obs_flag    = obs.(varName).qflag; %!
+    obs_unc     = obs.(varName).unc; %!
     sim_proc    = fx.(varName); %!
     
     % filter data
