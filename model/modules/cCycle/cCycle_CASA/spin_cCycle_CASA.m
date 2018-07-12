@@ -107,8 +107,8 @@ for zix = zixVec
     % FINAL CARBON AT POOL zix
     Ct                      = Co .* piA1 + sumB_piA .* piA2;
     sCt(:,zix) = Ct;
-disp(['DBG : Co : ' num2str(zix) ' : ' num2str(Co(1))])
-disp(['DBG : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
+disp([pad('DBG SPINUP',20) ' : Co : ' num2str(zix) ' : ' num2str(Co(1))])
+disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
 %     dT.storedStates.cEco(:,zix,end)	= Ct;
     sT.c.cEco(:,zix)        = Ct;%                 = d.storedStates.cEco;
     sT.prev.s_c_cEco(:,zix)	= Ct;
@@ -124,7 +124,7 @@ sT.c.cEco = sCt;
 sT.prev.s_c_cEco	= sCt;
 [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
 
-disp(['    TIM : spin_cCycle_simple : end : inputs : ' num2str(NI2E,'%1.0f|') ' : time : ' sec2som(toc(tstart))])
+disp([pad('TIMERUN FAST SPINUP',20) ' : spin_cCycle_simple : end : inputs : ' num2str(NI2E,'%1.0f|') ' : time : ' sec2som(toc(tstart))])
 
 
 end % function
