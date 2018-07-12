@@ -10,12 +10,14 @@ function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info)
 
 
 %% calculate tVec
-days        = info.tem.helpers.sizes.nTix;
-months      = calmonths(between(datetime(info.tem.model.time.sDate), datetime(info.tem.model.time.eDate),'months'))+1;
-xMonth      = [datetime(info.tem.model.time.sDate),datetime(info.tem.model.time.sDate)+calmonths(1:months-1)];
+% needs to go somewhere else
+
+days        = length(info.tem.helpers.dates.day);
+months      = length(info.tem.helpers.dates.month);
+xMonth      = info.tem.helpers.dates.month;
 [~,tVec,~]  = datevec(xMonth);
 
-etComps = {'EvapSub', 'EvapSoil', 'EvapInt','TranAct'};
+etComps = {'EvapSoil'};
 ETmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(etComps)
     compName = char(etComps{etC});
@@ -23,7 +25,7 @@ for etC = 1:numel(etComps)
         ETmod_d = ETmod_d + fx.(compName);
     end
 end
-QComps = {'Qbase', 'Qint'};
+QComps = {'Qbase'};
 Qmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(QComps)
     compName = char(QComps{etC});
@@ -35,12 +37,11 @@ end
 % except for TWS all uncertainties are still calculated within this
 % function
 try
-    TWSobs          = obs.TWSobs;
-    TWSobs_uncert   = 0.1 .* obs.TWSobs;
-%     TWSobs_uncert   = obs.unc.TWSobs; %sujan
-    SWEobs          = obs.SWEobs;
-    ETobs           = obs.Evapobs;
-    Qobs            = obs.Qrobs;   
+    TWSobs          = obs.TWS.data;
+    TWSobs_uncert   = obs.TWS.unc; %sujan
+    SWEobs          = obs.SWE.data;
+    ETobs           = obs.Evap.data;
+    Qobs            = obs.Qr.data;   
 catch
     warning('ERR: TWS, SWE, ET, Q or TWS uncertainty missing in observational constraints!');
 end
@@ -48,22 +49,22 @@ end
 % Monthly Aggregation of simulations
 try
     TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wGW);
-    TWSmod      = aggDay2Mon(TWSmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    TWSmod      = aggDay2Mon(TWSmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
     error('ERR: TWS  missing in model output!');
 end
 try
-    SWEmod      = aggDay2Mon(squeeze(d.storedStates.wSnow),info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    SWEmod      = aggDay2Mon(squeeze(d.storedStates.wSnow),info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
     error('ERR: SWE missing in model output!');
 end
 try
-    ETmod       = aggDay2Mon(ETmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    ETmod       = aggDay2Mon(ETmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
     error('ERR: Evap  missing in model output!');
 end
 try
-    Qmod        = aggDay2Mon(Qmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate,days);
+    Qmod        = aggDay2Mon(Qmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
     error('ERR: Qr  missing in model output!');
 end

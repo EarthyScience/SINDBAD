@@ -22,6 +22,8 @@ end
 % read opti cofigurations
 info.opti	= data_json;
 
+info.opti.constraints.variableNames = fields(data_json.constraints.variables);
+
 %%
 
 paramsList  = info.opti.params2opti;
