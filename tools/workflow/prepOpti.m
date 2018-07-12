@@ -80,6 +80,18 @@ end
 obs = info.opti.constraints.funHandle.import(info);
 
 
+% %read uncertainty of TWS
+% try
+%     info.opti.constraints.TWSobs.variableUncertainty.data.funHandle = str2func(info.opti.constraints.TWSobs.variableUncertainty.data.funName);
+%     unc = info.opti.constraints.TWSobs.variableUncertainty.data.funHandle(info);
+%     
+%     obs.unc = unc;
+%     
+% catch
+%     disp(['WARN: prepOpti: uncertainty function for reading obs. constraints is not provided: ' info.opti.constraints.TWSobs.variableUncertainty.data.funName])
+% end
+
+
 %% 2) check constraints 
 % so far based checkData4TEM.m 
 if isfield(info.opti.constraints.funHandle, 'check') && ~isempty(info.opti.constraints.funHandle.check)

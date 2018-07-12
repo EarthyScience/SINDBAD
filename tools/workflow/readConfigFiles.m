@@ -50,7 +50,8 @@ for ii = 1:numel(fldnmsINFO)
         case 'forcing'
              info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
              % add all the forcing variables to forcingInput list
-             info.(whatWorkFlow).model.variables.forcingInput = strcat('f.' ,data_json.VariableNames)';
+             info.(whatWorkFlow).model.variables.forcingInput = strcat('f.' ,fields(data_json.variables))';
+             info.(whatWorkFlow).forcing.variableNames = fields(data_json.variables);
         case 'modelrun'
             % feed model run settings 
             % because "model" is set in 2 different instances (modelRun and

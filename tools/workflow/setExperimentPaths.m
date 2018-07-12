@@ -3,32 +3,32 @@ function [ info ] = setExperimentPaths(info)
 %   [info] = setExperimentPaths(info)
 %
 % Requires:
-%   + the info:
-%       ++ after reading the experiment.json file
+%   - the info:
+%       - after reading the experiment.json file
 %
 % Purposes:
-%   + creates the outputInfoFilename
-%   + creates the paths for model run and generated code within the info
+%   - creates the outputInfoFilename
+%   - creates the paths for model run and generated code within the info
 %   based on the outputDirPath in the experiment.json
-%       ++ if no/only whitespace for outputDirPath is given, a default name
+%       - if no/only whitespace for outputDirPath is given, a default name
 %       using the experiment name, domain and runDate is defined
-%       ++ if the output directory already exists, a new path using
+%       - if the output directory already exists, a new path using
 %       the experiment name, domain and runDate is created as subfolder
-%   + checks if paths of forcing and constraints exists and converts them
+%   - checks if paths of forcing and constraints exists and converts them
 %   to absolute paths
 
 % Conventions:
-%   + whitespaces are removed
-%   + instead, one could do this: strrep(strrep(tmpStrName,' ','_'),'-','_')
+%   - whitespaces are removed
+%   - instead, one could do this: strrep(strrep(tmpStrName,' ','_'),'-','_')
 %
 % Created by:
-%   + Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
 % References:
-%   +
+%
 %
 % Versions:
-%   + 1.0 on 22.06.2018
+%   - 1.0 on 22.06.2018
 
 %% check if the experiment name, domain and runDate exist
 if isfield(info.experiment, 'name')
@@ -151,58 +151,81 @@ info.tem.model.paths.modulesDir        =   convertToFullPaths(info,info.tem.mode
 
 info.tem.spinup.paths.restartFile      =   convertToFullPaths(info,info.tem.spinup.paths);
 
+
 %paths of forcing
-for ii=1:numel(info.tem.forcing.VariableNames)
-    var_tmp = info.tem.forcing.VariableNames{ii};
-    pth_tmp = info.tem.forcing.(var_tmp).DataPath;
-    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-        info.tem.forcing.(var_tmp).DataPath = convertToFullPaths(info,pth_tmp);
-        pth_tmp = info.tem.forcing.(var_tmp).DataPath;
+if ~isempty(info.tem.forcing.oneDataPath)
+    if strcmp(strrep(getFullPath(info.tem.forcing.oneDataPath),'\','/'), strrep(info.tem.forcing.oneDataPath,'\','/'))==0
+        info.tem.forcing.oneDataPath = convertToFullPaths(info,info.tem.forcing.oneDataPath);
     end
-    if exist(pth_tmp) == 0
-        warning(['PATH MISS: path for forcing variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+    if exist(info.tem.forcing.oneDataPath) == 0
+        warning(['PATH MISS: path for forcing variables oneDataPath: ' info.tem.forcing.oneDataPath ' does not exist!']);
+    end
+else
+    for ii=1:numel(info.tem.forcing.variableNames)
+        var_tmp = info.tem.forcing.variableNames{ii};
+        pth_tmp = info.tem.forcing.variables.(var_tmp).dataPath;
+        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+            info.tem.forcing.variables.(var_tmp).dataPath = convertToFullPaths(info,pth_tmp);
+            pth_tmp = info.tem.forcing.variables.(var_tmp).dataPath;
+        end
+        if exist(pth_tmp) == 0
+            warning(['PATH MISS: path for forcing variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+        end
     end
 end
 
 %paths of constraints
 if isfield(info,'opti')
     if info.tem.model.flags.runOpti
-        for ii=1:numel(info.opti.constraints.VariableNames)
-            var_tmp = info.opti.constraints.VariableNames{ii};
-            pth_tmp = info.opti.constraints.(var_tmp).DataPath;
-            if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                info.opti.constraints.(var_tmp).DataPath = convertToFullPaths(info,pth_tmp);
-                pth_tmp = info.opti.constraints.(var_tmp).DataPath;
+        if ~isempty(info.opti.constraints.oneDataPath)
+            if strcmp(strrep(getFullPath(info.opti.constraints.oneDataPath),'\','/'), strrep(info.opti.constraints.oneDataPath,'\','/'))==0
+                info.opti.constraints.oneDataPath = convertToFullPaths(info,info.opti.constraints.oneDataPath);
             end
-            if exist(pth_tmp) == 0
-                warning(['PATH MISS: path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+            if exist(info.opti.constraints.oneDataPath) == 0
+                warning(['PATH MISS: path for observational variables oneDataPath: ' info.opti.constraints.oneDataPath ' does not exist!']);
             end
-            %for observational uncertainties
-            if ~isempty(info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath)
-                pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
+        else
+            for ii=1:numel(info.opti.constraints.variableNames)
+                var_tmp = info.opti.constraints.variableNames{ii};
+                pth_tmp = info.opti.constraints.variables.(var_tmp).data.dataPath;
                 if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                    info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath = convertToFullPaths(info,pth_tmp);
-                    pth_tmp = info.opti.constraints.(var_tmp).VariableUncertainty.Data.DataPath;
+                    info.opti.constraints.variables.(var_tmp).data.dataPath = convertToFullPaths(info,pth_tmp);
+                    pth_tmp = info.opti.constraints.variables.(var_tmp).data.dataPath;
                 end
                 if exist(pth_tmp) == 0
-                    warning(['PATH MISS: path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                    warning(['PATH MISS: path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
                 end
-            else
-                disp(['PATH MISS: no uncertainty data for observational ' var_tmp ' provided']);
-            end
-            %for Quality Flags
-            if isfield(info.opti.constraints.(var_tmp),'QualityFlag')
-                if ~isempty(info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath)
-                    pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
-                    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                        info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath = convertToFullPaths(info,pth_tmp);
-                        pth_tmp = info.opti.constraints.(var_tmp).QualityFlag.Data.DataPath;
-                    end
-                    if exist(pth_tmp) == 0
-                        warning(['PATH MISS: path for quality flag of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                %for observational uncertainties
+                if isfield(info.opti.constraints.variables.(var_tmp).unc,'DataPath')
+                    if isfield(info.opti.constraints.variables.(var_tmp).unc, 'DataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).unc.dataPath)
+                        pth_tmp = info.opti.constraints.variables.(var_tmp).unc.dataPath;
+                        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                            info.opti.constraints.variables.(var_tmp).unc.dataPath = convertToFullPaths(info,pth_tmp);
+                            pth_tmp = info.opti.constraints.variables.(var_tmp).unc.dataPath;
+                        end
+                        if exist(pth_tmp) == 0
+                            warning(['PATH MISS: path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                        end
+                    else
+                        disp(['PATH MISS: no uncertainty data for observational ' var_tmp ' provided']);
                     end
                 else
-                    disp(['WARN MISS: no quality flag data for observational ' var_tmp ' provided']);
+                    disp(['WARN MISS: no uncertainty data for observational ' var_tmp ' provided']);
+                end
+                %for Quality Flags
+                if isfield(info.opti.constraints.variables.(var_tmp),'qflag')
+                    if isfield(info.opti.constraints.variables.(var_tmp).qflag, 'DataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).qflag.dataPath)
+                        pth_tmp = info.opti.constraints.variables.(var_tmp).qflag.dataPath;
+                        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                            info.opti.constraints.variables.(var_tmp).qflag.dataPath = convertToFullPaths(info,pth_tmp);
+                            pth_tmp = info.opti.constraints.variables.(var_tmp).qflag.dataPath;
+                        end
+                        if exist(pth_tmp) == 0
+                            warning(['PATH MISS: path for quality flag of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+                        end
+                    else
+                        disp(['WARN MISS: no quality flag data for observational ' var_tmp ' provided']);
+                    end
                 end
             end
         end
