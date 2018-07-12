@@ -20,7 +20,7 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 %% get the sindbad root directory
 info.experiment.sindbadroot         =   sindbadroot;
 
-%% 1) check what is the input
+%% check what is the input
 if isstruct(expConfigFile)
     % is already a structure assume = info
     info	= expConfigFile;
@@ -32,7 +32,7 @@ if isstruct(expConfigFile)
     end
     info.experiment.oldSettings{k} = info.experiment;
     % stamp the experiment settings
-    info = stampExperiment(info);
+    info = getExperimentInfo(info);
     % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
     
@@ -55,18 +55,15 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
         
     % stamp the experiment settings
-    info                            =   stampExperiment(info);
+    info                            =   getExperimentInfo(info);
     
     % read the TEM configurations
-    info                            =   readConfigFiles(info,'tem',true);
-    [info]  = createStatesInfo(info);
+    info                            =   readConfiguration(info,'tem',true);
+    [info]  = setupStateInfo(info);
     
 end
 
 %% add date helpers
 info.tem.helpers.dates.day   = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'd');
 info.tem.helpers.dates.month = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'm');
-
-
-%% 4) write the info in a json file
 end

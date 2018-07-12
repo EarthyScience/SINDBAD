@@ -57,10 +57,14 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
     s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix);
     
     % growth respiration: R_g = (1 - YG) * GPP * allocationToPool
-    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
+    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix);
+%     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .*
+%     s.cd.cAlloc(:,zix); %sujan
     
     % maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
-    s.cd.RA_M(:,zix)	= fe.RAact.km(zix).value(:,tix) .* (s.c.cEco(:,zix) + p.RAact.YG .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix));
+    s.cd.RA_M(:,zix)	= fe.RAact.km(zix).value(:,tix) .* (s.c.cEco(:,zix) + p.RAact.YG .* fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix));
+%     s.cd.RA_M(:,zix)	= fe.RAact.km(zix).value(:,tix) .* (s.c.cEco(:,zix)
+%     + p.RAact.YG .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix)); %sujan
     
     % total respiration per pool: R_a = R_m + R_g
     s.cd.cEcoEfflux(:,zix)	= s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);

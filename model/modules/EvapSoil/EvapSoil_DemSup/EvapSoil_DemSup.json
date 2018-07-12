@@ -2,7 +2,7 @@
 	"params": {
 		"ETalpha": {
 			"Name": "alpha coefficient of Priestley-Taylor formula",
-			"Unit": NaN,
+			"Unit": "",
 			"Default": 1,
 			"LowerBound": 0,
 			"UpperBound": 3,
@@ -18,7 +18,7 @@
 			"Unit": "1/time",
 			"Default": 0.05,
 			"LowerBound": 0,
-			"UpperBound": 1,
+			"UpperBound": 0.8,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",

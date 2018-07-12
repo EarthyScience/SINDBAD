@@ -7,3 +7,5 @@ sandbox/infusion
 sandbox/tests4GSI
 *.bak
 *.asv
+
+tools/workflow/

@@ -8,7 +8,10 @@ s.cd.cEcoFlow                   =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 % distribute the NPP to the veg pools
 % zix                             =   info.tem.model.variables.states.c.zix.cEco; %sujan for zix, ask nuno if this is right
 zix                             =   info.tem.model.variables.states.c.flags.cVeg; % npp goes to the veg, it was divided by all pools...
-s.cd.cNPP                       =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+s.cd.cNPP                       =   fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix) - s.cd.cEcoEfflux(:,zix);
+
+% s.cd.cNPP                       =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix); %sujan moved cAlloc to d
+ 
 s.cd.cEcoInflux(:,zix)          =   s.cd.cNPP;
 % output fluxes
 s.cd.cEcoOut                    =   s.prev.s_c_cEco .* s.cd.p_cTauAct_k;

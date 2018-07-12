@@ -1,0 +1,18 @@
+{
+	"params": 
+	{
+	"constantLAI": {
+		"Name": "LAI",
+			"Unit": "m2/m2",
+			"Default": 3,
+			"LowerBound": 1,
+			"UpperBound": 12,
+			"Distribution": 
+			{
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": ""	}
+	}
+}

@@ -5,7 +5,7 @@ function [fullCost] = calcCostMultiConstraint(f,fe,fx,s,d,p,obs,info)
 
 %% transforming info.opti.costFun to needed structure
 VariableNames = fieldnames(info.opti.costFun.options.components);
-fx.NEE = fx.gpp - fx.cRECO;
+fx.NEE = fx.cRECO - fx.gpp;
 try 
     cf = structfun(@horzcat,info.opti.costFun.options.components);
     [cf.VariableName] = VariableNames{:};   
@@ -53,7 +53,7 @@ for i = 1:numel(VariableNames)
     %    cost=double(cost);
     cost = cost .* cf(i).CostWeight;
     
-    disp(['COST : calcCostMultiConstraint : ' datestr(now) ' : mef : ' num2str(calcCVP(sim_proc,obs_proc,'mef'),'%1.14f')])
+%     disp(['COST : calcCostMultiConstraint : ' datestr(now) ' : mef : ' num2str(calcCVP(sim_proc,obs_proc,'mef'),'%1.14f')])
     
     switch multiFlag
         case 'cat'  ;fullCost    = [fullCost cost];

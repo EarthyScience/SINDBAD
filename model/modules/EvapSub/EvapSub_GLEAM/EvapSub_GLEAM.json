@@ -4,8 +4,8 @@
 			"Name": "Priestley Taylor Coefficient for Sublimation",
 			"Unit": "none",
 			"Default": 0.95,
-			"LowerBound": 0.1,
-			"UpperBound": 2,
+			"LowerBound": 0,
+			"UpperBound": 3,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",
