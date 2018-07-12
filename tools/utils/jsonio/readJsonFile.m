@@ -26,9 +26,9 @@ end
 
 % remove comments marked by fieldnames "1_c", "2_x" in the json-file...
 info = data_json;
-[~, tree] = editINFOSettings(info, '_c');
+[~, tree] = editInfoField(info, '_c');
 for ii = 1 : size(tree, 2)
-    [info, tree2del] = editINFOSettings(info, ['x' num2str(ii) '_c']);
+    [info, tree2del] = editInfoField(info, ['x' num2str(ii) '_c']);
     if numel(tree2del) == 1
         tree2del = erase(tree2del,'info');
         tree2del = erase(tree2del,['.x' num2str(ii) '_c']);

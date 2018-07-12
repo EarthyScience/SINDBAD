@@ -1,13 +1,50 @@
 function [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,doPrecOnce,doCore,doSpinUp)
+% runs the coreTEM of SINDBAD depending on different mode and flags for
+% runGenCode
+%
+% Requires:
+%	- SINDBAD structures (f,fe,fx,s,d,p,info)
+%   - flags for running coreTEM 
+%       - doPrecOnce : true to do precOnce
+%       - doCore : true to run time loop of core
+%       - doSpinUp : true to spinup the model
+%
+% Purposes:
+%   - returns f,fe,fx,s,d,p after running the coreTEM if doCore and
+%   doSpinup are true
+%   - returns the precOnce fields if only doPrecOnce is true
+%   
+%
+% Conventions:
+%  - selects the original handle or generated code based on info.tem.model.flags.runGenCode
+%       - if true, 
+%           - runs generated code for both coreTEM and preconce and core 
+%       - if false, 
+%           - runs original original handle of coreTEM and runPrecOnceTEM for forward run
+%           - runs reduced versions, coreTEM4Spinup and runPrecOnceTEM4Spinup, for spinup (subset of
+%           modules selected through use4spinup flag in
+%           modelStructure.json
+%       
+% Created by:
+%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%
+% References:
+%
+% Versions:
+%   - 1.1 on 10.07.2018 : includes functionalities of use4spinup
+%   - 1.0 on 01.05.2018
 
+%%
 tstart = tic;
-
 %% ------------------------------------------------------------------------
 % get the handles for core and precOnce
 % -------------------------------------------------------------------------
 %--> check if the coreTEM is to be run in spinup mode or forward run
+
 if doSpinUp
     fn{1}   =   'spinup';
+%     doCore  =   1;
 else
     fn{1}   =   'model';
 end
@@ -22,59 +59,16 @@ end
 %--> run the handles
 if doPrecOnce 
     hPrec               =   info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle;
-    hPrec
     [f,fe,fx,s,d,p]     =   hPrec(f,fe,fx,s,d,p,info); 
 end
-if doCore
+if doCore || doSpinUp
     hCore               =   info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
-    hCore
     [f,fe,fx,s,d,p]     =   hCore(f,fe,fx,s,d,p,info); 
 end
 % disp(['    TIME : runCoreTEM : end : inputs : ' num2str([doPrecOnce,doCore,doSpinUp],'%1.0f|') ' : time : ' sec2som(toc(tstart))])
-f
-
-disp(['     TIMERUN : runCoreTEM with [ doPrecOnce=' num2str(doPrecOnce) ' | doCore = ' num2str(doCore) ' | doSpinUp = ' num2str(doSpinUp) ' ]: ' sec2som(toc(tstart))])
-disp(' ')
-
+% disp(f)
+disp([pad('     EXEC FUNC',20,'left') ' : ' pad('runCoreTEM',20) ' | ' pad(['PrecOnce : ' func2str(info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle)],40) ' | ' pad(['Core/Spinup : ' func2str(info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle)],40)])
+disp([pad('     TIMERUN',20,'left') ' : ' pad('runCoreTEM',20) ' | ' pad(['doPrecOnce : ' num2str(doPrecOnce) ' , doCore : ' num2str(doCore) ' , doSpinUp : ' num2str(doSpinUp)],40,'both') ' | ' sec2som(toc(tstart))])
 
 
 end
-
-%{
-if info.flags.runGenCode % using the generated code
-else % use the pure handles
-    if flagUse4SpinUp
-        if flagDoPrecOnce
-            sstr	= {'Prec_AutoResp_ATC_A','Prec_AutoResp_ATC_B','Prec_AutoResp_ATC_C','Prec_CCycle_CASA'};
-            for prc = 1:numel(info.tem.model.code.prec)
-                if~info.tem.model.code.prec(prc).runAlways
-                    if sum(strcmp(info.tem.model.code.prec(prc).funName,sstr))>0
-                        [f,fe,fx,s,d,p] = info.tem.model.code.prec(prc).funHandle(f,fe,fx,s,d,p,info);
-                    end
-                end
-            end
-        end
-        if flagDoCore
-            sstr = {'RAact','cCycle'};
-            for ii = 1:infoSpin.forcing.size(2)
-                for m = sstr
-                    [f,fe,fx,s,d,p]    = infoSpin.code.ms.(m{1}).funHandle(f,fe,fx,s,d,p,info,ii);
-                end
-            end
-        end
-    else %  not in spinup
-        if flagDoPrecOnce
-            % run the precOnce for all the modules that are not runAlways
-            for prc = 1:numel(info.tem.model.code.prec)
-                if~info.tem.model.code.prec(prc).runAlways
-                    [f,fe,fx,s,d,p] = info.tem.model.code.prec(prc).funHandle(f,fe,fx,s,d,p,info);
-                end
-            end
-        end
-        if flagDoCore
-            [f,fe,fx,s,d,p]    = info.tem.model.code.coreTEM.funHandle(f,fe,fx,s,d,p,info);
-            % it is easier then looping in time looping using info.tem.model.code.ms.(moduleName).funHandle
-        end
-    end
-end
-%}

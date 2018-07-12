@@ -1,7 +1,7 @@
 function [ModuleVariableMatrix,moduleNames,variableNames] = getModuleVariableMatrix(info)
 
-varsConfig=vertcat(info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:));
-variableNames=unique(vertcat(varsConfig(:),info.tem.model.code.variables.moduleAll(:)));
+varsConfig = vertcat(info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:));
+variableNames = unique(vertcat(varsConfig(:),info.tem.model.code.variables.moduleAll(:)));
 nvars=length(variableNames);
 
 nprecs=length(info.tem.model.code.prec);
@@ -51,9 +51,13 @@ tmp=sum(ModuleVariableMatrix,2);
 tf=tmp>0;
 moduleNames=moduleNames(tf);
 ModuleVariableMatrix=ModuleVariableMatrix(tf,:);
-
+figure
 imagesc(ModuleVariableMatrix)
-colormap(gray)
+cm=colormap(jet(4));
+
 set(gca,'XTick',[1:nvars],'XTickLabel',variableNames,'XTickLabelRotation',45,'YTick',[1:length(moduleNames)],'YTickLabel',moduleNames)
+cb=colorbar;
+set(cb,'Ticks',[0,1,2,3],'TickLabels',{'Not Used','Input','Output','Modified'})
+
 end
 

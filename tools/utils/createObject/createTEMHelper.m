@@ -1,4 +1,4 @@
-function [info] = createTEMHelpers(info)
+function [info] = createTEMHelper(info)
 % Usages: 
 %   info = createTEMHelpers(info)
 %

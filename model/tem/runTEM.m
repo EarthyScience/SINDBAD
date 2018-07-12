@@ -1,68 +1,67 @@
-function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU] = runTEM(info,f,    ...                      % minimal inputs
-    p,...                           % variant #0
-    SUData,...                      % variant #1
-    precOnceData,...                % variant #2
-    fx,fe,d,s, ...                  % variant #3
-    infoSU,fSU,precOnceDataSU,...   % variant #4
-    fxSU,feSU,dSU,sSU)              % variant #5
-% Terrestrial Ecosystem Model of SINDBAD
+function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU] = runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s,infoSU,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU) 
+% runs the Terrestrial Ecosystem Model of SINDBAD 
 %
-% types of calls
-% minimal
-%   varargout = runTEM(info,f)
-%       f       : structure with the required forcing data
-%       info    : structure on how to run the model
-%
-% variant #0
-%   varargout   = runTEM(info,f,p)
-%       ... same as above +
-%       p       : parameter vector
-%
-% variant #1
-%   varargout   = runTEM(info,f,p,SUData)
-%       ... same as above +
-%       SUData  : structure with the subfields "sSpinUp" and "dSpinUp"
+% Requires:
+%   - variant 1 (Minimal) : varargout = runTEM(info,f)
+%       - f : structure with the required forcing data
+%       - info : structure on how to run the model
+%   - variant 2 : varargout   = runTEM(info,f,p)
+%       - same as 1, and
+%       - p: parameter structure
+%   - variant 3 : varargout = runTEM(info,f,p,SUData)
+%       - same as 2, and 
+%       - SUDATA : structure with the subfields "sSU" and "dSU"
 %               which will be the initial conditions of the model if the
 %               flag info.tem.spinup.flags.runSpinup = false
+%   - variant 4 : varargout = runTEM(info,f,p,SUData,precOnceData)
+%       - same as 3, and 
+%       - precOnceData : structure with the subfields "fx", "fe", "d" and
+%                       "s" as coming out of the runCoreTEM with
+%                       doPrecOnce. Contains the variables that can be
+%                       computed outside the time loop.
+%   - variant 5 : varargout = runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s)
+%       - same as 4, and
+%       - fx : initialized structure for fluxes with pre-created arrays 
+%       - fe : initialized structure with pre-calculated extra forcing
+%       - d : initialized diagnostic structure with pre-created arrays
+%       - s : initialized state structure wtih with pre-created arrays
+%   - variant 6: varargout = runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s,infoSU,fSU)
+%       - same as 5, and 
+%       - infoSU: a copy of info with time and other information edited to match spinup run
+%       - fSU: a forcing structure with forcing variables needed to run the
+%       spinup, e.g., MSC of all variables
+%   - variant 7: varargout = runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s,infoSU,fSU,precOnceDataSU)
+%       - same as 6, and
+%       - precOnceDataSU: Same as precOnceData but with spinup forcing
+%   - variant 8: varargout = runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s,infoSU,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU)
+%       - same as 7, and
+%       - fxSU,feSU,dSU,sSU: Same as variant 5, but with spinup forcing
+% 
 %
-% variant #2
-%   varargout   = runTEM(info,f,p,SUData,precOdata)
-%       ... same as above +
-%       precOnceData    : structure with the subfields "fx", "fe", "d" and
-%                       "s" as coming out of the runCoreTEM precompute ONCE
+% Purposes:
+%   - returns f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
+%   - All SINDBAD structures with fluxes, states, and diagnostics from 
+%       - a forward run (f,fe,fx,s,d,p,precOnceData)
+%       - the spinup (fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU) using spinup forcing and the selected modules for spinup 
 %
-% variant #3
-%   varargout	= runTEM(info,f,SUData,precOnceData,fx,fe,d,s)
-%       ... same as above +
-%       fx	: initialized structure for fluxes
-%       fe  : initialized structure for forcing extra
-%       d   : initialized structure for diagnostics
-%       s   : initialized structure for states
-%
-% variant #4
-%   varargout	= runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s, ...
-%               infoSU, fSU)
-%       ... same as above +
-%       infoSU      : info for the spinup (analogous to info for TEM)
-%       fSU         : structure with the required forcing data for the
-%                   spinup
-%
-% variant #5
-%   varargout	= runTEM(info,f,p,SUData,precOnceData,fx,fe,d,s, ...
-%               infoSU,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU)
-%       ... same as above +
-%       fxSU	: initialized structure for fluxes during spinup
-%       feSU	: initialized structure for forcing extra during spinup
-%       dSU     : initialized structure for diagnostics during spinup
-%       sSU     : initialized structure for states during spinup
-%
-%       NOTE    : this should be the version used during optimization. One
-%               can also run it like runTEM(info,f) ... but will give MSGs
-%               for inneficiency
-%       NOTE    : the logic is that only mandatory inputs are info and f.
+% Conventions:
+%   - the logic is that only mandatory inputs are info and f.
 %               all the others are optional OR empty. When empty (or not
 %               given) they are created.
+%   - When called with minimal inputs (variant 1), the execution is slowest.
+%   - For faster runs use, variant 8. For example, during optimization.
+%       
+% Created by:
+%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %
+% References:
+%
+% Versions:
+%   - 1.0 on 01.05.2018 
+%   - 1.1 on 01.07.2018 (bug fixes in createTEMstruct, and added display
+%   for log of model run)
+
 %% ------------------------------------------------------------------------
 % 1 - check TEM inputs
 % -------------------------------------------------------------------------
@@ -145,14 +144,14 @@ end
 % 4 - create TEM structures for the transient run
 % -------------------------------------------------------------------------
 if runFlags.createStruct 
-    disp('MSG : runTEM : creating/initializing objects and arrays ...')
+    disp([pad('INPUT ARGS',20) ' : ' pad('runTEM',20) ' | required SINDBAD structures are not provided as input. Reading/creating'])
     [fe,fx,s,d,info]	= createTEMStruct(info); %sujan
     if info.tem.model.flags.runOpti
-        disp(['MSG : runTEM :' ...
-            ' runOpti == ' num2str(info.tem.model.flags.runOpti) ...
-            ' but created SINDBAD objects with arrays are not provided : '...
-            ' The arrays will be created in every iteration of optimization'...
-            ' Extremely inefficient mode of running...'])
+        disp([pad('OPTI WARN',20) ' : ' pad('runTEM',20) ':'])
+        disp(['                          >> Optimization Mode with runOpti = ' num2str(info.tem.model.flags.runOpti)])
+        disp('                          >> runTEM called with empty SINDBAD structures and arrays')
+        disp('                          >> Structures created in every iteration of OPTI')
+        disp('                          >> INEFFICIENT IF THIS MESSAGE APPEARS MORE THAN ONCE')
     end
 end
 % and feed the end states of spinup to the initial condition of the forward
@@ -169,17 +168,21 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     % ---------------------------------------------------------------------
     % 5.1 - PRECOMPUTATIONS (ONCE)
     % ---------------------------------------------------------------------
+    % -------------------------------------------------------------------------
+    % get the precOnce data structure
+    % -------------------------------------------------------------------------
     if isempty(precOnceData)
         [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
-        precOnceData	= struct;
-        for v = {'f','fe','fx','s','d','p'}
-            eval(['precOnceData.(v{1})	= ' v{1} ';']);
-        end
-    else
-        for v = {'f','fe','fx','d','p'}
-            eval([v{1} ' = precOnceData.(v{1});']);
-        end
+%         precOnceData	= struct;
+%         for v = {'f','fe','fx','s','d','p'}
+%             eval(['precOnceData.(v{1})	= ' v{1} ';']);
+%         end
+%     else
+%         for v = {'f','fe','fx','s','d','p'}
+%             eval([v{1} ' = precOnceData.(v{1});']);
+%         end
     end
+    [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d,p,info,'runTEM');
     % the previous steps should come from the spinup
     if iStep == 1, if isfield(dSU,'prev'), d.prev	= dSU.prev; end; end %isfield added by sujan
     % ---------------------------------------------------------------------
@@ -192,150 +195,8 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
 end
 
 % disp(['    TIM : runTEM : end : time : ' sec2som(toc(tstart))])
-disp(['TIMERUN : runTEM : Total Time Needed: ' sec2som(toc(tstart))])
+disp([pad('TOTAL TIMERUN',20) ' : ' pad('runTEM',20) ' | Total Time Needed: ' sec2som(toc(tstart))])
+disp(' ')
 
 
-end % function
-
-%%
-% -------------------------------------------------------------------------
-% 1 - MODEL SETTINGS
-% -------------------------------------------------------------------------
-
-% insert flag if is optimization mode or forward model run
-% info.flags.opti
-
-% forcing - climate, fpar, ...
-
-% check the units
-
-% parameter - controls response functions of model structure
-% surface variables
-% soil
-% vegetatioon
-% estimates of memory checks
-
-
-
-% load the model settings
-% how to do the spinup
-% how to compute fpar
-% which GPP/W coupling scheme to use
-% compute diagnostics
-% working in optimization mode?
-% check surface properties
-% ... (etc)
-% eg of a handle function for the calculation of et
-
-
-%{
-    % -------------------------------------------------------------------------
-% 4 - CONSISTENCY CHECKS
-% -------------------------------------------------------------------------
-
-% consistency checks in the way to run the model and the needed variables
-    % we need a time stamp vector in there now!
-
-% check compatibility with the settings, the forcing and the parameters
-
-% here end of if optimization or not
-
-% if it is in optmization mode , we need a flag that says if we need to scale the paraetmers
-	% scale paraemtres
-% 	p.et.alpha = inip.et.alpha .* scalp.et.alpha;
-
-
-    old notes...
-% -------------------------------------------------------------------------
-% 2 - IO SETUP
-% -------------------------------------------------------------------------
-
-% flags for input-output (io) operations
-	% from memory or from files?
-		% depending on the forcing (f) input. Folder names means from
-		% files, matrices means memory
-	% output
-		% save spin-up results?
-		% save transient simulations outputs?
-		% save diagnostics
-		% how to save them? every day? month? year?
-	% messages on model running
-		% ignore messages
-		% display messages during model run
-		% save them in an output file somewhere
-	% restart files?
-	%
-
-            % -----------------------------------------------------------------
-        % 6.1. - DEAL WITH MODEL FORCING
-        % -----------------------------------------------------------------
-        
-        % switch
-            % load from file
-                % spin up
-                    % we only need to load it once
-                % transient
-                    % get the file named as the year
-                    
-            % load from memory
-                % spin up
-                    % adjust time vector every year (we are basically
-                    % repeating the same year over and over...
-                % transient
-                    % sample the yearly data from the complete time series
-                    % (we always assume that from memory, we have all the
-                    % data at the same time)
-        % -----------------------------------------------------------------
-        % 6.2. - EXTRA FORCING REQUIREMENTS -this should be up!!!
-        % -----------------------------------------------------------------
-        
-        % special forcing, like soil temperature, PET, l?l?l? - this can be
-        % fed into the forcing structure
-        
-
-% -------------------------------------------------------------------------
-% 7 - GLOBAL OUTPUTS
-% -------------------------------------------------------------------------
-
-% like before, outputs for file or memory in transient mode (note, this way
-% should also have the option to be consistent with the previous CASA code
-% output, so that the optimization algorithms can be used with minimal
-% adjustments) -> this can be outsourced to a function for making the code
-% easier to read.
-    
-        % do the aggregation of the cPools here
-    if info.tem.flags.saveStates >= 1 || info.checks.CBalance
-        d	= temAggStates(info,d);
-    end
-    
-    % ---------------------------------------------------------------------
-    % X.X - CHECK BALANCES
-    % ---------------------------------------------------------------------
-    info	= CheckCarbonBalance(f,fe,fx,s,d,p,info);
-    info	= CheckWaterBalance(f,fe,fx,s,d,p,info);
-    
-    
-    % -----------------------------------------------------------------
-    % 6.4. - OUTPUTS
-    % -----------------------------------------------------------------
-        
-
-    % outputs for file or memory in transient mode (note, this way
-    % should also have the option to be consistent with the previous
-    % CASA code output, so that the optimization algorithms can be used
-    % with minimal adjustments)
-
-    % deal with restart files and have everything ones needs just to
-    % restart where we left from
-    
-    disp('between these comments need revision - stop')
-    
-
-% % ---------------------------------------------------------------------
-% % save the spinup output?
-% % ---------------------------------------------------------------------
-% if ~isempty(info.outputs.saveSpinUp)
-% end
-
-
-%}
+end

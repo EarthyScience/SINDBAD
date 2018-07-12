@@ -14,9 +14,9 @@ for ii=1:length(paramList)
     if exist(file_json,'file')
         param_json    = readJsonFile(file_json);
         if paramValue < param_json.params.(paramName).LowerBound
-            warning(['WARN BNDS: checkParamBounds | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is smaller than lower bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
+            warning([pad('WARN BNDS',20) ' : ' pad('checkParamBounds',20) ' | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is smaller than lower bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
         elseif paramValue > param_json.params.(paramName).UpperBound
-            warning(['WARN BNDS: checkParamBounds | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is larger than upper bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
+            warning([pad('WARN BNDS',20) ' : ' pad('checkParamBounds',20) ' | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is larger than upper bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
         end
         
     end
