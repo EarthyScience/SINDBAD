@@ -83,7 +83,10 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = gpp * (1 - YG)
-    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
+    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix);
+%     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .*
+%     s.cd.cAlloc(:,zix); %sujan 
+    
     
     % total respiration per pool: R_a = R_m + R_g
     s.cd.cEcoEfflux(:,zix)	= s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);

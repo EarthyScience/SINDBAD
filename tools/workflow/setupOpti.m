@@ -14,14 +14,13 @@ if ~isempty(info.experiment.configFiles.opti)
     try
         data_json	= readJsonFile(info.experiment.configFiles.opti);
     catch
-        error('CRIT FILEMISS: setupOpti: The main optimization configuration (opti.json) is missing');
+        error([pad('CRIT FILEMISS',20,'left') ' : ' pad('setupOpti',20) ' | The main optimization configuration (opti.json) is missing'])
     end
 else
-    error('CRIT MISMATCH: setupOpti: runOpti in modelRun configuration file is set to true, the configuration for optimization (opti json file) is not provided in experimental setup');
+    error([pad('CRIT MISMATCH',20,'left') ' : ' pad('setupOpti',20) ' | runOpti in modelRun configuration file is set to true, the configuration for optimization (opti json file) is not provided in experimental setup'])
 end
 % read opti cofigurations
 info.opti	= data_json;
-
 info.opti.constraints.variableNames = fields(data_json.constraints.variables);
 
 %%
@@ -59,7 +58,7 @@ for jj=1:numel(paramsList)
         upbounds                    =   [upbounds params.(module).(paramName).UpperBound];
         pdefault                    =   [pdefault params.(module).(paramName).Default];
     catch
-        error(['MSG: readOpti : module or parameter name not existing : ' mod_param])
+        error([pad('CRIT MODSTR',20,'left') ' : ' pad('setupOpti',20) ' | The optimized module or parameter name not exist in selected model structure, check params2opti in opti.json : ' mod_param])
     end
 end
 

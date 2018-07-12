@@ -26,8 +26,8 @@ function [fe,fx,s,d,info]     =  createTEMStruct(info)
 
 %%
 
-[info]                       =   createTEMHelpers(info);
-[s,d,info]                   =   createStatesArrays(info);                % create the arrays for state variables
-[fe,fx,d,info]               =   createVariablesArrays(d,info);           % create the arrays for variables in f,fe,fx,d
+[info]                       =   createTEMHelper(info);
+[s,d,info]                   =   createStateArray(info);                % create the arrays for state variables
+[fe,fx,d,info]               =   createVariableArray(d,info);           % create the arrays for variables in f,fe,fx,d
 
 end

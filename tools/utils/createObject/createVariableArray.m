@@ -1,4 +1,4 @@
-function [fe,fx,d,info] = createVariablesArrays(d,info)
+function [fe,fx,d,info] = createVariableArray(d,info)
 % Creates the arrays for non-state variables
 %
 % Requires: 

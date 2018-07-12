@@ -1,12 +1,13 @@
-function [f,fe,fx,s,d,p,precOnceData,sSU,dSU,info] = workflowExperiment(expConfigFile,varargin)
+function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU] = workflowExperiment(expConfigFile,varargin)
 % Runs a SINDBAD model experiment with either a given experimental config or info
 %
 % Requires:
-%	- a configuration file for a n experiment or
+%	- a configuration file for an experiment or
 %	- an info structure
 %
 % Purposes:
 %   - Runs the experiment based on the configuration files or info
+%       - in different modes such as forward or optimization
 %
 % Conventions:
 %
@@ -22,28 +23,39 @@ function [f,fe,fx,s,d,p,precOnceData,sSU,dSU,info] = workflowExperiment(expConfi
 tstartwf = tic;
 tmpStrDate                          =   datestr(now,30);
 tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
+if exist(tmpLogFile,'file')
+    eval(['delete ' tmpLogFile])
+end
 diary(tmpLogFile)
-disp('--------------------------------------')
-disp('START: Log of SINDBAD model experiment')
-disp('--------------------------------------')
+% start log file content
+disp(pad('-',200,'both','-'))
+disp(pad('START: Log of SINDBAD model experiment',200,'both'))
+disp(pad('-',200,'both','-'))
+% end log file content
 %% check if the experiment configuration has been passed. Stop, if not.
 if ~exist('expConfigFile','var')
-    error('CRIT : runExperiment : Cannot run experiment without configuration file: expConfigFile[.json] or SINDBAD info')
+    dispMSG = [pad('CRIT WORKFLOW',20) ' : ' pad('workflowExperiment',20) ' | Cannot run an experiment without configuration file [expConfigFile(.json)] or SINDBAD info'];
+    disp(dispMSG)
+    diary
+    error(dispMSG)
 end
 
 %% setup the TEM
-disp('------------------------------')
-disp('Set up the TEM of SINDBAD')
-disp('------------------------------')
+% start log file content
+disp(pad('-',200,'both','-'))
+disp(pad('Set up the TEM of SINDBAD',200,'both',' '))
+disp(pad('-',200,'both','-'))
+% end log file content
 [info, expConfigFile]                       =   setupTEM(expConfigFile);
 
 
-%% 4) write the info in a json file
 %% setup the optimization if it's on
 if info.tem.model.flags.runOpti
-    disp('----------------------------------')
-    disp('Set up the optimization of SINDBAD')
-    disp('----------------------------------')
+    % start log file content
+    disp(pad('-',200,'both','-'))
+    disp(pad('Set up the optimization of SINDBAD',200,'both',' '))
+    disp(pad('-',200,'both','-'))
+    % end log file content
     [info]                                  =   setupOpti(info);
     [info]                                  =   editTEMInfo(info,varargin{:});
     infoLite                                =   info;
@@ -53,32 +65,33 @@ else
     infoLite                                =   info;
 end
 
-%% setup the model structure
-disp('----------------------------------------------------------')
-disp('Setup the model structure and generate the code of SINDBAD')
-disp('----------------------------------------------------------')
-[info]                                      =   setupCode(info);
 
 %% prepare the SINDBAD objects and structures
-disp('--------------------------------------------')
-disp('Prepare the objects and structure of SINDBAD')
-disp('--------------------------------------------')
+% start log file content
+disp(pad('-',200,'both','-'))
+disp(pad('Prepare the objects and structure of SINDBAD',200,'both',' '))
+disp(pad('-',200,'both','-'))
+% end log file content
 [f,fe,fx,s,d,info]                          =   prepTEM(info);
 
 %% Forward run the model when optimization is off
-if info.tem.model.flags.forwardRun && ~info.tem.model.flags.runOpti
-    disp('-------------------------------------------------')
-    disp('Forward run SINDBAD model with default parameters')
-    disp('-------------------------------------------------')
+if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
+    % start log file content
+    disp(pad('-',200,'both','-'))
+    disp(pad('Forward run SINDBAD model with default parameters',200,'both',' '))
+    disp(pad('-',200,'both','-'))
+    % end log file content
     p                                       =   info.tem.params;
-    [f,fe,fx,s,d,p,precOnceData,sSU,dSU]    =   runTEM(info,f,p);
+    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
 end
 
 %% Optimize the model and then do the forward run using optimized parameter when opti is on
 if info.tem.model.flags.runOpti
-    disp('--------------------------')
-    disp('optimize the SINDBAD model')
-    disp('--------------------------')
+    % start log file content
+    disp(pad('-',200,'both','-'))
+    disp(pad('optimizing the SINDBAD TEM',200,'both',' '))
+    disp(pad('-',200,'both','-'))
+    % end log file content
     optimizerFunName                        =   ['optimizeTEM_' info.opti.algorithm.funName];
     if ~exist(optimizerFunName)
         optimizerFunName                    =   'optimizeTEM';
@@ -92,69 +105,85 @@ if info.tem.model.flags.runOpti
     for i                                   =   1:numel(info.opti.params.names)
         eval([info.opti.params.names{i} '   = info.opti.params.defaults(i) .* pScales(i);'])
     end
-    disp('---------------------------------------------------')
-    disp('Forward run SINDBAD model with optimized parameters')
-    disp('---------------------------------------------------')
-    [f,fe,fx,s,d,p,precOnceData,sSU,dSU]    = runTEM(info,f,p);
+    % start log file content
+    disp(pad('-',200,'both','-'))
+    disp(pad('Forward run SINDBAD model with optimized parameters',200,'both',' '))
+    disp(pad('-',200,'both','-'))
+    % end log file content
+    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    = runTEM(info,f,p);
 end
 
 %% Save the data and model output
-disp('----------------------------------------------------------------------')
-disp('Save the info of the current experiment and corresponding forcing data')
-disp('----------------------------------------------------------------------')
+% start log file content
+disp(pad('-',200,'both','-'))
+disp(pad('Save the data',200,'both',' '))
+disp(pad('-',200,'both','-'))
+% end log file content
 % create a copy of the configuration files of the experimentment to output directory
 [pth,~,~] = fileparts(expConfigFile);
 copyfile(pth,info.experiment.settingsOutputDirPath);
-disp(['Saved a copy of the configuration files at: ' info.experiment.settingsOutputDirPath])
+disp([pad('copy of configuration files',30) ' : ' info.experiment.settingsOutputDirPath])
 
 % save the light version of info with all configs and settings as a json
 % file
 savejsonJL('',infoLite,info.experiment.outputInfoFile);
-disp(['Saved the light version of info in json format: ' info.experiment.outputInfoFile])
+disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
 
-% save the info as mat file
-save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
-disp(['Saved the full version of info in .mat format: ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
+% % save the info as mat file
+% save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
+% disp([pad('full version of info (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
+% 
+% % save the f as mat file
+% save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')
+% disp([pad('forcing data (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'])
 
-% save the f as mat file
-save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')
-disp(['Saved the forcing for the experiment in .mat format: ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'])
-
-%% move the temporary log file to model output directory
-disp('---------------------------------------------------------------------------')
-disp(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configuration'])
-disp('---------------------------------------------------------------------------')
+%% write the experiment information and move the temporary log file to model output directory
+% start log file content
+disp(pad('-',200,'both','-'))
+disp(pad(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configuration'],200,'both'))
+disp(pad('-',200,'both','-'))
 if info.tem.model.flags.runOpti
-    disp('------Model Run in Optimization Mode--------')
+    disp(pad('Model Run in Optimization Mode',200,'both','-'))
 else
-    disp('------Model Run in Forward Mode (without Optimization)--------') 
+    disp(pad('Model Run in Forward Mode (without Optimization)',200,'both','-'))
 end
-disp('------Configuration Files--------')
+if info.tem.model.flags.runGenCode
+    disp(pad('Model Run using Generated Code',200,'both','-'))
+else
+    disp(pad('Model Run using Original Handles',200,'both','-'))
+end
+if info.tem.model.flags.genRedMemCode
+    disp(pad('Memory Reduction through genRedMemCode = 1',200,'both','-'))
+else
+    disp(pad('No Memory Reduction through genRedMemCode',200,'both','-'))
+end
+disp(pad('List of used Configuration Files',200,'both','-'))
 
-disp(['experiment : ' expConfigFile])
+disp([pad('experiment',20) ' : ' expConfigFile])
 confFN = fields(info.experiment.configFiles) ;
 for cfn = 1:numel(confFN)
     if ~strcmp(confFN{cfn},'opti')
-        disp([confFN{cfn} ' : ' info.experiment.configFiles.(confFN{cfn})])
+        disp([pad(confFN{cfn},20) ' : ' info.experiment.configFiles.(confFN{cfn})])
     end
 end
 if info.tem.model.flags.runOpti
-    disp('------ Optimization Configurations--------')
-    disp(['Main Configuration: ' info.experiment.configFiles.opti])
-    disp(['Optimization Algorithm: ' info.opti.algorithm.funName])
-    disp(['Optimization Additional Options: ' info.opti.algorithm.nonDefOptFile])
-    disp(['Cost Function: ' info.opti.costFun.funName])
-    disp(['Cost Function Additional Options: ' info.opti.costFun.nonDefOptFile])
+    disp(pad('Optimization Configuration:',200,'both','-'))
+    disp(['Main Configuration:                  ' info.experiment.configFiles.opti])
+    disp(['Optimization Algorithm:              ' info.opti.algorithm.funName])
+    disp(['Optimization Additional Options:     ' info.opti.algorithm.nonDefOptFile])
+    disp(['Cost Function:                       ' info.opti.costFun.funName])
+    disp(['Cost Function Additional Options:    ' info.opti.costFun.nonDefOptFile])
     
 end
-disp('--------------------------------------')
+disp(pad('-',200,'both','-'))
 
-disp(['  TOTAL TIME | Experiment: ' info.experiment.name ' | ' sec2som(toc(tstartwf))])
+disp(['  TOTAL TIME | Experiment:               ' info.experiment.name ' | ' sec2som(toc(tstartwf))])
 
-disp('--------------------------------------')
-disp('END: Log of SINDBAD model experiment')
-disp('--------------------------------------')
+disp(pad('-',200,'both','-'))
+disp(pad('END: Log of SINDBAD model experiment',200,'both'))
+disp(pad('-',200,'both','-'))
 
+% end log file content
 
 diary
 movefile(tmpLogFile,info.experiment.modelrunLogFile)

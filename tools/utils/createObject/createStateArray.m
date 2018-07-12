@@ -1,4 +1,4 @@
-function [s,d,info] = createStatesArrays(info)
+function [s,d,info] = createStateArray(info)
 % Creates the arrays of state variables before the model run. 
 %
 % Requires:
@@ -11,7 +11,6 @@ function [s,d,info] = createStatesArrays(info)
 %       - first element: a logical on whether or not to combine the
 %               pools
 %       - second element: a string of the name of combined pool
-%
 % Purposes:
 %   - Creates the arrays for the state variables needed to run the model.
 %   - Creates the arrays in

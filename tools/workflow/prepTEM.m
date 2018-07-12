@@ -8,8 +8,6 @@ function [f,fe,fx,s,d,info]   =     prepTEM(info)
 %
 % steps:
 %   1) prepForcing
-%   2) prepSpinup
-%   3) prepParams
 %   4) createArrays4Model
 %   5) runPrec
 
@@ -20,7 +18,7 @@ for jj      =   1:numel(fun_fields)
     try
     info.tem.forcing.funHandle.(fun_fields{jj})     =   str2func(info.tem.forcing.funName.(fun_fields{jj}));
     catch
-        disp(['prepTEM : no valid function name for ' fun_fields{jj} ' given in forcing.json'])
+        disp([pad('CRIT FUNCMISS',20,'left') ' : ' pad('prepTEM',20) ' |  no valid function name for ' fun_fields{jj} ' given in forcing.json'])
     end
 end
 
@@ -50,6 +48,12 @@ info.tem.helpers.sizes.nTix     =   info.tem.forcing.size(2);
 if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
     [info,f] = info.tem.forcing.funHandle.check(info,f);   
 end
+%% setup the model structure
+disp(pad('-',200,'both','-'))
+disp(pad('Setup the model structure and generate the code of SINDBAD',200,'both',' '))
+disp(pad('-',200,'both','-'))
+[info]                                      =   setupCode(info);
+
 %%
 % preparing params
 % p                 =   info.tem.params;
