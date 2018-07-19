@@ -14,7 +14,7 @@ function [f,fe,fx,s,d,p] = dyna_Qsnw_TRn(f,fe,fx,s,d,p,info,tix)
 % potMelt 	: potential snow melt based on temperature and net radiation [mm/time]
 %           (fe.Qsnw.potMelt)
 % frSnow    : snow fraction [] 
-%           (s.wd.wFrSnow)
+%           (s.wd.wSnwFr)
 % 
 % OUTPUT
 % Qsnow     : snow melt [mm/time]
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = dyna_Qsnw_TRn(f,fe,fx,s,d,p,info,tix)
 
 % Then snow melt (mm/day) is calculated as a simple function of temperature and radiation
 % and scaled with the snow covered fraction
-fx.Qsnow(:,tix) = min( s.w.wSnow , fe.Qsnw.potMelt(:,tix) .* s.wd.wFrSnow );
+fx.Qsnow(:,tix) = min( s.w.wSnow , fe.Qsnw.potMelt(:,tix) .* s.wd.wSnwFr );
 
 % update the snow pack
 s.w.wSnow = s.w.wSnow - fx.Qsnow(:,tix);

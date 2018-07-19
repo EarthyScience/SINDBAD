@@ -30,11 +30,11 @@ function fSpin	=	prepSpinupForcing(f,info)
 fSpin	= f;
 
 if info.tem.spinup.flags.readForcing
-    if ~isempty(info.tem.spinup.rules.func2readForcing)
-        fSpinHandle = str2func(info.tem.spinup.rules.prepForcingFromFile);
-        fSpin = fSpinHandle;
+    if ~isempty(info.tem.spinup.rules.fun2readForcing)
+        fSpinHandle = str2func(info.tem.spinup.rules.fun2readForcing);
+        [fSpin, info] = feval(fSpinHandle,info);
     else
-        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | Forcing for spinup is set to read from file, but the function to do it (prepForcingFromFile) is empty. Using the original forcing'] )
+        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | Forcing for spinup is set to read from file, but the function to do it (fun2readForcing) is empty. Using the original forcing'] )
     end
 end
 
@@ -59,9 +59,9 @@ if ~info.tem.spinup.flags.readForcing
     else
         disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using one forward run of original forcing for model spinup'])
     end
-elseif ~isempty(info.tem.spinup.rules.func2readForcing)
+elseif ~isempty(info.tem.spinup.rules.fun2readForcing)
     if ~info.tem.spinup.flags.recycleMSC
-        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using one forward run of new forcing from | ' info.tem.spinup.rules.prepForcingFromFile ' | for model spinup'])
+        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using one forward run of new forcing from | ' info.tem.spinup.rules.fun2readForcing ' | for model spinup'])
     else
         disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using recycled MSC of new forcing from | ' info.tem.spinup.rules.prepForcingFromFile ' | for model spinup'])
     end 

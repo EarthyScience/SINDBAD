@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU] = workflowExperiment(expConfigFile,varargin)
+function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU,obs,cost] = workflowExperiment(expConfigFile,varargin)
 % Runs a SINDBAD model experiment with either a given experimental config or info
 %
 % Requires:
@@ -8,16 +8,24 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
 % Purposes:
 %   - Runs the experiment based on the configuration files or info
 %       - in different modes such as forward or optimization
+%       - in v1.1: 
+%           - forward run with cost calculation but without
+%               optimization
+%           - outputs additionally the observational constraints
+%               and costs
 %
 % Conventions:
 %
 % Created by:
 %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
 % References:
 %
 % Versions:
+%   - 1.1 on 18.07.2018 
 %   - 1.0 on 01.07.2018
+
 
 %% create a temporary log file
 tstartwf = tic;
@@ -50,7 +58,7 @@ disp(pad('-',200,'both','-'))
 
 
 %% setup the optimization if it's on
-if info.tem.model.flags.runOpti
+if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('Set up the optimization of SINDBAD',200,'both',' '))
@@ -75,7 +83,7 @@ disp(pad('-',200,'both','-'))
 [f,fe,fx,s,d,info]                          =   prepTEM(info);
 
 %% Forward run the model when optimization is off
-if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
+if info.tem.model.flags.runForward && ~info.tem.model.flags.calcCost && ~info.tem.model.flags.runOpti
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('Forward run SINDBAD model with default parameters',200,'both',' '))
@@ -83,6 +91,26 @@ if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
     % end log file content
     p                                       =   info.tem.params;
     [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
+    
+    cost    = {};
+    obs     = {}; 
+end
+
+%% Forward run the model and calculate the costs when optimization is off
+if info.tem.model.flags.runForward && info.tem.model.flags.calcCost &&  ~info.tem.model.flags.runOpti
+    % start log file content
+    disp(pad('-',200,'both','-'))
+    disp(pad('Forward run SINDBAD model with default parameters & calculate costs',200,'both',' '))
+    disp(pad('-',200,'both','-'))
+    % end log file content
+    p                                       =   info.tem.params;
+    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
+    % calculate the cost
+    [costT,costComp]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
+    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(costT)])
+    disp(pad('+',200,'both','+'))
+    cost = costComp;
+    cost.total = costT;
 end
 
 %% Optimize the model and then do the forward run using optimized parameter when opti is on
@@ -111,6 +139,9 @@ if info.tem.model.flags.runOpti
     disp(pad('-',200,'both','-'))
     % end log file content
     [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    = runTEM(info,f,p);
+    % calculate the cost
+    [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
+    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost)])
 end
 
 %% Save the data and model output
@@ -144,6 +175,8 @@ disp(pad(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configur
 disp(pad('-',200,'both','-'))
 if info.tem.model.flags.runOpti
     disp(pad('Model Run in Optimization Mode',200,'both','-'))
+elseif info.tem.model.flags.calcCost
+    disp(pad('Model Run in Forward Mode & Cost calculation (without Optimization)',200,'both','-'))
 else
     disp(pad('Model Run in Forward Mode (without Optimization)',200,'both','-'))
 end
@@ -175,6 +208,15 @@ if info.tem.model.flags.runOpti
     disp(['Cost Function Additional Options:    ' info.opti.costFun.nonDefOptFile])
     
 end
+
+if info.tem.model.flags.calcCost
+    disp(pad('Cost Configuration:',200,'both','-'))
+    disp(['Main Configuration:                  ' info.experiment.configFiles.opti])
+    disp(['Cost Function:                       ' info.opti.costFun.funName])
+    disp(['Cost Function Additional Options:    ' info.opti.costFun.nonDefOptFile])
+    
+end
+
 disp(pad('-',200,'both','-'))
 
 disp(['  TOTAL TIME | Experiment:               ' info.experiment.name ' | ' sec2som(toc(tstartwf))])
@@ -186,5 +228,5 @@ disp(pad('-',200,'both','-'))
 % end log file content
 
 diary
-movefile(tmpLogFile,info.experiment.modelrunLogFile)
+%movefile(tmpLogFile,info.experiment.modelrunLogFile)
 end

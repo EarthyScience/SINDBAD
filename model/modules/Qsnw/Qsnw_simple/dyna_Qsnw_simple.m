@@ -14,7 +14,7 @@ function [f,fe,fx,s,d,p] = dyna_Qsnw_simple(f,fe,fx,s,d,p,info,tix)
 % Tterm     : effect of temperature on snow melt [mm/time]
 %           (fe.Qsnw.Tterm)
 % frSnow    : snow fraction [] (dimensionless)
-%           (s.wd.wFrSnow)
+%           (s.wd.wSnwFr)
 % 
 % OUTPUT
 % Qsnow     : snow melt [mm/time]
@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = dyna_Qsnw_simple(f,fe,fx,s,d,p,info,tix)
 
 % Then snow melt (mm/day) is calculated as a simple function of temperature
 % and scaled with the snow covered fraction
-fx.Qsnow(:,tix) = min( s.w.wSnow , fe.Qsnw.Tterm(:,tix) .* s.wd.wFrSnow );
+fx.Qsnow(:,tix) = min( s.w.wSnow , fe.Qsnw.Tterm(:,tix) .* s.wd.wSnwFr );
 
 % update the snow pack
 s.w.wSnow = s.w.wSnow - fx.Qsnow(:,tix);
