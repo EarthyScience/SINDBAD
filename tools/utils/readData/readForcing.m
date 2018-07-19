@@ -69,7 +69,7 @@ for ii=1:numel(dataPaths)
     elseif exist(dPath, 'file')
         dFiles = {dPath};
     else
-        disp(['WARN FILEMISS : readInput : ' dPath ' does not exists!'])
+        error(['ERROR FILEMISS : readInput : ' dPath ' does not exists!'])
     end
     
     % loop over files
@@ -85,9 +85,9 @@ for ii=1:numel(dataPaths)
                         tarVar = inVars{vv};
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
                         % assign variable + do conversions etc. -> without eval?!
-                        eval(['dataStructure.' tarVar ' = ' srcVar ';'])
+                        dataStructure.(tarVar) = eval(srcVar);
                         try
-                            eval(['dataStructure.' tarVar ' = dataStructure.' tarVar ' .' info.tem.forcing.variables.(tarVar).source2sindbadUnit ';'])
+                            dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
                             disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
                         end
@@ -103,9 +103,9 @@ for ii=1:numel(dataPaths)
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
                         dataStructure.(tarVar) = ncread(dFiles{ff},srcVar)';
                         try
-                            eval(['dataStructure.' tarVar  '= dataStructure.' tarVar ' .' info.tem.forcing.variables.(tarVar).source2sindbadUnit ';'])
+                           dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
-                            disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
+                           disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
                         end
                     catch
                         if tarVar == 'LAI'

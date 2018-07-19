@@ -18,7 +18,7 @@ function [f,fe,fx,s,d,p] = wSnwFr_HTESSEL(f,fe,fx,s,d,p,info,tix)
 % 
 % OUTPUT
 % frSnow    : fraction of the snow pack that is snow [] (fractional)
-%           (s.wd.wFrSnow)
+%           (s.wd.wSnwFr)
 % 
 % NOTES: this needs better documentation, like references, (skoirala)
 % 
@@ -28,6 +28,6 @@ function [f,fe,fx,s,d,p] = wSnwFr_HTESSEL(f,fe,fx,s,d,p,info,tix)
 s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
-s.wd.wFrSnow = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
+s.wd.wSnwFr = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
 
 end
