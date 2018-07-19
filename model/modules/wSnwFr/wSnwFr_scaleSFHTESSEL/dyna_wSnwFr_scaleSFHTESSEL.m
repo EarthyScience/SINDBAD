@@ -17,8 +17,8 @@ function [f,fe,fx,s,d,p] = dyna_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info,tix)
 %           (p.Snow.CoverParam)
 % 
 % OUTPUT
-% frSnow    : fraction of the snow pack that is snow [] (fractional)
-%           (s.wd.wFrSnow)
+% wSnwFr    : fraction of the snow pack that is snow [] (fractional)
+%           (s.wd.wSnwFr)
 % 
 % NOTES: this needs better documentation, like references, (skoirala)
 % 
@@ -28,6 +28,6 @@ function [f,fe,fx,s,d,p] = dyna_wSnwFr_scaleSFHTESSEL(f,fe,fx,s,d,p,info,tix)
 s.w.wSnow = s.w.wSnow + fe.wSnwFr.Snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
-s.wd.wFrSnow = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
+s.wd.wSnwFr = min(1, s.w.wSnow ./ p.wSnwFr.CoverParam );
 
 end

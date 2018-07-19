@@ -1,4 +1,4 @@
-function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
+function [cost, costComp] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
 % cost function used in the TWS Paper (Trautmann et al. 2018)
 % tVec      = vector with month (M)
 % cost      = costTWS + costSWE + costET + costQ
@@ -25,7 +25,7 @@ for etC = 1:numel(etComps)
         ETmod_d = ETmod_d + fx.(compName);
     end
 end
-QComps = {'Qbase'};
+QComps = {'Q'};
 Qmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(QComps)
     compName = char(QComps{etC});
@@ -152,7 +152,12 @@ sq_var      =   sum((Qobs_MSC(v_q3)-mean(Qobs_MSC(v_q3))).^2./sig(v_q3));
 costQ       =   sq_resid/sq_var;
 
 %% total costs
+% one value if in opti mode, all values if not
 cost        =   costTWS+costSWE+costET+costQ;
 
+costComp.TWS    = costTWS;
+costComp.SWE    = costSWE;
+costComp.ET     = costET;
+costComp.Q      = costQ;
 
 end
