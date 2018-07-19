@@ -22,6 +22,6 @@ function [f,fe,fx,s,d,p] = wSnwFr_binary(f,fe,fx,s,d,p,info,tix)
 s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
 
 % if there is snow, then snow fraction is 1, otherwise 0
-s.wd.wFrSnow = double(s.w.wSnow > 0);
+s.wd.wSnwFr = double(s.w.wSnow > 0);
 
 end % function
