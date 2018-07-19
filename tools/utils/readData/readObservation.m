@@ -123,7 +123,7 @@ for ii=1:numel(dataPaths)
     elseif exist(dPath, 'file')
         dFiles = {dPath};
     else
-        disp(['WARN FILEMISS : readInput : ' dPath ' does not exists!'])
+        error(['ERROR FILEMISS : readInput : ' dPath ' does not exists!'])
     end
     
     % loop over files
@@ -148,9 +148,9 @@ for ii=1:numel(dataPaths)
                         tarVar = inVars{vv};
                         srcVar = info.opti.constraints.variables.(tarVar).(fn).sourceVariableName;
                         % assign variable + do conversions etc. -> without eval?!
-                        eval(['dataStructure.' tarVar '.' fn ' = ' srcVar ';'])
+                        dataStructure.(tarVar).(fn) = eval(srcVar);
                         try
-                            eval(['dataStructure.' tarVar '.' fn '= dataStructure.' tarVar '.' fn ' .' info.opti.constraints.variables.(tarVar).(fn).source2sindbadUnit ';'])
+                            dataStructure.(tarVar).(fn) =  eval([ 'dataStructure.' tarVar '.' fn ' .'  info.opti.constraints.variables.(tarVar).(fn).source2sindbadUnit ';']);
                         catch
                             disp(['MISS: readObservation: Units of variable ' tarVar '.' fn ' not converted. Keeping the original values.']);
                         end
@@ -176,8 +176,8 @@ for ii=1:numel(dataPaths)
                         srcVar = info.opti.constraints.variables.(tarVar).(fn).sourceVariableName;
                         dataStructure.(tarVar).(fn) = ncread(dFiles{ff},srcVar)';
                         try
-                            eval(['dataStructure.' tarVar '.' fn '= dataStructure.' tarVar '.' fn ' .' info.opti.constraints.variables.(tarVar).(fn).source2sindbadUnit ';'])
-                        catch
+                            dataStructure.(tarVar).(fn) =  eval([ 'dataStructure.' tarVar '.' fn ' .'  info.opti.constraints.variables.(tarVar).(fn).source2sindbadUnit ';']);
+                       catch
                             disp(['MISS: readObservation: Units of variable ' tarVar '.' fn ' not converted. Keeping the original values.']);
                         end
                     catch
