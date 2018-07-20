@@ -9,8 +9,8 @@ function [allFieldnames, cnt_allFieldnames,allFieldnamesPure] = getAllFieldnames
 %   are  shown, if SHOW is true the contents are shown also.
 %   UNFOLD(SC,NAME,SHOW)
 
-%R.F. Tap
-%15-6-2005, 7-12-2005, 5-1-2006, 3-4-2006
+% R.F. Tap
+% 15-6-2005, 7-12-2005, 5-1-2006, 3-4-2006
 % check input
 nargin_original = nargin - 2;
 allFieldnames = varargin{nargin - 2};
@@ -53,7 +53,7 @@ if isstruct(SC)
     else
         hmax = min(1,NS);
     end
-
+%     hmax =1 ;
     %recursively display structure including fieldnames
     for h=1:hmax
         F = fieldnames(SC(h));

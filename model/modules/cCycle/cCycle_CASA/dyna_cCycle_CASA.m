@@ -7,6 +7,10 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
 s.cd.cEcoInflux                 =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 s.cd.cEcoFlow                   =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 
+s.cd.cEcoOut                    =   s.prev.s_c_cEco .* s.cd.p_cTauAct_k; %sujan copied this line from cCycle_simple because the prev did not exist and the runSpinUpTEM produced NaN is debug display
+
+
+
 %% vegetation
 zix                     =   info.tem.model.variables.states.c.flags.cVeg; 
 % DISTRIBUTE THE NPP TO VEGETATION POOLS
