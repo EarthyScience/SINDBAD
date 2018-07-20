@@ -190,17 +190,17 @@ for iss = 1:numel(spinSequence)
             end
         end
         %%
-%         if isfield(sSU,'prev')
-%             disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-%             if isfield(sSU.prev,'s_c_cEco')
-%                 disp('sSU.prev exists')
-%                 disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-%             else
-%                 disp('DBG : runSpinupTEM : cPools # / cEco  ')
-%                 disp('sSU.prev does not exists')
-%                 disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
-%             end
-%         end
+        if isfield(sSU,'prev')
+            disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
+            if isfield(sSU.prev,'s_c_cEco')
+                disp('sSU.prev exists')
+                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+            else
+                disp('DBG : runSpinupTEM : cPools # / cEco  ')
+                disp('sSU.prev does not exists')
+                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
+            end
+        end
     end
 end
 end

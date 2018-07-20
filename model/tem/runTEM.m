@@ -184,7 +184,11 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     end
     [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d,p,info,'runTEM');
     % the previous steps should come from the spinup
-    if iStep == 1, if isfield(dSU,'prev'), d.prev	= dSU.prev; end; end %isfield added by sujan
+    if iStep == 1 
+        if isfield(dSU,'prev')
+            d.prev	= dSU.prev;
+        end
+    end %isfield added by sujan
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------

@@ -39,7 +39,7 @@ if~isempty(ndx)
 	s.cd.p_cFlowAct_cTransfer(ndx) = ceff(ndx);
 end
 % transfers
-[taker,giver]           = find(squeeze(sum(s.cd.p_cFlowAct_cTransfer > 0,1))>1);
+[taker,giver]           = find(squeeze(sum(s.cd.p_cFlowAct_cTransfer > 0,1)) >= 1);
 s.cd.p_cFlowAct_taker	= taker;
 s.cd.p_cFlowAct_giver   = giver;
 % if there is flux order check that is consistent

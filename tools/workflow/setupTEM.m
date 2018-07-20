@@ -22,6 +22,9 @@ info.experiment.sindbadroot         =   sindbadroot;
 
 %% check what is the input
 if isstruct(expConfigFile)
+    disp(pad('-',200,'both','-'))
+    disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using info structure'])
+    disp(pad('-',200,'both','-'))
     % is already a structure assume = info
     info	= expConfigFile;
     % store the old settings in a cell array called oldSettings ...
@@ -38,28 +41,36 @@ if isstruct(expConfigFile)
     
 elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     expConfigFile = [info.experiment.sindbadroot expConfigFile] ;
-    %% 
+    %%
     % note: this part can be outsorced to a initINFOFromConfig in case this
-    % needs to be ran in other places 
-%     expConfigFile                   =   getFullPath(expConfigFile);
+    % needs to be ran in other places
+    %     expConfigFile                   =   getFullPath(expConfigFile);
     
     % is a file, assume a standard configuration file and read it
-% sujan: making sure than sindbad root in not overwritten
+    % sujan: making sure than sindbad root in not overwritten
+    disp(pad('-',200,'both','-'))
+    disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using an experiment configuration file: ' expConfigFile])
+    disp(pad('-',200,'both','-'))
     
     exp_json                 =   readJsonFile(expConfigFile);
-    exp_json_fn              = fields(exp_json);
+    exp_json_fn              =  fields(exp_json);
     for exp = 1:numel(exp_json_fn)
         info.experiment.(exp_json_fn{exp}) = exp_json.(exp_json_fn{exp});
     end
     % absolute paths of the config files
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
-        
+    
     % stamp the experiment settings
     info                            =   getExperimentInfo(info);
     
     % read the TEM configurations
     info                            =   readConfiguration(info,'tem',true);
     [info]  = setupStateInfo(info);
+else
+    disp(pad('-',200,'both','-'))
+    error([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | No valid SINDBAD info or an experiment configuration file is provided. Make sure that ' expConfigFile ' exists'])
+    disp(pad('-',200,'both','-'))
+    
     
 end
 
