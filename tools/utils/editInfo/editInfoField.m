@@ -66,21 +66,19 @@ for ii = 1 : size(keySet,2)
         case 1
             subtree{ii} = infoFieldnames(1,findPosInd);
             info = setfield(info, infoFieldnamesParts{findPosInd}{2:end}, valueSet{ii}); %#ok<SFLD>
-            % disp([infoFieldnames{findPosInd} ' changed successfully to:']);disp(valueSet{ii});
-%             if isnumeric(valueSet{ii})
-%                 dispVal = num2str(valueSet{ii});
-%             else
-%                 dispVal = valueSet{ii};
-%             end
-            
-%             disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to:' dispVal]);
-            disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to:']);
-            disp(valueSet{ii});
+            disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' toString(valueSet{ii})]);
         otherwise
             %disp(infoFieldnames(1,findPosInd)');
             subtree{ii} = infoFieldnames(1,findPosInd);
-            disp([pad('WARN INFO FIELD',20) ' : ' pad('editInfoField',20) ' : Fieldname ' keySet{ii} ' is not unique.Re-run with full structure-path (e.g.,info.tem.model.flags.runOpti)'...
+            disp([pad('WARN INFO FIELD',20) ' : ' pad('editInfoField',20) ' : Fieldname ' keySet{ii} ' is not unique. Re-run with full structure-path (e.g.,info.tem.model.flags.runOpti)'...
                 'for this key (for list of possible values check 2nd output variable: subtree'])
             
     end
+end
+%% change spinup sequence if given as input. Added because the editTEMinfo does not work for struct array.
+if any(strcmp(varargin,'info.tem.spinup.sequence'))
+    disp([pad('WARN INFO EXCEPTION',20) ' : ' pad('editInfoField',20) ' : Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!'])
+    datInd = find(strcmp(varargin,'info.tem.spinup.sequence'))+1 ;
+    info.tem.spinup.sequence = varargin{datInd};
+end
 end

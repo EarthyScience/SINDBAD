@@ -47,16 +47,16 @@ for zix = zixVec
         cLoxxRate(:,zix,:)	= min(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
         % gains in veg pools
         gppShp           = reshape(fx.gpp,nPix,1,nTix); % could be fxT?
-        cGain(:,zix,:)	= d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
+        cGain(:,zix,:)	= d.cAlloc.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
     else
         % no additional gains from outside
         cLoxxRate(:,zix,:)	= 1;
         % losses rates of carbon to other soil pools
-        ndxLooseTo = find(s.cd.p_cFlowAct_giver == zix);
+        ndxLoseTo = find(s.cd.p_cFlowAct_giver == zix);
         adjustLoss = 0;
-        for ii = 1:numel(ndxLooseTo)
-            taker                           = s.cd.p_cFlowAct_taker(ndxLooseTo(ii));
-            giver                           = s.cd.p_cFlowAct_giver(ndxLooseTo(ii));
+        for ii = 1:numel(ndxLoseTo)
+            taker                           = s.cd.p_cFlowAct_taker(ndxLoseTo(ii));
+            giver                           = s.cd.p_cFlowAct_giver(ndxLoseTo(ii));
             cLossRateShp                    = reshape(cLossRate(:,giver,:),nPix,1,1,nTix);
             cTransferShp                    = reshape(d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:),nPix,1,nTix);
             cFlowRateTrace(:,taker,giver,:) = cLossRateShp .* d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:);
@@ -71,7 +71,7 @@ for zix = zixVec
             taker               = s.cd.p_cFlowAct_taker(ndxGainFrom(ii));
             giver               = s.cd.p_cFlowAct_giver(ndxGainFrom(ii));
             % if the giver was also a taker (loop)
-            if any(giver == s.cd.p_cFlowAct_giver(ndxLooseTo))
+            if any(giver == s.cd.p_cFlowAct_giver(ndxLoseTo))
                 cTransferShp        = reshape(d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:),nPix,1,nTix);
                 cFlowRateTraceShp	= reshape(cFlowRateTrace(:,taker,giver,:),nPix,1,nTix);
                 cGain(:,taker,:)    = cGain(:,taker,:) + fCt(:,giver,:) .* cFlowRateTraceShp .* cTransferShp;
@@ -84,20 +84,26 @@ for zix = zixVec
             
 %%  % GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
     % CALCULATE At = 1 - Lt
-    At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
+%     At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
+%     % calculate Bt
+%     Bt  = squeeze(cGain(:,zix,:)) .* At;
+    %sujan changed the size of At and Bt to 1 x 365.
+    At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:))';
     % calculate Bt
-    Bt  = squeeze(cGain(:,zix,:)) .* At;
+    Bt  = squeeze(cGain(:,zix,:))' .* At;
+
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
     Co	= s.c.cEco(:,zix);%    d.storedStates.cEco(:,zix,:);
     
     % THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP;
     % EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL, SLOW AND OLD. IN THIS
     % CASE SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK NOTEBOOKS).
+    
     piA1        = (prod(At,2)) .^ (NI2E);
     At2         = [At ones(size(At,1),1)];
     sumB_piA    = NaN(size(f.Tair));
-    for ii = 1:info.tem.helpers.sizes.nTix
-        sumB_piA(:,ii) = Bt(:,ii) .* prod(At2(:,ii+1:info.tem.helpers.sizes.nTix+1),2);
+    for ii = 1:nTix
+        sumB_piA(:,ii) = Bt(:,ii) .* prod(At2(:,ii+1:nTix+1),2);
     end
     sumB_piA    = sum(sumB_piA,2);
     T2          = 0:1:NI2E - 1;
@@ -115,7 +121,7 @@ disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
     
     % CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
     % POOLS CALCULATIONS
-    [~,~,fxT,sT,dT] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
+    [~,~,fxT,sT,dT,~] = runCoreTEM(f,fe,fxT,sT,dT,p,info,true,true,false);
     % FEED fCt
     fCt(:,zix,:)	= dT.storedStates.cEco(:,zix,:);
 end
@@ -124,7 +130,7 @@ sT.c.cEco = sCt;
 sT.prev.s_c_cEco	= sCt;
 [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
 
-disp([pad('TIMERUN FAST SPINUP',20) ' : spin_cCycle_simple : end : inputs : ' num2str(NI2E,'%1.0f|') ' : time : ' sec2som(toc(tstart))])
+disp([pad('TIMERUN FAST SPINUP',20) ' : spin_cCycle_CASA : end : inputs : ' num2str(NI2E,'%1.0f|') ' : time : ' sec2som(toc(tstart))])
 
 
 end % function
