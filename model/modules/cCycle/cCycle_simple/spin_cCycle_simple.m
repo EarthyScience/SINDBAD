@@ -3,7 +3,7 @@ tstart = tic;
 % old CASA_fast imported
 % NI2E - number of iterations to equilibrium
 %{
-% NEEDS 
+% NEEDS
 WE NEED TESTS ON EQUILIBRIUM SIMULATIONS... EMPIRICAL VERSUS ANALYTICAL
 
 TSPY - or should be the length of the forcing...
@@ -47,23 +47,23 @@ for zix = zixVec
         cLoxxRate(:,zix,:)	= min(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
         % gains in veg pools
         gppShp           = reshape(fx.gpp,nPix,1,nTix); % could be fxT?
-        cGain(:,zix,:)	= d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
+        cGain(:,zix,:)	= d.cAlloc.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
     else
         % no additional gains from outside
         cLoxxRate(:,zix,:)	= 1;
         % losses rates of carbon to other soil pools
-        ndxLooseTo = find(s.cd.p_cFlowAct_giver == zix);
+        ndxLoseTo = find(s.cd.p_cFlowAct_giver == zix);
         adjustLoss = 0;
-        for ii = 1:numel(ndxLooseTo)
-            taker                           = s.cd.p_cFlowAct_taker(ndxLooseTo(ii));
-            giver                           = s.cd.p_cFlowAct_giver(ndxLooseTo(ii));
+        for ii = 1:numel(ndxLoseTo)
+            taker                           = s.cd.p_cFlowAct_taker(ndxLoseTo(ii));
+            giver                           = s.cd.p_cFlowAct_giver(ndxLoseTo(ii));
             cLossRateShp                    = reshape(cLossRate(:,giver,:),nPix,1,1,nTix);
             cTransferShp                    = reshape(d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:),nPix,1,nTix);
             cFlowRateTrace(:,taker,giver,:) = cLossRateShp .* d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:);
             adjustLoss                      = adjustLoss + cTransferShp;
         end
-%         cLossRate(:,zix,:) = cLossRate(:,zix,:) .* adjustLoss; % original
-%         was uncommented
+        %         cLossRate(:,zix,:) = cLossRate(:,zix,:) .* adjustLoss; % original
+        %         was uncommented
         % NC : if this pool receive c from a pool that is also fed by it
         
         % gains from other carbon pools
@@ -72,22 +72,27 @@ for zix = zixVec
             taker               = s.cd.p_cFlowAct_taker(ndxGainFrom(ii));
             giver               = s.cd.p_cFlowAct_giver(ndxGainFrom(ii));
             % if the giver was also a taker (loop)
-            if any(giver == s.cd.p_cFlowAct_giver(ndxLooseTo))
+            if any(giver == s.cd.p_cFlowAct_giver(ndxLoseTo))
                 cTransferShp        = reshape(d.storedStates.p_cFlowAct_cTransfer(:,taker,giver,:),nPix,1,nTix);
                 cFlowRateTraceShp	= reshape(cFlowRateTrace(:,taker,giver,:),nPix,1,nTix);
                 cGain(:,taker,:)    = cGain(:,taker,:) + fCt(:,giver,:) .* cFlowRateTraceShp .* cTransferShp;
             else
-%                 cGain(:,taker,:)    = cGain(:,taker,:) + (fCt(:,giver,:) ./ (1 - cLossRate(:,giver,:))) .* cLossRate(:,giver,:);
+                %                 cGain(:,taker,:)    = cGain(:,taker,:) + (fCt(:,giver,:) ./ (1 - cLossRate(:,giver,:))) .* cLossRate(:,giver,:);
                 cGain(:,taker,:)    = cGain(:,taker,:) + (fCt(:,giver,:)) .* cLossRate(:,giver,:);
             end
         end
     end
-            
-%%  % GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
+    
+    %%  % GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
     % CALCULATE At = 1 - Lt
-    At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
+%     At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
+%     % calculate Bt
+%     Bt  = squeeze(cGain(:,zix,:)) .* At;
+    %sujan changed the size of At and Bt to 1 x 365.
+    At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:))';
     % calculate Bt
-    Bt  = squeeze(cGain(:,zix,:)) .* At;
+    Bt  = squeeze(cGain(:,zix,:))' .* At;
+    
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
     Co	= s.c.cEco(:,zix);%    d.storedStates.cEco(:,zix,:);
     
@@ -108,16 +113,16 @@ for zix = zixVec
     % FINAL CARBON AT POOL zix
     Ct                      = Co .* piA1 + sumB_piA .* piA2;
     sCt(:,zix) = Ct;
-disp([pad('DBG SPINUP',20) ' : Co : ' num2str(zix) ' : ' num2str(Co(1))])
-disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
-
-%     dT.storedStates.cEco(:,zix,end)	= Ct;
+    disp([pad('DBG SPINUP',20) ' : Co : ' num2str(zix) ' : ' num2str(Co(1))])
+    disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
+    
+    %     dT.storedStates.cEco(:,zix,end)	= Ct;
     sT.c.cEco(:,zix)        = Ct;%                 = d.storedStates.cEco;
     sT.prev.s_c_cEco(:,zix)	= Ct;
     
     % CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
     % POOLS CALCULATIONS
-    [~,~,fxT,sT,dT] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
+    [~,~,fxT,sT,dT,~] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
     % FEED fCt
     fCt(:,zix,:)	= dT.storedStates.cEco(:,zix,:);
 end

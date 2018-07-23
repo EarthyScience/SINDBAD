@@ -1,4 +1,4 @@
-function [fullCost] = calcCostMultiConstraint(f,fe,fx,s,d,p,obs,info) 
+function [cost] = calcCostMultiConstraint(f,fe,fx,s,d,p,obs,info) 
 % function [f,fe,fx,s,d,p, fullCost] = calcCostMultiConstraint(f,fe,fx,s,d,p,obs,info) 
 
 % based on costFromFile (c) Nuno
@@ -29,6 +29,8 @@ switch multiFlag
     otherwise
         error(['CRIT COST : calcCostMultiConstraint : not a known MultiConstraintMethod : ' cf(1).MultiConstraintMethod '(use cat, mult, or sum)'])
 end
+
+
 
 for i = 1:numel(VariableNames)
     % get data
@@ -63,6 +65,13 @@ for i = 1:numel(VariableNames)
 end
 % sujan
 fullCost = mean(fullCost);
+
+if info.tem.model.flags.runOpti
+    cost            =   fullCost;
+else
+    cost            =   struct;
+    cost.Total      =   fullCost;
+end
 
 % disp('MSG : costFromFile : needs profiling')
 
