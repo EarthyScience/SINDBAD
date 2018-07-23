@@ -178,62 +178,62 @@ end
 
 
 %% paths of constraints
-if isfield(info,'opti')
-    if info.tem.model.flags.runOpti
-        if ~isempty(info.opti.constraints.oneDataPath)
-            if strcmp(strrep(getFullPath(info.opti.constraints.oneDataPath),'\','/'), strrep(info.opti.constraints.oneDataPath,'\','/'))==0
-                info.opti.constraints.oneDataPath = convertToFullPaths(info,info.opti.constraints.oneDataPath);
-            end
-            if exist(info.opti.constraints.oneDataPath) == 0
-                disp([pad('OBS PATHMISS DAT',20) ' : ' pad('setExperimentPath',20) ' | path for one file for all observational data ' info.tem.forcing.oneDataPath ' does not exist!']);
-            end
-        else
-            for ii=1:numel(info.opti.constraints.variableNames)
-                var_tmp = info.opti.constraints.variableNames{ii};
+% if isfield(info,'opti')
+if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
+    if ~isempty(info.opti.constraints.oneDataPath)
+        if strcmp(strrep(getFullPath(info.opti.constraints.oneDataPath),'\','/'), strrep(info.opti.constraints.oneDataPath,'\','/'))==0
+            info.opti.constraints.oneDataPath = convertToFullPaths(info,info.opti.constraints.oneDataPath);
+        end
+        if exist(info.opti.constraints.oneDataPath) == 0
+            disp([pad('OBS PATHMISS DAT',20) ' : ' pad('setExperimentPath',20) ' | path for one file for all observational data ' info.tem.forcing.oneDataPath ' does not exist!']);
+        end
+    else
+        for ii=1:numel(info.opti.constraints.variableNames)
+            var_tmp = info.opti.constraints.variableNames{ii};
+            pth_tmp = info.opti.constraints.variables.(var_tmp).data.dataPath;
+            if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                info.opti.constraints.variables.(var_tmp).data.dataPath = convertToFullPaths(info,pth_tmp);
                 pth_tmp = info.opti.constraints.variables.(var_tmp).data.dataPath;
-                if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                    info.opti.constraints.variables.(var_tmp).data.dataPath = convertToFullPaths(info,pth_tmp);
-                    pth_tmp = info.opti.constraints.variables.(var_tmp).data.dataPath;
-                end
-                if exist(pth_tmp) == 0
-                    disp([pad('OBS PATHMISS DAT',20) ' : ' pad('setExperimentPath',20) ' | path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
-                end
-                %for observational uncertainties
-                if isfield(info.opti.constraints.variables.(var_tmp).unc,'dataPath')
-                    if isfield(info.opti.constraints.variables.(var_tmp).unc, 'dataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).unc.dataPath)
+            end
+            if exist(pth_tmp) == 0
+                disp([pad('OBS PATHMISS DAT',20) ' : ' pad('setExperimentPath',20) ' | path for observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
+            end
+            %for observational uncertainties
+            if isfield(info.opti.constraints.variables.(var_tmp).unc,'dataPath')
+                if isfield(info.opti.constraints.variables.(var_tmp).unc, 'dataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).unc.dataPath)
+                    pth_tmp = info.opti.constraints.variables.(var_tmp).unc.dataPath;
+                    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                        info.opti.constraints.variables.(var_tmp).unc.dataPath = convertToFullPaths(info,pth_tmp);
                         pth_tmp = info.opti.constraints.variables.(var_tmp).unc.dataPath;
-                        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                            info.opti.constraints.variables.(var_tmp).unc.dataPath = convertToFullPaths(info,pth_tmp);
-                            pth_tmp = info.opti.constraints.variables.(var_tmp).unc.dataPath;
-                        end
-                        if exist(pth_tmp) == 0
-                            disp([pad('OBS PATHMISS UNC',20) ' : ' pad('setExperimentPath',20) '| path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
-                        end
-                    else
-                        disp([pad('OBS VARMISS UNC',20) ' : ' pad('setExperimentPath',20) '| uncertainty data for observational ' var_tmp ' is not provided']);
+                    end
+                    if exist(pth_tmp) == 0
+                        disp([pad('OBS PATHMISS UNC',20) ' : ' pad('setExperimentPath',20) '| path for uncertainty of observational variable ' var_tmp ': ' pth_tmp ' does not exist!']);
                     end
                 else
-                    disp([pad('OBS PATHMISS UNC',20) ' : ' pad('setExperimentPath',20) '| the path for uncertainty data for observational ' var_tmp ' is not set']);
+                    disp([pad('OBS VARMISS UNC',20) ' : ' pad('setExperimentPath',20) '| uncertainty data for observational ' var_tmp ' is not provided']);
                 end
-                %for Quality Flags
-                if isfield(info.opti.constraints.variables.(var_tmp),'qflag')
-                    if isfield(info.opti.constraints.variables.(var_tmp).qflag, 'dataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).qflag.dataPath)
+            else
+                disp([pad('OBS PATHMISS UNC',20) ' : ' pad('setExperimentPath',20) '| the path for uncertainty data for observational ' var_tmp ' is not set']);
+            end
+            %for Quality Flags
+            if isfield(info.opti.constraints.variables.(var_tmp),'qflag')
+                if isfield(info.opti.constraints.variables.(var_tmp).qflag, 'dataPath') && ~isempty(info.opti.constraints.variables.(var_tmp).qflag.dataPath)
+                    pth_tmp = info.opti.constraints.variables.(var_tmp).qflag.dataPath;
+                    if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
+                        info.opti.constraints.variables.(var_tmp).qflag.dataPath = convertToFullPaths(info,pth_tmp);
                         pth_tmp = info.opti.constraints.variables.(var_tmp).qflag.dataPath;
-                        if strcmp(strrep(getFullPath(pth_tmp),'\','/'), strrep(pth_tmp,'\','/'))==0
-                            info.opti.constraints.variables.(var_tmp).qflag.dataPath = convertToFullPaths(info,pth_tmp);
-                            pth_tmp = info.opti.constraints.variables.(var_tmp).qflag.dataPath;
-                        end
-                        if exist(pth_tmp) == 0
-                            disp([pad('OBS VARMISS QFLAG',20) ' : ' pad('setExperimentPath',20) '| path for quality flag of observational variable ' var_tmp ' does not exist!']);
-                        end
-                    else
-                        disp([pad('OBS PATHMISS QFLAG',20) ' : ' pad('setExperimentPath',20) '| path for quality flag of observational variable ' var_tmp ' is not set']);
                     end
+                    if exist(pth_tmp) == 0
+                        disp([pad('OBS VARMISS QFLAG',20) ' : ' pad('setExperimentPath',20) '| path for quality flag of observational variable ' var_tmp ' does not exist!']);
+                    end
+                else
+                    disp([pad('OBS PATHMISS QFLAG',20) ' : ' pad('setExperimentPath',20) '| path for quality flag of observational variable ' var_tmp ' is not set']);
                 end
             end
         end
     end
 end
+% end
 
 end
 

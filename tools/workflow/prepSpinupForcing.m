@@ -61,9 +61,9 @@ if ~info.tem.spinup.flags.readForcing
     end
 elseif ~isempty(info.tem.spinup.rules.fun2readForcing)
     if ~info.tem.spinup.flags.recycleMSC
-        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using one forward run of new forcing from | ' info.tem.spinup.rules.fun2readForcing ' | for model spinup'])
+        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using one forward run of new spinup forcing from | ' info.tem.spinup.rules.fun2readForcing ' | for model spinup'])
     else
-        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using recycled MSC of new forcing from | ' info.tem.spinup.rules.prepForcingFromFile ' | for model spinup'])
+        disp([pad('SPINUP FORC',20) ' : ' pad('prepSpinupForcing',20) ' | using recycled MSC of new spinup forcing from | ' info.tem.spinup.rules.fun2readForcing ' | for model spinup'])
     end 
 end
 

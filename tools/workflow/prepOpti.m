@@ -27,7 +27,7 @@ function [info, obs] = prepOpti(info)
 %% read the information related to optimization algorithm
 algorithmName                       =   info.opti.algorithm.funName;
 
-defOptionsFilePath                      =   convertToFullPaths(info,['optimization' filesep 'algorithms' filesep algorithmName filesep 'options_' algorithmName '.json']);
+defOptionsFilePath                  =   convertToFullPaths(info,['optimization' filesep 'algorithms' filesep algorithmName filesep 'options_' algorithmName '.json']);
 
 try
 info.opti.algorithm.options         =   readJsonFile(defOptionsFilePath);

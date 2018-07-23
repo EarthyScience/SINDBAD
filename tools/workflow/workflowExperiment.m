@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU,obs,cost] = workflowExperiment(expConfigFile,varargin)
+function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU,obs,cost] = workflowExperiment(expConfigFile,varargin)
 % Runs a SINDBAD model experiment with either a given experimental config or info
 %
 % Requires:
@@ -73,7 +73,6 @@ else
     infoLite                                =   info;
 end
 
-
 %% prepare the SINDBAD objects and structures
 % start log file content
 disp(pad('-',200,'both','-'))
@@ -106,11 +105,9 @@ if info.tem.model.flags.runForward && info.tem.model.flags.calcCost &&  ~info.te
     p                                       =   info.tem.params;
     [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
     % calculate the cost
-    [costT,costComp]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
-    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(costT)])
+    [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
+    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost.Total)])
     disp(pad('+',200,'both','+'))
-    cost = costComp;
-    cost.total = costT;
 end
 
 %% Optimize the model and then do the forward run using optimized parameter when opti is on
@@ -201,20 +198,20 @@ for cfn = 1:numel(confFN)
 end
 if info.tem.model.flags.runOpti
     disp(pad('Optimization Configuration:',200,'both','-'))
-    disp(['Main Configuration:                  ' info.experiment.configFiles.opti])
-    disp(['Optimization Algorithm:              ' info.opti.algorithm.funName])
-    disp(['Optimization Additional Options:     ' info.opti.algorithm.nonDefOptFile])
-    disp(['Cost Function:                       ' info.opti.costFun.funName])
-    disp(['Cost Function Additional Options:    ' info.opti.costFun.nonDefOptFile])
+    disp([pad('Main Configuration',35) ' : ' info.experiment.configFiles.opti])
+    disp([pad('Optimization Algorithm',35) ' : ' info.opti.algorithm.funName])
+    disp([pad('Optimization Additional Options',35) ' : ' info.opti.algorithm.nonDefOptFile])
+    disp([pad('Cost Function Name',35) ' : ' info.opti.costFun.funName])
+    disp([pad('Cost Function Additional Options',35) ' : ' info.opti.costFun.nonDefOptFile])
     
 end
 
 if info.tem.model.flags.calcCost
     disp(pad('Cost Configuration:',200,'both','-'))
-    disp(['Main Configuration:                  ' info.experiment.configFiles.opti])
-    disp(['Cost Function:                       ' info.opti.costFun.funName])
-    disp(['Cost Function Additional Options:    ' info.opti.costFun.nonDefOptFile])
-    
+    disp([pad('Cost Function defined through',35) ' : ' info.experiment.configFiles.opti])
+    disp([pad('Cost Function Name',35) ' : ' info.opti.costFun.funName])
+    disp([pad('Cost Function Additional Options',35) ' : ' info.opti.costFun.nonDefOptFile])
+
 end
 
 disp(pad('-',200,'both','-'))
