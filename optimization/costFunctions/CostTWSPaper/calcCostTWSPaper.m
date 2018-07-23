@@ -1,4 +1,4 @@
-function [cost, costComp] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info) 
+function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info)
 % cost function used in the TWS Paper (Trautmann et al. 2018)
 % tVec      = vector with month (M)
 % cost      = costTWS + costSWE + costET + costQ
@@ -41,7 +41,7 @@ try
     TWSobs_uncert   = obs.TWS.unc; %sujan
     SWEobs          = obs.SWE.data;
     ETobs           = obs.Evap.data;
-    Qobs            = obs.Qr.data;   
+    Qobs            = obs.Qr.data;
 catch
     warning('ERR: TWS, SWE, ET, Q or TWS uncertainty missing in observational constraints!');
 end
@@ -70,7 +70,7 @@ catch
 end
 
 
-    
+
 %% Calculate costs
 % valid data points
 v_tws = find(~isnan(TWSobs));
@@ -125,7 +125,7 @@ costSWE     =   sq_resid/sq_var;
 ETobs_MSC   =   calcMSC(ETobs,tVec);
 ETmod_MSC   =   calcMSC(ETmod,tVec);
 
-sig         =   max((0.1.*ETobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if ETobs = 0 0.1 mm 
+sig         =   max((0.1.*ETobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if ETobs = 0 0.1 mm
 sq_resid    =   sum((ETobs_MSC(:)-ETmod_MSC(:)).^2./sig(:));
 sq_var      =   sum((ETobs_MSC(:)-mean(ETobs_MSC(:))).^2./sig(:));
 
@@ -145,7 +145,7 @@ Qmod_MSC        =   calcMSC(Qmod_v,tVec);
 % remove pixel with NaN in Qobs
 v_q3        =   find(~isnan(Qobs_MSC));
 
-sig         =   max((0.1.*Qobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if Qobs = 0 0.1 mm 
+sig         =   max((0.1.*Qobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if Qobs = 0 0.1 mm
 sq_resid    =   sum((Qobs_MSC(v_q3)-Qmod_MSC(v_q3)).^2./sig(v_q3));
 sq_var      =   sum((Qobs_MSC(v_q3)-mean(Qobs_MSC(v_q3))).^2./sig(v_q3));
 
@@ -153,11 +153,18 @@ costQ       =   sq_resid/sq_var;
 
 %% total costs
 % one value if in opti mode, all values if not
-cost        =   costTWS+costSWE+costET+costQ;
+costTotal        =   costTWS+costSWE+costET+costQ;
 
-costComp.TWS    = costTWS;
-costComp.SWE    = costSWE;
-costComp.ET     = costET;
-costComp.Q      = costQ;
-
+%%% added by sujan to avoid having more than one output argument in the cost
+%%% function
+if info.tem.model.flags.runOpti
+    cost            =   costTotal;
+else
+    cost            =   struct;
+    cost.Total      =   costTotal;
+    cost.TWS        =   costTWS;
+    cost.SWE        =   costSWE;
+    cost.ET         =   costET;
+    cost.Q          =   costQ;
+end
 end

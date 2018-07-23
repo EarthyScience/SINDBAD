@@ -11,6 +11,10 @@ function [f,fe,fx,s,d,info]   =     prepTEM(info)
 %   4) createArrays4Model
 %   5) runPrec
 
+% %% add date helpers
+% info.tem.helpers.dates.day   = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'd');
+% info.tem.helpers.dates.month = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'm');
+
 %% 1) prepare forcing data
 % create function handles
 fun_fields  =   fieldnames(info.tem.forcing.funName);
@@ -21,29 +25,15 @@ for jj      =   1:numel(fun_fields)
         disp([pad('CRIT FUNCMISS',20,'left') ' : ' pad('prepTEM',20) ' |  no valid function name for ' fun_fields{jj} ' given in forcing.json'])
     end
 end
-
 % evaluate function handle in forcing
 f           =   info.tem.forcing.funHandle.import(info);
 
-%--> ncarval/sujan try making a larger forcing for a test of speed
-% fnew      =   struct;
-% for v     =   fieldnames(f)'
-%     if ~strcmp(v{:},'Year')
-%     fnew.(v{:})       =   repmat(f.(v{:}),2,1);
-%     else
-%         fnew.(v{:})   =   f.(v{:});
-%     end
-% end
-% f                     =   fnew;
-%<--
-%%
-% get size of (1st) forcing variable for nPix and nTix
+%% get size of (1st) forcing variable for nPix and nTix
 tmp                             =   fieldnames(f);
 info.tem.forcing.size           =   size(f.(tmp{1}));
 info.tem.helpers.sizes.nPix     =   info.tem.forcing.size(1);
 info.tem.helpers.sizes.nTix     =   info.tem.forcing.size(2);
 
-% 2) check forcing
 % so far based checkData4TEM.m 
 if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
     [info,f] = info.tem.forcing.funHandle.check(info,f);   
@@ -52,17 +42,16 @@ end
 disp(pad('-',200,'both','-'))
 disp(pad('Setup the model structure and generate the code of SINDBAD',200,'both',' '))
 disp(pad('-',200,'both','-'))
+
+% sujan: remove the code field if it exists.
+if isfield(info.tem.model,'code')
+    info.tem.model=rmfield(info.tem.model,'code');
+end
 [info]                                      =   setupCode(info);
 
-%%
-% preparing params
-% p                 =   info.tem.params;
+%% create SINDBAD structures
 
 [fe,fx,s,d,info]                =  createTEMStruct(info);
-
-%% note: this was in the setupTEM
-% create the output path if it not yet exists
-
 
 
 end

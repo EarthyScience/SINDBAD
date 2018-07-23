@@ -21,7 +21,7 @@ defOpts.UBounds                     =   eval(defOpts.UBounds)';
 costhand                               =   @(pScales)calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU,infoSU,obs,info);
 
 
-
 [~,~,~,~,~,pScales] = feval(info.opti.algorithm.funHandle,costhand,info.opti.params.defScalars,info.opti.algorithm.options.psigma,defOpts);
+% [~,~,~,~,~,pScales] = feval(info.opti.algorithm.funHandle,costhand,info.opti.params.defScalars,rand(size(info.opti.params.defScalars))',defOpts);
 
 end % function

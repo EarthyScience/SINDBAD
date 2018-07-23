@@ -2,8 +2,8 @@ function x2 = getForcingMSC(x,years,info)
 % prepares the forcing data for spinup using mean seasonal cycle
 %
 % Requires:
-%   - original forcing
-%   - years the size of the forcing through data in YYYY format
+%   - original forcing 
+%   - years: the size of the forcing through data in YYYY format
 %      - for daily forcing for 10 years, the years will be size 3652 with
 %       $YYYY replacing each date of that year
 %   - info to access the helpers
@@ -15,18 +15,33 @@ function x2 = getForcingMSC(x,years,info)
 %
 % Created by:
 %   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)?
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %
 % References:
 %
 % Versions:
+%   - 1.1 on 11.07.2018: added functionality to handle data that do not
+%   start on the Jan 01 or end on dec 31 (skoirala).
 %   - 1.0 on 01.04.2018
 
 %%
 x2      = zeros(info.tem.helpers.sizes.nPix,floor(info.tem.model.time.nStepsYear));
 den     = x2;
-yearvec	= mkHvec(unique(years));
+yearOri = unique(years);
+%% check if the some year in the data do not have a complete year of 365 or 366 days and disregard those data in MSC calculation
+datSel  = [];
+yearSel = [];
+for yr = 1:numel(yearOri)
+    countDays= sum(years == yearOri(yr));
+    if countDays >= 365        
+        datSel  = [datSel x(:,years == yearOri(yr))];
+        yearSel  = [yearSel years(:,years == yearOri(yr))];
+    end
+end
+
+yearvec	= mkHvec(unique(yearSel));
 for i = yearvec
-    tmp = x(:,years == i);
+    tmp = datSel(:,yearSel == i);
     if isleapyear(i)
         tmp(:,29+31)  = [];
     end
