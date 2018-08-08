@@ -171,8 +171,8 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     % -------------------------------------------------------------------------
     % get the precOnce data structure
     % -------------------------------------------------------------------------
-    if isempty(precOnceData)
-        [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
+%     if isempty(precOnceData)
+%         [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
 %         precOnceData	= struct;
 %         for v = {'f','fe','fx','s','d','p'}
 %             eval(['precOnceData.(v{1})	= ' v{1} ';']);
@@ -181,7 +181,7 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
 %         for v = {'f','fe','fx','s','d','p'}
 %             eval([v{1} ' = precOnceData.(v{1});']);
 %         end
-    end
+%     end
     [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d,p,info,'runTEM');
     % the previous steps should come from the spinup
     if iStep == 1 
