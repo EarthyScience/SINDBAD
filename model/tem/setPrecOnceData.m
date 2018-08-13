@@ -25,7 +25,9 @@ function [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d
 strList = {'f','fe','fx','s','d','p'};
 
 if isempty(precOnceData)
-    precOnceData	= struct;
+	[f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
+	strInpt         = repmat([strList; repmat({NaN},1,numel(strList))],1,1);
+	precOnceData    = struct(strInpt{:});
     for strLi = 1:numel(strList)
         strName = strList{strLi};
         eval(['precOnceData.(strName)	= ' strName ';']);
