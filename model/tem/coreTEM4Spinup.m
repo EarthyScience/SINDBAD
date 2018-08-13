@@ -26,7 +26,7 @@ function [f,fe,fx,s,d,p] = coreTEM4Spinup(f,fe,fx,s,d,p,info)
 
 %%
 %% get the list of modules that have use4spinup as true
-ms                      =   info.tem.model.code.ms;
+ms                          =   info.tem.model.code.ms;
 fullModList                 =   fields(ms);
 for mod                     =   1:numel(fullModList)
     modSel                  =   fullModList{mod};
@@ -42,4 +42,6 @@ for tix                     =   1:info.tem.helpers.sizes.nTix
         modSel              =   spinupModList{mod};
         [f,fe,fx,s,d,p]     =   ms.(modSel).funHandle(f,fe,fx,s,d,p,info,tix);
     end
+end
+
 end
