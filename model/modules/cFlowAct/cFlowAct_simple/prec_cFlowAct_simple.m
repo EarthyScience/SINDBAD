@@ -1,45 +1,25 @@
 function [f,fe,fx,s,d,p] = prec_cFlowAct_simple(f,fe,fx,s,d,p,info)
-% combine all the effects that change the transfer matrix
+% combine all the effects that change the transfers between carbon pools...
 
-% combine the soil and the veg scalars
-% ceff 	= p.cCycleBase.cTransfer .* 0.; %sujan
-% ceff    = info.tem.helpers.arrays.zerospixzix.c.cEco;
-ceff      =   repmat(info.tem.helpers.arrays.zerospixzix.c.cEco,1,1,...
-                                        info.tem.model.variables.states.c.nZix.cEco);
+%@nc : this needs to go in the full...
 
+% outputs 
+% s.cd.p_cFlowAct_A
 
-% ceff 	= zeros(size(p.cCycleBase.cTransfer));
-ndx		= s.cd.p_cFlowfpSoil_fSoil > 0 & s.cd.p_cFlowfpVeg_fVeg > 0;
-if~isempty(ndx)
-	ceff(ndx)= s.cd.p_cFlowfpSoil_fSoil(ndx).*s.cd.p_cFlowfpVeg_fVeg(ndx);
-end
-% combine the soil and the ~veg scalars
-ndx		= s.cd.p_cFlowfpSoil_fSoil > 0 & s.cd.p_cFlowfpVeg_fVeg <= 0;
-if~isempty(ndx)
-	ceff(ndx)= s.cd.p_cFlowfpSoil_fSoil(ndx);
-end
-% combine the ~soil and the veg scalars
-ndx		= s.cd.p_cFlowfpSoil_fSoil <= 0 & s.cd.p_cFlowfpVeg_fVeg > 0;
-if~isempty(ndx)
-	ceff(ndx)= s.cd.p_cFlowfpVeg_fVeg(ndx);
-end
-% combine the transfer with the pre-combined scalars
-% s.cd.p_cFlowAct_cTransfer = p.cCycleBase.cTransfer;
-s.cd.p_cFlowAct_cTransfer = repmat(reshape(p.cCycleBase.cTransfer,[1 size(p.cCycleBase.cTransfer)]),info.tem.helpers.sizes.nPix,1,1); %sujan
+% jus the A matrix...
+s.cd.p_cFlowAct_A                 = repmat(reshape(p.cCycleBase.cFlowA,[1 size(p.cCycleBase.cFlowA)]),info.tem.helpers.sizes.nPix,1,1); 
 
-% ndx = p.cCycleBase.cTransfer > 0 & ceff > 0; %sujan
-ndx = s.cd.p_cFlowAct_cTransfer > 0 & ceff > 0;
+% @nc : here we should check that: 
+%	the sum of F per column below the diagonals are always == 1 
+%	
+%	the sum of E per column below the diagonals are always < 1 
+%	the sum of E per column above the diagonals are always < 1 
+%
+%	the sum of A per column below the diagonals are always < 1 
+%	the sum of A per column above the diagonals are always < 1 
 
-if~isempty(ndx)
-	s.cd.p_cFlowAct_cTransfer(ndx) = s.cd.p_cFlowAct_cTransfer(ndx) .* ceff(ndx);
-end
-% combine the ~transfer with the pre-combined scalars
-ndx = s.cd.p_cFlowAct_cTransfer <= 0 & ceff > 0;
-if~isempty(ndx)
-	s.cd.p_cFlowAct_cTransfer(ndx) = ceff(ndx);
-end
 % transfers
-[taker,giver]           = find(squeeze(sum(s.cd.p_cFlowAct_cTransfer > 0,1)) >= 1);
+[taker,giver]           = find(squeeze(sum(s.cd.p_cFlowAct_A > 0,1)) >= 1);
 s.cd.p_cFlowAct_taker	= taker;
 s.cd.p_cFlowAct_giver   = giver;
 % if there is flux order check that is consistent
