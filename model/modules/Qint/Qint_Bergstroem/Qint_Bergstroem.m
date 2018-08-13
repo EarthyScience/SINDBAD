@@ -36,9 +36,15 @@ function [f,fe,fx,s,d,p] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % calculate land runoff from incoming water and current soil moisture
 fx.Qint(:,tix) = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.w.wSoil./p.Qint.smax));
 
-% update soil moisture and water balance
+% update soil moisture 
 s.w.wSoil = s.w.wSoil + ((f.Rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
 
+% account for oversaturation (in TWS paper after subtracting of ET)
+tmp             = max(0,s.w.wSoil-p.Qint.smax); 
+s.w.wSoil       = s.w.wSoil - tmp;
+fx.Qint(:,tix)  = fx.Qint(:,tix) + tmp;
+
+% update water balance
 s.wd.WBP = s.wd.WBP - fx.Qint(:,tix);
 
 end
