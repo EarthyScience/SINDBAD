@@ -139,9 +139,9 @@ pSU	= p;
 % Precomputations DO ONLY PRECOMP ALWAYS HERE - if an empty input...
 % -------------------------------------------------------------------------
 % f,fe,fx,s,d,p
-if isempty(precOnceDataSU)
-    [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
-        runCoreTEM(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,true,false,false);
+% if isempty(precOnceDataSU)
+%    [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+%        runCoreTEM(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,true,false,false);
     %     [precOnceDataSU] = getPrecOnceData(precOnceData,f,fe,fx,s,d,p,info)
     % precOnceDataSU = struct;
     %     for v = {'fSU','feSU','fxSU','sSU','dSU','pSU'}
@@ -152,7 +152,7 @@ if isempty(precOnceDataSU)
     %         eval([v{1} ' = precOnceDataSU.(v{1});']);
     %         %sujan added SU at the end of precOnceData
     %     end
-end
+% end
 % -------------------------------------------------------------------------
 % get the precOnce data structure
 % -------------------------------------------------------------------------
