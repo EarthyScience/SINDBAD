@@ -64,10 +64,8 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = (1 - YG) * (GPP * allocationToPool - R_m)
-    % %sujan check if this has anything to do with implicit/explicit
-    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix) - s.cd.RA_M(:,zix));
-%     s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .*
-%     s.cd.cAlloc(:,zix) - s.cd.RA_M(:,zix)); %sujan 
+    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.RA_M(:,zix));
+    
     % no negative growth respiration
     s.cd.RA_G(s.cd.RA_G(:,zix) < 0,zix)	= 0;
     
