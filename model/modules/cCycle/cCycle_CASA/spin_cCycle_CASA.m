@@ -108,9 +108,12 @@ for zix = zixVecOrder
     Bt  = squeeze(cGain(:,zix,:)) .* At;
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
     Co	= s.c.cEco(:,zix);
-    % THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP;
-    % EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL, SLOW AND OLD. IN THIS
-    % CASE SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK NOTEBOOKS).
+    % THE NEXT LINES REPRESENT THE IMPLICIT/ANALYTICAL SOLUTION FOR THE
+    % SPIN UP; EXCEPT FOR THE C POOLS THAT LOOP CARBON BETWEEN THEM
+    % (BECAUSE IS BASED IN RECURRENCE AND THE FINAL STATES OF THE giver IS
+    % NOT KNOWN. IN THE ORIGINAL CASA MODEL: SOIL MICROBIAL, SLOW AND OLD.
+    % IN THIS CASE A SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK
+    % NOTEBOOKS).
     piA1        = (prod(At,2)) .^ (NI2E);
     At2         = [At ones(size(At,1),1)];
     sumB_piA    = NaN(size(f.Tair));
@@ -125,8 +128,10 @@ for zix = zixVecOrder
     % FINAL CARBON AT POOL zix
     Ct                      = Co .* piA1 + sumB_piA .* piA2;
     sCt(:,zix) = Ct;
-% disp(['DBG : Co : ' num2str(zix) ' : ' num2str(Co(1))])
-% disp(['DBG : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
+    
+disp([pad('DBG SPINUP',20) ' : Co : ' num2str(zix) ' : ' num2str(Co(1))]);%@nc: clean up padding with sujan
+disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))]);%@nc: clean up padding with sujan
+
     sT.c.cEco(:,zix)        = Ct;
     sT.prev.s_c_cEco(:,zix)	= Ct;
     
