@@ -119,13 +119,13 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 4 - Climate and other effects on metabolic processes
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.cCycleBase.funHandle(f,fe,fx,s,d,p,info,tix);
+    [f,fe,fx,s,d,p]     =   ms.cCycleBase.funHandle(f,fe,fx,s,d,p,info,tix);        % pool structure of the carbon cycle
     [f,fe,fx,s,d,p]     =   ms.cTaufTsoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil temperature on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil moisture on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufLAI.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate litterfall scalars (that affect the changes in the vegetation k
     [f,fe,fx,s,d,p]     =   ms.cTaufpSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil texture on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufpVeg.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of vegetation properties on soil decomposition rates   
-    [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);
+    [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);           % combine effects of different factors on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.RAfTair.funHandle(f,fe,fx,s,d,p,info,tix);           % temperature effect on autotrophic maintenance respiration
     % ---------------------------------------------------------------------
     % 5 - Allocation of C within plant organs
@@ -143,9 +143,9 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 7 - Carbon transfers to soil pools
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.cFlowfpSoil.funHandle(f,fe,fx,s,d,p,info,tix);       % effect of soil texture on transfer between C pools
-    [f,fe,fx,s,d,p]     =   ms.cFlowfpVeg.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of vegetation properties on transfer between C pools
-    [f,fe,fx,s,d,p]     =   ms.cFlowAct.funHandle(f,fe,fx,s,d,p,info,tix);
+    [f,fe,fx,s,d,p]     =   ms.cFlowfpSoil.funHandle(f,fe,fx,s,d,p,info,tix);       % effect of soil properties on the C transfers between pools
+    [f,fe,fx,s,d,p]     =   ms.cFlowfpVeg.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of vegetation properties on the C transfers between pools
+    [f,fe,fx,s,d,p]     =   ms.cFlowAct.funHandle(f,fe,fx,s,d,p,info,tix);          % actual transfers of C between pools (of diagonal components)
     [f,fe,fx,s,d,p]     =   ms.cCycle.funHandle(f,fe,fx,s,d,p,info,tix);            % allocate carbon to vegetation components
                                                                                     % litterfall and litter scalars
                                                                                     % calculate carbon cycle/decomposition/respiration in soil
