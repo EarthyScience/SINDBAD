@@ -161,6 +161,8 @@ pSU	= p;
 % -------------------------------------------------------------------------
 % complete spinup sequence
 % -------------------------------------------------------------------------
+tmp = dSU.storedStates.cEco; % @nc: to delete or adjust
+
 spinSequence = info.tem.spinup.sequence;
 
 for iss = 1:numel(spinSequence)
@@ -190,17 +192,15 @@ for iss = 1:numel(spinSequence)
             end
         end
         %%
-        if isfield(sSU,'prev')
+        if isfield(sSU.prev,'s_c_cEco')
             disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-            if isfield(sSU.prev,'s_c_cEco')
-                disp('sSU.prev exists')
-                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-            else
-                disp('DBG : runSpinupTEM : cPools # / cEco  ')
-                disp('sSU.prev does not exists')
-                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
-            end
+            disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+        else
+            disp('DBG : runSpinupTEM : cPools # / cEco  ')
+            disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:)]))
         end
+        tmp = cat(3,tmp,dSU.storedStates.cEco);
     end
 end
+dSU.longStates.cEco = tmp;% @nc: to delete or adjust
 end
