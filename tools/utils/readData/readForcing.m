@@ -78,7 +78,7 @@ for ii=1:numel(dataPaths)
 
         switch ext
             case '.mat'
-                load(dFiles{ff})
+                load(dFiles{ff});%@nc: bad... should flow into some variable like tmp = load(...
                 for vv=1:numel(inVars)
                     % loop over variables
                     try 

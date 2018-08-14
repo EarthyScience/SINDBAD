@@ -1,4 +1,6 @@
 function [info] = editTEMInfo(info,varargin)
+% @nc: seems that this function edits any part of the info, should actually
+% be named editInfo? (Is replacing the old editTEMInfo
 %% setups the experiment and TEM part of the info
 % INPUT:    experiment configuration file OR an existing info
 %           + additional command line informations what should be edited in the info
