@@ -27,7 +27,6 @@ for jj      =   1:numel(fun_fields)
 end
 % evaluate function handle in forcing
 f           =   info.tem.forcing.funHandle.import(info);
-
 %% get size of (1st) forcing variable for nPix and nTix
 tmp                             =   fieldnames(f);
 info.tem.forcing.size           =   size(f.(tmp{1}));
