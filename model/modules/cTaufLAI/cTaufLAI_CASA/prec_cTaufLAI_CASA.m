@@ -7,12 +7,10 @@ TSPY	= info.tem.model.time.nStepsYear; %sujan
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
 
 % BUILD AN ANNUAL LAI MATRIX
-% LAI13                   = zeros(size(f.LAI,1), TSPY + 1);
-LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1); %sujan
+LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
 LAI13(:, 2:TSPY + 1)	=   flip(d.cLAI.LAI(:,1:TSPY), 2);
 LAI13(:, 1)             =   d.cLAI.LAI(:, 1);
-% d.cTaufLAI.LAI13        =   LAI13; % sujancdp
-s.cd.p_cTaufLAI_LAI13   =   LAI13; % transfer to d.cTaufLAI
+s.cd.p_cTaufLAI_LAI13   =   LAI13;
 
 
 end % function

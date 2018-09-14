@@ -28,15 +28,15 @@ for vn = {'E','F'}
 %         case 'F', aM = aMF;
 %     end
 	eval(['aM = aM' vn{:} ';']);
-for ii = 1:size(aM,1)
-    ndxSrc = info.tem.model.variables.states.c.zix.(aM{ii,1});
-    ndxTrg = info.tem.model.variables.states.c.zix.(aM{ii,2}); %sujan : is it ii,2?
-    for iSrc = 1:numel(ndxSrc)
-        for iTrg = 1:numel(ndxTrg)
+	for ii = 1:size(aM,1)
+		ndxSrc = info.tem.model.variables.states.c.zix.(aM{ii,1});
+		ndxTrg = info.tem.model.variables.states.c.zix.(aM{ii,2});
+		for iSrc = 1:numel(ndxSrc)
+			for iTrg = 1:numel(ndxTrg)
 				s.cd.(['p_cFlowfpSoil_' vn{1}])(:,ndxTrg(iTrg),ndxSrc(iSrc)) = aM{ii,3};
 			end
-        end
-    end
+		end
+	end
 end
 
 
