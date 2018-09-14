@@ -104,11 +104,11 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------
-	[f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
+    [f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
     [f,fe,fx,s,d,p]     =   ms.TranfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % supply limited Transpiration
     [f,fe,fx,s,d,p]     =   ms.GPPpot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
-    [f,fe,fx,s,d,p]     =   ms.GPPfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);          % compute 'stress' scalars
-    [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % compute 'stress' scalars
+    [f,fe,fx,s,d,p]     =   ms.GPPfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of diffuse radiation
+    [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of direct radiation
     [f,fe,fx,s,d,p]     =   ms.GPPfTair.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of temperature
     [f,fe,fx,s,d,p]     =   ms.GPPfVPD.funHandle(f,fe,fx,s,d,p,info,tix);           % VPD effect
     [f,fe,fx,s,d,p]     =   ms.GPPdem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum
@@ -124,7 +124,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cTaufwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil moisture on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufLAI.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate litterfall scalars (that affect the changes in the vegetation k
     [f,fe,fx,s,d,p]     =   ms.cTaufpSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil texture on soil decomposition rates
-    [f,fe,fx,s,d,p]     =   ms.cTaufpVeg.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of vegetation properties on soil decomposition rates   
+    [f,fe,fx,s,d,p]     =   ms.cTaufpVeg.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of vegetation properties on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);           % combine effects of different factors on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.RAfTair.funHandle(f,fe,fx,s,d,p,info,tix);           % temperature effect on autotrophic maintenance respiration
     % ---------------------------------------------------------------------
@@ -153,6 +153,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % Gather all variables that are desired and insert them
     % in fx,s,d
     % ---------------------------------------------------------------------
-     [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);         % store current states in previous state variables 
+    [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);         % store current states in previous state variables 
 end 
 end

@@ -72,8 +72,6 @@ if info.tem.spinup.flags.loadSpinup
     end
     disp([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : loaded sSU and dSU from restart file'])
     return
-    % sujan: changed the fields names to dSU and sSU from dSpinUp and
-    % sSpinup for consistency
 elseif~info.tem.spinup.flags.runSpinup
     % in this case we need to have SUData
     if ~isempty(SUData)
@@ -81,7 +79,6 @@ elseif~info.tem.spinup.flags.runSpinup
             % get the initial conditions from memory
             sSU	= SUData.sSU;
             dSU	= SUData.dSU;
-            %fSU = SUData.fSU % proposed the loading of spinup of data
             disp([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : loaded SUData.sSU and SUData.dSU from memory!'])
         else
             err([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : runSpinup is false in modelRun config, and cannot read it from file or memory!'])
@@ -100,10 +97,6 @@ requirInitVars      = {'fxSU','feSU','dSU','sSU'};
 if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
     runFlags.createStruct	= true;
 end
-%sujan
-% if sum(cellfun(@(x)exist(x,'var'),requirInitVars)) < numel(requirInitVars)
-%     runFlags.createStruct	= true;
-% end
 % -------------------------------------------------------------------------
 % Make the spinup data - only if it is an empty input
 % -------------------------------------------------------------------------
@@ -115,12 +108,9 @@ if isempty(infoSU)
     % make a new info for spin up based on info...
     infoSU	= info;
     % adjust the nTix
-    tmp     						= fieldnames(fSU); % sujan the size of variable YEAR in fSU remains the same as original data. So, this variable should not be used to determine nTIX in next step
-    
-    %     tmp     						= fieldnames(orderfields(fSU));
-    newNTix 						= size(fSU.(tmp{1}),2);
-    %     newNTix 						= size(fSU.(tmp{1}),2);
-    infoSU.tem.helpers.sizes.nTix 	= newNTix;
+    tmp     				= fieldnames(fSU);
+    newNTix 				= size(fSU.(tmp{1}),2);
+    infoSU.tem.helpers.sizes.nTix	= newNTix;
     if info.tem.spinup.flags.recycleMSC
         infoSU.tem.model.nYears	= 1; % should come from info.tem.s
     end
@@ -136,24 +126,6 @@ end
 % -------------------------------------------------------------------------
 pSU	= p;
 % -------------------------------------------------------------------------
-% Precomputations DO ONLY PRECOMP ALWAYS HERE - if an empty input...
-% -------------------------------------------------------------------------
-% f,fe,fx,s,d,p
-% if isempty(precOnceDataSU)
-%    [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
-%        runCoreTEM(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,true,false,false);
-    %     [precOnceDataSU] = getPrecOnceData(precOnceData,f,fe,fx,s,d,p,info)
-    % precOnceDataSU = struct;
-    %     for v = {'fSU','feSU','fxSU','sSU','dSU','pSU'}
-    %         eval(['precOnceDataSU.(v{1})	= ' v{1} ';']);
-    %     end
-    % else
-    %     for v = {'fSU','feSU','fxSU','sSU','dSU','pSU'}
-    %         eval([v{1} ' = precOnceDataSU.(v{1});']);
-    %         %sujan added SU at the end of precOnceData
-    %     end
-% end
-% -------------------------------------------------------------------------
 % get the precOnce data structure
 % -------------------------------------------------------------------------
 [precOnceDataSU,fSU,feSU,fxSU,sSU,dSU,pSU] = setPrecOnceData(precOnceDataSU,fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,'runSpinupTEM');
@@ -164,7 +136,6 @@ pSU	= p;
 tmp = dSU.storedStates.cEco; % @nc: to delete or adjust
 
 spinSequence = info.tem.spinup.sequence;
-
 for iss = 1:numel(spinSequence)
     % get handles, inputs and number of loops
     funHandleSpin	= str2func(spinSequence(iss).funHandleSpin);
@@ -172,7 +143,6 @@ for iss = 1:numel(spinSequence)
     nLoops          = spinSequence(iss).nLoops;
     if ~iscell(addInputs),addInputs = num2cell(addInputs');end
     disp([pad('EXEC MODRUN',20) ' : ' pad('runSpinupTEM',20) ' | ' pad('sequence',8) ' : ' num2str(iss) ' / ' num2str(numel(spinSequence)) ' | funHandleSpin    : ' spinSequence(iss).funHandleSpin])
-    %     disp(['MSG : runSpinupTEM : sequence : funAddInputs     : ' spinSequence(iss).funAddInputs])
     if ~isempty(spinSequence(iss).funHandleStop)
         funHandleStop   = str2func(spinSequence(iss).funHandleStop);
     else
