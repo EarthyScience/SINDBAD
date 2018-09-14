@@ -41,7 +41,7 @@ for cpn = 1:numel(cpNames)
     end
 end
 
-% check allocation again: 
+% check allocation again:
 % check allocation...
 % check allocation...
 % the following will need to move to the checks module that is not implemented yet

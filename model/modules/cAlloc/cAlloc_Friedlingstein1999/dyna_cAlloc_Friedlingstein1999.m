@@ -33,10 +33,8 @@ tmp0 = s.cd.cAlloc(:); %sujan
 tmp1 = sum(s.cd.cAlloc,2);
 if any(tmp0 > 1) || any(tmp0 < 0)
      error('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: cAlloc lt 0 or gt 1')
-%      error('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: cAlloc lt 0 or gt 1')
 end
 if any(abs(sum(tmp1,2)-1) > 1E-6)
       error('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: sum(cAlloc) ne 1')
-%      warning('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: sum(cAlloc) ne 1')
 end
 end % function

@@ -99,8 +99,8 @@ for zix = zixVecOrder
             adjustGain          = d.storedStates.p_cFlowAct_A(:,taker,giver,:);
             adjustGain3D        = reshape(adjustGain,nPix,1,nTix);
             cGain(:,taker,:)	= cGain(:,taker,:) + (fCt(:,giver,:) ./ denom) .* cLossRate(:,giver,:)  .* adjustGain3D;
-            end
         end
+    end
     %% GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
     % CALCULATE At = 1 - Lt
     At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
@@ -108,12 +108,9 @@ for zix = zixVecOrder
     Bt  = squeeze(cGain(:,zix,:)) .* At;
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
     Co	= s.c.cEco(:,zix);
-    % THE NEXT LINES REPRESENT THE IMPLICIT/ANALYTICAL SOLUTION FOR THE
-    % SPIN UP; EXCEPT FOR THE C POOLS THAT LOOP CARBON BETWEEN THEM
-    % (BECAUSE IS BASED IN RECURRENCE AND THE FINAL STATES OF THE giver IS
-    % NOT KNOWN. IN THE ORIGINAL CASA MODEL: SOIL MICROBIAL, SLOW AND OLD.
-    % IN THIS CASE A SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK
-    % NOTEBOOKS).
+    % THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP;
+    % EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL, SLOW AND OLD. IN THIS
+    % CASE SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK NOTEBOOKS).
     piA1        = (prod(At,2)) .^ (NI2E);
     At2         = [At ones(size(At,1),1)];
     sumB_piA    = NaN(size(f.Tair));
@@ -143,9 +140,9 @@ disp([pad('DBG SPINUP',20) ' : Ct : ' num2str(zix) ' : ' num2str(Ct(1))]);%@nc: 
     fCt	= dT.storedStates.cEco;
 end
 % make the fx consistent with the pools
-sT.c.cEco = sCt;
-sT.prev.s_c_cEco	= sCt;
-[f,fe,fx,s,d,p] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
+sT.c.cEco			= sCt;
+sT.prev.s_c_cEco    = sCt;
+[f,fe,fx,s,d,p]		= runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
 
 disp(['    TIM : spin_cCycle_CASA : end : inputs : ' num2str(NI2E,'%1.0f|') ' : time : ' sec2som(toc(tstart))])
 end % function
