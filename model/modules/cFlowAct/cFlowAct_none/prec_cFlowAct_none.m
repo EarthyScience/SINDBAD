@@ -8,7 +8,7 @@ tmp	= repmat(info.tem.helpers.arrays.zerospixzix.c.cEco,1,1,...
 s.cd.p_cFlowAct_A       = tmp;
 s.cd.p_cFlowAct_E       = tmp;
 s.cd.p_cFlowAct_F       = tmp;
-    % transfers
+% transfers
 s.cd.p_cFlowAct_taker	= [];
 s.cd.p_cFlowAct_giver   = [];
 
