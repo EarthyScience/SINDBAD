@@ -5,7 +5,18 @@ if ~justpng
     print(cf, [fn '.eps'], '-depsc')
 end
 if exist([fn '.png'],'file'),delete([fn '.png']),end
-if isunix && ~ismac
+
+% computer name...
+[ret, cname] = system('hostname');
+if ret ~= 0
+    if ispc
+        cname = getenv('COMPUTERNAME');
+    else
+        cname = getenv('HOSTNAME');
+    end
+end
+
+if isunix && ~ismac && ~strcmpi(deblank(cname),'etwa')
     save_gcf_UNIX(cf, fn, closefig, justpng)
     return
 %     % suddenly we need this... weird...
@@ -29,38 +40,38 @@ if isunix && ~ismac
 %     end
 %     disp(['save end : ' fn tmp])
 else
-        if justpng == -1
+    if justpng == -1
         if exist([fn '.fig'],'file'),delete([fn '.fig']),end
         saveas(cf, [fn '.fig']);
         tmp = '.fig';
-        else
-    computer_name	= deblank(getenv('COMPUTERNAME'));
-    if strcmpi(computer_name,'KERBALA') || ...
-            isempty(computer_name) || ...
-            strcmpi(computer_name,'DESNA') || ...
-            strcmpi(computer_name,'BARRACUDA') || ...
-            strcmpi(computer_name,'BARBUDA') || ...
-            strcmpi(computer_name,'ANTIGUA')
+    else
+        computer_name	= deblank(getenv('COMPUTERNAME'));
+        if strcmpi(computer_name,'KERBALA') || ...
+                isempty(computer_name) || ...
+                strcmpi(computer_name,'DESNA') || ...
+                strcmpi(computer_name,'BARRACUDA') || ...
+                strcmpi(computer_name,'BARBUDA') || ...
+                strcmpi(computer_name,'ANTIGUA')
             
-        try
-            print(cf, [fn '.png'], '-dpng', '-r600')
-        catch
             try
-                print(cf, [fn '.png'], '-dpng', '-r400')
+                print(cf, [fn '.png'], '-dpng', '-r600')
             catch
                 try
-                    print(cf, [fn '.png'], '-dpng', '-r200')
+                    print(cf, [fn '.png'], '-dpng', '-r400')
                 catch
-                    % it is not about memory!
-                    % something to do with the file permissions...
-                    disp(['could not print ' fn '.png'])
+                    try
+                        print(cf, [fn '.png'], '-dpng', '-r200')
+                    catch
+                        % it is not about memory!
+                        % something to do with the file permissions...
+                        disp(['could not print ' fn '.png'])
+                    end
                 end
             end
+        else
+            print(cf, [fn '.png'], '-dpng')
         end
-    else
-        print(cf, [fn '.png'], '-dpng')
     end
-        end
 end
 % if justpng == -1
 %     try
