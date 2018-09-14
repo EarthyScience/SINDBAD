@@ -154,7 +154,7 @@ disp([pad('copy of configuration files',30) ' : ' info.experiment.settingsOutput
 
 % save the light version of info with all configs and settings as a json
 % file
-savejsonJL('',infoLite,info.experiment.outputInfoFile);
+saveJsonFile('',infoLite,info.experiment.outputInfoFile);
 disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
 
 % % save the info as mat file
