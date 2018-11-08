@@ -113,6 +113,7 @@ if ~exist(info.experiment.settingsOutputDirPath, 'dir')
     mkdir(info.experiment.settingsOutputDirPath)
 end
 
+
 %% set the runDir path
 info.tem.model.paths.runDir    =    info.experiment.outputDirPath;
 
@@ -177,9 +178,15 @@ else
 end
 
 
-%% paths of constraints
+%% paths of constraints & outDirPath of optimization
 % if isfield(info,'opti')
 if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
+%     % outDirPath of optimization (not needed if no optimization
+%     if info.tem.model.flags.runOpti
+%         info.opti.algorithm.options.outDirPath = outputDirPath_full;
+%     end
+    
+    % constraints
     if ~isempty(info.opti.constraints.oneDataPath)
         if strcmp(strrep(getFullPath(info.opti.constraints.oneDataPath),'\','/'), strrep(info.opti.constraints.oneDataPath,'\','/'))==0
             info.opti.constraints.oneDataPath = convertToFullPaths(info,info.opti.constraints.oneDataPath);

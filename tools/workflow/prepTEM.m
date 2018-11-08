@@ -38,6 +38,7 @@ info.tem.helpers.sizes.nTix     =   info.tem.forcing.size(2);
 if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
     [info,f] = info.tem.forcing.funHandle.check(info,f);   
 end
+
 %% setup the model structure
 disp(pad('-',200,'both','-'))
 disp(pad('Setup the model structure and generate the code of SINDBAD',200,'both',' '))
@@ -47,7 +48,7 @@ disp(pad('-',200,'both','-'))
 if isfield(info.tem.model,'code')
     info.tem.model=rmfield(info.tem.model,'code');
 end
-[info]                                      =   setupCode(info);
+[info]                          =   setupCode(info);
 
 %% create SINDBAD structures
 
