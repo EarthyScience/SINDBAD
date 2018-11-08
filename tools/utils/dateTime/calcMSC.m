@@ -16,12 +16,13 @@ for m=1:12
    meanseasonOut(1,m)  = nanmean(seasonOut(:,m),1); 
 end
 
-
-years       =   length(find(tempvec==12));
+try
+years       =   length(find(tempvec==12)); % ONLY  WORKS WITH MONTHLY INPUT!
 iav         =   repmat(seasonOut, 1, years);
 iav         =   iav(:,tempvec(1):end);
 iavOut      =   In - iav;
 meaniavOut  =   nanmean(iavOut,1);
+end
 
 end
 

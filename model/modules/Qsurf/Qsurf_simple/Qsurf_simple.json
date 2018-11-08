@@ -1,0 +1,17 @@
+{
+	"params": {
+		"dc": {
+			"Name": "delayed surface runoff coefficient",
+			"Unit": "[]",
+			"Default": 0.01,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": " "
+		}
+	}
+}

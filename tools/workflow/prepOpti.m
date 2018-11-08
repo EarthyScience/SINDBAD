@@ -75,7 +75,7 @@ end
 
 %% create the output directory path for output files of the optimization algorithm
 if isfield(info.opti.algorithm.options,'outDirPath')
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
+    info.opti.algorithm.options.outDirPath      =   [info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep];
 end
 
 %% 1) create the function handles and get constraints for optimization
