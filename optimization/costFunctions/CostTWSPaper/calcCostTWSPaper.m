@@ -17,7 +17,7 @@ months      = length(info.tem.helpers.dates.month);
 xMonth      = info.tem.helpers.dates.month;
 [~,tVec,~]  = datevec(xMonth);
 
-etComps = {'EvapSoil'};
+etComps = {'ET'};%{'EvapSoil'};
 ETmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(etComps)
     compName = char(etComps{etC});
@@ -41,14 +41,18 @@ try
     TWSobs_uncert   = obs.TWS.unc; %sujan
     SWEobs          = obs.SWE.data;
     ETobs           = obs.Evap.data;
-    Qobs            = obs.Qr.data;
+    Qobs            = obs.Q.data;
 catch
     warning('ERR: TWS, SWE, ET, Q or TWS uncertainty missing in observational constraints!');
 end
 
 % Monthly Aggregation of simulations
-try
+try 
+    if isfield(d.storedStates, 'wTWS')
+    TWSmod_d    = squeeze(d.storedStates.wTWS);
+    else
     TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wGW);
+    end
     TWSmod      = aggDay2Mon(TWSmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
     error('ERR: TWS  missing in model output!');
@@ -66,7 +70,7 @@ end
 try
     Qmod        = aggDay2Mon(Qmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
-    error('ERR: Qr  missing in model output!');
+    error('ERR: Q  missing in model output!');
 end
 
 

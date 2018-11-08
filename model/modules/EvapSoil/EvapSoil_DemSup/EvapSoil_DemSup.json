@@ -18,7 +18,7 @@
 			"Unit": "1/time",
 			"Default": 0.05,
 			"LowerBound": 0,
-			"UpperBound": 0.8,
+			"UpperBound": 1,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",

@@ -8,17 +8,20 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 % Purposes:
 %   - Runs the experiment based on the configuration files or info
 %       - in different modes such as forward or optimization
-%       - in v1.1: 
-%           - forward run with cost calculation but without
-%               optimization
-%           - outputs additionally the observational constraints
-%               and costs
+%   - in v1.1: 
+%       - forward run with cost calculation but without
+%         optimization
+%       - outputs additionally the observational constraints
+%         and costs
+%   - in v1.2:
+%       - possible to save output if input is an info structure
 %
 % Conventions:
 %
 % Created by:
 %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
 % References:
 %
@@ -139,6 +142,11 @@ if info.tem.model.flags.runOpti
     % calculate the cost
     [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
     disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost)])
+    
+    % save the optimized parameters as a json
+    [paramFile] = writeParamsJson(info, p);
+    disp([pad('optimized parameter values are saved in a .json file',30) ' : ' paramFile])
+
 end
 
 %% Save the data and model output
@@ -147,15 +155,26 @@ disp(pad('-',200,'both','-'))
 disp(pad('Save the data',200,'both',' '))
 disp(pad('-',200,'both','-'))
 % end log file content
+
 % create a copy of the configuration files of the experimentment to output directory
-[pth,~,~] = fileparts(expConfigFile);
+if ~isstruct(expConfigFile) 
+    [pth,~,~] = fileparts(expConfigFile);
+else % info structure was input, use path of modelRun.json
+    [pth,~,~] = fileparts(info.experiment.configFiles.modelRun);
+end
 copyfile(pth,info.experiment.settingsOutputDirPath);
 disp([pad('copy of configuration files',30) ' : ' info.experiment.settingsOutputDirPath])
 
 % save the light version of info with all configs and settings as a json
 % file
-savejsonJL('',infoLite,info.experiment.outputInfoFile);
-disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
+% Tina hack to not save info if its the input to the workflow
+if ~isstruct(expConfigFile)
+    savejsonJL('',infoLite,info.experiment.outputInfoFile);
+    disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
+else
+    expConfigFile = 'info structure input';
+    disp([pad('info (.json) not saved',30)])
+end
 
 % % save the info as mat file
 % save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')

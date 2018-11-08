@@ -2,10 +2,10 @@
 	"params": {
 		"melt_T": {
 			"Name": "melt factor for temperature",
-			"Unit": "mm/°C",
+			"Unit": "mm/degC",
 			"Default": 3,
 			"LowerBound": 0,
-			"UpperBound": 3,
+			"UpperBound": 10,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",

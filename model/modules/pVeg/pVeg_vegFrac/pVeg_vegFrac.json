@@ -1,0 +1,20 @@
+{
+	"params":
+	{
+		"vegFr":
+		{
+			"Name": "vegetation fraction of grid cell",
+			"Unit": "fraction",
+			"Default": 0.5,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution":
+			{
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "Constant vegetation cover fraction"
+		}
+	}
+}
