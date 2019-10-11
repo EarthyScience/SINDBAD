@@ -1,0 +1,19 @@
+{
+	"params": 
+	{
+		"components": 
+		{
+			"Name": "all possible components of evapotranspiration",
+			"Unit": "NaN",
+			"Default": ["EvapSoil","EvapSub","EvapInt","Transp"],
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": " "
+		}
+	}
+}

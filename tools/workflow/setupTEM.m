@@ -1,32 +1,52 @@
 function [info,expConfigFile] = setupTEM(expConfigFile)
-%% setups the experiment and TEM part of the info
-% INPUT:    experiment configuration file OR an existing info
-%           + additional command line informations what should be edited in the info
-% OUTPUT:   info
-% comment:  needs to be run where the repository is
+% setups the experiment part of the info and date arrays
+%
+% Requires:
+%	- a configuration file for an experiment or
+%	- an info structure
+%
+% Purposes:
+%   - setups the the experiment and TEM part of the info 
+%   - based on the experiment configuration files or an existing info
+%   - reads configuration files 
 %
 % steps:
-%   1) input = info or info.json file or experiment configuration file?
+%   1) get sindbad root
+%   2) input = info or experiment configuration file?
 %     if configuration file:
 %       - set info.experiment
 %       - readConfigFiles
-%   2) editINFOSettings
-%   3) create the output folder structure
-%   4) writeJsonFile of info
-%   5) generate code and check model structure integrity
-%   x) create helpers -> done in prepTEM as also forcing etc is needed
-%   6) write the info structure in a mat file
+%   3) read parameter .json if provided
+%   4) add date helpers
+%
+% Conventions:
+%   - needs to be run where the repository is
+%
+% Created by:
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%
+% References:
+%
+% Versions:
+%   - 1.2 on 09.01.2019
+%   - 1.1 on 15.08.2018 
 
-%% get the sindbad root directory
+
+
+%% 1) get the sindbad root directory
 info.experiment.sindbadroot         =   sindbadroot;
 
-%% check what is the input
+%% 2) check what is the input
 if isstruct(expConfigFile)
     disp(pad('-',200,'both','-'))
     disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using info structure'])
     disp(pad('-',200,'both','-'))
+    
     % is already a structure assume = info
-    info	= expConfigFile;
+    info            = expConfigFile;
+    
     % store the old settings in a cell array called oldSettings ...
     if isfield(info.experiment,'oldSettings')
         k   = numel(info.experiment.oldSettings) + 1;
@@ -34,10 +54,12 @@ if isstruct(expConfigFile)
         k	= 1;
     end
     info.experiment.oldSettings{k} = info.experiment;
+    
     % stamp the experiment settings
     info = setExperimentInfo(info);
     % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
+    % function handles should be removed for saving infoLite.. 
     
 elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     expConfigFile = [info.experiment.sindbadroot expConfigFile] ;
@@ -52,11 +74,12 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using an experiment configuration file: ' expConfigFile])
     disp(pad('-',200,'both','-'))
     
-    exp_json                 =   readJsonFile(expConfigFile);
-    exp_json_fn              =  fields(exp_json);
+    exp_json                    =   readJsonFile(expConfigFile);
+    exp_json_fn                 =  fields(exp_json);
     for exp = 1:numel(exp_json_fn)
         info.experiment.(exp_json_fn{exp}) = exp_json.(exp_json_fn{exp});
     end
+    
     % absolute paths of the config files
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
     
@@ -65,16 +88,20 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     
     % read the TEM configurations
     info                            =   readConfiguration(info,'tem',true);
-    [info]  = setupStateInfo(info);
+    [info]                          =   setupStateInfo(info);
+    
 else
     disp(pad('-',200,'both','-'))
     error([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | No valid SINDBAD info or an experiment configuration file is provided. Make sure that ' expConfigFile ' exists'])
     disp(pad('-',200,'both','-'))
     
-    
 end
+    
 
-%% add date helpers
-info.tem.helpers.dates.day   = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'd');
-info.tem.helpers.dates.month = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'm');
+%% 3) add date helpers
+dateStart                    =  strsplit(info.tem.model.time.sDate,'-');
+dateEnd                      =  strsplit(info.tem.model.time.eDate,'-');
+info.tem.model.time.sYear    =  str2num(dateStart{1});
+info.tem.model.time.eYear    =  str2num(dateEnd{1});
+
 end

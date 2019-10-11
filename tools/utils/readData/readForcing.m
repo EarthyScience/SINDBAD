@@ -1,4 +1,4 @@
-function [dataStructure] = readForcing(info)
+function [dataStructure,info] = readForcing(info)
 % reads the forcing data (.mat or .nc) from dataPath
 %
 % Usages: 
@@ -33,6 +33,8 @@ function [dataStructure] = readForcing(info)
 % 
 % Versions: 
 %   - 1.0 on 09.07.2018 
+%   - 1.1: 12.12.2018: sujan: added info as output to get the lat/lon from
+%   input into info.tem.model.space.latVec and lonVec
 
 %%
 dataStructure = struct;
@@ -48,7 +50,14 @@ if ~isempty(info.tem.forcing.oneDataPath)
     idxVar = ones(1, numel(variables));
 else
     for vv = variables'
-        allDataPaths =  [allDataPaths info.tem.forcing.variables.(vv{1}).dataPath];
+        if info.tem.model.flags.runForwardYearly
+            fileEnd=[num2str(info.tem.model.time.runYear) info.tem.forcing.variables.(vv{1}).dataFormat];
+        else
+            fileEnd='';
+        end
+        dataPathFull = [info.tem.forcing.variables.(vv{1}).dataPath fileEnd];
+        info.tem.forcing.variables.(vv{1}).dataPathFull=dataPathFull; %skoirala
+        allDataPaths =  [allDataPaths dataPathFull];
     end
     allDataPaths = allDataPaths(2:end);
     [dataPaths, idxData, idxVar]  = unique(allDataPaths);
@@ -78,7 +87,7 @@ for ii=1:numel(dataPaths)
 
         switch ext
             case '.mat'
-                dataMat = load(dFiles{ff});%@nc: bad... should flow into some variable like tmp = load(...
+                dataMat = load(dFiles{ff});
                 for vv=1:numel(inVars)
                     % loop over variables
                     try 
@@ -95,25 +104,49 @@ for ii=1:numel(dataPaths)
                         error(['MISS: readForcing: Variable ' tarVar ' not found.']);
                     end
                 end
+                % add lat and lon
+                try
+                    info.tem.model.space.latVec = dataMat.lat;
+                    info.tem.model.space.lonVec = dataMat.lon;
+                    info.tem.model.space.reso   = [1 1];
+                catch
+                    disp('MISS: readForcing: Space information (latitude, longitute, resolution)  missing.');
+                end
+                
+                %  TINA: add dates.day (should exist in the spinup forcing!)
+                try
+                    dataStructure.dates = dataMat.dates;
+                catch
+                    disp('MISS: readForcing: Time information (dates.day)  missing. May cause problems with spinup.');
+                end
+
             case '.nc'
                  for vv=1:numel(inVars)
                     % loop over variables
                     try
                         tarVar = inVars{vv};
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
+                        if ~isfield(info.tem.model,'space')
+%                             info.tem.model.space.latVec=ncread(dFiles{ff},'latitude');
+%                             info.tem.model.space.lonVec=ncread(dFiles{ff},'longitude');
+%                             info.tem.model.space.reso=0.5;
+                        end
+                        info.tem.model.time.timeVec=ncread(dFiles{ff},'time');
                         dataStructure.(tarVar) = ncread(dFiles{ff},srcVar)';
                         try
                            dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
+                            %                            tarVar
+                            %                            size(dataStructure.(tarVar))
                         catch
                            disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
                         end
                     catch
-                        if tarVar == 'LAI'
-                            dataStructure.(tarVar) = ones(1,length(xDay));
-                            disp(['MISS: readForcing: Variable ' tarVar ' not found. Setting a constant value.']);
-                        else
+                        %                         if tarVar == 'LAI'
+                        %                             dataStructure.(tarVar) = ones(1,length(xDay));
+                        %                             disp(['MISS: readForcing: Variable ' tarVar ' not found. Setting a constant value.']);
+                        %                         else
                         error(['MISS: readForcing: Variable ' tarVar ' not found.']);
-                        end
+                        %                         end
                     end
                  end 
                  

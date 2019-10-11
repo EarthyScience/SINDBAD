@@ -6,23 +6,35 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %	- an info structure
 %
 % Purposes:
-%   - Runs the experiment based on the configuration files or info
+%   - runs the experiment based on the configuration files or info
 %       - in different modes such as forward or optimization
-%       - in v1.1: 
-%           - forward run with cost calculation but without
-%               optimization
-%           - outputs additionally the observational constraints
-%               and costs
+%   - in v1.1: 
+%       - forward run with cost calculation but without
+%         optimization
+%       - outputs additionally the observational constraints
+%         and costs
+%   - in v1.2:
+%       - possible to save output if input is an info structure
+%   - in v1.3:
+%       - possible to do simulations per year
+%   - in v1.4:
+%       - read and use parameter values defined in a .json file
 %
 % Conventions:
 %
 % Created by:
 %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - v1.3: Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - v1.4: Tina Trautmann (ttraut@bgc-jena.mpg.de) 
 %
 % References:
 %
 % Versions:
+%   - 1.4 on 09.01.2019
+%   - 1.3 on 20.12.2018
+%   - 1.2 on 20.08.2018
 %   - 1.1 on 18.07.2018 
 %   - 1.0 on 01.07.2018
 
@@ -40,7 +52,8 @@ disp(pad('-',200,'both','-'))
 disp(pad('START: Log of SINDBAD model experiment',200,'both'))
 disp(pad('-',200,'both','-'))
 % end log file content
-%% check if the experiment configuration has been passed. Stop, if not.
+
+%% check if the experiment configuration has been passed, stop if not
 if ~exist('expConfigFile','var')
     dispMSG = [pad('CRIT WORKFLOW',20) ' : ' pad('workflowExperiment',20) ' | Cannot run an experiment without configuration file [expConfigFile(.json)] or SINDBAD info'];
     disp(dispMSG)
@@ -57,17 +70,20 @@ disp(pad('-',200,'both','-'))
 [info, expConfigFile]                       =   setupTEM(expConfigFile);
 
 
-%% setup the optimization if it's on
+%% include changes from command line in info & setup the optimization if it's on or if costs shall be computed
 if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
+    
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('Set up the optimization of SINDBAD',200,'both',' '))
     disp(pad('-',200,'both','-'))
     % end log file content
+    
     [info]                                  =   setupOpti(info);
     [info]                                  =   editTEMInfo(info,varargin{:});
     infoLite                                =   info;
     [info, obs]                             =   prepOpti(info);
+    
 else
     [info]                                  =   editTEMInfo(info,varargin{:});
     infoLite                                =   info;
@@ -79,66 +95,102 @@ disp(pad('-',200,'both','-'))
 disp(pad('Prepare the objects and structure of SINDBAD',200,'both',' '))
 disp(pad('-',200,'both','-'))
 % end log file content
-[f,fe,fx,s,d,info]                          =   prepTEM(info);
+
+% get the parameter values in the wanted precision
+
+p           =   info.tem.params;
+paramType   =  'default'; % comes from info
 
 %% Forward run the model when optimization is off
-if info.tem.model.flags.runForward && ~info.tem.model.flags.calcCost && ~info.tem.model.flags.runOpti
-    % start log file content
-    disp(pad('-',200,'both','-'))
-    disp(pad('Forward run SINDBAD model with default parameters',200,'both',' '))
-    disp(pad('-',200,'both','-'))
-    % end log file content
-    p                                       =   info.tem.params;
-    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
+if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
     
-    cost    = {};
-    obs     = {}; 
-end
+    % do simulations per year
+    if info.tem.model.flags.runForwardYearly
+        sYear=info.tem.model.time.sYear;
+        eYear=info.tem.model.time.eYear;
+        for runYear=sYear:eYear
+            info.tem.model.time.runYear=runYear;
+            [f,fe,fx,s,d,info]                          =   prepTEM(info);
+            if runYear == sYear
+                [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
+                info.tem.spinup.flags.runSpinup = 0;
+                SUData.sSU = s;
+                SUData.dSU = d;
+            else
+                [f,fe,fx,s,d,info]                      =   prepTEM(info);
+                [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,SUData);
+            end
+            [~] = writeOutput(info,f,fe,fx,s,d,p);
+        end
+        
+    % do simulations for entire time series   
+    else
+        
+[f,fe,fx,s,d,info]                          =   prepTEM(info);
 
-%% Forward run the model and calculate the costs when optimization is off
-if info.tem.model.flags.runForward && info.tem.model.flags.calcCost &&  ~info.tem.model.flags.runOpti
     % start log file content
     disp(pad('-',200,'both','-'))
-    disp(pad('Forward run SINDBAD model with default parameters & calculate costs',200,'both',' '))
+    disp(pad(['Forward run SINDBAD model with ' paramType ' parameters'],200,'both',' '))
     disp(pad('-',200,'both','-'))
     % end log file content
-    p                                       =   info.tem.params;
-    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
-    % calculate the cost
-    [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
-    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost.Total)])
-    disp(pad('+',200,'both','+'))
+    
+    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,[],[],fx,fe,d,s);
 end
 
+end
+
+ 
 %% Optimize the model and then do the forward run using optimized parameter when opti is on
 if info.tem.model.flags.runOpti
+    [f,fe,fx,s,d,info]                      =   prepTEM(info);
+    
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('optimizing the SINDBAD TEM',200,'both',' '))
     disp(pad('-',200,'both','-'))
     % end log file content
+    
+    % function handle for optimization
     optimizerFunName                        =   ['optimizeTEM_' info.opti.algorithm.funName];
     if ~exist(optimizerFunName)
         optimizerFunName                    =   'optimizeTEM';
     end
-    
     optimizerFunHandle                      =   str2func(optimizerFunName);
+    
+    % evaluate the optimization
     [pScalesS]                              =   feval(optimizerFunHandle,f,obs,info);
+    
+    % get the optimized parameter values into p
     pScales                                 =   pScalesS.x;
-    %      [pScales]   = optimizeTEM(f,obs,info);
-    p                                       =   info.tem.params;
     for i                                   =   1:numel(info.opti.params.names)
         eval([info.opti.params.names{i} '   = info.opti.params.defaults(i) .* pScales(i);'])
     end
+    
+    % save the optimized parameters as a json
+    [paramFile] = writeParamsJson(info, p);
+    disp([pad('optimized parameter values are saved in a .json file',30) ' : ' paramFile])
+ 
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('Forward run SINDBAD model with optimized parameters',200,'both',' '))
     disp(pad('-',200,'both','-'))
     % end log file content
+    
+    % forward run with optimized parameter values
     [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    = runTEM(info,f,p);
-    % calculate the cost
+    
+end
+
+%% Calculate the cost 
+if info.tem.model.flags.calcCost || info.tem.model.flags.runOpti
     [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
-    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost)])
+
+    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost(:))])
+    %disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost.Total)])
+    disp(pad('+',200,'both','+'))
+else
+    cost    = {};
+    obs     = {}; 
 end
 
 %% Save the data and model output
@@ -147,15 +199,25 @@ disp(pad('-',200,'both','-'))
 disp(pad('Save the data',200,'both',' '))
 disp(pad('-',200,'both','-'))
 % end log file content
+
 % create a copy of the configuration files of the experimentment to output directory
-[pth,~,~] = fileparts(expConfigFile);
+if ~isstruct(expConfigFile) 
+    [pth,~,~] = fileparts(expConfigFile);
+else % info structure was input, use path of modelRun.json
+    [pth,~,~] = fileparts(info.experiment.configFiles.modelRun);
+end
 copyfile(pth,info.experiment.settingsOutputDirPath);
 disp([pad('copy of configuration files',30) ' : ' info.experiment.settingsOutputDirPath])
 
-% save the light version of info with all configs and settings as a json
-% file
-saveJsonFile('',infoLite,info.experiment.outputInfoFile);
-disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
+% save the light version of info with all configs and settings as a json file
+% Tina hack to not save info if its the input to the workflow
+if ~isstruct(expConfigFile)
+    savejsonJL('',infoLite,info.experiment.outputInfoFile);
+    disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
+else
+    expConfigFile = 'info structure input';
+    disp([pad('info (.json) not saved',30)])
+end
 
 % % save the info as mat file
 % save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
@@ -170,6 +232,8 @@ disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFi
 disp(pad('-',200,'both','-'))
 disp(pad(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configuration'],200,'both'))
 disp(pad('-',200,'both','-'))
+
+% kind of model run
 if info.tem.model.flags.runOpti
     disp(pad('Model Run in Optimization Mode',200,'both','-'))
 elseif info.tem.model.flags.calcCost
@@ -177,6 +241,8 @@ elseif info.tem.model.flags.calcCost
 else
     disp(pad('Model Run in Forward Mode (without Optimization)',200,'both','-'))
 end
+
+% kind of code used
 if info.tem.model.flags.runGenCode
     disp(pad('Model Run using Generated Code',200,'both','-'))
 else
@@ -187,6 +253,8 @@ if info.tem.model.flags.genRedMemCode
 else
     disp(pad('No Memory Reduction through genRedMemCode',200,'both','-'))
 end
+
+% list of configuration files
 disp(pad('List of used Configuration Files',200,'both','-'))
 
 disp([pad('experiment',20) ' : ' expConfigFile])
@@ -214,6 +282,7 @@ if info.tem.model.flags.calcCost
 
 end
 
+% total time needed
 disp(pad('-',200,'both','-'))
 
 disp(['  TOTAL TIME | Experiment:               ' info.experiment.name ' | ' sec2som(toc(tstartwf))])

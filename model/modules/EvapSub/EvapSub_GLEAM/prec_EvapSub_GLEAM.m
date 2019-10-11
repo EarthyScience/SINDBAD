@@ -54,7 +54,6 @@ Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
 palpha                      = p.EvapSub.alpha * info.tem.helpers.arrays.onespix;
 
-% tmp                         = palpha .* (Delta ./ (Delta + Gamma)) ./ Lambda; % old
 tmp                         = palpha .* f.Rn .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 tmp(tmp<0)                  = 0;
 fe.EvapSub.PTtermSub    = tmp;

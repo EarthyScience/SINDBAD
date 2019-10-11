@@ -51,8 +51,11 @@ kVarComp    =   'd.';
 for kv = 1: numel(vars2keep)
     kVar= vars2keep{kv};
     if ~isempty(strfind(kVar,'d.'))
-    keValStr            =   strcat(kVar,' = arnanpix;');
+        tmp = arnanpix;
+    %tmp=NaN(size(arnanpix));
+    keValStr            =   strcat(kVar,' = tmp;');
     eval(keValStr);
+    tmp=0;
     info.tem.model.variables.created{end+1}     =   kVar;
     end
 end
@@ -63,15 +66,20 @@ for v2c = 1:numel(vars2create)
         %         strcmp(vars2redMem,var2cr)
         if any(strcmp(vars2redMem,var2cr)) %% ismember is the inbuilt function that works
             if ~exist(var2cr,'var')
-                eValStr     =   strcat(var2cr,' = arnanpix;');
+                tmp = arnanpix;
+                %tmp = NaN(size(arnanpix));
+                eValStr     =   strcat(var2cr,' = tmp;');
             end
         end
     else
-        eValStr     =   strcat(var2cr,' = arnanpixtix;');
+        tmp = arnanpix;
+        %tmp = NaN(size(arnanpixtix));
+        eValStr     =   strcat(var2cr,' = tmp;');
     end
     if ~any(strcmp(info.tem.model.variables.created,var2cr))
         eval(eValStr);
         info.tem.model.variables.created{end+1}=var2cr;
+        tmp = 0;
     else
         disp(['The variable ' var2cr ' has already been created'])
     end

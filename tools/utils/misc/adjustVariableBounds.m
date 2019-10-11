@@ -12,25 +12,32 @@ if~exist('repvec','var');repvec=ones(size(var)).*miss_val;end
 
 v1=min(var(var~=miss_val&isnan(var)==0&isinf(var)==0));
 v2=max(var(var~=miss_val&isnan(var)==0&isinf(var)==0));
-disp(['MSG : check_bounds : for ' varname ': min: '  num2str(v1) ' max: ' num2str(v2) ]);
+
+sstr    =   [pad('MSG BOUNDS INPUT',20) ' : ' pad('adjustVariableBounds',20) ' | ' 'for ' varname ': min: '  num2str(v1) ' max: ' num2str(v2)];
+disp(sstr)
+
 
 varout=var;
 pos = find(var<varrange(1));
 if(~isempty(pos))
-    disp(['MSG : check_bounds : for ' varname ': replacing '  num2str(length(pos)) ' invalid minima ' ]);
+    sstr    =   [pad('MSG ADJ BOUNDS INPUT',20) ' : ' pad('adjustVariableBounds',20) ' | ' 'for ' varname ': replacing '  num2str(length(pos)) ' invalid minima'];
+    disp(sstr)
     for i = 1:length(pos)
         varout(pos(i))=repvec(pos(i));
     end
 end
 pos = find(var>varrange(2));
 if(~isempty(pos))
-    disp(['MSG : check_bounds : for ' varname ': replacing '  num2str(length(pos)) ' invalid maxima ' ]);
+    sstr    =   [pad('MSG ADJ BOUNDS INPUT',20) ' : ' pad('adjustVariableBounds',20) ' | ' 'for ' varname ': replacing '  num2str(length(pos)) ' invalid maxima'];
+    disp(sstr)
     for i = 1:length(pos)
         varout(pos(i))=repvec(pos(i));
     end
 end
 pos = find(isnan(var)==1);
 if(~isempty(pos))
+    sstr    =   [pad('MSG ADJ BOUNDS INPUT',20) ' : ' pad('adjustVariableBounds',20) ' | ' 'for ' varname ': replacing '  num2str(length(pos)) ' NaN ' ];
+    disp(sstr)
     disp(['MSG : check_bounds : for ' varname ': replacing '  num2str(length(pos)) ' NaN ' ]);
     for i = 1:length(pos)
         varout(pos(i))=repvec(pos(i));
@@ -38,7 +45,8 @@ if(~isempty(pos))
 end
 pos = find(isinf(var)==1);
 if(~isempty(pos))
-    disp(['MSG : check_bounds : for ' varname ': replacing '  num2str(length(pos)) ' Inf ' ]);
+    sstr    =   [pad('MSG ADJ BOUNDS INPUT',20) ' : ' pad('adjustVariableBounds',20) ' | ' 'for ' varname ': replacing '  num2str(length(pos)) ' Inf ' ];
+    disp(sstr)
     for i = 1:length(pos)
         varout(pos(i))=repvec(pos(i));
     end

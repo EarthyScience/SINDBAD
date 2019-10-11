@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_pSoil_none(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_pSoil_simple(f,fe,fx,s,d,p,info)
 
 % AWC       : maximum plant available water content in the top layer [mm]
 %           (p.pSoil.AWC(zix).value)
