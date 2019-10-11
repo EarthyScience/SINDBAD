@@ -1,0 +1,43 @@
+{
+	"params": {
+		"alphaVeg": {
+			"Name": "vegetation specific alpha coefficient of Priestley Taylor PET",
+			"Unit": "-",
+			"Default": 1,
+			"LowerBound": 0.2,
+			"UpperBound": 3,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds"
+		},
+		"k2": {
+			"Name": "fraction of upper soil layer available for transpiration",
+			"Unit": "-",
+			"Default": 0.02,
+			"LowerBound": 0.001,
+			"UpperBound": 0.15,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds"
+		},
+		"k1": {
+			"Name": "fraction of upper soil layer available for transpiration",
+			"Unit": "-",
+			"Default": 0.5,
+			"LowerBound": 0.01,
+			"UpperBound": 0.99,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": " "
+		}
+	}
+}

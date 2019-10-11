@@ -53,6 +53,7 @@ if isstruct(SC)
     else
         hmax = min(1,NS);
     end
+%     hmax =1 ;
     %recursively display structure including fieldnames
     for h=1:hmax
         F = fieldnames(SC(h));

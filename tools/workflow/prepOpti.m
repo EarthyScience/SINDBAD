@@ -75,7 +75,7 @@ end
 
 %% create the output directory path for output files of the optimization algorithm
 if isfield(info.opti.algorithm.options,'outDirPath')
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
+    info.opti.algorithm.options.outDirPath      =   [info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep];
 end
 
 %% 1) create the function handles and get constraints for optimization
@@ -100,5 +100,10 @@ end
 %% create function handles for the optimization algorithm and cost function
 info.opti.costFun.funHandle             =   str2func(info.opti.costFun.funName); 
 info.opti.algorithm.funHandle           =   str2func(info.opti.algorithm.funName); 
+
+%% add scaled parameter bounds
+info.opti.params.uBoundsScaled  = info.opti.params.uBounds  ./ info.opti.params.defaults ;
+info.opti.params.lBoundsScaled  = info.opti.params.lBounds  ./ info.opti.params.defaults ;
+info.opti.params.defScalars     = info.opti.params.defaults  ./ info.opti.params.defaults ;
 
 end

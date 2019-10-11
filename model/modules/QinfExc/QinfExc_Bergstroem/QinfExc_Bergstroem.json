@@ -1,0 +1,43 @@
+{
+	"params": {
+		"berg": {
+			"Name": "shape parameter runoff-infiltration curve (Bergstroem)",
+			"Unit": NaN,
+			"Default": 1.1,
+			"LowerBound": 0.1,
+			"UpperBound": 5,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "in Paper: s_exp"
+		},
+		"smax2": {
+			"Name": "maximum plant available water in 2nd soil layer",
+			"Unit": "mm",
+			"Default": 300,
+			"LowerBound": 0.001,
+			"UpperBound": 1000,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "in Paper: s_max"
+		},
+		"smax1": {
+			"Name": "maximum soil water holding capacity of 1st soil layer",
+			"Unit": "mm",
+			"Default": 4,
+			"LowerBound": 1,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": " "
+		}
+	}
+}

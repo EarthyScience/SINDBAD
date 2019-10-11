@@ -41,7 +41,7 @@ end
  
 function [newPrec] = funPrec(oldPrec, arPrec) 
     if isnumeric(oldPrec) 
-        newPrec = oldPrec.*ones(size(oldPrec), arPrec); 
+        newPrec = feval(arPrec, oldPrec);
     else 
         newPrec = oldPrec; 
     end 
