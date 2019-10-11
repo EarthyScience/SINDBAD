@@ -79,6 +79,7 @@ end
 % valid data points
 v_tws = find(~isnan(TWSobs));
 v_swe = find(~isnan(SWEobs));
+v_et  = find(~isnan(ETobs));
 v_q   = find(~isnan(Qobs));
 
 % TWS as time mean
@@ -94,6 +95,10 @@ v_tws2      =   v_tws(absResTWS < pct95TWS);
 absResSWE   =   abs(SWEobs(v_swe)-SWEmod(v_swe));
 pct95SWE    =   prctile(absResSWE, 95);
 v_swe2      =   v_swe(absResSWE < pct95SWE);
+
+absResET     =   abs(ETobs-ETmod); % in theory would not need to check Qobs ~isnan before
+pct95ET      =   prctile(absResET(v_et), 95);
+v_et2        =   find(absResET < pct95ET);
 
 absResQ     =   abs(Qobs-Qmod); % in theory would not need to check Qobs ~isnan before
 pct95Q      =   prctile(absResQ(v_q), 95);
@@ -126,12 +131,20 @@ sq_var                      =   sum((SWEobs(:)-mean(SWEobs(:))).^2./sig(:));
 costSWE     =   sq_resid/sq_var;
 
 %%%%% weighted MEF for MSC of ET with 10% uncertainty
-ETobs_MSC   =   calcMSC(ETobs,tVec);
-ETmod_MSC   =   calcMSC(ETmod,tVec);
+ETobs_v          =   NaN(size(ETobs));
+ETmod_v          =   NaN(size(ETmod));
+ETobs_v(v_et2)   =   ETobs(v_et2);
+ETmod_v(v_et2)   =   ETmod(v_et2);
 
-sig         =   max((0.1.*ETobs_MSC).^2,0.1^2); % 0.1 relative uncertainty, if ETobs = 0 0.1 mm
-sq_resid    =   sum((ETobs_MSC(:)-ETmod_MSC(:)).^2./sig(:));
-sq_var      =   sum((ETobs_MSC(:)-mean(ETobs_MSC(:))).^2./sig(:));
+ETobs_MSC   =   calcMSC(ETobs_v,tVec);
+ETmod_MSC   =   calcMSC(ETmod_v,tVec);
+
+% remove pixel with NaN in ETobs
+v_et3       =   find(~isnan(ETobs_MSC)); 
+
+sig         =   max((0.1.*ETobs_MSC(v_et3)).^2,0.1^2); % 0.1 relative uncertainty, if ETobs = 0 0.1 mm
+sq_resid    =   sum((ETobs_MSC(v_et3)-ETmod_MSC(v_et3)).^2./sig(:));
+sq_var      =   sum((ETobs_MSC(v_et3)-mean(ETobs_MSC(v_et3))).^2./sig(:));
 
 costET      =   sq_resid/sq_var;
 
@@ -158,6 +171,11 @@ costQ       =   sq_resid/sq_var;
 %% total costs
 % one value if in opti mode, all values if not
 costTotal        =   costTWS+costSWE+costET+costQ;
+
+% complex?
+if ~isreal(costTotal)
+    error(['comlex costs!'])
+end
 
 %%% added by sujan to avoid having more than one output argument in the cost
 %%% function
