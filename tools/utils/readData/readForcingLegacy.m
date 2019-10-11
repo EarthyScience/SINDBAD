@@ -27,6 +27,8 @@ function [dataStructure] = readForcing(info)
 % 
 % Created by: 
 %   - Tina Trautmann (ttraut@bgc-jena.mpg.de) 
+%   - Nuno - this is just to be back compatible AND reducde the number of
+%   gridcells
 % 
 % References: 
 %    
@@ -85,7 +87,7 @@ for ii=1:numel(dataPaths)
                         tarVar = inVars{vv};
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
                         % assign variable + do conversions etc. -> without eval?!
-                        dataStructure.(tarVar) = dataMat.(srcVar);
+                        dataStructure.(tarVar) = dataMat.ExpStruct.Forcing.(srcVar);
                         try
                             dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
@@ -130,6 +132,11 @@ for ii=1:numel(dataPaths)
 end
 
 dataStructure.Year                    = year(xDay);
+
+for fn = fieldnames(dataStructure)'
+    dataStructure.(fn{:})   = dataStructure.(fn{:})(1:100:end,:);
+end
+
 
 end
 

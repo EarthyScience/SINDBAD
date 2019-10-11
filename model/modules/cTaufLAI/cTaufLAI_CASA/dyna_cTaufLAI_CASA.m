@@ -46,12 +46,11 @@ TSPY	= info.tem.model.time.nStepsYear;
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
 
 % BUILD AN ANNUAL LAI MATRIX
-LAI13     = s.cd.p_cTaufLAI_LAI13; %sujancdp
-% LAI13     = d.cTaufLAI.LAI13;
+LAI13     = s.cd.p_cTaufLAI_LAI13;
 
 % FEED LAI13
 LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY);
-LAI13(:, 1) = d.cLAI.LAI(:,tix); %sujan
+LAI13(:, 1) = d.cLAI.LAI(:,tix);
 
 % CALCULATE DELTA LAI SUM
 dLAIsum                 = LAI13(:, 2:TSPY + 1) - LAI13(:, 1:TSPY);
@@ -87,7 +86,7 @@ RTLAI       = zeros(size(LTLAI));
 ndx         = (LAIsum > 0);
 LAI131st    = LAI13(:, 1);
 RTLAI(ndx)	= (1 - kRTLAI) .* (LTLAI(ndx) + LAI131st(ndx) ./ ...
-    LAIsum(ndx)) ./ 2 + kRTLAI ./ TSPY;
+		    LAIsum(ndx)) ./ 2 + kRTLAI ./ TSPY;
 
 % FEED OUTPUTS
 zix                             = info.tem.model.variables.states.c.zix.cVegLeaf;
@@ -98,6 +97,5 @@ else
     zix = info.tem.model.variables.states.c.zix.cVegRoot;
 end
 s.cd.p_cTaufLAI_kfLAI(:,zix)	= s.cd.p_cCycleBase_annk(:,zix) .* RTLAI ./ s.cd.p_cCycleBase_k(:,zix); % root litter scalar
-% d.cTaufLAI.LAI13 = LAI13;
-s.cd.p_cTaufLAI_LAI13	= LAI13; %sujancdp
+s.cd.p_cTaufLAI_LAI13	= LAI13;
 end % function

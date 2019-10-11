@@ -15,7 +15,7 @@
 		},
 		"SF_scale": {
 			"Name": "scaling factor for snow fall",
-			"Unit": NaN,
+			"Unit": "",
 			"Default": 1,
 			"LowerBound": 0,
 			"UpperBound": 3,
