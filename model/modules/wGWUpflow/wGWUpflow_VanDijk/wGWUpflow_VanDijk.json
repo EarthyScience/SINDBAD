@@ -1,0 +1,82 @@
+{
+	"params": {
+		"kFC": {
+			"Name": "hydraulic conductivity at field capacity",
+			"Unit": "mm/day",
+			"Default": 1,
+			"LowerBound": 0.5,
+			"UpperBound": 2,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": NaN
+		},
+		"thetaSat": {
+			"Name": "Porosity",
+			"Unit": "[m3/m3]",
+			"Default": 0.4,
+			"LowerBound": 0.3,
+			"UpperBound": 0.5,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		},
+		"thetaFC": {
+			"Name": "Field Capacity",
+			"Unit": "[m3/m3]",
+			"Default": 0.3,
+			"LowerBound": 0.2,
+			"UpperBound": 0.35,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		},
+		"kSat": {
+			"Name": "Saturated Hydraulic Conductivity",
+			"Unit": "mm/day",
+			"Default": 2.5,
+			"LowerBound": 0.3,
+			"UpperBound": 5,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		},
+		"chb": {
+			"Name": "Clapp Hornberger B parameter",
+			"Unit": "-",
+			"Default": 5,
+			"LowerBound": 3,
+			"UpperBound": 12,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		},
+		"psiSat": {
+			"Name": "Saturated Matric Potential",
+			"Unit": "m",
+			"Default": -0.3,
+			"LowerBound": -0.84,
+			"UpperBound": -0.05,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		}
+	}
+}

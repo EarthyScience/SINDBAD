@@ -1,0 +1,28 @@
+function [f,fe,fx,s,d,p] = prec_pVeg_vegFrac_EVI(f,fe,fx,s,d,p,info)
+
+% #########################################################################
+% PURPOSE	: sets p.vegFrac by reading the mean seasonal cycle of MODIS
+% EVI
+%
+% REFERENCES: ??
+%
+% CONTACT	: ttraut
+%
+% INPUT
+% p.pVeg.vegFr  : scaling parameter
+% EVI_MSC : reads it from the forcing data path + 'MODIS_EVI_MSC.mat'
+%
+% OUTPUT
+% p.pVeg.vegFr   : scaling parameter .* EVI_MSC in size(pix,tix)
+% d.pVeg.EVI_MSC : EVI MSC
+%
+% NOTES:
+%
+% #########################################################################
+
+load(info.tem.forcing.oneDataPath
+
+
+
+p.pVeg.vegFr = p.pVeg.vegFr .* info.tem.helpers.arrays.onespix;
+end

@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = QinfExc_Bergstroem(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = QoverFlow_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: calculates land surface runoff and infiltration to different soil layers
 %
@@ -29,9 +29,16 @@ function [f,fe,fx,s,d,p] = QinfExc_Bergstroem(f,fe,fx,s,d,p,info,tix)
 %  error(['unvalid parameter values in QinfExc_Bergstroem: smax1 > smaxVeg']);
 %end
 
+tmp_smaxVeg   = p.QinfExc.smax1 + p.QinfExc.smax2;
 tmp_SoilTotal = sum(s.w.wSoil, 2);
 % calculate land runoff from incoming water and current soil moisture
-fx.QinfExc (:,tix)  = s.wd.WBP .* exp(p.QinfExc.berg .* log(tmp_SoilTotal  ./ p.QinfExc.smaxVeg));
+tmp_InfExFrac = min(exp(p.QinfExc.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+fx.QinfExc(:,tix)  = s.wd.WBP .* tmp_InfExFrac;
+
+if isreal(fx.QinfExc(:,tix))==0
+error(['complex at tix ' num2str(tix)])
+end
+
 % original formula:
 % fx.Qint(:,tix)  = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* (s.w.wSoil./p.Qint.smax).^p.Qint.berg;
 
@@ -46,8 +53,7 @@ s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix);
 
 % for deeper layers
 for sl=2:size(s.w.wSoil,2)
-  tmp_smax  = p.QinfExc.smaxVeg - p.QinfExc.smax1;
-  ip = min(tmp_smax  - s.w.wSoil (:,sl), s.wd.WBP);
+  ip = min(p.QinfExc.smax2  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil (:,sl) =  s.w.wSoil (:,sl) + ip;
   s.wd.WBP = s.wd.WBP - ip;
 end
