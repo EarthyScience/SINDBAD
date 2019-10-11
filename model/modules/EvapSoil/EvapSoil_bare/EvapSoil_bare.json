@@ -1,0 +1,17 @@
+{
+	"params": {
+		"ks": {
+			"Name": "evaporation resistance of soil",
+			"Unit": "-",
+			"Default": 0.5,
+			"LowerBound": 0.001,
+			"UpperBound": 0.999,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "very rough bounds"
+		}
+	}
+}

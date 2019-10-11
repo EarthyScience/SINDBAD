@@ -1,4 +1,4 @@
-function [cost]=calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU,infoSU,obs,info)
+function [cost, costComp]=calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU,infoSU,obs,info)
 % pScales,f,precOnceData,fx,fe,d,s,dSU,sSU,fSU,obs,info
 % function [cost]=calcCostTEM(pScales,f,fSU,obs,info)
 
@@ -38,7 +38,24 @@ end
 %% calculate the cost 
 pScalesStr = sprintf('%.4f , ' , pScales);
 disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Parameter Scalars of the iteration: ' pScalesStr(1:end-2)])
+try
+    [cost, costComp]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
+    
+    if isfield(info.opti.algorithm.options, 'isMultiObj')
+        compN    = info.opti.costFun.variables2constrain;
+        cost        = NaN(1,numel(compN));
+        for cn = 1:numel(compN)
+            cost(1,cn) = costComp.(compN{cn});
+        end
+    end 
+    cost
+    
+catch
 [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
+    costComp = 0;
+end
+
+
 disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Cost of current iteration: ' num2str(cost)])
 disp(pad('+',200,'both','+'))
 

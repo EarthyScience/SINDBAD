@@ -16,8 +16,6 @@ function [f,fe,fx,s,d,p] = prec_EvapSoil_DemSup(f,fe,fx,s,d,p,info)
 % PETsoil   : potential evaporation from the soil surface [mm/time]
 %           (fe.EvapSoil.PETsoil)
 %
-% NOTES: check usage of (:,tix)
-% 
 % #########################################################################
 
 % calculate potential evaporation 

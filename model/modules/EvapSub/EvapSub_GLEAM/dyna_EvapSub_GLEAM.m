@@ -12,7 +12,7 @@ function [f,fe,fx,s,d,p] = dyna_EvapSub_GLEAM(f,fe,fx,s,d,p,info,tix)
 % wSWE      : snow pack [mm]
 %           (s.w.wSnow)
 % frSnow    : fraction of snow  [] (fractional)
-%           (s.wd.wSnwFr)
+%           (s.wd.wSnowFrac)
 % PTtermSub : Priestley-Taylor term [mm/MJ]
 %           (fe.EvapSub.PTtermSub)
 %
@@ -26,7 +26,7 @@ function [f,fe,fx,s,d,p] = dyna_EvapSub_GLEAM(f,fe,fx,s,d,p,info,tix)
 
 % PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
 % Then sublimation (mm/day) is calculated in GLEAM using a P.T. equation
-fx.EvapSub(:,tix) = min(s.w.wSnow, fe.EvapSub.PTtermSub(:,tix) .* s.wd.wSnwFr );
+fx.EvapSub(:,tix) = min(s.w.wSnow, fe.EvapSub.PTtermSub(:,tix) .* s.wd.wSnowFrac );
 
 % update the snow pack
 s.w.wSnow = s.w.wSnow - fx.EvapSub(:,tix);
