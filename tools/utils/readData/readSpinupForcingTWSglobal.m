@@ -33,7 +33,9 @@ function [ fSU, infoSU] = readSpinupForcingTWSglobal(info)
 % DataPath = convertToFullPaths(info, DataPath);
 
 % OR assuming that the spin up data is in the same folder as the forcing
-DataPath = [fileparts(info.tem.forcing.oneDataPath) '/globalTWS_ForcingSpinUp.mat'];
+[pathstr, filename, exten] = fileparts(info.tem.forcing.oneDataPath);
+filenameparts = strsplit(filename, '_');
+DataPath = [pathstr '/' filenameparts{1} '_ForcingSpinUp' exten];
 
 % Advantage: would have the fullpath
 % Problem: oneDataPath could be empty..would have to loop over variables
