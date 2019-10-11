@@ -78,8 +78,8 @@ if isfield(inputData, 'PET')
     inputData.PET(inputData.PET<0)=0;
 end
 
-disp('MSG : checkInputData : done')
-
+sstr    =   [pad('MSG INPUT',20) ' : ' pad('checkInputData',20) ' | ' 'Checking of Input Data Complete'];
+disp(sstr)
 
 % create optem QAQC/filters
 
@@ -141,7 +141,9 @@ if isempty(x)
 end
 
 if ndims(x) ~= 2
-    error(['input must have 2 dimensions! ndims(x) = ' num2str(ndims(x))])
+
+sstr    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'Input must have 2 dimensions! ndims(x) = ' num2str(ndims(x))];
+error(sstr)   
 end
 
 if size(x, 1) == 1
@@ -149,7 +151,8 @@ if size(x, 1) == 1
 elseif size(x, 2) == 1
     x	= x';
 else
-    error(['one of input dimensions must be 1! size(x)=' num2str(size(x))])
+str    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'one of input dimensions must be 1! size(x) = ' num2str(size(x))];
+error(sstr)       
 end
 
 if exist('mkV','var')

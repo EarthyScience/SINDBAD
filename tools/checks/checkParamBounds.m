@@ -10,7 +10,7 @@ for ii=1:length(paramList)
     paramValue  = info.tem.params.(module).(paramName);
     if ischar(paramValue) paramValue = str2num(paramValue);end
     % load the json of the approach
-    file_json   = convertToFullPaths(info,['./model/modules/' module '/' module '_' appr  '/' module '_' appr '.json']);
+    file_json   = convertToFullPaths(info,['.' filesep 'model' filesep 'modules' filesep module filesep module '_' appr  filesep module '_' appr '.json']);
     if exist(file_json,'file')
         param_json    = readJsonFile(file_json);
         if paramValue < param_json.params.(paramName).LowerBound
