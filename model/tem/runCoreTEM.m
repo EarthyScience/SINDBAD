@@ -44,7 +44,6 @@ tstart = tic;
 
 if doSpinUp
     fn{1}   =   'spinup';
-%     doCore  =   1;
 else
     fn{1}   =   'model';
 end
@@ -65,8 +64,6 @@ if doCore || doSpinUp
     hCore               =   info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
     [f,fe,fx,s,d,p]     =   hCore(f,fe,fx,s,d,p,info); 
 end
-% disp(['    TIME : runCoreTEM : end : inputs : ' num2str([doPrecOnce,doCore,doSpinUp],'%1.0f|') ' : time : ' sec2som(toc(tstart))])
-% disp(f)
 disp([pad('     EXEC FUNC',20,'left') ' : ' pad('runCoreTEM',20) ' | ' pad(['PrecOnce : ' func2str(info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle)],40) ' | ' pad(['Core/Spinup : ' func2str(info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle)],40)])
 disp([pad('     TIMERUN',20,'left') ' : ' pad('runCoreTEM',20) ' | ' pad(['doPrecOnce : ' num2str(doPrecOnce) ' , doCore : ' num2str(doCore) ' , doSpinUp : ' num2str(doSpinUp)],40,'both') ' | ' sec2som(toc(tstart))])
 

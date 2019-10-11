@@ -53,8 +53,8 @@ if isstruct(expConfigFile)
     info.experiment.oldSettings{k} = info.experiment;
     
     % stamp the experiment settings
-    info = getExperimentInfo(info);
-    % sujan hack to avoid trying to save the full info in the json file -Tina:?
+    info = setExperimentInfo(info);
+    % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
     % function handles should be removed for saving infoLite.. 
     
@@ -81,7 +81,7 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
     
     % stamp the experiment settings
-    info                            =   getExperimentInfo(info);
+    info                            =   setExperimentInfo(info);
     
     % read the TEM configurations
     info                            =   readConfiguration(info,'tem',true);

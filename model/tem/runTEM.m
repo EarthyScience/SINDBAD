@@ -77,20 +77,8 @@ inVarNames	= {'p','SUData','precOnceData','fx','fe','d','s',...
 
 % from last to first optional parameters, set them to [] when not included.
 for i = maxIn:-1:nargin+1
-    inVar = inVarNames{i-minIn};
-    eval([inVar ' = [];'])
+    eval([inVarNames{i-minIn} ' = [];'])
 end
-% for i = maxIn:-1:nargin+1
-%     inVar = inVarNames{i-minIn};
-%     if ~exist(inVar,'var')
-% % 
-% %         disp('variable exists')
-% %     else
-% % %         if ~isempty(eval(inVarNames{i-minIn}))
-%     eval([inVar ' = [];'])
-% %     end
-%     end
-% end
 
 % flags needed to run the runTEM
 runFlags.createStruct	=   false;
@@ -98,22 +86,6 @@ runFlags.precompOnce    =   false;
 
 % check the need for creating sindbad objects and arrays therein
 requirInitVars	= {'fx','fe','d','s'};
-% sumRVars = numel(requirInitVars);
-% for rv = 1:numel(requirInitVars)
-%     if isempty(eval(requirInitVars{rv}))
-% %     if exist(char(requirInitVars{rv}),'var')
-%         sumRVars = sumRVars - 1;
-%     end
-% end
-%  
-% if sumRVars < numel(requirInitVars)
-% % if sumRVars <= numel(requirInitVars)
-%     runFlags.createStruct	= true;
-% end
-% % sujan
-% if sum(cellfun(@(x)exist('x','var'),requirInitVars)) < numel(requirInitVars)
-%     runFlags.createStruct	= true;
-% end
 if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
     runFlags.createStruct	= true;
 end
@@ -126,20 +98,8 @@ end
 %% ------------------------------------------------------------------------
 % 3 - SPIN UP THE MODEL
 % -------------------------------------------------------------------------
-% sujan
-% [sSU,dSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
-%             fxSU,feSU,dSU,sSU);
 [fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU]   = runSpinupTEM(f,info,p,SUData,fSU,infoSU,precOnceDataSU,...
             fxSU,feSU,dSU,sSU);
-
-
-% disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-% if isfield(sSU.prev,'s_c_cEco')
-% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-% else
-% disp('DBG : runSpinupTEM : cPools # / cEco  ')
-% disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);NaN.*sSU.c.cEco(1,:)]))
-% end
 %% ------------------------------------------------------------------------
 % 4 - create TEM structures for the transient run
 % -------------------------------------------------------------------------
@@ -171,24 +131,11 @@ for iStep = 1%:info.tem.model.time.nStepsDay %sujan need to handle this
     % -------------------------------------------------------------------------
     % get the precOnce data structure
     % -------------------------------------------------------------------------
-%     if isempty(precOnceData)
-%         [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
-%         precOnceData	= struct;
-%         for v = {'f','fe','fx','s','d','p'}
-%             eval(['precOnceData.(v{1})	= ' v{1} ';']);
-%         end
-%     else
-%         for v = {'f','fe','fx','s','d','p'}
-%             eval([v{1} ' = precOnceData.(v{1});']);
-%         end
-%     end
     [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d,p,info,'runTEM');
     % the previous steps should come from the spinup
-    if iStep == 1 
-        if isfield(dSU,'prev')
+    if iStep == 1 && isfield(dSU,'prev')
             d.prev	= dSU.prev;
-        end
-    end %isfield added by sujan
+    end
     % ---------------------------------------------------------------------
     % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES
     % ---------------------------------------------------------------------
