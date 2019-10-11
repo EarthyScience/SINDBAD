@@ -101,4 +101,9 @@ end
 info.opti.costFun.funHandle             =   str2func(info.opti.costFun.funName); 
 info.opti.algorithm.funHandle           =   str2func(info.opti.algorithm.funName); 
 
+%% add scaled parameter bounds
+info.opti.params.uBoundsScaled  = info.opti.params.uBounds  ./ info.opti.params.defaults ;
+info.opti.params.lBoundsScaled  = info.opti.params.lBounds  ./ info.opti.params.defaults ;
+info.opti.params.defScalars     = info.opti.params.defaults  ./ info.opti.params.defaults ;
+
 end
