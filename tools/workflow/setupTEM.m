@@ -16,7 +16,8 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 %     if configuration file:
 %       - set info.experiment
 %       - readConfigFiles
-%   3) add date helpers
+%   3) read parameter .json if provided
+%   4) add date helpers
 %
 % Conventions:
 %   - needs to be run where the repository is
@@ -24,10 +25,12 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 % Created by:
 %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
 % References:
 %
 % Versions:
+%   - 1.2 on 09.01.2019
 %   - 1.1 on 15.08.2018 
 
 
@@ -92,11 +95,13 @@ else
     error([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | No valid SINDBAD info or an experiment configuration file is provided. Make sure that ' expConfigFile ' exists'])
     disp(pad('-',200,'both','-'))
     
-    
 end
+    
 
-%% add date helpers
-info.tem.helpers.dates.day   = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'd');
-info.tem.helpers.dates.month = createDateVector(info.tem.model.time.sDate, info.tem.model.time.eDate, 'm');
+%% 3) add date helpers
+dateStart                    =  strsplit(info.tem.model.time.sDate,'-');
+dateEnd                      =  strsplit(info.tem.model.time.eDate,'-');
+info.tem.model.time.sYear    =  str2num(dateStart{1});
+info.tem.model.time.eYear    =  str2num(dateEnd{1});
 
 end
