@@ -81,22 +81,23 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.wSnwFr.funHandle(f,fe,fx,s,d,p,info,tix);            % add snow fall and calculate SnowCoverFraction
+    [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);            % add snow fall and calculate SnowCoverFraction
     [f,fe,fx,s,d,p]     =   ms.EvapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
-    [f,fe,fx,s,d,p]     =   ms.Qsnw.funHandle(f,fe,fx,s,d,p,info,tix);              % calculate snowmelt and update SWE
+    [f,fe,fx,s,d,p]     =   ms.Qsnow.funHandle(f,fe,fx,s,d,p,info,tix);              % calculate snowmelt and update SWE
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.EvapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
     [f,fe,fx,s,d,p]     =   ms.QinfExc.funHandle(f,fe,fx,s,d,p,info,tix);           % infiltration excess runoff
-    [f,fe,fx,s,d,p]     =   ms.wSoilSatFr.funHandle(f,fe,fx,s,d,p,info,tix);        % saturation runoff
+    [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);        % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.Qsat.funHandle(f,fe,fx,s,d,p,info,tix);              % saturation runoff
-    [f,fe,fx,s,d,p]     =   ms.QwSoilRchg.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge the soil
+    [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge the soil
     [f,fe,fx,s,d,p]     =   ms.Qint.funHandle(f,fe,fx,s,d,p,info,tix);              % interflow
+    [f,fe,fx,s,d,p]     =   ms.QoverFlow.funHandle(f,fe,fx,s,d,p,info,tix);         % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-    [f,fe,fx,s,d,p]     =   ms.QwGRchg.funHandle(f,fe,fx,s,d,p,info,tix);           % recharge the groundwater 
+    [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);           % recharge the groundwater 
     [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
     [f,fe,fx,s,d,p]     =   ms.wG2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)
