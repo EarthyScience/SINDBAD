@@ -30,8 +30,8 @@
 			"Name": "fraction of upper soil layer available for transpiration",
 			"Unit": "-",
 			"Default": 0.5,
-			"LowerBound": 0.1,
-			"UpperBound": 1,
+			"LowerBound": 0.01,
+			"UpperBound": 0.99,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",

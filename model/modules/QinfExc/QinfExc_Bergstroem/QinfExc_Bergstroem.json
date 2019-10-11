@@ -13,11 +13,11 @@
 			},
 			"Comment": "in Paper: s_exp"
 		},
-		"smaxVeg": {
-			"Name": "maximum plant available water",
+		"smax2": {
+			"Name": "maximum plant available water in 2nd soil layer",
 			"Unit": "mm",
 			"Default": 300,
-			"LowerBound": 2,
+			"LowerBound": 0.001,
 			"UpperBound": 1000,
 			"Distribution": {
 				"name": "uniform",
