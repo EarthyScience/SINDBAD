@@ -87,7 +87,7 @@ for ii=1:numel(dataPaths)
 
         switch ext
             case '.mat'
-                load(dFiles{ff})
+                dataMat = load(dFiles{ff});
                 for vv=1:numel(inVars)
                     % loop over variables
                     try 
@@ -106,8 +106,8 @@ for ii=1:numel(dataPaths)
                 end
                 % add lat and lon
                 try
-                    info.tem.model.space.latVec = lat;
-                    info.tem.model.space.lonVec = lon;
+                    info.tem.model.space.latVec = dataMat.lat;
+                    info.tem.model.space.lonVec = dataMat.lon;
                     info.tem.model.space.reso   = [1 1];
                 catch
                     disp('MISS: readForcing: Space information (latitude, longitute, resolution)  missing.');
@@ -115,7 +115,7 @@ for ii=1:numel(dataPaths)
                 
                 %  TINA: add dates.day (should exist in the spinup forcing!)
                 try
-                    dataStructure.dates = dates;
+                    dataStructure.dates = dataMat.dates;
                 catch
                     disp('MISS: readForcing: Time information (dates.day)  missing. May cause problems with spinup.');
                 end
