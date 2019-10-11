@@ -66,7 +66,11 @@ for ii = 1 : size(keySet,2)
         case 1
             subtree{ii} = infoFieldnames(1,findPosInd);
             info = setfield(info, infoFieldnamesParts{findPosInd}{2:end}, valueSet{ii}); %#ok<SFLD>
-            disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' toString(valueSet{ii})]);
+            if iscell(valueSet{ii})
+                disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' reshape(toString(valueSet{ii})',1,[])]);
+            else
+                disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' toString(valueSet{ii})]);
+            end
         otherwise
             %disp(infoFieldnames(1,findPosInd)');
             subtree{ii} = infoFieldnames(1,findPosInd);
@@ -76,7 +80,7 @@ for ii = 1 : size(keySet,2)
     end
 end
 %% change spinup sequence if given as input. Added because the editTEMinfo does not work for struct array.
-if any(strcmp(varargin,'info.tem.spinup.sequence'))
+if any(strcmp(varargin,'info.tem.spinup.sequence'))% @nc : this seems inconsistent... should be tem.spinup.sequence ...
     disp([pad('WARN INFO EXCEPTION',20) ' : ' pad('editInfoField',20) ' : Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!'])
     datInd = find(strcmp(varargin,'info.tem.spinup.sequence'))+1 ;
     info.tem.spinup.sequence = varargin{datInd};

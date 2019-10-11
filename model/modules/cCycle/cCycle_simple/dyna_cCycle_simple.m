@@ -1,40 +1,28 @@
 function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
-% cycle carbon amongs pools...
-
-% these all need to be zeros... maybe is taken care automatically...
-
-s.cd.cEcoInflux                 =   info.tem.helpers.arrays.zerospixzix.c.cEco;
-s.cd.cEcoFlow                   =   info.tem.helpers.arrays.zerospixzix.c.cEco;
-% distribute the NPP to the veg pools
-% zix                             =   info.tem.model.variables.states.c.zix.cEco; %sujan for zix, ask nuno if this is right
-zix                             =   info.tem.model.variables.states.c.flags.cVeg; % npp goes to the veg, it was divided by all pools...
-s.cd.cNPP                       =   fx.gpp(:,tix) .* d.cAlloc.cAlloc(:,zix,tix) - s.cd.cEcoEfflux(:,zix);
-
-% s.cd.cNPP                       =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix); %sujan moved cAlloc to d
- 
-s.cd.cEcoInflux(:,zix)          =   s.cd.cNPP;
-% output fluxes
-s.cd.cEcoOut                    =   s.prev.s_c_cEco .* s.cd.p_cTauAct_k;
-% s.cd.cEcoOut            = s.prev.cEco .* s.cd.p_cTauAct_k;
-% circulate carbon within cEco pools
+% cycle carbon between pools...
+%% these all need to be zeros... maybe is taken care automatically...
+s.cd.cEcoInflux 		=   info.tem.helpers.arrays.zerospixzix.c.cEco;
+s.cd.cEcoFlow   		=   info.tem.helpers.arrays.zerospixzix.c.cEco;
+%% compute losses
+s.cd.cEcoOut			=   min(s.c.cEco,s.c.cEco .* s.cd.p_cTauAct_k);
+%% gains to vegetation
+zix                     =   info.tem.model.variables.states.c.flags.cVeg; 
+s.cd.cNPP               =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
+s.cd.cEcoInflux(:,zix)  =   s.cd.cNPP;
+%% flows and losses
+% @nc, if flux order does not matter, remove...
 for jix = 1:numel(p.cCycleBase.fluxOrder)
     taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
     giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
-    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_cTransfer(:,taker,giver);
-    s.cd.cEcoEfflux(:,giver)	= s.cd.cEcoEfflux(:,giver) + s.cd.cEcoOut(:,giver) .* (1 - s.cd.p_cFlowAct_cTransfer(:,taker,giver));
+    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
 end
-%{
-if find(s.c.cEco + s.cd.cEcoInflux - s.cd.cEcoOut + s.cd.cEcoFlow<0,1,'first')
-    stopHere=1;
-end
-%}
-
-% pools = previous + gains - losses
-s.c.cEco                        = s.c.cEco + s.cd.cEcoInflux - s.cd.cEcoOut + s.cd.cEcoFlow;
-% s.prev.cEco = s.c.cEco;
-% compute RA and RH
-fx.cRH(:,tix)                   = sum(s.cd.cEcoEfflux(:,~info.tem.model.variables.states.c.flags.cVeg),2); %sujan added 2 to sum along depth
-fx.cRA(:,tix)                   = sum(s.cd.cEcoEfflux(:,info.tem.model.variables.states.c.flags.cVeg),2); %sujan added 2 to sum along depth
-fx.cRECO(:,tix)                 = fx.cRH(:,tix) + fx.cRA(:,tix);
-fx.cNPP(:,tix)                  = sum(s.cd.cNPP,2);
+%% balance
+prevcEco 		= s.c.cEco;
+s.c.cEco 	= s.c.cEco + s.cd.cEcoFlow + s.cd.cEcoInflux - s.cd.cEcoOut;
+%% compute RA and RH
+fx.cNPP(:,tix)  = sum(s.cd.cNPP,2);
+backNEP		    = sum(s.c.cEco,2) - sum(prevcEco,2);
+fx.cRA(:,tix)   = fx.gpp(:,tix) - fx.cNPP(:,tix);
+fx.cRECO(:,tix) = fx.gpp(:,tix) - backNEP;
+fx.cRH(:,tix)   = fx.cRECO(:,tix) - fx.cRA(:,tix);
 end % function

@@ -6,16 +6,12 @@ function [f,fe,fx,s,d,p] = cAllocfTreeCover_Friedlingstein1999(f,fe,fx,s,d,p,inf
 % TreeCover and fine to coarse root ratio
 tc      = p.pVeg.TreeCover;
 rf2rc	= p.cAllocfTreeCover.Rf2Rc;
-tmpcAlloc = d.cAlloc.cAlloc(:,:,tix);
+
 % the allocation fractions according to the partitioning to root/wood/leaf
 % - represents plant level allocation
-r0	= sum(tmpcAlloc(:,info.tem.model.variables.states.c.zix.cVegRoot),2); % this is to below ground root fine+coarse
-s0	= sum(tmpcAlloc(:,info.tem.model.variables.states.c.zix.cVegWood),2);
-l0	= sum(tmpcAlloc(:,info.tem.model.variables.states.c.zix.cVegLeaf),2);
-% sujan moved cAlloc to d
-% r0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegRoot),2); % this is to below ground root fine+coarse
-% s0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegWood),2);
-% l0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegLeaf),2);
+r0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegRoot),2); % this is to below ground root fine+coarse
+s0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegWood),2);
+l0	= sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegLeaf),2);
 
 % adjust for spatial consideration of TreeCover and plant level
 % partitioning between fine and coarse roots
@@ -36,8 +32,6 @@ end
 % adjust the allocation parameters
 for cpn = 1:numel(cpNames)
     zix                 = info.tem.model.variables.states.c.zix.(cpNames{cpn});
-%     s.cd.cAlloc(:,zix)	= cF.(cpNames{cpn}) .* s.cd.cAlloc(:,zix);
-%     %sujan 
-        d.cAlloc.cAlloc(:,zix,tix)	= cF.(cpNames{cpn}) .* d.cAlloc.cAlloc(:,zix,tix);
+    s.cd.cAlloc(:,zix)	= cF.(cpNames{cpn}) .* s.cd.cAlloc(:,zix);
 end
 end % function
