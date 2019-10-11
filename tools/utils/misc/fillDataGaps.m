@@ -16,7 +16,9 @@ ngap = length(pos);
 
 %% No gaps, return to main programm
 if ( isempty(pos) )
-    disp(['MSG : gapfill: no gapfilling needed for ' varname ' returning... '])
+    
+    sstr    =   [pad('MSG GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'Gapfilling not needed for ' varname];
+    disp(sstr)
     setvar_out={var var_flag};
     return
 end
@@ -31,7 +33,8 @@ if ~exist('dt', 'var')
     elseif(rem(nstep,17520)==0)||(rem(nstep,17568)==0)
         dt=48;
     else
-        error('ERR : gapfill : unknown timestep for gapfilling')
+        sstr    =   [pad('CRIT GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'Time steps unknown for gap filling'];
+        error(sstr)
     end
 end
 %% Mark gaps in flag vector
@@ -57,9 +60,11 @@ end
 % isgap=missval==varout;
 isgap=missval==varout|isnan(varout)|isinf(varout);
 ngap2 = length(find(isgap));
-disp(['MSG : gapfill : filled ' num2str(ngap-ngap2) ' gaps by linear interpolation for ' varname ]);
+sstr    =   [pad('MSG FILLED GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'filled ' num2str(ngap-ngap2) ' gaps using linear interpolation for ' varname];
+disp(sstr)
 if( ngap2 == 0 )
-    disp(['MSG : gapfill : no further gapfilling needed for ' varname ' returning... '])
+    sstr    =   [pad('MSG GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'Gapfilling not needed for ' varname];
+    disp(sstr)
     setvar_out={varout var_flag};
     return
 end
@@ -90,12 +95,15 @@ end
 % isgap=missval==varout;
 isgap=missval==varout|isnan(varout)|isinf(varout);
 ngap3 = length(find(isgap));
-disp(['MSG : gapfill : filled ' num2str(ngap2-ngap3) ' gaps by average conditions around gap (' num2str(search_radius) ') for ' varname ]);
+sstr    =   [pad('MSG FILLED GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'filled ' num2str(ngap2-ngap3) ' gaps by average conditions around gap (' num2str(search_radius) ') for ' varname];
+disp(sstr)
 if(ngap3 > 0)
-    disp(['MSG : gapfill : gapfilling not sucessful for ' varname ':' num2str(ngap3) ' gaps remaining'])
+    sstr    =   [pad('CRIT REM GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'gapfilling not sucessful for ' varname ':' num2str(ngap3) ' gaps remaining'];
+    disp(sstr)
     var=varout;
     varout(isgap)=mean(var(var~=missval&isnan(var)==0&isinf(var)==0));
-    disp(['MSG : gapfill : filling by average conditions: ',num2str(mean(var(var~=missval&isnan(var)==0&isinf(var)==0)))])
+    sstr    =   [pad('MSG FILLED GAPS',20) ' : ' pad('fillDataGaps',20) ' | ' 'fgap filled using average conditions: ',num2str(mean(var(var~=missval&isnan(var)==0&isinf(var)==0)))];
+disp(sstr)
 end
 
 setvar_out={varout var_flag};

@@ -15,7 +15,7 @@ function x2 = getForcingShuffle(x,info)
 %
 % Created by:
 %   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)?
-%
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 % References:
 %
 % Versions:
