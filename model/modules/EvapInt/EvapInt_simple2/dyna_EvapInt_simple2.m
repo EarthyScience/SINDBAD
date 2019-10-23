@@ -26,7 +26,7 @@ function [f,fe,fx,s,d,p] = dyna_EvapInt_simple2(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % update the available water
-fx.EvapInt (:,tix)      =   min(fe.EvapInt.IntCap(:,tix), f.Rain(:,tix));
-s.wd.WBP                =   s.wd.WBP - fx.EvapInt(:,tix);
+fx.EvapInt(:,tix)      =   min(fe.EvapInt.IntCap(:,tix), f.Rain(:,tix));
+s.wd.WBP               =   s.wd.WBP - fx.EvapInt(:,tix);
 
 end

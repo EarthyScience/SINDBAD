@@ -27,10 +27,10 @@ function [f,fe,fx,s,d,p] = dyna_EvapSoil_bare(f,fe,fx,s,d,p,info,tix)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
-fx.EvapSoil (:,tix) = min(fe.EvapSoil.PETsoil(:,tix), s.w.wSoil(:,1) .* p.EvapSoil.ks);
+fx.EvapSoil(:,tix) = min(fe.EvapSoil.PETsoil(:,tix), s.w.wSoil(:,1) .* p.EvapSoil.ks);
 
 % update soil water pool
-s.w.wSoil (:,1) = s.w.wSoil(:,1) - fx.EvapSoil(:,tix);
+s.w.wSoil(:,1) = s.w.wSoil(:,1) - fx.EvapSoil(:,tix);
 
 
 end

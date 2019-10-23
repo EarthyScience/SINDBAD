@@ -43,13 +43,13 @@ fx.Transp(:,tix) = min(fe.TranfwSoil.PETveg(:,tix), d.TranfwSoil.wTranSup(:,tix)
 
 % distribute the transpiration loss among soil layers
 %fx.RootUp1(:,tix) = max(0, max(fx.Transp(:,tix) - s.w.wSoil(:,1) .* p.TranfwSoil.k, fx.Transp(:,tix) - s.w.wSoil(:,2)));
-fx.RootUp1(:,tix) = max(0, fx.Transp (:,tix) .* ((s.w.wSoil(:,1) .* p.TranfwSoil.k1) ./ d.TranfwSoil.wTranSup(:,tix)));
-fx.RootUp2(:,tix) = max(0, fx.Transp (:,tix) .* ((s.w.wSoil(:,2) .* p.TranfwSoil.k2) ./ d.TranfwSoil.wTranSup(:,tix)));
+fx.RootUp1(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,1) .* p.TranfwSoil.k1) ./ d.TranfwSoil.wTranSup(:,tix)));
+fx.RootUp2(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,2) .* p.TranfwSoil.k2) ./ d.TranfwSoil.wTranSup(:,tix)));
 
-% fx.RootUp2 (:,tix) = fx.Transp(:,tix) - fx.RootUp1(:,tix);
+% fx.RootUp2(:,tix) = fx.Transp(:,tix) - fx.RootUp1(:,tix);
 
 % update soil water pools
-s.w.wSoil (:,1) = s.w.wSoil(:,1) - fx.RootUp1(:,tix);
-s.w.wSoil (:,2) = s.w.wSoil(:,2) - fx.RootUp2(:,tix);
+s.w.wSoil(:,1) = s.w.wSoil(:,1) - fx.RootUp1(:,tix);
+s.w.wSoil(:,2) = s.w.wSoil(:,2) - fx.RootUp2(:,tix);
 
 end

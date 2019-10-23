@@ -16,7 +16,10 @@ missFields	= '';
 %% 1) which workflow?
 switch lower(whatWorkFlow)
     case 'tem' %creates all the substructures (fieldnames) of info.tem
-        fldnmsINFO      = {'modelRun','modelStructure','spinup','forcing','constants','output', 'params'};%
+        fldnmsINFO      = {'modelRun','modelStructure','spinup','forcing','constants','output'};%'params'
+        
+%     case 'opti' %creates all the substructures (fieldnames) of info.opti
+%         fldnmsINFO = {'opti'};
         
     case 'postprocessing'
         fldnmsINFO = {};
@@ -36,9 +39,7 @@ for ii = 1:numel(fldnmsINFO)
     try
         data_json	= readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
     catch
-        if ~strcmpi(fldnmsINFO{ii}, 'params')
         isAllOK     = false;
-        end
         missFields  = [missFields ' ' fldnmsINFO{ii} ';'];
         
         disp([pad('CONFIG FIELDMISS',20) ' : ' pad('readConfiguration',20) ' : ' fldnmsINFO{ii} 'is missing in the configuration file for ' ...
@@ -97,14 +98,11 @@ for ii = 1:numel(fldnmsINFO)
                 if exist(file_json,'file')
                     param_json    = readJsonFile(file_json);
                     paramName     = fieldnames(param_json.params);
-                    
                     % loop over the parameter of the approach & get the default value
                     for pp=1:numel(paramName)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
                         paramInput = [paramInput ['p.', module_fields{jj}, '.', paramName{pp}]];
                     end
-                    
-                    % write in the info that default parameter values are used
                     
                 else
                     disp([pad('WARN PARAM FILEMISS',20) ' : ' pad('readConfiguration',20) ' | Parameter config (json) missing | module : ' pad(module_fields{jj},20) ' | approach: ' approachName]);
@@ -115,44 +113,6 @@ for ii = 1:numel(fldnmsINFO)
             info.(whatWorkFlow).model.variables.paramInput = paramInput;
             % feed the paths
             info.(whatWorkFlow).model.paths = mergeSubField(info.(whatWorkFlow).model,data_json,'paths','last');
-            
-        case 'params'
-            paramJson = data_json.parameter;
-            % loop over model parameter
-            for pp=1:numel(info.tem.model.variables.paramInput)
-                paraDef     = [];
-                paraNew     = [];
-                paraName    = info.tem.model.variables.paramInput{pp};
-                tmp         = strsplit(paraName,'.');
-                % look if an alternative value is provided in the json file
-                if isfield(paramJson, tmp(2))
-                    moduleJson = paramJson.(tmp{2});
-                    if isfield(moduleJson, tmp(3)) && ~isempty(moduleJson.(tmp{3}))
-                        % values or scalars in the json?
-                        if data_json.type == 'value'
-                            info.tem.params.(tmp{2}).(tmp{3}) = moduleJson.(tmp{3})(1); %set 1st value - DOES NOT ACCOUNT FOR SPATIAL VARIATION!
-                        elseif data_json.type == 'scalar'
-                            info.tem.params.(tmp{2}).(tmp{3}) = info.tem.params.(tmp{2}).(tmp{3}) .* moduleJson.(tmp{3});
-                        else
-                            disp([pad('WARN PARAM TYPE',20) ' : ' pad('readConfiguration',20) ' : unvalid type in parameter json file! needs to be value or scalar. parameter ' tmp{2} '.' tmp{3} ' is not changed. '])
-                        end
-                        paraNew = [paraNew ', ' tmp{2} '.' tmp{3}];
-                    else
-                        paraDef = [paraDef ', ' tmp{2} '.' tmp{3}];
-                    end
-                else
-                    paraDef = [paraDef ', ' tmp{2} '.' tmp{3}];
-                end
-            end
-            
-            % write in the info that default parameter values are used
-             
-            % display, which parameters are changed and for which the
-            % default value is used
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : default parameter values are used for: ' paraDef])
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : parameter values from ' info.experiment.configFiles.(fldnmsINFO{ii}) ' are used for: '])
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : ' paraNew])
-
             
         case 'output'
             % set variables for output and storage

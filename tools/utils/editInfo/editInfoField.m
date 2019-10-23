@@ -66,7 +66,11 @@ for ii = 1 : size(keySet,2)
         case 1
             subtree{ii} = infoFieldnames(1,findPosInd);
             info = setfield(info, infoFieldnamesParts{findPosInd}{2:end}, valueSet{ii}); %#ok<SFLD>
+            if iscell(valueSet{ii})
+                disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' reshape(toString(valueSet{ii})',1,[])]);
+            else
                 disp([pad('EDIT INFO FIELD',20) ' : ' pad('editInfoField',20) ' | ' infoFieldnamesPure{findPosInd} ' changed successfully to: ' toString(valueSet{ii})]);
+            end
         otherwise
             %disp(infoFieldnames(1,findPosInd)');
             subtree{ii} = infoFieldnames(1,findPosInd);
