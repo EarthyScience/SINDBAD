@@ -1,7 +1,0 @@
-{
-	"fx": {
-		"Q": ["Qfast", "Qsurf"],
-		"ET": ["EvapSoil", "Transp"]
-	}
-
-}
