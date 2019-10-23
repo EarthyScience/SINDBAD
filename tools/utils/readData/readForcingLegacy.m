@@ -1,4 +1,4 @@
-function [dataStructure] = readForcing(info)
+function [dataStructure,info] = readForcingLegacy(info)
 % reads the forcing data (.mat or .nc) from dataPath
 %
 % Usages: 

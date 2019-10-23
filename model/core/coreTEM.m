@@ -99,7 +99,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % lump the FastRunoff into interflow
     [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);           % recharge the groundwater 
     [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
-    [f,fe,fx,s,d,p]     =   ms.wG2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % Groundwater soil moisture interactions (e.g. capilary flux, water
+    [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)
     [f,fe,fx,s,d,p]     =   ms.EvapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation            
     % ---------------------------------------------------------------------

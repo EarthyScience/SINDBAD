@@ -46,15 +46,15 @@ end
 s.wd.WBP        = s.wd.WBP - fx.QinfExc(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil1 (:,tix) = min(p.QinfExc.smax1 - s.w.wSoil(:,1), s.wd.WBP);
-s.w.wSoil (:,1)    = s.w.wSoil(:,1) + fx.InSoil1(:,tix);
+fx.InSoil1(:,tix) = min(p.QinfExc.smax1 - s.w.wSoil(:,1), s.wd.WBP);
+s.w.wSoil(:,1)    = s.w.wSoil(:,1) + fx.InSoil1(:,tix);
 
 s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix);
 
 % for deeper layers
 for sl=2:size(s.w.wSoil,2)
   ip = min(p.QinfExc.smax2  - s.w.wSoil(:,sl), s.wd.WBP);
-  s.w.wSoil (:,sl) =  s.w.wSoil (:,sl) + ip;
+  s.w.wSoil(:,sl) =  s.w.wSoil(:,sl) + ip;
   s.wd.WBP = s.wd.WBP - ip;
 end
 
