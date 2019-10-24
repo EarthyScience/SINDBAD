@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p]=dyna_wGWUpflow_VanDijk(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p]=dyna_wGW2wSoil_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 % Usages:
 %   [f,fe,fx,s,d,p]=dyna_wGWUpflow_VanDijk(f,fe,fx,s,d,p,info,tix)
 %
