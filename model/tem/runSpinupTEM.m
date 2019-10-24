@@ -108,8 +108,8 @@ if isempty(infoSU)
     % make a new info for spin up based on info...
     infoSU	= info;
     % adjust the nTix
-    tmp     				= fieldnames(fSU);
-    newNTix 				= size(fSU.(tmp{1}),2);
+    tmpFN     				= fieldnames(fSU);
+    newNTix 				= size(fSU.(tmpFN{1}),2);
     infoSU.tem.helpers.sizes.nTix	= newNTix;
     if info.tem.spinup.flags.recycleMSC
         infoSU.tem.model.nYears	= 1; % should come from info.tem.s
@@ -139,8 +139,8 @@ pSU	= p;
 % -------------------------------------------------------------------------
 % complete spinup sequence
 % -------------------------------------------------------------------------
-if isfield(dSU.storedStates,'cEco')
-	tmp 				  = dSU.storedStates.cEco; 
+if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
+	tmpLS 				  = dSU.storedStates.cEco; 
 end
 
 spinSequence = info.tem.spinup.sequence;
@@ -177,13 +177,13 @@ for iss = 1:numel(spinSequence)
             disp('DBG : runSpinupTEM : cPools # / cEco  ')
             disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:)]))
         end
-	if isfield(dSU.storedStates,'cEco')
-	        tmp = cat(3,tmp,dSU.storedStates.cEco);
+	if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
+	        tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
 	end
     end
 end
-if isfield(dSU.storedStates,'cEco')
-	dSU.longStates.cEco = tmp;% @nc: to delete or adjust
+if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
+	dSU.longStates.cEco = tmpLS;% @nc: to delete or adjust
 end
 
 end
