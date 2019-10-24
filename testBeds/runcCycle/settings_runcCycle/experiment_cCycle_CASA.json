@@ -1,0 +1,20 @@
+{
+	"1.c": 					"This json defines general settings and paths of the different config files that will be used for a SINDBAD model simulation", 
+	"2.c":					"The specific details for different aspects of an experiment should be changed in corresponding json config files",
+
+	"name": 				"CASA",
+	"domain": 				"NH",
+	"configFiles": 
+	{
+		"forcing": 			"testBeds/runcCycle/settings_runcCycle/forcing.json",
+		"modelStructure": 	"testBeds/runcCycle/settings_runcCycle/modelStructure_cCycle_CASA.json",
+		"constants": 		"testBeds/runcCycle/settings_runcCycle/constants.json",
+		"modelRun": 		"testBeds/runcCycle/settings_runcCycle/modelRun.json",
+		"output": 			"testBeds/runcCycle/settings_runcCycle/output.json",
+		"spinup": 			"testBeds/runcCycle/settings_runcCycle/spinup.json",
+		"opti": 			"testBeds/runcCycle/settings_runcCycle/opti.json",
+		"params": 			""
+	},
+	"outputInfoFile": 		"testBeds/runcCycle/settings_runcCycle/cCycle_CASA.json",
+	"outputDirPath": 		"testBeds/runcCycle/output/"
+}
