@@ -81,25 +81,25 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);            % add snow fall and calculate SnowCoverFraction
+    [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);         % add snow fall and calculate SnowCoverFraction
     [f,fe,fx,s,d,p]     =   ms.EvapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
-    [f,fe,fx,s,d,p]     =   ms.Qsnow.funHandle(f,fe,fx,s,d,p,info,tix);              % calculate snowmelt and update SWE
+    [f,fe,fx,s,d,p]     =   ms.Qsnow.funHandle(f,fe,fx,s,d,p,info,tix);             % calculate snowmelt and update SWE
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.EvapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
     [f,fe,fx,s,d,p]     =   ms.QinfExc.funHandle(f,fe,fx,s,d,p,info,tix);           % infiltration excess runoff
-    [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);        % saturation runoff
+    [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);      % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.Qsat.funHandle(f,fe,fx,s,d,p,info,tix);              % saturation runoff
-    [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge the soil
+    [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
     [f,fe,fx,s,d,p]     =   ms.Qint.funHandle(f,fe,fx,s,d,p,info,tix);              % interflow
     [f,fe,fx,s,d,p]     =   ms.QoverFlow.funHandle(f,fe,fx,s,d,p,info,tix);         % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-    [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);           % recharge the groundwater 
+    [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater 
     [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
-    [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % Groundwater soil moisture interactions (e.g. capilary flux, water
+    [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)
     [f,fe,fx,s,d,p]     =   ms.EvapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation            
     % ---------------------------------------------------------------------
@@ -140,7 +140,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 6 - Autotrophic respiration
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =    ms.RAact.funHandle(f,fe,fx,s,d,p,info,tix);             % determine growth and maintenance respiration -> NPP
+    [f,fe,fx,s,d,p]     =    ms.RAact.funHandle(f,fe,fx,s,d,p,info,tix);            % determine growth and maintenance respiration -> NPP
     % ---------------------------------------------------------------------
     % 7 - Carbon transfers to soil pools
     % ---------------------------------------------------------------------
@@ -149,11 +149,17 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cFlowAct.funHandle(f,fe,fx,s,d,p,info,tix);          % actual transfers of C between pools (of diagonal components)
     [f,fe,fx,s,d,p]     =   ms.cCycle.funHandle(f,fe,fx,s,d,p,info,tix);            % allocate carbon to vegetation components
                                                                                     % litterfall and litter scalars
-                                                                                    % calculate carbon cycle/decomposition/respiration in soil
+    % ---------------------------------------------------------------------
+    % sum up components of fluxes and states
+    % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.wTotal.funHandle(f,fe,fx,s,d,p,info,tix);            % add water storages to their sum
+    [f,fe,fx,s,d,p]     =   ms.QTotal.funHandle(f,fe,fx,s,d,p,info,tix);            % add runoff components to their sum
+    [f,fe,fx,s,d,p]     =   ms.EvapTotal.funHandle(f,fe,fx,s,d,p,info,tix);         % add evapotranspiration components to their sum
+
     % ---------------------------------------------------------------------
     % Gather all variables that are desired and insert them
     % in fx,s,d
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);         % store current states in previous state variables 
+    [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);             % store current states in previous state variables 
 end 
 end
