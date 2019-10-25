@@ -52,7 +52,7 @@ fx.QgwDrain(:,tix)        =   k_unsat;
 
 % update storages
 s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-fx.QgwDrain(:,tix);
-fx.QgwDrain(:,tix)        =   fx.QgwDrain(:,tix) + wSoilExc ;
+fx.QgwDrain(:,tix)      =   fx.QgwDrain(:,tix) + wSoilExc ;
 s.w.wGW                 =   s.w.wGW + fx.QgwDrain(:,tix);
 
 end
