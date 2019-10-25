@@ -79,19 +79,19 @@ for ii=1:numel(dataPaths)
     elseif exist(dPath, 'file')
         dFiles = {dPath};
     else
-        error(['ERROR FILEMISS : readInput : ' dPath ' does not exists!'])
+        error([pad('CRIT FILEMISS',20,'left') ' : ' pad('readForcing',20) ' | ' dPath ' does not exist'])
     end
     
     % loop over files
     for ff=1:numel(dFiles)
         [pathstr,name,ext] = fileparts(dFiles{ff});
-
+        
         switch ext
             case '.mat'
                 dataMat = load(dFiles{ff});
                 for vv=1:numel(inVars)
                     % loop over variables
-                    try 
+                    try
                         tarVar = inVars{vv};
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
                         % assign variable + do conversions etc. -> without eval?!
@@ -99,10 +99,10 @@ for ii=1:numel(dataPaths)
                         try
                             dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
-                            disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
+                            disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Units of forcing variable ' tarVar ' not converted. Keeping the original values'])
                         end
                     catch
-                        error(['MISS: readForcing: Variable ' tarVar ' not found.']);
+                        error([pad('CRIT DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Variable ' tarVar ' not found in ' dFiles{ff}])
                     end
                 end
                 % add lat and lon
@@ -111,16 +111,16 @@ for ii=1:numel(dataPaths)
                     info.tem.model.space.lonVec = dataMat.lon;
                     info.tem.model.space.reso   = [1 1];
                 catch
-                    disp('MISS: readForcing: Space information (latitude, longitute, resolution)  missing.');
+                    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Space information (latitude, longitute, resolution) missing'])
                 end
                 
                 %  TINA: add dates.day (should exist in the spinup forcing!)
                 try
                     dataStructure.dates = dataMat.dates;
                 catch
-                    disp('MISS: readForcing: Time information (dates.day)  missing. May cause problems with spinup.');
+                    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Time information (dates.day) missing in input data. May cause problems with spinup.'])
                 end
-
+                
             case '.nc'
                 for vv=1:numel(inVars)
                     % loop over variables
@@ -128,38 +128,33 @@ for ii=1:numel(dataPaths)
                         tarVar = inVars{vv};
                         srcVar = info.tem.forcing.variables.(tarVar).sourceVariableName;
                         if ~isfield(info.tem.model,'space')
-%                             info.tem.model.space.latVec=ncread(dFiles{ff},'latitude');
-%                             info.tem.model.space.lonVec=ncread(dFiles{ff},'longitude');
-%                             info.tem.model.space.reso=0.5;
+                            %                             info.tem.model.space.latVec=ncread(dFiles{ff},'latitude');
+                            %                             info.tem.model.space.lonVec=ncread(dFiles{ff},'longitude');
+                            %                             info.tem.model.space.reso=0.5;
                         end
                         info.tem.model.time.timeVec=ncread(dFiles{ff},'time');
                         dataStructure.(tarVar) = ncread(dFiles{ff},srcVar)';
                         try
-                           dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
+                            dataStructure.(tarVar) =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                             %                            tarVar
                             %                            size(dataStructure.(tarVar))
                         catch
-                           disp(['MISS: readForcing: Units of forcing variable ' tarVar ' not converted. Keeping the original values.']);
+                            disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Units of forcing variable ' tarVar ' not converted. Keeping the original values'])
                         end
                     catch
-                        %                         if tarVar == 'LAI'
-                        %                             dataStructure.(tarVar) = ones(1,length(xDay));
-                        %                             disp(['MISS: readForcing: Variable ' tarVar ' not found. Setting a constant value.']);
-                        %                         else
-                        error(['MISS: readForcing: Variable ' tarVar ' not found.']);
-                        %                         end
+                        error([pad('CRIT DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Variable ' tarVar ' not found in ' dFiles{ff}])
                     end
                 end
                 
             otherwise
-                disp(['WARN FILEMISS : readForcing : format of ' dFiles{ff} ' is not supported!'])
+                error([pad('CRIT DATA',20,'left') ' : ' pad('readForcing',20) ' | format of ' dFiles{ff} ' is not supported. Provide data in .nc or .mat formats'])
         end
     end
     
 end
 
 dataStructure.Year                    = year(xDay);
-
+    
 end
 
 

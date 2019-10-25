@@ -1,4 +1,3 @@
-
 % workflow for debugging the casa with full carbon cycle to optimize one fluxnet site
 %% setup working paths
 for fn = {'tools','model','optimization'} %,'sandbox/testBergBasic/','data/input/testInput_TWSmodel/'}
@@ -7,6 +6,7 @@ end
 
 %% go for the spinup
 disp('%% go for the spinup')
+
 toStore.CASA	= {
     's.w.wGW'
     's.w.wSnow'
@@ -112,7 +112,7 @@ for NI2E = [21]
                 fSU5,feSU5,fxSU5,sSU5,dSU5,precOnceDataSU5,infoSU5,...
                 obs5,cost5] = workflowExperiment(expConfigFile,...
                 'info.tem.spinup.sequence',zSequence,...
-                'info.tem.spinup.flags.storeLongStates',saveLongStates,...
+                'info.tem.spinup.flags.storeFullSpinupStates',saveLongStates,...
                 'tem.model.flags.genCode',false,...
                 'tem.model.flags.runGenCode',false,...
                 'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
@@ -128,7 +128,7 @@ for NI2E = [21]
                 
                 for j = 1:14
                     subplot(4,4,j)
-                    y   = [squeeze(dSU5.longStates.cEco(:,j,:)) squeeze(d5.storedStates.cEco(:,j,:))]';
+                    y   = [squeeze(dSU5.fullSpinupStates.cEco(:,j,:)) squeeze(d5.storedStates.cEco(:,j,:))]';
                     x	= (1:size(y,1));
                     plot(x,y,'lineWidth',2)
                     axis tight

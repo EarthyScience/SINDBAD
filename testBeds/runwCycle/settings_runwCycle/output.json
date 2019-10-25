@@ -1,0 +1,12 @@
+{
+	"variables":
+    {
+		"to":
+        {
+			"write":     ["s.w.wGW", "s.w.wSnow", "s.w.wSoil"],
+			"store":     ["s.w.wGW","s.w.wSnow","s.w.wSoil","s.wd.wSnowFrac"]
+		}
+	},
+	"dataFormat": ".nc",
+	"inputRef": "Tair"
+}

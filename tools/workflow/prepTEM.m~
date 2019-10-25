@@ -27,7 +27,7 @@ for jj      =   1:numel(fun_fields)
     try
     	info.tem.forcing.funHandle.(fun_fields{jj})     =   str2func(info.tem.forcing.funName.(fun_fields{jj}));
     catch
-        disp([pad('CRIT FUNCMISS',20,'left') ' : ' pad('prepTEM',20) ' | no valid function name for ' fun_fields{jj} ' given in forcing.json'])
+        disp([pad('CRIT FUNCMISS',20,'left') ' : ' pad('prepTEM',20) ' |  no valid function name for ' fun_fields{jj} ' given in forcing.json'])
     end
 end
 
@@ -46,7 +46,8 @@ try
     info.tem.helpers.areaPix    =   info.tem.helpers.areaPix(:,1);
 catch
     info.tem.helpers.areaPix    =   ones(info.tem.helpers.sizes.nPix,1);
-    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('prepTEM',20) ' | Space information (latitude, longitute, resolution)  missing. areaPix set to ones'])
+    disp([pad('WARN MISS',20,'left') ' : ' pad('prepTEM',20) ' |  no valid function name for ' fun_fields{jj} ' given in forcing.json'])
+    disp('MISS: prepTEM: Space information (latitude, longitute, resolution)  missing. areaPix set to ones');
 end
 
 % so far based checkData4TEM.m 
