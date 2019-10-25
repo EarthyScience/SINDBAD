@@ -17,8 +17,8 @@ function [f,fe,fx,s,d,p]=dyna_wGW2wSoil_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 %   + Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %
 % References:
-%   +
-%
+%   + AIJM Van Dijk, 2010, The Australian Water Resources Assessment System Technical Report 3. Landscape Model (version 0.5) Technical Description
+%   + http://www.clw.csiro.au/publications/waterforahealthycountry/2010/wfhc-aus-water-resources-assessment-system.pdf
 % Versions:
 %   + 1.0 on 17.04.2018
 

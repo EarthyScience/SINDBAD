@@ -21,11 +21,19 @@ function [info, subtree] = editInfoField(info, varargin)
 
 %% 1) Load, unfold and separate all fieldnames (endnodes) of Info structure
 [infoFieldnames,~,infoFieldnamesPure] = getAllFieldnames(info,false,{},1);
+%{
+infoFieldnamesParts{1,size(infoFieldnames, 2)} = []; infoFieldnamesEndnodes{1,size(infoFieldnames, 2)} = [];
+for ii = 1 : size(infoFieldnames, 2)
+    infoFieldnamesParts{ii} = strsplit(infoFieldnames{ii}, '.');
+    infoFieldnamesEndnodes(ii) = infoFieldnamesParts{ii}(1, end);
+end
+%}
 infoFieldnamesParts{1,size(infoFieldnamesPure, 2)} = []; infoFieldnamesEndnodes{1,size(infoFieldnamesPure, 2)} = [];
 for ii = 1 : size(infoFieldnamesPure, 2)
     infoFieldnamesParts{ii} = strsplit(infoFieldnamesPure{ii}, '.');
     infoFieldnamesEndnodes(ii) = infoFieldnamesParts{ii}(1, end);
 end
+
 
 %% 2) Check and read varargin
 if nargin == 2 && numel(varargin) ~= 0
@@ -39,7 +47,6 @@ elseif mod(nargin-1,2) == 0 %number is even else number is odd end
 else
     error('Number of arguments in varargin must to be even or 1 (or 0) as it represents a list of "Fieldname : newValue" pairs or a string to search for within the fieldnames.');
 end
-
 %% 3) Search for fieldnames which content is intended to change and change value or display information
 subtree = cell(size(keySet));
 for ii = 1 : size(keySet,2)
@@ -65,14 +72,14 @@ for ii = 1 : size(keySet,2)
             end
         otherwise
             subtree{ii} = infoFieldnames(1,findPosInd);
-            if strcmp( keySet{ii},'info.tem.spinup.sequence')
-                disp([pad('WARN INFO EXCEPTION',20) ' : ' pad('editInfoField',20) ' | Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!'])
-                datInd = find(strcmp(varargin,'info.tem.spinup.sequence'))+1 ;
-                info.tem.spinup.sequence = varargin{datInd};
-            else
-                error([pad('WARN INFO FIELD',20) ' : ' pad('editInfoField',20) ' | Fieldname ' keySet{ii} ' was found in multiple instances, and is ambiguous. To replace the exact field, give the full information starting from info.[.].[.]'])
-            end
+            disp([pad('WARN INFO FIELD',20) ' : ' pad('editInfoField',20) ' | Fieldname ' keySet{ii} ' is not unique. Re-run with full structure-path (e.g.,info.tem.model.flags.runOpti)'...
+                'for this key (for list of possible values check 2nd output variable: subtree)'])
     end
 end
-
+%% change spinup sequence if given as input. Added because the editTEMinfo does not work for struct array.
+if any(strcmp(varargin,'info.tem.spinup.sequence'))% @nc : this seems inconsistent... should be tem.spinup.sequence ...
+    disp([pad('WARN INFO EXCEPTION',20) ' : ' pad('editInfoField',20) ' | Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!'])
+    datInd = find(strcmp(varargin,'info.tem.spinup.sequence'))+1 ;
+    info.tem.spinup.sequence = varargin{datInd};
+end
 end

@@ -22,8 +22,8 @@ switch lower(whatWorkFlow)
         fldnmsINFO = {};
         
     otherwise
-        disp([pad('CRIT CONCEPT',20) ' : ' pad('readConfiguration',20) ' | only [modelRun,modelStructure,spinup,forcing,constants,output,params] are accepted'])
-        disp([pad('CRIT CONCEPT',20) ' : ' pad('readConfiguration',20) ' | '  whatWorkFlow ' is not a known part of SINDBAD workflow (branch of opti)'])
+        disp([pad('CRIT CONCEPT',20) ' : ' pad('readConfiguration',20) ' : only [modelRun,modelStructure,spinup,forcing,constants,output,params] are accepted'])
+        disp([pad('CRIT CONCEPT',20) ' : ' pad('readConfiguration',20) ' : '  whatWorkFlow ' is not a known part of SINDBAD workflow (branch of opti)'])
 end
 
 %% 2) loop through the fieldnames
@@ -41,7 +41,8 @@ for ii = 1:numel(fldnmsINFO)
         end
         missFields  = [missFields ' ' fldnmsINFO{ii} ';'];
         
-        disp([pad('CONFIG FIELMISS',20) ' : ' pad('readConfiguration',20) ' | configuration file for ' fldnmsINFO{ii} ' is missing in the experiment configuration'])
+        disp([pad('CONFIG FIELDMISS',20) ' : ' pad('readConfiguration',20) ' | ' fldnmsINFO{ii} ' is missing in the configuration file for ' ...
+			whatWorkFlow ' : ' info.experiment.configFiles.(fldnmsINFO{ii})])
         continue
     end
     
@@ -133,7 +134,7 @@ for ii = 1:numel(fldnmsINFO)
                         elseif data_json.type == 'scalar'
                             info.tem.params.(tmp{2}).(tmp{3}) = info.tem.params.(tmp{2}).(tmp{3}) .* moduleJson.(tmp{3});
                         else
-                            disp([pad('WARN PARAM TYPE',20) ' : ' pad('readConfiguration',20) ' | invalid type in parameter json file! needs to be value or scalar. parameter ' tmp{2} '.' tmp{3} ' is not changed. '])
+                            disp([pad('WARN PARAM TYPE',20) ' : ' pad('readConfiguration',20) ' : unvalid type in parameter json file! needs to be value or scalar. parameter ' tmp{2} '.' tmp{3} ' is not changed. '])
                         end
                         paraNew = [paraNew ', ' tmp{2} '.' tmp{3}];
                     else
@@ -148,9 +149,9 @@ for ii = 1:numel(fldnmsINFO)
              
             % display, which parameters are changed and for which the
             % default value is used
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' | default parameter values are used for: ' paraDef])
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' | parameter values from ' info.experiment.configFiles.(fldnmsINFO{ii}) ' are used for: '])
-            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' | ' paraNew])
+            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : default parameter values are used for: ' paraDef])
+            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : parameter values from ' info.experiment.configFiles.(fldnmsINFO{ii}) ' are used for: '])
+            disp([pad(' ',20) ' : ' pad('readConfiguration',20) ' : ' paraNew])
 
             
         case 'output'
