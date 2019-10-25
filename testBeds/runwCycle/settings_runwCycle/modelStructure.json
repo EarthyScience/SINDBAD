@@ -31,6 +31,18 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
+		"pSoil": 
+		{
+			"apprName": 	"pSoil_fixed",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"EvapInt": 
+		{
+			"apprName": 	"EvapInt_none",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
 		"EvapSub": 
 		{
 			"apprName": 	"EvapSub_GLEAM",
@@ -39,8 +51,8 @@
 		},
 		"Qbase": 
 		{
-			"apprName": 	"Qbase_Orth2013",
-			"runFull": 		false,
+			"apprName": 	"Qbase_fraction",
+			"runFull": 		true,
             "use4spinup":   false
 		},
 		"Qint": 
@@ -57,10 +69,38 @@
 		},
 		"wSnowFrac": 
 		{
-			"apprName": 	"wSnowFrac_scaleSFHTESSEL",
+			"apprName": 	"wSnwFr_scaleSFHTESSEL",
 			"runFull": 		false,
             "use4spinup":   false
+		},
+		"QTotal":
+		{
+			"apprName": 	"QTotal_simple",
+			"runFull": 		false,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"wTotal":
+		{
+			"apprName": 	"wTotal_simple",
+			"runFull": 		true,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"EvapTotal":
+		{
+			"apprName": 	"EvapTotal_simple",
+			"runFull": 		false,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"wGWRec":
+		{
+			"apprName": 	"wGWRec_kUnsat",
+			"runFull": 		true,
+			"use4spinup":   true
 		}
+
 	},		
 	"states": 
 	{

@@ -1,6 +1,9 @@
 % a script to run an experiment with the default parameters for 1000 pixel in the Northern
 % hemisphere (Trautmann, TWS paper, HESS 2018)
+try
 gone
+catch
+end
 
 % %% load the default results of the paper
 % load('M:\people\ttraut\MATLAB\Paper.Data\ExpStruct_newStudy_E2bScal_1000pix_Cal_Paper.mat')
@@ -19,20 +22,14 @@ end
 expConfigFile               =   'testBeds/runwCycle/settings_runwCycle/experiment_wCycle.json';
 
 %% run the experiment
+[f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,info,obs,cost] = workflowExperiment(expConfigFile,'info.tem.model.flags.genRedMemCode',true,'info.tem.model.flags.runGenCode',true);
+
 [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,info,obs,cost] = workflowExperiment(expConfigFile,'info.tem.model.flags.runGenCode',false);
 
-% [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,info,obs,cost] = workflowExperiment(expConfigFile,'info.tem.model.flags.runOpti',true,'info.tem.model.flags.runGenCode',false);
-% without runGenCode
-% [f2,fe2,fx2,s2,d2,p2,precOnceData,sSU,dSU,info] = workflowExperiment(expConfigFile,'info.tem.model.flags.runGenCode',false);
 
-%% compare the params
-p_def = NaN(1,numel(info.opti.params.names));
-for i =   1:numel(info.opti.params.names)
-   p_def(1,i) = info.opti.params.defaults(i);
-end
+[f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,info,obs,cost] = workflowExperiment(expConfigFile,'info.tem.model.flags.runGenCode',true);
 
-pa_def
-ModelSettings.BergBasic.Params.default
+% [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,info,obs,cost] = workflowExperiment(expConfigFile,'info.tem.model.flags.genRedMemCode',true,'info.tem.model.flags.runGenCode',true);
 
 %% FIGURES
 fNamesf=fields(f);
@@ -60,24 +57,4 @@ figure, scatter(mean(fx.Q,1),mean(fx.Qb,1)),xlabel('Q'), ylabel('Qb')
 figure, scatter(mean(fx.Q,1),mean(fx.Qint,1)),xlabel('Q'), ylabel('Qint')
 figure, scatter(mean(fx.Q,1),mean(fx.Qint+fx.Qb,1)),xlabel('Q'), ylabel('Qint+Qb')
 
-%% compare
-names = {'FSC','pot ET', 'ET soil', 'ET Sub', 'Snow melt', 'Qbase', 'Snow fall','Rain fall','SWE','SM', 'GW'}
-sDatas = {'squeeze(d.storedStates.wSnwFr)','f.PET', 'fx.EvapSoil', 'fx.EvapSub', 'fx.Qsnow', 'fx.Qb', 'f.Snow', 'f.Rain', 'squeeze(d.storedStates.wSnow)',...
-'squeeze(d.storedStates.wSoil)', 'squeeze(d.storedStates.wGW)'}
-oDatas = {'FSC','potET', 'actET','ETSub', 'M', 'Q', 'SF', 'P_liq', 'SWE', 'SM', 'GW'}
 
-for ii=1:numel(names)
-name  = names{ii};
-sData = eval(sDatas{ii});
-oData = eval(['Results.ModelOutput.' oDatas{ii}]);
-
-diffData = oData-sData;
-figure,set(gcf, 'Position', [10 10 15 10]), plot(mean(diffData,1)), title(name)
-%[ diffData ] = plotComparison(name, oData, sData);
-
-%sum(oData(:))<sum(sData(:))
-
-end
-% for fn = {'tools','model','optimization'}
-%     rmpath(genpath(['../../' fn{1}]))
-% end
