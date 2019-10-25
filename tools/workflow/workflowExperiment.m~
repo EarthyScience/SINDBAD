@@ -42,6 +42,7 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %% ------------------------------------------------------------------------
 % create a temporary log file
 % -------------------------------------------------------------------------
+
 tstartwf = tic;
 tmpStrDate                          =   datestr(now,30);
 tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
@@ -49,7 +50,6 @@ if exist(tmpLogFile,'file')
     eval(['delete ' tmpLogFile])
 end
 diary(tmpLogFile)
-
 % start log file content
 disp(pad('-',200,'both','-'))
 disp(pad('START: Log of SINDBAD model experiment',200,'both'))
@@ -57,9 +57,9 @@ disp(pad('-',200,'both','-'))
 % end log file content
 
 %% ------------------------------------------------------------------------
-% check if the experiment configuration has been passed, stop if not
+% create a temporary log file
 % -------------------------------------------------------------------------
-
+%% check if the experiment configuration has been passed, stop if not
 if ~exist('expConfigFile','var')
     dispMSG = [pad('CRIT WORKFLOW',20) ' : ' pad('workflowExperiment',20) ' | Cannot run an experiment without configuration file [expConfigFile(.json)] or SINDBAD info'];
     disp(dispMSG)
@@ -68,21 +68,21 @@ if ~exist('expConfigFile','var')
 end
 
 %% ------------------------------------------------------------------------
-% setup the TEM
+% create a temporary log file
 % -------------------------------------------------------------------------
-
+%% setup the TEM
 % start log file content
 disp(pad('-',200,'both','-'))
 disp(pad('Set up the TEM of SINDBAD',200,'both',' '))
 disp(pad('-',200,'both','-'))
 % end log file content
-
 [info, expConfigFile]                       =   setupTEM(expConfigFile);
 
-%% ----------------------------------------------------------------------------------------------------------
-% include changes from command line in info & setup the optimization if it's on or if costs shall be computed
-% -----------------------------------------------------------------------------------------------------------
 
+%% ------------------------------------------------------------------------
+% create a temporary log file
+% -------------------------------------------------------------------------
+%% include changes from command line in info & setup the optimization if it's on or if costs shall be computed
 if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
     
     % start log file content
@@ -101,10 +101,7 @@ else
     infoLite                                =   info;
 end
 
-%% ------------------------------------------------------------------------
-% prepare the SINDBAD objects and structures
-% -------------------------------------------------------------------------
-
+%% prepare the SINDBAD objects and structures
 % start log file content
 disp(pad('-',200,'both','-'))
 disp(pad('Prepare the objects and structure of SINDBAD',200,'both',' '))
@@ -116,10 +113,7 @@ disp(pad('-',200,'both','-'))
 p           =   info.tem.params;
 paramType   =  'default'; % comes from info
 
-%% ------------------------------------------------------------------------
-% Forward run the model when optimization is off
-% -------------------------------------------------------------------------
-
+%% Forward run the model when optimization is off
 if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
     
     % do simulations per year
@@ -158,10 +152,7 @@ end
 end
 
  
-%% ----------------------------------------------------------------------------------------
-% Optimize the model and then do the forward run using optimized parameter when opti is on
-% -----------------------------------------------------------------------------------------
-
+%% Optimize the model and then do the forward run using optimized parameter when opti is on
 if info.tem.model.flags.runOpti
     [f,fe,fx,s,d,info]                      =   prepTEM(info);
     
@@ -202,9 +193,7 @@ if info.tem.model.flags.runOpti
     
 end
 
-%% ------------------------------------------------------------------------
-% Calculate the cost
-% -------------------------------------------------------------------------
+%% Calculate the cost 
 if info.tem.model.flags.calcCost || info.tem.model.flags.runOpti
     [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
 
@@ -215,10 +204,8 @@ else
     cost    = {};
     obs     = {}; 
 end
-%% ------------------------------------------------------------------------
-% Save the data and model output
-% -------------------------------------------------------------------------
 
+%% Save the data and model output
 % start log file content
 disp(pad('-',200,'both','-'))
 disp(pad('Save the data',200,'both',' '))
@@ -252,16 +239,13 @@ end
 % save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')
 % disp([pad('forcing data (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'])
 
-%% ------------------------------------------------------------------------------------------
-% write the experiment information and move the temporary log file to model output directory
-% -------------------------------------------------------------------------------------------
-
+%% write the experiment information and move the temporary log file to model output directory
 % start log file content
 disp(pad('-',200,'both','-'))
 disp(pad(['EXPERIMENT COMPLETE: ' info.experiment.name ' with following configuration'],200,'both'))
 disp(pad('-',200,'both','-'))
-% kind of model run
 
+% kind of model run
 if info.tem.model.flags.runOpti
     disp(pad('Model Run in Optimization Mode',200,'both','-'))
 elseif info.tem.model.flags.calcCost

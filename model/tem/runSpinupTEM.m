@@ -1,5 +1,5 @@
 function [fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU] = runSpinupTEM(f,info,p,SUData,fSU,infoSU,...
-    precOnceDataSU,fxSU,feSU,dSU,sSU)
+        precOnceDataSU,fxSU,feSU,dSU,sSU)
 % runs the spinup of SINDBAD
 %
 % Requires:
@@ -60,6 +60,7 @@ function [fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU] = runSpinupTEM(f,info,p,S
 %   - 1.1 on 10.07.2018 : includes functionalities of use4spinup
 %   - 1.0 on 01.05.2018
 
+%%
 %% ------------------------------------------------------------------------
 % 1 - LOAD THE SPINUP FROM MEMORY OR FROM RESTART FILE
 % -------------------------------------------------------------------------
@@ -139,8 +140,8 @@ pSU	= p;
 % -------------------------------------------------------------------------
 % complete spinup sequence
 % -------------------------------------------------------------------------
-if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
-	tmpLS 				  = dSU.storedStates.cEco; 
+if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+    tmpLS 				  = dSU.storedStates.cEco;
 end
 
 spinSequence = info.tem.spinup.sequence;
@@ -150,7 +151,7 @@ for iss = 1:numel(spinSequence)
     addInputs       = spinSequence(iss).funAddInputs;
     nLoops          = spinSequence(iss).nLoops;
     if ~iscell(addInputs),addInputs = num2cell(addInputs');end
-    disp([pad('EXEC MODRUN',20) ' : ' pad('runSpinupTEM',20) ' | ' pad('sequence',8) ' : ' num2str(iss) ' / ' num2str(numel(spinSequence)) ' | funHandleSpin    : ' spinSequence(iss).funHandleSpin])
+    disp([pad('EXEC MODRUN',20,'right') ' : ' pad('runSpinupTEM',20) ' | ' pad('sequence',8) ' : ' num2str(iss) ' / ' num2str(numel(spinSequence)) ' | funHandleSpin    : ' spinSequence(iss).funHandleSpin])
     if ~isempty(spinSequence(iss).funHandleStop)
         funHandleStop   = str2func(spinSequence(iss).funHandleStop);
     else
@@ -159,7 +160,7 @@ for iss = 1:numel(spinSequence)
     % go for it
     for ij = 1:nLoops
         % run spinup
-        disp([pad('     EXEC MODRUN',20) ' : ' pad('runSpinupTEM',20) ' | ' pad('nLoop',8) ' : ' num2str(ij) ' / ' num2str(spinSequence(iss).nLoops)])
+        disp([pad('EXEC MODRUN',20,'left') ' : ' pad('runSpinupTEM',20) ' | ' pad('nLoop',8) ' : ' num2str(ij) ' / ' num2str(spinSequence(iss).nLoops)])
         [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
             funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs{:});
         % stop it according to function criteria?
@@ -170,20 +171,27 @@ for iss = 1:numel(spinSequence)
             end
         end
         %%
-        if isfield(sSU.prev,'s_c_cEco')
-            disp('DBG : runSpinupTEM : cPools # / cEco / s_c_cEco  ')
-            disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
-        else
-            disp('DBG : runSpinupTEM : cPools # / cEco  ')
-            disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:)]))
+        if isfield(sSU,'prev')
+            if isfield(sSU.prev,'s_c_cEco')
+                
+                disp(pad('.',100,'both','.'))
+                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | cPools # / cEco / s_c_cEco '])
+                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:);sSU.prev.s_c_cEco(1,:)]))
+                disp(pad('.',100,'both','.'))
+            else
+                disp(pad('.',100,'both','.'))
+                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
+                disp(num2str([1:size(sSU.c.cEco,2);sSU.c.cEco(1,:)]))
+                disp(pad('.',100,'both','.'))
+            end
         end
-	if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
-	        tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
-	end
+        if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+            tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
+        end
     end
 end
-if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeLongStates
-	dSU.longStates.cEco = tmpLS;% @nc: to delete or adjust
+if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+    dSU.fullSpinupStates.cEco = tmpLS;% @nc: to delete or adjust
 end
-
+    
 end
