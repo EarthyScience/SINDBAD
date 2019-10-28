@@ -19,6 +19,6 @@ function [f,fe,fx,s,d,p] = prec_GPPfVPD_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % no effect = 1
-d.GPPfVPD.VPDScGPP = info.tem.helpers.arrays.zerospixtix;
+d.GPPfVPD.VPDScGPP = info.tem.helpers.arrays.onespixtix;
 
 end

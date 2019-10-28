@@ -5,7 +5,7 @@ function [cost] = calcCostMultiConstraint(f,fe,fx,s,d,p,obs,info)
 
 %% transforming info.opti.costFun to needed structure
 VariableNames = fieldnames(info.opti.costFun.options.components);
-fx.NEE = fx.cRECO - fx.gpp;
+% fx.NEE = fx.cRECO - fx.gpp;
 try 
     cf = structfun(@horzcat,info.opti.costFun.options.components);
     [cf.VariableName] = VariableNames{:};   
