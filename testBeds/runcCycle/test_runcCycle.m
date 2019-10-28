@@ -54,18 +54,6 @@ for NI2E = [21]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
         expConfigFile               =   ['testBeds/runcCycle/settings_runcCycle/experiment_cCycle_' cCycleModel{:} '.json'];
-        %         expConfigFile               =   [sindbadroot '/testBeds/runcCycle/settings_runcCycle/experiment_cCycle_debug_' cCycleModel{:} '.json'];
-        %         expConfigFile               =   getFullPath(expConfigFile);
-        % build the info
-        %         info                = setupTEM(expConfigFile,...
-        %                             'tem.model.flags.genCode',false,...
-        %                             'tem.model.flags.runGenCode',false,...
-        %                             'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
-        %                             'tem.model.modules.cCycle.apprName',cCycleModel{:});%,...);
-        % %                             'tem.model.modules.RAact.apprName','none',...);
-        % %                             'tem.model.modules.RAfTair.apprName','none');
-        %
-        %         [f,fe,fx,s,d,info]  = prepTEM(info);
         for i = [3 1]% 2]
             switch i
                 case 1 % setup explicit spinup
@@ -104,8 +92,6 @@ for NI2E = [21]
             % current run
             disp(' ')
             disp([cCycleModel{:} ' : ' strN])
-            %             % switch the spinup set up
-            %             info.tem.spinup.sequence = zSequence;
             % run the model
             tstart = tic;
             [f5,fe5,fx5,s5,d5,p5,precOnceData5,info,...
@@ -117,7 +103,6 @@ for NI2E = [21]
                 'tem.model.flags.runGenCode',false,...
                 'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
                 'tem.model.modules.cCycle.apprName',cCycleModel{:});
-            %             [f5,fe5,fx5,s5,d5,p5,precOnceData5,sSU5,dSU5]   = runTEM(info,f);
             disp(['    ' sec2som(toc(tstart))])
             %
             save([oufile '.mat'], 'info','f5','fe5','fx5','s5','d5','p5','precOnceData5','sSU5','dSU5','-v7.3')
