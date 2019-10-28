@@ -107,7 +107,7 @@ for jj=1:numel(paramsList)
         upbounds                    =   [upbounds params.(module).(paramName).UpperBound];
 
     catch
-        error([pad('CRIT MODSTR',20,'left') ' : ' pad('setupOpti',20) ' | The optimized module or parameter name not exist in selected model structure, check params2opti in opti.json : ' mod_param])
+        error([pad('CRIT MODSTR',20,'left') ' : ' pad('setupOpti',20) ' | The optimized module or parameter name does not exist in selected model structure, check params2opti in opti.json : ' mod_param])
     end
 end
 

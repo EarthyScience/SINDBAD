@@ -19,6 +19,6 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdir_none(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % no effect (needs to be 1!)
-d.GPPfRdir.LightScGPP = info.tem.helpers.arrays.zerospixtix;
+d.GPPfRdir.LightScGPP = info.tem.helpers.arrays.onespixtix;
 
 end
