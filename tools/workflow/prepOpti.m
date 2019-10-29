@@ -76,8 +76,10 @@ end
 %% create the output directory path for output files of the optimization algorithm
 if isfield(info.opti.algorithm.options,'outDirPath')
     info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
+else
+    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep]);    
 end
-
+info.opti.algorithm.options.outFilePath         =   [info.opti.algorithm.options.outDirPath filesep 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
 %% 1) create the function handles and get constraints for optimization
 fun_fields = fieldnames(info.opti.constraints.funName);
 for jj=1:numel(fun_fields)

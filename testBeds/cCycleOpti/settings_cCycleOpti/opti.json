@@ -6,7 +6,7 @@
 	},
 	"algorithm": {
 		"funName": "cmaes",
-		"nonDefOptFile": "testBeds/optimize_fluxnet_site/settings_optimize_fluxnet_site/extraOptionsOpti/extraOptions_cmaes.json"
+		"nonDefOptFile": "testBeds/cCycleOpti/settings_cCycleOpti/extraOptionsOpti/extraOptions_cmaes.json"
 	},
 	"params2opti": [
 		"GPPpot.maxrue", "GPPfTair.Topt", "GPPfTair.ToptA", "GPPfTair.ToptB"

@@ -1,6 +1,6 @@
 function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 % Solve the steady state of the cCycle for the CASA model based on
-% recurrent. Never published, but very similar to Lardy et al 200?
+% recurrent.
 %
 % Requires:
 %	- all SINDBAD structure + NI2E = number of iterations to equilibrium
@@ -15,7 +15,9 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %
 % References:
-%
+% Not published but similar to the following:
+%   - Lardy, R., Bellocchi, G., & Soussana, J. F. (2011). A new method to determine soil organic carbon equilibrium. 
+%                                                         Environmental modelling & software, 26(12), 1759-1763.
 % Notes:
 %   - the input datasets [f,fe,fx,s,d] have to have a full year (or cycle
 %   of years) that will be used as the recycling dataset for the
@@ -25,7 +27,8 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 %
 % Versions:
 %   - 1.0 on 01.05.2018
-
+%   - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on
+%   Bt and At when nPix == 1 (single point simulation)
 %%
 tstart = tic;
 
@@ -105,8 +108,15 @@ for zix = zixVecOrder
     %% GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
     % CALCULATE At = 1 - Lt
     At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
-    % calculate Bt
-    Bt  = squeeze(cGain(:,zix,:)) .* At;
+    %sujan 29.10.2019: the squeeze removes the first dimension while
+    %running for a single point when nPix == 1
+    if size(cLossRate,1) == 1
+        At                     = At';
+        Bt  = squeeze(cGain(:,zix,:))' .* At;
+    else
+        Bt  = squeeze(cGain(:,zix,:)) .* At;
+    end
+    %sujan end squeeze fix
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
     Co	= s.c.cEco(:,zix);
     % THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP;
@@ -127,8 +137,8 @@ for zix = zixVecOrder
     Ct                      = Co .* piA1 + sumB_piA .* piA2;
     sCt(:,zix) = Ct;
     disp(pad('.',100,'both','.'))        
-    disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Co : ' num2str(zix) ' : ' num2str(Co(1))])
-    disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Ct : ' num2str(zix) ' : ' num2str(Ct(1))])
+    disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Co : ' num2str(zix) ' : ' num2str(round(Co(1),2))])
+    disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Ct : ' num2str(zix) ' : ' num2str(round(Ct(1),2))])
     disp(pad('.',100,'both','.'))
 
     sT.c.cEco(:,zix)        = Ct;
