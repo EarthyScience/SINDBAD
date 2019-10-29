@@ -1,22 +1,48 @@
+function test_cCycleOpti(inpath,outpath,obspath,testName)
 % a script to run an experiment to optimize one fluxnet site
-try
-    gone
-catch
+if isempty(inpath)
+    inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+    disp(['empty inpath using default:' inpath])
+else
+    disp(['user defined inpath:' inpath])
 end
 
-%% setup paths
-for fn = {'tools','model','optimization'}
-    addpath(genpath(['../../' fn{1}]),'-begin')
+if isempty(outpath)
+    [uname,~] = getUserInfo();
+    outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+    disp(['empty outpath using default:' outpath])
+else
+    disp(['user defined outpath:' outpath])
 end
-outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
-testName='cCycleOpti';
+
+
+if isempty(obspath)
+    obspath=inpath;
+    disp(['empty ipath: using inpath as obspath:' inpath])
+else
+    disp(['user defined obspath:' obspath])
+end
+
+% try
+%     gone
+% catch
+% end
+% 
+% %% setup paths
+% for fn = {'tools','model','optimization'}
+%     addpath(genpath(['../../' fn{1}]),'-begin')
+% end
+% 
+% [uname,~] = getUserInfo();
+% 
+% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+% 
+% inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+% testName='cCycleOpti';
 %% provide an experiment configuration file
 expConfigFile               =   'testBeds/cCycleOpti/settings_cCycleOpti/experiment_runOpti.json';
 
- % setup explicit spinup
-%strN        = '% setup explicit spinup';
-%strN2       = 'explicit';
+% creating the spinup sequence
 zSequence   = struct(...
 'funHandleSpin',{'runCoreTEM','runCoreTEM','spin_cCycle_CASA','runCoreTEM'},...
 'funHandleStop',{[],[],[],[]},...
@@ -27,13 +53,15 @@ zSequence   = struct(...
 %% run the experiment
 [f_def,fe_def,fx_def,s_def,d_def,p_def,precOnceData_def,info_def...
     ,fSU_def,feSU_def,fxSU_def,sSU_def,dSU_def,precOnceDataSU_def,infoSU_def,obs_def,cost_def] = workflowExperiment(expConfigFile,...
+    'info.tem.model.flags.runOpti',false,...
+    'info.tem.model.flags.calcCost',false,...
     'info.tem.spinup.sequence',zSequence,...
     'info.tem.spinup.flags.recycleMSC', true,...
     'info.tem.spinup.flags.saveSpinup', false,...
     'info.tem.forcing.oneDataPath',inpath,...
     'info.experiment.outputDirPath',outpath,...
     'info.experiment.name',testName,...
-    'info.opti.constraints.oneDataPath',inpath...
+    'info.opti.constraints.oneDataPath',obspath...
     );
 
 [f_opt,fe_opt,fx_opt,s_opt,d_opt,p_opt,precOnceData_opt,info_opt,...
@@ -44,5 +72,34 @@ zSequence   = struct(...
     'info.tem.forcing.oneDataPath',inpath,...
     'info.experiment.outputDirPath',outpath,...
     'info.experiment.name',testName,...
-    'info.opti.constraints.oneDataPath',inpath...
+    'info.opti.constraints.oneDataPath',obspath...
     );
+
+
+%% FIGURES
+fig_outDirPath=[info_def.experiment.outputDirPath 'testResults/' testName];
+mkdir(fig_outDirPath)
+fNamesf=fields(f_def);
+fNamesfx=fields(fx_def);
+fNamesd=fields(d_def.storedStates);
+
+% handles vs generated code
+for fn = 1:numel(fNamesf)
+    figure('Visible', 'off')
+    mk121s(nanmean(f_def.(fNamesf{fn}),1),nanmean(f_opt.(fNamesf{fn}),1),['default'],['optimized'],'LineWidth',2,'marker','o')
+    title(['forcing: all time steps ' fNamesf{fn}])
+    save_gcf(gcf,[fig_outDirPath '/forcing_' fNamesf{fn} '_default_vs_optimized_' testName],1,1)
+end
+for fn = 1:numel(fNamesfx)
+    figure('Visible', 'off')
+    mk121s(nanmean(fx_def.(fNamesfx{fn}),1),nanmean(fx_opt.(fNamesfx{fn}),1),['default'],['optimized'],'LineWidth',2,'marker','o')
+    title(['flux: all time steps ' fNamesfx{fn}])
+    save_gcf(gcf,[fig_outDirPath '/fluxes_' fNamesfx{fn} '_default_vs_optimized_wCycle_Forward'],1,1)
+end
+for fn = 1:numel(fNamesd)
+    figure('Visible', 'off')
+    mk121s(nanmean(d_def.storedStates.(fNamesd{fn}),1),nanmean(d_opt.storedStates.(fNamesd{fn}),1),['default'],['optimized'],'LineWidth',2,'marker','o')
+    title(['diagnostic stored states: all time steps ' fNamesd{fn}])
+    save_gcf(gcf,[fig_outDirPath '/diagnostics_' fNamesd{fn} '_default_vs_optimized_' testName],1,1)
+end
+

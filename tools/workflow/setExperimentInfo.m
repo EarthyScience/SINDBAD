@@ -1,22 +1,11 @@
 function info   =	setExperimentInfo(info)
 
 [info.experiment.usedVersion,~]     =   system('git rev-parse HEAD');
-if ismac
-    
-    info.experiment.userName        =   getenv('USER');
-    info.experiment.machine         =   getenv('HOSTNAME');
-    
-elseif isunix
-    
-    info.experiment.userName        =   getenv('USER');
-    info.experiment.machine         =   getenv('HOST');
 
-else
-    
-    info.experiment.userName        =   getenv('username');
-    info.experiment.machine         =   getenv('computername');
+[userName, machineName]             =   getUserInfo();
+info.experiment.userName            =   userName;
+info.experiment.machine             =   machineName;
 
-end
 tmpStrDate                          =   datestr(now,30);
 
 info.experiment.runDate             =   tmpStrDate(1:end-7);
