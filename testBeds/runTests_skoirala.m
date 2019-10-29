@@ -1,6 +1,6 @@
 % a script to run the diagnostic tests of SINDBAD when new developments
 % have been made and a merge request is being subnitted.
-% In order to maintain backward compaatibility of the model, The merge request will only be handled ONLY when these tests are successfully
+% In order to maintain backward compaatibility of the model, The merge request will be handled ONLY when these tests are successfully
 % run.
 %
 %% case 1:
@@ -9,53 +9,68 @@
 % - Runs: Explicit, Impicit, and Reduced Explicit modes of spinup for CASA
 % and simple model structure
 % - Produces: Figures comparing each of these version.
-% - Outcomes: 
+% - Outcomes:
 %   - 1:1 results of carbon storages for explicit vs reduced explicit for both CASA and simple
-%   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple 
+%   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple
 %
 %% case 2:
 % - Domain: An example fluxnet site
 % - Purpose: to test if optimization of the carbon cycle is running
-% - Runs: the model and optimizes with cmaes for 20 iterations. 
+% - Runs: the model and optimizes with cmaes for 20 iterations.
 % - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
-% - Outcomes: 
-%   - none
+% - Outcomes:
+%   - figures comparing the fields of f, fx, and d.StoredStates. for
+%   default and parameters at the end of optimization
+%   - all the variables that are not affected by the optimized parameters
+%   should be on 1:1 line
+%   - carbon cycle variables should divert from 1:1 line (e.g., cRa, cEco,
+%   RECO, RA,RH, NPP, gpp)
+%   - indirectly tests if the implicit spinup of carbon cycle is running
 %
-%% case 2:
-% - Domain: An example fluxnet site
-% - Purpose: to test if optimization of the carbon cycle is running
-% - Runs: the model and optimizes with cmaes for 20 iterations. 
-% - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
-% - Outcomes: 
-%   - none
+%% case 3:
+% - Domain: 1000 grids in the northern hemisphere
+% - Purpose: to test if water cycle model is running
+% - Runs: generated code, handles, and generated code with reduced memory arrays
+% - Produces: figures comparing the fields of f, fx, and d.StoredStates.
+% - Outcomes:
+%   - 1:1 results of all compared fields.
 
 %% clean the path and memory
 try
     gone
+    
+    for fn = {'tools','model','optimization','testBeds'}
+        rmpath(genpath(['../../' fn{1}]),'-begin')
+    end
 catch
 end
 
 %% add the paths of the necessary sindbad directories
 
-for fn = {'tools','model','optimization'}
-    addpath(genpath(['../../' fn{1}]),'-begin')
+for fn = {'tools','model','optimization','testBeds'}
+    addpath(genpath(['../' fn{1}]),'-begin')
 end
 
+testCases = [1 2 3];
 %% run the different tests
-for i = [1 2 3]
+for i = testCases
     switch i
-        case 1 % setup explicit spinup
-            %                     testName        = 'cCycleSpinup';
+        case 1
             outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
             inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
+            obspath='';
             testName='cCycleSpinup';
-        case 2 % setup explicit spinup - using reduced code version for spin up
+        case 2
             outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
             inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+            obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
             testName='cCycleOpti';
-        case 3 % implicit spin up
+        case 3
             outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
             inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
             testName='wCycleForward';
+            obspath='';
     end
+    evalStr = ['test_' testName '(''' char(inpath) ''',''' char(outpath) ''',''' obspath ''',''' char(testName) ''')']
+    eval(evalStr);
 end

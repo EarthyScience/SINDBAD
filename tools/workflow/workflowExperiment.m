@@ -141,23 +141,23 @@ if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
             [~] = writeOutput(info,f,fe,fx,s,d,p);
         end
         
-    % do simulations for entire time series   
+        % do simulations for entire time series
     else
         
-[f,fe,fx,s,d,info]                          =   prepTEM(info);
-
-    % start log file content
-    disp(pad('-',200,'both','-'))
-    disp(pad(['Forward run SINDBAD model with ' paramType ' parameters'],200,'both',' '))
-    disp(pad('-',200,'both','-'))
-    % end log file content
+        [f,fe,fx,s,d,info]                          =   prepTEM(info);
+        
+        % start log file content
+        disp(pad('-',200,'both','-'))
+        disp(pad(['Forward run SINDBAD model with ' paramType ' parameters'],200,'both',' '))
+        disp(pad('-',200,'both','-'))
+        % end log file content
+        
+        [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,[],[],fx,fe,d,s);
+    end
     
-    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,[],[],fx,fe,d,s);
 end
 
-end
 
- 
 %% ----------------------------------------------------------------------------------------
 % Optimize the model and then do the forward run using optimized parameter when opti is on
 % -----------------------------------------------------------------------------------------
