@@ -1,0 +1,54 @@
+% a script to run the diagnostic tests of SINDBAD when new developments
+% have been made and a merge request is being subnitted.
+% In order to maintain backward compaatibility of the model, The merge request will only be handled ONLY when these tests are successfully
+% run.
+%
+%% case 1:
+% - Domain: NH random 25 grid cells
+% - Purpose: to test if the carbon cycle spin ups are running
+% - Runs: Explicit, Impicit, and Reduced Explicit modes of spinup for CASA
+% and simple model structure
+% - Produces: Figures comparing each of these version.
+% - Outcomes: 
+%   - 1:1 results of carbon storages for explicit vs reduced explicit for both CASA and simple
+%   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple 
+
+%% case 2:
+% - Domain: An example fluxnet site
+% - Purpose: to test if optimization of the carbon cycle is running
+% - Runs: the model and optimizes with cmaes for 20 iterations. Does not
+% produce the 
+% - Produces: Figures comparing each of these version.
+% - Outcomes: 
+%   - 1:1 results of carbon storages for explicit vs reduced explicit for both CASA and simple
+%   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple 
+
+try
+    gone
+catch
+end
+
+%% add the paths of the necessary sindbad directories
+
+for fn = {'tools','model','optimization'}
+    addpath(genpath(['../../' fn{1}]),'-begin')
+end
+
+%% run the different tests
+for i = [1 2 3]
+    switch i
+        case 1 % setup explicit spinup
+            %                     testName        = 'cCycleSpinup';
+            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
+            testName='cCycleSpinup';
+        case 2 % setup explicit spinup - using reduced code version for spin up
+            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+            testName='cCycleOpti';
+        case 3 % implicit spin up
+            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
+            testName='wCycleForward';
+    end
+end

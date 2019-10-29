@@ -29,7 +29,7 @@ function [ fSU, infoSU] = readSpinupForcingTWS(info)
 
 %% Path of the TWS Paper spin up
 
-DataPath = '/Net/Groups/BGI/work_3/sindbad/data/testBeds/TWS_NH/CalibrationTWSPaper_ForcingSpinUp.mat';
+DataPath = '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_ForcingSpinUp.mat';
 % DataPath = convertToFullPaths(info, DataPath);
 
 % OR assuming that the spin up data is in the same folder as the forcing

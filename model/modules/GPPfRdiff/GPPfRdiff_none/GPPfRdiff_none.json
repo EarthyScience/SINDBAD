@@ -1,8 +1,8 @@
 {
 	"params": {
 		"rue": {
-			"Name": NaN,
-			"Unit": NaN,
+			"Name": "",
+			"Unit": "",
 			"Default": 2,
 			"LowerBound": 0.1,
 			"UpperBound": 5,

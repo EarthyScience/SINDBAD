@@ -74,7 +74,7 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using an experiment configuration file: ' expConfigFile])
     disp(pad('-',200,'both','-'))
     
-    exp_json                    =   readJsonFile(expConfigFile);
+    exp_json                    =  readJsonFile(expConfigFile);
     exp_json_fn                 =  fields(exp_json);
     for exp = 1:numel(exp_json_fn)
         info.experiment.(exp_json_fn{exp}) = exp_json.(exp_json_fn{exp});
