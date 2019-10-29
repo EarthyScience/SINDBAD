@@ -10,20 +10,14 @@ function test_wCycleForward(inpath,outpath,obspath,testName)
 % end
 
 if isempty(inpath)
-    inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
-    disp(['empty inpath using default:' inpath])
+    disp(['empty' 'inpath using default'])
+inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
 else
-    disp(['user defined inpath:' inpath])
+    disp('user defined inpath;
 end
 
-if isempty(outpath)
     [uname,~] = getUserInfo();
-    outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
-    disp(['empty outpath using default:' outpath])
-else
-    disp(['user defined outpath:' outpath])
-end
-
+% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
 % 
 % testName='wCycleForward';
 %% provide an experiment configuration file
