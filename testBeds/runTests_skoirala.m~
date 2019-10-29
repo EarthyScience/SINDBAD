@@ -14,6 +14,7 @@
 %   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple
 %
 %% case 2:
+% - overview: optimize carbon cycle parameters f a fluxnet site
 % - Domain: An example fluxnet site
 % - Purpose: to test if optimization of the carbon cycle is running
 % - Runs: the model and optimizes with cmaes for 20 iterations.
@@ -28,6 +29,7 @@
 %   - indirectly tests if the implicit spinup of carbon cycle is running
 %
 %% case 3:
+% - overview: forward run water cycle in the northen hemisphere
 % - Domain: 1000 grids in the northern hemisphere
 % - Purpose: to test if water cycle model is running
 % - Runs: generated code, handles, and generated code with reduced memory arrays
@@ -50,24 +52,44 @@ end
 for fn = {'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
+NonDefInp = falsee;
+if NonDefInp == 1
+    indir = './tmp';
+else
+    indir = '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
+end
+NonDefOut = true;
+if NonDefOut == 1
+    outpath = './t';
+else
+    outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+end
 
+testCases = [1 2 3];
 testCases = [3];
 %% run the different tests
 for i = testCases
     switch i
         case 1
-            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
+            outpath=outpath;
+            inpath=[indir filesep 'NH_25.mat'];
+            obspath='';
             testName='cCycleSpinup';
-            [~]=test_cCycleSpinp(inpath,outpath,tes
         case 2
-            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
-            obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+            outpath=outpath;
+            inpath=[indir filesep 'US-Ha1.2000-2015.nc'];
+            obspath=inpath;
+%             outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+%             inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
+%             obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
             testName='cCycleOpti';
         case 3
-            outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-            inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
+            outpath=outpath;
+            inpath=[indir filesep 'CalibrationTWSPaper_Forcing.mat'];
+            obspath='';
             testName='wCycleForward';
+
     end
+    evalStr = ['test_' testName '(''' char(inpath) ''',''' char(outpath) ''',''' obspath ''',''' char(testName) ''')']
+    eval(evalStr);
 end
