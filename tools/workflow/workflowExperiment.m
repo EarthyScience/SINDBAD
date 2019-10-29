@@ -188,7 +188,7 @@ if info.tem.model.flags.runOpti
     end
     
     % save the optimized parameters as a json
-    [paramFile] = writeParamsJson(info, p);
+    [paramFile] = saveOptimizedParams(info, p);
     disp([pad('optimized parameter values are saved in a .json file',30) ' : ' paramFile])
  
     % start log file content
@@ -244,10 +244,10 @@ else
     disp([pad('info (.json) not saved',30)])
 end
 
-% % save the info as mat file
-% save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
-% disp([pad('full version of info (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
-% 
+% save the info as mat file
+save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
+disp([pad('full version of info (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
+
 % % save the f as mat file
 % save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')
 % disp([pad('forcing data (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'])
@@ -322,5 +322,5 @@ disp(pad('-',200,'both','-'))
 % end log file content
 
 diary
-%movefile(tmpLogFile,info.experiment.modelrunLogFile)
+movefile(tmpLogFile,info.experiment.modelrunLogFile)
 end

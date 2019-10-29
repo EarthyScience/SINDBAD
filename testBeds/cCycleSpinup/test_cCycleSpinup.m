@@ -12,7 +12,6 @@ end
 %% Input and output path for the cCycle tests
 outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
 inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
-
 testName='cCycleSpinup';
 
 
@@ -66,7 +65,7 @@ saveLongStates  = true;
 for NI2E = [21]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
-        expConfigFile               =   ['testBeds/runcCycle/settings_runcCycle/experiment_cCycle_' cCycleModel{:} '.json'];
+        expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '.json'];
         for i = [3 1 2]
             switch i
                 case 1 % setup explicit spinup
