@@ -8,7 +8,6 @@ function test_wCycleForward(inpath,outpath,obspath,testName)
 % for fn = {'tools','model','optimization'}
 %     addpath(genpath(['../../' fn{1}]),'-begin')
 % end
-
 if isempty(inpath)
     inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
     disp(['empty inpath using default:' inpath])
