@@ -50,7 +50,7 @@
 try
     gone
     for fn              =	{'tools','model','optimization','testBeds'}
-        rmpath(genpath(['../../' fn{1}]))
+        rmpath(genpath(['../../../' fn{1}]))
     end
 catch
 end
@@ -58,7 +58,7 @@ end
 %% add the paths of the necessary sindbad directories
 
 for fn                  =	{'tools','model','optimization','testBeds'}
-    addpath(genpath(['../' fn{1}]),'-begin')
+    addpath(genpath(['../../../' fn{1}]),'-begin')
 end
 
 %% set the paths of input and output directory for the tests
@@ -74,7 +74,7 @@ userOutPath             =   '';
 % to a local directory. NEVER COPY IT TO SINDBAD ROOT
 % set the userOutPath to save the output to any directory. In this case
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
-
+% 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
 
@@ -95,7 +95,7 @@ end
 
 %% select the tests to run (see explanations at the beginning of this script)
 testCases               =   [1 2 3 4];
-testCases             =   [3];
+testCases             =   [1 2];
 
 %% run the different tests
 for i                   =   testCases
@@ -103,11 +103,16 @@ for i                   =   testCases
         case 1
             inpath      =   [inDir filesep 'NH_25.mat'];
             obspath     =   '';
-            testName    =   'cCycleSpinup';
+            modelSet    =   'cCycle';
+            testName    =   'genCode';
+            domainName      =   'NH';
+%             testName    =   'cCycleSpinup';
         case 2
             inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
             obspath     =   inpath;
-            testName    =   'cCycleOpti';
+            modelSet    =   'wCycle';
+            testName    =   'genCode';
+            domainName      =   'US-Ha1';
         case 3
             inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
             obspath     =   '';
@@ -119,6 +124,7 @@ for i                   =   testCases
             
             
     end
-    evalStr             =   ['test_' testName '(''' char(inpath) ''',''' char(outDir) ''',''' obspath ''',''' char(testName) ''');'];
+    expConfigFile       =   ['testBeds/testSettings/' modelSet '/experiment_' modelSet '.json'];
+    evalStr             =   ['test_' testName '(''' expConfigFile ''',''' char(inpath) ''',''' char(outDir) ''',''' obspath ''',''' char(testName) ''',''' char(domainName) ''');'];
     eval(evalStr);
 end

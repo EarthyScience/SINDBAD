@@ -82,6 +82,8 @@ disp(pad('-',200,'both','-'))
 %% ----------------------------------------------------------------------------------------------------------
 % include changes from command line in info & setup the optimization if it's on or if costs shall be computed
 % -----------------------------------------------------------------------------------------------------------
+% change the commanline options before settings up the code
+[info]                                  =   editTEMInfo(info,varargin{:});
 
 if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
     
