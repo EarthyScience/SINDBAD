@@ -1,19 +1,7 @@
 function test_cCycleSpinup(inpath,outpath,obspath,testName)
 % a script to run an experiment to optimize one fluxnet site
-if isempty(inpath)
-    inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
-    disp(['empty inpath using default:' inpath])
-else
-    disp(['user defined inpath:' inpath])
-end
-
-if isempty(outpath)
-    [uname,~] = getUserInfo();
-    outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
-    disp(['empty outpath using default:' outpath])
-else
-    disp(['user defined outpath:' outpath])
-end
+% [uname,~] = getUserInfo();
+% outpath=[outpath filesep uname];
 
 % % workflow for debugging the casa with full carbon cycle to optimize one fluxnet site
 % try

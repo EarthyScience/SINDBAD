@@ -74,9 +74,9 @@ userOutPath             =   '';
 % to a local directory. NEVER COPY IT TO SINDBAD ROOT
 % set the userOutPath to save the output to any directory. In this case
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
-% 
-% userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-% userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
+
+userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
 
 
 if isempty(userInPath)
@@ -95,7 +95,7 @@ end
 
 %% select the tests to run (see explanations at the beginning of this script)
 testCases               =   [1 2 3 4];
-% testCases             =   [3];
+testCases             =   [3];
 
 %% run the different tests
 for i                   =   testCases
