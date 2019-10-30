@@ -1,27 +1,7 @@
 function test_wCycleForward(inpath,outpath,obspath,testName)
-% try
-%     gone
-% catch
-% end
-% 
-% %% setup paths
-% for fn = {'tools','model','optimization'}
-%     addpath(genpath(['../../' fn{1}]),'-begin')
-% end
 
-if isempty(inpath)
-    disp(['empty' 'inpath using default'])
-inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/CalibrationTWSPaper_Forcing.mat';
-else
-    disp('user defined inpath;
-end
-
-    [uname,~] = getUserInfo();
-% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
-% 
-% testName='wCycleForward';
 %% provide an experiment configuration file
-expConfigFile               =   ['testBeds/wCycleForward/settings_wCycleForward/experiment_' testName '.json'];
+expConfigFile               =   ['testBeds/' testName '/settings_' testName '/experiment_' testName '.json'];
 
 %% run the experiment
 % generated code and reduced memory array

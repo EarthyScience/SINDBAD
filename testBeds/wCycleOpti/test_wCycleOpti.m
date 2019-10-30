@@ -1,0 +1,79 @@
+function test_wCycleOpti(inpath,outpath,obspath,testName)
+    %
+    %  %% setup paths
+    % for fn = {'tools','model','optimization'}
+    %     addpath(genpath(['../../' fn{1}]),'-begin')
+    %     addpath(genpath('../../sandbox/sb_Tina'))
+    % end
+    %
+    % % global optimization - baseline variant 1
+    % inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/globalTWS_Forcing.mat';
+    % obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/globalBaseline_Constraints_1deg.mat';
+    % testName='wCycleOpti';
+    % [uname,~] = getUserInfo();
+    % outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+    
+%     [uname,~] = getUserInfo();
+%     outpath=[outpath filesep uname];
+    
+    %% provide an experiment configuration file
+    expConfigFile               =   ['testBeds/wCycleOpti/settings_wCycleOpti/experiment_' testName '.json'];
+    
+    % run the experiment without opti
+    [f_tws,fe_tws,fx_tws,s_tws,d_tws,p_tws,precOnceData_tws,info_tws,...
+        fSU_tws,feSU_tws,fxSU_tws,sSU_tws,dSU_tws,precOnceDataSU_tws,infoSU_tws,obs_tws,cost_tws] =...
+        workflowExperiment(expConfigFile,...
+        'info.tem.model.flags.runOpti', false,...
+        'info.tem.model.flags.calcCost',true,...
+        'info.tem.spinup.flags.recycleMSC', true,...
+        'info.tem.spinup.flags.saveSpinup', false,...
+        'info.tem.forcing.oneDataPath',inpath,...
+        'info.experiment.outputDirPath',outpath,...
+        'info.experiment.name',testName,...
+        'info.opti.constraints.oneDataPath',obspath...
+        );%,...
+    
+    % run the experiment with opti
+    [f_opt,fe_opt,fx_opt,s_opt,d_opt,p_opt,precOnceData_opt,info_opt,...
+        fSU_opt,feSU_opt,fxSU_opt,sSU_opt,dSU_opt,precOnceDataSU_opt,infoSU_opt,obs_opt,cost_opt] =...
+        workflowExperiment(expConfigFile,...
+        'info.tem.model.flags.runOpti', true,...
+        'info.tem.model.flags.calcCost',false,...
+        'info.tem.spinup.flags.recycleMSC', true,...
+        'info.tem.spinup.flags.saveSpinup', false,...
+        'info.tem.forcing.oneDataPath',inpath,...
+        'info.experiment.outputDirPath',outpath,...
+        'info.experiment.name',testName,...
+        'info.opti.constraints.oneDataPath',obspath...
+        );%,...
+    
+    fig_outDirPath=[info_tws.experiment.outputDirPath 'testResults/' testName];
+    mkdir(fig_outDirPath)
+    fNamesf=fields(f_tws);
+    fNamesfx=fields(fx_tws);
+    fNamesd=fields(d_tws.storedStates);
+    
+    % handles vs generated code
+    for fn = 1:numel(fNamesf)
+        figure('Visible', 'off')
+        mk121s(nanmean(f_tws.(fNamesf{fn}),1),nanmean(f_opt.(fNamesf{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        title(['forcing: all time steps ' fNamesf{fn}])
+        save_gcf(gcf,[fig_outDirPath '/forcing_' fNamesf{fn} '_twsault_vs_optimized_' testName],1,1)
+    end
+    for fn = 1:numel(fNamesfx)
+        figure('Visible', 'off')
+        mk121s(nanmean(fx_tws.(fNamesfx{fn}),1),nanmean(fx_opt.(fNamesfx{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        title(['flux: all time steps ' fNamesfx{fn}])
+        save_gcf(gcf,[fig_outDirPath '/fluxes_' fNamesfx{fn} '_twsault_vs_optimized_wCycle_Forward'],1,1)
+    end
+    for fn = 1:numel(fNamesd)
+        figure('Visible', 'off')
+        mk121s(nanmean(d_tws.storedStates.(fNamesd{fn}),1),nanmean(d_opt.storedStates.(fNamesd{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        title(['diagnostic stored states: all time steps ' fNamesd{fn}])
+        save_gcf(gcf,[fig_outDirPath '/diagnostics_' fNamesd{fn} '_twsault_vs_optimized_' testName],1,1)
+    end
+    
+end
+
+
+

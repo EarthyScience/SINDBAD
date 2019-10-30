@@ -99,10 +99,10 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-    [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge to surface water storages
+    [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge to surface water storages
     [f,fe,fx,s,d,p]     =   ms.QsurfDir.funHandle(f,fe,fx,s,d,p,info,tix);          % direct surface runoff
     [f,fe,fx,s,d,p]     =   ms.QsurfIndir.funHandle(f,fe,fx,s,d,p,info,tix);        % runoff from surface water storages
-    [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the groundwater
+    [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater
     [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
     [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)

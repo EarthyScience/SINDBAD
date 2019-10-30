@@ -1,0 +1,10 @@
+{
+		"SpatialScale": NaN,
+		"Tolerances": {
+			"TWS": 0.1,
+			"SWE": 0.1,
+			"SM": 0.1,
+			"ET": 0.1,
+			"Q": 0.1
+		}
+}

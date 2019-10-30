@@ -10,7 +10,7 @@
 			"funHandleStop": 		"",
 			"funAddInputs": 		[true,true,false],
 			"comment":				"doPrecOnce,doCore,doSpinUp",
-			"nLoops": 2
+			"nLoops": 1
 		}
 
 	],
@@ -33,7 +33,6 @@
 		"recycleMSC": 				true,
 		"runSpinup": 				true,
 		"loadSpinup": 				false,
-		"saveSpinup": 				false,
-		"storeFullSpinupStates":	false
+		"saveSpinup": 				false
 	}
 }

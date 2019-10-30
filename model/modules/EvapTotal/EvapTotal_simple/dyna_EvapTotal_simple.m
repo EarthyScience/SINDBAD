@@ -3,6 +3,7 @@ function [f,fe,fx,s,d,p] = dyna_EvapTotal_simple(f,fe,fx,s,d,p,info,tix)
     
 %%
 etComps=info.tem.model.variables.to.sum.ET;
+fx.ET(:,tix)=0;
 
 for ws = 1:numel(etComps)
     etComp=etComps{ws};

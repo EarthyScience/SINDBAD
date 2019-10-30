@@ -3,20 +3,20 @@
 	"2.c":			"sum.ET: ET components. All should be fields of fx",
 	"variables":
     {
-	"to":
+		"to":
         {
-			"write":     ["fx.ET","fx.EvapSoil","fx.EvapInt",
-							"fx.Q","fx.Qb",
-							"d.storedStates.wTWS","d.storedStates.wSoil","d.storedStates.wGW"],
-			"store":     ["s.w.wSoil","s.wd.wTWS","s.wd.WBP","s.w.wGW"],
+			"write":     ["fx.ET","fx.EvapSoil","fx.Transp","fx.EvapInt","fx.EvapSub",
+							"fx.Q","fx.QsurfIndir","fx.QoverFlow","fx.QsurfDir",
+							"d.storedStates.wTWS","d.storedStates.wSoil","d.storedStates.wSurf","d.storedStates.wSnow"],
+			"store":     ["s.w.wSnow","s.w.wSurf","s.w.wSoil","s.wd.WBP","s.wd.wTWS"],
 			"sum":
 			{
 				"1.c":			"sum.Q: Runoff components. All should be fields of fx",
-				"Q": 			["Qb","QsurfDir","QsurfIndir"],
+				"Q": 			["QsurfDir","QsurfIndir"],
 				"2.c":			"sum.ET: ET components. All should be fields of fx",
 				"ET": 			["EvapSoil","EvapInt","Transp"]
-			}
 		}
+	}
 	},
 	"dataFormat": 			".nc",
 	"inputRef": 		"Tair"

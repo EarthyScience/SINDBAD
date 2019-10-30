@@ -1,22 +1,25 @@
-% workflow for debugging the casa with full carbon cycle to optimize one fluxnet site
-try
-    gone
-catch
-end
+function test_cCycleSpinup(inpath,outpath,obspath,testName)
+% a script to run an experiment to optimize one fluxnet site
+% [uname,~] = getUserInfo();
+% outpath=[outpath filesep uname];
 
-%% setup working paths
-for fn = {'tools','model','optimization'} %,'sandbox/testBergBasic/','data/input/testInput_TWSmodel/'}
-    addpath(genpath(['../../' fn{1}]),'-begin')
-end
-
-%% Input and output path for the cCycle tests
-[uname,~] = getUserInfo();
-
-outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
-
-outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
-testName='cCycleSpinup';
+% % workflow for debugging the casa with full carbon cycle to optimize one fluxnet site
+% try
+%     gone
+% catch
+% end
+% 
+% %% setup working paths
+% for fn = {'tools','model','optimization'} %,'sandbox/testBergBasic/','data/input/testInput_TWSmodel/'}
+%     addpath(genpath(['../../' fn{1}]),'-begin')
+% end
+% 
+% %% Input and output path for the cCycle tests
+% [uname,~] = getUserInfo();
+% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+% % outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+% inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
+% testName='cCycleSpinup';
 
 
 %% go for the spinup
