@@ -1,0 +1,134 @@
+{
+	"1.c": 					"Model Structure of the baseline model variant 1 (1 soil water storage)",
+	"2.c":					" ",
+
+	"paths":
+	{
+		"coreTEM":  		"model/core/coreTEM.m",
+		"modulesDir": 		"model/modules/"
+	},
+
+	"modules":
+	{
+		"getStates":
+		{
+			"apprName": 	"getStates_simple",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"storeStates":
+		{
+			"apprName": 	"storeStates_simple",
+			"runFull": 		true,
+			"comment": 		"This may never be changed",
+            "use4spinup":   true
+		},
+		"pVeg":
+		{
+			"apprName": 	"pVeg_vegFrac",
+			"runFull": 		false,
+						"use4spinup":   false
+		},
+
+		"wSnowFrac":
+		{
+			"apprName": 	"wSnowFrac_scaleSFHTESSEL",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"EvapSub":
+		{
+			"apprName": 	"EvapSub_GLEAM",
+			"runFull": 		false,
+						"use4spinup":   false
+		},
+		"Qsnow":
+		{
+			"apprName": 	"Qsnow_TRn",
+			"runFull": 		false,
+						"use4spinup":   false
+		},
+
+		"EvapInt":
+		{
+			"apprName": 	"EvapInt_simple2",
+			"runFull": 		false,
+						"use4spinup":   false
+		},
+		"QoverFlow":
+		{
+			"apprName": 	"QoverFlow_Bergstroem",
+			"runFull": 		true,
+			"use4spinup":   true
+		},
+		"wSurfRec":
+		{
+			"apprName": 	"wSurfRec_fraction",
+			"runFull": 		true,
+						"use4spinup":   true
+		},
+		"QsurfIndir":
+		{
+			"apprName": 	"QsurfIndir_simple",
+			"runFull": 		true,
+						"use4spinup":   true
+		},
+
+		"EvapSoil":
+		{
+			"apprName": 	"EvapSoil_bare",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+
+		"TranfwSoil":
+		{
+			"apprName": 	"TranfwSoil_simple",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"wTotal":
+		{
+			"apprName": 	"wTotal_simple",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"QTotal":
+		{
+			"apprName": 	"QTotal_simple",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"EvapTotal":
+		{
+			"apprName": 	"EvapTotal_simple",
+			"runFull": 		false,
+            "use4spinup":   true
+		}
+
+	},
+	"states":
+	{
+		"w":
+		{
+			"pools" :
+			[
+				["w.Surf", 		1, 	"zeros"],
+				["w.Soil", 		2, 	"zeros"],
+				["w.Buf", 		1, 	"zeros"],
+				["w.GW", 		1, 	"zeros"],
+				["w.Snow", 		1, 	"zeros"]
+			],
+			"combine":		[false,"wPools","zeros"]
+		},
+		"wd":
+		{
+			"pools" :
+			[
+				["WTD", 		1, 	"zeros"],
+				["w.SnowFrac", 	1, 	"zeros"]
+			],
+			"combine":		[false,"wStates","zeros"]
+		}
+	}
+}

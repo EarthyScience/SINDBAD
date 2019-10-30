@@ -40,7 +40,7 @@ for ws = 1:numel(wStorages)
     wTotal = wTotal + sComp;
     
 end
-s.wd.wTotal = wTotal ; 
+s.wd.wTWS = wTotal ; 
 % s.wd.totalW.wTWS = sum(s.w.wSoil,2) + s.w.wSurf;
 
 

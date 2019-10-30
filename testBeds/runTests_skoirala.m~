@@ -29,9 +29,18 @@
 %   - indirectly tests if the implicit spinup of carbon cycle is running
 %
 %% case 3:
-% - overview: forward run water cycle in the northen hemisphere
+% - overview: forward run water cycle
 % - Domain: 1000 grids in the northern hemisphere
 % - Purpose: to test if water cycle model is running
+% - Runs: generated code, handles, and generated code with reduced memory arrays
+% - Produces: figures comparing the fields of f, fx, and d.StoredStates.
+% - Outcomes:
+%   - 1:1 results of all compared fields.
+%
+%% case 4:
+% - overview: optimization of the water cycle
+% - Domain: 1000 grids in global
+% - Purpose: to test if the optimization of the water cycle model is running
 % - Runs: generated code, handles, and generated code with reduced memory arrays
 % - Produces: figures comparing the fields of f, fx, and d.StoredStates.
 % - Outcomes:
@@ -40,56 +49,76 @@
 %% clean the path and memory
 try
     gone
-    
-    for fn = {'tools','model','optimization','testBeds'}
-        rmpath(genpath(['../../' fn{1}]),'-begin')
+    for fn              =	{'tools','model','optimization','testBeds'}
+        rmpath(genpath(['../../' fn{1}]))
     end
 catch
 end
 
 %% add the paths of the necessary sindbad directories
 
-for fn = {'tools','model','optimization','testBeds'}
+for fn                  =	{'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
-NonDefInp = falsee;
-if NonDefInp == 1
-    indir = './tmp';
+
+%% set the paths of input and output directory for the tests
+% the path for the input and output as empty
+% default input path is used (runs in cluster): /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/
+% default output path is used (runs in cluster):
+% /Net/Groups/BGI/work_3/sindbad/data/testBeds/output/$userName
+userInPath              =   '';
+userOutPath             =   '';
+
+% Alternatively set the path for the input and output (for local runs)
+% copy the test input: /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/
+% to a local directory. NEVER COPY IT TO SINDBAD ROOT
+% set the userOutPath to save the output to any directory. In this case
+% $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
+
+userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
+
+
+if isempty(userInPath)
+    inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
 else
-    indir = '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
-end
-NonDefOut = true;
-if NonDefOut == 1
-    outpath = './t';
-else
-    outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
+    inDir               =   userInPath;
 end
 
-testCases = [1 2 3];
-testCases = [3];
+if isempty(userOutPath)
+    outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
+    [uname,~]           =	getUserInfo();
+    outDir              =   [outDir filesep uname];
+else
+    outDir              =   userOutPath;
+end
+
+%% select the tests to run (see explanations at the beginning of this script)
+testCases               =   [1 2 3 4];
+% testCases             =   [4];
+
 %% run the different tests
-for i = testCases
+for i                   =   testCases
     switch i
         case 1
-            outpath=outpath;
-            inpath=[indir filesep 'NH_25.mat'];
-            obspath='';
-            testName='cCycleSpinup';
+            inpath      =   [inDir filesep 'NH_25.mat'];
+            obspath     =   '';
+            testName    =   'cCycleSpinup';
         case 2
-            outpath=outpath;
-            inpath=[indir filesep 'US-Ha1.2000-2015.nc'];
-            obspath=inpath;
-%             outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
-%             inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
-%             obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
-            testName='cCycleOpti';
+            inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
+            obspath     =   inpath;
+            testName    =   'cCycleOpti';
         case 3
-            outpath=outpath;
-            inpath=[indir filesep 'CalibrationTWSPaper_Forcing.mat'];
+            inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
             obspath='';
             testName='wCycleForward';
-
+        case 4
+            inpath=[inDir filesep 'globalTWS_Forcing.mat'];
+            obspath=[inDir filesep 'globalBaseline_Constraints_1deg.mat'];
+            testName='wCycleOpti';
+            
+            
     end
-    evalStr = ['test_' testName '(''' char(inpath) ''',''' char(outpath) ''',''' obspath ''',''' char(testName) ''')']
+    evalStr = ['test_' testName '(''' char(inpath) ''',''' char(outDir) ''',''' obspath ''',''' char(testName) ''');'];
     eval(evalStr);
 end
