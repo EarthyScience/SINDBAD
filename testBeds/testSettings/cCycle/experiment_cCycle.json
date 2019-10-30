@@ -1,0 +1,15 @@
+{
+	"name": "biomascat_Optimization_Gencode",
+	"domain": "US-Ha1",
+	"configFiles": {
+		"forcing"		: "testBeds/testSettings/cCycle/forcing.json",
+		"modelStructure": "testBeds/testSettings/cCycle/modelStructure.json",
+		"constants"		: "testBeds/testSettings/cCycle/constants.json",
+		"modelRun"		: "testBeds/testSettings/cCycle/modelRun.json",
+		"output"		: "testBeds/testSettings/cCycle/output.json",
+		"spinup"		: "testBeds/testSettings/cCycle/spinup.json",
+		"params"		: "testBeds/testSettings/cCycle/params.json",
+		"opti"			: "testBeds/testSettings/cCycle/opti.json"
+	},
+	"outputDirPath"	: "./data/output/"
+}
