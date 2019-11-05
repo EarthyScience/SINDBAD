@@ -1,7 +1,7 @@
 {
 	"costFun": {
 		"funName": "CostBaseline_Area",
- 		"nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_costs.json",
+ 		"nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_CostBaseline_Area.json",
 		"variables2constrain": ["TWS", "SWE", "SM", "ET", "Q"]
 	},
 	"algorithm": {

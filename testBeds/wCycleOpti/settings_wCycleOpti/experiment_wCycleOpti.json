@@ -6,9 +6,9 @@
 		"modelStructure": "testBeds/wCycleOpti/settings_wCycleOpti/modelStructure.json",
 		"constants"		: "testBeds/wCycleOpti/settings_wCycleOpti/constants.json",
 		"modelRun"		: "testBeds/wCycleOpti/settings_wCycleOpti/modelRun.json",
-		"output"			: "testBeds/wCycleOpti/settings_wCycleOpti/output.json",
-		"spinup"			: "testBeds/wCycleOpti/settings_wCycleOpti/spinup.json",
-		"params"			: "testBeds/wCycleOpti/settings_wCycleOpti/paramsTWSpaper.json",
+		"output"		: "testBeds/wCycleOpti/settings_wCycleOpti/output.json",
+		"spinup"		: "testBeds/wCycleOpti/settings_wCycleOpti/spinup.json",
+		"params"		: "testBeds/wCycleOpti/settings_wCycleOpti/paramsTWSpaper.json",
 		"opti"			: "testBeds/wCycleOpti/settings_wCycleOpti/opti.json"
 	},
 	"outputDirPath"	: "data/output/baselineTesting/BaselineCF/"

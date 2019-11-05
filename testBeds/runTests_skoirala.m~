@@ -41,16 +41,17 @@
 % - overview: optimization of the water cycle
 % - Domain: 1000 grids in global
 % - Purpose: to test if the optimization of the water cycle model is running
-% - Runs: generated code, handles, and generated code with reduced memory arrays
-% - Produces: figures comparing the fields of f, fx, and d.StoredStates.
+% - Runs: the model and optimizes with cmaes for 20 iterations.
+% - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
 % - Outcomes:
-%   - 1:1 results of all compared fields.
+%   - figures comparing the fields of f, fx, and d.StoredStates. for
+%   pre optimized parameter and parameters at the end of optimization
 
 %% clean the path and memory
 try
     gone
     for fn              =	{'tools','model','optimization','testBeds'}
-        rmpath(genpath(['../../../' fn{1}]))
+        rmpath(genpath(['../../' fn{1}]))
     end
 catch
 end
@@ -58,7 +59,7 @@ end
 %% add the paths of the necessary sindbad directories
 
 for fn                  =	{'tools','model','optimization','testBeds'}
-    addpath(genpath(['../../../' fn{1}]),'-begin')
+    addpath(genpath(['../' fn{1}]),'-begin')
 end
 
 %% set the paths of input and output directory for the tests
@@ -76,7 +77,7 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_full_delete';
 
 
 if isempty(userInPath)
@@ -95,7 +96,8 @@ end
 
 %% select the tests to run (see explanations at the beginning of this script)
 testCases               =   [1 2 3 4];
-testCases             =   [1 2];
+% testCases               =   [4];
+% testCases             =   [ 2 ];
 
 %% run the different tests
 for i                   =   testCases
@@ -103,16 +105,11 @@ for i                   =   testCases
         case 1
             inpath      =   [inDir filesep 'NH_25.mat'];
             obspath     =   '';
-            modelSet    =   'cCycle';
-            testName    =   'genCode';
-            domainName      =   'NH';
-%             testName    =   'cCycleSpinup';
+            testName    =   'cCycleSpinup';
         case 2
             inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
             obspath     =   inpath;
-            modelSet    =   'wCycle';
-            testName    =   'genCode';
-            domainName      =   'US-Ha1';
+            testName    =   'cCycleOpti';
         case 3
             inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
             obspath     =   '';
@@ -124,7 +121,6 @@ for i                   =   testCases
             
             
     end
-    expConfigFile       =   ['testBeds/testSettings/' modelSet '/experiment_' modelSet '.json'];
-    evalStr             =   ['test_' testName '(''' expConfigFile ''',''' char(inpath) ''',''' char(outDir) ''',''' obspath ''',''' char(testName) ''',''' char(domainName) ''');'];
+    evalStr             =   ['test_' testName '(''' char(inpath) ''',''' char(outDir) ''',''' obspath ''',''' char(testName) ''');'];
     eval(evalStr);
 end
