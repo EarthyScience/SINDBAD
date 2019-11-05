@@ -41,10 +41,14 @@
 % - overview: optimization of the water cycle
 % - Domain: 1000 grids in global
 % - Purpose: to test if the optimization of the water cycle model is running
-% - Runs: generated code, handles, and generated code with reduced memory arrays
-% - Produces: figures comparing the fields of f, fx, and d.StoredStates.
+% - Runs: the model with pre-optimized parameters and optimizes with cmaes for 10 iterations.
+% - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
 % - Outcomes:
-%   - 1:1 results of all compared fields.
+%   - figures comparing the fields of f, fx, and d.StoredStates. for
+%   pre optimized parameters and parameters at the end of optimization
+%   - all the variables that are not affected by the optimized parameters
+%   should be on 1:1 line
+%   - water cycle variables should divert from 1:1 line (e.g., ET, wTotal)
 
 %% clean the path and memory
 try
@@ -76,7 +80,7 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_3';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
 
 
 if isempty(userInPath)
@@ -97,6 +101,7 @@ end
 testCases               =   [1 2 3 4];
 % testCases               =   [4];
 % testCases             =   [ 2 ];
+% testCases             =   [ 4 ];
 
 %% run the different tests
 for i                   =   testCases
