@@ -1,0 +1,59 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                 START: Log of SINDBAD model experiment                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                       Set up the TEM of SINDBAD                                                                                        
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MOD EXPERIMENT       : setupTEM             | Running SINDBAD using an experiment configuration file: /home/skoirala/sindbad/rem-master/testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_CASA.json
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : getStates            | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : storeStates          | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cCycle               | approach: CASA
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cFlowAct             | approach: CASA
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cTauAct              | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPact               | approach: mult
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPdem               | approach: none
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPfwSoil            | approach: none
+CONFIG FIELMISS      : readConfiguration    | configuration file for params is missing in the experiment configuration
+EDIT INFO FIELD      : editInfoField        | info.tem.forcing.oneDataPath changed successfully to: '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat'
+EDIT INFO FIELD      : editInfoField        | info.experiment.outputDirPath changed successfully to: '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output'
+EDIT INFO FIELD      : editInfoField        | info.experiment.name changed successfully to: 'cCycleSpinup'
+WARN INFO EXCEPTION  : editInfoField        | Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!
+EDIT INFO FIELD      : editInfoField        | info.tem.spinup.flags.storeFullSpinupStates changed successfully to: 1
+EDIT INFO FIELD      : editInfoField        | info.tem.model.flags.genCode changed successfully to: 0
+EDIT INFO FIELD      : editInfoField        | info.tem.model.flags.runGenCode changed successfully to: 0
+EDIT INFO FIELD      : editInfoField        | info.tem.model.variables.to.store changed successfully to: {          's.w.wGW'           }{         's.w.wSnow'          }{         's.w.wSoil'          }{          's.c.cEco'          }{     's.cd.p_RAact_km4su'     }{        's.cd.cAlloc'         }{      's.cd.p_cTauAct_k'      }{     's.cd.p_cFlowAct_A'      }{     's.cd.p_cFlowAct_E'      }{     's.cd.p_cFlowAct_F'      }{    's.cd.p_cCycleBase_k'     }{   's.cd.p_cTaufLAI_kfLAI'    }{  's.cd.p_cTaufpSoil_kfSoil'  }{   's.cd.p_cTaufpVeg_kfVeg'   }{      'fe.cTaufTsoil.fT'      }{    'd.cTaufwSoil.fwSoil'     }
+EDIT INFO FIELD      : editInfoField        | info.tem.model.modules.cCycle.apprName changed successfully to: 'CASA'
+WARN PARAM FILEMISS  : adjustInfo           |  no parameter config file (json) existing for adjusted module : cCycle : approach: CASA
+{Operation terminated by user during <a href="matlab:matlab.internal.language.introspective.errorDocCallback('readJsonFile', '/home/skoirala/sindbad/rem-master/tools/utils/jsonio/readJsonFile.m', 31)" style="font-weight:bold">readJsonFile</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/tools/utils/jsonio/readJsonFile.m',31,0)">line 31</a>)
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('checkParamBounds', '/home/skoirala/sindbad/rem-master/tools/checks/checkParamBounds.m', 15)" style="font-weight:bold">checkParamBounds</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/tools/checks/checkParamBounds.m',15,0)">line 15</a>)
+        param_json    = readJsonFile(file_json);
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('adjustInfo', '/home/skoirala/sindbad/rem-master/tools/utils/editInfo/adjustInfo.m', 103)" style="font-weight:bold">adjustInfo</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/tools/utils/editInfo/adjustInfo.m',103,0)">line 103</a>)
+checkParamBounds(info)
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('editTEMInfo', '/home/skoirala/sindbad/rem-master/tools/workflow/editTEMInfo.m', 25)" style="font-weight:bold">editTEMInfo</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/tools/workflow/editTEMInfo.m',25,0)">line 25</a>)
+[info]          =   adjustInfo(info, tree);
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('workflowExperiment', '/home/skoirala/sindbad/rem-master/tools/workflow/workflowExperiment.m', 100)" style="font-weight:bold">workflowExperiment</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/tools/workflow/workflowExperiment.m',100,0)">line 100</a>)
+    [info]                                  =   editTEMInfo(info,varargin{:});
+
+
+In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('test_cCycleSpinup', '/home/skoirala/sindbad/rem-master/testBeds/cCycleSpinup/test_cCycleSpinup.m', 110)" style="font-weight:bold">test_cCycleSpinup</a> (<a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/testBeds/cCycleSpinup/test_cCycleSpinup.m',110,0)">line 110</a>)
+                obs5,cost5] = workflowExperiment(expConfigFile,...
+} 
+ls
+Log_SINDBAD_run_20191029.txt  settings_cCycleSpinup  test_cCycleSpinup.m
+
+cd ../cCycleOpti/
+test_cCycleOpti
+{Error: <a href="matlab: opentoline('/home/skoirala/sindbad/rem-master/testBeds/cCycleOpti/test_cCycleOpti.m',11,7)">File: test_cCycleOpti.m Line: 11 Column: 7
+</a>Unexpected MATLAB operator.
+} 
+opentoline('/home/skoirala/sindbad/rem-master/testBeds/cCycleOpti/test_cCycleOpti.m',11,7)
+test_cCycleOpti
