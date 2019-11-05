@@ -156,6 +156,12 @@
 			"apprName":		"GPPfRdir_none",
 			"runFull": 		false,
             "use4spinup":   false
+		},
+		"GPPfRdiff":
+		{
+			"apprName":		"GPPfRdiff_none",
+			"runFull": 		false,
+            "use4spinup":   false
 		},	
 		"GPPfTair":
 		{
