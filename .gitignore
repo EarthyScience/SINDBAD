@@ -3,3 +3,8 @@
 ./settings
 ./sandbox
 ./output
+*~
+*.swpi
+*.swo
+*.bak
+~             
