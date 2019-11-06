@@ -12,6 +12,14 @@
 
 	"modules": 
 	{
+		"keepStates": 
+		{
+			"apprName": 	"keepStates_simple",
+			"runFull": 		true,
+			"comment": 		"This may never be changed",
+            "use4spinup":   true
+		},
+
 		"getStates": 
 		{
 			"apprName": 	"getStates_simple",
@@ -121,6 +129,7 @@
 			"pools" : 
 			[
 				["WTD", 		1, 	"zeros"],
+				["w.TWS", 		1, 	"zeros"],
 				["w.SnowFrac", 	1, 	"zeros"]
 			],
 			"combine":		[false,"wStates","zeros"]

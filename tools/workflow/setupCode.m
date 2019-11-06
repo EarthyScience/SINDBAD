@@ -159,6 +159,7 @@ info.tem.model.code.variables.to.keepShortName                  =   keptVars_sho
 
 %--> variables to create: all outputs except s. and p.
 tf                                                              =   ~startsWith(AllOutputs,{'s.','p.'});
+
 info.tem.model.code.variables.to.create                         =   AllOutputs(tf);
 end
 %%
@@ -582,7 +583,7 @@ if isempty(keptVars)
     keptVars_longDestination    =   [];
     keptVars_short              =   [];
 else
-    keptVars_split              =   split(keptVars,'.');
+    keptVars_split              =   split(keptVars,'.',2);
     keptVars_short              =   keptVars_split(:,end);
     
     keptVars_longSource       =   keptVars_short;
@@ -844,16 +845,37 @@ function [fid]  =   writeStoreStates_simple(info,fid)
 %info.tem.model.code.variables.to.storeStatesDestination=storeStates_longDestination;
 
 
-cvars_source            =	info.tem.model.code.variables.to.keepSource;
-cvars_destination       =   info.tem.model.code.variables.to.keepDestination;
+cvars_source            =   info.tem.model.code.variables.to.storeStatesSource;
+cvars_destination       =   info.tem.model.code.variables.to.storeStatesDestination;
 
 for ii  =   1:length(cvars_source)
     sstr                =   [char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
     fprintf(fid, '%s\n', sstr);
 end
 
-cvars_source            =   info.tem.model.code.variables.to.storeStatesSource;
-cvars_destination       =   info.tem.model.code.variables.to.storeStatesDestination;
+
+end
+
+%%
+function [fid]  =   writeKeepStates_simple(info,fid)
+
+%%%%
+%s.prev.[shortName]
+%s.w.[]
+%s.wd.[]
+%s.cd.
+%s.wd.WBP
+%info.tem.model.code.variables.to.keepSource=keptVars_longSource;
+%info.tem.model.code.variables.to.keepDestination=keptVars_longDestination;
+%info.tem.model.code.variables.to.store
+%info.tem.model.code.variables.to.keepShortName=keptVars_short;
+%d.storedStates.[shortName]
+%info.tem.model.code.variables.to.storeStatesSource=storeStates_longSource;
+%info.tem.model.code.variables.to.storeStatesDestination=storeStates_longDestination;
+
+
+cvars_source            =	info.tem.model.code.variables.to.keepSource;
+cvars_destination       =   info.tem.model.code.variables.to.keepDestination;
 
 for ii  =   1:length(cvars_source)
     sstr                =   [char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
@@ -928,11 +950,21 @@ for ii  =   iistart:length(CodeCore)
         if any(tmp)
             moduleStruct        =   info.tem.model.code.ms.(char(cModuleNameCore));
             
-            if strcmp(moduleStruct.funName,'storeStates_simple')
-                [fid]           =   writeStoreStates_simple(info,fid);
-            else
-                [fid]           =   writeFunContent(moduleStruct,fid);
+            switch char(moduleStruct.funName)
+                
+                case 'storeStates_simple'
+                     [fid]           =   writeStoreStates_simple(info,fid);
+                case 'keepStates_simple'
+                     [fid]           =   writeKeepStates_simple(info,fid);
+                otherwise
+                    [fid]           =   writeFunContent(moduleStruct,fid);
             end
+            
+%             if strcmp(moduleStruct.funName,'storeStates_simple')
+%                 [fid]           =   writeStoreStates_simple(info,fid);
+%             else
+%                 [fid]           =   writeFunContent(moduleStruct,fid);
+%             end
         end
     else
         fprintf(fid, '%s\n',CodeCore{ii});
