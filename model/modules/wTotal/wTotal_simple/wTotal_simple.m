@@ -23,24 +23,31 @@ function [f,fe,fx,s,d,p] = wTotal_simple(f,fe,fx,s,d,p,info,tix)
 %
 %
 %%
+tf=startsWith(info.tem.model.code.variables.moduleAll,'s.w.');
+wStorages=info.tem.model.code.variables.moduleAll(tf);
 
-wStorages=info.tem.model.variables.states.w.names;
+% wStorages=info.tem.model.variables.states.w.names;
 wTotal = 0;
 for ws = 1:numel(wStorages)
-    wComp=wStorages{ws};
-    if isfield(s.w,wComp)
-        if info.tem.model.variables.states.w.nZix.(wComp) > 1
+   % wComp=wStorages{ws};
+    tmp=split(wStorages{ws},'.');
+    wComp=tmp{end};
+%     if isfield(s.w,wComp)
+%         if info.tem.model.variables.states.w.nZix.(wComp) > 1
             sComp= sum(s.w.(wComp),2);
-        else
-            sComp = s.w.(wComp);
-        end
-    end
+%         else
+%             sComp = s.w.(wComp);
+%         end
+%     end
     s.wd.([wComp 'Tot']) = sComp ; 
 
     wTotal = wTotal + sComp;
     
 end
-s.wd.wTWS = wTotal ; 
+s.wd.wTWS = wTotal; 
+dTWS=s.wd.wTWS-s.prev.s_wd_wTWS;
+s.wd.dTWS=dTWS;
+%s.prev.s_wd_wTWS = wTotal;
 % s.wd.totalW.wTWS = sum(s.w.wSoil,2) + s.w.wSurf;
 
 

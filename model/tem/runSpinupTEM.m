@@ -178,11 +178,11 @@ for iss = 1:numel(spinSequence)
                 disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | cPools # / cEco / s_c_cEco '])
                 disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2);round(sSU.prev.s_c_cEco(1,:),2)]))
                 disp(pad('.',100,'both','.'))
-            else
-                disp(pad('.',100,'both','.'))
-                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
-                disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
-                disp(pad('.',100,'both','.'))
+%             else
+%                 disp(pad('.',100,'both','.'))
+%                 disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
+%                 disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
+%                 disp(pad('.',100,'both','.'))
             end
         end
         if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
