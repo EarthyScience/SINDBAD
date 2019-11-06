@@ -68,7 +68,12 @@ ms	= info.tem.model.code.ms;
 
 % LOOP : loop through the whole length of of the forcing dataset
 for tix = 1:info.tem.helpers.sizes.nTix
-    [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get states from previous time step
+ % ---------------------------------------------------------------------
+    % Get variables for previous time step and keep in s.prev. or d.prev
+    % 
+    % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);             % keep states from previous time step    
+    [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);        
     % ---------------------------------------------------------------------
     % 0 - Terrain - to get the terrain params ...    
     % 0 - SOIL - to get the soil related params ...

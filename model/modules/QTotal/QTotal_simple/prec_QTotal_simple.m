@@ -27,5 +27,5 @@ function [f,fe,fx,s,d,p] = prec_QTotal_simple(f,fe,fx,s,d,p,info,tix)
 % qComps=p.Qtotal.components;
 
 % qComps={'Qb','QsurfIndir','QsurfDir'};
-fx.Q = info.tem.helpers.arrays.nanpixtix;
+%fx.Q = info.tem.helpers.arrays.nanpixtix;
 end

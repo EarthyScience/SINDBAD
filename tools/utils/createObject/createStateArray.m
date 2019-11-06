@@ -1,5 +1,5 @@
 function [s,d,info] = createStateArray(info)
-% Creates the arrays of state variables before the model run. 
+% Creates the arrays of state variables before the model run.
 %
 % Requires:
 %	- a list of variables
@@ -40,6 +40,8 @@ function [s,d,info] = createStateArray(info)
 %   - 1.0 on 17.04.2018
 
 %%
+tf=startsWith(info.tem.model.code.variables.moduleAll,'s.');
+stateVarsCode=info.tem.model.code.variables.moduleAll(tf);
 stateVars       =   fields(info.tem.model.variables.states);
 s=struct;
 d=struct;
@@ -59,31 +61,33 @@ for ii = 1:numel(stateVars)
     poolNames   =   info.tem.model.variables.states.(sv).names;
     for sp=1:numel(poolNames)
         sVar                    =   ['s.' sv '.' poolNames{sp}];
-        nZix                    =   info.tem.model.variables.states.(sv).nZix.(poolNames{sp});
-        tmp = repmat(arzerospix,1,nZix);
-        %tmp = zeros(size(repmat(arzerospix,1,nZix)));
-        eValStr                 =   strcat(sVar,' = tmp;');
-        eval(eValStr);
-        tmp = 0;
-        info.tem.model.variables.created{end+1}         =   sVar;
-        if any(strcmp(vars2store,sVar))
-            dVar            =   ['d.storedStates.' poolNames{sp}];
-            tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
-            %tmp = NaN(size(reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix])));
-            deValStr        =   strcat(dVar,' = tmp;');
-            eval(deValStr);
-            tmp = 0;
-            info.tem.model.variables.created{end+1}     =   dVar;
-        end
-        kVar    =   ['s.prev.s_' sv '_' poolNames{sp}];
-        if any(strcmp(vars2keep,kVar))
-            %                 kVar=vark;%['s.prev.' poolNames{sp}];
+        if ismember(sVar, stateVarsCode) %|| startsWith(sVar,'d.storedStates')
+            nZix                    =   info.tem.model.variables.states.(sv).nZix.(poolNames{sp});
             tmp = repmat(arzerospix,1,nZix);
             %tmp = zeros(size(repmat(arzerospix,1,nZix)));
-            keValStr            =   strcat(kVar,' = tmp;');
-            eval(keValStr);
+            eValStr                 =   strcat(sVar,' = tmp;');
+            eval(eValStr);
             tmp = 0;
-            info.tem.model.variables.created{end+1}     =   kVar;
+            info.tem.model.variables.created{end+1}         =   sVar;
+            if any(strcmp(vars2store,sVar))
+                dVar            =   ['d.storedStates.' poolNames{sp}];
+                tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
+                %tmp = NaN(size(reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix])));
+                deValStr        =   strcat(dVar,' = tmp;');
+                eval(deValStr);
+                tmp = 0;
+                info.tem.model.variables.created{end+1}     =   dVar;
+            end
+            kVar    =   ['s.prev.s_' sv '_' poolNames{sp}];
+            if any(strcmp(vars2keep,kVar))
+                %                 kVar=vark;%['s.prev.' poolNames{sp}];
+                tmp = repmat(arzerospix,1,nZix);
+                %tmp = zeros(size(repmat(arzerospix,1,nZix)));
+                keValStr            =   strcat(kVar,' = tmp;');
+                eval(keValStr);
+                tmp = 0;
+                info.tem.model.variables.created{end+1}     =   kVar;
+            end
         end
     end
 end
