@@ -1,7 +1,8 @@
 {
 	"name": "NH_TWS_Forward",
 	"domain": "NH",
-	"configFiles": {
+	"configFiles": 
+	{
 		"forcing"		: "testBeds/wCycleForward/settings_wCycleForward/forcing.json",
 		"modelStructure": "testBeds/wCycleForward/settings_wCycleForward/modelStructure.json",
 		"constants"		: "testBeds/wCycleForward/settings_wCycleForward/constants.json",
@@ -11,5 +12,4 @@
 		"params"		: "testBeds/wCycleForward/settings_wCycleForward/params.json",
 		"opti"			: "testBeds/wCycleForward/settings_wCycleForward/opti.json"
 	},
-	"outputDirPath"	: "data/output/"
-}
+		"outputDirPath"	: "data/output/"}
