@@ -37,7 +37,7 @@ fx=struct;
 vars2create = info.tem.model.code.variables.to.create;
 vars2redMem = info.tem.model.code.variables.to.redMem;
 % vars2keep   = info.tem.model.code.variables.to.keepShortName;
-vars2keep       =   info.tem.model.code.variables.to.keepDestination; % need to confirm this with martin
+% vars2keep       =   info.tem.model.code.variables.to.keepDestination; % need to confirm this with martin
 
 genRedMem = info.tem.model.flags.genRedMemCode;
 runGenCode = info.tem.model.flags.runGenCode;
@@ -47,39 +47,33 @@ runGenCode = info.tem.model.flags.runGenCode;
 arnanpix= info.tem.helpers.arrays.nanpix;
 arnanpixtix = info.tem.helpers.arrays.nanpixtix;
 %--> create the variables to keep d.prev
-kVarComp    =   'd.';
-for kv = 1: numel(vars2keep)
-    kVar= vars2keep{kv};
-    if ~isempty(strfind(kVar,'d.'))
-        tmp = arnanpix;
-    %tmp=NaN(size(arnanpix));
-    keValStr            =   strcat(kVar,' = tmp;');
-    eval(keValStr);
-    tmp=0;
-    info.tem.model.variables.created{end+1}     =   kVar;
-    end
-end
+% kVarComp    =   'd.';
+% for kv = 1: numel(vars2keep)
+%     kVar= vars2keep{kv};
+%     if ~isempty(strfind(kVar,'d.'))
+%         tmp = arnanpix;
+%     %tmp=NaN(size(arnanpix));
+%     keValStr            =   strcat(kVar,' = tmp;');
+%     eval(keValStr);
+%     tmp=0;
+%     info.tem.model.variables.created{end+1}     =   kVar;
+%     end
+% end
 for v2c = 1:numel(vars2create)
     var2cr = vars2create{v2c};
     eValStr='';
+    tmp = arnanpixtix;
     if runGenCode && genRedMem
-        %         strcmp(vars2redMem,var2cr)
         if any(strcmp(vars2redMem,var2cr)) %% ismember is the inbuilt function that works
             if ~exist(var2cr,'var')
                 tmp = arnanpix;
-                %tmp = NaN(size(arnanpix));
-                eValStr     =   strcat(var2cr,' = tmp;');
             end
         end
-    else
-        tmp = arnanpix;
-        %tmp = NaN(size(arnanpixtix));
-        eValStr     =   strcat(var2cr,' = tmp;');
     end
+    eValStr     =   strcat(var2cr,' = tmp;');
     if ~any(strcmp(info.tem.model.variables.created,var2cr))
         eval(eValStr);
         info.tem.model.variables.created{end+1}=var2cr;
-        tmp = 0;
     else
         disp(['The variable ' var2cr ' has already been created'])
     end

@@ -26,14 +26,39 @@
 			"massBalance":
 			{
 				"carbon": 		false,
-				"water": 		false
+				"water": 		true
 			},
 			"numeric": 			false,
 			"bounds": 			false
 		}
-	},
-	"rules":
+	}
+	,
+	"sum":
+	{
+		"fx.Q":
+		{
+		"destination": "fx",
+		"components":["fx.Qint","fx.Qbase"],
+		"balance": true
+		},
+		"ET":
+		{
+		"destination": "fx",
+		"components":["fx.EvapInt","fx.Transp"],
+		"balance": true
+		},
+		"wTWS":
+		{
+		"destination": "s.wd",
+		"components":"s.w.",
+		"balance": true
+	}
+}
+	,
+		"rules":
 	{
 		"arrayPrecision": 		"double"
 	}
 }
+
+

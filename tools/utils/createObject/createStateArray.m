@@ -38,20 +38,25 @@ function [s,d,info] = createStateArray(info)
 %
 % Versions:
 %   - 1.0 on 17.04.2018
+%   - 1.1 on 05.11.2019 (handling of variables available in model
+%   structure, and removal of prev or variables to keep. exception for
+%   state variables not in modelStructure but in code: create nPix,1
 
 %%
-tf=startsWith(info.tem.model.code.variables.moduleAll,'s.');
+tf=logical(startsWith(info.tem.model.code.variables.moduleAll,'s.') .* ~startsWith(info.tem.model.code.variables.moduleAll,'s.prev'));
 stateVarsCode=info.tem.model.code.variables.moduleAll(tf);
 stateVars       =   fields(info.tem.model.variables.states);
 s=struct;
 d=struct;
+
 if~isfield('info.tem.model.variables','created');info.tem.model.variables.created= {};end;
 vars2store      =   info.tem.model.variables.to.store;
 % vars2keep       =   info.tem.model.code.variables.to.keepSource; % need to confirm this with martin
-vars2keep       =   info.tem.model.code.variables.to.keepDestination; % need to confirm this with martin
+% vars2keep       =   info.tem.model.code.variables.to.keepDestination; % need to confirm this with martin
 
 nTix            =   info.tem.helpers.sizes.nTix;
 nPix            =   info.tem.helpers.sizes.nPix;
+
 %--> get all locally needed arrays from helpers
 arnanpix        =   info.tem.helpers.arrays.nanpix;
 arzerospix      =   info.tem.helpers.arrays.zerospix;
@@ -61,7 +66,7 @@ for ii = 1:numel(stateVars)
     poolNames   =   info.tem.model.variables.states.(sv).names;
     for sp=1:numel(poolNames)
         sVar                    =   ['s.' sv '.' poolNames{sp}];
-        if ismember(sVar, stateVarsCode) %|| startsWith(sVar,'d.storedStates')
+        if ismember(sVar, stateVarsCode) %|| strcmp(sVar,'s.c.cEco')
             nZix                    =   info.tem.model.variables.states.(sv).nZix.(poolNames{sp});
             tmp = repmat(arzerospix,1,nZix);
             %tmp = zeros(size(repmat(arzerospix,1,nZix)));
@@ -78,17 +83,28 @@ for ii = 1:numel(stateVars)
                 tmp = 0;
                 info.tem.model.variables.created{end+1}     =   dVar;
             end
-            kVar    =   ['s.prev.s_' sv '_' poolNames{sp}];
-            if any(strcmp(vars2keep,kVar))
-                %                 kVar=vark;%['s.prev.' poolNames{sp}];
-                tmp = repmat(arzerospix,1,nZix);
-                %tmp = zeros(size(repmat(arzerospix,1,nZix)));
-                keValStr            =   strcat(kVar,' = tmp;');
-                eval(keValStr);
-                tmp = 0;
-                info.tem.model.variables.created{end+1}     =   kVar;
-            end
+%             kVar    =   ['s.prev.s_' sv '_' poolNames{sp}];
+%             if any(strcmp(vars2keep,kVar))
+%                 %                 kVar=vark;%['s.prev.' poolNames{sp}];
+%                 tmp = repmat(arzerospix,1,nZix);
+%                 %tmp = zeros(size(repmat(arzerospix,1,nZix)));
+%                 keValStr            =   strcat(kVar,' = tmp;');
+%                 eval(keValStr);
+%                 tmp = 0;
+%                 info.tem.model.variables.created{end+1}     =   kVar;
+%             end
         end
     end
 end
+
+for ii = 1:numel(stateVarsCode)
+    sVar                    =   stateVarsCode{ii};
+    if ~ismember(sVar,info.tem.model.variables.created) 
+            tmp = arzerospix;
+            eValStr                 =   strcat(sVar,' = tmp;');
+            eval(eValStr);
+            info.tem.model.variables.created{end+1}         =   sVar;
+    end
+end
+
 end
