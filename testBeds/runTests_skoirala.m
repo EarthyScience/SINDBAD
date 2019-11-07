@@ -80,7 +80,7 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup';
 
 
 if isempty(userInPath)
@@ -101,7 +101,7 @@ end
 testCases               =   [1 2 3 4];
 % testCases               =   [4];
 % testCases             =   [ 2 ];
-% testCases             =   [ 4 ];
+testCases             =   [ 1 ];
 
 %% run the different tests
 for i                   =   testCases

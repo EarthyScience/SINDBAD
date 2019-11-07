@@ -12,6 +12,13 @@
 
 	"modules": 
 	{
+		"keepStates": 
+		{
+			"apprName": 	"keepStates_simple",
+			"runFull": 		true,
+			"comment": 		"This may never be changed",
+            "use4spinup":   true
+		},
 		"getStates": 
 		{
 			"apprName": 	"getStates_simple",

@@ -1,0 +1,105 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                 START: Log of SINDBAD model experiment                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                       Set up the TEM of SINDBAD                                                                                        
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MOD EXPERIMENT       : setupTEM             | Running SINDBAD using an experiment configuration file: /home/skoirala/sindbad/sindbad_v2019/sindbad/testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_CASA.json
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : keepStates           | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : getStates            | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : storeStates          | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cCycle               | approach: CASA
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cFlowAct             | approach: CASA
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : cTauAct              | approach: simple
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPact               | approach: mult
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPdem               | approach: none
+WARN PARAM FILEMISS  : readConfiguration    | Parameter config (json) missing | module : GPPfwSoil            | approach: none
+CONFIG FIELMISS      : readConfiguration    | configuration file for params is missing in the experiment configuration
+<a href="matlab: opentoline('/home/skoirala/sindbad/sindbad_v2019/sindbad/tools/workflow/workflowExperiment.m',88,1)">88  </a>if info.tem.model.flags.runOpti || info.tem.model.flags.calcCost
+if system_dependent('IsDebugMode')==1, dbcont; end
+EDIT INFO FIELD      : editInfoField        | info.tem.forcing.oneDataPath changed successfully to: '/home/skoirala/sindbad/testBeds_sindbad/input/NH_25.mat'
+EDIT INFO FIELD      : editInfoField        | info.experiment.outputDirPath changed successfully to: '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup'
+EDIT INFO FIELD      : editInfoField        | info.experiment.name changed successfully to: 'cCycleSpinup'
+WARN INFO EXCEPTION  : editInfoField        | Fieldname info.tem.spinup.sequence is a struct array and it is flagged as multiple entries. Replacing the spinup sequence anyway!!
+EDIT INFO FIELD      : editInfoField        | info.tem.spinup.flags.storeFullSpinupStates changed successfully to: 1
+EDIT INFO FIELD      : editInfoField        | info.tem.model.flags.genCode changed successfully to: 0
+EDIT INFO FIELD      : editInfoField        | info.tem.model.flags.runGenCode changed successfully to: 0
+EDIT INFO FIELD      : editInfoField        | info.tem.model.variables.to.store changed successfully to: {          's.w.wGW'           }{         's.w.wSnow'          }{         's.w.wSoil'          }{          's.c.cEco'          }{     's.cd.p_RAact_km4su'     }{        's.cd.cAlloc'         }{      's.cd.p_cTauAct_k'      }{     's.cd.p_cFlowAct_A'      }{     's.cd.p_cFlowAct_E'      }{     's.cd.p_cFlowAct_F'      }{    's.cd.p_cCycleBase_k'     }{   's.cd.p_cTaufLAI_kfLAI'    }{  's.cd.p_cTaufpSoil_kfSoil'  }{   's.cd.p_cTaufpVeg_kfVeg'   }{      'fe.cTaufTsoil.fT'      }{    'd.cTaufwSoil.fwSoil'     }
+EDIT INFO FIELD      : editInfoField        | info.tem.model.modules.cCycle.apprName changed successfully to: 'CASA'
+WARN PARAM FILEMISS  : adjustInfo           |  no parameter config file (json) existing for adjusted module : cCycle : approach: CASA
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                              Prepare the objects and structure of SINDBAD                                                                              
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+info.tem.model
+
+ans = 
+
+  <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields:
+
+         time: [1×1 struct]
+        paths: [1×1 struct]
+        flags: [1×1 struct]
+        rules: [1×1 struct]
+    variables: [1×1 struct]
+      modules: [1×1 struct]
+       output: [1×1 struct]
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+info.tem.model
+
+ans = 
+
+  <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields:
+
+         time: [1×1 struct]
+        paths: [1×1 struct]
+        flags: [1×1 struct]
+        rules: [1×1 struct]
+    variables: [1×1 struct]
+      modules: [1×1 struct]
+       output: [1×1 struct]
+
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+       WARN DATAMISS : readForcing          | Space information (latitude, longitute, resolution) missing
+       WARN DATAMISS : readForcing          | Time information (dates.day) missing in input data. May cause problems with spinup.
+       WARN DATAMISS : prepTEM              | Space information (latitude, longitute, resolution)  missing. areaPix set to ones
+MSG BOUNDS INPUT     : adjustVariableBounds | for Rain: min: 0 max: 39.1078
+MSG GAPS             : fillDataGaps         | Gapfilling not needed for Rain
+MSG BOUNDS INPUT     : adjustVariableBounds | for Snow: min: 0 max: 48.86
+MSG GAPS             : fillDataGaps         | Gapfilling not needed for Snow
+MSG BOUNDS INPUT     : adjustVariableBounds | for Tair: min: -47.0177 max: 21.1024
+MSG GAPS             : fillDataGaps         | Gapfilling not needed for Tair
+MSG BOUNDS INPUT     : adjustVariableBounds | for TairDay: min: -47.0177 max: 21.1024
+MSG GAPS             : fillDataGaps         | Gapfilling not needed for TairDay
+MSG INPUT            : checkInputData       | Checking of Input Data Complete
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                       Setup the model structure and generate the code of SINDBAD                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MISS MODSTR          : setupCode            | pSoil_Saxton2006                    | (full_) not found , using (dyna_) and (prec_) in model/modules/pSoil/pSoil_Saxton2006
+MISS MODSTR          : setupCode            | pVeg_simple                         | (full_) not found , using (dyna_) and (prec_) in model/modules/pVeg/pVeg_simple
+MISS MODSTR          : setupCode            | cLAI_constant                       | (full_) not found , using (dyna_) and (prec_) in model/modules/cLAI/cLAI_constant
+MISS MODSTR          : setupCode            | wSnowFrac_scaleSFHTESSEL            | (full_) not found , using (dyna_) and (prec_) in model/modules/wSnowFrac/wSnowFrac_scaleSFHTESSEL
+MISS MODSTR          : setupCode            | EvapSub_GLEAM                       | (full_) not found , using (dyna_) and (prec_) in model/modules/EvapSub/EvapSub_GLEAM
+MISS MODSTR          : setupCode            | Qsnow_TRn                           | (full_) not found , using (dyna_) and (prec_) in model/modules/Qsnow/Qsnow_TRn
+MISS MODSTR          : setupCode            | Qbase_Orth2013                      | (full_) not found , using (dyna_) and (prec_) in model/modules/Qbase/Qbase_Orth2013
+MISS MODSTR          : setupCode            | EvapSoil_DemSup                     | (full_) not found , using (dyna_) and (prec_) in model/modules/EvapSoil/EvapSoil_DemSup
+MISS MODSTR          : setupCode            | GPPpot_Monteith                     | (full_) not found , using (dyna_) and (prec_) in model/modules/GPPpot/GPPpot_Monteith
+MISS MODSTR          : setupCode            | GPPfTair_CASA                       | (full_) not found , using (dyna_) and (prec_) in model/modules/GPPfTair/GPPfTair_CASA
+MISS MODSTR          : setupCode            | GPPdem_none                         | (full_) not found , using (dyna_) and (prec_) in model/modules/GPPdem/GPPdem_none
+MISS MODSTR          : setupCode            | GPPfwSoil_none                      | (full_) not found , using (dyna_) and (prec_) in model/modules/GPPfwSoil/GPPfwSoil_none
+MISS MODSTR          : setupCode            | cCycleBase_CASA                     | (full_) not found , using (dyna_) and (prec_) in model/modules/cCycleBase/cCycleBase_CASA
+MISS MODSTR          : setupCode            | cTaufTsoil_Q10                      | (full_) not found , using (dyna_) and (prec_) in model/modules/cTaufTsoil/cTaufTsoil_Q10
+MISS MODSTR          : setupCode            | cTaufwSoil_CASA                     | (full_) not found , using (dyna_) and (prec_) in model/modules/cTaufwSoil/cTaufwSoil_CASA
+MISS MODSTR          : setupCode            | cTaufLAI_CASA                       | (full_) not found , using (dyna_) and (prec_) in model/modules/cTaufLAI/cTaufLAI_CASA
+MISS MODSTR          : setupCode            | cTaufpSoil_CASA                     | (full_) not found , using (dyna_) and (prec_) in model/modules/cTaufpSoil/cTaufpSoil_CASA
+MISS MODSTR          : setupCode            | cTaufpVeg_CASA                      | (full_) not found , using (dyna_) and (prec_) in model/modules/cTaufpVeg/cTaufpVeg_CASA
+MISS MODSTR          : setupCode            | RAfTair_Q10                         | (full_) not found , using (dyna_) and (prec_) in model/modules/RAfTair/RAfTair_Q10
+MISS MODSTR          : setupCode            | cAllocfTsoil_Friedlingstein1999     | (full_) not found , using (dyna_) and (prec_) in model/modules/cAllocfTsoil/cAllocfTsoil_Friedlingstein1999
+MISS MODSTR          : setupCode            | cAlloc_Friedlingstein1999           | (full_) not found , using (dyna_) and (prec_) in model/modules/cAlloc/cAlloc_Friedlingstein1999
+MISS MODSTR          : setupCode            | RAact_Thornley2000A                 | (full_) not found , using (dyna_) and (prec_) in model/modules/RAact/RAact_Thornley2000A
+MISS MODSTR          : setupCode            | cFlowfpSoil_CASA                    | (full_) not found , using (dyna_) and (prec_) in model/modules/cFlowfpSoil/cFlowfpSoil_CASA
+MISS MODSTR          : setupCode            | cFlowfpVeg_CASA                
