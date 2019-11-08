@@ -65,6 +65,8 @@ for fn                  =	{'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
 
+ feature('SetPrecision', 24)
+
 %% set the paths of input and output directory for the tests
 % the path for the input and output as empty
 % default input path is used (runs in cluster): /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/

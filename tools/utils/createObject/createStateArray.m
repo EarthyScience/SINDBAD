@@ -50,9 +50,8 @@ s=struct;
 d=struct;
 
 if~isfield('info.tem.model.variables','created');info.tem.model.variables.created= {};end;
+
 vars2store      =   info.tem.model.variables.to.store;
-% vars2keep       =   info.tem.model.code.variables.to.keepSource; % need to confirm this with martin
-% vars2keep       =   info.tem.model.code.variables.to.keepDestination; % need to confirm this with martin
 
 nTix            =   info.tem.helpers.sizes.nTix;
 nPix            =   info.tem.helpers.sizes.nPix;
@@ -61,50 +60,73 @@ nPix            =   info.tem.helpers.sizes.nPix;
 arnanpix        =   info.tem.helpers.arrays.nanpix;
 arzerospix      =   info.tem.helpers.arrays.zerospix;
 arnanpixtix     =   info.tem.helpers.arrays.nanpixtix;
+
+%--> loop through the state variables from modelStructure.json
 for ii = 1:numel(stateVars)
     sv          =	stateVars{ii};
     poolNames   =   info.tem.model.variables.states.(sv).names;
     for sp=1:numel(poolNames)
         sVar                    =   ['s.' sv '.' poolNames{sp}];
-        if ismember(sVar, stateVarsCode) %|| strcmp(sVar,'s.c.cEco')
+        if ismember(sVar, stateVarsCode)
             nZix                    =   info.tem.model.variables.states.(sv).nZix.(poolNames{sp});
             tmp = repmat(arzerospix,1,nZix);
-            %tmp = zeros(size(repmat(arzerospix,1,nZix)));
             eValStr                 =   strcat(sVar,' = tmp;');
             eval(eValStr);
             tmp = 0;
             info.tem.model.variables.created{end+1}         =   sVar;
-            if any(strcmp(vars2store,sVar))
-                dVar            =   ['d.storedStates.' poolNames{sp}];
-                tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
-                %tmp = NaN(size(reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix])));
-                deValStr        =   strcat(dVar,' = tmp;');
-                eval(deValStr);
-                tmp = 0;
-                info.tem.model.variables.created{end+1}     =   dVar;
-            end
-%             kVar    =   ['s.prev.s_' sv '_' poolNames{sp}];
-%             if any(strcmp(vars2keep,kVar))
-%                 %                 kVar=vark;%['s.prev.' poolNames{sp}];
-%                 tmp = repmat(arzerospix,1,nZix);
-%                 %tmp = zeros(size(repmat(arzerospix,1,nZix)));
-%                 keValStr            =   strcat(kVar,' = tmp;');
-%                 eval(keValStr);
+%             if ismember(sVar,vars2store)
+%                 dVar            =   ['d.storedStates.' poolNames{sp}];
+%                 tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
+%                 deValStr        =   strcat(dVar,' = tmp;');
+%                 eval(deValStr);
 %                 tmp = 0;
-%                 info.tem.model.variables.created{end+1}     =   kVar;
+%                 info.tem.model.variables.created{end+1}     =   dVar;
 %             end
         end
     end
 end
 
-for ii = 1:numel(stateVarsCode)
-    sVar                    =   stateVarsCode{ii};
-    if ~ismember(sVar,info.tem.model.variables.created) 
-            tmp = arzerospix;
-            eValStr                 =   strcat(sVar,' = tmp;');
-            eval(eValStr);
-            info.tem.model.variables.created{end+1}         =   sVar;
+
+vars2storeCode=info.tem.model.code.variables.to.storeStatesSource;
+vars2storeDestCode=info.tem.model.code.variables.to.storeStatesDestination;
+
+for ij          =	1:numel(vars2storeCode)
+    var2s       =   vars2storeCode{ij};
+    var2sName   =   var2s(1:end-1);
+    varPart     =   cellstr(strsplit(var2s,'.'));
+    ws          =   varPart{2};
+    pName       =   char(varPart{3});
+    poolName    =   pName(1:end-1);
+    var2sName   =   ['d.storedStates.' poolName];
+    if ~ismember(var2sName,info.tem.model.variables.created) && isempty(strfind(poolName, 'p_'))
+        try
+            nZix    =   info.tem.model.variables.states.(char(ws)).nZix.(poolName);
+        catch
+            if ismember(ws,{'c' 'cd'})
+                nZix    =   info.tem.model.variables.states.c.nZix.cEco;
+            else
+                nZix    =   1;
+            end
+        end
+        
+        dVar            =   ['d.storedStates.' poolName];
+        tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
+        deValStr        =   strcat(dVar,' = tmp;');
+        eval(deValStr);
+        info.tem.model.variables.created{end+1}     =   dVar;
+        
     end
 end
+
+for ii = 1:numel(stateVarsCode)
+    sVar                    =   stateVarsCode{ii};
+    if ~ismember(sVar,info.tem.model.variables.created) && isempty(strfind(sVar, '.p_'))
+        tmp = arzerospix;
+        eValStr                 =   strcat(sVar,' = tmp;');
+        eval(eValStr);
+        info.tem.model.variables.created{end+1}         =   sVar;
+    end
+end
+
 
 end
