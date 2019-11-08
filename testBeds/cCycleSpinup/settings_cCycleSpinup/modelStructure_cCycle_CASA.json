@@ -276,6 +276,15 @@
 		],
 		"oldNames":		["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
 		"combine":		[true,"cEco","zeros"]
+		},
+		"cd": 
+		{
+			"pools" : 
+			[
+				["cAlloc", 		14, 	"zeros"],
+				["cNPP", 		4, 	"zeros"]
+			],
+			"combine":		[false,"wStates","zeros"]
 		}
 	}
 }
