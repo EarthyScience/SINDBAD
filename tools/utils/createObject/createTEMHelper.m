@@ -34,7 +34,7 @@ nTix                                        =	info.tem.helpers.sizes.nTix;
 
 info.tem.helpers.arrays.zerospixtix         =   zeros(nPix,nTix,info.tem.model.rules.arrayPrecision);
 info.tem.helpers.arrays.zerospix            =   zeros(nPix,1,info.tem.model.rules.arrayPrecision);
-info.tem.helpers.arrays.zerostix            =  zeros(1,nTix,info.tem.model.rules.arrayPrecision);
+info.tem.helpers.arrays.zerostix            =   zeros(1,nTix,info.tem.model.rules.arrayPrecision);
 info.tem.helpers.arrays.onespixtix          =   ones(nPix,nTix,info.tem.model.rules.arrayPrecision);
 info.tem.helpers.arrays.onespix             =   ones(nPix,1,info.tem.model.rules.arrayPrecision);
 info.tem.helpers.arrays.onestix             =   ones(1,nTix,info.tem.model.rules.arrayPrecision);

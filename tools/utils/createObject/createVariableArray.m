@@ -31,34 +31,34 @@ function [fe,fx,d,info] = createVariableArray(d,info)
 %   + 1.0 on 17.04.2018
 
 %%
-fe=struct;
-fx=struct;
+fe                      =   struct;
+fx                      =   struct;
 
-vars2create = info.tem.model.code.variables.to.create;
-vars2redMem = info.tem.model.code.variables.to.redMem;
+vars2create             =   info.tem.model.code.variables.to.create;
+vars2redMem             =   info.tem.model.code.variables.to.redMem;
 
-genRedMem = info.tem.model.flags.genRedMemCode;
-runGenCode = info.tem.model.flags.runGenCode;
+genRedMem               =   info.tem.model.flags.genRedMemCode;
+runGenCode              =   info.tem.model.flags.runGenCode;
 
 %--> get all locally needed arrays from helpers 
-arnanpix= info.tem.helpers.arrays.nanpix;
-arnanpixtix = info.tem.helpers.arrays.nanpixtix;
+arnanpix                =   info.tem.helpers.arrays.nanpix;
+arnanpixtix             =   info.tem.helpers.arrays.nanpixtix;
 
-for v2c = 1:numel(vars2create)
-    var2cr = vars2create{v2c};
+for v2c                 =   1:numel(vars2create)
+    var2cr              =   vars2create{v2c};
     eValStr='';
-    tmp = arnanpixtix;
+    tmp                 =   arnanpixtix;
     if runGenCode && genRedMem
         if ismember(var2cr,vars2redMem)
             if ~exist(var2cr,'var')
-                tmp = arnanpix;
+                tmp     =   arnanpix;
             end
         end
     end
-    eValStr     =   strcat(var2cr,' = tmp;');
+    eValStr             =   strcat(var2cr,' = tmp;');
     if ~ismember(var2cr,info.tem.model.variables.created)
         eval(eValStr);
-        info.tem.model.variables.created{end+1}=var2cr;
+        info.tem.model.variables.created{end+1}     =   var2cr;
     else
         disp([pad('WARN VARIABLE',20,'right') ' : ' pad('createVariableArray',20) ' | The variable ' var2cr ' has already been created'])
     end
