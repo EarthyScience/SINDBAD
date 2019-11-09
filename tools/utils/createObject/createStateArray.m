@@ -40,93 +40,54 @@ function [s,d,info] = createStateArray(info)
 %   - 1.0 on 17.04.2018
 %   - 1.1 on 05.11.2019 (handling of variables available in model
 %   structure, and removal of prev or variables to keep. exception for
-%   state variables not in modelStructure but in code: create nPix,1
+%   state variables not in modelStructure but in code: create nPix,1 and
+%   moving of storedStates fields to storeStates_simple
 
 %%
-tf=logical(startsWith(info.tem.model.code.variables.moduleAll,'s.') .* ~startsWith(info.tem.model.code.variables.moduleAll,'s.prev'));
-stateVarsCode=info.tem.model.code.variables.moduleAll(tf);
-stateVars       =   fields(info.tem.model.variables.states);
-s=struct;
-d=struct;
 
-if~isfield('info.tem.model.variables','created');info.tem.model.variables.created= {};end;
+%--> get the variables in the model and input in modelStructure.json
+tf                      =   logical(startsWith(info.tem.model.code.variables.moduleAll,'s.')...
+                            .* ~startsWith(info.tem.model.code.variables.moduleAll,'s.prev'));
+stateVarsCode           =   info.tem.model.code.variables.moduleAll(tf);
+stateVars               =   fields(info.tem.model.variables.states);
 
-vars2store      =   info.tem.model.variables.to.store;
+%--> initiate the sindbad structures and info fields
+s                       =   struct;
+d                       =   struct;
+if~isfield('info.tem.model.variables','created');info.tem.model.variables.created={};end;
 
-nTix            =   info.tem.helpers.sizes.nTix;
-nPix            =   info.tem.helpers.sizes.nPix;
+nTix                    =   info.tem.helpers.sizes.nTix;
+nPix                    =   info.tem.helpers.sizes.nPix;
 
 %--> get all locally needed arrays from helpers
-arnanpix        =   info.tem.helpers.arrays.nanpix;
-arzerospix      =   info.tem.helpers.arrays.zerospix;
-arnanpixtix     =   info.tem.helpers.arrays.nanpixtix;
-
-%--> loop through the state variables from modelStructure.json
-for ii = 1:numel(stateVars)
-    sv          =	stateVars{ii};
-    poolNames   =   info.tem.model.variables.states.(sv).names;
-    for sp=1:numel(poolNames)
-        sVar                    =   ['s.' sv '.' poolNames{sp}];
-        if ismember(sVar, stateVarsCode)
-            nZix                    =   info.tem.model.variables.states.(sv).nZix.(poolNames{sp});
-            tmp = repmat(arzerospix,1,nZix);
-            eValStr                 =   strcat(sVar,' = tmp;');
-            eval(eValStr);
-            tmp = 0;
-            info.tem.model.variables.created{end+1}         =   sVar;
-%             if ismember(sVar,vars2store)
-%                 dVar            =   ['d.storedStates.' poolNames{sp}];
-%                 tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
-%                 deValStr        =   strcat(dVar,' = tmp;');
-%                 eval(deValStr);
-%                 tmp = 0;
-%                 info.tem.model.variables.created{end+1}     =   dVar;
-%             end
-        end
-    end
-end
+arnanpix                =   info.tem.helpers.arrays.nanpix;
+arzerospix              =   info.tem.helpers.arrays.zerospix;
+arnanpixtix             =   info.tem.helpers.arrays.nanpixtix;
 
 
-vars2storeCode=info.tem.model.code.variables.to.storeStatesSource;
-vars2storeDestCode=info.tem.model.code.variables.to.storeStatesDestination;
-
-for ij          =	1:numel(vars2storeCode)
-    var2s       =   vars2storeCode{ij};
-    var2sName   =   var2s(1:end-1);
-    varPart     =   cellstr(strsplit(var2s,'.'));
-    ws          =   varPart{2};
-    pName       =   char(varPart{3});
-    poolName    =   pName(1:end-1);
-    var2sName   =   ['d.storedStates.' poolName];
-    if ~ismember(var2sName,info.tem.model.variables.created) && isempty(strfind(poolName, 'p_'))
+for ij                  =	1:numel(stateVarsCode)
+    var2cr               =   stateVarsCode{ij};
+    varPart             =   cellstr(strsplit(var2cr,'.'));
+    sv                  =   varPart{2};
+    poolName            =   varPart{3};
+    if ~ismember(var2cr,info.tem.model.variables.created) && isempty(strfind(poolName, 'p_'))
         try
-            nZix    =   info.tem.model.variables.states.(char(ws)).nZix.(poolName);
+            nZix        =   info.tem.model.variables.states.(char(sv)).nZix.(poolName);
         catch
-            if ismember(ws,{'c' 'cd'})
+            if ismember(sv,{'c' 'cd'})
                 nZix    =   info.tem.model.variables.states.c.nZix.cEco;
             else
+                disp([pad('WARN STATE ARRAY',20,'right') ' : ' pad('createStateArray',20) ' | The state variable ' var2cr ' exists in the code, but its size is not defined in modelStructure.json: Using nZix = 1'])
                 nZix    =   1;
             end
         end
         
-        dVar            =   ['d.storedStates.' poolName];
-        tmp = reshape(repmat(arnanpixtix,[nZix,1]),[nPix,nZix,nTix]);
-        deValStr        =   strcat(dVar,' = tmp;');
-        eval(deValStr);
-        info.tem.model.variables.created{end+1}     =   dVar;
+        tmp             =   repmat(arzerospix,1,nZix);
+        eValStr         =   strcat(var2cr,' = tmp;');
+        eval(eValStr);
+        info.tem.model.variables.created{end+1}    =    var2cr;
         
     end
 end
-
-for ii = 1:numel(stateVarsCode)
-    sVar                    =   stateVarsCode{ii};
-    if ~ismember(sVar,info.tem.model.variables.created) && isempty(strfind(sVar, '.p_'))
-        tmp = arzerospix;
-        eValStr                 =   strcat(sVar,' = tmp;');
-        eval(eValStr);
-        info.tem.model.variables.created{end+1}         =   sVar;
-    end
-end
-
 
 end
