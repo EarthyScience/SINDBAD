@@ -140,7 +140,8 @@ pSU	= p;
 % -------------------------------------------------------------------------
 % complete spinup sequence
 % -------------------------------------------------------------------------
-if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+% if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
     tmpLS 				  = dSU.storedStates.cEco;
 end
 
@@ -174,23 +175,27 @@ for iss = 1:numel(spinSequence)
         if isfield(sSU,'prev')
             if isfield(sSU.prev,'s_c_cEco')
                 
-                disp(pad('.',100,'both','.'))
+                disp(pad('.',200,'both','.'))
                 disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | cPools # / cEco / s_c_cEco '])
                 disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2);round(sSU.prev.s_c_cEco(1,:),2)]))
-                disp(pad('.',100,'both','.'))
-            else if isfield(sSU,'c') 
-                disp(pad('.',100,'both','.'))
-                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
-                disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
-                disp(pad('.',100,'both','.'))
+                disp(pad('.',200,'both','.'))
+            else if isfield(sSU,'c')
+                    disp(pad('.',200,'both','.'))
+                    disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
+                    disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
+                    disp(pad('.',100,'both','.'))
+                end
             end
-        end
-        if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+            if ~exist('tmpLS','var') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+                tmpLS 				  = dSU.storedStates.cEco;
+            end
+
+        if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
             tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
         end
     end
 end
-if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
     dSU.fullSpinupStates.cEco = tmpLS;% @nc: to delete or adjust
 end
     

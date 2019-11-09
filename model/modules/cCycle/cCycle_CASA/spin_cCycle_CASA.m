@@ -136,10 +136,10 @@ for zix = zixVecOrder
     % FINAL CARBON AT POOL zix
     Ct                      = Co .* piA1 + sumB_piA .* piA2;
     sCt(:,zix) = Ct;
-    disp(pad('.',100,'both','.'))        
+    disp(pad('.',200,'both','.'))        
     disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Co : ' num2str(zix) ' : ' num2str(round(Co(1),2))])
     disp([pad('  cCycle FAST SPINUP',20) ' : ' pad('spin_cCycle_CASA',20) ' | : Ct : ' num2str(zix) ' : ' num2str(round(Ct(1),2))])
-    disp(pad('.',100,'both','.'))
+    disp(pad('.',200,'both','.'))
 
     sT.c.cEco(:,zix)        = Ct;
     sT.prev.s_c_cEco(:,zix)	= Ct;

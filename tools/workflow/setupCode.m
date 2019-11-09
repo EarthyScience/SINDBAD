@@ -844,9 +844,24 @@ function [fid]  =   writeStoreStates_simple(info,fid)
 %info.tem.model.code.variables.to.storeStatesSource=storeStates_longSource;
 %info.tem.model.code.variables.to.storeStatesDestination=storeStates_longDestination;
 
-
 cvars_source            =   info.tem.model.code.variables.to.storeStatesSource;
 cvars_destination       =   info.tem.model.code.variables.to.storeStatesDestination;
+
+%--> added by sujan on 09.11.2019 to handle creation of array in generated
+%code
+fprintf(fid, '%s\n', '%storeStates_simple');
+fprintf(fid, '%s\n', 'if tix == 1;');
+fprintf(fid, '%s\n', 'numTimeStr = info.tem.helpers.sizes.nTix;');
+for ij                  =	1:numel(cvars_source)
+    var2ss              =   cvars_source{ij}(1:end-1);
+    var2sdtmp           =   strsplit(cvars_destination{ij},'(');
+    var2sd              =   var2sdtmp{1};
+    evalStr             =   [var2sd ' = reshape(repelem(' var2ss ',1,' 'numTimeStr' '),[size(' var2ss '),' 'numTimeStr' ']);'];
+    fprintf(fid, '%s\n', evalStr);
+end
+fprintf(fid, '%s\n', 'end;');
+%--> end of array creation by sujan
+
 
 for ii  =   1:length(cvars_source)
     sstr                =   [char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
@@ -858,7 +873,8 @@ end
 
 %%
 function [fid]  =   writeKeepStates_simple(info,fid)
-
+% generate the code for writing the .prev fields of s and d at the
+% beginning of every time sep
 %%%%
 %s.prev.[shortName]
 %s.w.[]
@@ -876,6 +892,8 @@ function [fid]  =   writeKeepStates_simple(info,fid)
 
 cvars_source            =	info.tem.model.code.variables.to.keepSource;
 cvars_destination       =   info.tem.model.code.variables.to.keepDestination;
+
+fprintf(fid, '%s\n', '%keepStates_simple');
 
 for ii  =   1:length(cvars_source)
     sstr                =   [char(cvars_destination(ii)) ' = ' char(cvars_source(ii))];
@@ -1062,7 +1080,7 @@ AllOutputs              =   unique(vertcat(AllOutputs,info.tem.model.variables.f
 
 %--> added by sujan on martin's suggestion (2018/04/25) on skipping .prev variables in
 % check of model integrity that gave false results. The .prev don't need to be an output of another
-% module because they are imlicitly treated by storeStates_simple approach
+% module because they are implicitly treated by keepStates_simple approach
 tf                      =   startsWith(AllInputs,{'s.prev.','d.prev.'});
 AllInputs               =   AllInputs(~tf);
 %<--
