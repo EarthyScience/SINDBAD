@@ -28,10 +28,12 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %   - v1.3: Sujan Koirala (skoirala@bgc-jena.mpg.de)
 %   - v1.4: Tina Trautmann (ttraut@bgc-jena.mpg.de) 
+%   - v1.5: Sujan Koirala 
 %
 % References:
 %
 % Versions:
+%   - 1.5 on 10.11.2019 (handling of writing output)
 %   - 1.4 on 09.01.2019
 %   - 1.3 on 20.12.2018
 %   - 1.2 on 20.08.2018
@@ -140,13 +142,13 @@ if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
                 [f,fe,fx,s,d,info]                      =   prepTEM(info);
                 [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,SUData);
             end
-            [~] = writeOutput(info,f,fe,fx,s,d,p);
+            [~]                                         =   writeOutput(info,f,fe,fx,s,d,p);
         end
         
         % do simulations for entire time series
     else
         
-        [f,fe,fx,s,d,info]                          =   prepTEM(info);
+        [f,fe,fx,s,d,info]                              =   prepTEM(info);
         
         % start log file content
         disp(pad('-',200,'both','-'))
@@ -155,6 +157,7 @@ if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
         % end log file content
         
         [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,[],[],fx,fe,d,s);
+        [~]                                                                         =   writeOutput(info,f,fe,fx,s,d,p);
     end
     
 end
@@ -200,7 +203,8 @@ if info.tem.model.flags.runOpti
     % end log file content
     
     % forward run with optimized parameter values
-    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    = runTEM(info,f,p);
+    [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p);
+    [~]                                                                         =   writeOutput(info,f,fe,fx,s,d,p);
     
 end
 

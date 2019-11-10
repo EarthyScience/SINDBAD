@@ -111,7 +111,7 @@ for ii=1:numel(dataPaths)
                     info.tem.model.space.lonVec = dataMat.lon;
                     info.tem.model.space.reso   = [1 1];
                 catch
-                    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Space information (latitude, longitute, resolution) missing'])
+                    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Space information (latitude, longitute, resolution) missing. These will not be used for output.'])
                 end
                 
                 %  TINA: add dates.day (should exist in the spinup forcing!)
