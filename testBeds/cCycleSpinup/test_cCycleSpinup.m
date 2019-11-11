@@ -127,7 +127,7 @@ for NI2E = [21]
             disp(['    ' sec2som(toc(tstart))])
             %
             test_outDirPath=[info.experiment.outputDirPath 'testResults/' testName filesep];
-            mkdir(test_outDirPath)
+            mkdirx(test_outDirPath)
             oufile = [test_outDirPath 'sb_simpleVScasa_' strExtra num2str(NI2E) '_' cCycleModel{:}  '_' strN2];
             save([oufile '.mat'], 'info','f5','fe5','fx5','s5','d5','p5','precOnceData5','sSU5','dSU5','-v7.3')
             

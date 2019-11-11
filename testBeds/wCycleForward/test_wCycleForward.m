@@ -33,7 +33,7 @@ expConfigFile               =   ['testBeds/' testName '/settings_' testName '/ex
 
 %% FIGURES
 fig_outDirPath=[info_rm.experiment.outputDirPath 'testResults/' testName];
-mkdir(fig_outDirPath)
+mkdirx(fig_outDirPath)
 fNamesf=fields(f_h);
 fNamesfx=fields(fx_h);
 fNamesd=fields(d_h.storedStates);
