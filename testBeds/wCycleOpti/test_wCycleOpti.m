@@ -50,7 +50,7 @@ function test_wCycleOpti(inpath,outpath,obspath,testName)
         );%,...
     
     fig_outDirPath=[info_tws.experiment.outputDirPath 'testResults/' testName];
-    mkdir(fig_outDirPath)
+    mkdirx(fig_outDirPath)
     fNamesf=fields(f_tws);
     fNamesfx=fields(fx_tws);
     fNamesd=fields(d_tws.storedStates);
