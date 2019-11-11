@@ -161,6 +161,33 @@ info.tem.model.code.variables.to.keepShortName                  =   keptVars_sho
 tf                                                              =   ~startsWith(AllOutputs,{'s.','p.'});
 
 info.tem.model.code.variables.to.create                         =   AllOutputs(tf);
+
+% --> sujan (11.11.2019): check of the variables to write. Make sure the
+% variables to write from output.json appears in the code. Also, all the
+% variables to output from s. structure will be replaced by d.storedStates
+% fields, as these variables will be automatically stored with the
+% preceding sections of this function
+writeVariables                                                  =   {};
+for vn                                                          =   1:numel(writeVars_longName)
+    vName                                                           =   writeVars_longName{vn};
+    if ismember(vName,varsAllAll)
+        if startsWith(vName,'s.')
+            tmp                                                         =   strsplit(vName,'.');
+            vNameShort                                                  =   tmp{3};
+            vNameE                                                       =   ['d.storedStates.' vNameShort];
+            writeVariables                                              =   [writeVariables,vNameE];
+        else
+            writeVariables                                              =   [writeVariables,vName];
+        end
+    else
+        sstr    =   [pad('WARN VAR MISS',20) ' : ' pad('setupCode',20) ' | ' vName ' is set as an output variable in output.json but does not exist in the selected Model Structure'];
+        disp(sstr)
+
+    end
+end
+info.tem.model.code.variables.to.write                          =   writeVariables;
+% --> sujan end of variables to write
+
 end
 %%
 function [variablesToRedMem] = getVariablesToRedMem(storeVars_longName,AllOutputsPrec,AllOutputs)

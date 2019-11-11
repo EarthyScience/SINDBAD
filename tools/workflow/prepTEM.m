@@ -20,7 +20,7 @@ else
     eDateRun=[num2str(info.tem.model.time.runYear) '-12-31'];
 end
 info.tem.helpers.dates.day      =  createDateVector(sDateRun, eDateRun, 'd');
-info.tem.helpers.dates.month =  createDateVector(sDateRun, eDateRun, 'm');
+info.tem.helpers.dates.month    =  createDateVector(sDateRun, eDateRun, 'm');
 
 fun_fields  =   fieldnames(info.tem.forcing.funName);
 for jj      =   1:numel(fun_fields)
@@ -39,6 +39,11 @@ tmp                             =   fieldnames(f);
 info.tem.forcing.size           =   size(f.(tmp{1}));
 info.tem.helpers.sizes.nPix     =   info.tem.forcing.size(1);
 info.tem.helpers.sizes.nTix     =   info.tem.forcing.size(2);
+
+if info.tem.helpers.sizes.nTix > size(info.tem.helpers.dates.day,2)
+        disp([pad('WARN FORC INCONST',20,'left') ' : ' pad('prepTEM',20) ' | Forcing variable has more days in data than the number of days between start and end date'])
+        info.tem.helpers.dates.day      =  createDateVector(sDateRun, datestr(daysadd(sDateRun, info.tem.helpers.sizes.nTix-1),'yyyy-mm-dd'), 'd');
+end    
 
 % create space helpers
 try
