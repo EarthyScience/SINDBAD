@@ -104,13 +104,13 @@ info.experiment.modelOutputDirPath      =    [outputDirPath_full filesep 'modelO
 info.experiment.settingsOutputDirPath   =    [outputDirPath_full filesep 'settings' filesep];
 
 if ~exist(info.experiment.outputDirPath, 'dir')
-    mkdir(info.experiment.outputDirPath)
+    mkdirx(info.experiment.outputDirPath)
 end
 if ~exist(info.experiment.modelOutputDirPath, 'dir')
-    mkdir(info.experiment.modelOutputDirPath)
+    mkdirx(info.experiment.modelOutputDirPath)
 end
 if ~exist(info.experiment.settingsOutputDirPath, 'dir')
-    mkdir(info.experiment.settingsOutputDirPath)
+    mkdirx(info.experiment.settingsOutputDirPath)
 end
 
 

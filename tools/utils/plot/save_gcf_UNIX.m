@@ -14,7 +14,7 @@ end
 if isunix
     try
     if ~exist('/scratch/tmp','dir')
-        mkdir('/scratch/tmp');
+        mkdirx('/scratch/tmp');
     end
     catch
         disp('Non-Critical: redundant directory for unix was not created in save_gcf_unix')

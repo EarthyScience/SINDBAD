@@ -950,7 +950,7 @@ end
 %CodePth=info.tem.model.paths.genCode.coreTEM;
 [genCorePath,genCoreName,~]     =   fileparts(CodePth);
 
-if~exist(genCorePath,'dir'),mkdir(genCorePath);end
+if~exist(genCorePath,'dir'),mkdirx(genCorePath);end
 
 if exist(CodePth,'file')
     delete(CodePth);

@@ -44,7 +44,7 @@ else
     var2write               =   info.tem.model.code.variables.to.write;
     pthSave                 =   info.experiment.modelOutputDirPath;
     if ~exist(pthSave,'dir')
-        mkdir(pthSave);
+        mkdirx(pthSave);
     end
     if strcmp(info.tem.model.output.dataFormat,'.nc')
             disp([pad('MODEL OUT',20,'left') ' : ' pad('writeOutput',20) ' | Writing SINDBAD output in netCDF(.nc) format'])
