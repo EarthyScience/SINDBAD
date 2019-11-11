@@ -287,7 +287,7 @@ else
     CMAESDIR=defopts.outDirPath;
 end
 % CMAESDIR='./out.CMAES/';
-mkdir(CMAESDIR)
+mkdirx(CMAESDIR)
 
 % Tina: create an empty table for all cost components
 allCostComp = table();
@@ -496,7 +496,7 @@ while irun <= myeval(opts.Restarts) % for-loop does not work with resume
     if strcmp(opts.LogFilenamePrefix(1), '/')
         CMAESDIR = '';
     else
-        mkdir(CMAESDIR);
+        mkdirx(CMAESDIR);
     end
     
     % TODO here silent option? set disp, save and log options to 0

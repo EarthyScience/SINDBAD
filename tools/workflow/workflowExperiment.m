@@ -238,21 +238,21 @@ else % info structure was input, use path of modelRun.json
     [pth,~,~] = fileparts(info.experiment.configFiles.modelRun);
 end
 copyfile(pth,info.experiment.settingsOutputDirPath);
-disp([pad('copy of configuration files',30) ' : ' info.experiment.settingsOutputDirPath])
+disp(pad(['copy of configuration files : ' info.experiment.settingsOutputDirPath],200))
 
 % save the light version of info with all configs and settings as a json file
 % Tina hack to not save info if its the input to the workflow
 if ~isstruct(expConfigFile)
     savejsonJL('',infoLite,info.experiment.outputInfoFile);
-    disp([pad('light version of info (.json)',30) ' : ' info.experiment.outputInfoFile])
+    disp(pad(['light version of info (.json)' ' : ' info.experiment.outputInfoFile],100))
 else
     expConfigFile = 'info structure input';
-    disp([pad('info (.json) not saved',30)])
+    disp(pad('info (.json) not saved',200))
 end
 
 % save the info as mat file
 save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'], 'info', '-v7.3')
-disp([pad('full version of info (.mat)',30) ' : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'])
+disp(pad(['saved full version of info (.mat) to : ' info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate '_info.mat'],200))
 
 % % save the f as mat file
 % save([info.experiment.modelOutputDirPath info.experiment.name '_' info.experiment.runDate  '_f.mat'], 'f', '-v7.3')

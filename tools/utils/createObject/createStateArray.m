@@ -51,6 +51,14 @@ tf                      =   logical(startsWith(info.tem.model.code.variables.mod
 stateVarsCode           =   info.tem.model.code.variables.moduleAll(tf);
 stateVars               =   fields(info.tem.model.variables.states);
 
+%--> get the list of variables to keep
+keepVarsSource          =   info.tem.model.code.variables.to.keepSource;
+keepVars                =   {};
+for ij                  =	1:numel(keepVarsSource)
+    var2ks              =   keepVarsSource{ij}(1:end-1);
+    keepVars            =   [keepVars var2ks];
+end
+
 %--> initiate the sindbad structures and info fields
 s                       =   struct;
 d                       =   struct;
@@ -66,7 +74,7 @@ arnanpixtix             =   info.tem.helpers.arrays.nanpixtix;
 
 
 for ij                  =	1:numel(stateVarsCode)
-    var2cr               =   stateVarsCode{ij};
+    var2cr               =  stateVarsCode{ij};
     varPart             =   cellstr(strsplit(var2cr,'.'));
     sv                  =   varPart{2};
     poolName            =   varPart{3};
@@ -81,13 +89,13 @@ for ij                  =	1:numel(stateVarsCode)
                 nZix    =   1;
             end
         end
-        
-        tmp             =   repmat(arzerospix,1,nZix);
-        eValStr         =   strcat(var2cr,' = tmp;');
-        eval(eValStr);
-        info.tem.model.variables.created{end+1}    =    var2cr;
-        
+        if isempty(strfind(sv, 'd')) || ismember(var2cr,keepVars)
+            tmp             =   repmat(arzerospix,1,nZix);
+            eValStr         =   strcat(var2cr,' = tmp;');
+            eval(eValStr);
+            info.tem.model.variables.created{end+1}    =    var2cr;
+        end
     end
+    
 end
-
 end
