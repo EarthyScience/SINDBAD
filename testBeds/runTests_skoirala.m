@@ -1,23 +1,23 @@
 % a script to run the diagnostic tests of SINDBAD when new developments
-% have been made and a merge request is being subnitted.
-% In order to maintain backward compaatibility of the model, The merge request will be handled ONLY when these tests are successfully
-% run.
+% have been made.
+% In order to maintain backward compaatibility of the model, the MERGE
+% REQUEST TO THE MASTER WILL BE HANDLED ONLY WHEN THE TESTS ARE SUCCESSFULLY EXECUTED
 %
 %% case 1:
 % - Domain: Random 25 grid cells in the northern hemisphere
 % - Purpose: to test if the carbon cycle spinups are running
 % - Runs: Explicit, Impicit, and Reduced Explicit modes of spinup for CASA
-% and simple model structure
-% - Produces: Figures comparing each of these version.
+% and simple model structures
+% - Produces: Figures comparing each of these model simulations and spinup.
 % - Outcomes:
 %   - 1:1 results of carbon storages for explicit vs reduced explicit for both CASA and simple
 %   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple
 %
 %% case 2:
-% - overview: optimize carbon cycle parameters f a fluxnet site
+% - overview: optimize carbon cycle parameters for a fluxnet site
 % - Domain: An example fluxnet site
 % - Purpose: to test if optimization of the carbon cycle is running
-% - Runs: the model and optimizes with cmaes for 20 iterations.
+% - Runs: Model with default parameters, and optimization with cmaes for 20 iterations.
 % - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
 % - Outcomes:
 %   - figures comparing the fields of f, fx, and d.StoredStates. for
@@ -33,19 +33,20 @@
 % - Domain: 1000 grids in the northern hemisphere
 % - Purpose: to test if water cycle model is running
 % - Runs: generated code, handles, and generated code with reduced memory arrays
-% - Produces: figures comparing the fields of f, fx, and d.StoredStates.
+% - Produces: figures comparing the fields of f, fx, and d.StoredStates for
+% above simulations
 % - Outcomes:
 %   - 1:1 results of all compared fields.
 %
 %% case 4:
 % - overview: optimization of the water cycle
-% - Domain: 1000 grids in global
+% - Domain: 904 grid cells globally distributed
 % - Purpose: to test if the optimization of the water cycle model is running
-% - Runs: the model with pre-optimized parameters and optimizes with cmaes for 10 iterations.
+% - Runs: model with pre-optimized parameters, and optimization with cmaes for 10 iterations.
 % - Produces: Runs and finishes without errors. Does not produce the final optimized parameters.
 % - Outcomes:
 %   - figures comparing the fields of f, fx, and d.StoredStates. for
-%   pre optimized parameters and parameters at the end of optimization
+%   pre-optimized parameters and parameters at the end of optimization
 %   - all the variables that are not affected by the optimized parameters
 %   should be on 1:1 line
 %   - water cycle variables should divert from 1:1 line (e.g., ET, wTotal)
@@ -65,7 +66,6 @@ for fn                  =	{'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
 
- feature('SetPrecision', 24)
 
 %% set the paths of input and output directory for the tests
 % the path for the input and output as empty
@@ -84,8 +84,8 @@ userOutPath             =   '';
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup';
 
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_2';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -106,7 +106,7 @@ testCases               =   [1 2 3 4];
 % testCases               =   [3 4];
 % testCases               =   [4];
 % testCases             =   [ 2 ];
-% testCases             =   [ 3 ];
+testCases             =   [ 1 3 4 ];
 
 %% run the different tests
 for i                   =   testCases
