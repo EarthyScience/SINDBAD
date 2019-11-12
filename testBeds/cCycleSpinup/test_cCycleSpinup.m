@@ -61,7 +61,7 @@ toStore.simple	= {
     'd.cTaufwSoil.fwSoil'
     };
 
-GPP2E           = 5;
+GPP2E           = 20;
 cCycleModelVec  = {'CASA','simple'};
 strExtra        = '';
 compareModels	= true;
@@ -69,7 +69,7 @@ saveLongStates  = true;
 % for NI2E = [11 101]% 1001 2001]
 % NI2E=11s
 
-for NI2E = [21]
+for NI2E = [2001]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
         expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '.json'];

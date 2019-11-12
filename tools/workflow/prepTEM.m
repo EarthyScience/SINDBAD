@@ -45,6 +45,10 @@ if info.tem.helpers.sizes.nTix > size(info.tem.helpers.dates.day,2)
         info.tem.helpers.dates.day      =  createDateVector(sDateRun, datestr(daysadd(sDateRun, info.tem.helpers.sizes.nTix-1),'yyyy-mm-dd'), 'd');
 end    
 
+%--> insert time variable in dimension to be used in producing netCDF
+%output in writeOutput.m
+info.tem.helpers.dimension.time.day       = info.tem.helpers.dates.day;
+info.tem.helpers.dimension.time.month     = info.tem.helpers.dates.month;
 % create space helpers
 try
     info.tem.helpers.areaPix    =   AreaGridLatLon(info.tem.model.space.latVec, info.tem.model.space.lonVec, info.tem.model.space.reso);
