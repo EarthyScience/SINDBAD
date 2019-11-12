@@ -1,9 +1,26 @@
-./data
-./input
-./settings
-./sandbox
-./output
+# Ignore everything in repository root 
+/*
+
+# Files to not ignore
+!/.gitignore
+!/.gitattributes
+!/README.md
+
+# Folders to not ignore (ignore every folder other than these)
+!/documentation/
+!/model/
+!/optimization/
+!/tools/
+!/testBeds/
+
+# Folder to ignore
+# ./data
+# ./input
+# ./settings
+# ./sandbox
+# ./output
 *~
 *.swpi
 *.swo
 *.bak
+*.txt

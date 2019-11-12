@@ -22,7 +22,7 @@ conv.kPa2Pa         = 1000;
 conv.ppm2umol       = 0.000001;
 conv.umol2mol       = 1E-6;
 conv.MJday2Wm2      = 1000000/86400;
-conv.gCday2umols    = 1000000/12/86400; 
+conv.gCday2umols    = 1000000/12/86400;
 conv.molday2umols	= 1000000/86400;
 
 range.Rain      = [ 0.0 60.0 ].*24;                 % mm/day
@@ -30,14 +30,14 @@ range.Snow      = [ 0.0 60.0 ].*24;                 % mm/day
 range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;	% MJ/m2/day
 range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;	% MJ/m2/day
 range.Rg_pot    = [ 0.0 1400.0 ]./conv.MJday2Wm2;   % MJ/m2/day
-range.Tair      = [ -100. 100. ];                   % ºC
-range.TairDay   = [ -100. 100. ];                   % ºC
-range.Tsoil     = [ -100. 100. ];                   % ºC
+range.Tair      = [ -100. 100. ];                   % ï¿½C
+range.TairDay   = [ -100. 100. ];                   % ï¿½C
+range.Tsoil     = [ -100. 100. ];                   % ï¿½C
 range.VPDDay    = [ 0 200. ].*10;                   % kPa
 range.FAPAR     = [0 1];
 range.LAI       = [0 12];
 
-% 
+%
 miss_val	= NaN;
 flag_val    = -9999;
 
@@ -59,7 +59,7 @@ for i = 1:numel(fns)
     inputData.(fns{i})  = x;
 end
 
-        
+
 % non NaNs or Infs
 vns = fieldnames(inputData);
 for i = 1:numel(vns)
@@ -100,64 +100,64 @@ end % end function
 % createHvec
 
 function xout	= createMeanYearTimeSeries(x,years,info)
-% creates mean year time series of daily data
-x       = createSpinUpYear(x,years,info);
-xout	= [];
-yearvec	= createHvec(unique(years));
-for i = yearvec
-    if isleapyear(i) && length(years(years==i))~=366
-        xtmp=[x(1:31+28) x(31+28:end)];
-    else
-        xtmp=x;
+    % creates mean year time series of daily data
+    x       = createSpinUpYear(x,years,info);
+    xout	= [];
+    yearvec	= createHvec(unique(years));
+    for i = yearvec
+        if isleapyear(i) && length(years(years==i))~=366
+            xtmp=[x(1:31+28) x(31+28:end)];
+        else
+            xtmp=x;
+        end
+        xout=[xout xtmp];
     end
-    xout=[xout xtmp];
-end
 end
 
 % -------------------------------------------------------------------------
 
 function x2 = createSpinUpYear(x,years,info)
-x2      = zeros(info.tem.forcing.size(1),floor(info.tem.model.time.nStepsYear));
-den     = x2;
-yearvec	= createHvec(unique(years));
-for i = yearvec
-    tmp = x(:,years == i);
-    if isleapyear(i)
-        tmp(:,29+31)  = [];
+    x2      = zeros(info.tem.forcing.size(1),floor(info.tem.model.time.nStepsYear));
+    den     = x2;
+    yearvec	= createHvec(unique(years));
+    for i = yearvec
+        tmp = x(:,years == i);
+        if isleapyear(i)
+            tmp(:,29+31)  = [];
+        end
+        den                 = den + double(isnan(tmp)==0);
+        tmp(isnan(tmp)==1)  = 0;
+        x2                  = x2+tmp;
     end
-    den                 = den + double(isnan(tmp)==0);
-    tmp(isnan(tmp)==1)  = 0;
-    x2                  = x2+tmp;
-end
-x2	= x2 ./ den;
-end % 
+    x2	= x2 ./ den;
+end %
 
 % -------------------------------------------------------------------------
 
 function x = createHvec(x,mkV)
-% make an horizontal vector, or vertical if(mkV)
-if isempty(x)
-    return
-end
-
-if ndims(x) ~= 2
-
-sstr    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'Input must have 2 dimensions! ndims(x) = ' num2str(ndims(x))];
-error(sstr)   
-end
-
-if size(x, 1) == 1
-    return
-elseif size(x, 2) == 1
-    x	= x';
-else
-str    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'one of input dimensions must be 1! size(x) = ' num2str(size(x))];
-error(sstr)       
-end
-
-if exist('mkV','var')
-    if mkV
-        x	= x';
+    % make an horizontal vector, or vertical if(mkV)
+    if isempty(x)
+        return
     end
-end
+    
+    if ndims(x) ~= 2
+        
+        sstr    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'Input must have 2 dimensions! ndims(x) = ' num2str(ndims(x))];
+        error(sstr)
+    end
+    
+    if size(x, 1) == 1
+        return
+    elseif size(x, 2) == 1
+        x	= x';
+    else
+        str    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'one of input dimensions must be 1! size(x) = ' num2str(size(x))];
+        error(sstr)
+    end
+    
+    if exist('mkV','var')
+        if mkV
+            x	= x';
+        end
+    end
 end
