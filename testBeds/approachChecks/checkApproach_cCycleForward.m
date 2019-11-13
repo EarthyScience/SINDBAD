@@ -121,7 +121,9 @@ for ap = 1:numel(appDirs)
         if fullFile
             runNum = runNum+1;
             expName=[testName '_' fullappName '_full'];
-            expName = horzcat(expName{:});
+            if iscell(expName)
+                expName = horzcat(expName{:});
+            end
             modString=['tem.model.modules.' moduleName '.apprName'];
             runString=['tem.model.modules.' moduleName '.runFull'];
             [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
