@@ -72,7 +72,7 @@ end
 
 for ii                              =   1:numel(dataPaths)
     dPath                           =   dataPaths{ii};
-    inVars                          = variables(idxVar==ii);
+    inVars                          =   variables(idxVar==ii);
     % is data path a folder or file?
     if exist(dPath, 'dir')
         dContent                    =	dir(dPath);
@@ -107,13 +107,18 @@ for ii                              =   1:numel(dataPaths)
                         error([pad('CRIT DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Variable ' tarVar ' not found in ' dFiles{ff}])
                     end
                 end
-                % add lat and lon if available in the mat file
-                try
-                    info.tem.helpers.dimension.space.latVec         =	dataMat.lat;
-                    info.tem.helpers.dimension.space.lonVec         =	dataMat.lon;
-                    info.tem.helpers.dimension.space.reso           =	[1 1];
-                catch
-                    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Space information (latitude, longitude, resolution) missing. These will not be used for output.'])
+                % add lat and lon if available in the mat file (changed by
+                % sujan on 12.11.2019
+                if ~isfield(info.tem.helpers,'dimension')
+                    varList              =  fieldnames(dataMat);
+                    [latVar,lonVar]      =  getLatLonVar(info, varList);
+                    if ~isempty(latVar) && ~isempty(lonVar)
+                        info.tem.helpers.dimension.space.latVec     =   dataMat.(latVar);
+                        info.tem.helpers.dimension.space.lonVec     =   dataMat.(lonVar);
+                        info.tem.helpers.dimension.space.reso       =   nanmean(diff(info.tem.helpers.dimension.space.latVec));
+                    else
+                        disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Spatial information is not found in input mat structure.'])                        
+                    end
                 end
                 
                 %  TINA: add dates.day (should exist in the spinup forcing!)
@@ -129,7 +134,7 @@ for ii                              =   1:numel(dataPaths)
                     try
                         tarVar                          =	inVars{vv};
                         srcVar                          =	info.tem.forcing.variables.(tarVar).sourceVariableName;
-%                         info.tem.helpers.dimension.time.timeVec     =   ncread(dFiles{ff},'time');
+                        %                         info.tem.helpers.dimension.time.timeVec     =   ncread(dFiles{ff},'time');
                         dataStructure.(tarVar)          =	ncread(dFiles{ff},srcVar)';
                         try
                             dataStructure.(tarVar)      =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
@@ -140,18 +145,16 @@ for ii                              =   1:numel(dataPaths)
                         error([pad('CRIT DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Variable ' tarVar ' not found in ' dFiles{ff}])
                     end
                 end
-                if ~isfield(info.tem.model,'space')
-                    try
-                        try
-                            info.tem.helpers.dimension.space.latVec     =   ncread(dFiles{ff},'latitude');
-                            info.tem.helpers.dimension.space.lonVec     =   ncread(dFiles{ff},'longitude');
-                        catch
-                            info.tem.helpers.dimension.space.latVec     =   ncread(dFiles{ff},'lat');
-                            info.tem.helpers.dimension.space.lonVec     =   ncread(dFiles{ff},'lon');
-                        end
-                        info.tem.helpers.dimension.space.reso           =   nanmean(diff(info.tem.model.space.latVec));
-                    catch
-                        disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Space information (latitude, longitude or lat, lon) information missing in input netCDF data. '])
+                if ~isfield(info.tem.helpers,'dimension')
+                    fileInfo             =  ncinfo(dFiles{ff});
+                    varList              =  {fileInfo.Variables(:).Name};
+                    [latVar,lonVar]      =  getLatLonVar(info, varList);
+                    if ~isempty(latVar) && ~isempty(lonVar)
+                        info.tem.helpers.dimension.space.latVec     =   ncread(dFiles{ff},latVar);
+                        info.tem.helpers.dimension.space.lonVec     =   ncread(dFiles{ff},lonVar);
+                        info.tem.helpers.dimension.space.reso       =   nanmean(diff(info.tem.helpers.dimension.space.latVec));
+                    else
+                        disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Spatial information is not found in input netCDF data'])                        
                     end
                 end
                 
@@ -166,4 +169,22 @@ dataStructure.Year                                      =	year(xDay);
     
 end
 
-
+function [latVar,lonVar] = getLatLonVar(info,varList)
+    % a function to return the name of latitude and longitude variables in
+    % the input files based on common variants hard-coded below
+    latList              =  {'lati','lat','latitude','LATI','LAT','LATITUDE','Latitude'};
+    lonList              =  {'longi','lon','longitude','LONGI','LON','LONGITUDE','Longitude'};
+    latVar               =  '';
+    lonVar               =  '';
+    for vn = 1:numel(varList)
+        varNameL = varList{vn};
+        if startsWith(varNameL,'L') || startsWith(varNameL,'l')
+            if ismember(varNameL,latList)
+                latVar     =   varNameL;
+            end
+            if ismember(varNameL,lonList)
+                lonVar     =   varNameL;
+            end
+        end
+    end
+end

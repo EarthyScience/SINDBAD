@@ -64,6 +64,7 @@ cLoxxRate       = cLossRate;
 zixVec   = 1:size(s.c.cEco,2);
 % BUT, we sort from left to right (veg to litter to soil) and prioritize
 % without loops
+kmoves      = 0;
 zixVecOrder = zixVec;
 for zix = zixVec
     move = false;
@@ -72,7 +73,8 @@ for zix = zixVec
     for ii = 1:numel(ndxGainFrom)
         giver   = s.cd.p_cFlowAct_giver(ndxGainFrom(ii));
         if any(giver == ndxLoseToZix)
-            move = true;
+            move    = true;
+            kmoves = kmoves + 1;
         end
     end
     if move
@@ -80,6 +82,9 @@ for zix = zixVec
         zixVecOrder(end) = zix;
     end
 end
+% if kmoves > 0
+%     zixVecOrder = [zixVecOrder zixVecOrder(end-kmoves+1:end)]; 
+% end
 %% solve it for each pool individually
 for zix = zixVecOrder
     % general k loss
