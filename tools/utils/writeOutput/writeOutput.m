@@ -33,7 +33,7 @@ function [dum] = writeOutput(info,f,fe,fx,s,d,p)
 %
 % Versions:
 %   - 1.0: 12.12.2018
-%   - 1.1: 11.11.2019 (skoirala): handling of time and .mat output
+%   - 1.1: 11.11.2019 (skoirala): handling of time, space, and .mat output
 
 
 %%
@@ -83,6 +83,12 @@ function writeNetCDF(var2write,pthSave,info,f,fe,fx,s,d,p)
     % if all output are written in one file for all years of simulation
     %     varsInput                   =   datinfo.Variables; %information of variables in reference input file
     %% --> loop through the list of variables
+    if isfield(info.tem.helpers.dimension,'space')
+        useLatLon               =   true;
+    else
+        useLatLon               =   false;
+    end
+    
     for varn                    =   1:numel(var2write)
         varSel                  =   var2write{varn};
         varNameSplit            =   strsplit(varSel,'.');
@@ -101,64 +107,62 @@ function writeNetCDF(var2write,pthSave,info,f,fe,fx,s,d,p)
         if ndims(datMain)       <  5
             %--> open the netCDF file for writing
             ncid = netcdf.create(filename,'NC_WRITE');
+            %--> define the common dimensions for arrays of all sizes
+            if useLatLon
+                dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
+                lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidlat]);
+                dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
+                lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidlon]);
+            end
+            dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
+            pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
+            
+            dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
+            time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);
+            netcdf.putAtt(ncid,time_ID,'long_name','time axis');
+            netcdf.putAtt(ncid,time_ID,'units','days since 0000-01-01');
+            
+            %--> define and add arrays of different sizes
             
             if ndims(datMain)   ==  2
-                dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
-                dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
-                pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
-                time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);
                 var_ID          =   netcdf.defVar(ncid,varName,'float',[dimidpix dimidtime]);
-                
-                netcdf.putAtt(ncid,time_ID,'long_name','time axis');
-                netcdf.putAtt(ncid,time_ID,'units','days since 0000-01-01');
-
                 netcdf.endDef(ncid);
-                netcdf.putVar(ncid,pix_ID,1:1:info.tem.helpers.sizes.nPix);
-                netcdf.putVar(ncid,time_ID,datenum(info.tem.helpers.dates.day));
                 netcdf.putVar(ncid,var_ID,datMain);
             end
             if ndims(datMain)   ==  3
-                dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
                 dimidlevel      =   netcdf.defDim(ncid,'level',size(datMain,2));
-                dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
-                pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
                 level_ID        =   netcdf.defVar(ncid,'level','float',[dimidlevel]);
-                time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);
                 var_ID          =   netcdf.defVar(ncid,varName,'float',[dimidpix dimidlevel dimidtime]);
-
-                netcdf.putAtt(ncid,time_ID,'long_name','time axis');
-                netcdf.putAtt(ncid,time_ID,'units','days since 0000-01-01');
-
                 netcdf.endDef(ncid);
-                netcdf.putVar(ncid,pix_ID,1:1:info.tem.helpers.sizes.nPix);
                 netcdf.putVar(ncid,level_ID,1:1:size(datMain,2));
-                netcdf.putVar(ncid,time_ID,datenum(info.tem.helpers.dates.day));
                 netcdf.putVar(ncid,var_ID,datMain);
             end
             if ndims(datMain)   == 4
-                dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
                 dimidlevel1     =   netcdf.defDim(ncid,'level1',size(datMain,2));
                 dimidlevel2     =   netcdf.defDim(ncid,'level2',size(datMain,3));
-                dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
-                pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
                 level1_ID       =   netcdf.defVar(ncid,'level1','float',[dimidlevel1]);
                 level2_ID       =   netcdf.defVar(ncid,'level2','float',[dimidlevel2]);
-                time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);
                 var_ID          =   netcdf.defVar(ncid,varName,'float',[dimidpix dimidlevel1 dimidlevel2 dimidtime]);
-
-                netcdf.putAtt(ncid,time_ID,'long_name','time axis');
-                netcdf.putAtt(ncid,time_ID,'units','days since 0000-01-01');
-
+                
                 netcdf.endDef(ncid);
-                netcdf.putVar(ncid,pix_ID,1:1:info.tem.helpers.sizes.nPix);
                 netcdf.putVar(ncid,level1_ID,1:1:size(datMain,2));
                 netcdf.putVar(ncid,level2_ID,1:1:size(datMain,3));
-                netcdf.putVar(ncid,time_ID,datenum(info.tem.helpers.dates.day));
                 netcdf.putVar(ncid,var_ID,datMain);
             end
+            
+            %% write the variables/values of the dimensions
+            if useLatLon
+                netcdf.putVar(ncid,lat_ID,info.tem.helpers.dimension.space.latVec);
+                netcdf.putVar(ncid,lon_ID,info.tem.helpers.dimension.space.lonVec);
+            end
+            netcdf.putVar(ncid,pix_ID,1:1:info.tem.helpers.sizes.nPix);
+            netcdf.putVar(ncid,time_ID,datenum(info.tem.helpers.dates.day));
             netcdf.close(ncid)
+            disp([pad('MODEL OUT',20,'left') ' : ' pad('writeOutput',20) ' | Wrote ' varSel ' to ' filename])
+
         else
             disp([pad('CRIT MODEL OUT',20,'left') ' : ' pad('writeOutput',20) ' | ' varName ' is ' numstr(ndims(datMain)) '-dimensional. Writing netCDF outputput is only supported until 4-dimensional data. Skipping the variable'])
         end
+        
     end
 end

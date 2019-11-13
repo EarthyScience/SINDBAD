@@ -14,10 +14,10 @@ for fn                  =	{'tools','model','optimization','testBeds'}
 end
 %%
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_approachChecks';
 %
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -170,7 +170,8 @@ for fn = 1:numel(fNamesfx)
     end
     hleg = legend(expNames);
     set(hleg,'Interpreter', 'none')
-    title(['flux: spatial mean ' fNamesfx{fn}])
+    titl=title(['flux: spatial mean ' fNamesfx{fn}]);
+    set(titl,'Interpreter', 'none');
     save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesfx{fn}],1,1)
 end
 for fn = 1:numel(fNamesd)
@@ -188,7 +189,8 @@ for fn = 1:numel(fNamesd)
     end
     hleg = legend(expNames);
     set(hleg,'Interpreter', 'none')
-    title(['diagnostic stored states: spatial mean ' fNamesd{fn}])
+    titl=title(['diagnostic stored states: spatial mean ' fNamesd{fn}]);
+    set(titl,'Interpreter', 'none');
     save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesd{fn}],1,1)
     
 end
