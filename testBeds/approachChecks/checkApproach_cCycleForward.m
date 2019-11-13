@@ -16,8 +16,8 @@ end
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup';
 %
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -68,11 +68,16 @@ for ap = 1:numel(appDirs)
     tmp=strsplit(appDirs{ap},'_');
     appName = tmp(end);
     fullappName = [moduleName '_' appName];
+    moduleInfo.(char(appName)).precFile = false;
+    moduleInfo.(char(appName)).dynaFile = false;
+    moduleInfo.(char(appName)).fullFile = false;
     if iscell(fullappName)
         fullappName=horzcat(fullappName{:});
     end
     if strcmp(appName,'dummy')
         disp(['dummy approach exists for ' moduleName])
+        moduleInfo.(char(appName)).dummyFile    = true;
+        moduleInfo.(char(appName)).fullFile     = true;
     else
         [~,appFiles]=getFiles(appDirs{ap},'m');
         appMfiles= {appFiles(:).name};
@@ -82,14 +87,17 @@ for ap = 1:numel(appDirs)
             if ~isempty(strfind(fileN, 'prec_'))
                 disp('prec exists')
                 precFile=true;
+                moduleInfo.(char(appName)).precFile = true;
             end
             if ~isempty(strfind(fileN, 'dyna_'))
                 disp('dyna exists')
                 dynaFile = true;
+                moduleInfo.(char(appName)).dynaFile = true;
             end
             if isempty(strfind(fileN, 'dyna_')) && isempty(strfind(fileN, 'prec_'))
                 disp('full file exists')
                 fullFile=true;
+                moduleInfo.(char(appName)).fullFile = true;
             end
         end
         if precFile && dynaFile
@@ -108,7 +116,7 @@ for ap = 1:numel(appDirs)
                 'info.tem.forcing.oneDataPath',inpath,...
                 'info.opti.constraints.oneDataPath',obspath,...
                 'info.experiment.name',expName,...
-                modString,fullappName,...
+                modString,char(appName),...
                 runString,false,...
                 'info.experiment.outputDirPath',outpath...
                 );
@@ -133,7 +141,7 @@ for ap = 1:numel(appDirs)
                 'info.tem.model.flags.runGenCode',true,...
                 'info.tem.forcing.oneDataPath',inpath,...
                 'info.opti.constraints.oneDataPath',obspath,...
-                modString,fullappName,...
+                modString,char(appName),...
                 runString,true,...
                 'info.experiment.outputDirPath',outpath...
                 );
@@ -160,7 +168,8 @@ for fn = 1:numel(fNamesfx)
     end
     hleg = legend(expNames);
     set(hleg,'Interpreter', 'none')
-    title(['flux: spatial mean ' fNamesfx{fn}])
+    titl=title(['flux: spatial mean ' fNamesfx{fn}]);
+    set(titl,'Interpreter', 'none');
     save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesfx{fn}],1,1)
 end
 for fn = 1:numel(fNamesd)
@@ -170,15 +179,18 @@ for fn = 1:numel(fNamesd)
         eval(['dat=d'  num2str(rn) '.storedStates.' fNamesd{fn} ';'])
         dat=squeeze(dat);
         if ndims(dat) > 2
-            datMean=nansum(nanmean(dat2,[1]),[2]);
+            datMean=nansum(nanmean(dat,[1]),[2]);
         else
             datMean=nanmean(dat,1);
         end
-        plot(datMean,'LineWidth',1)
+        if ndims(datMean) < 3
+            plot(datMean,'LineWidth',1)
+        end
     end
     hleg = legend(expNames);
     set(hleg,'Interpreter', 'none')
-    title(['diagnostic stored states: spatial mean ' fNamesd{fn}])
+    titl=title(['diagnostic stored states: spatial mean ' fNamesd{fn}]);
+    set(titl,'Interpreter', 'none');
     save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesd{fn}],1,1)
     
 end
