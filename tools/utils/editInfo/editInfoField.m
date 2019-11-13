@@ -54,7 +54,7 @@ for ii = 1 : size(keySet,2)
     
     switch no_of_occurences
         case 0
-            disp([pad('CRIT MISS INFO FIELD',20) ' : ' pad('editInfoField',20) ' | Fieldname ' keySet{ii} 'not found in Structure. It cannot changed''']);
+            disp([pad('CRIT MISS INFO FIELD',20) ' : ' pad('editInfoField',20) ' | Fieldname ' keySet{ii} ' not found in Structure. It cannot changed''']);
 %             disp(['Fieldname "' keySet{ii} '" not found in Structure. So, it was not changed']);
 %             error(['Fieldname "' keySet{ii} '" not found in Structure.']);
         case 1
