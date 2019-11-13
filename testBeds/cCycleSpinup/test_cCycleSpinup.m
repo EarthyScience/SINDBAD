@@ -69,7 +69,7 @@ saveLongStates  = true;
 % for NI2E = [11 101]% 1001 2001]
 % NI2E=11s
 
-for NI2E = [2001]
+for NI2E = [21]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
         expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '.json'];

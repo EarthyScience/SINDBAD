@@ -1,7 +1,8 @@
 {
 	"params": 
 	{
-	"constantLAI": {
+	"constantLAI": 
+		{
 		"Name": "LAI",
 			"Unit": "m2/m2",
 			"Default": 3,
@@ -13,6 +14,15 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": ""	}
-	}
+			"Comment": " a constant LAI value to be used"	
+		}	
+	},
+	"devStage":
+		{
+		"experimental": true,
+		"tested": false,
+		"consolidated": false,
+		"published": false,
+		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+		}
 }

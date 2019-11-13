@@ -1,0 +1,161 @@
+{
+	"1.c": 					"This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and modules 2) user selected", 
+	"2.c":					"approaches 3) structure of water and carbon states",
+	"3.c":					"If approaches are not set here, a default of dummy (blank/empty) will be used",
+	"4.c":					"If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
+
+	"paths": 
+	{
+		"coreTEM":  		"model/core/coreTEM.m",
+		"modulesDir": 		"model/modules/"
+	},
+
+	"modules": 
+	{
+		"keepStates": 
+		{
+			"apprName": 	"keepStates_simple",
+			"runFull": 		true,
+			"comment": 		"This may never be changed",
+            "use4spinup":   true
+		},
+
+		"getStates": 
+		{
+			"apprName": 	"getStates_simple",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"storeStates": 
+		{
+			"apprName": 	"storeStates_simple",
+			"runFull": 		true,
+			"comment": 		"This may never be changed",
+            "use4spinup":   true
+		},
+		"EvapSoil": 
+		{
+			"apprName": 	"EvapSoil_DemSup",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"pSoil": 
+		{
+			"apprName": 	"pSoil_fixed",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"EvapInt": 
+		{
+			"apprName": 	"EvapInt_none",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"EvapSub": 
+		{
+			"apprName": 	"EvapSub_GLEAM",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"Qbase": 
+		{
+			"apprName": 	"Qbase_fraction",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"Qint": 
+		{
+			"apprName": 	"Qint_Bergstroem",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"Qsnow": 
+		{
+			"apprName": 	"Qsnow_TRn",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"wSnowFrac": 
+		{
+			"apprName": 	"wSnwFr_scaleSFHTESSEL",
+			"runFull": 		false,
+            "use4spinup":   false
+		},
+		"QTotal":
+		{
+			"apprName": 	"QTotal_simple",
+			"runFull": 		false,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"wTotal":
+		{
+			"apprName": 	"wTotal_simple",
+			"runFull": 		true,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"EvapTotal":
+		{
+			"apprName": 	"EvapTotal_simple",
+			"runFull": 		false,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   true
+		},
+		"wGWRec":
+		{
+			"apprName": 	"wGWRec_kUnsat",
+			"runFull": 		true,
+			"use4spinup":   true
+		}
+
+	},		
+	"states": 
+	{
+		"w": 
+		{
+			"pools" : 
+			[
+				["w.Surf", 		1, 	"zeros"],
+				["w.Soil", 		1, 	"zeros"],
+				["w.Buf", 		1, 	"zeros"],
+				["w.GW", 		1, 	"zeros"],
+				["w.Snow", 		1, 	"zeros"]
+			],
+			"combine":		[false,"wPools","zeros"]
+		},
+		"wd": 
+		{
+			"pools" : 
+			[
+				["WTD", 		1, 	"zeros"],
+				["w.TWS", 		1, 	"zeros"],
+				["w.SnowFrac", 	1, 	"zeros"]
+			],
+			"combine":		[false,"wStates","zeros"]
+		},
+		"c": 
+		{
+		"pools" : 
+		[
+			["c.Veg.Root.F",	1,	"zeros"],
+			["c.Veg.Root.C",	1,	"zeros"],
+			["c.Veg.Wood",		1,	"zeros"],
+			["c.Veg.Leaf",		1,	"zeros"],
+			["c.Lit.Leaf.M",	1,	"zeros"],
+			["c.Lit.Leaf.S",	1,	"zeros"],
+			["c.Lit.Root.F.M",	1,	"zeros"],
+			["c.Lit.Root.F.S",	1,	"zeros"],
+			["c.Lit.Wood",		1,	"zeros"],
+			["c.Lit.Root.C",	1,	"zeros"],
+			["c.Mic.Surf",		1,	"zeros"],
+			["c.Mic.Soil",		1,	"zeros"],
+			["c.Soil.Slow",		1,	"zeros"],
+			["c.Soil.Old",		1,	"zeros"]
+		],
+		"oldNames":		["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
+		"combine":		[true,"cEco","zeros"]
+		}
+	}
+}
+
