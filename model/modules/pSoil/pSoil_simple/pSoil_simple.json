@@ -1,17 +1,17 @@
 {
 	"params": {
 		"tAWC": {
-			"Name": NaN,
+			"Name": "Available water Capacity",
 			"Unit": "mm/m",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
+			"Default": 100,
+			"LowerBound": 10,
+			"UpperBound": 1000,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"CLAY": {
 			"Name": NaN,

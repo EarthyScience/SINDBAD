@@ -42,7 +42,7 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'Qsurf';
+moduleName              = 'Qsat';
 
 
 %% stop if module does not exist
@@ -57,15 +57,22 @@ end
 runNum = 0;
 expNames ={};
 opList={'fx','s' 'd' 'info'};
+moduleInfo = struct;
 for ap = 1:numel(appDirs)
     tmp=strsplit(appDirs{ap},'_');
     appName = tmp(end);
+    moduleInfo.(char(appName)).precFile = false;
+    moduleInfo.(char(appName)).dynaFile = false;
+    moduleInfo.(char(appName)).fullFile = false;
     fullappName = [moduleName '_' appName];
     if iscell(fullappName)
-        fullappName=horzcat(fullappName{:})
-    end
+        fullappName=horzcat(fullappName{:});
+    end     
     if strcmp(appName,'dummy')
         disp(['dummy approach exists for ' moduleName])
+        dummyFile = 1;
+        moduleInfo.(char(appName)).dummyFile    = true;
+        moduleInfo.(char(appName)).fullFile     = true;
     else
         [~,appFiles]=getFiles(appDirs{ap},'m');
         appMfiles= {appFiles(:).name};
@@ -75,14 +82,17 @@ for ap = 1:numel(appDirs)
             if ~isempty(strfind(fileN, 'prec_'))
                 disp('prec exists')
                 precFile=true;
+                moduleInfo.(char(appName)).precFile = true;
             end
             if ~isempty(strfind(fileN, 'dyna_'))
                 disp('dyna exists')
                 dynaFile = true;
+                moduleInfo.(char(appName)).dynaFile = true;
             end
             if isempty(strfind(fileN, 'dyna_')) && isempty(strfind(fileN, 'prec_'))
                 disp('full file exists')
                 fullFile=true;
+                moduleInfo.(char(appName)).fullFile = true;
             end
         end
         if precFile && dynaFile
@@ -91,14 +101,14 @@ for ap = 1:numel(appDirs)
             if iscell(expName)
                 expName = horzcat(expName{:});
             end
-            modString=['tem.model.modules.' moduleName '.apprName'];
-            runString=['tem.model.modules.' moduleName '.runFull'];
+            modString=['info.tem.model.modules.' moduleName '.apprName'];
+            runString=['info.tem.model.modules.' moduleName '.runFull'];
             [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
                 workflowExperiment(expConfigFile,...
                 'info.tem.model.flags.runGenCode',true,...
                 'info.tem.forcing.oneDataPath',inpath,...
                 'info.experiment.name',expName,...
-                modString,fullappName,...
+                modString,char(appName),...
                 runString,false,...
                 'info.experiment.outputDirPath',outpath...
                 );
@@ -107,6 +117,8 @@ for ap = 1:numel(appDirs)
                 opName = opList{opN};
                 eval([opName num2str(runNum) '=' opName ';'])
             end
+            disp(['Prec and Dyna of approaches exists for ' fullappName])
+    
         end
         if fullFile
             runNum = runNum+1;
@@ -114,14 +126,14 @@ for ap = 1:numel(appDirs)
             if iscell(expName)
                 expName = horzcat(expName{:});
             end
-            modString=['tem.model.modules.' moduleName '.apprName'];
-            runString=['tem.model.modules.' moduleName '.runFull'];
+            modString=['info.tem.model.modules.' moduleName '.apprName'];
+            runString=['info.tem.model.modules.' moduleName '.runFull'];
             [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
                 workflowExperiment(expConfigFile,...
                 'info.tem.model.flags.runGenCode',true,...
                 'info.tem.forcing.oneDataPath',inpath,...
                 'info.experiment.name',expName,...
-                modString,fullappName,...
+                modString,char(appName),...
                 runString,true,...
                 'info.experiment.outputDirPath',outpath...
                 );
@@ -130,9 +142,19 @@ for ap = 1:numel(appDirs)
                 opName = opList{opN};
                 eval([opName num2str(runNum) '=' opName ';'])
             end
+                        disp(['Prec and Dyna of approaches exists for ' fullappName])
+
         end
     end
 end
+
+%% summary of files
+% if dummyFile == 1
+%     disp(['Dummy approach exists for ' moduleName])
+% else
+%         disp(['Dummy approach DOES NOT exist for ' moduleName])
+% end
+
 %% plot the comparison figures
 
 fig_outDirPath=[info.experiment.outputDirPath '../checkResults_' moduleName];
