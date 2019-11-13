@@ -1,5 +1,6 @@
 function test_wCycleForward(inpath,outpath,obspath,testName)
 
+testName                    = 'wCycle_Forward';
 %% provide an experiment configuration file
 expConfigFile               =   ['testBeds/' testName '/settings_' testName '/experiment_' testName '.json'];
 
