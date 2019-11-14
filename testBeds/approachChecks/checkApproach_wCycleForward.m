@@ -16,8 +16,8 @@ end
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_approachChecks';
 %
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -142,9 +142,10 @@ for ap = 1:numel(appDirs)
                 opName = opList{opN};
                 eval([opName num2str(runNum) '=' opName ';'])
             end
-                        disp(['Prec and Dyna of approaches exists for ' fullappName])
+            disp(['Prec and Dyna of approaches exists for ' fullappName])
 
         end
+        [~,~,~] = getModuleVariableMatrix(info);
     end
 end
 

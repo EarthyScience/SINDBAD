@@ -2,9 +2,9 @@ function [f,fe,fx,s,d,p] = prec_pSoil_simple(f,fe,fx,s,d,p,info)
 
 % AWC       : maximum plant available water content in the top layer [mm]
 %           (p.pSoil.AWC(zix).value)
-p.pSoil.HeightLayer = 
+% p.pSoil.HeightLayer = 
 % number of layers
-N     = numel(p.pSoil.HeightLayer);
+N     = numel(p.pSoil.HeightLayer1);
 
 % total soil depth
 tSLDP = info.tem.helpers.arrays.zerospix;
