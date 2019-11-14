@@ -19,5 +19,5 @@ function [f,fe,fx,s,d,p]=prec_cLAI_constant(f,fe,fx,s,d,p,info)
 %   - 1.0 on 11.11.2019 (skoirala): cleaned up the code
 %
 %% 
-fe.cLAI.LAI = info.tem.helpers.arrays.onespixtix .* p.cLAI.constantLAI;    
+s.cd.LAI = info.tem.helpers.arrays.onespix .* p.cLAI.constantLAI;    
 end

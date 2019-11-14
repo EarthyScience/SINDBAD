@@ -23,6 +23,7 @@ function [f,fe,fx,s,d,p] = getStates_simple(f,fe,fx,s,d,p,info,tix)
 % s.wd.WTD(:,tix) = s.prev.WTD;
 
 % Water Balance Pool
+% s.wd.WBP  = fe.rainSnow.Rain(:,tix);
 s.wd.WBP  = f.Rain(:,tix);
 
 end % function

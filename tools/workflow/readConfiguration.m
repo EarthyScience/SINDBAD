@@ -96,7 +96,12 @@ for ii = 1:numel(fldnmsINFO)
                 if exist(file_json,'file')
                     param_json    = readJsonFile(file_json);
                     paramName     = fieldnames(param_json.params);
-                    
+                    %sujan remove try catch after all jsons have been
+                    %modified
+                    try
+                        info.tem.model.modules.(module_fields{jj}).devStage = param_json.devStage;
+                    catch 
+                    end
                     % loop over the parameter of the approach & get the default value
                     for pp=1:numel(paramName)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
