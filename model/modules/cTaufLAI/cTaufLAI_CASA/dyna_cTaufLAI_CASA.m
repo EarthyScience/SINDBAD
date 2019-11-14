@@ -36,35 +36,39 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 
-% s.cd.p_cTaufLAI_kfLAI = info.tem.helpers.arrays.onespixzix.c.cEco; %(ineficient, should be pix zix_veg)
-% 
-% TSPY	= info.tem.model.time.nStepsYear; %sujan
-% % make sure TSPY is integer
-% if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
-% 
-% % BUILD AN ANNUAL LAI MATRIX
-% LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
-% LAI13(:, 2:TSPY + 1)    =   flip(d.cLAI.LAI(:,1:TSPY), 2);
-% LAI13(:, 1)             =   s.cd.LAI(:, 1);
-% s.cd.p_cTaufLAI_LAI13   =   LAI13;
-% 
-
 % PARAMETERS
 maxMinLAI	= p.cTaufLAI.maxMinLAI;
 kRTLAI      = p.cTaufLAI.kRTLAI;
 
+
+%%%%%NEW
 % NUMBER OF TIME STEPS PER YEAR, AND TIME RECORDS
 TSPY	= info.tem.model.time.nStepsYear;
-
 % make sure TSPY is integer
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
 
 % BUILD AN ANNUAL LAI MATRIX
-LAI13     = s.cd.p_cTaufLAI_LAI13;
+%--> get the LAI of previous time step in LAI13
+LAI13                   =   s.cd.p_cTaufLAI_LAI13;
+LAI13(:, 1)             =   s.cd.LAI;
+LAI13(:, 2:TSPY + 1)	=   LAI13(:,1:TSPY);
+% LAI13(:, 1)             =   s.cd.LAI;
 
-% FEED LAI13
-LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY);
-LAI13(:, 1) = d.cLAI.LAI(:,tix);
+%--> update s
+s.cd.p_cTaufLAI_LAI13	= LAI13;
+
+%%%%NEW END
+
+% 
+% %%%%% OLD
+% % BUILD AN ANNUAL LAI MATRIX
+% LAI13     = s.cd.p_cTaufLAI_LAI13;
+% 
+% % FEED LAI13
+% LAI13(:, 2:TSPY + 1) = LAI13 (:, 1:TSPY);
+% LAI13(:, 1) = d.cLAI.LAI(:,tix);
+% 
+% %%% OLD END
 
 % CALCULATE DELTA LAI SUM
 dLAIsum                 = LAI13(:, 2:TSPY + 1) - LAI13(:, 1:TSPY);

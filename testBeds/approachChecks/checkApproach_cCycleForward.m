@@ -14,7 +14,7 @@ for fn                  =	{'tools','model','optimization','testBeds'}
 end
 %%
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterCreateCleanup';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cCycleCheck';
 %
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
@@ -71,6 +71,7 @@ for ap = 1:numel(appDirs)
     moduleInfo.(char(appName)).precFile = false;
     moduleInfo.(char(appName)).dynaFile = false;
     moduleInfo.(char(appName)).fullFile = false;
+    moduleInfo.(char(appName)).jsonFile = false;
     if iscell(fullappName)
         fullappName=horzcat(fullappName{:});
     end
@@ -81,9 +82,9 @@ for ap = 1:numel(appDirs)
     else
         [~,appFiles]=getFiles(appDirs{ap},'m');
         appMfiles= {appFiles(:).name};
-        precFile=0;dynaFile=0;fullFile=0;
+        precFile=0;dynaFile=0;fullFile=0;jsonFile=0;
         for apFN = 1:numel(appMfiles)
-            [~,fileN,~] = fileparts(appMfiles{apFN});
+            [filePath,fileN,~] = fileparts(appMfiles{apFN});
             if ~isempty(strfind(fileN, 'prec_'))
                 disp('prec exists')
                 precFile=true;
@@ -99,6 +100,12 @@ for ap = 1:numel(appDirs)
                 fullFile=true;
                 moduleInfo.(char(appName)).fullFile = true;
             end
+            fileNameFull = strsplit(fileN,'_');
+            fileJSON     = [appDirs{ap} '/' moduleName '_' fileNameFull{end} '.json'];
+             if exist(fileJSON,'file')
+                moduleInfo.(char(appName)).jsonFile = true;
+            end
+            
         end
         if precFile && dynaFile
             runNum = runNum+1;
@@ -151,6 +158,7 @@ for ap = 1:numel(appDirs)
                 eval([opName num2str(runNum) '=' opName ';'])
             end
         end
+        [~,~,~] = getModuleVariableMatrix(info);
     end
 end
 %% plot the comparison figures
