@@ -110,7 +110,7 @@
 		},
 		"wGWRec":
 		{
-			"apprName": 	"wGWRec_fraction",
+			"apprName": 	"wGWRec_dummy",
 			"runFull": 		true,
 			"use4spinup":   true
 		}
