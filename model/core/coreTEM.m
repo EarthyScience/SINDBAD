@@ -165,10 +165,11 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % sum up components of fluxes and states
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.wTotal.funHandle(f,fe,fx,s,d,p,info,tix);            % add water storages to their sum
-    [f,fe,fx,s,d,p]     =   ms.QTotal.funHandle(f,fe,fx,s,d,p,info,tix);            % add runoff components to their sum
-    [f,fe,fx,s,d,p]     =   ms.EvapTotal.funHandle(f,fe,fx,s,d,p,info,tix);         % add evapotranspiration components to their sum
+    [f,fe,fx,s,d,p]     =   ms.sumVariables.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
+    [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
 
+    [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
+    
     % ---------------------------------------------------------------------
     % Gather all variables that are desired and insert them
     % in fx,s,d
