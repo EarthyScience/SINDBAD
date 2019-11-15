@@ -12,19 +12,6 @@
 				"params" : []
 			},
 			"Comment": "in Paper: sn_c"
-		},
-		"SF_scale": {
-			"Name": "scaling factor for snow fall",
-			"Unit": NaN,
-			"Default": 1,
-			"LowerBound": 0,
-			"UpperBound": 3,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "in Paper: p_sf"
 		}
 	}
 }

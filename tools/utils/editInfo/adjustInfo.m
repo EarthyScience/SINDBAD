@@ -88,7 +88,7 @@ if ~isempty(tree)
                     end
                 end
             else
-                disp([pad('WARN PARAM FILEMISS',20) ' : ' pad('adjustInfo',20) ' |  no parameter config file (json) existing for adjusted module : '  module ' : approach: ' appr]);
+                disp([pad('WARN PARAM FILEMISS',20) ' : ' pad('adjustInfo',20) ' | no parameter config file (json) existing for adjusted module : '  module ' : approach: ' appr]);
             end
             
             % feed list of params
