@@ -64,7 +64,7 @@ info.tem.model.code.rawMS.coreTEM.funHandle        =    str2func(rawCoreName);
 info.tem.spinup.code.rawMS.precOnce.funHandle      =    @runPrecOnceTEM4Spinup;
 info.tem.spinup.code.rawMS.coreTEM.funHandle       =    @coreTEM4Spinup;
 % info.tem.spinup.code.rawMS.precOnce.funHandle      =    @runPrecOnceTEM;
-% %sujan 
+% %sujan
 % info.tem.spinup.code.rawMS.coreTEM.funHandle       =    str2func(rawCoreName);
 %<--
 
@@ -126,22 +126,6 @@ storeVars_longName                              =   info.tem.model.variables.to.
 storeVars_longName                              =   unique(vertcat(storeVars_longName(:),...
     writeVars_longName(:)));
 
-%--> check if supplied write and store variables exist in the code
-varsAllAll              =	vertcat(info.tem.model.code.variables.moduleAll(:),info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:));
-problemVars             =   setdiff(storeVars_longName,varsAllAll);
-if ~isempty(problemVars)
-    for ii      =   1:length(problemVars)
-        if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
-            %sujan (allowing storedstates)
-            sstr    =   [pad('CRIT MODSTR',20) ' : ' pad('setupCode',20) ' | ' char(problemVars(ii)) ' does not exist in selected Model Structure (from ModelStructure.json) | Check output[.json] config file for variables to store and to write'];
-        error(sstr)
-        else
-            sstr    =   [pad('WARN MODSTR',20) ' : ' pad('setupCode',20) ' | EXCEPTION: for ' char(problemVars(ii)) ' in variables.to.write | taken from output[.json] config file'];
-            disp(sstr)
-        end
-    end
-end
-
 
 info.tem.model.variables.to.store                               =   storeVars_longName;
 [storeStates_longSource,storeStates_longDestination]            =   getStatesToStore(storeVars_longName);
@@ -151,11 +135,100 @@ info.tem.model.code.variables.to.storeStatesDestination         =   storeStates_
 [variablesToRedMem]                                             =   getVariablesToRedMem(storeVars_longName,AllOutputsPrec,AllOutputs);
 info.tem.model.code.variables.to.redMem                         =   variablesToRedMem(:);
 
-AllVars                                                         =   unique(vertcat(AllInputs,AllOutputs));
+%% variables to sum
+sumVars=info.tem.model.varsToSum;
+
+sumVars_longDestination={''};
+sumVars_codeLines={''};
+fn_sumVars=fieldnames(sumVars);
+addKeepVar={''};
+
+cnt_keep=1;
+
+cnt=1;
+for ii=1:length(fn_sumVars)
+    %sVarFlag=false;
+    sumVars_longDestination(ii)=cellstr([sumVars.(char(fn_sumVars(ii))).destination '.' char(fn_sumVars(ii))]);
+    
+    if startsWith(sumVars_longDestination(ii),['s.'])
+        %        sVarFlag=true;
+        cCL=[char(sumVars_longDestination(ii)) '=0'];
+        tmp=startsWith(AllOutputs,sumVars.(char(fn_sumVars(ii))).components);
+        cComps=AllOutputs(tmp);
+        if sumVars.(char(fn_sumVars(ii))).balance
+            % [s.prev.s_wd_wTWS]
+            addKeepVar(cnt_keep)=cellstr(['s.prev.' char(regexprep(sumVars_longDestination(ii),'\.','_'))]);
+        end
+        
+        for j=1:length(cComps)
+            cstr=['+sum(' char(cComps(j)) ',2)'];
+            
+            cCL=[cCL cstr];
+        end
+        cCL=[cCL ';'];
+        sumVars_codeLines(cnt)=cellstr(cCL);
+        cnt=cnt+1;
+        
+    else
+        cCL=[char(sumVars_longDestination(ii)) '(:,tix)=0'];
+        cComps=sumVars.(char(fn_sumVars(ii))).components;
+        
+        
+        for j=1:length(cComps)
+            if ismember(cComps(j),info.tem.model.code.variables.moduleAll)
+                if info.tem.model.flags.genRedMemCode && ismember(cComps(j),info.tem.model.code.variables.to.redMem)
+                    cstr=['+' char(cComps(j)) '(:,1)'];
+                else
+                    cstr=['+' char(cComps(j)) '(:,tix)'];
+                end
+                cCL=[cCL cstr];
+            end
+        end
+        cCL=[cCL ';'];
+        sumVars_codeLines(cnt)=cellstr(cCL);
+        cnt=cnt+1;
+    end
+end
+
+info.tem.model.code.variables.to.sum.codeLines=sumVars_codeLines;
+
+%add the new variables to output variables such that they can be created.
+%the new variables will however NOT be listed in
+%info.tem.model.code.variables !!!
+AllOutputs=vertcat(AllOutputs,sumVars_longDestination(:));
+%info.tem.model.code.variables.moduleInputs      =   AllInputs;
+info.tem.model.code.variables.moduleOutputs     =   AllOutputs;
+info.tem.model.code.variables.moduleAll         =   unique(vertcat(AllInputs,AllOutputs));
+
+%%
+%--> check if supplied write and store variables exist in the code
+varsAllAll              =	unique(vertcat(AllOutputs,info.tem.model.code.variables.moduleAll(:),info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:)));
+problemVars             =   setdiff(storeVars_longName,varsAllAll);
+if ~isempty(problemVars)
+    for ii      =   1:length(problemVars)
+        if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
+            %sujan (allowing storedstates)
+            sstr    =   [pad('CRIT MODSTR',20) ' : ' pad('setupCode',20) ' | ' char(problemVars(ii)) ' does not exist in selected Model Structure (from ModelStructure.json) | Check output[.json] config file for variables to store and to write'];
+            error(sstr)
+        else
+            sstr    =   [pad('WARN MODSTR',20) ' : ' pad('setupCode',20) ' | EXCEPTION: for ' char(problemVars(ii)) ' in variables.to.write | taken from output[.json] config file'];
+            disp(sstr)
+        end
+    end
+end
+
+
+%%
+AllVars                                                         =   unique(vertcat(AllInputs,AllOutputs,addKeepVar(:)));
 [keptVars_longSource,keptVars_longDestination,keptVars_short]   =   getVariablesToKeep(AllVars);
 info.tem.model.code.variables.to.keepSource                     =   keptVars_longSource;
 info.tem.model.code.variables.to.keepDestination                =   keptVars_longDestination;
 info.tem.model.code.variables.to.keepShortName                  =   keptVars_short;
+
+%%
+
+%%
+
 
 %--> variables to create: all outputs except s. and p.
 tf                                                              =   ~startsWith(AllOutputs,{'s.','p.'});
@@ -182,7 +255,7 @@ for vn                                                          =   1:numel(writ
     else
         sstr    =   [pad('WARN VAR MISS',20) ' : ' pad('setupCode',20) ' | ' vName ' is set as an output variable in output.json but does not exist in the selected Model Structure'];
         disp(sstr)
-
+        
     end
 end
 info.tem.model.code.variables.to.write                          =   writeVariables;
@@ -361,7 +434,7 @@ for i   =   1:length(moduleNamesCore)
         for j   =   1:length(Pxl)
             precStruct(cntP).runAlways      =   0;
             precStruct(cntP).moduleName     =   char(moduleNamesCore(i));
-            % sujan: added the use4spinup field to preconce modules            
+            % sujan: added the use4spinup field to preconce modules
             if isfield(info.tem.model.modules.(precStruct(cntP).moduleName),'use4spinup')
                 precStruct(cntP).use4spinup   =   info.tem.model.modules.(precStruct(cntP).moduleName).use4spinup;
             else
@@ -437,7 +510,7 @@ for i   =   1:length(codeStruct)
             cmstart     =   matchstart{cv};
             ceq         =   starteq{cv};
             try
-            ceq         =   ceq(1);
+                ceq         =   ceq(1);
             catch
                 error(['ERR : in function : ' codeStruct(i).funName{1} ...
                     ' : in line : ' codeStruct(i).funContent{cv}])
@@ -899,6 +972,21 @@ end
 end
 
 %%
+function [fid]  =   writeSumVariables_simple(info,fid)
+
+fprintf(fid, '%s\n', '%sumVariables_simple');
+
+CL=info.tem.model.code.variables.to.sum.codeLines;
+for ii  =   1:length(CL)
+    sstr            =   char(CL(ii));
+        fprintf(fid, '%s\n', sstr);
+    
+end
+
+end
+
+
+%%
 function [fid]  =   writeKeepStates_simple(info,fid)
 % generate the code for writing the .prev fields of s and d at the
 % beginning of every time sep
@@ -998,18 +1086,20 @@ for ii  =   iistart:length(CodeCore)
             switch char(moduleStruct.funName)
                 
                 case 'storeStates_simple'
-                     [fid]           =   writeStoreStates_simple(info,fid);
+                    [fid]           =   writeStoreStates_simple(info,fid);
                 case 'keepStates_simple'
-                     [fid]           =   writeKeepStates_simple(info,fid);
+                    [fid]           =   writeKeepStates_simple(info,fid);
+                case 'sumVariables_simple'
+                    [fid]           =   writeSumVariables_simple(info,fid);
                 otherwise
                     [fid]           =   writeFunContent(moduleStruct,fid);
             end
             
-%             if strcmp(moduleStruct.funName,'storeStates_simple')
-%                 [fid]           =   writeStoreStates_simple(info,fid);
-%             else
-%                 [fid]           =   writeFunContent(moduleStruct,fid);
-%             end
+            %             if strcmp(moduleStruct.funName,'storeStates_simple')
+            %                 [fid]           =   writeStoreStates_simple(info,fid);
+            %             else
+            %                 [fid]           =   writeFunContent(moduleStruct,fid);
+            %             end
         end
     else
         fprintf(fid, '%s\n',CodeCore{ii});
