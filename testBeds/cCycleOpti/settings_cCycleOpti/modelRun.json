@@ -32,6 +32,27 @@
 			"bounds": 			false
 		}
 	},
+	"varsToSum":
+	{
+		"Q":
+		{
+		"destination": "fx",
+		"components":["fx.Qint","fx.Qb"],
+		"balance": true
+		},
+		"ET":
+		{
+		"destination": "fx",
+		"components":["fx.EvapInt","fx.Transp","fx.EvapSoil","fx.EvapSub"],
+		"balance": true
+		},
+		"wTWS":
+		{
+		"destination": "s.wd",
+		"components":"s.w.",
+		"balance": true
+		}
+	},
 	"rules":
 	{
 		"arrayPrecision": 		"single"

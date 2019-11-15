@@ -18,8 +18,8 @@ months      = length(info.tem.helpers.dates.month);
 xMonth      = info.tem.helpers.dates.month;
 [~,tVec,~]  = datevec(xMonth);
 
-gridArea    = repmat(info.tem.helpers.areaPix,1,days);
-gridArea_m  = repmat(info.tem.helpers.areaPix,1,months);
+gridArea    = repmat(info.tem.helpers.dimension.space.areaPix,1,days);
+gridArea_m  = repmat(info.tem.helpers.dimension.space.areaPix,1,months);
 
 % threshold for SWE
 swe_thrs    = 100;

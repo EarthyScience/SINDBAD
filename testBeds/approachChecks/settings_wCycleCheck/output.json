@@ -19,7 +19,5 @@
 			}
 		}
 	},
-	"dataFormat": 			".nc",
-	"inputRef": 		"Tair"
-
+	"dataFormat": 			".nc"
 }
