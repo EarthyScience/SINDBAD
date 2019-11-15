@@ -24,6 +24,6 @@ function [f,fe,fx,s,d,p] = prec_wSnowFrac_scaleSFHTESSEL(f,fe,fx,s,d,p,info)
 
 
 % compute snow fall
-fe.wSnowFrac.Snow  	 = (p.wSnowFrac.SF_scale .* info.tem.helpers.arrays.onespix) .* f.Snow; % *ones as parameter has one value for each pixel
+% fe.wSnowFrac.Snow  	 = (p.wSnowFrac.SF_scale .* info.tem.helpers.arrays.onespix) .* f.Snow; % *ones as parameter has one value for each pixel
 
 end

@@ -63,7 +63,7 @@ pBGME	= d.prev.d_cTaufwSoil_fwSoil; %sujan
 ndx = (f.PET(:,tix) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + f.Rain(ndx,tix)) ./ f.PET(ndx,tix);
+BGRATIO(ndx)	= (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + fe.rainSnow.rain(ndx,tix)) ./ f.PET(ndx,tix);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.cTaufwSoil.Aws;

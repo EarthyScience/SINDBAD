@@ -72,7 +72,8 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % Get variables for previous time step and keep in s.prev. or d.prev
     % 
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);             % keep states from previous time step    
+    [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);          % set rain and snow to fe.rainSnow.
+    [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
     [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);        
     % ---------------------------------------------------------------------
     % 0 - Terrain - to get the terrain params ...    
@@ -165,10 +166,10 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % sum up components of fluxes and states
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.sumVariables.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
-    [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
+    [f,fe,fx,s,d,p]     =   ms.sumVariables.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables (through modelRun.json)
+%     [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
 
-    [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
+    [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate the water balance
     
     % ---------------------------------------------------------------------
     % Gather all variables that are desired and insert them

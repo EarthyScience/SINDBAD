@@ -19,7 +19,7 @@ function [f,fe,fx,s,d,p] = wSnowFrac_binary(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % first update the snow pack
-s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
+s.w.wSnow = s.w.wSnow + fe.rainSnow.snow(:,tix);
 
 % if there is snow, then snow fraction is 1, otherwise 0
 s.wd.wSnowFrac = double(s.w.wSnow > 0);

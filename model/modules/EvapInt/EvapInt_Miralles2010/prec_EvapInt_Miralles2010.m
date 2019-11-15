@@ -9,7 +9,7 @@ function [f,fe,fx,s,d,p] = prec_EvapInt_Miralles2010(f,fe,fx,s,d,p,info)
 % 
 % INPUT
 % Rain      : rain fall [mm]
-%           (f.Rain)
+%           (fe.rainSnow.rain)
 % RainInt   : rainfall intensity [mm/hr] {1.5 or 5.6 for synoptic or
 %           convective}
 %           (f.RainInt)
@@ -69,28 +69,28 @@ Pgc(valids)=-1.*( f.RainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids)
 Pgt(valids)=Pgc(valids) + f.RainInt(valids) .* St(valids) ./ ( pd(valids) .* f.FAPAR(valids) .* ( f.RainInt(valids) - EvapRate(valids) .* (1 - fte(valids) )));
 
 %Ic: EvapInt loss from canopy
-Ic1(valids) = f.FAPAR(valids) .* f.Rain(valids); %Pg < Pgc
-Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ) .* ( f.Rain(valids) - Pgc(valids))); %Pg > Pgc
+Ic1(valids) = f.FAPAR(valids) .* fe.rainSnow.rain(valids); %Pg < Pgc
+Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ) .* ( fe.rainSnow.rain(valids) - Pgc(valids))); %Pg > Pgc
 
 
-v= f.Rain <= Pgc & valids==1;
+v= fe.rainSnow.rain <= Pgc & valids==1;
 Ic(v)=Ic1(v);
 Ic(v==0)=Ic2(v==0);
 
 %It: interception loss from trunks
 
 %It1 = St;% Pg < Pgt
-It2(valids) = pd(valids) .* f.FAPAR(valids) .* (1-(1 - fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ).*( f.Rain(valids) - Pgc(valids));%Pg > Pgt
+It2(valids) = pd(valids) .* f.FAPAR(valids) .* (1-(1 - fte(valids) ) .* EvapRate(valids) ./ f.RainInt(valids) ).*( fe.rainSnow.rain(valids) - Pgc(valids));%Pg > Pgt
 
-v= f.Rain <= Pgt;
+v= fe.rainSnow.rain <= Pgt;
 It(v) = St(v);
 It(v==0)=It2(v==0);
 
 tmp = Ic+It;
-tmp(f.Rain == 0) = 0;
+tmp(fe.rainSnow.rain == 0) = 0;
 
-v=tmp > f.Rain;
-tmp(v) = f.Rain(v);
+v=tmp > fe.rainSnow.rain;
+tmp(v) = fe.rainSnow.rain(v);
 
 fx.ECanop = tmp;
 
