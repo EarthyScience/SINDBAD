@@ -42,7 +42,8 @@ kRTLAI                          =   p.cTaufLAI.kRTLAI;
 
 
 %%%%%NEW
-% NUMBER OF TIME STEPS PER YEAR, AND TIME RECORDS
+
+%--> Get the number of time steps per year
 TSPY                            =   info.tem.model.time.nStepsYear;
 % make sure TSPY is integer
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
@@ -69,43 +70,49 @@ s.cd.p_cTaufLAI_LAI13           =   LAI13;
 % 
 % %%% OLD END
 
-% CALCULATE DELTA LAI SUM
+%--> Calculate sum of deltaLAI over the year
 dLAIsum                         =   LAI13(:, 2:TSPY + 1) - LAI13(:, 1:TSPY);
 dLAIsum(dLAIsum < 0)            =   0;
 dLAIsum                         =   sum(dLAIsum, 2);
 
-% CALCULATE LAI AVERAGE AND MINIMUM
+
+%--> Calculate average and minimum LAI
 LAIave                          =   mean(LAI13(:, 2:TSPY + 1), 2);
 LAImin                          =   min(LAI13(:, 2:TSPY + 1), [], 2);
 LAImin(LAImin > maxMinLAI)      =   maxMinLAI(LAImin > maxMinLAI);
 LAIsum                          =   sum(LAI13(:, 2:TSPY + 1), 2);
 
-% CALCULATE LTCON: CONSTANT FRACTION OF LAI
+
+%--> Calculate constant fraction of LAI (LTCON)
 LTCON                           =   zeros(size(LAI13(:, 1)));
 ndx                             =   (LAIave > 0);
 LTCON(ndx)                      =   LAImin(ndx) ./ LAIave(ndx);
 
-% CALCULATE dLAI (VARIABLE LAI)
+
+%--> Calculate deltaLAI
 dLAI                            =   LAI13(:, 2) - LAI13(:, 1);
 dLAI(dLAI < 0)                  =   0;
 
-% CALCULATE LTVAR: VARIABLE FRACTION OF LAI
+
+%--> Calculate variable fraction of LAI (LTCON)
 LTVAR                           =   zeros(size(dLAI));
 LTVAR(dLAI <= 0 | dLAIsum <= 0)	=   0;
 ndx                             =   (dLAI > 0 | dLAIsum > 0);
 LTVAR(ndx)                      =   (dLAI(ndx) ./ dLAIsum(ndx));
 
-% LITTER SCALAR
+
+%--> Calculate the scalar for litterfall
 LTLAI                           =   LTCON ./ TSPY + (1 - LTCON) .* LTVAR;
 
-% ROOT LITTER SCALAR
+%--> Calculate the scalar for root litterfall
 RTLAI                           =   zeros(size(LTLAI));
 ndx                             =   (LAIsum > 0);
 LAI131st                        =   LAI13(:, 1);
 RTLAI(ndx)                      =   (1 - kRTLAI) .* (LTLAI(ndx) + LAI131st(ndx) ./ ...
                                     LAIsum(ndx)) ./ 2 + kRTLAI ./ TSPY;
 
-% FEED OUTPUTS
+
+%--> Feed the output fluxes to cCycle components
 zix                             =   info.tem.model.variables.states.c.zix.cVegLeaf;
 s.cd.p_cTaufLAI_kfLAI(:,zix)	=   s.cd.p_cCycleBase_annk(:,zix) .* LTLAI ./ s.cd.p_cCycleBase_k(:,zix); % leaf litter scalar
 if isfield(info.tem.model.variables.states.c.zix,'cVegRootF')
@@ -114,5 +121,4 @@ else
     zix = info.tem.model.variables.states.c.zix.cVegRoot;
 end
 s.cd.p_cTaufLAI_kfLAI(:,zix)	=   s.cd.p_cCycleBase_annk(:,zix) .* RTLAI ./ s.cd.p_cCycleBase_k(:,zix); % root litter scalar
-% s.cd.p_cTaufLAI_LAI13           =   LAI13;
 end % function
