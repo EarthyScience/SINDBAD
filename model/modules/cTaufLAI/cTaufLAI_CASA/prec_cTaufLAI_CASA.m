@@ -5,8 +5,9 @@ s.cd.p_cTaufLAI_kfLAI = info.tem.helpers.arrays.onespixzix.c.cEco; %(inefficient
 TSPY	= info.tem.model.time.nStepsYear; %sujan
 % make sure TSPY is integer
 if rem(TSPY,1)~=0,TSPY=floor(TSPY);end
-% s.cd.p_cTaufLAI_LAI13                   =   repmat(s.cd.LAI,1, TSPY + 1);
-s.cd.p_cTaufLAI_LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
+% s.cd.p_cTaufLAI_LAI13                 =   repmat(s.cd.LAI,1, TSPY + 1);
+s.cd.p_cTaufLAI_LAI13                 =   repmat(s.cd.LAI,1, TSPY + 1);
+% s.cd.p_cTaufLAI_LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
 
 
 
