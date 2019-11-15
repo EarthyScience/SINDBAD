@@ -1,0 +1,20 @@
+{
+	"1.c": 					"This json defines general settings and paths of the different config files that will be used for a SINDBAD model simulation", 
+	"2.c":					"The specific details for different aspects of an experiment should be changed in corresponding json config files",
+
+	"name": 				"CASA",
+	"domain": 				"US-Ha1",
+	"configFiles": 
+	{
+		"forcing": 			"testBeds/cLAISpinup/settings_cLAISpinup/forcing.json",
+		"modelStructure": 	"testBeds/cLAISpinup/settings_cLAISpinup/modelStructure_cLAISpinup_CASA.json",
+		"constants": 		"testBeds/cLAISpinup/settings_cLAISpinup/constants.json",
+		"modelRun": 		"testBeds/cLAISpinup/settings_cLAISpinup/modelRun.json",
+		"output": 			"testBeds/cLAISpinup/settings_cLAISpinup/output.json",
+		"spinup": 			"testBeds/cLAISpinup/settings_cLAISpinup/spinup.json",
+		"opti": 			"testBeds/cLAISpinup/settings_cLAISpinup/opti.json",
+		"params": 			""
+	},
+	"outputInfoFile": 		"testBeds/cLAISpinup/settings_cLAISpinup/cLAISpinup_CASA.json",
+	"outputDirPath": 		"testBeds/cLAISpinup/output/"
+}
