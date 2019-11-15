@@ -7,7 +7,7 @@ function [f,fe,fx,s,d,p] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % CONTACT	: ttraut
 %
 % INPUT
-% f.Rain            : rain fall [mm/time]
+% fe.rainSnow.rain            : rain fall [mm/time]
 % fx.Qsnow          : snow melt [mm/time]
 % p.Qint.smaxberg   : shape parameter of runoff-infiltration curve []
 % p.Qint.smax 		: maximum woil water holding capacity [mm]
@@ -24,12 +24,11 @@ function [f,fe,fx,s,d,p] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calculate land runoff from incoming water and current soil moisture
-fx.Qint(:,tix)  = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.w.wSoil./p.Qint.smax));
+fx.Qint(:,tix)  = (fe.rainSnow.rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.w.wSoil./p.Qint.smax));
 % original formula:
-% fx.Qint(:,tix)  = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* (s.w.wSoil./p.Qint.smax).^p.Qint.berg;
 
 % update soil moisture
-s.w.wSoil       = s.w.wSoil + ((f.Rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
+s.w.wSoil       = s.w.wSoil + ((fe.rainSnow.rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));
 
 % account for oversaturation (in TWS paper after subtracting of ET)
 tmp             = max(0,s.w.wSoil-p.Qint.smax);

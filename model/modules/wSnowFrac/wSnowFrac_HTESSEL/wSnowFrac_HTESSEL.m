@@ -25,7 +25,7 @@ function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % first update the snow pack
-s.w.wSnow = s.w.wSnow + f.Snow(:,tix);
+s.w.wSnow = s.w.wSnow + fe.rainSnow.snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
 s.wd.wSnowFrac = min(1, s.w.wSnow ./ p.wSnowFrac.CoverParam );

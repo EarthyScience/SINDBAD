@@ -33,6 +33,6 @@ function [f,fe,fx,s,d,p] = prec_EvapInt_simple(f,fe,fx,s,d,p,info)
 % interception evaporation is simply the minimum of the fapar dependent
 % storage and the rainfall
 tmp             =   (p.EvapInt.isp * info.tem.helpers.arrays.onestix) .* f.FAPAR;
-fx.EvapInt       =   min(tmp,f.Rain);
+fx.EvapInt       =   min(tmp,fe.rainSnow.rain);
 
 end

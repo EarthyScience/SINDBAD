@@ -51,11 +51,11 @@ info.tem.helpers.dimension.time.day       = info.tem.helpers.dates.day;
 info.tem.helpers.dimension.time.month     = info.tem.helpers.dates.month;
 % create space helpers
 try
-    info.tem.helpers.areaPix    =   AreaGridLatLon(info.tem.model.space.latVec, info.tem.model.space.lonVec, info.tem.model.space.reso);
-    info.tem.helpers.areaPix    =   info.tem.helpers.areaPix(:,1);
+    info.tem.helpers.dimension.space.areaPix    =   AreaGridLatLon(info.tem.model.space.latVec, info.tem.model.space.lonVec, info.tem.model.space.reso);
+    info.tem.helpers.dimension.space.areaPix    =   info.tem.helpers.areaPix(:,1);
 catch
-    info.tem.helpers.areaPix    =   ones(info.tem.helpers.sizes.nPix,1);
-    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('prepTEM',20) ' | Space information (latitude, longitute, resolution)  missing. areaPix set to ones'])
+    info.tem.helpers.dimension.space.areaPix    =   ones(info.tem.helpers.sizes.nPix,1);
+    disp([pad('WARN DATAMISS',20,'left') ' : ' pad('prepTEM',20) ' | Space information (latitude, longitude, resolution)  missing. areaPix set to ones'])
 end
 
 % so far based checkData4TEM.m 

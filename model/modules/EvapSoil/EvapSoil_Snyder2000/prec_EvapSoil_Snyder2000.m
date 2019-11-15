@@ -58,14 +58,14 @@ beta2               =   p.EvapSoil.beta.*p.EvapSoil.beta;
 %loop over time
 for it  =   2:size(PET,2)
     %isdry(:)   = f.Rain(:,it)==0;
-    isdry(:)        =   f.Rain(:,it) - fx.ECanop(:,it) < PET(:,it); %assume wetting occurs with precip-interception > pet_soil; Snyder argued one should use precip > 3*pet_soil but then it becomes inconsistent here
+    isdry(:)        =   fe.rainSnow.rain(:,it) - fx.ECanop(:,it) < PET(:,it); %assume wetting occurs with precip-interception > pet_soil; Snyder argued one should use precip > 3*pet_soil but then it becomes inconsistent here
     sPET(:)         =   isdry.*(sPET_old+PET(:,it));
     issat           =   sPET > beta2; %same as sqrt(sPET) > beta (see paper); issat is a flag for stage 2 evap (name 'issat' not correct here)
     ET(:,it)        =   isdry.*(~issat .* sPET+issat .* sqrt(sPET) .* p.EvapSoil.beta - sET) + ~isdry .* PET(:,it);
     %
     %correct for conditions with light rainfall which were considered not as a
     %wetting event; for these conditions we assume soil_evap=min(precip-ECanop,pet_soil-evap soil already used)
-    ET2(:,it2)      =   min( f.Rain(:,it) - fx.ECanop(:,it) , PET(:,it) - ET(:,it));
+    ET2(:,it2)      =   min(fe.rainSnow.rain(:,it) - fx.ECanop(:,it) , PET(:,it) - ET(:,it));
     %[sPET ET(:,it) sET(:) issat]
     sET(:)          =   isdry.*(sET+ET(:,it));
     sPET_old(:)     =   sPET(:);

@@ -35,6 +35,13 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 %               (fe.cCycle.RTLAI)
 % #########################################################################
 
+% % BUILD AN ANNUAL LAI MATRIX
+% LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
+% LAI13(:, 2:TSPY + 1)	=   flip(d.cLAI.LAI(:,1:TSPY), 2);
+% LAI13(:, 1)             =   d.cLAI.LAI(:, 1);
+% s.cd.p_cTaufLAI_LAI13   =   LAI13;
+
+
 
 % PARAMETERS
 maxMinLAI                       =   p.cTaufLAI.maxMinLAI;

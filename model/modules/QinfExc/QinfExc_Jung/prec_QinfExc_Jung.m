@@ -41,8 +41,8 @@ function [f,fe,fx,s,d,p] = prec_QinfExc_Jung(f,fe,fx,s,d,p,info)
 pInfCapacity	=   p.pSoil.InfCapacity * info.tem.helpers.arrays.onestix;
 
 Qinf            =   info.helper.zeros2d;
-tmp             =   f.RainInt > 0;
-Qinf(tmp)       =   f.Rain(tmp) - (f.Rain(tmp) .* f.FAPAR(tmp) + (1 - f.FAPAR(tmp)) .* min(f.Rain(tmp),min(pInfCapacity(tmp),f.RainInt(tmp)) .* f.Rain(tmp) ./ f.RainInt(tmp)));
+tmp             =   fe.rainSnow.rain > 0;
+Qinf(tmp)       =   fe.rainSnow.rain(tmp) - (fe.rainSnow.rain(tmp) .* f.FAPAR(tmp) + (1 - f.FAPAR(tmp)) .* min(fe.rainSnow.rain(tmp),min(pInfCapacity(tmp),f.RainInt(tmp)) .* fe.rainSnow.rain(tmp) ./ f.RainInt(tmp)));
 fx.Qinf         =   Qinf;
 end
 

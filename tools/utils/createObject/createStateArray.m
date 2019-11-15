@@ -91,11 +91,13 @@ for ij                  =	1:numel(stateVarsCode)
             end
         end
         if isempty(strfind(sv, 'd')) || ismember(var2cr,keepVars)
-            tmp             =   repmat(arzerospix,1,nZix);
-            eValStr         =   strcat(var2cr,' = tmp;');
-            eval(eValStr);
-            info.tem.model.variables.created{end+1}    =    var2cr;
-        end
+            if startsWith(var2cr,'s.')
+                tmp             =   repmat(arzerospix,1,nZix);
+                eValStr         =   strcat(var2cr,' = tmp;');
+                eval(eValStr);
+                info.tem.model.variables.created{end+1}    =    var2cr;
+            end
+            end
     end
     
 end
