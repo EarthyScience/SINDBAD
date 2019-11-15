@@ -59,6 +59,7 @@ for ij                  =	1:numel(keepVarsSource)
     keepVars            =   [keepVars var2ks];
 end
 
+stateVarsCode=unique(vertcat(stateVarsCode(:),keepVars(:)));
 %--> initiate the sindbad structures and info fields
 s                       =   struct;
 d                       =   struct;

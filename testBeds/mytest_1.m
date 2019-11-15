@@ -1,3 +1,7 @@
+for fn                  =	{'tools','model','optimization','testBeds'}
+    addpath(genpath(['../' fn{1}]),'-begin')
+end
+
 inDir              =   'M:\work_3\sindbad\data\testBeds\input';
 outDir             =   'C:\work\sindbad_tests\output';
             inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
@@ -5,11 +9,11 @@ outDir             =   'C:\work\sindbad_tests\output';
             testName    =   'wCycleForward';
             outpath=outDir;
             expConfigFile               =   ['testBeds/' testName '/settings_' testName '/experiment_' testName '.json'];
-profile on
+%profile on
 [f_gc,fe_gc,fx_gc,s_gc,d_gc,p_gc,precOnceData_gc,info_gc,fSU_gc,feSU_gc,fxSU_gc,sSU_gc,dSU_gc,precOnceDataSU_gc,infoSU_gc,obs_gc,cost_gc] = ...
     workflowExperiment(expConfigFile,'info.tem.model.flags.runGenCode',true,...
     'info.tem.forcing.oneDataPath',inpath,...
     'info.experiment.name',testName,...
     'info.experiment.outputDirPath',outpath...
     );
-profile viewer
+%profile viewer
