@@ -84,8 +84,8 @@ userOutPath             =   '';
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cLAI';
 % 
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_cLAI';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_cLAI';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -105,7 +105,7 @@ end
 testCases               =   [1 2 3 4];
 testCases               =   [3 4];
 % testCases               =   [4];
-testCases             =   [ 1 ];
+testCases             =   [ 5 ];
 % testCases             =   [ 1 3 4 ];
 
 %% run the different tests
@@ -127,6 +127,10 @@ for i                   =   testCases
             inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
             obspath     =   [inDir filesep 'globalBaseline_Constraints_1deg.mat'];
             testName    =   'wCycleOpti';
+        case 5
+            inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
+            obspath     =   '';
+            testName    =   'cCycleSpinup';
             
             
     end
