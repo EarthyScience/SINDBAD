@@ -69,7 +69,8 @@ else
                 end
             end
         else
-            print(cf, [fn '.png'], '-dpng')
+            saveas(cf, fn, 'png')
+%             print(cf, [fn '.png'], '-dpng')
         end
     end
 end

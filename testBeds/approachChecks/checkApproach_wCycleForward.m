@@ -42,7 +42,7 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'Qsat';
+moduleName              = 'QSurf';
 
 
 %% stop if module does not exist

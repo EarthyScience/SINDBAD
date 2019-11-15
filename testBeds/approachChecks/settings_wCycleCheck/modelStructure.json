@@ -41,7 +41,7 @@
 		},
 		"pSoil": 
 		{
-			"apprName": 	"pSoil_simple",
+			"apprName": 	"pSoil_fixed",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -77,7 +77,7 @@
 		},
 		"Qsat": 
 		{
-			"apprName": 	"Qsat_Zhang2008",
+			"apprName": 	"Qsat_dummy",
 			"runFull": 		true,
             "use4spinup":   false
 		},
@@ -87,23 +87,23 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"QTotal":
+		"sumVariables":
 		{
-			"apprName": 	"QTotal_simple",
-			"runFull": 		false,
-			"comment": 		"Do not change the approach here",
-            "use4spinup":   true
-		},
-		"wTotal":
-		{
-			"apprName": 	"wTotal_simple",
+			"apprName": 	"sumVariables_simple",
 			"runFull": 		true,
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true
 		},
-		"EvapTotal":
+		"wBalance":
 		{
-			"apprName": 	"EvapTotal_simple",
+			"apprName": 	"wBalance_simple",
+			"runFull": 		true,
+			"comment": 		"Do not change the approach here",
+            "use4spinup":   false
+		},
+		"rainSnow":
+		{
+			"apprName": 	"rainSnow_forcing",
 			"runFull": 		false,
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true

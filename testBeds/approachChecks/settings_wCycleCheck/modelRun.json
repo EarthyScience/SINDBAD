@@ -31,20 +31,19 @@
 			"numeric": 			false,
 			"bounds": 			false
 		}
-	}
-	,
-	"sum":
+	},
+	"varsToSum":
 	{
-		"fx.Q":
+		"Q":
 		{
 		"destination": "fx",
-		"components":["fx.Qint","fx.Qbase"],
+		"components":["fx.Qint","fx.Qb"],
 		"balance": true
 		},
 		"ET":
 		{
 		"destination": "fx",
-		"components":["fx.EvapInt","fx.Transp"],
+		"components":["fx.EvapInt","fx.Transp","fx.EvapSoil","fx.EvapSub"],
 		"balance": true
 		},
 		"wTWS":

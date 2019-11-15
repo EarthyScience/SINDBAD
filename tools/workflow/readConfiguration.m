@@ -163,7 +163,6 @@ for ii = 1:numel(fldnmsINFO)
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
             info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.store;
             info.(whatWorkFlow).model.output.dataFormat     = data_json.dataFormat;
-            info.(whatWorkFlow).model.output.inputRef       = data_json.inputRef;
             
         otherwise % these include 'spinup' and all other cases
             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
