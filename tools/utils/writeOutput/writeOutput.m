@@ -84,9 +84,11 @@ function writeNetCDF(var2write,pthSave,info,f,fe,fx,s,d,p)
     %     varsInput                   =   datinfo.Variables; %information of variables in reference input file
     %% --> loop through the list of variables
     if isfield(info.tem.helpers.dimension,'space')
-        useLatLon               =   true;
-    else
-        useLatLon               =   false;
+        if isfield(info.tem.helpers.dimension.space,'latVec') && isfield(info.tem.helpers.dimension.space,'lonVec')
+            useLatLon               =   true;
+        else
+            useLatLon               =   false;
+        end
     end
     
     for varn                    =   1:numel(var2write)

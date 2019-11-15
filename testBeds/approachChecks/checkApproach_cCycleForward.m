@@ -16,8 +16,8 @@ end
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cCycleCheck';
 %
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';

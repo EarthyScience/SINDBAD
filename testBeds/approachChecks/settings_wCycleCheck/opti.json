@@ -9,7 +9,7 @@
 	},
 	"params2opti": [
 		"wSnowFrac.CoverParam",
-		"wSnowFrac.SF_scale",
+		"rainSnow.SF_scale",
 		"EvapSub.alpha",
 		"Qsnow.melt_T",
 		"Qsnow.melt_Rn",

@@ -20,7 +20,10 @@
 			"melt_Rn": 0.90
 		},
 		"wSnowFrac": {
-			"CoverParam": 80,
+			"CoverParam": 80
+		},
+		"rainSnow":
+		{
 			"SF_scale": 0.67
 		}
 	},

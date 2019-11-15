@@ -169,6 +169,19 @@
 		"sourceDataProductName": "FLUXNET",
 		"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
 	},
+	"LAI":
+    {
+		"variableUnit": "-",
+		"bounds": [0, 1],
+		"sourceVariableName": "ndvi",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*10",
+		"isCategorical": false,
+		"nameShort": "LAI = 10 x ndvi",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
+	},
 	"NDWI":
     {
 		"variableUnit": "-",

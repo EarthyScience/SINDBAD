@@ -97,12 +97,11 @@
 		},
 		"rainSnow":
 		{
-			"apprName": 	"rainSnow_simple",
-			"runFull": 		true,
+			"apprName": 	"rainSnow_forcing",
+			"runFull": 		false,
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true
 		},
-	
 		"wGWRec":
 		{
 			"apprName": 	"wGWRec_kUnsat",
