@@ -186,16 +186,16 @@ for iss = 1:numel(spinSequence)
                     disp(pad('.',100,'both','.'))
                 end
             end
-            if ~exist('tmpLS','var') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+            if ~exist('tmpLS','var') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
                 tmpLS 				  = dSU.storedStates.cEco;
             end
 
-        if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+        if isfield(dSU,'storedStates') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
             tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
         end
     end
 end
-if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
+if isfield(dSU,'storedStates') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
     dSU.fullSpinupStates.cEco = tmpLS;% @nc: to delete or adjust
 end
     

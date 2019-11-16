@@ -12,7 +12,7 @@ for ii=1:numel(pa_opti)
 end
 
 %% outPutDir and name from info
-outPath     = info.opti.algorithm.options.outFilePath
+outPath     = info.opti.algorithm.options.outFilePath;
 %% save the json
 jsonParam   = savejsonJL('',out,outPath);
 

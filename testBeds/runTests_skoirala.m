@@ -103,7 +103,7 @@ end
 
 %% select the tests to run (see explanations at the beginning of this script)
 testCases               =   [1 2 3 4 5];
-testCases               =   [5];
+% testCases               =   [5];
 % testCases               =   [4];
 % testCases             =   [ 5 ];
 % testCases             =   [ 1 3 4 ];
