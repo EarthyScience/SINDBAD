@@ -221,8 +221,8 @@ varsAllAll              =	unique(vertcat(AllOutputs,info.tem.model.code.variable
 problemVars             =   setdiff(storeVars_longName,varsAllAll);
 if ~isempty(problemVars)
     for ii      =   1:length(problemVars)
-        if ~contains(char(problemVars(ii)),'d.storedStates.')
-%         if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
+%         if ~contains(char(problemVars(ii)),'d.storedStates.')
+        if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
             %sujan (allowing storedstates)
             sstr    =   [pad('CRIT MODSTR',20) ' : ' pad('setupCode',20) ' | ' char(problemVars(ii)) ' does not exist in selected Model Structure (from ModelStructure.json) | Check output[.json] config file for variables to store and to write'];
             error(sstr)
@@ -614,20 +614,31 @@ else
     error([pad('CRIT MODSTR',20) ': Cannot execute model with inconsistent module names in config and corresponding coreTEM.m (check modelStructure.json)'])
 end
 
+%--> sujan: 15.11.2019: added default of simple for get, keep, and storestates
+% modules. These do not have any other approaches, and always needed to be
+% set in modelStructure as simple. Now, that redundancy is fixed.
+simpleModules                   =   {'keepStates','getStates','storeStates'};
 for ii  =   1:length(moduleNamesCore)
-    %if module name exists in coreTEM but not in config file: assume 'none'
+    %if module name exists in coreTEM but not in config file: assume 'dummy'
     %approach
     
     if isfield(infoModules,moduleNamesCore(ii))
         approachNames(ii)       =   cellstr(infoModules.(moduleNamesCore{ii}).apprName);
+    %sujan
+    elseif ismember(moduleNamesCore(ii),simpleModules)
+        approachNames(ii)                               =   cellstr('simple');
+        infoModules.(moduleNamesCore{ii}).apprName      =   'simple';
+        infoModules.(moduleNamesCore{ii}).runFull       =   true;  
+        infoModules.(moduleNamesCore{ii}).use4spinup    =   true;  
+    %sujan
     else
-        approachNames(ii)                           =   cellstr('dummy');
-        infoModules.(moduleNamesCore{ii}).apprName  =   'dummy';
-        infoModules.(moduleNamesCore{ii}).runFull   =   true;
+        approachNames(ii)                               =   cellstr('dummy');
+        infoModules.(moduleNamesCore{ii}).apprName      =   'dummy';
+        infoModules.(moduleNamesCore{ii}).runFull       =   true;
     end
 end
 
-info.tem.model.modules                              =   infoModules;
+info.tem.model.modules                                  =   infoModules;
 end
 
 %%
