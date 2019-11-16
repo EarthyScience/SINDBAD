@@ -124,7 +124,6 @@ for NI2E = [21]
                 'tem.model.flags.runGenCode',true,...
                 'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
                 'tem.model.modules.cCycle.apprName',cCycleModel{:});
-            disp(['    ' sec2som(toc(tstart))])
             %
             test_outDirPath=[info.experiment.outputDirPath 'testResults/' testName filesep];
             mkdirx(test_outDirPath)

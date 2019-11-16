@@ -119,7 +119,6 @@ for NI2E = [21]
                 'tem.model.modules.cLAI.apprName','forcing',...
                 'tem.model.modules.cLAI.runFull',true,...
                 'tem.model.modules.cCycle.apprName',cCycleModel{:});
-            disp(['    ' sec2som(toc(tstart))])
             %
             test_outDirPath=[info.experiment.outputDirPath 'testResults/' testName filesep];
             mkdirx(test_outDirPath)

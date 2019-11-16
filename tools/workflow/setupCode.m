@@ -124,8 +124,23 @@ info.tem.model.code.variables.moduleAll         =   unique(vertcat(AllInputs,All
 writeVars_longName                              =   info.tem.model.variables.to.write;
 storeVars_longName                              =   info.tem.model.variables.to.store;
 storeVars_longName                              =   unique(vertcat(storeVars_longName(:),...
-    writeVars_longName(:)));
-
+                                                    writeVars_longName(:)));
+%--> sujan on 16.11.2019: add the storage variables in variables.to.write
+%to variables.to.store. This only works if the write variables are given as
+%s.w.wSoil rather than d.storedStates.wSoil 
+% storeVarsfromWriteVars={};
+% for wv = 1:numel(writeVars_longName)
+%     wVar = writeVars_longName{wv};
+%     if contains('s.',wVar)
+%         storeVarsfromWriteVars(end+1) = wVar;
+%     end
+%     if contains('d.storedStates',wVar)
+%     tmp    = strsplit(wVar,'.');
+%     dVar   =    tmp(end);
+%     if startsWith(dVar,'w')
+%     end
+       
+% end
 
 info.tem.model.variables.to.store                               =   storeVars_longName;
 [storeStates_longSource,storeStates_longDestination]            =   getStatesToStore(storeVars_longName);
@@ -136,69 +151,69 @@ info.tem.model.code.variables.to.storeStatesDestination         =   storeStates_
 info.tem.model.code.variables.to.redMem                         =   variablesToRedMem(:);
 
 %% variables to sum
-sumVars=info.tem.model.varsToSum;
+sumVars                                                         =   info.tem.model.varsToSum;
 
-sumVars_longDestination={''};
-sumVars_codeLines={''};
-fn_sumVars=fieldnames(sumVars);
-addKeepVar={''};
+sumVars_longDestination                                         =   {''};
+sumVars_codeLines                                               =   {''};
+fn_sumVars                                                      =   fieldnames(sumVars);
+addKeepVar                                                      =   {''};
 
-cnt_keep=1;
+cnt_keep                                                        =   1;
 
-cnt=1;
-for ii=1:length(fn_sumVars)
+cnt                                                             =   1;
+for ii  =   1:length(fn_sumVars)
     %sVarFlag=false;
-    sumVars_longDestination(ii)=cellstr([sumVars.(char(fn_sumVars(ii))).destination '.' char(fn_sumVars(ii))]);
+    sumVars_longDestination(ii)                                 =   cellstr([sumVars.(char(fn_sumVars(ii))).destination '.' char(fn_sumVars(ii))]);
     
     if startsWith(sumVars_longDestination(ii),['s.'])
         %        sVarFlag=true;
-        cCL=[char(sumVars_longDestination(ii)) '=0'];
-        tmp=startsWith(AllOutputs,sumVars.(char(fn_sumVars(ii))).components);
-        cComps=AllOutputs(tmp);
+        cCL                                                     =   [char(sumVars_longDestination(ii)) '=0'];
+        tmp                                                     =   startsWith(AllOutputs,sumVars.(char(fn_sumVars(ii))).components);
+        cComps                                                  =   AllOutputs(tmp);
         if sumVars.(char(fn_sumVars(ii))).balance
             % [s.prev.s_wd_wTWS]
-            addKeepVar(cnt_keep)=cellstr(['s.prev.' char(regexprep(sumVars_longDestination(ii),'\.','_'))]);
+            addKeepVar(cnt_keep)                                =   cellstr(['s.prev.' char(regexprep(sumVars_longDestination(ii),'\.','_'))]);
         end
         
-        for j=1:length(cComps)
-            cstr=['+sum(' char(cComps(j)) ',2)'];
+        for j   =   1:length(cComps)
+            cstr                                                =   ['+sum(' char(cComps(j)) ',2)'];
             
-            cCL=[cCL cstr];
+            cCL                                                 =   [cCL cstr];
         end
-        cCL=[cCL ';'];
-        sumVars_codeLines(cnt)=cellstr(cCL);
-        cnt=cnt+1;
+        cCL                                                     =   [cCL ';'];
+        sumVars_codeLines(cnt)                                  =   cellstr(cCL);
+        cnt                                                     =   cnt+1;
         
     else
-        cCL=[char(sumVars_longDestination(ii)) '(:,tix)=0'];
-        cComps=sumVars.(char(fn_sumVars(ii))).components;
+        cCL                                                     =   [char(sumVars_longDestination(ii)) '(:,tix)=0'];
+        cComps                                                  =   sumVars.(char(fn_sumVars(ii))).components;
         
         
-        for j=1:length(cComps)
+        for j   =   1:length(cComps)
             if ismember(cComps(j),info.tem.model.code.variables.moduleAll)
                 if info.tem.model.flags.genRedMemCode && ismember(cComps(j),info.tem.model.code.variables.to.redMem)
-                    cstr=['+' char(cComps(j)) '(:,1)'];
+                    cstr                                        =   ['+' char(cComps(j)) '(:,1)'];
                 else
-                    cstr=['+' char(cComps(j)) '(:,tix)'];
+                    cstr                                        =   ['+' char(cComps(j)) '(:,tix)'];
                 end
-                cCL=[cCL cstr];
+                cCL                                             =   [cCL cstr];
             end
         end
-        cCL=[cCL ';'];
-        sumVars_codeLines(cnt)=cellstr(cCL);
-        cnt=cnt+1;
+        cCL                                                     =   [cCL ';'];
+        sumVars_codeLines(cnt)                                  =   cellstr(cCL);
+        cnt                                                     =   cnt+1;
     end
 end
 
-info.tem.model.code.variables.to.sum.codeLines=sumVars_codeLines;
+info.tem.model.code.variables.to.sum.codeLines                  =   sumVars_codeLines;
 
 %add the new variables to output variables such that they can be created.
 %the new variables will however NOT be listed in
 %info.tem.model.code.variables !!!
-AllOutputs=vertcat(AllOutputs,sumVars_longDestination(:));
+AllOutputs                                                      =   vertcat(AllOutputs,sumVars_longDestination(:));
 %info.tem.model.code.variables.moduleInputs      =   AllInputs;
-info.tem.model.code.variables.moduleOutputs     =   AllOutputs;
-info.tem.model.code.variables.moduleAll         =   unique(vertcat(AllInputs,AllOutputs));
+info.tem.model.code.variables.moduleOutputs                     =   AllOutputs;
+info.tem.model.code.variables.moduleAll                         =   unique(vertcat(AllInputs,AllOutputs));
 
 %%
 %--> check if supplied write and store variables exist in the code
@@ -206,7 +221,8 @@ varsAllAll              =	unique(vertcat(AllOutputs,info.tem.model.code.variable
 problemVars             =   setdiff(storeVars_longName,varsAllAll);
 if ~isempty(problemVars)
     for ii      =   1:length(problemVars)
-        if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
+        if ~contains(char(problemVars(ii)),'d.storedStates.')
+%         if isempty(strfind(char(problemVars(ii)),'d.storedStates.'))
             %sujan (allowing storedstates)
             sstr    =   [pad('CRIT MODSTR',20) ' : ' pad('setupCode',20) ' | ' char(problemVars(ii)) ' does not exist in selected Model Structure (from ModelStructure.json) | Check output[.json] config file for variables to store and to write'];
             error(sstr)
