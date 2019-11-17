@@ -45,6 +45,8 @@ for fn = 1:numel(fNamesf)
     mk121s(nanmean(f_h.(fNamesf{fn}),1),nanmean(f_gc.(fNamesf{fn}),1),['handle'],['generated'],'LineWidth',2,'marker','o')
     title(['forcing: spatial mean ' fNamesf{fn}])
     save_gcf(gcf,[fig_outDirPath '/forcing_' fNamesf{fn} '_handle_vs_generated_' testName],1,1)
+%         img     = getframe(gcf);
+%         imwrite(img.cdata,[fig_outDirPath '/forcing_' fNamesf{fn} '_handle_vs_generated_' testName '.tif'],'TIFF','Resolution',[2000 2000]);
 end
 for fn = 1:numel(fNamesfx)
     figure('Visible', 'off')

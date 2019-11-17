@@ -34,7 +34,7 @@ function [info] = setupCode(info)
 
 %%
 %--> get code and set handles;
-[precStruct,moduleStruct]      =	setupModules(info);
+[info,precStruct,moduleStruct]      =	setupModules(info);
 
 %--> interpret code, get various variables etc
 [info,precStruct,moduleStruct] =    getVariablesFromCode(info,precStruct,moduleStruct);
@@ -372,7 +372,7 @@ end
 end
 
 %%
-function [precStruct,moduleStruct]  =   setupModules(info)
+function [info,precStruct,moduleStruct]  =   setupModules(info)
 % - checks if module names in coreTEM and info (from json config) are
 %   consistent
 
@@ -769,10 +769,12 @@ moduleList      = fields(info.tem.model.modules);
 validModules    =  {''};
 cnt             =   1;
 for mod         =   1:numel(moduleList)
-    if info.tem.model.modules.(moduleList{mod}).use4spinup
-        
-        validModules{cnt}   = char(moduleList(mod));
-        cnt                 = cnt + 1;
+    if isfield(info.tem.model.modules.(moduleList{mod}),'use4spinup')
+        if info.tem.model.modules.(moduleList{mod}).use4spinup
+            
+            validModules{cnt}   = char(moduleList(mod));
+            cnt                 = cnt + 1;
+        end
     end
 end
 pthGenCode                                      =   info.tem.spinup.paths.genCode.coreTEM;

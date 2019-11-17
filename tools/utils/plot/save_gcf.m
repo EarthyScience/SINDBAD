@@ -54,7 +54,8 @@ else
                 strcmpi(computer_name,'ANTIGUA')
             
             try
-                print(cf, [fn '.png'], '-dpng', '-r600')
+%                 saveas(cf, fn, 'png')
+                print(cf, [fn '.png'], '-dpng', '-r300')
             catch
                 try
                     print(cf, [fn '.png'], '-dpng', '-r400')
@@ -70,7 +71,12 @@ else
             end
         else
             saveas(cf, fn, 'png')
-%             print(cf, [fn '.png'], '-dpng')
+%         img     = getframe(gcf);
+%         
+%         % Test built-in IMWRITE
+%         tic;
+%         imwrite(img.cdata,'example1.png');
+        %             print(cf, [fn '.png'], '-dpng')
         end
     end
 end
