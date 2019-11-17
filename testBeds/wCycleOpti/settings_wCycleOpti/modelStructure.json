@@ -11,31 +11,11 @@
 	"modules":
 	{
 
-		"keepStates": 
-		{
-			"apprName": 	"keepStates_simple",
-			"runFull": 		true,
-			"comment": 		"This may never be changed",
-            "use4spinup":   true
-		},
-		"getStates":
-		{
-			"apprName": 	"getStates_simple",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"storeStates":
-		{
-			"apprName": 	"storeStates_simple",
-			"runFull": 		true,
-			"comment": 		"This may never be changed",
-            "use4spinup":   true
-		},
 		"pVeg":
 		{
 			"apprName": 	"pVeg_vegFrac",
 			"runFull": 		false,
-						"use4spinup":   false
+			"use4spinup":   false
 		},
 
 		"wSnowFrac":
@@ -48,38 +28,38 @@
 		{
 			"apprName": 	"EvapSub_GLEAM",
 			"runFull": 		false,
-						"use4spinup":   false
+			"use4spinup":   false
 		},
 		"Qsnow":
 		{
 			"apprName": 	"Qsnow_TRn",
 			"runFull": 		false,
-						"use4spinup":   false
+			"use4spinup":   false
 		},
 
 		"EvapInt":
 		{
 			"apprName": 	"EvapInt_simple2",
 			"runFull": 		false,
-						"use4spinup":   false
+			"use4spinup":   false
 		},
 		"QoverFlow":
 		{
 			"apprName": 	"QoverFlow_Bergstroem",
 			"runFull": 		true,
-			"use4spinup":   true
+"use4spinup":   true
 		},
 		"wSurfRec":
 		{
 			"apprName": 	"wSurfRec_fraction",
 			"runFull": 		true,
-						"use4spinup":   true
+			"use4spinup":   true
 		},
 		"QsurfIndir":
 		{
 			"apprName": 	"QsurfIndir_simple",
 			"runFull": 		true,
-						"use4spinup":   true
+			"use4spinup":   true
 		},
 
 		"EvapSoil":

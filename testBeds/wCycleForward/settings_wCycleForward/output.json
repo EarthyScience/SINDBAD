@@ -7,16 +7,9 @@
         {
 			"write":     ["fx.ET","fx.EvapSoil","fx.EvapInt",
 							"fx.Q","fx.Qb",
-							"d.storedStates.wTWS","d.storedStates.wSoil","d.storedStates.wGW"],
-			"store":     ["s.w.wSoil","s.wd.wTWS","s.wd.WBP","s.w.wGW"],
-			"sum":
-			{
-				"1.c":			"sum.Q: Runoff components. All should be fields of fx",
-				"Q": 			["QsurfDir","QsurfIndir"],
-				"2.c":			"sum.ET: ET components. All should be fields of fx",
-				"ET": 			["EvapSoil","EvapInt","Transp"]
-		}
-		}
-	},
+							"s.w.wSoil","s.wd.wTWS","s.wd.WBP","s.w.wGW"],
+			"store":     []
+	}
+},
 	"dataFormat": 			".nc"
 }

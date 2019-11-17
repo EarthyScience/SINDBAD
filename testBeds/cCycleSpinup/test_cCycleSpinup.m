@@ -143,6 +143,8 @@ for NI2E = [21]
                     set_gcf(gcf,gca,'s',1,[30 30],1)
                     title([num2str(j) ' : ' info.tem.model.variables.states.c.components{j}])
                 end
+%                 img     = getframe(gcf);
+%                 imwrite(img.cdata,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_TS_' cCycleModel{:} '_' strN2 '_' testName '.png'],'XResolution',1250);
                 save_gcf(gcf,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_TS_' cCycleModel{:} '_' strN2 '_' testName],1,1)
             %%
             end
@@ -183,7 +185,9 @@ for NI2E = [21]
         subplot(4,4,16)
         mk121s(x_implicit.fx5.cRH,x_explicit.fx5.cRH,[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
         title('RH')
-        
+%         
+%         img     = getframe(gcf);
+%         imwrite(img.cdata,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_compSpinUp_' cCycleModel{:} '_' testName '.png'],'XResolution',1250);
         save_gcf(gcf,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_compSpinUp_' cCycleModel{:} '_' testName],1,1)
     end
     %%
@@ -214,7 +218,9 @@ for NI2E = [21]
                 set_gcf(gcf,gca,'s',1,[30 30],1)
                 title([num2str(j) ' : ' x_implicit.info.tem.model.variables.states.c.components{j}])
             end
-            save_gcf(gcf,[test_outDirPath 'simpleVScasa_'  strExtra num2str(NI2E) '_4_compModels_' strN2 '_' testName],1,1)
+%         img     = getframe(gcf);
+%         imwrite(img.cdata,[test_outDirPath 'simpleVScasa_'  strExtra num2str(NI2E) '_4_compModels_' strN2 '_' testName '.png'],'XResolution',1250);
+        save_gcf(gcf,[test_outDirPath 'simpleVScasa_'  strExtra num2str(NI2E) '_4_compModels_' strN2 '_' testName],1,1)
         end
     end
 end

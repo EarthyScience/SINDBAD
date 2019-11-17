@@ -29,11 +29,11 @@ wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 
 % degree of saturation of the lowermost soil layer
 
-dosSoilend                  =  s.w.wSoil(:,wSoilend) ./ p.pSoil.smax2;
+dosSoilend              =  s.w.wSoil(:,wSoilend) ./ p.pSoil.smax2;
 
 % calculate the reduction in hydraulic conductivity due to soil under
 % saturation
-k_unsatfrac_soil             =  min((dosSoilend) .^ (2.*p.pSoil.chb + 3),1);
+k_unsatfrac_soil        =  min((dosSoilend) .^ (2.*p.pSoil.chb + 3),1);
 
 % unsaturated hydraulic conductivity and GW downward recharge
 k_unsat                 =   p.pSoil.kSat .* k_unsatfrac_soil;
