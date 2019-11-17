@@ -106,8 +106,8 @@ testCases               =   [1 2 3 4 5];
 % testCases               =   [5];
 % testCases               =   [4];
 % testCases             =   [ 5 ];
-% testCases             =   [ 1 3 4 ];
-testCases             =   [ 3 ];
+% testCases             =   [3];
+% testCases             =   [ 1 ];
 
 %% run the different tests
 for i                   =   testCases
