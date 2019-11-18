@@ -1,27 +1,27 @@
 function [f,fe,fx,s,d,p] = dyna_EvapSub_GLEAM(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: estimate sublimation
+% computes sublimation following GLEAM
 %
-% REFERENCES: ??
+% Inputs:
+%	- f.Rn   :              net radiation [MJ/m2/time]
+%   - fe.EvapSub.PTtermSub: Priestley-Taylor term [mm/MJ]
+%   - s.wd.wSnowFrac:       snow cover fraction []
 %
-% CONTACT	: mjung
+% Outputs:
+%   - fx.EvapSub: sublimation [mm/time]
 %
-% INPUT
-% Rn        : net radiation [MJ/m2/time]
-%           (f.Rn)
-% wSWE      : snow pack [mm]
-%           (s.w.wSnow)
-% frSnow    : fraction of snow  [] (fractional)
-%           (s.wd.wSnowFrac)
-% PTtermSub : Priestley-Taylor term [mm/MJ]
-%           (fe.EvapSub.PTtermSub)
+% Modifies:
+% 	- s.w.wSnow: snow pack [mm]
 %
-% OUTPUT
-% Subl      : sublimation flux [mm/time]
-%           (fx.Subl)
+% References:
+%	- GLEAM, Miralles et al.
 %
-% NOTES:
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
 % PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda

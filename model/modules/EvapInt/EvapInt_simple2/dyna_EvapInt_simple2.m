@@ -1,32 +1,29 @@
 function [f,fe,fx,s,d,p] = dyna_EvapInt_simple2(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: for canopy interception evaporation (EvapInt) everything is
+% for canopy interception evaporation (EvapInt) everything is
 % precomputed. This function only updates the WBP variable.
 %
-% REFERENCES: ??
+% Inputs:
+%   - fx.EvapInt: canopy interception evaporation [mm/time]
+% 
 %
-% CONTACT	: ttraut
+% Outputs:
+%   - 
 %
-% INPUT
-% IntCap    : canopy interception capacity [mm]
-%           (fe.EvapInt.IntCap)
-% Rain      : rain fall [mm/time]
-%           (f.Rain)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
+% Modifies:
+% 	- s.wd.WBP: updates the water balance pool [mm]
 %
-% OUTPUT
-% EvapInt    : canopy interception evaporation [mm/time]
-%           (fx.ECanop)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
+% References:
+%	- 
 %
-% NOTES:
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
 % update the available water
-fx.EvapInt(:,tix)      =   min(fe.EvapInt.IntCap(:,tix), fe.rainSnow.rain(:,tix));
 s.wd.WBP               =   s.wd.WBP - fx.EvapInt(:,tix);
 
 end

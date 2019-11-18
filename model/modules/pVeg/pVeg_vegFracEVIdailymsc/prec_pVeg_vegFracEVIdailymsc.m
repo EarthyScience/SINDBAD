@@ -1,26 +1,30 @@
 function [f,fe,fx,s,d,p] = prec_pVeg_vegFracEVIdailymsc(f,fe,fx,s,d,p,info)
-
 % #########################################################################
-% PURPOSE	: sets p.vegFrac by reading the daily mean seasonal cycle of MODIS
-% EVI
+% sets p.vegFrac by reading the daily mean seasonal cycle of MODIS
 %
-% REFERENCES: ??
+% Inputs:
+%	- p.pVeg.vegFr:     scaling parameter
+%   - f.EVI_MSC:        reads it from the forcing data path + 'MODIS_EVI_MSC.mat'
+%                       (pix,12)
 %
-% CONTACT	: ttraut
+% Outputs:
+%   - p.pVeg.vegFr   : scaling parameter .* EVI_MSC in size(pix,tix)
 %
-% INPUT
-% p.pVeg.vegFr  : scaling parameter
-% EVI_MSC       : reads it from the forcing data path + 'MODIS_EVI_MSC.mat'
-%                   (pix,12)
+% Modifies:
+% 	- 
 %
-% OUTPUT
-% p.pVeg.vegFr   : scaling parameter .* EVI_MSC in size(pix,tix)
-% d.pVeg.EVI_MSC : EVI MSC (pix,tix)
+% References:
+%	- 
 %
-% NOTES:
+% Created by:
+%   - Tina Trautmann (sets p.vegFrac by reading the daily mean seasonal cycle of MODIS@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
+%% READING f.EVI_MSC goes to another script!!!
 % empty daily array
 d.pVeg.EVI_MSC = info.tem.helpers.arrays.nanpixtix;
 
@@ -49,9 +53,9 @@ end
 tmp3 = (EVI_MSC(:,59) + EVI_MSC(:,60) ) ./ 2;
 d.pVeg.EVI_MSC(:,M==2 & D==29)  = tmp3 .* ones(size(d.pVeg.EVI_MSC(:,M==2 & D==29)));
 
-
-% scale it with the p.pVeg.vegFr
-p.pVeg.vegFr = min(p.pVeg.vegFr .*  d.pVeg.EVI_MSC, 1);
+%% THE FOLLOWING REMAINS HERE
+% scale daily MSC of EVI with the p.pVeg.vegFr
+p.pVeg.vegFr = min(p.pVeg.vegFr .*  f.EVI_MSC, 1);
 
 
 end

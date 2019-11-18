@@ -1,28 +1,28 @@
 function [f,fe,fx,s,d,p] = dyna_QinfExc_Jung(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: 
-% 
-% REFERENCES:
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% Qinf      : infiltration excess runoff [mm/time] - what runs off because
+% compute the runoff from infiltration excess
+%
+% Inputs:
+%   - fx.Qinf: infiltration excess runoff [mm/time] - what runs off because
 %           the precipitation intensity is to high for it to inflitrate in
-%           the soil.
-%           (fx.Qinf)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% OUTPUT
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% NOTES: NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT
-% TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!!
-% NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT
-% TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! NOT TESTED!!!! 
-% 
+%           the soil
+%
+% Outputs:
+%   - 
+%
+% Modifies:
+% 	- s.wd.WBP: water balance pool [mm]
+%
+% References:
+%	- 
+%
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+%% 
 % #########################################################################
 
 % everything is precomputed
