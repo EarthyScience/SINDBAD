@@ -1,27 +1,29 @@
 function [f,fe,fx,s,d,p] = QoverFlow_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: calculates land surface runoff and infiltration to different soil layers
+% calculates land surface runoff and infiltration to different soil layers
 %
-% REFERENCES: Bergstroem 1992
+% Inputs:
+%	- p.QoverFlow.berg       : shape parameter of runoff-infiltration curve []
+%   - p.QoverFlow.smax2      : maximum water capacity of second soil layer  [mm]
+%   - p.QoverFlow.smax1      : maximum water capacity of first soil layer  [mm]
 %
-% CONTACT	: ttraut
+% Outputs:
+%   - fx.QoverFlow : runoff from land [mm/time]
+%   - fx.InSoil    : infiltration in soil [mm/time]
 %
-% INPUT
-% p.QoverFlow.smaxberg   : shape parameter of runoff-infiltration curve []
-% p.QoverFlow.smaxVeg 		: maximum plant available soil water  [mm]
-% p.QoverFlow.smax1 		  : maximum water capacity of first soil layer  [mm]
-% s.w.wSoil         : soil moisture of the layers [mm]
-% s.w.wTotalSoil    : total soil moisture [mm]
-% s.wd.WBP          : water balance pool [mm]
+% Modifies:
+% 	- s.w.wSoil    : soil moisture of the layers [mm]
+%   - s.wd.WBP     : water balance pool [mm]
 %
-% OUTPUT
-% fx.QoverFlow   : runoff from land [mm/time]
-% fx.InSoil1   : infiltration in first soil layer [mm/time]
-% s.w.wSoil    : total soil moisture [mm]
-% s.wd.WBP     : water balance pool [mm]
+% References:
+%	- Bergstroem 1992
 %
-% NOTES:
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
 % check the parameter values
@@ -31,40 +33,25 @@ function [f,fe,fx,s,d,p] = QoverFlow_Bergstroem(f,fe,fx,s,d,p,info,tix)
 
 tmp_smaxVeg   = p.QoverFlow.smax1 + p.QoverFlow.smax2;
 tmp_SoilTotal = sum(s.w.wSoil, 2);
+
 % calculate land runoff from incoming water and current soil moisture
 tmp_InfExFrac = min(exp(p.QoverFlow.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 fx.QoverFlow(:,tix)  = s.wd.WBP .* tmp_InfExFrac;
-
-if isreal(fx.QoverFlow(:,tix))==0
-error(['complex at tix ' num2str(tix)])
-end
-
-% original formula:
-% fx.Qint(:,tix)  = (f.Rain(:,tix)+fx.Qsnow(:,tix)) .* (s.w.wSoil./p.Qint.smax).^p.Qint.berg;
 
 % update water balance
 s.wd.WBP        = s.wd.WBP - fx.QoverFlow(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil1(:,tix) = min(p.QoverFlow.smax1 - s.w.wSoil(:,1), s.wd.WBP);
-s.w.wSoil(:,1)    = s.w.wSoil(:,1) + fx.InSoil1(:,tix);
+fx.InSoil(:,tix) = min(p.QoverFlow.smax1 - s.w.wSoil(:,1), s.wd.WBP);
+s.w.wSoil(:,1)   = s.w.wSoil(:,1) + fx.InSoil(:,tix);
 
 s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix);
 
-% for deeper layers
+% realocate excess of 1st layer to deeper layers 
 for sl=2:size(s.w.wSoil,2)
   ip = min(p.QoverFlow.smax2  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil(:,sl) =  s.w.wSoil(:,sl) + ip;
   s.wd.WBP = s.wd.WBP - ip;
 end
-
-
-
-% account for oversaturation (in TWS paper after subtracting of ET)
-%tmp             = max(0,s.w.wSoil-p.QoverFlow.smax);
-%s.w.wSoil       = s.w.wSoil - tmp;
-%fx.QoverFlow(:,tix)  = fx.QoverFlow(:,tix) + tmp;
-
-
 
 end

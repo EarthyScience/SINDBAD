@@ -1,34 +1,31 @@
 function [f,fe,fx,s,d,p] = Qbase_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	:
+% computes baseflow from a linear ground water storage
 %
-% REFERENCES: ??
+% Inputs:
+%	- p.Qbase.bc:   baseflow coefficient [1/time]
 %
-% CONTACT	: mjung
+% Outputs:
+%   - fx.Qbase:     base flow [mm/time]
 %
-% INPUT
-% bc        : baseflow coefficient [1/time]
-%           (p.Qbase.bc)
-% wGW       : ground water pool [mm]
-%           (s.w.wGW)
+% Modifies:
+% 	- s.w.wGW:      ground water pool [mm]
 %
-% OUTPUT
-% Qb        : base flow [mm/time]
-%           (fx.Qb)
-% wGW       : ground water pool [mm]
-%           (s.w.wGW)
+% References:
+%	- Zhang et al 2008
 %
-% NOTES:
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
-% np = (1-(1-p).^time_res); % time resolution is in days
-% scale: p.Qbase.bc
-
 % simply assume that a fraction of the GW pool is baseflow
-fx.Qb(:,tix) = p.Qbase.bc .* s.w.wGW;
+fx.Qbase(:,tix) = p.Qbase.bc .* s.w.wGW;
 
 % update the GW pool
-s.w.wGW = s.w.wGW - fx.Qb(:,tix);
+s.w.wGW = s.w.wGW - fx.Qbase(:,tix);
 
 end

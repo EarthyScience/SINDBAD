@@ -1,31 +1,30 @@
 function [f,fe,fx,s,d,p] = dyna_Qsnow_TRn(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: compute the snow melt based on radiation-temperature factors
+% precompute the potential snow melt based on temperature and net radiation
+% on days with Tair > 0°C
 %
-% REFERENCES: ??
+% Inputs:
+%   - fe.Qsnow.potMelt 	: potential snow melt based on temperature and net radiation [mm/time]
+% 	- s.wd.wSnowFrac    : snow cover fraction []
+%	- info structure
 %
-% CONTACT	: ttraut
+% Outputs:
+%   - fx.Qsnow     : snow melt [mm/time]
 %
-% INPUT
-% Rain      : rainfall [mm/time]
-%           (f.Rain)
-% wSWE      : snowpack [mm]
-%           (s.w.wSnow)
-% potMelt 	: potential snow melt based on temperature and net radiation [mm/time]
-%           (fe.Qsnow.potMelt)
-% frSnow    : snow fraction []
-%           (s.wd.wSnowFrac)
+% Modifies:
+% 	- s.w.wSnow    : snowpack [mm]
+% 	- s.wd.WBP     : water balance pool [mm] 
 %
-% OUTPUT
-% Qsnow     : snow melt [mm/time]
-%           (fx.Qsnow)
-% wSWE      : snowpack [mm]
-%           (s.w.wSnow)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
+% References:
+%	- 
 %
-% NOTES:
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+%%
 % #########################################################################
 
 % Then snow melt (mm/day) is calculated as a simple function of temperature and radiation

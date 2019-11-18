@@ -1,38 +1,42 @@
 function [f,fe,fx,s,d,p] = prec_EvapInt_simple(f,fe,fx,s,d,p,info)
 % #########################################################################
-% PURPOSE	: compute canopy interception evaporation according to the Gash
-% model.
-% 
-% REFERENCES: ??
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% Rain      : rain fall [mm/time]
-%           (f.Rain)
-% FAPAR     : fraction of absorbed photosynthetically active radiation
-%           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
-% isp       : maximum storage capacity for a fully developed
-%           canopy [mm] (warning: this is per rain event)
-%           (p.EvapInt.isp)
-% 
-% OUTPUT
-% ECanop    : canopy interception evaporation [mm/time]
-%           (fx.ECanop)
-% 
-% NOTES: Works per rain event. Here we assume that we have one rain event
-% per day - this approach should not be used for timeSteps very different
-% to daily.
-%        Parameters above, defaults in curly brackets from Mirales et al
+%  compute canopy interception evaporation according to the Gash
+%   model
+%
+% Inputs:
+%	- fe.rainSnow.rain:     rain fall [mm/time]
+%   - f.FAPAR:  fraction of absorbed photosynthetically active radiation [] 
+%               (equivalent to "canopy cover" in Gash and Miralles)
+% 	- p.EvapInt.isp: maximum storage capacity for a fully developed
+%                   canopy [mm] (warning: this is per rain event)
+%
+% Outputs:
+%   - fx.EvapInt:   canopy interception evaporation [mm/time]
+%
+% Modifies:
+% 	- 
+%
+% References:
+%	- Miralles et al 2010
+%
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+% Notes:
+%   - Works per rain event. Here we assume that we have one rain event
+%     per day - this approach should not be used for timeSteps very different
+%       to daily.
+%  - Parameters above, defaults in curly brackets from Miralles et al
 %        2010
-% 
+%%
 % #########################################################################
-
 
 % interception evaporation is simply the minimum of the fapar dependent
 % storage and the rainfall
 tmp             =   (p.EvapInt.isp * info.tem.helpers.arrays.onestix) .* f.FAPAR;
-fx.EvapInt       =   min(tmp,fe.rainSnow.rain);
+fx.EvapInt      =   min(tmp,fe.rainSnow.rain);
 
 end
