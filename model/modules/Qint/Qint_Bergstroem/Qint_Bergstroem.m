@@ -1,31 +1,36 @@
 function [f,fe,fx,s,d,p] = Qint_Bergstroem(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: calculates land surface runoff and infiltration
+% calculates land surface runoff and infiltration
 %
-% REFERENCES: Bergstroem 1992
-%
-% CONTACT	: ttraut
-%
-% INPUT
+% Inputs:
 % fe.rainSnow.rain            : rain fall [mm/time]
 % fx.Qsnow          : snow melt [mm/time]
-% p.Qint.smaxberg   : shape parameter of runoff-infiltration curve []
-% p.Qint.smax 		: maximum woil water holding capacity [mm]
-% s.w.wSoil         : total soil moisture [mm]
-% s.wd.WBP          : water balance pool [mm]
+%	- p.Qint.smaxberg   : shape parameter of runoff-infiltration curve []
+%   - p.Qint.smax 		: maximum woil water holding capacity [mm]
+
 %
-% OUTPUT
-% fx.Qint      : runoff from land [mm/time]
-% s.w.wSoil    : total soil moisture [mm]
-% s.wd.WBP     : water balance pool [mm]
+% Outputs:
+%   - fx.Qint      : runoff from land [mm/time]
 %
-% NOTES:
+% Modifies:
+% 	- s.w.wSoil    : total soil moisture [mm]
+%   - s.wd.WBP     : water balance pool [mm]
+
 %
+% References:
+%	- Bergstroem 1992
+%
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
 % calculate land runoff from incoming water and current soil moisture
+% (fe.rainSnow.rain(:,tix)+fx.Qsnow(:,tix)) = WBP
 fx.Qint(:,tix)  = (fe.rainSnow.rain(:,tix)+fx.Qsnow(:,tix)) .* exp(p.Qint.berg .* log(s.w.wSoil./p.Qint.smax));
-% original formula:
 
 % update soil moisture
 s.w.wSoil       = s.w.wSoil + ((fe.rainSnow.rain(:,tix)+fx.Qsnow(:,tix))-fx.Qint(:,tix));

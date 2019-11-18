@@ -1,28 +1,27 @@
 function [f,fe,fx,s,d,p] = QsurfIndir_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	:
+% computes runoff from a linear surface water storage
 %
-% REFERENCES: ??
+% Inputs:
+%	- p.QsurfIndir.dc: delayed surface runoff coefficient [1/time]
 %
-% CONTACT	: ttraut
+% Outputs:
+%   - fx.QsurfIndir: slow runoff from surface water storage [mm/time]
 %
-% INPUT
-% dc        : delayed surface runoff coefficient [1/time]
-%           (p.QsurfIndir.dc)
-% wGW       : surface water pool [mm]
-%           (s.w.wSurf)
+% Modifies:
+% 	- s.w.wSurf: surface water pool [mm]
 %
-% OUTPUT
-% QsurfIndir     : slow surface runoff [mm/time]
-%           (fx.QsurfIndir)
-% wSurf       : surface water pool [mm]
-%           (s.w.wSurf)
+% References:
+%	- 
 %
-% NOTES:
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
 %
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
-% np = (1-(1-p).^time_res); % time resolution is in days
 
 % simply assume that a fraction of the surface water pool is slow runoff
 fx.QsurfIndir(:,tix) = p.QsurfIndir.dc .* s.w.wSurf;

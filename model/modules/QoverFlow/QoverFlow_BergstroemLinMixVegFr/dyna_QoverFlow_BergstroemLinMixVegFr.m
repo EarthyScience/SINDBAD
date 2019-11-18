@@ -1,37 +1,32 @@
 function [f,fe,fx,s,d,p] = dyna_QoverFlow_BergstroemLinMixVegFr(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: calculates land surface runoff and infiltration to different soil layers
+% calculates land surface runoff and infiltration to different soil layers
 %
-% REFERENCES: Bergstroem 1992
-%
-% CONTACT	: ttraut
-%
-% INPUT
-% p.QoverFlow.berg_scaleV : scaling parameter to define p.berg from p.vegFr
-%                           for vegetated fraction
-% p.QoverFlow.berg_scaleS : scaling parameter to define p.berg from p.vegFr
-%                           for non vegetated fraction
-% p.QoverFlow.smaxberg   : shape parameter of runoff-infiltration curve []
-% p.QoverFlow.smaxVeg 	 : maximum plant available soil water  [mm]
-% p.QoverFlow.smax1      : maximum water capacity of first soil layer  [mm]
-% s.w.wSoil         : soil moisture of the layers [mm]
-% s.w.wTotalSoil    : total soil moisture [mm]
-% s.wd.WBP          : water balance pool [mm]
-%
-% OUTPUT
-% fx.QoverFlow   : runoff from land [mm/time]
-% fx.InSoil1   : infiltration in first soil layer [mm/time]
-% s.w.wSoil    : total soil moisture [mm]
-% s.wd.WBP     : water balance pool [mm]
-%
-% NOTES:
-%
-% #########################################################################
+% Inputs:
+%	- p.QoverFlow.berg       : shape parameter of runoff-infiltration curve []
+%   - p.QoverFlow.smax2      : maximum water capacity of second soil layer  [mm]
+%   - p.QoverFlow.smax1      : maximum water capacity of first soil layer  [mm]
 
-% check the parameter values
-%if p.QoverFlow.smax1 > p.QoverFlow.smaxVeg
-%  error(['unvalid parameter values in QoverFlow_Bergstroem: smax1 > smaxVeg']);
-%end
+%
+% Outputs:
+%   - fx.QoverFlow : runoff from land [mm/time]
+%   - fx.InSoil    : infiltration in soil [mm/time]
+%
+% Modifies:
+% 	- s.w.wSoil    : soil moisture of the layers [mm]
+%   - s.wd.WBP     : water balance pool [mm]
+
+%
+% References:
+%	- Bergstroem 1992
+%
+% Created by:
+%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
+% #########################################################################
 
 tmp_smaxVeg   = p.QoverFlow.smax1 + p.QoverFlow.smax2;
 tmp_SoilTotal = sum(s.w.wSoil, 2);
@@ -47,10 +42,10 @@ fx.QoverFlow(:,tix)  = s.wd.WBP .* tmp_InfExFrac;
 s.wd.WBP        = s.wd.WBP - fx.QoverFlow(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil1(:,tix) = min(p.QoverFlow.smax1 - s.w.wSoil(:,1), s.wd.WBP);
+fx.InSoil(:,tix) = min(p.QoverFlow.smax1 - s.w.wSoil(:,1), s.wd.WBP);
 s.w.wSoil(:,1)    = s.w.wSoil(:,1) + fx.InSoil1(:,tix);
 
-s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix);
+s.wd.WBP    = s.wd.WBP - fx.InSoil(:,tix);
 
 % for deeper layers
 for sl=2:size(s.w.wSoil,2)

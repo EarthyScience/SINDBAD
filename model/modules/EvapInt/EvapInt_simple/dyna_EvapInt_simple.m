@@ -1,24 +1,31 @@
 function [f,fe,fx,s,d,p] = dyna_EvapInt_simple(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: for canopy interception evaporation (ECanop) everything is
-% precomputed. This function only updates the WBP variable.
-% 
-% REFERENCES: ??
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% ECanop    : canopy interception evaporation [mm/time]
-%           (fx.ECanop)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% OUTPUT
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% NOTES:
-% 
+% for interception everything is precomputed. 
+% This function only updates the WBP variable.
+%
+% Inputs:
+%	- fx.EvapInt:    canopy interception evaporation [mm/time]
+%
+% Outputs:
+%   - 
+%
+% Modifies:
+% 	- s.wd.WBP:     water balance pool [mm]
+%
+% References:
+%	- Gash model, Miralles et al 2010
+%
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+% NOTES: 
+%   - Works per rain event. Here we assume that we have one rain event
+%     per day - this approach should not be used for timeSteps very different
+%     to daily.
+%
+%%
 % #########################################################################
 
 % update the available water

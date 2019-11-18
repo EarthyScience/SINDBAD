@@ -1,42 +1,43 @@
 function [f,fe,fx,s,d,p] = prec_EvapInt_Miralles2010(f,fe,fx,s,d,p,info)
 % #########################################################################
-% PURPOSE	: compute canopy interception evaporation according to the Gash
-% model.
-% 
-% REFERENCES: ??
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% Rain      : rain fall [mm]
-%           (fe.rainSnow.rain)
-% RainInt   : rainfall intensity [mm/hr] {1.5 or 5.6 for synoptic or
-%           convective}
-%           (f.RainInt)
-% CanopyStorage : Canopy storage [mm] {1.2}
-%               (p.EvapInt.CanopyStorage)
-% fte           : fraction of trunk evaporation [] {0.02}
-%               (p.EvapInt.fte)
-% EvapRate      : mean evaporation rate [mm/hr] {0.3}
-%               (p.EvapInt.EvapRate)
-% St            : trunk capacity [mm] {0.02}
-%               (p.EvapInt.St)
-% pd            : fraction rain to trunks [] {0.02}
-%               (p.EvapInt.pd)
-% FAPAR         : fraction of absorbed photosynthetically active radiation
-%               [] (equivalent to "canopy cover" in Gash and Miralles)
-%               (f.FAPAR)
-% 
-% OUTPUT
-% ECanop    : canopy interception evaporation [mm/time]
-%           (fx.ECanop)
-% 
-% NOTES: Works per rain event. Here we assume that we have one rain event
-% per day - this approach should not be used for timeSteps very different
-% to daily.
-%        Parameters above, defaults in curly brackets from Mirales et al
-%        2010
-% 
+% computes canopy interception evaporation according to the Gash model
+%
+% Inputs:
+%	- info structure
+%   - fe.rainSnow.rain:     rain fall [mm/time]
+%   - f.RainInt:            rainfall intensity [mm/hr]
+%                           {1.5 or 5.6 for synoptic or convective}
+%   - f.FAPAR:              fraction of absorbed photosynthetically active 
+%                           radiation [] 
+%                           (equivalent to "canopy cover" in Gash and Miralles)
+%
+%   - p.EvapInt.CanopyStorage:  Canopy storage [mm] {1.2}
+%   - p.EvapInt.fte:            fraction of trunk evaporation [] {0.02}
+%   - p.EvapInt.EvapRate:       mean evaporation rate [mm/hr] {0.3}
+%   - p.EvapInt.St:             trunk capacity [mm] {0.02}
+%   - p.EvapInt.pd:             fraction rain to trunks [] {0.02}
+%
+% Outputs:
+%   - fx.EvapInt:    canopy interception evaporation [mm/time]
+%
+% Modifies:
+% 	- 
+%
+% References:
+%	- Gash model; Miralles et al 2010
+%
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+% NOTES: 
+%   - Works per rain event. Here we assume that we have one rain event
+%     per day - this approach should not be used for timeSteps very different
+%     to daily.
+%
+%%
 % #########################################################################
 
 tmp             =   info.tem.helpers.arrays.onestix;
@@ -92,7 +93,7 @@ tmp(fe.rainSnow.rain == 0) = 0;
 v=tmp > fe.rainSnow.rain;
 tmp(v) = fe.rainSnow.rain(v);
 
-fx.ECanop = tmp;
+fx.EvapInt = tmp;
 
 
 end

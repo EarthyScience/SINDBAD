@@ -1,24 +1,27 @@
 function [f,fe,fx,s,d,p] = prec_EvapSub_GLEAM(f,fe,fx,s,d,p,info)
 % #########################################################################
-% PURPOSE	: precompute the Priestley-Taylor term for sublimation
+% precomputes the Priestley-Taylor term for sublimation following GLEAM
 %
-% REFERENCES: ??
+% Inputs:
+%	- f.TairDay   : daytime temperature [C]
+%   - f.PsurfDay  : atmospheric pressure during the daytime [kPa]
+%   - p.EvapSub.alpha: alpha coefficient for sublimation
 %
-% CONTACT	: mjung
+% Outputs:
+%   - fe.EvapSub.PTtermSub: Priestley-Taylor term [mm/MJ]
 %
-% INPUT
-% TairDay   : daytime temperature [?C]
-%           (f.TairDay)
+% Modifies:
+% 	- 
 %
-% PsurfDay  : atmospheric pressure during the daytime [kPa]
-%           (f.PsurfDay)
+% References:
+%	- GLEAM, Miralles et al.
 %
-% OUTPUT
-% PTtermSub : Priestley-Taylor term [mm/MJ]
-%           (fe.EvapSub.PTtermSub)
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
 %
-% NOTES:
-%
+% Versions:
+%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%%
 % #########################################################################
 
 % convert temperature to Kelvin
@@ -56,6 +59,6 @@ palpha                      = p.EvapSub.alpha * info.tem.helpers.arrays.onespix;
 
 tmp                         = palpha .* f.Rn .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 tmp(tmp<0)                  = 0;
-fe.EvapSub.PTtermSub    = tmp;
+fe.EvapSub.PTtermSub        = tmp;
 
 end

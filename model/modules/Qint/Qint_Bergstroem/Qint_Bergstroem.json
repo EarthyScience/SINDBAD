@@ -1,7 +1,7 @@
 {
 	"params": {
 		"berg": {
-			"Name": "shape parameter runoff-infiltration curve (Bergström)",
+			"Name": "shape parameter runoff-infiltration curve (Bergstrï¿½m)",
 			"Unit": NaN,
 			"Default": 1.1,
 			"LowerBound": 0.1,
@@ -26,5 +26,14 @@
 			},
 			"Comment": "in Paper: s_max"
 		}
-	}
+	},
+	"devStage":
+		{
+		"experimental": true,
+		"tested": false,
+		"consolidated": false,
+		"published": false,
+		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+		}
+
 }
