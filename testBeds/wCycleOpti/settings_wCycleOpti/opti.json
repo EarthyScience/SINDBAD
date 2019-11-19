@@ -17,7 +17,7 @@
 		"Qsnow.melt_Rn",
 		"EvapInt.pInt",
 		"wSurfRec.rf",
-		"QsurfIndir.dc",
+		"Qsurf.dc",
 		"EvapSoil.ks",
 		"TranfwSoil.alphaVeg",
 		"TranfwSoil.k2"
