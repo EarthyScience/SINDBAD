@@ -151,7 +151,7 @@ info.tem.model.code.variables.to.storeStatesDestination         =   storeStates_
 info.tem.model.code.variables.to.redMem                         =   variablesToRedMem(:);
 
 %% variables to sum
-sumVars                                                         =   info.tem.model.varsToSum;
+sumVars                                                         =   info.tem.model.variables.to.sum; %--> sujan moved the fields from info.tem.model.varsToSum
 
 sumVars_longDestination                                         =   {''};
 sumVars_codeLines                                               =   {''};
@@ -1069,7 +1069,7 @@ end
 
 if~exist(genCorePath,'dir'),mkdirx(genCorePath);end
 
-if exist(CodePth,'file')
+if exist(CodePth,'file') == 2 
     delete(CodePth);
 end
 

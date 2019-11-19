@@ -52,6 +52,7 @@
 %   - water cycle variables should divert from 1:1 line (e.g., ET, wTotal)
 
 %% clean the path and memory
+restoredefaultpath
 try
     gone
     for fn              =	{'tools','model','optimization','testBeds'}
@@ -82,10 +83,10 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cLAI';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_afterTinaCleanup';
 % 
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_rainSnow';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_rainSnow';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -106,8 +107,8 @@ testCases               =   [1 2 3 4 5];
 % testCases               =   [5];
 % testCases               =   [4];
 % testCases             =   [ 5 ];
-% testCases             =   [3];
-% testCases             =   [ 1 ];
+% testCases             =   [5];
+testCases             =   [ 3 ];
 
 %% run the different tests
 for i                   =   testCases

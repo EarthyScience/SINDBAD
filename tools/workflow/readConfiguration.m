@@ -68,7 +68,6 @@ for ii = 1:numel(fldnmsINFO)
             else
                 info.(whatWorkFlow).model	= data_json;
             end
-            
         case 'modelstructure'
             % set the model structure and needed settings in general
             
@@ -168,6 +167,10 @@ for ii = 1:numel(fldnmsINFO)
             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
     end
 end
+
+%--> sujan: moved variables to sum to a suitable place in info
+info.tem.model.variables.to.sum                             = info.tem.model.varsToSum;
+info.tem.model                                              = rmfield(info.tem.model,'varsToSum');
 
 if stopIfMissField && isAllOK == false
     error([pad('CRIT FIELDMISS',20) ' : ' pad('readConfiguration',20) ' | necessary fields are missing in configuration files : ' missFields])

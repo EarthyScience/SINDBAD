@@ -20,5 +20,5 @@ function [f,fe,fx,s,d,p]=cLAI_forcing(f,fe,fx,s,d,p,info,tix)
 %   - 1.0 on 11.11.2019 (skoirala): moved LAI from d.cLAI.LAI to s.cd.cLAI
 %
 %% 
-s.cd.LAI = f.LAI(:,tix);    
+s.cd.LAI = f.LAI(:,tix);
 end

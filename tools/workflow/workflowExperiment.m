@@ -44,6 +44,7 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %% ------------------------------------------------------------------------
 % create a temporary log file
 % -------------------------------------------------------------------------
+% resetPath
 tstartwf = tic;
 tmpStrDate                          =   datestr(now,30);
 tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
