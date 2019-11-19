@@ -1,7 +1,7 @@
 {
 	"params": {
 		"alpha": {
-			"Name": "??? Check with martin",
+			"Name": "an empirical Budiko parameter",
 			"Unit": "-",
 			"Default": 0.5,
 			"LowerBound": 0.01,

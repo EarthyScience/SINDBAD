@@ -14,7 +14,7 @@
 			"Comment": ""
 		},
 		"CLAY": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 0.3,
 			"LowerBound": 0,
@@ -24,10 +24,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"SILT": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 0.3,
 			"LowerBound": 0,
@@ -37,10 +37,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"SAND": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 0.4,
 			"LowerBound": 0,
@@ -50,10 +50,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"InfCapacity": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "mm/hr",
 			"Default": 15,
 			"LowerBound": 1,
@@ -63,10 +63,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"HeightLayer1": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "m",
 			"Default": 0.05,
 			"LowerBound": 0.05,
@@ -76,10 +76,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"HeightLayer2": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "m",
 			"Default": 1,
 			"LowerBound": 0.1,
@@ -89,20 +89,20 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"iniAWC": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "mm/m",
-			"Default": 0,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
+			"Default": 0.1,
+			"LowerBound": 0,
+			"UpperBound": 10,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		}
 	}
 }

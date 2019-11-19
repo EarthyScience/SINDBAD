@@ -42,6 +42,6 @@ end
 s.w.wGW = s.w.wGW + fx.Qint(:,tix) - fx.Q(:,tix);
 
 % Qb for water balance check
-fx.Qb(:,tix) = fx.Q(:,tix) - fx.Qint(:,tix);
+fx.Qbase(:,tix) = fx.Q(:,tix) - fx.Qint(:,tix);
 
 end

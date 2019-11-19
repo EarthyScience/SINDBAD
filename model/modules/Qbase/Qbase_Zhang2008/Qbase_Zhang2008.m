@@ -21,11 +21,8 @@ function [f,fe,fx,s,d,p] = Qbase_Zhang2008(f,fe,fx,s,d,p,info,tix)
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %%
 % #########################################################################
-
 % simply assume that a fraction of the GW pool is baseflow
 fx.Qbase(:,tix) = p.Qbase.bc .* s.w.wGW;
-
 % update the GW pool
 s.w.wGW = s.w.wGW - fx.Qbase(:,tix);
-
 end

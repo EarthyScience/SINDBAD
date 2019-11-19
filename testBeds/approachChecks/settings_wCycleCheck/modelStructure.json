@@ -20,7 +20,7 @@
 		},
 		"pSoil": 
 		{
-			"apprName": 	"pSoil_fixed",
+			"apprName": 	"pSoil_simple",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -36,34 +36,40 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
+		"Qsurf": 
+		{
+			"apprName": 	"Qsurf_directIndirect",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
 		"Qbase": 
 		{
-			"apprName": 	"Qbase_fraction",
+			"apprName": 	"Qbase_none",
 			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"Qint": 
-		{
-			"apprName": 	"Qint_Bergstroem",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"Qsnow": 
-		{
-			"apprName": 	"Qsnow_TRn",
-			"runFull": 		false,
             "use4spinup":   false
 		},
 		"Qsat": 
 		{
-			"apprName": 	"Qsat_dummy",
+			"apprName": 	"Qsat_none",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"Qinf": 
+		{
+			"apprName": 	"Qinf_Bergstroem",
+			"runFull": 		true,
+            "use4spinup":   false
+		},
+		"QoverFlow": 
+		{
+			"apprName": 	"QoverFlow_Inf",
 			"runFull": 		true,
             "use4spinup":   false
 		},
 		"wSnowFrac": 
 		{
-			"apprName": 	"wSnwFr_scaleSFHTESSEL",
-			"runFull": 		false,
+			"apprName": 	"wSnowFrac_HTESSEL",
+			"runFull": 		true,
             "use4spinup":   false
 		},
 		"sumVariables":
