@@ -118,7 +118,7 @@
 		{
 			"apprName": 	"cLAI_constant",
 			"runFull": 		false,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"EvapSoil": 
 		{
@@ -206,8 +206,8 @@
 		},
 		"wSnowFrac": 
 		{
-			"apprName": 	"wSnowFrac_scaleSFHTESSEL",
-			"runFull": 		false,
+			"apprName": 	"wSnowFrac_HTESSEL",
+			"runFull": 		true,
             "use4spinup":   false
 		},
 		"sumVariables":

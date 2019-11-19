@@ -71,7 +71,7 @@ zSequence   = struct(...
 
 
 %% FIGURES
-fig_outDirPath=[info_def.experiment.outputDirPath 'testResults/' testName];
+fig_outDirPath=[info_def.experiment.outputDirPath 'test_' testName];
 mkdirx(fig_outDirPath)
 fNamesf=fields(f_def);
 fNamesfx=fields(fx_def);

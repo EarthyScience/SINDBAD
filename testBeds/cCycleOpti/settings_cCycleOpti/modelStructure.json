@@ -202,21 +202,21 @@
 		{
 			"apprName": 	"sumVariables_simple",
 			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
+			"comment": 		"",
             "use4spinup":   true
 		},
 		"wBalance":
 		{
 			"apprName": 	"wBalance_simple",
 			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
+			"comment": 		"",
             "use4spinup":   false
 		},
 		"rainSnow":
 		{
 			"apprName": 	"rainSnow_Tair",
 			"runFull": 		false,
-			"comment": 		"Do not change the approach here",
+			"comment": 		"",
             "use4spinup":   true
 		}
 	},		

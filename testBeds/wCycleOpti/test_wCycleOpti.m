@@ -49,7 +49,7 @@ function test_wCycleOpti(inpath,outpath,obspath,testName)
         'info.opti.constraints.oneDataPath',obspath...
         );%,...
     
-    fig_outDirPath=[info_tws.experiment.outputDirPath 'testResults/' testName];
+    fig_outDirPath=[info_tws.experiment.outputDirPath 'test_' testName];
     mkdirx(fig_outDirPath)
     fNamesf=fields(f_tws);
     fNamesfx=fields(fx_tws);
