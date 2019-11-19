@@ -1,31 +1,26 @@
 function [f,fe,fx,s,d,p] = Qsat_simple(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: compute saturation runoff
-% 
-% REFERENCES: ??
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% frSat     : saturated fraction of soil [] (from 0 to 1)
-%           (s.wd.wFrSat)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% OUTPUT
-% Qsat      : saturation runoff [mm/time]
-%           (fx.Qsat)
-% WBP       : water balance pool [mm]
-%           (s.wd.WBP)
-% 
-% NOTES: is supposed to work over multiple time scales
-% 
-% #########################################################################
-
-
-% this is a dummy
-fx.Qsat(:,tix) = s.wd.WBP .* s.wd.wFrSat;
-
+% calculate the saturation excess runoff as a fraction of 
+%
+% Inputs:
+%	- s.wd.wSoilSatFrac: fraction of the grid cell that is saturated
+%   - s.wd.WBP: amount of incoming water
+% Outputs:
+%   - fx.Qsat: saturation excess runoff in mm/day
+%
+% Modifies:
+% 	- s.wd.WBP
+%
+% References:
+%	- 
+%
+% Created by:
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 11.11.2019 (skoirala): cleaned up the code
+%
+%% 
+fx.Qsat(:,tix) = s.wd.WBP .* s.wd.wSoilSatFrac;
 % update the WBP
 s.wd.WBP = s.wd.WBP - fx.Qsat(:,tix);
 

@@ -1,15 +1,15 @@
-function [f,fe,fx,s,d,p] = dyna_QoverFlow_BergstroemLinVegFr(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_Qinf_BergstroemLinVegFr(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % calculates land surface runoff and infiltration to different soil layers
 %
 % Inputs:
-%	- p.QoverFlow.berg       : shape parameter of runoff-infiltration curve []
-%   - p.QoverFlow.smax2      : maximum water capacity of second soil layer  [mm]
-%   - p.QoverFlow.smax1      : maximum water capacity of first soil layer  [mm]
+%	- p.Qinf.berg       : shape parameter of runoff-infiltration curve []
+%   - p.Qinf.smax2      : maximum water capacity of second soil layer  [mm]
+%   - p.Qinf.smax1      : maximum water capacity of first soil layer  [mm]
 
 %
 % Outputs:
-%   - fx.QoverFlow : runoff from land [mm/time]
+%   - fx.Qinf : runoff from land [mm/time]
 %   - fx.InSoil    : infiltration in soil [mm/time]
 %
 % Modifies:
@@ -28,25 +28,25 @@ function [f,fe,fx,s,d,p] = dyna_QoverFlow_BergstroemLinVegFr(f,fe,fx,s,d,p,info,
 %%
 % #########################################################################
 
-tmp_smaxVeg   = p.QoverFlow.smax1 + p.QoverFlow.smax2;
+tmp_smaxVeg   = p.Qinf.smax1 + p.Qinf.smax2;
 tmp_SoilTotal = sum(s.w.wSoil, 2);
 
 % calculate land runoff from incoming water and current soil moisture
-tmp_InfExFrac = min(exp(p.QoverFlow.berg(:,tix) .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
-fx.QoverFlow(:,tix)  = s.wd.WBP .* tmp_InfExFrac;
+tmp_InfExFrac = min(exp(p.Qinf.berg(:,tix) .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+fx.Qinf(:,tix)  = s.wd.WBP .* tmp_InfExFrac;
 
 % update water balance
-s.wd.WBP        = s.wd.WBP - fx.QoverFlow(:,tix);
+s.wd.WBP        = s.wd.WBP - fx.Qinf(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil(:,tix) = min(p.QoverFlow.smax1 - s.w.wSoil(:,1), s.wd.WBP);
+fx.InSoil(:,tix) = min(p.Qinf.smax1 - s.w.wSoil(:,1), s.wd.WBP);
 s.w.wSoil(:,1)    = s.w.wSoil(:,1) + fx.InSoil(:,tix);
 
-s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix);
+s.wd.WBP    = s.wd.WBP - fx.InSoil(:,tix);
 
 % for deeper layers
 for sl=2:size(s.w.wSoil,2)
-  ip = min(p.QoverFlow.smax2  - s.w.wSoil(:,sl), s.wd.WBP);
+  ip = min(p.Qinf.smax2  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil(:,sl) =  s.w.wSoil(:,sl) + ip;
   s.wd.WBP = s.wd.WBP - ip;
 end

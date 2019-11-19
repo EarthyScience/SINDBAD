@@ -37,13 +37,13 @@ end
 inpath                  =   [inDir filesep 'globalTWS_Forcing.mat'];
 obspath                 =   '';
 testName                =   'wCycleCheck';
-outpath                 =   outDir;
 expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/experiment_' testName '.json'];
 
 
 %% set the module to be checked
-moduleName              = 'QSurf';
+moduleName              = 'Qsat';
 
+outpath                 =   [outDir '/' moduleName];
 
 %% stop if module does not exist
 moduleDir             = [sindbadroot 'model/modules/' moduleName];
@@ -58,6 +58,7 @@ runNum = 0;
 expNames ={};
 opList={'fx','s' 'd' 'info'};
 moduleInfo = struct;
+tryCatch = 0;
 for ap = 1:numel(appDirs)
     tmp=strsplit(appDirs{ap},'_');
     appName = tmp(end);
@@ -67,7 +68,7 @@ for ap = 1:numel(appDirs)
     fullappName = [moduleName '_' appName];
     if iscell(fullappName)
         fullappName=horzcat(fullappName{:});
-    end     
+    end
     if strcmp(appName,'dummy')
         disp(['dummy approach exists for ' moduleName])
         dummyFile = 1;
@@ -96,56 +97,110 @@ for ap = 1:numel(appDirs)
             end
         end
         if precFile && dynaFile
-            runNum = runNum+1;
             expName=[testName '_' fullappName '_precDyna'];
             if iscell(expName)
                 expName = horzcat(expName{:});
             end
             modString=['info.tem.model.modules.' moduleName '.apprName'];
             runString=['info.tem.model.modules.' moduleName '.runFull'];
-            [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
-                workflowExperiment(expConfigFile,...
-                'info.tem.model.flags.runGenCode',true,...
-                'info.tem.forcing.oneDataPath',inpath,...
-                'info.experiment.name',expName,...
-                modString,char(appName),...
-                runString,false,...
-                'info.experiment.outputDirPath',outpath...
-                );
-            expNames=[expNames expName];
-            for opN = 1:numel(opList)
-                opName = opList{opN};
-                eval([opName num2str(runNum) '=' opName ';'])
+            if tryCatch
+                try
+                    [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
+                        workflowExperiment(expConfigFile,...
+                        'info.tem.model.flags.runGenCode',true,...
+                        'info.tem.forcing.oneDataPath',inpath,...
+                        'info.experiment.name',expName,...
+                        modString,char(appName),...
+                        runString,false,...
+                        'info.experiment.outputDirPath',outpath...
+                        );
+                    runNum = runNum+1;
+                    expNames=[expNames expName];
+                    for opN = 1:numel(opList)
+                        opName = opList{opN};
+                        eval([opName num2str(runNum) '=' opName ';'])
+                    end
+                    disp(['Prec and Dyna of approaches exists for ' fullappName])
+                catch e %e is an MException struct
+                    fprintf(1,'The identifier was:\n%s',e.identifier);
+                    fprintf(1,'There was an error! The message was:\n%s',e.message);
+                    %                     save([moduleName '_' appName '.mat'], 'e','-v7.3')
+                    %                     save(char([moduleName '_' appName '.mat']), 'e','-v7.3')
+                    disp(['approach ' appName ' does not run'])
+                end
+            else
+                [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
+                    workflowExperiment(expConfigFile,...
+                    'info.tem.model.flags.runGenCode',true,...
+                    'info.tem.forcing.oneDataPath',inpath,...
+                    'info.experiment.name',expName,...
+                    modString,char(appName),...
+                    runString,false,...
+                    'info.experiment.outputDirPath',outpath...
+                    );
+                runNum = runNum+1;
+                expNames=[expNames expName];
+                for opN = 1:numel(opList)
+                    opName = opList{opN};
+                    eval([opName num2str(runNum) '=' opName ';'])
+                end
+                disp(['Prec and Dyna of approaches exists for ' fullappName])
+                
             end
-            disp(['Prec and Dyna of approaches exists for ' fullappName])
-    
+            %
         end
         if fullFile
-            runNum = runNum+1;
             expName=[testName '_' fullappName '_full'];
             if iscell(expName)
                 expName = horzcat(expName{:});
             end
             modString=['info.tem.model.modules.' moduleName '.apprName'];
             runString=['info.tem.model.modules.' moduleName '.runFull'];
-            [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
-                workflowExperiment(expConfigFile,...
-                'info.tem.model.flags.runGenCode',true,...
-                'info.tem.forcing.oneDataPath',inpath,...
-                'info.experiment.name',expName,...
-                modString,char(appName),...
-                runString,true,...
-                'info.experiment.outputDirPath',outpath...
-                );
-            expNames=[expNames expName];
-            for opN = 1:numel(opList)
-                opName = opList{opN};
-                eval([opName num2str(runNum) '=' opName ';'])
+            if tryCatch
+                try
+                    [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
+                        workflowExperiment(expConfigFile,...
+                        'info.tem.model.flags.runGenCode',true,...
+                        'info.tem.forcing.oneDataPath',inpath,...
+                        'info.experiment.name',expName,...
+                        modString,char(appName),...
+                        runString,true,...
+                        'info.experiment.outputDirPath',outpath...
+                        );
+                    runNum = runNum+1;
+                    expNames=[expNames expName];
+                    for opN = 1:numel(opList)
+                        opName = opList{opN};
+                        eval([opName num2str(runNum) '=' opName ';'])
+                    end
+                    disp(['Prec and Dyna of approaches exists for ' fullappName])
+                catch e %e is an MException struct
+                    fprintf(1,'The identifier was:\n%s',e.identifier);
+                    fprintf(1,'There was an error! The message was:\n%s',e.message);
+                    %                     save(char([moduleName '_' appName '.mat']), 'e','-v7.3')
+                    disp(['approach ' appName ' does not run'])
+                end
+            else
+                [~,~,fx,s,d,~,~,info,~,~,~,~,~,~,~,~,~] = ...
+                    workflowExperiment(expConfigFile,...
+                    'info.tem.model.flags.runGenCode',true,...
+                    'info.tem.forcing.oneDataPath',inpath,...
+                    'info.experiment.name',expName,...
+                    modString,char(appName),...
+                    runString,true,...
+                    'info.experiment.outputDirPath',outpath...
+                    );
+                runNum = runNum+1;
+                expNames=[expNames expName];
+                for opN = 1:numel(opList)
+                    opName = opList{opN};
+                    eval([opName num2str(runNum) '=' opName ';'])
+                end
             end
-            disp(['Prec and Dyna of approaches exists for ' fullappName])
-
+            
+            
         end
-        [~,~,~] = getModuleVariableMatrix(info);
+        %         [~,~,~] = getModuleVariableMatrix(info);
     end
 end
 

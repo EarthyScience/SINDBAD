@@ -1,18 +1,7 @@
 {
-	"params": {
-		"bc": {
-			"Name": "base flow coefficient",
-			"Unit": "[]",
-			"Default": 0.1,
-			"LowerBound": 0,
-			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from Zhang2008"
-		}
+	"params": 
+	{
+	
 	},
 	"devStage":
 		{
