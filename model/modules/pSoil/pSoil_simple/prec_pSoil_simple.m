@@ -9,7 +9,7 @@ N     = numel(p.pSoil.HeightLayer1);
 % total soil depth
 tSLDP = info.tem.helpers.arrays.zerospix;
 for ij = 1:N
-    tSLDP	= tSLDP + p.pSoil.HeightLayer(ij).value;
+    tSLDP	= tSLDP + p.pSoil.HeightLayer(ij);
 end
 
 % distribute tAWC equaly according to the soil depth
