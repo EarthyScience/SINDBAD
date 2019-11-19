@@ -16,8 +16,6 @@
 		"Qsnow.melt_T",
 		"Qsnow.melt_Rn",
 		"EvapInt.pInt",
-		"QoverFlow.berg",
-		"QoverFlow.smax2",
 		"wSurfRec.rf",
 		"QsurfIndir.dc",
 		"EvapSoil.ks",

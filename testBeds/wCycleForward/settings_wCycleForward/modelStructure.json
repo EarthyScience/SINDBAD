@@ -56,8 +56,8 @@
 		},
 		"wSnowFrac": 
 		{
-			"apprName": 	"wSnwFr_scaleSFHTESSEL",
-			"runFull": 		false,
+			"apprName": 	"wSnowFrac_HTESSEL",
+			"runFull": 		true,
             "use4spinup":   false
 		},
 		"sumVariables":

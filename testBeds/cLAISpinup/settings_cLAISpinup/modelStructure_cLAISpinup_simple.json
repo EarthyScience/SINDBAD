@@ -12,26 +12,6 @@
 
 	"modules": 
 	{
-		"keepStates": 
-		{
-			"apprName": 	"keepStates_simple",
-			"runFull": 		true,
-			"comment": 		"This may never be changed",
-            "use4spinup":   true
-		},
-		"getStates": 
-		{
-			"apprName": 	"getStates_simple",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"storeStates": 
-		{
-			"apprName": 	"storeStates_simple",
-			"runFull": 		true,
-			"comment": 		"This may never be changed",
-            "use4spinup":   true
-		},
 		"cAlloc":
 		{
 			"apprName": 	"cAlloc_Friedlingstein1999",
@@ -136,9 +116,9 @@
 		},
 		"cLAI":
 		{
-			"apprName": 	"cLAI_constant",
+			"apprName": 	"cLAI_forcing",
 			"runFull": 		false,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"EvapSoil": 
 		{

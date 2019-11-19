@@ -1,30 +1,29 @@
 function [f,fe,fx,s,d,p] = getStates_simple(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: initialize the states for the current time steps from the
-% d.tmp.... variable
-% 
-% REFERENCES:
-% 
-% CONTACT	: ncarval; mjung
-% 
-% INPUT
-% 
-% OUTPUT
-% 
-% NOTES:
-% 
-% #########################################################################
+% gets the amount of water available for the current time step
+%
+% Inputs:
+%	- tix 
+%	- amount of rainfall
+%
+% Outputs:
+%   - s.wd.WBP: the amount of liquid water input to the system
+%
+% Modifies:
+% 	- None
+% References:
+%	- 
+%
+% Created by:
+%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 19.11.2019 (skoirala): added the documentation and cleaned the code, added json with development stage
+%
+%% 
 
-% water pools
-% s.w.wSoil(:,tix)  = s.prev.wSM;
-% s.w.wGW(:,tix)  = s.prev.wGW;
-% s.wd.wGWR(:,tix) = s.prev.wGWR;
-% s.w.wSnow(:,tix) = s.prev.wSWE;
-% s.wd.WTD(:,tix) = s.prev.WTD;
-
-% Water Balance Pool
+%--> Water Balance Pool
 s.wd.WBP  = fe.rainSnow.rain(:,tix);
-% s.wd.WBP  = f.Rain(:,tix);
-
 end % function
 

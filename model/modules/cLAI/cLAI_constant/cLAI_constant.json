@@ -19,8 +19,8 @@
 	},
 	"devStage":
 		{
-		"experimental": true,
-		"tested": false,
+		"experimental": false,
+		"tested": true,
 		"consolidated": false,
 		"published": false,
 		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"

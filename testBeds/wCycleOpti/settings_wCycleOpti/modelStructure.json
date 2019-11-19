@@ -20,8 +20,8 @@
 
 		"wSnowFrac":
 		{
-			"apprName": 	"wSnowFrac_scaleSFHTESSEL",
-			"runFull": 		false,
+			"apprName": 	"wSnowFrac_HTESSEL",
+			"runFull": 		true,
             "use4spinup":   false
 		},
 		"EvapSub":
@@ -45,9 +45,9 @@
 		},
 		"QoverFlow":
 		{
-			"apprName": 	"QoverFlow_Bergstroem",
+			"apprName": 	"QoverFlow_none",
 			"runFull": 		true,
-"use4spinup":   true
+			"use4spinup":   true
 		},
 		"wSurfRec":
 		{
