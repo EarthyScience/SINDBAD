@@ -55,9 +55,9 @@
 			"runFull": 		true,
 			"use4spinup":   true
 		},
-		"QsurfIndir":
+		"Qsurf":
 		{
-			"apprName": 	"QsurfIndir_simple",
+			"apprName": 	"Qsurf_simple",
 			"runFull": 		true,
 			"use4spinup":   true
 		},
