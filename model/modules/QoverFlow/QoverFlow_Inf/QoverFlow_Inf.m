@@ -1,9 +1,9 @@
-function [f,fe,fx,s,d,p] = prec_QoverFlow_none(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = QoverFlow_Inf(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % calculates total land surface runoff that passes to the surface storage
 %
 % Inputs:
-%	- info: to set QoverFlow to zeros
+%	- fx.Qinf: infiltration excess runoff
 %
 % Outputs:
 %   - fx.QoverFlow : runoff from land [mm/time]
@@ -19,6 +19,5 @@ function [f,fe,fx,s,d,p] = prec_QoverFlow_none(f,fe,fx,s,d,p,info)
 %   - 1.0 on 18.11.2019 (skoirala)
 %%
 % #########################################################################
-fx.QoverFlow = info.tem.helpers.arrays.zerospixtix;
+fx.QoverFlow(:,tix)         = fx.Qinf(:,tix);
 end
-
