@@ -42,13 +42,6 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 %   - 1.1 on 10.07.2018 : cleanup and documentation
 %   - 1.0 on 01.05.2018
 %
-% Temp Notes:
-%   - A) In this code, we should use the following strategy, e.g. for ET: if ET is not a forcing (~exist('f.ET','var'))
-%     compute ET
-%   - for ET and GPP - this allows us to force the model with different datastreams
-%   - B) from 1->3 depends on the WAI flags (which we should start calling the
-%   - C) check mass balance in all different calculations (at each iteration or in the end? In the end: saves time)
-%   - D) don't forget to output the stressors for the spinup inside thediagnostics structure (d) to be used in the calc_cflux_fast
 
 %%
 % -------------------------------------------------------------------------
@@ -94,7 +87,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % 2 - Water 
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.EvapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
-    [f,fe,fx,s,d,p]     =   ms.QinfExc.funHandle(f,fe,fx,s,d,p,info,tix);           % infiltration excess runoff
+    [f,fe,fx,s,d,p]     =   ms.Qinf.funHandle(f,fe,fx,s,d,p,info,tix);              % infiltration excess runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);      % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.Qsat.funHandle(f,fe,fx,s,d,p,info,tix);              % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
@@ -103,9 +96,8 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-    [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge to surface water storages
-    [f,fe,fx,s,d,p]     =   ms.QsurfDir.funHandle(f,fe,fx,s,d,p,info,tix);          % direct surface runoff
-    [f,fe,fx,s,d,p]     =   ms.QsurfIndir.funHandle(f,fe,fx,s,d,p,info,tix);        % runoff from surface water storages
+%     [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge to surface water storages
+    [f,fe,fx,s,d,p]     =   ms.Qsurf.funHandle(f,fe,fx,s,d,p,info,tix);             % runoff from surface water storages
     [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater
     [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
     [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
