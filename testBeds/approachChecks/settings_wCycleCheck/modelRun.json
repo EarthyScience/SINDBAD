@@ -34,19 +34,19 @@
 	},
 	"varsToSum":
 	{
-		"Q":
+		"roTotal":
 		{
 		"destination": "fx",
-		"components":["fx.Qint","fx.Qb"],
+		"components":["fx.roInt","fx.roBase"],
 		"balance": true
 		},
-		"ET":
+		"evapTotal":
 		{
 		"destination": "fx",
-		"components":["fx.EvapInt","fx.Transp","fx.EvapSoil","fx.EvapSub"],
+		"components":["fx.evapInt","fx.Transp","fx.evapSoil","fx.evapSub"],
 		"balance": true
 		},
-		"wTWS":
+		"wTotal":
 		{
 		"destination": "s.wd",
 		"components":"s.w.",

@@ -120,15 +120,15 @@
 			"runFull": 		false,
             "use4spinup":   true
 		},
-		"EvapSoil": 
+		"evapSoil": 
 		{
-			"apprName": 	"EvapSoil_DemSup",
+			"apprName": 	"evapSoil_DemSup",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"EvapSub": 
+		"evapSub": 
 		{
-			"apprName": 	"EvapSub_GLEAM",
+			"apprName": 	"evapSub_GLEAM",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -174,21 +174,21 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qbase": 
+		"roBase": 
 		{
-			"apprName": 	"Qbase_Orth2013",
+			"apprName": 	"roBase_Orth2013",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"Qint": 
+		"roInt": 
 		{
-			"apprName": 	"Qint_Bergstroem",
+			"apprName": 	"roInt_Bergstroem",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qsnow": 
+		"snowMelt": 
 		{
-			"apprName": 	"Qsnow_TRn",
+			"apprName": 	"snowMelt_TRn",
 			"runFull": 		false,
             "use4spinup":   false
 		},

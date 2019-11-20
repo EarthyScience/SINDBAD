@@ -41,7 +41,7 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'Qsat';
+moduleName              = 'roSat';
 
 outpath                 =   [outDir '/' moduleName];
 

@@ -9,7 +9,7 @@ function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 %	ensures full coverage of the grid cell [mm]
 %
 % Outputs:
-%   - fx.EvapSoil: soil evaporation flux
+%   - fx.evapSoil: soil evaporation flux
 %
 % Modifies:
 % 	- s.w.wSnow:        adds snow fall to the snow pack
@@ -17,7 +17,7 @@ function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 %
 % References:
 %	- H-TESSEL = land surface scheme of the European Centre for Medium-
-%       Range Weather Forecasts’ operational weather forecast system; 
+%       Range Weather Forecastsï¿½ operational weather forecast system; 
 %       Balsamo et al., 2009
 %
 % Created by:

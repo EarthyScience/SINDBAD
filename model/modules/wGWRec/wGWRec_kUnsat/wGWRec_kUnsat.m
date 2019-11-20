@@ -1,14 +1,14 @@
 function [f,fe,fx,s,d,p] = wGWRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: calculates groundwater recharge as a fraction of Qint_Bergstroem (land runoff that does not increase soil moisture)
+% PURPOSE	: calculates groundwater recharge as a fraction of roSat_Bergstroem (land runoff that does not increase soil moisture)
 %
 % REFERENCES:
 %
 % CONTACT	: ttraut
 %
 % INPUT
-% Qint      : interflow resp. land runoff [mm/time]
-%             (fx.Qint)
+% roSat      : interflow resp. land runoff [mm/time]
+%             (fx.roSat)
 % rf:       : fraction of water that contributes to recharge [-]
 %             (p.wGWRec.rf)
 % wGW       : ground water pool [mm]
