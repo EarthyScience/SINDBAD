@@ -10,14 +10,14 @@
 	"params2opti": [
 		"wSnowFrac.CoverParam",
 		"rainSnow.SF_scale",
-		"EvapSub.alpha",
-		"Qsnow.melt_T",
-		"Qsnow.melt_Rn",
-		"Qint.berg",
-		"Qint.smax",
-		"EvapSoil.ETalpha",
-		"EvapSoil.ETsup",
-		"Qbase.qt"
+		"evapSub.alpha",
+		"snowMelt.melt_T",
+		"snowMelt.melt_Rn",
+		"roInt.berg",
+		"roInt.smax",
+		"evapSoil.ETalpha",
+		"evapSoil.ETsup",
+		"roBase.qt"
 	],
 	"checks": "Nuno, please help...",
 	"constraints": {
@@ -71,7 +71,7 @@
 			"unc": {},
 			"qflag": {}
 		},
-		"Evap": {
+		"evap": {
 			"data" :{
 				"variableUnit": "mm",
 				"bounds": [0, 100],
@@ -87,7 +87,7 @@
 			"unc": {},
 			"qflag": {}
 		},
-		"Q": {
+		"roTotal": {
 			"data" :{
 				"variableUnit": "mm",
 				"bounds": [0, 100],

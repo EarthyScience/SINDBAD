@@ -1,13 +1,10 @@
-{
-	"1.c":			"sum.Q: Runoff components. All should be fields of fx",
-	"2.c":			"sum.ET: ET components. All should be fields of fx",
-	"variables":
+{	"variables":
     {
 		"to":
         {
-			"write":     ["fx.ET","fx.EvapSoil","fx.Transp","fx.EvapInt","fx.EvapSub",
-							"fx.Q","fx.Qsurf","fx.QoverFlow",
-							"s.w.wSnow","s.w.wSurf","s.w.wSoil","s.wd.wTWS"],
+			"write":     ["fx.evapTotal","fx.evapSoil","fx.Transp","fx.evapInt","fx.evapSub",
+							"fx.roTotal","fx.roSurf","fx.roOverland",
+							"s.w.wSnow","s.w.wSurf","s.w.wSoil","s.wd.wTotal"],
 			"store":     ["s.wd.WBP"]
 	}
 	},

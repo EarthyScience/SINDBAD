@@ -5,9 +5,9 @@
     {
 	"to":
         {
-			"write":     ["fx.ET","fx.EvapSoil","fx.EvapInt",
-							"fx.Qbase",
-							"s.w.wSoil","s.wd.wTWS","s.wd.WBP","s.w.wGW"],
+			"write":     ["fx.ET","fx.evapSoil","fx.evapInt",
+							"fx.roBase",
+							"s.w.wSoil","s.wd.wTotal","s.wd.WBP","s.w.wGW"],
 			"store":     []
 				}
 	},

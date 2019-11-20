@@ -1,5 +1,0 @@
-function [f,fe,fx,s,d,p] = prec_EvapSub_none(f,fe,fx,s,d,p,info)
-
-fx.EvapSub=info.tem.helpers.arrays.zerospixtix;
-
-end
