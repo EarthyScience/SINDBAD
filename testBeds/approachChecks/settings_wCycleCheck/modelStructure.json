@@ -12,9 +12,9 @@
 
 	"modules": 
 	{
-		"EvapSoil": 
+		"evapSoil": 
 		{
-			"apprName": 	"EvapSoil_DemSup",
+			"apprName": 	"evapSoil_DemSup",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -24,15 +24,15 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"EvapInt": 
+		"evapInt": 
 		{
-			"apprName": 	"EvapInt_none",
+			"apprName": 	"evapInt_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"EvapSub": 
+		"evapSub": 
 		{
-			"apprName": 	"EvapSub_GLEAM",
+			"apprName": 	"evapSub_GLEAM",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -42,15 +42,15 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qbase": 
+		"roBase": 
 		{
-			"apprName": 	"Qbase_none",
+			"apprName": 	"roBase_none",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qsat": 
+		"roSat": 
 		{
-			"apprName": 	"Qsat_none",
+			"apprName": 	"roSat_none",
 			"runFull": 		true,
             "use4spinup":   false
 		},

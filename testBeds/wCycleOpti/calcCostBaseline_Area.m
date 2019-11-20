@@ -49,11 +49,11 @@ end
 
 %%  ----------- get the modelled fluxes  ----------- 
 % TWS
-if isfield(d.storedStates,'wTWS')
-    TWSmod_d = reshape(d.storedStates.wTWS, info.tem.helpers.sizes.nPix, info.tem.helpers.sizes.nTix) .* gridArea;
-    %TWSmod_d = squeeze(d.storedStates.wTWS).* gridArea;
+if isfield(d.storedStates,'wTotal')
+    TWSmod_d = reshape(d.storedStates.wTotal, info.tem.helpers.sizes.nPix, info.tem.helpers.sizes.nTix) .* gridArea;
+    %TWSmod_d = squeeze(d.storedStates.wTotal).* gridArea;
 else
-    error('ERR: wTWS  missing in model output!');
+    error('ERR: wTotal  missing in model output!');
 end
 
 % SWE
@@ -65,10 +65,10 @@ else
 end
 
 % ET
-if isfield(fx,'ET')
-    ETmod_d =  fx.ET.* gridArea;
+if isfield(fx,'evapTotal')
+    ETmod_d =  fx.evapTotal.* gridArea;
 else
-    error('ERR: ET  missing in model output!');
+    error('ERR: evapTotal  missing in model output!');
 end
 
 % SM
@@ -80,10 +80,10 @@ else
 end
 
 % Q
-if isfield(fx,'Q')
-    Qmod_d =  fx.Q.* gridArea;
+if isfield(fx,'roTotal')
+    Qmod_d =  fx.roTotal.* gridArea;
 else
-    error('ERR: Q  missing in model output!');
+    error('ERR: roTotal  missing in model output!');
 end
 
 %%  ----------- Preparations  ----------- 

@@ -4,11 +4,11 @@ function [f,fe,fx,s,d,p] = wBalance_simple(f,fe,fx,s,d,p,info,tix)
 % Inputs:
 %	- tix  
 %	- info
-%   - variables to sum for Q and ET
+%   - variables to sum for roTotal(total runoff) and evapTotal (total evap)
 %   - check if snow exists to calculate p=rain+snow
 %
 % Outputs:
-%   - d.wBalance.WP in nPix,nZix
+%   - d.wBalance.wBal in nPix,nZix
 %   - add to variables to store 
 %
 % Modifies:
@@ -31,7 +31,7 @@ if isfield(fe.rainSnow,'snow')
     precip=precip+fe.rainSnow.snow(:,tix);
 end
 %--> get the change in storage
-dS=s.wd.wTWS-s.prev.s_wd_wTWS;
+dS=s.wd.wTotal-s.prev.s_wd_wTotal;
 %--> calculate and store the water balance
-d.wBalance.wBal(:,tix) = precip-fx.Q(:,tix)-fx.ET(:,tix)-dS;
+d.wBalance.wBal(:,tix) = precip-fx.roTotal(:,tix)-fx.evapTotal(:,tix)-dS;
 end

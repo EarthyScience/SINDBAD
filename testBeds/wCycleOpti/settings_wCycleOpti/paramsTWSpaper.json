@@ -1,21 +1,21 @@
 {
 	"type": "value",
 	"parameter": {
-	"EvapSoil": {
+	"evapSoil": {
 		"ETalpha": 1.2,
 		"ETsup": 0.02
 	},
-    "EvapSub": {
+    "evapSub": {
 			"alpha": 0.44
 		},
-		"Qbase": {
+		"roBase": {
 			"qt": 13
 		},
-		"Qint": {
+		"roInt": {
 			"berg": 1.46,
 			"smax": 515
 		},
-		"Qsnow": {
+		"snowMelt": {
 			"melt_T": 2.63,
 			"melt_Rn": 0.90
 		},
@@ -34,12 +34,12 @@
 				"UpperBound": 1.5
 			}
 		},
-		"Qsnow": {
+		"snowMelt": {
 			"melt_T": {
 				"UpperBound": 5
 			}
 		},
-		"EvapInt": {
+		"evapInt": {
 			"pInt": {
 				"UpperBound": 10
 			}

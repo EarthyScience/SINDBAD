@@ -67,43 +67,43 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);          % set rain and snow to fe.rainSnow.
     [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
-    [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);        
+    [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get the amount of water at the beginning of timestep
     % ---------------------------------------------------------------------
     % 0 - Terrain - to get the terrain params ...    
     % 0 - SOIL - to get the soil related params ...
     % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
-    [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);
-    [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);
-    [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);
-    [f,fe,fx,s,d,p]     =   ms.cLAI.funHandle(f,fe,fx,s,d,p,info,tix);
+    [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);             % topographic properties
+    [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
+    [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
+    [f,fe,fx,s,d,p]     =   ms.cLAI.funHandle(f,fe,fx,s,d,p,info,tix);              % leaf area index
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);         % add snow fall and calculate SnowCoverFraction
-    [f,fe,fx,s,d,p]     =   ms.EvapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
-    [f,fe,fx,s,d,p]     =   ms.Qsnow.funHandle(f,fe,fx,s,d,p,info,tix);             % calculate snowmelt and update SWE
+    [f,fe,fx,s,d,p]     =   ms.evapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
+    [f,fe,fx,s,d,p]     =   ms.snowMelt.funHandle(f,fe,fx,s,d,p,info,tix);             % calculate snowmelt and update SWE
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.EvapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
-    [f,fe,fx,s,d,p]     =   ms.Qinf.funHandle(f,fe,fx,s,d,p,info,tix);              % infiltration excess runoff
+    [f,fe,fx,s,d,p]     =   ms.evapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
+    [f,fe,fx,s,d,p]     =   ms.roInf.funHandle(f,fe,fx,s,d,p,info,tix);             % infiltration excess runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);      % saturation runoff
-    [f,fe,fx,s,d,p]     =   ms.Qsat.funHandle(f,fe,fx,s,d,p,info,tix);              % saturation runoff
+    [f,fe,fx,s,d,p]     =   ms.roSat.funHandle(f,fe,fx,s,d,p,info,tix);             % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
-    [f,fe,fx,s,d,p]     =   ms.Qint.funHandle(f,fe,fx,s,d,p,info,tix);              % interflow
-    [f,fe,fx,s,d,p]     =   ms.QoverFlow.funHandle(f,fe,fx,s,d,p,info,tix);         % land over flow (sum of saturation and infiltration excess runoff)
+    [f,fe,fx,s,d,p]     =   ms.roInt.funHandle(f,fe,fx,s,d,p,info,tix);             % interflow
+    [f,fe,fx,s,d,p]     =   ms.roOverland.funHandle(f,fe,fx,s,d,p,info,tix);        % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-%     [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge to surface water storages
-    [f,fe,fx,s,d,p]     =   ms.Qsurf.funHandle(f,fe,fx,s,d,p,info,tix);             % runoff from surface water storages
+%     [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge to surface water storages
+    [f,fe,fx,s,d,p]     =   ms.roSurf.funHandle(f,fe,fx,s,d,p,info,tix);            % runoff from surface water storages
     [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater
-    [f,fe,fx,s,d,p]     =   ms.Qbase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
+    [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
     [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)
-    [f,fe,fx,s,d,p]     =   ms.EvapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation
+    [f,fe,fx,s,d,p]     =   ms.evapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation
     % ---------------------------------------------------------------------
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------

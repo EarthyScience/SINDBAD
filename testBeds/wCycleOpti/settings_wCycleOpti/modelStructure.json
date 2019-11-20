@@ -24,47 +24,52 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"EvapSub":
+		"evapSub":
 		{
-			"apprName": 	"EvapSub_GLEAM",
+			"apprName": 	"evapSub_GLEAM",
 			"runFull": 		false,
 			"use4spinup":   false
 		},
-		"Qsnow":
+		"snowMelt":
 		{
-			"apprName": 	"Qsnow_TRn",
+			"apprName": 	"snowMelt_TRn",
 			"runFull": 		false,
 			"use4spinup":   false
 		},
 
-		"EvapInt":
+		"evapInt":
 		{
-			"apprName": 	"EvapInt_simple2",
+			"apprName": 	"evapInt_simple2",
 			"runFull": 		false,
 			"use4spinup":   false
 		},
-		"QoverFlow":
+		"roOverland":
 		{
-			"apprName": 	"QoverFlow_none",
+			"apprName": 	"roOverland_Sat",
 			"runFull": 		true,
 			"use4spinup":   true
 		},
-		"wSurfRec":
+		"roInt":
 		{
-			"apprName": 	"wSurfRec_fraction",
+			"apprName": 	"roInt_none",
 			"runFull": 		true,
 			"use4spinup":   true
 		},
-		"Qsurf":
+		"roSat":
 		{
-			"apprName": 	"Qsurf_simple",
+			"apprName": 	"roSat_Bergstroem",
 			"runFull": 		true,
 			"use4spinup":   true
 		},
-
-		"EvapSoil":
+				"roSurf":
 		{
-			"apprName": 	"EvapSoil_bare",
+			"apprName": 	"roSurf_directIndirect",
+			"runFull": 		true,
+			"use4spinup":   true
+		},
+		"evapSoil":
+		{
+			"apprName": 	"evapSoil_bare",
 			"runFull": 		false,
             "use4spinup":   false
 		},

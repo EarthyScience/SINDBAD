@@ -7,7 +7,7 @@
 		"funName": "lsqnonlin",
 		"methodsFile": "optimization/optimizationSchemes/optionsOptimizationSchemes.json"
 	},
-	"params": ["wSnwFr.CoverParam", "wSnwFr.SF_scale", "EvapSub.alpha", "Qsnw.melt_T", "Qsnw.melt_Rn", "Qint.berg", "Qint.smax", "EvapSoil.ETalpha", "EvapSoil.ETsup", "Qbase.qt"],
+	"params": ["wSnwFr.CoverParam", "wSnwFr.SF_scale", "evapSub.alpha", "Qsnw.melt_T", "Qsnw.melt_Rn", "roInt.berg", "roInt.smax", "evapSoil.ETalpha", "evapSoil.ETsup", "roBase.qt"],
 	"checks": "Nuno, please help...",
 	"constraints": {
 		"funName": {

@@ -5,9 +5,9 @@
         {
 			"Name": "thickness of the soil layers",
 			"Unit": "mm",
-			"Default": [50,1000,2000],
+			"Default": [2000],
 			"LowerBound": [50],
-			"UpperBound": [300],
+			"UpperBound": [3000],
             "Distribution": 
             {
 				"name": "uniform",

@@ -1,6 +1,6 @@
 function [f,fe,fx,s,d,p] = wGWRec_fraction(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
-% PURPOSE	: calculates groundwater recharge as a fraction of Qint_Bergstroem (land runoff that does not increase soil moisture)
+% PURPOSE	: calculates groundwater recharge as a fraction of roSat_Bergstroem (land runoff that does not increase soil moisture)
 %
 % REFERENCES:
 %

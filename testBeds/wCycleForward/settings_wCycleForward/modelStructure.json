@@ -12,9 +12,9 @@
 
 	"modules": 
 	{
-		"EvapSoil": 
+		"evapSoil": 
 		{
-			"apprName": 	"EvapSoil_DemSup",
+			"apprName": 	"evapSoil_DemSup",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -24,57 +24,51 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"EvapInt": 
+		"evapInt": 
 		{
-			"apprName": 	"EvapInt_none",
+			"apprName": 	"evapInt_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"EvapSub": 
+		"evapSub": 
 		{
-			"apprName": 	"EvapSub_GLEAM",
+			"apprName": 	"evapSub_GLEAM",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"Qbase": 
+		"roBase": 
 		{
-			"apprName": 	"Qbase_Zhang2008",
+			"apprName": 	"roBase_Zhang2008",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qint": 
+		"roInt": 
 		{
-			"apprName": 	"Qint_Bergstroem",
+			"apprName": 	"roInt_Bergstroem",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qsnow": 
+		"snowMelt": 
 		{
-			"apprName": 	"Qsnow_TRn",
+			"apprName": 	"snowMelt_TRn",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"Qsurf": 
+		"roSurf": 
 		{
-			"apprName": 	"Qsurf_directIndirect",
+			"apprName": 	"roSurf_directIndirect",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qsat": 
+		"roSat": 
 		{
-			"apprName": 	"Qsat_none",
+			"apprName": 	"roSat_Bergstroem",
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"Qinf": 
+		"roOverland": 
 		{
-			"apprName": 	"Qinf_Bergstroem",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"QoverFlow": 
-		{
-			"apprName": 	"QoverFlow_Inf",
+			"apprName": 	"roOverland_Sat",
 			"runFull": 		true,
             "use4spinup":   false
 		},
