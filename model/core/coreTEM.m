@@ -73,6 +73,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % 0 - SOIL - to get the soil related params ...
     % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
     [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);
     [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);

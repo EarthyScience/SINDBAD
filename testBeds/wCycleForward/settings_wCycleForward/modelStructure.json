@@ -91,6 +91,13 @@
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true
 		},
+		"wSoilBase":
+		{
+			"apprName": 	"wSoilBase_1LSet1",
+			"runFull": 		false,
+			"comment": 		"",
+            "use4spinup":   true
+		},
 		"wBalance":
 		{
 			"apprName": 	"wBalance_simple",

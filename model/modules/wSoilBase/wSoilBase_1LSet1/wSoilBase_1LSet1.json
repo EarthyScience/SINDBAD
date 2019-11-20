@@ -1,0 +1,28 @@
+{
+    "params": 
+    {
+        "layerDepths": 
+        {
+			"Name": "thickness of the soil layers",
+			"Unit": "mm",
+			"Default": [50,1000,2000],
+			"LowerBound": [50],
+			"UpperBound": [300],
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		""
+        }
+    },
+	"devStage":
+		{
+		"experimental": true,
+		"tested": false,
+		"consolidated": false,
+		"published": false,
+		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+		}
+    }
