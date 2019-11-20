@@ -42,12 +42,6 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"roInt": 
-		{
-			"apprName": 	"roInt_Bergstroem",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
 		"snowMelt": 
 		{
 			"apprName": 	"snowMelt_TRn",

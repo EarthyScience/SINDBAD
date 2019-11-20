@@ -39,7 +39,8 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 % References:
 %
 % Versions:
-%   - 1.1 on 10.07.2018 : cleanup and documentation
+%   - 1.1 on 20.11.2019 : skoirala : multiple changes in name of modules
+%   - 1.1 on 10.07.2018 : skoirala : cleanup and documentation
 %   - 1.0 on 01.05.2018
 %
 
@@ -83,7 +84,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);         % add snow fall and calculate SnowCoverFraction
     [f,fe,fx,s,d,p]     =   ms.evapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
-    [f,fe,fx,s,d,p]     =   ms.snowMelt.funHandle(f,fe,fx,s,d,p,info,tix);             % calculate snowmelt and update SWE
+    [f,fe,fx,s,d,p]     =   ms.snowMelt.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate snowmelt and update s.w.wSnow
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
@@ -97,7 +98,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
-%     [f,fe,fx,s,d,p]     =   ms.wSurfRec.funHandle(f,fe,fx,s,d,p,info,tix);        % recharge to surface water storages
     [f,fe,fx,s,d,p]     =   ms.roSurf.funHandle(f,fe,fx,s,d,p,info,tix);            % runoff from surface water storages
     [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater
     [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
