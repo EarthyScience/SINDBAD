@@ -85,8 +85,8 @@ userOutPath             =   '';
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wCleanup';
 % 
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_Qclean';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_Qclean';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -106,10 +106,10 @@ end
 testCases               =   [1 2 3 4 5];
 % testCases               =   [5];
 % testCases               =   [4];
-% testCases             =   [ 5 ];
+testCases             =   [ 5 ];
 % testCases             =   [5];
 % testCases             =   [ 1 ];
-% testCases               =   [4 5];
+% testCases               =   [3 4 5];
 
 %% run the different tests
 for i                   =   testCases

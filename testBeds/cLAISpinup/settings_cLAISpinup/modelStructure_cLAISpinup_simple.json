@@ -22,7 +22,7 @@
 		{
 			"apprName": 	"cAllocfLAI_Friedlingstein1999",
 			"runFull": 		true,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"cAllocfNut":
 		{
@@ -88,7 +88,7 @@
 		{
 			"apprName": 	"cTaufLAI_CASA",
 			"runFull": 		false,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"cTaufpSoil":
 		{
