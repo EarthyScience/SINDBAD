@@ -20,7 +20,7 @@
 		},
 		"pSoil": 
 		{
-			"apprName": 	"pSoil_simple",
+			"apprName": 	"pSoil_UniformSaxton2006",
 			"runFull": 		false,
             "use4spinup":   false
 		},

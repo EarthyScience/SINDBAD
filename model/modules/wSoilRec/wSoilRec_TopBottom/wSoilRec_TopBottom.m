@@ -7,9 +7,8 @@ function [f,fe,fx,s,d,p] = wSoilRec_TopBottom(f,fe,fx,s,d,p,info,tix)
 % CONTACT	: mjung
 %
 % INPUT
-%s.smPools  : soil moisture content of layers [mm]
-%p.pSoil.AWC : maximum plant available water content of layers
-% wSM      : soil moisture sum of all layers [mm]
+%   - s.w.wSoil  : soil moisture content of layers [mm]
+%   - fe.wSoilBase.sAWC : maximum plant available water content of layers
 % WBP       : water balance pool [mm]
 %           (s.wd.WBP)
 %
@@ -27,19 +26,13 @@ function [f,fe,fx,s,d,p] = wSoilRec_TopBottom(f,fe,fx,s,d,p,info,tix)
 
 % water refill from top to bottom
 % upper layer
+nSoilLayers = fe.wSoilBase.nSoilLayers;
 
-
-for ii=1:length(s.smPools)
+for sl=1:nSoilLayers
     
-    ip = min( p.pSoil.AWC(ii).value - s.smPools(ii).value , s.wd.WBP);
-    s.smPools(ii).value = s.smPools(ii).value + ip;
+    ip = min(fe.wSoilBase.sAWC(:,sl) - s.w.wSoil(:,sl) , s.wd.WBP);
+    s.w.wSoil(:,sl) = s.w.wSoil(:,sl) + ip;
     s.wd.WBP = s.wd.WBP - ip;
-    
-    s.w.wSoil = s.w.wSoil + ip;
 end
-
-
-
-
 
 end

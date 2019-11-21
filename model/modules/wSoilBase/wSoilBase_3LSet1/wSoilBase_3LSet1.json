@@ -15,6 +15,21 @@
 				"pdarams" : []
 			},
 			"Comment": 		""
+		},
+		"fracRoot2SoilD": 
+        {
+			"Name": "fraction of the root to soil depth for each layer",
+			"Unit": "mm",
+			"Default": [1, 1, 0.3],
+			"LowerBound": [0,0,0],
+			"UpperBound": [1,1,1],
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": "can be conceptualized as the layer which plants can extract water from, and relative difficulty to do so"
         }
     },
 	"devStage":
