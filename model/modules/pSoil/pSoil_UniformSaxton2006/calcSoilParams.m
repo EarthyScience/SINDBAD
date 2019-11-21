@@ -20,7 +20,7 @@ function [Alpha,Beta,WPT,FC] = calcSoilParams(p,fe,info)
 % #########################################################################
 
 % psoil DEPTH
-SD  = fe.wSoilBase.soilDepths; %sujan
+SD  = sum(fe.wSoilBase.soilDepths); %sujan
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
 CLAY    = p.pSoil.CLAY .* 100;

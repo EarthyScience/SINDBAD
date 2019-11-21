@@ -62,11 +62,14 @@ ms	= info.tem.model.code.ms;
 
 % LOOP : loop through the whole length of of the forcing dataset
 for tix = 1:info.tem.helpers.sizes.nTix
- % ---------------------------------------------------------------------
-    % Get variables for previous time step and keep in s.prev. or d.prev
-    % 
+    % ---------------------------------------------------------------------
+    % Get rainfall, snowfall, and rainfall intensities
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);          % set rain and snow to fe.rainSnow.
+    [f,fe,fx,s,d,p]     =   ms.rainInt.funHandle(f,fe,fx,s,d,p,info,tix);           % set rainfall intensity
+    % ---------------------------------------------------------------------
+    % Get variables for previous time step and keep in s.prev. or d.prev
+    % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
     [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get the amount of water at the beginning of timestep
     % ---------------------------------------------------------------------
