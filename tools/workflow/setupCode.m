@@ -361,9 +361,14 @@ for ii  =   1:length(mf)
             %  original                      C               =   vertcat(P1,P2,P3);
             
             try
-                C               =   vertcat(P1,P2,P3);
+                C           =   vertcat(P1,P2,P3);
             catch
-                C               =   vertcat(P1',P2',P3');
+                try
+                    C       =   vertcat(P1',P2',P3');
+                catch
+                    sstr    =   [pad('CRIT MODSTR',20) ' : ' pad('setupCode:readMfunctionContents',20) ' | probably a broken line with "..." in the code, or a function called more than one time in the same module_approach'];
+                    error(sstr)
+                end
             end
             %<--
         end

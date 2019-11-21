@@ -69,7 +69,7 @@ saveLongStates  = true;
 % for NI2E = [11 101]% 1001 2001]
 % NI2E=11s
 
-for NI2E = [21]
+for NI2E = [2000 ]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
         expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '.json'];
@@ -182,9 +182,11 @@ for NI2E = [21]
         subplot(4,4,15)
         mk121s(x_implicit.fx5.cRA,x_explicit.fx5.cRA,[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
         title('RA')
+        set_gcf(gcf,gca,'s',1,[30 30],1)
         subplot(4,4,16)
         mk121s(x_implicit.fx5.cRH,x_explicit.fx5.cRH,[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
         title('RH')
+        set_gcf(gcf,gca,'s',1,[30 30],1)
 %         
 %         img     = getframe(gcf);
 %         imwrite(img.cdata,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_compSpinUp_' cCycleModel{:} '_' testName '.png'],'XResolution',1250);

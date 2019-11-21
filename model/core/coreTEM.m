@@ -77,9 +77,9 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % 0 - SOIL - to get the soil related params ...
     % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
     [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);             % topographic properties
     [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
+    [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
     [f,fe,fx,s,d,p]     =   ms.cLAI.funHandle(f,fe,fx,s,d,p,info,tix);              % leaf area index
     % ---------------------------------------------------------------------
@@ -163,8 +163,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % sum up components of fluxes and states
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.sumVariables.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables (through modelRun.json)
-%     [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables
-
     [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate the water balance
     
     % ---------------------------------------------------------------------

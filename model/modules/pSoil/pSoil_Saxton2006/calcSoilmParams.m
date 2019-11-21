@@ -1,4 +1,7 @@
-function [Alpha,Beta,WPT,FC] = calcSoilmParams(p,info)
+function [Alpha,Beta,WPT,FC,K] = calcSoilmParams(p,info)
+
+% @skoirala@ncarval: to delete"!
+
 % #########################################################################
 % CALCULATE psoil MOISTURE PARAMETERS
 % soilm_prm = calc_soilm_prms(CLAY, SAND, soilm_prm)
@@ -87,11 +90,11 @@ for WT = [33 1500]
     end
     clear ndx
 
-    % -------------------------------------------------------------------------
+    % % -------------------------------------------------------------------------
     % % WATER CONDUCTIVITY (m/s)
     % K = 2.778E-6 .*(exp(p + q .* SAND + (r + t .* SAND + u .* CLAY + v .*...
     %     CLAY .^ 2) .* (1 ./ Theta)));
-    % -------------------------------------------------------------------------
+    % % -------------------------------------------------------------------------
 
     % ACCOUNT FOR psoil DEPTH
     Theta = Theta .* SD .* 1000;
@@ -101,7 +104,7 @@ for WT = [33 1500]
     elseif Psi == 1500
         WPT = Theta;
     else
-        error(['ERR:calc_soil_prms: Psi not known : ' num2str(Psi)])
+        error(['ERR:calcSoilmParams: Psi not known : ' num2str(Psi)])
     end
 end
 
