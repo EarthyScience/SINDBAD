@@ -20,5 +20,4 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_DemSup(f,fe,fx,s,d,p,info)
 
 % calculate potential evaporation 
 fe.evapSoil.PETsoil 	=	max(0, f.PET .* (p.evapSoil.ETalpha * info.tem.helpers.arrays.onespixtix)); 
-
 end

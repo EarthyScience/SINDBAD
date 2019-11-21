@@ -85,8 +85,8 @@ userOutPath             =   '';
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wCleanup';
 % 
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_Qclean';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_pSoil';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';

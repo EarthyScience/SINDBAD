@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = TranfwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 wAvail                              =  s.wd.WBP; 
 
 % CALCULATE VMC: Volumetric Moisture Content with root fractions
-VMC                             = min(max((sum(s.w.wSoil .* fe.wSoilBase.fracRoot2SoilD,2) - sum(fe.wSoilBase.sWP .* fe.wSoilBase.fracRoot2SoilD,2)),0) ./ sum(fe.wSoilBase.sAWC .* fe.wSoilBase.fracRoot2SoilD,2),1);
+VMC                             = min(max((sum(s.w.wSoil .* fe.wSoilBase.fracRoot2SoilD,2) - sum(fe.wSoilBase.wWP .* fe.wSoilBase.fracRoot2SoilD,2)),0) ./ sum(fe.wSoilBase.wAWC .* fe.wSoilBase.fracRoot2SoilD,2),1);
 
 % compute relative drying rate
 RDR                                 =   info.tem.helpers.arrays.zerospix;
