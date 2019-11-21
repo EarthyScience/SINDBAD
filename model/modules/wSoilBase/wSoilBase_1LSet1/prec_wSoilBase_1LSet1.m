@@ -6,7 +6,7 @@ if numel(soilDepths) ~=  nSoilLayers
     error('the number of soil layers in modelStructure.json does not match with soil depths specified in wSoilBase')
 end
 fe.wSoilBase.soilDepths          = zeros(nSoilLayers,1);
-fe.wSoilBase.nsoilLayers        = nSoilLayers;
+fe.wSoilBase.nsoilLayers            = nSoilLayers;
 
 for sl = 1:nSoilLayers
 fe.wSoilBase.soilDepths(sl,1) = soilDepths(sl);

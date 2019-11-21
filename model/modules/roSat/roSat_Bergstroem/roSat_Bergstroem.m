@@ -26,7 +26,7 @@ function [f,fe,fx,s,d,p] = roSat_Bergstroem(f,fe,fx,s,d,p,info,tix)
 %%
 % #########################################################################
 
-tmp_smaxVeg         = sum(fe.wSoilBase.sSat,2);
+tmp_smaxVeg         = sum(fe.wSoilBase.wSat,2);
 tmp_SoilTotal       = sum(s.w.wSoil, 2);
 
 % calculate land runoff from incoming water and current soil moisture
@@ -37,7 +37,7 @@ fx.roSat(:,tix)      =   s.wd.WBP .* tmp_InfExFrac;
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil(:,tix)    =   min(fe.wSoilBase.sSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
+fx.InSoil(:,tix)    =   min(fe.wSoilBase.wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
 s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.InSoil(:,tix);
 
 s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
@@ -46,7 +46,7 @@ s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
 
 % reallocate excess of 1st layer to deeper layers 
 for sl  =   2:size(s.w.wSoil,2)
-  ip                =   min(fe.wSoilBase.sSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
+  ip                =   min(fe.wSoilBase.wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil(:,sl)   =	s.w.wSoil(:,sl) + ip;
   s.wd.WBP          =   s.wd.WBP - ip;
 end

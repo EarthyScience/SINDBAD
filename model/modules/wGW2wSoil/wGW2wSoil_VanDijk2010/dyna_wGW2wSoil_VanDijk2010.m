@@ -30,7 +30,7 @@ wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 
 % degree of saturation of the lowermost soil layer
 
-dosSoilend              =  s.w.wSoil(:,wSoilend) ./ fe.wSoilBase.sSat(:,wSoilend);
+dosSoilend              =  s.w.wSoil(:,wSoilend) ./ fe.wSoilBase.wSat(:,wSoilend);
 
 % calculate the reduction in hydraulic conductivity due to soil under
 % saturation

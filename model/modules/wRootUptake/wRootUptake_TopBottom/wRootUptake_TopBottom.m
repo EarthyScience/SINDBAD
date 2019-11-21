@@ -11,7 +11,7 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % INPUT
 %s.smPools  : soil moisture content of layers [mm]
 % wSM      : soil moisture sum of all layers [mm]
-%fe.wSoilBase.sAWC : maximum plant available water content of layers
+%fe.wSoilBase.wAWC : maximum plant available water content of layers
 % wGWR      : ground water recharge pool [mm] 
 %           (s.wd.wGWR)
 %fx.TranAct  : transpiration [mm]

@@ -15,7 +15,5 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_none(f,fe,fx,s,d,p,info)
 % NOTES:
 % 
 % #########################################################################
-
-fx.ESoil = info.helper.zeros2d;
-
+fx.evapSoil = info.tem.helpers.arrays.zerospixtix;
 end

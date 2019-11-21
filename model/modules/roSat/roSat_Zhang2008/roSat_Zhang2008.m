@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = roSat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %	- f.PET: potential ET
-%   - fe.wSoilBase.sAWC: maximum available water in soil per soil layer
+%   - fe.wSoilBase.wAWC: maximum available water in soil per soil layer
 %   - s.wd.WBP: amount of incoming water
 %
 % Outputs:
@@ -38,7 +38,7 @@ function [f,fe,fx,s,d,p] = roSat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 %% 
 %--> a supply / demand limit concept cf Budyko
 %-->  calc demand limit (X0)
-X0 = f.PET(:,tix) + sum(fe.wSoilBase.sAWC,2) - sum(s.w.wSoil,2);
+X0 = f.PET(:,tix) + sum(fe.wSoilBase.wAWC,2) - sum(s.w.wSoil,2);
 
 %catch for division by zero
 roSat            =   info.tem.helpers.array.zerospix;

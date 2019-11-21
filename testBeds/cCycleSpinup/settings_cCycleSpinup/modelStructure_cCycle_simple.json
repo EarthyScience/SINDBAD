@@ -224,6 +224,13 @@
 			"comment": 		"Do not change the approach here",
             "use4spinup":   false
 		},
+		"wSoilBase":
+		{
+			"apprName": 	"wSoilBase_3LSet1",
+			"runFull": 		false,
+			"comment": 		"",
+            "use4spinup":   true
+		},
 		"rainSnow":
 		{
 			"apprName": 	"rainSnow_forcing",
@@ -240,7 +247,7 @@
 			"pools" : 
 			[
 				["w.Surf", 		1, 	"zeros"],
-				["w.Soil", 		1, 	"zeros"],
+				["w.Soil", 		3, 	"zeros"],
 				["w.Buf", 		1, 	"zeros"],
 				["w.GW", 		1, 	"zeros"],
 				["w.Snow", 		1, 	"zeros"]
