@@ -1,5 +1,44 @@
 {
 	"params": {
+		"psiFC": {
+			"Name": "matric potential at field capacity",
+			"Unit": "kPa",
+			"Default": 33,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": ""
+		},
+		"psiWP": {
+			"Name": "matric potential at wilting point",
+			"Unit": "kPa",
+			"Default": 1500,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": ""
+		},
+		"psiSat": {
+			"Name": "matric potential at saturation",
+			"Unit": "kPa",
+			"Default": 0.0,
+			"LowerBound": NaN,
+			"UpperBound": NaN,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": ""
+		},
 		"CLAY": {
 			"Name": NaN,
 			"Unit": "[]",
@@ -30,32 +69,6 @@
 			"Name": NaN,
 			"Unit": "[]",
 			"Default": 0.4,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": NaN
-		},
-		"InfCapacity": {
-			"Name": NaN,
-			"Unit": "mm/hr",
-			"Default": 15,
-			"LowerBound": 1,
-			"UpperBound": 30,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "to be consistent this should be computed from texture..."
-		},
-		"iniAWC": {
-			"Name": NaN,
-			"Unit": "mm/m",
-			"Default": 50,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
 			"Distribution": {

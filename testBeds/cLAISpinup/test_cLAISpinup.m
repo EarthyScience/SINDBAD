@@ -62,7 +62,7 @@ saveLongStates  = true;
 % for NI2E = [11 101]% 1001 2001]
 % NI2E=11s
 
-for NI2E = [20]
+for NI2E = [20 300 ]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
         expConfigFile               =   ['testBeds/cLAISpinup/settings_cLAISpinup/experiment_cLAISpinup_' cCycleModel{:} '.json'];
@@ -116,7 +116,7 @@ for NI2E = [20]
                 'tem.model.flags.genCode',true,...
                 'tem.model.flags.runGenCode',true,...
                 'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
-                'tem.model.modules.cLAI.apprName','forcing',...
+                'tem.model.modules.cLAI.apprName','constant',...
                 'tem.model.modules.cLAI.runFull',true,...
                 'tem.model.modules.cCycle.apprName',cCycleModel{:});
             %
@@ -173,15 +173,17 @@ for NI2E = [20]
             subplot(4,4,j)
             mk121s(x_implicit.sSU5.c.cEco(:,j),x_explicit.sSU5.c.cEco(:,j),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
             mk121s(x_implicit.dSU5.storedStates.cEco(:,j,end),x_explicit.dSU5.storedStates.cEco(:,j,end),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2)
-            set_gcf(gcf,gca,'s',1,[30 30],1)
             title([num2str(j) ' : ' x_implicit.info.tem.model.variables.states.c.components{j}])
+            set_gcf(gcf,gca,'s',1,[30 30],1)
         end
         subplot(4,4,15)
         mk121s(x_implicit.fx5.cRA,x_explicit.fx5.cRA,[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
         title('RA')
+        set_gcf(gcf,gca,'s',1,[30 30],1)
         subplot(4,4,16)
         mk121s(x_implicit.fx5.cRH,x_explicit.fx5.cRH,[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
         title('RH')
+        set_gcf(gcf,gca,'s',1,[30 30],1)
         
         save_gcf(gcf,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_compSpinUp_' cCycleModel{:} '_' testName],1,1)
     end

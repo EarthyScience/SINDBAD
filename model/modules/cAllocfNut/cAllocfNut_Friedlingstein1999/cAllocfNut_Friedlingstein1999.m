@@ -21,7 +21,7 @@ NL(NL >= p.cAllocfNut.maxL)	= p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);
 %sujan NL(NL >= p.cAllocfNut.maxL)	= p.cAllocfNut.maxL(NL >= p.cAllocfNut.maxL);
 
 % water limitation calculation
-WL                          = s.w.wSoil(:,1) ./ p.pSoil.tAWC;
+WL                          = sum(s.w.wSoil,2) ./ sum(fe.wSoilBase.sAWC,2);
 WL(WL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL;%(WL <= p.cAllocfNut.minL);
 WL(WL >= p.cAllocfNut.maxL) = p.cAllocfNut.maxL;%(WL >= p.cAllocfNut.maxL); %% check if p.cAlloc.maxL and p.cAlloc.minL should used p.cAlloc.maxL_fW?
 %sujan WL(WL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL(WL <= p.cAllocfNut.minL);

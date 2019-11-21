@@ -1,38 +1,53 @@
 function [f,fe,fx,s,d,p] = prec_pSoil_UniformSaxton2006(f,fe,fx,s,d,p,info)
-
-% AWC       : maximum plant available water content in the top layer [mm]
-%           (p.pSoil.AWC(zix).value)
-
+% sets the value of soil hydraulic parameters
+%
+% Inputs:
+%	- p.SAND/SILT/CLAY/DEPTH/+ the Saxton parameters that are in the json
+%
+% Outputs:
+%   - p.pSoil.thetaSat/kSat/psiSat/sSat
+%   - p.pSoil.thetaFC/kFC/psiFC/sFC
+%   - p.pSoil.thetaWP/kWP/psiWP/sWP
+%
+% Modifies:
+% 	- None
+% 
+% References:
+%	- Saxton, K.E., W.J. Rawls, J.S. Romberger, and R.I. Papendick. 1986. 
+% Estimating generalized soil-water characteristics from texture. 
+% Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
+% http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
+%
+% Created by:
+%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%
+% Versions:
+%   - 1.0 on 21.11.2019
+%
+%% 
 % we are assuming here that texture does not change with depth
 
 % number of layers
-N           = numel(fe.wSoilBase.soilDepths); %sujan
-% N           = numel(p.pSoil.HeightLayer);
+[Alpha,Beta,kFC,thetaFC,psiFC]  = calcSoilParams(p,fe,info,p.pSoil.psiFC);
+[~,~,kWP,thetaWP,psiWP]         = calcSoilParams(p,fe,info,p.pSoil.psiWP);
+[~,~,kSat,thetaSat,psiSat]      = calcSoilParams(p,fe,info,p.pSoil.psiSat);
 
-% maximuma available water content per layer
-p.pSoil.AWC	= struct('value',{});
+p.pSoil.Alpha       = Alpha;
+p.pSoil.Beta        = Beta;
 
-AWC         = info.tem.helpers.arrays.onespixzix.w.wSoil;
-tAWC        = info.tem.helpers.arrays.onespixzix.w.wSoil;
-tWPT        = info.tem.helpers.arrays.onespixzix.w.wSoil;
-tFC         = info.tem.helpers.arrays.onespixzix.w.wSoil;
-% tAWC        = info.tem.helpers.arrays.zerospix;
-% tWPT        = info.tem.helpers.arrays.zerospix;
-% tFC         = info.tem.helpers.arrays.zerospix;
-for ij = 1:N
-    info.helper.pSoil.layer  = ij;
-    [Alpha,Beta,WPT,FC]     = calcSoilParams(p,fe,info);
-    AWC                     = (FC - WPT) .* AWC;
-%     p.pSoil.AWC(ij).value    = AWC;
-    tAWC                    = tAWC + AWC;
-    tWPT                    = tWPT + WPT;
-    tFC                     = tFC  + FC;
-end
+p.pSoil.kFC         = kFC;
+p.pSoil.thetaFC     = thetaFC;
+p.pSoil.psiFC       = psiFC;
 
-p.pSoil.Alpha    = Alpha;
-p.pSoil.Beta     = Beta;
-p.pSoil.WPT      = tWPT;
-p.pSoil.FC       = tFC;
-p.pSoil.tAWC     = tAWC;
+p.pSoil.kWP         = kWP;
+p.pSoil.thetaWP     = thetaWP;
+p.pSoil.psiWP       = psiWP;
+
+p.pSoil.kSat        = kSat;
+p.pSoil.thetaSat    = thetaSat;
+p.pSoil.psiSat      = psiSat;
+
+
 
 end % function

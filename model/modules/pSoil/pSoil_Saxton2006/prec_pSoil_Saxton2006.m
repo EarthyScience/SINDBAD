@@ -1,5 +1,7 @@
 function [f,fe,fx,s,d,p] = prec_pSoil_Saxton2006(f,fe,fx,s,d,p,info)
 
+% @skoirala@ncarval: to delete"!
+
 % AWC       : maximum plant available water content in the top layer [mm]
 %           (p.pSoil.AWC(zix).value)
 
