@@ -2,6 +2,7 @@ function [f,fe,fx,s,d,p] = prec_pSoil_none(f,fe,fx,s,d,p,info)
 
 % AWC       : maximum plant available water content in the top layer [mm]
 %           (p.pSoil.AWC(i).value)
+% @skoirala@ncarval: to delete"!
 
 % number of layers
 N     = numel(p.pSoil.HeightLayer);
