@@ -12,17 +12,21 @@ N           = numel(fe.wSoilBase.soilDepths); %sujan
 % maximuma available water content per layer
 p.pSoil.AWC	= struct('value',{});
 
-tAWC        = info.tem.helpers.arrays.zerospix;
-tWPT        = info.tem.helpers.arrays.zerospix;
-tFC         = info.tem.helpers.arrays.zerospix;
+AWC         = info.tem.helpers.arrays.onespixzix.w.wSoil;
+tAWC        = info.tem.helpers.arrays.onespixzix.w.wSoil;
+tWPT        = info.tem.helpers.arrays.onespixzix.w.wSoil;
+tFC         = info.tem.helpers.arrays.onespixzix.w.wSoil;
+% tAWC        = info.tem.helpers.arrays.zerospix;
+% tWPT        = info.tem.helpers.arrays.zerospix;
+% tFC         = info.tem.helpers.arrays.zerospix;
 for ij = 1:N
     info.helper.pSoil.layer  = ij;
     [Alpha,Beta,WPT,FC]     = calcSoilParams(p,fe,info);
-    AWC                     = FC - WPT;
-    p.pSoil.AWC(ij).value    = AWC;
+    AWC                     = (FC - WPT) .* AWC;
+%     p.pSoil.AWC(ij).value    = AWC;
     tAWC                    = tAWC + AWC;
     tWPT                    = tWPT + WPT;
-    tFC                     = tFC + FC;
+    tFC                     = tFC  + FC;
 end
 
 p.pSoil.Alpha    = Alpha;
