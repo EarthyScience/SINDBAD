@@ -20,7 +20,7 @@
 		},
 		"pSoil": 
 		{
-			"apprName": 	"pSoil_fixed",
+			"apprName": 	"pSoil_UniformSaxton2006",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -81,7 +81,7 @@
 		},
 		"wSoilBase":
 		{
-			"apprName": 	"wSoilBase_1LSet1",
+			"apprName": 	"wSoilBase_3LSet1",
 			"runFull": 		false,
 			"comment": 		"",
             "use4spinup":   true

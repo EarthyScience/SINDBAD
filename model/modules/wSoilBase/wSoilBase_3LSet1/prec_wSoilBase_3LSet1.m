@@ -29,16 +29,17 @@ function [f,fe,fx,s,d,p] = prec_wSoilBase_3LSet1(f,fe,fx,s,d,p,info)
 
 nSoilLayers            = info.tem.model.variables.states.w.nZix.wSoil;
 soilDepths             = p.wSoilBase.layerDepths;
-
+fracRoot2SoilD             = p.wSoilBase.fracRoot2SoilD;
 if numel(soilDepths) ~=  nSoilLayers
     error('the number of soil layers in modelStructure.json does not match with soil depths specified in wSoilBase')
 end
-fe.wSoilBase.soilDepths     = soilDepths;
-fe.wSoilBase.nsoilLayers    = nSoilLayers;
+fe.wSoilBase.nsoilLayers        = nSoilLayers;
 
-fe.wSoilBase.sFC            = info.tem.helpers.arrays.onespixzix.w.wSoil;
-fe.wSoilBase.sWP            = info.tem.helpers.arrays.onespixzix.w.wSoil;
-fe.wSoilBase.sSat           = info.tem.helpers.arrays.onespixzix.w.wSoil;
+fe.wSoilBase.sFC                = info.tem.helpers.arrays.onespixzix.w.wSoil;
+fe.wSoilBase.sWP                = info.tem.helpers.arrays.onespixzix.w.wSoil;
+fe.wSoilBase.sSat               = info.tem.helpers.arrays.onespixzix.w.wSoil;
+fe.wSoilBase.fracRoot2SoilD     = info.tem.helpers.arrays.onespixzix.w.wSoil;
+fe.wSoilBase.soilDepths         = info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 
 for v = {'Alpha','Beta'}
@@ -47,14 +48,16 @@ end
 
 for v = {'k','theta','psi'}
     for v1 = {'FC','WP','Sat'}
-        fe.wSoilBase.([v{:} v1{:}]) = info.tem.helpers.arrays.onespixzix.w.wSoil;
+        fe.wSoilBase.([v{:} v1{:}])     =   info.tem.helpers.arrays.onespixzix.w.wSoil;
     end
 end
 
 for sl = 1:nSoilLayers
-    fe.wSoilBase.sFC(:,sl)        = p.pSoil.thetaFC .* soilDepths(sl);
-    fe.wSoilBase.sWP(:,sl)        = p.pSoil.thetaWP .* soilDepths(sl);
-    fe.wSoilBase.sSat(:,sl)       = p.pSoil.thetaSat .* soilDepths(sl);
+    fe.wSoilBase.sFC(:,sl)              =   p.pSoil.thetaFC .* soilDepths(sl);
+    fe.wSoilBase.sWP(:,sl)              =   p.pSoil.thetaWP .* soilDepths(sl);
+    fe.wSoilBase.sSat(:,sl)             =   p.pSoil.thetaSat .* soilDepths(sl);
+    fe.wSoilBase.soilDepths(:,sl)       =   soilDepths(sl);
+    fe.wSoilBase.fracRoot2SoilD(:,sl)   =   fe.wSoilBase.fracRoot2SoilD(:,sl) .* fracRoot2SoilD(sl);
     for v = {'Alpha','Beta'}
         fe.wSoilBase.(v{:})(:,sl) = p.pSoil.(v{:});
     end
