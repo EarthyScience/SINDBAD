@@ -6,7 +6,7 @@ function [f,fe,fx,s,d,p] = prec_roInf_Jung(f,fe,fx,s,d,p,info)
 %	- fe.rainSnow.rain : rainfall [mm/time]
 % 	- f.FAPAR:   fraction of absorbed photosynthetically active radiation
 %                [] (equivalent to "canopy cover" in Gash and Miralles)
-% 	- f.RainInt: rain intensity [mm/h]
+% 	- fe.rainInt.rainInt: rain intensity [mm/h]
 %   - p.pSoil.InfCapacity: infiltration capacity [mm/hour]
 %
 % Outputs:
@@ -42,7 +42,7 @@ pInfCapacity	=   p.pSoil.InfCapacity * info.tem.helpers.arrays.onestix;
 roInf            =   info.tem.helpers.arrays.zerospixtix;
 
 tmp             =   fe.rainSnow.rain > 0;
-roInf(tmp)       =   fe.rainSnow.rain(tmp) - (fe.rainSnow.rain(tmp) .* f.FAPAR(tmp) + (1 - f.FAPAR(tmp)) .* min(fe.rainSnow.rain(tmp),min(pInfCapacity(tmp),f.RainInt(tmp)) .* fe.rainSnow.rain(tmp) ./ f.RainInt(tmp)));
+roInf(tmp)       =   fe.rainSnow.rain(tmp) - (fe.rainSnow.rain(tmp) .* f.FAPAR(tmp) + (1 - f.FAPAR(tmp)) .* min(fe.rainSnow.rain(tmp),min(pInfCapacity(tmp),fe.rainInt.rainInt(tmp)) .* fe.rainSnow.rain(tmp) ./ fe.rainInt.rainInt(tmp)));
 fx.roInf         =   roInf;
 
 end

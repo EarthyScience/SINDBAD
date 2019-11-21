@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = prec_evapInt_Miralles2010(f,fe,fx,s,d,p,info)
 % Inputs:
 %	- info structure
 %   - fe.rainSnow.rain:     rain fall [mm/time]
-%   - f.RainInt:            rainfall intensity [mm/hr]
+%   - fe.rainInt.rainInt:            rainfall intensity [mm/hr]
 %                           {1.5 or 5.6 for synoptic or convective}
 %   - f.FAPAR:              fraction of absorbed photosynthetically active 
 %                           radiation [] 
@@ -49,7 +49,7 @@ pd              =   p.evapInt.pd             * tmp;
 
 
 %catch for division by zero
-valids          =	f.RainInt > 0 & f.FAPAR > 0;
+valids          =	fe.rainInt.rainInt > 0 & f.FAPAR > 0;
 Pgc             =   info.tem.helpers.arrays.zerospixtix;
 Pgt             =   info.tem.helpers.arrays.zerospixtix;
 Ic              =	info.tem.helpers.arrays.zerospixtix;
@@ -60,18 +60,18 @@ It              =   info.tem.helpers.arrays.zerospixtix;
 
 %Rainintensity must be larger than evap rate
 %adjusting evap rate:
-v=f.RainInt < evapRate & valids==1;
-evapRate(v)=f.RainInt(v);
+v=fe.rainInt.rainInt < evapRate & valids==1;
+evapRate(v)=fe.rainInt.rainInt(v);
 
 %Pgc: amount of gross rainfall necessary to saturate the canopy
-Pgc(valids)=-1.*( f.RainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids) ) .* evapRate(valids) )).*log(1-((1- fte(valids) ) .* evapRate(valids) ./ f.RainInt(valids) ));
+Pgc(valids)=-1.*( fe.rainInt.rainInt(valids) .* CanopyStorage(valids) ./ ((1- fte(valids) ) .* evapRate(valids) )).*log(1-((1- fte(valids) ) .* evapRate(valids) ./ fe.rainInt.rainInt(valids) ));
 
 %Pgt: amount of gross rainfall necessary to saturate the trunks
-Pgt(valids)=Pgc(valids) + f.RainInt(valids) .* St(valids) ./ ( pd(valids) .* f.FAPAR(valids) .* ( f.RainInt(valids) - evapRate(valids) .* (1 - fte(valids) )));
+Pgt(valids)=Pgc(valids) + fe.rainInt.rainInt(valids) .* St(valids) ./ ( pd(valids) .* f.FAPAR(valids) .* ( fe.rainInt.rainInt(valids) - evapRate(valids) .* (1 - fte(valids) )));
 
 %Ic: evapInt loss from canopy
 Ic1(valids) = f.FAPAR(valids) .* fe.rainSnow.rain(valids); %Pg < Pgc
-Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* evapRate(valids) ./ f.RainInt(valids) ) .* ( fe.rainSnow.rain(valids) - Pgc(valids))); %Pg > Pgc
+Ic2(valids) = f.FAPAR(valids) .* (Pgc(valids)+((1- fte(valids) ) .* evapRate(valids) ./ fe.rainInt.rainInt(valids) ) .* ( fe.rainSnow.rain(valids) - Pgc(valids))); %Pg > Pgc
 
 
 v= fe.rainSnow.rain <= Pgc & valids==1;
@@ -81,7 +81,7 @@ Ic(v==0)=Ic2(v==0);
 %It: interception loss from trunks
 
 %It1 = St;% Pg < Pgt
-It2(valids) = pd(valids) .* f.FAPAR(valids) .* (1-(1 - fte(valids) ) .* evapRate(valids) ./ f.RainInt(valids) ).*( fe.rainSnow.rain(valids) - Pgc(valids));%Pg > Pgt
+It2(valids) = pd(valids) .* f.FAPAR(valids) .* (1-(1 - fte(valids) ) .* evapRate(valids) ./ fe.rainInt.rainInt(valids) ).*( fe.rainSnow.rain(valids) - Pgc(valids));%Pg > Pgt
 
 v= fe.rainSnow.rain <= Pgt;
 It(v) = St(v);
