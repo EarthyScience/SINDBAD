@@ -3,9 +3,9 @@
 		"berg": {
 			"Name": "shape parameter runoff-infiltration curve (Bergstroem)",
 			"Unit": "",
-			"Default": 1.1,
+			"Default": 7,
 			"LowerBound": 0.1,
-			"UpperBound": 5,
+			"UpperBound": 8,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",
