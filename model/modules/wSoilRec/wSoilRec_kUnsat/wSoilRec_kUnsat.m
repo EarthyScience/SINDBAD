@@ -30,12 +30,12 @@ for sl=1:nSoilLayers-1
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
     k_unsatfrac             =   (s.w.wSoil(:,sl) ./ fe.wSoilBase.wSat(:,sl)) .^ (2 ./ fe.wSoilBase.Alpha(:,sl) + 3);
     k_unsatfrac             =   nanmax(nanmin(k_unsatfrac,1.),0);
-    % unsaturated hydraulic conductivity and GW downward recharge
+    % unsaturated hydraulic conductivity and downward recharge in soil
     k_unsat                 =   fe.wSoilBase.kSat(:,sl) .* k_unsatfrac;
-    
+    drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,sl),0));
     % update storages
-    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl)-k_unsat;
-    s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+k_unsat+wSoilExc;
+    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl)-drain;
+    s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain+wSoilExc;
 end
 
 end
