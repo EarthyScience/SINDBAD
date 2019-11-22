@@ -83,7 +83,7 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wSoilBase';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wSoilBaseRen';
 % 
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_pSoil';

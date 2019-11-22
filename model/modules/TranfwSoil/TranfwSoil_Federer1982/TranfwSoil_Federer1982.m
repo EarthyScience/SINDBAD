@@ -11,11 +11,11 @@ function [f,fe,fx,s,d,p] = TranfwSoil_Federer1982(f,fe,fx,s,d,p,info,tix)
 % maxRate   : maximum transpiration rate [mm/day]
 %           (p.TranfwSoil.maxRate)
 % tAWC     : maximum available water content for plants (sum of all layers) [mm]
-%           (fe.wSoilBase.wAWC)
+%           (s.wd.p_wSoilBase_wAWC)
 % 
 % OUTPUT
 % TranActS   : Supply limited transpiration [mm/time]
-%           (d.TranfwSoil.TranActS)
+%           (d.TranfwSoil.TranSup)
 % 
 % DEPENDENCIES  :
 % 
@@ -24,6 +24,6 @@ function [f,fe,fx,s,d,p] = TranfwSoil_Federer1982(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % T = maxRate*(SM1+SM2)/AWC12
-d.TranfwSoil.TranActS(:,tix) = p.TranfwSoil.maxRate .* sum(s.w.wSoil .* fe.wSoilBase.fracRoot2SoilD,2)  ./ sum(fe.wSoilBase.wAWC .* fe.wSoilBase.fracRoot2SoilD,2);
+d.TranfwSoil.TranSup(:,tix) = p.TranfwSoil.maxRate .* sum(s.w.wSoil .* s.wd.p_wSoilBase_fracRoot2SoilD,2)  ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_wSoilBase_fracRoot2SoilD,2);
 
 end

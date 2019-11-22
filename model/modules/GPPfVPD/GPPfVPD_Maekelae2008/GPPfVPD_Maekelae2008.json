@@ -3,7 +3,7 @@
 		"k": {
 			"Name": "??Check with martin",
 			"Unit": "??",
-			"Default": -0.4,
+			"Default": 0.01,
 			"LowerBound": -0.01,
 			"UpperBound": 0.1,
 			"Distribution": {
@@ -11,7 +11,7 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": "from Mäkalä2008"
+			"Comment": "from Mï¿½kalï¿½2008"
 		}
 	}
 }
