@@ -21,7 +21,7 @@ function [f,fe,fx,s,d,p]=dyna_wGW2wSoil_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 %   + http://www.clw.csiro.au/publications/waterforahealthycountry/2010/wfhc-aus-water-resources-assessment-system.pdf
 % Versions:
 %   + 1.0 on 17.04.2018
-%   + 1.1 on 21.11.2019: skoirala: replaced p.pSoil with fe.wSoilBase.
+%   + 1.1 on 21.11.2019: skoirala: replaced p.pSoil with s.wd.p_wSoilBase_
 
 
 
@@ -30,16 +30,16 @@ wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 
 % degree of saturation of the lowermost soil layer
 
-dosSoilend              =  s.w.wSoil(:,wSoilend) ./ fe.wSoilBase.wSat(:,wSoilend);
+dosSoilend              =  s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
 
 % calculate the reduction in hydraulic conductivity due to soil under
 % saturation
-k_unsatfrac_soil        =  min((dosSoilend) .^ (2.* fe.wSoilBase.Beta(:,wSoilend) + 3),1);
+k_unsatfrac_soil        =  min((dosSoilend) .^ (2.* s.wd.p_wSoilBase_Beta(:,wSoilend) + 3),1);
 
 % unsaturated hydraulic conductivity and GW downward recharge
-k_unsat                 =  fe.wSoilBase.kSat(:,wSoilend) .* k_unsatfrac_soil;
+k_unsat                 =  s.wd.p_wSoilBase_kSat(:,wSoilend) .* k_unsatfrac_soil;
 
-k_sat                   =  fe.wSoilBase.kSat(:,wSoilend) ;
+k_sat                   =  s.wd.p_wSoilBase_kSat(:,wSoilend) ;
 
 c_flux                  =  sqrt(k_unsat .* k_sat) .* (1 - dosSoilend);
 % 

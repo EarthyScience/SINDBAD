@@ -17,7 +17,7 @@ function [f,fe,fx,s,d,p] = GPPfwSoil_supply(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calc GPP supply
-d.GPPfwSoil.gppS(:,tix)   = d.TranfwSoil.TranActS(:,tix) .* d.WUE.AoE(:,tix);   
+d.GPPfwSoil.gppS(:,tix)   = d.TranfwSoil.TranSup(:,tix) .* d.WUE.AoE(:,tix);   
 
 % calc SM stress scalar
 ndx                             = d.GPPdem.gppE(:,tix) > 0;

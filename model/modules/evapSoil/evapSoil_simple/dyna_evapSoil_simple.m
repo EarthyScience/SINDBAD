@@ -29,7 +29,7 @@ function [f,fe,fx,s,d,p] = dyna_evapSoil_simple(f,fe,fx,s,d,p,info,tix)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
-fx.evapSoil(:,tix) = min(fe.evapSoil.PETsoil(:,tix) .* s.w.wSoil(:,1) ./ fe.wSoilBase.wAWC(:,1) , s.w.wSoil(:,1));
+fx.evapSoil(:,tix) = min(fe.evapSoil.PETsoil(:,tix) .* s.w.wSoil(:,1) ./ s.wd.p_wSoilBase_wAWC(:,1) , s.w.wSoil(:,1));
 
 % update soil moisture of the uppermost soil layer
 s.w.wSoil(:,1) = s.w.wSoil(:,1) - fx.evapSoil(:,tix);
