@@ -7,7 +7,7 @@ function [f,fe,fx,s,d,p] = prec_roInf_Jung(f,fe,fx,s,d,p,info)
 % 	- f.FAPAR:   fraction of absorbed photosynthetically active radiation
 %                [] (equivalent to "canopy cover" in Gash and Miralles)
 % 	- fe.rainInt.rainInt: rain intensity [mm/h]
-%   - fe.wSoilBase.kSat: infiltration capacity [mm/day]
+%   - s.wd.p_wSoilBase_kSat: infiltration capacity [mm/day]
 %
 % Outputs:
 %   - fx.roInf: infiltration excess runoff [mm/time] - what runs off because
@@ -38,7 +38,7 @@ function [f,fe,fx,s,d,p] = prec_roInf_Jung(f,fe,fx,s,d,p,info)
 % roInf=P-(P.*fpar+(1-fpar).*min(P,min(I,R).*P./R));
 
 % here converts [mm/hour] to [mm/day]
-pInfCapacity	=   fe.wSoilBase.kSat .* info.tem.helpers.arrays.onestix ./ 24;
+pInfCapacity	=   s.wd.p_wSoilBase_kSat .* info.tem.helpers.arrays.onestix ./ 24;
 
 roInf            =   info.tem.helpers.arrays.zerospixtix;
 

@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_wSoilBase_3LSet1(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_wSoilBase_4LSet1(f,fe,fx,s,d,p,info)
 % sets the value of soil hydraulic parameters
 %
 % Inputs:

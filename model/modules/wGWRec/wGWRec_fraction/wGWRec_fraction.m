@@ -29,12 +29,12 @@ function [f,fe,fx,s,d,p] = wGWRec_fraction(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calculate recharge
-fx.wGWrec(:,tix)  = p.wGWRec.rf .* fx.Qint(:,tix);
-
-% calculate direct runoff
-fx.Qdir(:,tix)  = (1-p.wGWRec.rf) .* fx.Qint(:,tix);
+wSoilEnd  = size(s.w.wSoil,2)
+fx.wGWRec(:,tix)  = p.wGWRec.rf .* s.w.wSoil(:,wSoilEnd);
+fx.QgwDrain(:,tix)  = fx.wGWRec(:,tix);
 
 % update groundwater pool
+s.w.wSoil(:,wSoilEnd) = s.w.wSoil(:,wSoilEnd)- fx.wGWRec(:,tix);
 s.w.wGW = s.w.wGW + fx.wGWRec(:,tix);
 
 end

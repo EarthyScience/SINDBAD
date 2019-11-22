@@ -2,8 +2,8 @@
 	"params": {
 		"rf": {
 			"Name": "fraction of land runoff that percolates to groundwater",
-			"Unit": NaN,
-			"Default": 0.5,
+			"Unit": "-",
+			"Default": 0.1,
 			"LowerBound": 0,
 			"UpperBound": 1,
 			"Distribution": {

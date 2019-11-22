@@ -8,7 +8,7 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 %
 % INPUT
 %   - s.w.wSoil  : soil moisture content of layers [mm]
-%   - fe.wSoilBase.wAWC : maximum plant available water content of layers
+%   - s.wd.p_wSoilBase_wAWC : maximum plant available water content of layers
 % WBP       : water balance pool [mm]
 %           (s.wd.WBP)
 %
@@ -23,15 +23,15 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 %
 % #########################################################################
 
-% nSoilLayers                 =   fe.wSoilBase.nSoilLayers;
+% nSoilLayers                 =   s.wd.p_wSoilBase_nSoilLayers;
 nSoilLayers                 =   info.tem.model.variables.states.w.nZix.wSoil;
 for sl=1:nSoilLayers-1
-    wSoilExc                =   max(s.w.wSoil(:,sl) - fe.wSoilBase.wSat(:,sl),0);
+    wSoilExc                =   max(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
-    k_unsatfrac             =   (s.w.wSoil(:,sl) ./ fe.wSoilBase.wSat(:,sl)) .^ (2 ./ fe.wSoilBase.Alpha(:,sl) + 3);
+    k_unsatfrac             =   (s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl)) .^ (2 ./ s.wd.p_wSoilBase_Alpha(:,sl) + 3);
     k_unsatfrac             =   nanmax(nanmin(k_unsatfrac,1.),0);
     % unsaturated hydraulic conductivity and downward recharge in soil
-    k_unsat                 =   fe.wSoilBase.kSat(:,sl) .* k_unsatfrac;
+    k_unsat                 =   s.wd.p_wSoilBase_kSat(:,sl) .* k_unsatfrac;
     drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,sl),0));
     % update storages
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl)-drain;

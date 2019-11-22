@@ -22,7 +22,7 @@ function [f,fe,fx,s,d,p] = dyna_TranfwSoil_simple(f,fe,fx,s,d,p,info,tix)
 % k2             : fraction of lower soil layer available for transpiration
 %                 (p.TranfwSoil.k2)
 % wTranSup      : transpiration supply from soil water pool (mm)
-%                 (d.TranfwSoil.wTranSup)
+%                 (s.wd.TranSup)
 %
 % OUTPUT
 % Transp      : transpiration [mm/time]
@@ -37,14 +37,14 @@ function [f,fe,fx,s,d,p] = dyna_TranfwSoil_simple(f,fe,fx,s,d,p,info,tix)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
-d.TranfwSoil.wTranSup(:,tix) = s.w.wSoil(:,1) .* p.TranfwSoil.k1 + s.w.wSoil(:,2) .* p.TranfwSoil.k2;
-
-fx.Transp(:,tix) = min(fe.TranfwSoil.PETveg(:,tix), d.TranfwSoil.wTranSup(:,tix));
+d.TranfwSoil.TranSup(:,tix) = s.w.wSoil(:,1) .* p.TranfwSoil.k1 + s.w.wSoil(:,2) .* p.TranfwSoil.k2;
+% d.TranfwSoil.TranSup(:,tix)
+fx.Transp(:,tix) = min(fe.TranfwSoil.PETveg(:,tix), d.TranfwSoil.TranSup(:,tix));
 
 % distribute the transpiration loss among soil layers
 %fx.RootUp1(:,tix) = max(0, max(fx.Transp(:,tix) - s.w.wSoil(:,1) .* p.TranfwSoil.k, fx.Transp(:,tix) - s.w.wSoil(:,2)));
-fx.RootUp1(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,1) .* p.TranfwSoil.k1) ./ d.TranfwSoil.wTranSup(:,tix)));
-fx.RootUp2(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,2) .* p.TranfwSoil.k2) ./ d.TranfwSoil.wTranSup(:,tix)));
+fx.RootUp1(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,1) .* p.TranfwSoil.k1) ./ d.TranfwSoil.TranSup(:,tix)));
+fx.RootUp2(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,2) .* p.TranfwSoil.k2) ./ d.TranfwSoil.TranSup(:,tix)));
 
 % fx.RootUp2(:,tix) = fx.Transp(:,tix) - fx.RootUp1(:,tix);
 

@@ -1,0 +1,43 @@
+{
+    "params": 
+    {
+        "layerDepths": 
+        {
+			"Name": "thickness of the soil layers",
+			"Unit": "mm",
+			"Default": [50, 1000, 1000, 2000],
+			"LowerBound": [5,500,800,1500],
+			"UpperBound": [100,1500,2000,2500],
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		""
+		},
+		"fracRoot2SoilD": 
+        {
+			"Name": "fraction of the root to soil depth for each layer",
+			"Unit": "mm",
+			"Default": [1, 1, 0.3,0],
+			"LowerBound": [0,0,0,0],
+			"UpperBound": [1,1,1,1],
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": "can be conceptualized as the layer which plants can extract water from, and relative difficulty to do so"
+        }
+    },
+	"devStage":
+		{
+		"experimental": true,
+		"tested": false,
+		"consolidated": false,
+		"published": false,
+		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+		}
+    }

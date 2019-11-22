@@ -24,6 +24,6 @@ function [f,fe,fx,s,d,p] = TranAct_CASA(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % calculate transpiration
-fx.TranAct(:,tix)	= d.TranfwSoil.TranActS(:,tix);
+fx.TranAct(:,tix)	= d.TranfwSoil.TranSup(:,tix);
 
 end

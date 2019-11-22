@@ -37,17 +37,17 @@ wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 
 % drain the excess moisture to GW
 
-wSoilExc = max(s.w.wSoil(:,wSoilend) - fe.wSoilBase.wSat(:,wSoilend),0);
+wSoilExc = max(s.w.wSoil(:,wSoilend) - s.wd.p_wSoilBase_wSat(:,wSoilend),0);
 
 s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-wSoilExc;
 
 % calculate the reduction in hydraulic conductivity due to soil under
 % saturation
-k_unsatfrac             =  (s.w.wSoil(:,wSoilend) ./ fe.wSoilBase.wSat(:,wSoilend)) .^ (2 ./ fe.wSoilBase.Alpha(:,wSoilend) + 3);
+k_unsatfrac             =  (s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend)) .^ (2 ./ s.wd.p_wSoilBase_Alpha(:,wSoilend) + 3);
 k_unsatfrac             =   min(k_unsatfrac,1.);
 
 % unsaturated hydraulic conductivity and GW downward recharge
-k_unsat                 =   fe.wSoilBase.kSat(:,wSoilend) .* k_unsatfrac;
+k_unsat                 =   s.wd.p_wSoilBase_kSat(:,wSoilend) .* k_unsatfrac;
 fx.QgwDrain(:,tix)      =   k_unsat;
 
 % update storages

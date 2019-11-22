@@ -110,14 +110,20 @@ function writeNetCDF(var2write,pthSave,info,f,fe,fx,s,d,p)
             %--> open the netCDF file for writing
             ncid = netcdf.create(filename,'NC_WRITE');
             %--> define the common dimensions for arrays of all sizes
-            if useLatLon
-                dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
-                lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidlat]);
-                dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
-                lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidlon]);
-            end
             dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
             pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
+            if useLatLon
+%                 dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
+%                 lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidlat]);
+%                 dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
+%                 lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidlon]);
+%                 dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
+                lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidpix]);
+%                 dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
+                lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidpix]);
+            end
+%             dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
+%             pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
             
             dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
             time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);

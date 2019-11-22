@@ -118,7 +118,7 @@
 		{
 			"apprName": 	"cLAI_constant",
 			"runFull": 		false,
-            "use4spinup":   true
+            		"use4spinup":   true
 		},
 		"evapSoil": 
 		{
