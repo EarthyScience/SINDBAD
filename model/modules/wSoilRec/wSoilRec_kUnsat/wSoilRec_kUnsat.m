@@ -28,14 +28,13 @@ nSoilLayers                 =   info.tem.model.variables.states.w.nZix.wSoil;
 for sl=1:nSoilLayers-1
     wSoilExc                =   max(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
-    k_unsatfrac             =   (s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl)) .^ (2 ./ s.wd.p_wSoilBase_Alpha(:,sl) + 3);
-    k_unsatfrac             =   nanmax(nanmin(k_unsatfrac,1.),0);
-    % unsaturated hydraulic conductivity and downward recharge in soil
-    k_unsat                 =   s.wd.p_wSoilBase_kSat(:,sl) .* k_unsatfrac;
+    soilDOS                 =   s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl);
+    kSat                    =   s.wd.p_wSoilBase_kSat(:,sl);
+    Beta                    =   s.wd.p_wSoilBase_Beta(:,sl);
+    k_unsat                 =   feval(p.pSoil.kUnsatFuncH,p,info,soilDOS,kSat,Beta);    
     drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,sl),0));
     % update storages
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl)-drain;
     s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain+wSoilExc;
 end
-
 end
