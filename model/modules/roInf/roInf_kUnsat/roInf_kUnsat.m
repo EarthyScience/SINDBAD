@@ -30,9 +30,9 @@ function [f,fe,fx,s,d,p] = roInf_kUnsat(f,fe,fx,s,d,p,info,tix)
 % drain the excess moisture to GW
 
 soilDOS                 =   s.w.wSoil(:,1) ./ s.wd.p_wSoilBase_wSat(:,1);
-kSat                    =   s.wd.p_wSoilBase_kSat(:,1);
-Beta                    =   s.wd.p_wSoilBase_Beta(:,1);
-k_unsat                 =   feval(p.pSoil.kUnsatFuncH,p,info,soilDOS,kSat,Beta);    
+% kSat                    =   s.wd.p_wSoilBase_kSat(:,1);
+% Beta                    =   s.wd.p_wSoilBase_Beta(:,1);
+k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,1);    
 
 fx.roInf(:,tix)         =   max(s.wd.WBP-k_unsat,0);
 

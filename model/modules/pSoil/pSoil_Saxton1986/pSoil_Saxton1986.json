@@ -52,43 +52,6 @@
 		},
 		"Comment": ""
 	},
-	"CLAY": {
-		"Name": "Clay content",
-		"Unit": "%",
-		"Default": 20,
-		"LowerBound": 0,
-		"UpperBound": 100,
-		"Distribution": {
-			"name": "uniform",
-			"funHandle" : "",
-			"params" : []
-		}
-	},
-	"SILT": {
-		"Name": "Silt content",
-		"Unit": "%",
-		"Default": 30,
-		"LowerBound": 0,
-		"UpperBound": 100,
-		"Distribution": {
-			"name": "uniform",
-			"funHandle" : "",
-			"params" : []
-		}
-		},
-	"SAND": {
-		"Name": "Sand content",
-		"Unit": "%",
-		"Default": 60,
-		"LowerBound": 0,
-		"UpperBound": 100,
-		"Distribution": {
-			"name": "uniform",
-			"funHandle" : "",
-			"params" : []
-		},
-		"Comment": "NaN"
-	},
 	"a": {
 		"Name": "Saxton Parameters",
 		"Unit": "-",

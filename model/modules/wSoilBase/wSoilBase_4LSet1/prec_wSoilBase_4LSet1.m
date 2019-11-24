@@ -27,13 +27,18 @@ function [f,fe,fx,s,d,p] = prec_wSoilBase_4LSet1(f,fe,fx,s,d,p,info)
 %
 %% 
 
-nSoilLayers            = info.tem.model.variables.states.w.nZix.wSoil;
-soilDepths             = p.wSoilBase.layerDepths;
-fracRoot2SoilD         = p.wSoilBase.fracRoot2SoilD;
+nSoilLayers                 =   info.tem.model.variables.states.w.nZix.wSoil;
+soilDepths                  =   p.wSoilBase.layerDepths;
+s.wd.p_wSoilBase_soilDepths =   soilDepths;
+fracRoot2SoilD              =   p.wSoilBase.fracRoot2SoilD;
 if numel(soilDepths) ~=  nSoilLayers
     error('the number of soil layers in modelStructure.json does not match with soil depths specified in wSoilBase')
 end
 s.wd.p_wSoilBase_nsoilLayers        =   nSoilLayers;
+s.wd.p_wSoilBase_CLAY               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_SAND               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_SILT               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_ORGM               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 s.wd.p_wSoilBase_wFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_wWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
@@ -65,6 +70,10 @@ s.wd.p_wSoilBase_thetaWP            =   info.tem.helpers.arrays.onespixzix.w.wSo
 % end
 
 for sl = 1:nSoilLayers
+    s.wd.p_wSoilBase_CLAY(:,sl)             =   p.soilTexture.CLAY;
+    s.wd.p_wSoilBase_SAND(:,sl)             =   p.soilTexture.SAND;
+    s.wd.p_wSoilBase_SILT(:,sl)             =   p.soilTexture.SILT;
+    s.wd.p_wSoilBase_ORGM(:,sl)             =   p.soilTexture.ORGM;
     s.wd.p_wSoilBase_wFC(:,sl)              =   p.pSoil.thetaFC .* soilDepths(sl);
     s.wd.p_wSoilBase_wWP(:,sl)              =   p.pSoil.thetaWP .* soilDepths(sl);
     s.wd.p_wSoilBase_wSat(:,sl)             =   p.pSoil.thetaSat .* soilDepths(sl);

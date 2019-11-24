@@ -48,7 +48,7 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 tstartwf = tic;
 tmpStrDate                          =   datestr(now,30);
 tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
-if exist(tmpLogFile,'file')
+if exist(tmpLogFile,'file') == 2
     eval(['delete ' tmpLogFile])
 end
 diary(tmpLogFile)
