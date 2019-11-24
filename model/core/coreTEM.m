@@ -78,6 +78,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);             % topographic properties
+    [f,fe,fx,s,d,p]     =   ms.soilTexture.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
     [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
     [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
@@ -93,11 +94,11 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.evapInt.funHandle(f,fe,fx,s,d,p,info,tix);           % interception evaporation
     [f,fe,fx,s,d,p]     =   ms.roInf.funHandle(f,fe,fx,s,d,p,info,tix);             % infiltration excess runoff
+    [f,fe,fx,s,d,p]     =   ms.roSat.funHandle(f,fe,fx,s,d,p,info,tix);             % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);      % saturation runoff
     [f,fe,fx,s,d,p]     =   ms.evapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation
     [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
     [f,fe,fx,s,d,p]     =   ms.roInt.funHandle(f,fe,fx,s,d,p,info,tix);             % interflow
-
     [f,fe,fx,s,d,p]     =   ms.roOverland.funHandle(f,fe,fx,s,d,p,info,tix);        % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a dummy handle that returnes zeros and
@@ -155,7 +156,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cCycle.funHandle(f,fe,fx,s,d,p,info,tix);            % allocate carbon to vegetation components
                                                                                     % litterfall and litter scalars
                                                                                     % calculate carbon cycle/decomposition/respiration in soil
-    [f,fe,fx,s,d,p]     =   ms.roSat.funHandle(f,fe,fx,s,d,p,info,tix);             % saturation runoff
 
     [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
 %     [f,fe,fx,s,d,p]     =   ms.wGWUpflow.funHandle(f,fe,fx,s,d,p,info,tix);         % Flux of water from wGW to the lowermost soil layers (upward GW capillary flux)

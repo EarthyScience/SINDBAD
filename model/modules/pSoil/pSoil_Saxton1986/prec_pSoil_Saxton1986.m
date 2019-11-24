@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_pSoil_UniformSaxton2006(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_pSoil_Saxton1986(f,fe,fx,s,d,p,info)
 % sets the value of soil hydraulic parameters
 %
 % Inputs:
@@ -29,9 +29,9 @@ function [f,fe,fx,s,d,p] = prec_pSoil_UniformSaxton2006(f,fe,fx,s,d,p,info)
 % we are assuming here that texture does not change with depth
 
 % number of layers
-[Alpha,Beta,kFC,thetaFC,psiFC]  = calcSoilParams(p,fe,info,p.pSoil.psiFC);
-[~,~,kWP,thetaWP,psiWP]         = calcSoilParams(p,fe,info,p.pSoil.psiWP);
-[~,~,kSat,thetaSat,psiSat]      = calcSoilParams(p,fe,info,p.pSoil.psiSat);
+[Alpha,Beta,kFC,thetaFC,psiFC]  = calcSoilParamsSaxton1986(p,info,p.pSoil.psiFC);
+[~,~,kWP,thetaWP,psiWP]         = calcSoilParamsSaxton1986(p,info,p.pSoil.psiWP);
+[~,~,kSat,thetaSat,psiSat]      = calcSoilParamsSaxton1986(p,info,p.pSoil.psiSat);
 
 p.pSoil.Alpha       = Alpha;
 p.pSoil.Beta        = Beta;
@@ -48,6 +48,7 @@ p.pSoil.kSat        = kSat;
 p.pSoil.thetaSat    = thetaSat;
 p.pSoil.psiSat      = psiSat;
 
+p.pSoil.kUnsatFuncH  = str2func(p.pSoil.kUnsatFunc);
 
 
 end % function
