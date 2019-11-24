@@ -18,6 +18,12 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
+		"soilTexture": 
+		{
+			"apprName": 	"soilTexture_fixed",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
 		"pSoil": 
 		{
 			"apprName": 	"pSoil_Saxton1986",
@@ -36,34 +42,52 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"Qsurf": 
+		"fAPAR": 
 		{
-			"apprName": 	"Qsurf_directIndirect",
-			"runFull": 		true,
-            "use4spinup":   false
+			"apprName": 	"fAPAR_constant",
+			"runFull": 		false,
+            "use4spinup":   true
 		},
 		"roBase": 
 		{
-			"apprName": 	"roBase_none",
+			"apprName": 	"roBase_Zhang2008",
 			"runFull": 		true,
-            "use4spinup":   false
+            "use4spinup":   true
+		},
+		"roInf": 
+		{
+			"apprName": 	"roInf_none",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"roInt": 
+		{
+			"apprName": 	"roInt_none",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"roOverland": 
+		{
+			"apprName": 	"roOverland_InfIntSat",
+			"runFull": 		true,
+            "use4spinup":   true
 		},
 		"roSat": 
 		{
-			"apprName": 	"roSat_none",
+			"apprName": 	"roSat_Bergstroem",
 			"runFull": 		true,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
-		"Qinf": 
+		"roSurf": 
 		{
-			"apprName": 	"Qinf_Bergstroem",
+			"apprName": 	"roSurf_directIndirect",
 			"runFull": 		true,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
-		"QoverFlow": 
+		"snowMelt": 
 		{
-			"apprName": 	"QoverFlow_Inf",
-			"runFull": 		true,
+			"apprName": 	"snowMelt_TRn",
+			"runFull": 		false,
             "use4spinup":   false
 		},
 		"wSnowFrac": 
@@ -72,38 +96,60 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"sumVariables":
+		"wSoilRec":
 		{
-			"apprName": 	"sumVariables_simple",
+			"apprName": 	"wSoilRec_kUnsat",
 			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
+			"use4spinup":   true
+		},
+		"wGWRec":
+		{
+			"apprName": 	"wGWRec_kUnsat",
+			"runFull": 		true,
+			"use4spinup":   true
+		},
+		"TranfwSoil":
+		{
+			"apprName": 	"TranfwSoil_CASA",
+			"runFull": 		true,
             "use4spinup":   true
 		},
-		"wBalance":
+		"TranAct":
 		{
-			"apprName": 	"wBalance_simple",
+			"apprName": 	"TranAct_CASA",
 			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
-            "use4spinup":   false
+            "use4spinup":   true
 		},
-		"wSoilBase":
+		"wRootUptake":
 		{
-			"apprName": 	"wSoilBase_3LSet1",
+			"apprName": 	"wRootUptake_TopBottom",
+			"runFull": 		true,
+            "use4spinup":   true
+		},
+		"wGW2wSoil":
+		{
+			"apprName": 	"wGW2wSoil_VanDijk2010",
 			"runFull": 		false,
-			"comment": 		"",
+            "use4spinup":   true
+		},
+		"wSoilUpflow":
+		{
+			"apprName": 	"wSoilUpflow_VanDijk2010",
+			"runFull": 		false,
             "use4spinup":   true
 		},
 		"rainSnow":
 		{
-			"apprName": 	"rainSnow_forcing",
+			"apprName": 	"rainSnow_Tair",
 			"runFull": 		false,
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true
 		},
-		"wGWRec":
+		"wSoilBase":
 		{
-			"apprName": 	"wGWRec_dummy",
-			"runFull": 		true,
+			"apprName": 	"wSoilBase_uniform",
+			"runFull": 		false,
+			"comment": 		"",
 			"use4spinup":   true
 		}
 
@@ -114,45 +160,47 @@
 		{
 			"pools" : 
 			[
-				["w.Surf", 		1, 	"zeros"],
-				["w.Soil", 		3, 	"zeros"],
-				["w.Buf", 		1, 	"zeros"],
-				["w.GW", 		1, 	"zeros"],
-				["w.Snow", 		1, 	"zeros"]
+				["w.Surf", 		1, 	0],
+				["w.Soil", 		3, 	0],
+				["w.Buf", 		1, 	0],
+				["w.GW", 		1, 	0],
+				["w.Snow", 		1, 	0]
 			],
-			"combine":		[false,"wPools","zeros"]
+			"combine":		[false,"wPools",0],
+			"wSoilLayersThickness":    [50,400, 1000],
+			"fracRoot2SoilThickness":  [1, 1,0.3]
 		},
 		"wd": 
 		{
 			"pools" : 
 			[
-				["WTD", 		1, 	"zeros"],
-				["w.TWS", 		1, 	"zeros"],
-				["w.SnowFrac", 	1, 	"zeros"]
+				["WTD", 		1, 	0],
+				["w.TWS", 		1, 	0],
+				["w.SnowFrac", 	1, 	0]
 			],
-			"combine":		[false,"wStates","zeros"]
+			"combine":		[false,"wStates",0]
 		},
 		"c": 
 		{
 		"pools" : 
 		[
-			["c.Veg.Root.F",	1,	"zeros"],
-			["c.Veg.Root.C",	1,	"zeros"],
-			["c.Veg.Wood",		1,	"zeros"],
-			["c.Veg.Leaf",		1,	"zeros"],
-			["c.Lit.Leaf.M",	1,	"zeros"],
-			["c.Lit.Leaf.S",	1,	"zeros"],
-			["c.Lit.Root.F.M",	1,	"zeros"],
-			["c.Lit.Root.F.S",	1,	"zeros"],
-			["c.Lit.Wood",		1,	"zeros"],
-			["c.Lit.Root.C",	1,	"zeros"],
-			["c.Mic.Surf",		1,	"zeros"],
-			["c.Mic.Soil",		1,	"zeros"],
-			["c.Soil.Slow",		1,	"zeros"],
-			["c.Soil.Old",		1,	"zeros"]
+			["c.Veg.Root.F",	1,	0],
+			["c.Veg.Root.C",	1,	0],
+			["c.Veg.Wood",		1,	0],
+			["c.Veg.Leaf",		1,	0],
+			["c.Lit.Leaf.M",	1,	0],
+			["c.Lit.Leaf.S",	1,	0],
+			["c.Lit.Root.F.M",	1,	0],
+			["c.Lit.Root.F.S",	1,	0],
+			["c.Lit.Wood",		1,	0],
+			["c.Lit.Root.C",	1,	0],
+			["c.Mic.Surf",		1,	0],
+			["c.Mic.Soil",		1,	0],
+			["c.Soil.Slow",		1,	0],
+			["c.Soil.Old",		1,	0]
 		],
 		"oldNames":		["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
-		"combine":		[true,"cEco","zeros"]
+		"combine":		[true,"cEco",0]
 		}
 	}
 }

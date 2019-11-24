@@ -11,14 +11,14 @@ function [f,fe,fx,s,d,p] = GPPact_min(f,fe,fx,s,d,p,info,tix)
 % INPUT     :
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
 %           (d.GPPpot.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % AllScGPP
 % SMScGPP
 % 
@@ -37,6 +37,6 @@ function [f,fe,fx,s,d,p] = GPPact_min(f,fe,fx,s,d,p,info,tix)
 d.GPPact.AllScGPP(:,tix)	= min(d.GPPdem.AllDemScGPP(:,tix),d.GPPfwSoil.SMScGPP(:,tix));
 
 % ... and multiply with apar and rue
-fx.gpp(:,tix) = f.FAPAR(:,tix) .* f.PAR(:,tix) .* d.GPPpot.rueGPP(:,tix) .* d.GPPact.AllScGPP(:,tix);
+fx.gpp(:,tix) = s.cd.fAPAR(:,tix) .* f.PAR(:,tix) .* d.GPPpot.rueGPP(:,tix) .* d.GPPact.AllScGPP(:,tix);
 
 end

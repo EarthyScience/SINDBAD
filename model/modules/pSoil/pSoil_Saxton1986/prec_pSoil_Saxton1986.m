@@ -26,7 +26,6 @@ function [f,fe,fx,s,d,p] = prec_pSoil_Saxton1986(f,fe,fx,s,d,p,info)
 %   - 1.0 on 21.11.2019
 %
 %% 
-% we are assuming here that texture does not change with depth
 
 % number of layers
 [Alpha,Beta,kFC,thetaFC,psiFC]  = calcSoilParamsSaxton1986(p,info,p.pSoil.psiFC);

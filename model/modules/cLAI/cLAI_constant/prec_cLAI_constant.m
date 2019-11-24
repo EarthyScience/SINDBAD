@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p]=prec_cLAI_constant(f,fe,fx,s,d,p,info)
 %	- p.cLAI.constantLAI
 %
 % Outputs:
-%   - fe.cLAI.LAI: an extra forcing that creates a time series of constant LAI
+%   - s.cd.LAI: an extra forcing that creates a time series of constant LAI
 %
 % Modifies:
 % 	- None

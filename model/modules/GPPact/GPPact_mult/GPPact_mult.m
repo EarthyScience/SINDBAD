@@ -11,14 +11,14 @@ function [f,fe,fx,s,d,p] = GPPact_mult(f,fe,fx,s,d,p,info,tix)
 % INPUT     :
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
 %           (d.GPPpot.rueGPP)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % AllScGPP  : 
 % SMScGPP
 % 

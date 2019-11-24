@@ -143,7 +143,7 @@
 		"sourceDataProductName": "FLUXNET",
 		"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
 	},
-	"FAPAR":
+	"fAPAR":
     {
 		"variableUnit": "-",
 		"bounds": [0, 1],
@@ -151,7 +151,7 @@
 		"sourceVariableUnit": "-",
 		"source2sindbadUnit": "*1",
 		"isCategorical": false,
-		"nameShort": "FAPAR from ndvi",
+		"nameShort": "fAPAR from ndvi",
 		"spaceTimeType": "normal",
 		"sourceDataProductName": "FLUXNET",
 		"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"

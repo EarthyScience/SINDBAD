@@ -29,6 +29,7 @@ function [f,fe,fx,s,d,p] = dyna_evapInt_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % update the available water
-s.wd.WBP = s.wd.WBP - fx.evapInt(:,tix);
-
+tmp                     =   p.evapInt.isp .* s.cd.fAPAR;
+fx.evapInt(:,tix)       =   min(tmp,fe.rainSnow.rain(:,tix));
+s.wd.WBP                =   s.wd.WBP - fx.evapInt(:,tix);
 end

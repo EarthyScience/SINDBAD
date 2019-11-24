@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = prec_evapInt_simple(f,fe,fx,s,d,p,info)
 %
 % Inputs:
 %	- fe.rainSnow.rain:     rain fall [mm/time]
-%   - f.FAPAR:  fraction of absorbed photosynthetically active radiation [] 
+%   - s.cd.fAPAR:  fraction of absorbed photosynthetically active radiation [] 
 %               (equivalent to "canopy cover" in Gash and Miralles)
 % 	- p.evapInt.isp: maximum storage capacity for a fully developed
 %                   canopy [mm] (warning: this is per rain event)
@@ -36,7 +36,7 @@ function [f,fe,fx,s,d,p] = prec_evapInt_simple(f,fe,fx,s,d,p,info)
 
 % interception evaporation is simply the minimum of the fapar dependent
 % storage and the rainfall
-tmp             =   (p.evapInt.isp * info.tem.helpers.arrays.onestix) .* f.FAPAR;
+tmp             =   (p.evapInt.isp * info.tem.helpers.arrays.onestix) .* s.cd.fAPAR;
 fx.evapInt      =   min(tmp,fe.rainSnow.rain);
 
 end
