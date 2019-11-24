@@ -17,6 +17,12 @@
 			"runFull": 		false,
 			"use4spinup":   false
 		},
+		"soilTexture": 
+		{
+			"apprName": 	"soilTexture_fixed",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
 		"pSoil": 
 		{
 			"apprName": 	"pSoil_Saxton1986",
@@ -41,12 +47,17 @@
 			"runFull": 		false,
 			"use4spinup":   false
 		},
-
 		"evapInt":
 		{
 			"apprName": 	"evapInt_simple2",
 			"runFull": 		false,
 			"use4spinup":   false
+		},
+		"fAPAR": 
+		{
+			"apprName": 	"fAPAR_constant",
+			"runFull": 		false,
+            "use4spinup":   true
 		},
 		"roOverland":
 		{
@@ -66,7 +77,7 @@
 			"runFull": 		true,
 			"use4spinup":   true
 		},
-				"roSurf":
+		"roSurf":
 		{
 			"apprName": 	"roSurf_directIndirect",
 			"runFull": 		true,
@@ -101,7 +112,7 @@
 		},
 		"wSoilBase":
 		{
-			"apprName": 	"wSoilBase_3LSet1",
+			"apprName": 	"wSoilBase_uniform",
 			"runFull": 		false,
 			"comment": 		"",
             "use4spinup":   true
@@ -121,22 +132,24 @@
 		{
 			"pools" :
 			[
-				["w.Surf", 		1, 	"zeros"],
-				["w.Soil", 		3, 	"zeros"],
-				["w.Buf", 		1, 	"zeros"],
-				["w.GW", 		1, 	"zeros"],
-				["w.Snow", 		1, 	"zeros"]
+				["w.Surf", 		1, 	0],
+				["w.Soil", 		2, 	0],
+				["w.Buf", 		1, 	0],
+				["w.GW", 		1, 	0],
+				["w.Snow", 		1, 	0]
 			],
-			"combine":		[false,"wPools","zeros"]
+			"wSoilLayersThickness":    [50, 1000],
+			"fracRoot2SoilThickness":  [1, 1],
+			"combine":		[false,"wPools",0]
 		},
 		"wd":
 		{
 			"pools" :
 			[
-				["WTD", 		1, 	"zeros"],
-				["w.SnowFrac", 	1, 	"zeros"]
+				["WTD", 		1, 	0],
+				["w.SnowFrac", 	1, 	0]
 			],
-			"combine":		[false,"wStates","zeros"]
+			"combine":		[false,"wStates",0]
 		}
 	}
 }

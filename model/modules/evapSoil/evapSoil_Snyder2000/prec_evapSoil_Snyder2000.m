@@ -1,81 +1,83 @@
 function [f,fe,fx,s,d,p] = prec_evapSoil_Snyder2000(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: 
-% 
-% REFERENCES: Snyder et al 2000
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% PET       : potential evapotranspiration [mm/time]
-%           (f.PET)
-% ECanop    : interception evaporation [mm/time]
-%           (fx.ECanop)
-% alpha     : Priestley-Taylor coefficient []
-%           (p.evapSoil.alpha); ; range ~ [0.5 1.5]
-% beta      : soil hydraulic parameter [sqrt(mm/time)]
-%           : p.evapSoil.beta; range ~ [1 5]
-% FAPAR     : fraction of absorbed photosynthetically active radiation
-%           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
-%rainfall   :mm/time
-%
-% 
-% OUTPUT
-% ETsoil   : evaporation from the soil surface [mm/time]
-%           (fe.evapSoil.PETsoil)
-% 
-% NOTES:
-% 
-% #########################################################################
+% % #########################################################################
+% % PURPOSE	: 
+% % 
+% % REFERENCES: Snyder et al 2000
+% % 
+% % CONTACT	: mjung
+% % 
+% % INPUT
+% % PET       : potential evapotranspiration [mm/time]
+% %           (f.PET)
+% % ECanop    : interception evaporation [mm/time]
+% %           (fx.ECanop)
+% % alpha     : Priestley-Taylor coefficient []
+% %           (p.evapSoil.alpha); ; range ~ [0.5 1.5]
+% % beta      : soil hydraulic parameter [sqrt(mm/time)]
+% %           : p.evapSoil.beta; range ~ [1 5]
+% % FAPAR     : fraction of absorbed photosynthetically active radiation
+% %           [] (equivalent to "canopy cover" in Gash and Miralles)
+% %           (s.cd.fAPAR)
+% %rainfall   :mm/time
+% %
+% % 
+% % OUTPUT
+% % ETsoil   : evaporation from the soil surface [mm/time]
+% %           (fe.evapSoil.PETsoil)
+% % 
+% % NOTES:
+% % 
+% % #########################################################################
+PET                         =   f.PET .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
+PET(PET<0)                  =   0;
+s.wd.p_evapSoil_sPETOld     =   PET(:,1);
+
+% %sPET_old: sum of PET since last precip event
+% %sET: sum of ET  since last precip event
 
 
-%sPET_old: sum of PET since last precip event
-%sET: sum of ET  since last precip event
+% palpha              =   p.evapSoil.alpha * info.tem.helpers.arrays.onestix;
+% PET                 =   f.PET .* palpha .* (1 - s.cd.fAPAR);
+% PET(PET<0)          =   0;
 
 
-palpha              =   p.evapSoil.alpha * info.tem.helpers.arrays.onestix;
-PET                 =   f.PET .* palpha .* (1 - f.FAPAR);
-PET(PET<0)          =   0;
+% fe.evapSoil.PETsoil =   PET;
 
+% %initialise
+% sPET_old            =   PET(:,1);
+% sET                 =   info.tem.helpers.arrays.zerospix; %sET from last time step
+% isdry               =   info.tem.helpers.arrays.zerospix; %is basically a logical flag
+% sPET                =   info.tem.helpers.arrays.zerospix;
 
-fe.evapSoil.PETsoil =   PET;
+% ET                  =   info.tem.helpers.arrays.zerospixtix;
+% ET2                 =   info.tem.helpers.arrays.zerospixtix; %for conditions with light rainfall which were considered not as a
+% %wetting event
+% ET(:,1)             =   PET(:,1);
 
-%initialise
-sPET_old            =   PET(:,1);
-sET                 =   info.tem.helpers.arrays.zerospix; %sET from last time step
-isdry               =   info.tem.helpers.arrays.zerospix; %is basically a logical flag
-sPET                =   info.tem.helpers.arrays.zerospix;
-
-ET                  =   info.tem.helpers.arrays.zerospixtix;
-ET2                 =   info.tem.helpers.arrays.zerospixtix; %for conditions with light rainfall which were considered not as a
-%wetting event
-ET(:,1)             =   PET(:,1);
-
-beta2               =   p.evapSoil.beta.*p.evapSoil.beta;
-%precip_threshold
-%precip_threshold=3.*PET;
-%loop over time
-for it  =   2:size(PET,2)
-    %isdry(:)   = f.Rain(:,it)==0;
-    isdry(:)        =   fe.rainSnow.rain(:,it) - fx.ECanop(:,it) < PET(:,it); %assume wetting occurs with precip-interception > pet_soil; Snyder argued one should use precip > 3*pet_soil but then it becomes inconsistent here
-    sPET(:)         =   isdry.*(sPET_old+PET(:,it));
-    issat           =   sPET > beta2; %same as sqrt(sPET) > beta (see paper); issat is a flag for stage 2 evap (name 'issat' not correct here)
-    ET(:,it)        =   isdry.*(~issat .* sPET+issat .* sqrt(sPET) .* p.evapSoil.beta - sET) + ~isdry .* PET(:,it);
-    %
-    %correct for conditions with light rainfall which were considered not as a
-    %wetting event; for these conditions we assume soil_evap=min(precip-ECanop,pet_soil-evap soil already used)
-    ET2(:,it2)      =   min(fe.rainSnow.rain(:,it) - fx.ECanop(:,it) , PET(:,it) - ET(:,it));
-    %[sPET ET(:,it) sET(:) issat]
-    sET(:)          =   isdry.*(sET+ET(:,it));
-    sPET_old(:)     =   sPET(:);
-end
+% beta2               =   p.evapSoil.beta.*p.evapSoil.beta;
+% %precip_threshold
+% %precip_threshold=3.*PET;
+% %loop over time
+% for it  =   2:size(PET,2)
+%     %isdry(:)   = f.Rain(:,it)==0;
+%     isdry(:)        =   fe.rainSnow.rain(:,it) - fx.ECanop(:,it) < PET(:,it); %assume wetting occurs with precip-interception > pet_soil; Snyder argued one should use precip > 3*pet_soil but then it becomes inconsistent here
+%     sPET(:)         =   isdry.*(sPET_old+PET(:,it));
+%     issat           =   sPET > beta2; %same as sqrt(sPET) > beta (see paper); issat is a flag for stage 2 evap (name 'issat' not correct here)
+%     ET(:,it)        =   isdry.*(~issat .* sPET+issat .* sqrt(sPET) .* p.evapSoil.beta - sET) + ~isdry .* PET(:,it);
+%     %
+%     %correct for conditions with light rainfall which were considered not as a
+%     %wetting event; for these conditions we assume soil_evap=min(precip-ECanop,pet_soil-evap soil already used)
+%     ET2(:,it2)      =   min(fe.rainSnow.rain(:,it) - fx.ECanop(:,it) , PET(:,it) - ET(:,it));
+%     %[sPET ET(:,it) sET(:) issat]
+%     sET(:)          =   isdry.*(sET+ET(:,it));
+%     sPET_old(:)     =   sPET(:);
+% end
 
 
 
 
 
 
-fe.evapSoil.ETsoil  =   ET + ET2;
+% fe.evapSoil.ETsoil  =   ET + ET2;
 
 end

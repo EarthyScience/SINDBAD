@@ -1,2 +1,47 @@
 function [f,fe,fx,s,d,p] = dyna_GPPdem_min(f,fe,fx,s,d,p,info)
+% #########################################################################
+% PURPOSE	: compute the demand GPP: stress scalars are combined as the
+%           minimum (which limits most)
+% 
+% REFERENCES: SINDABD ;)
+% 
+% CONTACT	: mjung, ncarval
+% 
+% INPUT
+% rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
+%           (d.GPPpot.rueGPP)
+% PAR       : photosynthetically active radiation [MJ/m2/time]
+%           (f.PAR)
+% FAPAR     : fraction of absorbed photosynthetically active radiation
+%           [] (equivalent to "canopy cover" in Gash and Miralles)
+%           (s.cd.fAPAR)
+% TempScGPP : temperature effect on GPP [] dimensionless, between 0-1
+%           (d.GPPfTair.TempScGPP)
+% VPDScGPP  : VPD effect on GPP [] dimensionless, between 0-1
+%           (d.GPPfVPD.VPDScGPP)
+% LightScGPP: light saturation scalar [] dimensionless
+%           (d.GPPfRdir.LightScGPP)
+% 
+% OUTPUT
+% gppE      : demand GPP [gC/m2/time]
+%           (d.GPPdem.gppE)
+% 
+% DEPENDENCIES  :
+% 
+% NOTES:
+% 
+% #########################################################################
+
+% make 3D matrix 
+scall           = repmat(info.tem.helpers.arrays.onespix,1,3);
+scall(:,:,1)    = d.GPPfTair.TempScGPP(:,tix);
+scall(:,:,2)    = d.GPPfVPD.VPDScGPP(:,tix);
+scall(:,:,3)    = d.GPPfRdir.LightScGPP(:,tix);
+
+% compute the minumum of all the scalars
+d.GPPdem.AllDemScGPP(:,tix) = min(scall,[],2);
+
+% compute demand GPP
+d.GPPdem.gppE(:,tix)	= s.cd.fAPAR .* f.PAR(:,tix) .* d.GPPpot.rueGPP(:,tix) .* d.GPPdem.AllDemScGPP(:,tix);
+
 end

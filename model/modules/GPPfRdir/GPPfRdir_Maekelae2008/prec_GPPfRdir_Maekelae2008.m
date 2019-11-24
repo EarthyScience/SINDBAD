@@ -10,7 +10,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdir_Maekelae2008(f,fe,fx,s,d,p,info)
 % 
 % INPUT
 % FAPAR     : fraction of absorbed photosynthetically active radiation [] 
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % PAR       : photosynthetically active radiation [MJ/m2/time]
 %           (f.PAR)
 % gamma     : light response curve parameter to account for light
@@ -29,7 +29,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdir_Maekelae2008(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-pgamma                      =   p.GPPfRdir.gamma * info.tem.helpers.arrays.onestix;
-d.GPPfRdir.LightScGPP       =   1 ./ (pgamma .* f.PAR .* f.FAPAR + 1);
+% pgamma                      =   p.GPPfRdir.gamma * info.tem.helpers.arrays.onestix;
+% d.GPPfRdir.LightScGPP       =   1 ./ (pgamma .* f.PAR .* s.cd.fAPAR + 1);
 
 end

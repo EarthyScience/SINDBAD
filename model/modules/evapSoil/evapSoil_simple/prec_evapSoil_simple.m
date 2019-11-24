@@ -13,7 +13,7 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_simple(f,fe,fx,s,d,p,info)
 %           (p.evapSoil.alpha)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
-%           (f.FAPAR)
+%           (s.cd.fAPAR)
 % 
 % OUTPUT
 % PETsoil   : potential evaporation from the soil surface [mm/time]
@@ -23,9 +23,9 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_simple(f,fe,fx,s,d,p,info)
 % 
 % #########################################################################
 
-palpha                  =   p.evapSoil.alpha * info.tem.helpers.arrays.onestix;
-tmp                     =   f.PET .* palpha .* (1 - f.FAPAR);
-tmp(tmp<0)              =   0;
-fe.evapSoil.PETsoil     =   tmp;
+% palpha                  =   p.evapSoil.alpha * info.tem.helpers.arrays.onestix;
+% tmp                     =   f.PET .* palpha .* (1 - s.cd.fAPAR);
+% tmp(tmp<0)              =   0;
+% fe.evapSoil.PETsoil     =   tmp;
 
 end

@@ -157,11 +157,23 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
+		"soilTexture": 
+		{
+			"apprName": 	"soilTexture_fixed",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
 		"pSoil": 
 		{
 			"apprName": 	"pSoil_Saxton1986",
 			"runFull": 		false,
             "use4spinup":   false
+		},
+		"fAPAR": 
+		{
+			"apprName": 	"fAPAR_forcing",
+			"runFull": 		true,
+            "use4spinup":   true
 		},
 		"pVeg": 
 		{
@@ -197,7 +209,7 @@
 		},
 		"wSoilBase":
 		{
-			"apprName": 	"wSoilBase_3LSet1",
+			"apprName": 	"wSoilBase_uniform",
 			"runFull": 		false,
 			"comment": 		"",
             "use4spinup":   true
@@ -217,53 +229,55 @@
 		{
 			"pools" : 
 			[
-				["w.Surf", 		1, 	"zeros"],
-				["w.Soil", 		3, 	"zeros"],
-				["w.Buf", 		1, 	"zeros"],
-				["w.GW", 		1, 	"zeros"],
-				["w.Snow", 		1, 	"zeros"]
+				["w.Surf", 		1, 	0],
+				["w.Soil", 		3, 	0],
+				["w.Buf", 		1, 	0],
+				["w.GW", 		1, 	0],
+				["w.Snow", 		1, 	0]
 			],
-			"combine":		[false,"wPools","zeros"]
+			"wSoilLayersThickness":    [50, 1000, 2000],
+			"fracRoot2SoilThickness":  [1, 0.3,0],
+			"combine":		[false,"wPools",0]
 		},
 		"wd": 
 		{
 			"pools" : 
 			[
-				["WTD", 		1, 	"zeros"],
-				["w.SnowFrac", 	1, 	"zeros"]
+				["WTD", 		1, 	0],
+				["w.SnowFrac", 	1, 	0]
 			],
-			"combine":		[false,"wStates","zeros"]
+			"combine":		[false,"wStates",0]
 		},
 		"c": 
 		{
 		"pools" : 
 		[
-			["c.Veg.Root.F",	1,	"zeros"],
-			["c.Veg.Root.C",	1,	"zeros"],
-			["c.Veg.Wood",		1,	"zeros"],
-			["c.Veg.Leaf",		1,	"zeros"],
-			["c.Lit.Leaf.M",	1,	"zeros"],
-			["c.Lit.Leaf.S",	1,	"zeros"],
-			["c.Lit.Root.F.M",	1,	"zeros"],
-			["c.Lit.Root.F.S",	1,	"zeros"],
-			["c.Lit.Wood",		1,	"zeros"],
-			["c.Lit.Root.C",	1,	"zeros"],
-			["c.Mic.Surf",		1,	"zeros"],
-			["c.Mic.Soil",		1,	"zeros"],
-			["c.Soil.Slow",		1,	"zeros"],
-			["c.Soil.Old",		1,	"zeros"]
+			["c.Veg.Root.F",	1,	0],
+			["c.Veg.Root.C",	1,	0],
+			["c.Veg.Wood",		1,	0],
+			["c.Veg.Leaf",		1,	0],
+			["c.Lit.Leaf.M",	1,	0],
+			["c.Lit.Leaf.S",	1,	0],
+			["c.Lit.Root.F.M",	1,	0],
+			["c.Lit.Root.F.S",	1,	0],
+			["c.Lit.Wood",		1,	0],
+			["c.Lit.Root.C",	1,	0],
+			["c.Mic.Surf",		1,	0],
+			["c.Mic.Soil",		1,	0],
+			["c.Soil.Slow",		1,	0],
+			["c.Soil.Old",		1,	0]
 		],
 		"oldNames":		["ROOT","ROOTC","WOOD","LEAF","M_LEAF","S_LEAF","M_ROOT","S_ROOT","LiWOOD","LiROOT","LEAF_MIC","SOIL_MIC", "SLOW", "OLD"],
-		"combine":		[true,"cEco","zeros"]
+		"combine":		[true,"cEco",0]
 		},
 		"cd": 
 		{
 			"pools" : 
 			[
-				["cAlloc", 		14, 	"zeros"],
-				["cNPP", 		4, 	"zeros"]
+				["cAlloc", 		14, 	0],
+				["cNPP", 		4, 	0]
 			],
-			"combine":		[false,"wStates","zeros"]
+			"combine":		[false,"wStates",0]
 		}
 	}
 }

@@ -65,14 +65,9 @@ s                       =   struct;
 d                       =   struct;
 if~isfield('info.tem.model.variables','created');info.tem.model.variables.created={};end;
 
-nTix                    =   info.tem.helpers.sizes.nTix;
-nPix                    =   info.tem.helpers.sizes.nPix;
-
 %--> get all locally needed arrays from helpers
-arnanpix                =   info.tem.helpers.arrays.nanpix;
 arzerospix              =   info.tem.helpers.arrays.zerospix;
-arnanpixtix             =   info.tem.helpers.arrays.nanpixtix;
-
+aronespix               =   info.tem.helpers.arrays.onespix;
 
 for ij                  =	1:numel(stateVarsCode)
     var2cr               =  stateVarsCode{ij};
@@ -83,7 +78,7 @@ for ij                  =	1:numel(stateVarsCode)
         try
             nZix        =   info.tem.model.variables.states.(char(sv)).nZix.(poolName);
         catch
-            if ismember(sv,{'c' 'cd'})
+            if ismember(sv,{'c'})
                 nZix    =   info.tem.model.variables.states.c.nZix.cEco;
             else
                 disp([pad('WARN STATE ARRAY',20,'right') ' : ' pad('createStateArray',20) ' | The state variable ' var2cr ' exists in the code, but its size is not defined in modelStructure.json: Using nZix = 1'])
@@ -92,12 +87,17 @@ for ij                  =	1:numel(stateVarsCode)
         end
         if isempty(strfind(sv, 'd')) || ismember(var2cr,keepVars)
             if startsWith(var2cr,'s.')
-                tmp             =   repmat(arzerospix,1,nZix);
-                eValStr         =   strcat(var2cr,' = tmp;');
+                if ~ismember(sv,{'wd' 'cd'}) %only the storage pools are initiated at the values given in modelStructure.json. cd and wd variables are initiated with zeros.
+                    tmp             =   repmat(aronespix .* info.tem.model.variables.states.(sv).initValue.(poolName) ,1,nZix);
+                else
+                    tmp             =   repmat(arzerospix ,1,nZix);
+                end
+                eValStr             =   strcat(var2cr,' = tmp;');
                 eval(eValStr);
                 info.tem.model.variables.created{end+1}    =    var2cr;
+                
             end
-            end
+        end
     end
     
 end

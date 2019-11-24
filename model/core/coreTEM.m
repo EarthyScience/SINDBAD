@@ -74,15 +74,23 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get the amount of water at the beginning of timestep
     % ---------------------------------------------------------------------
     % 0 - Terrain - to get the terrain params ...    
-    % 0 - SOIL - to get the soil related params ...
-    % 0 - VEG - put here any LC changes / phenology / disturbances / ...
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);             % topographic properties
-    [f,fe,fx,s,d,p]     =   ms.soilTexture.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
-    [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties
-    [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % handling depth of the soil moisture layers
+    % ---------------------------------------------------------------------
+    % 0 - SOIL - to get the soil related params ...
+    % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.soilTexture.funHandle(f,fe,fx,s,d,p,info,tix);       % soil texture (sand,silt,clay, and organic matter fraction)
+    [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties (hydraulic properties)
+    [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % distribution of soil hydraulic properties over depth
+    % ---------------------------------------------------------------------
+    % 0 - VEG - put here any LC changes / phenology / disturbances / structure ...
+    % ---------------------------------------------------------------------
+
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
+    [f,fe,fx,s,d,p]     =   ms.fAPAR.funHandle(f,fe,fx,s,d,p,info,tix);             % fraction of Absorbed Photosynthetically Active Radiation
+    [f,fe,fx,s,d,p]     =   ms.EVI.funHandle(f,fe,fx,s,d,p,info,tix);               % EVI
     [f,fe,fx,s,d,p]     =   ms.cLAI.funHandle(f,fe,fx,s,d,p,info,tix);              % leaf area index
+    [f,fe,fx,s,d,p]     =   ms.vegFrac.funHandle(f,fe,fx,s,d,p,info,tix);           % fractional coverage of vegetation
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
@@ -158,7 +166,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % calculate carbon cycle/decomposition/respiration in soil
 
     [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
-%     [f,fe,fx,s,d,p]     =   ms.wGWUpflow.funHandle(f,fe,fx,s,d,p,info,tix);         % Flux of water from wGW to the lowermost soil layers (upward GW capillary flux)
 
     % ---------------------------------------------------------------------
     % sum up components of fluxes and states
