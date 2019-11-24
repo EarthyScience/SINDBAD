@@ -69,6 +69,9 @@ for ii = 1:numel(stateVars)
     end
     [info]      =   setStatesInfo(sv,sStruct,info);
 end
+% info.tem.model.variables.states.w.wSoilLayers = 
+info.tem.model.variables.states.w.soilLayerDepths       =   info.tem.model.variables.states.input.w.wSoilLayersThickness;
+info.tem.model.variables.states.w.fracRoot2SoilD        =   info.tem.model.variables.states.input.w.fracRoot2SoilThickness;
 info.tem.model.variables.states        =   rmfield(info.tem.model.variables.states,'input');
 
 %%    
@@ -85,7 +88,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
     % generate the nameLayers from structure of the state
     
     nameLayers          =   sInfo(:,1:2);
-    initMethods         =   sInfo(:,3);
+    initValues         =   sInfo(:,3);
     %-->	check that the names are unique : we can just let it go too...
     if numel(unique(nameLayers(:,1)))   ~=  size(nameLayers,1)
         error('ERR : getFlagsPools : pool names are not unique')
@@ -106,7 +109,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
         sStruct.names               =   cellstr(combPoolName);
         sStruct.components          =   allNames';
         sStruct.nZix.(combPoolName) = nZix;
-        sStruct.initMethod.(combPoolName)  =   combPools{3};
+        sStruct.initValue.(combPoolName)  =   combPools{3};
 %         sStruct.(combPoolName) = allNames';
     else
         if~exist('sStruct','var')
@@ -120,7 +123,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
             sStruct.flags.(fullName)        =   true(1,nZix);
             sStruct.zix.(fullName)          =   1:nZix;
             sStruct.nZix.(fullName)         =   nZix;
-            sStruct.initMethod.(fullName)   =   initMethods{i};
+            sStruct.initValue.(fullName)   =   initValues{i};
        end
         sStruct.names                       =   allNames';
         sStruct.components                  =   allNames';
