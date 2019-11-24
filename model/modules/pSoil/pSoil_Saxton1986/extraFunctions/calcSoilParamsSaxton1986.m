@@ -21,8 +21,8 @@ function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
 % #########################################################################
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
-CLAY            =   p.soilTexture.CLAY;
-SAND            =   p.soilTexture.SAND;
+CLAY            =   p.soilTexture.CLAY .* 100;
+SAND            =   p.soilTexture.SAND .* 100;
 
 % Equations
 A               =   exp(p.pSoil.a + p.pSoil.b .* CLAY + p.pSoil.c .* SAND .^ 2 + p.pSoil.d1 .* SAND .^ 2 .* CLAY) * 100;
@@ -68,7 +68,10 @@ clear ndx
 
 % -------------------------------------------------------------------------
 % WATER CONDUCTIVITY (mm/day)
-K               =   calcKSaxton1986(p,info,Theta);
+% K               =   calcKSaxton1986(p,info,Theta);
+K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
+    (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
+    CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
 
 % K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
 %     (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...

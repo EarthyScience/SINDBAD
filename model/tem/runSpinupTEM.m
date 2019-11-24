@@ -183,7 +183,7 @@ for iss = 1:numel(spinSequence)
                 disp(pad('.',200,'both','.'))
                 disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
                 disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
-                disp(pad('.',100,'both','.'))
+                disp(pad('.',200,'both','.'))
             end
         end
         

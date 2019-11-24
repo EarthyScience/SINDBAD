@@ -1,4 +1,4 @@
-function K = calcKSaxton1986(p,info,Theta,kSat,B)
+function K = calcKSaxton1986(s,p,sl)
 % #########################################################################
 % calculate conductivity from soil moisture 
 % based on saxton 1986, equation 10
@@ -22,9 +22,11 @@ function K = calcKSaxton1986(p,info,Theta,kSat,B)
 % #########################################################################
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
-CLAY    = p.soilTexture.CLAY  .* info.tem.helpers.arrays.onespix;
-SAND    = p.pSoil.SAND  .* info.tem.helpers.arrays.onespix;
 
+CLAY    = s.wd.p_wSoilBase_CLAY(:,sl) .* 100;
+SAND    = s.wd.p_wSoilBase_SAND(:,sl)  .* 100;
+soilD   = s.wd.p_wSoilBase_soilDepths(sl);
+Theta   = s.w.wSoil(:,sl) ./ soilD;
 % -------------------------------------------------------------------------
 % WATER CONDUCTIVITY (mm/day)
 K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...

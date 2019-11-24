@@ -1,4 +1,4 @@
-function K = calcKSaxton2006(p,info,Theta,kSat,B)
+function K = calcKSaxton2006(s,p,sl)
 % calculates the soil hydraulic conductivity for a given moisture content based on Saxton 2006
 %
 % Inputs:
@@ -35,13 +35,15 @@ function K = calcKSaxton2006(p,info,Theta,kSat,B)
 % needs Theta_s
 % needs B Beta?
 % s.wd.p_wSoilBase_kSat  
-
-lambda          =   1 ./ B;
-
+Beta            =   s.wd.p_wSoilBase_Beta(:,sl);
+kSat            =   s.wd.p_wSoilBase_kSat(:,sl);
+wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
+lambda          =   1 ./ Beta;
+Theta_dos       =   s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl);
 
 % -------------------------------------------------------------------------
 % WATER CONDUCTIVITY (mm/day)
-K               =   kSat .* ((Theta) .^ (3 + (2 ./ lambda)));
+K               =   kSat .* ((Theta_dos) .^ (3 + (2 ./ lambda)));
 % -------------------------------------------------------------------------
 
 

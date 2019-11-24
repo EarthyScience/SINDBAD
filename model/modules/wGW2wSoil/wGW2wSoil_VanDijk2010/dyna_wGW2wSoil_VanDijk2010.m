@@ -38,9 +38,9 @@ dosSoilend              =  s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoi
 
 % % unsaturated hydraulic conductivity and GW downward recharge
 % k_unsat                 =  s.wd.p_wSoilBase_kSat(:,wSoilend) .* k_unsatfrac_soil;
-kSat                    =   s.wd.p_wSoilBase_kSat(:,wSoilend);
-Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
-k_unsat                 =   feval(p.pSoil.kUnsatFuncH,p,info,dosSoilend,kSat,Beta);    
+% kSat                    =   s.wd.p_wSoilBase_kSat(:,wSoilend);
+% Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
+k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,wSoilend);    
 
 k_sat                   =  s.wd.p_wSoilBase_kSat(:,wSoilend) ;
 

@@ -36,11 +36,11 @@ wSoilExc                =   max(s.w.wSoil(:,wSoilend) - ...
 s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-wSoilExc;
 
 %--> get the drainage
-kSat                    =   s.wd.p_wSoilBase_kSat(:,wSoilend);
-Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
+% kSat                    =   s.wd.p_wSoilBase_kSat(:,wSoilend);
+% Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
 
-soilDOS                 =   s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
-k_unsat                 =   feval(p.pSoil.kUnsatFuncH,p,info,soilDOS,kSat,Beta);    
+% soilDOS                 =   s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
+k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,wSoilend);    
 drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,wSoilend),0));
 fx.QgwDrain(:,tix)      =   drain;
 
