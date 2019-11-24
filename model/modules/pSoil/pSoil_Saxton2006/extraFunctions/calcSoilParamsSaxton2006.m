@@ -40,9 +40,9 @@ function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] =
 % CLAY            =   p.soilTexture.CLAY .* info.tem.helpers.arrays.onespix ./ 100;
 % SAND            =   p.soilTexture.SAND .* info.tem.helpers.arrays.onespix ./ 100;
 % ORGM            =   p.soilTexture.ORGM .* info.tem.helpers.arrays.onespix ./ 100;
-CLAY            =   p.soilTexture.CLAY ./ 100;
-SAND            =   p.soilTexture.SAND ./ 100;
-ORGM            =   p.soilTexture.ORGM ./ 100;
+CLAY            =   p.soilTexture.CLAY;
+SAND            =   p.soilTexture.SAND;
+ORGM            =   p.soilTexture.ORGM;
 
 %% Moisture regressions
 
