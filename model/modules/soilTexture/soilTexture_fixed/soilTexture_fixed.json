@@ -1,0 +1,54 @@
+{
+	"params": {
+		"CLAY": {
+			"Name": "Clay content",
+			"Unit": "%",
+			"Default": 20,
+			"LowerBound": 0,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			}
+		},
+		"SILT": {
+			"Name": "Silt content",
+			"Unit": "%",
+			"Default": 30,
+			"LowerBound": 0,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			}
+			},
+		"SAND": {
+			"Name": "Sand content",
+			"Unit": "%",
+			"Default": 60,
+			"LowerBound": 0,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		},
+		"ORGM": {
+			"Name": "Organic matter content",
+			"Unit": "%",
+			"Default": 0,
+			"LowerBound": 0,
+			"UpperBound": 100,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "NaN"
+		}
+	}
+}

@@ -34,10 +34,13 @@ dosSoilend              =  s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoi
 
 % calculate the reduction in hydraulic conductivity due to soil under
 % saturation
-k_unsatfrac_soil        =  min((dosSoilend) .^ (2.* s.wd.p_wSoilBase_Beta(:,wSoilend) + 3),1);
+% k_unsatfrac_soil        =  min((dosSoilend) .^ (2.* s.wd.p_wSoilBase_Beta(:,wSoilend) + 3),1);
 
-% unsaturated hydraulic conductivity and GW downward recharge
-k_unsat                 =  s.wd.p_wSoilBase_kSat(:,wSoilend) .* k_unsatfrac_soil;
+% % unsaturated hydraulic conductivity and GW downward recharge
+% k_unsat                 =  s.wd.p_wSoilBase_kSat(:,wSoilend) .* k_unsatfrac_soil;
+kSat                    =   s.wd.p_wSoilBase_kSat(:,wSoilend);
+Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
+k_unsat                 =   feval(p.pSoil.kUnsatFuncH,p,info,dosSoilend,kSat,Beta);    
 
 k_sat                   =  s.wd.p_wSoilBase_kSat(:,wSoilend) ;
 
