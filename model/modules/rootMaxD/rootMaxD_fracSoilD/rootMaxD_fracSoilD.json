@@ -1,0 +1,28 @@
+{
+	"params": 
+	{
+	"fracRootD2SoilD": 
+		{
+		"Name": "root depth as a fraction of soil depth",
+			"Unit": "-",
+			"Default": 0.5,
+			"LowerBound": 0,
+			"UpperBound": 1,
+			"Distribution": 
+			{
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": "a constant fraction to limit the maximum depth of root uptake"	
+		}	
+	},
+	"devStage":
+		{
+		"experimental": true,
+		"tested": false,
+		"consolidated": false,
+		"published": false,
+		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+		}
+}

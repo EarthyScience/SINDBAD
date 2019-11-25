@@ -10,7 +10,7 @@ function [f,fe,fx,s,d,p] = prec_TranfwSoil_simple(f,fe,fx,s,d,p,info)
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
 % vegFr     : vegetation fraction of grid cell []
-%           (p.pVeg.vegFr)
+%           (s.cd.vegFrac)
 % alphaVeg  : plant specific alpha coefficient in Priestley Taylor
 %           (p.TranfwSoil.alphaVeg)
 %
@@ -22,6 +22,6 @@ function [f,fe,fx,s,d,p] = prec_TranfwSoil_simple(f,fe,fx,s,d,p,info)
 %
 % #########################################################################
 
-fe.TranfwSoil.PETveg     =   f.PET .* p.pVeg.vegFr .* p.TranfwSoil.alphaVeg;
+fe.TranfwSoil.PETveg     =   f.PET .* s.cd.vegFrac .* p.TranfwSoil.alphaVeg;
 
 end

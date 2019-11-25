@@ -9,7 +9,7 @@
 		"nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_cmaes_costComp.json"
 	},
 	"params2opti": [
-		"pVeg.vegFr",
+		"vegFrac.constantVegFrac",
 		"wSnowFrac.CoverParam",
 		"rainSnow.SF_scale",
 		"evapSub.alpha",

@@ -71,7 +71,7 @@ for ii = 1:numel(stateVars)
 end
 % info.tem.model.variables.states.w.wSoilLayers = 
 info.tem.model.variables.states.w.soilLayerDepths       =   info.tem.model.variables.states.input.w.wSoilLayersThickness;
-info.tem.model.variables.states.w.fracRoot2SoilD        =   info.tem.model.variables.states.input.w.fracRoot2SoilThickness;
+% info.tem.model.variables.states.w.fracRoot2SoilD        =   info.tem.model.variables.states.input.w.fracRoot2SoilThickness;
 info.tem.model.variables.states        =   rmfield(info.tem.model.variables.states,'input');
 
 %%    

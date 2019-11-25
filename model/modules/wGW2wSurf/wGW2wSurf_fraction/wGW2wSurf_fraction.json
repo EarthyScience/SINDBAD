@@ -1,0 +1,17 @@
+{
+	"params": {
+		"kGW2Surf": {
+			"Name": "maximum transfer rate between GW and surface water",
+			"Unit": "[d-1]",
+			"Default": 0.15,
+			"LowerBound": 0.05,
+			"UpperBound": 0.95,
+			"Distribution": {
+				"name": "uniform",
+				"funHandle" : "",
+				"params" : []
+			},
+			"Comment": " "
+		}
+	}
+}

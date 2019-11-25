@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = prec_evapInt_simple2(f,fe,fx,s,d,p,info)
 %
 % Inputs:
 %   - fe.rainSnow.rain: rain fall [mm/time]
-%	- p.pVeg.vegFr:     "canopy cover", vegetation fraction of the grid cell
+%	- s.cd.vegFrac:     "canopy cover", vegetation fraction of the grid cell
 %   - p.evapInt.pInt:   maximum storage capacity for a fully developed
 %                       canopy [mm]
 % 
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = prec_evapInt_simple2(f,fe,fx,s,d,p,info)
 
 % interception evaporation is simply the minimum of the vegetation fraction dependent
 % storage and the rainfall
-fe.evapInt.IntCap   =   (p.evapInt.pInt * info.tem.helpers.arrays.onespixtix) .* p.pVeg.vegFr;
+fe.evapInt.IntCap   =   (p.evapInt.pInt * info.tem.helpers.arrays.onespixtix) .* s.cd.vegFrac;
 fx.evapInt          =   min(fe.evapInt.IntCap, fe.rainSnow.rain);
 
 end
