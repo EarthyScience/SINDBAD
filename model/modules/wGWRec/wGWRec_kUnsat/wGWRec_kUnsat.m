@@ -41,7 +41,7 @@ s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-wSoilExc;
 
 % soilDOS                 =   s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
 k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,wSoilend);    
-drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,wSoilend),0));
+drain                   =   min(k_unsat,s.w.wSoil(:,wSoilend));
 fx.QgwDrain(:,tix)      =   drain;
 
 % update storages
