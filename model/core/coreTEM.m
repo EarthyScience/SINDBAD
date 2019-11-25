@@ -3,8 +3,8 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 % runs time loop
 %
 % Requires:
-%   - f: dorcing fe,fx,s,d,p,info)
-%   - fe: extra forcing precomputed outside time loop (exclusively out of runPreCompOnce
+%   - f: forcing
+%   - fe: extra forcing precomputed outside time loop (exclusively out of runPreCompOnce)
 %   - fx: structure with all fluxes
 %   - s: structure with all state variables
 %   - d: structure with all diagnostics
@@ -43,7 +43,6 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 %   - 1.1 on 10.07.2018 : skoirala : cleanup and documentation
 %   - 1.0 on 01.05.2018
 %
-
 %%
 % -------------------------------------------------------------------------
 % Do precomputations
@@ -53,7 +52,6 @@ for prc = 1:numel(info.tem.model.code.prec)
         [f,fe,fx,s,d,p]	= info.tem.model.code.prec(prc).funHandle(f,fe,fx,s,d,p,info);
     end
 end
-
 % -------------------------------------------------------------------------
 % CARBON AND WATER FLUXES ON LAND
 % -------------------------------------------------------------------------
@@ -73,11 +71,11 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
     [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get the amount of water at the beginning of timestep
     % ---------------------------------------------------------------------
-    % 0 - Terrain - to get the terrain params ...    
+    % 0 - Terrain - to get the terrain params   
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.pTopo.funHandle(f,fe,fx,s,d,p,info,tix);             % topographic properties
     % ---------------------------------------------------------------------
-    % 0 - SOIL - to get the soil related params ...
+    % 0 - SOIL - to get the soil related params
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.soilTexture.funHandle(f,fe,fx,s,d,p,info,tix);       % soil texture (sand,silt,clay, and organic matter fraction)
     [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties (hydraulic properties)
@@ -88,9 +86,8 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.rootMaxD.funHandle(f,fe,fx,s,d,p,info,tix);          % maximum rooting depth
     [f,fe,fx,s,d,p]     =   ms.rootFrac.funHandle(f,fe,fx,s,d,p,info,tix);          % distribution of maximum water uptake by root per soil layer
     % ---------------------------------------------------------------------
-    % 0 - VEG - put here any LC changes / phenology / disturbances / structure ...
+    % 0 - VEG - LC changes / phenology / disturbances / structure
     % ---------------------------------------------------------------------
-
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
     [f,fe,fx,s,d,p]     =   ms.fAPAR.funHandle(f,fe,fx,s,d,p,info,tix);             % fraction of Absorbed Photosynthetically Active Radiation
     [f,fe,fx,s,d,p]     =   ms.EVI.funHandle(f,fe,fx,s,d,p,info,tix);               % EVI
@@ -99,9 +96,9 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % 1 - Snow
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);         % add snow fall and calculate SnowCoverFraction
-    [f,fe,fx,s,d,p]     =   ms.evapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update swe
-    [f,fe,fx,s,d,p]     =   ms.snowMelt.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate snowmelt and update s.w.wSnow
+    [f,fe,fx,s,d,p]     =   ms.wSnowFrac.funHandle(f,fe,fx,s,d,p,info,tix);         % add snow fall and calculate snow cover fraction
+    [f,fe,fx,s,d,p]     =   ms.evapSub.funHandle(f,fe,fx,s,d,p,info,tix);           % calculate sublimation and update snow water equivalent
+    [f,fe,fx,s,d,p]     =   ms.snowMelt.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate snowmelt and update s.w.wSnow
     % ---------------------------------------------------------------------
     % 2 - Water 
     % ---------------------------------------------------------------------
@@ -118,7 +115,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % lump the FastRunoff into interflow
     [f,fe,fx,s,d,p]     =   ms.roSurf.funHandle(f,fe,fx,s,d,p,info,tix);            % runoff from surface water storages
     [f,fe,fx,s,d,p]     =   ms.wGWRec.funHandle(f,fe,fx,s,d,p,info,tix);            % recharge the groundwater
-    [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);             % baseflow
+    [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);            % baseflow
     [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
                                                                                     % table in root zone etc)
     % ---------------------------------------------------------------------
@@ -142,7 +139,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cCycleBase.funHandle(f,fe,fx,s,d,p,info,tix);        % pool structure of the carbon cycle
     [f,fe,fx,s,d,p]     =   ms.cTaufTsoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil temperature on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil moisture on decomposition rates
-    [f,fe,fx,s,d,p]     =   ms.cTaufLAI.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate litterfall scalars (that affect the changes in the vegetation k
+    [f,fe,fx,s,d,p]     =   ms.cTaufLAI.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate litterfall scalars (that affect the changes in the vegetation k)
     [f,fe,fx,s,d,p]     =   ms.cTaufpSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil texture on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufpVeg.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of vegetation properties on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);           % combine effects of different factors on decomposition rates
@@ -169,20 +166,17 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cCycle.funHandle(f,fe,fx,s,d,p,info,tix);            % allocate carbon to vegetation components
                                                                                     % litterfall and litter scalars
                                                                                     % calculate carbon cycle/decomposition/respiration in soil
-
     [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
     [f,fe,fx,s,d,p]     =   ms.wGW2wSurf.funHandle(f,fe,fx,s,d,p,info,tix);         % water exchange between surface and groundwater
-
     % ---------------------------------------------------------------------
     % sum up components of fluxes and states
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.sumVariables.funHandle(f,fe,fx,s,d,p,info,tix);      % sum variables (through modelRun.json)
-    [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate the water balance
-    
+    [f,fe,fx,s,d,p]     =   ms.wBalance.funHandle(f,fe,fx,s,d,p,info,tix);          % calculate the water balance    
     % ---------------------------------------------------------------------
     % Gather all variables that are desired and insert them
     % in fx,s,d
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]	= ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);             % store current states in previous state variables 
+    [f,fe,fx,s,d,p]	    =   ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);       % store current states in previous state variables 
 end 
 end
