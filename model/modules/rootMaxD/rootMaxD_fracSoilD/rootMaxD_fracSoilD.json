@@ -6,8 +6,8 @@
 		"Name": "root depth as a fraction of soil depth",
 			"Unit": "-",
 			"Default": 0.5,
-			"LowerBound": 0,
-			"UpperBound": 1,
+			"LowerBound": 0.10,
+			"UpperBound": 0.8,
 			"Distribution": 
 			{
 				"name": "uniform",
