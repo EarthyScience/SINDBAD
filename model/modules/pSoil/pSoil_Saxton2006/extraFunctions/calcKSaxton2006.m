@@ -25,24 +25,15 @@ function K = calcKSaxton2006(s,p,sl)
 %   - 1.0 on 22.11.2019 (skoirala):
 %
 %% 
-
 % #########################################################################
-
-% CONVERT SAND AND CLAY TO PERCENTAGES
-
-% needs ks
-% needs lambda
-% needs Theta_s
-% needs B Beta?
-% s.wd.p_wSoilBase_kSat  
 Beta            =   s.wd.p_wSoilBase_Beta(:,sl);
 kSat            =   s.wd.p_wSoilBase_kSat(:,sl);
 wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
 lambda          =   1 ./ Beta;
-Theta_dos       =   s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl);
+Theta_dos       =   s.w.wSoil(:,sl) ./ wSat;
 
 % -------------------------------------------------------------------------
-% WATER CONDUCTIVITY (mm/day)
+% WATER CONDUCTIVITY (mm/day)       
 K               =   kSat .* ((Theta_dos) .^ (3 + (2 ./ lambda)));
 % -------------------------------------------------------------------------
 

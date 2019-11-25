@@ -69,9 +69,9 @@ if info.tem.spinup.flags.loadSpinup
     load(info.tem.spinup.paths.restartFile)
     % this needs to output sSU and dSU
     if sum(strcmp(who,'sSU')) ~= 1 || sum(strcmp(who,'dSU')) ~= 1
-        err([pad('ERR SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : restart file does not have sSU or dSU fields'])
+        err([pad('ERR SPINUP',20) ' : ' pad('runSpinupTEM',20) ' | restart file does not have sSU or dSU fields'])
     end
-    disp([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : loaded sSU and dSU from restart file'])
+    disp([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' | loaded sSU and dSU from restart file'])
     return
 elseif~info.tem.spinup.flags.runSpinup
     % in this case we need to have SUData

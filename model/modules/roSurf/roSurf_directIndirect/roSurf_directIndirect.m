@@ -26,7 +26,7 @@ roOverland               =   fx.roOverland(:,tix);
 fx.roSurfDir(:,tix)      =   (1-p.roSurf.rf) .* roOverland;
 
 %--> fraction of surface storage that flows out irrespective of input
-fx.wSurfRec(:,tix)      =   p.roSurf.rf .* roOverland;
+fx.wSurfRec(:,tix)       =   p.roSurf.rf .* roOverland;
 fx.roSurfIndir(:,tix)    =   p.roSurf.dc .* s.w.wSurf;
 
 %--> update surface water storage
