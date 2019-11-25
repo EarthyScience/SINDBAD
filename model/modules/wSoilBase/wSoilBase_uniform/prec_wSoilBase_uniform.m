@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = prec_wSoilBase_uniform(f,fe,fx,s,d,p,info)
 nSoilLayers                         =   info.tem.model.variables.states.w.nZix.wSoil;
 soilDepths                          =   info.tem.model.variables.states.w.soilLayerDepths;
 s.wd.p_wSoilBase_soilDepths         =   soilDepths;
-fracRoot2SoilD                      =   info.tem.model.variables.states.w.fracRoot2SoilD;
+% fracRoot2SoilD                      =   info.tem.model.variables.states.w.fracRoot2SoilD;
 
 %--> check if the number of soil layers and number of elements in soil
 %thickness arrays are the same
@@ -42,7 +42,7 @@ s.wd.p_wSoilBase_CLAY               =   info.tem.helpers.arrays.onespixzix.w.wSo
 s.wd.p_wSoilBase_SAND               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_SILT               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_ORGM               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
-s.wd.p_wSoilBase_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+% s.wd.p_wSoilBase_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_soilDepths         =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 % storages
@@ -78,7 +78,7 @@ for sl = 1:nSoilLayers
     s.wd.p_wSoilBase_wWP(:,sl)              =   p.pSoil.thetaWP .* soilDepths(sl);
     s.wd.p_wSoilBase_wSat(:,sl)             =   p.pSoil.thetaSat .* soilDepths(sl);
     s.wd.p_wSoilBase_soilDepths(:,sl)       =   soilDepths(sl);
-    s.wd.p_wSoilBase_fracRoot2SoilD(:,sl)   =   s.wd.p_wSoilBase_fracRoot2SoilD(:,sl) .* fracRoot2SoilD(sl);
+    % s.wd.p_wSoilBase_fracRoot2SoilD(:,sl)   =   s.wd.p_wSoilBase_fracRoot2SoilD(:,sl) .* fracRoot2SoilD(sl);
     s.wd.p_wSoilBase_Alpha(:,sl)            =   p.pSoil.Alpha;
     s.wd.p_wSoilBase_Beta(:,sl)             =   p.pSoil.Beta;
     s.wd.p_wSoilBase_kSat(:,sl)             =   p.pSoil.kSat;

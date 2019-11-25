@@ -10,7 +10,7 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_bare(f,fe,fx,s,d,p,info)
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
 % vegFr     : vegetation fraction of grid cell []
-%           (p.pVeg.vegFr)
+%           (s.cd.vegFrac)
 % ks        : evaporation resistance of soil
 %           (p.evapSoil.ks)
 %
@@ -23,6 +23,6 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_bare(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 %p.evapSoil.ks           =   p.evapSoil.ks * info.tem.helpers.arrays.onestix;
-fe.evapSoil.PETsoil     =   f.PET .* (1-p.pVeg.vegFr);
+
 
 end

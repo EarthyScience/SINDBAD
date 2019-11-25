@@ -7,7 +7,7 @@ function [f,fe,fx,s,d,p] = prec_roSat_BergstroemLinMixVegFr(f,fe,fx,s,d,p,info)
 %                               for vegetated fraction
 %   - p.roSat.berg_scaleS : scaling parameter to define p.berg from p.vegFr
 %                               for non vegetated fraction
-%   - p.pVeg.vegFr:             vegetation (cover) fraction (npix,ntix)
+%   - s.cd.vegFrac:             vegetation (cover) fraction (npix,ntix)
 %
 % Outputs:
 %   - p.roSat.berg : shape parameter runoff-infiltration curve (Bergstroem)
@@ -27,7 +27,7 @@ function [f,fe,fx,s,d,p] = prec_roSat_BergstroemLinMixVegFr(f,fe,fx,s,d,p,info)
 % #########################################################################
 
 % get p.berg as linear function of p.berg_scal and p.vegFr
-p.roSat.berg = p.roSat.berg_scaleV .* p.pVeg.vegFr + p.roSat.berg_scaleS .* (1-p.pVeg.vegFr);
+p.roSat.berg = p.roSat.berg_scaleV .* s.cd.vegFrac + p.roSat.berg_scaleS .* (1-s.cd.vegFrac);
 p.roSat.berg = max(0.1, p.roSat.berg); % do this?
 
 end

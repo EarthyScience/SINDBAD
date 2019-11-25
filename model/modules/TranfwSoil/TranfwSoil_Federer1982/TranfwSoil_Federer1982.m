@@ -24,6 +24,6 @@ function [f,fe,fx,s,d,p] = TranfwSoil_Federer1982(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 
 % T = maxRate*(SM1+SM2)/AWC12
-d.TranfwSoil.TranSup(:,tix) = p.TranfwSoil.maxRate .* sum(s.w.wSoil .* s.wd.p_wSoilBase_fracRoot2SoilD,2)  ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_wSoilBase_fracRoot2SoilD,2);
+d.TranfwSoil.TranSup(:,tix) = p.TranfwSoil.maxRate .* sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)  ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2);
 
 end
