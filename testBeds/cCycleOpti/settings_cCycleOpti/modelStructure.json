@@ -217,6 +217,12 @@
 			"comment": 		"",
             "use4spinup":   true
 		},
+		"vegFrac": 
+		{
+			"apprName": 	"vegFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
 		"wBalance":
 		{
 			"apprName": 	"wBalance_simple",
@@ -237,6 +243,18 @@
 			"runFull": 		false,
 			"comment": 		"",
             "use4spinup":   true
+		},
+		"rootFrac": 
+		{
+			"apprName": 	"rootFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"rootMaxD": 
+		{
+			"apprName": 	"rootMaxD_fracSoilD",
+			"runFull": 		false,
+            "use4spinup":   true
 		}
 	},		
 	"states": 
@@ -252,8 +270,7 @@
 				["w.Snow", 		1, 	0]
 			],
 			"combine":		[false,"wPools",0],
-			"wSoilLayersThickness":    [50, 500,1000],
-			"fracRoot2SoilThickness":  [1, 0.8,0.2]
+			"wSoilLayersThickness":    [50, 500,1000]
 		},
 		"wd": 
 		{

@@ -93,10 +93,10 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wSoilBaseRen';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_scd';
 % 
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_pSoil';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_pSoil';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -113,7 +113,8 @@ else
 end
 
 %% select the tests to run (see explanations at the beginning of this script)
-testCases               =   [1 2 3 4 5];
+testCases               =   [4 5];
+% testCases               =   [1 2 3 4 5];
 % testCases               =   [5];
 % testCases               =   [4];
 % testCases             =   [ 3 ];

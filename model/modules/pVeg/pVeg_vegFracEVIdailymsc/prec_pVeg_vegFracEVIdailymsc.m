@@ -3,12 +3,12 @@ function [f,fe,fx,s,d,p] = prec_pVeg_vegFracEVIdailymsc(f,fe,fx,s,d,p,info)
 % sets p.vegFrac by reading the daily mean seasonal cycle of MODIS
 %
 % Inputs:
-%	- p.pVeg.vegFr:     scaling parameter
+%	- s.cd.vegFrac:     scaling parameter
 %   - f.EVI_MSC:        reads it from the forcing data path + 'MODIS_EVI_MSC.mat'
 %                       (pix,12)
 %
 % Outputs:
-%   - p.pVeg.vegFr   : scaling parameter .* EVI_MSC in size(pix,tix)
+%   - s.cd.vegFrac   : scaling parameter .* EVI_MSC in size(pix,tix)
 %
 % Modifies:
 % 	- 
@@ -54,8 +54,8 @@ tmp3 = (EVI_MSC(:,59) + EVI_MSC(:,60) ) ./ 2;
 d.pVeg.EVI_MSC(:,M==2 & D==29)  = tmp3 .* ones(size(d.pVeg.EVI_MSC(:,M==2 & D==29)));
 
 %% THE FOLLOWING REMAINS HERE
-% scale daily MSC of EVI with the p.pVeg.vegFr
-p.pVeg.vegFr = min(p.pVeg.vegFr .*  f.EVI_MSC, 1);
+% scale daily MSC of EVI with the s.cd.vegFrac
+s.cd.vegFrac = min(s.cd.vegFrac .*  f.EVI_MSC, 1);
 
 
 end

@@ -78,6 +78,12 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
+		"vegFrac": 
+		{
+			"apprName": 	"vegFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
 		"wSnowFrac": 
 		{
 			"apprName": 	"wSnowFrac_HTESSEL",
@@ -122,6 +128,18 @@
 			"apprName": 	"wGWRec_kUnsat",
 			"runFull": 		true,
 			"use4spinup":   true
+		},
+		"rootFrac": 
+		{
+			"apprName": 	"rootFrac_constant",
+			"runFull": 		false,
+            "use4spinup":   true
+		},
+		"rootMaxD": 
+		{
+			"apprName": 	"rootMaxD_fracSoilD",
+			"runFull": 		false,
+            "use4spinup":   true
 		}
 
 	},		
@@ -138,7 +156,6 @@
 				["w.Snow", 		1, 	0]
 			],
 			"wSoilLayersThickness":    [1000],
-			"fracRoot2SoilThickness":  [1],
 			"combine":		[false,"wPools",0]
 		},
 		"wd": 

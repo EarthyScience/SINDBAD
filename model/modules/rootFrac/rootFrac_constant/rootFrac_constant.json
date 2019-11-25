@@ -1,21 +1,21 @@
 {
-	"params":
+	"params": 
 	{
-		"vegFr":
+	"constantRootFrac": 
 		{
-			"Name": "vegetation fraction of grid cell",
-			"Unit": "fraction",
+		"Name": "root fraction",
+			"Unit": "-",
 			"Default": 0.5,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution":
+			"Distribution": 
 			{
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": "Constant vegetation cover fraction"
-		}
+			"Comment": "a constant root fraction to be used for all soil layers"	
+		}	
 	},
 	"devStage":
 		{
@@ -25,5 +25,4 @@
 		"published": false,
 		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
 		}
-
 }

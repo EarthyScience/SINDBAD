@@ -83,6 +83,11 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.pSoil.funHandle(f,fe,fx,s,d,p,info,tix);             % soil properties (hydraulic properties)
     [f,fe,fx,s,d,p]     =   ms.wSoilBase.funHandle(f,fe,fx,s,d,p,info,tix);         % distribution of soil hydraulic properties over depth
     % ---------------------------------------------------------------------
+    % 0 - Root      - root depth and distribution
+    % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.rootMaxD.funHandle(f,fe,fx,s,d,p,info,tix);          % maximum rooting depth
+    [f,fe,fx,s,d,p]     =   ms.rootFrac.funHandle(f,fe,fx,s,d,p,info,tix);          % distribution of maximum water uptake by root per soil layer
+    % ---------------------------------------------------------------------
     % 0 - VEG - put here any LC changes / phenology / disturbances / structure ...
     % ---------------------------------------------------------------------
 
@@ -166,6 +171,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
                                                                                     % calculate carbon cycle/decomposition/respiration in soil
 
     [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
+    [f,fe,fx,s,d,p]     =   ms.wGW2wSurf.funHandle(f,fe,fx,s,d,p,info,tix);         % water exchange between surface and groundwater
 
     % ---------------------------------------------------------------------
     % sum up components of fluxes and states
