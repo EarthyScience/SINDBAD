@@ -85,9 +85,9 @@
             "use4spinup":   false
 		},
 
-		"TranfwSoil":
+		"tranfwSoil":
 		{
-			"apprName": 	"TranfwSoil_simple",
+			"apprName": 	"tranfwSoil_simple",
 			"runFull": 		false,
             "use4spinup":   false
 		},

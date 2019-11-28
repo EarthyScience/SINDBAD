@@ -19,8 +19,8 @@
 		"roSurf.rf",
 		"roSurf.dc",
 		"evapSoil.ks",
-		"TranfwSoil.alphaVeg",
-		"TranfwSoil.k2"
+		"tranfwSoil.alphaVeg",
+		"tranfwSoil.k2"
 	],
 	"checks": " ",
 	"constraints": {

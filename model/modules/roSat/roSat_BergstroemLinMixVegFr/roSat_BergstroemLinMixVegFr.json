@@ -23,42 +23,14 @@
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
-			},
-			"Comment": ""
-		},
-		"smax2": {
-			"Name": "maximum plant available water in 2nd soil layer",
-			"Unit": "mm",
-			"Default": 300,
-			"LowerBound": 0.001,
-			"UpperBound": 1000,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "in Paper: s_max"
-		},
-		"smax1": {
-			"Name": "maximum soil water holding capacity of 1st soil layer",
-			"Unit": "mm",
-			"Default": 4,
-			"LowerBound": 1,
-			"UpperBound": 100,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": " "
+			}
 		}
 	},
-	"devStage":
-		{
+	"devStage":{
 		"experimental": true,
 		"tested": false,
 		"consolidated": false,
 		"published": false,
 		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
-		}
+	}
 }
