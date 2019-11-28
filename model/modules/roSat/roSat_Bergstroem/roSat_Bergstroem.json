@@ -1,25 +1,24 @@
 {
-	"params": {
-		"berg": {
-			"Name": "shape parameter runoff-infiltration curve (Bergstroem)",
-			"Unit": "",
-			"Default": 7,
-			"LowerBound": 0.1,
-			"UpperBound": 8,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "in Paper: s_exp"
-		}
-	},
-	"devStage":
-		{
-		"experimental": true,
-		"tested": false,
-		"consolidated": false,
-		"published": false,
-		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
-		}
+    "params": {
+        "berg": {
+            "Name": "shape parameter runoff-infiltration curve (Bergstroem)",
+            "Unit": "",
+            "Default": 7,
+            "LowerBound": 0.1,
+            "UpperBound": 8,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "in Paper: s_exp"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
 }

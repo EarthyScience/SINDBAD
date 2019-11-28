@@ -1,5 +1,6 @@
 function [f,fe,fx,s,d,p]=prec_cLAI_constant(f,fe,fx,s,d,p,info)
 % sets the value of LAI as a constant 
+%
 % Inputs:
 %	- info helper for array 
 %	- p.cLAI.constantLAI
@@ -9,6 +10,7 @@ function [f,fe,fx,s,d,p]=prec_cLAI_constant(f,fe,fx,s,d,p,info)
 %
 % Modifies:
 % 	- None
+%
 % References:
 %	- 
 %

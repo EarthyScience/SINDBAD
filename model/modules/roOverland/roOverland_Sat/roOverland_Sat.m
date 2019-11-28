@@ -19,5 +19,5 @@ function [f,fe,fx,s,d,p] = roOverland_Sat(f,fe,fx,s,d,p,info,tix)
 %   - 1.0 on 18.11.2019 (skoirala)
 %%
 % #########################################################################
-fx.roOverland(:,tix)         = fx.roSat(:,tix);
+fx.roOverland(:,tix)         =  fx.roSat(:,tix);
 end

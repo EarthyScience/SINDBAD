@@ -1,148 +1,122 @@
 {
-	"1.c": 					"This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and modules 2) user selected", 
-	"2.c":					"approaches 3) structure of water and carbon states",
-	"3.c":					"If approaches are not set here, a default of dummy (blank/empty) will be used",
-	"4.c":					"If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
-
-	"paths": 
-	{
-		"coreTEM":  		"model/core/coreTEM.m",
-		"modulesDir": 		"model/modules/"
-	},
-
-	"modules": 
-	{
-		"evapSoil": 
-		{
-			"apprName": 	"evapSoil_DemSup",
-			"runFull": 		false,
-            "use4spinup":   false
-		},
-		"soilTexture": 
-		{
-			"apprName": 	"soilTexture_fixed",
-			"runFull": 		false,
-            "use4spinup":   true
-		},
-		"pSoil": 
-		{
-			"apprName": 	"pSoil_Saxton1986",
-			"runFull": 		false,
-            "use4spinup":   false
-		},
-		"evapInt": 
-		{
-			"apprName": 	"evapInt_none",
-			"runFull": 		false,
-            "use4spinup":   false
-		},
-		"evapSub": 
-		{
-			"apprName": 	"evapSub_GLEAM",
-			"runFull": 		false,
-            "use4spinup":   false
-		},
-		"fAPAR": 
-		{
-			"apprName": 	"fAPAR_constant",
-			"runFull": 		false,
-            "use4spinup":   true
-		},
-		"roBase": 
-		{
-			"apprName": 	"roBase_Zhang2008",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"snowMelt": 
-		{
-			"apprName": 	"snowMelt_TRn",
-			"runFull": 		false,
-            "use4spinup":   false
-		},
-		"roSurf": 
-		{
-			"apprName": 	"roSurf_directIndirect",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"roSat": 
-		{
-			"apprName": 	"roSat_Bergstroem",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"roOverland": 
-		{
-			"apprName": 	"roOverland_Sat",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"vegFrac": 
-		{
-			"apprName": 	"vegFrac_constant",
-			"runFull": 		false,
-            "use4spinup":   true
-		},
-		"wSnowFrac": 
-		{
-			"apprName": 	"wSnowFrac_HTESSEL",
-			"runFull": 		true,
-            "use4spinup":   false
-		},
-		"sumVariables":
-		{
-			"apprName": 	"sumVariables_simple",
-			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
-            "use4spinup":   true
-		},
-		"wBalance":
-		{
-			"apprName": 	"wBalance_simple",
-			"runFull": 		true,
-			"comment": 		"Do not change the approach here",
-            "use4spinup":   false
-		},
-		"wSoilBase":
-		{
-			"apprName": 	"wSoilBase_uniform",
-			"runFull": 		false,
-            "use4spinup":   true
-		},
-		"rainSnow":
-		{
-			"apprName": 	"rainSnow_forcing",
-			"runFull": 		false,
-			"comment": 		"Do not change the approach here",
-            "use4spinup":   true
-		},
-		"wSoilRec":
-		{
-			"apprName": 	"wSoilRec_kUnsat",
-			"runFull": 		true,
-			"use4spinup":   true
-		},
-		"wGWRec":
-		{
-			"apprName": 	"wGWRec_kUnsat",
-			"runFull": 		true,
-			"use4spinup":   true
-		},
-		"rootFrac": 
-		{
-			"apprName": 	"rootFrac_constant",
-			"runFull": 		false,
-            "use4spinup":   true
-		},
-		"rootMaxD": 
-		{
-			"apprName": 	"rootMaxD_fracSoilD",
-			"runFull": 		false,
-            "use4spinup":   true
-		}
-
-	},		
+    "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and modules 2) user selected",
+    "2.c": "approaches 3) structure of water and carbon states",
+    "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
+    "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
+    "paths": {
+        "coreTEM": "model/core/coreTEM.m",
+        "modulesDir": "model/modules/"
+    },
+    "modules": {
+        "evapInt": {
+            "apprName": "evapInt_none",
+            "runFull": false,
+            "use4spinup": false
+        },
+        "evapSoil": {
+            "apprName": "evapSoil_DemSup",
+            "runFull": false,
+            "use4spinup": false
+        },
+        "evapSub": {
+            "apprName": "evapSub_GLEAM",
+            "runFull": false,
+            "use4spinup": false
+        },
+        "fAPAR": {
+            "apprName": "fAPAR_constant",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "pSoil": {
+            "apprName": "pSoil_Saxton1986",
+            "runFull": false,
+            "use4spinup": false
+        },
+        "rainSnow": {
+            "apprName": "rainSnow_forcing",
+            "comment": "Do not change the approach here",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "roBase": {
+            "apprName": "roBase_Zhang2008",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "roOverland": {
+            "apprName": "roOverland_Sat",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "roSat": {
+            "apprName": "roSat_Bergstroem",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "roSurf": {
+            "apprName": "roSurf_directIndirect",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "rootFrac": {
+            "apprName": "rootFrac_constant",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "rootMaxD": {
+            "apprName": "rootMaxD_fracSoilD",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "snowMelt": {
+            "apprName": "snowMelt_TRn",
+            "runFull": false,
+            "use4spinup": false
+        },
+        "soilTexture": {
+            "apprName": "soilTexture_fixed",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "sumVariables": {
+            "apprName": "sumVariables_simple",
+            "comment": "Do not change the approach here",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "vegFrac": {
+            "apprName": "vegFrac_constant",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "wBalance": {
+            "apprName": "wBalance_simple",
+            "comment": "Do not change the approach here",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "wGWRec": {
+            "apprName": "wGWRec_kUnsat",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSnowFrac": {
+            "apprName": "wSnowFrac_HTESSEL",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "wSoilBase": {
+            "apprName": "wSoilBase_uniform",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "wSoilRec": {
+            "apprName": "wSoilRec_kUnsat",
+            "runFull": true,
+            "use4spinup": true
+        }
+    },		
 	"states": 
 	{
 		"w": 
@@ -192,4 +166,3 @@
 		}
 	}
 }
-

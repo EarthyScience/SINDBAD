@@ -14,7 +14,7 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 %s.wd.p_wSoilBase_wAWC : maximum plant available water content of layers
 % wGWR      : ground water recharge pool [mm] 
 %           (s.wd.wGWR)
-%fx.TranAct  : transpiration [mm]
+%fx.tranAct  : transpiration [mm]
 % OUTPUT
 %s.smPools  : soil moisture content of layers [mm]
 % wSM      : soil moisture sum of all layers [mm]
@@ -32,7 +32,7 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % - sum(s.wd.p_wSoilBase_wWP .* s.wd.p_rootFrac_fracRoot2SoilD,2)),0) ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2),1);
 % AWC4Trans  = 
 
-transp          = fx.TranAct(:,tix);
+transp          = fx.tranAct(:,tix);
 
 % 
 % ET1         = min(ET,s.wd.wGWR);

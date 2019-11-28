@@ -1,17 +1,17 @@
 {
-	"params": {
-		"alpha": {
-			"Name": "an empirical Budiko parameter",
-			"Unit": "-",
-			"Default": 0.5,
-			"LowerBound": 0.01,
-			"UpperBound": 10,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "very rough bounds"
-		}
-	}
+    "params": {
+        "alpha": {
+            "Name": "an empirical Budiko parameter",
+            "Unit": "-",
+            "Default": 0.5,
+            "LowerBound": 0.01,
+            "UpperBound": 10,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "very rough bounds"
+        }
+    }
 }
