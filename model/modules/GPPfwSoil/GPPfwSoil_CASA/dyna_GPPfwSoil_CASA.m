@@ -8,7 +8,7 @@ We      = d.prev.d_GPPfwSoil_SMScGPP;
 
 % otherwise, compute according to CASA
 ndx     = f.Tair(:,tix) > 0 & f.PET(:,tix) > 0;
-We(ndx) = p.GPPfwSoil.Bwe(ndx,1) + d.GPPfwSoil.OmBweOPET(ndx,tix) .* d.TranfwSoil.TranSup(ndx,tix);
+We(ndx) = p.GPPfwSoil.Bwe(ndx,1) + d.GPPfwSoil.OmBweOPET(ndx,tix) .* d.tranfwSoil.TranSup(ndx,tix);
 
 d.GPPfwSoil.SMScGPP(:,tix)	= We;
 

@@ -122,7 +122,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % 3 - Transpiration and GPP
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
-    [f,fe,fx,s,d,p]     =   ms.TranfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % supply limited Transpiration
+    [f,fe,fx,s,d,p]     =   ms.tranfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % supply limited Transpiration
     [f,fe,fx,s,d,p]     =   ms.GPPpot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
     [f,fe,fx,s,d,p]     =   ms.GPPfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of diffuse radiation
     [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of direct radiation
@@ -131,7 +131,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.GPPdem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum
     [f,fe,fx,s,d,p]     =   ms.GPPfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % if 'coupled' requires access to iwue param    
     [f,fe,fx,s,d,p]     =   ms.GPPact.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum    
-    [f,fe,fx,s,d,p]     =   ms.TranAct.funHandle(f,fe,fx,s,d,p,info,tix);           % if coupled computed from GPP
+    [f,fe,fx,s,d,p]     =   ms.tranAct.funHandle(f,fe,fx,s,d,p,info,tix);           % if coupled computed from GPP
     [f,fe,fx,s,d,p]     =   ms.wRootUptake.funHandle(f,fe,fx,s,d,p,info,tix);       % root water uptake (extract water from soil)
     % ---------------------------------------------------------------------
     % 4 - Climate and other effects on metabolic processes
