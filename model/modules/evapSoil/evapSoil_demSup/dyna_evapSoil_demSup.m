@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_evapSoil_DemSup(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_evapSoil_demSup(f,fe,fx,s,d,p,info,tix)
 % calculates the bare soil evaporation from the grid
 %
 % Inputs:

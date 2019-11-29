@@ -11,11 +11,11 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"Tref_RM": {
 			"Name": "Reference temperature for the maintenance respiration",
-			"Unit": "ºC",
+			"Unit": "ï¿½C",
 			"Default": 20,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -24,7 +24,7 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		}
 	}
 }

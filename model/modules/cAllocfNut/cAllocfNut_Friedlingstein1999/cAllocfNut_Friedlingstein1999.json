@@ -1,8 +1,8 @@
 {
 	"params": {
 		"minL": {
-			"Name": NaN,
-			"Unit": NaN,
+			"Name": "",
+			"Unit": "",
 			"Default": 0.1,
 			"LowerBound": 0,
 			"UpperBound": 1,
@@ -14,8 +14,8 @@
 			"Comment": "minimum resource availability (severely limited) [factor]"
 		},
 		"maxL": {
-			"Name": NaN,
-			"Unit": NaN,
+			"Name": "",
+			"Unit": "",
 			"Default": 1,
 			"LowerBound": 0,
 			"UpperBound": 1,

@@ -1,17 +1,17 @@
 {
-	"params": {
-		"k": {
-			"Name": "??Check with martin",
-			"Unit": "??",
-			"Default": 0.01,
-			"LowerBound": -0.01,
-			"UpperBound": 0.1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from M�kal�2008"
-		}
-	}
+    "params": {
+        "k": {
+            "Name": "??Check with martin",
+            "Unit": "??",
+            "Default": 0.01,
+            "LowerBound": -0.01,
+            "UpperBound": 0.1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Maekelae2008"
+        }
+    }
 }

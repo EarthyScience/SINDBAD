@@ -4,8 +4,8 @@ function [boundsCheckFlag] = checkBounds(f,fe,fx,s,d,p,info)
 % provided in info.checks.bounds which can either be:
 % 'all': checks all variables
 % a cellstr with e.g. {'f','fx'}
-% a cellstr with variable names e.g. {'f.Rain','fx.Transp}
-% or a combination of the latter two e.g. {'f','fx.Transp'}
+% a cellstr with variable names e.g. {'f.Rain','fx.tranAct}
+% or a combination of the latter two e.g. {'f','fx.tranAct'}
 % ONLY if info.tem.model.flags.checks.numeric = true
 %
 % bounds are assumed to be given in info.variables.bounds which is a cellarray with:

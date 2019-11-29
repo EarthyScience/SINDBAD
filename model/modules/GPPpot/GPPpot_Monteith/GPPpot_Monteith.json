@@ -1,18 +1,17 @@
 {
-	"params": 
-	{
-		"maxrue": {
-			"Name": "",
-			"Unit": "",
-			"Default": 2,
-			"LowerBound": 0.1,
-			"UpperBound": 5,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "very rough bounds"
-		}
-	}
+    "params": {
+        "maxrue": {
+            "Name": "",
+            "Unit": "",
+            "Default": 2,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "very rough bounds"
+        }
+    }
 }

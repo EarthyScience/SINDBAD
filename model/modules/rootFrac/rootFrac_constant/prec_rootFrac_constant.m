@@ -34,12 +34,16 @@ maxRootDepth                        =   min(s.wd.maxRootD,totalSoilDepth); % max
 %--> create the arrays to fill in the soil properties
 s.wd.p_rootFrac_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 %--> set the properties
+rootStop                            =   0;
 for sl = 1:nSoilLayers
     soilD = sum(soilDepths(1:sl));
-    if soilD < maxRootDepth
-        s.wd.p_rootFrac_fracRoot2SoilD(:,sl)   =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* constantRootFrac;
+    if ~rootStop
+        s.wd.p_rootFrac_fracRoot2SoilD(:,sl)        =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* constantRootFrac;
     else
-        s.wd.p_rootFrac_fracRoot2SoilD(:,sl)   =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* 0;
+        s.wd.p_rootFrac_fracRoot2SoilD(:,sl)        =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* 0;
+    end
+    if soilD > maxRootDepth
+        rootStop = 1;
     end
 end
 

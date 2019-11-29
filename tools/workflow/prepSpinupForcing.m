@@ -22,6 +22,8 @@ function fSpin	=	prepSpinupForcing(f,info)
 % References:
 %   -
 % Versions:
+%   - 1.2 om 29.11.2019: skoirala: do not recycle MSC when variables do not
+%   have a time dimension
 %   - 1.1 on 10.07.2018: includes handling of spinup forcing from other
 %   functions
 %   - 1.0 on 10.04.2018
@@ -44,10 +46,16 @@ if info.tem.spinup.flags.recycleMSC
     fns     = fieldnames(f);
     for jj  = 1:numel(fns)
         if strcmpi(fns{jj},'Year'),continue,end
-        tmp             =	f.(fns{jj});
-        tmp             =	getForcingMSC(tmp,f.Year,info);
-        fSpin.(fns{jj})	=	tmp;
-        YearSize        =   size(tmp);
+        if strcmp(info.tem.forcing.variables.(fns{jj}).spaceTimeType,'spatial')
+            %--> skoirala: if part of the forcing data does not have a
+            %temporal dimension, just copy it to the spinup forcing
+            fSpin.(fns{jj})	=	f.(fns{jj});
+        else  
+            tmp             =	f.(fns{jj});
+            tmp             =	getForcingMSC(tmp,f.Year,info);
+            fSpin.(fns{jj})	=	tmp;
+            YearSize        =   size(tmp);
+        end
     end
     % dummy year for the spinup
     fSpin.Year          = ones(YearSize,info.tem.model.rules.arrayPrecision) .* 1901;
