@@ -1,43 +1,43 @@
 {
-	"params": {
-		"TimConst": {
-			"Name": "?? Check with martin",
-			"Unit": "days",
-			"Default": 5,
-			"LowerBound": 1,
-			"UpperBound": 20,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from Mäkalä2008"
-		},
-		"X0": {
-			"Name": "?? Check with martin",
-			"Unit": NaN,
-			"Default": -5,
-			"LowerBound": -15,
-			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from Mäkalä2008"
-		},
-		"Smax": {
-			"Name": "?? Check with martin",
-			"Unit": NaN,
-			"Default": 20,
-			"LowerBound": 10,
-			"UpperBound": 30,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from Mäkalä2008"
-		}
-	}
+    "params": {
+        "TimConst": {
+            "Name": "?? Check with martin",
+            "Unit": "days",
+            "Default": 5,
+            "LowerBound": 1,
+            "UpperBound": 20,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Maekelae2008"
+        },
+        "X0": {
+            "Name": "?? Check with martin",
+            "Unit": "",
+            "Default": -5,
+            "LowerBound": -15,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Maekelae2008"
+        },
+        "Smax": {
+            "Name": "?? Check with martin",
+            "Unit": "",
+            "Default": 20,
+            "LowerBound": 10,
+            "UpperBound": 30,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Maekelae2008"
+        }
+    }
 }

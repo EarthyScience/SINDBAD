@@ -7,7 +7,7 @@
 			"LowerBound": 0.001,
 			"UpperBound": "Inf",
 			"Distribution": NaN,
-			"Comment": NaN
+			"Comment": ""
 		}
 	}
 }

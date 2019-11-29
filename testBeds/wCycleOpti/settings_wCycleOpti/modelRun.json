@@ -43,7 +43,7 @@
 		"evapTotal":
 		{
 		"destination": "fx",
-		"components":["fx.evapInt","fx.Transp","fx.evapSoil","fx.evapSub"],
+		"components":["fx.evapInt","fx.tranAct","fx.evapSoil","fx.evapSub"],
 		"balance": true
 		},
 		"wTotal":

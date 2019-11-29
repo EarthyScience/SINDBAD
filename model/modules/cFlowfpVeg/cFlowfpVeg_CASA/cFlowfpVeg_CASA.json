@@ -2,7 +2,7 @@
 	"params": {
 		"WOODLIGFRAC": {
 			"Name": "fraction of wood that is lignin",
-			"Unit": "[]",
+			"Unit": "",
 			"Default": 0.4,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -10,8 +10,7 @@
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
-			},
-			"Comment": NaN
+			}
 		}
-    }
+    }	
 }

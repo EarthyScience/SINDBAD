@@ -1,17 +1,17 @@
 {
-	"params": {
-		"Bwe": {
-			"Name": "CASA We",
-			"Unit": "[]",
-			"Default": 0.5,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": NaN
-		}
-	}
+    "params": {
+        "Bwe": {
+            "Name": "CASA We",
+            "Unit": "[]",
+            "Default": 0.5,
+            "LowerBound": null,
+            "UpperBound": null,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    }
 }

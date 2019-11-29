@@ -7,11 +7,11 @@
             "LowerBound": NaN,
             "UpperBound": NaN,
             "Distribution": NaN,
-            "Comment": NaN
+            "Comment": ""
         },
 		"NONSOL2SOLLIGNIN": {
-			"Name": NaN,
-			"Unit": NaN,
+			"Name": "",
+			"Unit": "",
 			"Default": 2.22,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -20,10 +20,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"MTFA": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 0.85,
 			"LowerBound": NaN,
@@ -33,10 +33,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"MTFB": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 0.018,
 			"LowerBound": NaN,
@@ -46,11 +46,11 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"C2LIGNIN": {
-			"Name": NaN,
-			"Unit": NaN,
+			"Name": "",
+			"Unit": "",
 			"Default": 0.65,
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -59,10 +59,10 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
 		"LIGEFFA": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 3,
 			"LowerBound": NaN,
@@ -72,7 +72,7 @@
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": NaN
+			"Comment": ""
 		},
         "LITC2N_per_PFT": {
             "Name": "carbon-to-nitrogen ratio in litter",
@@ -81,7 +81,7 @@
             "LowerBound": NaN,
             "UpperBound": NaN,
             "Distribution": NaN,
-            "Comment": NaN
+            "Comment": ""
         }
 	}
 }

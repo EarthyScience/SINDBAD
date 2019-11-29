@@ -4,10 +4,9 @@
 			"Name": "maximum value for the minimum LAI for litter scalars",
 			"Unit": "m2/m2",
 			"Default": 12,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": NaN,
-			"Comment": NaN
+			"LowerBound": 11,
+			"UpperBound": 13,
+			"Distribution": ""
 		},
 		"kRTLAI": {
 			"Name": "constant fraction of root litter imputs",
@@ -15,8 +14,7 @@
 			"Default": 0.3,
 			"LowerBound": 0,
 			"UpperBound": 1,
-			"Distribution": NaN,
-			"Comment": NaN
+			"Distribution": ""
 		}
 	}
 }

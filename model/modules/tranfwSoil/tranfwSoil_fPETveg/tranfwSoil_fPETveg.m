@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_tranfwSoil_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = tranfwSoil_vegFrac(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % PURPOSE	: transpiration from vegetated area
 %
@@ -37,8 +37,9 @@ function [f,fe,fx,s,d,p] = dyna_tranfwSoil_simple(f,fe,fx,s,d,p,info,tix)
 
 % scale the potential with the moisture status and take the minimum of what
 % is available
+PETveg                          =   f.PET(:,tix) .* s.cd.vegFrac .* p.tranfwSoil.alphaVeg;
 
-d.tranfwSoil.TranSup(:,tix)     = min(fe.tranfwSoil.PETveg(:,tix),sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2));
+d.tranfwSoil.TranSup(:,tix)     =   min(PETveg,sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2));
 
 % d.tranfwSoil.TranSup(:,tix) = s.w.wSoil(:,1) .* p.tranfwSoil.k1 + s.w.wSoil(:,2) .* p.tranfwSoil.k2;
 % % d.tranfwSoil.TranSup(:,tix)

@@ -122,7 +122,7 @@
 		},
 		"evapSoil": 
 		{
-			"apprName": 	"evapSoil_DemSup",
+			"apprName": 	"evapSoil_demSup",
 			"runFull": 		false,
             "use4spinup":   false
 		},

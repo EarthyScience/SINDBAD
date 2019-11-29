@@ -1,17 +1,17 @@
 {
-	"params": {
-		"maxFlux": {
-			"Name": "maximum flux between the soil and the surface water",
-			"Unit": "[mm d]",
-			"Default": 10,
-			"LowerBound": 0,
-			"UpperBound": 50,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": " "
-		}
-	}
+    "params": {
+        "maxFlux": {
+            "Name": "maximum flux between the soil and the surface water",
+            "Unit": "[mm d]",
+            "Default": 10,
+            "LowerBound": 0,
+            "UpperBound": 50,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": " "
+        }
+    }
 }
