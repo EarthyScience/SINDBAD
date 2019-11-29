@@ -1,17 +1,17 @@
 {
-	"params": {
-		"gamma": {
-			"Name": "?? CHECK WITH MARTIN",
-			"Unit": NaN,
-			"Default": 0.04,
-			"LowerBound": 0.001,
-			"UpperBound": 0.1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "from Mäkalä2008; units ok?"
-		}
-	}
+    "params": {
+        "gamma": {
+            "Name": "?? CHECK WITH MARTIN",
+            "Unit": "",
+            "Default": 0.04,
+            "LowerBound": 0.001,
+            "UpperBound": 0.1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "from Maekelae2008; units ok?"
+        }
+    }
 }

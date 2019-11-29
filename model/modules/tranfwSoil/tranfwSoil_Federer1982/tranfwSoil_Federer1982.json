@@ -1,17 +1,17 @@
 {
-	"params": {
-		"maxRate": {
-			"Name": "?? Check with martin",
-			"Unit": "mm/day",
-			"Default": 5,
-			"LowerBound": 0.1,
-			"UpperBound": 20,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "very rough bounds"
-		}
-	}
+    "params": {
+        "maxRate": {
+            "Name": "?? Check with martin",
+            "Unit": "mm/day",
+            "Default": 5,
+            "LowerBound": 0.1,
+            "UpperBound": 20,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "very rough bounds"
+        }
+    }
 }

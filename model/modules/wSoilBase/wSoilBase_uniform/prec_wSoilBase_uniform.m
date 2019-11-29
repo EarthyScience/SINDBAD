@@ -54,6 +54,11 @@ s.wd.p_wSoilBase_wSat               =   info.tem.helpers.arrays.onespixzix.w.wSo
 s.wd.p_wSoilBase_kSat               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_kLookUp            =   repmat(info.tem.helpers.arrays.onespixzix.w.wSoil,1,1,p.wSoilBase.nLookup);
+
+dos_lookUp                          =   0:1/p.wSoilBase.nLookup:1;
+sLStruct                            =   struct;
+sLStruct.w.wSoil                    =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 s.wd.p_wSoilBase_psiSat             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_psiFC              =   info.tem.helpers.arrays.onespixzix.w.wSoil;
@@ -67,7 +72,6 @@ s.wd.p_wSoilBase_thetaWP            =   info.tem.helpers.arrays.onespixzix.w.wSo
 % retention coefficients
 s.wd.p_wSoilBase_Alpha              =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_Beta               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
-
 %--> set the properties
 for sl = 1:nSoilLayers
     s.wd.p_wSoilBase_CLAY(:,sl)             =   p.soilTexture.CLAY;
@@ -90,6 +94,12 @@ for sl = 1:nSoilLayers
     s.wd.p_wSoilBase_thetaSat(:,sl)         =   p.pSoil.thetaSat;
     s.wd.p_wSoilBase_thetaFC(:,sl)          =   p.pSoil.thetaFC;
     s.wd.p_wSoilBase_thetaWP(:,sl)          =   p.pSoil.thetaWP;
+    sLookup                                 =   0:s.wd.p_wSoilBase_wSat(:,sl)/p.wSoilBase.nLookup:s.wd.p_wSoilBase_wSat(:,sl);
+    for nL=1:p.wSoilBase.nLookup 
+        sLStruct.w.wSoil(:,sl)              = sLookup(nL)
+        s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =  feval(p.pSoil.kUnsatFuncH,sLStruct,p,sl);
+    end
+    
 end
 
 %--> get the plant available water available

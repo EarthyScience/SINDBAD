@@ -1,22 +1,22 @@
 {
 	"params": {
 		"Q10": {
-			"Name": NaN,
+			"Name": "",
 			"Unit": "[]",
 			"Default": 2,
 			"LowerBound": 0,
 			"UpperBound": 10,
 			"Distribution": NaN,
-			"Comment": NaN
+			"Comment": ""
 		},
 		"Tref": {
-			"Name": NaN,
-			"Unit": "ºC",
+			"Name": "",
+			"Unit": "ï¿½C",
 			"Default": 30,
 			"LowerBound": 0,
 			"UpperBound": 40,
 			"Distribution": NaN,
-			"Comment": NaN
+			"Comment": ""
 		}
 	}
 }

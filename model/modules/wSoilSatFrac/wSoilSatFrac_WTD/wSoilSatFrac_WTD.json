@@ -1,17 +1,17 @@
 {
-	"params": {
-		"CritDepth": {
-			"Name": NaN,
-			"Unit": "m",
-			"Default": 0.5,
-			"LowerBound": 0,
-			"UpperBound": 2,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": NaN
-		}
-	}
+    "params": {
+        "CritDepth": {
+            "Name": "",
+            "Unit": "m",
+            "Default": 0.5,
+            "LowerBound": 0,
+            "UpperBound": 2,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    }
 }

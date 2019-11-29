@@ -2,7 +2,7 @@
 	"params": {
 		"berg_scale": {
 			"Name": "linear scaling parameter for berg",
-			"Unit": NaN,
+			"Unit": "",
 			"Default": 3,
 			"LowerBound": 0.1,
 			"UpperBound": 5,

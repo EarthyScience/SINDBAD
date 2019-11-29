@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_evapSoil_DemSup(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_evapSoil_demSup(f,fe,fx,s,d,p,info)
 % calculates the bare soil evaporation from demand-supply limited approach
 %
 % Inputs:
