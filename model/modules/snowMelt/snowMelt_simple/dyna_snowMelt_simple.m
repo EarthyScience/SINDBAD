@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = dyna_snowMelt_simple(f,fe,fx,s,d,p,info,tix)
 
 % snow melt (mm/day) is calculated as a simple function of temperature
 % and scaled with the snow covered fraction
-fx.snowMelt(:,tix) = min( s.w.wSnow , fe.snowMelt.Tterm(:,tix) .* s.wd.wSnowFrac );
+fx.snowMelt(:,tix) = minsb( s.w.wSnow , fe.snowMelt.Tterm(:,tix) .* s.wd.wSnowFrac );
 
 % update the snow pack
 s.w.wSnow = s.w.wSnow - fx.snowMelt(:,tix);

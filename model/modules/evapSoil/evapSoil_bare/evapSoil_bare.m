@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = evapSoil_bare(f,fe,fx,s,d,p,info,tix)
 fe.evapSoil.PETsoil(:,tix)     =   f.PET(:,tix) .* (1-s.cd.vegFrac);
 
 %--> calculate actual ET as a fraction of PETsoil
-fx.evapSoil(:,tix) = min(fe.evapSoil.PETsoil(:,tix), s.w.wSoil(:,1) .* p.evapSoil.ks);
+fx.evapSoil(:,tix) = minsb(fe.evapSoil.PETsoil(:,tix), s.w.wSoil(:,1) .* p.evapSoil.ks);
 
 % update soil moisture of the first layer
 s.w.wSoil(:,1) = s.w.wSoil(:,1) - fx.evapSoil(:,tix);

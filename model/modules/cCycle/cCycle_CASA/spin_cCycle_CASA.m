@@ -88,11 +88,11 @@ end
 %% solve it for each pool individually
 for zix = zixVecOrder
     % general k loss
-    cLossRate(:,zix,:) 	= max(min(d.storedStates.p_cTauAct_k(:,zix,:),1),0);
+    cLossRate(:,zix,:) 	= maxsb(minsb(d.storedStates.p_cTauAct_k(:,zix,:),1),0);
 
     if any(zix==info.tem.model.variables.states.c.zix.cVeg)
         % additional losses (RA) in veg pools
-        cLoxxRate(:,zix,:)	= min(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
+        cLoxxRate(:,zix,:)	= minsb(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
         % gains in veg pools
         gppShp           = reshape(fx.gpp,nPix,1,nTix); % could be fxT?
         cGain(:,zix,:)	= d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;

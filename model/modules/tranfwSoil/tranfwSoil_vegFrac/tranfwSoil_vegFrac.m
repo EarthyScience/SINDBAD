@@ -39,16 +39,16 @@ function [f,fe,fx,s,d,p] = tranfwSoil_fPETveg(f,fe,fx,s,d,p,info,tix)
 % is available
 PETveg                          =   f.PET(:,tix) .* s.cd.vegFrac .* p.tranfwSoil.alphaVeg;
 
-d.tranfwSoil.TranSup(:,tix)     =   min(PETveg,sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2));
+d.tranfwSoil.TranSup(:,tix)     =   minsb(PETveg,sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2));
 
 % d.tranfwSoil.TranSup(:,tix) = s.w.wSoil(:,1) .* p.tranfwSoil.k1 + s.w.wSoil(:,2) .* p.tranfwSoil.k2;
 % % d.tranfwSoil.TranSup(:,tix)
-% fx.Transp(:,tix) = min(fe.tranfwSoil.PETveg(:,tix), d.tranfwSoil.TranSup(:,tix));
+% fx.Transp(:,tix) = minsb(fe.tranfwSoil.PETveg(:,tix), d.tranfwSoil.TranSup(:,tix));
 
 % % distribute the transpiration loss among soil layers
-% %fx.RootUp1(:,tix) = max(0, max(fx.Transp(:,tix) - s.w.wSoil(:,1) .* p.tranfwSoil.k, fx.Transp(:,tix) - s.w.wSoil(:,2)));
-% fx.RootUp1(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,1) .* p.tranfwSoil.k1) ./ d.tranfwSoil.TranSup(:,tix)));
-% fx.RootUp2(:,tix) = max(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,2) .* p.tranfwSoil.k2) ./ d.tranfwSoil.TranSup(:,tix)));
+% %fx.RootUp1(:,tix) = maxsb(0, maxsb(fx.Transp(:,tix) - s.w.wSoil(:,1) .* p.tranfwSoil.k, fx.Transp(:,tix) - s.w.wSoil(:,2)));
+% fx.RootUp1(:,tix) = maxsb(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,1) .* p.tranfwSoil.k1) ./ d.tranfwSoil.TranSup(:,tix)));
+% fx.RootUp2(:,tix) = maxsb(0, fx.Transp(:,tix) .* ((s.w.wSoil(:,2) .* p.tranfwSoil.k2) ./ d.tranfwSoil.TranSup(:,tix)));
 
 % % fx.RootUp2(:,tix) = fx.Transp(:,tix) - fx.RootUp1(:,tix);
 

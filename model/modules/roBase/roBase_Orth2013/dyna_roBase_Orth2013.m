@@ -32,7 +32,7 @@ function [f,fe,fx,s,d,p] = dyna_roBase_Orth2013(f,fe,fx,s,d,p,info,tix)
 
 % calculate Q from delay of previous days
 if tix>60
-	tmin = max(tix-60,1);
+	tmin = maxsb(tix-60,1);
 	fx.roTotal(:,tix) = sum(fx.roInt(:,tmin:tix) .* fe.roBase.Rdelay,2);		
 else % or accumulate land runoff in GW
 	fx.roTotal(:,tix) = 0;

@@ -81,7 +81,7 @@ BGME(ndx4)	= 0.5;
 % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
 ndxn        = (f.PET(:,tix) <= 0);
 BGME(ndxn)	= pBGME(ndxn);
-BGME        = max(min(BGME,1),0);
+BGME        = maxsb(minsb(BGME,1),0);
 
 % FEED IT TO THE STRUCTURE
 d.cTaufwSoil.fwSoil(:,tix)	= BGME; 

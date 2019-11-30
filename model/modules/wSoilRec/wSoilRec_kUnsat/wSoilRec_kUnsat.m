@@ -26,13 +26,13 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 % nSoilLayers                 =   s.wd.p_wSoilBase_nSoilLayers;
 nSoilLayers                 =   info.tem.model.variables.states.w.nZix.wSoil;
 for sl=1:nSoilLayers-1
-    wSoilExc                =   max(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
+    wSoilExc                =   maxsb(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
     % soilDOS                 =   s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl);
     % kSat                    =   s.wd.p_wSoilBase_kSat(:,sl);
     % Beta                    =   s.wd.p_wSoilBase_Beta(:,sl);
-    k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,sl);    
-    drain                   =   nanmin(k_unsat,nanmax(s.w.wSoil(:,sl),0));
+    k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
+    drain                   =   nanmin(k_unsat,maxsb(s.w.wSoil(:,sl),0));
     % update storages
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl)-drain;
     s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain+wSoilExc;
