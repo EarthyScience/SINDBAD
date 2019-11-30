@@ -31,7 +31,7 @@ tmp(tmp<0)                      =   0;
 fe.evapSoil.PETsoil(:,tix)      =   tmp;
 
 %--> scale the potential with the a fraction of available water and get the minimum of the current moisture
-fx.evapSoil(:,tix)              =   min(fe.evapSoil.PETsoil(:,tix) .* s.w.wSoil(:,1) ./ s.wd.p_wSoilBase_wAWC(:,1) , s.w.wSoil(:,1));
+fx.evapSoil(:,tix)              =   minsb(fe.evapSoil.PETsoil(:,tix) .* s.w.wSoil(:,1) ./ s.wd.p_wSoilBase_wAWC(:,1) , s.w.wSoil(:,1));
 
 %--> update soil moisture of the uppermost soil layer
 s.w.wSoil(:,1)                  =   s.w.wSoil(:,1) - fx.evapSoil(:,tix);

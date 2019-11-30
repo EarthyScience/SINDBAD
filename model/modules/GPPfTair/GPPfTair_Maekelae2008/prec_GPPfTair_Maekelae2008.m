@@ -46,8 +46,8 @@ for ii  =   2:info.tem.helpers.sizes.nTix
     X(:,ii) =   X(:,ii-1) + 1 / TimConst .* (f.TairDay(:,ii) - X(:,ii-1));
 end
 
-S           =   max(X - X0 ,0);
-vsc         =   max(min(S ./ Smax,1),0);
+S           =   maxsb(X - X0 ,0);
+vsc         =   maxsb(minsb(S ./ Smax,1),0);
 
 d.GPPfTair.TempScGPP = vsc;
 

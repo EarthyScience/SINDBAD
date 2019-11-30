@@ -249,7 +249,11 @@ info.tem.model.code.variables.to.keepShortName                  =   keptVars_sho
 %--> variables to create: all outputs except s. and p.
 tf                                                              =   ~startsWith(AllOutputs,{'s.','p.'});
 
-info.tem.model.code.variables.to.create                         =   AllOutputs(tf);
+%--> skoirala: adding roTotal and evapTotal to variables to create
+allOuts                                                         =   AllOutputs(tf);
+allOuts{end+1}                                                  =   'fx.roTotal';
+allOuts{end+1}                                                  =   'fx.evapTotal';
+info.tem.model.code.variables.to.create                         =   allOuts;
 
 % --> sujan (11.11.2019): check of the variables to write. Make sure the
 % variables to write from output.json appears in the code. Also, all the

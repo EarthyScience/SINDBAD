@@ -1,4 +1,4 @@
-function K = calcKSaxton2006(s,p,sl)
+function K = calcKSaxton2006(s,p,info,sl)
 % calculates the soil hydraulic conductivity for a given moisture content based on Saxton 2006
 %
 % Inputs:
@@ -26,16 +26,42 @@ function K = calcKSaxton2006(s,p,sl)
 %
 %% 
 % #########################################################################
-Beta            =   s.wd.p_wSoilBase_Beta(:,sl);
-kSat            =   s.wd.p_wSoilBase_kSat(:,sl);
 wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
-lambda          =   1 ./ Beta;
 Theta_dos       =   s.w.wSoil(:,sl) ./ wSat;
-
-% -------------------------------------------------------------------------
-% WATER CONDUCTIVITY (mm/day)       
-K               =   kSat .* ((Theta_dos) .^ (3 + (2 ./ lambda)));
-% -------------------------------------------------------------------------
-
+if p.wSoilBase.makeLookup
+    Beta            =   s.wd.p_wSoilBase_Beta(:,sl);
+    kSat            =   s.wd.p_wSoilBase_kSat(:,sl);
+    lambda          =   1 ./ Beta;
+    % -------------------------------------------------------------------------
+    % WATER CONDUCTIVITY (mm/day)
+    K               =   kSat .* ((Theta_dos) .^ (3 + (2 ./ lambda)));
+    % -------------------------------------------------------------------------
+else
+    lkDat                                       =   squeeze(s.wd.p_wSoilBase_kLookUp(:,sl,:));
+    Theta_dos(Theta_dos<0) = 0;
+    Theta_dos(imag(Theta_dos)~=0) = 0;
+    if size(lkDat,2) == 1
+        lkDat       = lkDat';
+    end
+    
+    lkInd                                       =   floor(Theta_dos .* p.wSoilBase.nLookup);
+    lkInd(lkInd==0)                             =   1;
+    lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
+    idxArray= zeros(size(lkDat));
+    for i = 1: length(lkDat)
+        idxArray(i,lkInd(i)) = 1;
+    end
+        K                                           =   lkDat(idxArray ==1);
+%     K                                           =   lkInd;
+%     lkInd(lkInd==0)                             =   1;
+%     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
+%     K = lkDat(:,lkInd);
+%     K  = K(:,1);
+end
+% a=rand(904,1);
+% b=repmat(rng',1,size(a,1))';
+% c=abs(a-b);
+% d=c*0;
+% d(c==min(c,[],2))=1;
 
 end % function

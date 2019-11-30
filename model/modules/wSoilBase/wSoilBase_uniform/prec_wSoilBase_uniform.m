@@ -55,11 +55,12 @@ s.wd.p_wSoilBase_kSat               =   info.tem.helpers.arrays.onespixzix.w.wSo
 s.wd.p_wSoilBase_kFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kLookUp            =   repmat(info.tem.helpers.arrays.onespixzix.w.wSoil,1,1,p.wSoilBase.nLookup);
+p.wSoilBase.makeLookup              =   1;
 
-dos_lookUp                          =   0:1/p.wSoilBase.nLookup:1;
-sLStruct                            =   struct;
-sLStruct.w.wSoil                    =   info.tem.helpers.arrays.onespixzix.w.wSoil;
-
+if info.tem.model.flags.useLookupK
+    sLStruct                        =   struct;
+    sLStruct.w.wSoil                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+end
 s.wd.p_wSoilBase_psiSat             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_psiFC              =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_psiWP              =   info.tem.helpers.arrays.onespixzix.w.wSoil;
@@ -94,15 +95,20 @@ for sl = 1:nSoilLayers
     s.wd.p_wSoilBase_thetaSat(:,sl)         =   p.pSoil.thetaSat;
     s.wd.p_wSoilBase_thetaFC(:,sl)          =   p.pSoil.thetaFC;
     s.wd.p_wSoilBase_thetaWP(:,sl)          =   p.pSoil.thetaWP;
-    sLookup                                 =   0:s.wd.p_wSoilBase_wSat(:,sl)/p.wSoilBase.nLookup:s.wd.p_wSoilBase_wSat(:,sl);
-    for nL=1:p.wSoilBase.nLookup 
-        sLStruct.w.wSoil(:,sl)              = sLookup(nL)
-        s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =  feval(p.pSoil.kUnsatFuncH,sLStruct,p,sl);
-    end
     
+    if info.tem.model.flags.useLookupK
+        sLookup                                 =   0:s.wd.p_wSoilBase_wSat(:,sl)/p.wSoilBase.nLookup:s.wd.p_wSoilBase_wSat(:,sl);
+        sLStruct.wd                             =   s.wd;
+        for nL=1:p.wSoilBase.nLookup
+            sLStruct.w.wSoil(:,sl)              =  sLookup(nL);
+            s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =  feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
+        end
+    end
 end
-
 %--> get the plant available water available
-s.wd.p_wSoilBase_wAWC                       =   s.wd.p_wSoilBase_wFC - s.wd.p_wSoilBase_wWP;
+if info.tem.model.flags.useLookupK
+p.wSoilBase.makeLookup                          =   0;
+end
+s.wd.p_wSoilBase_wAWC                           =   s.wd.p_wSoilBase_wFC - s.wd.p_wSoilBase_wWP;
 
 end %function

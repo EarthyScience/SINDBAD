@@ -21,6 +21,7 @@
 		"genRedMemCode": 		false,
 		"runOpti": 				false,
 		"calcCost":				false,
+		"useLookupK":			true,	
 		"checks":
 		{
 			"massBalance":
@@ -38,7 +39,7 @@
 		"roTotal":
 		{
 		"destination": "fx",
-		"components":["fx.roInt","fx.roBase"],
+		"components":["fx.roSurf","fx.roBase"],
 		"balance": true
 		},
 		"evapTotal":

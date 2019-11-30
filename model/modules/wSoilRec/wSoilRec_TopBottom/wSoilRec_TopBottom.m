@@ -29,7 +29,7 @@ function [f,fe,fx,s,d,p] = wSoilRec_TopBottom(f,fe,fx,s,d,p,info,tix)
 nSoilLayers = s.wd.p_wSoilBase_nSoilLayers;
 
 for sl=1:nSoilLayers
-    ip = min(s.wd.p_wSoilBase_wAWC(:,sl) - s.w.wSoil(:,sl),s.wd.WBP);
+    ip = minsb(s.wd.p_wSoilBase_wAWC(:,sl) - s.w.wSoil(:,sl),s.wd.WBP);
     s.w.wSoil(:,sl) = s.w.wSoil(:,sl) + ip;
     s.wd.WBP = s.wd.WBP - ip;
 end
