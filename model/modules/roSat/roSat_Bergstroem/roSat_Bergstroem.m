@@ -29,14 +29,16 @@ tmp_smaxVeg         = sum(s.wd.p_wSoilBase_wSat,2);
 tmp_SoilTotal       = sum(s.w.wSoil, 2);
 
 % calculate land runoff from incoming water and current soil moisture
-tmp_InfExFrac       =   min(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+tmp_InfExFrac       =   minsb(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+
+% tmp_InfExFrac       =   minsb(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 fx.roSat(:,tix)     =   s.wd.WBP .* tmp_InfExFrac;
 
 % update water balance
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil(:,tix)    =   min(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
+fx.InSoil(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
 s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.InSoil(:,tix);
 
 s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
@@ -45,7 +47,7 @@ s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
 
 % reallocate excess of 1st layer to deeper layers 
 for sl  =   2:size(s.w.wSoil,2)
-  ip                =   min(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
+  ip                =   minsb(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil(:,sl)   =	  s.w.wSoil(:,sl) + ip;
   s.wd.WBP          =   s.wd.WBP - ip;
 end

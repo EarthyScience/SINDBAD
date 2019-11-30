@@ -31,7 +31,7 @@ tmp_sat =  s.w.wSoil(:,2) ./ p.QoverFlow.smax2; % the sign of the gradient gives
 % scale saturation with maximum flux
 potFlux  = tmp_sat .* p.wGW2wSoil.maxFlux; % need to make sure that the flux does not overflow or underflow storages
 
-fx.Soil2Surf(:,tix) = min(potFlux, s.w.wSoil(:,2));
+fx.Soil2Surf(:,tix) = minsb(potFlux, s.w.wSoil(:,2));
 
 % update water pools
 s.w.wSoil(:,2)  = s.w.wSoil(:,2) - fx.Soil2Surf(:,tix);

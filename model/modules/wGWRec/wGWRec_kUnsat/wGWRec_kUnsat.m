@@ -31,7 +31,7 @@ function [f,fe,fx,s,d,p] = wGWRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 
 % index of the last soil layer
 wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
-wSoilExc                =   max(s.w.wSoil(:,wSoilend) - ...
+wSoilExc                =   maxsb(s.w.wSoil(:,wSoilend) - ...
                             s.wd.p_wSoilBase_wSat(:,wSoilend),0);
 s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-wSoilExc;
 
@@ -40,8 +40,8 @@ s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-wSoilExc;
 % Beta                    =   s.wd.p_wSoilBase_Beta(:,wSoilend);
 
 % soilDOS                 =   s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
-k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,wSoilend);    
-drain                   =   min(k_unsat,s.w.wSoil(:,wSoilend));
+k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,wSoilend);    
+drain                   =   minsb(k_unsat,s.w.wSoil(:,wSoilend));
 fx.QgwDrain(:,tix)      =   drain;
 
 % update storages

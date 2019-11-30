@@ -55,7 +55,7 @@ d.pVeg.EVI_MSC(:,M==2 & D==29)  = tmp3 .* ones(size(d.pVeg.EVI_MSC(:,M==2 & D==2
 
 %% THE FOLLOWING REMAINS HERE
 % scale daily MSC of EVI with the s.cd.vegFrac
-s.cd.vegFrac = min(s.cd.vegFrac .*  f.EVI_MSC, 1);
+s.cd.vegFrac = minsb(s.cd.vegFrac .*  f.EVI_MSC, 1);
 
 
 end

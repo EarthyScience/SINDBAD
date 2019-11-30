@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = dyna_evapInt_simple(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 %--> calculate interception loss
 intCap                  =   p.evapInt.isp .* s.cd.fAPAR;
-fx.evapInt(:,tix)       =   min(intCap, fe.rainSnow.rain(:,tix));
+fx.evapInt(:,tix)       =   minsb(intCap, fe.rainSnow.rain(:,tix));
 
 %--> update the available water
 s.wd.WBP                =   s.wd.WBP - fx.evapInt(:,tix);

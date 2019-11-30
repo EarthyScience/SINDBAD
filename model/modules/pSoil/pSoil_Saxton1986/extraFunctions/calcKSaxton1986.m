@@ -1,4 +1,4 @@
-function K = calcKSaxton1986(s,p,sl)
+function K = calcKSaxton1986(s,p,info,sl)
 % #########################################################################
 % calculate conductivity from soil moisture 
 % based on saxton 1986, equation 10
@@ -22,17 +22,49 @@ function K = calcKSaxton1986(s,p,sl)
 % #########################################################################
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
-
-CLAY    = s.wd.p_wSoilBase_CLAY(:,sl) .* 100;
-SAND    = s.wd.p_wSoilBase_SAND(:,sl)  .* 100;
-soilD   = s.wd.p_wSoilBase_soilDepths(sl);
-Theta   = s.w.wSoil(:,sl) ./ soilD;
-% -------------------------------------------------------------------------
-% WATER CONDUCTIVITY (mm/day)
-K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
-    (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
-    CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
-% -------------------------------------------------------------------------
-
+if p.wSoilBase.makeLookup
+    
+    CLAY    = s.wd.p_wSoilBase_CLAY(:,sl) .* 100;
+    SAND    = s.wd.p_wSoilBase_SAND(:,sl)  .* 100;
+    soilD   = s.wd.p_wSoilBase_soilDepths(sl);
+    
+    % -------------------------------------------------------------------------
+    % WATER CONDUCTIVITY (mm/day)
+    Theta   = s.w.wSoil(:,sl) ./ soilD;
+    K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
+        (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
+        CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
+    % -------------------------------------------------------------------------
+else
+    wSat                                        =   s.wd.p_wSoilBase_wSat(:,sl);
+    Theta_dos                                   =   s.w.wSoil(:,sl) ./ wSat;
+    Theta_dos(Theta_dos<0) = 0;
+    Theta_dos(imag(Theta_dos)~=0) = 0;
+    lkDat                                       =   squeeze(s.wd.p_wSoilBase_kLookUp(:,sl,:));
+%     lkDat(lkDat<0) = 1;
+%     lkDat(imag(lkDat)~=0) = 1;
+    if size(lkDat,2) == 1
+        lkDat       = lkDat';
+    end
+    
+    lkInd                                       =   floor(Theta_dos .* p.wSoilBase.nLookup);
+    lkInd(lkInd==0)                             =   1;
+    lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
+    idxArray= zeros(size(lkDat));
+    for i = 1: length(lkDat)
+        idxArray(i,lkInd(i)) = 1;
+    end
+        K                                           =   lkDat(idxArray ==1);
+    
+%     lkInd                                       =   floor(Theta_dos .* p.wSoilBase.nLookup);
+%     K                                           =   lkInd;
+%     lkInd(lkInd==0)                             =   1;
+%     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
+%     K = lkDat(:,lkInd);
+    K  = K(:,1);
+%     for lk=1:numel(lkInd)
+%         K(lk) = lkDat(lk,lkInd(lk));
+%     end
+end
 
 end % function

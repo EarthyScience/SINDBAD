@@ -34,24 +34,24 @@ tmp_smaxVeg         =   sum(s.wd.p_wSoilBase_wSat,2);
 tmp_SoilTotal       =   sum(s.w.wSoil, 2);
 
 %--> get the berg parameters according the vegetation fraction
-p.roSat.berg_tmp    =   max(0.1, p.roSat.berg_scale  .* s.cd.vegFrac); % do this?
+p.roSat.berg_tmp    =   maxsb(0.1, p.roSat.berg_scale  .* s.cd.vegFrac); % do this?
 
 %--> calculate land runoff from incoming water and current soil moisture
-tmp_SatExFrac       =   min(exp(p.roSat.berg_tmp .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+tmp_SatExFrac       =   minsb(exp(p.roSat.berg_tmp .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 fx.roSat(:,tix)     =   s.wd.WBP .* tmp_SatExFrac;
 
 %--> update water balance
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
 %--> update soil moisture for 1st layer
-fx.InSoil(:,tix)    =   min(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
+fx.InSoil(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
 s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.InSoil(:,tix);
 
 s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
 
 %--> reallocate to deeper layers
 for sl  =   2:size(s.w.wSoil,2)
-  ip                =   min(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
+  ip                =   minsb(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
   s.w.wSoil(:,sl)   =	  s.w.wSoil(:,sl) + ip;
   s.wd.WBP          =   s.wd.WBP - ip;
 end

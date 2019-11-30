@@ -28,21 +28,21 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % #########################################################################
 % first extract it from ground water in the root zone
 % VMC                      
-% = min(max((sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)
+% = minsb(maxsb((sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)
 % - sum(s.wd.p_wSoilBase_wWP .* s.wd.p_rootFrac_fracRoot2SoilD,2)),0) ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2),1);
 % AWC4Trans  = 
 
 transp          = fx.tranAct(:,tix);
 
 % 
-% ET1         = min(ET,s.wd.wGWR);
+% ET1         = minsb(ET,s.wd.wGWR);
 % s.wd.wGWR = s.wd.wGWR - ET1;
 % ET=ET-ET1;
 
 %extract from top to bottom
 for sl  =   1:size(s.w.wSoil,2)
     wSoilAvail      =   s.w.wSoil(:,sl) .* s.wd.p_rootFrac_fracRoot2SoilD(:,sl);
-    contrib         =   min(transp,wSoilAvail);
+    contrib         =   minsb(transp,wSoilAvail);
     s.w.wSoil(:,sl) =   s.w.wSoil(:,sl) - contrib;
     transp          =   transp-contrib;    
 end

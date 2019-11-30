@@ -5,7 +5,7 @@ s.cd.cEcoInflux                 =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 s.cd.cEcoFlow                   =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 s.cd.cEcoEfflux(:,~info.tem.model.variables.states.c.flags.cVeg)   =   0;
 %% compute losses
-s.cd.cEcoOut	=   min(s.c.cEco,s.c.cEco .* s.cd.p_cTauAct_k);
+s.cd.cEcoOut	=   minsb(s.c.cEco,s.c.cEco .* s.cd.p_cTauAct_k);
 %% gains to vegetation
 zix                     =   info.tem.model.variables.states.c.flags.cVeg; 
 s.cd.cNPP               =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
