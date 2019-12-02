@@ -195,7 +195,7 @@
 		},
 		"pVeg": 
 		{
-			"apprName": 	"pVeg_simple",
+			"apprName": 	"pVeg_PFT",
 			"runFull": 		true,
             "use4spinup":   false
 		},

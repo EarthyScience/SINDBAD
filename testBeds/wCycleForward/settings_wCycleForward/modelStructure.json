@@ -28,8 +28,13 @@
             "runFull": false,
             "use4spinup": true
         },
+        "gwRec": {
+            "apprName": "gwRec_kUnsat",
+            "runFull": true,
+            "use4spinup": true
+        },
         "pSoil": {
-            "apprName": "pSoil_Saxton1986",
+            "apprName": "pSoil_Saxton2006",
             "runFull": false,
             "use4spinup": true
         },
@@ -85,6 +90,16 @@
             "runFull": true,
             "use4spinup": true
         },
+        "tranAct": {
+            "apprName": "tranAct_CASA",
+            "runFull": true,
+            "use4spinup": false
+        },
+        "tranSup": {
+            "apprName": "tranSup_vegFrac",
+            "runFull": true,
+            "use4spinup": false
+        },
         "vegFrac": {
             "apprName": "vegFrac_constant",
             "runFull": false,
@@ -96,10 +111,20 @@
             "runFull": true,
             "use4spinup": false
         },
-        "gwRec": {
-            "apprName": "gwRec_kUnsat",
+        "wGW2wSurf": {
+            "apprName": "wGW2wSurf_fraction",
             "runFull": true,
             "use4spinup": true
+        },
+        "wGW2wSoil": {
+            "apprName": "wGW2wSoil_none",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "wRootUptake": {
+            "apprName": "wRootUptake_TopBottom",
+            "runFull": true,
+            "use4spinup": false
         },
         "wSnowFrac": {
             "apprName": "wSnowFrac_HTESSEL",
@@ -112,10 +137,16 @@
             "use4spinup": true
         },
         "wSoilRec": {
-            "apprName": "wSoilRec_kUnsat",
+            "apprName": "wSoilRec_wFC",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSoilUpflow": {
+            "apprName": "wSoilUpflow_VanDijk2010",
             "runFull": true,
             "use4spinup": true
         }
+        
     },		
 	"states": 
 	{
@@ -124,12 +155,12 @@
 			"pools" : 
 			[
 				["w.Surf", 		1, 	0],
-				["w.Soil", 		1, 	1000],
+				["w.Soil", 		2, 	1000],
 				["w.Buf", 		1, 	0],
 				["w.GW", 		1, 	0],
 				["w.Snow", 		1, 	0]
 			],
-			"wSoilLayersThickness":    [1000],
+			"wSoilLayersThickness":    [100, 1000],
 			"combine":		[false,"wPools",0]
 		},
 		"wd": 

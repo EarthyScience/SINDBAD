@@ -1,11 +1,12 @@
-function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wSoilRec_wFC(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% computes the downward flow of moisture (drainage) in soil layers based on unsaturated
-% hydraulic conductivity
+% computes the downward flow of moisture (drainage) in soil layers based on overflow
+% from the upper layers
 %
 % Inputs:
 %	- s.w.wSoil: soil moisture in different layers
-%   - p.pSoil.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+%   - s.wd.WBP amount of water that can potentially drain
+%   - s.wd.p_wSoilBase_wFC: field capacity of soil in mm
 %
 % Outputs:
 %   - s.wd.wSoilFlow: drainage flux between soil layers (same as nZix, from percolation
@@ -21,9 +22,10 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 %
 % Created by:
 %   - Sujan Koirala (skoirala)
+%   - Martin Jung (mjung)
 %
 % Versions:
-%   - 1.0 on 18.11.2019 (skoirala): 
+%   - 1.0 on 18.11.2019 (skoirala): clean up and consistency
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -33,16 +35,11 @@ nSoilLayers                 =   s.wd.p_wSoilBase_nsoilLayers;
 s.wd.wSoilFlow(:,1)         =   fx.wSoilPerc(:,tix);
 for sl=1:nSoilLayers-1
     %--> drain excess moisture in oversaturation
-    wSoilExc                =   maxsb(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
-    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
-    %--> get the drainage flux
-    k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
-    drain                   =   nanmin(k_unsat,maxsb(s.w.wSoil(:,sl),0));
+    maxDrain                =   maxsb(s.w.wSoil(:,sl) + s.wd.WBP - s.wd.p_wSoilBase_wFC(:,sl), 0);
     %--> store the drainage flux
-    s.wd.wSoilFlow(:,sl+1)  =   drain;
+    s.wd.wSoilFlow(:,sl+1)  =   maxDrain;
     %--> update storages
-    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - drain;
-    s.wd.WBP                =   s.wd.WBP - drain;
-    s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain+wSoilExc;
+    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) + s.wd.WBP - maxDrain;
+    s.wd.WBP                =   maxDrain;
 end
 end

@@ -1,24 +1,27 @@
-function [f,fe,fx,s,d,p] = dyna_pVeg_vegFracEVIdailymsc(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = prec_pVeg_PFT(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% all calculations are done in prec
+% sets a uniform PFT class
 %
 % Inputs:
-%    - 
+%    - info structure
 %
 % Outputs:
 %   - 
 %
 % Modifies:
-%     - 
+%     - p.pVeg.PFT:  from size(1,1) to size(pix,1)
 %
 % References:
 %    - 
 %
 % Created by:
-%   - Tina Trautmann (ttraut)
+%   - unknown (xxx)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+p.pVeg.PFT = p.pVeg.PFT .* info.tem.helpers.arrays.onespix;
+
 end

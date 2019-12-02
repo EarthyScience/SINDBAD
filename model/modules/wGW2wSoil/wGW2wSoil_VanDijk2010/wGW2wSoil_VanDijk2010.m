@@ -8,7 +8,7 @@ function [f,fe,fx,s,d,p]= wGW2wSoil_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 %
 % Outputs:
 %   - fx.gwRec: net groundwater recharge
-%   - fx.gwcClux: capillary flux
+%   - fx.gwClux: capillary flux
 %
 % Modifies:
 % 	- s.w.wSoil

@@ -10,9 +10,9 @@
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
-            },
-            "Comment": "very rough bounds"
-        }},
+            }
+        }
+    },
     "devStage": {
         "experimental": true,
         "tested": false,

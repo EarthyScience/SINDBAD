@@ -11,6 +11,8 @@ function [f,fe,fx,s,d,p]= wSoilUpflow_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 %
 % Modifies:
 % 	- s.w.wSoil 
+%   - s.wd.wSoilFlow: drainage flux between soil layers (from wSoilRec) is adjusted to reflect
+%     upward capillary flux
 %
 % References:
 %   - AIJM Van Dijk, 2010, The Australian Water Resources Assessment System Technical Report 3. Landscape Model (version 0.5) Technical Description
@@ -27,12 +29,16 @@ function [f,fe,fx,s,d,p]= wSoilUpflow_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 %%
 wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 for sl=wSoilend:-1:2   
+    %--> calculate the capillary flux
     k_unsat_lower                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
     dosSoilUpper                  =   s.w.wSoil(:,sl-1) ./ s.wd.p_wSoilBase_wSat(:,sl-1);
     k_unsat_upper                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl-1);    
     c_flux                        =   sqrt(k_unsat_lower .* k_unsat_upper) .* (1 - dosSoilUpper);
     c_flux                        =   minsb(c_flux,s.w.wSoil(:,sl));
-% % update storages
+    %--> update the soil flow to have a net between drainage and capillary flux
+    s.wd.wSoilFlow(:,sl)          =   s.wd.wSoilFlow(:,sl)-c_flux;
+
+    %--> update storages
     s.w.wSoil(:,sl)               =   s.w.wSoil(:,sl)-c_flux;
     s.w.wSoil(:,sl-1)             =   s.w.wSoil(:,sl-1)+c_flux;
 end
