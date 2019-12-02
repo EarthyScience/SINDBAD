@@ -1,10 +1,10 @@
 function [f,fe,fx,s,d,p] = prec_GPPfTair_TEM(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: estimate temperature effect on GPP
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : estimate temperature effect on GPP
 % 
 % REFERENCES: ???
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % TairDay   : daytime temperature [?C]
@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfTair_TEM(f,fe,fx,s,d,p,info)
 % 
 % NOTES: Tmin < Topt < Tmax ALWAYS!!! can go in the consistency checks!
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 tmp             =   info.tem.helpers.arrays.onestix;
 

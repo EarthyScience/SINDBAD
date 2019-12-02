@@ -1,12 +1,12 @@
 function [f,fe,fx,s,d,p] = wGW2wSurf_fraction(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: calculates a flux between the lowest wSoil layer and wSurf
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : calculates a flux between the lowest wSoil layer and wSurf
 %   depending on how wet the soil layer is
 %   it's a redistribution of wSoil(:,2), doesn't affect the water balance
 %
 % REFERENCES: 
 %
-% CONTACT	: ttraut
+% CONTACT    : ttraut
 %
 % INPUT
 % p.wGW2wSoil.maxFlux       : =10; potential (maximum) flux between the buffer and the soil (lower layer) [mm/day], bounds=[0 20]?
@@ -22,7 +22,7 @@ function [f,fe,fx,s,d,p] = wGW2wSurf_fraction(f,fe,fx,s,d,p,info,tix)
 
 % NOTES: may need to go to another (new) module
 %
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 fx.wGW2wSurf(:,tix)     =   p.wGW2wSurf.kGW2Surf .* (s.w.wGW - s.w.wSurf);

@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% FUNCTION	: dyna_RAact_Thornley2000A
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : dyna_RAact_Thornley2000A
 % 
-% PURPOSE	: estimate autotrophic respiration as maintenance + growth
+% PURPOSE    : estimate autotrophic respiration as maintenance + growth
 % respiration according to Thornley and Cannell (2000): MODEL A -
 % maintenance respiration is given priority (check Fig.1 of the paper).
 % 
@@ -16,7 +16,7 @@ function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
 % of plant respiration: Representation and realism, Ann Bot-London, 85(1),
 % 55-67.
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
 % INPUTS
 % gpp       : substrate supply rate: Gross Primary Production (gC.m-2.deltaT-1)
@@ -38,12 +38,12 @@ function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000A(f,fe,fx,s,d,p,info,tix)
 % cNpp      : net primary production for each plant pool (gC.m-2.deltaT-1)
 %           (s.cd.cNPP)
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % 
 % Questions - practical - leave RAact per pool, or make a field fx.ra
 % that has all the autotrophic respiration components together?
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % adjust nitrogen efficiency rate of maintenance respiration to the current
 % model time step
@@ -58,20 +58,20 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     % scalars of maintenance respiration for models A, B and C
     % km is the maintenance respiration coefficient (d-1)
     s.cd.p_RAact_km(:,zix)    = 1 ./ s.cd.p_RAact_C2N(:,zix) .* RMN .* fe.RAfTair.fT(:,tix);
-    s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix) .* p.RAact.YG;
+    s.cd.p_RAact_km4su(:,zix)    = s.cd.p_RAact_km(:,zix) .* p.RAact.YG;
     
     % maintenance respiration first: R_m = km * C
-    s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* s.c.cEco(:,zix);
+    s.cd.RA_M(:,zix)    = s.cd.p_RAact_km(:,zix) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = (1 - YG) * (GPP * allocationToPool - R_m)
-    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.RA_M(:,zix));
+    s.cd.RA_G(:,zix)    = (1 - p.RAact.YG) .* (fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.RA_M(:,zix));
     
     % no negative growth respiration
-    s.cd.RA_G(s.cd.RA_G(:,zix) < 0,zix)	= 0;
+    s.cd.RA_G(s.cd.RA_G(:,zix) < 0,zix)    = 0;
     
     % total respiration per pool: R_a = R_m + R_g
-    s.cd.cEcoEfflux(:,zix)	= s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);
+    s.cd.cEcoEfflux(:,zix)    = s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);
 
 end
 
-end % function
+end

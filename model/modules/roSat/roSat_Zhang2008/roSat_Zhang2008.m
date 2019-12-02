@@ -1,4 +1,5 @@
 function [f,fe,fx,s,d,p] = roSat_Zhang2008(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the saturation excess runoff as a fraction of incoming water
 %
 % Inputs:
@@ -29,12 +30,14 @@ function [f,fe,fx,s,d,p] = roSat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 %   than just using precip
 % 
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 11.11.2019 (skoirala): cleaned up the code
 %
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %% 
 %--> a supply / demand limit concept cf Budyko
 %-->  calc demand limit (X0)

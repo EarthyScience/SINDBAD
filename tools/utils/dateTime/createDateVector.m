@@ -18,7 +18,7 @@ function [xOut, days, months, years, Y, M, D] = createDateVector(startDate, endD
 % Conventions: 
 % 
 % Created by: 
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de) 
+%   - Tina Trautmann (ttraut) 
 % 
 % References: 
 %    

@@ -1,6 +1,7 @@
 function [f,fe,fx,s,d,p] = dyna_snowMelt_simple(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % computes the snow melt term as function of f.Tair
+%
 % Inputs:
 %   - fe.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
 %   - s.wd.wSnowFrac: snow cover fraction [-]
@@ -17,7 +18,7 @@ function [f,fe,fx,s,d,p] = dyna_snowMelt_simple(f,fe,fx,s,d,p,info,tix)
 %	- 
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
@@ -25,9 +26,10 @@ function [f,fe,fx,s,d,p] = dyna_snowMelt_simple(f,fe,fx,s,d,p,info,tix)
 % Notes:
 %   -  may not be working well for longer time scales (like for weekly or
 %       longer time scales). Warnings needs to be set accordingly.
-%% 
-% #########################################################################
+% 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+%%
 % snow melt (mm/day) is calculated as a simple function of temperature
 % and scaled with the snow covered fraction
 fx.snowMelt(:,tix) = minsb( s.w.wSnow , fe.snowMelt.Tterm(:,tix) .* s.wd.wSnowFrac );

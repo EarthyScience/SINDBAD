@@ -1,22 +1,22 @@
 {
-	"params": {
-		"Q10": {
-			"Name": "",
-			"Unit": "[]",
-			"Default": 2,
-			"LowerBound": 0,
-			"UpperBound": 10,
-			"Distribution": NaN,
-			"Comment": ""
-		},
-		"Tref": {
-			"Name": "",
-			"Unit": "�C",
-			"Default": 30,
-			"LowerBound": 0,
-			"UpperBound": 40,
-			"Distribution": NaN,
-			"Comment": ""
-		}
-	}
+    "params": {
+        "Q10": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 2,
+            "LowerBound": 0,
+            "UpperBound": 10,
+            "Distribution": NaN,
+            "Comment": ""
+        },
+        "Tref": {
+            "Name": "",
+            "Unit": "�C",
+            "Default": 30,
+            "LowerBound": 0,
+            "UpperBound": 40,
+            "Distribution": NaN,
+            "Comment": ""
+        }
+    }
 }

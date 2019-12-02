@@ -1,16 +1,16 @@
 function [f,fe,fx,s,d,p] = prec_cTaufTsoil_none(f,fe,fx,s,d,p,info)
 
-% #########################################################################
-% FUNCTION	: 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : 
 % 
-% PURPOSE	: 
+% PURPOSE    : 
 % 
 % REFERENCES:
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-fe.cTaufTsoil.fT	= info.tem.helpers.arrays.onespixtix; 
+fe.cTaufTsoil.fT    = info.tem.helpers.arrays.onespixtix; 
 
-end % function
+end

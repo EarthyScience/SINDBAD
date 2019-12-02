@@ -1,30 +1,30 @@
 {
-	"params": {
-		"minL": {
-			"Name": "",
-			"Unit": "",
-			"Default": 0.1,
-			"LowerBound": 0,
-			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "minimum resource availability (severely limited) [factor]"
-		},
-		"maxL": {
-			"Name": "",
-			"Unit": "",
-			"Default": 1,
-			"LowerBound": 0,
-			"UpperBound": 1,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": "maximum resource availability (readily available) [factor]"
-		}
-	}
+    "params": {
+        "minL": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": "minimum resource availability (severely limited) [factor]"
+        },
+        "maxL": {
+            "Name": "",
+            "Unit": "",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": "maximum resource availability (readily available) [factor]"
+        }
+    }
 }

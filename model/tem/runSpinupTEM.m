@@ -51,8 +51,8 @@ function [fSU,feSU,fxSU,precOnceDataSU,sSU,dSU,infoSU] = runSpinupTEM(f,info,p,S
 %           modelStructure.json.
 %
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %
@@ -78,8 +78,8 @@ elseif~info.tem.spinup.flags.runSpinup
     if ~isempty(SUData)
         if ~isempty(SUData.sSU) && ~isempty(SUData.dSU)
             % get the initial conditions from memory
-            sSU	= SUData.sSU;
-            dSU	= SUData.dSU;
+            sSU    = SUData.sSU;
+            dSU    = SUData.dSU;
             disp([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : loaded SUData.sSU and SUData.dSU from memory!'])
         else
             err([pad('DATA SPINUP',20) ' : ' pad('runSpinupTEM',20) ' : runSpinup is false in modelRun config, and cannot read it from file or memory!'])
@@ -96,24 +96,24 @@ end
 runFlags.createStruct = false;
 requirInitVars      = {'fxSU','feSU','dSU','sSU'};
 if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
-    runFlags.createStruct	= true;
+    runFlags.createStruct    = true;
 end
 % -------------------------------------------------------------------------
 % Make the spinup data - only if it is an empty input
 % -------------------------------------------------------------------------
-if isempty(fSU), fSU	= prepSpinupForcing(f,info); end
+if isempty(fSU), fSU    = prepSpinupForcing(f,info); end
 % -------------------------------------------------------------------------
 % Adjust the info structure - only if it is an empty input
 % -------------------------------------------------------------------------
 if isempty(infoSU)
     % make a new info for spin up based on info...
-    infoSU	= info;
+    infoSU    = info;
     % adjust the nTix
-    tmpFN     				= fieldnames(fSU);
-    newNTix 				= size(fSU.(tmpFN{1}),2);
-    infoSU.tem.helpers.sizes.nTix	= newNTix;
+    tmpFN                     = fieldnames(fSU);
+    newNTix                 = size(fSU.(tmpFN{1}),2);
+    infoSU.tem.helpers.sizes.nTix    = newNTix;
     if info.tem.spinup.flags.recycleMSC
-        infoSU.tem.model.nYears	= 1; % should come from info.tem.s
+        infoSU.tem.model.nYears    = 1; % should come from info.tem.s
     end
     
     % TINA: add dates.day from fSU.dates if it exists
@@ -126,12 +126,12 @@ end
 % Pre-allocate fx,fe,d,s for the spinup runs
 % -------------------------------------------------------------------------
 if runFlags.createStruct
-    [feSU,fxSU,sSU,dSU,infoSU]	= createTEMStruct(infoSU);
+    [feSU,fxSU,sSU,dSU,infoSU]    = createTEMStruct(infoSU);
 end
 % -------------------------------------------------------------------------
 % the parameters
 % -------------------------------------------------------------------------
-pSU	= p;
+pSU    = p;
 % -------------------------------------------------------------------------
 % get the precOnce data structure
 % -------------------------------------------------------------------------
@@ -142,13 +142,13 @@ pSU	= p;
 % -------------------------------------------------------------------------
 if isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
 % if isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
-    tmpLS 				  = dSU.storedStates.cEco;
+    tmpLS                   = dSU.storedStates.cEco;
 end
 
 spinSequence = info.tem.spinup.sequence;
 for iss = 1:numel(spinSequence)
     % get handles, inputs and number of loops
-    funHandleSpin	= str2func(spinSequence(iss).funHandleSpin);
+    funHandleSpin    = str2func(spinSequence(iss).funHandleSpin);
     addInputs       = spinSequence(iss).funAddInputs;
     nLoops          = spinSequence(iss).nLoops;
     if ~iscell(addInputs),addInputs = num2cell(addInputs');end
@@ -162,7 +162,7 @@ for iss = 1:numel(spinSequence)
     for ij = 1:nLoops
         % run spinup
         disp([pad('EXEC MODRUN',20,'left') ' : ' pad('runSpinupTEM',20) ' | ' pad('nLoop',8) ' : ' num2str(ij) ' / ' num2str(spinSequence(iss).nLoops)])
-        [fSU,feSU,fxSU,sSU,dSU,pSU]	= ...
+        [fSU,feSU,fxSU,sSU,dSU,pSU]    = ...
             funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs{:});
         % stop it according to function criteria?
         if ~isempty(funHandleStop)
@@ -188,7 +188,7 @@ for iss = 1:numel(spinSequence)
         end
         
         if ~exist('tmpLS','var') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
-            tmpLS 				  = dSU.storedStates.cEco;
+            tmpLS                   = dSU.storedStates.cEco;
         elseif isfield(dSU,'storedStates') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
             tmpLS = cat(3,tmpLS,dSU.storedStates.cEco);
         end

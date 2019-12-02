@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
-% #########################################################################
-% FUNCTION	: prec_cAlloc_Fix
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : prec_cAlloc_Fix
 % 
-% PURPOSE	: compute the fraction of NPP that is allocated to the
+% PURPOSE    : compute the fraction of NPP that is allocated to the
 % different plant organs. In this case, the allocation is fixed in time
 % according to the parameters in p.cAlloc. These parameters are
 % adjusted according to the TreeCover fraction
@@ -22,13 +22,13 @@ function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
 % via Eddy Covariance and Biometric Constraints, Glob. Change Biol., 16,
 % 2813?2829, doi: 10.1111/j.1365-2486.2009.2173.x, 2010.
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % % make vectors/matrices
 % for ii = {'cf2Root','cf2Wood','cf2Leaf'}
-%     d.cAlloc.(ii{1})	= p.cAlloc.(ii{1}) .* ones(size(f.Tair));
+%     d.cAlloc.(ii{1})    = p.cAlloc.(ii{1}) .* ones(size(f.Tair));
 % end
 s.cd.cAlloc = info.tem.helpers.arrays.zerospixzix.c.cEco;
 % distribute the allocation according to pools...
@@ -37,7 +37,7 @@ for cpn = 1:numel(cpNames)
     zixVec = info.tem.model.variables.states.c.zix.(cpNames{cpn});
     N      = numel(zixVec);
     for zix = zixVec
-        s.cd.cAlloc(:,zix)	= p.cAlloc.(cpNames{cpn}) ./ N .* info.tem.helpers.arrays.onespix;
+        s.cd.cAlloc(:,zix)    = p.cAlloc.(cpNames{cpn}) ./ N .* info.tem.helpers.arrays.onespix;
     end
 end
 
@@ -55,4 +55,4 @@ if any(abs(sum(tmp1,2)-1) > 1E-6)
       error('SINDBAD TEM prec_cAlloc_Fix: sum(cAlloc) ne1')
 %      warning('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: sum(cAlloc) ne 1')
 end
-end % function
+end

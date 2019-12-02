@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,doPrecOnce,doCore,doSpi
 % runGenCode
 %
 % Requires:
-%	- SINDBAD structures (f,fe,fx,s,d,p,info)
+%    - SINDBAD structures (f,fe,fx,s,d,p,info)
 %   - flags for running coreTEM 
 %       - doPrecOnce : true to do precOnce
 %       - doCore : true to run time loop of core
@@ -26,8 +26,8 @@ function [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,doPrecOnce,doCore,doSpi
 %           modelStructure.json
 %       
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %
@@ -48,10 +48,10 @@ else
     fn{1}   =   'model';
 end
 %--> check if the generated code of the raw code is to be run
-if info.tem.model.flags.runGenCode	
-    fn{2}	=   'genMS';
+if info.tem.model.flags.runGenCode    
+    fn{2}    =   'genMS';
 else
-    fn{2}	=   'rawMS';
+    fn{2}    =   'rawMS';
 end
 %--> get the appropriate function handles of precomputation and coreTEM from the above two options
 

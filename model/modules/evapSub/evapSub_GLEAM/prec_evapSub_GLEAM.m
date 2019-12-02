@@ -1,28 +1,32 @@
 function [f,fe,fx,s,d,p] = prec_evapSub_GLEAM(f,fe,fx,s,d,p,info)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % precomputes the Priestley-Taylor term for sublimation following GLEAM
 %
 % Inputs:
-%	- f.TairDay   : daytime temperature [C]
-%   - f.PsurfDay  : atmospheric pressure during the daytime [kPa]
-%   - p.evapSub.alpha: alpha coefficient for sublimation
+%   -   f.TairDay   : daytime temperature [C]
+%   -   f.PsurfDay  : atmospheric pressure during the daytime [kPa]
+%   -   p.evapSub.alpha: alpha coefficient for sublimation
 %
 % Outputs:
-%   - fe.evapSub.PTtermSub: Priestley-Taylor term [mm/MJ]
+%   -   fe.evapSub.PTtermSub: Priestley-Taylor term [mm/MJ]
 %
 % Modifies:
-% 	- 
+%   - 
 %
 % References:
-%	- GLEAM, Miralles et al.
+%   -   Miralles, D. G., De Jeu, R. A. M., Gash, J. H., Holmes, T. R. H., 
+%       & Dolman, A. J. (2011). An application of GLEAM to estimating global evaporation.
+%       Hydrology & Earth System Sciences Discussions, 8(1).
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   -   Martin Jung (mjung)
 %
 % Versions:
-%   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
+%   -   1.0 on 18.11.2019 (ttraut): cleaned up the code
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %%
-% #########################################################################
 
 % convert temperature to Kelvin
 T = f.TairDay + 273.15;

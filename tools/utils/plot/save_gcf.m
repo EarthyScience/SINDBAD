@@ -1,6 +1,6 @@
 function save_gcf(cf, fn, closefig, justpng)
-if ~exist('closefig', 'var'),	closefig	= 1; end
-if ~exist('justpng', 'var'),	justpng     = 0; end
+if ~exist('closefig', 'var'),    closefig    = 1; end
+if ~exist('justpng', 'var'),    justpng     = 0; end
 if ~justpng
     print(cf, [fn '.eps'], '-depsc')
 end
@@ -45,7 +45,7 @@ else
         saveas(cf, [fn '.fig']);
         tmp = '.fig';
     else
-        computer_name	= deblank(getenv('COMPUTERNAME'));
+        computer_name    = deblank(getenv('COMPUTERNAME'));
         if strcmpi(computer_name,'KERBALA') || ...
                 isempty(computer_name) || ...
                 strcmpi(computer_name,'DESNA') || ...

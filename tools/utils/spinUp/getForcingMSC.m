@@ -14,8 +14,8 @@ function x2 = getForcingMSC(x,years,info)
 % Conventions:
 %
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)?
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)?
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %
@@ -39,7 +39,7 @@ for yr = 1:numel(yearOri)
     end
 end
 
-yearvec	= mkHvec(unique(yearSel));
+yearvec    = mkHvec(unique(yearSel));
 for i = yearvec
     tmp = datSel(:,yearSel == i);
     if isleapyear(i)
@@ -49,5 +49,5 @@ for i = yearvec
     tmp(isnan(tmp)==1)  = 0;
     x2                  = x2+tmp;
 end
-x2	= x2 ./ den;
+x2    = x2 ./ den;
 end 

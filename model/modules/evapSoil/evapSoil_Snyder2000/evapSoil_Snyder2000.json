@@ -10,8 +10,7 @@
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
-            },
-            "Comment": "in Paper: et_a"
+            }
         },
         "beta": {
             "Name": "soil moisture resistance factor for soil evapotranspiration",
@@ -23,8 +22,7 @@
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
-            },
-            "Comment": "in Paper: et_sup"
+            }
         }
     },
     "devStage": {

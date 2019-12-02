@@ -1,10 +1,10 @@
 function [f,fe,fx,s,d,p] = prec_GPPfVPD_none(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : 
 % 
 % REFERENCES:
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % 
@@ -16,7 +16,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfVPD_none(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % no effect = 1
 d.GPPfVPD.VPDScGPP = info.tem.helpers.arrays.onespixtix;

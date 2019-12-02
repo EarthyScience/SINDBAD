@@ -12,7 +12,7 @@ function [cost, costComp]=calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,pre
     %   - if one, it should be the total cost (scalar)
     %   - if two, it should be the total cost (scalar), and a struct with its components      
     % Created by:
-    %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+    %   - Sujan Koirala (skoirala)
     %
     % References:
     %
@@ -59,5 +59,5 @@ function [cost, costComp]=calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,pre
     disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Cost of current iteration: ' num2str(cost)])
     disp(pad('+',200,'both','+'))
     
-    end % function
+    end
     

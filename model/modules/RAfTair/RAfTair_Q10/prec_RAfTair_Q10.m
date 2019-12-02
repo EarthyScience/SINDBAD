@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = prec_RAfTair_Q10(f,fe,fx,s,d,p,info)
-% #########################################################################
-% FUNCTION	: prec_RAfTair_Q10
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : prec_RAfTair_Q10
 % 
-% PURPOSE	: estimate the effect of temperature in autotrophic maintenance
+% PURPOSE    : estimate the effect of temperature in autotrophic maintenance
 % respiration - q10 model.
 % 
 % REFERENCES:
@@ -15,22 +15,22 @@ function [f,fe,fx,s,d,p] = prec_RAfTair_Q10(f,fe,fx,s,d,p,info)
 % of plant respiration: Representation and realism, Ann Bot-London, 85(1),
 % 55-67.
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
 % INPUTS
-% Tsoil     : soil temperature (ºC)
-% Tair      : air temperature (ºC) 
+% Tsoil     : soil temperature (ï¿½C)
+% Tair      : air temperature (ï¿½C) 
 % Q10_RM    : q10 parameter ([])
-% Tref_RM	: reference temperature (ºC)
+% Tref_RM    : reference temperature (ï¿½C)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
 %           (fe.RAfTair.fT)
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate temperature effect on plant maintenance respiration (1 and 2
 % corresponds to roots; 3 and 4 corresponds to wood and leafs)
-fe.RAfTair.fT	= p.RAfTair.Q10_RM .^ ((f.Tair - p.RAfTair.Tref_RM) ./ 10);
+fe.RAfTair.fT    = p.RAfTair.Q10_RM .^ ((f.Tair - p.RAfTair.Tref_RM) ./ 10);
 
-end % function
+end

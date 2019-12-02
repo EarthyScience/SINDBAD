@@ -65,7 +65,7 @@
 restoredefaultpath
 try
     gone
-    for fn              =	{'tools','model','optimization','testBeds'}
+    for fn              =    {'tools','model','optimization','testBeds'}
         rmpath(genpath(['../../' fn{1}]))
     end
 catch
@@ -73,7 +73,7 @@ end
 
 %% add the paths of the necessary sindbad directories
 
-for fn                  =	{'tools','model','optimization','testBeds'}
+for fn                  =    {'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
 
@@ -106,7 +106,7 @@ end
 
 if isempty(userOutPath)
     outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
-    [uname,~]           =	getUserInfo();
+    [uname,~]           =    getUserInfo();
     outDir              =   [outDir filesep uname];
 else
     outDir              =   userOutPath;
@@ -116,7 +116,7 @@ end
 testCases               =   [1 2 3 4 5];
 % testCases               =   [1 2 3 4 5];
 % testCases               =   [5];
-% testCases               =   [4];
+testCases               =   [4];
 % testCases             =   [ 3 ];
 % testCases             =   [3];
 % testCases             =   [ 1 ];

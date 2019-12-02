@@ -19,7 +19,7 @@ function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] =
 %      for hydrologic solutions. Soil science society of America Journal, 70(5), 1569-1578.
 % 
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 22.11.2019 (skoirala):
@@ -153,4 +153,4 @@ psiFC           =   33 .* info.tem.helpers.arrays.onespix;
 thetaWP         =   Theta_1500;
 psiWP           =   1500 .* info.tem.helpers.arrays.onespix;
 kWP             =   kSat .* ((thetaWP ./ thetaSat) .^ (3 + (2 ./ lambda)));
-end % function
+end

@@ -1,4 +1,5 @@
 function [f,fe,fx,s,d,p] = roSurf_directIndirect(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the runoff from surface water storage
 %
 % Inputs:
@@ -15,10 +16,13 @@ function [f,fe,fx,s,d,p] = roSurf_directIndirect(f,fe,fx,s,d,p,info,tix)
 %	- 
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 20.11.2019 (skoirala): combine roSurfDir,Indir, wSurfRec
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %%
 %--> fraction of overland runoff that recharges the surface water and the
 %fraction that flows out directly

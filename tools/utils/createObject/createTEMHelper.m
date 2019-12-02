@@ -18,7 +18,7 @@ function [info] = createTEMHelper(info)
 %     parameters in the approaches.
 %
 % Created by: 
-%   Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   Sujan Koirala (skoirala)
 % 
 % References: 
 %   + 
@@ -30,7 +30,7 @@ function [info] = createTEMHelper(info)
 %% create the helpers for variables that have a either one dimension (pix,1 in space, 1,tix in time) or two (pix,tix in space time)
 
 nPix                                        =   info.tem.helpers.sizes.nPix;
-nTix                                        =	info.tem.helpers.sizes.nTix;
+nTix                                        =    info.tem.helpers.sizes.nTix;
 
 info.tem.helpers.arrays.zerospixtix         =   zeros(nPix,nTix,info.tem.model.rules.arrayPrecision);
 info.tem.helpers.arrays.zerospix            =   zeros(nPix,1,info.tem.model.rules.arrayPrecision);

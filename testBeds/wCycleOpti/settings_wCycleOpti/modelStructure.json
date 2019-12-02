@@ -14,7 +14,7 @@
 						"use4spinup": false
 			},
 			"evapSoil": {
-						"apprName": "evapSoil_bare",
+						"apprName": "evapSoil_bareFrac",
 						"runFull": true,
 						"use4spinup": false
 			},
@@ -35,7 +35,6 @@
 			},
 			"rainSnow": {
 						"apprName": "rainSnow_forcing",
-						"comment": "Do not change the approach here",
 						"runFull": false,
 						"use4spinup": true
 			},
@@ -90,8 +89,8 @@
 						"runFull": true,
 						"use4spinup": false
 			},
-			"tranfwSoil": {
-						"apprName": "tranfwSoil_vegFrac",
+			"tranSup": {
+						"apprName": "tranSup_vegFrac",
 						"runFull": true,
 						"use4spinup": false
 			},

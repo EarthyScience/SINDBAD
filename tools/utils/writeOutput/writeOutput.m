@@ -26,7 +26,7 @@ function [dum] = writeOutput(info,f,fe,fx,s,d,p)
 %   - one file per variable per year if runForwardYearly == 1
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %

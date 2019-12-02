@@ -19,13 +19,13 @@ function K = calcKSaxton2006(s,p,info,sl)
 %      for hydrologic solutions. Soil science society of America Journal, 70(5), 1569-1578.
 % 
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 22.11.2019 (skoirala):
 %
 %% 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
 Theta_dos       =   s.w.wSoil(:,sl) ./ wSat;
 if p.wSoilBase.makeLookup
@@ -64,4 +64,4 @@ end
 % d=c*0;
 % d(c==min(c,[],2))=1;
 
-end % function
+end

@@ -100,8 +100,8 @@
             "runFull": true,
             "use4spinup": true
         },
-        "tranfwSoil": {
-            "apprName": "tranfwSoil_CASA",
+        "tranSup": {
+            "apprName": "tranSup_CASA",
             "runFull": true,
             "use4spinup": true
         },
@@ -112,11 +112,11 @@
         },
         "wGW2wSoil": {
             "apprName": "wGW2wSoil_VanDijk2010",
-            "runFull": false,
+            "runFull": true,
             "use4spinup": true
         },
-        "wGWRec": {
-            "apprName": "wGWRec_kUnsat",
+        "gwRec": {
+            "apprName": "gwRec_kUnsat",
             "runFull": true,
             "use4spinup": true
         },
@@ -148,7 +148,7 @@
         },
         "wSoilUpflow": {
             "apprName": "wSoilUpflow_VanDijk2010",
-            "runFull": false,
+            "runFull": true,
             "use4spinup": true
         }
     },		

@@ -24,4 +24,4 @@ costhand                               =   @(pScales)calcCostTEM(pScales,f,p,pre
 [~,~,~,~,~,pScales] = feval(info.opti.algorithm.funHandle,costhand,info.opti.params.defScalars,info.opti.algorithm.options.psigma,defOpts);
 % [~,~,~,~,~,pScales] = feval(info.opti.algorithm.funHandle,costhand,info.opti.params.defScalars,rand(size(info.opti.params.defScalars))',defOpts);
 
-end % function
+end

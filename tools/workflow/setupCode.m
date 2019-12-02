@@ -24,7 +24,7 @@ function [info] = setupCode(info)
 %       - s.[ElementName(d)].[VariableName]: c for carbon, w, d for state variables that are not storages
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
 %
 % References:
 %   -
@@ -34,7 +34,7 @@ function [info] = setupCode(info)
 
 %%
 %--> get code and set handles;
-[info,precStruct,moduleStruct]      =	setupModules(info);
+[info,precStruct,moduleStruct]      =    setupModules(info);
 
 %--> interpret code, get various variables etc
 [info,precStruct,moduleStruct] =    getVariablesFromCode(info,precStruct,moduleStruct);
@@ -54,7 +54,7 @@ end
 %   easy to change once respective field in info is available (which modules
 %   to do)
 if info.tem.model.flags.genCode
-    [info]      =	writeCode(info);
+    [info]      =    writeCode(info);
 end
 
 %--> Adding the function handles of raw core and precomp to the info (ncarval, skoirala: 19/04/2018)
@@ -71,7 +71,7 @@ info.tem.spinup.code.rawMS.coreTEM.funHandle       =    @coreTEM4Spinup;
 end
 
 %%
-function [moduleStruct]     =	redMemModules(moduleStruct,varsToRedMem)
+function [moduleStruct]     =    redMemModules(moduleStruct,varsToRedMem)
 % - find the modules which have these variables in redMem mode
 % - check for the existences of variables to define with 1 in time dimension
 %%
@@ -217,7 +217,7 @@ info.tem.model.code.variables.moduleAll                         =   unique(vertc
 
 %%
 %--> check if supplied write and store variables exist in the code
-varsAllAll              =	unique(vertcat(AllOutputs,info.tem.model.code.variables.moduleAll(:),info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:)));
+varsAllAll              =    unique(vertcat(AllOutputs,info.tem.model.code.variables.moduleAll(:),info.tem.model.variables.forcingInput(:),info.tem.model.variables.paramInput(:)));
 problemVars             =   setdiff(storeVars_longName,varsAllAll);
 if ~isempty(problemVars)
     for ii      =   1:length(problemVars)
@@ -349,7 +349,7 @@ mf                  =   dir([pathstr filesep '*.m']);
 %--> check if you find it in C
 for ii  =   1:length(mf)
     
-    [pathstr2,name,ext]     =	fileparts(mf(ii).name);     % Comment: on Linux, this line
+    [pathstr2,name,ext]     =    fileparts(mf(ii).name);     % Comment: on Linux, this line
     % will only work for absolute paths
     
     tmp                     =   regexp(C,[name '\s*(']); %added '(' to make sure its a function call and not e.g. confused with an error message
@@ -480,7 +480,7 @@ end
 %%
 function [codeStruct]   =   getModelCode(xpth,codeStruct,cnt)
 
-[pathstr, FunName, ext]     =	fileparts(xpth);
+[pathstr, FunName, ext]     =    fileparts(xpth);
 %--> set path
 path(path,pathstr);
 %--> generate handle
@@ -837,16 +837,16 @@ linecount       =   0;
 
 % read the file line by line
 k               =   0;
-tlinef          =	{};
-fid             =	fopen(file);
+tlinef          =    {};
+fid             =    fopen(file);
 while 1
-    k           =	k + 1;
-    tline       =	fgets(fid);
+    k           =    k + 1;
+    tline       =    fgets(fid);
     if ~ischar(tline),   break,   end
-    tlinef{k}   =	tline;
-    mtext           =	[mtext, tline, char(13)];
+    tlinef{k}   =    tline;
+    mtext           =    [mtext, tline, char(13)];
     if ~isempty(tline)
-        linecount   =	linecount+1;
+        linecount   =    linecount+1;
     end
 end
 fclose(fid);
@@ -854,10 +854,10 @@ fclose(fid);
 % remove multiple lines...
 k           =   1;
 while k < numel(tlinef)
-    tline   =	rmComm(strtrim(tlinef{k}),0,true);
-    newk    =	k + 1;
+    tline   =    rmComm(strtrim(tlinef{k}),0,true);
+    newk    =    k + 1;
     if isempty(tline)
-        tlinef{k}	=   '';
+        tlinef{k}    =   '';
         k           =   newk;
         continue
     end
@@ -919,7 +919,7 @@ l2k     =   [];
 for i   =   1:numel(tlinef)
     tline           =   tlinef{i};
     if ~ischar(tline),   break,   end
-    [tline,codek]	=   rmComm(strtrim(tlinef{i}),codek,false);
+    [tline,codek]    =   rmComm(strtrim(tlinef{i}),codek,false);
     if ~isempty(tline)
         code{codek} =   tline;
     end
@@ -927,7 +927,7 @@ end
 code = code(~cellfun('isempty',code));
 % outputs
 mfinfo.filename     =   file;
-mfinfo.linecount	=   linecount;
+mfinfo.linecount    =   linecount;
 mfinfo.text         =   strtrim(mtext);
 mfinfo.code         =   strtrim(code);
 end
@@ -963,7 +963,7 @@ else
     outLine             =   strtrim(tline);
     codek               =   codek + 1;
 end
-end % function
+end
 
 %%
 function [fid]  =   writeStoreStates_simple(info,fid)
@@ -990,7 +990,7 @@ cvars_destination       =   info.tem.model.code.variables.to.storeStatesDestinat
 fprintf(fid, '%s\n', '%storeStates_simple');
 fprintf(fid, '%s\n', 'if tix == 1;');
 fprintf(fid, '%s\n', 'numTimeStr = info.tem.helpers.sizes.nTix;');
-for ij                  =	1:numel(cvars_source)
+for ij                  =    1:numel(cvars_source)
     var2ss              =   cvars_source{ij}(1:end-1);
     var2sdtmp           =   strsplit(cvars_destination{ij},'(');
     var2sd              =   var2sdtmp{1};
@@ -1043,7 +1043,7 @@ function [fid]  =   writeKeepStates_simple(info,fid)
 %info.tem.model.code.variables.to.storeStatesDestination=storeStates_longDestination;
 
 
-cvars_source            =	info.tem.model.code.variables.to.keepSource;
+cvars_source            =    info.tem.model.code.variables.to.keepSource;
 cvars_destination       =   info.tem.model.code.variables.to.keepDestination;
 
 fprintf(fid, '%s\n', '%keepStates_simple');
@@ -1154,7 +1154,7 @@ funhCore                    =   str2func(genCoreName);
 
 %%%%%%%%%%%%%%%%%precOnce
 
-genPrecOnceName             =	['precOnce_' genCoreName];
+genPrecOnceName             =    ['precOnce_' genCoreName];
 
 CodePth                     =   [genCorePath '/' genPrecOnceName '.m'];
 

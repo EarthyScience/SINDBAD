@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = sumVariables_simple(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % sums variables based on the list in modelRun.json
 %
 % Inputs:
-%	- tix  
 %	- info
 %   - variables to sum
 %       - are taken from modelRun.json (varsToSum) with exhaustive list of
@@ -22,10 +22,13 @@ function [f,fe,fx,s,d,p] = sumVariables_simple(f,fe,fx,s,d,p,info,tix)
 %	- 
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
 %
 % Versions:
 %   - 1.0 on 11.11.2019
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %%
 %--> get the list of list of lines generated to sum the variables based on
 %the input and model structure
@@ -34,5 +37,5 @@ for ii  =	1:length(CL)
     sstr            =   char(CL(ii));
     eval(sstr);
 end
-end % function
+end
 

@@ -1,12 +1,12 @@
 function [f,fe,fx,s,d,p] = prec_GPPfTair_Maekelae2008(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: estimate temperature effect on GPP 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : estimate temperature effect on GPP 
 % 
 % REFERENCES: Maekelae et al 2008 - Developing an empirical model of stand
 % GPP with the LUE approach: analysis of eddy covariance data at five
 % contrasting conifer sites in Europen
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % TairDay   : daytime temperature [?C]
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfTair_Maekelae2008(f,fe,fx,s,d,p,info)
 % 
 % NOTES: Tmin < Tmax ALWAYS!!! can go in the consistency checks!
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 tmp         =   info.tem.helpers.arrays.onestix;

@@ -1,16 +1,16 @@
 {
-	"params": {
-		"WOODLIGFRAC": {
-			"Name": "fraction of wood that is lignin",
-			"Unit": "",
-			"Default": 0.4,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			}
-		}
-    }	
+    "params": {
+        "WOODLIGFRAC": {
+            "Name": "fraction of wood that is lignin",
+            "Unit": "",
+            "Default": 0.4,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            }
+        }
+    }    
 }

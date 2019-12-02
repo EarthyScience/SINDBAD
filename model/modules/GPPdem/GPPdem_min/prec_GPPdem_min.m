@@ -1,11 +1,11 @@
 function [f,fe,fx,s,d,p] = prec_GPPdem_min(f,fe,fx,s,d,p,info)
-% % #########################################################################
-% % PURPOSE	: compute the demand GPP: stress scalars are combined as the
+% % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% % PURPOSE    : compute the demand GPP: stress scalars are combined as the
 % %           minimum (which limits most)
 % % 
 % % REFERENCES: SINDABD ;)
 % % 
-% % CONTACT	: mjung, ncarval
+% % CONTACT    : mjung, ncarval
 % % 
 % % INPUT
 % % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = prec_GPPdem_min(f,fe,fx,s,d,p,info)
 % % 
 % % NOTES:
 % % 
-% % #########################################################################
+% % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % % make 3D matrix 
 % scall           = repmat(info.tem.helpers.arrays.onespixtix,1,1,3);
@@ -42,6 +42,6 @@ function [f,fe,fx,s,d,p] = prec_GPPdem_min(f,fe,fx,s,d,p,info)
 % d.GPPdem.AllDemScGPP = min(scall,[],3);
 
 % % compute demand GPP
-% d.GPPdem.gppE	= s.cd.fAPAR .* f.PAR .* d.GPPpot.rueGPP .* d.GPPdem.AllDemScGPP;
+% d.GPPdem.gppE    = s.cd.fAPAR .* f.PAR .* d.GPPpot.rueGPP .* d.GPPdem.AllDemScGPP;
 
 end

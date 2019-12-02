@@ -15,24 +15,24 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 NL                          = p.cAllocfNut.minL.*ones(size(f.PET(:,tix)));
 ndx                         = f.PET(:,tix) > 0;
 NL(ndx)                     = fe.cAllocfTsoil.NL_fT(ndx) .* d.cAllocfwSoil.NL_fW(ndx);
-NL(NL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL;%(NL <= p.cAllocfNut.minL);
-NL(NL >= p.cAllocfNut.maxL)	= p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);
-%sujan NL(NL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL(NL <= p.cAllocfNut.minL);
-%sujan NL(NL >= p.cAllocfNut.maxL)	= p.cAllocfNut.maxL(NL >= p.cAllocfNut.maxL);
+NL(NL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL;%(NL <= p.cAllocfNut.minL);
+NL(NL >= p.cAllocfNut.maxL)    = p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);
+%sujan NL(NL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL(NL <= p.cAllocfNut.minL);
+%sujan NL(NL >= p.cAllocfNut.maxL)    = p.cAllocfNut.maxL(NL >= p.cAllocfNut.maxL);
 
 % sujan consider root fractions
 % water limitation calculation
 WL                          = sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2) ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2);
 % WL                          = sum(s.w.wSoil,2) ./ sum(s.wd.p_wSoilBase_wAWC,2);
-WL(WL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL;%(WL <= p.cAllocfNut.minL);
+WL(WL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL;%(WL <= p.cAllocfNut.minL);
 WL(WL >= p.cAllocfNut.maxL) = p.cAllocfNut.maxL;%(WL >= p.cAllocfNut.maxL); %% check if p.cAlloc.maxL and p.cAlloc.minL should used p.cAlloc.maxL_fW?
-%sujan WL(WL <= p.cAllocfNut.minL)	= p.cAllocfNut.minL(WL <= p.cAllocfNut.minL);
+%sujan WL(WL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL(WL <= p.cAllocfNut.minL);
 %sujan WL(WL >= p.cAllocfNut.maxL) = p.cAllocfNut.maxL(WL >= p.cAllocfNut.maxL); %% check if p.cAlloc.maxL and p.cAlloc.minL should used p.cAlloc.maxL_fW?
 
 
 % minimum of WL and NL
 minWLNL             = NL;
-minWLNL(WL < NL)	= WL(WL < NL);
+minWLNL(WL < NL)    = WL(WL < NL);
 
 fe.cAllocfNut.minWLNL(:,tix) = minWLNL;
-end % function
+end

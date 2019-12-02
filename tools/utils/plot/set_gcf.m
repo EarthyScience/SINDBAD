@@ -1,29 +1,29 @@
 function set_gcf(cf, ca, style, samevar, figdims, scalefontsize,forcelims,ticklengths)
 % function to make a current figure "nicer"
 if ~exist('style', 'var')   , style     = 'rectangle';  end
-if ~exist('samevar', 'var') , samevar	= 0;  end
-if ~exist('scalefontsize', 'var') , scalefontsize	= 1;  end
+if ~exist('samevar', 'var') , samevar    = 0;  end
+if ~exist('scalefontsize', 'var') , scalefontsize    = 1;  end
 if ~exist('forcelims','var'), forcelims = []; end
 if ~exist('ticklengths','var'), ticklengths = []; end
 if ~exist('figdims','var'), figdims = []; end
 
 % figure dimensions
-left	= 0;
-bottom	= 0;
+left    = 0;
+bottom    = 0;
 switch lower(style)
     case {'r','rect','rectangle'}
-        width	= 20;
-        height	= 15;
+        width    = 20;
+        height    = 15;
     case {'s','sq','square'}
-        width	= 20;
-        height	= 20;
+        width    = 20;
+        height    = 20;
     otherwise
         error(['not a known style : ' style])
 end
 if exist('figdims', 'var')
     if ~isempty(figdims)
-        width	= figdims(1);
-        height	= figdims(2);
+        width    = figdims(1);
+        height    = figdims(2);
     end
 end
 
@@ -47,9 +47,9 @@ set(cf, ...
 
 % font styles and sizes
 fontnamelabel   = 'Times';
-fontsizelabel	= floor(24 * scalefontsize);
+fontsizelabel    = floor(24 * scalefontsize);
 fontnameaxis   = 'Times';
-fontsizeaxis	= floor(14 * scalefontsize);
+fontsizeaxis    = floor(14 * scalefontsize);
 set(get(ca, 'XLabel'), 'FontName', fontnamelabel, 'FontSize', fontsizelabel,'FontUnits','points')
 set(get(ca, 'YLabel'), 'FontName', fontnamelabel, 'FontSize', fontsizelabel,'FontUnits','points')
 set(get(ca, 'ZLabel'), 'FontName', fontnamelabel, 'FontSize', fontsizelabel,'FontUnits','points')
@@ -82,22 +82,22 @@ if samevar && strcmpi(style, 'square')
     getLims=1;
     if exist('forcelims','var')
         if ~isempty(forcelims)
-            lims	= forcelims;
-                xlims	= lims;
+            lims    = forcelims;
+                xlims    = lims;
                 ylims   = lims;
                 getLims=0;
         end
     end
     if getLims
-        lims	= [get(ca, 'XLim') get(ca, 'YLim')];
-        lims	= [min(lims) max(lims)];
+        lims    = [get(ca, 'XLim') get(ca, 'YLim')];
+        lims    = [min(lims) max(lims)];
         try
-            xdata	= cell2mat(get(get(gca,'Children'),'XData'));
-            ydata	= cell2mat(get(get(gca,'Children'),'YData'));
-            xlims	= [min(xdata(:)) max(xdata(:))];
-            ylims	= [min(ydata(:)) max(ydata(:))];
+            xdata    = cell2mat(get(get(gca,'Children'),'XData'));
+            ydata    = cell2mat(get(get(gca,'Children'),'YData'));
+            xlims    = [min(xdata(:)) max(xdata(:))];
+            ylims    = [min(ydata(:)) max(ydata(:))];
         catch
-            xlims	= lims;
+            xlims    = lims;
             ylims   = lims;
         end
     end

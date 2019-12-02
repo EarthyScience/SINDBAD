@@ -18,7 +18,7 @@ function strPaths = convertToFullPaths(info,strPaths)
 %
 % Created by:
 %   - unknown
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %
@@ -65,7 +65,7 @@ else
     disp(['WARN PATH : convertToFullPaths : not a known string datatype for paths : ' class(strPaths)])
 end
 
-end % function
+end
 
 %% function to replace the slashes and add the basedir to create a full path
 function str = setItUp(bf,str)

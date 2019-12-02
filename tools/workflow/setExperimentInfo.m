@@ -1,4 +1,4 @@
-function info   =	setExperimentInfo(info)
+function info   =    setExperimentInfo(info)
 
 [info.experiment.usedVersion,~]     =   system('git rev-parse HEAD');
 

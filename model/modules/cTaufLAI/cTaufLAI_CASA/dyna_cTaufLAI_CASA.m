@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% FUNCTION	: cTaufLAI_CASA
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : cTaufLAI_CASA
 %
-% PURPOSE	: compute the seasonal cycle of litter fall and root litter
+% PURPOSE    : compute the seasonal cycle of litter fall and root litter
 %           "fall" based on LAI variations. Necessarily in precomputation
 %           mode...
 %
@@ -12,7 +12,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 % production: A process model based on global satellite and surface data.
 % Global Biogeochemical Cycles. 7: 811-841.
 %
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 %
 % INPUT
 % lai           : leaf area index (m2/m2)
@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 % kRTLAI        : parameter for the constant fraction of root litter imputs
 %               to the soil ([])
 %               (p.cTaufLAI.kRTLAI)
-% stepsPerYear	: number of time steps per year
+% stepsPerYear    : number of time steps per year
 %               (info.timeScale.stepsPerYear)
 % NYears        : number of years of simulations
 %               (info.timeScale.nYears)
@@ -33,11 +33,11 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
 %               (fe.cCycle.LTLAI)
 % RTLAI         : root litter scalar ([])
 %               (fe.cCycle.RTLAI)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % % BUILD AN ANNUAL LAI MATRIX
 % LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
-% LAI13(:, 2:TSPY + 1)	=   flip(d.cLAI.LAI(:,1:TSPY), 2);
+% LAI13(:, 2:TSPY + 1)    =   flip(d.cLAI.LAI(:,1:TSPY), 2);
 % LAI13(:, 1)             =   d.cLAI.LAI(:, 1);
 % s.cd.p_cTaufLAI_LAI13   =   LAI13;
 
@@ -103,7 +103,7 @@ dLAI(dLAI < 0)                  =   0;
 
 %--> Calculate variable fraction of LAI (LTCON)
 LTVAR                           =   zeros(size(dLAI));
-LTVAR(dLAI <= 0 | dLAIsum <= 0)	=   0;
+LTVAR(dLAI <= 0 | dLAIsum <= 0)    =   0;
 ndx                             =   (dLAI > 0 | dLAIsum > 0);
 LTVAR(ndx)                      =   (dLAI(ndx) ./ dLAIsum(ndx));
 
@@ -121,11 +121,11 @@ RTLAI(ndx)                      =   (1 - kRTLAI) .* (LTLAI(ndx) + LAI131st(ndx) 
 
 %--> Feed the output fluxes to cCycle components
 zix                             =   info.tem.model.variables.states.c.zix.cVegLeaf;
-s.cd.p_cTaufLAI_kfLAI(:,zix)	=   s.cd.p_cCycleBase_annk(:,zix) .* LTLAI ./ s.cd.p_cCycleBase_k(:,zix); % leaf litter scalar
+s.cd.p_cTaufLAI_kfLAI(:,zix)    =   s.cd.p_cCycleBase_annk(:,zix) .* LTLAI ./ s.cd.p_cCycleBase_k(:,zix); % leaf litter scalar
 if isfield(info.tem.model.variables.states.c.zix,'cVegRootF')
     zix = info.tem.model.variables.states.c.zix.cVegRootF;
 else
     zix = info.tem.model.variables.states.c.zix.cVegRoot;
 end
-s.cd.p_cTaufLAI_kfLAI(:,zix)	=   s.cd.p_cCycleBase_annk(:,zix) .* RTLAI ./ s.cd.p_cCycleBase_k(:,zix); % root litter scalar
-end % function
+s.cd.p_cTaufLAI_kfLAI(:,zix)    =   s.cd.p_cCycleBase_annk(:,zix) .* RTLAI ./ s.cd.p_cCycleBase_k(:,zix); % root litter scalar
+end

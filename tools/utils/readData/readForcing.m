@@ -26,7 +26,7 @@ function [dataStructure,info] = readForcing(info)
 %   - if a variable cannot be read, a default value is applied
 %
 % Created by:
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut)
 %
 % References:
 %
@@ -41,7 +41,7 @@ function [dataStructure,info] = readForcing(info)
 
 %%
 
-dataStructure                       =	struct;
+dataStructure                       =    struct;
 allDataPaths                        =   cell(1);
 variables                           =   fields(info.tem.forcing.variables);
 
@@ -51,7 +51,7 @@ xDay                                =   info.tem.helpers.dates.day;
 % get data paths
 if ~isempty(info.tem.forcing.oneDataPath)
     dataPaths                       =   {info.tem.forcing.oneDataPath};
-    idxVar                          =	ones(1, numel(variables));
+    idxVar                          =    ones(1, numel(variables));
 else
     for vv                          =   variables'
         if info.tem.model.flags.runForwardYearly
@@ -75,31 +75,31 @@ for ii                              =   1:numel(dataPaths)
     inVars                          =   variables(idxVar==ii);
     % is data path a folder or file?
     if exist(dPath, 'dir')
-        dContent                    =	dir(dPath);
-        dFiles                      =	{dContent(~[dContent.isdir]).name};
-        dFiles                      =	strcat(dPath,dFiles);
+        dContent                    =    dir(dPath);
+        dFiles                      =    {dContent(~[dContent.isdir]).name};
+        dFiles                      =    strcat(dPath,dFiles);
     elseif exist(dPath, 'file')
-        dFiles                      =	{dPath};
+        dFiles                      =    {dPath};
     else
         error([pad('CRIT FILEMISS',20,'left') ' : ' pad('readForcing',20) ' | ' dPath ' does not exist'])
     end
     
     % loop over files
     for ff=1:numel(dFiles)
-        [pathstr,name,ext]          =	fileparts(dFiles{ff});
+        [pathstr,name,ext]          =    fileparts(dFiles{ff});
         
         switch ext
             case '.mat'
-                dataMat             =	load(dFiles{ff});
+                dataMat             =    load(dFiles{ff});
                 for vv              =   1:numel(inVars)
                     % loop over variables
                     try
-                        tarVar      =	inVars{vv};
-                        srcVar      =	info.tem.forcing.variables.(tarVar).sourceVariableName;
+                        tarVar      =    inVars{vv};
+                        srcVar      =    info.tem.forcing.variables.(tarVar).sourceVariableName;
                         % assign variable + do conversions etc. -> without eval?!
-                        dataStructure.(tarVar)          =	dataMat.(srcVar);
+                        dataStructure.(tarVar)          =    dataMat.(srcVar);
                         try
-                            dataStructure.(tarVar)      =	eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
+                            dataStructure.(tarVar)      =    eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
                             disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Units of forcing variable ' tarVar ' not converted. Keeping the original values'])
                         end
@@ -123,7 +123,7 @@ for ii                              =   1:numel(dataPaths)
                 
                 %  TINA: add dates.day (should exist in the spinup forcing!)
                 try
-                    dataStructure.dates                 =	dataMat.dates;
+                    dataStructure.dates                 =    dataMat.dates;
                 catch
                     disp([pad('WARN DATAMISS',20,'left') ' : ' pad('readForcing',20) ' | Time information (dates.day) missing in input data. May cause problems with spinup.'])
                 end
@@ -132,10 +132,10 @@ for ii                              =   1:numel(dataPaths)
                 for vv=1:numel(inVars)
                     % loop over variables
                     try
-                        tarVar                          =	inVars{vv};
-                        srcVar                          =	info.tem.forcing.variables.(tarVar).sourceVariableName;
+                        tarVar                          =    inVars{vv};
+                        srcVar                          =    info.tem.forcing.variables.(tarVar).sourceVariableName;
                         %                         info.tem.helpers.dimension.time.timeVec     =   ncread(dFiles{ff},'time');
-                        dataStructure.(tarVar)          =	ncread(dFiles{ff},srcVar)';
+                        dataStructure.(tarVar)          =    ncread(dFiles{ff},srcVar)';
                         try
                             dataStructure.(tarVar)      =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
@@ -165,7 +165,7 @@ for ii                              =   1:numel(dataPaths)
     
 end
 
-dataStructure.Year                                      =	year(xDay);
+dataStructure.Year                                      =    year(xDay);
     
 end
 

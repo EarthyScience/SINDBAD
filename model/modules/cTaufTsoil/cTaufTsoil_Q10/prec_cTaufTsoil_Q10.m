@@ -1,14 +1,14 @@
 function [f,fe,fx,s,d,p] = prec_cTaufTsoil_Q10(f,fe,fx,s,d,p,info)
-% #########################################################################
-% FUNCTION	: 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : 
 % 
-% PURPOSE	: 
+% PURPOSE    : 
 % 
 % REFERENCES:
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 % NOTE, WE NEED TO CHECK THIS CODE OUT! NORMALIZATION FOR TREF WHEN
@@ -25,6 +25,6 @@ function [f,fe,fx,s,d,p] = prec_cTaufTsoil_Q10(f,fe,fx,s,d,p,info)
 
 
 % CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-fe.cTaufTsoil.fT	= p.cTaufTsoil.Q10 .^ ((f.Tair - p.cTaufTsoil.Tref) ./ 10) .* TsM; 
+fe.cTaufTsoil.fT    = p.cTaufTsoil.Q10 .^ ((f.Tair - p.cTaufTsoil.Tref) ./ 10) .* TsM; 
 
-end % function
+end

@@ -1,11 +1,11 @@
 function [f,fe,fx,s,d,p] = dyna_GPPdem_mult(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% PURPOSE	: compute the demand GPP: stress scalars are in a
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : compute the demand GPP: stress scalars are in a
 % multiplicative way 
 % 
 % REFERENCES: SINDABD ;)
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = dyna_GPPdem_mult(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 scall                   =   repmat(info.tem.helpers.arrays.onespix,1,2);
     scall(:,1)            =   d.GPPfTair.TempScGPP(:,tix);
     scall(:,2)            =   d.GPPfVPD.VPDScGPP(:,tix);

@@ -1,7 +1,10 @@
 %% clean the path and memory
 try
     gone
-    for fn              =	{'tools','model','optimization','testBeds'}
+catch
+end
+try
+    for fn              =    {'tools','model','optimization','testBeds'}
         rmpath(genpath(['../../' fn{1}]))
     end
 catch
@@ -9,15 +12,15 @@ end
 
 %% add the paths of the necessary sindbad directories
 
-for fn                  =	{'tools','model','optimization','testBeds'}
+for fn                  =    {'tools','model','optimization','testBeds'}
     addpath(genpath(['../../' fn{1}]),'-begin')
 end
 %%
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wapproachChecks';
 %
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
+userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -27,7 +30,7 @@ end
 
 if isempty(userOutPath)
     outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
-    [uname,~]           =	getUserInfo();
+    [uname,~]           =    getUserInfo();
     outDir              =   [outDir filesep uname];
 else
     outDir              =   userOutPath;
@@ -41,7 +44,8 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'rainSnow';
+moduleName              = 'gwRec';
+figsInterest = {'gwRec'};
 
 outpath                 =   [outDir '/' moduleName];
 
@@ -62,10 +66,9 @@ rgenCode = {0 1};
 grCode = {0 1};
 runGenCode  = 0;
 genRedMemCode = 0;
-tryCatch = 0;
+tryCatch = 1;
 % rgenCode = {0};
 % grCode = {1};
-figsInterest = {'evapInt'};
 for a=1:2
     runGenCode = rgenCode{a};
     for b = 1:2
@@ -238,50 +241,78 @@ fig_outDirPath=[info.experiment.outputDirPath '../checkResults_' moduleName];
 mkdirx(fig_outDirPath)
 fNamesfx=fields(fx);
 fNamesd=fields(d.storedStates);
+nColo = runNum/3;
+colors = {'b' 'k' 'r' 'g' 'y' 'c' 'm'};
+markers = {'+' 'o' 'x'};
 for fn = 1:numel(fNamesfx)
-    figure('Visible', 'off')
-    hold on
-    for rn = 1:1:runNum
-        eval(['dat=fx' num2str(rn) '.' fNamesfx{fn} ';'])
-        try
-            plot(nanmean(dat,1),'LineWidth',1,'Color',rand(1,3))
-        catch
-            disp([expNames{rn} ' failed to plot ' fNamesfx{fn} ])
-        end
-    end
-    hleg = legend(expNames);
-    set(hleg,'Interpreter', 'none')
-    titl=title(['flux: spatial mean ' fNamesfx{fn}]);
-    set(titl,'Interpreter', 'none');
+    coloNum =1;
+    markerNum = 1;
     if ismember(fNamesfx{fn},figsInterest)
-        savefig([fig_outDirPath '/' moduleName '_' fNamesfx{fn} '.fig'])
+        figure('Visible', 'off')
+        hold on
+        for rn = 1:1:runNum
+            eval(['dat=fx' num2str(rn) '.' fNamesfx{fn} ';'])
+            try
+                plot(nanmean(dat,1),'LineWidth',0.01,'Color',colors{coloNum},'Marker',markers{markerNum},'MarkerIndices',1:100:length(dat))
+%                 rn
+%                 nColo
+                if rem(rn,nColo) == 0
+%                     disp('marker change')
+                    coloNum = 1;
+                    markerNum = markerNum + 1;
+                else
+                    disp('color change')
+                    coloNum = coloNum + 1;
+                end
+
+            catch
+                disp([expNames{rn} ' failed to plot ' fNamesfx{fn} ])
+            end
+        end
+        hleg = legend(expNames);
+        set(hleg,'Interpreter', 'none')
+        titl=title(['flux: spatial mean ' fNamesfx{fn}]);
+        set(titl,'Interpreter', 'none');
+        if ismember(fNamesfx{fn},figsInterest)
+            savefig([fig_outDirPath '/' moduleName '_' fNamesfx{fn} '.fig'])
+        end
+        
+                save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesfx{fn}],1,1)
     end
-    
-    save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesfx{fn}],1,1)
 end
 for fn = 1:numel(fNamesd)
-    figure('Visible', 'off')
-    hold on
-    for rn = 1:1:runNum
-        eval(['dat=d'  num2str(rn) '.storedStates.' fNamesd{fn} ';'])
-        dat=squeeze(dat);
-        try
-            if ndims(dat) > 2
-                datMean=nansum(nanmean(dat,[1]),[2]);
-            else
-                datMean=nanmean(dat,1);
-            end
-            plot(datMean,'LineWidth',1,'Color',rand(1,3))
-        catch
-            disp([expNames{rn} ' failed to plot ' fNamesd{fn} ])
-        end
-    end
-    hleg = legend(expNames);
-    set(hleg,'Interpreter', 'none')
-    titl=title(['diagnostic stored states: spatial mean ' fNamesd{fn}]);
-    set(titl,'Interpreter', 'none');
+    coloNum =1;
+    markerNum = 1;
     if ismember(fNamesd{fn},figsInterest)
-        savefig([fig_outDirPath '/' moduleName '_' fNamesd{fn} '.fig'])
+        figure('Visible', 'off')
+        hold on
+        for rn = 1:1:runNum
+            eval(['dat=d'  num2str(rn) '.storedStates.' fNamesd{fn} ';'])
+            dat=squeeze(dat);
+            try
+                if ndims(dat) > 2
+                    datMean=nansum(nanmean(dat,[1]),[2]);
+                else
+                    datMean=nanmean(dat,1);
+                end
+                plot(datMean,'LineWidth',0.01,'Color',colors{coloNum},'Marker',markers{markerNum},'MarkerIndices',1:100:length(datMean))
+                if rem(rn,nColo) == 0
+                    coloNum = 1;
+                    markerNum = markerNum + 1;
+                else
+                    coloNum = coloNum + 1;
+                end
+            catch
+                disp([expNames{rn} ' failed to plot ' fNamesd{fn} ])
+            end
+        end
+         hleg = legend(expNames);
+        set(hleg,'Interpreter', 'none')
+        titl=title(['diagnostic stored states: spatial mean ' fNamesd{fn}]);
+        set(titl,'Interpreter', 'none');
+        if ismember(fNamesd{fn},figsInterest)
+            savefig([fig_outDirPath '/' moduleName '_' fNamesd{fn} '.fig'])
+        end
     end
     save_gcf(gcf,[fig_outDirPath '/' moduleName '_' fNamesd{fn}],1,1)
     

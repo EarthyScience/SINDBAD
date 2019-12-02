@@ -6,12 +6,12 @@ s.cd.p_cTaufpVeg_C2LIGNIN               =   p.cTaufpVeg.C2LIGNIN .* info.tem.hel
 s.cd.p_cTaufpVeg_kfVeg                  =   info.tem.helpers.arrays.onespixzix.c.cEco; %sujan
 %% adjust the annk that are pft dependent directly on the p matrix
 pftVec  = unique(p.pVeg.PFT);
-% AGE	= info.tem.helpers.arrays.zerospixzix.c.cEco; %sujan
+% AGE    = info.tem.helpers.arrays.zerospixzix.c.cEco; %sujan
 for cpN = {'cVegRootF','cVegRootC','cVegWood','cVegLeaf'}
     % get average age from parameters
-    AGE	= info.tem.helpers.arrays.zerospix; %sujan
+    AGE    = info.tem.helpers.arrays.zerospix; %sujan
     for ij = 1:numel(pftVec)
-        AGE(p.pVeg.PFT == pftVec(ij))	=   p.cCycleBase.([cpN{:} '_AGE_per_PFT'])(pftVec(ij));
+        AGE(p.pVeg.PFT == pftVec(ij))    =   p.cCycleBase.([cpN{:} '_AGE_per_PFT'])(pftVec(ij));
     end
     % compute annk based on age
     annk                                =   1e-40 .* info.tem.helpers.arrays.onespix; %sujan ones(size(AGE))
@@ -27,8 +27,8 @@ pftVec                                  =   unique(p.pVeg.PFT);
 s.cd.p_cTaufpVeg_LITC2N                 =   info.tem.helpers.arrays.zerospix;
 s.cd.p_cTaufpVeg_LIGNIN                 =   info.tem.helpers.arrays.zerospix;
 for ij = 1:numel(pftVec)
-    s.cd.p_cTaufpVeg_LITC2N(p.pVeg.PFT == pftVec(ij))	= p.cTaufpVeg.LITC2N_per_PFT(pftVec(ij));
-    s.cd.p_cTaufpVeg_LIGNIN(p.pVeg.PFT == pftVec(ij))	= p.cTaufpVeg.LIGNIN_per_PFT(pftVec(ij));
+    s.cd.p_cTaufpVeg_LITC2N(p.pVeg.PFT == pftVec(ij))    = p.cTaufpVeg.LITC2N_per_PFT(pftVec(ij));
+    s.cd.p_cTaufpVeg_LIGNIN(p.pVeg.PFT == pftVec(ij))    = p.cTaufpVeg.LIGNIN_per_PFT(pftVec(ij));
 end
 
 % CALCULATE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
@@ -47,8 +47,8 @@ s.cd.p_cTaufpVeg_SCLIGNIN    = (s.cd.p_cTaufpVeg_LIGNIN .* s.cd.p_cTaufpVeg_C2LI
 s.cd.p_cTaufpVeg_LIGEFF = exp(-p.cTaufpVeg.LIGEFFA .* s.cd.p_cTaufpVeg_SCLIGNIN);
 
 % feed the output
-s.cd.p_cTaufpVeg_kfVeg(:,info.tem.model.variables.states.c.zix.cLitLeafS)	= s.cd.p_cTaufpVeg_LIGEFF;
-s.cd.p_cTaufpVeg_kfVeg(:,info.tem.model.variables.states.c.zix.cLitRootFS)	= s.cd.p_cTaufpVeg_LIGEFF;
+s.cd.p_cTaufpVeg_kfVeg(:,info.tem.model.variables.states.c.zix.cLitLeafS)    = s.cd.p_cTaufpVeg_LIGEFF;
+s.cd.p_cTaufpVeg_kfVeg(:,info.tem.model.variables.states.c.zix.cLitRootFS)    = s.cd.p_cTaufpVeg_LIGEFF;
 
 
 end %function

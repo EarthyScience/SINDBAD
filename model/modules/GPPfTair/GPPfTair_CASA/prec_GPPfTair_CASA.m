@@ -1,10 +1,10 @@
 function [f,fe,fx,s,d,p] = prec_GPPfTair_CASA(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: compute the temperature scalar used in the CASA model
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : compute the temperature scalar used in the CASA model
 % 
 % REFERENCES: Potter et al 1993, 2003; Carvalhais et al 2008
 % 
-% CONTACT	: ncarval, mjung
+% CONTACT    : ncarval, mjung
 % 
 % INPUT
 % 
@@ -14,7 +14,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfTair_CASA(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % get air temperature during the day
 AIRT    =   f.TairDay;

@@ -22,7 +22,7 @@ function [fe,fx,d,info] = createVariableArray(d,info)
 %   + d.prev.[VariableName]: nPix,1
 %
 % Created by: 
-%   Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   Sujan Koirala (skoirala)
 % 
 % References: 
 %   + 

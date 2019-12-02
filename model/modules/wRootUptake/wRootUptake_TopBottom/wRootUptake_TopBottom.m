@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % PURPOSE	: extract the transpired water from the soil
 % 
 % REFERENCES:
@@ -25,7 +25,7 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % first extract it from ground water in the root zone
 % VMC                      
 % = minsb(maxsb((sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)

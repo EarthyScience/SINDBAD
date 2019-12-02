@@ -21,7 +21,7 @@ function [info] = editTEMInfo(info,varargin)
 
 
 %% 2) edit the settings of the TEM based on the function inputs
-[info, tree]	=   editInfoField(info,varargin{:});
+[info, tree]    =   editInfoField(info,varargin{:});
 [info]          =   adjustInfo(info, tree);
 
 %% 3) paths & output folder structure

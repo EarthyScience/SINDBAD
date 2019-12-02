@@ -21,7 +21,7 @@ function [boundsCheckFlag] = checkBounds(f,fe,fx,s,d,p,info)
 if info.tem.model.flags.checks.bounds == true
     
     % read json catalogue with plausible variable ranges
-    data_json	= readJsonFile(info.tem.model.paths.variableBounds);
+    data_json    = readJsonFile(info.tem.model.paths.variableBounds);
     
     varBounds(:,1) = data_json.VariableNames;
     
