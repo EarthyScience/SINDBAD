@@ -1,34 +1,52 @@
 function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% CALCULATE psoil MOISTURE PARAMETERS
-% [Alpha,Beta,K,Theta,Psi] = calcSoilParams(p,fe,info,WT)
+% calculate the soil hydraulic properties based on Saxton, 1986
 % 
-% soilm_parm    : soil moisture parameter output array
-% CLAY          : clay array
-% SAND          : sand array
-% WT            : Psi : water tension (kPa)
-%               : wilting point     : 'WP'      : WT = 1500
-%               : field capacity    : 'FC'      : WT = 33
-%               : saturation        : 'Sat'     : WT = 10
-%               : alpha             : 'alpha'
-%               : beta              : 'beta'
-% 
-% Reference:
-% Saxton, K.E., W.J. Rawls, J.S. Romberger, and R.I. Papendick. 1986. 
-% Estimating generalized soil-water characteristics from texture. 
-% Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
-% http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
+% Inputs:
+%   - soilm_parm    : soil moisture parameter output array
+%   - CLAY          : clay array (from soilTexture)
+%   - SAND          : sand array  (from soilTexture)
+%   - WT            : Psi : matric potential of soil water (kPa)
+%   -               : wilting point     : 'WP'      : WT = 1500
+%   -               : field capacity    : 'FC'      : WT = 33
+%   -               : saturation        : 'Sat'     : WT = 10
+%   -               : alpha             : 'alpha'
+%   -               : beta              : 'beta'
+%	- s.w.wSoil: soil moisture in different layers
+%
+% Outputs:
+%   - K,Psi,Theta @ FC, Sat, and WP
+%   - moisture retension parameters (Alpha and Beta)
+%
+% Modifies:
+%
+% References:
+%   - Saxton, K.E., W.J. Rawls, J.S. Romberger, and R.I. Papendick. 1986. 
+%     Estimating generalized soil-water characteristics from texture. 
+%     Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
+%     http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (skoirala): 
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% CONVERT SAND AND CLAY TO PERCENTAGES
+%%
+%--> get the number of soil layers
+
+%-->  CONVERT SAND AND CLAY TO PERCENTAGES
 CLAY            =   p.soilTexture.CLAY .* 100;
 SAND            =   p.soilTexture.SAND .* 100;
 
-% Equations
+%-->  Equations
 A               =   exp(p.pSoil.a + p.pSoil.b .* CLAY + p.pSoil.c .* SAND .^ 2 + p.pSoil.d1 .* SAND .^ 2 .* CLAY) * 100;
 B               =   p.pSoil.e + p.pSoil.f1 .* CLAY .^ 2 + p.pSoil.g .* SAND .^ 2 .* CLAY;
 
-% WATER POTENTIAL, Psi, kPa
+%-->  WATER POTENTIAL, Psi, kPa
 Psi             =   WT .* info.tem.helpers.arrays.onespix;
 
 % WATER CONTENT AT SATURATION (m^3/m^3)
@@ -68,14 +86,9 @@ clear ndx
 
 % -------------------------------------------------------------------------
 % WATER CONDUCTIVITY (mm/day)
-% K               =   calcKSaxton1986(p,info,Theta);
 K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
     (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
     CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
-
-% K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
-%     (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
-%     CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
 % -------------------------------------------------------------------------
 
 Alpha           =   A;

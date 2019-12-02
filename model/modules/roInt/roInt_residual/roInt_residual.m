@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = roInt_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = roInt_residual(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates interflow as a fraction of the available water
 %

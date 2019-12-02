@@ -7,7 +7,7 @@ function [f,fe,fx,s,d,p] = roSat_Bergstroem(f,fe,fx,s,d,p,info,tix)
 %
 % Outputs:
 %   - fx.roSat      : runoff from land [mm/time]
-%   - fx.InSoil     : infiltration into soil [mm/time]
+%   - fx.wSoilPerc     : infiltration into soil [mm/time]
 %
 % Modifies:
 %   - s.w.wSoil    : soil moisture of the layers [mm]
@@ -39,12 +39,12 @@ fx.roSat(:,tix)     =   s.wd.WBP .* tmp_InfExFrac;
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
 % update soil moisture for 1st layer
-fx.InSoil(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
-s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.InSoil(:,tix);
+fx.wSoilPerc(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
+s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.wSoilPerc(:,tix);
 
-s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
-% s.wd.WBP    = s.wd.WBP - fx.InSoil1(:,tix); %--> sujan removed 1 at the
-% end of InSoil1
+s.wd.WBP            =   s.wd.WBP - fx.wSoilPerc(:,tix);
+% s.wd.WBP    = s.wd.WBP - fx.wSoilPerc1(:,tix); %--> sujan removed 1 at the
+% end of wSoilPerc1
 
 % reallocate excess of 1st layer to deeper layers 
 for sl  =   2:size(s.w.wSoil,2)
