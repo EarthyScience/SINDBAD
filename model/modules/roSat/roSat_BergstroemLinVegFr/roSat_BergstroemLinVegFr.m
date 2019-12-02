@@ -9,7 +9,7 @@ function [f,fe,fx,s,d,p] = dyna_roSat_BergstroemLinVegFr(f,fe,fx,s,d,p,info,tix)
 %
 % Outputs:
 %   - fx.roSat : runoff from land [mm/time]
-%   - fx.InSoil    : infiltration in soil [mm/time]
+%   - fx.wSoilPerc    : infiltration in soil [mm/time]
 %
 % Modifies:
 % 	- s.w.wSoil    : soil moisture of the layers [mm]
@@ -42,10 +42,10 @@ fx.roSat(:,tix)     =   s.wd.WBP .* tmp_SatExFrac;
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
 %--> update soil moisture for 1st layer
-fx.InSoil(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
-s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.InSoil(:,tix);
+fx.wSoilPerc(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
+s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.wSoilPerc(:,tix);
 
-s.wd.WBP            =   s.wd.WBP - fx.InSoil(:,tix);
+s.wd.WBP            =   s.wd.WBP - fx.wSoilPerc(:,tix);
 
 %--> reallocate to deeper layers
 for sl  =   2:size(s.w.wSoil,2)

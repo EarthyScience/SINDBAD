@@ -52,11 +52,11 @@ else
         idxArray(i,lkInd(i)) = 1;
     end
         K                                           =   lkDat(idxArray ==1);
+%     K  = K(:,1);
 %     K                                           =   lkInd;
 %     lkInd(lkInd==0)                             =   1;
 %     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
 %     K = lkDat(:,lkInd);
-%     K  = K(:,1);
 end
 % a=rand(904,1);
 % b=repmat(rng',1,size(a,1))';

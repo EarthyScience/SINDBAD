@@ -1,50 +1,39 @@
 function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% PURPOSE	: extract the transpired water from the soil
-% 
-% REFERENCES:
-% 
-% CONTACT	: mjung, ncarval
-% 
-% INPUT
+% calculates the rootUptake from each of the soil layer from top to bottom
 %
-% INPUT
-%s.smPools  : soil moisture content of layers [mm]
-% wSM      : soil moisture sum of all layers [mm]
-%s.wd.p_wSoilBase_wAWC : maximum plant available water content of layers
-% wGWR      : ground water recharge pool [mm] 
-%           (s.wd.wGWR)
-%fx.tranAct  : transpiration [mm]
-% OUTPUT
-%s.smPools  : soil moisture content of layers [mm]
-% wSM      : soil moisture sum of all layers [mm]
-% wGWR      : ground water recharge pool [mm] 
-%           (s.wd.wGWR)
-% 
-% DEPENDENCIES  :
-% 
-% NOTES:
-% 
+% Inputs:
+%	- fx.tranAct: actual transpiration
+%	- s.wd.p_rootFrac_fracRoot2SoilD: max fraction of moisture that can be uptake from a layer (out of rootFrac module)
+%   - s.w.wSoil: soil moisture
+%
+% Outputs:
+%   - s.wd.wRootUptake: moisture uptake from each soil layer (nPix,nZix of wSoil) 
+%
+% Modifies:
+% 	- s.w.wSoil
+%
+% References:
+%   -
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%
+% Versions:
+%   - 1.0 on 18.11.2019 (skoirala): 
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% first extract it from ground water in the root zone
-% VMC                      
-% = minsb(maxsb((sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)
-% - sum(s.wd.p_wSoilBase_wWP .* s.wd.p_rootFrac_fracRoot2SoilD,2)),0) ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2),1);
-% AWC4Trans  = 
 
+%%
+%--> get the transpiration
 transp          = fx.tranAct(:,tix);
 
-% 
-% ET1         = minsb(ET,s.wd.wGWR);
-% s.wd.wGWR = s.wd.wGWR - ET1;
-% ET=ET-ET1;
-
-%extract from top to bottom
+%--> extract from top to bottom and update moisture
 for sl  =   1:size(s.w.wSoil,2)
-    wSoilAvail      =   s.w.wSoil(:,sl) .* s.wd.p_rootFrac_fracRoot2SoilD(:,sl);
-    contrib         =   minsb(transp,wSoilAvail);
-    s.w.wSoil(:,sl) =   s.w.wSoil(:,sl) - contrib;
-    transp          =   transp-contrib;    
+    wSoilAvail              =   s.w.wSoil(:,sl) .* s.wd.p_rootFrac_fracRoot2SoilD(:,sl);
+    contrib                 =   minsb(transp,wSoilAvail);
+    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - contrib;
+    s.wd.wRootUptake(:,sl)  =   contrib;
+    transp                  =   transp-contrib;    
 end
-
 end
