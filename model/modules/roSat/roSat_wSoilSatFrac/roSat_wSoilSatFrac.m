@@ -1,4 +1,5 @@
 function [f,fe,fx,s,d,p] = roSat_wSoilSatFrac(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the saturation excess runoff as a fraction of 
 %
 % Inputs:
@@ -17,11 +18,13 @@ function [f,fe,fx,s,d,p] = roSat_wSoilSatFrac(f,fe,fx,s,d,p,info,tix)
 %   - only works if wSoilSatFrac module is activated
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 11.11.2019 (skoirala): cleaned up the code
 %
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %% 
 fx.roSat(:,tix) = s.wd.WBP .* s.wd.wSoilSatFrac;
 % update the WBP

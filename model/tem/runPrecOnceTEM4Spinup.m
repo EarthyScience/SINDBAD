@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = runPrecOnceTEM4Spinup(f,fe,fx,s,d,p,info)
 % as runAlways by setupCode
 %
 % Requires:
-%	- all SINDBAD structure
+%    - all SINDBAD structure
 %
 % Purposes:
 %   - Returns the fields of structures which can be calculated outside the
@@ -12,8 +12,8 @@ function [f,fe,fx,s,d,p] = runPrecOnceTEM4Spinup(f,fe,fx,s,d,p,info)
 % Conventions:
 %
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %

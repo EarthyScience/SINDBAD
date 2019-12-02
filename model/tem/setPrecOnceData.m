@@ -2,7 +2,7 @@ function [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d
 % sets field of precOnceData from SINDBAD structures or vice-versa
 %
 % Requires:
-%	- precOnceData or/and SINDBAD structures (f,fe,fx,s,d,p)
+%    - precOnceData or/and SINDBAD structures (f,fe,fx,s,d,p)
 %
 % Purposes:
 %   - if PrecOnceData is empty, fills its fields with SINDBAD structures
@@ -14,7 +14,7 @@ function [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d
 %  - If runOpti == 1 (in optimization mode), p from optimizer is taken
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %
@@ -25,12 +25,12 @@ function [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d
 strList = {'f','fe','fx','s','d','p'};
 
 if isempty(precOnceData)
-	[f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
-	strInpt         = repmat([strList; repmat({NaN},1,numel(strList))],1,1);
-	precOnceData    = struct(strInpt{:});
+    [f,fe,fx,s,d,p] = runCoreTEM(f,fe,fx,s,d,p,info,true,false,false);
+    strInpt         = repmat([strList; repmat({NaN},1,numel(strList))],1,1);
+    precOnceData    = struct(strInpt{:});
     for strLi = 1:numel(strList)
         strName = strList{strLi};
-        eval(['precOnceData.(strName)	= ' strName ';']);
+        eval(['precOnceData.(strName)    = ' strName ';']);
     end
     disp([pad('SET PRECDATA',20)  ' : ' pad('setPrecOnceData',20) ' | ' pad(runMode,20) ' | EMPTY PrecOnceData fields replaced by SINDBAD structures'])
 else

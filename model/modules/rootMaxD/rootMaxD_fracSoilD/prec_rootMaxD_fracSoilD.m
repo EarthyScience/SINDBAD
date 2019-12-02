@@ -1,26 +1,28 @@
 function [f,fe,fx,s,d,p]=prec_rootMaxD_fracSoilD(f,fe,fx,s,d,p,info)
-% sets the maximum fraction of water that root can uptake from soil layers
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% sets the maximum rooting depth as a fraction of total soil depth
 %
 % Inputs:
-%   - p.pSoil.thetaSat/kSat/psiSat/sSat
-%   - p.pSoil.thetaFC/kFC/psiFC/sFC
-%   - p.pSoil.thetaWP/kWP/psiWP/sWP
+%   - p.rootMaxD.fracRootD2SoilD
+%   - info.tem.model.variables.states.w.soilLayerDepths
 %
 % Outputs:
-%   - same as inputs per layer of soil depth in s.wd.p_wSoilBase_(parameter_name)
+%   - s.wd.maxRootD: The maximum rooting depth as a fraction of total soil depth
 %
 % Modifies:
-% 	- None
+%     - None
 % 
 % References:
-%	- 
+%    - 
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 21.11.2019
 %
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %% 
 
 %--> get the soil thickness and root distribution information from input

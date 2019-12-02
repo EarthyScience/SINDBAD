@@ -1,24 +1,23 @@
 {
-	"params": {
-		"berg_scale": {
-			"Name": "linear scaling parameter for berg",
-			"Unit": "",
-			"Default": 3,
-			"LowerBound": 0.1,
-			"UpperBound": 5,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			}
-		}
-	},
-	"devStage":
-		{
-		"experimental": true,
-		"tested": false,
-		"consolidated": false,
-		"published": false,
-		"comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
-		}
+    "params": {
+        "berg_scale": {
+            "Name": "linear scaling parameter for berg",
+            "Unit": "",
+            "Default": 3,
+            "LowerBound": 0.1,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
 }

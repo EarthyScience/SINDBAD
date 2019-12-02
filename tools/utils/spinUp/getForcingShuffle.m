@@ -14,8 +14,8 @@ function x2 = getForcingShuffle(x,info)
 % Conventions:
 %
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)?
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)?
+%   - Sujan Koirala (skoirala)
 % References:
 %
 % Versions:
@@ -23,7 +23,7 @@ function x2 = getForcingShuffle(x,info)
 
 %%
 years = f.Year;
-yearUniq	= unique(years);
+yearUniq    = unique(years);
 
 yearShuf = yearUniq(randperm(length(yearUniq)));
 
@@ -34,9 +34,9 @@ for jj  = 1:numel(fns)
     if strcmpi(fns{jj},'Year'),continue,end
     
     xVar      = zeros(size());
-    tmp             =	f.(fns{jj});
-    tmp             =	getForcingShuffle(tmp,f.Year,info);
-    x2.(fns{jj})	=	tmp;
+    tmp             =    f.(fns{jj});
+    tmp             =    getForcingShuffle(tmp,f.Year,info);
+    x2.(fns{jj})    =    tmp;
     YearSize        =   size(tmp);
 end
 fSpin.Year          = ones(YearSize,info.tem.model.rules.arrayPrecision) .* 1901;
@@ -52,5 +52,5 @@ for i = yearvec
     tmp(isnan(tmp)==1)  = 0;
     x2                  = x2+tmp;
 end
-x2	= x2 ./ den;
+x2    = x2 ./ den;
 end

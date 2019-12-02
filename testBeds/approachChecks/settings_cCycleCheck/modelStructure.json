@@ -89,7 +89,7 @@
 		{
 			"apprName": 	"cTaufLAI_CASA",
 			"runFull": 		false,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"cTaufpSoil":
 		{
@@ -119,7 +119,7 @@
 		{
 			"apprName": 	"cLAI_constant",
 			"runFull": 		false,
-            "use4spinup":   false
+            "use4spinup":   true
 		},
 		"evapSoil": 
 		{
@@ -211,6 +211,16 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
+        "rootFrac": {
+            "apprName": "rootFrac_constant",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "rootMaxD": {
+            "apprName": "rootMaxD_fracSoilD",
+            "runFull": false,
+            "use4spinup": true
+        },
 		"sumVariables":
 		{
 			"apprName": 	"sumVariables_simple",
@@ -218,6 +228,11 @@
 			"comment": 		"Do not change the approach here",
             "use4spinup":   true
 		},
+        "vegFrac": {
+            "apprName": "vegFrac_constant",
+            "runFull": false,
+            "use4spinup": true
+        },
 		"wBalance":
 		{
 			"apprName": 	"wBalance_simple",

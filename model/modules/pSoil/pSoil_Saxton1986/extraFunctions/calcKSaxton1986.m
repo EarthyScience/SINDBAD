@@ -1,5 +1,5 @@
 function K = calcKSaxton1986(s,p,info,sl)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate conductivity from soil moisture 
 % based on saxton 1986, equation 10
 % [Alpha,Beta,K,Theta,Psi] = calcSoilParams(p,fe,info,WT)
@@ -19,7 +19,7 @@ function K = calcKSaxton1986(s,p,info,sl)
 % Estimating generalized soil-water characteristics from texture. 
 % Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
 % http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
 if p.wSoilBase.makeLookup
@@ -67,4 +67,4 @@ else
 %     end
 end
 
-end % function
+end

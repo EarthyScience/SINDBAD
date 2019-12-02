@@ -16,7 +16,7 @@ function [fe,fx,s,d,info]     =  createTEMStruct(info)
 %     parameters in the approaches.
 %
 % Created by: 
-%   Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   Sujan Koirala (skoirala)
 % 
 % References: 
 %   + 

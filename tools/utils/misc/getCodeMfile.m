@@ -194,7 +194,7 @@ while k < numel(tlinef)
     tline   = rmComm(strtrim(tlinef{k}),0,true);
     newk    = k + 1;
     if isempty(tline)
-        tlinef{k}	= '';
+        tlinef{k}    = '';
         k           = newk;
         continue
     end
@@ -212,7 +212,7 @@ while k < numel(tlinef)
         end
         % cat the next line in case ... is present
         if comm_idx > 1 && comm_idx<length(tline)
-            tlinef{k}	= [strtrim(tline(1:comm_idx-1)), tlinef{min([k+1 numel(tlinef)])}, char(13)];
+            tlinef{k}    = [strtrim(tline(1:comm_idx-1)), tlinef{min([k+1 numel(tlinef)])}, char(13)];
             if numel(tlinef)>k
                 tlinef(k+1) = [];
                 newk        = k;
@@ -256,7 +256,7 @@ l2k     = [];
 for i = 1:numel(tlinef)
     tline = tlinef{i};
     if ~ischar(tline),   break,   end
-    [tline,codek]	= rmComm(strtrim(tlinef{i}),codek,false);
+    [tline,codek]    = rmComm(strtrim(tlinef{i}),codek,false);
     if ~isempty(tline)
         code{codek}     = tline;
     end
@@ -264,7 +264,7 @@ end
 code = code(~cellfun('isempty',code));
 % outputs
 mfinfo.filename     = file;
-mfinfo.linecount	= linecount;
+mfinfo.linecount    = linecount;
 mfinfo.text         = strtrim(mtext);
 mfinfo.code         = strtrim(code);
 end
@@ -289,16 +289,16 @@ if pcts_idx
     % extract the code
     if comm_idx > 1 && comm_idx < length(tline)
         outLine = strtrim(tline(1:comm_idx-1));
-        codek	= codek + 1;
+        codek    = codek + 1;
     end
     if comm_idx > 1 && comm_idx == length(tline)
         outLine = strtrim(tline(1:comm_idx));
-        codek	= codek + 1;
+        codek    = codek + 1;
     end
 else
     outLine = strtrim(tline);
-    codek	= codek + 1;
+    codek    = codek + 1;
 end
-end % function
+end
 
 

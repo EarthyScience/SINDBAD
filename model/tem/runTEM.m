@@ -52,8 +52,8 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
     %   - For faster runs use, variant 8. For example, during optimization.
     %       
     % Created by:
-    %   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
-    %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+    %   - Nuno Carvalhais (ncarval)
+    %   - Sujan Koirala (skoirala)
     %
     % References:
     %
@@ -72,7 +72,7 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
     narginchk(minIn,maxIn)
     
     % input variable names
-    inVarNames	= {'p','SUData','precOnceData','fx','fe','d','s',...
+    inVarNames    = {'p','SUData','precOnceData','fx','fe','d','s',...
                 'infoSU','fSU','precOnceDataSU','fxSU','feSU','dSU','sSU'};
     
     % from last to first optional parameters, set them to [] when not included.
@@ -81,19 +81,19 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
     end
     
     % flags needed to run the runTEM
-    runFlags.createStruct	=   false;
+    runFlags.createStruct    =   false;
     runFlags.precompOnce    =   false;
     
     % check the need for creating sindbad objects and arrays therein
-    requirInitVars	= {'fx','fe','d','s'};
+    requirInitVars    = {'fx','fe','d','s'};
     if sum(cellfun(@(x)exist('x','var') && ~isempty(evalin('caller',x)),requirInitVars)) < numel(requirInitVars)
-        runFlags.createStruct	= true;
+        runFlags.createStruct    = true;
     end
     %% ------------------------------------------------------------------------
     % 2 - MODEL PARAMETERS
     % -------------------------------------------------------------------------
     if isempty(p)
-        p	=   info.tem.params;
+        p    =   info.tem.params;
     end
     %% ------------------------------------------------------------------------
     % 3 - SPIN UP THE MODEL
@@ -105,7 +105,7 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
     % -------------------------------------------------------------------------
     if runFlags.createStruct 
         disp([pad('INPUT ARGS',20) ' : ' pad('runTEM',20) ' | required SINDBAD structures are not provided as input. Reading/creating'])
-        [fe,fx,s,d,info]	= createTEMStruct(info); %sujan
+        [fe,fx,s,d,info]    = createTEMStruct(info); %sujan
         if info.tem.model.flags.runOpti
             disp([pad('OPTI WARN',20) ' : ' pad('runTEM',20) ':'])
             disp(['                          >> Optimization Mode with runOpti = ' num2str(info.tem.model.flags.runOpti)])
@@ -118,7 +118,7 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
     % model run
     if ~isempty(sSU)        , s         = sSU;      end
     if isempty(dSU)         , dSU       = d;        end
-    if isfield(dSU,'prev')  , d.prev	= dSU.prev;	end
+    if isfield(dSU,'prev')  , d.prev    = dSU.prev;    end
     %% ------------------------------------------------------------------------
     % 5.0 - RUN THE MODEL
     % -------------------------------------------------------------------------
@@ -134,7 +134,7 @@ function [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU
         [precOnceData,f,fe,fx,s,d,p] = setPrecOnceData(precOnceData,f,fe,fx,s,d,p,info,'runTEM');
         % the previous steps should come from the spinup
         if iStep == 1 && isfield(dSU,'prev')
-                d.prev	= dSU.prev;
+                d.prev    = dSU.prev;
         end
         % ---------------------------------------------------------------------
         % 5.2 - CARBON AND WATER DYNAMICS IN THE ECOSYSTEM: FLUXES AND STATES

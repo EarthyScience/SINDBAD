@@ -1,15 +1,15 @@
 function [f,fe,fx,s,d,p] = prec_GPPfVPD_Wang2005(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: compute  the CO2 compensation point by Wang et al 2014
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : compute  the CO2 compensation point by Wang et al 2014
 % 
 % REFERENCES: 
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % VPDDay    : daytime vapor pressure deficit [kPa]
 %           (f.VPDDay)
-% TairDay   : daytime temperature [ºC]
+% TairDay   : daytime temperature [ï¿½C]
 %           (f.TairDay)
 % ca        : atmospheric concetration of CO2 [ppm]
 %           (f.ca)
@@ -27,7 +27,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfVPD_Wang2005(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate co2 compensation point after Bernacci (C3 photosynthesis) as
 % suggested by Wang et al 2014

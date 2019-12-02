@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% FUNCTION	: cTaufwSoil_CASA
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : cTaufwSoil_CASA
 % 
-% PURPOSE	: effect of soil moisture on soil decomposition as modelled in
+% PURPOSE    : effect of soil moisture on soil decomposition as modelled in
 %           CASA (BGME - below grounf moisture effect). The below ground
 %           moisture effect, taken directly from the century model, uses
 %           soil moisture from the previous month to determine a scalar
@@ -18,7 +18,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % production: A process model based on global satellite and surface data. 
 % Global Biogeochemical Cycles. 7: 811-841. 
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
 % INPUT
 % stepsPerYear  : number of time steps per year
@@ -45,25 +45,25 @@ function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % decomposition processes of pools that are at the surface and deeper in
 % the soils.   
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
-TSPY	= info.tem.model.time.nStepsYear; %sujan
-TSPM	= TSPY ./ 12;
+TSPY    = info.tem.model.time.nStepsYear; %sujan
+TSPM    = TSPY ./ 12;
 
 % BELOW GROUND RATIO (BGRATIO) AND BELOW GROUND MOISTURE EFFECT (BGME)
 BGRATIO = info.tem.helpers.arrays.zerospix;
-BGME	= info.tem.helpers.arrays.onespix;
+BGME    = info.tem.helpers.arrays.onespix;
 
 % PREVIOUS TIME STEP VALUES
-% pBGME	= s.prev.cTaufwSoil_fwSoil;
-pBGME	= d.prev.d_cTaufwSoil_fwSoil; %sujan
+% pBGME    = s.prev.cTaufwSoil_fwSoil;
+pBGME    = d.prev.d_cTaufwSoil_fwSoil; %sujan
 
 % FOR PET > 0
 ndx = (f.PET(:,tix) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)	= (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + fe.rainSnow.rain(ndx,tix)) ./ f.PET(ndx,tix);
+BGRATIO(ndx)    = (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + fe.rainSnow.rain(ndx,tix)) ./ f.PET(ndx,tix);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.cTaufwSoil.Aws;
@@ -76,15 +76,15 @@ BGME(ndx2)  = 1;
 ndx3        = ndx & (BGRATIO > 2 & BGRATIO <= 30);
 BGME(ndx3)  = 1 + 1 / 28 - 0.5 / 28 .* BGRATIO(ndx(ndx3));
 ndx4        = ndx & (BGRATIO > 30);
-BGME(ndx4)	= 0.5;
+BGME(ndx4)    = 0.5;
 
 % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
 ndxn        = (f.PET(:,tix) <= 0);
-BGME(ndxn)	= pBGME(ndxn);
+BGME(ndxn)    = pBGME(ndxn);
 BGME        = maxsb(minsb(BGME,1),0);
 
 % FEED IT TO THE STRUCTURE
-d.cTaufwSoil.fwSoil(:,tix)	= BGME; 
+d.cTaufwSoil.fwSoil(:,tix)    = BGME; 
 % d.prev.cTaufwSoil_fwSoil    = BGME;
 
-end % function
+end

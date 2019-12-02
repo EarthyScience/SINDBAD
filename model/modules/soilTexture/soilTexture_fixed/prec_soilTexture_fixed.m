@@ -19,8 +19,8 @@ function [f,fe,fx,s,d,p] = prec_soilTexture_fixed(f,fe,fx,s,d,p,info)
 % http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
 %
 % Versions:
 %   - 1.0 on 21.11.2019
@@ -32,4 +32,4 @@ p.soilTexture.SAND =  p.soilTexture.SAND .* info.tem.helpers.arrays.onespix;
 p.soilTexture.SILT =  p.soilTexture.SILT .* info.tem.helpers.arrays.onespix;
 p.soilTexture.ORGM =  p.soilTexture.ORGM .* info.tem.helpers.arrays.onespix;
 
-end % function
+end

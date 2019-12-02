@@ -9,4 +9,4 @@ NL_fT(NL_fT <= p.cAllocfTsoil.minL_fT)  = p.cAllocfTsoil.minL_fT;
 % NL_fT(NL_fT >= p.cAllocfTsoil.maxL_fT)  = p.cAllocfTsoil.maxL_fT(NL_fT >= p.cAllocfTsoil.maxL_fT);
 % NL_fT(NL_fT <= p.cAllocfTsoil.minL_fT)  = p.cAllocfTsoil.minL_fT(NL_fT <= p.cAllocfTsoil.minL_fT);
 fe.cAllocfTsoil.NL_fT                   = NL_fT;
-end % function
+end

@@ -96,8 +96,8 @@
             "runFull": true,
             "use4spinup": false
         },
-        "wGWRec": {
-            "apprName": "wGWRec_kUnsat",
+        "gwRec": {
+            "apprName": "gwRec_kUnsat",
             "runFull": true,
             "use4spinup": true
         },

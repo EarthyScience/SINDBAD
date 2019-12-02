@@ -1,10 +1,10 @@
 function [f,fe,fx,s,d,p] = prec_GPPfRdiff_none(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : 
 % 
 % REFERENCES:
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % 
@@ -16,7 +16,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdiff_none(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % just put here a single maximum radiation use efficiency
 d.GPPfRdiff.rueGPP = p.GPPfRdiff.rue * info.tem.helpers.arrays.onestix;

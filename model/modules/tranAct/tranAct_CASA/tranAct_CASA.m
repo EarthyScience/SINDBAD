@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = tranAct_CASA(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % PURPOSE	: estimate transpiration from GPP
 % 
 % REFERENCES:
@@ -21,8 +21,8 @@ function [f,fe,fx,s,d,p] = tranAct_CASA(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate transpiration
-fx.tranAct(:,tix)	= d.tranfwSoil.TranSup(:,tix);
+fx.tranAct(:,tix)	= d.tranSup.tranSup(:,tix);
 end

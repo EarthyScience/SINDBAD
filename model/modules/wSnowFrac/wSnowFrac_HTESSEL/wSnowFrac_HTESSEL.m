@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % computes the snow pack and fraction of snow cover following the HTESSEL
 % approach
 %
@@ -17,17 +17,18 @@ function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 %
 % References:
 %	- H-TESSEL = land surface scheme of the European Centre for Medium-
-%       Range Weather Forecasts� operational weather forecast system; 
+%       Range Weather Forecasts' operational weather forecast system; 
 %       Balsamo et al., 2009
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+%%
 % first update the snow pack
 s.w.wSnow       = s.w.wSnow + fe.rainSnow.snow(:,tix);
 

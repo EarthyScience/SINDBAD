@@ -2,7 +2,7 @@ function [info, obs] = prepOpti(info)
 % Prepares the information and data needed for optimization
 %
 % Requires:
-%	- info with the name of the algorithm and cost function
+%    - info with the name of the algorithm and cost function
 %   - variables and path for observational constraints and (associated)
 %   uncertainties
 %
@@ -17,7 +17,7 @@ function [info, obs] = prepOpti(info)
 %       (e.g., obs.gpp obs.wSnow
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %

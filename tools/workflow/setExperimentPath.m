@@ -22,7 +22,7 @@ function [ info ] = setExperimentPath(info)
 %   + instead, one could do this: strrep(strrep(tmpStrName,' ','_'),'-','_')
 %
 % Created by:
-%   + Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   + Tina Trautmann (ttraut)
 %
 % References:
 %   +
@@ -96,7 +96,7 @@ outputDirPath_full = [outputDirPath_full filesep default_tmp filesep];
 % end
 
 %% put the full outputDirPath in the info
-info.experiment.outputDirPath	=   outputDirPath_full;
+info.experiment.outputDirPath    =   outputDirPath_full;
 
 %% set the output info.json file -should this be a filename or absolute path?
 info.experiment.outputInfoFile          =    [outputDirPath_full filesep 'settings' filesep 'Info_' default_tmp '.json'];
@@ -118,10 +118,10 @@ end
 info.tem.model.paths.runDir    =    info.experiment.outputDirPath;
 
 %% set the generated code filenames into the info
-% info 	= setGenCodePaths(info);
+% info     = setGenCodePaths(info);
 % unique name for the generated code files according to experiment name and to runDate.
 
-tmpStrName	= [info.experiment.name '_' info.experiment.domain '_' info.experiment.runDate];
+tmpStrName    = [info.experiment.name '_' info.experiment.domain '_' info.experiment.runDate];
 tmpStrName  = strrep(strrep(tmpStrName,' ','_'),'-','_');
 
 for n1 = {'model','spinup'}
@@ -139,7 +139,7 @@ for n1 = {'model','spinup'}
             end
         end
         if feedIt
-            info.tem.(n1{1}).paths.genCode.(n2{1})	= [info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '_' tmpStrName '.m'];
+            info.tem.(n1{1}).paths.genCode.(n2{1})    = [info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '_' tmpStrName '.m'];
         end
     end
 end

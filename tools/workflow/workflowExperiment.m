@@ -2,8 +2,8 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 % Runs a SINDBAD model experiment with either a given experimental config or info
 %
 % Requires:
-%	- a configuration file for an experiment or
-%	- an info structure
+%    - a configuration file for an experiment or
+%    - an info structure
 %
 % Purposes:
 %   - runs the experiment based on the configuration files or info
@@ -23,11 +23,11 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 % Conventions:
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
-%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
-%   - v1.3: Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - v1.4: Tina Trautmann (ttraut@bgc-jena.mpg.de) 
+%   - Sujan Koirala (skoirala)
+%   - v1.1: Tina Trautmann (ttraut)
+%   - v1.2: Tina Trautmann (ttraut)
+%   - v1.3: Sujan Koirala (skoirala)
+%   - v1.4: Tina Trautmann (ttraut) 
 %   - v1.5: Sujan Koirala 
 %
 % References:

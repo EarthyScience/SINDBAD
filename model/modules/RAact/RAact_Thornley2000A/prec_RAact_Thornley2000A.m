@@ -4,7 +4,7 @@ s.cd.p_RAact_C2N        =   zeros(info.tem.helpers.sizes.nPix,numel(info.tem.mod
 
 for cpn = 1:numel(cpNames)
     zix                 =   info.tem.model.variables.states.c.zix.(cpNames{cpn});
-    s.cd.p_RAact_C2N(:,zix)	=   p.RAact.C2N(cpn);
+    s.cd.p_RAact_C2N(:,zix)    =   p.RAact.C2N(cpn);
 end
 
-end % function
+end

@@ -1,4 +1,5 @@
 function [f,fe,fx,s,d,p] = storeStates_simple(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % stores the time series of state variables at the end of every time step
 %
 % Inputs:
@@ -18,14 +19,16 @@ function [f,fe,fx,s,d,p] = storeStates_simple(f,fe,fx,s,d,p,info,tix)
 %	- 
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 11.01.2018 (mjung): automatic handling using setupCode
 %   - 1.1 on 11.11.2019 (skoirala): creation of d.storedStates when tix==1
-%%
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+%%
 cvars_source        =   info.tem.model.code.variables.to.storeStatesSource;
 cvars_destination	=   info.tem.model.code.variables.to.storeStatesDestination;
 %--> added by sujan on 09.11.2019 to create all the stored states arrays at
@@ -48,5 +51,5 @@ for ii  =   1:length(cvars_source)
     sstr                    =   [char(cvars_destination{ii}) ' = ' char(cvars_source(ii)) ';'];
     eval(sstr);
 end
-end % function
+end
 

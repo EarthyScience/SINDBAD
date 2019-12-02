@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = GPPfwSoil_supply(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % PURPOSE	: Supply Control
 % 
 % REFERENCES:
@@ -14,10 +14,10 @@ function [f,fe,fx,s,d,p] = GPPfwSoil_supply(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calc GPP supply
-d.GPPfwSoil.gppS(:,tix)   = d.tranfwSoil.TranSup(:,tix) .* d.WUE.AoE(:,tix);   
+d.GPPfwSoil.gppS(:,tix)   = d.tranSup.tranSup(:,tix) .* d.WUE.AoE(:,tix);   
 
 % calc SM stress scalar
 ndx                             = d.GPPdem.gppE(:,tix) > 0;

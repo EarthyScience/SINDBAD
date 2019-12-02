@@ -16,8 +16,8 @@ function [f,fe,fx,s,d,p] = coreTEM4Spinup(f,fe,fx,s,d,p,info)
 %   - When runGenCode is activated, the generated code for coreTEM is used.
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
 %
 % References:
 %

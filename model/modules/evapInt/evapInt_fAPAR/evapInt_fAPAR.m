@@ -1,26 +1,29 @@
-function [f,fe,fx,s,d,p] = dyna_evapInt_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = evapInt_fAPAR(f,fe,fx,s,d,p,info,tix)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % computes canopy interception evaporation as a fraction of fAPAR
 %
 % Inputs:
-%	- fx.evapInt:    canopy interception evaporation [mm/time]
+%    - s.cd.fAPAR: fAPAR
+%   - p.evapInt.isp
 %
 % Outputs:
-%   - 
+%    - fx.evapInt: interception loss
 %
 % Modifies:
-% 	- s.wd.WBP:     water balance pool [mm]
+%     - s.wd.WBP:     water balance pool [mm]
 %
 % References:
-%	- Gash model, Miralles et al 2010
+%    - 
 %
 % Created by:
-%   - Martin Jung (mjung@bgc-jena.mpg.de)
+%   - Martin Jung (mjung)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
-%
+%   - 1.1 on 29.11.2019 (skoirala): s.cd.fAPAR
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %%
-% #########################################################################
 %--> calculate interception loss
 intCap                  =   p.evapInt.isp .* s.cd.fAPAR;
 fx.evapInt(:,tix)       =   minsb(intCap, fe.rainSnow.rain(:,tix));

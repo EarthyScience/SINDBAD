@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% FUNCTION	: prec_RAact_Thornley2000C
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : prec_RAact_Thornley2000C
 % 
-% PURPOSE	: precomputations to estimate autotrophic respiration as
+% PURPOSE    : precomputations to estimate autotrophic respiration as
 % maintenance + growth respiration according to Thornley and Cannell
 % (2000): MODEL C - growth, degradation and resynthesis view of respiration
 % (check Fig.1 of the paper). 
@@ -19,7 +19,7 @@ function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 % of plant respiration: Representation and realism, Ann Bot-London, 85(1),
 % 55-67.
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
 % INPUTS
 % 
@@ -34,7 +34,7 @@ function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 %               (fe.cCycle.MTF)
 % YG            : growth yield coefficient - or growth efficiency (gC.gC-1)
 %               (p.RAact.YG)
-% stepsPerDay	: number of time steps per day
+% stepsPerDay    : number of time steps per day
 %               (info.timeScale.stepsPerDay)
 % 
 % OUTPUTS
@@ -43,10 +43,10 @@ function [f,fe,fx,s,d,p] = dyna_RAact_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 %           (deltaT-1)
 %           (fe.RAact.km(ii).value)
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % questions: see the notes on the Fd below!!!
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % adjust nitrogen efficiency rate of maintenance respiration
 %sujan RMN     = p.RAact.RMN ./ info.timeScale.stepsPerDay;
@@ -74,19 +74,19 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     km                      = 1 ./ s.cd.p_RAact_C2N(:,zix) .* RMN .* fe.RAfTair.fT(:,tix);
     kd                      = p.RAact.Fd(:,zix);
     s.cd.p_RAact_km(:,zix)    = km .* kd;
-    s.cd.p_RAact_km4su(:,zix)	= s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG);
+    s.cd.p_RAact_km4su(:,zix)    = s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG);
     
     % compute maintenance and growth respiration terms for each vegetation pool
     % according to MODEL C - growth, degradation and resynthesis view of
     % respiration
     % maintenance respiration: R_m = km * (1 - YG) * C; km = km * MTF (before equivalent to kd)
-    s.cd.RA_M(:,zix)	= s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
+    s.cd.RA_M(:,zix)    = s.cd.p_RAact_km(:,zix) .* (1 - p.RAact.YG) .* s.c.cEco(:,zix);
     
     % growth respiration: R_g = gpp * (1 - YG)
-    s.cd.RA_G(:,zix)	= (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
+    s.cd.RA_G(:,zix)    = (1 - p.RAact.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
     
     % total respiration per pool: R_a = R_m + R_g
-    s.cd.cEcoEfflux(:,zix)	= s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);
+    s.cd.cEcoEfflux(:,zix)    = s.cd.RA_M(:,zix) + s.cd.RA_G(:,zix);
 end
 
-end % function
+end

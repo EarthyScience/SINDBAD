@@ -3,7 +3,7 @@
         "constantfAPAR": {
             "Name": "a constant fAPAR",
             "Unit": "-",
-            "Default": 0.5,
+            "Default": 0.2,
             "LowerBound": 0,
             "UpperBound": 1,
             "Distribution": {

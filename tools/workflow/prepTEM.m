@@ -8,7 +8,7 @@ function [f,fe,fx,s,d,info]   =     prepTEM(info)
 %
 % steps:
 %   1) imports the forcing
-% 	2) sets up the model code
+%     2) sets up the model code
 %   3) creates sindbad's structures
 %% 1) prepare forcing data
 % create function handles
@@ -25,7 +25,7 @@ info.tem.helpers.dates.month    =  createDateVector(sDateRun, eDateRun, 'm');
 fun_fields  =   fieldnames(info.tem.forcing.funName);
 for jj      =   1:numel(fun_fields)
     try
-    	info.tem.forcing.funHandle.(fun_fields{jj})     =   str2func(info.tem.forcing.funName.(fun_fields{jj}));
+        info.tem.forcing.funHandle.(fun_fields{jj})     =   str2func(info.tem.forcing.funName.(fun_fields{jj}));
     catch
         disp([pad('CRIT FUNCMISS',20,'left') ' : ' pad('prepTEM',20) ' | no valid function name for ' fun_fields{jj} ' given in forcing.json'])
     end

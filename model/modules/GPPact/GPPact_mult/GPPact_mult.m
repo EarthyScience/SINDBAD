@@ -1,12 +1,12 @@
 function [f,fe,fx,s,d,p] = GPPact_mult(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
-% FUNCTION	: 
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : 
 % 
-% PURPOSE	: 
+% PURPOSE    : 
 % 
 % REFERENCES:
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT     :
 % FAPAR     : fraction of absorbed photosynthetically active radiation
@@ -30,12 +30,12 @@ function [f,fe,fx,s,d,p] = GPPact_mult(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES: we don't actually need FAPAR, rueGPP, PAR. ---
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate the combined effect of all the stress scalars from demand GPP
 % and the supply GPP 
-% d.GPPact.AllScGPP(:,tix)	=   d.GPPdem.AllDemScGPP(:,tix) .* d.GPPfwSoil.SMScGPP(:,tix); %sujan
-d.GPPact.AllScGPP(:,tix)	=   d.GPPdem.AllDemScGPP(:,tix) .* d.GPPfwSoil.SMScGPP(:,tix) ...
+% d.GPPact.AllScGPP(:,tix)    =   d.GPPdem.AllDemScGPP(:,tix) .* d.GPPfwSoil.SMScGPP(:,tix); %sujan
+d.GPPact.AllScGPP(:,tix)    =   d.GPPdem.AllDemScGPP(:,tix) .* d.GPPfwSoil.SMScGPP(:,tix) ...
                                 .* d.GPPfTair.TempScGPP(:,tix);
 
 % multiply GPPdem with soil moisture sress scalar (is the same as taking

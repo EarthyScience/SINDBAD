@@ -50,7 +50,7 @@ for i = 1:numel(VariableNames)
     end
     % compute costs
     %whos cost
-    cost	= calcCVP(sim_proc,obs_proc,cf(i).CostMetric,'trim_data',cf(i).Trimming,'UncSigma',obs_unc);
+    cost    = calcCVP(sim_proc,obs_proc,cf(i).CostMetric,'trim_data',cf(i).Trimming,'UncSigma',obs_unc);
 %     whos cost
     %    cost=double(cost);
     cost = cost .* cf(i).CostWeight;
@@ -75,4 +75,4 @@ end
 
 % disp('MSG : costFromFile : needs profiling')
 
-end % function
+end

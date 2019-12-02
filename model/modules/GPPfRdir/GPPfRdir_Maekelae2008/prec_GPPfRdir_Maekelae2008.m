@@ -1,12 +1,12 @@
 function [f,fe,fx,s,d,p] = prec_GPPfRdir_Maekelae2008(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: saturating light function
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : saturating light function
 % 
 % REFERENCES: Maekelae et al 2008 - Developing an empirical model of stand
 % GPP with the LUE approach: analysis of eddy covariance data at five
 % contrasting conifer sites in Europen
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % FAPAR     : fraction of absorbed photosynthetically active radiation [] 
@@ -27,7 +27,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdir_Maekelae2008(f,fe,fx,s,d,p,info)
 % et al 2008. The smaller gamma the smaller the effect; no effect if it
 % becomes 0 (i.e. linear light response).
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % pgamma                      =   p.GPPfRdir.gamma * info.tem.helpers.arrays.onestix;
 % d.GPPfRdir.LightScGPP       =   1 ./ (pgamma .* f.PAR .* s.cd.fAPAR + 1);

@@ -12,7 +12,7 @@ function [info] = readConfiguration(info, whatWorkFlow, stopIfMissField)
 %% check whether to immediately stop if there are missing fields...
 if~exist('stopIfMissField','var'),stopIfMissField = true; end
 isAllOK     = true;
-missFields	= '';
+missFields    = '';
 %% 1) which workflow?
 switch lower(whatWorkFlow)
     case 'tem' %creates all the substructures (fieldnames) of info.tem
@@ -34,7 +34,7 @@ end
 for ii = 1:numel(fldnmsINFO)
     % read the json configuration files
     try
-        data_json	= readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
+        data_json    = readJsonFile(info.experiment.configFiles.(fldnmsINFO{ii}));
     catch
         if ~strcmpi(fldnmsINFO{ii}, 'params')
         isAllOK     = false;
@@ -47,7 +47,7 @@ for ii = 1:numel(fldnmsINFO)
     
     switch lower(fldnmsINFO{ii})
         case 'forcing'
-             info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
+             info.(whatWorkFlow).(fldnmsINFO{ii})    = data_json;
              % add all the forcing variables to forcingInput list
              info.(whatWorkFlow).model.variables.forcingInput = strcat('f.' ,fields(data_json.variables))';
              info.(whatWorkFlow).forcing.variableNames = fields(data_json.variables);
@@ -66,7 +66,7 @@ for ii = 1:numel(fldnmsINFO)
                     info.(whatWorkFlow).model.(fn{1}) = mergeSubField(info.(whatWorkFlow).model,data_json,(fn{1}),'last');
                 end
             else
-                info.(whatWorkFlow).model	= data_json;
+                info.(whatWorkFlow).model    = data_json;
             end
         case 'modelstructure'
             % set the model structure and needed settings in general
@@ -160,11 +160,11 @@ for ii = 1:numel(fldnmsINFO)
         case 'output'
             % set variables for output and storage
             info.(whatWorkFlow).model.variables.to          = data_json.variables.to; %so far only includes the variables that need to be written
-            info.(whatWorkFlow).model.variables.to.store	= info.(whatWorkFlow).model.variables.to.store;
+            info.(whatWorkFlow).model.variables.to.store    = info.(whatWorkFlow).model.variables.to.store;
             info.(whatWorkFlow).model.output.dataFormat     = data_json.dataFormat;
             
         otherwise % these include 'spinup' and all other cases
-            info.(whatWorkFlow).(fldnmsINFO{ii})	= data_json;
+            info.(whatWorkFlow).(fldnmsINFO{ii})    = data_json;
     end
 end
 
