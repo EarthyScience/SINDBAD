@@ -12,7 +12,7 @@ function mkdirx(tmp)
 % Conventions:
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %

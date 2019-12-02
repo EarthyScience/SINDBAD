@@ -16,7 +16,7 @@ function [Out,NaNCnt] = aggDay2Mon(In,startDate,endDate)
 % Conventions:
 %
 % Created by:
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut)
 %
 % References:
 %

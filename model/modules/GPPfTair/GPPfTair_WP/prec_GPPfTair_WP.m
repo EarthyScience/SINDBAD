@@ -1,11 +1,11 @@
 function [f,fe,fx,s,d,p] = prec_GPPfTair_WP(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: estimate temperature effect on GPP
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : estimate temperature effect on GPP
 % 
 % REFERENCES: Wang et al 2014 - Biophsyical constraints on gross primary
 % production by the terrestrial biosphere 
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % TairDay   : daytime temperature [?C]
@@ -21,7 +21,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfTair_WP(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 pTmax                   =   p.GPPfTair.Tmax * info.tem.helpers.arrays.onestix;
 tsc                     =   f.TairDay ./ pTmax;

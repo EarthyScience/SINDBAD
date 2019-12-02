@@ -1,11 +1,11 @@
 function [f,fe,fx,s,d,p] = prec_GPPfVPD_MOD17(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: compute the VPD effect on GPP according to the MOD17 model
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : compute the VPD effect on GPP according to the MOD17 model
 % 
 % REFERENCES:  MOD17 User?s Guide, Running et al. (2004), Zhao et al.
 % (2005)
 % 
-% CONTACT	: mjung, ncarval
+% CONTACT    : mjung, ncarval
 % 
 % INPUT
 % VPDDay    : daytime vapor pressure deficit [kPa]
@@ -23,9 +23,9 @@ function [f,fe,fx,s,d,p] = prec_GPPfVPD_MOD17(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-tmp                  	=   info.tem.helpers.arrays.onestix;
+tmp                      =   info.tem.helpers.arrays.onestix;
 
 td                      =   (p.GPPfVPD.VPDmax - p.GPPfVPD.VPDmin)   * tmp;
 pVPDmax                 =   p.GPPfVPD.VPDmax                             * tmp;

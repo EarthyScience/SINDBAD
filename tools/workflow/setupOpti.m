@@ -2,7 +2,7 @@ function [info] = setupOpti(info)
 % setups the optimization part of the info 
 %
 % Requires:
-%	- an info structure
+%    - an info structure
 %
 % Purposes:
 %   - setups the the opti part of the info 
@@ -18,8 +18,8 @@ function [info] = setupOpti(info)
 %   - needs to be run where the repository is
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - v1.1: Tina Trautmann (ttraut)
 %
 % References:
 %
@@ -29,8 +29,8 @@ function [info] = setupOpti(info)
 %% 1) read the OPTI configuration
 if ~isempty(info.experiment.configFiles.opti)
     try
-        data_json	= readJsonFile(info.experiment.configFiles.opti);
-        info.opti	= data_json;
+        data_json    = readJsonFile(info.experiment.configFiles.opti);
+        info.opti    = data_json;
     catch
         error([pad('CRIT FILEMISS',20,'left') ' : ' pad('setupOpti',20) ' | The main optimization configuration (opti.json) is missing'])
     end
@@ -50,7 +50,7 @@ pdefault    =   [];
 
 
 % parameter scalars to optimize
-info.opti.paramsScale   	= ones(size(paramsList));
+info.opti.paramsScale       = ones(size(paramsList));
 
 for jj=1:numel(paramsList)
     mod_param   = paramsList{jj};

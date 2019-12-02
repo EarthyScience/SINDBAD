@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = prec_rainSnow_Tair(f,fe,fx,s,d,p,info)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % stores the time series of rainfall and estimated snowfall from forcing
 %
 % Inputs: 
-%	- info
 %   - f.Rain
 %   - f.Tair
 %
@@ -12,16 +12,19 @@ function [f,fe,fx,s,d,p] = prec_rainSnow_Tair(f,fe,fx,s,d,p,info)
 %   threshold
 %
 % Modifies:
-% 	- f.Rain
+%   - f.Rain
 %
 % References:
-%	- 
+%   - 
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 11.11.2019 (skoirala): creation of approach
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %%
 rain                    =   f.Rain;
 tair                    =   f.Tair;
@@ -31,5 +34,5 @@ snow(tmp)               =   rain(tmp);
 rain(tmp)               =   0.;
 fe.rainSnow.rain        =   rain;
 fe.rainSnow.snow        =   snow;
-end % function
+end
 

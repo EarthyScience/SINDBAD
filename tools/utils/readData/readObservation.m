@@ -32,7 +32,7 @@ function [dataStructure] = readObservation(info)
 %   - if a variable cannot be read, a default value is given
 %
 % Created by:
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut)
 %
 % References:
 %

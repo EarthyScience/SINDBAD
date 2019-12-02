@@ -1,7 +1,7 @@
 {
     "params": {
         "alpha": {
-            "Name": "an empirical Budiko parameter",
+            "Name": "an empirical Budyko parameter",
             "Unit": "-",
             "Default": 0.5,
             "LowerBound": 0.01,
@@ -13,5 +13,12 @@
             },
             "Comment": "very rough bounds"
         }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }

@@ -193,7 +193,7 @@ end
 function txt=struct2ubjson(name,item,level,varargin)
 txt='';
 if(~isstruct(item))
-	error('input is not a struct');
+    error('input is not a struct');
 end
 dim=size(item);
 if(ndims(squeeze(item))>2) % for 3D or higher dimensions, flatten to 2D for now
@@ -225,7 +225,7 @@ for j=1:dim(2)
      end
      if(~isempty(names))
        for e=1:length(names)
-	     txt=[txt obj2ubjson(names{e},item(i,j).(names{e}),...
+         txt=[txt obj2ubjson(names{e},item(i,j).(names{e}),...
              level+(dim(1)>1)+1+forcearray,varargin{:})];
        end
      end
@@ -283,24 +283,24 @@ if(length(size(item))>2 || issparse(item) || ~isreal(item) || ...
    (isempty(item) && any(size(item))) ||jsonopt('ArrayToStruct',0,varargin{:}))
       cid=I_(uint32(max(size(item))));
       if(isempty(name))
-    	txt=['{' N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1)) ];
+        txt=['{' N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1)) ];
       else
           if(isempty(item))
               txt=[N_(checkname(name,varargin{:})),'Z'];
               return;
           else
-    	      txt=[N_(checkname(name,varargin{:})),'{',N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1))];
+              txt=[N_(checkname(name,varargin{:})),'{',N_('_ArrayType_'),S_(class(item)),N_('_ArraySize_'),I_a(size(item),cid(1))];
           end
       end
 else
     if(isempty(name))
-    	txt=matdata2ubjson(item,level+1,varargin{:});
+        txt=matdata2ubjson(item,level+1,varargin{:});
     else
         if(numel(item)==1 && jsonopt('SingletArray',0,varargin{:})==0)
             numtxt=regexprep(regexprep(matdata2ubjson(item,level+1,varargin{:}),'^\[',''),']','');
-           	txt=[N_(checkname(name,varargin{:})) numtxt];
+               txt=[N_(checkname(name,varargin{:})) numtxt];
         else
-    	    txt=[N_(checkname(name,varargin{:})),matdata2ubjson(item,level+1,varargin{:})];
+            txt=[N_(checkname(name,varargin{:})),matdata2ubjson(item,level+1,varargin{:})];
         end
     end
     return;
@@ -381,7 +381,7 @@ if(isa(mat,'integer') || isinteger(mat) || (isfloat(mat) && all(mod(mat(:),1) ==
             error('high-precision data is not yet supported');
         end
         key='iIlL';
-	type=key(id~=0);
+    type=key(id~=0);
     end
     txt=[I_a(mat(:),type,size(mat))];
 elseif(islogical(mat))

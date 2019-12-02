@@ -23,12 +23,12 @@ conv.ppm2umol       = 0.000001;
 conv.umol2mol       = 1E-6;
 conv.MJday2Wm2      = 1000000/86400;
 conv.gCday2umols    = 1000000/12/86400;
-conv.molday2umols	= 1000000/86400;
+conv.molday2umols    = 1000000/86400;
 
 range.Rain      = [ 0.0 60.0 ].*24;                 % mm/day
 range.Snow      = [ 0.0 60.0 ].*24;                 % mm/day
-range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;	% MJ/m2/day
-range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;	% MJ/m2/day
+range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;    % MJ/m2/day
+range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;    % MJ/m2/day
 range.Rg_pot    = [ 0.0 1400.0 ]./conv.MJday2Wm2;   % MJ/m2/day
 range.Tair      = [ -100. 100. ];                   % �C
 range.TairDay   = [ -100. 100. ];                   % �C
@@ -38,12 +38,12 @@ range.FAPAR     = [0 1];
 range.LAI       = [0 12];
 
 %
-miss_val	= NaN;
+miss_val    = NaN;
 flag_val    = -9999;
 
 fns = fieldnames(inputData);
 for i = 1:numel(fns)
-    x	= inputData.(fns{i});
+    x    = inputData.(fns{i});
     if isfield(range,fns{i})
         varname = fns{i};
         % replicate mean seasonal cycle (daily values) for length of input
@@ -63,7 +63,7 @@ end
 % non NaNs or Infs
 vns = fieldnames(inputData);
 for i = 1:numel(vns)
-    tmp	= inputData.(vns{i});
+    tmp    = inputData.(vns{i});
     if isnan(tmp(1))||isinf(tmp(1))||tmp(1)==-9999,tmp(1)=0;end
     for j = 2:numel(tmp)
         if isnan(tmp(j))||isinf(tmp(j))||tmp(j)==-9999
@@ -99,11 +99,11 @@ end % end function
 % createSpinUpYear
 % createHvec
 
-function xout	= createMeanYearTimeSeries(x,years,info)
+function xout    = createMeanYearTimeSeries(x,years,info)
     % creates mean year time series of daily data
     x       = createSpinUpYear(x,years,info);
-    xout	= [];
-    yearvec	= createHvec(unique(years));
+    xout    = [];
+    yearvec    = createHvec(unique(years));
     for i = yearvec
         if isleapyear(i) && length(years(years==i))~=366
             xtmp=[x(1:31+28) x(31+28:end)];
@@ -119,7 +119,7 @@ end
 function x2 = createSpinUpYear(x,years,info)
     x2      = zeros(info.tem.forcing.size(1),floor(info.tem.model.time.nStepsYear));
     den     = x2;
-    yearvec	= createHvec(unique(years));
+    yearvec    = createHvec(unique(years));
     for i = yearvec
         tmp = x(:,years == i);
         if isleapyear(i)
@@ -129,7 +129,7 @@ function x2 = createSpinUpYear(x,years,info)
         tmp(isnan(tmp)==1)  = 0;
         x2                  = x2+tmp;
     end
-    x2	= x2 ./ den;
+    x2    = x2 ./ den;
 end %
 
 % -------------------------------------------------------------------------
@@ -149,7 +149,7 @@ function x = createHvec(x,mkV)
     if size(x, 1) == 1
         return
     elseif size(x, 2) == 1
-        x	= x';
+        x    = x';
     else
         str    =   [pad('CRIT ERROR',20) ' : ' pad('checkInputData',20) ' | ' 'one of input dimensions must be 1! size(x) = ' num2str(size(x))];
         error(sstr)
@@ -157,7 +157,7 @@ function x = createHvec(x,mkV)
     
     if exist('mkV','var')
         if mkV
-            x	= x';
+            x    = x';
         end
     end
 end

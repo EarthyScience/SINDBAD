@@ -10,7 +10,7 @@ function [pScales]=optimizeTEM(f,obs,info)
     % Conventions:
     %   - always needs forcing       
     % Created by:
-    %   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+    %   - Sujan Koirala (skoirala)
     %
     % References:
     %
@@ -40,5 +40,5 @@ function [pScales]=optimizeTEM(f,obs,info)
     
     pScales = feval(info.opti.algorithm.funHandle,costhand,info.opti.params.defScalars,defOpts.LBounds,defOpts.UBounds,defOpts);
     
-    end % function
+    end
     

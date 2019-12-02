@@ -1,4 +1,4 @@
-function fSpin	=	prepSpinupForcing(f,info)
+function fSpin    =    prepSpinupForcing(f,info)
 % Prepare the forcing for the spinup run of SINDBAD TEM
 %
 % Requires:
@@ -16,8 +16,8 @@ function fSpin	=	prepSpinupForcing(f,info)
 %       the full original forcing
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
 %
 % References:
 %   -
@@ -29,7 +29,7 @@ function fSpin	=	prepSpinupForcing(f,info)
 %   - 1.0 on 10.04.2018
 
 %%
-fSpin	= f;
+fSpin    = f;
 
 if info.tem.spinup.flags.readForcing
     if ~isempty(info.tem.spinup.rules.fun2readForcing)
@@ -49,11 +49,11 @@ if info.tem.spinup.flags.recycleMSC
         if strcmp(info.tem.forcing.variables.(fns{jj}).spaceTimeType,'spatial')
             %--> skoirala: if part of the forcing data does not have a
             %temporal dimension, just copy it to the spinup forcing
-            fSpin.(fns{jj})	=	f.(fns{jj});
+            fSpin.(fns{jj})    =    f.(fns{jj});
         else  
-            tmp             =	f.(fns{jj});
-            tmp             =	getForcingMSC(tmp,f.Year,info);
-            fSpin.(fns{jj})	=	tmp;
+            tmp             =    f.(fns{jj});
+            tmp             =    getForcingMSC(tmp,f.Year,info);
+            fSpin.(fns{jj})    =    tmp;
             YearSize        =   size(tmp);
         end
     end

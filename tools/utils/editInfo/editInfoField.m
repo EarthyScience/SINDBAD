@@ -1,6 +1,6 @@
 function [info, subtree] = editInfoField(info, varargin)
 % INPUT:    info       :    (info) structure
-%           varargin{:}:	list of fields in info structure to change
+%           varargin{:}:    list of fields in info structure to change
 %                           ('Fieldname' : new value) OR one string to
 %                           search for in fieldnames (see examples)
 % OUTPUT:   info : structure with changed (or unchanged) values
@@ -8,7 +8,7 @@ function [info, subtree] = editInfoField(info, varargin)
 %
 % EXAMPLE 1:
 % usage to change fieldvalues
-%    - [info, subtree]	= editInfoField(info,'name',newValue);
+%    - [info, subtree]    = editInfoField(info,'name',newValue);
 %
 % If the fieldname to change is not unique, the function issues a warning and all
 % possible options can be accessed via output: subtree
@@ -17,7 +17,7 @@ function [info, subtree] = editInfoField(info, varargin)
 %
 % EXAMPLE 2:
 % usage to look for substring in fieldnames
-%       [info, subtree]	= editInfoField(info,'paths');
+%       [info, subtree]    = editInfoField(info,'paths');
 
 %% 1) Load, unfold and separate all fieldnames (endnodes) of Info structure
 [infoFieldnames,~,infoFieldnamesPure] = getAllFieldnames(info,false,{},1);

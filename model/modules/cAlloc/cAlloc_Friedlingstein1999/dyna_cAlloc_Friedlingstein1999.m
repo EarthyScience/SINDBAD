@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % FUNCTION	: prec_cAlloc_Friedlingstein1999
 % 
 % PURPOSE	: compute the fraction of NPP that is allocated to the
@@ -9,7 +9,7 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
 %           (f.PET)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % allocation to root, wood and leaf
 cf2.cVegRoot	= p.cAlloc.ro .* (p.cAlloc.RelY + 1) .* d.cAllocfLAI.LL(:,tix) ./ (d.cAllocfLAI.LL(:,tix) + p.cAlloc.RelY .* fe.cAllocfNut.minWLNL(:,tix));
@@ -35,4 +35,4 @@ end
 if any(abs(sum(tmp1,2)-1) > 1E-6)
       error('SINDBAD TEM dyna_cAlloc_Friedlingstein1999: sum(cAlloc) ne 1')
 end
-end % function
+end

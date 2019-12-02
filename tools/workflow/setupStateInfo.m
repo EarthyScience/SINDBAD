@@ -32,8 +32,8 @@ function [info] = setupStateInfo(info)
 %   + d.storedStates.[VariableName]: nPix,nZix,nTix
 %
 % Created by: 
-%   + Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   + Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   + Sujan Koirala (skoirala)
+%   + Nuno Carvalhais (ncarval)
 % 
 % References: 
 %   + 
@@ -48,7 +48,7 @@ if ~isfield(info.tem.model.variables.states,'input')
 end;
 
 
-stateVars           =	fields(info.tem.model.variables.states.input');
+stateVars           =    fields(info.tem.model.variables.states.input');
 
 for ii = 1:numel(stateVars)
     sv          =   stateVars{ii};
@@ -60,11 +60,11 @@ for ii = 1:numel(stateVars)
     sStruct     =   struct;
     [sStruct]   =   genStateStructure(sInfo,sStruct,sComb);
     if isfield(sStruct.flags,sv)
-        sStruct.flags.(sComb{2})    =	sStruct.flags.(sv);
-        sStruct.flags               =	rmfield(sStruct.flags,sv);
+        sStruct.flags.(sComb{2})    =    sStruct.flags.(sv);
+        sStruct.flags               =    rmfield(sStruct.flags,sv);
     end
     if isfield(sStruct.zix,sv)
-        sStruct.zix.(sComb{2})      =	sStruct.zix.(sv);
+        sStruct.zix.(sComb{2})      =    sStruct.zix.(sv);
         sStruct.zix                 =   rmfield(sStruct.zix,sv);
     end
     [info]      =   setStatesInfo(sv,sStruct,info);
@@ -89,7 +89,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
     
     nameLayers          =   sInfo(:,1:2);
     initValues         =   sInfo(:,3);
-    %-->	check that the names are unique : we can just let it go too...
+    %-->    check that the names are unique : we can just let it go too...
     if numel(unique(nameLayers(:,1)))   ~=  size(nameLayers,1)
         error('ERR : getFlagsPools : pool names are not unique')
     end
@@ -102,7 +102,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
         sStruct.flags       =   flags;
         sStruct.zix         =   zix;
         allNames            =   {};
-        for i   =	1:size(nameLayers,1)
+        for i   =    1:size(nameLayers,1)
             allNames        = [allNames  repmat(strrep(nameLayers(i,1),'.',''),1,nameLayers{i,2})];
         end
         
@@ -115,9 +115,9 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
         if~exist('sStruct','var')
             sStruct = struct;
         end
-       allNames	= {};
-       for i	=	1:size(nameLayers,1)
-            nZix                            =	nameLayers{i,2};
+       allNames    = {};
+       for i    =    1:size(nameLayers,1)
+            nZix                            =    nameLayers{i,2};
             fullName                        =   strrep(nameLayers{i,1},'.','');
             allNames                        =   [allNames  fullName];
             sStruct.flags.(fullName)        =   true(1,nZix);
@@ -132,28 +132,28 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
 end
 
 %%
-function [flags,zix]	=	genFlags(nameLayers)
+function [flags,zix]    =    genFlags(nameLayers)
 % check that the names are unique : we can just let it go too...
-    if numel(unique(nameLayers(:,1)))	~=  size(nameLayers,1)
+    if numel(unique(nameLayers(:,1)))    ~=  size(nameLayers,1)
         error('ERR : getFlagsPools : pool names are not unique')
     end
     %-->    number of pools
-    nPools          =	sum([nameLayers{:,2}]);
-    ndxPools        =	[0 cumsum([nameLayers{:,2}])];
+    nPools          =    sum([nameLayers{:,2}]);
+    ndxPools        =    [0 cumsum([nameLayers{:,2}])];
     %-->    flags (logical vectors in the structure)
     flags           =   struct;
     zix             =   struct;
-    for i	=	1:size(nameLayers,1)
+    for i    =    1:size(nameLayers,1)
         pName       = nameLayers{i,1};
         fullName    = '';
         while ~isempty(pName)
-            [fName, pName]              =	strtok(pName, '.');
-            fullName                    =	[fullName fName];
+            [fName, pName]              =    strtok(pName, '.');
+            fullName                    =    [fullName fName];
             if  ~isfield(flags,fullName)
-                    flags.(fullName)    =	false(1,nPools);
+                    flags.(fullName)    =    false(1,nPools);
             end
-            flags.(fullName)(ndxPools(i)+1:ndxPools(i+1))	=	true;
-            zix.(fullName)                                  =	find(flags.(fullName) == true);
+            flags.(fullName)(ndxPools(i)+1:ndxPools(i+1))    =    true;
+            zix.(fullName)                                  =    find(flags.(fullName) == true);
         end
     end
 end

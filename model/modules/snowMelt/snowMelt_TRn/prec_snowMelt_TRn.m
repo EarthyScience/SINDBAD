@@ -1,7 +1,7 @@
 function [f,fe,fx,s,d,p] = prec_snowMelt_TRn(f,fe,fx,s,d,p,info)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % precompute the potential snow melt based on temperature and net radiation
-% on days with Tair > 0�C
+% on days with Tair > 0degC
 %
 % Inputs:
 % 	- f.Tair:   temperature [C]
@@ -20,14 +20,14 @@ function [f,fe,fx,s,d,p] = prec_snowMelt_TRn(f,fe,fx,s,d,p,info)
 %	- 
 %
 % Created by:
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %
-%%
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+%%
 % potential snow melt if T > 0 deg C
 idx 				= f.Tair > 0;
 

@@ -1,5 +1,5 @@
 function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % CALCULATE psoil MOISTURE PARAMETERS
 % [Alpha,Beta,K,Theta,Psi] = calcSoilParams(p,fe,info,WT)
 % 
@@ -18,7 +18,7 @@ function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
 % Estimating generalized soil-water characteristics from texture. 
 % Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
 % http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % CONVERT SAND AND CLAY TO PERCENTAGES
 CLAY            =   p.soilTexture.CLAY .* 100;
@@ -81,4 +81,4 @@ K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
 Alpha           =   A;
 Beta            =   B;
 
-end % function
+end

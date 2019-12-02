@@ -1,5 +1,5 @@
 {
-	"params": {
+    "params": {
         "LIGNIN_per_PFT": {
             "Name": "fraction of litter that is lignin",
             "Unit": "[]",
@@ -9,71 +9,71 @@
             "Distribution": NaN,
             "Comment": ""
         },
-		"NONSOL2SOLLIGNIN": {
-			"Name": "",
-			"Unit": "",
-			"Default": 2.22,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": ""
-		},
-		"MTFA": {
-			"Name": "",
-			"Unit": "[]",
-			"Default": 0.85,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": ""
-		},
-		"MTFB": {
-			"Name": "",
-			"Unit": "[]",
-			"Default": 0.018,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": ""
-		},
-		"C2LIGNIN": {
-			"Name": "",
-			"Unit": "",
-			"Default": 0.65,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": ""
-		},
-		"LIGEFFA": {
-			"Name": "",
-			"Unit": "[]",
-			"Default": 3,
-			"LowerBound": NaN,
-			"UpperBound": NaN,
-			"Distribution": {
-				"name": "uniform",
-				"funHandle" : "",
-				"params" : []
-			},
-			"Comment": ""
-		},
+        "NONSOL2SOLLIGNIN": {
+            "Name": "",
+            "Unit": "",
+            "Default": 2.22,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "MTFA": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 0.85,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "MTFB": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 0.018,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "C2LIGNIN": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.65,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
+        "LIGEFFA": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 3,
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle" : "",
+                "params" : []
+            },
+            "Comment": ""
+        },
         "LITC2N_per_PFT": {
             "Name": "carbon-to-nitrogen ratio in litter",
             "Unit": "[]",
@@ -83,5 +83,5 @@
             "Distribution": NaN,
             "Comment": ""
         }
-	}
+    }
 }

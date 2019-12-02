@@ -2,11 +2,11 @@ function [s,d,info] = createStateArray(info)
 % Creates the arrays of state variables before the model run.
 %
 % Requires:
-%	- a list of variables
+%    - a list of variables
 %       - state variables: info.tem.model.variables.states.input
 %       - store in memory: info.tem.model.variables.to.store
 %       - keep in memory: Feeds to s.prev. info.tem.model.code.variables.to.keepShortName,
-%	- information on whether or not to combine the pool
+%    - information on whether or not to combine the pool
 %       - info.tem.model.variables.states.input.(sv).combine
 %       - first element: a logical on whether or not to combine the
 %               pools
@@ -30,8 +30,8 @@ function [s,d,info] = createStateArray(info)
 %   - d.storedStates.[VariableName]: nPix,nZix,nTix
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
 %
 % References:
 %   -
@@ -54,7 +54,7 @@ stateVars               =   fields(info.tem.model.variables.states);
 %--> get the list of variables to keep
 keepVarsSource          =   info.tem.model.code.variables.to.keepSource;
 keepVars                =   {};
-for ij                  =	1:numel(keepVarsSource)
+for ij                  =    1:numel(keepVarsSource)
     var2ks              =   keepVarsSource{ij}(1:end-1);
     keepVars            =   [keepVars var2ks];
 end
@@ -69,7 +69,7 @@ if~isfield('info.tem.model.variables','created');info.tem.model.variables.create
 arzerospix              =   info.tem.helpers.arrays.zerospix;
 aronespix               =   info.tem.helpers.arrays.onespix;
 
-for ij                  =	1:numel(stateVarsCode)
+for ij                  =    1:numel(stateVarsCode)
     var2cr               =  stateVarsCode{ij};
     varPart             =   cellstr(strsplit(var2cr,'.'));
     sv                  =   varPart{2};

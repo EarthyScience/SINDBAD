@@ -725,15 +725,15 @@ while irun <= myeval(opts.Restarts) % for-loop does not work with resume
                         disp([pad('CMAES',20) ' : ' 'could not open ' filenameprefix name '.dat']);
                         filenames(find(strcmp(filenames,name))) = [];
                     else
-                        %	  fprintf(fid, '%s\n', ...
-                        %	      ['<CMAES-OUTPUT version="' cmaVersion '">']);
-                        %	  fprintf(fid, ['  <NAME>' name '</NAME>\n']);
-                        %	  fprintf(fid, ['  <DATE>' date() '</DATE>\n']);
-                        %	  fprintf(fid, '  <PARAMETERS>\n');
-                        %	  fprintf(fid, ['    dimension=' num2str(N) '\n']);
-                        %	  fprintf(fid, '  </PARAMETERS>\n');
+                        %      fprintf(fid, '%s\n', ...
+                        %          ['<CMAES-OUTPUT version="' cmaVersion '">']);
+                        %      fprintf(fid, ['  <NAME>' name '</NAME>\n']);
+                        %      fprintf(fid, ['  <DATE>' date() '</DATE>\n']);
+                        %      fprintf(fid, '  <PARAMETERS>\n');
+                        %      fprintf(fid, ['    dimension=' num2str(N) '\n']);
+                        %      fprintf(fid, '  </PARAMETERS>\n');
                         % different cases for DATA columns annotations here
-                        %	  fprintf(fid, '  <DATA');
+                        %      fprintf(fid, '  <DATA');
                         if strcmp(name, 'axlen')
                             fprintf(fid, ['%%  columns="iteration, evaluation, sigma, ' ...
                                 'max axis length, min axis length, ' ...
@@ -757,7 +757,7 @@ while irun <= myeval(opts.Restarts) % for-loop does not work with resume
                         if strcmp(name, 'xmean')
                             fprintf(fid, '%ld %ld 0 0 0 ', 0, counteval);
                             % fprintf(fid, '%ld %ld 0 0 %e ', countiter, counteval, fmean);
-                            %qqq	    fprintf(fid, msprintf('%e ', genophenotransform(out.genopheno, xmean)) + '\n');
+                            %qqq        fprintf(fid, msprintf('%e ', genophenotransform(out.genopheno, xmean)) + '\n');
                             fprintf(fid, '%e ', xmean);
                             fprintf(fid, '\n');
                         end

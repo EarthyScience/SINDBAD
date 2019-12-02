@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % PURPOSE	: estimate transpiration from GPP
 % 
 % REFERENCES:
@@ -21,7 +21,7 @@ function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate transpiration
 fx.tranAct(:,tix)	= fx.gpp(:,tix) ./ d.WUE.AoE(:,tix);

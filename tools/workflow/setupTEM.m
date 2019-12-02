@@ -2,8 +2,8 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 % setups the experiment part of the info and date arrays
 %
 % Requires:
-%	- a configuration file for an experiment or
-%	- an info structure
+%    - a configuration file for an experiment or
+%    - an info structure
 %
 % Purposes:
 %   - setups the the experiment and TEM part of the info 
@@ -23,9 +23,9 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 %   - needs to be run where the repository is
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - v1.1: Tina Trautmann (ttraut@bgc-jena.mpg.de)
-%   - v1.2: Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - v1.1: Tina Trautmann (ttraut)
+%   - v1.2: Tina Trautmann (ttraut)
 %
 % References:
 %
@@ -51,7 +51,7 @@ if isstruct(expConfigFile)
     if isfield(info.experiment,'oldSettings')
         k   = numel(info.experiment.oldSettings) + 1;
     else
-        k	= 1;
+        k    = 1;
     end
     info.experiment.oldSettings{k} = info.experiment;
     

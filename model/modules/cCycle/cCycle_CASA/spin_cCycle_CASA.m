@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 % recurrent.
 %
 % Requires:
-%	- all SINDBAD structure + NI2E = number of iterations to equilibrium
+%    - all SINDBAD structure + NI2E = number of iterations to equilibrium
 %
 % Purposes:
 %   - Returns the model C pools in equilibrium
@@ -11,8 +11,8 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 % Conventions:
 %
 % Created by:
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Nuno Carvalhais (ncarval)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 % Not published but similar to the following:
@@ -33,7 +33,7 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
 tstart = tic;
 
 % START fCt - final time series of pools
-fCt	= d.storedStates.cEco;
+fCt    = d.storedStates.cEco;
 sCt = s.c.cEco;
 
 % updated states / diagnostics and fluxes...
@@ -68,7 +68,7 @@ kmoves      = 0;
 zixVecOrder = zixVec;
 for zix = zixVec
     move = false;
-    ndxGainFrom	= find(s.cd.p_cFlowAct_taker == zix);
+    ndxGainFrom    = find(s.cd.p_cFlowAct_taker == zix);
     ndxLoseToZix = s.cd.p_cFlowAct_taker(s.cd.p_cFlowAct_giver == zix);
     for ii = 1:numel(ndxGainFrom)
         giver   = s.cd.p_cFlowAct_giver(ndxGainFrom(ii));
@@ -88,31 +88,31 @@ end
 %% solve it for each pool individually
 for zix = zixVecOrder
     % general k loss
-    cLossRate(:,zix,:) 	= maxsb(minsb(d.storedStates.p_cTauAct_k(:,zix,:),1),0);
+    cLossRate(:,zix,:)     = maxsb(minsb(d.storedStates.p_cTauAct_k(:,zix,:),1),0);
 
     if any(zix==info.tem.model.variables.states.c.zix.cVeg)
         % additional losses (RA) in veg pools
-        cLoxxRate(:,zix,:)	= minsb(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
+        cLoxxRate(:,zix,:)    = minsb(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
         % gains in veg pools
         gppShp           = reshape(fx.gpp,nPix,1,nTix); % could be fxT?
-        cGain(:,zix,:)	= d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
+        cGain(:,zix,:)    = d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
     else
         % no additional gains from outside
-        cLoxxRate(:,zix,:)	= 1;
+        cLoxxRate(:,zix,:)    = 1;
         % gains from other carbon pools
-        ndxGainFrom	= find(s.cd.p_cFlowAct_taker == zix);
+        ndxGainFrom    = find(s.cd.p_cFlowAct_taker == zix);
         for ii = 1:numel(ndxGainFrom)
             taker               = s.cd.p_cFlowAct_taker(ndxGainFrom(ii)); % @nc : taker always has to be the same as zix...
             giver               = s.cd.p_cFlowAct_giver(ndxGainFrom(ii));
             denom               = (1 - cLossRate(:,giver,:));
             adjustGain          = d.storedStates.p_cFlowAct_A(:,taker,giver,:);
             adjustGain3D        = reshape(adjustGain,nPix,1,nTix);
-            cGain(:,taker,:)	= cGain(:,taker,:) + (fCt(:,giver,:) ./ denom) .* cLossRate(:,giver,:)  .* adjustGain3D;
+            cGain(:,taker,:)    = cGain(:,taker,:) + (fCt(:,giver,:) ./ denom) .* cLossRate(:,giver,:)  .* adjustGain3D;
         end
     end
     %% GET THE POOLS GAINS (Gt) AND LOSSES (Lt)
     % CALCULATE At = 1 - Lt
-    At	= squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
+    At    = squeeze((1 - cLossRate(:,zix,:)) .* cLoxxRate(:,zix,:));
     %sujan 29.10.2019: the squeeze removes the first dimension while
     %running for a single point when nPix == 1
     if size(cLossRate,1) == 1
@@ -123,7 +123,7 @@ for zix = zixVecOrder
     end
     %sujan end squeeze fix
     % CARBON AT THE END FOR THE FIRST SPINUP PHASE, NPP IN EQUILIBRIUM
-    Co	= s.c.cEco(:,zix);
+    Co    = s.c.cEco(:,zix);
     % THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP;
     % EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL, SLOW AND OLD. IN THIS
     % CASE SIGNIFICANT APPROXIMATION IS CALCULATED (CHECK NOTEBOOKS).
@@ -147,19 +147,19 @@ for zix = zixVecOrder
     disp(pad('.',200,'both','.'))
 
     sT.c.cEco(:,zix)        = Ct;
-    sT.prev.s_c_cEco(:,zix)	= Ct;
+    sT.prev.s_c_cEco(:,zix)    = Ct;
 
     % CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
     % POOLS CALCULATIONS
     [~,~,fxT,sT,dT] = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
     % FEED fCt
-    % fCt(:,zix,:)	= dT.storedStates.cEco(:,zix,:);
-    fCt	= dT.storedStates.cEco;
+    % fCt(:,zix,:)    = dT.storedStates.cEco(:,zix,:);
+    fCt    = dT.storedStates.cEco;
 end
 % make the fx consistent with the pools
-sT.c.cEco			= sCt;
+sT.c.cEco            = sCt;
 sT.prev.s_c_cEco    = sCt;
-[f,fe,fx,s,d,p]		= runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
+[f,fe,fx,s,d,p]        = runCoreTEM(f,fe,fxT,sT,dT,p,info,false,true,false);
 
 disp([pad('TIMERUN FAST SPINUP',20,'left') ' : ' pad('spin_cCycle_CASA',20) ' | inputs : ' num2str(NI2E,'%1.0f |') ', time : ' sec2som(toc(tstart))])
-end % function
+end

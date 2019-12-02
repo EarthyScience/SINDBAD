@@ -1,4 +1,4 @@
-function [userName, machineName]   =	getUserInfo()
+function [userName, machineName]   =    getUserInfo()
 
 if ismac
     

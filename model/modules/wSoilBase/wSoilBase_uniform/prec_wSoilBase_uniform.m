@@ -16,8 +16,8 @@ function [f,fe,fx,s,d,p] = prec_wSoilBase_uniform(f,fe,fx,s,d,p,info)
 %	- 
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
-%   - Nuno Carvalhais (ncarval@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
+%   - Nuno Carvalhais (ncarval)
 %
 % Versions:
 %   - 1.0 on 21.11.2019

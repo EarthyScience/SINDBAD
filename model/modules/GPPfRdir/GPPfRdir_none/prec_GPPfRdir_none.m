@@ -1,10 +1,10 @@
 function [f,fe,fx,s,d,p] = prec_GPPfRdir_none(f,fe,fx,s,d,p,info)
-% #########################################################################
-% PURPOSE	: saturating light function
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% PURPOSE    : saturating light function
 % 
 % REFERENCES:
 % 
-% CONTACT	: mung, ncarval
+% CONTACT    : mung, ncarval
 % 
 % INPUT
 % 
@@ -16,7 +16,7 @@ function [f,fe,fx,s,d,p] = prec_GPPfRdir_none(f,fe,fx,s,d,p,info)
 % 
 % NOTES:
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % no effect (needs to be 1!)
 d.GPPfRdir.LightScGPP = info.tem.helpers.arrays.onespixtix;

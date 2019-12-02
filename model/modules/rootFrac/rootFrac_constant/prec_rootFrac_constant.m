@@ -1,13 +1,13 @@
 function [f,fe,fx,s,d,p]=prec_rootFrac_constant(f,fe,fx,s,d,p,info)
-% sets the maximum fraction of water that root can uptake from soil layers
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% sets the maximum fraction of water that root can uptake from soil layers as constant
 %
 % Inputs:
-%   - p.pSoil.thetaSat/kSat/psiSat/sSat
-%   - p.pSoil.thetaFC/kFC/psiFC/sFC
-%   - p.pSoil.thetaWP/kWP/psiWP/sWP
+%   - p.rootFrac.constantRootFrac
+%   - s.wd.maxRootD
 %
 % Outputs:
-%   - same as inputs per layer of soil depth in s.wd.p_wSoilBase_(parameter_name)
+%   - s.wd.p_rootFrac_fracRoot2SoilD as nPix,nZix for wSoil
 %
 % Modifies:
 % 	- None
@@ -16,11 +16,13 @@ function [f,fe,fx,s,d,p]=prec_rootFrac_constant(f,fe,fx,s,d,p,info)
 %	- 
 %
 % Created by:
-%   - Sujan Koirala (skoirala@bgc-jena.mpg.de)
+%   - Sujan Koirala (skoirala)
 %
 % Versions:
 %   - 1.0 on 21.11.2019
 %
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %% 
 
 %--> get the soil thickness and root distribution information from input

@@ -25,7 +25,7 @@ function test_cCycleSpinup(inpath,outpath,obspath,testName)
 %% go for the spinup
 disp('%% go for the spinup')
 
-toStore.CASA	= {
+toStore.CASA    = {
     's.w.wGW'
     's.w.wSnow'
     's.w.wSoil'
@@ -44,7 +44,7 @@ toStore.CASA	= {
     'd.cTaufwSoil.fwSoil'
     };
 
-toStore.simple	= {
+toStore.simple    = {
     's.w.wGW'
     's.w.wSnow'
     's.w.wSoil'
@@ -64,7 +64,7 @@ toStore.simple	= {
 GPP2E           = 20;
 cCycleModelVec  = {'CASA','simple'};
 strExtra        = '';
-compareModels	= true;
+compareModels    = true;
 saveLongStates  = true;
 % for NI2E = [11 101]% 1001 2001]
 % NI2E=11s
@@ -87,7 +87,7 @@ for NI2E = [20]
                 case 2 % setup explicit spinup - using reduced code version for spin up
                     strN        = '% setup explicit spinup - using reduced code version for spin up';
                     strN2       = 'expliRed';
-                    zSequence	= struct(...
+                    zSequence    = struct(...
                         'funHandleSpin',{'runCoreTEM','runCoreTEM','runCoreTEM','runCoreTEM'},...
                         'funHandleStop',{[],[],[],[]},...
                         'funAddInputs',{{1,0,0},{0,1,0},{0,1,1},{0,1,0}},...
@@ -137,7 +137,7 @@ for NI2E = [20]
                 for j = 1:14
                     subplot(4,4,j)
                     y   = [squeeze(dSU5.fullSpinupStates.cEco(:,j,:)) squeeze(d5.storedStates.cEco(:,j,:))]';
-                    x	= (1:size(y,1));
+                    x    = (1:size(y,1));
                     plot(x,y,'lineWidth',2)
                     axis tight
                     set_gcf(gcf,gca,'s',1,[30 30],1)

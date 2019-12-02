@@ -16,7 +16,7 @@ function [ outVar ] = adjustPrecision( info, inVar )
 % Conventions: 
 % 
 % Created by: 
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de) 
+%   - Tina Trautmann (ttraut) 
 % 
 % References: 
 %    

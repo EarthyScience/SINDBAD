@@ -1,7 +1,7 @@
 function [f,fe,fx,s,d,p] = dyna_snowMelt_TRn(f,fe,fx,s,d,p,info,tix)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % precompute the potential snow melt based on temperature and net radiation
-% on days with Tair > 0�C
+% on days with Tair > 0 degC
 %
 % Inputs:
 %   - fe.snowMelt.potMelt 	: potential snow melt based on temperature and net radiation [mm/time]
@@ -19,14 +19,14 @@ function [f,fe,fx,s,d,p] = dyna_snowMelt_TRn(f,fe,fx,s,d,p,info,tix)
 %	- 
 %
 % Created by:
-%   - Tina Trautmann (ttraut@bgc-jena.mpg.de)
+%   - Tina Trautmann (ttraut)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %
-%%
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+%%
 % Then snow melt (mm/day) is calculated as a simple function of temperature and radiation
 % and scaled with the snow covered fraction
 fx.snowMelt(:,tix) = minsb( s.w.wSnow , fe.snowMelt.potMelt(:,tix) .* s.wd.wSnowFrac);

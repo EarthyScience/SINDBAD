@@ -1,9 +1,9 @@
 function [f,fe,fx,s,d,p] = prec_pVeg_vegFracEVIdailymsc(f,fe,fx,s,d,p,info)
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % sets p.vegFrac by reading the daily mean seasonal cycle of MODIS
 %
 % Inputs:
-%	- s.cd.vegFrac:     scaling parameter
+%    - s.cd.vegFrac:     scaling parameter
 %   - f.EVI_MSC:        reads it from the forcing data path + 'MODIS_EVI_MSC.mat'
 %                       (pix,12)
 %
@@ -11,18 +11,18 @@ function [f,fe,fx,s,d,p] = prec_pVeg_vegFracEVIdailymsc(f,fe,fx,s,d,p,info)
 %   - s.cd.vegFrac   : scaling parameter .* EVI_MSC in size(pix,tix)
 %
 % Modifies:
-% 	- 
+%     - 
 %
 % References:
-%	- 
+%    - 
 %
 % Created by:
-%   - Tina Trautmann (sets p.vegFrac by reading the daily mean seasonal cycle of MODIS@bgc-jena.mpg.de)
+%   - Tina Trautmann (sets p.vegFrac by reading the daily mean seasonal cycle of MODIS)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (ttraut): cleaned up the code
 %%
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% READING f.EVI_MSC goes to another script!!!
 % empty daily array

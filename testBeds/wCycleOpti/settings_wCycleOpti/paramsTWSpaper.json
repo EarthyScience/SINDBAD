@@ -43,7 +43,7 @@
                 "UpperBound": 10
             }
         },
-        "tranfwSoil": {
+        "tranSup": {
             "alphaVeg": {
                 "LowerBound": 0.5,
                 "UpperBound": 1.5

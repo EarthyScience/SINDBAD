@@ -1,8 +1,8 @@
 function [f,fe,fx,s,d,p] = prec_RAfTair_none(f,fe,fx,s,d,p,info)
-% #########################################################################
-% FUNCTION	: prec_RAfTair_none
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : prec_RAfTair_none
 % 
-% PURPOSE	: estimate the effect of temperature in autotrophic maintenance
+% PURPOSE    : estimate the effect of temperature in autotrophic maintenance
 % respiration - q10 model.
 % 
 % REFERENCES:
@@ -15,22 +15,22 @@ function [f,fe,fx,s,d,p] = prec_RAfTair_none(f,fe,fx,s,d,p,info)
 % of plant respiration: Representation and realism, Ann Bot-London, 85(1),
 % 55-67.
 % 
-% CONTACT	: Nuno
+% CONTACT    : Nuno
 % 
 % INPUTS
 % Tsoil     : soil temperature (?C)
 % Tair      : air temperature (?C) 
 % Q10_RM    : q10 parameter ([])
-% Tref_RM	: reference temperature (?C)
+% Tref_RM    : reference temperature (?C)
 % 
 % OUTPUTS
 % fT    : autotrophic respiration from each plant pools (gC.m-2.deltaT-1)
 %           (fe.RAfTair.fT)
 % 
-% #########################################################################
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 % just copy
-fe.RAfTair.fT	= info.tem.helpers.arrays.onespixtix;
+fe.RAfTair.fT    = info.tem.helpers.arrays.onespixtix;
 
-end % function
+end

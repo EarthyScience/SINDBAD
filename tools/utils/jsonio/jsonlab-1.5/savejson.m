@@ -153,11 +153,11 @@ end
 filename=jsonopt('FileName','',opt);
 if(~isempty(filename))
     if(jsonopt('SaveBinary',0,opt)==1)
-	    fid = fopen(filename, 'wb');
-	    fwrite(fid,json);
+        fid = fopen(filename, 'wb');
+        fwrite(fid,json);
     else
-	    fid = fopen(filename, 'wt');
-	    fwrite(fid,json,'char');
+        fid = fopen(filename, 'wt');
+        fwrite(fid,json,'char');
     end
     fclose(fid);
 end
@@ -235,7 +235,7 @@ txt = sprintf('%s',txt{:});
 function txt=struct2json(name,item,level,varargin)
 txt={};
 if(~isstruct(item))
-	error('input is not a struct');
+    error('input is not a struct');
 end
 dim=size(item);
 if(ndims(squeeze(item))>2) % for 3D or higher dimensions, flatten to 2D for now
@@ -282,7 +282,7 @@ for j=1:dim(2)
     end
     if(~isempty(names))
       for e=1:length(names)
-	    txt{end+1}=obj2json(names{e},item(i,j).(names{e}),...
+        txt{end+1}=obj2json(names{e},item(i,j).(names{e}),...
              level+(dim(1)>1)+1+forcearray,varargin{:});
         if(e<length(names))
             txt{end+1}=',';
@@ -367,10 +367,10 @@ sep=ws.sep;
 if(length(size(item))>2 || issparse(item) || ~isreal(item) || ...
    (isempty(item) && any(size(item))) ||jsonopt('ArrayToStruct',0,varargin{:}))
     if(isempty(name))
-    	txt=sprintf('%s{%s%s"_ArrayType_": "%s",%s%s"_ArraySize_": %s,%s',...
+        txt=sprintf('%s{%s%s"_ArrayType_": "%s",%s%s"_ArraySize_": %s,%s',...
               padding1,nl,padding0,class(item),nl,padding0,regexprep(mat2str(size(item)),'\s+',','),nl);
     else
-    	txt=sprintf('%s"%s": {%s%s"_ArrayType_": "%s",%s%s"_ArraySize_": %s,%s',...
+        txt=sprintf('%s"%s": {%s%s"_ArrayType_": "%s",%s%s"_ArraySize_": %s,%s',...
               padding1,checkname(name,varargin{:}),nl,padding0,class(item),nl,padding0,regexprep(mat2str(size(item)),'\s+',','),nl);
     end
 else
@@ -380,12 +380,12 @@ else
         numtxt=matdata2json(item,level+1,varargin{:});
     end
     if(isempty(name))
-    	txt=sprintf('%s%s',padding1,numtxt);
+        txt=sprintf('%s%s',padding1,numtxt);
     else
         if(numel(item)==1 && jsonopt('SingletArray',0,varargin{:})==0)
-           	txt=sprintf('%s"%s": %s',padding1,checkname(name,varargin{:}),numtxt);
+               txt=sprintf('%s"%s": %s',padding1,checkname(name,varargin{:}),numtxt);
         else
-    	    txt=sprintf('%s"%s": %s',padding1,checkname(name,varargin{:}),numtxt);
+            txt=sprintf('%s"%s": %s',padding1,checkname(name,varargin{:}),numtxt);
         end
     end
     return;

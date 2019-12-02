@@ -4,4 +4,4 @@ s.cd.p_cCycleBase_k              = info.tem.helpers.arrays.onespixzix.c.cEco;
 s.cd.p_cCycleBase_cFlowE         = info.tem.helpers.arrays.onespixzix.c.cEco;
 s.cd.p_cCycleBase_cFlowF         = info.tem.helpers.arrays.onespixzix.c.cEco;
 s.cd.p_cCycleBase_annk           = info.tem.helpers.arrays.onespixzix.c.cEco;
-end % function
+end
