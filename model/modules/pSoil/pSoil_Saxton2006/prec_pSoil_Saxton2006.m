@@ -29,25 +29,33 @@ function [f,fe,fx,s,d,p] = prec_pSoil_Saxton2006(f,fe,fx,s,d,p,info)
 % we are assuming here that texture does not change with depth
 
 % number of layers
-[Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] = calcSoilParamsSaxton2006(p,info);
-% [Alpha,Beta,kFC,thetaFC,psiFC]  = calcSoilParamsSaxton2006(p,fe,info,p.pSoil.psiFC);
-% [~,~,kWP,thetaWP,psiWP]         = calcSoilParamsSaxton2006(p,fe,info,p.pSoil.psiWP);
-% [~,~,kSat,thetaSat,psiSat]      = calcSoilParamsSaxton2006(p,fe,info,p.pSoil.psiSat);
+nSoilLayers                         =   info.tem.model.variables.states.w.nZix.wSoil;
+s.wd.p_pSoil_Alpha                  =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_Beta                   =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_kFC                    =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_thetaFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_psiFC                  =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_kWP                    =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_thetaWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_psiWP                  =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_kSat                   =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_thetaSat               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_pSoil_psiSat                 =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
-p.pSoil.Alpha       = Alpha;
-p.pSoil.Beta        = Beta;
-
-p.pSoil.kFC         = kFC;
-p.pSoil.thetaFC     = thetaFC;
-p.pSoil.psiFC       = psiFC;
-
-p.pSoil.kWP         = kWP;
-p.pSoil.thetaWP     = thetaWP;
-p.pSoil.psiWP       = psiWP;
-
-p.pSoil.kSat        = kSat;
-p.pSoil.thetaSat    = thetaSat;
-p.pSoil.psiSat      = psiSat;
+for sl      =   1:nSoilLayers
+    [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] = calcSoilParamsSaxton2006(s,p,info,sl);
+    s.wd.p_pSoil_Alpha(:,sl)        =   Alpha;
+    s.wd.p_pSoil_Beta(:,sl)         =   Beta;
+    s.wd.p_pSoil_kFC(:,sl)          =   kFC;
+    s.wd.p_pSoil_thetaFC(:,sl)      =   thetaFC;
+    s.wd.p_pSoil_psiFC(:,sl)        =   psiFC;
+    s.wd.p_pSoil_kWP(:,sl)          =   kWP;
+    s.wd.p_pSoil_thetaWP(:,sl)      =   thetaWP;
+    s.wd.p_pSoil_psiWP(:,sl)        =   psiWP;
+    s.wd.p_pSoil_kSat(:,sl)         =   kSat;
+    s.wd.p_pSoil_thetaSat(:,sl)     =   thetaSat;
+    s.wd.p_pSoil_psiSat(:,sl)       =   psiSat;
+end
 
 p.pSoil.kUnsatFuncH  = str2func(p.pSoil.kUnsatFunc);
 
