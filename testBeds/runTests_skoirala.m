@@ -95,8 +95,8 @@ userOutPath             =   '';
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
 userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_lku';
 % 
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_lku';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_lku';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';

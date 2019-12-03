@@ -1,4 +1,4 @@
-function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
+function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(s,p,info,sl,WT)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the soil hydraulic properties based on Saxton, 1986
 % 
@@ -36,8 +36,8 @@ function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
 %--> get the number of soil layers
 
 %-->  CONVERT SAND AND CLAY TO PERCENTAGES
-CLAY            =   p.soilTexture.CLAY .* 100;
-SAND            =   p.soilTexture.SAND .* 100;
+CLAY            =   s.wd.p_soilTexture_CLAY(:,sl) .* 100;
+SAND            =   s.wd.p_soilTexture_SAND(:,sl) .* 100;
 
 %-->  Equations
 A               =   exp(p.pSoil.a + p.pSoil.b .* CLAY + p.pSoil.c .* SAND .^ 2 + p.pSoil.d1 .* SAND .^ 2 .* CLAY) * 100;
