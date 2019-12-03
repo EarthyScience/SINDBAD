@@ -1,10 +1,8 @@
 function K = calcKSaxton1986(s,p,info,sl)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% calculate conductivity from soil moisture 
-% based on saxton 1986, equation 10
-% [Alpha,Beta,K,Theta,Psi] = calcSoilParams(p,fe,info,WT)
+% calculate hydraulic conductivity from soil moisture using Saxton 1986, equation 10
 % 
-% soilm_parm    : soil moisture parameter output array
+% p.pSoil     : soil moisture parameter output array
 % CLAY          : clay array
 % SAND          : sand array
 % WT            : Psi : water tension (kPa)
@@ -21,7 +19,7 @@ function K = calcKSaxton1986(s,p,info,sl)
 % http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% CONVERT SAND AND CLAY TO PERCENTAGES
+%--> if useLookUp is set to true in modelRun.json, run the original non-linear equation
 if p.wSoilBase.makeLookup
     
     CLAY    = s.wd.p_wSoilBase_CLAY(:,sl) .* 100;
@@ -35,34 +33,19 @@ if p.wSoilBase.makeLookup
         (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
         CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
     % -------------------------------------------------------------------------
+
 else
     soilD                                       =   s.wd.p_wSoilBase_soilDepths(sl);
     Theta                                       =   s.w.wSoil(:,sl) ./ soilD;
-    Theta(Theta<0) = 0;
-    Theta(imag(Theta)~=0) = 0;
-    lkDat                                       =   squeeze(s.wd.p_wSoilBase_kLookUp(:,sl,:));
-    if size(lkDat,2) == 1
-        lkDat       = lkDat';
-    end
-    
+    rowArray                                    =   1:size(Theta,1);
+    Theta(Theta<0)                              =   0;
+    Theta(imag(Theta)~=0)                       =   0;
+    lkDat                                       =   s.wd.p_wSoilBase_kLookUp{sl};
     lkInd                                       =   floor(Theta .* p.wSoilBase.nLookup);
     lkInd(lkInd==0)                             =   1;
     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
-    idxArray= zeros(size(lkDat));
-    for i = 1: length(lkDat)
-        idxArray(i,lkInd(i)) = 1;
-    end
-    K                                           =   lkDat(idxArray ==1);
-    K                                           =   K(:,1);
-    
-%     lkInd                                       =   floor(Theta_dos .* p.wSoilBase.nLookup);
-%     K                                           =   lkInd;
-%     lkInd(lkInd==0)                             =   1;
-%     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
-%     K = lkDat(:,lkInd);
-%     for lk=1:numel(lkInd)
-%         K(lk) = lkDat(lk,lkInd(lk));
-%     end
+    idx                                         =   sub2ind(size(lkDat),rowArray',lkInd);
+    K                                           =   lkDat(idx);    
 end
 
 end

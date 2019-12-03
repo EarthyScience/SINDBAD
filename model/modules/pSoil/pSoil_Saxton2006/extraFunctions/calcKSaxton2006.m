@@ -23,7 +23,8 @@ function K = calcKSaxton2006(s,p,info,sl)
 %
 % Versions:
 %   - 1.0 on 22.11.2019 (skoirala):
-%
+%   - 1.1 on 03.12.2019 (skoirala): included the option to handle lookup table when set to true
+%     from modelRun.json
 %% 
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
@@ -37,31 +38,15 @@ if p.wSoilBase.makeLookup
     K               =   kSat .* ((Theta_dos) .^ (3 + (2 ./ lambda)));
     % -------------------------------------------------------------------------
 else
-    lkDat                                       =   squeeze(s.wd.p_wSoilBase_kLookUp(:,sl,:));
-    Theta_dos(Theta_dos<0) = 0;
-    Theta_dos(imag(Theta_dos)~=0) = 0;
-    if size(lkDat,2) == 1
-        lkDat       = lkDat';
-    end
-    
+    rowArray                                    =   1:size(Theta_dos,1);
+    Theta_dos(Theta_dos<0)                      =   0;
+    Theta_dos(imag(Theta_dos)~=0)               =   0;
+    lkDat                                       =   s.wd.p_wSoilBase_kLookUp{sl};
     lkInd                                       =   floor(Theta_dos .* p.wSoilBase.nLookup);
     lkInd(lkInd==0)                             =   1;
     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
-    idxArray= zeros(size(lkDat));
-    for i = 1: length(lkDat)
-        idxArray(i,lkInd(i)) = 1;
-    end
-        K                                           =   lkDat(idxArray ==1);
-%     K  = K(:,1);
-%     K                                           =   lkInd;
-%     lkInd(lkInd==0)                             =   1;
-%     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
-%     K = lkDat(:,lkInd);
+    idx                                         =   sub2ind(size(lkDat),rowArray',lkInd);
+    K                                           =   lkDat(idx);        
 end
-% a=rand(904,1);
-% b=repmat(rng',1,size(a,1))';
-% c=abs(a-b);
-% d=c*0;
-% d(c==min(c,[],2))=1;
 
 end

@@ -2,12 +2,12 @@ function [f,fe,fx,s,d,p] = prec_pSoil_Saxton2006(f,fe,fx,s,d,p,info)
 % sets the value of soil hydraulic parameters
 %
 % Inputs:
-%    - p.SAND/SILT/CLAY/DEPTH/+ the Saxton parameters that are in the json
+%    - p.SAND/SILT/CLAY/+ the Saxton parameters that are in the json
 %
 % Outputs:
-%   - p.soilTexture.thetaSat/kSat/psiSat/sSat
-%   - p.soilTexture.thetaFC/kFC/psiFC/sFC
-%   - p.soilTexture.thetaWP/kWP/psiWP/sWP
+%   - p.pSoil.thetaSat/kSat/psiSat/sSat
+%   - p.pSoil.thetaFC/kFC/psiFC/sFC
+%   - p.pSoil.thetaWP/kWP/psiWP/sWP
 %
 % Modifies:
 %     - None
