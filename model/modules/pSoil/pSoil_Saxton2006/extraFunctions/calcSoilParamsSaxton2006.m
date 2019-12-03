@@ -31,8 +31,6 @@ function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] =
 %   - WP: Wilting point moisture (1500 kPa), %v
 %   - FC: Field Capacity moisture (33 kPa), %v
 
-
-
 %% Get sand, clay, and organic matter contents
 % CLAY: Clay, %w
 % SAND: Sand, %w

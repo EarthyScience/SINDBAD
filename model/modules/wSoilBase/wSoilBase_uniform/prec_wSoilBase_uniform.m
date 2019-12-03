@@ -56,7 +56,6 @@ s.wd.p_wSoilBase_wSat               =   info.tem.helpers.arrays.onespixzix.w.wSo
 s.wd.p_wSoilBase_kSat               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
-s.wd.p_wSoilBase_kLookUp            =   repmat(info.tem.helpers.arrays.onespixzix.w.wSoil,1,1,p.wSoilBase.nLookup);
 
 % matric potentials
 s.wd.p_wSoilBase_psiSat             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
@@ -76,6 +75,9 @@ s.wd.p_wSoilBase_Beta               =   info.tem.helpers.arrays.onespixzix.w.wSo
 p.wSoilBase.makeLookup              =   1;
 
 if info.tem.model.flags.useLookupK
+    tmpLookUp                       =   repmat(info.tem.helpers.arrays.onespix,1,p.wSoilBase.nLookup);
+    s.wd.p_wSoilBase_kLookUp        =   cell(nSoilLayers,1);
+    % s.wd.p_wSoilBase_kLookUp        =   repmat(info.tem.helpers.arrays.onespixzix.w.wSoil,1,1,p.wSoilBase.nLookup);
     sLStruct                        =   struct;
     sLStruct.w.wSoil                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 end
@@ -111,14 +113,16 @@ for sl      =   1:nSoilLayers
         sLStruct.wd                             =   s.wd;
         for nL    =   1:p.wSoilBase.nLookup
             sLStruct.w.wSoil(:,sl)              =   sLookup(nL);
-            s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =   feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
+            tmpLookUp(:,nL)                     =   feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
+            % s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =   feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
         end
+        s.wd.p_wSoilBase_kLookUp{sl}            = tmpLookUp;
     end
 end
 %--> get the plant available water available
 s.wd.p_wSoilBase_wAWC                           =   s.wd.p_wSoilBase_wFC - s.wd.p_wSoilBase_wWP;
-%--> set the make look up flag to false after creating the table 
+%--> set the make lookUp flag to false after creating the table 
 if info.tem.model.flags.useLookupK
     p.wSoilBase.makeLookup                      =   0;
 end
-end %function
+end
