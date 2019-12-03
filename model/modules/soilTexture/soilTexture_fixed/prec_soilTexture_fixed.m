@@ -27,9 +27,21 @@ function [f,fe,fx,s,d,p] = prec_soilTexture_fixed(f,fe,fx,s,d,p,info)
 %
 %% 
 % we are assuming here that texture does not change with depth
-p.soilTexture.CLAY =  p.soilTexture.CLAY .* info.tem.helpers.arrays.onespix;
-p.soilTexture.SAND =  p.soilTexture.SAND .* info.tem.helpers.arrays.onespix;
-p.soilTexture.SILT =  p.soilTexture.SILT .* info.tem.helpers.arrays.onespix;
-p.soilTexture.ORGM =  p.soilTexture.ORGM .* info.tem.helpers.arrays.onespix;
+% vars = {'CLAY','SAND','SILT','ORGM'};
+
+% for vn = 1:numel(vars)
+%     vari = vars{vn};
+%     eval(['s.wd.p_soilTexture_' vari ' = p.soilTexture.' vari '.* info.tem.helpers.arrays.onespixzix.w.wSoil;']);
+% end
+
+s.wd.p_soilTexture_CLAY     =   p.soilTexture.CLAY .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_soilTexture_SAND     =   p.soilTexture.SAND .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_soilTexture_SILT     =   p.soilTexture.SILT .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_soilTexture_ORGM     =   p.soilTexture.ORGM .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+
+% p.soilTexture.CLAY =  p.soilTexture.CLAY .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+% p.soilTexture.SAND =  p.soilTexture.SAND .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+% p.soilTexture.SILT =  p.soilTexture.SILT .* info.tem.helpers.arrays.onespixzix.w.wSoil;
+% p.soilTexture.ORGM =  p.soilTexture.ORGM .* info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 end

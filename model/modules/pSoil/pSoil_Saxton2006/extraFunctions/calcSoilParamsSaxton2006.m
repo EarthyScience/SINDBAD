@@ -1,4 +1,5 @@
-function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] = calcSoilParamsSaxton2006(p,info)
+function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] = calcSoilParamsSaxton2006(s,p,info,sl)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates the soil hydraulic properties based on Saxton 2006
 %
 % Inputs:
@@ -30,6 +31,8 @@ function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] =
 %   - SAT: Saturation moisture (0 kPa), %v
 %   - WP: Wilting point moisture (1500 kPa), %v
 %   - FC: Field Capacity moisture (33 kPa), %v
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% Get sand, clay, and organic matter contents
 % CLAY: Clay, %w
@@ -38,9 +41,17 @@ function [Alpha,Beta,kSat,thetaSat,psiSat,kFC,thetaFC,psiFC,kWP,thetaWP,psiWP] =
 % CLAY            =   p.soilTexture.CLAY .* info.tem.helpers.arrays.onespix ./ 100;
 % SAND            =   p.soilTexture.SAND .* info.tem.helpers.arrays.onespix ./ 100;
 % ORGM            =   p.soilTexture.ORGM .* info.tem.helpers.arrays.onespix ./ 100;
-CLAY            =   p.soilTexture.CLAY;
-SAND            =   p.soilTexture.SAND;
-ORGM            =   p.soilTexture.ORGM;
+
+% s.wd.p_soilTexture_CLAY
+
+
+CLAY            =   s.wd.p_soilTexture_CLAY(:,sl);
+SAND            =   s.wd.p_soilTexture_SAND(:,sl);
+ORGM            =   s.wd.p_soilTexture_ORGM(:,sl);
+
+% CLAY            =   p.soilTexture.CLAY;
+% SAND            =   p.soilTexture.SAND;
+% ORGM            =   p.soilTexture.ORGM;
 
 %% Moisture regressions
 

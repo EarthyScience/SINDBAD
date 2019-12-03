@@ -21,7 +21,7 @@
 		"genRedMemCode": 		false,
 		"runOpti": 				false,
 		"calcCost":				false,
-		"useLookupK":			false,	
+		"useLookupK":			true,	
 		"checks":
 		{
 			"massBalance":

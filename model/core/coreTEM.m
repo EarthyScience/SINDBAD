@@ -39,7 +39,7 @@ function [f,fe,fx,s,d,p] = coreTEM(f,fe,fx,s,d,p,info)
 % References:
 %
 % Versions:
-%   - 1.1 on 20.11.2019 : skoirala : multiple changes in name of modules
+%   - 1.2 on 20.11.2019 : skoirala : multiple changes in name of modules
 %   - 1.1 on 10.07.2018 : skoirala : cleanup and documentation
 %   - 1.0 on 01.05.2018
 %

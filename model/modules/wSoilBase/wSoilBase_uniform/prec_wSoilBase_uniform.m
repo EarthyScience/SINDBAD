@@ -86,35 +86,32 @@ linScalers                          =   linspace(0,1,p.wSoilBase.nLookup);
     
 %--> set the properties
 for sl      =   1:nSoilLayers
-    s.wd.p_wSoilBase_CLAY(:,sl)                 =   p.soilTexture.CLAY;
-    s.wd.p_wSoilBase_SAND(:,sl)                 =   p.soilTexture.SAND;
-    s.wd.p_wSoilBase_SILT(:,sl)                 =   p.soilTexture.SILT;
-    s.wd.p_wSoilBase_ORGM(:,sl)                 =   p.soilTexture.ORGM;
-    s.wd.p_wSoilBase_wFC(:,sl)                  =   p.pSoil.thetaFC .* soilDepths(sl);
-    s.wd.p_wSoilBase_wWP(:,sl)                  =   p.pSoil.thetaWP .* soilDepths(sl);
-    s.wd.p_wSoilBase_wSat(:,sl)                 =   p.pSoil.thetaSat .* soilDepths(sl);
+    s.wd.p_wSoilBase_CLAY(:,sl)                 =   s.wd.p_soilTexture_CLAY(:,sl);
+    s.wd.p_wSoilBase_SAND(:,sl)                 =   s.wd.p_soilTexture_SAND(:,sl);
+    s.wd.p_wSoilBase_SILT(:,sl)                 =   s.wd.p_soilTexture_SILT(:,sl);
+    s.wd.p_wSoilBase_ORGM(:,sl)                 =   s.wd.p_soilTexture_ORGM(:,sl);
+    s.wd.p_wSoilBase_wFC(:,sl)                  =   s.wd.p_pSoil_thetaFC(:,sl) .* soilDepths(sl);
+    s.wd.p_wSoilBase_wWP(:,sl)                  =   s.wd.p_pSoil_thetaWP(:,sl) .* soilDepths(sl);
+    s.wd.p_wSoilBase_wSat(:,sl)                 =   s.wd.p_pSoil_thetaSat(:,sl) .* soilDepths(sl);
     s.wd.p_wSoilBase_soilDepths(:,sl)           =   soilDepths(sl);
-    s.wd.p_wSoilBase_Alpha(:,sl)                =   p.pSoil.Alpha;
-    s.wd.p_wSoilBase_Beta(:,sl)                 =   p.pSoil.Beta;
-    s.wd.p_wSoilBase_kSat(:,sl)                 =   p.pSoil.kSat;
-    s.wd.p_wSoilBase_kFC(:,sl)                  =   p.pSoil.kFC;
-    s.wd.p_wSoilBase_kWP(:,sl)                  =   p.pSoil.kWP;
-    s.wd.p_wSoilBase_psiSat(:,sl)               =   p.pSoil.psiSat;
-    s.wd.p_wSoilBase_psiFC(:,sl)                =   p.pSoil.psiFC;
-    s.wd.p_wSoilBase_psiWP(:,sl)                =   p.pSoil.psiWP;
-    s.wd.p_wSoilBase_thetaSat(:,sl)             =   p.pSoil.thetaSat;
-    s.wd.p_wSoilBase_thetaFC(:,sl)              =   p.pSoil.thetaFC;
-    s.wd.p_wSoilBase_thetaWP(:,sl)              =   p.pSoil.thetaWP;
+    s.wd.p_wSoilBase_Alpha(:,sl)                =   s.wd.p_pSoil_Alpha(:,sl);
+    s.wd.p_wSoilBase_Beta(:,sl)                 =   s.wd.p_pSoil_Beta(:,sl);
+    s.wd.p_wSoilBase_kSat(:,sl)                 =   s.wd.p_pSoil_kSat(:,sl);
+    s.wd.p_wSoilBase_kFC(:,sl)                  =   s.wd.p_pSoil_kFC(:,sl);
+    s.wd.p_wSoilBase_kWP(:,sl)                  =   s.wd.p_pSoil_kWP(:,sl);
+    s.wd.p_wSoilBase_psiSat(:,sl)               =   s.wd.p_pSoil_psiSat(:,sl);
+    s.wd.p_wSoilBase_psiFC(:,sl)                =   s.wd.p_pSoil_psiFC(:,sl);
+    s.wd.p_wSoilBase_psiWP(:,sl)                =   s.wd.p_pSoil_psiWP(:,sl);
+    s.wd.p_wSoilBase_thetaSat(:,sl)             =   s.wd.p_pSoil_thetaSat(:,sl);
+    s.wd.p_wSoilBase_thetaFC(:,sl)              =   s.wd.p_pSoil_thetaFC(:,sl);
+    s.wd.p_wSoilBase_thetaWP(:,sl)              =   s.wd.p_pSoil_thetaWP(:,sl);
     
     if info.tem.model.flags.useLookupK
         sLookup                                 =   linScalers .* s.wd.p_wSoilBase_wSat(:,sl);
-%     sLookup                                 =   linspace(0,s.wd.p_wSoilBase_wSat(:,sl),p.wSoilBase.nLookup);
-%         sLookup                                 =   0:s.wd.p_wSoilBase_wSat(:,sl)/p.wSoilBase.nLookup:s.wd.p_wSoilBase_wSat(:,sl);
         sLStruct.wd                             =   s.wd;
         for nL    =   1:p.wSoilBase.nLookup
             sLStruct.w.wSoil(:,sl)              =   sLookup(nL);
             tmpLookUp(:,nL)                     =   feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
-            % s.wd.p_wSoilBase_kLookUp(:,sl,nL)   =   feval(p.pSoil.kUnsatFuncH,sLStruct,p,info,sl);
         end
         s.wd.p_wSoilBase_kLookUp{sl}            = tmpLookUp;
     end
