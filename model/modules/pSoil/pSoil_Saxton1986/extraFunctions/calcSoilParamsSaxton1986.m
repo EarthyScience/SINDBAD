@@ -3,16 +3,13 @@ function [Alpha,Beta,K,Theta,Psi] = calcSoilParamsSaxton1986(p,info,WT)
 % calculate the soil hydraulic properties based on Saxton, 1986
 % 
 % Inputs:
-%   - soilm_parm    : soil moisture parameter output array
-%   - CLAY          : clay array (from soilTexture)
-%   - SAND          : sand array  (from soilTexture)
-%   - WT            : Psi : matric potential of soil water (kPa)
-%   -               : wilting point     : 'WP'      : WT = 1500
-%   -               : field capacity    : 'FC'      : WT = 33
-%   -               : saturation        : 'Sat'     : WT = 10
-%   -               : alpha             : 'alpha'
-%   -               : beta              : 'beta'
-%	- s.w.wSoil: soil moisture in different layers
+%   - p.pSoilm. :  parameters of the empirical fit
+%   - CLAY : clay array (from soilTexture)
+%   - SAND : sand array  (from soilTexture)
+%   - WT   : Psi : matric potential of soil water (kPa)
+%   -      : wilting point     : 'WP'      : WT = 1500
+%   -      : field capacity    : 'FC'      : WT = 33
+%   -      : saturation        : 'Sat'     : WT = 10
 %
 % Outputs:
 %   - K,Psi,Theta @ FC, Sat, and WP
@@ -49,10 +46,10 @@ B               =   p.pSoil.e + p.pSoil.f1 .* CLAY .^ 2 + p.pSoil.g .* SAND .^ 2
 %-->  WATER POTENTIAL, Psi, kPa
 Psi             =   WT .* info.tem.helpers.arrays.onespix;
 
-% WATER CONTENT AT SATURATION (m^3/m^3)
+%--> WATER CONTENT AT SATURATION (m^3/m^3)
 Theta_s         =   p.pSoil.h + p.pSoil.j .* SAND + p.pSoil.k .* log10(CLAY);
 
-% WATER POTENTIAL AT AIR ENTRY (kPa)
+%--> WATER POTENTIAL AT AIR ENTRY (kPa)
 Psi_e           =   100 .* (p.pSoil.m + p.pSoil.n .* Theta_s);
 
 Theta           =   zeros(size(CLAY));
@@ -84,12 +81,10 @@ if ~isempty(ndx)
 end
 clear ndx
 
-% -------------------------------------------------------------------------
-% WATER CONDUCTIVITY (mm/day)
+%--> hydraulic conductivity (mm/day)
 K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
     (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
     CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
-% -------------------------------------------------------------------------
 
 Alpha           =   A;
 Beta            =   B;
