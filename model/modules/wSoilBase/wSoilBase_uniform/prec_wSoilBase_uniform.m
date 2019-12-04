@@ -1,15 +1,16 @@
 function [f,fe,fx,s,d,p] = prec_wSoilBase_uniform(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% sets the soil hydraulic properties for different soil layers assuming a fixed
-% vertical distribution
+% distributes the soil hydraulic properties for different soil layers assuming an uniform
+% vertical distribution of all soil properties
 %
 % Inputs:
-%   - p.soilTexture.[SAND/SILT/CLAY/ORGM]: texture properties
+%   - s.wd.p_soilTexture_[SAND/SILT/CLAY/ORGM]: texture properties (nPix, nZix)
 %   - info.tem.model.variables.states.w.: soil layers and depths 
 %   - p.pSoil.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+%   - info.tem.model.flags.useLookupK: flag for creating lookup table (modelRun.json)
 %
 % Outputs:
-%   - all soil hydraulic properties in s.wd.p_wSoilBase_[parameterName]
+%   - all soil hydraulic properties in s.wd.p_wSoilBase_[parameterName] (nPix, nTix)
 %
 % Modifies:
 % 	- p.wSoilBase.makeLookup: to switch on/off the creation of lookup table of 
@@ -24,6 +25,7 @@ function [f,fe,fx,s,d,p] = prec_wSoilBase_uniform(f,fe,fx,s,d,p,info)
 %
 % Versions:
 %   - 1.0 on 18.11.2019 (skoirala): clean up and consistency
+%   - 1.1 on 03.12.2019 (skoirala): handling potentail vertical distribution of soil texture
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -36,7 +38,8 @@ s.wd.p_wSoilBase_soilDepths         =   soilDepths;
 %--> check if the number of soil layers and number of elements in soil
 %thickness arrays are the same
 if numel(soilDepths)                ~=  nSoilLayers
-    error('the number of soil layers in modelStructure.json does not match with soil depths specified in wSoilBase_uniform')
+    error(['prec_wSoilBase_uniform: the number of soil layers in modelStructure.json does...
+            not match with soil depths specified'])
 end
 
 %--> create the arrays to fill in the soil properties
@@ -80,11 +83,10 @@ if info.tem.model.flags.useLookupK
     % s.wd.p_wSoilBase_kLookUp        =   repmat(info.tem.helpers.arrays.onespixzix.w.wSoil,1,1,p.wSoilBase.nLookup);
     sLStruct                        =   struct;
     sLStruct.w.wSoil                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+    linScalers                      =   linspace(0,1,p.wSoilBase.nLookup);
 end
-linScalers                          =   linspace(0,1,p.wSoilBase.nLookup);
 
-    
-%--> set the properties
+%--> set the properties for each soil layer
 for sl      =   1:nSoilLayers
     s.wd.p_wSoilBase_CLAY(:,sl)                 =   s.wd.p_soilTexture_CLAY(:,sl);
     s.wd.p_wSoilBase_SAND(:,sl)                 =   s.wd.p_soilTexture_SAND(:,sl);
