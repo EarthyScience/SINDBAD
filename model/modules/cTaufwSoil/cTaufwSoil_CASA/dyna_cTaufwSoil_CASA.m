@@ -60,10 +60,10 @@ BGME    = info.tem.helpers.arrays.onespix;
 pBGME    = d.prev.d_cTaufwSoil_fwSoil; %sujan
 
 % FOR PET > 0
-ndx = (f.PET(:,tix) > 0);
+ndx = (fe.PET.PET(:,tix) > 0);
 
 % COMPUTE BGRATIO
-BGRATIO(ndx)    = (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + fe.rainSnow.rain(ndx,tix)) ./ f.PET(ndx,tix);
+BGRATIO(ndx)    = (s.prev.s_w_wSoil(ndx,1) ./ TSPM  + fe.rainSnow.rain(ndx,tix)) ./ fe.PET.PET(ndx,tix);
 
 % ADJUST ACCORDING TO Aws
 BGRATIO         = BGRATIO .* p.cTaufwSoil.Aws;
@@ -79,7 +79,7 @@ ndx4        = ndx & (BGRATIO > 30);
 BGME(ndx4)    = 0.5;
 
 % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
-ndxn        = (f.PET(:,tix) <= 0);
+ndxn        = (fe.PET.PET(:,tix) <= 0);
 BGME(ndxn)    = pBGME(ndxn);
 BGME        = maxsb(minsb(BGME,1),0);
 

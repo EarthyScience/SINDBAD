@@ -620,7 +620,7 @@ else
         emsg    =   [pad('MISMATCH MODSTR',20) ' : module ' char(unknownModules(ii)) ' not found in specified coreTEM.m (check modelStructure.json)'];
         warning(emsg)
     end
-    error([pad('CRIT MODSTR',20) ': Cannot execute model with inconsistent module names in config and corresponding coreTEM.m (check modelStructure.json)'])
+    error([pad('CRIT MODSTR',20) ' | ' unknownModules{:} ': Cannot execute model with inconsistent module names in config and corresponding coreTEM.m (check modelStructure.json)'])
 end
 
 %--> sujan: 15.11.2019: added default of simple for get, keep, and storestates

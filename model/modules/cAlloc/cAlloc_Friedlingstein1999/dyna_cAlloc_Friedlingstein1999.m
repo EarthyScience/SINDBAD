@@ -8,7 +8,7 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix
 % 
 % INPUT
 % PET       : potential evapotranspiration [mm/time]
-%           (f.PET)
+%           (fe.PET.PET)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % allocation to root, wood and leaf

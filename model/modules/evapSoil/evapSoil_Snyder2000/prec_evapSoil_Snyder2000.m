@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_Snyder2000(f,fe,fx,s,d,p,info)
 % calculates the bare soil evaporation using relative drying rate of soil
 %
 % Inputs:
-%   - f.PET 
+%   - fe.PET.PET 
 %   - p.evapSoil.alpha 
 %   - s.cd.fAPAR 
 % 
@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_Snyder2000(f,fe,fx,s,d,p,info)
 
 %% 
 %--> set the PET and ET values as precomputation, because they are needed in the first time step and updated every time
-PET                         =   f.PET .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
+PET                         =   fe.PET.PET .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
 PET(PET<0)                  =   0;
 s.wd.p_evapSoil_sPETOld     =   PET(:,1);
 s.wd.p_evapSoil_sET         =   info.tem.helpers.arrays.zerospix;
