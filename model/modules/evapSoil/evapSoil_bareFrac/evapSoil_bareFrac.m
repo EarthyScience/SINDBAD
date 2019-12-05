@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = evapSoil_bareFrac(f,fe,fx,s,d,p,info,tix)
 % calculates the bare soil evaporation from 1-vegFrac of the grid and PETsoil
 %
 % Inputs:
-%   - f.PET: forcing data set
+%   - fe.PET.PET: forcing data set
 %   - s.cd.vegFrac (output of vegFrac module)
 %   - p.evapSoil.ks
 %
@@ -29,7 +29,7 @@ function [f,fe,fx,s,d,p] = evapSoil_bareFrac(f,fe,fx,s,d,p,info,tix)
 
 %% 
 %--> scale the potential ET with bare soil fraction
-fe.evapSoil.PETsoil(:,tix)      =   f.PET(:,tix) .* (1-s.cd.vegFrac);
+fe.evapSoil.PETsoil(:,tix)      =   fe.PET.PET(:,tix) .* (1-s.cd.vegFrac);
 
 %--> calculate actual ET as a fraction of PETsoil
 fx.evapSoil(:,tix)              =   minsb(fe.evapSoil.PETsoil(:,tix), s.w.wSoil(:,1) .* p.evapSoil.ks);

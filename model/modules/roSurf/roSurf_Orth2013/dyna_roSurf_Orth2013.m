@@ -1,12 +1,12 @@
-function [f,fe,fx,s,d,p] = dyna_roBase_Orth2013(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_roSurf_Orth2013(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates the base runoff
 %
 % Inputs:
-%   -   fe.roBase.Rdelay : delay function of roInt as defined by qt parameter
+%   -   fe.roSurf.Rdelay : delay function of roInt as defined by qt parameter
 %   
 % Outputs:
-%   -   fx.roBase : runoff from land [mm/time]
+%   -   fx.roSurf : runoff from land [mm/time]
 %
 % Modifies:
 %
@@ -28,15 +28,12 @@ function [f,fe,fx,s,d,p] = dyna_roBase_Orth2013(f,fe,fx,s,d,p,info,tix)
 % calculate Q from delay of previous days
 if tix>60
     tmin = maxsb(tix-60,1);
-    fx.roBase(:,tix) = sum(fx.roOverland(:,tmin:tix) .* fe.roBase.Rdelay,2);        
-else % or accumulate land runoff in GW
-    fx.roBase(:,tix) = 0;
+    fx.roSurf(:,tix) = sum(fx.roOverland(:,tmin:tix) .* fe.roSurf.Rdelay,2);        
+else % or accumulate land runoff in surface storage
+    fx.roSurf(:,tix) = 0;
 end
 
 % update the GW pool
-s.w.wGW = s.w.wGW + fx.roOverland(:,tix) - fx.roBase(:,tix);
-
-% % roBase for water balance check
-% fx.roBase(:,tix) = fx.roTotal(:,tix) - fx.roInt(:,tix);
+s.w.wSurf = s.w.wSurf + fx.roOverland(:,tix) - fx.roSurf(:,tix);
 
 end

@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = evapSoil_fAPAR(f,fe,fx,s,d,p,info,tix)
 % calculates the bare soil evaporation from 1-fAPAR and PET soil
 %
 % Inputs:
-%   - f.PET: forcing data set
+%   - fe.PET.PET: forcing data set
 %   - s.cd.fAPAR (output of fAPAR module)
 %   - p.evapSoil.alpha
 %
@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = evapSoil_fAPAR(f,fe,fx,s,d,p,info,tix)
 
 %% 
 %-->  multiply equilibrium PET with alphaSoil and (1-fAPAR) to get potential soil evap
-tmp                             =   f.PET(:,tix) .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
+tmp                             =   fe.PET.PET(:,tix) .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
 tmp(tmp<0)                      =   0;
 fe.evapSoil.PETsoil(:,tix)      =   tmp;
 

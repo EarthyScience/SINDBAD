@@ -12,8 +12,8 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 
 
 % estimate NL
-NL                          = p.cAllocfNut.minL.*ones(size(f.PET(:,tix)));
-ndx                         = f.PET(:,tix) > 0;
+NL                          = p.cAllocfNut.minL.*ones(size(fe.PET.PET(:,tix)));
+ndx                         = fe.PET.PET(:,tix) > 0;
 NL(ndx)                     = fe.cAllocfTsoil.NL_fT(ndx) .* d.cAllocfwSoil.NL_fW(ndx);
 NL(NL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL;%(NL <= p.cAllocfNut.minL);
 NL(NL >= p.cAllocfNut.maxL)    = p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);

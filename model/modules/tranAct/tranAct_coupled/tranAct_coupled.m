@@ -24,6 +24,10 @@ function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % calculate transpiration
+gppSup       = fx.tranAct(:,tix)	.* d.WUE.AoE(:,tix);  
+
+fx.gpp(:,tix) = minsb(gppSup,fx.gpp(:,tix));
+
 fx.tranAct(:,tix)	= fx.gpp(:,tix) ./ d.WUE.AoE(:,tix);
 
 end

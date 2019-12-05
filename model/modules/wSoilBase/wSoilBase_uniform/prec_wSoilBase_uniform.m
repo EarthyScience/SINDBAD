@@ -38,8 +38,7 @@ s.wd.p_wSoilBase_soilDepths         =   soilDepths;
 %--> check if the number of soil layers and number of elements in soil
 %thickness arrays are the same
 if numel(soilDepths)                ~=  nSoilLayers
-    error(['prec_wSoilBase_uniform: the number of soil layers in modelStructure.json does...
-            not match with soil depths specified'])
+    error(['prec_wSoilBase_uniform: the number of soil layers in modelStructure.json does not match with soil depths specified'])
 end
 
 %--> create the arrays to fill in the soil properties

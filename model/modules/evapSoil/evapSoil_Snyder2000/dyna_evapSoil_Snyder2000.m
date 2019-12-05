@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = dyna_evapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
 % calculates the bare soil evaporation using relative drying rate of soil
 %
 % Inputs:
-%   - f.PET: 
+%   - fe.PET.PET: 
 %   - fe.rainSnow.rain
 %   - p.evapSoil.alpha
 %   - s.cd.fAPAR
@@ -31,7 +31,7 @@ function [f,fe,fx,s,d,p] = dyna_evapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
 %% 
 %--> get the rain, and PET scaled by alpha and a proxy of vegetation cover
 rain                        =   fe.rainSnow.rain(:,tix);
-PET                         =   f.PET(:,tix) .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
+PET                         =   fe.PET.PET(:,tix) .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
 PET(PET<0)                  =   0;
 
 beta2                       =   p.evapSoil.beta .* p.evapSoil.beta;
