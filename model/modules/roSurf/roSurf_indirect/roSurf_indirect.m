@@ -31,7 +31,7 @@ fx.wSurfRec(:,tix)      =   fx.roOverland(:,tix);
 fx.roSurf(:,tix)         =   p.roSurf.dc .* s.w.wSurf;
 
 %--> update surface water storage
-s.w.wSurf               =   s.w.wSurf + fx.wSurfRec(:,tix) - fx.roSurfIndir(:,tix);
+s.w.wSurf               =   s.w.wSurf + fx.wSurfRec(:,tix) - fx.roSurf(:,tix);
 
 
 end

@@ -29,10 +29,10 @@ function [f,fe,fx,s,d,p] = prec_WUE_Medlyn(f,fe,fx,s,d,p,info)
 % 
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-VPDDay                  = f.VPDDay;
-VPDDay(f.VPDDay < 1E-4) = 1E-4;
-pg1                     = p.WUE.g1 * info.tem.helpers.arrays.onestixs;
-d.WUE.AoE               = 6.6667e-004 .* f.ca .* f.PsurfDay ./ (1.6 .* (VPDDay + pg1 .* sqrt(VPDDay)));
+VPDDay                      =   f.VPDDay;
+VPDDay(f.VPDDay < 1E-4)     =   1E-4;
+pg1                         =   p.WUE.g1 .* info.tem.helpers.arrays.onestix;
+d.WUE.AoE                   =   6.6667e-004 .* f.ca .* f.PsurfDay ./ (1.6 .* (VPDDay + pg1 .* sqrt(VPDDay)));
 
 % Compute ci according to Medlyn et al 2012
 d.WUE.ci	= f.ca .* pg1 ./ (pg1 + sqrt(VPDDay));

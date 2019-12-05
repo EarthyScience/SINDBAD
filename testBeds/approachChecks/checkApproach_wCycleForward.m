@@ -17,7 +17,7 @@ for fn                  =    {'tools','model','optimization','testBeds'}
 end
 %%
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_wapproachChecks';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_coupledWC';
 %
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_approachChecks';
@@ -44,8 +44,8 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'wGW2wSurf';
-figsInterest = {'wGW2wSurf'};
+moduleName              = 'tranDem';
+figsInterest = {'evapTotal','tranAct'};
 
 outpath                 =   [outDir '/' moduleName];
 

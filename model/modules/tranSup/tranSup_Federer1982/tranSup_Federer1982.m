@@ -1,29 +1,30 @@
 function [f,fe,fx,s,d,p] = tranSup_Federer1982(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% PURPOSE	: 
-% 
-% REFERENCES: Federer et al 1982
-% 
-% CONTACT	: mjung
-% 
-% INPUT
-% wSM      : soil moisture sum of all layers [mm]
-% maxRate   : maximum transpiration rate [mm/day]
-%           (p.tranSup.maxRate)
-% tAWC     : maximum available water content for plants (sum of all layers) [mm]
-%           (s.wd.p_wSoilBase_wAWC)
-% 
-% OUTPUT
-% tranActS   : Supply limited transpiration [mm/time]
-%           (d.tranSup.tranSup)
-% 
-% DEPENDENCIES  :
-% 
-% NOTES:
-% 
+% calculate the supply limited transpiration as a function of max rate parameter
+% and avaialable water
+%
+% Inputs:
+%   - s.w.wSoil : total soil moisture
+%   - s.wd.p_rootFrac_fracRoot2SoilD: extractable fraction of water
+%   - s.wd.p_wSoilBase_wAWC: total maximum plant available water (FC-WP)
+%
+% Outputs:
+%   - d.tranSup.tranSup: demand driven transpiration 
+%
+% Modifies:
+%   - 
+%
+% References:
+%   - 
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%
+% Versions:
+%   - 1.0 on 22.11.2019 (skoirala): 
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% T = maxRate*(SM1+SM2)/AWC12
+%%
 d.tranSup.tranSup(:,tix) = p.tranSup.maxRate .* sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)  ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2);
-
 end

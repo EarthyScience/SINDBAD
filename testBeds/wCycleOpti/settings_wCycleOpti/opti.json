@@ -25,7 +25,7 @@
         "roSurf.rf",
         "roSurf.dc",
         "evapSoil.ks",
-        "tranSup.alphaVeg"
+        "tranDem.alphaVeg"
     ],
     "checks": " ",
     "constraints": {

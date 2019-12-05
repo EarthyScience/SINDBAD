@@ -233,6 +233,21 @@
             "runFull": false,
             "use4spinup": true
         },
+        "tranAct": {
+            "apprName": "tranAct_demSup",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "tranDem": {
+            "apprName": "tranDem_PET",
+            "runFull": false,
+            "use4spinup": true
+        },
+        "tranSup": {
+            "apprName": "tranSup_wAWC",
+            "runFull": true,
+            "use4spinup": true
+        },
 		"wBalance":
 		{
 			"apprName": 	"wBalance_simple",

@@ -37,6 +37,11 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
+        "PET": {
+            "apprName": "PET_forcing",
+            "runFull": false,
+            "use4spinup": false
+        },
 		"cAllocfTsoil":
 		{
 			"apprName": 	"cAllocfTsoil_Friedlingstein1999",

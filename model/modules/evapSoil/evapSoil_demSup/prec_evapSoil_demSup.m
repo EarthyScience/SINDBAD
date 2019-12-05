@@ -3,7 +3,7 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_demSup(f,fe,fx,s,d,p,info)
 % calculates the bare soil evaporation from demand-supply limited approach
 %
 % Inputs:
-%   - f.PET: extra forcing from prec
+%   - fe.PET.PET: extra forcing from prec
 %   - p.evapSoil.alpha: 
 % 
 % Outputs:
@@ -27,5 +27,5 @@ function [f,fe,fx,s,d,p] = prec_evapSoil_demSup(f,fe,fx,s,d,p,info)
 
 %%  
 % calculate potential soil evaporation 
-fe.evapSoil.PETsoil      =     maxsb(0, f.PET .* (p.evapSoil.alpha .* info.tem.helpers.arrays.onespixtix)); 
+fe.evapSoil.PETsoil      =     maxsb(0, fe.PET.PET .* (p.evapSoil.alpha .* info.tem.helpers.arrays.onespixtix)); 
 end
