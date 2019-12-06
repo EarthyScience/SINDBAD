@@ -1,29 +1,35 @@
 function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% PURPOSE	: estimate transpiration from GPP
-% 
-% REFERENCES:
-% 
-% CONTACT	: mjung, ncarval
-% 
-% INPUT
-% gpp       : actual GPP [gC/m2/time]
-%           (fx.gpp)
-% AoE       : water use efficiency - ratio of assimilation and
-%           transpiration fluxes [gC/mmH2O]
-%           (d.WUE.AoE)
-% 
-% OUTPUT
-% tranAct    : transpiration [mm/m2/time]
-%           (fx.tranAct)
-% 
-% DEPENDENCIES  :
-% 
-% NOTES:
-% 
+% calculate the actual transpiration as function of gppAct and WUE
+%
+% Inputs:
+%   - d.WUE.AoE: water use efficiency in gC/mmH2O
+%   - fx.gppAct: GPP based on a minimum of demand and stressors (except water limitation)
+%                out of gppAct_coupled in which tranSup is used to get supply limited GPP
+%
+% Outputs:
+%   - fx.tranAct: actual transpiration 
+%
+% Modifies:
+%   - 
+%
+% References:
+%   - 
+%
+% Notes:
+%   - 
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%   - Martin Jung (mjung)
+%
+% Versions:
+%   - 1.0 on 22.11.2019 (skoirala): 
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% calculate transpiration
+%%
+%--> calculate actual transpiration coupled with GPP
 AoE                     =   d.WUE.AoE(:,tix);
 fx.tranAct(:,tix)	    =   fx.gpp(:,tix) ./ AoE;
 
