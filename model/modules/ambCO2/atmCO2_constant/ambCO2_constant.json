@@ -1,17 +1,17 @@
 {
     "params": {
-        "constantRootFrac": {
-            "Name": "root fraction",
-            "Unit": "-",
-            "Default": 0.1,
-            "LowerBound": 0.3,
-            "UpperBound": 0.9,
+        "constantambCO2": {
+            "Name": "atmospheric CO2 concentration",
+            "Unit": "ppm",
+            "Default": 3,
+            "LowerBound": 1,
+            "UpperBound": 12,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "a constant root fraction to be used for all soil layers"
+            "Comment": "a constant CO2 concentration"
         }
     },
     "devStage": {

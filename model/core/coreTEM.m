@@ -64,11 +64,12 @@ ms    = info.tem.model.code.ms;
 % LOOP : loop through the whole length of of the forcing dataset
 for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
-    % Climate: rainfall, snowfall, rainfall intensities, PET
+    % Climate: rainfall, snowfall, rainfall intensities, PET, ambCO2
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.rainSnow.funHandle(f,fe,fx,s,d,p,info,tix);          % set rain and snow to fe.rainSnow.
     [f,fe,fx,s,d,p]     =   ms.rainInt.funHandle(f,fe,fx,s,d,p,info,tix);           % set rainfall intensity
     [f,fe,fx,s,d,p]     =   ms.PET.funHandle(f,fe,fx,s,d,p,info,tix);               % set potential evapotranspiration
+    [f,fe,fx,s,d,p]     =   ms.ambCO2.funHandle(f,fe,fx,s,d,p,info,tix);            % set/get ambient CO2 concentration
     % ---------------------------------------------------------------------
     % Get variables for previous time step and keep in s.prev. or d.prev
     % ---------------------------------------------------------------------
@@ -115,17 +116,23 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.roInt.funHandle(f,fe,fx,s,d,p,info,tix);             % interflow
     [f,fe,fx,s,d,p]     =   ms.roOverland.funHandle(f,fe,fx,s,d,p,info,tix);        % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
-                                                                                    % explicitly modelled then assign a dummy handle that returnes zeros and
+                                                                                    % explicitly modelled then assign a none handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
     [f,fe,fx,s,d,p]     =   ms.roSurf.funHandle(f,fe,fx,s,d,p,info,tix);            % runoff from surface water storages
     [f,fe,fx,s,d,p]     =   ms.gwRec.funHandle(f,fe,fx,s,d,p,info,tix);             % recharge the groundwater
-    [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);            % baseflow
+    % ---------------------------------------------------------------------
+    % Water transfer: upward flow from GW through soil
+    % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.wGW2wSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % Groundwater soil moisture interactions (e.g. capilary flux, water
+    [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
+    [f,fe,fx,s,d,p]     =   ms.wGW2wSurf.funHandle(f,fe,fx,s,d,p,info,tix);         % water exchange between surface and groundwater
                                                                                     % table in root zone etc)
+    [f,fe,fx,s,d,p]     =   ms.roBase.funHandle(f,fe,fx,s,d,p,info,tix);            % baseflow
+
     % ---------------------------------------------------------------------
-    % Water-carbon processes: transpiration and GPP
+    % Water-carbon processes: demand and supply GPP and transpiration
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
+    [f,fe,fx,s,d,p]     =   ms.awcAct.funHandle(f,fe,fx,s,d,p,info,tix);            % plant available water
     [f,fe,fx,s,d,p]     =   ms.tranDem.funHandle(f,fe,fx,s,d,p,info,tix);           % demand-driven Transpiration
     [f,fe,fx,s,d,p]     =   ms.tranSup.funHandle(f,fe,fx,s,d,p,info,tix);           % supply-limited Transpiration
     [f,fe,fx,s,d,p]     =   ms.GPPpot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
@@ -135,14 +142,13 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.GPPfVPD.funHandle(f,fe,fx,s,d,p,info,tix);           % VPD effect
     [f,fe,fx,s,d,p]     =   ms.GPPdem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum
     [f,fe,fx,s,d,p]     =   ms.GPPfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % if 'coupled' requires access to iwue param    
+    % ---------------------------------------------------------------------
+    % Water-carbon interaction: GPP, transpiration, and water uptake
+    % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
     [f,fe,fx,s,d,p]     =   ms.GPPact.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum    
     [f,fe,fx,s,d,p]     =   ms.tranAct.funHandle(f,fe,fx,s,d,p,info,tix);           % if coupled computed from GPP
-    % ---------------------------------------------------------------------
-    % Water transfer: root uptake and upward flow from GW through soil
-    % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.wRootUptake.funHandle(f,fe,fx,s,d,p,info,tix);       % root water uptake (extract water from soil)
-    [f,fe,fx,s,d,p]     =   ms.wGW2wSurf.funHandle(f,fe,fx,s,d,p,info,tix);         % water exchange between surface and groundwater
-    [f,fe,fx,s,d,p]     =   ms.wSoilUpflow.funHandle(f,fe,fx,s,d,p,info,tix);       % Flux of water from lower to upper soil layers (upward soil moisture movement)
     % ---------------------------------------------------------------------
     % Climate + additional effects: carbon metabolic processes
     % ---------------------------------------------------------------------
