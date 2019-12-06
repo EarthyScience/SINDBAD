@@ -30,7 +30,7 @@ toStore.CASA    = {
     's.w.wSnow'
     's.w.wSoil'
     's.c.cEco'%
-    's.cd.p_RAact_km4su'
+    's.cd.p_raAct_km4su'
     's.cd.cAlloc'
     's.cd.p_cTauAct_k'
     's.cd.p_cFlowAct_A'
@@ -49,7 +49,7 @@ toStore.simple    = {
     's.w.wSnow'
     's.w.wSoil'
     's.c.cEco'%
-    's.cd.p_RAact_km4su'
+    's.cd.p_raAct_km4su'
     's.cd.cAlloc'
     's.cd.p_cTauAct_k'
     's.cd.p_cFlowAct_A'

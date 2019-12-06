@@ -30,7 +30,7 @@ transp          = fx.tranAct(:,tix);
 
 %--> extract from top to bottom and update moisture
 for sl  =   1:size(s.w.wSoil,2)
-    wSoilAvail              =   s.wd.awcAct(:,sl);
+    wSoilAvail              =   s.wd.pawAct(:,sl);
     contrib                 =   minsb(transp,wSoilAvail);
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - contrib;
     s.wd.wRootUptake(:,sl)  =   contrib;

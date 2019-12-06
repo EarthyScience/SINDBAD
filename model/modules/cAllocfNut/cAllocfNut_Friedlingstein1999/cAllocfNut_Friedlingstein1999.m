@@ -23,7 +23,7 @@ NL(NL >= p.cAllocfNut.maxL)    = p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);
 % sujan consider root fractions
 % water limitation calculation
 % WL                          = sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2) ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2);
-WL                          = sum(s.wd.awcAct,2) ./ sum(s.wd.p_wSoilBase_wAWC,2);
+WL                          = sum(s.wd.pawAct,2) ./ sum(s.wd.p_wSoilBase_wAWC,2);
 % WL                          = sum(s.w.wSoil,2) ./ sum(s.wd.p_wSoilBase_wAWC,2);
 WL(WL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL;%(WL <= p.cAllocfNut.minL);
 WL(WL >= p.cAllocfNut.maxL) = p.cAllocfNut.maxL;%(WL >= p.cAllocfNut.maxL); %% check if p.cAlloc.maxL and p.cAlloc.minL should used p.cAlloc.maxL_fW?

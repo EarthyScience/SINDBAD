@@ -3,7 +3,7 @@
         "bc": {
             "Name": "base flow coefficient",
             "Unit": "[]",
-            "Default": 0.1,
+            "Default": 0.001,
             "LowerBound": 0,
             "UpperBound": 1,
             "Distribution": {

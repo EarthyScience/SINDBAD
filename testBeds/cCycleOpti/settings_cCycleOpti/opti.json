@@ -9,7 +9,7 @@
 		"nonDefOptFile": "testBeds/cCycleOpti/settings_cCycleOpti/extraOptionsOpti/extraOptions_cmaes.json"
 	},
 	"params2opti": [
-		"GPPpot.maxrue", "GPPfTair.Topt", "GPPfTair.ToptA", "GPPfTair.ToptB"
+		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA", "gppfTair.ToptB"
 	],
 	"checks": "Nuno, please help...",
 	"constraints": {
