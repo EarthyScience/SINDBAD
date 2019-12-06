@@ -115,9 +115,9 @@
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"cLAI":
+		"LAI":
 		{
-			"apprName": 	"cLAI_constant",
+			"apprName": 	"LAI_constant",
 			"runFull": 		false,
             "use4spinup":   true
 		},
@@ -133,51 +133,51 @@
 			"runFull": 		false,
             "use4spinup":   true
 		},
-		"GPPact":
+		"gppAct":
 		{
-			"apprName": 	"GPPact_mult",
+			"apprName": 	"gppAct_mult",
 			"runFull": 		true,
             "use4spinup":   true
 		},
-		"GPPdem":
+		"gppDem":
 		{
-			"apprName": 	"GPPdem_mult",
+			"apprName": 	"gppDem_mult",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"GPPfRdir":
+		"gppfRdir":
 		{
-			"apprName":		"GPPfRdir_none",
+			"apprName":		"gppfRdir_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"GPPfRdiff":
+		"gppfRdiff":
 		{
-			"apprName":		"GPPfRdiff_none",
+			"apprName":		"gppfRdiff_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},	
-		"GPPfTair":
+		"gppfTair":
 		{
-			"apprName":		"GPPfTair_CASA",
+			"apprName":		"gppfTair_CASA",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"GPPfVPD":
+		"gppfVPD":
 		{
-			"apprName":		"GPPfVPD_none",
+			"apprName":		"gppfVPD_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"GPPfwSoil":
+		"gppfwSoil":
 		{
-			"apprName": 	"GPPfwSoil_none",
+			"apprName": 	"gppfwSoil_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
-		"GPPpot":
+		"gppPot":
 		{
-			"apprName": 	"GPPpot_Monteith",
+			"apprName": 	"gppPot_Monteith",
 			"runFull": 		false,
             "use4spinup":   false
 		},
@@ -199,15 +199,15 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"RAact":
+		"raAct":
 		{
-			"apprName": 	"RAact_Thornley2000A",
+			"apprName": 	"raAct_Thornley2000A",
 			"runFull": 		false,
             "use4spinup":   true
 		},
-		"RAfTair":
+		"rafTair":
 		{
-			"apprName": 	"RAfTair_Q10",
+			"apprName": 	"rafTair_Q10",
 			"runFull": 		false,
             "use4spinup":   false
 		},

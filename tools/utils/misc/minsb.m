@@ -20,7 +20,7 @@ function [min_val] = minsb(a,b)
 %
 % Versions:
 %   - 1.0 on 30.11.2019
-min_val=(a+b-abs(a-b))./2;
+min_val=(a+b-abs(a-b))./2;      
 % min_val=min(a,b);
 end
 

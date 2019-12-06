@@ -25,11 +25,6 @@ function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 
 % calculate transpiration
 AoE                     =   d.WUE.AoE(:,tix);
-tranSup                 =   d.tranSup.tranSup(:,tix);
-gppSup                  =   tranSup .* AoE;  
-gppDem                  =   fx.gpp(:,tix);
-gppAct                  =   nanmin(gppSup,gppDem);
-fx.gpp(:,tix)           =   gppAct;
-fx.tranAct(:,tix)	    =   gppAct ./ AoE;
+fx.tranAct(:,tix)	    =   fx.gpp(:,tix) ./ AoE;
 
 end

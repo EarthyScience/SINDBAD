@@ -83,7 +83,7 @@ userOutPath             =   [pwd filesep '../output/testBeds/'];
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 % userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-% userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cLAI';
+% userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_LAI';
 % % 
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_nivala_rainSnow';
@@ -131,7 +131,7 @@ for i                   =   testCases
         case 5
             inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
             obspath     =   '';
-            testName    =   'cLAISpinup';
+            testName    =   'LAISpinup';
             
             
     end
