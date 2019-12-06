@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = tranSup_wAWC(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - s.w.wSoil : total soil moisture
-%   - s.wd.awcAct: actual extractable water
+%   - s.wd.pawAct: actual extractable water
 %   - s.wd.p_wSoilBase_wAWC: total maximum plant available water (FC-WP)
 %
 % Outputs:
@@ -15,7 +15,7 @@ function [f,fe,fx,s,d,p] = tranSup_wAWC(f,fe,fx,s,d,p,info,tix)
 %   - 
 %
 % References:
-%   - 
+%   - Teuling, 2007 or 2009: Time scales....
 %
 % Created by:
 %   - Sujan Koirala (skoirala)
@@ -26,6 +26,5 @@ function [f,fe,fx,s,d,p] = tranSup_wAWC(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-d.tranSup.tranSup(:,tix)     =   minsb(sum(s.wd.awcAct,2) .* p.tranSup.tranFrac,...
-                                    sum(s.wd.p_wSoilBase_wAWC,2));
+d.tranSup.tranSup(:,tix)     =   sum(s.wd.pawAct,2) .* p.tranSup.tranFrac;
 end

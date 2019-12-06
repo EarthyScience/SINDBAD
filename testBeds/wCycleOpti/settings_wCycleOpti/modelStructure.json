@@ -6,6 +6,11 @@
         "modulesDir": "model/modules/"
     },
     "modules": {
+        "pawAct": {
+            "apprName": "pawAct_fRootFrac",
+            "runFull": false,
+            "use4spinup": true
+        },
         "evapInt": {
             "apprName": "evapInt_vegFrac",
             "runFull": true,

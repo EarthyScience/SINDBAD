@@ -45,7 +45,7 @@ expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/expe
 
 
 %% set the module to be checked
-moduleName              = 'cLAI';
+moduleName              = 'LAI';
 figsInterest = {'gpp' 'cRH' 'cRA' 'cRECO'};
 
 

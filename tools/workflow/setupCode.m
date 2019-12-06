@@ -774,7 +774,7 @@ info.tem.model.code.genMS.precOnce.funHandle    =   funhPrecOnce;
 
 %coreTEM4spinup (includes precomps 'always')
 moduleList      = fields(info.tem.model.modules);
-% validModules                                    =   {'RAact','cCycle'};
+% validModules                                    =   {'raAct','cCycle'};
 validModules    =  {''};
 cnt             =   1;
 for mod         =   1:numel(moduleList)

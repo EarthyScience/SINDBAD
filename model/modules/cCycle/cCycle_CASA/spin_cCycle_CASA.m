@@ -52,13 +52,13 @@ cGain           = cLossRate;
 cLoxxRate       = cLossRate;
 
 %% some debugging
-% if~isfield(d.storedStates,'p_RAact_km4su')
-%    d.storedStates.p_RAact_km4su = cLossRate;
+% if~isfield(d.storedStates,'p_raAct_km4su')
+%    d.storedStates.p_raAct_km4su = cLossRate;
 % end
-% if~isfield(p,'RAact')
-%    p.RAact.YG = 1;
-% elseif~isfield(p.RAact,'YG')
-%    p.RAact.YG = 1;
+% if~isfield(p,'raAct')
+%    p.raAct.YG = 1;
+% elseif~isfield(p.raAct,'YG')
+%    p.raAct.YG = 1;
 % end
 %% ORDER OF CALCULATIONS (1 to the end of pools...)
 zixVec   = 1:size(s.c.cEco,2);
@@ -92,10 +92,10 @@ for zix = zixVecOrder
 
     if any(zix==info.tem.model.variables.states.c.zix.cVeg)
         % additional losses (RA) in veg pools
-        cLoxxRate(:,zix,:)    = minsb(1-d.storedStates.p_RAact_km4su(:,zix,:),1);
+        cLoxxRate(:,zix,:)    = minsb(1-d.storedStates.p_raAct_km4su(:,zix,:),1);
         % gains in veg pools
         gppShp           = reshape(fx.gpp,nPix,1,nTix); % could be fxT?
-        cGain(:,zix,:)    = d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.RAact.YG;
+        cGain(:,zix,:)    = d.storedStates.cAlloc(:,zix,:) .* gppShp .* p.raAct.YG;
     else
         % no additional gains from outside
         cLoxxRate(:,zix,:)    = 1;

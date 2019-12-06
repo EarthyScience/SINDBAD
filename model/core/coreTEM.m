@@ -96,7 +96,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.pVeg.funHandle(f,fe,fx,s,d,p,info,tix);              % vegetation/structural properties
     [f,fe,fx,s,d,p]     =   ms.fAPAR.funHandle(f,fe,fx,s,d,p,info,tix);             % fraction of Absorbed Photosynthetically Active Radiation
     [f,fe,fx,s,d,p]     =   ms.EVI.funHandle(f,fe,fx,s,d,p,info,tix);               % EVI
-    [f,fe,fx,s,d,p]     =   ms.cLAI.funHandle(f,fe,fx,s,d,p,info,tix);              % leaf area index
+    [f,fe,fx,s,d,p]     =   ms.LAI.funHandle(f,fe,fx,s,d,p,info,tix);               % leaf area index
     [f,fe,fx,s,d,p]     =   ms.vegFrac.funHandle(f,fe,fx,s,d,p,info,tix);           % fractional coverage of vegetation
     % ---------------------------------------------------------------------
     % Snow processes
@@ -132,22 +132,22 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % Water-carbon processes: demand and supply GPP and transpiration
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.awcAct.funHandle(f,fe,fx,s,d,p,info,tix);            % plant available water
-    [f,fe,fx,s,d,p]     =   ms.tranDem.funHandle(f,fe,fx,s,d,p,info,tix);           % demand-driven Transpiration
-    [f,fe,fx,s,d,p]     =   ms.tranSup.funHandle(f,fe,fx,s,d,p,info,tix);           % supply-limited Transpiration
-    [f,fe,fx,s,d,p]     =   ms.GPPpot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
-    [f,fe,fx,s,d,p]     =   ms.GPPfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of diffuse radiation
-    [f,fe,fx,s,d,p]     =   ms.GPPfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of direct radiation
-    [f,fe,fx,s,d,p]     =   ms.GPPfTair.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of temperature
-    [f,fe,fx,s,d,p]     =   ms.GPPfVPD.funHandle(f,fe,fx,s,d,p,info,tix);           % VPD effect
-    [f,fe,fx,s,d,p]     =   ms.GPPdem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum
-    [f,fe,fx,s,d,p]     =   ms.GPPfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % if 'coupled' requires access to iwue param    
+    [f,fe,fx,s,d,p]     =   ms.pawAct.funHandle(f,fe,fx,s,d,p,info,tix);            % plant available water
+    [f,fe,fx,s,d,p]     =   ms.gppPot.funHandle(f,fe,fx,s,d,p,info,tix);            % maximum instantaneous radiation use efficiency
+    [f,fe,fx,s,d,p]     =   ms.gppfRdiff.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of diffuse radiation
+    [f,fe,fx,s,d,p]     =   ms.gppfRdir.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of direct radiation
+    [f,fe,fx,s,d,p]     =   ms.gppfTair.funHandle(f,fe,fx,s,d,p,info,tix);          % effect of temperature
+    [f,fe,fx,s,d,p]     =   ms.gppfVPD.funHandle(f,fe,fx,s,d,p,info,tix);           % VPD effect
+    [f,fe,fx,s,d,p]     =   ms.gppDem.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum
+    [f,fe,fx,s,d,p]     =   ms.gppfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);         % GPP as a function of wSoil; should be set to none if coupled with transpiration    
     % ---------------------------------------------------------------------
     % Water-carbon interaction: GPP, transpiration, and water uptake
     % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.tranDem.funHandle(f,fe,fx,s,d,p,info,tix);           % demand-driven Transpiration
+    [f,fe,fx,s,d,p]     =   ms.tranSup.funHandle(f,fe,fx,s,d,p,info,tix);           % supply-limited Transpiration
     [f,fe,fx,s,d,p]     =   ms.WUE.funHandle(f,fe,fx,s,d,p,info,tix);               % estimate WUE
-    [f,fe,fx,s,d,p]     =   ms.GPPact.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum    
-    [f,fe,fx,s,d,p]     =   ms.tranAct.funHandle(f,fe,fx,s,d,p,info,tix);           % if coupled computed from GPP
+    [f,fe,fx,s,d,p]     =   ms.gppAct.funHandle(f,fe,fx,s,d,p,info,tix);            % combine effects as multiplicative or minimum; if coupled, uses tranSup    
+    [f,fe,fx,s,d,p]     =   ms.tranAct.funHandle(f,fe,fx,s,d,p,info,tix);           % if coupled, computed from GPP and AOE from WUE
     [f,fe,fx,s,d,p]     =   ms.wRootUptake.funHandle(f,fe,fx,s,d,p,info,tix);       % root water uptake (extract water from soil)
     % ---------------------------------------------------------------------
     % Climate + additional effects: carbon metabolic processes
@@ -159,7 +159,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cTaufpSoil.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of soil texture on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTaufpVeg.funHandle(f,fe,fx,s,d,p,info,tix);         % effect of vegetation properties on soil decomposition rates
     [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);           % combine effects of different factors on decomposition rates
-    [f,fe,fx,s,d,p]     =   ms.RAfTair.funHandle(f,fe,fx,s,d,p,info,tix);           % temperature effect on autotrophic maintenance respiration
+    [f,fe,fx,s,d,p]     =   ms.rafTair.funHandle(f,fe,fx,s,d,p,info,tix);           % temperature effect on autotrophic maintenance respiration
     % ---------------------------------------------------------------------
     % Climate + additional effects: arbon allocation to plant organs
     % ---------------------------------------------------------------------
@@ -172,7 +172,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % Autotrophic respiration
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =    ms.RAact.funHandle(f,fe,fx,s,d,p,info,tix);            % determine growth and maintenance respiration -> NPP
+    [f,fe,fx,s,d,p]     =    ms.raAct.funHandle(f,fe,fx,s,d,p,info,tix);            % determine growth and maintenance respiration -> NPP
     % ---------------------------------------------------------------------
     % Carbon transfers: among different carbon pools
     % ---------------------------------------------------------------------
@@ -191,7 +191,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % Store the time series of selected state variables
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]        =   ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);    % store the full time series of selected state variables
+    [f,fe,fx,s,d,p]     =   ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);       % store the full time series of selected state variables
 end
 % disp([pad('TIME LOOP',20)  ' : ' pad('coreTEM',20) ' | Completed the time loop of SINDBAD core | Total Time Needed: ' sec2som(toc(tstart))]) 
 end

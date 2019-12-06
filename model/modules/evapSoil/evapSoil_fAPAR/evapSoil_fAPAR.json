@@ -12,6 +12,19 @@
                 "params": []
             },
             "Comment": "same as alpha in evapSoil_demSup"
+        },
+        "supLim": {
+            "Name": "fraction of soil water that can be used for soil evaporation",
+            "Unit": "1/time",
+            "Default": 0.2,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "in TWS paper: et_sup"
         }
     },
     "devStage": {
