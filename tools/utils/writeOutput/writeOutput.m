@@ -1,12 +1,14 @@
 function [dum] = writeOutput(info,f,fe,fx,s,d,p)
-% writes the output of SINDBAD model run in different formats (.mat or .nc)
+% Writes the output of SINDBAD model run in different formats (.mat or .nc)
 %
 % Usages:
 %   [dum] = writeOutput(info,f,fe,fx,s,d,p);
 %
 % Requires:
 %   - the info: with the field info.tem.model.variables.to.write
+%   (output.json)
 %   - the sindbad fluxes and diagnostics (fx and d)
+%
 % Purposes:
 %   - reads the forcing data from a defined DataPath
 %       - DataPath can be a .nc or .mat file, or a folder with such files
@@ -21,9 +23,10 @@ function [dum] = writeOutput(info,f,fe,fx,s,d,p)
 % Conventions:
 %   - date vector should be present in info for .nc outout
 %       - should be same size as nTix as all the output variables will be the
-%   same
+%       same
 %   - one file per variable
 %   - one file per variable per year if runForwardYearly == 1
+%   - can only write the variables with a maximum of 4 dimensions
 %
 % Created by:
 %   - Sujan Koirala (skoirala)
@@ -113,17 +116,10 @@ function writeNetCDF(var2write,pthSave,info,f,fe,fx,s,d,p)
             dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
             pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
             if useLatLon
-%                 dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
-%                 lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidlat]);
-%                 dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
-%                 lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidlon]);
-%                 dimidlat    =   netcdf.defDim(ncid,'latitude',info.tem.helpers.sizes.nPix);
+
                 lat_ID      =   netcdf.defVar(ncid,'latitude','float',[dimidpix]);
-%                 dimidlon    =   netcdf.defDim(ncid,'longitude',info.tem.helpers.sizes.nPix);
                 lon_ID      =   netcdf.defVar(ncid,'longitude','float',[dimidpix]);
             end
-%             dimidpix        =   netcdf.defDim(ncid,'pix',info.tem.helpers.sizes.nPix);
-%             pix_ID          =   netcdf.defVar(ncid,'pix','float',[dimidpix]);
             
             dimidtime       =   netcdf.defDim(ncid,'time',info.tem.helpers.sizes.nTix);
             time_ID         =   netcdf.defVar(ncid,'time','float',[dimidtime]);

@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = tranSup_CASA(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - s.w.wSoil : total soil moisture
-%   - s.wd.p_rootFrac_fracRoot2SoilD: extractable fraction of water
+%   - s.wd.awcAct: actual extractable water
 %   - s.wd.p_wSoilBase_wAWC: total maximum plant available water (FC-WP)
 %   - s.wd.p_wSoilBase_[Alpha/Beta]: moisture retention characteristics
 %
@@ -33,9 +33,9 @@ function [f,fe,fx,s,d,p] = tranSup_CASA(f,fe,fx,s,d,p,info,tix)
 
 %%
 
-VMC                                 =   minsb(maxsb((sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2) - sum(s.wd.p_wSoilBase_wWP .* s.wd.p_rootFrac_fracRoot2SoilD,2)),0)...
-                                        ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2),1);
+VMC                                 =   minsb(maxsb(sum(s.wd.awcAct,2),0)...
+                                        ./ sum(s.wd.p_wSoilBase_wAWC,2),1);
 RDR                                 =   (1 + mean(s.wd.p_wSoilBase_Alpha,2)) ./ (1 + mean(s.wd.p_wSoilBase_Alpha,2) .* (VMC .^ mean(s.wd.p_wSoilBase_Beta,2)));
 
-d.tranSup.tranSup(:,tix)            =   minsb(sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2) .* RDR, sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2));
+d.tranSup.tranSup(:,tix)            =   sum(s.wd.awcAct,2) .* RDR;
 end

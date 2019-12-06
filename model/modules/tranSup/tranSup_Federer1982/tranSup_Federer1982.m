@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = tranSup_Federer1982(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - s.w.wSoil : total soil moisture
-%   - s.wd.p_rootFrac_fracRoot2SoilD: extractable fraction of water
+%   - s.wd.awcAct: actual extractable water
 %   - s.wd.p_wSoilBase_wAWC: total maximum plant available water (FC-WP)
 %
 % Outputs:
@@ -26,5 +26,5 @@ function [f,fe,fx,s,d,p] = tranSup_Federer1982(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-d.tranSup.tranSup(:,tix) = p.tranSup.maxRate .* sum(s.w.wSoil .* s.wd.p_rootFrac_fracRoot2SoilD,2)  ./ sum(s.wd.p_wSoilBase_wAWC .* s.wd.p_rootFrac_fracRoot2SoilD,2);
+d.tranSup.tranSup(:,tix) = p.tranSup.maxRate .* sum(s.wd.awcAct,2)  ./ sum(s.wd.p_wSoilBase_wAWC,2);
 end
