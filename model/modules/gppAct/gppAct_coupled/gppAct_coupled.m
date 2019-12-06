@@ -1,34 +1,34 @@
 function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% PURPOSE	: estimate transpiration from GPP
-% 
-% REFERENCES:
-% 
-% CONTACT	: mjung, ncarval
-% 
-% INPUT
-% gpp       : actual GPP [gC/m2/time]
-%           (fx.gpp)
-% AoE       : water use efficiency - ratio of assimilation and
-%           transpiration fluxes [gC/mmH2O]
-%           (d.WUE.AoE)
-% 
-% OUTPUT
-% tranAct    : transpiration [mm/m2/time]
-%           (fx.tranAct)
-% 
-% DEPENDENCIES  :
-% 
-% NOTES:
-% 
+% calculate GPP based on transpiration supply and water use efficiency
+%
+% Inputs:
+%   - d.WUE.AoE: water use efficiency in gC/mmH2O
+%   - d.tranSup.tranSup: supply limited transpiration
+%   - d.gppDem.gppE: Demand-driven GPP with stressors except wSoil applied
+%
+% Outputs:
+%   - fx.gpp: actual GPP 
+%
+% Modifies:
+%   - 
+%
+% References:
+%   - 
+%
+% Notes:
+%   - 
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%   - Martin Jung (mjung)
+%
+% Versions:
+%   - 1.0 on 22.11.2019 (skoirala): 
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% calculate transpiration
-AoE                     =   d.WUE.AoE(:,tix);
-tranSup                 =   d.tranSup.tranSup(:,tix);
-gppSup                  =   tranSup .* AoE;  
-gppDem                  =   d.gppDem.gppE(:,tix);
-gppAct                  =   nanmin(gppSup,gppDem);
-fx.gpp(:,tix)           =   gppAct;
+%%
+fx.gpp(:,tix)           =   nanmin(d.tranSup.tranSup(:,tix) .* d.WUE.AoE(:,tix), d.gppDem.gppE(:,tix));
 
 end
