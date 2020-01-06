@@ -28,5 +28,4 @@ function [f,fe,fx,s,d,p] = tranAct_demSup(f,fe,fx,s,d,p,info,tix)
 
 %%
 fx.tranAct(:,tix)	= minsb(d.tranDem.tranDem(:,tix),d.tranSup.tranSup(:,tix));
-
 end

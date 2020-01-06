@@ -20,8 +20,8 @@ function test_wCycleOpti(inpath,outpath,obspath,testName)
     expConfigFile               =   ['testBeds/wCycleOpti/settings_wCycleOpti/experiment_' testName '.json'];
     
     % run the experiment without opti
-    [f_tws,fe_tws,fx_tws,s_tws,d_tws,p_tws,precOnceData_tws,info_tws,...
-        fSU_tws,feSU_tws,fxSU_tws,sSU_tws,dSU_tws,precOnceDataSU_tws,infoSU_tws,obs_tws,cost_tws] =...
+    [f_def,fe_def,fx_def,s_def,d_def,p_def,precOnceData_def,info_def,...
+        fSU_def,feSU_def,fxSU_def,sSU_def,dSU_def,precOnceDataSU_def,infoSU_def,obs_def,cost_def] =...
         workflowExperiment(expConfigFile,...
         'info.tem.model.flags.runOpti', false,...
         'info.tem.model.flags.calcCost',true,...
@@ -49,30 +49,30 @@ function test_wCycleOpti(inpath,outpath,obspath,testName)
         'info.opti.constraints.oneDataPath',obspath...
         );%,...
     
-    fig_outDirPath=[info_tws.experiment.outputDirPath 'test_' testName];
+    fig_outDirPath=[info_def.experiment.outputDirPath 'test_' testName];
     mkdirx(fig_outDirPath)
-    fNamesf=fields(f_tws);
-    fNamesfx=fields(fx_tws);
-    fNamesd=fields(d_tws.storedStates);
+    fNamesf=fields(f_def);
+    fNamesfx=fields(fx_def);
+    fNamesd=fields(d_def.storedStates);
     
     % handles vs generated code
     for fn = 1:numel(fNamesf)
         figure('Visible', 'off')
-        mk121s(nanmean(f_tws.(fNamesf{fn}),1),nanmean(f_opt.(fNamesf{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        mk121s(nanmean(f_def.(fNamesf{fn}),1),nanmean(f_opt.(fNamesf{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
         title(['forcing: all time steps ' fNamesf{fn}])
-        save_gcf(gcf,[fig_outDirPath '/forcing_' fNamesf{fn} '_twsault_vs_optimized_' testName],1,1)
+        save_gcf(gcf,[fig_outDirPath '/forcing_' fNamesf{fn} '_default_vs_optimized_' testName],1,1)
     end
     for fn = 1:numel(fNamesfx)
         figure('Visible', 'off')
-        mk121s(nanmean(fx_tws.(fNamesfx{fn}),1),nanmean(fx_opt.(fNamesfx{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        mk121s(nanmean(fx_def.(fNamesfx{fn}),1),nanmean(fx_opt.(fNamesfx{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
         title(['flux: all time steps ' fNamesfx{fn}])
-        save_gcf(gcf,[fig_outDirPath '/fluxes_' fNamesfx{fn} '_twsault_vs_optimized_wCycle_Forward'],1,1)
+        save_gcf(gcf,[fig_outDirPath '/fluxes_' fNamesfx{fn} '_default_vs_optimized_wCycle_Forward'],1,1)
     end
     for fn = 1:numel(fNamesd)
         figure('Visible', 'off')
-        mk121s(nanmean(d_tws.storedStates.(fNamesd{fn}),1),nanmean(d_opt.storedStates.(fNamesd{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
+        mk121s(nanmean(d_def.storedStates.(fNamesd{fn}),1),nanmean(d_opt.storedStates.(fNamesd{fn}),1),['Trautmann2018'],['optimized'],'LineWidth',2,'marker','o')
         title(['diagnostic stored states: all time steps ' fNamesd{fn}])
-        save_gcf(gcf,[fig_outDirPath '/diagnostics_' fNamesd{fn} '_twsault_vs_optimized_' testName],1,1)
+        save_gcf(gcf,[fig_outDirPath '/diagnostics_' fNamesd{fn} '_default_vs_optimized_' testName],1,1)
     end
     
 end

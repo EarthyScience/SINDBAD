@@ -93,10 +93,10 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cpld_full';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cpld_2020';
 % 
-userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_cpl';
+% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
+% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_cpl';
 
 if isempty(userInPath)
     inDir               =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/';
@@ -117,8 +117,8 @@ testCases               =   [1 2 3 4 5];
 % testCases               =   [1 2 3 4 5];
 % testCases               =   [1];
 % testCases               =   [4];
-testCases             =   [ 3 ];
-% testCases             =   [5];
+testCases             =   [ 4 ];
+testCases             =   [5];
 % testCases             =   [ 1 ];
 % testCases               =   [3 4 5];
 % testCases               =   [3 4 5 1 2];

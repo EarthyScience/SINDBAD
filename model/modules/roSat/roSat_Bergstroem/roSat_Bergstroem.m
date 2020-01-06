@@ -7,10 +7,8 @@ function [f,fe,fx,s,d,p] = roSat_Bergstroem(f,fe,fx,s,d,p,info,tix)
 %
 % Outputs:
 %   - fx.roSat      : runoff from land [mm/time]
-%   - fx.wSoilPerc     : infiltration into soil [mm/time]
 %
 % Modifies:
-%   - s.w.wSoil    : soil moisture of the layers [mm]
 %   - s.wd.WBP     : water balance pool [mm]
 %
 % References:
