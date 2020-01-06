@@ -1,43 +1,41 @@
 function [f,fe,fx,s,d,p] = prec_soilTexture_forcing(f,fe,fx,s,d,p,info)
-% sets the value of soil hydraulic parameters
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% sets the soil texture properties from input
 %
 % Inputs:
-%	- p.SAND/SILT/CLAY/DEPTH/+ the Saxton parameters that are in the json
+%	- f.SAND/SILT/CLAY/ORGM
 %
 % Outputs:
-%   - p.pSoil.thetaSat/kSat/psiSat/sSat
-%   - p.pSoil.thetaFC/kFC/psiFC/sFC
-%   - p.pSoil.thetaWP/kWP/psiWP/sWP
+%   - s.wd.p_soilTexture_SAND/SILT/CLAY/ORGM
 %
 % Modifies:
 % 	- None
 % 
 % References:
-%	- Saxton, K.E., W.J. Rawls, J.S. Romberger, and R.I. Papendick. 1986. 
-% Estimating generalized soil-water characteristics from texture. 
-% Soil Sci. Soc. Am. J. Vol. 50(4):1031-1036.
-% http://www.bsyse.wsu.edu/saxton/soilwater/Article.htm
+%	- 
 %
+% Notes:
+%   - if the input has same number of layers and wSoil, then sets the properties per layer
+%   - if not, then sets the average of all as the fixed property of all layers
+% 
 % Created by:
 %   - Sujan Koirala (skoirala)
-%   - Nuno Carvalhais (ncarval)
 %
 % Versions:
 %   - 1.0 on 21.11.2019
 %
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 %% 
+%--> get the number of soil layers from model structure and create arrays for soil
+%   texture properties
 nSoilLayers                         =   info.tem.model.variables.states.w.nZix.wSoil;
 s.wd.p_soilTexture_CLAY             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_soilTexture_SAND             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_soilTexture_SILT             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_soilTexture_ORGM             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
-
-% fCLAY   =   f.CLAY;
-% fSAND   =   f.SAND;
-% fSILT   =   f.SILT;
-% fORGM   =   f.ORGM;
-% size(fCLAY == nSoilLayers)
+%--> set the properties
 vars = {'CLAY','SAND','SILT','ORGM'};
 for vn = 1:numel(vars)
     vari = vars{vn};
@@ -54,15 +52,5 @@ for vn = 1:numel(vars)
         eval(['s.wd.p_soilTexture_' vari '(:,sl)  = dat(:,sl);']);
     end
 end
-
-% s.wd.p_soilTexture_CLAY =  f.CLAY .* info.tem.helpers.arrays.onespixzix.w.wSoil;
-% s.wd.p_soilTexture_SAND =  f.SAND .* info.tem.helpers.arrays.onespixzix.w.wSoil;
-% s.wd.p_soilTexture_SILT =  f.SILT .* info.tem.helpers.arrays.onespixzix.w.wSoil;
-% s.wd.p_soilTexture_ORGM =  f.ORGM .* info.tem.helpers.arrays.onespixzix.w.wSoil;
-% end
-% p.soilTexture.CLAY =   .* info.tem.helpers.arrays.onespix;
-% p.soilTexture.SAND =   .* info.tem.helpers.arrays.onespix;
-% p.soilTexture.SILT =   .* info.tem.helpers.arrays.onespix;
-% p.soilTexture.ORGM =   .* info.tem.helpers.arrays.onespix;
 
 end

@@ -103,7 +103,7 @@ tmp(v)               =  rain(v);
 
 fx.evapInt(:,tix)    =  tmp;
 
-% update the available water
+% update the water budget pool
 s.wd.WBP             =  s.wd.WBP - fx.evapInt(:,tix);
 
 end

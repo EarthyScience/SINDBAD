@@ -1,6 +1,6 @@
 function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% calculate GPP based on transpiration supply and water use efficiency
+% calculate GPP based on transpiration supply and water use efficiency (coupled)
 %
 % Inputs:
 %   - d.WUE.AoE: water use efficiency in gC/mmH2O

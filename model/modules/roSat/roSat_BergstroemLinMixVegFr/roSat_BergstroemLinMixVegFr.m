@@ -41,18 +41,4 @@ fx.roSat(:,tix)     =   s.wd.WBP .* tmp_SatExFrac;
 %--> update water balance
 s.wd.WBP            =   s.wd.WBP - fx.roSat(:,tix);
 
-%--> update soil moisture for 1st layer
-fx.wSoilPerc(:,tix)    =   minsb(s.wd.p_wSoilBase_wSat(:,1) - s.w.wSoil(:,1), s.wd.WBP);
-s.w.wSoil(:,1)      =   s.w.wSoil(:,1) + fx.wSoilPerc(:,tix);
-
-s.wd.WBP            =   s.wd.WBP - fx.wSoilPerc(:,tix);
-
-%--> reallocate to deeper layers
-for sl  =   2:size(s.w.wSoil,2)
-  ip                =   minsb(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), s.wd.WBP);
-  s.w.wSoil(:,sl)   =      s.w.wSoil(:,sl) + ip;
-  s.wd.WBP          =   s.wd.WBP - ip;
-end
-
-
 end

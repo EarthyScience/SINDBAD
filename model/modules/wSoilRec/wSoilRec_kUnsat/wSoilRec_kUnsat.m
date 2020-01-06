@@ -14,7 +14,6 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 %
 % Modifies:
 % 	- s.w.wSoil 
-%   - s.wd.WBP
 %
 % References:
 %   - 
@@ -32,17 +31,13 @@ function [f,fe,fx,s,d,p] = wSoilRec_kUnsat(f,fe,fx,s,d,p,info,tix)
 nSoilLayers                 =   s.wd.p_wSoilBase_nsoilLayers;
 s.wd.wSoilFlow(:,1)         =   fx.wSoilPerc(:,tix);
 for sl=1:nSoilLayers-1
-    %--> drain excess moisture in oversaturation
-    wSoilExc                =   maxsb(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wSat(:,sl),0);
-    s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - wSoilExc;
     %--> get the drainage flux
     k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
-    drain                   =   nanmin(k_unsat,maxsb(s.w.wSoil(:,sl),0));
+    drain                   =   minsb(k_unsat,s.w.wSoil(:,sl));
     %--> store the drainage flux
     s.wd.wSoilFlow(:,sl+1)  =   drain;
     %--> update storages
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - drain;
-    s.wd.WBP                =   s.wd.WBP - drain;
-    s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain+wSoilExc;
+    s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain;
 end
 end
