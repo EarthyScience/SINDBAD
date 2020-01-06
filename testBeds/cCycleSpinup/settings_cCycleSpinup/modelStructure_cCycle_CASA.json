@@ -259,6 +259,21 @@
 			"comment": 		"",
             "use4spinup":   true
 		},
+        "wSoilPerc": {
+            "apprName": "wSoilPerc_WBP",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSoilRec": {
+            "apprName": "wSoilRec_kUnsat",
+            "runFull": true,
+            "use4spinup": true
+        },
+        "wSoilUpflow": {
+            "apprName": "wSoilUpflow_VanDijk2010",
+            "runFull": true,
+            "use4spinup": true
+        },
 		"rainSnow":
 		{
 			"apprName": 	"rainSnow_forcing",

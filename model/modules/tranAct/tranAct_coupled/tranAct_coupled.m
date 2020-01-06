@@ -4,8 +4,9 @@ function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - d.WUE.AoE: water use efficiency in gC/mmH2O
-%   - fx.gppAct: GPP based on a minimum of demand and stressors (except water limitation)
-%                out of gppAct_coupled in which tranSup is used to get supply limited GPP
+%   - fx.gppAct: GPP based on a minimum of demand and stressors (except water 
+%        limitation) out of gppAct_coupled in which tranSup is used to get 
+%        supply limited GPP
 %
 % Outputs:
 %   - fx.tranAct: actual transpiration 
@@ -32,5 +33,4 @@ function [f,fe,fx,s,d,p] = tranAct_coupled(f,fe,fx,s,d,p,info,tix)
 %--> calculate actual transpiration coupled with GPP
 AoE                     =   d.WUE.AoE(:,tix);
 fx.tranAct(:,tix)	    =   fx.gpp(:,tix) ./ AoE;
-
 end

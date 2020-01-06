@@ -3,16 +3,14 @@ function [f,fe,fx,s,d,p] = dyna_roSat_BergstroemLinVegFr(f,fe,fx,s,d,p,info,tix)
 % calculates land surface runoff and infiltration to different soil layers
 %
 % Inputs:
-%	  - p.roSat.berg       : shape parameter of runoff-infiltration curve []
+%	- p.roSat.berg       : shape parameter of runoff-infiltration curve []
 %   - p.roSat.smax2      : maximum water capacity of second soil layer  [mm]
 %   - p.roSat.smax1      : maximum water capacity of first soil layer  [mm]
 %
 % Outputs:
 %   - fx.roSat : runoff from land [mm/time]
-%   - fx.wSoilPerc    : infiltration in soil [mm/time]
 %
 % Modifies:
-% 	- s.w.wSoil    : soil moisture of the layers [mm]
 %   - s.wd.WBP     : water balance pool [mm]
 %
 % References:
