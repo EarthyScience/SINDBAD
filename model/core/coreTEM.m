@@ -111,14 +111,15 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.roInf.funHandle(f,fe,fx,s,d,p,info,tix);             % infiltration excess runoff
     [f,fe,fx,s,d,p]     =   ms.wSoilSatFrac.funHandle(f,fe,fx,s,d,p,info,tix);      % saturated fraction of a grid cell
     [f,fe,fx,s,d,p]     =   ms.roSat.funHandle(f,fe,fx,s,d,p,info,tix);             % saturation runoff
-    [f,fe,fx,s,d,p]     =   ms.evapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation
-    [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
     [f,fe,fx,s,d,p]     =   ms.roInt.funHandle(f,fe,fx,s,d,p,info,tix);             % interflow
     [f,fe,fx,s,d,p]     =   ms.roOverland.funHandle(f,fe,fx,s,d,p,info,tix);        % land over flow (sum of saturation and infiltration excess runoff)
                                                                                     % if e.g. infiltration excess runoff and or saturation runoff are not
                                                                                     % explicitly modelled then assign a none handle that returnes zeros and
                                                                                     % lump the FastRunoff into interflow
     [f,fe,fx,s,d,p]     =   ms.roSurf.funHandle(f,fe,fx,s,d,p,info,tix);            % runoff from surface water storages
+    [f,fe,fx,s,d,p]     =   ms.wSoilPerc.funHandle(f,fe,fx,s,d,p,info,tix);         % calculate the soil percolation = WBP at this point
+    [f,fe,fx,s,d,p]     =   ms.evapSoil.funHandle(f,fe,fx,s,d,p,info,tix);          % soil evaporation
+    [f,fe,fx,s,d,p]     =   ms.wSoilRec.funHandle(f,fe,fx,s,d,p,info,tix);          % recharge the soil
     [f,fe,fx,s,d,p]     =   ms.gwRec.funHandle(f,fe,fx,s,d,p,info,tix);             % recharge the groundwater
     % ---------------------------------------------------------------------
     % Water transfer: upward flow from GW through soil

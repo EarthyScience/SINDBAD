@@ -5,6 +5,7 @@ function [f,fe,fx,s,d,p] = roSat_wSoilSatFrac(f,fe,fx,s,d,p,info,tix)
 % Inputs:
 %	- s.wd.wSoilSatFrac: fraction of the grid cell that is saturated
 %   - s.wd.WBP: amount of incoming water
+%
 % Outputs:
 %   - fx.roSat: saturation excess runoff in mm/day
 %
@@ -29,5 +30,4 @@ function [f,fe,fx,s,d,p] = roSat_wSoilSatFrac(f,fe,fx,s,d,p,info,tix)
 fx.roSat(:,tix) = s.wd.WBP .* s.wd.wSoilSatFrac;
 % update the WBP
 s.wd.WBP = s.wd.WBP - fx.roSat(:,tix);
-
 end
