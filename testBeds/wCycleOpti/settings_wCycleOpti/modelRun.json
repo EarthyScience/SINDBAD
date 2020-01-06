@@ -38,7 +38,7 @@
 		"roTotal":
 		{
 		"destination": "fx",
-		"components":["fx.roSurf","fx.roBase"],
+		"components":["fx.roSurf"],
 		"balance": true
 		},
 		"evapTotal":

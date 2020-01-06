@@ -105,7 +105,7 @@ function xout    = createMeanYearTimeSeries(x,years,info)
     xout    = [];
     yearvec    = createHvec(unique(years));
     for i = yearvec
-        if isleapyear(i) && length(years(years==i))==366
+        if isleapyear(i) && length(years(years==i))~=366
             xtmp=[x(1:31+28) x(31+28:end)];
         else
             xtmp=x;

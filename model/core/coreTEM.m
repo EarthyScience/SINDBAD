@@ -162,7 +162,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cTauAct.funHandle(f,fe,fx,s,d,p,info,tix);           % combine effects of different factors on decomposition rates
     [f,fe,fx,s,d,p]     =   ms.rafTair.funHandle(f,fe,fx,s,d,p,info,tix);           % temperature effect on autotrophic maintenance respiration
     % ---------------------------------------------------------------------
-    % Climate + additional effects: arbon allocation to plant organs
+    % Climate + additional effects: carbon allocation to plant organs
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.cAllocfLAI.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of LAI on carbon allocation 
     [f,fe,fx,s,d,p]     =   ms.cAllocfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);      % effect of soil moisture on carbon allocation 

@@ -7,12 +7,10 @@ function [f,fe,fx,s,d,p] = dyna_roSat_BergstroemLinMixVegFr(f,fe,fx,s,d,p,info,t
 %
 % Outputs:
 %   - fx.roSat : runoff from land [mm/time]
-%   - fx.wSoilPerc    : infiltration in soil [mm/time]
 %
 % Modifies:
-%   - s.w.wSoil    : soil moisture of the layers [mm]
 %   - s.wd.WBP     : water balance pool [mm]
-
+%
 %
 % References:
 %   - Bergström, S. (1992). The HBV model–its structure and applications. SMHI.

@@ -30,5 +30,4 @@ function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 
 %%
 fx.gpp(:,tix)           =   nanmin(d.tranSup.tranSup(:,tix) .* d.WUE.AoE(:,tix), d.gppDem.gppE(:,tix));
-
 end
