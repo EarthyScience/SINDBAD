@@ -1,14 +1,8 @@
 function [f,fe,fx,s,d,p] = gppAct_min(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% FUNCTION    : 
-% 
-% PURPOSE    : 
-% 
-% REFERENCES:
-% 
-% CONTACT    : mjung, ncarval
-% 
-% INPUT     :
+% calculate GPP based on minimum of demand stressors and soil moisture stressor
+%
+% Inputs:
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (s.cd.fAPAR)
@@ -19,6 +13,44 @@ function [f,fe,fx,s,d,p] = gppAct_min(f,fe,fx,s,d,p,info,tix)
 % FAPAR     : fraction of absorbed photosynthetically active radiation
 %           [] (equivalent to "canopy cover" in Gash and Miralles)
 %           (s.cd.fAPAR)
+
+%   - d.WUE.AoE: water use efficiency in gC/mmH2O
+%   - d.tranSup.tranSup: supply limited transpiration
+%   - d.gppDem.gppE: Demand-driven GPP with stressors except wSoil applied
+%
+% Outputs:
+%   - fx.gpp: actual GPP 
+%
+% Modifies:
+%   - 
+%
+% References:
+%   - 
+%
+% Notes:
+%   - 
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%   - Martin Jung (mjung)
+%
+% Versions:
+%   - 1.0 on 22.11.2019 (skoirala): 
+%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+%%
+
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% FUNCTION    : 
+% 
+% PURPOSE    : 
+% 
+% REFERENCES:
+% 
+% CONTACT    : mjung, ncarval
+% 
+% INPUT     :
 % AllScGPP
 % SMScGPP
 % 

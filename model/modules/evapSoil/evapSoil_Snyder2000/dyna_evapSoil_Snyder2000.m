@@ -4,7 +4,6 @@ function [f,fe,fx,s,d,p] = dyna_evapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - fe.PET.PET: 
-%   - fe.rainSnow.rain
 %   - p.evapSoil.alpha
 %   - s.cd.fAPAR
 %   - p.evapSoil.beta
@@ -29,13 +28,13 @@ function [f,fe,fx,s,d,p] = dyna_evapSoil_Snyder2000(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-%--> get the rain, and PET scaled by alpha and a proxy of vegetation cover
-rain                        =   fe.rainSnow.rain(:,tix);
+%--> get the soil moisture available PET scaled by alpha and a proxy of vegetation cover
+wSoilAvail                  =   s.w.wSoil(:,1);
 PET                         =   fe.PET.PET(:,tix) .* p.evapSoil.alpha .* (1 - s.cd.fAPAR);
 PET(PET<0)                  =   0;
 
 beta2                       =   p.evapSoil.beta .* p.evapSoil.beta;
-isdry                       =   s.wd.WBP < PET;     % assume wetting occurs with precip-interception > 
+isdry                       =   wSoilAvail < PET;     % assume wetting occurs with precip-interception > 
                                                     % pet_soil; Snyder argued one should use precip > 3*pet_soil but then it becomes inconsistent here
 sPET                        =   isdry .* (s.wd.p_evapSoil_sPETOld + PET);
 issat                       =   sPET > beta2;       % same as sqrt(sPET) > beta (see paper); issat is a flag for stage 2 evap 
@@ -44,7 +43,7 @@ ET                          =   isdry.*(~issat .* sPET + issat .* sqrt(sPET) .* 
 %
 %--> correct for conditions with light rainfall which were considered not as a
 %wetting event; for these conditions we assume soil_evap=minsb(precip-ECanop,pet_soil-evap soil already used)
-ET2                         =   minsb(s.wd.WBP, PET-ET);
+ET2                         =   minsb(wSoilAvail, PET-ET);
 
 ETsoil                      =   ET + ET2;
 actETsoil                   =   minsb(ETsoil, s.w.wSoil(:,1));
