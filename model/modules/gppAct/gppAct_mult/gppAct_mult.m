@@ -34,15 +34,7 @@ function [f,fe,fx,s,d,p] = gppAct_mult(f,fe,fx,s,d,p,info,tix)
 
 % calculate the combined effect of all the stress scalars from demand GPP
 % and the supply GPP 
-% d.gppAct.AllScGPP(:,tix)    =   d.gppDem.AllDemScGPP(:,tix) .* d.gppfwSoil.SMScGPP(:,tix); %sujan
-d.gppAct.AllScGPP(:,tix)    =   d.gppDem.AllDemScGPP(:,tix) .* d.gppfwSoil.SMScGPP(:,tix) ...
-                                .* d.gppfTair.TempScGPP(:,tix);
-
-% multiply gppDem with soil moisture sress scalar (is the same as taking
-% the min of gppDem and SupplyGPP)
-% fx.gpp(:,tix) = d.gppDem.gppE(:,tix) .* d.gppfwSoil.SMScGPP(:,tix);
-% %sujan
-fx.gpp(:,tix) = d.gppDem.gppE(:,tix) .* d.gppAct.AllScGPP(:,tix);
-
+d.gppAct.AllScGPP(:,tix)    =   d.gppDem.AllDemScGPP(:,tix) .* d.gppfwSoil.SMScGPP(:,tix); %sujan
+fx.gpp(:,tix)               = s.cd.fAPAR .* d.gppPot.gppPot(:,tix) .* d.gppAct.AllScGPP(:,tix);
 
 end
