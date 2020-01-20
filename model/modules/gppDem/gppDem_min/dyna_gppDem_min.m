@@ -33,15 +33,16 @@ function [f,fe,fx,s,d,p] = dyna_gppDem_min(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % make 3D matrix 
-scall           = repmat(info.tem.helpers.arrays.onespix,1,3);
-scall(:,:,1)    = d.gppfTair.TempScGPP(:,tix);
-scall(:,:,2)    = d.gppfVPD.VPDScGPP(:,tix);
-scall(:,:,3)    = d.gppfRdir.LightScGPP(:,tix);
+scall           = repmat(info.tem.helpers.arrays.onespix,1,4);
+scall(:,1)      = d.gppfTair.TempScGPP(:,tix);
+scall(:,2)      = d.gppfVPD.VPDScGPP(:,tix);
+scall(:,3)      = d.gppfRdir.LightScGPP(:,tix);
+scall(:,4)      = d.gppfRdiff.CloudScGPP(:,tix);
 
 % compute the minumum of all the scalars
 d.gppDem.AllDemScGPP(:,tix) = min(scall,[],2);
 
 % compute demand GPP
-d.gppDem.gppE(:,tix)    = s.cd.fAPAR .* f.PAR(:,tix) .* d.gppPot.rueGPP(:,tix) .* d.gppDem.AllDemScGPP(:,tix);
+d.gppDem.gppE(:,tix)    = s.cd.fAPAR .* d.gppPot.gppPot(:,tix) .* d.gppDem.AllDemScGPP(:,tix);
 
 end

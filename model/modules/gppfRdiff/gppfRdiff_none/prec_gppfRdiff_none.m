@@ -19,6 +19,6 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_none(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % just put here a single maximum radiation use efficiency
-d.gppfRdiff.rueGPP = p.gppfRdiff.rue * info.tem.helpers.arrays.onestix;
+d.gppfRdiff.CloudScGPP = info.tem.helpers.arrays.onespixtix;
 
 end

@@ -2,7 +2,7 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Turner(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % PURPOSE    : diffuse radiation effect on GPP
 % 
-% REFERENCES: Turner et al XXXX
+% REFERENCES: Turner et al 2006, DOI: 10.1111/j.1600-0889.2006.00221.x
 % 
 % CONTACT    : mjung, ncarval
 % 
@@ -13,13 +13,11 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Turner(f,fe,fx,s,d,p,info)
 % RgPot     : potential global incoming radiation [MJ/m2/time]
 %           (f.RgPot)
 % 
-% rue1      : maximum radiation use efficiency for direct radiation 
-% 
-% rue2
+% rueRatio  : ratio of clear sky LUE to max LUE, in turner et al., appendix A, e_{g_cs} / e_{g_max}, should be between 0 and 1
 % 
 % OUTPUT
-% rueGPP    : maximum instantaneous radiation use efficiency [gC/MJ]
-%           (d.gppfRdiff.rueGPP)
+% CloudScGPP: effect of cloudiness on instantaneous light use efficiency
+%           (d.gppfRdiff.CloudScGPP)
 % 
 % DEPENDENCIES  :
 % 
@@ -27,11 +25,10 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Turner(f,fe,fx,s,d,p,info)
 % 
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-tmp                             =   info.tem.helpers.arrays.onestix;
-prue2                           =   p.gppfRdiff.rue2 * tmp;
-prue1                           =   p.gppfRdiff.rue1 * tmp;
-d.gppfRdiff.rueGPP              =   prue1;
+rueRatio                        =   p.gppfRdiff.rueRatio .* info.tem.helpers.arrays.onespixtix;
+CI                              =   info.tem.helpers.arrays.zerospixtix;
 valid                           =   f.RgPot > 0;
-d.gppfRdiff.rueGPP(valid)       =   (prue2(valid) - prue1(valid)) .* (1 - f.Rg(valid) ...
-                                    ./ f.RgPot(valid) ) + prue1(valid);
+CI(valid)                       =   f.Rg(valid) ./ f.RgPot(valid);
+SCI                             =   (CI - minsb(CI)) ./ (maxsb(CI) - minsb(CI));
+d.gppfRdiff.CloudScGPP          =   (1 - rueRatio) .* SCI + rueRatio;
 end
