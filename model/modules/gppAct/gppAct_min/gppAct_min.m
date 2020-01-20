@@ -67,8 +67,8 @@ function [f,fe,fx,s,d,p] = gppAct_min(f,fe,fx,s,d,p,info,tix)
 % calculate the minimum of all the stress scalars from demand GPP and the
 % supply GPP
 d.gppAct.AllScGPP(:,tix)    = minsb(d.gppDem.AllDemScGPP(:,tix),d.gppfwSoil.SMScGPP(:,tix));
+% ... and multiply
+fx.gpp(:,tix)               = s.cd.fAPAR .* d.gppPot.gppPot(:,tix) .* d.gppAct.AllScGPP(:,tix);
 
-% ... and multiply with apar and rue
-fx.gpp(:,tix) = s.cd.fAPAR(:,tix) .* f.PAR(:,tix) .* d.gppPot.rueGPP(:,tix) .* d.gppAct.AllScGPP(:,tix);
 
 end
