@@ -3,9 +3,9 @@
         "tranFrac": {
             "Name": "fraction of total maximum available water that can be transpired",
             "Unit": "-",
-            "Default": 0.5,
+            "Default": 1,
             "LowerBound": 0.02,
-            "UpperBound": 0.98,
+            "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",

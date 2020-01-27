@@ -1,17 +1,16 @@
 {
     "params": {
-        "berg": {
-            "Name": "shape parameter runoff-infiltration curve (Bergstroem)",
-            "Unit": "",
-            "Default": 1.1,
-            "LowerBound": 0.1,
-            "UpperBound": 5,
+        "smax": {
+            "Name": "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0.001,
+            "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
-            },
-            "Comment": "in Paper: s_exp"
+            }
         }
     },
     "devStage": {
