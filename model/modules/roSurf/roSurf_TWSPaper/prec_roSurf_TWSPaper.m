@@ -1,6 +1,7 @@
-function [f,fe,fx,s,d,p] = prec_roSurf_Orth2013(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_roSurf_TWSPaper(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates the delay coefficient of first 60 days as a precomputation
+% based on Orth et al. 2013 and as it is used in Trautmannet al. 2018
 %
 % Inputs:
 %   -   p.roSurf.qt : delay parameter [time]
@@ -18,6 +19,8 @@ function [f,fe,fx,s,d,p] = prec_roSurf_Orth2013(f,fe,fx,s,d,p,info)
 %   -   Tina Trautmann (ttraut)
 %
 % Versions:
+%   -   1.1 on 21.01.2020 (ttraut) : calculate wSurf based on water balance
+%   (1:1 as in TWS Paper)
 %   -   1.0 on 18.11.2019 (ttraut)
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

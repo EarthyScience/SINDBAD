@@ -36,4 +36,5 @@ for sl  =   1:size(s.w.wSoil,2)
     s.wd.wRootUptake(:,sl)  =   contrib;
     transp                  =   transp-contrib;    
 end
+
 end

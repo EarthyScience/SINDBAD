@@ -1,4 +1,4 @@
-function [cost] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info)
+function [cost, costComps] = calcCostTWSPaper(f,fe,fx,s,d,p,obs,info)
 % cost function used in the TWS Paper (Trautmann et al. 2018)
 % tVec      = vector with month (M)
 % cost      = costTWS + costSWE + costET + costQ
@@ -17,7 +17,7 @@ months      = length(info.tem.helpers.dates.month);
 xMonth      = info.tem.helpers.dates.month;
 [~,tVec,~]  = datevec(xMonth);
 
-etComps = {'ET'};%{'EvapSoil'};
+etComps = {'evapSoil'};%{'EvapSoil'};
 ETmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(etComps)
     compName = char(etComps{etC});
@@ -25,7 +25,7 @@ for etC = 1:numel(etComps)
         ETmod_d = ETmod_d + fx.(compName);
     end
 end
-QComps = {'Q'};
+QComps = {'roTotal'};
 Qmod_d = info.tem.helpers.arrays.zerospixtix;
 for etC = 1:numel(QComps)
     compName = char(QComps{etC});
@@ -48,10 +48,10 @@ end
 
 % Monthly Aggregation of simulations
 try 
-    if isfield(d.storedStates, 'wTWS')
-    TWSmod_d    = squeeze(d.storedStates.wTWS);
+    if isfield(d.storedStates, 'wTotal')
+    TWSmod_d    = squeeze(d.storedStates.wTotal);
     else
-    TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wGW);
+    TWSmod_d    = squeeze(d.storedStates.wSoil+d.storedStates.wSnow+d.storedStates.wSurf);
     end
     TWSmod      = aggDay2Mon(TWSmod_d,info.tem.model.time.sDate,info.tem.model.time.eDate);
 catch
@@ -177,16 +177,14 @@ if ~isreal(costTotal)
     error(['comlex costs!'])
 end
 
-%%% added by sujan to avoid having more than one output argument in the cost
-%%% function
-if info.tem.model.flags.runOpti
-    cost            =   costTotal;
-else
-    cost            =   struct;
-    cost.Total      =   costTotal;
-    cost.TWS        =   costTWS;
-    cost.SWE        =   costSWE;
-    cost.ET         =   costET;
-    cost.Q          =   costQ;
-end
+%% output
+cost                 =   costTotal;
+
+costComps            =   struct;
+costComps.Total      =   costTotal;
+costComps.TWS        =   costTWS;
+costComps.SWE        =   costSWE;
+costComps.ET         =   costET;
+costComps.Q          =   costQ;
+
 end
