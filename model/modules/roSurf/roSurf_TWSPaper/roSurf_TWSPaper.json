@@ -1,17 +1,17 @@
 {
     "params": {
-        "berg": {
-            "Name": "shape parameter runoff-infiltration curve (Bergstroem)",
-            "Unit": "",
-            "Default": 1.1,
-            "LowerBound": 0.1,
-            "UpperBound": 5,
+        "qt": {
+            "Name": "delay parameter for land runoff",
+            "Unit": "time",
+            "Default": 2,
+            "LowerBound": 0.5,
+            "UpperBound": 100,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "in Paper: s_exp"
+            "Comment": "in Paper: q_t"
         }
     },
     "devStage": {
