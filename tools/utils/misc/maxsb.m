@@ -20,7 +20,7 @@ function [max_val] = maxsb(a,b)
 %
 % Versions:
 %   - 1.0 on 30.11.2019
-% max_val=max(a,b);
-max_val=(a+b+abs(a-b))./2;
+ max_val=max(a,b);
+%max_val=(a+b+abs(a-b))./2;
 end
 
