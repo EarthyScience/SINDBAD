@@ -11,10 +11,10 @@ function test_wCycleOpti(inpath,outpath,obspath,testName)
     % obspath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/globalBaseline_Constraints_1deg.mat';
     % testName='wCycleOpti';
     % [uname,~] = getUserInfo();
-    % outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+    % outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' '/' uname];
     
 %     [uname,~] = getUserInfo();
-%     outpath=[outpath filesep uname];
+%     outpath=[outpath '/' uname];
     
     %% provide an experiment configuration file
     expConfigFile               =   ['testBeds/wCycleOpti/settings_wCycleOpti/experiment_' testName '.json'];

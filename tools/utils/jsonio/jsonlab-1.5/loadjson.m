@@ -52,8 +52,8 @@ function data = loadjson(fname,varargin)
 %
 % examples:
 %      dat=loadjson('{"obj":{"string":"value","array":[1,2,3]}}')
-%      dat=loadjson(['examples' filesep 'example1.json'])
-%      dat=loadjson(['examples' filesep 'example1.json'],'SimplifyCell',1)
+%      dat=loadjson(['examples' '/' 'example1.json'])
+%      dat=loadjson(['examples' '/' 'example1.json'],'SimplifyCell',1)
 %
 % license:
 %     BSD License, see LICENSE_BSD.txt files for details 

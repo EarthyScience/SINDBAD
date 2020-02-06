@@ -1,7 +1,7 @@
 function test_cCycleOpti(inpath,outpath,obspath,testName)
 % a script to run an experiment to optimize one fluxnet site
 % [uname,~] = getUserInfo();
-% outpath=[outpath filesep uname];
+% outpath=[outpath '/' uname];
 
 
 if isempty(obspath)
@@ -23,7 +23,7 @@ end
 % 
 % [uname,~] = getUserInfo();
 % 
-% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' '/' uname];
 % 
 % inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/US-Ha1.2000-2015.nc';
 % testName='cCycleOpti';

@@ -139,20 +139,20 @@ end
 prepath = '';       % the path before the wild card
 wildpath = '';      % the path wild card
 postpath = rootdir; % the path after the wild card
-I = find(rootdir==filesep,1,'last');
+I = find(rootdir=='/',1,'last');
 
 % Directory separator for current platform
-if filesep == '\'
-  % On PC, filesep is '\'
-  anti_filesep = '/';
+if '/' == '\'
+  % On PC, '/' is '\'
+  anti_'/' = '/';
 else
-  % On UNIX system, filesep is '/'
-  anti_filesep = '\';
+  % On UNIX system, '/' is '/'
+  anti_'/' = '\';
 end
 
-if isempty(I) && ~isempty(strfind(rootdir, anti_filesep))
-  error([mfilename, ':FileSep'],...
-    'Use correct directory separator "%s".', filesep)
+if isempty(I) && ~isempty(strfind(rootdir, anti_'/'))
+  error([mfilename, ':'/''],...
+    'Use correct directory separator "%s".', '/')
 end
 
 
@@ -167,12 +167,12 @@ if ~isempty(I),
   if ~isempty(I),
     postpath = [prepath(I:end) postpath];
     prepath = prepath(1:I-1);
-    I = find(prepath==filesep,1,'last');
+    I = find(prepath=='/',1,'last');
     if ~isempty(I),
       wildpath = prepath(I+1:end);
       prepath = prepath(1:I);
     end;
-    I = find(postpath==filesep,1,'first');
+    I = find(postpath=='/',1,'first');
     if ~isempty(I),
       wildpath = [wildpath postpath(1:I-1)];
       postpath = postpath(I:end);
@@ -215,7 +215,7 @@ if isempty(wildpath)
 elseif strcmp(wildpath,'**')
   % A double wildcards directory means recurs down into sub directories
 
-  % first look for files in the current directory (remove extra filesep)
+  % first look for files in the current directory (remove extra '/')
   D = rdir([prepath postpath(2:end)]);
 
   % then look for sub directories
@@ -227,7 +227,7 @@ elseif strcmp(wildpath,'**')
 
   % Process each sub directory found
   % Performance tweak: avoid growing array within loop (X. Mo)
-  c_D = arrayfun(@(x) rdir([prepath x.name filesep wildpath postpath]),...
+  c_D = arrayfun(@(x) rdir([prepath x.name '/' wildpath postpath]),...
     D_sd, 'UniformOutput', false);
   
   D = [D; cell2mat( c_D ) ];

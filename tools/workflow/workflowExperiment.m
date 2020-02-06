@@ -80,7 +80,7 @@ disp(pad('Set up the TEM of SINDBAD',200,'both',' '))
 disp(pad('-',200,'both','-'))
 % end log file content
 
-[info, expConfigFile]                       =   setupTEM(expConfigFile);
+[info, expConfigFile]                       =   setupTEM(expConfigFile,varargin{:});
 
 %% ----------------------------------------------------------------------------------------------------------
 % include changes from command line in info & setup the optimization if it's on or if costs shall be computed

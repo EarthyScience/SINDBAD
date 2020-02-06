@@ -89,7 +89,7 @@ if nargin > 3
 end
 
 if bootstrapit
-    bsf    = [gettoolboxesdir filesep 'bootstrap_functions' filesep];
+    bsf    = [gettoolboxesdir '/' 'bootstrap_functions' '/'];
 end
 
 % check if we are doing multiple regressions

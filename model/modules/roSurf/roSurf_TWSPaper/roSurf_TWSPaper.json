@@ -18,7 +18,7 @@
         "experimental": true,
         "tested": false,
         "consolidated": false,
-        "published": false,
+        "published": true,
         "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }

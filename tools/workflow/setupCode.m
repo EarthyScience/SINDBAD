@@ -5,7 +5,7 @@ function [info] = setupCode(info)
 % Requires:
 %   - info.tem.model.modules: structure with approaches, order does not matter
 %   - info.tem.model.paths.coreTEM: path including m file name
-%   - info.tem.model.paths.modules: path to modules with filesep at end
+%   - info.tem.model.paths.modules: path to modules with '/' at end
 %   - info.optem.params.names: list of params to optimise
 %   - info.tem.model.variables.to.store
 %   - info.tem.model.flags.genredMemCode
@@ -344,7 +344,7 @@ end
 
 %--> find mfunctions in directory
 [pathstr,name,ext]  =   fileparts(mpth);
-mf                  =   dir([pathstr filesep '*.m']);
+mf                  =   dir([pathstr '/' '*.m']);
 
 %--> check if you find it in C
 for ii  =   1:length(mf)
@@ -358,7 +358,7 @@ for ii  =   1:length(mf)
         
         if ~isempty(tmp{iii})               %something found
             P1              =   C(1:iii-1);
-            [P2]            =   readMfunctionContents([pathstr filesep mf(ii).name]);
+            [P2]            =   readMfunctionContents([pathstr '/' mf(ii).name]);
             P3              =   C(iii+1:end);
             %--> sujan and nuno: the array sizes were 1 x N when other
             % functions were being called from within an approach. So, try-catch has been added
@@ -486,7 +486,7 @@ path(path,pathstr);
 %--> generate handle
 codeStruct(cnt).funHandle   =   str2func(FunName);
 %--> get contents of function
-[funCont]                   =   readMfunctionContents([pathstr filesep FunName '.m']);
+[funCont]                   =   readMfunctionContents([pathstr '/' FunName '.m']);
 %mfinfo = mfileread([pathstr '/' FunName '.m']);
 %funCont=mfinfo.code;
 [funCont]                   =   beautifyFunCont(funCont);
