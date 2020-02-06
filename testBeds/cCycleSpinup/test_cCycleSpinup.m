@@ -1,7 +1,7 @@
 function test_cCycleSpinup(inpath,outpath,obspath,testName)
 % a script to run an experiment to optimize one fluxnet site
 % [uname,~] = getUserInfo();
-% outpath=[outpath filesep uname];
+% outpath=[outpath '/' uname];
 
 % % workflow for debugging the casa with full carbon cycle to optimize one fluxnet site
 % try
@@ -16,7 +16,7 @@ function test_cCycleSpinup(inpath,outpath,obspath,testName)
 % 
 % %% Input and output path for the cCycle tests
 % [uname,~] = getUserInfo();
-% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' filesep uname];
+% outpath=['/Net/Groups/BGI/work_3/sindbad/data/testBeds/output' '/' uname];
 % % outpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/output';
 % inpath='/Net/Groups/BGI/work_3/sindbad/data/testBeds/input/NH_25.mat';
 % testName='cCycleSpinup';
@@ -125,7 +125,7 @@ for NI2E = [20]
                 'tem.model.variables.to.store',toStore.(cCycleModel{:}),...
                 'tem.model.modules.cCycle.apprName',cCycleModel{:});
             %
-            test_outDirPath=[info.experiment.outputDirPath 'test_' testName filesep];
+            test_outDirPath=[info.experiment.outputDirPath 'test_' testName '/'];
             mkdirx(test_outDirPath)
             oufile = [test_outDirPath 'sb_simpleVScasa_' strExtra num2str(NI2E) '_' cCycleModel{:}  '_' strN2];
             save([oufile '.mat'], 'info','f5','fe5','fx5','s5','d5','p5','precOnceData5','sSU5','dSU5','-v7.3')

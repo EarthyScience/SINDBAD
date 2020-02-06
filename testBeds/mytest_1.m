@@ -4,7 +4,7 @@ end
 
 inDir              =   'M:\work_3\sindbad\data\testBeds\input';
 outDir             =   'C:\work\sindbad_tests\output';
-            inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
+            inpath      =   [inDir '/' 'globalTWS_Forcing.mat'];
             obspath     =   '';
             testName    =   'wCycleForward';
             outpath=outDir;

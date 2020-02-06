@@ -27,7 +27,7 @@ function [info, obs] = prepOpti(info)
 %% read the information related to optimization algorithm
 algorithmName                       =   info.opti.algorithm.funName;
 
-defOptionsFilePath                  =   convertToFullPaths(info,['optimization' filesep 'algorithms' filesep algorithmName filesep 'options_' algorithmName '.json']);
+defOptionsFilePath                  =   convertToFullPaths(info,['optimization' '/' 'algorithms' '/' algorithmName '/' 'options_' algorithmName '.json']);
 
 try
 info.opti.algorithm.options         =   readJsonFile(defOptionsFilePath);
@@ -51,7 +51,7 @@ end
 %% read the information related to cost function
 costName                            =   info.opti.costFun.funName;
 info.opti.costFun.funName           =   ['calc' costName];
-defCostOptionsFilePath              =   convertToFullPaths(info,['optimization' filesep 'costFunctions' filesep costName filesep 'options_' costName '.json']);
+defCostOptionsFilePath              =   convertToFullPaths(info,['optimization' '/' 'costFunctions' '/' costName '/' 'options_' costName '.json']);
 
 try
     def_costOpt                     =   readJsonFile(defCostOptionsFilePath);   
@@ -75,11 +75,11 @@ end
 
 %% create the output directory path for output files of the optimization algorithm
 if isfield(info.opti.algorithm.options,'outDirPath')
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep info.opti.algorithm.options.outDirPath filesep]);
+    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/' info.opti.algorithm.options.outDirPath '/']);
 else
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' filesep]);    
+    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/']);    
 end
-info.opti.algorithm.options.outFilePath         =   [info.opti.algorithm.options.outDirPath filesep 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
+info.opti.algorithm.options.outFilePath         =   [info.opti.algorithm.options.outDirPath '/' 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
 %% 1) create the function handles and get constraints for optimization
 fun_fields = fieldnames(info.opti.constraints.funName);
 for jj=1:numel(fun_fields)

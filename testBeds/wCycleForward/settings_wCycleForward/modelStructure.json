@@ -127,7 +127,7 @@
             "use4spinup": false
         },
         "wGW2wSurf": {
-            "apprName": "wGW2wSurf_fraction",
+            "apprName": "wGW2wSurf_fracGradient",
             "runFull": true,
             "use4spinup": true
         },

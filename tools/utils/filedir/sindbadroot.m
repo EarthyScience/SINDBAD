@@ -7,6 +7,7 @@ f2c = 'sindbadroot.m';
 str = which(f2c,'-all');
 % the sindbadroot should be 3 folders up
 str = [str{1}(1:end-numel(f2c)) '../../../'];
+str =str(1:end-29); %% Sujan: changes on 05.02.2020
 str = strrep(getFullPath(str),'\','/');
 % check that the path exists
 if ~exist(str,'dir')

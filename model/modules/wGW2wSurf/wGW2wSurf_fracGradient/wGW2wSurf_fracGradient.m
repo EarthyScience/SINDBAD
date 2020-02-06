@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = wGW2wSurf_fraction(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wGW2wSurf_fracGradient(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates the moisture exchange between groundwater and surface water as a fraction
 % of difference between the storages

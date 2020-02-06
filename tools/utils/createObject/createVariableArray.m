@@ -56,7 +56,7 @@ for v2c                 =   1:numel(vars2create)
         end
     end
     eValStr             =   strcat(var2cr,' = tmp;');
-    if ~ismember(var2cr,info.tem.model.variables.created)
+    if ~isempty(var2cr) && ~ismember(var2cr,info.tem.model.variables.created)
         eval(eValStr);
         info.tem.model.variables.created{end+1}     =   var2cr;
     else
