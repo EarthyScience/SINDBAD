@@ -51,33 +51,33 @@ default_tmp = [name '_' domain '_' info.experiment.runDate];
 if isfield(info.experiment, 'outputDirPath')
     info.experiment.outputDirPath(info.experiment.outputDirPath == ' ') = [];
     if ~isempty(info.experiment.outputDirPath)
-        info.experiment.outputDirPath  = replace(info.experiment.outputDirPath,{'/','\'},filesep);
+        info.experiment.outputDirPath  = replace(info.experiment.outputDirPath,{'/','\'},'/');
         % check whether it is an absolute path
         if strcmp(getFullPath(info.experiment.outputDirPath), info.experiment.outputDirPath)==1
             outputDirPath_full = [info.experiment.outputDirPath];
-            %            outputDirPath_full = [info.experiment.outputDirPath filesep
-            %            default_tmp filesep]; %sujan
+            %            outputDirPath_full = [info.experiment.outputDirPath '/'
+            %            default_tmp '/']; %sujan
         else
             outputDirPath_full = convertToFullPaths(info,info.experiment.outputDirPath);
         end
     else
-        outputDirPath_def               = ['data' filesep 'output'];
-        %         outputDirPath_def               = ['data' filesep 'output'
-        %         filesep default_tmp filesep]; %sujan
+        outputDirPath_def               = ['data' '/' 'output'];
+        %         outputDirPath_def               = ['data' '/' 'output'
+        %         '/' default_tmp '/']; %sujan
         outputDirPath_full              = convertToFullPaths(info,outputDirPath_def);
         disp(['WARN PATH: setExperimentPaths : no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
     end
 else
     % default output directory
-    %     outputDirPath_def               = ['output' filesep default_tmp
-    %     filesep]; %sujan
-    outputDirPath_def               = ['data' filesep 'output'];
+    %     outputDirPath_def               = ['output' '/' default_tmp
+    %     '/']; %sujan
+    outputDirPath_def               = ['data' '/' 'output'];
     
     outputDirPath_full              = convertToFullPaths(info,outputDirPath_def);
     disp(['WARN PATH: setExperimentPaths: no "outputDirPath" was provided : a default path is created: ' outputDirPath_full  ])
 end
 
-outputDirPath_full = [outputDirPath_full filesep default_tmp filesep];
+outputDirPath_full = [outputDirPath_full '/' default_tmp '/'];
 
 
 %% check if the outputDirPath already exists -> if so, rename it
@@ -85,7 +85,7 @@ outputDirPath_full = [outputDirPath_full filesep default_tmp filesep];
 % ii = 0;
 % outputDirPath_new = outputDirPath_full;
 % while exist(outputDirPath_new, 'dir')
-%     outputDirPath_new  =    [outputDirPath_full default_tmp '_v' num2str(ii) filesep];
+%     outputDirPath_new  =    [outputDirPath_full default_tmp '_v' num2str(ii) '/'];
 %     ii = ii+1;
 % end
 %
@@ -99,9 +99,9 @@ outputDirPath_full = [outputDirPath_full filesep default_tmp filesep];
 info.experiment.outputDirPath    =   outputDirPath_full;
 
 %% set the output info.json file -should this be a filename or absolute path?
-info.experiment.outputInfoFile          =    [outputDirPath_full filesep 'settings' filesep 'Info_' default_tmp '.json'];
-info.experiment.modelOutputDirPath      =    [outputDirPath_full filesep 'modelOutput' filesep];
-info.experiment.settingsOutputDirPath   =    [outputDirPath_full filesep 'settings' filesep];
+info.experiment.outputInfoFile          =    [outputDirPath_full '/' 'settings' '/' 'Info_' default_tmp '.json'];
+info.experiment.modelOutputDirPath      =    [outputDirPath_full '/' 'modelOutput' '/'];
+info.experiment.settingsOutputDirPath   =    [outputDirPath_full '/' 'settings' '/'];
 
 if ~exist(info.experiment.outputDirPath, 'dir')
     mkdirx(info.experiment.outputDirPath)
@@ -139,11 +139,11 @@ for n1 = {'model','spinup'}
             end
         end
         if feedIt
-            info.tem.(n1{1}).paths.genCode.(n2{1})    = [info.tem.model.paths.runDir 'code' filesep 'gen' str2 str1 '_' tmpStrName '.m'];
+            info.tem.(n1{1}).paths.genCode.(n2{1})    = [info.tem.model.paths.runDir 'code' '/' 'gen' str2 str1 '_' tmpStrName '.m'];
         end
     end
 end
-info.experiment.modelrunLogFile     =    [info.experiment.modelOutputDirPath filesep 'log_ModelRun_' tmpStrName '_runGenCode-' ...
+info.experiment.modelrunLogFile     =    [info.experiment.modelOutputDirPath '/' 'log_ModelRun_' tmpStrName '_runGenCode-' ...
     num2str(info.tem.model.flags.runGenCode) '_genRedMemCode-' num2str(info.tem.model.flags.genRedMemCode)...
     '_runForward-' num2str(info.tem.model.flags.runForward)   '_runOpti-' num2str(info.tem.model.flags.runOpti)...
     '.txt'];

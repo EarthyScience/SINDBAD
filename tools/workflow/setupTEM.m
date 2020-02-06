@@ -1,4 +1,4 @@
-function [info,expConfigFile] = setupTEM(expConfigFile)
+function [info,expConfigFile] = setupTEM(expConfigFile,varargin)
 % setups the experiment part of the info and date arrays
 %
 % Requires:
@@ -26,10 +26,14 @@ function [info,expConfigFile] = setupTEM(expConfigFile)
 %   - Sujan Koirala (skoirala)
 %   - v1.1: Tina Trautmann (ttraut)
 %   - v1.2: Tina Trautmann (ttraut)
+%   - v1.3: Tina Trautmann (ttraut)
 %
 % References:
 %
 % Versions:
+%   - 1.3 on 05.02.2020 - considers changes of experiment.configFiles via
+%   command line (e.g. to define another params.json) & can read
+%   expConfigFile from a full path
 %   - 1.2 on 09.01.2019
 %   - 1.1 on 15.08.2018 
 
@@ -60,9 +64,15 @@ if isstruct(expConfigFile)
     % sujan hack to avoid trying to save the full info in the json file
     info.experiment.outputInfoFile='';
     % function handles should be removed for saving infoLite.. 
+
     
-elseif exist([info.experiment.sindbadroot expConfigFile],'file')
-    expConfigFile = [info.experiment.sindbadroot expConfigFile] ;
+elseif  exist([info.experiment.sindbadroot expConfigFile],'file') || exist(getFullPath(expConfigFile), 'file')
+    if exist([info.experiment.sindbadroot expConfigFile],'file') %if the expConfigFile is provided with relative path
+        expConfigFile = [info.experiment.sindbadroot expConfigFile] ;
+    else
+        expConfigFile = getFullPath(expConfigFile); %if the expConfigFile is provided with absolute path
+    end    
+
     %%
     % note: this part can be outsorced to a initINFOFromConfig in case this
     % needs to be ran in other places
@@ -74,12 +84,25 @@ elseif exist([info.experiment.sindbadroot expConfigFile],'file')
     disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | Running SINDBAD using an experiment configuration file: ' expConfigFile])
     disp(pad('-',200,'both','-'))
     
+    
     exp_json                    =  readJsonFile(expConfigFile);
     exp_json_fn                 =  fields(exp_json);
     for exp = 1:numel(exp_json_fn)
         info.experiment.(exp_json_fn{exp}) = exp_json.(exp_json_fn{exp});
     end
     
+    % check if another expConfigFile is given by the command line
+    % loop over the varargin and compare if the path to another
+    % info.experiment.configFile is given; if so, set the 
+    for vn=1:2:numel(varargin)-1       %because varargin is pairwise: a=fullname in info, b=value
+        if ~isempty(strfind(varargin{vn}, 'info.experiment.configFiles'))  
+            tmp = varargin{vn+1};
+            eval(char([varargin{vn} '=  tmp;']))
+            disp([pad('MOD EXPERIMENT',20) ' : ' pad('setupTEM',20) ' | ' varargin{vn} ' is changed to: ' varargin{vn+1}])
+            disp(pad('-',200,'both','-'))
+        end
+    end
+   
     % absolute paths of the config files
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
     

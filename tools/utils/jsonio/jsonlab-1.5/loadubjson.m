@@ -40,8 +40,8 @@ function data = loadubjson(fname,varargin)
 %      obj=struct('string','value','array',[1 2 3]);
 %      ubjdata=saveubjson('obj',obj);
 %      dat=loadubjson(ubjdata)
-%      dat=loadubjson(['examples' filesep 'example1.ubj'])
-%      dat=loadubjson(['examples' filesep 'example1.ubj'],'SimplifyCell',1)
+%      dat=loadubjson(['examples' '/' 'example1.ubj'])
+%      dat=loadubjson(['examples' '/' 'example1.ubj'],'SimplifyCell',1)
 %
 % license:
 %     BSD License, see LICENSE_BSD.txt files for details 

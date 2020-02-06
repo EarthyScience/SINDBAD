@@ -109,7 +109,7 @@ end
 [pathstr,name,ext] = fileparts(mpth);
 
 %find mfunctions in directory
-mf=dir([pathstr filesep '*.m']);
+mf=dir([pathstr '/' '*.m']);
 
 %check if you find it in C
 for ii=1:length(mf)
@@ -124,7 +124,7 @@ for ii=1:length(mf)
             %something found
             P1=C(1:iii-1);
 
-            [P2]=readMfunctionContents([pathstr filesep mf(ii).name]);
+            [P2]=readMfunctionContents([pathstr '/' mf(ii).name]);
 
             P3=C(iii+1:end);
             C=vertcat(P1,P2,P3);

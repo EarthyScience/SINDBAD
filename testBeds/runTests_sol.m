@@ -74,7 +74,7 @@ end
 % default output path is used (runs in cluster):
 % /Net/Groups/BGI/work_3/sindbad/data/testBeds/output/$userName
 userInPath              =   '';
-userOutPath             =   [pwd filesep '../output/testBeds/'];
+userOutPath             =   [pwd '/' '../output/testBeds/'];
 
 % Alternatively set the path for the input and output (for local runs)
 % copy the test input: /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/
@@ -97,7 +97,7 @@ end
 if isempty(userOutPath)
     outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
     [uname,~]           =    getUserInfo();
-    outDir              =   [outDir filesep uname];
+    outDir              =   [outDir '/' uname];
 else
     outDir              =   userOutPath;
 end
@@ -113,23 +113,23 @@ testCases               =   [1];% 5 1 ];
 for i                   =   testCases
     switch i
         case 1
-            inpath      =   [inDir filesep 'NH_25.mat'];
+            inpath      =   [inDir '/' 'NH_25.mat'];
             obspath     =   '';
             testName    =   'cCycleSpinup';
         case 2
-            inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
+            inpath      =   [inDir '/' 'US-Ha1.2000-2015.nc'];
             obspath     =   inpath;
             testName    =   'cCycleOpti';
         case 3
-            inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
+            inpath      =   [inDir '/' 'globalTWS_Forcing.mat'];
             obspath     =   '';
             testName    =   'wCycleForward';
         case 4
-            inpath      =   [inDir filesep 'globalTWS_Forcing.mat'];
-            obspath     =   [inDir filesep 'globalBaseline_Constraints_1deg.mat'];
+            inpath      =   [inDir '/' 'globalTWS_Forcing.mat'];
+            obspath     =   [inDir '/' 'globalBaseline_Constraints_1deg.mat'];
             testName    =   'wCycleOpti';
         case 5
-            inpath      =   [inDir filesep 'US-Ha1.2000-2015.nc'];
+            inpath      =   [inDir '/' 'US-Ha1.2000-2015.nc'];
             obspath     =   '';
             testName    =   'LAISpinup';
             

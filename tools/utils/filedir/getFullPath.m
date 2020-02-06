@@ -147,7 +147,7 @@ if ischar(File) == 0  % Non-empty inputs must be strings
 end
 
 if isWIN  % Windows: --------------------------------------------------------
-   FSep = '\';
+   FSep = '/'; %%Tina: replaced to avoid errors when paths are given with '/' in windows. original: FSep = '/'; 
    File = strrep(File, '/', FSep);
    
    % Remove the magic key on demand, it is appended finally again:

@@ -31,13 +31,13 @@ end
 if isempty(userOutPath)
     outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
     [uname,~]           =    getUserInfo();
-    outDir              =   [outDir filesep uname];
+    outDir              =   [outDir '/' uname];
 else
     outDir              =   userOutPath;
 end
 
 %% generate the inpath and experiment config
-inpath                  =   [inDir filesep 'globalTWS_Forcing.mat'];
+inpath                  =   [inDir '/' 'globalTWS_Forcing.mat'];
 obspath                 =   '';
 testName                =   'wCycleCheck';
 expConfigFile           =   ['testBeds/approachChecks/settings_' testName '/experiment_' testName '.json'];

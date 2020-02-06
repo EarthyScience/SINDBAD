@@ -50,22 +50,11 @@
 %   - all the variables that are not affected by the optimized parameters
 %   should be on 1:1 line
 %   - water cycle variables should divert from 1:1 line (e.g., ET, wTotal)
-%% case 5:
-% - overview: test the spin up of carbon cycle but with a forced LAI data
-% - Domain: fluxnet site
-% - Purpose: to test if the lai is fed correctly to s.cd.
-% - Runs: Explicit, Impicit, and Reduced Explicit modes of spinup for CASA
-% and simple model structures
-% - Produces: Figures comparing each of these model simulations and spinup.
-% - Outcomes:
-%   - 1:1 results of carbon storages for explicit vs reduced explicit for both CASA and simple
-%   - near 1:1 results of carbon storages for implicit vs explict or casa vs simple
 
 %% clean the path and memory
-restoredefaultpath
 try
     gone
-    for fn              =    {'tools','model','optimization','testBeds'}
+    for fn              =	{'tools','model','optimization','testBeds'}
         rmpath(genpath(['../../' fn{1}]))
     end
 catch
@@ -73,7 +62,7 @@ end
 
 %% add the paths of the necessary sindbad directories
 
-for fn                  =    {'tools','model','optimization','testBeds'}
+for fn                  =	{'tools','model','optimization','testBeds'}
     addpath(genpath(['../' fn{1}]),'-begin')
 end
 
@@ -91,12 +80,11 @@ userOutPath             =   '';
 % to a local directory. NEVER COPY IT TO SINDBAD ROOT
 % set the userOutPath to save the output to any directory. In this case
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
-% 
-userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_cpld_2020';
-% 
-% userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
-% userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_cpl';
+
+
+% %Tina
+userInPath              =   'C:/Users/ttraut/Documents/SindbadTestData/input/';
+userOutPath             =   'C:/Users/ttraut/Documents/SindbadTestData/output/';
 
 
 if isempty(userInPath)
@@ -106,23 +94,20 @@ else
 end
 
 if isempty(userOutPath)
-    outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
-    [uname,~]           =    getUserInfo();
+    outDir              =   'C:\Users\ttraut\Desktop\sindbad tests'%'/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
+    [uname,~]           =	getUserInfo();
     outDir              =   [outDir '/' uname];
 else
     outDir              =   userOutPath;
 end
 
 %% select the tests to run (see explanations at the beginning of this script)
-testCases               =   [1 2 3 4 5];
 % testCases               =   [1 2 3 4 5];
-% testCases               =   [1];
+% testCases               =   [5];
 % testCases               =   [4];
-testCases             =   [ 4 ];
-testCases             =   [5];
-% testCases             =   [ 1 ];
-% testCases               =   [3 4 5];
-% testCases               =   [3 4 5 1 2];
+% testCases             =   [ 5 ];
+% testCases             =   [ 1 3 4 ];
+testCases               =   [ 3 4 5];
 
 %% run the different tests
 for i                   =   testCases
@@ -146,7 +131,7 @@ for i                   =   testCases
         case 5
             inpath      =   [inDir '/' 'US-Ha1.2000-2015.nc'];
             obspath     =   '';
-            testName    =   'LAISpinup';
+            testName    =   'cLAISpinup';
             
             
     end
@@ -154,3 +139,4 @@ for i                   =   testCases
     eval(evalStr);
     
 end
+

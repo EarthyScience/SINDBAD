@@ -11,14 +11,14 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "very rough bounds"
+            "Comment": "sn_c in TWS Paper"
         }
     },
     "devStage": {
-        "experimental": true,
+        "experimental": false,
         "tested": false,
         "consolidated": false,
-        "published": false,
+        "published": true,
         "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }

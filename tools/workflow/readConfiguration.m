@@ -91,7 +91,7 @@ for ii = 1:numel(fldnmsINFO)
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).use4spinup     = data_json.modules.(module_fields{jj, 1}).use4spinup;
                 
                 % read parameter information of the approaches
-                file_json   = convertToFullPaths(info,['model' filesep 'modules' filesep module_fields{jj} filesep module_fields{jj} '_' approachName  filesep module_fields{jj} '_' approachName '.json']);
+                file_json   = convertToFullPaths(info,['model' '/' 'modules' '/' module_fields{jj} '/' module_fields{jj} '_' approachName  '/' module_fields{jj} '_' approachName '.json']);
                 if exist(file_json,'file')
                     param_json    = readJsonFile(file_json);
                     paramName     = fieldnames(param_json.params);
@@ -169,8 +169,12 @@ for ii = 1:numel(fldnmsINFO)
 end
 
 %--> sujan: moved variables to sum to a suitable place in info
+if isfield(info.tem.model, 'varsToSum') %%TINA HACK
 info.tem.model.variables.to.sum                             = info.tem.model.varsToSum;
 info.tem.model                                              = rmfield(info.tem.model,'varsToSum');
+else
+    info.tem.model.variables.to.sum  = struct;
+end
 
 if stopIfMissField && isAllOK == false
     error([pad('CRIT FIELDMISS',20) ' : ' pad('readConfiguration',20) ' | necessary fields are missing in configuration files : ' missFields])

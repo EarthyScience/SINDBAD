@@ -31,13 +31,13 @@ end
 if isempty(userOutPath)
     outDir              =   '/Net/Groups/BGI/work_3/sindbad/data/testBeds/output/';
     [uname,~]           =    getUserInfo();
-    outDir              =   [outDir filesep uname];
+    outDir              =   [outDir '/' uname];
 else
     outDir              =   userOutPath;
 end
 
 %% generate the inpath and experiment config
-inpath                  =   [inDir filesep 'US-Ha1.2000-2015.nc'];
+inpath                  =   [inDir '/' 'US-Ha1.2000-2015.nc'];
 obspath                 =   inpath;
 testName                =   'cCycleCheck';
 outpath                 =   outDir;
