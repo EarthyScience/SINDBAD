@@ -105,6 +105,20 @@
                 "dparams" : []
             },
             "Comment": ""
-		}
+        },
+        "C2Nveg":{
+            "Name": "carbon to nitrogen ratio in vegetation pools",
+            "Unit": "gC/gN",
+            "Default": [25,260,260,25],
+            "LowerBound": NaN,
+            "UpperBound": NaN,
+            "Distribution": 
+            {
+                "name": "uniform",
+                "funHandle" : "",
+                "dparams" : []
+            },
+            "Comment": ""
+        }
 	}
 }
