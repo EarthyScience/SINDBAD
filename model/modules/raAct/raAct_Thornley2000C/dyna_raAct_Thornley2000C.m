@@ -1,15 +1,29 @@
 function [f,fe,fx,s,d,p] = dyna_raAct_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% FUNCTION    : prec_raAct_Thornley2000C
-% 
-% PURPOSE    : precomputations to estimate autotrophic respiration as
+% Precomputations to estimate autotrophic respiration as
 % maintenance + growth respiration according to Thornley and Cannell
 % (2000): MODEL C - growth, degradation and resynthesis view of respiration
 % (check Fig.1 of the paper). 
-% 
-% Computes the km (maintenance (respiration) coefficient) 
-% 
-% REFERENCES:
+% Computes the km (maintenance (respiration) coefficient)
+%
+% Inputs:
+%   - fe.rafTair.fT:              temperature effect on autrotrophic respiration (deltaT-1)
+%   - p.raAct.RMN:                nitrogen efficiency rate of maintenance respiration
+%                                 (gC.gN-1.deltaT-1)
+%   - p.cCycleBase.C2Nveg(zix):   carbon to nitrogen ratio (gC.gN-1)
+%   - fe.cCycle.MTF:              metabolic fraction ([])
+%   - p.raAct.YG:                 growth yield coefficient - or growth efficiency (gC.gC-1)
+%   - info.timeScale.stepsPerDay: number of time steps per day
+
+% Outputs:
+%   - fe.raAct.km(ii).value: maintenance (respiration) coefficient - dependent on
+%           temperature and, depending on the models, degradable fraction
+%           (deltaT-1)
+
+% Modifies:
+%  
+%
+% References:
 % Amthor, J. S. (2000), The McCree-de Wit-Penning de Vries-Thornley
 % respiration paradigms: 30 years later, Ann Bot-London, 86(1), 1-20. 
 % Ryan, M. G. (1991), Effects of Climate Change on Plant Respiration, Ecol
@@ -18,40 +32,14 @@ function [f,fe,fx,s,d,p] = dyna_raAct_Thornley2000C(f,fe,fx,s,d,p,info,tix)
 % Thornley, J. H. M., and M. G. R. Cannell (2000), Modelling the components
 % of plant respiration: Representation and realism, Ann Bot-London, 85(1),
 % 55-67.
-% 
-% CONTACT    : Nuno
-% 
-% INPUTS
-% 
-% fT            : temperature effect on autrotrophic respiration (deltaT-1)
-%               (fe.rafTair.fT)
-% RMN           : nitrogen efficiency rate of maintenance respiration
-%               (gC.gN-1.deltaT-1) 
-%               (p.raAct.RMN)
-% C2N           : carbon to nitrogen ratio (gC.gN-1)
-%               (p.raAct.C2N(zix))
-% MTF           : metabolic fraction ([])
-%               (fe.cCycle.MTF)
-% YG            : growth yield coefficient - or growth efficiency (gC.gC-1)
-%               (p.raAct.YG)
-% stepsPerDay    : number of time steps per day
-%               (info.timeScale.stepsPerDay)
-% 
-% OUTPUTS
-% km        : maintenance (respiration) coefficient - dependent on
-%           temperature and, depending on the models, degradable fraction
-%           (deltaT-1)
-%           (fe.raAct.km(ii).value)
-% 
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-% questions: see the notes on the Fd below!!!
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-% adjust nitrogen efficiency rate of maintenance respiration
-%sujan RMN     = p.raAct.RMN ./ info.timeScale.stepsPerDay;
-RMN     = p.raAct.RMN ./ info.tem.model.time.nStepsDay;
-
+%
+% Created by:
+%   - Nuno Carvalhais (ncarval)
+%
+% Versions:
+%   - 1.0 on 06.02.2020 (sbesnard): cleaned up the code
+%
+% Notes :
 % Fd is the decomposable fraction from each plant pool (see Thornley and
 % Cannell 2000). Since we don't discriminate in the model, this should be
 % based on literature values (e.g. sap to hard wood ratios). Before this
@@ -60,6 +48,11 @@ RMN     = p.raAct.RMN ./ info.tem.model.time.nStepsDay;
 % approach and add a flag to model parameters to switch it off.
 % Another thing to consider is if this a double count, since we have C2N
 % ratios?
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+% adjust nitrogen efficiency rate of maintenance respiration
+%sujan RMN     = p.raAct.RMN ./ info.timeScale.stepsPerDay;
+RMN     = p.raAct.RMN ./ info.tem.model.time.nStepsDay;
 
 for zix = info.tem.model.variables.states.c.zix.cVeg
     % make the Fd of each pool equal to the MTF
@@ -71,7 +64,7 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     
     % scalars of maintenance respiration for models A, B and C
     % km is the maintenance respiration coefficient (d-1)
-    km                      = 1 ./ s.cd.p_raAct_C2N(:,zix) .* RMN .* fe.rafTair.fT(:,tix);
+    km                      = 1 ./ s.cd.p_cCycleBase_C2Nveg(:,zix) .* RMN .* fe.rafTair.fT(:,tix);
     kd                      = p.raAct.Fd(:,zix);
     s.cd.p_raAct_km(:,zix)    = km .* kd;
     s.cd.p_raAct_km4su(:,zix)    = s.cd.p_raAct_km(:,zix) .* (1 - p.raAct.YG);
