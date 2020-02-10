@@ -117,7 +117,7 @@ for sl      =   1:nSoilLayers
         s.wd.p_wSoilBase_kLookUp{sl}            = tmpLookUp;
     end
 end
-%--> get the plant available water available
+%--> get the plant available water capacity
 s.wd.p_wSoilBase_wAWC                           =   s.wd.p_wSoilBase_wFC - s.wd.p_wSoilBase_wWP;
 %--> set the make lookUp flag to false after creating the table 
 if info.tem.model.flags.useLookupK
