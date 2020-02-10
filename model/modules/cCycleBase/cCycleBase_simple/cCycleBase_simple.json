@@ -45,59 +45,14 @@
                 "dparams" : []
             },
             "Comment": ""
-            },
-        "cVegRootF_AGE_per_PFT": 
-        {
-            "Name": "mean age of fine roots",
-            "Unit": "yr",
-            "Default": [1.8,1.2,1.2,5.0,1.8,1.0,1.0,0.0,1.0,2.8,1.0,1.0],
-            "LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-            "UpperBound": [20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0],
-            "Distribution": 
-            {
-                "name": "uniform",
-                "funHandle" : "",
-                "dparams" : []
-            },
-            "Comment": ""
+
         },
-        "cVegRootC_AGE_per_PFT": 
-        {
-            "Name": "mean age of coarse roots",
-            "Unit": "yr",
-            "Default": [41.0,58.0,58.0,42.0,27.0,25.0,25.0,0.0,5.5,40.0,1.0,40.0],
-            "LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-            "UpperBound": [100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0],
-            "Distribution": 
-            {
-                "name": "uniform",
-                "funHandle" : "",
-                "dparams" : []
-            },
-            "Comment": ""
-        },
-        "cVegWood_AGE_per_PFT": 
-        {
-            "Name": "mean age of wood",
-            "Unit": "yr",
-            "Default": [41.0,58.0,58.0,42.0,27.0,25.0,25.0,0.0,5.5,40.0,1.0,40.0],
-            "LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-            "UpperBound": [100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0],
-            "Distribution": 
-            {
-                "name": "uniform",
-                "funHandle" : "",
-                "dparams" : []
-            },
-            "Comment": ""
-        },
-        "cVegLeaf_AGE_per_PFT": 
-        {
-            "Name": "mean age of leafs",
-            "Unit": "yr",
-            "Default": [1.8,1.2,1.2,5.0,1.8,1.0,1.0,0.0,1.0,2.8,1.0,1.0],
-            "LowerBound": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-            "UpperBound": [20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0],
+        "C2Nveg":{
+            "Name": "carbon to nitrogen ratio in vegetation pools",
+            "Unit": "gC/gN",
+            "Default": [25,260,260,25],
+            "LowerBound": NaN,
+            "UpperBound": NaN,
             "Distribution": 
             {
                 "name": "uniform",
