@@ -13,19 +13,6 @@
             },
             "Comment": ""
         },
-        "C2N": {
-            "Name": "carbon to nitrogen ratio in fine roots",
-            "Unit": "gC/gN",
-            "Default": [25,260,260,25],
-            "LowerBound": NaN,
-            "UpperBound": NaN,
-            "Distribution": {
-                "name": "uniform",
-                "funHandle" : "",
-                "params" : []
-            },
-            "Comment": "Don't remember where I got this from (nuno). Pools order assumptions cVegRootF,cVegRootC,cVegWood,cVegLeaf"
-        },
         "YG": {
             "Name": "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration",
             "Unit": "gC/gC",
