@@ -24,6 +24,19 @@
 		"sourceDataProductName": "CERES",
 		"dataPath": ""
 	},
+		"PAR":
+		{
+			"variableUnit": "MJ m-2",
+			"bounds": [-50, 500],
+			"sourceVariableName": "Rn",
+			"sourceVariableUnit": "MJ m-2",
+			"source2sindbadUnit": "*1",
+			"isCategorical": false,
+			"nameShort": "PAR=Rn",
+			"spaceTimeType": "normal",
+			"sourceDataProductName": "CERES",
+			"dataPath": ""
+		},
 	"Rain":
     {
 		"variableUnit": "mm d-1",
