@@ -30,8 +30,8 @@ nSoilLayers                         =   info.tem.model.variables.states.w.nZix.w
 
 
 for sl = 1:nSoilLayers
-    wSoilAvail                      =   minsb(s.w.wSoil(:,sl),s.wd.p_wSoilBase_wAWC(:,sl));
-    s.wd.pawAct(:,sl)               =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* (maxsb(wSoilAvail - s.wd.p_wSoilBase_wWP(:,sl),0));
+    % wSoilAvail                      =   minsb(s.w.wSoil(:,sl),s.wd.p_wSoilBase_wAWC(:,sl));
+    s.wd.pawAct(:,sl)               =   s.wd.p_rootFrac_fracRoot2SoilD(:,sl) .* (maxsb(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wWP(:,sl),0));
 end
 
 end
