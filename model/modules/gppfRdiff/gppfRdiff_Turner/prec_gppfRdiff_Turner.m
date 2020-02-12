@@ -29,6 +29,6 @@ rueRatio                        =   p.gppfRdiff.rueRatio .* info.tem.helpers.arr
 CI                              =   info.tem.helpers.arrays.zerospixtix;
 valid                           =   f.RgPot > 0;
 CI(valid)                       =   f.Rg(valid) ./ f.RgPot(valid);
-SCI                             =   (CI - minsb(CI)) ./ (maxsb(CI) - minsb(CI));
+SCI                             =   (CI - min(CI,2)) ./ (max(CI,2) - min(CI,2));
 d.gppfRdiff.CloudScGPP          =   (1 - rueRatio) .* SCI + rueRatio;
 end

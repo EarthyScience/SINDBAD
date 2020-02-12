@@ -93,7 +93,7 @@ userOutPath             =   '';
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
 userInPath              =   '/home/skoirala/sindbad/testBeds_sindbad/input';
-userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_test_nep';
+userOutPath             =   '/home/skoirala/sindbad/testBeds_sindbad/output_test_cra';
 % 
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_cpl';
@@ -115,9 +115,9 @@ end
 
 %% select the tests to run (see explanations at the beginning of this script)
 testCases               =   [1 2 3 4 5];
-% testCases               =   [1 2 3 4 5];
+% testCases               =   [2 3 4 5];
 % testCases               =   [1];
-testCases               =   [4];
+% testCases               =   [1];
 % testCases             =   [ 4 ];
 % testCases             =   [5];
 % testCases             =   [ 1 ];

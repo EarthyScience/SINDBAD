@@ -50,7 +50,6 @@ end
 
 %% read the information related to cost function
 costName                            =   info.opti.costFun.funName;
-info.opti.costFun.funName           =   ['calc' costName];
 defCostOptionsFilePath              =   convertToFullPaths(info,['optimization' '/' 'costFunctions' '/' costName '/' 'options_' costName '.json']);
 
 try
@@ -75,11 +74,14 @@ end
 
 %% create the output directory path for output files of the optimization algorithm
 if isfield(info.opti.algorithm.options,'outDirPath')
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/' info.opti.algorithm.options.outDirPath '/']);
+    info.opti.paths.outDirPath              =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/' info.opti.algorithm.options.outDirPath '/']);
+    info.opti.algorithm.options.outDirPath  =   info.opti.paths.outDirPath;
 else
-    info.opti.algorithm.options.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/']);    
+    info.opti.paths.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/']);    
 end
-info.opti.algorithm.options.outFilePath         =   [info.opti.algorithm.options.outDirPath '/' 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
+mkdirx(info.opti.paths.outDirPath);
+info.opti.paths.ParamFilePath         =   [info.opti.paths.outDirPath 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
+info.opti.paths.outFullPath         =   [info.opti.paths.outDirPath 'optimResultsFull' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.mat'];
 %% 1) create the function handles and get constraints for optimization
 fun_fields = fieldnames(info.opti.constraints.funName);
 for jj=1:numel(fun_fields)

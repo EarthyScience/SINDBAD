@@ -29,6 +29,9 @@ function [fe,fx,d,info] = createVariableArray(d,info)
 %
 % Versions: 
 %   + 1.0 on 17.04.2018
+%   - 1.1 on 10.02.2020: added section to create the diagnostic arrays to be
+%   saved in d.prev fields, and set it to zeros (nPix,1)
+
 
 %%
 fe                      =   struct;
@@ -63,4 +66,14 @@ for v2c                 =   1:numel(vars2create)
         disp([pad('WARN VARIABLE',20,'right') ' : ' pad('createVariableArray',20) ' | The variable ' var2cr ' has already been created'])
     end
 end
+
+%--> create all state arrays in d.prev
+allPrevVars         =  info.tem.model.code.variables.to.keepDestination;
+dPrevVars           =  allPrevVars(startsWith(allPrevVars,'d.prev'));
+for sv = 1:numel(dPrevVars)
+    prvDes     = dPrevVars{sv};
+    eval([prvDes '= info.tem.helpers.arrays.zerospix;'])
+    info.tem.model.variables.created{end+1}    =    prvDes;
+end
+
 end

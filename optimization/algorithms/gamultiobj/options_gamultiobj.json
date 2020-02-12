@@ -1,0 +1,18 @@
+{
+    "TolFun": 1e-4, 
+    "TolCon": 1e-3, 
+    "InitialPopulation":[], 
+    "InitialScores": [], 
+    "PlotInterval":1, 
+    "CreationFcn": @gacreationuniform, 
+    "SelectionFcn": "{{@selectiontournament,2}}", 
+    "CrossoverFcn":"@crossoverintermediate", 
+    "MutationFcn":"@mutationadaptfeasible", 
+    "DistanceMeasureFcn":"{{@distancecrowding, 'phenotype'}}", 
+    "HybridFcn":[], 
+    "Display": "final", 
+    "PlotFcns": [], 
+    "OutputFcns": [], 
+    "Vectorized": "off", 
+    "UseParallel": false
+}

@@ -98,7 +98,7 @@
 		},
 		"cTaufpVeg":
 		{
-			"apprName": 	"cTaufpVeg_CASA",
+			"apprName": 	"cTaufpVeg_none",
 			"runFull": 		false,
             "use4spinup":   false
 		},
