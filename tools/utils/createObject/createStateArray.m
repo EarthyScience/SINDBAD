@@ -42,6 +42,9 @@ function [s,d,info] = createStateArray(info)
 %   structure, and removal of prev or variables to keep. exception for
 %   state variables not in modelStructure but in code: create nPix,1 and
 %   moving of storedStates fields to storeStates_simple
+%   - 1.2 on 10.02.2020: added section to create the state arrays to be
+%   saved in s.prev fields, and set it to same inital values as state
+%   arrays
 
 %%
 
@@ -100,5 +103,16 @@ for ij                  =    1:numel(stateVarsCode)
         end
     end
     
+end
+
+%--> create all state arrays in s.prev
+allPrevVars         =  info.tem.model.code.variables.to.keepDestination;
+sPrevVars           =  allPrevVars(startsWith(allPrevVars,'s.prev'));
+for sv = 1:numel(sPrevVars)
+    prvDes     = sPrevVars{sv};
+    tmp= prvDes(8:end);
+    prvSrc      = strrep(tmp,'_','.');
+    eval([prvDes '=' prvSrc ';'])
+    info.tem.model.variables.created{end+1}    =    prvDes;
 end
 end

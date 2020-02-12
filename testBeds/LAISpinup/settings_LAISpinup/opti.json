@@ -6,7 +6,13 @@
 	},
 	"algorithm": {
 		"funName": "cmaes",
-		"nonDefOptFile": "testBeds/cCycleOpti/settings_cCycleOpti/extraOptionsOpti/extraOptions_cmaes.json"
+		"nonDefOptFile": "testBeds/cCycleOpti/settings_cCycleOpti/extraOptionsOpti/extraOptions_cmaes.json",
+		"isMultiObj": false
+	},
+	"optimizer":{
+		"funName": "",
+		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
+
 	},
 	"params2opti": [
 		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA", "gppfTair.ToptB"
