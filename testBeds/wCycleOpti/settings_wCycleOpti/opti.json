@@ -12,7 +12,12 @@
     },
     "algorithm": {
         "funName": "cmaes_costComp",
-        "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_cmaes_costComp.json"
+        "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_cmaes_costComp.json",
+		"isMultiObj": false
+	},
+	"optimizer":{
+		"funName": "optimizeTEM_cmaes",
+		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
     },
     "params2opti": [
         "vegFrac.constantVegFrac",

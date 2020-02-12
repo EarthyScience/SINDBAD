@@ -29,10 +29,12 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %   - v1.3: Sujan Koirala (skoirala)
 %   - v1.4: Tina Trautmann (ttraut) 
 %   - v1.5: Sujan Koirala 
+%   - v1.6: Sujan Koirala 
 %
 % References:
 %
 % Versions:
+%   - 1.6 on 11.02.2020 (handling of full optimization output)
 %   - 1.5 on 10.11.2019 (handling of writing output)
 %   - 1.4 on 09.01.2019
 %   - 1.3 on 20.12.2018
@@ -178,17 +180,21 @@ if info.tem.model.flags.runOpti
     % end log file content
     
     % function handle for optimization
-    optimizerFunName                        =   ['optimizeTEM_' info.opti.algorithm.funName];
-    if ~exist(optimizerFunName)
-        optimizerFunName                    =   'optimizeTEM';
+    if isempty(info.opti.optimizer.funName)
+        optimizerFunName                        =   ['optimizeTEM_' info.opti.algorithm.funName];
+    else
+        optimizerFunName = info.opti.optimizer.funName;
     end
     optimizerFunHandle                      =   str2func(optimizerFunName);
     
     % evaluate the optimization
-    [pScalesS]                              =   feval(optimizerFunHandle,f,obs,info);
-    
+    [optimOutFull]                          =   feval(optimizerFunHandle,f,obs,info);
     % get the optimized parameter values into p
-    pScales                                 =   pScalesS.x;
+    pScales                                 =   optimOutFull.pScales;
+    if info.opti.algorithm.isMultiObj
+        pScales                                 =   mean(pScales,1);
+    end
+    
     for i                                   =   1:numel(info.opti.params.names)
         eval([info.opti.params.names{i} '   = info.opti.params.defaults(i) .* pScales(i);'])
     end
@@ -196,7 +202,10 @@ if info.tem.model.flags.runOpti
     % save the optimized parameters as a json
     [paramFile] = saveOptimizedParams(info, p);
     disp([pad('optimized parameter values are saved in a .json file',30) ' : ' paramFile])
- 
+    % save the full optimization results
+    save(info.opti.paths.outFullPath, 'optimOutFull', '-v7.3')
+    disp(pad(['saved full optimization output to : ' info.opti.paths.outFullPath],200))
+    
     % start log file content
     disp(pad('-',200,'both','-'))
     disp(pad('Forward run SINDBAD model with optimized parameters',200,'both',' '))

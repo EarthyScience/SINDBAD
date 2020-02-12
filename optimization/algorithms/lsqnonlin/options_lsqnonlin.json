@@ -1,6 +1,4 @@
 {
-    "lsqnonlin": 
-{
         "Algorithm": "levenberg-marquardt",
         "LevenbergMarquardt": true,
         "LargeScale": false,
@@ -13,5 +11,4 @@
         "TolX": [1.00E-12],
         "TolFun": [1.00E-12],
         "Display": false
-    }
 }

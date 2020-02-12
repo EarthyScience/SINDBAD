@@ -73,7 +73,6 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % Get variables for previous time step and keep in s.prev. or d.prev
     % ---------------------------------------------------------------------
-    [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
     [f,fe,fx,s,d,p]     =   ms.getStates.funHandle(f,fe,fx,s,d,p,info,tix);         % get the amount of water at the beginning of timestep
     % ---------------------------------------------------------------------
     % Terrain: terrain/topography params   
@@ -192,6 +191,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % ---------------------------------------------------------------------
     % Store the time series of selected state variables
     % ---------------------------------------------------------------------
+    [f,fe,fx,s,d,p]     =   ms.keepStates.funHandle(f,fe,fx,s,d,p,info,tix);        % keep states from previous time step to s.prev    
     [f,fe,fx,s,d,p]     =   ms.storeStates.funHandle(f,fe,fx,s,d,p,info,tix);       % store the full time series of selected state variables
 end
 % disp([pad('TIME LOOP',20)  ' : ' pad('coreTEM',20) ' | Completed the time loop of SINDBAD core | Total Time Needed: ' sec2som(toc(tstart))]) 
