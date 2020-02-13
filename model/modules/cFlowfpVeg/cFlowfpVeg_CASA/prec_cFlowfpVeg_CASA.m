@@ -1,11 +1,41 @@
 function [f,fe,fx,s,d,p] = prec_cFlowfpVeg_CASA(f,fe,fx,s,d,p,info)
-% effect of vegetation on transfer rates between pools (Potter et al 1993)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % effects of vegetation that change the transfers 
+    % between carbon pools
+    %
+    % Inputs:
+    %   - s.cd.p_cTaufpVeg_MTF:              fraction of C in structural litter pools 
+    %                                        that will be metabolic from lignin:N ratio
+    %   - s.cd.p_cTaufpVeg_SCLIGNIN:         fraction of C in structural litter pools from lignin
+    %   - p.cFlowfpVeg.WOODLIGFRAC:          fraction of wood that is lignin
+    %
+    % Outputs:
+    %   - s.cd.p_cFlowfpVeg_E:               effect of vegetation on transfer efficiency between pools
+    %   - s.cd.p_cFlowfpVeg_F:               effect of vegetation on transfer fraction between pools
+    %
+    % Modifies:
+    %   - s.cd.p_cFlowfpVeg_E
+    %   - s.cd.p_cFlowfpVeg_F
+    %
+    % References:
+    %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
+    %     Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
+    %     production: A process model based on global satellite and surface data.
+    %     Global Biogeochemical Cycles. 7: 811-841.
+    %
+    % Created by:
+    %   - ncarvalhais 
+    %
+    % Versions:
+    %   - 1.0 on 13.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % s.cd.p_cFlowfpVeg_fVeg = zeros(nPix,numel(info.tem.model.c.nZix)); %sujan
 %s.cd.p_cFlowfpVeg_fVeg      =   info.tem.helpers.arrays.zerospixzix.c.cEco;
 s.cd.p_cFlowfpVeg_F      =   repmat(info.tem.helpers.arrays.zerospixzix.c.cEco,1,1,...
                                         info.tem.model.variables.states.c.nZix.cEco);
-                                    s.cd.p_cFlowfpVeg_E = s.cd.p_cFlowfpVeg_F;
+s.cd.p_cFlowfpVeg_E = s.cd.p_cFlowfpVeg_F;
 % ADJUST cFlow BASED ON PARTICULAR PARAMETERS...
 %   SOURCE,TARGET,INCREMENT... 
 aM    = {...

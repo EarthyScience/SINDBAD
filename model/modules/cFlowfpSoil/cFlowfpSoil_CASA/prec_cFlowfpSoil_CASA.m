@@ -1,4 +1,39 @@
 function [f,fe,fx,s,d,p] = prec_cFlowfpSoil_CASA(f,fe,fx,s,d,p,info)
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % effects of soil that change the transfers 
+    % between carbon pools
+    %
+    % Inputs:
+    %   - s.wd.p_wSoilBase_CLAY:              soil hydraulic properties for clay layer
+    %   - s.wd.p_wSoilBase_SILT:              soil hydraulic properties for silt layer 
+    %   - p.cFlowfpSoil.effA:                                
+    %   - p.cFlowfpSoil.effB:                  
+    %   - p.cFlowfpSoil.effCLAY_cSoilSlow_A:  
+    %   - p.cFlowfpSoil.effCLAY_cSoilSlow_B:
+    %   - p.cFlowfpSoil.effCLAY_cMicSoil_A:
+    %   - p.cFlowfpSoil.effCLAY_cMicSoil_B:
+    %
+    % Outputs:
+    %   - s.cd.p_cFlowfpSoil_E:               effect of soil on transfer efficiency between pools
+    %   - s.cd.p_cFlowfpSoil_F:               effect of soil on transfer fraction between pools
+    %
+    % Modifies:
+    %   - s.cd.p_cFlowfpSoil_E
+    %   - s.cd.p_cFlowfpSoil_F
+    %
+    % References:
+    %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
+    %     Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
+    %     production: A process model based on global satellite and surface data.
+    %     Global Biogeochemical Cycles. 7: 811-841.
+    %
+    % Created by:
+    %   - ncarvalhais 
+    %
+    % Versions:
+    %   - 1.0 on 13.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % s.cd.p_cFlowfpSoil_fSoil = zeros(numel(info.tem.model.nPix),numel(info.tem.model.nZix));
 % s.cd.p_cFlowfpSoil_fSoil = info.tem.helpers.arrays.zerospixzix.c.cEco;
@@ -24,7 +59,6 @@ aMF = {...
     'cMicSoil',     'cSoilSlow',    1 - (p.cFlowfpSoil.effCLAY_cMicSoil_A + (p.cFlowfpSoil.effCLAY_cMicSoil_B .* CLAY));...
     'cMicSoil',     'cSoilOld',     p.cFlowfpSoil.effCLAY_cMicSoil_A + (p.cFlowfpSoil.effCLAY_cMicSoil_B .* CLAY);...
     };
-
     
 for vn = {'E','F'}
 %     switch vn{1}

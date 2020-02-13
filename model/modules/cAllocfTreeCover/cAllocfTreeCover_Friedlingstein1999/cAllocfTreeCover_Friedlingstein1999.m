@@ -1,7 +1,29 @@
 function [f,fe,fx,s,d,p] = cAllocfTreeCover_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
-
-% adjust the allocation coefficients according to the fraction of
-% trees to herbaceous and fine to coarse root partitioning
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % adjust the allocation coefficients according to the fraction of
+    % trees to herbaceous and fine to coarse root partitioning
+    %
+    % Inputs:
+    %   - p.pVeg.TreeCover:            values for tree cover
+    %   - p.cAllocfTreeCover.Rf2Rc:    values for fine root to coarse root fraction 
+    %   - s.cd.cAlloc:                 the fraction of NPP that is allocated to the different plant organs                
+    %
+    % Outputs:
+    %   - s.cd.cAlloc: adjusted fraction of NPP that is allocated to the different plant organs  
+    %
+    % Modifies:
+    %   - s.cd.cAlloc
+    %
+    % References:
+    %   -  Friedlingstein, P., G. Joel, C.B. Field, and I.Y. Fung, 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol., 5, 755-770, doi:10.1046/j.1365-2486.1999.00269.x.
+    %
+    % Created by:
+    %   - ncarvalhais 
+    %
+    % Versions:
+    %   - 1.0 on 12.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % TreeCover and fine to coarse root ratio
 tc      = p.pVeg.TreeCover;
