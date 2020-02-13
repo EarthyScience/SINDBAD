@@ -1,6 +1,6 @@
 function [f,fe,fx,s,d,p] = cFlowAct_none(f,fe,fx,s,d,p,info,tix)
-% @nc : none means there is not transfer, or that nothing is transfered, so, flux matrices are all 0 and figer, taker order is []
-
+% set transfer between pools to 0 (i.e. nothing is transfered)
+% set giver and taker matrices to []
 tmp    = repmat(info.tem.helpers.arrays.zerospixzix.c.cEco,1,1,...
     info.tem.model.variables.states.c.nZix.cEco);
 

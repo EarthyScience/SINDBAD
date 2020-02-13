@@ -1,37 +1,51 @@
 {
     "params": {
-        "minL_fW": {
+        "tau": {
             "Name": "",
             "Unit": "",
-            "Default": 0.5,
-            "LowerBound": 0,
+            "Default": 0.02,
+            "LowerBound": 0.001,
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "minimum limitation for the moisture function (for pseudo Nutrient Limitation estimations)"
+            "Comment": "turn-over times"
         },
-        "maxL_fW": {
+        "slope": {
             "Name": "",
             "Unit": "",
-            "Default": 0.5,
-            "LowerBound": 0,
-            "UpperBound": 1,
+            "Default": 1,
+            "LowerBound": 0.1,
+            "UpperBound": 200,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "maximum limitation for the moisture function (for pseudo Nutrient Limitation estimations)"
+            "Comment": "slope"
+        },
+        "base": {
+            "Name": "",
+            "Unit": "",
+            "Default": 10,
+            "LowerBound": 0,
+            "UpperBound": 100,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "base"
         }
     },
     "devStage": {
-        "experimental": false,
-        "tested": true,
+        "experimental": true,
+        "tested": false,
         "consolidated": false,
         "published": false,
         "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
+
 }
