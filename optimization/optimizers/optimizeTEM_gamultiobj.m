@@ -36,7 +36,17 @@ disp([pad('TIMERUN',20) ' : ' pad(['optimizeTEM_' info.opti.algorithm.funName]) 
 %% prepare the options of optimization and cost function handles and call optimization
 defOpts                     =   info.opti.algorithm.options;
 %--> convert struct to name value pairs
-op2nameVal                  =   namedargs2cell(defOpts);
+try
+    op2nameVal                  =   namedargs2cell(defOpts);
+catch
+    op2nameVal                  =   {};
+    fieldNames                  =   fieldnames(defOpts);
+    for fn    = 1:numel(fieldNames)
+        op2nameVal{fn}          =   fieldNames{fn};
+        op2nameVal{end+1}       =   defOpts.(fieldNames{fn});
+    end
+end
+
 %--> create the options to pass to ga
 gaOptions                   =   optimoptions(@gamultiobj,op2nameVal{:});
 LBounds                     =   info.opti.params.lBoundsScaled;
