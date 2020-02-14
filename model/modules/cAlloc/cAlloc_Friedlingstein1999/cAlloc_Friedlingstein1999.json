@@ -39,5 +39,12 @@
             },
             "Comment": "relative importance of investments to acquire Y-type  resources (see Friedlingstein et al 1999 section Allocation and resources estimate for ambient conditions"
         }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }

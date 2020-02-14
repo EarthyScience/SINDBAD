@@ -1,14 +1,31 @@
 function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% FUNCTION	: prec_cAlloc_Friedlingstein1999
-% 
-% PURPOSE	: compute the fraction of NPP that is allocated to the
+% compute the fraction of NPP that is allocated to the
 % different plant organs following the scheme of Friedlingstein et al 1999.
 % Check cAlloc_Friedlingstein1999 for details.
-% 
-% INPUT
-% PET       : potential evapotranspiration [mm/time]
-%           (fe.PET.PET)
+%
+% Inputs:
+%   - fe.cAllocfNut.minWLNL: values for the pseudo-nutrient limitation
+%   - d.cAllocfLAI.LL:       values for light limitation 
+%   - p.cAlloc.ro:           carbon allocation to root for non-limiting conditions 
+%   - p.cAlloc.RelY:         relative importance of investments to acquire Y-type  resources (see Friedlingstein et al 1999 section Allocation and resources estimate for ambient conditions
+%   - p.cAlloc.so:           carbon allocation to stem for non-limiting conditions
+%
+% Outputs:
+%   - s.cd.cAlloc: the fraction of NPP that is allocated to the different plant organs 
+%
+% Modifies:
+%   - s.cd.cAlloc
+%
+% References:
+%   -  Friedlingstein, P., G. Joel, C.B. Field, and I.Y. Fung, 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol., 5, 755-770, doi:10.1046/j.1365-2486.1999.00269.x.
+%
+% Created by:
+%   - ncarvalhais
+%
+% Versions:
+%   - 1.0 on 12.01.2020 (sbesnard)
+%
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % allocation to root, wood and leaf

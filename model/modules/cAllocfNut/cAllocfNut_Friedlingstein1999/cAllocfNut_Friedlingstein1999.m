@@ -1,15 +1,41 @@
 function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
-
-
-% pseudo-nutrient limitation (NL) calculation: 
-% "There is no explicit estimate of soil mineral nitrogen in the version of
-% CASA used for these simulations. As a surrogate, we assume that spatial
-% variability in nitrogen mineralization and soil organic matter
-% decomposition are identical (Townsend et al. 1995). Nitrogen
-% availability, N, is calculated as the product of the temperature and
-% moisture abiotic factors used in CASA for the calculation of microbial
-% respiration (Potter et al. 1993)." in Friedlingstein et al., 1999.
-
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % pseudo-nutrient limitation (NL) calculation: 
+    % "There is no explicit estimate of soil mineral nitrogen in the version of
+    % CASA used for these simulations. As a surrogate, we assume that spatial
+    % variability in nitrogen mineralization and soil organic matter
+    % decomposition are identical (Townsend et al. 1995). Nitrogen
+    % availability, N, is calculated as the product of the temperature and
+    % moisture abiotic factors used in CASA for the calculation of microbial
+    % respiration (Potter et al. 1993)." in Friedlingstein et al., 1999.%
+    %
+    % Inputs:
+    %   - fe.PET.PET:               values for potential evapotranspiration
+    %   - fe.cAllocfTsoil.NL_fT:    values for partial computation for the temperature effect on
+    %                               decomposition/mineralization 
+    %   - d.cAllocfwSoil.NL_fW:     values for partial computation for the moisture effect on
+    %                               decomposition/mineralization 
+    %   - p.cAllocfNut.minL:        factor for minimum resource availability (severely limited)
+    %   - p.cAllocfNut.maxL:        factor for maximum resource availability (readily available)
+    %   - s.wd.pawAct:              values for maximum fraction of water that root can uptake from soil layers as constant 
+    %   - s.wd.p_wSoilBase_wAWC:    values for the plant water available
+    %
+    % Outputs:
+    %   - fe.cAllocfNut.minWLNL: the pseudo-nutrient limitation (NL) calculation 
+    %
+    % Modifies:
+    %   - fe.cAllocfNut.minWLNL
+    %
+    % References:
+    %   -  Friedlingstein, P., G. Joel, C.B. Field, and I.Y. Fung, 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol., 5, 755-770, doi:10.1046/j.1365-2486.1999.00269.x.
+    %
+    % Created by:
+    %   - ncarvalhais 
+    %
+    % Versions:
+    %   - 1.0 on 12.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % estimate NL
 NL                          = p.cAllocfNut.minL.*ones(size(fe.PET.PET(:,tix)));
