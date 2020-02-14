@@ -1012,9 +1012,9 @@ while irun <= myeval(opts.Restarts) % for-loop does not work with resume
           
           fitness.sel = fitness.raw;
           
-          fitness.Tina.allCostComp = allCostComp;
-          fitness.Tina.allCost = allCostTina;
-          fitness.Tina.allX    = allParaTina;
+          out.full.allCostComp = allCostComp;
+          out.full.allCost = allCostTina;
+          out.full.allX    = allParaTina;
         
         % ----- handle boundaries -----
         if 1 < 3 && bnd.isactive
@@ -1526,7 +1526,7 @@ while irun <= myeval(opts.Restarts) % for-loop does not work with resume
             out.solutions.bestever.evals = counteval + fitness.idx(1) - lambda;
             bestever = out.solutions.bestever;
         end
-        
+
         % Set stop flag
         if fitness.raw(1) <= stopFitness, stopflag(end+1) = {'fitness'}; end
         if counteval >= stopMaxFunEvals, stopflag(end+1) = {'maxfunevals'}; end
