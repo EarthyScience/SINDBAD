@@ -24,4 +24,5 @@ function [f,fe,fx,s,d,p]=EVI_forcing(f,fe,fx,s,d,p,info,tix)
 
 %% 
 s.cd.EVI = f.EVI(:,tix);
+
 end

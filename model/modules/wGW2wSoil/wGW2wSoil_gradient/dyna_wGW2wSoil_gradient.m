@@ -42,7 +42,7 @@ fx.GW2Soil(:,tix)  = min(fe.wGW2wSoil.potFlux(:,tix), min(s.w.wGW, s.wd.p_wSoilB
 fx.GW2Soil(:,tix)  = max(fx.GW2Soil(:,tix), max(-s.w.wSoil(:,wSoilend), -(s.wd.p_wGW2wSoil_gwmax - s.w.wGW))); % use here the fx.GW2Soil from above! 
 
 % update water pools
-s.w.wSoil(:,wSoilend)   = s.w.wSoil(:,2) + fx.GW2Soil(:,tix);
+s.w.wSoil(:,wSoilend)   = s.w.wSoil(:,wSoilend) + fx.GW2Soil(:,tix);
 s.w.wGW                 = s.w.wGW - fx.GW2Soil(:,tix);
 
 end
