@@ -14,7 +14,8 @@
 		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
 	},
 	"params2opti": [
-		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA", "gppfTair.ToptB"
+		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA",
+		 "gppfTair.ToptB"
 	],
 	"checks": "Nuno, please help...",
 	"constraints": {

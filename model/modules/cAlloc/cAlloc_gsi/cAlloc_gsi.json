@@ -1,9 +1,9 @@
 {
     "params": {
-        "cVegRoot": {
-            "Name": "fraction of NPP to cRoot",
+        "Re2LRSlp":{
+            "Name": "slope reserve to leave/root",
             "Unit": "fractional",
-            "Default": 0.3,
+            "Default": 0.1,
             "LowerBound": 0,
             "UpperBound": 1,
             "Distribution": {
@@ -11,12 +11,12 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0.5 - this is allocation to below ground (roots) which is then partitioned according to Rf2Rc"
+            "Comment": ""
         },
-        "cVegWood": {
-            "Name": "fraction of NPP to cWood",
+        "kShed":{
+            "Name": "slope shedding",
             "Unit": "fractional",
-            "Default": 0.3,
+            "Default": 0.1,
             "LowerBound": 0,
             "UpperBound": 1,
             "Distribution": {
@@ -24,12 +24,12 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.3; if isTree==0 then 0"
+            "Comment": ""
         },
-        "cVegLeaf": {
-            "Name": "fraction of NPP to cLeaf",
+        "LR2ReSlp":{
+            "Name": "slope leave/root to reserve",
             "Unit": "fractional",
-            "Default": 0.4,
+            "Default": 0.1,
             "LowerBound": 0,
             "UpperBound": 1,
             "Distribution": {
@@ -37,7 +37,14 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.4; if isTree==0 then 0.5"
+            "Comment": ""
         }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }
