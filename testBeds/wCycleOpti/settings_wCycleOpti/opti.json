@@ -11,7 +11,7 @@
         ]
     },
     "algorithm": {
-        "funName": "cmaes_costComp",
+        "funName": "cmaes",
         "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_cmaes_costComp.json",
 		"isMultiObj": false
 	},
