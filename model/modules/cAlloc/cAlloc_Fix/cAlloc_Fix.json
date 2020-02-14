@@ -39,5 +39,12 @@
             },
             "Comment": "it was 1/3, to make it consistent with the Dynamic Allocation of Friedlingstein, we make it 0.4; if isTree==0 then 0.5"
         }
+    },
+    "devStage": {
+        "experimental": false,
+        "tested": true,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }
