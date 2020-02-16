@@ -1,19 +1,3 @@
 function [f,fe,fx,s,d,p] = dyna_gppfwSoil_none(f,fe,fx,s,d,p,info,tix)
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% PURPOSE	: none
-% 
-% REFERENCES:
-% 
-% CONTACT	: mjung, ncarval
-% 
-% INPUT
-% 
-% OUTPUT
-% 
-% DEPENDENCIES  :
-% 
-% NOTES:
-% 
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+% see prec_gppfwSoil_none
 end

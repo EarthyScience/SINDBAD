@@ -1,12 +1,12 @@
-function [f,fe,fx,s,d,p] = prec_gppfVPD_none(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_gppfTair_none(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% set the VPD stress on gppPot to ones (no stress)
+% set the temperature stress on gppPot to ones (no stress)
 %
 % Inputs:
 %   - info
 %
 % Outputs:
-%   - d.gppfVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
+%   - d.gppfTair.TempScGPP: effect of temperature on potential GPP
 %
 % Modifies:
 %   - 
@@ -24,5 +24,5 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_none(f,fe,fx,s,d,p,info)
 
 %%
 %--> set scalar to a constant one (no effect on potential GPP)
-d.gppfVPD.VPDScGPP = info.tem.helpers.arrays.onespixtix;
+d.gppfTair.TempScGPP = info.tem.helpers.arrays.onespixtix;
 end
