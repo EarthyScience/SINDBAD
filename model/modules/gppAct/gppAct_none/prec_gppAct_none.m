@@ -1,12 +1,12 @@
-function [f,fe,fx,s,d,p] = prec_gppfRdiff_none(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_gppAct_none(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% set the cloudiness scalar (radiation diffusion) for gppPot to ones
+% sets the actual GPP to zeros
 %
 % Inputs:
 %   - info
 %
 % Outputs:
-%   - d.gppfRdiff.CloudScGPP: effect of cloudiness on potential GPP
+%   - fx.gpp: actual GPP [gC/m2/time]
 %
 % Modifies:
 %   - 
@@ -15,7 +15,6 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_none(f,fe,fx,s,d,p,info)
 %   - 
 % 
 % Created by:
-%   - Martin Jung (mjung)
 %   - Nuno Carvalhais (ncarval)
 %
 % Versions:
@@ -24,6 +23,5 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_none(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-%--> set scalar to a constant one (no effect on potential GPP)
-d.gppfRdiff.CloudScGPP = info.tem.helpers.arrays.onespixtix;
+fx.gpp = info.tem.helpers.arrays.zerospixtix;
 end

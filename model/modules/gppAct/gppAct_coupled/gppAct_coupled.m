@@ -8,7 +8,7 @@ function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 %   - d.gppDem.gppE: Demand-driven GPP with stressors except wSoil applied
 %
 % Outputs:
-%   - fx.gpp: actual GPP 
+%   - fx.gpp: actual GPP [gC/m2/time]
 %
 % Modifies:
 %   - 
