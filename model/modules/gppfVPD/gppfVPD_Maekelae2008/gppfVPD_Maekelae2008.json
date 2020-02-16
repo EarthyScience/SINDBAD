@@ -1,11 +1,11 @@
 {
     "params": {
         "k": {
-            "Name": "??Check with martin",
-            "Unit": "??",
-            "Default": 0.01,
-            "LowerBound": -0.01,
-            "UpperBound": 0.1,
+            "Name": "empirical parameter assuming typically negative values",
+            "Unit": "kPa-1",
+            "Default": -0.40,
+            "LowerBound": -0.7,
+            "UpperBound": -0.06,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
@@ -13,5 +13,12 @@
             },
             "Comment": "from Maekelae2008"
         }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
 }

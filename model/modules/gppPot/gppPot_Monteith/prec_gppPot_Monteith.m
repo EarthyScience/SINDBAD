@@ -1,6 +1,6 @@
 function [f,fe,fx,s,d,p] = prec_gppPot_Monteith(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% set the potential GPP
+% set the potential GPP based on radiation use efficiency
 %
 % Inputs:
 %   - p.gppPot.maxrue : maximum instantaneous radiation use efficiency [gC/MJ]
