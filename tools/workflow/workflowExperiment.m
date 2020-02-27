@@ -47,6 +47,7 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 % create a temporary log file
 % -------------------------------------------------------------------------
 % resetPath
+
 tstartwf = tic;
 tmpStrDate                          =   datestr(now,30);
 tmpLogFile                          =   ['Log_SINDBAD_run_' tmpStrDate(1:end-7) '.txt'];
@@ -149,16 +150,13 @@ if info.tem.model.flags.runForward && ~info.tem.model.flags.runOpti
         end
         
         % do simulations for entire time series
-    else
-        
-        [f,fe,fx,s,d,info]                              =   prepTEM(info);
-        
+    else     
+        [f,fe,fx,s,d,info]                              =   prepTEM(info);        
         % start log file content
         disp(pad('-',200,'both','-'))
         disp(pad(['Forward run SINDBAD model with ' paramType ' parameters'],200,'both',' '))
         disp(pad('-',200,'both','-'))
-        % end log file content
-        
+        % end log file content        
         [f,fe,fx,s,d,p,precOnceData,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,infoSU]    =   runTEM(info,f,p,[],[],fx,fe,d,s);
         [~]                                                                         =   writeOutput(info,f,fe,fx,s,d,p);
     end
