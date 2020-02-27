@@ -42,8 +42,9 @@ catch
     op2nameVal                  =   {};
     fieldNames                  =   fieldnames(defOpts);
     for fn    = 1:numel(fieldNames)
-        op2nameVal{fn}          =   fieldNames{fn};
-        op2nameVal{end+1}       =   defOpts.(fieldNames{fn});
+        ind = 2*fn-1;
+        op2nameVal{ind}          =   fieldNames{fn};
+        op2nameVal{ind+1}       =   defOpts.(fieldNames{fn});
     end
 end
 
