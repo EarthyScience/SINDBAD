@@ -41,16 +41,16 @@ for vn = 1:numel(vars)
     vari = vars{vn};
     if size(f.(vari),2) == nSoilLayers
         dat = f.(vari);
-        disp([pad('prec_soilTexture_forcing',20) ' |  the vertical profile of soil texture properties and discretization match. Using the observed profile.'])
+        dispMsg = [pad('prec_soilTexture_forcing',20) ' |  the vertical profile of soil texture properties and discretization match. Using the observed profile.'];
+
     else
-        datTmp                      =   mean(f.(vari),2)
-        dat                         =   repmat(datTmp,1,nSoilLayers)
-        disp([pad('prec_soilTexture_forcing',20) ' |  the vertical profile of soil texture properties do not match the discretization...
-                    of soil layers in modelStructure.json. Using average of all layers for setting soil properties'])
+        datTmp                      =   mean(f.(vari),2);
+        dat                         =   repmat(datTmp,1,nSoilLayers);
+        dispMsg= [pad('prec_soilTexture_forcing',20) ' |  the vertical profile of soil texture properties do not match the discretization of soil layers in modelStructure.json. Using average of all layers for setting soil properties'];
     end        
     for sl      =   1:nSoilLayers
         eval(['s.wd.p_soilTexture_' vari '(:,sl)  = dat(:,sl);']);
     end
 end
-
+disp(dispMsg)
 end
