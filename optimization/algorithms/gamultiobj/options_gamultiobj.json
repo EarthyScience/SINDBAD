@@ -4,7 +4,7 @@
     "InitialPopulation":[], 
     "InitialScores": [], 
     "PlotInterval":1, 
-    "CreationFcn": @gacreationuniform, 
+    "CreationFcn": "@gacreationuniform", 
     "SelectionFcn": "{{@selectiontournament,2}}", 
     "CrossoverFcn":"@crossoverintermediate", 
     "MutationFcn":"@mutationadaptfeasible", 
