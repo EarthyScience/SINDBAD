@@ -1,6 +1,6 @@
 function [optimOut]=optimizeTEM_gamultiobj(f,obs,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% run the optimization of SINDBAD parameters using gamultiobs algorithm
+% run the optimization of SINDBAD parameters using gamultiobj algorithm
 %
 % Requires:
 %   - forcing structure so that it is not loaded in every iteration
@@ -8,10 +8,10 @@ function [optimOut]=optimizeTEM_gamultiobj(f,obs,info)
 %   - info
 %
 % Purposes:
-%   - returns the full output of the optimization 
+%   - returns the full output of the optimization
 %
 % Conventions:
-%   - always needs forcing and observation      
+%   - always needs forcing and observation
 %   - the parameter scalers should always be written in pScales field of optimOut
 %   - other output field names can be different
 %
@@ -21,7 +21,8 @@ function [optimOut]=optimizeTEM_gamultiobj(f,obs,info)
 % References:
 %
 % Versions:
-%   - 1.0 on 11.02.2020 
+%   - 1.0 on 11.02.2020
+%   - 1.1 on 27.02.2020: fixes in handling the options (skoirala)
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -35,9 +36,25 @@ disp([pad('TIMERUN',20) ' : ' pad(['optimizeTEM_' info.opti.algorithm.funName]) 
 
 %% prepare the options of optimization and cost function handles and call optimization
 defOpts                     =   info.opti.algorithm.options;
+%--> convert string fieldnames to function handles and cell arrays as needed by gamultiobj
+fieldNames                  =   fieldnames(defOpts);
+for fn                      =   1:numel(fieldNames)
+    fName                   =   fieldNames{fn};
+    valName                 =   defOpts.(fName);
+    if contains(fName,'Fcn') && ~isempty(valName) 
+        if startsWith(valName,'@')
+            valName         =   str2func(valName);
+        else
+            tmp             =   eval(valName);
+            valName         =   tmp{1};
+        end
+    end
+        defOpts.(fName)     = valName;
+end
+
 %--> convert struct to name value pairs
 try
-    op2nameVal                  =   namedargs2cell(defOpts);
+    op2nameVal                  =   namedargs2cell(defOpts); % works for MATLAB 2019b onwards
 catch
     op2nameVal                  =   {};
     fieldNames                  =   fieldnames(defOpts);
@@ -59,8 +76,8 @@ costhand                            =   @(pScales)calcCostTEM(pScales,f,p,precOn
 optimOut                                                            =   struct;
 optimOut.pScales                                                    =   x;
 optimOut.fval                                                       =   fval;
-optimOut.exitFlag                                                   =   exitFlag; 
-optimOut.output                                                     =   output; 
+optimOut.exitFlag                                                   =   exitFlag;
+optimOut.output                                                     =   output;
 optimOut.population                                                 =   population;
-optimOut.scores                                                     =   scores; 
+optimOut.scores                                                     =   scores;
 end
