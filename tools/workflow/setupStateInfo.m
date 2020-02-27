@@ -44,7 +44,7 @@ function [info] = setupStateInfo(info)
 %%
 
 if ~isfield(info.tem.model.variables.states,'input')
-  info.tem.model.variables.states.input     =   info.tem.model.variables.states;
+    info.tem.model.variables.states.input     =   info.tem.model.variables.states;
 end;
 
 

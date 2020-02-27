@@ -102,7 +102,6 @@ elseif  exist([info.experiment.sindbadroot expConfigFile],'file') || exist(getFu
             disp(pad('-',200,'both','-'))
         end
     end
-   
     % absolute paths of the config files
     info.experiment.configFiles     =   convertToFullPaths(info,info.experiment.configFiles);
     
@@ -119,7 +118,6 @@ else
     disp(pad('-',200,'both','-'))
     
 end
-    
 
 %% 3) add date helpers
 dateStart                    =  strsplit(info.tem.model.time.sDate,'-');

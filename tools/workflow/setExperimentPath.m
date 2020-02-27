@@ -29,6 +29,7 @@ function [ info ] = setExperimentPath(info)
 %
 % Versions:
 %   + 1.0 on 22.06.2018
+%   + 1.1 on 27.02.2020: skoirala: change the names of the generated code to shorten it
 
 %% check if the experiment name, domain and runDate exist
 if isfield(info.experiment, 'name')
@@ -121,15 +122,17 @@ info.tem.model.paths.runDir    =    info.experiment.outputDirPath;
 % info     = setGenCodePaths(info);
 % unique name for the generated code files according to experiment name and to runDate.
 
-tmpStrName    = [info.experiment.name '_' info.experiment.domain '_' info.experiment.runDate];
+% tmpStrName    = [info.experiment.name '_' info.experiment.domain '_' info.experiment.runDate]; %sujan: remove domain from generated code names to shorten them
+tmpStrName    = [info.experiment.name '_' info.experiment.runDate];
 tmpStrName  = strrep(strrep(tmpStrName,' ','_'),'-','_');
+
 
 for n1 = {'model','spinup'}
     str1 = '';
-    if strcmp(n1{1},'spinup'),str1='_Spinup';end
+    if strcmp(n1{1},'spinup'),str1='_SU';end
     for n2 = {'coreTEM','preCompOnce'}
-        str2 = 'Core';
-        if strcmp(n2{1},'preCompOnce'),str2='PrecOnce';end
+        str2 = 'c';
+        if strcmp(n2{1},'preCompOnce'),str2='po';end
         feedIt = true;
         if isfield(info.tem.(n1{1}).paths,'genCode')
             if isfield(info.tem.(n1{1}).paths.genCode,n2{1})
@@ -139,7 +142,7 @@ for n1 = {'model','spinup'}
             end
         end
         if feedIt
-            info.tem.(n1{1}).paths.genCode.(n2{1})    = [info.tem.model.paths.runDir 'code' '/' 'gen' str2 str1 '_' tmpStrName '.m'];
+            info.tem.(n1{1}).paths.genCode.(n2{1})    = [info.tem.model.paths.runDir 'code' '/' str2 str1 '_' tmpStrName '.m'];
         end
     end
 end

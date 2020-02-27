@@ -25,6 +25,7 @@ function [info] = setupCode(info)
 %
 % Created by:
 %   - Martin Jung (mjung)
+%   - Sujan Koirala (skoirala)
 %
 % References:
 %   -
@@ -1090,6 +1091,17 @@ fid                             =   fopen(CodePth, 'wt');
 %write the core
 str                             =   ['function [f,fe,fx,s,d,p] = ' genCoreName '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
+% sujan: adding information inside the file of the generated code
+if contains(genCoreName,'c_SU')
+    infoAdd = 'spinup';
+else
+    infoAdd = 'forward run';
+end
+% end sujan adding info
+
+str2                         =   ['% Automatically generated core function for ' infoAdd ' of the selected model structure and settings of SINDBAD'];
+fprintf(fid, '%s\n', str2);
+
 
 str                             =   '%%%starting with prec (always)%%%';
 fprintf(fid, '%s\n', str);
@@ -1154,8 +1166,14 @@ funhCore                    =   str2func(genCoreName);
 
 %%%%%%%%%%%%%%%%%precOnce
 
-genPrecOnceName             =    ['precOnce_' genCoreName];
-
+genPrecOnceName             =    ['p_' genCoreName(3:end)];
+% sujan: adding information inside the file of the generated code
+if contains(genPrecOnceName,'p_SU')
+    infoAdd = 'spinup';
+else
+    infoAdd = 'forward run';
+end
+% end sujan adding info
 CodePth                     =   [genCorePath '/' genPrecOnceName '.m'];
 
 if exist(CodePth,'file')
@@ -1167,6 +1185,8 @@ fid                         =   fopen(CodePth, 'wt');
 %write ...
 str                         =   ['function [f,fe,fx,s,d,p]=' genPrecOnceName '(f,fe,fx,s,d,p,info);'];
 fprintf(fid, '%s\n', str);
+str2                         =   ['% Automatically generated PrecOnce function for ' infoAdd ' of the selected model structure and settings of SINDBAD'];
+fprintf(fid, '%s\n', str2);
 
 doAlways                    =   0;
 [fid]                       =   writePrecContents(precs,doAlways,validModules,fid);
