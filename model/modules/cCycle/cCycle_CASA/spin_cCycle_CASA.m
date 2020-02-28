@@ -1,35 +1,44 @@
 function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
-% Solve the steady state of the cCycle for the CASA model based on
-% recurrent.
-%
-% Requires:
-%    - all SINDBAD structure + NI2E = number of iterations to equilibrium
-%
-% Purposes:
-%   - Returns the model C pools in equilibrium
-%
-% Conventions:
-%
-% Created by:
-%   - Nuno Carvalhais (ncarval)
-%   - Sujan Koirala (skoirala)
-%
-% References:
-% Not published but similar to the following:
-%   - Lardy, R., Bellocchi, G., & Soussana, J. F. (2011). A new method to determine soil organic carbon equilibrium. 
-%                                                         Environmental modelling & software, 26(12), 1759-1763.
-% Notes:
-%   - the input datasets [f,fe,fx,s,d] have to have a full year (or cycle
-%   of years) that will be used as the recycling dataset for the
-%   determination of C pools at equilibrium
-%   - for model structures that loop the carbon cycle between pools this is
-%   merely a rough approximation (the solution does not really work...)
-%
-% Versions:
-%   - 1.0 on 01.05.2018
-%   - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on
-%   Bt and At when nPix == 1 (single point simulation)
-%%
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % Solve the steady state of the cCycle for the CASA model based on
+    % recurrent. Returns the model C pools in equilibrium
+    %
+    % Inputs:
+    %   - fx.gpp:                       values for gross primary productivity
+    %   - d.storedStates.p_cTauAct_k:   Turn over times carbon pools 
+    %   - s.cd.p_cFlowAct_taker:        taker pool array
+    %   - s.cd.p_cFlowAct_giver:        giver pool array
+    %   - s.cd.p_cFlowAct_E:            effect of soil and vegetation on transfer efficiency between pools
+    %
+    % Outputs:
+    %   - sT.c.cEco:   states of the different carbon pools 
+    %
+    % Modifies:
+    %   - 
+    %
+    % References:
+    % Not published but similar to the following:
+    %   - Lardy, R., Bellocchi, G., & Soussana, J. F. (2011). A new method to determine soil organic carbon equilibrium. 
+    %     Environmental modelling & software, 26(12), 1759-1763.
+    %
+    % Created by:
+    %   - Nuno Carvalhais (ncarval)
+    %   - Sujan Koirala (skoirala) 
+    %
+    % Versions:
+    %   - 1.0 on 01.05.2018
+    %   - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on
+    %     Bt and At when nPix == 1 (single point simulation)
+    %
+    % Notes:
+    %   - the input datasets [f,fe,fx,s,d] have to have a full year (or cycle
+    %   of years) that will be used as the recycling dataset for the
+    %   determination of C pools at equilibrium
+    %   - for model structures that loop the carbon cycle between pools this is
+    %   merely a rough approximation (the solution does not really work...)
+
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 tstart = tic;
 
 % START fCt - final time series of pools
