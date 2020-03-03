@@ -1,5 +1,43 @@
 function [f,fe,fx,s,d,p] = prec_cTaufpVeg_CASA(f,fe,fx,s,d,p,info)
-% effect of vegetation type on turnover rates of c...
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % Compute effect of vegetation type on turnover rates (k)
+    %
+    % Inputs:
+    %   - p.pVeg.PFT: 
+    %   - p.cTaufpVeg.C2LIGNIN: parameter for fraction of C to ligning
+    %   - p.cTaufpVeg.MTFA:   
+    %   - p.cTaufpVeg.MTFB:
+    %   - p.cTaufpVeg.NONSOL2SOLLIGNIN:
+    %   - p.cTaufpVeg.LIGEFFA:
+    %   - p.cTaufpVeg.LITC2N_per_PFT: carbon-to-nitrogen ratio in litter
+    %   - p.cTaufpVeg.LIGNIN_per_PFT: fraction of litter that is lignin
+    %
+    % Outputs:
+    %   - s.cd.p_cTaufpVeg_kfVeg:
+    %   - s.cd.p_cTaufpVeg_LITC2N:
+    %   - s.cd.p_cTaufpVeg_LIGNIN:
+    %   - s.cd.p_cTaufpVeg_MTF:
+    %   - s.cd.p_cTaufpVeg_SCLIGNIN: 
+    %   - s.cd.p_cTaufpVeg_LIGEFF:
+    %
+    % Modifies:
+    %   - 
+    %
+    % References:
+    %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
+    %     Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
+    %     production: A process model based on global satellite and surface data.
+    %     Global Biogeochemical Cycles. 7: 811-841. 
+    %
+    % Created by:
+    %   - ncarvalhais
+    %
+    % Versions:
+    %   - 1.0 on 12.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 % s.cd.p_cCycleBase_annk                  =   p.cCycleBase.annk; %sujan
 % initialize the outputs to ones
 s.cd.p_cTaufpVeg_C2LIGNIN               =   p.cTaufpVeg.C2LIGNIN .* info.tem.helpers.arrays.onespix; %sujan
