@@ -1,51 +1,49 @@
 function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% FUNCTION    : cTaufwSoil_CASA
-% 
-% PURPOSE    : effect of soil moisture on soil decomposition as modelled in
-%           CASA (BGME - below grounf moisture effect). The below ground
-%           moisture effect, taken directly from the century model, uses
-%           soil moisture from the previous month to determine a scalar
-%           that is then used to determine the moisture effect on below
-%           ground carbon fluxes. BGME is dependent on PET, Rainfall. This
-%           approach is designed to work for Rainfall and PET values at the
-%           monthly time step and it is necessary to scale it to meet that
-%           criterion.
-% 
-% REFERENCES:
-% Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
-% Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
-% production: A process model based on global satellite and surface data. 
-% Global Biogeochemical Cycles. 7: 811-841. 
-% 
-% CONTACT    : Nuno
-% 
-% INPUT
-% stepsPerYear  : number of time steps per year
-%               (info.timeScale.stepsPerYear)
-% PET           : potential evapotranspiration (mm)
-%               (fi.PET)
-% Rainfall      : rainfall (mm)
-%               (fi.Rainfall)
-% pwSM          : soil moisture sum of all layers of previous time step [mm] 
-%               (s.prev.wSM)
-% Aws           : curve (expansion/contraction) controlling parameter
-%               (p.cTaufwSoil.Aws)
-% pBGME         : BGME of previous timestep
-% 
-% OUTPUT
-% BGME          : below ground moisture effect on decomposition processes
-%               ([])
-% pBGME         : BGME of this time step (to be used in the next
-%               calculation ([])
-% 
-% NOTES: the BGME is used as a scalar dependent on soil moisture, as the
-% sum of soil moisture for all layers. This can be partitioned into
-% different soil layers in the soil and affect independently the
-% decomposition processes of pools that are at the surface and deeper in
-% the soils.   
-% 
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % Compute effect of soil moisture on soil decomposition as modelled in
+    % CASA (BGME - below grounf moisture effect). The below ground
+    % moisture effect, taken directly from the century model, uses
+    % soil moisture from the previous month to determine a scalar
+    % that is then used to determine the moisture effect on below
+    % ground carbon fluxes. BGME is dependent on PET, Rainfall. This
+    % approach is designed to work for Rainfall and PET values at the
+    % monthly time step and it is necessary to scale it to meet that
+    % criterion.
+    %
+    % Inputs:
+    %   - fe.PET.PET:                      potential evapotranspiration (mm)
+    %   - info.tem.model.time.nStepsYear:  number of time steps per year 
+    %   - p.cTaufwSoil.Aws:                parameter for curve (expansion/contraction) controlling
+    %   - fe.rainSnow.rain:                rainfall
+    %   - s.prev.s_w_wSoil:                soil moisture sum of all layers of previous time step [mm] 
+    %   - d.prev.d_cTaufwSoil_fwSoil:      previous time step below ground moisture effect on decomposition processes
+    %
+    % Outputs:
+    %   - d.cTaufwSoil.fwSoil: values for below ground moisture effect on decomposition processes
+    %
+    % Modifies:
+    %   -
+    %
+    % References:
+    %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
+    %    Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
+    %    production: A process model based on global satellite and surface data. 
+    %    Global Biogeochemical Cycles. 7: 811-841. 
+    %
+    % Notes:
+    % the BGME is used as a scalar dependent on soil moisture, as the
+    % sum of soil moisture for all layers. This can be partitioned into
+    % different soil layers in the soil and affect independently the
+    % decomposition processes of pools that are at the surface and deeper in
+    % the soils.  
+    %
+    % Created by:
+    %   - ncarvalhais
+    %
+    % Versions:
+    %   - 1.0 on 12.01.2020 (sbesnard)
+    %
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
 TSPY    = info.tem.model.time.nStepsYear; %sujan
