@@ -35,7 +35,7 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % estimate NL
 NL                          = p.cAllocfNut.minL.*ones(size(fe.PET.PET(:,tix)));

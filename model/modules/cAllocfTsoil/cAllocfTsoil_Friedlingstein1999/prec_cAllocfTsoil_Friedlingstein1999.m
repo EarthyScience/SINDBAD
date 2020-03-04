@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = prec_cAllocfTsoil_Friedlingstein1999(f,fe,fx,s,d,p,in
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % Compute partial computation for the temperature effect on
 % decomposition/mineralization

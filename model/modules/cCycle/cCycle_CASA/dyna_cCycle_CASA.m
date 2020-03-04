@@ -16,7 +16,6 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
     %   - fx.cRECO:    values for ecosystem respiration  
     %   - fx.cNPP:     values for net primary productivity  
     %
-    %
     % Modifies:
     %   - 
     %
@@ -32,7 +31,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
     % Versions:
     %   - 1.0 on 28.02.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% these all need to be zeros... maybe is taken care automatically...
 s.cd.cEcoInflux                 =   info.tem.helpers.arrays.zerospixzix.c.cEco;

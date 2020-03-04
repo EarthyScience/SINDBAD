@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = prec_cTaufpVeg_CASA(f,fe,fx,s,d,p,info)
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute effect of vegetation type on turnover rates (k)
     %
     % Inputs:
@@ -35,7 +35,7 @@ function [f,fe,fx,s,d,p] = prec_cTaufpVeg_CASA(f,fe,fx,s,d,p,info)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 % s.cd.p_cCycleBase_annk                  =   p.cCycleBase.annk; %sujan

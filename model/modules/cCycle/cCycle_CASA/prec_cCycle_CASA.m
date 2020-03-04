@@ -1,6 +1,7 @@
 function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    % CALCULATE DECAY RATES FOR THE ECOSYSTEM C POOLS AT APPROPRIATE TIME STEPS
+    % Calculate decay rates for the ecosystem C pools at appropriate
+    % time steps
     %
     % Inputs:
     %   - info.tem.model.time.nStepsYear:   number of time steps per year
@@ -14,7 +15,10 @@ function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
     %   - 
     %
     % References:
-    %
+    %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
+    %     Vitousek, H. A. Mooney, and S. A. Klooster. 1993.  Terrestrial ecosystem
+    %     production: A process model based on global satellite and surface data.
+    %     Global Biogeochemical Cycles. 7: 811-841.
     %
     % Created by:
     %   - ncarvalhais 
@@ -22,7 +26,7 @@ function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
     % Versions:
     %   - 1.0 on 28.02.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % NUMBER OF TIME STEPS PER YEAR
 TSPY                =   info.tem.model.time.nStepsYear;
