@@ -1,5 +1,5 @@
 function [f,fe,fx,s,d,p] = prec_cTaufpSoil_CASA(f,fe,fx,s,d,p,info)
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute soil texture effects on turnover rates (k) of cMicSoil
     %
     % Inputs:
@@ -25,7 +25,7 @@ function [f,fe,fx,s,d,p] = prec_cTaufpSoil_CASA(f,fe,fx,s,d,p,info)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %sujan: moving clay and silt from p.soilTexture to s.wd.p_wSoilBase.
 CLAY                       =   mean(s.wd.p_wSoilBase_CLAY,2);

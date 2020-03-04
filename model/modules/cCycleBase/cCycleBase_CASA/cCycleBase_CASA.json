@@ -33,7 +33,7 @@
 				[	0,    0,    0,    0,    0,    0,    0,    0,    0,   -1,    0,    0,    0,    0],
 				[	0,    0,    0,    0, 0.40, 0.40,    0,    0, 0.40,    0,   -1,    0,    0,    0],
 				[	0,    0,    0,    0,    0,    0, 0.45, 0.45,    0, 0.40,    0,   -1, 0.45, 0.45],
-				[	0,    0,    0,    0,    0, 0.70,    0, 0.70, 0.70, 0.70, 0.40,    0,   -1,    0],
+				[	0,    0,    0,    0,    0, 0.60,    0, 0.55, 0.60, 0.60, 0.40,    0,   -1,    0],
 				[	0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0, 0.45,   -1]
 			],
 			"LowerBound": NaN,
@@ -123,7 +123,7 @@
     },
     "devStage": {
         "experimental": false,
-        "tested": false,
+        "tested": true,
         "consolidated": false,
         "published": false,
         "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"

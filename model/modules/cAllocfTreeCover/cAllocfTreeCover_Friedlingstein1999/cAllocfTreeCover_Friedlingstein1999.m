@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = cAllocfTreeCover_Friedlingstein1999(f,fe,fx,s,d,p,inf
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % TreeCover and fine to coarse root ratio
 tc      = p.pVeg.TreeCover;

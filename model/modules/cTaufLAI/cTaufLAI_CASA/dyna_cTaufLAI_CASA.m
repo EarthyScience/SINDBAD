@@ -7,9 +7,9 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
     %   - f.LAI:                        leaf area index (m2/m2)       
     %   - p.cTaufLAI.maxMinLAI:         parameter for the maximum value for the minimum LAI
     %                                   (m2/m2)
-    %   - p.cTaufLAI.kRTLAI:             parameter for the constant fraction of root litter imputs
-    %                                    to the soil ([])      
-    %   - info.timeScale.stepsPerYear:   number of years of simulations     
+    %   - p.cTaufLAI.kRTLAI:            parameter for the constant fraction of root litter imputs
+    %                                   to the soil ([])      
+    %   - info.timeScale.stepsPerYear:  number of years of simulations     
     %
     % Outputs:
     %   - s.cd.p_cTaufLAI_kfLAI:  LAI stressor values on the the turnover rates based 
@@ -30,7 +30,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % BUILD AN ANNUAL LAI MATRIX
 % LAI13                   =   repmat(info.tem.helpers.arrays.zerospix,1, TSPY + 1);
