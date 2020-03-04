@@ -1,6 +1,7 @@
 function [f,fe,fx,s,d,p] = prec_cCycle_simple(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    % CALCULATE DECAY RATES FOR THE ECOSYSTEM C POOLS AT APPROPRIATE TIME STEPS
+    % Calculate decay rates for the ecosystem C pools at appropriate
+    % time steps
     %
     % Inputs:
     %   - info.tem.model.time.nStepsYear:   number of time steps per year
@@ -14,7 +15,7 @@ function [f,fe,fx,s,d,p] = prec_cCycle_simple(f,fe,fx,s,d,p,info)
     %   - 
     %
     % References:
-    %
+    %   -
     %
     % Created by:
     %   - ncarvalhais 
@@ -22,12 +23,10 @@ function [f,fe,fx,s,d,p] = prec_cCycle_simple(f,fe,fx,s,d,p,info)
     % Versions:
     %   - 1.0 on 28.02.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% NUMBER OF TIME STEPS PER YEAR
-TSPY                =   info.tem.model.time.nStepsYear;
+TSPY                =   info.tem.model.time.nStepsYear; % NUMBER OF TIME STEPS PER YEAR
 % s.prev.cTaufwSoil_fwSoil=info.tem.helpers.arrays.onespixzix.c.cEco; %sujan
-% CALCULATE DECAY RATES FOR THE ECOSYSTEM C POOLS AT APPROPRIATE TIME STEPS
 s.cd.p_cCycleBase_k    =   1 - (exp(-s.cd.p_cCycleBase_annk) .^ (1 / TSPY));
 s.cd.cEcoEfflux     =   info.tem.helpers.arrays.zerospixzix.c.cEco; %sujan moved from get states
 

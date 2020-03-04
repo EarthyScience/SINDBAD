@@ -36,8 +36,7 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f,fe,fx,s,d,p,info,NI2E)
     %   determination of C pools at equilibrium
     %   - for model structures that loop the carbon cycle between pools this is
     %   merely a rough approximation (the solution does not really work...)
-
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 tstart = tic;
 

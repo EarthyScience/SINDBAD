@@ -1,9 +1,9 @@
 function [f,fe,fx,s,d,p] = dyna_cAllocfRad_gsi(f,fe,fx,s,d,p,info,tix)
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % computation for the radiation effect on decomposition/mineralization using 
     % a GSI method
     % Inputs:
-    %   - d.prev.d_cAllocfRad_fR:   previous values for the radiation effect on decomposition/mineralization            values for potential evapotranspiration
+    %   - d.prev.d_cAllocfRad_fR:   previous values for the radiation effect on decomposition/mineralization
     %   - f.PAR:                    values for PAR 
     %   - p.cAllocfRad.slope:        
     %   - p.cAllocfRad.tau:         
@@ -24,7 +24,7 @@ function [f,fe,fx,s,d,p] = dyna_cAllocfRad_gsi(f,fe,fx,s,d,p,info,tix)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     % computation for the radiation effect on decomposition/mineralization
     pfR                       = d.prev.d_cAllocfRad_fR;

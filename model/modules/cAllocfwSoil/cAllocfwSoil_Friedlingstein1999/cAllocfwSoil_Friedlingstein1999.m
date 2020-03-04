@@ -23,7 +23,7 @@ function [f,fe,fx,s,d,p] = cAllocfwSoil_Friedlingstein1999(f,fe,fx,s,d,p,info,ti
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % computation for the moisture effect on decomposition/mineralization
 NL_fW                                   = d.cTaufwSoil.fwSoil(:,tix);
