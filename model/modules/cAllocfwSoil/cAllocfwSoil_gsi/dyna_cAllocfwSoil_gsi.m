@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = dyna_cAllocfwSoil_gsi(f,fe,fx,s,d,p,info,tix)
     % Inputs:
     %   - d.prev.d_cAllocfwSoil_fW:    previous moisture stressor value
     %   - d.gppfwSoil.SMScGPP:         moisture stressors on GPP 
-    %   - p.cAllocfwSoil.tau:       
+    %   - p.cAllocfwSoil.tau:          parameter for turnover times
     %
     % Outputs:
     %   - d.cAllocfwSoil.fW: values for the moisture effect on decomposition/mineralization 
@@ -26,5 +26,5 @@ function [f,fe,fx,s,d,p] = dyna_cAllocfwSoil_gsi(f,fe,fx,s,d,p,info,tix)
 
     % computation for the moisture effect on decomposition/mineralization
     pfW                       = d.prev.d_cAllocfwSoil_fW;
-    d.cAllocfwSoil.fW(:,tix) =  pfW+(d.gppfwSoil.SMScGPP(:,tix)-pfW).*p.cAllocfwSoil.tau;
+    d.cAllocfwSoil.fW(:,tix) =  pfW + (d.gppfwSoil.SMScGPP(:,tix) - pfW) .* p.cAllocfwSoil.tau;
 end
