@@ -32,7 +32,7 @@ function [f,fe,fx,s,d,p] = cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % Estimate flows between reserve, leave, root and shed
-pcFlowAct_fWfTfR = d.prev.d_cAllocfwSoil_fW * d.prev.d_cAllocfTsoil_fT * d.prev.d_cAllocfRad_fR ;
+pcFlowAct_fWfTfR = d.prev.d_cAllocfwSoil_fW * d.prev.d_cAllocfTsoil_fT * d.prev.d_cAllocfRad_fR;
 cFlowAct.fWfTfR = d.cAllocfwSoil.fW(:,tix) * d.cAllocfTsoil.fT(:,tix) * d.cAllocfRad.fR(:,tix);
 LR2Re   =  min(max(pcFlowAct_fWfTfR-cFlowAct.fWfTfR,0).*p.cFlowAct.LR2ReSlp,1); % if DAS degrades, mobilize c to reserves
 Re2LR   =  min(max(cFlowAct.fWfTfR-pcFlowAct_fWfTfR,0).*p.cFlowAct.Re2LRSlp,1); % if DAS increases, mobilize c to leafs and roots
