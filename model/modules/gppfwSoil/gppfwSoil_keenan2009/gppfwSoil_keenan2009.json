@@ -1,11 +1,11 @@
 {
     "params": {
-        "Bwe": {
-            "Name": "CASA We",
+        "q": {
+            "Name": "sensitivity of GPP to soil moisture ",
             "Unit": "[]",
-            "Default": 0.5,
-            "LowerBound": null,
-            "UpperBound": null,
+            "Default": 0.6,
+            "LowerBound": 0,
+            "UpperBound": 15,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
