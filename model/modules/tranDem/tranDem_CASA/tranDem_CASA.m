@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = tranSup_CASA(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = tranDem_CASA(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the supply limited transpiration as function of volumetric soil content 
 % and soil properties, as in the CASA model
@@ -32,5 +32,10 @@ function [f,fe,fx,s,d,p] = tranSup_CASA(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-d.tranSup.tranSup(:,tix)            =   sum(s.wd.pawAct,2);
+
+VMC                                 =   minsb(maxsb(sum(s.wd.pawAct,2),0)...
+                                        ./ sum(s.wd.p_wSoilBase_wAWC,2),1);
+RDR                                 =   (1 + mean(s.wd.p_wSoilBase_Alpha,2)) ./ (1 + mean(s.wd.p_wSoilBase_Alpha,2) .* (VMC .^ mean(s.wd.p_wSoilBase_Beta,2)));
+
+d.tranDem.tranDem(:,tix)            =   fx.wSoilPerc(:,tix) + (fe.PET.PET(:,tix) - fx.wSoilPerc(:,tix)) .* RDR;
 end

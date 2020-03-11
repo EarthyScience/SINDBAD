@@ -3,9 +3,9 @@
         "k": {
             "Name": "empirical parameter assuming typically negative values",
             "Unit": "kPa-1",
-            "Default": -0.40,
-            "LowerBound": -0.7,
-            "UpperBound": -0.06,
+            "Default": 0.40,
+            "LowerBound": 0.06,
+            "UpperBound": 0.7,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",

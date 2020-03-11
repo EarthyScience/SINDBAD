@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_gppfwSoil_keenan2009(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_gppfwSoil_Keenan2009(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % calculate the soil moisture stress on gpp
     %
