@@ -18,12 +18,13 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledEVI(f,fe,fx,s,d,p,info,tix)
 %   - Tina Trautmann (ttraut)
 %
 % Versions:
+%   - 1.1 on 05.03.2020 (ttraut): apply the minsb function
 %   - 1.0 on 06.02.2020 (ttraut)
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.vegFrac = s.cd.EVI .* p.vegFrac.EVIscale;    
+s.cd.vegFrac = minsb(s.cd.EVI .* p.vegFrac.EVIscale,1);    
 
 
 end
