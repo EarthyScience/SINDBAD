@@ -18,7 +18,7 @@
                 "Unit": "fraction",
                 "Default": 0.05,
                 "LowerBound": 0,
-                "UpperBound": 1,
+                "UpperBound": 5,
                 "Distribution":
                 {
                     "name": "uniform",
@@ -33,7 +33,7 @@
                 "Unit": "fraction",
                 "Default": 0.05,
                 "LowerBound": 0,
-                "UpperBound": 1,
+                "UpperBound": 5,
                 "Distribution":
                 {
                     "name": "uniform",
@@ -48,7 +48,7 @@
                 "Unit": "fraction",
                 "Default": 0.05,
                 "LowerBound": 0,
-                "UpperBound": 1,
+                "UpperBound": 5,
                 "Distribution":
                 {
                     "name": "uniform",
@@ -63,7 +63,7 @@
                 "Unit": "fraction",
                 "Default": 0.05,
                 "LowerBound": 0,
-                "UpperBound": 1,
+                "UpperBound": 5,
                 "Distribution":
                 {
                     "name": "uniform",
