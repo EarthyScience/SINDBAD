@@ -28,15 +28,7 @@ function [f,fe,fx,s,d,p] = prec_cTaufTsoil_Q10(f,fe,fx,s,d,p,info)
     %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% TrefPap = 30;
-% if ~exist('deltaTref', 'var')
-%     Tref    = mean(f.Tair(isnan(f.Tair) == 0));
-%     TsM     = iniQ10 .^ ((p.cTaufTsoil.Tref - TrefPap) ./ 10);
-% else
-    TsM     = 1;
-% end
-
 % CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-fe.cTaufTsoil.fT    = p.cTaufTsoil.Q10 .^ ((f.Tair - p.cTaufTsoil.Tref) ./ 10) .* TsM; 
+fe.cTaufTsoil.fT    = p.cTaufTsoil.Q10 .^ ((f.Tair - p.cTaufTsoil.Tref) ./ 10); 
 
 end

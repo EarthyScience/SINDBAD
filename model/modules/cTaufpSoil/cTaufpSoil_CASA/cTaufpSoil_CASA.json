@@ -1,11 +1,11 @@
 {
     "params": {
         "TEXTEFFA": {
-            "Name": "",
+            "Name": "effect of soil texture on turnove times",
             "Unit": "",
             "Default": 0.75,
-            "LowerBound": NaN,
-            "UpperBound": NaN,
+            "LowerBound": 0,
+            "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
                 "funHandle" : "",

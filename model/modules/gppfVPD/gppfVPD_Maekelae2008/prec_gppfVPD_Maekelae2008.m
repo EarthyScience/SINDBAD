@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_Maekelae2008(f,fe,fx,s,d,p,info)
 % Inputs:
 %   - f.VPDDay: daytime vapor pressure deficit [kPa]
 %   - p.gppfVPD.k: parameter of the exponential decay function of GPP with VPD
-%           [kPa-1] dimensionless [-0.06 -0.7]; median ~-0.4 
+%           [kPa-1] dimensionless [0.06 0.7]; median ~0.4 
 %   
 % Outputs:
 %   - d.gppfVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
@@ -32,7 +32,7 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_Maekelae2008(f,fe,fx,s,d,p,info)
 
 %%
 pk                      =   p.gppfVPD.k .* info.tem.helpers.arrays.onestix;
-VPDScGPP                =   exp(pk .* f.VPDDay);
+VPDScGPP                =   exp(-pk .* f.VPDDay);
 VPDScGPP(VPDScGPP>1)    =   1;
 d.gppfVPD.VPDScGPP      =   VPDScGPP;
 end

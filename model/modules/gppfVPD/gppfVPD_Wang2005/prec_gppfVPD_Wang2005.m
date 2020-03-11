@@ -9,7 +9,7 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_Wang2005(f,fe,fx,s,d,p,info)
 % INPUT
 % VPDDay    : daytime vapor pressure deficit [kPa]
 %           (f.VPDDay)
-% TairDay   : daytime temperature [�C]
+% TairDay   : daytime temperature [deg C]
 %           (f.TairDay)
 % ca        : atmospheric concetration of CO2 [ppm]
 %           (f.ca)
@@ -26,6 +26,7 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_Wang2005(f,fe,fx,s,d,p,info)
 % DEPENDENCIES  :
 % 
 % NOTES:
+% - it is what it is needed to reproduce the Wang2014 model: VPD, amtospheric CO2 (?), temperature effects  
 % 
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
