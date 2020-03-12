@@ -8,8 +8,8 @@
             "UpperBound": NaN,
             "Distribution": {
                 "name": "uniform",
-                "funHandle" : "",
-                "params" : []
+                "funHandle": "",
+                "params": []
             }
         }
     },

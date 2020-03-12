@@ -1,16 +1,16 @@
-function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function [f, fe, fx, s, d, p] = dyna_cAlloc_gsi(f, fe, fx, s, d, p, info, tix)
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the fraction of NPP that is allocated to the
     % different plant organs. In this case, the allocation is dynamic in time
     % according to temperature, water and radiation stressors computed from GSI approach.
     %
     % Inputs:
     %   - d.cAllocfwSoil.fW:    water stressors for carbon allocation
-    %   - d.cAllocfwSoil.fT:    temperature stressors for carbon allocation 
-    %   - d.cAllocfRad.fR:      radiation stressors for carbo allocation 
+    %   - d.cAllocfwSoil.fT:    temperature stressors for carbon allocation
+    %   - d.cAllocfRad.fR:      radiation stressors for carbo allocation
     %
     % Outputs:
-    %   - s.cd.cAlloc: the fraction of NPP that is allocated to the different plant organs 
+    %   - s.cd.cAlloc: the fraction of NPP that is allocated to the different plant organs
     %
     % Modifies:
     %   - s.cd.cAlloc
@@ -22,32 +22,29 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
     %     Codominant water control on global interannual variability and trends in land surface phenology and greenness.
     %
     % Created by:
-    %   - ncarvalhais and sbesnard 
+    %   - ncarvalhais and sbesnard
     %
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     % allocation to root, wood and leaf
-    cf2.cVegLeaf = d.cAllocfwSoil.fW(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix)) ./ 2;
-    cf2.cVegWood = d.cAllocfwSoil.fW(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix)) ./ 2;
-    cf2.cVegRoot = d.cAllocfTsoil.fT(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix));
-    
+    cf2.cVegLeaf = d.cAllocfwSoil.fW(:, tix) ./ (d.cAllocfwSoil.fW(:, tix) + d.cAllocfTsoil.fT(:, tix)) ./ 2;
+    cf2.cVegWood = d.cAllocfwSoil.fW(:, tix) ./ (d.cAllocfwSoil.fW(:, tix) + d.cAllocfTsoil.fT(:, tix)) ./ 2;
+    cf2.cVegRoot = d.cAllocfTsoil.fT(:, tix) ./ (d.cAllocfwSoil.fW(:, tix) + d.cAllocfTsoil.fT(:, tix));
+
     % distribute the allocation according to pools
-    cpNames = {'cVegRoot','cVegWood','cVegLeaf'};
+    cpNames = {'cVegRoot', 'cVegWood', 'cVegLeaf'};
+
     for cpn = 1:numel(cpNames)
         zixVec = info.tem.model.variables.states.c.zix.(cpNames{cpn});
-        N      = numel(zixVec);
+        N = numel(zixVec);
+
         for zix = zixVec
-            s.cd.cAlloc(:,zix)	= cf2.(cpNames{cpn}) ./ N;
+            s.cd.cAlloc(:, zix) = cf2.(cpNames{cpn}) ./ N;
         end
+
     end
-    end
-    
-    
 
-
-
-
-    
+end

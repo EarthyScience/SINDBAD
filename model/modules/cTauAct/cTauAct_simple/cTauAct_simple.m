@@ -1,12 +1,12 @@
-function [f,fe,fx,s,d,p] = cTauAct_simple(f,fe,fx,s,d,p,info,tix)
-  % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function [f, fe, fx, s, d, p] = cTauAct_simple(f, fe, fx, s, d, p, info, tix)
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % combine all the effects that change the turnover rates (k)
     %
     % Inputs:
-    %   - s.cd.p_cCycleBase_k:       
+    %   - s.cd.p_cCycleBase_k:
     %   - s.cd.p_cTaufLAI_kfLAI:     LAI stressor values on the the turnover rates
-    %   - s.cd.p_cTaufpSoil_kfSoil:  Soil texture stressor values on the the turnover rates      
-    %   - s.cd.p_cTaufpVeg_kfVeg:    Vegetation type stressor values on the the turnover rates     
+    %   - s.cd.p_cTaufpSoil_kfSoil:  Soil texture stressor values on the the turnover rates
+    %   - s.cd.p_cTaufpVeg_kfVeg:    Vegetation type stressor values on the the turnover rates
     %   - fe.cTaufTsoil.fT:          Air temperature stressor values on the the turnover rates
     %   - d.cTaufwSoil.fwSoil:       Soil moisture stressor values on the the turnover rates
     %
@@ -17,7 +17,7 @@ function [f,fe,fx,s,d,p] = cTauAct_simple(f,fe,fx,s,d,p,info,tix)
     %   - s.cd.p_cTauAct_k
     %
     % References:
-    %   -  
+    %   -
     %
     % Notes:
     % we are multiplying [nPix,nZix]x[nPix,1] should be OK!
@@ -29,16 +29,16 @@ function [f,fe,fx,s,d,p] = cTauAct_simple(f,fe,fx,s,d,p,info,tix)
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
     %
-  % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  
-s.cd.p_cTauAct_k = ...
-            s.cd.p_cCycleBase_k .* ...
-            s.cd.p_cTaufLAI_kfLAI .* ...
-            s.cd.p_cTaufpSoil_kfSoil .* ...
-            s.cd.p_cTaufpVeg_kfVeg .* ...
-            fe.cTaufTsoil.fT(:,tix) .* ...
-            d.cTaufwSoil.fwSoil(:,tix);
-        
-s.cd.p_cTauAct_k = minsb(maxsb(s.cd.p_cTauAct_k,0),1); 
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    s.cd.p_cTauAct_k = ...
+        s.cd.p_cCycleBase_k .* ...
+        s.cd.p_cTaufLAI_kfLAI .* ...
+        s.cd.p_cTaufpSoil_kfSoil .* ...
+        s.cd.p_cTaufpVeg_kfVeg .* ...
+        fe.cTaufTsoil.fT(:, tix) .* ...
+        d.cTaufwSoil.fwSoil(:, tix);
+
+    s.cd.p_cTauAct_k = minsb(maxsb(s.cd.p_cTauAct_k, 0), 1);
 
 end %function
