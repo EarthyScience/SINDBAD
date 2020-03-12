@@ -5,7 +5,6 @@ function [f,fe,fx,s,d,p] = prec_cCycleBase_simple(f,fe,fx,s,d,p,info)
     % Inputs:
     %   - p.cCycleBase.C2Nveg:            carbon to nitrogen ratio in vegetation pools
     %   - p.cCycleBase.annk:              turnover rate of ecosystem carbon pools 
-    %   - p.cCycleBase.cFlowA:            Transfer matrix for carbon at ecosystem level 
     % 
     %
     % Outputs:
