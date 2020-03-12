@@ -28,9 +28,9 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     % allocation to root, wood and leaf
-    cf2.cVegLeaf = d.cAllocfwSoil.fW(:,tix)./(d.cAllocfwSoil.fW(:,tix)+d.cAllocfTsoil.fT(:,tix))./2;
-    cf2.cVegWood = d.cAllocfwSoil.fW(:,tix)./(d.cAllocfwSoil.fW(:,tix)+d.cAllocfTsoil.fT(:,tix))./2;
-    cf2.cVegRoot = d.cAllocfTsoil.fT(:,tix)./(d.cAllocfwSoil.fW(:,tix)+d.cAllocfTsoil.fT(:,tix));
+    cf2.cVegLeaf = d.cAllocfwSoil.fW(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix)) ./ 2;
+    cf2.cVegWood = d.cAllocfwSoil.fW(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix)) ./ 2;
+    cf2.cVegRoot = d.cAllocfTsoil.fT(:,tix) ./ (d.cAllocfwSoil.fW(:,tix) + d.cAllocfTsoil.fT(:,tix));
     
     % distribute the allocation according to pools
     cpNames = {'cVegRoot','cVegWood','cVegLeaf'};
