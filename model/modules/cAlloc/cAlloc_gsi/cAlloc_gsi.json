@@ -1,7 +1,5 @@
 {
-    "params": {
-        
-     },
+    "params": {},
     "devStage": {
         "experimental": true,
         "tested": false,

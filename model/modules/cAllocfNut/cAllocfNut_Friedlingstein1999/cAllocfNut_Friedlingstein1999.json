@@ -8,8 +8,8 @@
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
-                "funHandle" : "",
-                "params" : []
+                "funHandle": "",
+                "params": []
             },
             "Comment": "minimum resource availability (severely limited) [factor]"
         },
@@ -21,8 +21,8 @@
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
-                "funHandle" : "",
-                "params" : []
+                "funHandle": "",
+                "params": []
             },
             "Comment": "maximum resource availability (readily available) [factor]"
         }
