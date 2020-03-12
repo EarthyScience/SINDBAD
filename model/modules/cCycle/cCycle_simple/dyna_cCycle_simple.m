@@ -1,23 +1,23 @@
-function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function [f, fe, fx, s, d, p] = dyna_cCycle_simple(f, fe, fx, s, d, p, info, tix)
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Perform carbon cycle between pools
     %
     % Inputs:
     %   - fx.gpp:                   values for gross primary productivity
-    %   - s.cd.cAlloc:              carbon allocation matrix 
+    %   - s.cd.cAlloc:              carbon allocation matrix
     %   - s.cd.p_cFlowAct_taker:    taker pool array
     %   - s.cd.p_cFlowAct_giver:    giver pool array
     %   - s.cd.p_cFlowAct_E:        effect of soil and vegetation on transfer efficiency between pools
     %
     % Outputs:
     %   - s.c.cEco:    values for the different carbon pools
-    %   - fx.cRH:      values for heterotrophic respiration  
-    %   - fx.cRA:      values for autotrophic respiration  
-    %   - fx.cRECO:    values for ecosystem respiration  
-    %   - fx.cNPP:     values for net primary productivity  
+    %   - fx.cRH:      values for heterotrophic respiration
+    %   - fx.cRA:      values for autotrophic respiration
+    %   - fx.cRECO:    values for ecosystem respiration
+    %   - fx.cNPP:     values for net primary productivity
     %
     % Modifies:
-    %   - 
+    %   -
     %
     % References:
     %   - Potter, C. S., J. T. Randerson, C. B. Field, P. A. Matson, P. M.
@@ -26,42 +26,42 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     %     Global Biogeochemical Cycles. 7: 811-841.
     %
     % Created by:
-    %   - ncarvalhais 
+    %   - ncarvalhais
     %
     % Versions:
     %   - 1.0 on 28.02.2020 (sbesnard)
     %
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%% these all need to be zeros... maybe is taken care automatically...
-s.cd.cEcoInflux         =   info.tem.helpers.arrays.zerospixzix.c.cEco;
-s.cd.cEcoFlow           =   info.tem.helpers.arrays.zerospixzix.c.cEco;
-%% compute losses
-s.cd.cEcoOut            =   minsb(s.c.cEco,s.c.cEco .* s.cd.p_cTauAct_k);
-%% gains to vegetation
-zix                     =   info.tem.model.variables.states.c.flags.cVeg; 
-s.cd.cNPP               =   fx.gpp(:,tix) .* s.cd.cAlloc(:,zix) - s.cd.cEcoEfflux(:,zix);
-s.cd.cEcoInflux(:,zix)  =   s.cd.cNPP;
-%% flows and losses
-% @nc, if flux order does not matter, remove...
-%for jix = 1:numel(p.cCycleBase.fluxOrder)
-%    taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
-%    giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
-%    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
-%end
-for jix = 1:numel(s.cd.p_cFlowAct_taker)
-    taker                       = s.cd.p_cFlowAct_taker(jix);
-    giver                       = s.cd.p_cFlowAct_giver(jix);
-    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
-end
+    %% these all need to be zeros... maybe is taken care automatically...
+    s.cd.cEcoInflux = info.tem.helpers.arrays.zerospixzix.c.cEco;
+    s.cd.cEcoFlow = info.tem.helpers.arrays.zerospixzix.c.cEco;
+    %% compute losses
+    s.cd.cEcoOut = minsb(s.c.cEco, s.c.cEco .* s.cd.p_cTauAct_k);
+    %% gains to vegetation
+    zix = info.tem.model.variables.states.c.flags.cVeg;
+    s.cd.cNPP = fx.gpp(:, tix) .* s.cd.cAlloc(:, zix) - s.cd.cEcoEfflux(:, zix);
+    s.cd.cEcoInflux(:, zix) = s.cd.cNPP;
+    %% flows and losses
+    % @nc, if flux order does not matter, remove...
+    %for jix = 1:numel(p.cCycleBase.fluxOrder)
+    %    taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
+    %    giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
+    %    s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
+    %end
+    for jix = 1:numel(s.cd.p_cFlowAct_taker)
+        taker = s.cd.p_cFlowAct_taker(jix);
+        giver = s.cd.p_cFlowAct_giver(jix);
+        s.cd.cEcoFlow(:, taker) = s.cd.cEcoFlow(:, taker) + s.cd.cEcoOut(:, giver) .* s.cd.p_cFlowAct_A(:, taker, giver);
+    end
 
-%% balance
-prevcEco         = s.c.cEco;
-s.c.cEco     = s.c.cEco + s.cd.cEcoFlow + s.cd.cEcoInflux - s.cd.cEcoOut;
-%% compute RA and RH
-fx.cNPP(:,tix)  = sum(s.cd.cNPP,2);
-backNEP            = sum(s.c.cEco,2) - sum(prevcEco,2);
-fx.cRA(:,tix)   = fx.gpp(:,tix) - fx.cNPP(:,tix);
-fx.cRECO(:,tix) = fx.gpp(:,tix) - backNEP;
-fx.cRH(:,tix)   = fx.cRECO(:,tix) - fx.cRA(:,tix);
+    %% balance
+    prevcEco = s.c.cEco;
+    s.c.cEco = s.c.cEco + s.cd.cEcoFlow + s.cd.cEcoInflux - s.cd.cEcoOut;
+    %% compute RA and RH
+    fx.cNPP(:, tix) = sum(s.cd.cNPP, 2);
+    backNEP = sum(s.c.cEco, 2) - sum(prevcEco, 2);
+    fx.cRA(:, tix) = fx.gpp(:, tix) - fx.cNPP(:, tix);
+    fx.cRECO(:, tix) = fx.gpp(:, tix) - backNEP;
+    fx.cRH(:, tix) = fx.cRECO(:, tix) - fx.cRA(:, tix);
 end

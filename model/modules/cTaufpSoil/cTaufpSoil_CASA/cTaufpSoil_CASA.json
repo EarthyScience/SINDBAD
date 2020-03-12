@@ -8,8 +8,8 @@
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
-                "funHandle" : "",
-                "params" : []
+                "funHandle": "",
+                "params": []
             },
             "Comment": ""
         }
