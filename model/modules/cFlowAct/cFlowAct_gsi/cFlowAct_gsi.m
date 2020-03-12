@@ -34,19 +34,19 @@ function [f,fe,fx,s,d,p] = cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
 % Estimate flows between reserve, leave, root and shed
 pcFlowAct_fWfTfR = d.prev.d_cAllocfwSoil_fW * d.prev.d_cAllocfTsoil_fT * d.prev.d_cAllocfRad_fR;
 cFlowAct.fWfTfR = d.cAllocfwSoil.fW(:,tix) * d.cAllocfTsoil.fT(:,tix) * d.cAllocfRad.fR(:,tix);
-LR2Re   =  min(max(pcFlowAct_fWfTfR-cFlowAct.fWfTfR,0).*p.cFlowAct.LR2ReSlp,1); % if DAS degrades, mobilize c to reserves
-Re2LR   =  min(max(cFlowAct.fWfTfR-pcFlowAct_fWfTfR,0).*p.cFlowAct.Re2LRSlp,1); % if DAS increases, mobilize c to leafs and roots
-kShed   =  min(max(pcFlowAct_fWfTfR-cFlowAct.fWfTfR,0).*p.cFlowAct.kShed,1);    % if DAS degrades increase c to litter
+LR2Re   =  min(max(pcFlowAct_fWfTfR - cFlowAct.fWfTfR, 0) .* p.cFlowAct.LR2ReSlp, 1); % if DAS degrades, mobilize c to reserves
+Re2LR   =  min(max(cFlowAct.fWfTfR - pcFlowAct_fWfTfR, 0) .* p.cFlowAct.Re2LRSlp, 1); % if DAS increases, mobilize c to leafs and roots
+kShed   =  min(max(pcFlowAct_fWfTfR - cFlowAct.fWfTfR, 0) .* p.cFlowAct.kShed, 1);    % if DAS degrades increase c to litter
 
 % Do A matrix
 s.cd.p_cFlowAct_A  = repmat(reshape(p.cCycleBase.cFlowA,[1 size(p.cCycleBase.cFlowA)]),info.tem.helpers.sizes.nPix,1,1); 
 
 % Adjust cFlow between reserve, leave and root
 aM    = {...
-    'cVegReserve',     'cVegLeaf',    Re2LR/2;...
-    'cVegReserve',     'cVegRoot',    Re2LR/2;...
-    'cVegLeaf',    'cVegReserve',     LR2Re/2;...
-    'cVegRoot',    'cVegReserve',     LR2Re/2;...
+    'cVegReserve',     'cVegLeaf',    Re2LR ./ 2;...
+    'cVegReserve',     'cVegRoot',    Re2LR ./ 2;...
+    'cVegLeaf',    'cVegReserve',     LR2Re ./ 2;...
+    'cVegRoot',    'cVegReserve',     LR2Re ./ 2;...
     };
 
 for ii = 1:size(aM,1)
@@ -65,20 +65,20 @@ flagLo = repmat(reshape(tril(ones(size(p.cCycleBase.cFlowA)),-1),[1 size(p.cCycl
 % of diagonal values of 0 must be between 0 and 1
 anyBad     = any(s.cd.p_cFlowAct_A.*(flagLo+flagUp) < 0);
 if anyBad 
-    error('prec_cCycleBase_simple : negative values in the A matrix!')
+    error('cFlowAct_gsi : negative values in the A matrix!')
 end
 anyBad     = any(s.cd.p_cFlowAct_A.*(flagLo+flagUp) > 1);
 if anyBad 
-    error('prec_cCycleBase_simple : values in the A matrix greater than 1!')
+    error('cFlowAct_gsi : values in the A matrix greater than 1!')
 end
 % in the lower and upper part of the matrix A the sums have to be lower than 1
 anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagLo,2)>1);
 if anyBad
-    error('prec_cCycleBase_simple : sum of cols higher than one in lower!')
+    error('cFlowAct_gsi : sum of cols higher than one in lower!')
 end
 anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagUp,2)>1);
 if anyBad
-    error('prec_cCycleBase_simple : sum of cols higher than one in upper!')
+    error('cFlowAct_gsi : sum of cols higher than one in upper!')
 end
 
 % transfers

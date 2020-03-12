@@ -14,7 +14,7 @@
 		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
 	},
 	"params2opti": [
-		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA",
+		"gppPot.maxrue", "gppfTair.Topt", "gppfTair.ToptA",	
 		 "gppfTair.ToptB"
 	],
 	"checks": "Nuno, please help...",
@@ -33,7 +33,7 @@
 		"gpp": {
 			"data": {
 				"variableUnit": "gC m-2 day-1",
-				"bounds": [-Inf, Inf ],
+				"bounds": [0, 500],
 				"sourceVariableName": "GPP_NT",
 				"sourceVariableUnit": "gC m-2 day-1",
 				"source2sindbadUnit": "*1",
@@ -45,19 +45,19 @@
 			},
 			"unc": {
 				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
-				"bounds": [-Inf, Inf ],
+				"bounds": [0, 400],
 				"sourceVariableName": "NEE_RANDUNC"
 			},
 			"qflag": {
 				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
-				"bounds": [-Inf, Inf ],
+				"bounds": [0, 1],
 				"sourceVariableName": "NEE_QC"
 			}
 		},
 		"AGB": {
 			"data": {
 				"variableUnit": "MgC ha-1",
-				"bounds": [-Inf, Inf ],
+				"bounds": [0, 600],
 				"sourceVariableName": "AGB",
 				"sourceVariableUnit": "MgC ha-1",
 				"source2sindbadUnit": "*100",
