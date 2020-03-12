@@ -10,9 +10,9 @@ function [f,fe,fx,s,d,p] = cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
     %   - d.prev.d_cAllocfwSoil_fW:    previous water stressors for carbon allocation
     %   - d.prev.d_cAllocfTsoil_fT:    previous temperature stressors for carbon allocation 
     %   - d.prev.d_cAllocfRad_fR:      previous radiation stressors for carbo allocation 
-    %   - p.cFlowAct.LR2ReSlp:           slope from leave/root to reserve
-    %   - p.cFlowAct.Re2LRSlp:           slope from reserve to leave/roots
-    %   - p.cFlowAct.kShed:              carbon allocation to litter from shedding
+    %   - p.cFlowAct.LR2ReSlp:         slope from leave/root to reserve
+    %   - p.cFlowAct.Re2LRSlp:         slope from reserve to leave/roots
+    %   - p.cFlowAct.kShed:            carbon allocation to litter from shedding
     %
     % Outputs:
     %   - s.cd.p_cFlowAct_A:            updated transfer matrix for carbon at ecosystem level
@@ -32,8 +32,8 @@ function [f,fe,fx,s,d,p] = cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % Estimate flows between reserve, leave, root and shed
-pcFlowAct_fWfTfR = d.prev.d_cAllocfwSoil_fW * d.prev.d_cAllocfTsoil_fT * d.prev.d_cAllocfRad_fR;
-cFlowAct.fWfTfR = d.cAllocfwSoil.fW(:,tix) * d.cAllocfTsoil.fT(:,tix) * d.cAllocfRad.fR(:,tix);
+pcFlowAct_fWfTfR = d.prev.d_cAllocfwSoil_fW .* d.prev.d_cAllocfTsoil_fT .* d.prev.d_cAllocfRad_fR;
+cFlowAct.fWfTfR = d.cAllocfwSoil.fW(:,tix) .* d.cAllocfTsoil.fT(:,tix) .* d.cAllocfRad.fR(:,tix);
 LR2Re   =  min(max(pcFlowAct_fWfTfR - cFlowAct.fWfTfR, 0) .* p.cFlowAct.LR2ReSlp, 1); % if DAS degrades, mobilize c to reserves
 Re2LR   =  min(max(cFlowAct.fWfTfR - pcFlowAct_fWfTfR, 0) .* p.cFlowAct.Re2LRSlp, 1); % if DAS increases, mobilize c to leafs and roots
 kShed   =  min(max(pcFlowAct_fWfTfR - cFlowAct.fWfTfR, 0) .* p.cFlowAct.kShed, 1);    % if DAS degrades increase c to litter

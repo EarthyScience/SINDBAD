@@ -1,9 +1,9 @@
 {
     "params": {
         "tau": {
-            "Name": "",
+            "Name": "temporal change rate for the water-limiting function",
             "Unit": "",
-            "Default": 0.5,
+            "Default": 0.8,
             "LowerBound": 0.001,
             "UpperBound": 1,
             "Distribution": {
