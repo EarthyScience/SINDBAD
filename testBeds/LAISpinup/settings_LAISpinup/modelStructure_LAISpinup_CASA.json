@@ -31,9 +31,9 @@
 			"runFull": 		true,
             "use4spinup":   false
 		},
-		"cAllocfTreeCover":
+		"cAllocfTreeFrac":
 		{
-			"apprName": 	"cAllocfTreeCover_Friedlingstein1999",
+			"apprName": 	"cAllocfTreeFrac_Friedlingstein1999",
 			"runFull": 		true,
             "use4spinup":   false
 		},

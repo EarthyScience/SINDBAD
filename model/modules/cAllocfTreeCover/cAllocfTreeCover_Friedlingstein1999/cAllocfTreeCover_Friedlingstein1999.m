@@ -1,11 +1,11 @@
-function [f,fe,fx,s,d,p] = cAllocfTreeCover_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = cAllocfTreeFrac_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % adjust the allocation coefficients according to the fraction of
     % trees to herbaceous and fine to coarse root partitioning
     %
     % Inputs:
-    %   - p.pVeg.TreeCover:            values for tree cover
-    %   - p.cAllocfTreeCover.Rf2Rc:    values for fine root to coarse root fraction 
+    %   - p.pVeg.TreeFrac:            values for tree cover
+    %   - p.cAllocfTreeFrac.Rf2Rc:    values for fine root to coarse root fraction 
     %   - s.cd.cAlloc:                 the fraction of NPP that is allocated to the different plant organs                
     %
     % Outputs:
@@ -25,9 +25,9 @@ function [f,fe,fx,s,d,p] = cAllocfTreeCover_Friedlingstein1999(f,fe,fx,s,d,p,inf
     %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% TreeCover and fine to coarse root ratio
-tc      = p.pVeg.TreeCover;
-rf2rc    = p.cAllocfTreeCover.Rf2Rc;
+% TreeFrac and fine to coarse root ratio
+tc      = p.pVeg.TreeFrac;
+rf2rc    = p.cAllocfTreeFrac.Rf2Rc;
 
 % the allocation fractions according to the partitioning to root/wood/leaf
 % - represents plant level allocation
@@ -35,7 +35,7 @@ r0    = sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegRoot),2); % 
 s0    = sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegWood),2);
 l0    = sum(s.cd.cAlloc(:,info.tem.model.variables.states.c.zix.cVegLeaf),2);
 
-% adjust for spatial consideration of TreeCover and plant level
+% adjust for spatial consideration of TreeFrac and plant level
 % partitioning between fine and coarse roots
 cF.cVegRootF    = tc .* rf2rc + (r0 + s0 .* (r0 ./ (r0 + l0))) .* (1 - tc);
 cF.cVegRootC    = tc .* (1 - rf2rc);

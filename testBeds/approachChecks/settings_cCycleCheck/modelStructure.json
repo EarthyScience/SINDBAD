@@ -110,8 +110,8 @@
             "runFull": true,
             "use4spinup": false
         },
-        "cAllocfTreeCover": {
-            "apprName": "cAllocfTreeCover_none",
+        "cAllocfTreeFrac": {
+            "apprName": "cAllocfTreeFrac_none",
             "runFull": true,
             "use4spinup": false
         },
