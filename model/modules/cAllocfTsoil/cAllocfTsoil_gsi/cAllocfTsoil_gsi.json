@@ -1,9 +1,9 @@
 {
     "params": {
         "tau": {
-            "Name": "",
+            "Name": "temporal change rate for the temperature-limiting function",
             "Unit": "",
-            "Default": 0.02,
+            "Default": 0.2,
             "LowerBound": 0.001,
             "UpperBound": 1,
             "Distribution": {
