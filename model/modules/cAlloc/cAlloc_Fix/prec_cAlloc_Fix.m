@@ -3,8 +3,8 @@ function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
     % compute the fraction of NPP that is allocated to the
     % different plant organs. In this case, the allocation is fixed in time
     % according to the parameters in p.cAlloc. These parameters are
-    % adjusted according to the TreeCover fraction
-    % (p.pveg.TreeCover). Allocation to roots is partitioned into
+    % adjusted according to the TreeFrac fraction
+    % (p.pveg.TreeFrac). Allocation to roots is partitioned into
     % fine (cf2Root) and coarse roots (cf2RootCoarse) according to
     % p.cAlloc.Rf2Rc.
     %

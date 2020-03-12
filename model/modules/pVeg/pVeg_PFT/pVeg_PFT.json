@@ -13,7 +13,7 @@
             },
             "Comment": "Constant PFT only one type"
         },
-        "TreeCover": {
+        "TreeFrac": {
             "Name": "Fractional Tree Cover",
             "Unit": "fraction",
             "Default": 1,
