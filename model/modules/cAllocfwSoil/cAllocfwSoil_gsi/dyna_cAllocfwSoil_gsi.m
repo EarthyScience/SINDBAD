@@ -15,7 +15,9 @@ function [f, fe, fx, s, d, p] = dyna_cAllocfwSoil_gsi(f, fe, fx, s, d, p, info, 
     %   - d.cAllocfwSoil.fW
     %
     % References:
-    %   -
+    %   - Jolly, William M., Ramakrishna Nemani, and Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 (2005): 619-632.
+    %   - Forkel, M., Migliavacca, M., Thonicke, K., Reichstein, M., Schaphoff, S., Weber, U., Carvalhais, N. (2015).
+    %     Codominant water control on global interannual variability and trends in land surface phenology and greenness.
     %
     % Created by:
     %   - ncarvalhais and sbesnard
