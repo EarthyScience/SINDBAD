@@ -48,10 +48,6 @@ end
 %--> read the forcing data
 [f,info]           =   info.tem.forcing.funHandle.import(info);
 
-%--> check the values in the forcing data using check function provided in forcing.json 
-if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
-    [info,f] = info.tem.forcing.funHandle.check(info,f);   
-end
 
 %% get the sizes of arrays in space and time based on forcing data
 forNames                             =   info.tem.forcing.variableNames;
@@ -82,6 +78,11 @@ else
         fprintf('%s    %s    %s\n',pad(normalVars{vn},12,'left'),pad(num2str(nPixes(vn)),6,'left'),pad(num2str(nTixes(vn)),6,'left'));
     end
     error(erroMsg)
+end
+
+%--> check the values in the forcing data using check function provided in forcing.json 
+if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
+    [info,f] = info.tem.forcing.funHandle.check(info,f);   
 end
 
 %% forcing size and dates consistency 

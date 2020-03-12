@@ -31,8 +31,13 @@ range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;    % MJ/m2/day
 range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;    % MJ/m2/day
 range.Rg_pot    = [ 0.0 1400.0 ]./conv.MJday2Wm2;   % MJ/m2/day
 range.Tair      = [ -100. 100. ];                   % deg C
+<<<<<<< Updated upstream
 range.TairDay   = [ -100. 100. ];                   % deg C
 range.Tsoil     = [ -100. 100. ];                   % deg C
+=======
+range.TairDay   = [ -100. 100. ];                   % �C
+range.Tsoil     = [ -100. 100. ];                   % �C
+>>>>>>> Stashed changes
 range.VPDDay    = [ 0 200. ].*10;                   % kPa
 range.FAPAR     = [0 1];
 range.LAI       = [0 12];

@@ -28,6 +28,6 @@ function [f,fe,fx,s,d,p] = dyna_cAllocfRad_gsi(f,fe,fx,s,d,p,info,tix)
 
     % computation for the radiation effect on decomposition/mineralization
     pfR                       = d.prev.d_cAllocfRad_fR;
-    fR                        = (1./(1+exp(-p.cAllocfRad.slope.*(f.PAR(:,tix)-p.cAllocfRad.base))));
-    d.cAllocfRad.fR(:,tix) =  pfR+(fR-pfR).*p.cAllocfRad.tau;
+    fR                        = (1 ./ (1 + exp(-p.cAllocfRad.slope .* (f.PAR(:,tix) - p.cAllocfRad.base))));
+    d.cAllocfRad.fR(:,tix) =  pfR + (fR - pfR) .* p.cAllocfRad.tau;
 end
