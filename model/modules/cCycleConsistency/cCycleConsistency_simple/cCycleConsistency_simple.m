@@ -48,19 +48,42 @@ function [f,fe,fx,s,d,p] = wBalance_simple(f,fe,fx,s,d,p,info,tix)
     % in the lower and upper part of the matrix A the sums have to be lower than 1
     anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagLo,2)>1);
     if anyBad
-        error('sum of cols higher than one in lower in the cFlowAct_A!')
+        error('sum of cols higher than one in lower in the cFlowAct_A matrix!')
     end
     anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagUp,2)>1);
     if anyBad
         error('sum of cols higher than one in upper in the cFlowAct_A')
     end
 
-    % check on flux order check
+    % check carbon flow on matrix
+    % the sum of A per column below the diagonals is always < 1 
+    flagUp = triu(ones(size(p.cCycleBase.cFlowA)),1);
+    flagLo     = tril(ones(size(p.cCycleBase.cFlowA)),-1);
+    % of diagonal values of 0 must be between 0 and 1
+    anyBad     = any(p.cCycleBase.cFlowA.*(flagLo+flagUp) < 0);
+    if anyBad 
+    error('negative values in the cFlowA matrix!')
+    end
+    anyBad     = any(p.cCycleBase.cFlowA.*(flagLo+flagUp) > 1);
+    if anyBad 
+    error('values in the cFlowA matrix greater than 1!')
+    end
+    % in the lower and upper part of the matrix A the sums have to be lower than 1
+    anyBad     = any(sum(p.cCycleBase.cFlowA.*flagLo,1)>1);
+    if anyBad
+    error('sum of cols higher than one in lower in cFlowA matrix')
+    end
+    anyBad     = any(sum(p.cCycleBase.cFlowA.*flagUp,1)>1);
+    if anyBad
+    error('sum of cols higher than one in upper in cFlowA matrix')
+    end
+
+    % check on flux order
     if ~isfield(p.cCycleBase,'fluxOrder')
     p.cCycleBase.fluxOrder = 1:numel(taker);
     else
     if numel(p.cCycleBase.fluxOrder) ~= numel(taker)
-        error(['ERR : cFlowAct_* : '...
+        error(['ERR : cFlowAct_ : '...
             'numel(p.cCycleBase.fluxOrder) ~= numel(taker)'])
     end
     end
