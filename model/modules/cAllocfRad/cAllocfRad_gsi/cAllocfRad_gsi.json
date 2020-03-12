@@ -1,9 +1,9 @@
 {
     "params": {
         "tau": {
-            "Name": "",
+            "Name": "temporal change rate for the light-limiting function",
             "Unit": "",
-            "Default": 0.02,
+            "Default": 0.2,
             "LowerBound": 0.001,
             "UpperBound": 1,
             "Distribution": {
@@ -11,12 +11,12 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "turn-over times"
+            "Comment": ""
         },
         "slope": {
-            "Name": "",
+            "Name": "slope parameters of a logistic function based on mean daily y shortwave downward radiation",
             "Unit": "",
-            "Default": 1,
+            "Default": 58,
             "LowerBound": 0.1,
             "UpperBound": 200,
             "Distribution": {
@@ -24,10 +24,10 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "slope"
+            "Comment": ""
         },
         "base": {
-            "Name": "",
+            "Name": "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation",
             "Unit": "",
             "Default": 10,
             "LowerBound": 0,
@@ -37,7 +37,7 @@
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "base"
+            "Comment": ""
         }
     },
     "devStage": {
@@ -47,5 +47,4 @@
         "published": false,
         "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
     }
-
 }
