@@ -11,9 +11,9 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     %
     % Inputs:
     %   - fe.PET.PET:               values for potential evapotranspiration
-    %   - fe.cAllocfTsoil.NL_fT:    values for partial computation for the temperature effect on
+    %   - fe.cAllocfTsoil.fT:    values for partial computation for the temperature effect on
     %                               decomposition/mineralization 
-    %   - d.cAllocfwSoil.NL_fW:     values for partial computation for the moisture effect on
+    %   - d.cAllocfwSoil.fW:     values for partial computation for the moisture effect on
     %                               decomposition/mineralization 
     %   - p.cAllocfNut.minL:        factor for minimum resource availability (severely limited)
     %   - p.cAllocfNut.maxL:        factor for maximum resource availability (readily available)
@@ -40,7 +40,7 @@ function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
 % estimate NL
 NL                          = p.cAllocfNut.minL.*ones(size(fe.PET.PET(:,tix)));
 ndx                         = fe.PET.PET(:,tix) > 0;
-NL(ndx)                     = fe.cAllocfTsoil.NL_fT(ndx) .* d.cAllocfwSoil.NL_fW(ndx);
+NL(ndx)                     = fe.cAllocfTsoil.fT(ndx) .* d.cAllocfwSoil.fW(ndx);
 NL(NL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL;%(NL <= p.cAllocfNut.minL);
 NL(NL >= p.cAllocfNut.maxL)    = p.cAllocfNut.maxL;%(NL >= p.cAllocfNut.maxL);
 %sujan NL(NL <= p.cAllocfNut.minL)    = p.cAllocfNut.minL(NL <= p.cAllocfNut.minL);
