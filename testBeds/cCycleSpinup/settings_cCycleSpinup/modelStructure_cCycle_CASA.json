@@ -144,7 +144,7 @@
 		},
 		"gppAct":
 		{
-			"apprName": 	"gppAct_none",
+			"apprName": 	"gppAct_mult",
 			"runFull": 		true,
             "use4spinup":   true
 		},
@@ -168,8 +168,8 @@
 		},
 		"gppPot":
 		{
-			"apprName": 	"gppPot_dummy",
-			"runFull": 		true,
+			"apprName": 	"gppPot_Monteith",
+			"runFull": 		false,
             "use4spinup":   false
 		},
 		"soilTexture": 

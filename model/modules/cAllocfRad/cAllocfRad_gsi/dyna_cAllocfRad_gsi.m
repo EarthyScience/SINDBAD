@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cAllocfRad_gsi(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cAllocfRad_gsi(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % computation for the radiation effect on decomposition/mineralization using
     % a GSI method

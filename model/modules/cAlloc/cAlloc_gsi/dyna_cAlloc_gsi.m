@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cAlloc_gsi(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the fraction of NPP that is allocated to the
     % different plant organs. In this case, the allocation is dynamic in time

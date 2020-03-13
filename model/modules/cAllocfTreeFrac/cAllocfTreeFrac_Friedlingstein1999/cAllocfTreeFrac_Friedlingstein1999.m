@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cAllocfTreeFrac_Friedlingstein1999(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cAllocfTreeFrac_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % adjust the allocation coefficients according to the fraction of
     % trees to herbaceous and fine to coarse root partitioning

@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cCycleBase_simple6Cpool(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cCycleBase_simple6Cpool(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute carbon to nitrogen ratio and  annual turnover rates
     %
@@ -37,5 +37,6 @@ function [f, fe, fx, s, d, p] = prec_cCycleBase_simple6Cpool(f, fe, fx, s, d, p,
 
     % annual turnover rates
     s.cd.p_cCycleBase_annk = reshape(repelem(p.cCycleBase.annk, info.tem.helpers.sizes.nPix), info.tem.helpers.sizes.nPix, info.tem.model.variables.states.c.nZix.cEco); %sujan
+
 
 end %function

@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cAllocfNut_Friedlingstein1999(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cAllocfNut_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % pseudo-nutrient limitation (NL) calculation:
     % "There is no explicit estimate of soil mineral nitrogen in the version of
