@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cCycle_CASA(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Perform carbon cycle between pools
     %
@@ -29,7 +29,6 @@ function [f, fe, fx, s, d, p] = dyna_cCycle_CASA(f, fe, fx, s, d, p, info, tix)
     %   - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).
     %       Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data and ecosystem
     %       modeling 1982–1998. Global and Planetary Change, 39(3-4), 201-213.
-    %
     %
     % Created by:
     %   - ncarvalhais

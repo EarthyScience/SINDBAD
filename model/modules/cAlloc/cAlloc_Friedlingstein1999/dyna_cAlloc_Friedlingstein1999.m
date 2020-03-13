@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cAlloc_Friedlingstein1999(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cAlloc_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the fraction of NPP that is allocated to the
     % different plant organs following the scheme of Friedlingstein et al 1999.

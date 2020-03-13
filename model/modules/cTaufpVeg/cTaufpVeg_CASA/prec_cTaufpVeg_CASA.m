@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cTaufpVeg_CASA(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cTaufpVeg_CASA(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute effect of vegetation type on turnover rates (k)
     %

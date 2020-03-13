@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cCycle_CASA(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cCycle_CASA(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Calculate decay rates for the ecosystem C pools at appropriate
     % time steps

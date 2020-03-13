@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cTauAct_simple(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cTauAct_simple(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % combine all the effects that change the turnover rates (k)
     %

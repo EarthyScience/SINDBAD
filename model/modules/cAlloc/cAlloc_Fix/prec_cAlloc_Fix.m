@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cAlloc_Fix(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cAlloc_Fix(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the fraction of NPP that is allocated to the
     % different plant organs. In this case, the allocation is fixed in time

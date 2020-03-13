@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cTaufwSoil_CASA(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute effect of soil moisture on soil decomposition as modelled in
     % CASA (BGME - below grounf moisture effect). The below ground

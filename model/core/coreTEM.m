@@ -179,6 +179,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.cFlowfpSoil.funHandle(f,fe,fx,s,d,p,info,tix);       % effect of soil properties on the C transfers between pools
     [f,fe,fx,s,d,p]     =   ms.cFlowfpVeg.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of vegetation properties on the C transfers between pools
     [f,fe,fx,s,d,p]     =   ms.cFlowAct.funHandle(f,fe,fx,s,d,p,info,tix);          % actual transfers of C between pools (of diagonal components)
+    [f,fe,fx,s,d,p]     =   ms.cCycleConsistency.funHandle(f,fe,fx,s,d,p,info,tix); % consistency checks on the C allocation and transfers between pools
     [f,fe,fx,s,d,p]     =   ms.cCycle.funHandle(f,fe,fx,s,d,p,info,tix);            % allocate carbon to vegetation components
                                                                                     % litterfall and litter scalars
                                                                                     % calculate carbon cycle/decomposition/respiration in soil

@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cFlowfpSoil_CASA(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cFlowfpSoil_CASA(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % effects of soil that change the transfers
     % between carbon pools

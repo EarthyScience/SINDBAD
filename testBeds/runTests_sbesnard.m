@@ -83,7 +83,7 @@ end
 % default input path is used (runs in cluster): /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/
 % default output path is used (runs in cluster):
 % /Net/Groups/BGI/work_3/sindbad/data/testBeds/output/$userName
-userInPath             =   ['/home/simon/Documents/post_doc/sindbad/sandbox/sb_biomascat/input_biomascat'];
+userInPath             =   ['/home/simon/Net/Groups/BGI/work_3/sindbad/data/testBeds/input'];
 userOutPath             =  ['/home/simon/Documents/post_doc/sindbad/sandbox/sb_biomascat/output_biomascat'];
 
 % Alternatively set the path for the input and output (for local runs)
@@ -113,8 +113,8 @@ else
 end
 
 %% select the tests to run (see explanations at the beginning of this script)
-%testCases               =   [1 2 3 4 5];
-testCases             =   [2];
+testCases               =   [1 2 3 4 5];
+%testCases             =   [2];
 
 %% run the different tests
 for i                   =   testCases
