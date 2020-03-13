@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cFlowfpVeg_CASA(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cFlowfpVeg_CASA(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % effects of vegetation that change the transfers
     % between carbon pools

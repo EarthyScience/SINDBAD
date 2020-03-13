@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cAllocfLAI_Friedlingstein1999(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cAllocfLAI_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute the light limitation (LL) calculation
     %

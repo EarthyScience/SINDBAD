@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
+function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Solve the steady state of the cCycle for the CASA model based on
     % recurrent. Returns the model C pools in equilibrium

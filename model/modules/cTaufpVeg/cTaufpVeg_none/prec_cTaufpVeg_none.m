@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cTaufpVeg_none(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cTaufpVeg_none(f,fe,fx,s,d,p,info)
     % set the outputs to ones
     s.cd.p_cTaufpVeg_kfVeg = info.tem.helpers.arrays.onespixzix.c.cEco;
     s.cd.p_cTaufpVeg_LITC2N = info.tem.helpers.arrays.zerospix;

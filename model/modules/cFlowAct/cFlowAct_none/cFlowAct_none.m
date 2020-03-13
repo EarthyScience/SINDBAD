@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cFlowAct_none(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cFlowAct_none(f,fe,fx,s,d,p,info,tix)
     % set transfer between pools to 0 (i.e. nothing is transfered)
     % set giver and taker matrices to []
     tmp = repmat(info.tem.helpers.arrays.zerospixzix.c.cEco, 1, 1, ...

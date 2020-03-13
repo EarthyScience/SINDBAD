@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cCycleBase_simple(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cCycleBase_simple(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute carbon to nitrogen ratio and  annual turnover rates
     %

@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cTaufpSoil_CASA(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cTaufpSoil_CASA(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute soil texture effects on turnover rates (k) of cMicSoil
     %

@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = cAllocfwSoil_Friedlingstein1999(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = cAllocfwSoil_Friedlingstein1999(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute partial computation for the moisture effect on
     % decomposition/mineralization

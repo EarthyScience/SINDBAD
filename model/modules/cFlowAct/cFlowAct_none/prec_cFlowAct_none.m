@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = prec_cFlowAct_none(f, fe, fx, s, d, p, info)
+function [f,fe,fx,s,d,p] = prec_cFlowAct_none(f,fe,fx,s,d,p,info)
     % set transfer between pools to 0 (i.e. nothing is transfered)
     % set giver and taker matrices to []
     tmp = repmat(info.tem.helpers.arrays.zerospixzix.c.cEco, 1, 1, ...

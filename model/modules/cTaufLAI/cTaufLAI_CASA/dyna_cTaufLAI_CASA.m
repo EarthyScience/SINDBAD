@@ -1,4 +1,4 @@
-function [f, fe, fx, s, d, p] = dyna_cTaufLAI_CASA(f, fe, fx, s, d, p, info, tix)
+function [f,fe,fx,s,d,p] = dyna_cTaufLAI_CASA(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute the seasonal cycle of litter fall and root litter
     % "fall" based on LAI variations. Necessarily in precomputation mode
