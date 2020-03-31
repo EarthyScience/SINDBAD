@@ -1,6 +1,6 @@
-function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = wRootUptake_proportion(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% calculates the rootUptake from each of the soil layer from top to bottom
+% calculates the rootUptake from each of the soil layer proportional to the root fraction
 %
 % Inputs:
 %	- fx.tranAct: actual transpiration
@@ -17,27 +17,26 @@ function [f,fe,fx,s,d,p] = wRootUptake_TopBottom(f,fe,fx,s,d,p,info,tix)
 %   -
 %
 % Notes:
-%   - assumes that the uptake is prioritized from top to bottom, irrespective of root fraction of the layers
+%   - assumes that the uptake from each layer remains proportional to the root fraction
 %
 % Created by:
-%   - Sujan Koirala (skoirala)
+%   - Tina Trautmann (ttraut)
 %
 % Versions:
-%   - 1.0 on 18.11.2019 (skoirala): 
+%   - 1.0 on 13.03.2020 (ttraut): 
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
 %--> get the transpiration
 transp          = fx.tranAct(:,tix);
-
+pawActTotal     = sum(s.wd.pawAct,2);
 %--> extract from top to bottom and update moisture
 for sl  =   1:size(s.w.wSoil,2)
-    wSoilAvail              =   s.wd.pawAct(:,sl);
-    contrib                 =   minsb(transp,wSoilAvail);
+    wSoilAvailProp          =   maxsb(0, s.wd.pawAct(:,sl)./pawActTotal); %necessary because supply can be 0 -> 0./0=NaN
+    contrib                 =   transp .* wSoilAvailProp;
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - contrib;
     s.wd.wRootUptake(:,sl)  =   contrib;
-    transp                  =   transp-contrib;    
 end
 
 end
