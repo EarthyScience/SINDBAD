@@ -59,7 +59,9 @@ keepVarsSource          =   info.tem.model.code.variables.to.keepSource;
 keepVars                =   {};
 for ij                  =    1:numel(keepVarsSource)
     var2ks              =   keepVarsSource{ij}(1:end-1);
-    keepVars            =   [keepVars var2ks];
+    if startsWith(info.tem.model.code.variables.moduleAll,'s.')
+        keepVars            =   [keepVars var2ks];
+    end
 end
 
 stateVarsCode=unique(vertcat(stateVarsCode(:),keepVars(:)));
@@ -88,7 +90,7 @@ for ij                  =    1:numel(stateVarsCode)
                 nZix    =   1;
             end
         end
-        if isempty(strfind(sv, 'd')) || ismember(var2cr,keepVars)
+        if isempty(strfind(sv, 'd.')) || ismember(var2cr,keepVars)
             if startsWith(var2cr,'s.')
                 if ~ismember(sv,{'wd' 'cd'}) %only the storage pools are initiated at the values given in modelStructure.json. cd and wd variables are initiated with zeros.
                     tmp             =   repmat(aronespix .* info.tem.model.variables.states.(sv).initValue.(poolName) ,1,nZix);
