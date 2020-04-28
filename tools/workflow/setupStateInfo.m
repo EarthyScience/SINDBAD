@@ -106,7 +106,9 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
         sStruct.zix         =   zix;
         allNames            =   {};
         for i   =    1:size(nameLayers,1)
-            allNames        = [allNames  repmat(strrep(nameLayers(i,1),'.',''),1,nameLayers{i,2})];
+            allNames                        =   [allNames  repmat(strrep(nameLayers(i,1),'.',''),1,nameLayers{i,2})];
+            fullName                        =   strrep(nameLayers{i,1},'.','');
+            sStruct.initValue.(fullName)    =   initValues{i};
         end
         
         sStruct.names               =   cellstr(combPoolName);
@@ -126,7 +128,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
             sStruct.flags.(fullName)        =   true(1,nZix);
             sStruct.zix.(fullName)          =   1:nZix;
             sStruct.nZix.(fullName)         =   nZix;
-            sStruct.initValue.(fullName)   =   initValues{i};
+            sStruct.initValue.(fullName)    =   initValues{i};
        end
         sStruct.names                       =   allNames';
         sStruct.components                  =   allNames';
