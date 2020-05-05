@@ -30,10 +30,13 @@ function [f,fe,fx,s,d,p,precOnceData,info,fSU,feSU,fxSU,sSU,dSU,precOnceDataSU,i
 %   - v1.4: Tina Trautmann (ttraut) 
 %   - v1.5: Sujan Koirala 
 %   - v1.6: Sujan Koirala 
+%   - v1.7: Sujan Koirala 
 %
 % References:
 %
 % Versions:
+%   - 1.7 on 11.02.2020 (finding parameter set with minimum squared distance in
+%                       multiobj)
 %   - 1.6 on 11.02.2020 (handling of full optimization output)
 %   - 1.5 on 10.11.2019 (handling of writing output)
 %   - 1.4 on 09.01.2019
@@ -189,8 +192,14 @@ if info.tem.model.flags.runOpti
     [optimOutFull]                          =   feval(optimizerFunHandle,f,obs,info);
     % get the optimized parameter values into p
     pScales                                 =   optimOutFull.pScales;
+    % for multiobjective optimization, save the parameter with minimum
+    % sum of distance to minimum for each objective
     if info.opti.algorithm.isMultiObj
-        pScales                                 =   mean(pScales,1);
+        pScalesFull                         =   optimOutFull.pScales;
+        fVals                               =   optimOutFull.fval;
+        fValsSqDis                          =   (fVals - min(fVals,1)) .^ 2;
+        [~,fValsSqDisInd]                   =   min(sqrt(sum(fValsSqDis,2)));
+        pScales                             =   pScalesFull(fValsSqDisInd,:);
     end
     
     for i                                   =   1:numel(info.opti.params.names)
