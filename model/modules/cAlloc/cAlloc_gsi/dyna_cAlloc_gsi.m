@@ -23,6 +23,8 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
     %
     % Created by:
     %   - ncarvalhais and sbesnard
+    % Notes:
+    % Check if we can partition C to leaf and wood constrained by interception of light. 
     %
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)

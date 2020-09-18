@@ -1,11 +1,11 @@
 {
     "params": {
-        "Re2LRSlp": {
-            "Name": "slope reserve to leave/root",
+        "kLRe_base": {
+            "Name": "base leave to reserve",
             "Unit": "fractional",
-            "Default": 1,
-            "LowerBound": 0,
-            "UpperBound": 1,
+            "Default": 50,
+            "LowerBound": 1,
+            "UpperBound": 100,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
@@ -13,12 +13,12 @@
             },
             "Comment": ""
         },
-        "kShed": {
-            "Name": "slope shedding",
+        "kLshed_base": {
+            "Name": "base leave to shedding",
             "Unit": "fractional",
-            "Default": 1,
-            "LowerBound": 0,
-            "UpperBound": 1,
+            "Default": 50,
+            "LowerBound": 1,
+            "UpperBound": 100,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
@@ -26,12 +26,38 @@
             },
             "Comment": ""
         },
-        "LR2ReSlp": {
-            "Name": "slope leave/root to reserve",
+        "kRRe_base": {
+            "Name": "base root to reserve",
             "Unit": "fractional",
-            "Default": 1,
-            "LowerBound": 0,
-            "UpperBound": 1,
+            "Default": 50,
+            "LowerBound": 1,
+            "UpperBound": 100,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "kRshed_base": {
+            "Name": "base root to shedding",
+            "Unit": "fractional",
+            "Default": 50,
+            "LowerBound": 1,
+            "UpperBound": 100,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "kRe_base": {
+            "Name": "base reserve",
+            "Unit": "fractional",
+            "Default": 50,
+            "LowerBound": 1,
+            "UpperBound": 100,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",

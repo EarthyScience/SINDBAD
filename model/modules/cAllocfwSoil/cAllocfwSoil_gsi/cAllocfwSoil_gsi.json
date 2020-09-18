@@ -1,6 +1,6 @@
 {
     "params": {
-        "tau": {
+        "tau_wSoil": {
             "Name": "temporal change rate for the water-limiting function",
             "Unit": "",
             "Default": 0.8,

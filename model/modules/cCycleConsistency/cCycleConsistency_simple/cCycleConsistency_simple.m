@@ -1,10 +1,10 @@
-function [f,fe,fx,s,d,p] = wBalance_simple(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = cCycleConsistency_simple(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % check consistency in cCycle matrix: cAlloc, cFlow
     %
     % Inputs:
     %	- s.cd.cAlloc:            carbon allocation matrix
-    %   - s.cd.p_cFlowAct_A:      carbon flow matrix
+    %   - flow_matrix:            carbon flow matrix
     %
     % Outputs:
     %   -
@@ -33,24 +33,25 @@ function [f,fe,fx,s,d,p] = wBalance_simple(f,fe,fx,s,d,p,info,tix)
     end
 
     % Check carbon flow matrix
-    % the sum of A per column below the diagonals is always < 1 
-    flagUp = triu(ones(size(s.cd.p_cFlowAct_A)),1);
-    flagLo     = tril(ones(size(s.cd.p_cFlowAct_A)),-1);
+    % the sum of A per column below the diagonals is always < 1
+    flow_matrix = reshape(s.cd.p_cFlowAct_A, info.tem.model.variables.states.c.nZix.cEco, info.tem.model.variables.states.c.nZix.cEco);
+    flagUp = triu(ones(size(flow_matrix)),1);
+    flagLo     = tril(ones(size(flow_matrix)),-1);
     % of diagonal values of 0 must be between 0 and 1
-    anyBad     = any(s.cd.p_cFlowAct_A.*(flagLo+flagUp) < 0);
+    anyBad     = any(flow_matrix.*(flagLo+flagUp) < 0);
     if anyBad 
         error('negative values in the p_cFlowAct_A matrix!')
     end
-    anyBad     = any(s.cd.p_cFlowAct_A.*(flagLo+flagUp) > 1);
+    anyBad     = any(flow_matrix.*(flagLo+flagUp) > 1 + 1E-6);
     if anyBad 
         error('values in the p_cFlowAct_A matrix greater than 1!')
     end
     % in the lower and upper part of the matrix A the sums have to be lower than 1
-    anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagLo,1)>1);
+    anyBad     = any(sum(flow_matrix.*flagLo,1)>1 + 1E-6);
     if anyBad
         error('sum of cols higher than one in lower in p_cFlowAct_A matrix')
     end
-    anyBad     = any(sum(s.cd.p_cFlowAct_A.*flagUp,1)>1);
+    anyBad     = any(sum(flow_matrix.*flagUp,1)>1 + 1E-6);
     if anyBad
         error('sum of cols higher than one in upper in p_cFlowAct_A matrix')
     end

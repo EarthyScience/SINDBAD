@@ -96,6 +96,10 @@ for tix = 1:info.tem.helpers.sizes.nTix
     [f,fe,fx,s,d,p]     =   ms.fAPAR.funHandle(f,fe,fx,s,d,p,info,tix);             % fraction of Absorbed Photosynthetically Active Radiation
     [f,fe,fx,s,d,p]     =   ms.EVI.funHandle(f,fe,fx,s,d,p,info,tix);               % EVI
     [f,fe,fx,s,d,p]     =   ms.LAI.funHandle(f,fe,fx,s,d,p,info,tix);               % leaf area index
+    [f,fe,fx,s,d,p]     =   ms.NDVI.funHandle(f,fe,fx,s,d,p,info,tix);               % NDVI
+    [f,fe,fx,s,d,p]     =   ms.NIRv.funHandle(f,fe,fx,s,d,p,info,tix);               % NIRv
+    [f,fe,fx,s,d,p]     =   ms.NDWI.funHandle(f,fe,fx,s,d,p,info,tix);               % NDWI
+    
     [f,fe,fx,s,d,p]     =   ms.vegFrac.funHandle(f,fe,fx,s,d,p,info,tix);           % fractional coverage of vegetation
     % ---------------------------------------------------------------------
     % Snow processes
@@ -164,6 +168,7 @@ for tix = 1:info.tem.helpers.sizes.nTix
     % Climate + additional effects: carbon allocation to plant organs
     % ---------------------------------------------------------------------
     [f,fe,fx,s,d,p]     =   ms.cAllocfLAI.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of LAI on carbon allocation 
+    [f,fe,fx,s,d,p]     =   ms.cAllocfRad.funHandle(f,fe,fx,s,d,p,info,tix);        % effect of radiation on carbon allocation 
     [f,fe,fx,s,d,p]     =   ms.cAllocfwSoil.funHandle(f,fe,fx,s,d,p,info,tix);      % effect of soil moisture on carbon allocation 
     [f,fe,fx,s,d,p]     =   ms.cAllocfTsoil.funHandle(f,fe,fx,s,d,p,info,tix);      % effect of soil temperature on carbon allocation 
     [f,fe,fx,s,d,p]     =   ms.cAllocfNut.funHandle(f,fe,fx,s,d,p,info,tix);        % (pseudo)effect of nutrients on carbon allocation 

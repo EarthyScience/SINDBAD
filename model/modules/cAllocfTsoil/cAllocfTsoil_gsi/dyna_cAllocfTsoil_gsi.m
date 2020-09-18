@@ -29,5 +29,5 @@ function [f,fe,fx,s,d,p] = dyna_cAllocfTsoil_gsi(f,fe,fx,s,d,p,info,tix)
 
     % computation for the temperature effect on decomposition/mineralization
     pfT = d.prev.d_cAllocfTsoil_fT;
-    d.cAllocfTsoil.fT(:,tix) =   pfT + (d.gppfTair.TempScGPP(:,tix) - pfT) .* p.cAllocfTsoil.tau;
+    d.cAllocfTsoil.fT(:,tix) =   pfT + (d.gppfTair.TempScGPP(:,tix) - pfT) .* p.cAllocfTsoil.tau_Tsoil;
 end

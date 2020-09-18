@@ -25,6 +25,4 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledEVI(f,fe,fx,s,d,p,info,tix)
 
 %% 
 s.cd.vegFrac = minsb(s.cd.EVI .* p.vegFrac.EVIscale,1);    
-
-
 end

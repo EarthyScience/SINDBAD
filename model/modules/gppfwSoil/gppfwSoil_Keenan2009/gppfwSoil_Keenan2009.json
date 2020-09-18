@@ -12,7 +12,34 @@
                 "params": []
             },
             "Comment": ""
+        },
+        "Smax": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 0.7,
+            "LowerBound": 0.2,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "Smin": {
+            "Name": "",
+            "Unit": "[]",
+            "Default": 0.5,
+            "LowerBound": 0.01,
+            "UpperBound": 0.95,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
         }
+
     },
     "devStage": {
         "experimental": true,

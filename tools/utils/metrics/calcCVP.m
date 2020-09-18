@@ -406,7 +406,7 @@ switch parameter
          end
          
      % LINEAR REGRESSION PARAMETERS
-     case {'r', 'r2', 'alpha', 'rlo', 'rup', 'adjr2','rw','r2w'}
+     case {'r', 'rinv', 'r2', 'alpha', 'rlo', 'rup', 'adjr2','rw','r2w'}
          warning off MATLAB:divideByZero
          [r, alpha, rlo, rup]   = corrcoef(Obs, Pre);
          
@@ -426,7 +426,9 @@ switch parameter
              
              case 'r'       % PEARSON CORRELATION COEFFICIENT
                  X  = r(1, 2);
-                 
+             case 'rinv'       % PEARSON CORRELATION COEFFICIENT
+                    X  = 1 - r(1, 2);
+                    
              case 'r2'      % r^2
                  X  = r(1, 2) .^ 2;
                  

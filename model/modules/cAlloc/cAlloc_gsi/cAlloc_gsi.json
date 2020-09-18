@@ -1,5 +1,45 @@
 {
-    "params": {},
+    "params": {
+        "Re2LRSlp": {
+            "Name": "slope reserve to leave/root",
+            "Unit": "fractional",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "kShed": {
+            "Name": "slope shedding",
+            "Unit": "fractional",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "LR2ReSlp": {
+            "Name": "slope leave/root to reserve",
+            "Unit": "fractional",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    },
     "devStage": {
         "experimental": true,
         "tested": false,

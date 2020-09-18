@@ -84,7 +84,7 @@ end
 % default output path is used (runs in cluster):
 % /Net/Groups/BGI/work_3/sindbad/data/testBeds/output/$userName
 userInPath             =   ['/home/simon/Net/Groups/BGI/work_3/sindbad/data/testBeds/input'];
-userOutPath             =  ['/home/simon/Documents/post_doc/sindbad/sandbox/sb_biomascat/output_biomascat'];
+userOutPath             =  ['/home/simon/Net/Groups/BGI/work_3/sindbad/project/biomascat/sindbad_master/sandbox/biomascat/output_data/testBeds/'];
 
 % Alternatively set the path for the input and output (for local runs)
 % copy the test input: /Net/Groups/BGI/work_3/sindbad/data/testBeds/input/
