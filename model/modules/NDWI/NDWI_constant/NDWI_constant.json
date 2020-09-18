@@ -1,0 +1,24 @@
+{
+    "params": {
+        "constantNDWI": {
+            "Name": "NDWI",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": " a constant NDWI value to be used"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

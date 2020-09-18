@@ -1,0 +1,23 @@
+{
+    "params": {
+        "LAIscale": {
+            "Name": "scalar for LAI",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0,
+            "UpperBound": 5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "a scalar to derive vegetation fraction from LAI"
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false, "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

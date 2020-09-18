@@ -29,6 +29,6 @@ wSoilEnd                =   size(s.w.wSoil,2);
 fx.gwRec(:,tix)         =   p.gwRec.rf .* s.w.wSoil(:,wSoilEnd);
 
 % update storages pool
-s.w.wSoil(:,wSoilEnd)   =   s.w.wSoil(:,wSoilEnd)- fx.gwRec(:,tix);
+s.w.wSoil(:,wSoilEnd)   =   s.w.wSoil(:,wSoilEnd) - fx.gwRec(:,tix);
 s.w.wGW                 =   s.w.wGW + fx.gwRec(:,tix);
 end

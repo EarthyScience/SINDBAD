@@ -35,8 +35,8 @@ function [f,fe,fx,s,d,p] = prec_cCycleBase_simple6Cpool(f,fe,fx,s,d,p,info)
         s.cd.p_cCycleBase_C2Nveg(:, zix) = p.cCycleBase.C2Nveg(zix);
     end
 
-    % annual turnover rates
-    s.cd.p_cCycleBase_annk = reshape(repelem(p.cCycleBase.annk, info.tem.helpers.sizes.nPix), info.tem.helpers.sizes.nPix, info.tem.model.variables.states.c.nZix.cEco); %sujan
-
+    % annual turnover rates    
+    annk = [p.cCycleBase.annk_Root(:), p.cCycleBase.annk_Wood(:), p.cCycleBase.annk_Leaf(:), p.cCycleBase.annk_Reserve(:), p.cCycleBase.annk_Soil(:)];
+    s.cd.p_cCycleBase_annk = reshape(repelem(annk, info.tem.helpers.sizes.nPix), info.tem.helpers.sizes.nPix, info.tem.model.variables.states.c.nZix.cEco); %sujan
 
 end %function

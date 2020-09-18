@@ -43,11 +43,10 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     s.cd.cNPP = fx.gpp(:, tix) .* s.cd.cAlloc(:, zix) - s.cd.cEcoEfflux(:, zix);
     s.cd.cEcoInflux(:, zix) = s.cd.cNPP;
     % flows and losses
-    % @nc, if flux order does not matter, remove...
-    for jix = 1:numel(p.cCycleBase.fluxOrder)
-        taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
-        giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
-        s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
+    for jix = 1:numel(s.cd.p_cFlowAct_taker)
+        taker                       = s.cd.p_cFlowAct_taker(jix);
+        giver                       = s.cd.p_cFlowAct_giver(jix);
+        s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)  + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
     end
 
     %% balance

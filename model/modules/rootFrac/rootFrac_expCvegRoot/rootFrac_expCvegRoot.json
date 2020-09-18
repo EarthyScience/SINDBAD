@@ -1,7 +1,7 @@
 {
     "params": {
         "k_cVegRoot": {
-        "Name": "rate constant of exponentail relationship",
+        "Name": "rate constant of exponential relationship",
         "Unit": "m2/kgC (inverse of carbon storage)",
         "Default": 0.02,
         "LowerBound": 0.001,
