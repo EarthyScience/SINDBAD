@@ -1,6 +1,6 @@
 {
     "params": {
-        "tau": {
+        "tau_Tsoil": {
             "Name": "temporal change rate for the temperature-limiting function",
             "Unit": "",
             "Default": 0.2,

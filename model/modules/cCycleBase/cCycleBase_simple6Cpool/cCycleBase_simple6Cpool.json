@@ -1,33 +1,95 @@
 {
     "params": 
     {
-        "annk": 
+        "annk_Root": 
         {
 			"Name": "turnover rate of ecosystem carbon pools",
 			"Unit": "yr-1",
-            "Default": [1, 0.03, 0.03, 1, 0, 0.2],
-			"LowerBound": [0.05,0.02, 0.02, 0.05, 0, 0.02],
-			"UpperBound": [3.3, 0.5, 0.5, 3.3, 0, 2.0],
+            "Default": 1,
+			"LowerBound": 0.05,
+			"UpperBound": 3.3,
             "Distribution": 
             {
 				"name": "uniform",
 				"funHandle": "",
 				"pdarams" : []
 			},
-			"Comment": 		" cEcoNames:[c.Veg.Root.F, c.Veg.Root.C, c.Veg.Wood, c.Veg.Leaf, c.Veg.Reserve, 'c.Soil']"
+			"Comment": 		" cEcoNames: c.Veg.Root"
+
+        },
+        "annk_Wood": 
+        {
+			"Name": "turnover rate of ecosystem carbon pools",
+			"Unit": "yr-1",
+            "Default": 0.03,
+			"LowerBound": 0.01,
+			"UpperBound": 0.5,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		" cEcoNames: c.Veg.Wood"
+
+        },
+        "annk_Leaf": 
+        {
+			"Name": "turnover rate of ecosystem carbon pools",
+			"Unit": "yr-1",
+            "Default": 0.5,
+			"LowerBound": 0.05,
+			"UpperBound": 10,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		" cEcoNames: c.Veg.Leaf"
+
+        },        
+        "annk_Reserve": 
+        {
+			"Name": "turnover rate of ecosystem carbon pools",
+			"Unit": "yr-1",
+            "Default": 0.75,
+			"LowerBound": 0.5,
+			"UpperBound": 1,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		" cEcoNames: c.Veg.Reserve"
+
+        },
+        "annk_Soil": 
+        {
+			"Name": "turnover rate of ecosystem carbon pools",
+			"Unit": "yr-1",
+            "Default": 0.2,
+			"LowerBound": 0.02,
+			"UpperBound": 2.0,
+            "Distribution": 
+            {
+				"name": "uniform",
+				"funHandle": "",
+				"pdarams" : []
+			},
+			"Comment": 		" cEcoNames: c.Soil"
 
 		},
 		"cFlowA": {
 			"Name": "Transfer matrix for carbon at ecosystem level",
 			"Unit": "",
 			"Default": [
-				[  -1,    0,    0,    0,    0,    0],
-                [  -1,    0,    0,    0,    0,    0],
-                [	0,   -1,    0,    0,    0,    0],
-                [	0,    0,   -1,    0,    0,    0],
-                [	0,    0,    0,   -1,    0,    0],
-                [   0,    0,    0,    0,   -1,    0],
-                [   0.2,  0.2, 0.02,  0.2,  0,   -1]
+				[  -1,    0,    0,    0,    0],
+                [   0,   -1,    0,    0,    0],
+                [	0,    0,   -1,    0,    0],
+                [   0,    0,    0,   -1,    0],
+                [   1,    1,    1,    0,   -1]
 			],
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -42,7 +104,7 @@
         "C2Nveg":{
             "Name": "carbon to nitrogen ratio in vegetation pools",
             "Unit": "gC/gN",
-            "Default": [25,260,260,25, 10],
+            "Default": [25,260,25,10],
             "LowerBound": NaN,
             "UpperBound": NaN,
             "Distribution": 
