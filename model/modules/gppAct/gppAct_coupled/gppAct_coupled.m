@@ -6,6 +6,7 @@ function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 %   - d.WUE.AoE: water use efficiency in gC/mmH2O
 %   - d.tranSup.tranSup: supply limited transpiration
 %   - d.gppDem.gppE: Demand-driven GPP with stressors except wSoil applied
+%   - d.gppfwSoil.SMScGPP: soil moisture stress on photosynthetic capacity
 %
 % Outputs:
 %   - fx.gpp: actual GPP [gC/m2/time]
@@ -29,5 +30,5 @@ function [f,fe,fx,s,d,p] = gppAct_coupled(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-fx.gpp(:,tix)           =   nanmin(d.tranSup.tranSup(:,tix) .* d.WUE.AoE(:,tix), d.gppDem.gppE(:,tix));
+fx.gpp(:,tix)           =   nanmin(d.tranSup.tranSup(:,tix) .* d.WUE.AoE(:,tix), d.gppDem.gppE(:,tix) .* d.gppfwSoil.SMScGPP(:,tix));
 end

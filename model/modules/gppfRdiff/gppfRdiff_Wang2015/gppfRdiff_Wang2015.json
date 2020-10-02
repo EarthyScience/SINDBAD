@@ -1,17 +1,17 @@
 {
     "params": {
-        "constantambCO2": {
-            "Name": "atmospheric CO2 concentration",
-            "Unit": "ppm",
-            "Default": 400,
-            "LowerBound": 200,
-            "UpperBound": 5000,
+        "miu": {
+            "Name": "",
+            "Unit": "",
+            "Default": 0.46,
+            "LowerBound": 0.0001,
+            "UpperBound": 1.0,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "a constant CO2 concentration"
+            "Comment": ""
         }
     },
     "devStage": {
