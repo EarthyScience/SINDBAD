@@ -32,11 +32,12 @@ function [f,fe,fx,s,d,p] = dyna_gppfwSoil_Keenan2009(f,fe,fx,s,d,p,info,tix)
     %   - 1.0 on 10.03.2020 (sbesnard) 
     %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    SM    = sum(s.w.wSoil, 2);
-    WP  = sum(s.wd.p_wSoilBase_wWP, 2);
-    maxAWC = maxsb(SM - WP, 0);
-    Smax = p.gppfwSoil.Smax * maxAWC;
-    Smin = p.gppfwSoil.Smin * Smax;    
-    d.gppfwSoil.SMScGPP(:,tix) = min(max(((max(SM,Smin) - Smin) ./ (Smax-Smin)) .^ p.gppfwSoil.q,0),1);
+    SM                          = sum(s.w.wSoil, 2);
+    WP                          = sum(s.wd.p_wSoilBase_wWP, 2);
+    Wsat                        = sum(s.wd.p_wSoilBase_wSat, 2);
+    maxAWC                      = maxsb(Wsat - WP, 0);
+    Smax                        = p.gppfwSoil.sSmax * maxAWC;
+    Smin                        = p.gppfwSoil.sSmin * Smax;    
+    d.gppfwSoil.SMScGPP(:,tix)	= min(max(((max(SM,Smin) - Smin) ./ (Smax-Smin)) .^ p.gppfwSoil.q,0),1);
     
 end
