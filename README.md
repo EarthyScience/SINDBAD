@@ -18,6 +18,8 @@ SINDBAD is being developed at the Department of Biogeochemical Integration of th
 
 -   Simon Besnard (<sbesnard@bgc-jena.mpg.de>)
 
+-   Hoontaek Lee (<hlee@bgc-jena.mpg.de>)
+
 
 ### Documentation
 
