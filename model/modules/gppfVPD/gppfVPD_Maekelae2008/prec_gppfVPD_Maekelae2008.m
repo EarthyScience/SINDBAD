@@ -20,7 +20,8 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_Maekelae2008(f,fe,fx,s,d,p,info)
 %       Global change biology, 14(1), 92-108. 
 %
 % Notes: 
-%   - 
+%   - Equation 5. a negative exponent is introduced to have positive parameter 
+%      values
 %
 % Created by:
 %   - Nuno Carvalhais (ncarval)

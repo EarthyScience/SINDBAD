@@ -3,9 +3,9 @@
         "VPDmax": {
             "Name": "Max VPD with GPP > 0",
             "Unit": "kPa",
-            "Default": 2,
-            "LowerBound": 1,
-            "UpperBound": 10,
+            "Default": 4,
+            "LowerBound": 2,
+            "UpperBound": 8,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
@@ -16,9 +16,9 @@
         "VPDmin": {
             "Name": "Min VPD with GPP > 0",
             "Unit": "kPa",
-            "Default": 1,
+            "Default": 0.65,
             "LowerBound": 0,
-            "UpperBound": 5,
+            "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",

@@ -15,12 +15,12 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_MOD17(f,fe,fx,s,d,p,info)
 %
 % References:
 %   - MOD17 User guide: https://lpdaac.usgs.gov/documents/495/MOD17_User_Guide_V6.pdf
-%   - Zhao, M., Heinsch, F. A., Nemani, R. R., & Running, S. W. (2005). Improvements 
-%   of the MODIS terrestrial gross and net primary production global data set. Remote 
-%   sensing of Environment, 95(2), 164-176.
+%   - Zhao, M., Heinsch, F. A., Nemani, R. R., & Running, S. W. (2005)
+%       Improvements of the MODIS terrestrial gross and net primary production 
+%       global data set. Remote sensing of Environment, 95(2), 164-176.
 %   - Running, S. W., Nemani, R. R., Heinsch, F. A., Zhao, M., Reeves, M., 
-%   & Hashimoto, H. (2004). A continuous satellite-derived measure of global terrestrial 
-%   primary production. Bioscience, 54(6), 547-560.
+%       & Hashimoto, H. (2004). A continuous satellite-derived measure of
+%       global terrestrial primary production. Bioscience, 54(6), 547-560.
 %
 % Notes:
 %   - 
@@ -39,7 +39,7 @@ td                      =   (p.gppfVPD.VPDmax - p.gppfVPD.VPDmin) .* tmp;
 pVPDmax                 =   p.gppfVPD.VPDmax .* tmp;
 
 
-vsc                     =   -f.VPDDay ./ td + pVPDmax ./ td;
+vsc                     =   (pVPDmax - f.VPDDay) ./ td;
 vsc(vsc<0)              =   0;
 vsc(vsc>1)              =   1;
 
