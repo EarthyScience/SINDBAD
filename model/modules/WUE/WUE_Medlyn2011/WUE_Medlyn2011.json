@@ -1,17 +1,17 @@
 {
 	"params": {
 		"g1": {
-			"Name": "??? Check with martin",
+			"Name": "stomatal conductance parameter",
 			"Unit": "kPa^0.5",
 			"Default": 3,
-			"LowerBound": 1.5,
+			"LowerBound": 0.5,
 			"UpperBound": 9,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",
 				"params" : []
 			},
-			"Comment": "from Sven"
+			"Comment": "from Table in Medlyn, 2012 corrigendum"
 		}
 	}
 }
