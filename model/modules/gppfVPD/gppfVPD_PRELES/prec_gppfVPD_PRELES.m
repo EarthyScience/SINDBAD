@@ -34,7 +34,7 @@ function [f,fe,fx,s,d,p] = prec_gppfVPD_PRELES(f,fe,fx,s,d,p,info)
 %% from SHanning's codes
 fVPD_VPD            = exp(p.gppfVPD.kappa .* f.VPDDay .* (s.cd.ambCO2./p.gppfVPD.Ca0) .^ p.gppfVPD.Ckappa);
 fCO2_CO2            = 1 + (s.cd.ambCO2-p.gppfVPD.Ca0)./(s.cd.ambCO2-p.gppfVPD.Ca0+p.gppfVPD.Cm);
-VPDScGPP            = maxsb(0,minsb(1,fVPD_VPD.*fCO2_CO2));
+VPDScGPP            = max(0,min(1,fVPD_VPD.*fCO2_CO2));
 d.gppfVPD.VPDScGPP	= VPDScGPP;
 
     

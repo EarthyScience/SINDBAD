@@ -23,5 +23,5 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledLAI(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.vegFrac = minsb(s.cd.LAI .* p.vegFrac.LAIscale,1);    
+s.cd.vegFrac = min(s.cd.LAI .* p.vegFrac.LAIscale,1);    
 end

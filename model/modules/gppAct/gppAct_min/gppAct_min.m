@@ -31,7 +31,7 @@ function [f,fe,fx,s,d,p] = gppAct_min(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-d.gppAct.AllScGPP(:,tix)    = minsb(d.gppDem.AllDemScGPP(:,tix),d.gppfwSoil.SMScGPP(:,tix));
+d.gppAct.AllScGPP(:,tix)    = min(d.gppDem.AllDemScGPP(:,tix),d.gppfwSoil.SMScGPP(:,tix));
 % ... and multiply
 fx.gpp(:,tix)               = s.cd.fAPAR .* d.gppPot.gppPot(:,tix) .* d.gppAct.AllScGPP(:,tix);
 

@@ -34,10 +34,10 @@ tmp_smaxVeg         =   sum(s.wd.p_wSoilBase_wSat,2);
 tmp_SoilTotal       =   sum(s.w.wSoil, 2);
 
 %--> get the berg parameters according the vegetation fraction
-s.wd.p_roSat_berg    =   maxsb(0.1, p.roSat.berg_scale  .* s.cd.vegFrac); % do this?
+s.wd.p_roSat_berg    =   max(0.1, p.roSat.berg_scale  .* s.cd.vegFrac); % do this?
 
 %--> calculate land runoff from incoming water and current soil moisture
-tmp_SatExFrac       =   minsb(exp(s.wd.p_roSat_berg  .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+tmp_SatExFrac       =   min(exp(s.wd.p_roSat_berg  .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 fx.roSat(:,tix)     =   s.wd.WBP .* tmp_SatExFrac;
 
 %--> update water balance pool

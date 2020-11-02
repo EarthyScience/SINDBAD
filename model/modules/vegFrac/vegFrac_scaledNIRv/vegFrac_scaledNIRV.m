@@ -23,5 +23,5 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledNIRv(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.vegFrac = minsb(s.cd.NIRv .* p.vegFrac.NIRvscale,1);    
+s.cd.vegFrac = min(s.cd.NIRv .* p.vegFrac.NIRvscale,1);    
 end

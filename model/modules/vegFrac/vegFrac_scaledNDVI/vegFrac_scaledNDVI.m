@@ -23,5 +23,5 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledNDVI(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.vegFrac = minsb(s.cd.NDVI .* p.vegFrac.NDVIscale,1);    
+s.cd.vegFrac = min(s.cd.NDVI .* p.vegFrac.NDVIscale,1);    
 end

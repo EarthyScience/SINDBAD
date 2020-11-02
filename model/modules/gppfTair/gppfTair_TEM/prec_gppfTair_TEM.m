@@ -38,5 +38,5 @@ pTScGPP         =   pTmin .* pTmax ./ ((pTmin .* pTmax) - (f.TairDay - pTopt) .^
 
 d.gppfTair.TempScGPP(f.TairDay>p.gppfTair.Tmax)   =     0;
 d.gppfTair.TempScGPP(f.TairDay<p.gppfTair.Tmin)   =     0;
-d.gppfTair.TempScGPP                              =     minsb(maxsb(pTScGPP,0),1);
+d.gppfTair.TempScGPP                              =     min(max(pTScGPP,0),1);
 end

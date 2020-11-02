@@ -31,7 +31,7 @@ nSoilLayers                         =   info.tem.model.variables.states.w.nZix.w
 soilDepths                          =   info.tem.model.variables.states.w.soilLayerDepths;
 
 totalSoilDepth                      =   sum(soilDepths);
-maxRootDepth                        =   minsb(s.wd.maxRootD,totalSoilDepth); % maximum rootingdepth
+maxRootDepth                        =   min(s.wd.maxRootD,totalSoilDepth); % maximum rootingdepth
 
 %--> create the arrays to fill in the soil properties
 s.wd.p_rootFrac_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;

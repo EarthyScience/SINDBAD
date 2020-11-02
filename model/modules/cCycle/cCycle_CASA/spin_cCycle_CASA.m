@@ -103,11 +103,11 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
     %% solve it for each pool individually
     for zix = zixVecOrder
         % general k loss
-        cLossRate(:, zix, :) = maxsb(minsb(d.storedStates.p_cTauAct_k(:, zix, :), 1), 0);
+        cLossRate(:, zix, :) = max(min(d.storedStates.p_cTauAct_k(:, zix, :), 1), 0);
 
         if any(zix == info.tem.model.variables.states.c.zix.cVeg)
             % additional losses (RA) in veg pools
-            cLoxxRate(:, zix, :) = minsb(1 - d.storedStates.p_raAct_km4su(:, zix, :), 1);
+            cLoxxRate(:, zix, :) = min(1 - d.storedStates.p_raAct_km4su(:, zix, :), 1);
             % gains in veg pools
             gppShp = reshape(fx.gpp, nPix, 1, nTix); % could be fxT?
             cGain(:, zix, :) = d.storedStates.cAlloc(:, zix, :) .* gppShp .* p.raAct.YG;
