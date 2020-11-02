@@ -2,16 +2,16 @@
     "params": {
         "kappa": {
             "Name": "",
-            "Unit": "hPa-1",
-            "Default": -0.005,
-            "LowerBound": 0.0,
-            "UpperBound": -1.0,
+            "Unit": "kPa-1",
+            "Default": 0.40,
+            "LowerBound": 0.06,
+            "UpperBound": 0.7,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": "from PRELES"
+            "Comment": "from PRELES, same as Maekaelae, 2008, sign flipped"
         },
         "Ckappa": {
             "Name": "",
