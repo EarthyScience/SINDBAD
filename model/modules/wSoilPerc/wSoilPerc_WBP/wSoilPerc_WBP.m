@@ -32,11 +32,11 @@ fx.wSoilPerc(:,tix)     =   s.wd.WBP;
 %--> update the soil moisture in the first layer
 s.w.wSoil(:,1)          =   s.w.wSoil(:,1) + fx.wSoilPerc(:,tix);
 %--> calculate the oversaturation of the first layer 
-wSoilExc                =   maxsb(s.w.wSoil(:,1)-s.wd.p_wSoilBase_wSat(:,1),0);
+wSoilExc                =   max(s.w.wSoil(:,1)-s.wd.p_wSoilBase_wSat(:,1),0);
 s.w.wSoil(:,1)          =   s.w.wSoil(:,1) - wSoilExc;
 %--> reallocate excess moisture of 1st layer to deeper layers 
 for sl  =   1:size(s.w.wSoil,2)
-    ip                  =   minsb(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), wSoilExc);
+    ip                  =   min(s.wd.p_wSoilBase_wSat(:,sl)  - s.w.wSoil(:,sl), wSoilExc);
     s.w.wSoil(:,sl)     =   s.w.wSoil(:,sl) + ip;
     wSoilExc            =   wSoilExc - ip;
 end

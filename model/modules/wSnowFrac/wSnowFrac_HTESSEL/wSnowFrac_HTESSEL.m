@@ -33,6 +33,6 @@ function [f,fe,fx,s,d,p] = wSnowFrac_HTESSEL(f,fe,fx,s,d,p,info,tix)
 s.w.wSnow       = s.w.wSnow + fe.rainSnow.snow(:,tix);
 
 % suggested by Sujan (after HTESSEL GHM)
-s.wd.wSnowFrac = minsb(1, s.w.wSnow ./ p.wSnowFrac.CoverParam );
+s.wd.wSnowFrac = min(1, s.w.wSnow ./ p.wSnowFrac.CoverParam );
 
 end

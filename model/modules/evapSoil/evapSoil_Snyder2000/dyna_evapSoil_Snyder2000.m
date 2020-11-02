@@ -42,11 +42,11 @@ issat                       =   sPET > beta2;       % same as sqrt(sPET) > beta 
 ET                          =   isdry.*(~issat .* sPET + issat .* sqrt(sPET) .* p.evapSoil.beta - s.wd.p_evapSoil_sET) + ~isdry .* PET;
 %
 %--> correct for conditions with light rainfall which were considered not as a
-%wetting event; for these conditions we assume soil_evap=minsb(precip-ECanop,pet_soil-evap soil already used)
-ET2                         =   minsb(wSoilAvail, PET-ET);
+%wetting event; for these conditions we assume soil_evap=min(precip-ECanop,pet_soil-evap soil already used)
+ET2                         =   min(wSoilAvail, PET-ET);
 
 ETsoil                      =   ET + ET2;
-actETsoil                   =   minsb(ETsoil, s.w.wSoil(:,1));
+actETsoil                   =   min(ETsoil, s.w.wSoil(:,1));
 fx.evapSoil(:,tix)          =   actETsoil;
 
 %--> storing the ET and PET of the current time step

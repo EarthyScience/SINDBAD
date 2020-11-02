@@ -35,7 +35,7 @@ nSoilLayers                 =   s.wd.p_wSoilBase_nsoilLayers;
 s.wd.wSoilFlow(:,1)         =   fx.wSoilPerc(:,tix);
 for sl=1:nSoilLayers-1
     %--> drain excess moisture in oversaturation
-    maxDrain                =   maxsb(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wFC(:,sl), 0);
+    maxDrain                =   max(s.w.wSoil(:,sl) - s.wd.p_wSoilBase_wFC(:,sl), 0);
     %--> store the drainage flux
     s.wd.wSoilFlow(:,sl+1)  =   maxDrain;
     %--> update storages

@@ -26,7 +26,7 @@ function [f,fe,fx,s,d,p] = evapInt_vegFrac(f,fe,fx,s,d,p,info,tix)
 %%
 %--> calculate interception loss
 intCap                  =   p.evapInt.pInt .* s.cd.vegFrac;
-fx.evapInt(:,tix)       =   minsb(intCap, fe.rainSnow.rain(:,tix));
+fx.evapInt(:,tix)       =   min(intCap, fe.rainSnow.rain(:,tix));
 
 % update the available water
 s.wd.WBP               =   s.wd.WBP - fx.evapInt(:,tix);

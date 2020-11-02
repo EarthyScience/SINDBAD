@@ -37,7 +37,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     s.cd.cEcoInflux = info.tem.helpers.arrays.zerospixzix.c.cEco;
     s.cd.cEcoFlow = info.tem.helpers.arrays.zerospixzix.c.cEco;
     %% compute losses
-    s.cd.cEcoOut = minsb(s.c.cEco, s.c.cEco .* s.cd.p_cTauAct_k);
+    s.cd.cEcoOut = min(s.c.cEco, s.c.cEco .* s.cd.p_cTauAct_k);
     %% gains to vegetation
     zix = info.tem.model.variables.states.c.flags.cVeg;
     s.cd.cNPP = fx.gpp(:, tix) .* s.cd.cAlloc(:, zix) - s.cd.cEcoEfflux(:, zix);

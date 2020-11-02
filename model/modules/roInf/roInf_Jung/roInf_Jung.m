@@ -43,7 +43,7 @@ rain            =   fe.rainSnow.rain(:,tix);
 rainInt         =   fe.rainInt.rainInt(:,tix);
 tmp             =   rain > 0;
 roInf(tmp)      =   rain(tmp) - (rain(tmp) .* s.cd.fAPAR(tmp) + (1 - s.cd.fAPAR(tmp)) .*...
-                    minsb(rain(tmp),minsb(pInfCapacity(tmp),rainInt(tmp)) .* rain(tmp) ./ rainInt(tmp)));
+                    min(rain(tmp),min(pInfCapacity(tmp),rainInt(tmp)) .* rain(tmp) ./ rainInt(tmp)));
 fx.roInf(:,tix) =   roInf;
 s.wd.WBP        =   s.wd.WBP - fx.roInf(:,tix);
 end

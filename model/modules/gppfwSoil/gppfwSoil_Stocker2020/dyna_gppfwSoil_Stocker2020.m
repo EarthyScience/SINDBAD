@@ -34,8 +34,8 @@ function [f,fe,fx,s,d,p] = dyna_gppfwSoil_Stocker2020(f,fe,fx,s,d,p,info,tix)
 SM      = sum(s.w.wSoil, 2);
 WP      = sum(s.wd.p_wSoilBase_wWP, 2);
 WFC     = sum(s.wd.p_wSoilBase_wFC, 2);
-maxAWC  = maxsb(WFC - WP, 0);
-actAWC  = maxsb(SM - WP, 0);
+maxAWC  = max(WFC - WP, 0);
+actAWC  = max(SM - WP, 0);
 SM_nor	= min(actAWC ./ maxAWC, 1);
 
 fW      = (p.gppfwSoil.q .* (SM_nor - p.gppfwSoil.thetastar) .^ 2 + 1) .*...

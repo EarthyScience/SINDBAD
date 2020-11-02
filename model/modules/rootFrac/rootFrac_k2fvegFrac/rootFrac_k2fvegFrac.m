@@ -39,8 +39,8 @@ if numel(soilDepths)                ~=  nSoilLayers &&  numel(soilDepths) ~= 2
 end
 
 % the scaling parameters can be >1 but k1RootFrac needs to be <= 1
-k1RootFrac                    =   minsb(1,s.cd.vegFrac .* p.rootFrac.k1_scale); % the fraction of water that a root can uptake from the 1st soil layer
-k2RootFrac                    =   minsb(1,s.cd.vegFrac .* p.rootFrac.k2_scale); % the fraction of water that a root can uptake from the 1st soil layer
+k1RootFrac                    =   min(1,s.cd.vegFrac .* p.rootFrac.k1_scale); % the fraction of water that a root can uptake from the 1st soil layer
+k2RootFrac                    =   min(1,s.cd.vegFrac .* p.rootFrac.k2_scale); % the fraction of water that a root can uptake from the 1st soil layer
 
 %--> create the arrays to fill in the soil properties
 s.wd.p_rootFrac_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;

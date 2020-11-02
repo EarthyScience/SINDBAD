@@ -33,7 +33,7 @@ s.wd.wSoilFlow(:,1)         =   fx.wSoilPerc(:,tix);
 for sl=1:nSoilLayers-1
     %--> get the drainage flux
     k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
-    drain                   =   minsb(k_unsat,s.w.wSoil(:,sl));
+    drain                   =   min(k_unsat,s.w.wSoil(:,sl));
     %--> store the drainage flux
     s.wd.wSoilFlow(:,sl+1)  =   drain;
     %--> update storages

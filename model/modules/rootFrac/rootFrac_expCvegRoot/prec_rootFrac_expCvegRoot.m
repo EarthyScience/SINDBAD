@@ -27,7 +27,7 @@ function [f,fe,fx,s,d,p]=prec_rootFrac_expCvegRoot(f,fe,fx,s,d,p,info)
 %%s.wd.p_rootFrac_fracRoot2SoilD = info.tem.helpers.arrays.onespixzix.w.wSoil;
 soilDepths = info.tem.model.variables.states.w.soilLayerDepths;
 totalSoilDepth = sum(soilDepths);
-s.wd.maxRootDepth = minsb(s.wd.maxRootD, totalSoilDepth); % maximum rootingdepth
+s.wd.maxRootDepth = min(s.wd.maxRootD, totalSoilDepth); % maximum rootingdepth
 
 %--> create the arrays to fill in the soil properties
 s.wd.p_rootFrac_fracRoot2SoilD     =   info.tem.helpers.arrays.onespixzix.w.wSoil;

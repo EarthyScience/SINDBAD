@@ -28,9 +28,9 @@ tmp_smaxVeg         = sum(s.wd.p_wSoilBase_wSat,2);
 tmp_SoilTotal       = sum(s.w.wSoil, 2);
 
 % calculate land runoff from incoming water and current soil moisture
-tmp_InfExFrac       =   minsb(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+tmp_InfExFrac       =   min(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 
-% tmp_InfExFrac       =   minsb(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
+% tmp_InfExFrac       =   min(exp(p.roSat.berg .* log(tmp_SoilTotal  ./ tmp_smaxVeg)),1);
 fx.roSat(:,tix)     =   s.wd.WBP .* tmp_InfExFrac;
 
 % update water balance

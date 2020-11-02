@@ -49,8 +49,8 @@ for ii  =   2:info.tem.helpers.sizes.nTix
 end
 
 %--> calculate the stress and saturation
-S           =   maxsb(X - X0 ,0);
-vsc         =   maxsb(minsb(S ./ Smax,1),0);
+S           =   max(X - X0 ,0);
+vsc         =   max(min(S ./ Smax,1),0);
 
 %--> assign stressor
 d.gppfTair.TempScGPP = vsc;
