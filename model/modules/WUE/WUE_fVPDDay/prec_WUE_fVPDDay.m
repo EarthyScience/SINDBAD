@@ -3,7 +3,8 @@ function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
 % calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
 %
 % Inputs:
-%    - p.WUE.WUEat1hPa: the VOD at 1 hpa 
+%    - p.WUE.WUEat1hPa: the VPD at 1 hpa 
+%    - f.VPDDay: daytime mean VPD [kPa] 
 %
 % Outputs:
 %   - d.WUE.AoE: water use efficiency - ratio of assimilation and
@@ -26,5 +27,6 @@ function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-d.WUE.AoE                   =  p.WUE.WUEat1hPa * 1 ./ sqrt(f.VPDDay);
+kpa_to_hpa  = 10;
+d.WUE.AoE   = p.WUE.WUEat1hPa * 1 ./ sqrt(kpa_to_hpa .* f.VPDDay);
 end
