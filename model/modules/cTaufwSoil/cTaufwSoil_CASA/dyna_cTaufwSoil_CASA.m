@@ -84,7 +84,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
     % WHEN PET IS 0, SET THE BGME TO THE PREVIOUS TIME STEP'S VALUE
     ndxn = (fe.PET.PET(:, tix) <= 0);
     BGME(ndxn) = pBGME(ndxn);
-    BGME = maxsb(minsb(BGME, 1), 0);
+    BGME = max(min(BGME, 1), 0);
 
     % FEED IT TO THE STRUCTURE
     d.cTaufwSoil.fwSoil(:, tix) = BGME;

@@ -31,7 +31,7 @@ function [f,fe,fx,s,d,p] = dyna_roSurf_TWSPaper(f,fe,fx,s,d,p,info,tix)
 
 % calculate Q from delay of previous days
 if tix>60
-    tmin = maxsb(tix-60,1);
+    tmin = max(tix-60,1);
     fx.roSurf(:,tix) = sum(fx.roOverland(:,tmin:tix) .* fe.roSurf.Rdelay,2);    
     % calculate wSurf by water balance
     dSurf =(fe.rainSnow.rain(:,tix)+fe.rainSnow.snow(:,tix))-fx.evapSoil(:,tix) - fx.evapSub(:,tix) - fx.roSurf(:,tix) - (sum(s.w.wSnow,2) - sum(s.prev.s_w_wSnow,2)) - (sum(s.w.wSoil,2) - sum(s.prev.s_w_wSoil,2));

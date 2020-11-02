@@ -34,7 +34,7 @@ idx 				= f.Tair > 0;
 tmp_mt              = p.snowMelt.melt_T * info.tem.helpers.arrays.onespixtix;
 tmp_T 				= f.Tair(idx) .* tmp_mt(idx);
 tmp_mr              = p.snowMelt.melt_Rn * info.tem.helpers.arrays.onespixtix;
-tmp_Rn 				= maxsb(f.Rn(idx) .* tmp_mr(idx), 0);
+tmp_Rn 				= max(f.Rn(idx) .* tmp_mr(idx), 0);
 
 fe.snowMelt.potMelt 		= zeros(size(f.Tair));
 fe.snowMelt.potMelt(idx)	= tmp_T + tmp_Rn;

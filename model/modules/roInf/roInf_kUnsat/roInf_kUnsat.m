@@ -29,7 +29,7 @@ function [f,fe,fx,s,d,p] = roInf_kUnsat(f,fe,fx,s,d,p,info,tix)
 k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,1);    
 
 %--> minimum of the conductivity and the incoming water
-fx.roInf(:,tix)         =   maxsb(s.wd.WBP-k_unsat,0);
+fx.roInf(:,tix)         =   max(s.wd.WBP-k_unsat,0);
 
 %--> update the remaining water
 s.wd.WBP                =  s.wd.WBP - fx.roInf(:,tix);

@@ -33,7 +33,7 @@ function [f,fe,fx,s,d,p] = tranDem_CASA(f,fe,fx,s,d,p,info,tix)
 
 %%
 
-VMC                                 =   minsb(maxsb(sum(s.wd.pawAct,2),0)...
+VMC                                 =   min(max(sum(s.wd.pawAct,2),0)...
                                         ./ sum(s.wd.p_wSoilBase_wAWC,2),1);
 RDR                                 =   (1 + mean(s.wd.p_wSoilBase_Alpha,2)) ./ (1 + mean(s.wd.p_wSoilBase_Alpha,2) .* (VMC .^ mean(s.wd.p_wSoilBase_Beta,2)));
 

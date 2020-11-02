@@ -40,7 +40,7 @@ k_sat                   =  s.wd.p_wSoilBase_kSat(:,wSoilend); %GW is saturated
 
 %--> get the capillary flux
 c_flux                  =  sqrt(k_unsat .* k_sat) .* (1 - dosSoilend);
-c_flux                  =  minsb(c_flux,s.w.wGW);
+c_flux                  =  min(c_flux,s.w.wGW);
 
 %--> store the net recharge and capillary flux
 fx.gwRec(:,tix)        =  fx.gwRec(:,tix) - c_flux ;

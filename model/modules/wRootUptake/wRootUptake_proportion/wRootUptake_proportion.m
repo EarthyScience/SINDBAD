@@ -33,7 +33,7 @@ transp          = fx.tranAct(:,tix);
 pawActTotal     = sum(s.wd.pawAct,2);
 %--> extract from top to bottom and update moisture
 for sl  =   1:size(s.w.wSoil,2)
-    wSoilAvailProp          =   maxsb(0, s.wd.pawAct(:,sl)./pawActTotal); %necessary because supply can be 0 -> 0./0=NaN
+    wSoilAvailProp          =   max(0, s.wd.pawAct(:,sl)./pawActTotal); %necessary because supply can be 0 -> 0./0=NaN
     contrib                 =   transp .* wSoilAvailProp;
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - contrib;
     s.wd.wRootUptake(:,sl)  =   contrib;

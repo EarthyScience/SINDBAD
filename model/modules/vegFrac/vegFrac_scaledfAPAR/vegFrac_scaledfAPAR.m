@@ -23,5 +23,5 @@ function [f,fe,fx,s,d,p]=vegFrac_scaledfAPAR(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.vegFrac = minsb(s.cd.fAPAR .* p.vegFrac.fAPARscale,1);    
+s.cd.vegFrac = min(s.cd.fAPAR .* p.vegFrac.fAPARscale,1);    
 end

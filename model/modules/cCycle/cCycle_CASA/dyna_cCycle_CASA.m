@@ -44,7 +44,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
     s.cd.cEcoEfflux(:, ~info.tem.model.variables.states.c.flags.cVeg) = 0;
 
     %% compute losses
-    s.cd.cEcoOut = minsb(s.c.cEco, s.c.cEco .* s.cd.p_cTauAct_k);
+    s.cd.cEcoOut = min(s.c.cEco, s.c.cEco .* s.cd.p_cTauAct_k);
 
     %% gains to vegetation
     zix = info.tem.model.variables.states.c.flags.cVeg;

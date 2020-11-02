@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = dyna_roSurf_Orth2013(f,fe,fx,s,d,p,info,tix)
 
 % calculate Q from delay of previous days
 if tix>60
-    tmin = maxsb(tix-60,1);
+    tmin = max(tix-60,1);
     fx.roSurf(:,tix) = sum(fx.roOverland(:,tmin:tix) .* fe.roSurf.Rdelay,2);        
 else % or accumulate land runoff in surface storage
     fx.roSurf(:,tix) = 0;

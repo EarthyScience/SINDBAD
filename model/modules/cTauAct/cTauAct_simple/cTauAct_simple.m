@@ -39,6 +39,6 @@ function [f,fe,fx,s,d,p] = cTauAct_simple(f,fe,fx,s,d,p,info,tix)
         fe.cTaufTsoil.fT(:, tix) .* ...
         d.cTaufwSoil.fwSoil(:, tix);
 
-    s.cd.p_cTauAct_k = minsb(maxsb(s.cd.p_cTauAct_k, 0), 1);
+    s.cd.p_cTauAct_k = min(max(s.cd.p_cTauAct_k, 0), 1);
 
 end %function
