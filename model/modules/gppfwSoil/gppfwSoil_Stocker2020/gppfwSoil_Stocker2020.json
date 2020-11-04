@@ -3,15 +3,15 @@
         "q": {
             "Name": "sensitivity of GPP to soil moisture ",
             "Unit": "[]",
-            "Default": -1,
+            "Default": 1,
             "LowerBound": 0,
-            "UpperBound": -4,
+            "UpperBound": 4,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
             },
-            "Comment": ""
+            "Comment": "sign in flipped for bounds"
         },
         "thetastar": {
             "Name": "",

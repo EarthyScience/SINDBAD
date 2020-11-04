@@ -46,7 +46,11 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     for jix = 1:numel(s.cd.p_cFlowAct_taker)
         taker                       = s.cd.p_cFlowAct_taker(jix);
         giver                       = s.cd.p_cFlowAct_giver(jix);
-        s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)  + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
+        c_flow                      = s.cd.p_cFlowAct_A(:,taker,giver);
+        take_flow                   = s.cd.cEcoFlow(:,taker);
+        give_flow                   = s.cd.cEcoFlow(:,giver);
+        s.cd.cEcoFlow(:,taker)      = take_flow  + give_flow .* c_flow;
+%         s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)  + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
     end
 
     %% balance

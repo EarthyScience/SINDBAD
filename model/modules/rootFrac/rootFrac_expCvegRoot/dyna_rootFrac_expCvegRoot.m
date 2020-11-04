@@ -39,7 +39,7 @@ soilDepths = info.tem.model.variables.states.w.soilLayerDepths;
 rootStop = 0;
 
 cVegRootZix = info.tem.model.variables.states.c.zix.cVegRoot;
-cVegRoot= s.c.cEco(:,cVegRootZix);
+cVegRoot= sum(s.c.cEco(:,cVegRootZix),2);
 
 for sl = 1:nSoilLayers
     soilD = sum(soilDepths(1:sl));
