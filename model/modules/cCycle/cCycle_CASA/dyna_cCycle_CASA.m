@@ -68,5 +68,6 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_CASA(f,fe,fx,s,d,p,info,tix)
     fx.cRH(:, tix) = sum(s.cd.cEcoEfflux(:, ~info.tem.model.variables.states.c.flags.cVeg), 2); %sujan added 2 to sum along depth
     fx.cRA(:, tix) = sum(s.cd.cEcoEfflux(:, info.tem.model.variables.states.c.flags.cVeg), 2); %sujan added 2 to sum along depth
     fx.cRECO(:, tix) = fx.cRH(:, tix) + fx.cRA(:, tix);
-    fx.cNPP(:, tix) = sum(s.cd.cNPP, 2);
+    fx.cNPP(:, tix)  = sum(s.cd.cNPP, 2);
+    fx.NEE(:, tix)   = fx.cRECO(:, tix) - fx.gpp(:, tix);
 end

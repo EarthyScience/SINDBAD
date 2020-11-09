@@ -43,14 +43,23 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     s.cd.cNPP = fx.gpp(:, tix) .* s.cd.cAlloc(:, zix) - s.cd.cEcoEfflux(:, zix);
     s.cd.cEcoInflux(:, zix) = s.cd.cNPP;
     % flows and losses
+    % @nc, if flux order does not matter, remove...
+    % sujanq: this was deleted by simon in the version of 2020-11. Need to
+    % find out why. Led to having zeros in most of the carbon pools of the
+    % explicit simple
+    % old before cleanup... was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing p.cCycleBase.fluxOrder. So, in biomascat, the fields do not exits and this block of code will not work.
+    % for jix = 1:numel(p.cCycleBase.fluxOrder)
+        % taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
+        % giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
+        % s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
+        
     for jix = 1:numel(s.cd.p_cFlowAct_taker)
         taker                       = s.cd.p_cFlowAct_taker(jix);
         giver                       = s.cd.p_cFlowAct_giver(jix);
         c_flow                      = s.cd.p_cFlowAct_A(:,taker,giver);
         take_flow                   = s.cd.cEcoFlow(:,taker);
-        give_flow                   = s.cd.cEcoFlow(:,giver);
+        give_flow                   = s.cd.cEcoOut(:,giver);
         s.cd.cEcoFlow(:,taker)      = take_flow  + give_flow .* c_flow;
-%         s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)  + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
     end
 
     %% balance
@@ -62,4 +71,5 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     fx.cRA(:, tix) = fx.gpp(:, tix) - fx.cNPP(:, tix);
     fx.cRECO(:, tix) = fx.gpp(:, tix) - backNEP;
     fx.cRH(:, tix) = fx.cRECO(:, tix) - fx.cRA(:, tix);
+    fx.NEE(:, tix) = fx.cRECO(:, tix) - fx.gpp(:, tix);
 end

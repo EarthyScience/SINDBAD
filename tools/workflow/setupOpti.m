@@ -40,11 +40,11 @@ end
 
 %% get information of observation constraints and the parameters to optimize
 %--> variables to constrain
-info.opti.constraints.variableNames = fields(data_json.constraints.variables);
+info.opti.constraints.variableNames = data_json.variables2constrain;
 
 %--> parameters to optimize
-paramsList  = info.opti.params2opti;
-info.opti        =   rmfield(info.opti,'params2opti');
+paramsList  =   info.opti.params2opti;
+info.opti   =   rmfield(info.opti,'params2opti');
 upbounds    =   [];
 lowbounds   =   [];
 pdefault    =   [];
@@ -55,6 +55,9 @@ info.opti.paramsScale       =       ones(size(paramsList));
 for jj=1:numel(paramsList)
     mod_param               =       paramsList{jj};
     tmp                     =       strsplit(mod_param,'.');
+    if length(tmp) == 3 
+        tmp                 =       tmp(2:3);
+    end
     module                  =       tmp{1};
     paramName               =       tmp{2};
     apprName                =       info.tem.model.modules.(module).apprName;
@@ -98,7 +101,9 @@ for jj=1:numel(paramsList)
             pdefault                =   [pdefault info.tem.params.(module).(paramName)];
         end
         % add the existing params to the list of params to optimize
-        paramsList{jj}              =   ['p.' paramsList{jj}];
+        if ~startsWith(paramsList{jj},'p.')
+            paramsList{jj}              =   ['p.' paramsList{jj}];
+        end
         lowbounds                   =   [lowbounds params.(module).(paramName).LowerBound];
         upbounds                    =   [upbounds params.(module).(paramName).UpperBound];
     catch

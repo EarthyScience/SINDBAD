@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_cCycleBase_simple5Cpool(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_cCycleBase_simple4Cpool(f,fe,fx,s,d,p,info)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % Compute carbon to nitrogen ratio and  annual turnover rates
     %
@@ -36,7 +36,7 @@ function [f,fe,fx,s,d,p] = prec_cCycleBase_simple5Cpool(f,fe,fx,s,d,p,info)
     end
 
     % annual turnover rates    
-    annk = [p.cCycleBase.annk_Root(:), p.cCycleBase.annk_Wood(:), p.cCycleBase.annk_Leaf(:), p.cCycleBase.annk_Reserve(:), p.cCycleBase.annk_Soil(:)];
+    annk = [p.cCycleBase.annk_Root(:), p.cCycleBase.annk_Wood(:), p.cCycleBase.annk_Leaf(:), p.cCycleBase.annk_Soil(:)];
     s.cd.p_cCycleBase_annk = reshape(repelem(annk, info.tem.helpers.sizes.nPix), info.tem.helpers.sizes.nPix, info.tem.model.variables.states.c.nZix.cEco); %sujan
 
 end %function

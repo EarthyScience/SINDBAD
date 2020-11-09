@@ -14,7 +14,7 @@
 				"funHandle": "",
 				"pdarams" : []
 			},
-			"Comment": 		"cEcoNames: [cVegRoot, cVegWood, cVegLeaf, cVegReserve, cSoil]"
+			"Comment": 		"cEcoNames: [cVegRoot, cVegWood, cVegLeaf, cSoil]"
         },
         "annk_Wood": 
         {
@@ -43,20 +43,6 @@
 				"funHandle": "",
 				"pdarams" : []
 			}
-        },        
-        "annk_Reserve": 
-        {
-			"Name": "turnover rate of ecosystem carbon pools",
-			"Unit": "yr-1",
-            "Default": 0.75,
-			"LowerBound": 0.5,
-			"UpperBound": 1,
-            "Distribution": 
-            {
-				"name": "uniform",
-				"funHandle": "",
-				"pdarams" : []
-			}
         },
         "annk_Soil": 
         {
@@ -77,11 +63,10 @@
 			"Name": "Transfer matrix for carbon at ecosystem level",
 			"Unit": "",
 			"Default": [
-				[  -1,    0,    0,    0,    0],
-                [   0,   -1,    0,    0,    0],
-                [	0,    0,   -1,    0,    0],
-                [   0,    0,    0,   -1,    0],
-                [   1,    1,    1,    0,   -1]
+				[  -1,    0,    0,    0],
+                [   0,   -1,    0,    0],
+                [	0,    0,   -1,    0],
+                [   1,    1,    1,   -1]
 			],
 			"LowerBound": NaN,
 			"UpperBound": NaN,
@@ -96,7 +81,7 @@
         "C2Nveg":{
             "Name": "carbon to nitrogen ratio in vegetation pools",
             "Unit": "gC/gN",
-            "Default": [25,260,25,10],
+            "Default": [25,260,25],
             "LowerBound": NaN,
             "UpperBound": NaN,
             "Distribution": 

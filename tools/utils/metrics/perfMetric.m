@@ -1,4 +1,4 @@
-function X = calcCVP(Obs, Pre, parameter, varargin)
+function X = perfMetric(Obs, Pre, parameter, UncSigma, varargin)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % CALCULATE CALIBRATION AND VALIDATION PARAMETERS.
 % X = calc_cvp(Obs, Est, parameter)
@@ -71,76 +71,26 @@ function X = calcCVP(Obs, Pre, parameter, varargin)
 % ndx         = isnan(Obs) == 1 | isnan(Pre) == 1;
 % Obs(ndx)    = [];
 % Pre(ndx)    = [];
+Obs = Obs{:};
+Pre = Pre{:};
+parameter = parameter{:};
+UncSigma = UncSigma{:};
 
-trim_data       = 0;
 do_alternative  = 0;
 benchmark       = [];
 bootstrapit     = 0;
 NParams         = 0;
 mregress        = 0;
 minN            = 3;
-UncSigma        = ones(size(Obs));
 
 % evaluate nargin
-if nargin > 3
+if nargin > 4
     for i = 1:(nargin - 3) / 2
         eval([varargin{i * 2 - 1} ' = varargin{' num2str(i * 2) '};']);
     end
 end
 
-if bootstrapit
-    bsf    = [gettoolboxesdir '/' 'bootstrap_functions' '/'];
-end
-
 % check if we are doing multiple regressions
-if mregress
-    if size(Obs, 1) ~= size(Pre, 1)
-        error('dimensions don''t match')
-    end
-    
-    if bootstrapit
-        addpath(bsf)
-        ndx     = 1:size(Pre, 1);
-        ndxm    = bootrsp(ndx, bootstrapit);
-        if strcmpi(parameter, 'coeffs')
-            X    = NaN(bootstrapit, size(Pre, 2));
-        else
-            X    = NaN(bootstrapit, 1);
-        end
-        for i = 1:bootstrapit
-            X(i, :)    = calc_cvp(Obs(ndxm(:, i)), Pre(ndxm(:, i), :), ...
-                parameter, ...
-                'mregress'          , 1         , ...
-                'trim_data'         , trim_data    , ...
-                'benchmark'         , benchmark    , ...
-                'NParams'           , NParams    , ...
-                'bootstrapit'       , 0         , ...
-                'minN'              , minN      , ...
-                'UncSigma'          , UncSigma  , ...
-                'do_alternative'    , do_alternative);
-        end
-        rmpath(bsf)
-        return
-    end
-    
-    coeffs    = regress(Obs, Pre);
-    
-    switch parameter
-        case 'coeffs'
-            X    = coeffs;
-            
-        otherwise
-            newPre    = Pre * coeffs;
-            X       = calc_cvp(Obs, newPre, parameter, ...
-                'trim_data'         , trim_data    , ...
-                'benchmark'         , benchmark    , ...
-                'NParams'           , NParams    , ...
-                'minN'              , minN      , ...
-                'UncSigma'          , UncSigma  , ...
-                'do_alternative'    , do_alternative);
-    end
-    return
-end
 
 if numel(Obs) == numel(Pre)
     if size(Obs, 1) ~= size(Pre, 1)
@@ -148,77 +98,7 @@ if numel(Obs) == numel(Pre)
     end
 end
 
-if bootstrapit
-    % sweep off NaN and Inf ...............................................
-    ndx         = (isnan(Obs) | isnan(Pre) | isinf(Obs) | isinf(Pre));
-    Obs(ndx)    = [];
-    Pre(ndx)    = [];
-    if exist('r_w','var')
-        if ~isempty(r_w)
-            r_w(ndx)    = [];
-        end
-    else
-        r_w     = [];
-    end
-    % sweep off NaN and Inf ...............................................
-    addpath(bsf)
-    ndx     = 1:numel(Pre);
-    ndxm    = bootrsp(ndx, bootstrapit);
-    X       = NaN(1, bootstrapit);
-    for i = 1:bootstrapit
-        X(i)    = calc_cvp(Obs(ndxm(:, i)), Pre(ndxm(:, i)), parameter, ...
-            'trim_data'         , trim_data    , ...
-            'benchmark'         , benchmark    , ...
-            'NParams'           , NParams    , ...
-            'minN'              , minN      , ...
-            'r_w'               , r_w      , ...
-            'UncSigma'          , UncSigma  , ...
-            'do_alternative'    , do_alternative);
-    end
-    rmpath(bsf)
-    return
-end
 
-% trim the data?
-if trim_data > 0
-    ndx         = (isnan(Obs) | isnan(Pre) | isinf(Obs) | isinf(Pre));
-    Obs(ndx)    = [];
-    Pre(ndx)    = [];
-    UncSigma(ndx)   = [];
-    if exist('r_w','var')
-        if ~isempty(r_w)
-            r_w(ndx)    = [];
-        end
-    else
-        r_w=[];
-    end
-    %     tmp             = polyfit(Obs, Pre, 1);
-    %     tmp2            = polyval(tmp, Obs);
-    %     e2              = abs(tmp2 - Pre);
-    %     prct95_2        = prctile(e2, trim_data);
-    %     Obs(e2 > prct95_2) = [];
-    %     Pre(e2 > prct95_2) = [];
-    e               = abs(Obs - Pre);
-    prct95          = prctile(e, trim_data);
-    Obs(e > prct95) = [];
-    Pre(e > prct95) = [];
-    UncSigma(e > prct95) = [];
-    if exist('r_w','var')
-        if ~isempty(r_w)
-            r_w(e > prct95)    = [];
-        end
-    end
-    
-    if ~isempty(benchmark)
-        benchmark(e > prct95)    = [];
-    end
-    X    = calc_cvp(Obs, Pre    , parameter    , ...
-        'benchmark'         , benchmark    , ...
-        'NParams'           , NParams    , ...
-        'r_w'               , r_w,...
-        'do_alternative'    , do_alternative);
-    return
-end
 
 warning off MATLAB:divideByZero
 if numel(Obs) ~= numel(Pre), error('Inputs do not have the same size'), end
@@ -250,6 +130,7 @@ else
         r_w=[];
     end
 end
+
 
 if numel(Obs) < minN
     X = NaN;

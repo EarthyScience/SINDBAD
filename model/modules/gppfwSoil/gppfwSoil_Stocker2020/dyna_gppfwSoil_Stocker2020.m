@@ -5,7 +5,7 @@ function [f,fe,fx,s,d,p] = dyna_gppfwSoil_Stocker2020(f,fe,fx,s,d,p,info,tix)
 % Inputs:
 %   - s.w.wSoil:             values of soil moisture current time step
 %   - p.gppfwSoil.q:         parameters for sensitivity of GPP to SM 
-%   - p.gppfwSoil.Smax
+%   - p.gppfwSoil.thetaStar
 %   - p.gppfwSoil.Smin
 %   - s.wd.p_wSoilBase_wWP:  wilting point
 %
@@ -39,9 +39,9 @@ maxAWC  = max(WFC - WP, 0);
 actAWC  = max(SM - WP, 0);
 SM_nor	= min(actAWC ./ maxAWC, 1);
 
-fW      = (-p.gppfwSoil.q .* (SM_nor - p.gppfwSoil.thetastar) .^ 2 + 1) .*...
-        (SM_nor <= p.gppfwSoil.thetastar)...
-        + 1 .* (SM_nor > p.gppfwSoil.thetastar);
+fW      = (-p.gppfwSoil.q .* (SM_nor - p.gppfwSoil.thetaStar) .^ 2 + 1) .*...
+        (SM_nor <= p.gppfwSoil.thetaStar)...
+        + 1 .* (SM_nor > p.gppfwSoil.thetaStar);
 
 d.gppfwSoil.SMScGPP(:,tix)	= max(0.0,min(1.0,fW));
 % d.gppfwSoil.SM_nor(:,tix)	= SM_nor;

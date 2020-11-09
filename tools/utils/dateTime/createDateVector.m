@@ -4,34 +4,34 @@ function [xOut, days, months, years, Y, M, D] = createDateVector(startDate, endD
 % -------------
 % check for Leap years in data?
 %
-% Usages: 
-%   - [xOut, days, months, years, Y, M, D] = createDateVector(startDate, endDate, steps ); 
-% 
-% Requires: 
+% Usages:
+%   - [xOut, days, months, years, Y, M, D] = createDateVector(startDate, endDate, steps );
+%
+% Requires:
 %   - startDate: 'yyyy-mm-dd'
 %   - endDate:   'yyyy-mm-dd'
 %   - steps: 'd', 'm', 'y'
-% 
-% Purposes: 
-%   - create date vectors  
-% 
-% Conventions: 
-% 
-% Created by: 
-%   - Tina Trautmann (ttraut) 
-% 
-% References: 
-%    
-% 
-% Versions: 
-%   - 1.0 on 11.07.2018 
+%
+% Purposes:
+%   - create date vectors
+%
+% Conventions:
+%
+% Created by:
+%   - Tina Trautmann (ttraut)
+%
+% References:
+%
+%
+% Versions:
+%   - 1.0 on 11.07.2018
 %
 
 %%
 tmp = strsplit(startDate,'-');
 if str2double(tmp{1}) > str2double(tmp{3})
-startD      = datenum(startDate,'yyyy-mm-dd');
-endD        = datenum(endDate,'yyyy-mm-dd');
+    startD      = datenum(startDate,'yyyy-mm-dd');
+    endD        = datenum(endDate,'yyyy-mm-dd');
     inForm      = 'yyyy-MM-dd';
 else
     startD      = datenum(startDate,'mm-dd-yyyy');

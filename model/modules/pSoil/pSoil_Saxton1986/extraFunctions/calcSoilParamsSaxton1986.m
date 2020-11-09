@@ -47,7 +47,7 @@ Psi             =   WT .* info.tem.helpers.arrays.onespix;
 Theta_s         =   p.pSoil.h + p.pSoil.j .* SAND + p.pSoil.k .* log10(CLAY);
 
 %--> air entry pressure (kPa)
-Psi_e           =   100 .* (p.pSoil.m + p.pSoil.n .* Theta_s);
+Psi_e           =   abs(100 .* (p.pSoil.m + p.pSoil.n .* Theta_s));
 
 Theta           =   zeros(size(CLAY));
 ndx     = find(Psi >= 10 & Psi <= 1500);
