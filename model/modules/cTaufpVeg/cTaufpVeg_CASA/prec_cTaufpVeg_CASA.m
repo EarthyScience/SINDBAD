@@ -58,7 +58,7 @@ function [f,fe,fx,s,d,p] = prec_cTaufpVeg_CASA(f,fe,fx,s,d,p,info)
         end
 
         % compute annk based on age
-        annk = 1e-40 .* info.tem.helpers.arrays.onespix; %sujan ones(size(AGE))
+        annk = info.tem.helpers.arrays.zerospix; %sujan ones(size(AGE))
         annk(AGE > 0) = 1 ./ AGE(AGE > 0);
         % feed it to the new annual turnover rates
         zix = info.tem.model.variables.states.c.zix.(cpN{:});

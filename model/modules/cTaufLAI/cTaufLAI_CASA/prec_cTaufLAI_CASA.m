@@ -35,6 +35,15 @@ function [f,fe,fx,s,d,p] = prec_cTaufLAI_CASA(f,fe,fx,s,d,p,info)
     s.cd.p_cTaufLAI_kfLAI = info.tem.helpers.arrays.onespixzix.c.cEco; %(inefficient, should be pix zix_veg)
 
     TSPY = info.tem.model.time.nStepsYear; %sujan
+    
+    s.cd.p_cTaufLAI_cVegLeafZix = info.tem.model.variables.states.c.zix.cVegLeaf;
+
+    if isfield(info.tem.model.variables.states.c.zix, 'cVegRootF')
+        s.cd.p_cTaufLAI_cVegRootZix = info.tem.model.variables.states.c.zix.cVegRootF;
+    else
+        s.cd.p_cTaufLAI_cVegRootZix = info.tem.model.variables.states.c.zix.cVegRoot;
+    end
+
     % make sure TSPY is integer
     if rem(TSPY, 1) ~= 0, TSPY = floor(TSPY); end
 

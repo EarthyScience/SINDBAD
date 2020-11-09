@@ -13,7 +13,7 @@
             },
             "Comment": "sign in flipped for bounds"
         },
-        "thetastar": {
+        "thetaStar": {
             "Name": "",
             "Unit": "[]",
             "Default": 0.6,

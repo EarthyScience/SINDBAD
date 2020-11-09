@@ -86,11 +86,11 @@ Theta_s_33      =   Theta_s_33t + (0.636 .* Theta_s_33t - 0.107);
 
 %--> psi_et: Tension at air entry, first solution, kPa
 %--> psi_e: Tension at air entry (bubbling pressure), kPa
-Psi_et          =   -21.67  .* SAND - 27.93 .* CLAY - 81.97 .* Theta_s_33 ...
+Psi_et          =   abs(-21.67  .* SAND - 27.93 .* CLAY - 81.97 .* Theta_s_33 ...
                     + 71.12 .* (SAND .* Theta_s_33) + 8.29 .* (CLAY .* Theta_s_33) ... 
-                    - 14.05 .* (SAND .* CLAY) + 27.16;
+                    - 14.05 .* (SAND .* CLAY) + 27.16);
                 
-Psi_e           =   Psi_et + (0.02 .* (Psi_et .^ 2) - 0.113 .* Psi_et - 0.70);
+Psi_e           =   abs(Psi_et + (0.02 .* (Psi_et .^ 2) - 0.113 .* Psi_et - 0.70));
                     
 %--> Theta_s: Saturated moisture (0 kPa), normal density, %v
 %--> rho_N: Normal density, g cm-3

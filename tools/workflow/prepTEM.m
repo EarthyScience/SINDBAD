@@ -34,6 +34,7 @@ else
 end
 info.tem.helpers.dates.day      =  createDateVector(sDateRun, eDateRun, 'd');
 info.tem.helpers.dates.month    =  createDateVector(sDateRun, eDateRun, 'm');
+info.tem.helpers.dates.year     =  year(info.tem.helpers.dates.day);
 
 %% handle and read the forcing data
 %--> setup the functions to read the forcing variables

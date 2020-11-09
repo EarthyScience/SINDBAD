@@ -5,8 +5,12 @@
             "Unit": "[]",
             "Default": 1,
             "LowerBound": 0.001,
-            "UpperBound": "Inf",
-            "Distribution": NaN,
+            "UpperBound": 1000,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
             "Comment": ""
         }
     },
