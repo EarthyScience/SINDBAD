@@ -94,13 +94,27 @@ for ij                  =    1:numel(stateVarsCode)
             if startsWith(var2cr,'s.')
                 if ~ismember(sv,{'wd' 'cd'}) %only the storage pools are initiated at the values given in modelStructure.json. cd and wd variables are initiated with zeros.
                     tmp             =   repmat(aronespix .* info.tem.model.variables.states.(sv).initValue.(poolName) ,1,nZix);
+                    
                 else
                     tmp             =   repmat(arzerospix ,1,nZix);
                 end
                 eValStr             =   strcat(var2cr,' = tmp;');
                 eval(eValStr);
                 info.tem.model.variables.created{end+1}    =    var2cr;
-                
+                %--> set the carbon pool initial values to the ones from modelstructure[.json]    
+                if strcmpi('s.c.cEco',var2cr)
+                    c_pools = info.tem.model.variables.states.c.components;
+                    for car_pN = 1:numel(c_pools)
+                        car_pName = c_pools(car_pN);
+                        if size(size(info.tem.model.variables.states.c.zix.(car_pName{:}),2)) == 1
+                            zix = info.tem.model.variables.states.c.zix.(car_pName{:});
+                            cval = info.tem.model.variables.states.c.initValue.(car_pName{:});
+                            s.c.cEco(:,zix) = cval;
+                        end
+                    end
+                    
+                end
+                %--> done setting the correct carbon pools
             end
         end
     end

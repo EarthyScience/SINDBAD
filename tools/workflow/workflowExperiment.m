@@ -231,8 +231,15 @@ end
 if info.tem.model.flags.calcCost || info.tem.model.flags.runOpti
     [cost]  =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
 
-    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost(:))])
-    %disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Cost: ' num2str(cost.Total)])
+    disp([pad(' FORWARD RUN COST',20) ' : ' pad(info.opti.costFun.funName,20) ' | Algorithm: ' info.opti.algorithm.funName ' | Cost: '])
+    if info.opti.algorithm.isMultiObj
+        constraint = info.opti.variables2constrain;
+        cost       = round(cost(:),2);
+        disp(table(constraint, cost))
+    else
+        cost       = round(cost(:),2);
+        disp(cost)
+    end
     disp(pad('+',200,'both','+'))
 else
     cost    = {};

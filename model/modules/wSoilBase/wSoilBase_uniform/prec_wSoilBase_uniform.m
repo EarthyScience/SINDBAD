@@ -56,8 +56,10 @@ s.wd.p_wSoilBase_wSat               =   info.tem.helpers.arrays.onespixzix.w.wSo
 
 % hydraulic conductivities
 s.wd.p_wSoilBase_kSat               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_logkSat            =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kFC                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 s.wd.p_wSoilBase_kWP                =   info.tem.helpers.arrays.onespixzix.w.wSoil;
+s.wd.p_wSoilBase_kPow               =   info.tem.helpers.arrays.onespixzix.w.wSoil;
 
 % matric potentials
 s.wd.p_wSoilBase_psiSat             =   info.tem.helpers.arrays.onespixzix.w.wSoil;
@@ -98,6 +100,7 @@ for sl      =   1:nSoilLayers
     s.wd.p_wSoilBase_Alpha(:,sl)                =   s.wd.p_pSoil_Alpha(:,sl);
     s.wd.p_wSoilBase_Beta(:,sl)                 =   s.wd.p_pSoil_Beta(:,sl);
     s.wd.p_wSoilBase_kSat(:,sl)                 =   s.wd.p_pSoil_kSat(:,sl);
+    s.wd.p_wSoilBase_kSat(:,sl)                 =   s.wd.p_pSoil_kSat(:,sl);
     s.wd.p_wSoilBase_kFC(:,sl)                  =   s.wd.p_pSoil_kFC(:,sl);
     s.wd.p_wSoilBase_kWP(:,sl)                  =   s.wd.p_pSoil_kWP(:,sl);
     s.wd.p_wSoilBase_psiSat(:,sl)               =   s.wd.p_pSoil_psiSat(:,sl);
@@ -106,6 +109,10 @@ for sl      =   1:nSoilLayers
     s.wd.p_wSoilBase_thetaSat(:,sl)             =   s.wd.p_pSoil_thetaSat(:,sl);
     s.wd.p_wSoilBase_thetaFC(:,sl)              =   s.wd.p_pSoil_thetaFC(:,sl);
     s.wd.p_wSoilBase_thetaWP(:,sl)              =   s.wd.p_pSoil_thetaWP(:,sl);
+    Beta                                        =   s.wd.p_wSoilBase_Beta(:,sl);
+    lambda                                      =   1 ./ Beta;
+    s.wd.p_wSoilBase_kPow(:,sl)                 =   3 + (2 ./ lambda);
+    s.wd.p_wSoilBase_logkSat(:,sl)              =   log(s.wd.p_wSoilBase_logkSat(:,sl));
     
     if info.tem.model.flags.useLookupK
         sLookup                                 =   linScalers .* s.wd.p_wSoilBase_wSat(:,sl);

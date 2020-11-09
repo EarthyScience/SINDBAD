@@ -1,5 +1,4 @@
 function [f,fe,fx,s,d,p] = prec_gppfRdiff_Wang2015(f,fe,fx,s,d,p,info)
-% NEEDS TO BE CHANGED TO THE WANG ET AL 2015 IMPLEMENTATION
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculate the cloudiness scalar (radiation diffusion) on gppPot
 %
@@ -36,12 +35,13 @@ valid       =   f.RgPot > 0;
 CI(valid)   =   1 - f.Rg(valid) ./ f.RgPot(valid);
 
 CI_nor      = info.tem.helpers.arrays.onespixtix;
-
-for i = unique(f.Year)
-    ndx         = f.Year == i;
-    CImin       = nanmin(CI(ndx));         %CImin is the minimum CI value of present year
-    CImax       = nanmax(CI(ndx));
-    CI_nor(ndx)	= (CI(ndx) - CImin) ./ (CImax - CImin);
+yearsVec    = info.tem.helpers.dates.year;
+yearsVec    = yearsVec(:,1:size(CI,2));
+for i = unique(yearsVec)
+    ndx         = yearsVec == i;
+    CImin       = nanmin(CI(:,ndx),2);         %CImin is the minimum CI value of present year
+    CImax       = nanmax(CI(:,ndx),2);
+    CI_nor(:,ndx)	= (CI(:,ndx) - CImin) ./ (CImax - CImin);
 end
 d.gppfRdiff.CloudScGPP	= 1 - p.gppfRdiff.miu .* (1 - CI_nor);
 

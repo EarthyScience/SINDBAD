@@ -57,10 +57,12 @@ end
 
 %--> run the handles
 if doPrecOnce 
+    disp([pad('EXEC MODRUN',20)  ' : ' pad('runCoreTEM',20) ' | Running PrecOnce: ' fn{1} ',' fn{2}])
     hPrec               =   info.tem.(fn{1}).code.(fn{2}).precOnce.funHandle;
     [f,fe,fx,s,d,p]     =   hPrec(f,fe,fx,s,d,p,info); 
 end
 if doCore || doSpinUp
+    disp([pad('EXEC MODRUN',20)  ' : ' pad('runCoreTEM',20) ' | Running Core: ' fn{1} ',' fn{2}])
     hCore               =   info.tem.(fn{1}).code.(fn{2}).coreTEM.funHandle;
     [f,fe,fx,s,d,p]     =   hCore(f,fe,fx,s,d,p,info); 
 end
