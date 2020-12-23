@@ -81,6 +81,19 @@ else
     error(erroMsg)
 end
 
+% check in the mean forcing types such as soil and other have consistent
+% shape
+for fni = 1:numel(forNames)
+    forName = forNames{fni};
+    if strcmp(info.tem.forcing.variables.(forName).spaceTimeType,'spatial')
+        fSize                       =   size(f.(forName));
+        if fSize(1) ~= info.tem.helpers.sizes.nPix
+            f.(forName) = f.(forName)';
+            disp(['transposing spatial input : ', forName])
+        end
+    end
+end
+
 %--> check the values in the forcing data using check function provided in forcing.json 
 if isfield(info.tem.forcing.funHandle, 'check') && ~isempty(info.tem.forcing.funHandle.check)
     [info,f] = info.tem.forcing.funHandle.check(info,f);   

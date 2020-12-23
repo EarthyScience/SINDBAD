@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = gwRec_fraction(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = gwRec_dos(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates GW recharge as a fraction of soil moisture of the lowermost layer
 %
@@ -26,8 +26,9 @@ function [f,fe,fx,s,d,p] = gwRec_fraction(f,fe,fx,s,d,p,info,tix)
 %%
 % calculate recharge
 wSoilEnd                =   size(s.w.wSoil,2);
+dosSoilEnd              =  s.w.wSoil(:,wSoilEnd) ./ s.wd.p_wSoilBase_wSat(:,wSoilEnd);
 
-fx.gwRec(:,tix)         =   p.gwRec.rf .* s.w.wSoil(:,wSoilEnd);
+fx.gwRec(:,tix)         =   (dosSoilEnd) .^ p.gwRec.dos_exp .* s.w.wSoil(:,wSoilEnd);
 
 % update storages pool
 s.w.wSoil(:,wSoilEnd)   =   s.w.wSoil(:,wSoilEnd) - fx.gwRec(:,tix);

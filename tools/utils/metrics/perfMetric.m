@@ -303,7 +303,7 @@ switch parameter
         end
         
         % LINEAR REGRESSION PARAMETERS
-    case {'r', 'rinv', 'r2', 'alpha', 'rlo', 'rup', 'adjr2','rw','r2w'}
+    case {'r', 'rinv', 'r2', 'r2inv', 'alpha', 'rlo', 'rup', 'adjr2','rw','r2w'}
         warning off MATLAB:divideByZero
         [r, alpha, rlo, rup]   = corrcoef(Obs, Pre);
         
@@ -328,7 +328,9 @@ switch parameter
                 
             case 'r2'      % r^2
                 X  = r(1, 2) .^ 2;
-                
+            case 'r2inv'
+                X  = 1-r(1, 2) .^ 2;
+
             case 'adjr2'      % r^2
                 X  = r(1, 2) .^ 2;
                 N     = numel(Obs);
