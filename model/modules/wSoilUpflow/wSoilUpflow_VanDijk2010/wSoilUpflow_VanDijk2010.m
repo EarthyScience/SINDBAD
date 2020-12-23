@@ -30,10 +30,17 @@ function [f,fe,fx,s,d,p]= wSoilUpflow_VanDijk2010(f,fe,fx,s,d,p,info,tix)
 wSoilend                =   info.tem.model.variables.states.w.nZix.wSoil;
 for sl=wSoilend:-1:2   
     %--> calculate the capillary flux
-    k_unsat_lower                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
+    % k_unsat_lower                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
     dosSoilUpper                  =   s.w.wSoil(:,sl-1) ./ s.wd.p_wSoilBase_wSat(:,sl-1);
-    k_unsat_upper                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl-1);    
-    c_flux                        =   sqrt(k_unsat_lower .* k_unsat_upper) .* (1 - dosSoilUpper);
+    % k_unsat_upper                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl-1);    
+ 
+    % c_flux                        =   sqrt(k_unsat_lower .* k_unsat_upper) .* (1 - dosSoilUpper);
+
+
+    % modified by sujan 01.12.2020
+    k_fc                            =  s.wd.p_wSoilBase_kFC(:,sl); %GW is saturated
+    c_flux                          =  k_fc .* (1 - dosSoilUpper);
+   
     c_flux                        =   min(c_flux,s.w.wSoil(:,sl));
     %--> update the soil flow to have a net between drainage and capillary flux
     s.wd.wSoilFlow(:,sl)          =   s.wd.wSoilFlow(:,sl)-c_flux;

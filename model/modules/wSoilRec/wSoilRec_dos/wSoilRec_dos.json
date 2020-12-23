@@ -1,17 +1,16 @@
 {
     "params": {
-        "constantRootFrac": {
-            "Name": "root fraction",
+        "dos_exp": {
+            "Name": "exponest of non-lineasrity for dos influence on drainage in soil",
             "Unit": "-",
-            "Default": 0.8,
-            "LowerBound": 0.3,
-            "UpperBound": 0.9,
+            "Default": 10,
+            "LowerBound": 1,
+            "UpperBound": 30,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
                 "params": []
-            },
-            "Comment": "a constant root fraction to be used for all soil layers"
+            }
         }
     },
     "devStage": {

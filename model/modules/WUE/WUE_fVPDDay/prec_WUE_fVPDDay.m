@@ -27,6 +27,8 @@ function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
+% "p.WUE.WUEat1hPa"
+
 kpa_to_hpa  = 10;
-d.WUE.AoE   = p.WUE.WUEat1hPa * 1 ./ sqrt(kpa_to_hpa .* f.VPDDay);
+d.WUE.AoE   = p.WUE.WUEatOnehPa * 1 ./ sqrt(kpa_to_hpa .* (f.VPDDay +0.05));
 end

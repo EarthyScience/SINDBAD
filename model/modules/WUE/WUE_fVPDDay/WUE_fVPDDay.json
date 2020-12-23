@@ -1,6 +1,6 @@
 {
 	"params": {
-		"WUEat1hPa": {
+		"WUEatOnehPa": {
 			"Name": "WUE at 1 hpa VPD",
 			"Unit": "gC/mmH2O",
 			"Default": 9.2,

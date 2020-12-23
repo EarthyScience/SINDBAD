@@ -36,7 +36,7 @@ function [f,fe,fx,s,d,p] = dyna_WUE_Medlyn2011(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-d.WUE.AoE(:,tix)            =   fe.WUE.AoENoCO2 .* s.cd.ambCO2; 
-d.WUE.ci(:,tix)             =   fe.WUE.ciNoCO2 .* s.cd.ambCO2; 
+d.WUE.AoE(:,tix)            =   fe.WUE.AoENoCO2(:,tix) .* s.cd.ambCO2; 
+d.WUE.ci(:,tix)             =   fe.WUE.ciNoCO2(:,tix) .* s.cd.ambCO2; 
 
 end

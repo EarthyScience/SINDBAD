@@ -34,12 +34,14 @@ wSoilend                =  info.tem.model.variables.states.w.nZix.wSoil;
 %--> degree of saturation and unsaturated hydraulic conductivity of the lowermost soil layer
 
 dosSoilend              =  s.w.wSoil(:,wSoilend) ./ s.wd.p_wSoilBase_wSat(:,wSoilend);
-k_unsat                 =  feval(p.pSoil.kUnsatFuncH,s,p,info,wSoilend);    
+% k_unsat                 =  feval(p.pSoil.kUnsatFuncH,s,p,info,wSoilend);    
 
 k_sat                   =  s.wd.p_wSoilBase_kSat(:,wSoilend); %GW is saturated
+k_fc                   =  s.wd.p_wSoilBase_kFC(:,wSoilend); %GW is saturated
 
 %--> get the capillary flux
-c_flux                  =  sqrt(k_unsat .* k_sat) .* (1 - dosSoilend);
+% c_flux                  =  sqrt(k_unsat .* k_sat) .* (1 - dosSoilend);
+c_flux                  =  k_fc .* (1 - dosSoilend);
 c_flux                  =  min(c_flux,s.w.wGW);
 
 %--> store the net recharge and capillary flux
