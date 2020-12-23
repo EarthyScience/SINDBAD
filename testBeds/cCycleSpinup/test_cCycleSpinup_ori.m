@@ -62,19 +62,17 @@ toStore.simple    = {
     };
 
 GPP2E           = 20;
-cCycleModelVec  = {'simple'};
-% cCycleModelVec  = {'CASA','simple'};
+cCycleModelVec  = {'CASA','simple'};
 strExtra        = '';
-compareModels    = false;
+compareModels    = true;
 saveLongStates  = true;
 % for NI2E = [11 101 1001 2001]
 % NI2E=11s
-nPools = 4;
 
 for NI2E = [11 101 1001 2001 3001]
     for cCycleModel = cCycleModelVec
         % name of the experiment configuration file
-        expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '_5pool.json'];
+        expConfigFile               =   ['testBeds/cCycleSpinup/settings_cCycleSpinup/experiment_cCycle_' cCycleModel{:} '.json'];
         for i = [3 1 2]
             switch i
                 case 1 % setup explicit spinup
@@ -136,7 +134,7 @@ for NI2E = [11 101 1001 2001 3001]
             if saveLongStates
                 figure('Visible', 'off'), hold on
                 
-                for j = 1:nPools
+                for j = 1:14
                     subplot(4,4,j)
                     y   = [squeeze(dSU5.fullSpinupStates.cEco(:,j,:)) squeeze(d5.storedStates.cEco(:,j,:))]';
                     x    = (1:size(y,1));
@@ -175,7 +173,7 @@ for NI2E = [11 101 1001 2001 3001]
         end
       % implicit vs explicit
         figure('Visible', 'off'), hold on
-        for j = 1:nPools
+        for j = 1:14
             subplot(4,4,j)
             mk121s(x_implicit.sSU5.c.cEco(:,j),x_explicit.sSU5.c.cEco(:,j),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2,'marker','o')
             mk121s(x_implicit.dSU5.storedStates.cEco(:,j,end),x_explicit.dSU5.storedStates.cEco(:,j,end),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{explicit}'],'LineWidth',2)
@@ -194,7 +192,7 @@ for NI2E = [11 101 1001 2001 3001]
 
       % implicit vs explicit Reduced
       figure('Visible', 'off'), hold on
-        for j = 1:nPools
+        for j = 1:14
             subplot(4,4,j)
             mk121s(x_implicit.sSU5.c.cEco(:,j),x_expliRed.sSU5.c.cEco(:,j),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{expliRed}'],'LineWidth',2,'marker','o')
             mk121s(x_implicit.dSU5.storedStates.cEco(:,j,end),x_expliRed.dSU5.storedStates.cEco(:,j,end),[cCycleModel{:} '_{implicit}'],[cCycleModel{:} '_{expliRed}'],'LineWidth',2)
@@ -212,7 +210,7 @@ for NI2E = [11 101 1001 2001 3001]
         save_gcf(gcf,[test_outDirPath 'simpleVScasa_' strExtra num2str(NI2E) '_4_compSpinUp_' cCycleModel{:} '_implicit_expliRed_' testName],1,1)
         % explicit vs explicit Reduced
         figure('Visible', 'off'), hold on
-        for j = 1:nPools
+        for j = 1:14
             subplot(4,4,j)
             mk121s(x_explicit.sSU5.c.cEco(:,j),x_expliRed.sSU5.c.cEco(:,j),[cCycleModel{:} '_{explicit}'],[cCycleModel{:} '_{expliRed}'],'LineWidth',2,'marker','o')
             mk121s(x_explicit.dSU5.storedStates.cEco(:,j,end),x_expliRed.dSU5.storedStates.cEco(:,j,end),[cCycleModel{:} '_{explicit}'],[cCycleModel{:} '_{expliRed}'],'LineWidth',2)
@@ -252,7 +250,7 @@ for NI2E = [11 101 1001 2001 3001]
                 eval(['x_' cCycleModel{:} ' = tmp;'])
             end
             
-            for j = 1:nPools
+            for j = 1:14
                 subplot(4,4,j)
                 mk121s(x_CASA.sSU5.c.cEco(:,j),x_simple.sSU5.c.cEco(:,j),['CASA_{' strN2 '}'],['simple_{' strN2 '}'],'LineWidth',2)
                 title([num2str(j) ' : ' x_CASA.info.tem.model.variables.states.c.components{j}])

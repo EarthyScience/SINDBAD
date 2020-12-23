@@ -20,7 +20,7 @@
         {
 			"Name": "turnover rate of ecosystem carbon pools",
 			"Unit": "yr-1",
-            "Default": 0.03,
+            "Default": 0.2,
 			"LowerBound": 0.01,
 			"UpperBound": 0.5,
             "Distribution": 

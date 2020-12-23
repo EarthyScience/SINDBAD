@@ -41,6 +41,7 @@ fullCost    = [];
 % get cost metric function handle
 metric_fun          = info.opti.costMetric.funHandle;
 
+cmList = {};
 % loop through the variables
 for i = 1:numel(VariableNames)
     varName             = VariableNames{i};
@@ -57,6 +58,7 @@ for i = 1:numel(VariableNames)
     quality_bound       = info.opti.constraints.variables.(varName).costOptions.quality_bound;
     data_bound          = info.opti.constraints.variables.(varName).costOptions.data_bound;
     
+    cmList{end+1} = costMetric;
     % set the CostMetric to the same size array as the number of pixels.
     % Used when the cost is calculated separately for each pixel using
     % table and rowfun
@@ -68,7 +70,11 @@ for i = 1:numel(VariableNames)
     
     % get the observation data and it's uncertainty
     obs_proc    = obs.(varName).data;
-    obs_unc     = obs.(varName).unc; %!
+    if isfield(obs.(varName), 'unc')
+        obs_unc     = obs.(varName).unc; %!
+    else
+        obs_unc= obs_proc;
+    end
     
     % get the simulation data and set it to sim_proc. The modelFullVar
     % includes the operators so that any mean/median/extraction can be
@@ -80,7 +86,7 @@ for i = 1:numel(VariableNames)
     % apply the quality flag and filter data based on observation/user
     % input
     % apply quality flag bounds
-    if ~isempty(quality_bound)
+    if ~isempty(quality_bound) && isfield(obs.(varName), 'qflag')
         obs_flag        = obs.(varName).qflag; %!
         ndx             = obs_flag < quality_bound(1) | obs_flag > quality_bound(2);
         obs_proc(ndx)   = NaN;
@@ -139,7 +145,7 @@ for i = 1:numel(VariableNames)
     
     switch spatialCostAggr
         case 'cat'
-            cost        =   metric_fun({sim_proc}, {obs_proc}, costMetric,{obs_unc});
+            cost        =   metric_fun({sim_proc(:)}, {obs_proc(:)}, costMetric,{obs_unc(:)});
         case 'mean'
             dataTab     =   table(num2cell(sim_proc,2), num2cell(obs_proc,2), costMetric, num2cell(obs_unc,2), 'VariableNames',{'sim_proc', 'obs_proc', 'costMetric', 'obs_unc'});
             cost_full   =   rowfun(metric_fun, dataTab, 'OutputVariableName','cost');
@@ -157,11 +163,12 @@ for i = 1:numel(VariableNames)
     end
     
     % apply weighht for cost
+%     varName
     cost        = cost .* costWeight;
     fullCost    = [fullCost cost];
 end
 
-costTable = table(VariableNames, fullCost','VariableNames',{'constraint', 'cost'});
+costTable = table(VariableNames, cmList', fullCost','VariableNames',{'constraint', 'metric', 'cost'});
 disp(costTable)
 
 % combine/produce the different method for putting the cost together

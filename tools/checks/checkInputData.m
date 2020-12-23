@@ -17,27 +17,33 @@ function [info,inputData] = checkInputData(info,inputData)
 
 %-------------------------------------------------------------------------
 % the following ranges could move to the check_variableBounds
-conv.hPa2Pa         = 100;
-conv.kPa2Pa         = 1000;
-conv.ppm2umol       = 0.000001;
-conv.umol2mol       = 1E-6;
-conv.MJday2Wm2      = 1000000/86400;
-conv.gCday2umols    = 1000000/12/86400;
-conv.molday2umols    = 1000000/86400;
-
-range.Rain      = [ 0.0 60.0 ].*24;                 % mm/day
-range.Snow      = [ 0.0 60.0 ].*24;                 % mm/day
-range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;    % MJ/m2/day
-range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;    % MJ/m2/day
-range.Rg_pot    = [ 0.0 1400.0 ]./conv.MJday2Wm2;   % MJ/m2/day
-range.Tair      = [ -100. 100. ];                   % deg C
-range.TairDay   = [ -100. 100. ];                   % deg C
-range.Tsoil     = [ -100. 100. ];                   % deg C
-range.TairDay   = [ -100. 100. ];                   % �C
-range.Tsoil     = [ -100. 100. ];                   % �C
-range.VPDDay    = [ 0 200. ].*10;                   % kPa
-range.FAPAR     = [0 1];
-range.LAI       = [0 12];
+% conv.hPa2Pa         = 100;
+% conv.kPa2Pa         = 1000;
+% conv.ppm2umol       = 0.000001;
+% conv.umol2mol       = 1E-6;
+% conv.MJday2Wm2      = 1000000/86400;
+% conv.gCday2umols    = 1000000/12/86400;
+% conv.molday2umols    = 1000000/86400;
+% 
+range = struct;
+forVar = info.tem.forcing.variableNames;
+for fn = 1:numel(forVar)
+    forc = forVar{fn};
+    range.(forc) = info.tem.forcing.variables.(forc).bounds;
+end
+% range.Rain      = [ 0.0 60.0 ].*24;                 % mm/day
+% range.Snow      = [ 0.0 60.0 ].*24;                 % mm/day
+% range.Rg        = [ 0.0 1200.0 ]./conv.MJday2Wm2;    % MJ/m2/day
+% range.PAR       = [ 0.0 600.0 ]./conv.MJday2Wm2;    % MJ/m2/day
+% range.Rg_pot    = [ 0.0 1400.0 ]./conv.MJday2Wm2;   % MJ/m2/day
+% range.Tair      = [ -100. 100. ];                   % deg C
+% range.TairDay   = [ -100. 100. ];                   % deg C
+% range.Tsoil     = [ -100. 100. ];                   % deg C
+% range.TairDay   = [ -100. 100. ];                   % �C
+% range.Tsoil     = [ -100. 100. ];                   % �C
+% range.VPDDay    = [ 0 200. ].*10;                   % kPa
+% range.FAPAR     = [0 1];
+% range.LAI       = [0 12];
 
 %
 miss_val    = NaN;
@@ -48,6 +54,7 @@ for i = 1:numel(fns)
     x    = inputData.(fns{i});
     if isfield(range,fns{i})
         varname = fns{i};
+        if ~strcmpi(info.tem.forcing.variables.(varname).spaceTimeType, 'spatial')
         % replicate mean seasonal cycle (daily values) for length of input
         % time series
         repvec  = createMeanYearTimeSeries(x,inputData.Year,info);
@@ -57,6 +64,7 @@ for i = 1:numel(fns)
         % fill data gaps with MSC
         x       = fillDataGaps(x,NaN(size(x)),varname,flag_val,1);
         x       = x{1};
+        end
     end
     inputData.(fns{i})  = x;
 end
