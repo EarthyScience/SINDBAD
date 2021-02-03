@@ -4,7 +4,7 @@ function [f,fe,fx,s,d,p]=dyna_LAI_cVegLeaf(f,fe,fx,s,d,p,info,tix)
 %
 % Inputs:
 %   - s.c.cEco(:,cVegLeafZix): carbon in the leave
-%   - s.cd.p_fAPAR_SLA : SLA parameter
+%   - p.LAI.SLA : SLA parameter: only works if fAPAR is set to cVegLeaf
 %
 % Outputs:
 %   - s.cd.LAI: the value of LAI for current time step
@@ -20,11 +20,12 @@ function [f,fe,fx,s,d,p]=dyna_LAI_cVegLeaf(f,fe,fx,s,d,p,info,tix)
 %
 % Versions:
 %   - 1.0 on 05.05.2020 (sbesnard)
+%   - 1.1 on 04.02.2021 (skoirala): introduced the p.LAI.SLA parameter rather than using p.fAPAR.SLA
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
 cVegLeafZix = info.tem.model.variables.states.c.zix.cVegLeaf;
 cVegLeaf= s.c.cEco(:,cVegLeafZix);
-s.cd.LAI = cVegLeaf.* p.fAPAR.SLA;
+s.cd.LAI = cVegLeaf.* p.LAI.SLA; % 
 end

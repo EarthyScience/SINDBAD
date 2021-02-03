@@ -27,5 +27,5 @@ function [f,fe,fx,s,d,p]=dyna_fAPAR_cVegLeaf(f,fe,fx,s,d,p,info,tix)
 %% 
 cVegLeafZix = info.tem.model.variables.states.c.zix.cVegLeaf;
 cVegLeaf= s.c.cEco(:,cVegLeafZix);
-s.cd.fAPAR = 1-exp(-(cVegLeaf.*p.fAPAR.SLA.*p.fAPAR.kLAI));
+s.cd.fAPAR = 1-exp(-(cVegLeaf.*p.fAPAR.SLA .* p.fAPAR.kLAI));
 end

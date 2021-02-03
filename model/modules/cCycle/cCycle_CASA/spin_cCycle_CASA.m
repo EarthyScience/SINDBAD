@@ -74,7 +74,8 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
     % without loops
     kmoves = 0;
     zixVecOrder = zixVec;
-
+    zixVecOrder_veg = [];
+    zixVecOrder_nonVeg = [];
     for zix = zixVec
         move = false;
         ndxGainFrom = find(s.cd.p_cFlowAct_taker == zix);
@@ -91,12 +92,22 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
         end
 
         if move
-            zixVecOrder(zix:end - 1) = zixVecOrder(zix + 1:end);
-            zixVecOrder(end) = zix;
+            zixVecOrder(zixVecOrder == zix) = [];
+            zixVecOrder = [zixVecOrder zix];
         end
 
+        
     end
-
+    
+    for zv = zixVecOrder
+        if any(zv == info.tem.model.variables.states.c.zix.cVeg)
+            zixVecOrder_veg = [zixVecOrder_veg zv];
+        else
+            zixVecOrder_nonVeg = [zixVecOrder_nonVeg zv];
+        end
+    end
+    zixVecOrder = [zixVecOrder_veg zixVecOrder_nonVeg];
+%     zixVecOrder = [2 1 3 4 5];
     % if kmoves > 0
     %     zixVecOrder = [zixVecOrder zixVecOrder(end-kmoves+1:end)];
     % end
@@ -111,9 +122,12 @@ function [f,fe,fx,s,d,p] = spin_cCycle_CASA(f, fe, fx, s, d, p, info, NI2E)
             % gains in veg pools
             gppShp = reshape(fx.gpp, nPix, 1, nTix); % could be fxT?
             cGain(:, zix, :) = d.storedStates.cAlloc(:, zix, :) .* gppShp .* p.raAct.YG;
-        else
+        end
+        if any(zix == s.cd.p_cFlowAct_taker)
             % no additional gains from outside
+            if ~any(zix == info.tem.model.variables.states.c.zix.cVeg)
             cLoxxRate(:, zix, :) = 1;
+            end
             % gains from other carbon pools
             ndxGainFrom = find(s.cd.p_cFlowAct_taker == zix);
 

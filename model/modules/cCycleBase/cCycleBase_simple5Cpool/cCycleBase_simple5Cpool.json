@@ -46,10 +46,10 @@
         },        
         "annk_Reserve": 
         {
-			"Name": "turnover rate of ecosystem carbon pools",
+			"Name": "Reserve does not respire",
 			"Unit": "yr-1",
-            "Default": 0.75,
-			"LowerBound": 0.5,
+            "Default": 0.0,
+			"LowerBound": -1,
 			"UpperBound": 1,
             "Distribution": 
             {

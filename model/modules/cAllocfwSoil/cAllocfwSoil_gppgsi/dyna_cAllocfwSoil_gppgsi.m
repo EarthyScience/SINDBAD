@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_cAllocfwSoil_gsi(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_cAllocfwSoil_gppgsi(f,fe,fx,s,d,p,info,tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the moisture effect on C allocation computed from GSI approach.
     %
