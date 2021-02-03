@@ -57,10 +57,10 @@ for zix = info.tem.model.variables.states.c.cVeg.zix
     s.cd.p_raAct_km(:,zix)    = 1 ./ s.cd.p_cCycleBase_C2Nveg(:,zix) .* RMN .* fe.rafTair.fT;
     s.cd.p_raAct_km4su(:,zix)    = s.cd.p_raAct_km(:,zix);
     
-    % growth respiration: R_g = (1 - YG) * GPP * allocationToPool
+    % growth respiration: R_g = (1 - YG) .* GPP .* allocationToPool
     s.cd.RA_G(:,zix)    = (1 - p.raAct.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
     
-    % maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
+    % maintenance respiration: R_m = km .* (C + YG .* GPP .* allocationToPool)
     s.cd.RA_M(:,zix)    = fe.raAct.km(zix).value(:,tix) .* (s.c.cEco(:,zix) + p.raAct.YG .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix));
     
     % total respiration per pool: R_a = R_m + R_g

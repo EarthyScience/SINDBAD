@@ -39,7 +39,7 @@ function [f,fe,fx,s,d,p] = roSat_Zhang2008(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-%--> a supply / demand limit concept cf Budyko
+%--> a supply - demand limit concept cf Budyko
 %-->  calc demand limit (X0)
 X0                  =   fe.PET.PET(:,tix) + sum(s.wd.p_wSoilBase_wSat,2) - sum(s.w.wSoil,2);
 

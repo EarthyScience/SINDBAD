@@ -6,7 +6,7 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Turner(f,fe,fx,s,d,p,info)
 %   - f.Rg: Global radiation (SW incoming) [MJ/m2/time]
 %   - f.RgPot: Potential radiation [MJ/m2/time]
 %   - p.gppfRdiff.rueRatio  : ratio of clear sky LUE to max LUE, 
-%       in turner et al., appendix A, e_{g_cs} / e_{g_max}, should be between 0 and 1
+%       in turner et al., appendix A, e_{g_cs} ./ e_{g_max}, should be between 0 and 1
 %
 % Outputs:
 %   - d.gppfRdiff.CloudScGPP: effect of cloudiness on potential GPP

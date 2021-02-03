@@ -29,8 +29,8 @@ function [f,fe,fx,s,d,p] = prec_snowMelt_simple(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %%
-% effect of temperature on snow melt = snowMeltRate * Tair
-pRate               = (p.snowMelt.rate .* info.tem.model.time.nStepsDay) * info.tem.helpers.arrays.onestix;
+% effect of temperature on snow melt = snowMeltRate .* Tair
+pRate               = (p.snowMelt.rate .* info.tem.model.time.nStepsDay) .* info.tem.helpers.arrays.onestix;
 fe.snowMelt.Tterm      = max(pRate .* f.Tair,0);
 
 end

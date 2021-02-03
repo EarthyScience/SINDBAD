@@ -35,8 +35,8 @@ function [f,fe,fx,s,d,p] = prec_gppfTair_MOD17(f,fe,fx,s,d,p,info)
 
 %%
 tmp                         =   info.tem.helpers.arrays.onestix;
-td                          =   (p.gppfTair.Tmax - p.gppfTair.Tmin) * tmp;
-tmax                        =   p.gppfTair.Tmax * tmp;
+td                          =   (p.gppfTair.Tmax - p.gppfTair.Tmin) .* tmp;
+tmax                        =   p.gppfTair.Tmax .* tmp;
 tsc                         =   f.TairDay ./ td + 1 - tmax ./ td;
 tsc(tsc<0)                  =   0;
 tsc(tsc>1)                  =   1;

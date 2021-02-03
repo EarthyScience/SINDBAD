@@ -44,11 +44,11 @@ function [f,fe,fx,s,d,p] = evapInt_Miralles2010(f,fe,fx,s,d,p,info,tix)
 rain                 =  fe.rainSnow.rain(:,tix);
 rainInt              =  fe.rainInt.rainInt(:,tix);
 tmp                  =  info.tem.helpers.arrays.onespix;
-CanopyStorage        =  p.evapInt.CanopyStorage  * tmp;
-fte                  =  p.evapInt.fte            * tmp; 
-evapRate             =  p.evapInt.evapRate       * tmp;
-St                   =  p.evapInt.St             * tmp;
-pd                   =  p.evapInt.pd             * tmp;
+CanopyStorage        =  p.evapInt.CanopyStorage  .* tmp;
+fte                  =  p.evapInt.fte            .* tmp;
+evapRate             =  p.evapInt.evapRate       .* tmp;
+St                   =  p.evapInt.St             .* tmp;
+pd                   =  p.evapInt.pd             .* tmp;
 
 
 %catch for division by zero

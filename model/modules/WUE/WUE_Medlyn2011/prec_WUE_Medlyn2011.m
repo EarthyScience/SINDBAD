@@ -34,6 +34,7 @@ function [f,fe,fx,s,d,p] = prec_WUE_Medlyn2011(f,fe,fx,s,d,p,info)
 %   - unit conversion: C_flux[gC m-2 d-1] <- CO2_flux[(umol CO2 m-2 s-1)] * 
 %      1e-06 [umol2mol] * 0.012011 [Cmol] * 1000 [kg2g] * 86400 [days2seconds]
 %      from Knauer, 2019 
+%   - water: mmol m-2 s-1: /1000 [mol m-2 s-1] * .018015 [Wmol in kg/mol] * 84600
 %
 % Created by:
 %   - Sujan Koirala (skoirala)
@@ -47,10 +48,11 @@ function [f,fe,fx,s,d,p] = prec_WUE_Medlyn2011(f,fe,fx,s,d,p,info)
 g_one                         =   p.WUE.g1 .* info.tem.helpers.arrays.onestix;
 
 VPDDay                      =   f.VPDDay;
-VPDDay(f.VPDDay < 1E-4)     =   1E-4;
+VPDDay(f.VPDDay < 5E-2)     =   5E-2;
 
-umol_to_gC                  =   1e-06 * 0.012011 * 1000 * 86400;
+umol_to_gC                  = 6.6667e-004;
+% umol_to_gC                  =   1e-06 .* 0.012011 .* 1000 .* 86400 ./ (86400 .* 0.018015); %/(86400 = s to day .* .018015 = molecular weight of water) for a guessed fix of the units of water... not sure what it should be because the unit of A/E is not clear...if A is converted to gCm-2d-1 E should be converted from kg to g?
+% umol_to_gC                  =   12 .* 100/(18 .* 1000);
 fe.WUE.ciNoCO2              =   g_one ./ (g_one + sqrt(VPDDay)); % RHS eqn 13 in corrigendum
-fe.WUE.AoENoCO2             =   umol_to_gC .* f.PsurfDay ./ (1.6 .* (VPDDay + g_one .* sqrt(VPDDay))); % eqn 14
-
+fe.WUE.AoENoCO2             =   umol_to_gC .* f.PsurfDay ./ (1.6 .* (VPDDay + g_one .* sqrt(VPDDay))); % eqn 14 %?  gC/mol of H2o?
 end

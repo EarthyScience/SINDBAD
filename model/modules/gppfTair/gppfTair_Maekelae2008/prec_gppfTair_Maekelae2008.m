@@ -45,7 +45,7 @@ Smax        =   p.gppfTair.Smax  .* tmp;
 %--> calculate temperature acclimation
 X           =   f.TairDay; %pix,tix
 for ii  =   2:info.tem.helpers.sizes.nTix
-    X(:,ii) =   X(:,ii-1) + (1 / TimConst) .* (f.TairDay(:,ii) - X(:,ii-1));
+    X(:,ii) =   X(:,ii-1) + (1 ./ TimConst) .* (f.TairDay(:,ii) - X(:,ii-1));
 end
 
 %--> calculate the stress and saturation
