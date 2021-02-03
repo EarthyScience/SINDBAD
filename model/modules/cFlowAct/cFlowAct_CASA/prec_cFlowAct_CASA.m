@@ -65,7 +65,7 @@ function [f,fe,fx,s,d,p] = prec_cFlowAct_CASA(f,fe,fx,s,d,p,info)
         p.cCycleBase.fluxOrder = 1:numel(taker);
     else
         if numel(p.cCycleBase.fluxOrder) ~= numel(taker)
-            error(['ERR : cFlowAct_simple : '...
+            error(['ERR : cFlowAct_CASA : '...
                 'numel(p.cCycleBase.fluxOrder) ~= numel(taker)'])
         end
     end

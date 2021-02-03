@@ -1,50 +1,37 @@
 {
     "params": {
-        "LR2ReSlp": {
-            "Name": "Leaf-Root to Reserve",
-            "Unit": "fractional",
-            "Default": 0.1,
-            "LowerBound": 0.01,
-            "UpperBound": 1,
-            "Distribution": {
-                "name": "uniform",
-                "funHandle": "",
-                "params": []
-            },
-            "Comment": ""
-        },
-        "Re2LRSlp": {
-            "Name": "Reserve to Leaf-Root",
-            "Unit": "fractional",
-            "Default": 0.1,
-            "LowerBound": 0.01,
-            "UpperBound": 1,
-            "Distribution": {
-                "name": "uniform",
-                "funHandle": "",
-                "params": []
-            },
-            "Comment": ""
-        },
-        "kShed": {
-            "Name": "rate of shedding",
-            "Unit": "fractional",
-            "Default": 0.1,
-            "LowerBound": 0.01,
-            "UpperBound": 1,
-            "Distribution": {
-                "name": "uniform",
-                "funHandle": "",
-                "params": []
-            },
-            "Comment": ""
-        },
-        "f_tau": {
+        "fR_tau": {
             "Name": "contribution factor for current stressor",
             "Unit": "fractional",
-            "Default": 0.01,
+            "Default": 0.2,
             "LowerBound": 0.01,
             "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "fR_slope": {
+            "Name": "slope of sigmoid",
+            "Unit": "fractional",
+            "Default": 58,
+            "LowerBound": 1,
+            "UpperBound": 100,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "fR_base": {
+            "Name": "base of sigmoid",
+            "Unit": "fractional",
+            "Default": 59.78,
+            "LowerBound": 1,
+            "UpperBound": 120,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
