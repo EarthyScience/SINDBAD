@@ -1,15 +1,18 @@
-{
-    "costFun": {
-        "funName": "CostBaseline_Area",
-        "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_CostBaseline_Area.json",
-        "variables2constrain": [
-            "TWS",
-            "SWE",
-            "SM",
-            "ET",
-            "Q"
-        ]
+{"variables2constrain": [
+    "TWS",
+    "SWE",
+    "wSoil",
+    "Evap",
+    "Q"
+],
+	        "costFun": {
+        "funName": "CostBaseline_Area_tb",
+        "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_CostBaseline_Area.json"
     },
+	"costMetric":{
+		"funName": "tools/utils/metrics/perfMetric",
+		"comment": "the function that calculates the performance metric. Uses perfMetric.m"
+	},
     "algorithm": {
         "funName": "cmaes",
         "nonDefOptFile": "testBeds/wCycleOpti/settings_wCycleOpti/extraOptionsOpti/extraOptions_cmaes_costComp.json",
@@ -209,7 +212,7 @@
                     "sourceVariableUnit": "",
                     "source2sindbadUnit": "*1",
                     "isCategorical": true,
-                    "nameShort": "wSoil_usedDays",
+                    "nameShort": "SM_usedDays",
                     "spaceTimeType": "normal",
                     "sourceDataProductName": "ESA CCI Soil moisture v404",
                     "dataPath": ""

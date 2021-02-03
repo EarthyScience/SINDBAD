@@ -6,7 +6,7 @@
 	"time":
 	{
 		"step": 				"d",
-		"sDate": 				"2000-01-01",
+		"sDate": 				"1999-12-31",
 		"eDate": 				"2015-12-31",
 		"nYears": 				[15],
 		"nStepsDay": 			[1],

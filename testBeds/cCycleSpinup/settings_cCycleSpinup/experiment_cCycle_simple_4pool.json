@@ -7,7 +7,7 @@
 	"configFiles": 
 	{
 		"forcing": 			"testBeds/cCycleSpinup/settings_cCycleSpinup/forcing.json",
-		"modelStructure": 	"testBeds/cCycleSpinup/settings_cCycleSpinup/modelStructure_cCycle_simple_5pool.json",
+		"modelStructure": 	"testBeds/cCycleSpinup/settings_cCycleSpinup/modelStructure_cCycle_simple_4pool.json",
 		"constants": 		"testBeds/cCycleSpinup/settings_cCycleSpinup/constants.json",
 		"modelRun": 		"testBeds/cCycleSpinup/settings_cCycleSpinup/modelRun.json",
 		"output": 			"testBeds/cCycleSpinup/settings_cCycleSpinup/output.json",
