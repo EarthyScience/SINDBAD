@@ -88,7 +88,7 @@ for jj=1:numel(paramsList)
                     if isfield(param_settings.bounds.(module).(paramName), 'UpperBound')
                         params.(module).(paramName).UpperBound      =   param_settings.bounds.(module).(paramName).UpperBound;
                         disp(['upper bound for parameter ' module '.' paramName ' is changed  to: ' num2str(param_settings.bounds.(module).(paramName).UpperBound)]); 
-                    end 
+                    end     
                 end
             end    
         end
