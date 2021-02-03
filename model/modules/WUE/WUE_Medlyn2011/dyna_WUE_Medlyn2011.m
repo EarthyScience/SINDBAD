@@ -7,8 +7,8 @@ function [f,fe,fx,s,d,p] = dyna_WUE_Medlyn2011(f,fe,fx,s,d,p,info,tix)
 %   - fe.WUE.ciNoCO2: precomputed internal co2 scalar without ambient co2
 %
 % Outputs:
-%   - d.WUE.AoENoCO2: water use efficiency A/E [gC/mmH2O] with ambient co2
-%   - d.WUE.ciNoCO2: internal co2 with ambient co2
+%   - d.WUE.AoE: water use efficiency A/E [gC/mmH2O] with ambient co2
+%   - d.WUE.ci: internal co2 with ambient co2
 %
 % Modifies:
 %     - None
@@ -36,7 +36,7 @@ function [f,fe,fx,s,d,p] = dyna_WUE_Medlyn2011(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-d.WUE.AoE(:,tix)            =   fe.WUE.AoENoCO2(:,tix) .* s.cd.ambCO2; 
+d.WUE.AoE(:,tix)            =   fe.WUE.AoENoCO2(:,tix) .* p.WUE.zeta .* s.cd.ambCO2; 
 d.WUE.ci(:,tix)             =   fe.WUE.ciNoCO2(:,tix) .* s.cd.ambCO2; 
 
 end

@@ -46,7 +46,7 @@ if p.wSoilBase.makeLookup
     Theta   = s.w.wSoil(:,sl) ./ soilD;
     K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
         (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
-        CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
+        CLAY .^ 2) .* (1 ./ Theta))) .* 1000 .* 3600 .* 24;
 
 else
     soilD                                       =   s.wd.p_wSoilBase_soilDepths(sl);
