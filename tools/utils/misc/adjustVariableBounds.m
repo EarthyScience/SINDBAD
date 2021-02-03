@@ -8,6 +8,11 @@ function varout = adjustVariableBounds(var,varrange,miss_val,varname,repvec)
 % OUTPUT
 % varout
 
+% Note: skoirala: 05-02-2021: This function most likely does not work if
+% all the data values are outside the range given in input data bounds.May
+% need further refinement... For example, if LAI is supposed to between 1
+% and 10, and the range/bound is given between 0 and 1, this will fail. 
+%%
 if~exist('repvec','var');repvec=ones(size(var)).*miss_val;end
 
 v1=min(var(var~=miss_val&isnan(var)==0&isinf(var)==0));
