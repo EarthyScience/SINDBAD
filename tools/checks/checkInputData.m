@@ -65,6 +65,8 @@ for i = 1:numel(fns)
         x       = fillDataGaps(x,NaN(size(x)),varname,flag_val,1);
         x       = x{1};
         end
+        sstr    =   [pad('MSG INPUT',20) ' : ' pad('checkInputData',20) ' | ' 'Checking done for ' fns{i} 'Data'];
+        disp(sstr);
     end
     inputData.(fns{i})  = x;
 end
