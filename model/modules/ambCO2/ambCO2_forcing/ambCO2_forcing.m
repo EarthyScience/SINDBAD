@@ -23,5 +23,5 @@ function [f,fe,fx,s,d,p]=ambCO2_forcing(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %% 
-s.cd.ambCO2 = f.ambCO2(:,tix);
+s.cd.ambCO2 = f.ambCO2(:,tix) .* info.tem.helpers.arrays.onespix;
 end

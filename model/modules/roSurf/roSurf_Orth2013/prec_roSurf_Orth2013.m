@@ -24,7 +24,7 @@ function [f,fe,fx,s,d,p] = prec_roSurf_Orth2013(f,fe,fx,s,d,p,info)
 
 %%
 %--> calculate delay function of previous days
-z                  =    exp(-(info.tem.helpers.arrays.onespix * (0:60) ./ (p.roSurf.qt * ones(1,61)))) - exp(((info.tem.helpers.arrays.onespix * (0:60)+1) ./ (p.roSurf.qt * ones(1,61)))); 
-fe.roSurf.Rdelay   =    z./(sum(z,2) * ones(1,61));
+z                  =    exp(-(info.tem.helpers.arrays.onespix .* (0:60) ./ (p.roSurf.qt .* ones(1,61)))) - exp(((info.tem.helpers.arrays.onespix .* (0:60)+1) ./ (p.roSurf.qt .* ones(1,61))));
+fe.roSurf.Rdelay   =    z./(sum(z,2) .* ones(1,61));
 
 end

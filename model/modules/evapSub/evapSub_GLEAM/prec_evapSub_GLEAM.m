@@ -43,7 +43,7 @@ Delta = (5723.265./T.^2 + 3.53068./(T-0.00728332)).* exp(9.550426-5723.265./T + 
 Delta = Delta.*0.001;
 
 % The latent heat of sublimation of ice (Lambda) can be found in eq. (5):
-Lambda = 46782.5 + 35.8925.*T - 0.07414.*T.^2 + 541.5 * exp(-(T./123.75).^2);
+Lambda = 46782.5 + 35.8925.*T - 0.07414.*T.^2 + 541.5 .* exp(-(T./123.75).^2);
 
 % To convert from [J/mol] to [MJ/kg] I assume a molecular mass of water of
 % 18.01528 g/mol:
@@ -59,7 +59,7 @@ pa = 0.001; %MJ/kg/K
 Gamma = f.PsurfDay .* pa./(0.622.*Lambda);
 
 %PTterm=(fei.Delta./(fei.Delta+fei.Gamma))./fei.Lambda
-palpha                      = p.evapSub.alpha * info.tem.helpers.arrays.onespix;
+palpha                      = p.evapSub.alpha .* info.tem.helpers.arrays.onespix;
 
 tmp                         = palpha .* f.Rn .* (Delta ./ (Delta + Gamma)) ./ Lambda;
 tmp(tmp<0)                  = 0;

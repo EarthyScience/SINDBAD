@@ -6,7 +6,7 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Wang2015(f,fe,fx,s,d,p,info)
 %   - f.Rg: Global radiation (SW incoming) [MJ/m2/time]
 %   - f.RgPot: Potential radiation [MJ/m2/time]
 %   - p.gppfRdiff.rueRatio  : ratio of clear sky LUE to max LUE, 
-%       in turner et al., appendix A, e_{g_cs} / e_{g_max}, should be between 0 and 1
+%       in turner et al., appendix A, e_{g_cs} ./ e_{g_max}, should be between 0 and 1
 %
 % Outputs:
 %   - d.gppfRdiff.CloudScGPP: effect of cloudiness on potential GPP
@@ -26,6 +26,8 @@ function [f,fe,fx,s,d,p] = prec_gppfRdiff_Wang2015(f,fe,fx,s,d,p,info)
 %
 % Versions:
 %   - 1.0 on 22.11.2019 (skoirala): documentation and clean up (changed the output to nPix, nTix)
+%   - 1.1 on 22.01.2021 (skoirala): minimum and maximum function had []
+%   missing and were not working
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %% FROM SHANNING
@@ -39,8 +41,8 @@ yearsVec    = info.tem.helpers.dates.year;
 yearsVec    = yearsVec(:,1:size(CI,2));
 for i = unique(yearsVec)
     ndx         = yearsVec == i;
-    CImin       = nanmin(CI(:,ndx),2);         %CImin is the minimum CI value of present year
-    CImax       = nanmax(CI(:,ndx),2);
+    CImin       = nanmin(CI(:,ndx),[],2);         %CImin is the minimum CI value of present year
+    CImax       = nanmax(CI(:,ndx),[],2);
     CI_nor(:,ndx)	= (CI(:,ndx) - CImin) ./ (CImax - CImin);
 end
 d.gppfRdiff.CloudScGPP	= 1 - p.gppfRdiff.miu .* (1 - CI_nor);

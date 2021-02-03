@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
+function [f,fe,fx,s,d,p] = prec_WUE_VPDDayCo2(f,fe,fx,s,d,p,info)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD 
 %
@@ -7,8 +7,8 @@ function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
 %    - f.VPDDay: daytime mean VPD [kPa] 
 %
 % Outputs:
-%   - d.WUE.AoE: water use efficiency - ratio of assimilation and
-%           transpiration fluxes [gC/mmH2O]
+%   - fe.WUE.AoENoCO2: water use efficiency - ratio of assimilation and
+%           transpiration fluxes [gC/mmH2O] without co2 effect
 %
 % Modifies:
 %     - None
@@ -30,5 +30,5 @@ function [f,fe,fx,s,d,p] = prec_WUE_VPDDay(f,fe,fx,s,d,p,info)
 % "p.WUE.WUEat1hPa"
 
 kpa_to_hpa  = 10;
-d.WUE.AoE   = p.WUE.WUEatOnehPa .* 1 ./ sqrt(kpa_to_hpa .* (f.VPDDay +0.05));
+fe.WUE.AoENoCO2   = p.WUE.WUEatOnehPa .* 1 ./ sqrt(kpa_to_hpa .* (f.VPDDay +0.05));
 end

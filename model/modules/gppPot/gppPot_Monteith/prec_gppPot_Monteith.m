@@ -15,7 +15,7 @@ function [f,fe,fx,s,d,p] = prec_gppPot_Monteith(f,fe,fx,s,d,p,info)
 %   - 
 %
 % Notes:
-%   - set the potential GPP as maxRUE * PAR (gC/m2/timestep)
+%   - set the potential GPP as maxRUE .* PAR (gC/m2/timestep)
 %   - no crontrols for fPAR or meteo factors
 %   - usually, 
 %       GPP     = e_max x f(clim) x FAPAR x PAR

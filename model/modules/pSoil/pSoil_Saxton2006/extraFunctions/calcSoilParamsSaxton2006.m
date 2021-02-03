@@ -137,7 +137,7 @@ Ks              =   1930 .* ((Theta_s - Theta_33) .^ (3 - lambda)) .* 24;
 %--> Rw: Weight fraction of gravel (decimal), g g-1 
 %--> Kb: Saturated conductivity (bulk soil), mm h-1
 
-alphaRho        =   p.pSoil.matricSoilDensity / p.pSoil.gravelDensity;
+alphaRho        =   p.pSoil.matricSoilDensity ./ p.pSoil.gravelDensity;
 Rv              =   (alphaRho .* p.pSoil.Rw) ./ (1 - p.pSoil.Rw .* (1 - alphaRho));
 rho_B           =   rho_N .* (1 - Rv) + Rv .* 2.65;
 % PAW_B           =   PAW .* (1 - p.soilTexture.Rv);

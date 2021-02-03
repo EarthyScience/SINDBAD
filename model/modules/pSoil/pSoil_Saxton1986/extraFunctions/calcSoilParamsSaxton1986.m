@@ -37,7 +37,7 @@ CLAY            =   s.wd.p_soilTexture_CLAY(:,sl) .* 100;
 SAND            =   s.wd.p_soilTexture_SAND(:,sl) .* 100;
 
 %-->  Equations
-A               =   exp(p.pSoil.a + p.pSoil.b .* CLAY + p.pSoil.c .* SAND .^ 2 + p.pSoil.d1 .* SAND .^ 2 .* CLAY) * 100;
+A               =   exp(p.pSoil.a + p.pSoil.b .* CLAY + p.pSoil.c .* SAND .^ 2 + p.pSoil.d1 .* SAND .^ 2 .* CLAY) .* 100;
 B               =   p.pSoil.e + p.pSoil.f1 .* CLAY .^ 2 + p.pSoil.g .* SAND .^ 2 .* CLAY;
 
 %-->  soil matric potential, Psi, kPa
@@ -78,7 +78,7 @@ clear ndx
 %--> hydraulic conductivity (mm/day): original equation for mm/s
 K   = 2.778E-6 .*(exp(p.pSoil.p + p.pSoil.q .* SAND + ...
     (p.pSoil.r + p.pSoil.t .* SAND + p.pSoil.u .* CLAY + p.pSoil.v .*...
-    CLAY .^ 2) .* (1 ./ Theta))) .* 1000 * 3600 * 24;
+    CLAY .^ 2) .* (1 ./ Theta))) .* 1000 .* 3600 .* 24;
 
 Alpha           =   A;
 Beta            =   B;

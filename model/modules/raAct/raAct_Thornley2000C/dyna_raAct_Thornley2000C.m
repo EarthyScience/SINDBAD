@@ -72,10 +72,10 @@ for zix = info.tem.model.variables.states.c.zix.cVeg
     % compute maintenance and growth respiration terms for each vegetation pool
     % according to MODEL C - growth, degradation and resynthesis view of
     % respiration
-    % maintenance respiration: R_m = km * (1 - YG) * C; km = km * MTF (before equivalent to kd)
+    % maintenance respiration: R_m = km .* (1 - YG) .* C; km = km .* MTF (before equivalent to kd)
     s.cd.RA_M(:,zix)    = s.cd.p_raAct_km(:,zix) .* (1 - p.raAct.YG) .* s.c.cEco(:,zix);
     
-    % growth respiration: R_g = gpp * (1 - YG)
+    % growth respiration: R_g = gpp .* (1 - YG)
     s.cd.RA_G(:,zix)    = (1 - p.raAct.YG) .* fx.gpp(:,tix) .* s.cd.cAlloc(:,zix);
     
     % total respiration per pool: R_a = R_m + R_g

@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = dyna_gppfwSoil_Stocker2020(f,fe,fx,s,d,p,info,tix)
 %   - Nuno Carvalhais (ncarval) and Shanning Bao (sbao)
 %
 % Versions:
-%   - 1.1 on 03.11.2020 (skoirala): flipped the sing of p.gppfwSoil.q 
+%   - 1.1 on 03.11.2020 (skoirala): flipped the sign of p.gppfwSoil.q 
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
