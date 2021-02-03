@@ -1,4 +1,4 @@
-function [cost, costComps] = calcCostBaseline_Area(f,fe,fx,s,d,p,obs,info)
+function [cost, costComps] = CostBaseline_Area_tb(f,fe,fx,s,d,p,obs,info)
 % baseline cost function using robust metrics, data uncertainty and area
 % weights
 % tVec      = vector with month (M)
@@ -163,15 +163,15 @@ end
 %%%%% correlation for SM
 if ~isempty(SMobs(vSM))
     corSM       =   corr(SMobs(vSM),SMmod(vSM), 'rows', 'pairwise');
-    costSM      =   1-sign(corSM ) .* abs(corSM); % just: 1 - corSM ?
+    costwSoil      =   1-sign(corSM ) .* abs(corSM); % just: 1 - corSM ?
 else
-    costSM     =   0;
+    costwSoil     =   0;
 end
 %%%%% weighted MEF for ET
 et_resid    =   sum( abs(ETobs(vET)-ETmod(vET)) ./ abs(ETobs_uncert(vET)) );
 et_var      =   sum( abs(ETobs(vET)-mean(ETobs(vET))) ./ abs(ETobs_uncert(vET)) );
 
-costET      =   et_resid/et_var;
+costEvap      =   et_resid/et_var;
 
 %%%%% weighted MEF for MSC of Q 
 q_resid     =   sum( abs(Q_MSCobs(vQ)-Q_MSCmod(vQ)) ./ abs(Q_MSCobs_uncert(vQ)) );
@@ -185,7 +185,7 @@ costQ       =   q_resid/q_var;
 %% total costs
 % what variables to sum up
 costTotal   = 0;
-costComp    = info.opti.costFun.variables2constrain;
+costComp    = info.opti.variables2constrain;
 for cn = 1:numel(costComp)
     costTotal   =   costTotal + eval(char(['cost' costComp{cn} ';']));
 end
@@ -204,8 +204,8 @@ costComps            =   struct;
 costComps.Total      =   costTotal;
 costComps.TWS        =   costTWS;
 costComps.SWE        =   costSWE;
-costComps.SM         =   costSM;
-costComps.ET         =   costET;
+costComps.SM         =   costwSoil;
+costComps.ET         =   costEvap;
 costComps.Q          =   costQ;
 
 

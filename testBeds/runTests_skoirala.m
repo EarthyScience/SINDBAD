@@ -92,8 +92,8 @@ userOutPath             =   '';
 % set the userOutPath to save the output to any directory. In this case
 % $username is not appended to the path. NEVER SET IT INSIDE SINDBAD ROOT
 % 
-userInPath              =   '/Users/skoirala/research/sindbad/sandbox/cwCycleOpti/input';
-userOutPath             =   '/Users/skoirala/research/sindbad/sandbox/cwCycleOpti/output_test_cra';
+userInPath              =   '/home/skoirala/sindbad/sandbox/cwCycleOpti/input';
+userOutPath             =   '/home/skoirala/sindbad/sandbox/cwCycleOpti/output_test_20210203';
 % 
 % userInPath              =   '/Volumes/Kaam/sindbad_tests/input';
 % userOutPath             =   '/Volumes/Kaam/sindbad_tests/output_cpl';
@@ -117,7 +117,7 @@ end
 testCases               =   [1 2 3 4 5];
 % testCases               =   [2 3 4 5];
 % testCases               =   [1];
-testCases               =   [1];
+% testCases               =   [5];
 % testCases             =   [ 4 ];
 % testCases             =   [5];
 % testCases             =   [ 1 ];

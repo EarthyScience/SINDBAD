@@ -1,8 +1,17 @@
 
 {
+	"variables2constrain": [
+		"gpp",
+		"AGB"
+	],
 	"costFun": {
-		"funName": "CostMultiConstraint",
-		"nonDefOptFile": ""
+		"funName": "costMultiConstraint",
+		"nonDefOptFile": "",
+		"multiConstraintMethod": "sum"
+	},
+	"costMetric":{
+		"funName": "tools/utils/metrics/perfMetric",
+		"comment": "the function that calculates the performance metric. Uses perfMetric.m"
 	},
 	"algorithm": {
 		"funName": "cmaes",
@@ -31,6 +40,7 @@
 		"oneDataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
 		"variables": {
 		"gpp": {
+			"modelFullVar": "fx.gpp",
 			"data": {
 				"variableUnit": "gC m-2 day-1",
 				"bounds": [0, 500],
@@ -52,9 +62,24 @@
 				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc",
 				"bounds": [0, 1],
 				"sourceVariableName": "NEE_QC"
+			},
+			"costOptions":{
+				"trimPerc": [],
+				"aggrOrder": "spacetime", 
+				"spatialAggr": "cat", 
+				"spatialCostAggr": "median",
+				"temporalAggr": "day",
+				"temporalAggrObs": false,
+				"temporalAggrFunc": "nanmean",
+				"costMetric": "mefinv",
+				"costWeight": 1,
+				"areaWeight": false,
+				"quality_bound": [0.85,1],
+				"data_bound":[]
 			}
 		},
 		"AGB": {
+			"modelFullVar": "squeeze(sum(d.storedStates.cEco,2));",
 			"data": {
 				"variableUnit": "MgC ha-1",
 				"bounds": [0, 600],
@@ -66,6 +91,20 @@
 				"spaceTimeType": "normal",
 				"sourceDataProductName": "FLUXNET",
 				"dataPath": "data/input/FluxNet_Ex/US-Blo.2000-2015.nc"
+			},
+			"costOptions":{
+				"trimPerc": [],
+				"aggrOrder": "spacetime", 
+				"spatialAggr": "cat", 
+				"spatialCostAggr": "median",
+				"temporalAggr": "day",
+				"temporalAggrObs": false,
+				"temporalAggrFunc": "nanmean",
+				"costMetric": "r2inv",
+				"costWeight": 1,
+				"areaWeight": false,
+				"quality_bound": [0.85,1],
+				"data_bound":[]
 			}
 		}
 	}
