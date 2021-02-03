@@ -48,24 +48,25 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     % find out why. Led to having zeros in most of the carbon pools of the
     % explicit simple
     % old before cleanup... was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing p.cCycleBase.fluxOrder. So, in biomascat, the fields do not exits and this block of code will not work.
-    % for jix = 1:numel(p.cCycleBase.fluxOrder)
-        % taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
-        % giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
-        % s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
-        
-    for jix = 1:numel(s.cd.p_cFlowAct_taker)
-        taker                       = s.cd.p_cFlowAct_taker(jix);
-        giver                       = s.cd.p_cFlowAct_giver(jix);
-        c_flow                      = s.cd.p_cFlowAct_A(:,taker,giver);
-        take_flow                   = s.cd.cEcoFlow(:,taker);
-        give_flow                   = s.cd.cEcoOut(:,giver);
-        s.cd.cEcoFlow(:,taker)      = take_flow  + give_flow .* c_flow;
+    for jix = 1:numel(p.cCycleBase.fluxOrder)
+        taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
+        giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
+        s.cd.cEcoFlow(:,taker)      = s.cd.cEcoFlow(:,taker)   + s.cd.cEcoOut(:,giver) .* s.cd.p_cFlowAct_A(:,taker,giver);
     end
+%     for jix = 1:numel(s.cd.p_cFlowAct_taker)
+%         taker                       = s.cd.p_cFlowAct_taker(jix);
+%         giver                       = s.cd.p_cFlowAct_giver(jix);
+%         c_flow                      = s.cd.p_cFlowAct_A(:,taker,giver);
+%         take_flow                   = s.cd.cEcoFlow(:,taker);
+%         give_flow                   = s.cd.cEcoOut(:,giver);
+%         s.cd.cEcoFlow(:,taker)      = take_flow  + give_flow .* c_flow;
+%     end
 
     %% balance
     prevcEco = s.c.cEco;
     s.c.cEco = s.c.cEco + s.cd.cEcoFlow + s.cd.cEcoInflux - s.cd.cEcoOut;
     %% compute RA and RH
+    s.cd.del_cEco = s.c.cEco - prevcEco;
     fx.cNPP(:, tix) = sum(s.cd.cNPP, 2);
     backNEP = sum(s.c.cEco, 2) - sum(prevcEco, 2);
     fx.cRA(:, tix) = fx.gpp(:, tix) - fx.cNPP(:, tix);

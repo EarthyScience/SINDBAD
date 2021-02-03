@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_cAllocfTsoil_gsi(f,fe,fx,s,d,p,info,tix)
+function [f,fe,fx,s,d,p] = dyna_cAllocfTsoil_gppgsi(f,fe,fx,s,d,p,info,tix)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the temperature effect on C allocation based on GSI approach.
     %

@@ -1,5 +1,19 @@
 {
-    "params": {},
+    "params": {
+        "SLA": {
+            "Name": "specific leaf area",
+            "Unit": "m^2.gC^-1",
+            "Default": 0.016,
+            "LowerBound": 0.001,
+            "UpperBound": 0.024,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": "lower bound was 0.008 in semda"
+        }
+    },
     "devStage": {
         "experimental": false,
         "tested": true,
