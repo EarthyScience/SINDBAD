@@ -122,9 +122,9 @@ for ii = 1:numel(fldnmsINFO)
         case 'params'
             paramJson = data_json.parameter;
             % loop over model parameter
+            paraDef     = [];
+            paraNew     = [];
             for pp=1:numel(info.tem.model.variables.paramInput)
-                paraDef     = [];
-                paraNew     = [];
                 paraName    = info.tem.model.variables.paramInput{pp};
                 tmp         = strsplit(paraName,'.');
                 % look if an alternative value is provided in the json file
@@ -139,12 +139,12 @@ for ii = 1:numel(fldnmsINFO)
                         else
                             disp([pad('WARN PARAM TYPE',20) ' : ' pad('readConfiguration',20) ' | invalid type in parameter json file! needs to be value or scalar. parameter ' tmp{2} '.' tmp{3} ' is not changed. '])
                         end
-                        paraNew = [paraNew ', ' tmp{2} '.' tmp{3}];
+                        paraNew = [paraNew tmp{2} '.' tmp{3} ', '];
                     else
-                        paraDef = [paraDef ', ' tmp{2} '.' tmp{3}];
+                        paraDef = [paraDef tmp{2} '.' tmp{3} ', '];
                     end
                 else
-                    paraDef = [paraDef ', ' tmp{2} '.' tmp{3}];
+                    paraDef = [paraDef tmp{2} '.' tmp{3} ', '];
                 end
             end
             
