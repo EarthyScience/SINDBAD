@@ -82,6 +82,9 @@ for i = 1:numel(VariableNames)
     modVar              = info.opti.constraints.variables.(varName).modelFullVar;
     evalStr             = ['sim_proc = ' modVar ';'];
     eval(evalStr)
+    if info.tem.helpers.sizes.nPix == 1 && size(sim_proc,1) > 1
+        sim_proc = sim_proc';
+    end
     
     % apply the quality flag and filter data based on observation/user
     % input
