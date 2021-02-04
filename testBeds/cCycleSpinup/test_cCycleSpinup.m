@@ -71,7 +71,7 @@ saveLongStates  = true;
 % NI2E=11s
 nPools = 14;
 
-NI2Es = [11 101 1001 2001];
+NI2Es = [11 101 1001];
 % NI2Es = [11];
 % for NI2E = [11 101 1001 2001 3001]
 for NI2E = NI2Es
