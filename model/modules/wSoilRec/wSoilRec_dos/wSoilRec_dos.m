@@ -40,7 +40,7 @@ for sl=1:nSoilLayers-1
     % drain                   =   min(k_unsat,s.w.wSoil(:,sl));
     %--> store the drainage flux
     s.wd.wSoilFlow(:,sl+1)  =   drain;
-    drain = min(drain, s.wd.p_wSoilBase_wSat(:,sl+1) - s.w.wSoil(:,sl+1))
+    drain = min(drain, s.wd.p_wSoilBase_wSat(:,sl+1) - s.w.wSoil(:,sl+1));
     %--> update storages
     s.w.wSoil(:,sl)         =   s.w.wSoil(:,sl) - drain;
     s.w.wSoil(:,sl+1)       =   s.w.wSoil(:,sl+1)+drain;
