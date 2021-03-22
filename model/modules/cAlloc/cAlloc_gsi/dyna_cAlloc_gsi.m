@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
+function [f, fe, fx, s, d, p] = dyna_cAlloc_gsi(f, fe, fx, s, d, p, info, tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % compute the fraction of NPP that is allocated to the
     % different plant organs. In this case, the allocation is dynamic in time
@@ -24,7 +24,7 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
     % Created by:
     %   - ncarvalhais and sbesnard
     % Notes:
-    % Check if we can partition C to leaf and wood constrained by interception of light. 
+    % Check if we can partition C to leaf and wood constrained by interception of light.
     %
     % Versions:
     %   - 1.0 on 12.01.2020 (sbesnard)
@@ -37,16 +37,29 @@ function [f,fe,fx,s,d,p] = dyna_cAlloc_gsi(f,fe,fx,s,d,p,info,tix)
     cf2.cVegRoot = d.cAllocfTsoil.fT(:, tix) ./ (d.cAllocfwSoil.fW(:, tix) + d.cAllocfTsoil.fT(:, tix));
 
     % distribute the allocation according to pools
-    cpNames = {'cVegRoot', 'cVegWood', 'cVegLeaf'};
+    %     cpNames = {'cVegRoot', 'cVegWood', 'cVegLeaf'};
 
-    for cpn = 1:numel(cpNames)
-        zixVec = info.tem.model.variables.states.c.zix.(cpNames{cpn});
+    for cpN = 1:numel(s.cd.p_cAlloc_cpNames)
+        cpName = s.cd.p_cAlloc_cpNames(cpN);
+        zixVec = s.cd.p_cAlloc_zixVecs{cpN};
         N = numel(zixVec);
 
         for zix = zixVec
-            s.cd.cAlloc(:, zix) = cf2.(cpNames{cpn}) ./ N;
+            s.cd.cAlloc(:, zix) = cf2.(cpName) ./ N;
         end
 
     end
+
+    % cpNames = ["cVegRoot", "cVegWood", "cVegLeaf"];
+
+    % for cpName =cpNames
+    %     zixVec = info.tem.model.variables.states.c.zix.(cpName);
+    %     N = numel(zixVec);
+
+    %     for zix = zixVec
+    %         s.cd.cAlloc(:, zix) = cf2.(cpName) ./ N;
+    %     end
+
+    % end
 
 end
