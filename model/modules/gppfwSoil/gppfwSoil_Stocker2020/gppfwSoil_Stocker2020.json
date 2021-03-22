@@ -4,7 +4,7 @@
             "Name": "sensitivity of GPP to soil moisture ",
             "Unit": "[]",
             "Default": 1,
-            "LowerBound": 0,
+            "LowerBound": 0.01,
             "UpperBound": 4,
             "Distribution": {
                 "name": "uniform",
@@ -17,7 +17,7 @@
             "Name": "",
             "Unit": "[]",
             "Default": 0.6,
-            "LowerBound": 0,
+            "LowerBound": 0.1,
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
