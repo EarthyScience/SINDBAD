@@ -89,5 +89,7 @@ function [f,fe,fx,s,d,p] = dyna_cTaufwSoil_CASA(f,fe,fx,s,d,p,info,tix)
     % FEED IT TO THE STRUCTURE
     d.cTaufwSoil.fwSoil(:, tix) = BGME;
     % d.prev.cTaufwSoil_fwSoil    = BGME;
+    % set the same moisture stress to all carbon pools
+    s.cd.p_cTaufwSoil_fwSoil(:,info.tem.model.variables.states.c.zix.cEco) = d.cTaufwSoil.fwSoil(:,tix);
 
 end
