@@ -86,6 +86,11 @@ for i = 1:numel(VariableNames)
         sim_proc = sim_proc';
     end
     
+    % apply the the nan mask of observation to simulation
+    ndx             = isnan(obs_proc);
+    obs_proc(ndx)   = NaN;
+    obs_unc(ndx)    = NaN;
+    sim_proc(ndx)   = NaN;
     % apply the quality flag and filter data based on observation/user
     % input
     % apply quality flag bounds
@@ -139,7 +144,7 @@ for i = 1:numel(VariableNames)
             [sim_proc, obs_proc, obs_unc]   = temporal_aggregation(sim_proc, obs_proc, obs_unc, timeAggrFreq, timeAggrFunc, timeAggrObs, info);
             [sim_proc, obs_proc, obs_unc]   = spatial_aggregation(sim_proc, obs_proc, obs_unc, spatialAggr);
         otherwise
-            error(['CRIT : calcCostMultiConstraint : The function does not work for : ' aggrOrder ' order of space and time aggregation aggregation of data. Use either {spacetime, timespace}.'])
+            error(['CRIT : costMultiConstraint : The function does not work for : ' aggrOrder ' order of space and time aggregation aggregation of data. Use either {spacetime, timespace}.'])
     end
     
     
@@ -162,15 +167,20 @@ for i = 1:numel(VariableNames)
             cost_full   =   rowfun(metric_fun, dataTab, 'OutputVariableName','cost');
             cost        =   prctile(cost_full.cost, spatialCostAggr_per);
         otherwise
-            error(['CRIT : calcCostMultiConstraint : The function does not work for : ' spatialCostAggr ' spatial aggregation of cost. Use either {cat, mean, median, or a numeric value for percentile}.'])
+            error(['CRIT : costMultiConstraint : The function does not work for : ' spatialCostAggr ' spatial aggregation of cost. Use either {cat, mean, median, or a numeric value for percentile}.'])
     end
     
     % apply weighht for cost
 %     varName
-    cost        = cost .* costWeight;
-    fullCost    = [fullCost cost];
-end
 
+    cost        = cost .* costWeight;
+    if isinf(cost)
+        fullCost    = [fullCost 1e15];
+    else
+        fullCost    = [fullCost cost];
+    end
+end
+disp([pad(' ITER OPTI COST',20) ' : ' pad('costMultiConstraint',20) ' | Cost components: '])
 costTable = table(VariableNames, cmList', fullCost','VariableNames',{'constraint', 'metric', 'cost'});
 disp(costTable)
 
@@ -181,13 +191,13 @@ switch multiConstraintMethod
     case 'mult'
         cost        = prod(fullCost);
     case 'sum'
-        cost        = sum(fullCost);
+        cost        = nansum(fullCost);
     case 'min'
-        cost        = min(fullCost);
+        cost        = nanmin(fullCost);
     case 'max'
-        cost        = max(fullCost);
+        cost        = nanmax(fullCost);
     otherwise
-        error(['CRIT : calcCostMultiConstraint : The function does not work for : ' multiConstraintMethod ' multiConstraintMethod. Use either {cat, min, max, mult, sum}.'])
+        error(['CRIT : costMultiConstraint : The function does not work for : ' multiConstraintMethod ' multiConstraintMethod. Use either {cat, min, max, mult, sum}.'])
 end
 
 % spatial aggregation function
@@ -210,7 +220,7 @@ end
                 obs_proc    = nanmedian(obs_proc_in, 1);
                 obs_unc     = nanmedian(obs_unc_in, 1);
             otherwise
-                error(['CRIT : calcCostMultiConstraint : The function does not work for : ' spatialAggr_in ' spatial aggregation/operation of data. Use either {cat, mean, median, sum}.'])
+                error(['CRIT : costMultiConstraint : The function does not work for : ' spatialAggr_in ' spatial aggregation/operation of data. Use either {cat, mean, median, sum}.'])
         end
     end
 
@@ -223,10 +233,10 @@ end
         end
         switch timeAggrFreq_in
             case 'mean'
-                sim_proc                    = mean(sim_proc_in, 2);
+                sim_proc                    = nanmean(sim_proc_in, 2);
                 if timeAggrObs_in
-                    obs_proc                = mean(obs_proc_in, 2);
-                    obs_unc                 = mean(obs_unc_in, 2);
+                    obs_proc                = nanmean(obs_proc_in, 2);
+                    obs_unc                 = nanmean(obs_unc_in, 2);
                 end
             case 'day'
                 sim_proc                    = sim_proc_in;
@@ -319,7 +329,7 @@ end
                     obs_unc                 = obs_unc_year - mean(obs_unc_year, 2);
                 end
             otherwise
-                error(['CRIT : calcCostMultiConstraint : The function does not work for : ' timeAggrFreq_in ' temporal aggregation/operation yet. Use either {mean, day, month, year, dayAnomaly, dayMSC, dayMSCAnomaly, monthAnomaly, monthIAV, monthMSC, monthMSCAnomaly, yearAnomaly}.'])
+                error(['CRIT : costMultiConstraint : The function does not work for : ' timeAggrFreq_in ' temporal aggregation/operation yet. Use either {mean, day, month, year, dayAnomaly, dayMSC, dayMSCAnomaly, monthAnomaly, monthIAV, monthMSC, monthMSCAnomaly, yearAnomaly}.'])
         end
     end
 
