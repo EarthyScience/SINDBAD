@@ -47,7 +47,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     % sujanq: this was deleted by simon in the version of 2020-11. Need to
     % find out why. Led to having zeros in most of the carbon pools of the
     % explicit simple
-    % old before cleanup... was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing p.cCycleBase.fluxOrder. So, in biomascat, the fields do not exits and this block of code will not work.
+    % old before cleanup... was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing p.cCycleBase.fluxOrder. So, in biomascat, the fields do not exist and this block of code will not work.
     for jix = 1:numel(p.cCycleBase.fluxOrder)
         taker                       = s.cd.p_cFlowAct_taker(p.cCycleBase.fluxOrder(jix));
         giver                       = s.cd.p_cFlowAct_giver(p.cCycleBase.fluxOrder(jix));
@@ -66,7 +66,7 @@ function [f,fe,fx,s,d,p] = dyna_cCycle_simple(f,fe,fx,s,d,p,info,tix)
     prevcEco = s.c.cEco;
     s.c.cEco = s.c.cEco + s.cd.cEcoFlow + s.cd.cEcoInflux - s.cd.cEcoOut;
     %% compute RA and RH
-    s.cd.del_cEco = s.c.cEco - prevcEco;
+    s.cd.del_cEco = s.c.cEco - s.prev.s_c_cEco;
     fx.cNPP(:, tix) = sum(s.cd.cNPP, 2);
     backNEP = sum(s.c.cEco, 2) - sum(prevcEco, 2);
     fx.cRA(:, tix) = fx.gpp(:, tix) - fx.cNPP(:, tix);
