@@ -161,6 +161,7 @@ for iss = 1:numel(spinSequence)
     % go for it
     for ij = 1:nLoops
         % run spinup
+        disp(pad('.',200,'both','.'))
         disp([pad('EXEC MODRUN',20,'left') ' : ' pad('runSpinupTEM',20) ' | ' pad('nLoop',8) ' : ' num2str(ij) ' / ' num2str(spinSequence(iss).nLoops)])
         [fSU,feSU,fxSU,sSU,dSU,pSU]    = ...
             funHandleSpin(fSU,feSU,fxSU,sSU,dSU,pSU,infoSU,addInputs{:});
@@ -172,21 +173,21 @@ for iss = 1:numel(spinSequence)
             end
         end
         %%
+        disp(pad('-',50,'both','-'))
         if isfield(sSU,'prev')
             if isfield(sSU.prev,'s_c_cEco')
                 
-                disp(pad('.',200,'both','.'))
-                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | cPools # / cEco / s_c_cEco '])
-                disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2);round(sSU.prev.s_c_cEco(1,:),2)]))
-                disp(pad('.',200,'both','.'))
+                disp([pad('cCycle DEBUG',20) ' : ' pad('runSpinupTEM:',20) 'with previous s.c.cEco'])
+                disp(pad('-',5,'left'))
+                disp(cell2table(num2cell([round(sSU.c.cEco(1,:),2);round(sSU.prev.s_c_cEco(1,:),2)]), 'VariableNames', info.tem.model.variables.states.c.components', 'RowNames',{'Current', 'Previous'}))
+%                 disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2);round(sSU.prev.s_c_cEco(1,:),2)]))
             elseif isfield(sSU,'c')
-                disp(pad('.',200,'both','.'))
-                disp([pad('     cCycle DEBUG',20) ' : ' pad('runSpinupTEM',20) ' | runSpinupTEM : cPools # / cEco '])
-                disp(num2str([1:size(sSU.c.cEco,2);round(sSU.c.cEco(1,:),2)]))
-                disp(pad('.',200,'both','.'))
+                disp([pad('cCycle DEBUG',20) ' : ' pad('runSpinupTEM:',20)])
+                disp(pad('-',5,'left'))
+                disp(cell2table(num2cell(round(sSU.c.cEco(1,:),2)), 'VariableNames', info.tem.model.variables.states.c.components', 'RowNames',{'Current'}))
             end
         end
-        
+
         if ~exist('tmpLS','var') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
             tmpLS                   = dSU.storedStates.cEco;
         elseif isfield(dSU,'storedStates') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
