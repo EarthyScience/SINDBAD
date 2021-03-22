@@ -4,7 +4,7 @@
             "Name": "fraction of land runoff that percolates to groundwater",
             "Unit": "-",
             "Default": 0.1,
-            "LowerBound": 0,
+            "LowerBound": 0.01,
             "UpperBound": 1,
             "Distribution": {
                 "name": "uniform",
