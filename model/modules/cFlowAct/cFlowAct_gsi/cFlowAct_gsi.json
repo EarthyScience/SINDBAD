@@ -42,7 +42,7 @@
         "f_tau": {
             "Name": "contribution factor for current stressor",
             "Unit": "fractional",
-            "Default": 0.01,
+            "Default": 0.1,
             "LowerBound": 0.01,
             "UpperBound": 1,
             "Distribution": {
