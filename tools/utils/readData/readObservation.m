@@ -174,7 +174,7 @@ for ii=1:numel(dataPaths)
                     try
                         tarVar = inVars{vv};
                         srcVar = info.opti.constraints.variables.(tarVar).(fn).sourceVariableName;
-                        dataStructure.(tarVar).(fn) = ncread(dFiles{ff},srcVar)';
+                        dataStructure.(tarVar).(fn) = squeeze(ncread(dFiles{ff},srcVar))';
                         try
                             dataStructure.(tarVar).(fn) =  eval([ 'dataStructure.' tarVar '.' fn ' .'  info.opti.constraints.variables.(tarVar).(fn).source2sindbadUnit ';']);
                        catch
