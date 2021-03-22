@@ -44,10 +44,17 @@ function [f, fe, fx, s, d, p] = dyna_cAllocfTreeFrac_Friedlingstein1999(f, fe, f
     cF.cVegLeaf = tc + (l0 + s0 .* (l0 ./ (r0 + l0))) .* (1 - tc);
     % adjust the allocation parameters
 
-    for cp = s.cd.p_cAllocfTreeFrac_cVegName
-        zix = info.tem.model.variables.states.c.zix.(cp);
-        s.cd.cAlloc(:, zix) = cF.(cp) .* s.cd.cAlloc(:, zix);
+    for cpN = 1:numel(s.cd.p_cAllocfTreeFrac_cVegName)
+        cpName = s.cd.p_cAllocfTreeFrac_cVegName(cpN);
+        zix = s.cd.p_cAllocfTreeFrac_cVegZix{cpN};
+        s.cd.cAlloc(:, zix) = cF.(cpName) .* s.cd.cAlloc(:, zix);
     end
+
+
+    % for cp = s.cd.p_cAllocfTreeFrac_cVegName
+    %     zix = info.tem.model.variables.states.c.zix.(cp);
+    %     s.cd.cAlloc(:, zix) = cF.(cp) .* s.cd.cAlloc(:, zix);
+    % end
 
 
     % originally before 2020-11-05

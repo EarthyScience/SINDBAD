@@ -28,11 +28,22 @@ function [f,fe,fx,s,d,p] = prec_cAllocfTreeFrac_Friedlingstein1999(f,fe,fx,s,d,p
     if isfield(info.tem.model.variables.states.c.components, 'cVegWoodC') && ...
             isfield(info.tem.model.variables.states.c.components, 'cVegWoodF')
         cpNames = ["cVegRootF", "cVegRootC", "cVegWood", "cVegLeaf"];
+        zixVecs = {
+            info.tem.model.variables.states.c.zix.cVegRootF;
+            info.tem.model.variables.states.c.zix.cVegRootC;
+            info.tem.model.variables.states.c.zix.cVegWood;
+            info.tem.model.variables.states.c.zix.cVegLeaf;
+        }    
     else
         cpNames = ["cVegRoot", "cVegWood", "cVegLeaf"];
+        zixVecs = {
+            info.tem.model.variables.states.c.zix.cVegRoot;
+            info.tem.model.variables.states.c.zix.cVegWood;
+            info.tem.model.variables.states.c.zix.cVegLeaf;
+        }    
     end
 
-    s.cd.p_cAllocfTreeFrac_cVegZix = zeros(size(cpNames));
+    s.cd.p_cAllocfTreeFrac_cVegZix = zixVecs;
     s.cd.p_cAllocfTreeFrac_cVegName = cpNames;
 
     % for cp = 1:numel(cpNames)
