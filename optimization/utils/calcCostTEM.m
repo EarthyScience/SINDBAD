@@ -38,9 +38,11 @@ end
 %--> calculate the cost
 [cost]                              =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
 
-pScalesStr                              =   sprintf('%.4f , ' , pScales);
-disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Parameter Scalars of current iteration: ' pScalesStr(1:end-2)])
-disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Cost of current iteration: ' num2str(cost)])
+% pScalesStr                              =   sprintf('%.4f , ' , pScales);
+disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Parameters: '])
+paramsTable = table(info.opti.params.names, info.opti.params.defaults' .* pScales', info.opti.params.defaults', info.opti.params.lBounds', info.opti.params.uBounds', 'VariableNames',{'parameters', 'current', 'default', 'low_b', 'high_b'});
+disp(paramsTable)
+disp([pad(' ITER OPTI PARAM',20) ' : ' pad('calcCostTEM',20) ' | Total Cost: ' num2str(cost)])
 disp(pad('+',200,'both','+'))
 
 end
