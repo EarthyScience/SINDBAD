@@ -1,0 +1,50 @@
+{
+    "params": {
+        "Wopt": {
+            "Name": "Optimal moisture for decomposition",
+            "Unit": "percent degree of saturation",
+            "Default": 90,
+            "LowerBound": 60,
+            "UpperBound": 95,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "WoptA": {
+            "Name": "slope of increase",
+            "Unit": "per percent",
+            "Default": 0.2,
+            "LowerBound": 0.1,
+            "UpperBound": 0.3,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        },
+        "WoptB": {
+            "Name": "slope of decrease",
+            "Unit": "per percent",
+            "Default": 0.3,
+            "LowerBound": 0.15,
+            "UpperBound": 0.5,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            },
+            "Comment": ""
+        }
+    },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

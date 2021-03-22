@@ -3,9 +3,9 @@
         "Q10": {
             "Name": "",
             "Unit": "[]",
-            "Default": 2,
-            "LowerBound": 0.01,
-            "UpperBound": 10,
+            "Default": 1.4,
+            "LowerBound": 1.05,
+            "UpperBound": 3,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",
