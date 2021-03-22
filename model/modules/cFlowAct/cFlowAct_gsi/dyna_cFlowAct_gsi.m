@@ -1,4 +1,4 @@
-function [f,fe,fx,s,d,p] = dyna_cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
+function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
     % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     % combine all the effects that change the transfers
     % between carbon pools based on GSI method
@@ -27,15 +27,15 @@ function [f,fe,fx,s,d,p] = dyna_cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
     %   - ncarvalhais and sbesnard
     %
     % Notes:
-        % currently not needed to check the growth but the code may be implemented in future
-        % cVegZix = info.tem.model.variables.states.c.zix.cVeg;
-        % d.cFlowAct.cVegTotal(:,tix) = sum(s.c.cEco(:,cVegZix),2);
-        % s_cur = s.c.cEco + s.cd.del_cEco; % need this trick becuase s.cd.del_cEco (increase of stock in the previous time step) only has a nZix of 1 in the first time step
-        % s_del = s_cur - s.c.cEco;
-        % cVeg_growth = sum(s_del(:,cVegZix),2);
-        % d.cFlowAct.cVeg_growth(:,tix)=cVeg_growth;
-        % d.cFlowAct.L2ReCG(:,tix)                          =  min(max(-d.cFlowAct.slope_fWfTfR(:,tix),0) .* p.cFlowAct.LR2ReSlp ,1) .* (cVeg_growth < 0);
-        %
+    % currently not needed to check the growth but the code may be implemented in future
+    % cVegZix = info.tem.model.variables.states.c.zix.cVeg;
+    % d.cFlowAct.cVegTotal(:,tix) = sum(s.c.cEco(:,cVegZix),2);
+    % s_cur = s.c.cEco + s.cd.del_cEco; % need this trick becuase s.cd.del_cEco (increase of stock in the previous time step) only has a nZix of 1 in the first time step
+    % s_del = s_cur - s.c.cEco;
+    % cVeg_growth = sum(s_del(:,cVegZix),2);
+    % d.cFlowAct.cVeg_growth(:,tix)=cVeg_growth;
+    % d.cFlowAct.L2ReCG(:,tix)                          =  min(max(-d.cFlowAct.slope_fWfTfR(:,tix),0) .* p.cFlowAct.LR2ReSlp ,1) .* (cVeg_growth < 0);
+    %
     % Versions:
     %   - 1.0 on 13.01.2020 (sbesnard)
     %   - 1.1 on 05.02.2021 (skoirala): changes with stressors and smoothing as well as handling the activation of leaf/root to reserve or reserve to leaf/root switches. Adjustment of total flow rates (cTau) of relevant pools
@@ -45,70 +45,97 @@ function [f,fe,fx,s,d,p] = dyna_cFlowAct_gsi(f,fe,fx,s,d,p,info,tix)
     % Compute sigmoid functions
     % LPJ-GSI formulation: In GSI, the stressors are smoothened per control variable. That means, gppfwSoil, fTair, and fRdiff should all have a GSI approach for 1:1 conversion. For now, the function below smoothens the combined stressors, and then calculates the slope for allocation
 
-    % a ARMA smoothing function for stressors
-    f_smooth  = @(f_p,f_n,tau)(1-tau) .* f_p + tau .* f_n;
     % current time step before smoothing
     f_tmp = d.cAllocfwSoil.fW(:, tix) .* d.cAllocfTsoil.fT(:, tix) .* d.cAllocfRad.fR(:, tix);
 
-
     % stressor from previos time step
     f_prev = d.prev.d_cFlowAct_fWfTfR;
-    f_now  = f_smooth(f_prev, f_tmp, p.cFlowAct.f_tau);
 
-    d.cFlowAct.fWfTfR(:,tix) = f_now;
-    d.cFlowAct.slope_fWfTfR(:,tix) = f_now -f_prev;
+    % get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
+    f_now = (1 - p.cFlowAct.f_tau) .* f_prev + p.cFlowAct.f_tau .* f_tmp;
 
+    d.cFlowAct.fWfTfR(:, tix) = f_now;
+    d.cFlowAct.slope_fWfTfR(:, tix) = f_now -f_prev;
+
+    % get the indices of leaf and root
+    cVegLeafzix = info.tem.model.variables.states.c.zix.cVegLeaf;
+    cVegRootzix = info.tem.model.variables.states.c.zix.cVegRoot;
 
     % calculate the flow rate for exchange with reserve pools based on the slopes
-
     % get the flow and shedding rates
-    LR2Re                          =  min(max(-d.cFlowAct.slope_fWfTfR(:,tix),0) .* p.cFlowAct.LR2ReSlp ,1);% .* (cVeg_growth < 0);
-    Re2LR                          =  min(max(d.cFlowAct.slope_fWfTfR(:,tix),0) .* p.cFlowAct.Re2LRSlp ,1);%.* (cVeg_growth > 0);
-    KShed                          =  min(max(-d.cFlowAct.slope_fWfTfR(:,tix),0) .* p.cFlowAct.kShed ,1);
+    LR2Re = min(max(-d.cFlowAct.slope_fWfTfR(:, tix), 0) .* p.cFlowAct.LR2ReSlp, 1); % .* (cVeg_growth < 0);
+    Re2LR = min(max(d.cFlowAct.slope_fWfTfR(:, tix), 0) .* p.cFlowAct.Re2LRSlp, 1); %.* (cVeg_growth > 0);
+    KShed = min(max(-d.cFlowAct.slope_fWfTfR(:, tix), 0) .* p.cFlowAct.kShed, 1);
 
     % set the Leaf and Root to Reserve flow rate as the same
-    d.cFlowAct.L2Re(:,tix)         =  LR2Re; % should it be divided by 2?
-    d.cFlowAct.R2Re(:,tix)         =  LR2Re;
+    L2Re = LR2Re; % should it be divided by 2?
+    R2Re = LR2Re;
 
-    d.cFlowAct.k_Lshed(:,tix)      =  KShed;
-    d.cFlowAct.k_Rshed(:,tix)      =  KShed;
+    k_Lshed = KShed;
+    k_Rshed = KShed;
 
     % Estimate flows from reserve to leaf and root
-    d.cFlowAct.Re2L(:,tix)         =  Re2LR .* (d.cAllocfwSoil.fW(:, tix) ./ (d.cAllocfRad.fR(:, tix) + d.cAllocfwSoil.fW(:, tix))); % if water stressor is high (=low water stress), larger fraction of reserve goes to the leaves for light acquisition
-    d.cFlowAct.Re2R(:,tix)         =  Re2LR .* (d.cAllocfRad.fR(:, tix)   ./ (d.cAllocfRad.fR(:, tix) + d.cAllocfwSoil.fW(:, tix))); % if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
+    Re2L = Re2LR .* (d.cAllocfwSoil.fW(:, tix) ./ (d.cAllocfRad.fR(:, tix) + d.cAllocfwSoil.fW(:, tix))); % if water stressor is high (=low water stress), larger fraction of reserve goes to the leaves for light acquisition
+    Re2R = Re2LR .* (d.cAllocfRad.fR(:, tix) ./ (d.cAllocfRad.fR(:, tix) + d.cAllocfwSoil.fW(:, tix))); % if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
 
-    % Update k leaf, root including the flows to reserve and shedding
-    cVegLeafzix                        = info.tem.model.variables.states.c.zix.cVegLeaf;
-    s.cd.p_cTauAct_k(:,cVegLeafzix)    = s.cd.p_cTauAct_k(:,cVegLeafzix) + d.cFlowAct.k_Lshed(:,tix) + d.cFlowAct.L2Re(:,tix);
-    cVegRootzix                        = info.tem.model.variables.states.c.zix.cVegRoot;
-    s.cd.p_cTauAct_k(:,cVegRootzix)    = s.cd.p_cTauAct_k(:,cVegRootzix) + d.cFlowAct.k_Rshed(:,tix) + d.cFlowAct.R2Re(:,tix);
+    % the following two lines lead to k larger than 1, which results in negative carbon pools.
+    % s.cd.p_cTauAct_k(:,cVegLeafzix)    = s.cd.p_cTauAct_k(:,cVegLeafzix) + d.cFlowAct.k_Lshed(:,tix) + d.cFlowAct.L2Re(:,tix);
+    % s.cd.p_cTauAct_k(:,cVegRootzix)    = s.cd.p_cTauAct_k(:,cVegRootzix) + d.cFlowAct.k_Rshed(:,tix) + d.cFlowAct.R2Re(:,tix);
 
+    s.cd.p_cTauAct_k(:, cVegLeafzix) = min((s.cd.p_cTauAct_k(:, cVegLeafzix) + k_Lshed + L2Re), 1);
+    s.cd.p_cTauAct_k(:, cVegRootzix) = min((s.cd.p_cTauAct_k(:, cVegRootzix) + k_Rshed + R2Re), 1);
 
+    L2ReF = L2Re ./ (s.cd.p_cTauAct_k(:, cVegLeafzix));
+    R2ReF = R2Re ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
 
-    d.cFlowAct.L2ReF(:,tix)         =  d.cFlowAct.L2Re(:,tix) ./ (s.cd.p_cTauAct_k(:,cVegLeafzix)); % should it be divided by 2?
-    d.cFlowAct.R2ReF(:,tix)         =  d.cFlowAct.R2Re(:,tix) ./ (s.cd.p_cTauAct_k(:,cVegRootzix));
+    k_LshedF = k_Lshed ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
+    k_RshedF = k_Rshed ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
 
     % Adjust cFlow between reserve, leaf, root, and soil
-    aM = {...
-        'cVegReserve',  'cVegLeaf',    d.cFlowAct.Re2L(:,tix); ...
-        'cVegReserve',  'cVegRoot',    d.cFlowAct.Re2R(:,tix); ...
-        'cVegLeaf',     'cVegReserve', d.cFlowAct.L2ReF(:,tix); ...
-        'cVegRoot',     'cVegReserve', d.cFlowAct.R2ReF(:,tix); ...
-        'cVegLeaf',     'cSoil',       1 - d.cFlowAct.L2ReF(:,tix); ... 
-        'cVegRoot',     'cSoil',       1 - d.cFlowAct.R2ReF(:,tix); ... 
-        };
+    % Adjust cFlow between reserve, leaf, root, and soil
+    % s.cd.p_cFlowAct_aM{1} = Re2L;
+    % s.cd.p_cFlowAct_aM{2} = Re2R;
+    % s.cd.p_cFlowAct_aM{3} = L2ReF;
+    % s.cd.p_cFlowAct_aM{4} = R2ReF;
+    % s.cd.p_cFlowAct_aM{5} = k_LshedF;
+    % s.cd.p_cFlowAct_aM{6} = k_RshedF;
 
+    % while using the indexing of aM would be elegant, the speed is really slow, and hence the following block of code is implemented
+    for ii = 1:size(s.cd.p_cFlowAct_ndxSrc, 1)
+        ndxSrc = s.cd.p_cFlowAct_ndxSrc(ii);
+        ndxTrg = s.cd.p_cFlowAct_ndxTrg(ii);
 
-    for ii = 1:size(aM, 1)
-        ndxSrc = info.tem.model.variables.states.c.zix.(aM{ii, 1});
-        ndxTrg = info.tem.model.variables.states.c.zix.(aM{ii, 2}); 
+        if ii == 1
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2L;
+        elseif ii == 2
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2R;
+        elseif ii == 3
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = L2ReF;
+        elseif ii == 4
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = R2ReF;
+        elseif ii == 5
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = k_LshedF;
+        elseif ii == 6
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = k_RshedF;
 
-        for iSrc = 1:numel(ndxSrc)
-
-            for iTrg = 1:numel(ndxTrg)
-                s.cd.p_cFlowAct_A(:, ndxTrg(iTrg), ndxSrc(iSrc)) = aM{ii, 3};
-            end
         end
+
     end
+
+    % store the varibles in diagnostic structure
+    d.cFlowAct.L2Re(:, tix) = LR2Re; % should it be divided by 2?
+    d.cFlowAct.R2Re(:, tix) = R2Re;
+
+    d.cFlowAct.k_Lshed(:, tix) = KShed;
+    d.cFlowAct.k_Rshed(:, tix) = KShed;
+
+    d.cFlowAct.Re2L(:, tix) = Re2L;
+    d.cFlowAct.Re2R(:, tix) = Re2R;
+
+    d.cFlowAct.L2ReF(:, tix) = L2ReF; % should it be divided by 2?
+    d.cFlowAct.R2ReF(:, tix) = R2ReF;
+
+    d.cFlowAct.k_LshedF(:, tix) = k_LshedF;
+    d.cFlowAct.k_RshedF(:, tix) = k_RshedF;
 
 end %function
