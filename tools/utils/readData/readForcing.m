@@ -135,7 +135,7 @@ for ii                              =   1:numel(dataPaths)
                         tarVar                          =    inVars{vv};
                         srcVar                          =    info.tem.forcing.variables.(tarVar).sourceVariableName;
                         %                         info.tem.helpers.dimension.time.timeVec     =   ncread(dFiles{ff},'time');
-                        dataStructure.(tarVar)          =    ncread(dFiles{ff},srcVar)';
+                        dataStructure.(tarVar)          =    squeeze(ncread(dFiles{ff},srcVar))';
                         try
                             dataStructure.(tarVar)      =  eval(['dataStructure.' tarVar ' .'  info.tem.forcing.variables.(tarVar).source2sindbadUnit ';']);
                         catch
