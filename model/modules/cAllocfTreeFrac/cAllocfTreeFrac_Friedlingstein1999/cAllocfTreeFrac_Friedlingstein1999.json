@@ -2,7 +2,7 @@
     "params": {
         "Rf2Rc": {
             "Name": "fine root to coarse root fraction",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 1,
             "LowerBound": 0,
             "UpperBound": 1,

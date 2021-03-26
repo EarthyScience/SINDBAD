@@ -1,11 +1,11 @@
 {
     "params": {
         "dos_exp": {
-            "Name": "exponest of non-lineasrity for dos influence on drainage to groundwater",
+            "Name": "exponent of non-linearity for dos influence on drainage to groundwater",
             "Unit": "-",
-            "Default": 10,
-            "LowerBound": 1,
-            "UpperBound": 30,
+            "Default": 1,
+            "LowerBound": 0.1,
+            "UpperBound": 3,
             "Distribution": {
                 "name": "uniform",
                 "funHandle": "",

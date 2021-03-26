@@ -28,7 +28,7 @@ function [f,fe,fx,s,d,p] = gwRec_dos(f,fe,fx,s,d,p,info,tix)
 wSoilEnd                =   size(s.w.wSoil,2);
 dosSoilEnd              =  s.w.wSoil(:,wSoilEnd) ./ s.wd.p_wSoilBase_wSat(:,wSoilEnd);
 
-fx.gwRec(:,tix)         =   (dosSoilEnd) .^ p.gwRec.dos_exp .* s.w.wSoil(:,wSoilEnd);
+fx.gwRec(:,tix)         =   ((dosSoilEnd) .^ (p.gwRec.dos_exp .* s.wd.p_wSoilBase_Beta(:,wSoilEnd))) .* s.w.wSoil(:,wSoilEnd);
 
 % update storages pool
 s.w.wSoil(:,wSoilEnd)   =   s.w.wSoil(:,wSoilEnd) - fx.gwRec(:,tix);

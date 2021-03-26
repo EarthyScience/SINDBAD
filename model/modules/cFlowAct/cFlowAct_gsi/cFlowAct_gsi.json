@@ -2,7 +2,7 @@
     "params": {
         "LR2ReSlp": {
             "Name": "Leaf-Root to Reserve",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.1,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -15,7 +15,7 @@
         },
         "Re2LRSlp": {
             "Name": "Reserve to Leaf-Root",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.1,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -28,7 +28,7 @@
         },
         "kShed": {
             "Name": "rate of shedding",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.1,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -41,7 +41,7 @@
         },
         "f_tau": {
             "Name": "contribution factor for current stressor",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.1,
             "LowerBound": 0.01,
             "UpperBound": 1,

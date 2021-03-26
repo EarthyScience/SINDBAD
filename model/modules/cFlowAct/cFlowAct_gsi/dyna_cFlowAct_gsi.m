@@ -60,6 +60,7 @@ function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
     % get the indices of leaf and root
     cVegLeafzix = info.tem.model.variables.states.c.zix.cVegLeaf;
     cVegRootzix = info.tem.model.variables.states.c.zix.cVegRoot;
+    cVegReservezix = info.tem.model.variables.states.c.zix.cVegReserve;
 
     % calculate the flow rate for exchange with reserve pools based on the slopes
     % get the flow and shedding rates
@@ -82,14 +83,18 @@ function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
     % s.cd.p_cTauAct_k(:,cVegLeafzix)    = s.cd.p_cTauAct_k(:,cVegLeafzix) + d.cFlowAct.k_Lshed(:,tix) + d.cFlowAct.L2Re(:,tix);
     % s.cd.p_cTauAct_k(:,cVegRootzix)    = s.cd.p_cTauAct_k(:,cVegRootzix) + d.cFlowAct.k_Rshed(:,tix) + d.cFlowAct.R2Re(:,tix);
 
+    % adjust the outflow rate from the flow pools
     s.cd.p_cTauAct_k(:, cVegLeafzix) = min((s.cd.p_cTauAct_k(:, cVegLeafzix) + k_Lshed + L2Re), 1);
-    s.cd.p_cTauAct_k(:, cVegRootzix) = min((s.cd.p_cTauAct_k(:, cVegRootzix) + k_Rshed + R2Re), 1);
-
     L2ReF = L2Re ./ (s.cd.p_cTauAct_k(:, cVegLeafzix));
-    R2ReF = R2Re ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
+    k_LshedF = k_Lshed ./ (s.cd.p_cTauAct_k(:, cVegLeafzix));
 
-    k_LshedF = k_Lshed ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
+    s.cd.p_cTauAct_k(:, cVegRootzix) = min((s.cd.p_cTauAct_k(:, cVegRootzix) + k_Rshed + R2Re), 1);
+    R2ReF = R2Re ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
     k_RshedF = k_Rshed ./ (s.cd.p_cTauAct_k(:, cVegRootzix));
+
+    s.cd.p_cTauAct_k(:, cVegReservezix) = min((s.cd.p_cTauAct_k(:, cVegReservezix) + Re2L + Re2R), 1);
+    Re2LF = Re2L ./ s.cd.p_cTauAct_k(:, cVegReservezix);
+    Re2RF = Re2R ./ s.cd.p_cTauAct_k(:, cVegReservezix);
 
     % Adjust cFlow between reserve, leaf, root, and soil
     % Adjust cFlow between reserve, leaf, root, and soil
@@ -100,15 +105,16 @@ function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
     % s.cd.p_cFlowAct_aM{5} = k_LshedF;
     % s.cd.p_cFlowAct_aM{6} = k_RshedF;
 
+
     % while using the indexing of aM would be elegant, the speed is really slow, and hence the following block of code is implemented
     for ii = 1:size(s.cd.p_cFlowAct_ndxSrc, 1)
         ndxSrc = s.cd.p_cFlowAct_ndxSrc(ii);
         ndxTrg = s.cd.p_cFlowAct_ndxTrg(ii);
 
         if ii == 1
-            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2L;
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2LF;
         elseif ii == 2
-            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2R;
+            s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = Re2RF;
         elseif ii == 3
             s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = L2ReF;
         elseif ii == 4
@@ -117,7 +123,6 @@ function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
             s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = k_LshedF;
         elseif ii == 6
             s.cd.p_cFlowAct_A(:, ndxTrg, ndxSrc) = k_RshedF;
-
         end
 
     end
@@ -129,8 +134,8 @@ function [f, fe, fx, s, d, p] = dyna_cFlowAct_gsi(f, fe, fx, s, d, p, info, tix)
     d.cFlowAct.k_Lshed(:, tix) = KShed;
     d.cFlowAct.k_Rshed(:, tix) = KShed;
 
-    d.cFlowAct.Re2L(:, tix) = Re2L;
-    d.cFlowAct.Re2R(:, tix) = Re2R;
+    d.cFlowAct.Re2L(:, tix) = Re2LF;
+    d.cFlowAct.Re2R(:, tix) = Re2RF;
 
     d.cFlowAct.L2ReF(:, tix) = L2ReF; % should it be divided by 2?
     d.cFlowAct.R2ReF(:, tix) = R2ReF;
