@@ -2,7 +2,7 @@
     "params": {
         "fR_tau": {
             "Name": "contribution factor for current stressor",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.2,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -15,7 +15,7 @@
         },
         "fR_slope": {
             "Name": "slope of sigmoid",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 58,
             "LowerBound": 1,
             "UpperBound": 100,
@@ -28,7 +28,7 @@
         },
         "fR_base": {
             "Name": "base of sigmoid",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 59.78,
             "LowerBound": 1,
             "UpperBound": 120,

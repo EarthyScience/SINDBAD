@@ -7,7 +7,6 @@ function [f,fe,fx,s,d,p]    =   prec_gppDem_none(f,fe,fx,s,d,p,info)
 %
 % Outputs:
 %   - d.gppDem.AllDemScGPP: effective scalar of demands
-%   - d.gppDem.gppE: demand-driven GPP
 %
 % Modifies:
 %   - 
@@ -25,7 +24,7 @@ function [f,fe,fx,s,d,p]    =   prec_gppDem_none(f,fe,fx,s,d,p,info)
 
 %%
 %--> set scalar to a constant one (no effect on potential GPP)
+s.cd.scall               =   repmat(info.tem.helpers.arrays.onespix,1,4);
 d.gppDem.AllDemScGPP        =   info.tem.helpers.arrays.onespixtix;
 %--> set GPP demand to zeros
-d.gppDem.gppE               =   info.tem.helpers.arrays.zerospixtix;
 end

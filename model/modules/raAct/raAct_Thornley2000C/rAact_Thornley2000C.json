@@ -4,8 +4,8 @@
             "Name": "Nitrogen efficiency rate of maintenance respiration",
             "Unit": "gC/gN/day",
             "Default": 0.0090857142857142855,
-            "LowerBound": NaN,
-            "UpperBound": NaN,
+            "LowerBound": 0.00090857142857142855,
+            "UpperBound": 0.090857142857142855,
             "Distribution": {
                 "name": "uniform",
                 "funHandle" : "",

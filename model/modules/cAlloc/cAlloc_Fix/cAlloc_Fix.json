@@ -2,7 +2,7 @@
     "params": {
         "cVegRoot": {
             "Name": "fraction of NPP to cRoot",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.3,
             "LowerBound": 0,
             "UpperBound": 1,
@@ -15,7 +15,7 @@
         },
         "cVegWood": {
             "Name": "fraction of NPP to cWood",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.3,
             "LowerBound": 0,
             "UpperBound": 1,
@@ -28,7 +28,7 @@
         },
         "cVegLeaf": {
             "Name": "fraction of NPP to cLeaf",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.4,
             "LowerBound": 0,
             "UpperBound": 1,

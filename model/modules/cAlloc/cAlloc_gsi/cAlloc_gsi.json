@@ -2,7 +2,7 @@
     "params": {
         "Re2LRSlp": {
             "Name": "slope reserve to leave/root",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 1,
             "LowerBound": 0,
             "UpperBound": 1,
@@ -15,7 +15,7 @@
         },
         "kShed": {
             "Name": "slope shedding",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 1,
             "LowerBound": 0,
             "UpperBound": 1,
@@ -28,7 +28,7 @@
         },
         "LR2ReSlp": {
             "Name": "slope leave/root to reserve",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 1,
             "LowerBound": 0,
             "UpperBound": 1,

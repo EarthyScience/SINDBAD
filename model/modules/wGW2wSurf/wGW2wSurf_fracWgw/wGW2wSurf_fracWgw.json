@@ -2,7 +2,7 @@
     "params": {
         "drainGW": {
 			"Name": "scale parameter for drainage from wGW to wSurf",
-			"Unit": "[]",
+			"Unit": "fraction",
 			"Default": 0.5,
 			"LowerBound": 0,
 			"UpperBound": 1,

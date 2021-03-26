@@ -34,8 +34,8 @@ for sl=1:nSoilLayers-1
     %--> get the drainage flux
     dosSoil              =  s.w.wSoil(:,sl) ./ s.wd.p_wSoilBase_wSat(:,sl);
 
-    drain                   =   (dosSoil) .^ p.wSoilRec.dos_exp .* s.w.wSoil(:,sl);
-    
+    drain                   =   ((dosSoil) .^ (p.wSoilRec.dos_exp .* s.wd.p_wSoilBase_Beta(:,sl))) .* s.w.wSoil(:,sl);
+
     % k_unsat                 =   feval(p.pSoil.kUnsatFuncH,s,p,info,sl);    
     % drain                   =   min(k_unsat,s.w.wSoil(:,sl));
     %--> store the drainage flux

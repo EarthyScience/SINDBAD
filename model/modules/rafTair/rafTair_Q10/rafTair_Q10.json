@@ -4,8 +4,8 @@
             "Name": "Q10 parameter for maintenance respiration",
             "Unit": "[]",
             "Default": 2,
-            "LowerBound": NaN,
-            "UpperBound": NaN,
+            "LowerBound": 1,
+            "UpperBound": 3,
             "Distribution": {
                 "name": "uniform",
                 "funHandle" : "",
@@ -15,10 +15,10 @@
         },
         "Tref_RM": {
             "Name": "Reference temperature for the maintenance respiration",
-            "Unit": "�C",
+            "Unit": "degC",
             "Default": 20,
-            "LowerBound": NaN,
-            "UpperBound": NaN,
+            "LowerBound": 0,
+            "UpperBound": 40,
             "Distribution": {
                 "name": "uniform",
                 "funHandle" : "",
