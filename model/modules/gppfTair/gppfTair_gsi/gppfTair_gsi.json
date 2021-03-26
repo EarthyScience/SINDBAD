@@ -2,7 +2,7 @@
     "params": {
         "fT_c_tau": {
             "Name": "contribution factor for current stressor for cold stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.2,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -15,7 +15,7 @@
         },
         "fT_c_slope": {
             "Name": "slope of sigmoid for cold stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.25,
             "LowerBound": 0,
             "UpperBound": 100,
@@ -28,7 +28,7 @@
         },
         "fT_c_base": {
             "Name": "base of sigmoid for cold stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 7,
             "LowerBound": 1,
             "UpperBound": 15,
@@ -41,7 +41,7 @@
         },
         "fT_h_tau": {
             "Name": "contribution factor for current stressor for heat stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 0.2,
             "LowerBound": 0.01,
             "UpperBound": 1,
@@ -54,7 +54,7 @@
         },
         "fT_h_slope": {
             "Name": "slope of sigmoid for heat stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 1.74,
             "LowerBound": 0,
             "UpperBound": 100,
@@ -67,7 +67,7 @@
         },
         "fT_h_base": {
             "Name": "base of sigmoid for heat stress",
-            "Unit": "fractional",
+            "Unit": "fraction",
             "Default": 41.51,
             "LowerBound": 25,
             "UpperBound": 65,

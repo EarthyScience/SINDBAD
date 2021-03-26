@@ -46,10 +46,10 @@
         },        
         "annk_Reserve": 
         {
-			"Name": "Reserve does not respire",
+			"Name": "Reserve does not respire, but has a small value for numerical error",
 			"Unit": "yr-1",
-            "Default": 0.0,
-			"LowerBound": -1,
+            "Default": 0.00000000001,
+			"LowerBound": 0.000000000001,
 			"UpperBound": 1,
             "Distribution": 
             {
