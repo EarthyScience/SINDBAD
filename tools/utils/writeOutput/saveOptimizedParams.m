@@ -1,6 +1,24 @@
 function [outPath] = saveOptimizedParams(info, p)
 % writes the optimized parameter values to a json file
-
+%
+% Requires:
+%   - info
+%   - p: the parameter strucure with the optimized parameter values
+%
+% Purposes:
+%   - save the optimized parameters into a json file that can be used for
+%     a forward run
+%
+% Conventions:
+%
+% Created by:
+%   - Sujan Koirala (skoirala)
+%
+% References:
+%
+% Versions:
+%   - 1.0 on 01.03.2020 (by skoirala) : 
+%
 %% create the structure that should be saved
 out.type = 'value';
 
