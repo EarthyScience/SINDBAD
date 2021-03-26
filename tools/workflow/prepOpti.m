@@ -80,7 +80,10 @@ else
     info.opti.paths.outDirPath      =   convertToFullPaths(info,[info.experiment.outputDirPath 'optimization' '/']);    
 end
 mkdirx(info.opti.paths.outDirPath);
-info.opti.paths.ParamFilePath         =   [info.opti.paths.outDirPath 'optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
+info.opti.paths.ParamFilePath         =   [info.opti.paths.outDirPath '../optimizedParams' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.json'];
+
+info.opti.paths.ParamTablePath         =   [info.opti.paths.outDirPath '../table_Params' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.xlsx'];
+
 info.opti.paths.outFullPath         =   [info.opti.paths.outDirPath 'optimResultsFull' '_' info.experiment.domain '_' info.opti.algorithm.funName '_' info.experiment.name '.mat'];
 %% 1) create the function handles and get constraints for optimization
 fun_fields = fieldnames(info.opti.constraints.funName);

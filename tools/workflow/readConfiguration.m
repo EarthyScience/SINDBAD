@@ -104,6 +104,7 @@ for ii = 1:numel(fldnmsINFO)
                     % loop over the parameter of the approach & get the default value
                     for pp=1:numel(paramName)
                         info.tem.params.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp}).Default;
+                        info.tem.allparams.(module_fields{jj}).(paramName{pp}) = param_json.params.(paramName{pp});
                         paramInput = [paramInput ['p.', module_fields{jj}, '.', paramName{pp}]];
                     end
                     
