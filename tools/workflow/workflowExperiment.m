@@ -127,6 +127,10 @@ disp(pad('-',200,'both','-'))
 p           =   info.tem.params;
 paramType   =  'default'; % comes from info
 
+
+% get the full table of all parameters
+paramStruct = getParamsStruct(info);
+
 %% ------------------------------------------------------------------------
 % Forward run the model when optimization is off
 % -------------------------------------------------------------------------
@@ -225,6 +229,8 @@ if info.tem.model.flags.runOpti
     
 end
 
+% save the full table of the parameters
+[~]=saveParamsTable(info, p, paramStruct);
 %% ------------------------------------------------------------------------
 % Calculate the cost
 % -------------------------------------------------------------------------

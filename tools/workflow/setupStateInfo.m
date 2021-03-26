@@ -101,14 +101,38 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
     combPoolName            =   combPools{2};
     if doCombPools
         nZix                =   sum([nameLayers{:,2}]);
+        newNameLayers = cell(nZix,2);
+        newInitValues = cell(nZix,1);
+        layer_nm = 1;
+        for i   =    1:size(nameLayers,1)
+            numLayers = nameLayers{i,2};
+            if numLayers == 1
+                newNameLayers(layer_nm,1)=nameLayers(i,1);
+                newNameLayers(layer_nm,2)=nameLayers(i,2);
+                newInitValues(layer_nm)=initValues(i);
+                layer_nm = layer_nm + 1;
+            else
+                for lN = 1:numLayers
+                    tmpName = nameLayers(i,1);
+                    layerName = [tmpName{:} num2str(lN)];
+%                     layer_nm = i + lN-1
+                    newNameLayers{layer_nm,1}     =   layerName;
+                    newNameLayers{layer_nm,2}     =   1;
+                    newInitValues(layer_nm)       =   initValues(i);
+                    layer_nm = layer_nm + 1;
+                end
+            end
+        end
+        nameLayers = newNameLayers;
         [flags,zix]         =   genFlags(nameLayers);
         sStruct.flags       =   flags;
         sStruct.zix         =   zix;
         allNames            =   {};
+        
         for i   =    1:size(nameLayers,1)
-            allNames                        =   [allNames  repmat(strrep(nameLayers(i,1),'.',''),1,nameLayers{i,2})];
+            allNames     =   [allNames  strrep(nameLayers(i,1),'.','')];
             fullName                        =   strrep(nameLayers{i,1},'.','');
-            sStruct.initValue.(fullName)    =   initValues{i};
+            sStruct.initValue.(fullName)    =   newInitValues{i};
         end
         
         sStruct.names               =   cellstr(combPoolName);
@@ -140,7 +164,7 @@ end
 function [flags,zix]    =    genFlags(nameLayers)
 % check that the names are unique : we can just let it go too...
     if numel(unique(nameLayers(:,1)))    ~=  size(nameLayers,1)
-        error('ERR : getFlagsPools : pool names are not unique')
+        error('ERR : getFlagsPools : pool names are not unique. Check modelStructure[].json')
     end
     %-->    number of pools
     nPools          =    sum([nameLayers{:,2}]);
