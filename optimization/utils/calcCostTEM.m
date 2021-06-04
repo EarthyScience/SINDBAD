@@ -26,7 +26,10 @@ function [cost]=calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataS
 %   now done in the cost function.
 
 %% scale the parameters with scalers
+% NC: pScales = pScales'; % because CMAES spits outs parameter matrix PxN P paraameter vecors by N samples N = PopSize (in SDB words, gridcell)
+% NC: forcing and state vars in inputs need to be of the size(pScales,1)
 for i = 1:numel(info.opti.params.names)
+    % NC: eval([info.opti.params.names{i} '   =   info.opti.params.defaults(i) .* pScales(:,i);'])
     eval([info.opti.params.names{i} '   =   info.opti.params.defaults(i) .* pScales(i);'])
 end
 %
