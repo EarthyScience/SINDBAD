@@ -1,4 +1,4 @@
-function runEcosystem(; infoExperiment = info, models = [rainSnowTair])
+function runEcosystem(; infoExperiment = info, models = [rainSnowTair, snowMelt])
     o = passValsModel(models[1], infoExperiment)
     rainSnowTair!(o)
     return o

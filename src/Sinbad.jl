@@ -8,7 +8,7 @@ using Reexport: @reexport
     using ModelParameters: Model, Param
 end
 
-export rainSnow, snowMelt, run!, setParam, ecosystem
+export rainSnow, snowMelt, run!, updateState, ecosystem
 
 include("model/models/rainSnow/rainSnow.jl")
 include("model/models/snowMelt/snowMelt.jl")

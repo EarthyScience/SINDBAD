@@ -20,7 +20,7 @@ function run!(o::rainSnow)
     rain[Tair_thres.<=Tair] .*= 0
     precip = snow .+ rain
     # update parameters
-    o.Snow = setParam(o.Snow, ustrip(snow))
-    o.Rain = setParam(o.Rain, ustrip(rain))
-    o.precip = setParam(o.precip, ustrip(precip))
+    o.Snow = updateState(o.Snow, ustrip(snow))
+    o.Rain = updateState(o.Rain, ustrip(rain))
+    o.precip = updateState(o.precip, ustrip(precip))
 end

@@ -1,4 +1,5 @@
 name = "Sinbad"
+
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 authors = ["lazarusA <lazarus.alon@gmail.com> and contributors"]
 version = "0.1.0"

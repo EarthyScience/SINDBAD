@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = Sindbad
+CurrentModule = Sinbad
 ```
 
 # Sindbad
 
-Documentation for [Sindbad](https://git.bgc-jena.mpg.de/lalonso/Sindbad.jl).
+Documentation for [Sinbad](https://git.bgc-jena.mpg.de/sindbad/sinbad.jl).
 
 ```@index
 ```

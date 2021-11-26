@@ -17,6 +17,6 @@ function run!(o::snowMelt)
     Rn, Tair, melt_T, melt_Rn, snowMelt = withunits(Model(o))
     snowMelt = Tair .* melt_T .+ maximum.(tuple.(0, Rn .* melt_Rn))
     snowMelt[Tair.<0] .= 0
-    o.snowMelt = setParam(o.snowMelt, ustrip(snowMelt))
+    o.snowMelt = updateState(o.snowMelt, ustrip(snowMelt))
 end
 

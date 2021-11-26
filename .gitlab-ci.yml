@@ -1,4 +1,5 @@
 .script:
+  
   script:
     - |
       julia --project=@. -e '
