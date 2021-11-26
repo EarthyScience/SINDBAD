@@ -6,11 +6,11 @@
 
 ```julia
 julia]
-pkg > add https://git.bgc-jena.mpg.de/lalonso/sinbad.jl
+pkg > add https://git.bgc-jena.mpg.de/sindbad/sinbad.jl.git
 ```
 
 ```julia
-using Sindbad
+using Sinbad
 Model((rainSnow(), snowMelt()))
 Model with parent object of type: 
 
