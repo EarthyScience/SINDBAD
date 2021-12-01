@@ -1,45 +1,19 @@
 module Sinbad
-import DataStructures
-using InteractiveUtils
+
+using ModelParameters
+using Setfield
+using Unitful
 using Reexport: @reexport
-using CMAEvolutionStrategy:
-    minimize,
-    xbest
-using CSV: CSV
-using DocStringExtensions
-#using FieldMetadata
-using Flatten:
-    flatten,
-    metaflatten,
-    fieldnameflatten,
-    parentnameflatten
-using JSON:
-    parsefile
-    #parse as jsparse,
-    #read as jsread
-using NCDatasets:
-    Dataset
-using Parameters
-@reexport using PrettyPrinting:
-    pprint
-using Setfield:
-    @set!
-using TableOperations:
-    select
-using Tables:
-    columntable,
-    matrix
-using TypedTables:
-    Table
-using StatsBase:
-    mean,
-    cor
+@reexport begin
+    using ModelParameters: Model, Param
+end
 
-include("Ecosystem/runEcosystem.jl")
-include("optimization/optimization.jl")
-include("tools/tools.jl")
+export rainSnow, snowMelt, snowMeltSimple, runEcosystem
+export run!, updateState, ecosystem, addForcing!, getForcingVars
 
-include("models/models.jl")
-@reexport using .Models
-
+include("model/models/rainSnow/rainSnow.jl")
+include("model/models/snowMelt/snowMelt.jl")
+include("model/models/snowMelt/snowMeltSimple.jl")
+include("model/ecosystem.jl")
+include("utils.jl")
 end
