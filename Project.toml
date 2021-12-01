@@ -1,11 +1,12 @@
 name = "Sinbad"
-
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 authors = ["lazarusA <lazarus.alon@gmail.com> and contributors"]
 version = "0.1.0"
 
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 ModelParameters = "4744a3fa-6c31-4707-899e-a3298e4618ad"
+NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"

@@ -1,13 +1,14 @@
 using Sinbad
 using Test
 using Unitful
-using ModelParameters
 
-#o = rainSnow()
+# setup
+#o1 = rainSnow()
+#o2 = snowMelt()
+#o3 = snowMeltSimple()
 
-#run!(o)
-#Model(o)
-#run!(o)
+#Model(o1)
+#run!(o1)
 # test operation with units and without units.
 # run full model altogether.
 

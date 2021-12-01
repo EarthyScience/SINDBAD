@@ -1,9 +1,9 @@
 abstract type ecosystem end
 
 Base.@kwdef mutable struct rainSnow <: ecosystem
-    Rain = Param(rand(4), units = u"mm/d", bounds = (0, 100), forcing = true)
+    Rain = Forcing(rand(4); units = u"mm/d", bounds = (0, 100)) # Param(rand(4), units = u"mm/d", bounds = (0, 100))
     Snow = Param(missing, units = u"mm/d")
-    Tair = Param(rand(4), units = u"°C", bounds = (-80, 60), forcing = true)
+    Tair = Forcing(rand(4); units = u"°C", bounds = (-80, 60))
     Tair_thres = Param(0.5, units = u"°C", bounds = (-5, 5))
     precip = Param(missing, units = "mm/d")
 end

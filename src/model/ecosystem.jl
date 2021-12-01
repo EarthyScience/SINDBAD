@@ -1,3 +1,17 @@
+"""
+runEcosystem(inputData, models)
+inputData :: data frame with forcing variables
+models    :: tuple [list] of models to run
+"""
+function runEcosystem(inputData, models)
+    for oo in models
+        addForcing!(oo, inputData)
+        run!(oo) # rm forcing input [TODO]
+    end
+end
+
+
+
 function runEcosystem(; infoExperiment = info, models = [rainSnowTair, snowMelt])
     o = passValsModel(models[1], infoExperiment)
     rainSnowTair!(o)
