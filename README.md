@@ -18,6 +18,10 @@ models = (m1, m2)
 # some fake data
 # see experiment.jl
 forcing, timesteps = getforcing()
+variables = [:rain, :Tair, :Rn]
+values = [rand(100), rand(100), rand(100)]
+forcing = Table((; zip(variables, values)...))
+timesteps = length(forcing)
 
 outTime = evolveEcosystem(forcing, models, timesteps)
 ```

@@ -2,8 +2,6 @@
     Tair_thres::T = 0.5 # parametric
 end
 
-SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
-
 function run(o::rainSnow, forcing, out)
     @unpack_rainSnow o # repetition
     (; Tair, rain) = forcing
