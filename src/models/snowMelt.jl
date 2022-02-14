@@ -3,6 +3,8 @@
     melt_Rn::T = 2.0
 end
 
+SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
+
 function run(o::snowMelt, forcing, out)
     @unpack_snowMelt o
     (; Rn, Tair), snow = forcing, out.snow
