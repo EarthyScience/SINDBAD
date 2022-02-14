@@ -1,19 +1,16 @@
 module Sinbad
 
-using ModelParameters
-using Setfield
-using Unitful
 using Reexport: @reexport
 @reexport begin
-    using ModelParameters: Model, Param
+    using Parameters, TypedTables
 end
 
-export rainSnow, snowMelt, snowMeltSimple, runEcosystem
-export run!, updateState, ecosystem, addForcing!, getForcingVars
+export runEcosystem, evolveEcosystem
+export SnowFrac, rainSnow, snowMelt, run, getforcing
 
-include("model/models/rainSnow/rainSnow.jl")
-include("model/models/snowMelt/snowMelt.jl")
-include("model/models/snowMelt/snowMeltSimple.jl")
-include("model/ecosystem.jl")
+include("Ecosystem.jl")
 include("utils.jl")
+include("./models/rainSnow.jl")
+include("./models/snowMelt.jl")
+
 end
