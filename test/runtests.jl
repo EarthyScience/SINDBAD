@@ -1,18 +1,14 @@
 using Sinbad
 using Test
-using Unitful
 
-# setup
-#o1 = rainSnow()
-#o2 = snowMelt()
-#o3 = snowMeltSimple()
+m1 = rainSnow()
+m2 = snowMelt()
+models = (m1, m2)
 
-#Model(o1)
-#run!(o1)
-# test operation with units and without units.
-# run full model altogether.
+forcing, timesteps = getforcing()
 
-@testset "rainSnow" begin
-    @test typeof(rainSnow()) == rainSnow
-    @test typeof(snowMelt()) == snowMelt
+outTime = evolveEcosystem(forcing, models, timesteps)
+
+@testset "Sinbad.jl" begin
+    println("Hello, Sinbad?")
 end
