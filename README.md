@@ -17,4 +17,7 @@ models = (m1, m2)
 
 # some fake data
 # see experiment.jl
+forcing, timesteps = getforcing()
+
+outTime = evolveEcosystem(forcing, models, timesteps)
 ```
