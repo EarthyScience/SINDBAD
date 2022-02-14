@@ -1,41 +1,17 @@
-function updateState(p::AbstractParam, newVal) # updateStateVariable
-    # check if units are the same and update if possible.
-    return @set p.val = newVal
-end
+# data with NCDatasets
+using NCDatasets, UnicodePlots, TypedTables
 
-"""
-Forcing(val = missing; units = "", bounds = nothing)
-"""
-function Forcing(val = missing; units = "", bounds = nothing)
-    return Param(val, units = units, bounds = bounds, forcing = true)
-end
+namedPairs = Dict()
+namedPairs["rain"] = "P_DayMean_FLUXNET_gapfilled"
+namedPairs["Tair"] = "TA_DayTime_FLUXNET_gapfilled"
+namedPairs["Rn"] = "SW_IN_DayMean_FLUXNET_gapfilled"
 
-"""
-addForcing!(o, data)
-"""
-function addForcing!(o, data)
-    names = fieldnames(typeof(o))
-    for name in names
-        p = getfield(o, name)
-        if :forcing in keys(p)
-            @set! p.val = data[!, name]
-            setproperty!(o, name, p)
-        end
-    end
-    return nothing
-end
-
-"""
-getForcingVars(o)
-"""
-function getForcingVars(o)
-    names = fieldnames(typeof(o))
-    forcingVars = []
-    for name in names
-        p = getfield(o, name)
-        if :forcing in keys(p)
-            push!(forcingVars, name)
-        end
-    end
-    return forcingVars
+function getforcing(; filename = "./data/BE-Vie.2000-2019.nc",
+    vars = ("rain", "Tair", "Rn"), namedPairs = namedPairs)
+    ds = NCDatasets.Dataset(filename)
+    names = [Symbol(vars[i]) for i in 1:length(vars)]
+    values = [ds[namedPairs[vars[i]]][1, 1, :] for i in 1:length(vars)]
+    forcing = Table((; zip(names, values)...)) # NCDatasets
+    timesteps = size(forcing)[1]
+    return forcing, timesteps
 end
