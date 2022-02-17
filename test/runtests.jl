@@ -1,7 +1,13 @@
+using Revise
 using Sinbad
 using Test
 
-#forcing, timesteps = getforcing()
+m1 =  rainSnow()
+m2 = snowMelt()
+m3 = evapSoil()
+m4 = transpiration()
+mlast = updateState()
+forcing, timesteps = getforcing()
 #outTime = evolveEcosystem(forcing, models, timesteps)
 
 @testset "Sinbad.jl" begin

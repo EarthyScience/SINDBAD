@@ -1,20 +1,35 @@
 abstract type EarthEcosystem end
 
-function runEcosystem(forcing, models)
-    out = NamedTuple()
+function runEcosystem(forcing, models, out)
     for m in models
         out = run(m, forcing, out)
     end
     return out
 end
+
+function initiateStates(wSnow, wSoil)
+    out = NamedTuple()
+    out = (; out..., wSnow, wSoil) 
+    return out
+end
+
+out = initiateStates(0.0, 0.0)
+keys(out)
+
 # ForwadDiff ?
 function evolveEcosystem(forcing, models, timesteps)
-    out = runEcosystem(forcing[1], models) # just tuples ?
+    out = initiateStates(0,0)
+    out = runEcosystem(forcing[1], models, out) # just tuples ?
+    # outTime = []
     outTime = zeros(timesteps, length(out))
     outTime[1, :] .= values(out)
     for t in 2:timesteps
-        out = runEcosystem(forcing[t], models)
+        out = runEcosystem(forcing[t], models, out)
+        # push!(outTime, out)
         outTime[t, :] .= values(out)
     end
-    outTime
+    namesOut = keys(out)
+    valuesOut = [outTime[:, i] for i in 1:length(namesOut)]
+    outTable = Table((; zip(namesOut, valuesOut)...))
+    return outTable
 end
