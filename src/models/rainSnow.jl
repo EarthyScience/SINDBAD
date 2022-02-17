@@ -1,5 +1,5 @@
-@with_kw struct rainSnow{T} <: EarthEcosystem
-    Tair_thres::T = 0.5 # parametric
+@with_kw struct rainSnow{type} <: EarthEcosystem
+    Tair_thres::type = 0.5 # parametric
 end
 
 function run(o::rainSnow, forcing, out)
