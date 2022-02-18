@@ -18,14 +18,12 @@ keys(out)
 
 # ForwadDiff ?
 function evolveEcosystem(forcing, models, timesteps)
-    out = initiateStates(0,0)
+    out = initiateStates(0.01,0.01)
     out = runEcosystem(forcing[1], models, out) # just tuples ?
-    # outTime = []
     outTime = zeros(timesteps, length(out))
     outTime[1, :] .= values(out)
-    for t in 2:timesteps
+    for t in 1:timesteps
         out = runEcosystem(forcing[t], models, out)
-        # push!(outTime, out)
         outTime[t, :] .= values(out)
     end
     namesOut = keys(out)

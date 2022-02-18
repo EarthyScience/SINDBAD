@@ -4,11 +4,11 @@ end
 
 function run(o::updateState, forcing, out)
     @unpack_updateState o # repetition
-    (; fracTranspiration, fracEvapSoil, FracSnowMelt, rain, snow, wSnow, wSoil) = out
-    snowMelt = FracSnowMelt * wSnow
+    (; fracTranspiration, fracEvapSoil, fracSnowMelt, rain, snow, wSnow, wSoil) = out
+    snowMelt = fracSnowMelt * wSnow
     transpiration = fracTranspiration * wSoil
     evapSoil = fracEvapSoil * wSoil
-    wSnow = wSnow + snow - FracSnowMelt * wSnow
+    wSnow = wSnow + snow - fracSnowMelt * wSnow
     wSoil = wSoil + rain + snowMelt - evapSoil - transpiration
     return (; out..., wSnow, wSoil, snowMelt, evapSoil, transpiration)
 end
