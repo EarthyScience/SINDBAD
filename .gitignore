@@ -2,6 +2,7 @@
 *.jl.cov
 *.jl.mem
 *_raw.jl
+sandbox/
 /Manifest.toml
 examples/Manifest.toml
 examples/Project.toml
