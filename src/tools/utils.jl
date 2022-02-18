@@ -3,10 +3,10 @@ using NCDatasets, UnicodePlots, TypedTables
 
 namedPairs = Dict()
 namedPairs["rain"] = "P_DayMean_FLUXNET_gapfilled"
-namedPairs["Tair"] = "TA_DayTime_FLUXNET_gapfilled"
+namedPairs["Tair"] = "TA_DayMean_FLUXNET_gapfilled"
 namedPairs["Rn"] = "SW_IN_DayMean_FLUXNET_gapfilled"
 
-function getforcing(; filename = "./data/BE-Vie.2000-2019.nc",
+function getforcing(; filename = "../../data/BE-Vie.2000-2019.nc",
     vars = ("rain", "Tair", "Rn"), namedPairs = namedPairs)
     ds = NCDatasets.Dataset(filename)
     names = [Symbol(vars[i]) for i in 1:length(vars)]
