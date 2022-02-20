@@ -1,4 +1,4 @@
-@with_kw struct getStates{type} <: EarthEcosystem
+@with_kw struct getStates{type} <: TerEcosystem
     updateState::type = true
     # wSoil::type = 0.0
     # wSnow::type = 0.0

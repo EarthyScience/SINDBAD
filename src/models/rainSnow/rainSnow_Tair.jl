@@ -1,4 +1,4 @@
-@with_kw struct rainSnow{type} <: EarthEcosystem
+@with_kw struct rainSnow{type} <: TerEcosystem
     Tair_thres::type = 0.5 # parametric
     para_a::type = 0.5
     para_b::type = 0.5
