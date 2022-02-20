@@ -1,4 +1,4 @@
-@with_kw struct updateState{type} <: EarthEcosystem
+@with_kw struct updateState{type} <: TerEcosystem
     calcFlux :: type = true
 end
 
