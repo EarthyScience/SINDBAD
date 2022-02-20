@@ -1,4 +1,4 @@
-@with_kw struct snowMelt{type} <: EarthEcosystem
+@with_kw struct snowMelt{type} <: TerEcosystem
     melt_T::type = 3.0 # parametric type
     melt_Rn::type = 2.0
 end
