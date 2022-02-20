@@ -1,17 +1,47 @@
-# data with NCDatasets
-using NCDatasets, UnicodePlots, TypedTables
+using TypedTables
 
-namedPairs = Dict()
-namedPairs["rain"] = "P_DayMean_FLUXNET_gapfilled"
-namedPairs["Tair"] = "TA_DayMean_FLUXNET_gapfilled"
-namedPairs["Rn"] = "SW_IN_DayMean_FLUXNET_gapfilled"
 
-function getforcing(; filename = "../../data/BE-Vie.2000-2019.nc",
-    vars = ("rain", "Tair", "Rn"), namedPairs = namedPairs)
-    ds = NCDatasets.Dataset(filename)
-    names = [Symbol(vars[i]) for i in 1:length(vars)]
-    values = [ds[namedPairs[vars[i]]][1, 1, :] for i in 1:length(vars)]
-    forcing = Table((; zip(names, values)...)) # NCDatasets
-    timesteps = size(forcing)[1]
-    return forcing, timesteps
+function tuple2table(dTuple; colNames=nothing)
+    tpNames = propertynames(dTuple)
+    tpValues = values(dTuple)
+    dNames = [Symbol(tpNames[i]) for i in 1:length(tpNames)]
+    dValues = [[tpValues[i]] for i in 1:length(tpNames)]
+    if isnothing(colNames)
+        dTable = Table((; zip(dNames, dValues)...)) 
+    else
+        dTable = Table(@eval $(colNames)[1]=dNames, @eval $(colNames)[2]=dValues)
+    end
+    return dTable
+end
+
+"""
+dict2tuple(d::Dict)
+covert nested dictionary to named Tuple
+"""
+function dict2tuple(d::Dict)
+    for k in keys(d)
+        if d[k] isa Array{Any,1}
+            d[k] = [v for v in d[k]]
+        elseif d[k] isa Dict
+            d[k] = typenarrow!(d[k])
+        end
+    end
+    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    return dTuple
+end
+
+"""
+typenarrow!(d::Dict)
+covert nested dictionary to named Tuple
+"""
+function typenarrow!(d::Dict)
+    for k in keys(d)
+        if d[k] isa Array{Any,1}
+            d[k] = [v for v in d[k]]
+        elseif d[k] isa Dict
+            d[k] = typenarrow!(d[k])
+        end
+    end
+    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    return dTuple
 end

@@ -1,42 +1,64 @@
-
-function getConfigurationFiles(; expFile=expFile)
-    jsonFile = String(read(expFile))    
+"""
+getConfigurationFiles(expFile)
+get the basic configuration from experiment json
+"""
+function getExperimentConfiguration(expFile)
+    jsonFile = String(read(expFile))
     parseFile = JSON.parse(jsonFile)
-    newDict = rmComments(; inputDict = parseFile) # filter(x -> !occursin(".c", first(x)), parseFile)
-    return newDict
-end
-
-function readConfiguration(; configuration=nothing)
-    configFiles = getConfigurationFiles(; expFile=configuration)
     info = Dict()
-    for jsonFile in configFiles
-        nameFile = jsonFile[20:end-5]
-        jsonFile = String(read(jsonFile))
-        parseFile = JSON.parse(jsonFile)
-        newDict = rmComments(; inputDict = parseFile) # filter(x -> !occursin(".c", first(x)), parseFile)
-        info[nameFile] = newDict
+    for (k, v) in parseFile
+        info[k] = v
     end
     return info
 end
 
+"""
+readConfiguration(configFiles)
+read configuration experiment json and return dictionary
+"""
+function readConfiguration(info_exp)
+    info = Dict()
+    info["experiment"] = info_exp
+    for (k, v) in info_exp["configFiles"]
+        info[k] = JSON.parse(String(read(v)))
+    end
+    info_nocomments = removeComments(inputDict = info)
+    return info_nocomments
+end
 
-info = readConfiguration()
-
-
-function rmComments(; inputDict = inputDict)
+"""
+removeComments(; inputDict = inputDict)
+remove unnecessary comment files starting with certain expressions from the dictionary keys
+"""
+function removeComments(; inputDict = inputDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
     newDict = filter(x -> !occursin("comments", first(x)), newDict)
     newDict = filter(x -> !occursin("comment", first(x)), newDict)
     return newDict
 end
 
-function typenarrow!(d::Dict)
-    for k in keys(d)
-        if d[k] isa Array{Any,1}
-            d[k] = [v for v in d[k]]
-        elseif d[k] isa Dict
-            d[k] = typenarrow!(d[k])
-        end
+"""
+convert2abspath(; inputDict = inputDict)
+find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
+"""
+function convert2abspath(; inputDict = inputDict)
+    #### NOT DONE YET
+    newDict = filter(x -> !occursin("path", first(x)), inputDict)
+    # newDict = filter(x -> !occursin("comments", first(x)), newDict)
+    # newDict = filter(x -> !occursin("comment", first(x)), newDict)
+    return newDict
+end
+
+"""
+getConfiguration(sindbad_experiment)
+get the experiment info from either json or load the named tuple
+"""
+function runGetConfiguration(sindbad_experiment)
+    if typeof(sindbad_experiment) == String
+        info_exp = getExperimentConfiguration(sindbad_experiment)
+        info = readConfiguration(info_exp)
     end
-    NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    infoTuple = typenarrow!(info)
+    return infoTuple
+    # return info
 end
