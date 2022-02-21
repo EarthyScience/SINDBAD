@@ -1,0 +1,198 @@
+{
+	"variables2constrain": [
+		"tranAct",
+		"evapTotal"
+	],
+	"costFun": {
+		"funName": "costMultiConstraint",
+		"nonDefOptFile": "",
+		"multiConstraintMethod": "sum"
+	},
+	"costMetric": {
+		"funName": "tools/utils/metrics/perfMetric",
+		"comment": "the function that calculates the performance metric. Uses perfMetric.m"
+	},
+	"algorithm": {
+		"funName": "cmaes",
+		"nonDefOptFile": "sandbox/sb_minimal/settings_minimal/extraOpti.json",
+		"isMultiObj": false,
+		"maxParN": 1
+
+	},
+	"optimizer": {
+		"funName": "",
+		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
+	},
+	"params2opti": [
+		"p.evapSoil.alpha",
+		"p.evapSoil.supLim",
+		"p.roBase.bc",
+		"p.roSurf.berg",
+		"p.snowMelt.melt_T",
+		"p.snowMelt.melt_Rn",
+		"p.wSoilRec.dos_exp"
+			],
+	"checks": "",
+	"constraints": {
+		"funName": {
+			"import": "readObservationRoasted",
+			"check": ""
+		},
+		"oneDataPath": "",
+		"variables": {
+			"gpp": {
+				"modelFullVar": "fx.gpp",
+				"data": {
+					"variableUnit": "gC m-2 day-1",
+					"bounds": [
+						0,
+						500
+					],
+					"sourceVariableName": "GPP_NT_FLUXNET",
+					"sourceVariableUnit": "gC m-2 day-1",
+					"source2sindbadUnit": "*1",
+					"isCategorical": false,
+					"nameShort": "Gross Primary Productivity",
+					"spaceTimeType": "normal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": ""
+				},
+				"unc": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						400
+					],
+					"sourceVariableName": "NEE_RANDUNC_FLUXNET"
+				},
+				"qflag": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						1
+					],
+					"sourceVariableName": "NEE_QC_FLUXNET"
+				},
+				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "cat",
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1,
+					"areaWeight": false,
+					"quality_bound": [
+						0.85,
+						1
+					],
+					"data_bound": []
+				}
+			},
+			"evapTotal": {
+				"modelFullVar": "fx.evapTotal",
+				"data": {
+					"variableUnit": "mm day-1",
+					"bounds": [
+						0,
+						200
+					],
+					"sourceVariableName": "LE_FLUXNET",
+					"sourceVariableUnit": "W m-2",
+					"source2sindbadUnit": "*0.0864/2.45",
+					"isCategorical": false,
+					"nameShort": "Evapotranspiration",
+					"spaceTimeType": "normal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": ""
+				},
+				"unc": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						500
+					],
+					"sourceVariableName": "LE_RANDUNC_FLUXNET"
+				},
+				"qflag": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						1
+					],
+					"sourceVariableName": "LE_QC_FLUXNET"
+				},
+				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "cat",
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1,
+					"areaWeight": false,
+					"quality_bound": [
+						0.85,
+						1
+					],
+					"data_bound": []
+				}
+			},
+			"tranAct": {
+				"modelFullVar": "fx.tranAct",
+				"data": {
+					"variableUnit": "mm day-1",
+					"bounds": [
+						0,
+						200
+					],
+					"sourceVariableName": "T_NT_75_Nelson2018",
+					"sourceVariableUnit": "mm day-1",
+					"source2sindbadUnit": "*1",
+					"isCategorical": false,
+					"nameShort": "transpiration",
+					"spaceTimeType": "normal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": ""
+				},
+				"unc": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						200
+					],
+					"sourceVariableName": "LE_RANDUNC_FLUXNET"
+				},
+				"qflag": {
+					"dataPath": "",
+					"bounds": [
+						0,
+						1
+					],
+					"sourceVariableName": "LE_QC_FLUXNET"
+				},
+				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "cat",
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1,
+					"areaWeight": false,
+					"quality_bound": [
+						0.85,
+						1
+					],
+					"data_bound": []
+				}
+			}
+		}
+	}
+}
