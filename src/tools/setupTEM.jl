@@ -26,16 +26,30 @@ function getSelectedOrderedModels(fullModels, selModels)
     end
 end
 
-function setupTEM!(info)
+function setupTEM(info)
     selModels = propertynames(info.modelStructure.modules)
     corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-    (; info.paths.coreTEM..., corePath)
-    (; info..., (tem = (model = modules = selected_models)))
+    info=(; info..., paths=(coreTEM = corePath));
+    # (; info.paths.coreTEM..., corePath)
+    # (; info..., (tem = (model = modules = selected_models)))
     # path.core = corePath
     include(corePath)
     fullModels = propertynames(getAllModels())
     selected_models = getSelectedOrderedModels(fullModels, selModels)
-    info.tem.model.modules = selected_models
+    
+    info=(; info..., tem=(; models = selected_models));
+    # info=(; info..., tem=(models = selected_models, states = ( c = names_cStates)))
+    # set_tuple_fields!(info, "info.tem.models", selected_models)
+
+    # for feildname in split("info.tem.models")
+    #     if field != "info"
+    #         if ∉ info
+    #     info = (; info..., fieldname)
+    # end
+
+    # info.tem.models = selected_models
+    # info.tem.variables.states.c =  names_cStates
+    # info.tem.variables.states.w = names_wStates
     return info
 end
 

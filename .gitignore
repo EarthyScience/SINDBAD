@@ -1,7 +1,6 @@
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
-sandbox/
 /Manifest.toml
 /docs/build/
 .vscode
