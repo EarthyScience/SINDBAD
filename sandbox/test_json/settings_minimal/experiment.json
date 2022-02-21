@@ -1,0 +1,15 @@
+{
+	"name": "minimal",
+	"domain": "FLUXNET",
+	"configFiles": {
+		"forcing"		: "sandbox/test_json/settings_minimal/forcing.json",
+		"modelStructure": "sandbox/test_json/settings_minimal/modelStructure.json",
+		"constants"		: "sandbox/test_json/settings_minimal/constants.json",
+		"modelRun"		: "sandbox/test_json/settings_minimal/modelRun.json",
+		"output"		: "sandbox/test_json/settings_minimal/output.json",
+		"spinup"		: "sandbox/test_json/settings_minimal/spinup.json",
+		"params"		: "sandbox/test_json/settings_minimal/params.json",
+		"opti"			: "sandbox/test_json/settings_minimal/opti.json"
+	},
+	"outputDirPath"	: "sandbox/output/"
+}
