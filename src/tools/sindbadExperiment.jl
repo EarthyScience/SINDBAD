@@ -5,26 +5,6 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = runGetConfiguration(expFile);
 
 ## setupTEM => get the selected model structure, check consistency, etc...
-# selModels = propertynames(info.modelStructure.modules)
-# corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-# info=(; info..., paths=(coreTEM = corePath))
-# # (; info.paths.coreTEM..., corePath)
-# # (; info..., (tem = (model = modules = selected_models)))
-# # path.core = corePath
-# include(corePath)
-# fullModels = propertynames(getAllModels())
-
-# selModels = propertynames(info.modelStructure.modules)
-# corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-# info=(; info..., paths=(coreTEM = corePath))
-# # (; info.paths.coreTEM..., corePath)
-# # (; info..., (tem = (model = modules = selected_models)))
-# # path.core = corePath
-# include(corePath)
-# fullModels = propertynames(getAllModels())
-# selected_models = getSelectedOrderedModels(fullModels, selModels)
-# info=(; info..., tem=(; models = selected_models))
-# info=(; info..., tem=(models = selected_models));
 
 info = setupTEM(info)
 
@@ -35,6 +15,7 @@ forcing = getForcing(info)
 ## run TEM => optimization or forward run
 timesteps = size(forcing)[1]
 models = info.tem.models
+
 outTable = evolveEcosystem(forcing, models, timesteps) # evolve is intransitive, may be use update?
 
 
