@@ -1,0 +1,247 @@
+{
+	"1.c": 							"This json info file explains the forcing variables and all related information",
+	"2.c":							"add more comments",
+	"3.c":							"and some more",
+
+	"funName":
+	{
+		"import": "readForcing",
+		"check": "checkInputData"
+	},
+	"comments": "to get forcing from netCDF file",
+	"size": [NaN, NaN],
+	"oneDataPath": "data/BE-Vie.2000-2019.nc",
+	"variables": {
+	"Rain":
+    {
+		"variableUnit": "mm d-1",
+		"bounds": [0, 100],
+		"sourceVariableName": "P_DayMean_FLUXNET_gapfilled",
+		"sourceVariableUnit": "mm d-1",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Rain",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"Rg":
+    {
+		"variableUnit": "MJ m-2",
+		"bounds": [0, 600],
+		"sourceVariableName": "SW_IN_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "W m-2",
+		"source2sindbadUnit": "/11.57407",
+		"isCategorical": false,
+		"nameShort": "Global Radiation",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"PAR":
+    {
+		"variableUnit": "MJ m-2",
+		"bounds": [0, 600],
+		"sourceVariableName": "SW_IN_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "W m-2",
+		"source2sindbadUnit": "*0.5/11.57407",
+		"isCategorical": false,
+		"nameShort": "Photosynthetically active radiation (=Rg*.5)",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"RgPot":
+    {
+		"variableUnit": "MJ m-2",
+		"bounds": [0, 600],
+		"sourceVariableName": "SW_IN_POT_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "W m-2",
+		"source2sindbadUnit": "/11.57407",
+		"isCategorical": false,
+		"nameShort": "Potential Global Radiation",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"Rn":
+    {
+		"variableUnit": "MJ m-2",
+		"bounds": [-50, 500],
+		"sourceVariableName": "NETRAD_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "W m-2",
+		"source2sindbadUnit": "/11.57407",
+		"isCategorical": false,
+		"nameShort": "Net radiation",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"Tair":
+    {
+		"variableUnit": "°C",
+		"bounds": [-80, 60],
+		"sourceVariableName": "TA_DayMean_FLUXNET_gapfilled",
+		"sourceVariableUnit": "°C",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Tair",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"TairDay":
+    {
+		"variableUnit": "°C",
+		"bounds": [-80, 60],
+		"sourceVariableName": "TA_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "°C",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "TairDay",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"VPD":
+    {
+		"variableUnit": "kPa",
+		"bounds": [0, 100],
+		"sourceVariableName": "VPD_DayMean_FLUXNET_gapfilled",
+		"sourceVariableUnit": "hPa",
+		"source2sindbadUnit": "*0.1",
+		"isCategorical": false,
+		"nameShort": "Vapor pressure deficit Day",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"VPDDay":
+    {
+		"variableUnit": "kPa",
+		"bounds": [0, 100],
+		"sourceVariableName": "VPD_DayTime_FLUXNET_gapfilled",
+		"sourceVariableUnit": "hPa",
+		"source2sindbadUnit": "*0.1",
+		"isCategorical": false,
+		"nameShort": "Vapor pressure deficit Day",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"fAPAR":
+    {
+		"variableUnit": "-",
+		"bounds": [0, 1],
+		"sourceVariableName": "kNDVI_MCD43A",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "fAPAR from kernel ndvi",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"EVI":
+    {
+		"variableUnit": "-",
+		"bounds": [0, 1],
+		"sourceVariableName": "EVI_MCD43A",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Normalized vegetation difference index",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"NDVI":
+    {
+		"variableUnit": "-",
+		"bounds": [0, 1],
+		"sourceVariableName": "NDVI_MCD43A",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Normalized vegetation difference index",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"LAI":
+    {
+		"variableUnit": "-",
+		"bounds": [0, 10],
+		"sourceVariableName": "kNDVI_MCD43A",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*10",
+		"isCategorical": false,
+		"nameShort": "LAI = 10 x ndvi",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"NDWI":
+    {
+		"variableUnit": "-",
+		"bounds": [-1, 1],
+		"sourceVariableName": "NDWI_MCD43A",
+		"sourceVariableUnit": "-",
+		"source2sindbadUnit": "*1",
+		"isCategorical": false,
+		"nameShort": "Normalized water difference index",
+		"spaceTimeType": "normal",
+		"sourceDataProductName": "FLUXNET",
+		"dataPath": ""
+	},
+	"CLAY": {
+		"variableUnit": "-",
+		"bounds": [0, 100],
+		"sourceVariableName": "CLYPPT_SoilGrids",
+		"sourceVariableUnit": "%",
+		"source2sindbadUnit": "*0.01",
+		"isCategorical": false,
+		"nameShort": "CLAY",
+		"spaceTimeType": "spatial",
+		"sourceDataProductName": "soilgrids",
+		"dataPath": ""
+	}
+	,
+	"SAND": {
+		"variableUnit": "-",
+		"bounds": [0, 100],
+		"sourceVariableName": "SNDPPT_SoilGrids",
+		"sourceVariableUnit": "%",
+		"source2sindbadUnit": "*0.01",
+		"isCategorical": false,
+		"nameShort": "SAND",
+		"spaceTimeType": "spatial",
+		"sourceDataProductName": "soilgrids",
+		"dataPath": ""
+	},
+	"SILT": {
+		"variableUnit": "-",
+		"bounds": [0, 100],
+		"sourceVariableName": "SLTPPT_SoilGrids",
+		"sourceVariableUnit": "%",
+		"source2sindbadUnit": "*0.01",
+		"isCategorical": false,
+		"nameShort": "CLAY",
+		"spaceTimeType": "spatial",
+		"sourceDataProductName": "soilgrids",
+		"dataPath": ""
+	},
+	"ORGM": {
+		"variableUnit": "-",
+		"bounds": [0, 100],
+		"sourceVariableName": "OCSTHA_SoilGrids",
+		"sourceVariableUnit": "%",
+		"source2sindbadUnit": "*0",
+		"isCategorical": false,
+		"nameShort": "CLAY",
+		"spaceTimeType": "spatial",
+		"sourceDataProductName": "soilgrids",
+		"dataPath": ""
+	}
+}
+}
