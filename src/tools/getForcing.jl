@@ -1,49 +1,40 @@
-export getForcing
+# data with NCDatasets
+using NCDatasets, TypedTables
 
-"""
-getForcing(info)
-"""
+function checkForcingBounds(forcingVariable, bounds)
+    println("Not done")
+end
+
 function getForcing(info)
-    doOnePath = false
-    if !isempty(info.forcing.oneDataPath)
+    if isempty(info.forcing.oneDataPath) == false
         doOnePath = true
         if isabspath(info.forcing.oneDataPath)
             dataPath = info.forcing.oneDataPath
         else
-            dataPath = joinpath(info.sinbad_root, info.forcing.oneDataPath)
+            dataPath = joinpath(pwd(), info.forcing.oneDataPath)
         end
     end
-    varnames = propertynames(info.forcing.variables)
+    varnames = propertynames(info.forcing.variables);
+    data_dict = Dict()
     varlist = []
-    dataAr = []
-    # forcing = (;)
-    if doOnePath
-        ds = Dataset(dataPath)
-    end
+    dataAr=[]
     for v in varnames
         vinfo = getproperty(info.forcing.variables, v)
-        if !doOnePath
-            dataPath = vinfo.dataPath
-            ds = Dataset(dataPath)
+        if doOnePath == false
+            dataPath = v.dataPath
         end
-        srcVar = vinfo.sourceVariableName
-        tarVar = Symbol(v)
-        ds_dat = ds[srcVar][:, :, :]
-        data_tmp = applyUnitConversion(ds_dat, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
-        bounds = vinfo.bounds
-        data_tmp = clamp.(data_tmp, bounds[1], bounds[2])
-        data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
-        data_to_push = info.tem.helpers.numbers.numType.(data_tmp[1, 1, :])
         if vinfo.spaceTimeType == "normal"
+            ds = NCDatasets.Dataset(dataPath)
+            srcVar = vinfo.sourceVariableName
+            tarVar = Symbol(v)
             push!(varlist, tarVar)
-            push!(dataAr, data_to_push)
-        else
-            push!(varlist, tarVar)
-            push!(dataAr, fill(data_to_push, 14245))
+            push!(dataAr, ds[srcVar][1, 1, :])
+            # data_dict[tarVar]=ds[srcVar][1, 1, :]
         end
     end
-    println("forcing is still replicating the static variables 14245 times. Needs refinement and automation.")
     forcing = Table((; zip(varlist, dataAr)...))
+    # forcing = Table((; zip(keys(data_dict), [v for v in values(data_dict)])...))
     return forcing
 end
+
 
