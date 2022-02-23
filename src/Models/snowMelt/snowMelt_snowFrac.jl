@@ -7,7 +7,7 @@ end
 
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
 
-function run(o::snowMelt_snowFrac, forcing, out)
+function compute(o::snowMelt_snowFrac, forcing, out)
     @unpack_snowMelt_snowFrac o
     (; Rn, Tair) = forcing
     (; snow, wSnow) = out

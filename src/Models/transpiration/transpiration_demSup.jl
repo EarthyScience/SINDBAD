@@ -5,7 +5,7 @@ export transpiration_demSup
     supLim :: type = 0.50
 end
 
-function run(o::transpiration_demSup, forcing, out)
+function compute(o::transpiration_demSup, forcing, out)
     @unpack_transpiration_demSup o
     (; Rn) = forcing
     (; wSoil) = out

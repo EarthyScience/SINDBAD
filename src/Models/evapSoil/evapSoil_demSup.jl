@@ -5,7 +5,7 @@ export evapSoil_demSup
     supLim::type = 0.25
 end
 
-function run(o::evapSoil_demSup, forcing, out)
+function compute(o::evapSoil_demSup, forcing, out)
     @unpack_evapSoil_demSup o
     (; Rn) = forcing
     (; wSoil) = out
