@@ -3,7 +3,7 @@ export updateState_wSimple
     calcFlux :: type = true
 end
 
-function run(o::updateState_wSimple, forcing, out)
+function compute(o::updateState_wSimple, forcing, out)
     @unpack_updateState_wSimple o # repetition
     (; fracTranspiration, fracEvapSoil, fracSnowMelt, rain, snow, wSnow, wSoil) = out
     snowMelt = fracSnowMelt * wSnow
