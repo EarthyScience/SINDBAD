@@ -4,7 +4,7 @@
     # wSnow::type = 0.0
 end
 
-function run(o::getStates_simple, forcing, out)
+function compute(o::getStates_simple, forcing, out)
     @unpack_getStates_simple o
     (; wSoil, wSnow) = out
     return (; out..., wSoil, wSnow)
