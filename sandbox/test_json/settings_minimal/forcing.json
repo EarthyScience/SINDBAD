@@ -12,7 +12,7 @@
 	"size": [NaN, NaN],
 	"oneDataPath": "data/BE-Vie.2000-2019.nc",
 	"variables": {
-	"Rain":
+	"rain":
     {
 		"variableUnit": "mm d-1",
 		"bounds": [0, 100],

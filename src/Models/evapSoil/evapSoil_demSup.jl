@@ -1,10 +1,12 @@
-@with_kw struct evapSoil{type} <: TerEcosystem
-    α::type = 0.075
-    supLim::type = 0.5
+export evapSoil_demSup
+
+@with_kw struct evapSoil_demSup{type} <: TerEcosystem
+    α::type = 0.005
+    supLim::type = 0.25
 end
 
-function run(o::evapSoil, forcing, out)
-    @unpack_evapSoil o
+function run(o::evapSoil_demSup, forcing, out)
+    @unpack_evapSoil_demSup o
     (; Rn) = forcing
     (; wSoil) = out
     PETsoil = Rn * α
