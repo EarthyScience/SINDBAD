@@ -2,7 +2,7 @@ abstract type TerEcosystem end
 
 function runEcosystem(forcing, models, out)
     for m in models
-        out = run(m, forcing, out)
+        out = Models.run(m, forcing, out)
     end
     return out
 end
