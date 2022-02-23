@@ -1,9 +1,10 @@
-@with_kw struct updateState{type} <: TerEcosystem
+export updateState_wSimple
+@with_kw struct updateState_wSimple{type} <: TerEcosystem
     calcFlux :: type = true
 end
 
-function run(o::updateState, forcing, out)
-    @unpack_updateState o # repetition
+function run(o::updateState_wSimple, forcing, out)
+    @unpack_updateState_wSimple o # repetition
     (; fracTranspiration, fracEvapSoil, fracSnowMelt, rain, snow, wSnow, wSoil) = out
     snowMelt = fracSnowMelt * wSnow
     transpiration = fracTranspiration * wSoil
