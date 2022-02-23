@@ -7,7 +7,7 @@ export rainSnow_simpleorwhatever
     Tair_thres_bounds = [0.1, 0.7] # parametric
 end
 
-function run(o::rainSnow_simpleorwhatever, forcing, out)
+function compute(o::rainSnow_simpleorwhatever, forcing, out)
     @unpack_rainSnow_simpleorwhatever o # repetition
     (; Tair, rain) = forcing
     # if Tair < Tair_thres
