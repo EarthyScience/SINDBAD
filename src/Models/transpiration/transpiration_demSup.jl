@@ -1,10 +1,12 @@
-@with_kw struct transpiration{type} <: TerEcosystem
-    α :: type = 0.125
+export transpiration_demSup
+
+@with_kw struct transpiration_demSup{type} <: TerEcosystem
+    α :: type = 0.15
     supLim :: type = 0.50
 end
 
-function run(o::transpiration, forcing, out)
-    @unpack_transpiration o
+function run(o::transpiration_demSup, forcing, out)
+    @unpack_transpiration_demSup o
     (; Rn) = forcing
     (; wSoil) = out
     PETveg = Rn * α

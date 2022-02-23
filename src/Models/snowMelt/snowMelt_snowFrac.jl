@@ -1,12 +1,14 @@
-@with_kw struct snowMelt{type} <: TerEcosystem
+export snowMelt_snowFrac
+
+@with_kw struct snowMelt_snowFrac{type} <: TerEcosystem
     melt_T::type = 3.0 # parametric type
     melt_Rn::type = 2.0
 end
 
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
 
-function run(o::snowMelt, forcing, out)
-    @unpack_snowMelt o
+function run(o::snowMelt_snowFrac, forcing, out)
+    @unpack_snowMelt_snowFrac o
     (; Rn, Tair) = forcing
     (; snow, wSnow) = out
 

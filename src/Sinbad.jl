@@ -23,14 +23,8 @@ include("tem/sindbadCore.jl")
 export getAllModels
 
 ### the following should come from the model structure json
-include("models/getStates/getStates_simple.jl")
-include("models/rainSnow/rainSnow_Tair.jl")
-include("models/snowMelt/snowMelt_snowFrac.jl")
-include("models/evapSoil/evapSoil_demSup.jl")
-include("models/transpiration/transpiration_demSup.jl")
-include("models/updateState/updateState_wSimple.jl")
 
-
+include("Models/Models.jl")
 
 # include("../tools/utils.jl")
 # include("../models/rainSnow/rainSnow_Tair.jl")
