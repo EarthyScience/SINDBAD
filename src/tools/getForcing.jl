@@ -6,6 +6,7 @@ function checkForcingBounds(forcingVariable, bounds)
 end
 
 function getForcing(info)
+
     if isempty(info.forcing.oneDataPath) == false
         doOnePath = true
         if isabspath(info.forcing.oneDataPath)
@@ -15,7 +16,6 @@ function getForcing(info)
         end
     end
     varnames = propertynames(info.forcing.variables);
-    data_dict = Dict()
     varlist = []
     dataAr=[]
     for v in varnames
@@ -28,13 +28,11 @@ function getForcing(info)
             srcVar = vinfo.sourceVariableName
             tarVar = Symbol(v)
             push!(varlist, tarVar)
-            push!(dataAr, ds[srcVar][1, 1, :])
-            # data_dict[tarVar]=ds[srcVar][1, 1, :]
+            data_tmp = ds[srcVar][1, 1, :]
+            push!(dataAr,  eval(Meta.parse("$data_tmp" * vinfo.source2sindbadUnit)))
         end
     end
     forcing = Table((; zip(varlist, dataAr)...))
-    # forcing = Table((; zip(keys(data_dict), [v for v in values(data_dict)])...))
     return forcing
 end
-
 

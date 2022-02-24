@@ -1,5 +1,5 @@
 @with_kw struct transpiration{type} <: TerEcosystem
-    α :: type = 0.15
+    α :: type = 0.125
     supLim :: type = 0.50
 end
 
