@@ -5,7 +5,6 @@ function checkModelForcingExists(info, forcingVariables)
     println("Not done")
 end
 
-
 function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
     for sm in selModels
@@ -34,7 +33,6 @@ function getSelectedApproaches(info, selModelsOrdered)
     sel_appr_spinup = []
     println(selModelsOrdered)
     for sm in selModelsOrdered
-        println(sm)
         modInfo = getfield(info.modelStructure.models, sm)
         modAppr = modInfo.apprName
         sel_approach = String(sm) * "_" * modAppr
@@ -47,20 +45,14 @@ function getSelectedApproaches(info, selModelsOrdered)
     info=(; info..., tem=(; models = (; forward = sel_appr_forward, spinup = sel_appr_spinup)));
     return info
 end
+
 function setupTEM!(info)
     selModels = propertynames(info.modelStructure.models)
     # corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
     # info=(; info..., paths=(coreTEM = corePath));
     # include(corePath)
     fullModels = propertynames(getEcoProcess())
-    println(fullModels)
     selected_models = getSelectedOrderedModels(fullModels, selModels)
     info = getSelectedApproaches(info, selected_models)
     return info
 end
-
-
-
-# runmodel
-
-# post process
