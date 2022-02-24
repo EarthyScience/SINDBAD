@@ -1,8 +1,6 @@
 function runEcosystem(forcing, models, out)
-    for j in 1:3
-        for m in models
-            out = Models.compute(m, forcing, out)
-        end
+    for m in models
+        out = Models.compute(m, forcing, out)
     end
     return out
 end
@@ -38,8 +36,10 @@ function runSpinupTEM(info, forcing)
     out = initiateStates(0.01,0.01)
     timesteps = size(forcing)[1]
     out = runEcosystem(forcing[1], info.tem.models.spinup, out) # just tuples ?
-    for t in 1:timesteps
-        out = runEcosystem(forcing[t], info.tem.models.spinup, out)
+    for j in 1:3 ## just 3 repeats of the the spinup.. placeholder for nLoops in spinup.json
+        for t in 1:timesteps
+            out = runEcosystem(forcing[t], info.tem.models.spinup, out)
+        end
     end
     return out
 end
