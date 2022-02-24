@@ -1,6 +1,6 @@
 @with_kw struct evapSoil{type} <: TerEcosystem
-    α::type = 0.005
-    supLim::type = 0.25
+    α::type = 0.075
+    supLim::type = 0.5
 end
 
 function run(o::evapSoil, forcing, out)
