@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 @with_kw struct rainSnow{type} <: TerEcosystem
+=======
+export rainSnow_Tair
+
+@with_kw struct rainSnow_Tair{type} <: LandEcosystem
+>>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
     Tair_thres::type = 0.5 # parametric
     para_a::type = 0.5
     para_b::type = 0.5
