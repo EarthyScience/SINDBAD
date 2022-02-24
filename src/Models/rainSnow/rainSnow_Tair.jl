@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 @with_kw struct rainSnow{type} <: TerEcosystem
-=======
 export rainSnow_Tair
 
 @with_kw struct rainSnow_Tair{type} <: LandEcosystem
->>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
     Tair_thres::type = 0.5 # parametric
     para_a::type = 0.5
     para_b::type = 0.5
@@ -22,6 +19,11 @@ function run(o::rainSnow, forcing, out)
     # end
     snow = Tair < Tair_thres ? Rain : 0.0
     rain = Tair >= Tair_thres ? Rain : 0.0
+function compute(o::rainSnow_Tair, forcing, out)
+    @unpack_rainSnow_Tair o # repetition
+    (; Tair, rain) = forcing
+    snow = Tair < Tair_thres ? rain : 0.0
+    rain = Tair >= Tair_thres ? rain : 0.0
     # rain = rain - snow
     precip = rain + snow
     return (; out..., Tair, snow, rain, precip)
