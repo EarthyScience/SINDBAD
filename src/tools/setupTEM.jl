@@ -1,7 +1,10 @@
+using Sinbad.Models
+export setupTEM!
 
 function checkModelForcingExists(info, forcingVariables)
     println("Not done")
 end
+
 
 function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
@@ -26,30 +29,33 @@ function getSelectedOrderedModels(fullModels, selModels)
     end
 end
 
-function setupTEM(info)
-    selModels = propertynames(info.modelStructure.modules)
-    corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-    info=(; info..., paths=(coreTEM = corePath));
-    # (; info.paths.coreTEM..., corePath)
-    # (; info..., (tem = (model = modules = selected_models)))
-    # path.core = corePath
-    include(corePath)
-    fullModels = propertynames(getAllModels())
+function getSelectedApproaches(info, selModelsOrdered)
+    sel_appr_forward = []
+    sel_appr_spinup = []
+    println(selModelsOrdered)
+    for sm in selModelsOrdered
+        println(sm)
+        modInfo = getfield(info.modelStructure.models, sm)
+        modAppr = modInfo.apprName
+        sel_approach = String(sm) * "_" * modAppr
+        sel_approach_func = getfield(Sinbad.Models, Symbol(sel_approach))()
+        push!(sel_appr_forward, sel_approach_func)
+        if modInfo.use4spinup == true
+            push!(sel_appr_spinup, sel_approach_func)
+        end
+    end
+    info=(; info..., tem=(; models = (; forward = sel_appr_forward, spinup = sel_appr_spinup)));
+    return info
+end
+function setupTEM!(info)
+    selModels = propertynames(info.modelStructure.models)
+    # corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
+    # info=(; info..., paths=(coreTEM = corePath));
+    # include(corePath)
+    fullModels = propertynames(getEcoProcess())
+    println(fullModels)
     selected_models = getSelectedOrderedModels(fullModels, selModels)
-    
-    info=(; info..., tem=(; models = selected_models));
-    # info=(; info..., tem=(models = selected_models, states = ( c = names_cStates)))
-    # set_tuple_fields!(info, "info.tem.models", selected_models)
-
-    # for feildname in split("info.tem.models")
-    #     if field != "info"
-    #         if ∉ info
-    #     info = (; info..., fieldname)
-    # end
-
-    # info.tem.models = selected_models
-    # info.tem.variables.states.c =  names_cStates
-    # info.tem.variables.states.w = names_wStates
+    info = getSelectedApproaches(info, selected_models)
     return info
 end
 

@@ -1,24 +1,37 @@
 using Revise
 using Sinbad
-using Sinbad.Models
+# using Sinbad.Models
 # get experiment info
+include("../tools/setupTEM.jl")
+
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = runGetConfiguration(expFile);
 
 ## setupTEM => get the selected model structure, check consistency, etc...
-
-info = setupTEM(info)
-
+info = setupTEM!(info);
 
 ## prepare TEM => read forcing, create arrays if needed, handle observations when needed for optimization or calculation of model cost
 forcing = getForcing(info)
 
 ## run TEM => optimization or forward run
-timesteps = size(forcing)[1]
-selected_models = [getStates_simple(), rainSnow_Tair(), snowMelt_snowFrac(), evapSoil_demSup(), transpiration_demSup(), updateState_wSimple()]
+# timesteps = size(forcing)[1]
+# a=eval("getStates_simple()")
+
+# selected_models = getfield(Sinbad.Models, Symbol("getStates_simple"))
+
+# selected_models = [getStates_simple(), rainSnow_Tair(), snowMelt_snowFrac(), evapSoil_demSup(), transpiration_demSup(), updateState_wSimple()]
+
+# str2func -> getfield(Sinbad.Models, Symbol(x))()
+
+# mod_list = ["getStates_simple", "rainSnow_Tair", "snowMelt_snowFrac", "evapSoil_demSup", "transpiration_demSup", "updateState_wSimple"]
+
+# selected_models = map(x -> getfield(Sinbad.Models, Symbol(x))(), mod_list)
+
+# selected_models = [str2func(model) for model in mod_list]
+# selected_models = [getStates_simple(), rainSnow_Tair(), snowMelt_snowFrac(), getfield(Sinbad.Models, Symbol("evapSoil_demSup"))(), transpiration_demSup(), updateState_wSimple()]
 
 
-outTable = evolveEcosystem(forcing, selected_models, timesteps) # evolve is intransitive, may be use update?
+outTable = runTEM(info, forcing) # evolve is intransitive, may be use update?
 
 ## collect data and post process
 using GLMakie

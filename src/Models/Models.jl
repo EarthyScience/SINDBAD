@@ -1,9 +1,9 @@
 module Models
-using ..Sinbad: LandEcosystem
 using ..Sinbad
 
 export getStates, rainSnow, snowMelt, evapSoil, transpiration, updateState
-export run
+
+abstract type LandEcosystem end
 
 abstract type getStates <: LandEcosystem end
 include("getStates/getStates_simple.jl")
