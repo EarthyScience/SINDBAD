@@ -5,18 +5,14 @@ using Reexport: @reexport
     using Parameters, TypedTables
 end
 
-# export runEcosystem, evolveEcosystem
-export runGetConfiguration
-
-export runTEM
-
-include("tem/runTEM.jl")
 include("tools/utils.jl")
 include("tools/getConfiguration.jl")
-
+export runGetConfiguration
 include("tools/getForcing.jl")
 export getForcing
 
+include("tem/runTEM.jl")
+export runTEM
 include("tem/ecoProcess.jl")
 export getEcoProcess
 
