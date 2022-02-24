@@ -1,17 +1,17 @@
 {
-    "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and modules 2) user selected",
+    "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and models 2) user selected",
     "2.c": "approaches 3) structure of water and carbon states",
     "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
     "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
     "selected_models": ["getStates", "rainSnow", "snowMelt", "evapSoil", "transpiration"],
-    "modules": {
+    "models": {
         "getStates": {
             "apprName": "simple",
-            "use4spinup": false
+            "use4spinup": true
         },
         "evapSoil": {
             "apprName": "demSup",
-            "use4spinup": false
+            "use4spinup": true
         },
         "rainSnow": {
             "apprName": "Tair",
@@ -31,8 +31,8 @@
         }
     },
     "paths": {
-        "coreTEM": "src/tem/sindbadCore.jl",
-        "modulesDir": "src/models/"
+        "coreTEM": "src/tem/ecoProcess.jl",
+        "modelsDir": "src/models/"
     },
 	"states":
 	{

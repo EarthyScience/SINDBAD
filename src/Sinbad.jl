@@ -5,24 +5,20 @@ using Reexport: @reexport
     using Parameters, TypedTables
 end
 
-export runEcosystem, evolveEcosystem
-<<<<<<< HEAD
-export SnowFrac, rainSnow, snowMelt, run, getForcing
-export evapSoil, transpiration, updateState, getStates
-=======
->>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
-export runGetConfiguration, setupTEM
+# export runEcosystem, evolveEcosystem
+export runGetConfiguration
 
-include("tem/Ecosystem.jl")
+export runTEM
+
+include("tem/runTEM.jl")
 include("tools/utils.jl")
 include("tools/getConfiguration.jl")
-include("tools/setupTEM.jl")
 
 include("tools/getForcing.jl")
 export getForcing
 
-include("tem/sindbadCore.jl")
-export getAllModels
+include("tem/ecoProcess.jl")
+export getEcoProcess
 
 ### testing getting modules from jl files
 include("Models/Models.jl")
