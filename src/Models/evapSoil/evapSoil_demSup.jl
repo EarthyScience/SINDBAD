@@ -1,8 +1,8 @@
 export evapSoil_demSup
 
-@with_kw struct evapSoil_demSup{type} <: TerEcosystem
-    α::type = 0.005
-    supLim::type = 0.25
+@with_kw struct evapSoil_demSup{type} <: LandEcosystem
+    α::type = 0.075
+    supLim::type = 0.5
 end
 
 function compute(o::evapSoil_demSup, forcing, out)

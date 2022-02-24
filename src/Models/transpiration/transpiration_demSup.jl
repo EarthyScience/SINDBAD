@@ -1,6 +1,6 @@
 export transpiration_demSup
 
-@with_kw struct transpiration_demSup{type} <: TerEcosystem
+@with_kw struct transpiration_demSup{type} <: LandEcosystem
     α :: type = 0.15
     supLim :: type = 0.50
 end
