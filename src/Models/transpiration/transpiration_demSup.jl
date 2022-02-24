@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 @with_kw struct transpiration{type} <: TerEcosystem
     α :: type = 0.125
+=======
+export transpiration_demSup
+
+@with_kw struct transpiration_demSup{type} <: LandEcosystem
+    α :: type = 0.15
+>>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
     supLim :: type = 0.50
 end
 

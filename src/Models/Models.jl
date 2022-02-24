@@ -1,6 +1,5 @@
 module Models
-
-# Import & export necessary modules/functions
+using ..Sinbad: LandEcosystem
 using ..Sinbad
 using FieldMetadata: @metadata
 using TypedTables: Table
@@ -14,6 +13,19 @@ export describe, bounds, units
 
 export sindbad_models
 
+abstract type getStates <: LandEcosystem end
+include("getStates/getStates_simple.jl")
+abstract type rainSnow <: LandEcosystem end
+include("rainSnow/rainSnow_Tair.jl")
+include("rainSnow/rainSnow_simpleorwhatever.jl")
+abstract type snowMelt <: LandEcosystem end
+include("snowMelt/snowMelt_snowFrac.jl")
+abstract type evapSoil <: LandEcosystem end
+include("evapSoil/evapSoil_demSup.jl")
+abstract type transpiration <: LandEcosystem end
+include("transpiration/transpiration_demSup.jl")
+abstract type updateState <: LandEcosystem end
+include("updateState/updateState_wSimple.jl")
 
 ## Define SINDBAD supertype
 abstract type LandEcosystem end

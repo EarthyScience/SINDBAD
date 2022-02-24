@@ -1,5 +1,5 @@
 export updateState_wSimple
-@with_kw struct updateState_wSimple{type} <: TerEcosystem
+@with_kw struct updateState_wSimple{type} <: LandEcosystem
     calcFlux :: type = true
 end
 

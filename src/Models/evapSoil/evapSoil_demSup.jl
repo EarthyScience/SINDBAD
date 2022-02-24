@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 @with_kw struct evapSoil{type} <: TerEcosystem
+=======
+export evapSoil_demSup
+
+@with_kw struct evapSoil_demSup{type} <: LandEcosystem
+>>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
     α::type = 0.075
     supLim::type = 0.5
 end
