@@ -9,7 +9,6 @@ abstract type getStates <: LandEcosystem end
 include("getStates/getStates_simple.jl")
 abstract type rainSnow <: LandEcosystem end
 include("rainSnow/rainSnow_Tair.jl")
-include("rainSnow/rainSnow_simpleorwhatever.jl")
 abstract type snowMelt <: LandEcosystem end
 include("snowMelt/snowMelt_snowFrac.jl")
 abstract type evapSoil <: LandEcosystem end

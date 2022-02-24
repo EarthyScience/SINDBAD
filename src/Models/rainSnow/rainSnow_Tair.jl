@@ -10,12 +10,6 @@ end
 function compute(o::rainSnow_Tair, forcing, out)
     @unpack_rainSnow_Tair o # repetition
     (; Tair, rain) = forcing
-    # if Tair < Tair_thres
-    #     snow = rain
-    #     rain = 0.0
-    # else
-    #     snow = 0.0
-    # end
     snow = Tair < Tair_thres ? rain : 0.0
     rain = Tair >= Tair_thres ? rain : 0.0
     # rain = rain - snow
