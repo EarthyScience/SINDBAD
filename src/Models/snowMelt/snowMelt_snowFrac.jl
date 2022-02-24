@@ -1,6 +1,6 @@
 export snowMelt_snowFrac
 
-@with_kw struct snowMelt_snowFrac{type} <: TerEcosystem
+@with_kw struct snowMelt_snowFrac{type} <: LandEcosystem
     melt_T::type = 3.0 # parametric type
     melt_Rn::type = 2.0
 end

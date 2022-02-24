@@ -1,6 +1,6 @@
 export rainSnow_Tair
 
-@with_kw struct rainSnow_Tair{type} <: TerEcosystem
+@with_kw struct rainSnow_Tair{type} <: LandEcosystem
     Tair_thres::type = 0.5 # parametric
     para_a::type = 0.5
     para_b::type = 0.5

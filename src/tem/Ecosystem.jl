@@ -1,4 +1,4 @@
-abstract type TerEcosystem end
+abstract type LandEcosystem end
 
 function runEcosystem(forcing, models, out)
     for m in models
