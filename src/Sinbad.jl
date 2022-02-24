@@ -1,5 +1,4 @@
 module Sinbad
-
 using JSON
 using Reexport: @reexport
 @reexport begin
@@ -7,8 +6,11 @@ using Reexport: @reexport
 end
 
 export runEcosystem, evolveEcosystem
+<<<<<<< HEAD
 export SnowFrac, rainSnow, snowMelt, run, getForcing
 export evapSoil, transpiration, updateState, getStates
+=======
+>>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)
 export runGetConfiguration, setupTEM
 
 include("tem/Ecosystem.jl")
@@ -22,15 +24,7 @@ export getForcing
 include("tem/sindbadCore.jl")
 export getAllModels
 
-### the following should come from the model structure json
-
+### testing getting modules from jl files
 include("Models/Models.jl")
-
-# include("../tools/utils.jl")
-# include("../models/rainSnow/rainSnow_Tair.jl")
-# include("../models/snowMelt/snowMelt_snowFrac.jl")
-# include("../models/evapSoil/evapSoil_demSup.jl")
-# include("../models/transpiration/transpiration_demSup.jl")
-# include("../models/updateState/updateState_wSimple.jl")
 
 end
