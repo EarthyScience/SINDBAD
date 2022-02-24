@@ -7,7 +7,7 @@ using Reexport: @reexport
 end
 
 export runEcosystem, evolveEcosystem
-export SnowFrac, rainSnow, snowMelt, run, getforcing
+export SnowFrac, rainSnow, snowMelt, run, getForcing
 export evapSoil, transpiration, updateState, getStates
 export runGetConfiguration, setupTEM
 
