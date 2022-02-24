@@ -20,40 +20,18 @@ selected_models = [getStates_simple(), rainSnow_Tair(), snowMelt_snowFrac(), eva
 
 outTable = evolveEcosystem(forcing, selected_models, timesteps) # evolve is intransitive, may be use update?
 
-
-function runExperiment(exp_file, )
+## collect data and post process
+using GLMakie
+function plotResults(outTable; startTime=1, endTime=365)
+    fig = Figure(resolution = (2200, 900))
+    axs = [Axis(fig[i,j]) for i in 1:3 for j in 1:6]
+    for (i, vname) in enumerate(propertynames(outTable))
+        lines!(axs[i], @eval outTable.$(vname))
+        axs[i].title=string(vname)
+        xlims!(axs[i], startTime, endTime)
+    end
+    fig
 end
 
-## collect data and post process
-"""
-using GLMakie
- function plotResults(outTable, startTime=1, endTime=365)
-     fig = Figure(resolution = (2200, 900))
-     axs = [Axis(fig[i,j]) for i in 1:3 for j in 1:6]
-     for (i, vname) in enumerate(propertynames(outTable))
-         lines!(axs[i], @eval outTable.$(vname))
-         axs[i].title=string(vname)
-         xlims!(axs[i], startTime, endTime)
-     end
-     fig
- end
-
- plotResults(outTable)
-# selModels = propertynames(info.modelStructure.modules)
-# corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-# (; info.modelStructure.paths.coreTEM = corePath)
-
-# splitArray = split("info.tem.models", ".")
-
-# for fn in split("info.tem.models", ".")
-#     if fn !== last(splitArray)
-#         if fn ∉ info. 
-#         fnn=:fn
-#         merge(info, [fnn => 1])
-#     end
-# end
-
-# runmodel
-
-# post process
-"""
+endTime=3000
+plotResults(outTable; startTime=1,endTime=endTime)
