@@ -4,12 +4,13 @@ export updateState_wSimple
 end
 
 function compute(o::updateState_wSimple, forcing, out)
-    @unpack_updateState_wSimple o # repetition
-    (; fracTranspiration, fracEvapSoil, fracSnowMelt, rain, snow, wSnow, wSoil) = out
-    snowMelt = fracSnowMelt * wSnow
+    @unpack_updateState_wSimple o
+    (; fracTranspiration, fracEvapSoil, snowMelt, roSat, rain, snow, wSnow, wSoil) = out
     transpiration = fracTranspiration * wSoil
     evapSoil = fracEvapSoil * wSoil
-    wSnow = wSnow + snow - fracSnowMelt * wSnow
-    wSoil = wSoil + rain + snowMelt - evapSoil - transpiration
-    return (; out..., wSnow, wSoil, snowMelt, evapSoil, transpiration)
+    roTotal = roSat
+    evapTotal = evapSoil + transpiration
+    wSnow = wSnow + snow - snowMelt
+    wSoil = wSoil + rain + snowMelt - roTotal - evapTotal
+    return (; out..., wSnow, wSoil, roTotal,  evapTotal, evapSoil, transpiration)
 end
