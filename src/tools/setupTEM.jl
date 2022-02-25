@@ -1,4 +1,5 @@
 using Sinbad.Models
+using Accessors
 export setupTEM!
 
 function checkModelForcingExists(info, forcingVariables)
@@ -42,6 +43,8 @@ function getSelectedApproaches(info, selModelsOrdered)
             push!(sel_appr_spinup, sel_approach_func)
         end
     end
+    # @set info.tem.models.forward = sel_appr_forward
+    # @set info.tem.models.spinup = sel_appr_spinup
     info=(; info..., tem=(; models = (; forward = sel_appr_forward, spinup = sel_appr_spinup)));
     return info
 end

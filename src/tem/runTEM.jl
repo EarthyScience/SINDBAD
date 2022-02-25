@@ -17,10 +17,10 @@ function runForwardTEM(info, forcing, out, update_timeseries=true)
     valuesOut = [outTime[:, i] for i in 1:length(namesOut)]
     outTable = Table((; zip(namesOut, valuesOut)...))
 
-    if update_timeseries
-        # update the fluxes and states.. usually for spinup, we do not need the time series, and so this flag is useful for spinup vs forward run.. may be this chunk needs to be another function because it needs to have option to have the time series of the variables that are listed to be stored in output.json.
-        println("not done yet")
-    end
+    # if update_timeseries
+    #     # update the fluxes and states.. usually for spinup, we do not need the time series, and so this flag is useful for spinup vs forward run.. may be this chunk needs to be another function because it needs to have option to have the time series of the variables that are listed to be stored in output.json.
+    #     println("not done yet")
+    # end
     return outTable
 end
 
@@ -44,7 +44,7 @@ function runSpinupTEM(info, forcing)
     return out
 end
 
-function runTEM(info, forcing, optimize=false, observation=nothing)
+function runTEM(info, forcing; optimize=false, observation=nothing)
     # runSpinupTEM : runspinup
     out = runSpinupTEM(info, forcing)
 
