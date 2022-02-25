@@ -1,6 +1,8 @@
 using Revise
 using Sinbad
 include("setupTEM.jl")
+include("../optimization/optimizeTEM.jl")
+
 
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = runGetConfiguration(expFile);
@@ -10,25 +12,32 @@ info = setupTEM!(info);
 
 ## prepare TEM => read forcing, create arrays if needed, handle observations when needed for optimization or calculation of model cost
 forcing = getForcing(info)
+observation = getObservation(info)
+
 
 ## run TEM => optimization or forward run
-for t = 1:50
-    # @show t
-    @time outTable = runTEM(info, forcing)
+if info.modelRun.flags.runOpti == true
+    optim = optimizeTEM(info, forcing, observation)
+else
+    for t = 1:10
+        # @show t
+        @time outTable = runTEM(info, forcing)
+    end
 end
 ## post process
+outTable = runTEM(info, forcing)
 using GLMakie
-function plotResults(outTable; startTime=1, endTime=365)
+function plotResults(outTable; startTime = 1, endTime = 365)
     fig = Figure(resolution = (2200, 900))
-    axs = [Axis(fig[i,j]) for i in 1:3 for j in 1:6]
+    axs = [Axis(fig[i, j]) for i in 1:3 for j in 1:6]
     for (i, vname) in enumerate(propertynames(outTable))
         lines!(axs[i], @eval outTable.$(vname))
-        axs[i].title=string(vname)
+        axs[i].title = string(vname)
         xlims!(axs[i], startTime, endTime)
     end
     fig
 end
 
-endTime=3000
-plotResults(outTable; startTime=1,endTime=endTime)
+endTime = 3000
+plotResults(outTable; startTime = 1, endTime = endTime)
 
