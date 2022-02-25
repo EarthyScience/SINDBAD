@@ -12,8 +12,10 @@ info = setupTEM!(info);
 forcing = getForcing(info)
 
 ## run TEM => optimization or forward run
-outTable = runTEM(info, forcing)
-
+for t = 1:50
+    # @show t
+    @time outTable = runTEM(info, forcing)
+end
 ## post process
 using GLMakie
 function plotResults(outTable; startTime=1, endTime=365)
@@ -29,3 +31,4 @@ end
 
 endTime=3000
 plotResults(outTable; startTime=1,endTime=endTime)
+
