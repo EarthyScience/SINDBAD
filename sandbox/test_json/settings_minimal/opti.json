@@ -24,75 +24,20 @@
 		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
 	},
 	"params2opti": [
-		"p.evapSoil.alpha",
-		"p.evapSoil.supLim",
-		"p.roBase.bc",
-		"p.roSurf.berg",
-		"p.snowMelt.melt_T",
-		"p.snowMelt.melt_Rn",
-		"p.wSoilRec.dos_exp"
-			],
+		"evapSoil.α",
+		"evapSoil.supLim",
+		"snowMelt.melt_T",
+		"snowMelt.melt_Rn"],
 	"checks": "",
 	"constraints": {
 		"funName": {
 			"import": "readObservationRoasted",
 			"check": ""
 		},
-		"oneDataPath": "",
+		"oneDataPath": "data/BE-Vie.2000-2019.nc",
 		"variables": {
-			"gpp": {
-				"modelFullVar": "fx.gpp",
-				"data": {
-					"variableUnit": "gC m-2 day-1",
-					"bounds": [
-						0,
-						500
-					],
-					"sourceVariableName": "GPP_NT_FLUXNET",
-					"sourceVariableUnit": "gC m-2 day-1",
-					"source2sindbadUnit": "*1",
-					"isCategorical": false,
-					"nameShort": "Gross Primary Productivity",
-					"spaceTimeType": "normal",
-					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
-				},
-				"unc": {
-					"dataPath": "",
-					"bounds": [
-						0,
-						400
-					],
-					"sourceVariableName": "NEE_RANDUNC_FLUXNET"
-				},
-				"qflag": {
-					"dataPath": "",
-					"bounds": [
-						0,
-						1
-					],
-					"sourceVariableName": "NEE_QC_FLUXNET"
-				},
-				"costOptions": {
-					"trimPerc": [],
-					"aggrOrder": "timespace",
-					"spatialAggr": "cat",
-					"spatialCostAggr": "cat",
-					"temporalAggr": "day",
-					"temporalAggrObs": false,
-					"temporalAggrFunc": "nanmean",
-					"costMetric": "mefinv",
-					"costWeight": 1,
-					"areaWeight": false,
-					"quality_bound": [
-						0.85,
-						1
-					],
-					"data_bound": []
-				}
-			},
 			"evapTotal": {
-				"modelFullVar": "fx.evapTotal",
+				"modelFullVar": "evapTotal",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
@@ -143,7 +88,7 @@
 				}
 			},
 			"tranAct": {
-				"modelFullVar": "fx.tranAct",
+				"modelFullVar": "transpiration",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
