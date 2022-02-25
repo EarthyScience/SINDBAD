@@ -34,9 +34,5 @@ function getForcing(info)
     end
     forcing = Table((; zip(varlist, dataAr)...))
     return forcing
-<<<<<<< HEAD
 end
 
-=======
-end
->>>>>>> 726b9fd (merge of main and tools_skoirala; cleanup, unit conversion)

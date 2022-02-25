@@ -13,6 +13,10 @@
             "apprName": "demSup",
             "use4spinup": true
         },
+        "roSat": {
+            "apprName": "Bergstroem",
+            "use4spinup": true
+        },
         "rainSnow": {
             "apprName": "Tair",
             "use4spinup": true

@@ -6,8 +6,6 @@ provides the core modules of sindbad over which the TEM is run. The list is orde
 
 function getEcoProcess()
     ecoProcess = NamedTuple()
-    ecoProcess = (; rainSnow = "set rain and snow to fe.rainSnow.")
-    ecoProcess = (; ecoProcess..., rainSnow = "set rain and snow to fe.rainSnow.")
     # ---------------------------------------------------------------------
     # Climate: rainfall, snowfall, rainfall intensities, PET, ambCO2
     # ---------------------------------------------------------------------
