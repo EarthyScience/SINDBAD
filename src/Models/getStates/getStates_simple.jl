@@ -6,8 +6,9 @@ end
 
 function compute(o::getStates_simple, forcing, out)
     @unpack_getStates_simple o
-    (; wSoil, wSnow) = out
-    return (; out..., wSoil, wSnow)
+    (; rain) = out
+    WBP = rain
+    return (; out..., WBP)
 end
 
 export getStates_simple
