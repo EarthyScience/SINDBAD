@@ -23,5 +23,6 @@ export getEcoProcess
 
 ### testing getting modules from jl files
 include("Models/Models.jl")
+export Models
 
 end
