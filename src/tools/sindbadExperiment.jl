@@ -17,15 +17,14 @@ observation = getObservation(info)
 
 ## run TEM => optimization or forward run
 if info.modelRun.flags.runOpti == true
-    optim = optimizeTEM(info, forcing, observation)
+    outTable = optimizeTEM(info, forcing, observation)
 else
     for t = 1:10
-        # @show t
         @time outTable = runTEM(info, forcing)
     end
+    outTable = runTEM(info, forcing)
 end
 ## post process
-outTable = runTEM(info, forcing)
 using GLMakie
 function plotResults(outTable; startTime = 1, endTime = 365)
     fig = Figure(resolution = (2200, 900))
