@@ -1,7 +1,11 @@
 using Sinbad
-using Optim
 using Setfield
 using Statistics
+using Optim
+using CMAEvolutionStrategy
+using Evolutionary
+
+# using Accessors
 
 function perfMetric(info, out, obs)
     varnames = Symbol.(info.opti.variables2constrain);
@@ -19,6 +23,7 @@ function perfMetric(info, out, obs)
         # PsO = sum(skipmissing((modData - obsData) .^ 2));
         # mefinv = PsO ./ OmO
         # cost = cost + 
+        # @show sum(collect(skipmissing(modData))), sum(collect(skipmissing(obsData)))
         cost = cost + bias
     end
     return cost
@@ -79,8 +84,17 @@ function updateModelParameters(pVector, info)
             end
             push!(updated_appr, appr2)
         end
-        @eval (@set! info.tem.models.$model_mode_symbol = updated_appr);
+        # the following line does not update the field for some reason, and so the if block is added
+        # @eval (@set! info.tem.models.$model_mode_symbol = updated_appr);
+
+        if model_mode == "forward"
+            # (; out..., roSat)
+            @set! info.tem.models.forward = updated_appr;
+        else
+            @set! info.tem.models.spinup = updated_appr;
+        end
     end
+    # @show info.tem.models.forward, updated_appr, pVector
     return info
 end
 
@@ -92,20 +106,39 @@ function calcCost(pVector, info, forcing, observation)
     # runForwardTEM: use the output of spinup to do forward run
     outTab = runForwardTEM(info, forcing, out)
     cost = perfMetric(info, outTab, observation)
-    # cost= Statistics.mean(outTab.roTotal)
     @show pVector, cost
     return cost
 end
 
 function optimizeTEM(info, forcing, observation)
-    funcCalc = (x -> calCost(x, info, forcing, observation))
+    info_upd = info
+    costFunc = x -> calcCost(x, info_upd, forcing, observation)
     defParams = getDefaultParameters(info)
-    @show defParams
-    # x = defParams
-    inner_optimizer = GradientDescent()
-    results = optimize(x -> calcCost(x, info, forcing, observation), defParams.lower, defParams.upper, defParams.default, Fminbox(inner_optimizer))
-    # results = optimize(x -> calcCost(x, info, forcing, observation), defParams.default)
-    return results
+    optiAlgo = info.opti.algorithm.funName
+    if optiAlgo == "cmaes"
+        results = CMAEvolutionStrategy.minimize(costFunc, defParams.default, 1;
+            lower = defParams.lower,
+            upper = defParams.upper,
+            multi_threading=true,
+            maxfevals = 1000)
+        optim_para = CMAEvolutionStrategy.xbest(results)
+    elseif optiAlgo == "Optim_jl"
+        inner_optimizer = Optim.GradientDescent()
+        results = Optim.optimize(costFunc, defParams.lower, defParams.upper, defParams.default, Optim.Fminbox(inner_optimizer))
+        optim_para = Optim.minimizer(results)
+    elseif optiAlgo == "Evolutionary_jl"
+        results = Evolutionary.optimize(costFunc, Evolutionary.BoxConstraints(defParams.lower, defParams.upper), defParams.default,
+        Evolutionary.GA(populationSize = 100, selection = susinv,
+                crossover = DC, mutation = Evolutionary.PLM()))
+        optim_para = Evolutionary.minimizer(results)
+    else
+        outTab = runTEM(info, forcing)
+        return outTab
+    end
+    info_opt = updateModelParameters(optim_para, info)
+    # runTEM: use the output of spinup to do forward run
+    outTab = runTEM(info_opt, forcing)
+    return outTab
 end
 
 
