@@ -6,9 +6,13 @@ CurrentModule = Sinbad
 
 Documentation for [Sinbad](https://git.bgc-jena.mpg.de/sindbad/sinbad.jl).
 
-```@index
+## Installing Sinbad
+
+```julia
+]
+pkg > add https://git.bgc-jena.mpg.de/sindbad/sinbad.jl.git
 ```
 
-```@autodocs
-Modules = [Sindbad]
+```julia
+using Sinbad
 ```

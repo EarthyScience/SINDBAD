@@ -43,32 +43,23 @@
 		"w":
 		{
 			"pools" :
-			[
-				["w.Soil", 		4, 	100],
-				["w.GW", 		1, 	0],
-				["w.Snow", 		1, 	0]
-			],
-			"combine":		[false,"wPools",0],
-			"wSoilLayersThickness":    [50, 200,750, 1000]
+                {
+                "wSoil": [1, 1, 100.0],
+                "wGW": [1,1,1000.0],
+				"wSnow": [1,1,0.01]
+            },
+			"combine": [false,"wPools",0],
+			"wSoilLayersThickness": [50, 200,750, 1000]
 		},
 		"wd":
 		{
 			"pools" :
 			[
 				["WTD", 		1, 	0],
-				["w.SnowFrac", 	1, 	0],
-				["w.Total", 	1, 	400]
+				["wSnowFrac", 	1, 	0],
+				["wTotal", 	1, 	400]
 			],
 			"combine":		[false,"wStates",0]
-		},
-		"c":
-		{
-        "pools" :
-        [["noC", 		1, 	0]
-    ],
-        "oldNames":		[],
-        "comment": "",
-		"combine":		[true,"cEco",100]
 		}
 	}
 }
