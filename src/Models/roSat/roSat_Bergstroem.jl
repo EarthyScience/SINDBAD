@@ -1,16 +1,23 @@
 export roSat_Bergstroem
 
-@with_kw struct roSat_Bergstroem{type} <: LandEcosystem
-    beta::type = 0.5
-    s_max::type = 1000.0
-    frac_ro::type = 0.2
+@with_kw struct roSat_Bergstroem{T1, T2} <: roSat
+    β::T1 = 0.5
+    s_max::T2 = 1000.0
 end
 
 function compute(o::roSat_Bergstroem, forcing, out)
-    @unpack_roSat_Bergstroem o 
-    (; wSoil, WBP) = out
-    # fracRoSat = minimum([maximum([(wSoil / s_max) .^ beta, 0]), 1.0])
-    # roSat = fracRoSat * WBP
-    roSat = frac_ro * WBP
-    return (; out..., roSat)
+    @unpack_roSat_Bergstroem o
+    (; wSoil) = out
+    #fracRoSat = (sum(wSoil,1) / s_max)^β
+    fracRoSat = 0.2
+    #fracRoSat = fracRoSat < 0.0 ? 0.0 : fracRoSat > 1.0 ? 1.0 : fracRoSat
+    return (; out..., fracRoSat)
+end
+
+function update(o::roSat_Bergstroem, forcing, out)
+    (; fracRoSat, wSoil, WBP) = out
+    roSat = fracRoSat * WBP
+    WBP = WBP - roSat
+    wSoil[1] = wSoil[1] + WBP
+    return (; out..., roSat, WBP, wSoil)
 end

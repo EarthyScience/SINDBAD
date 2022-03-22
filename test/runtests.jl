@@ -1,6 +1,9 @@
-using Revise
 using Sinbad
 using Test
+
+using Sinbad.Models: rainSnow_Tair
+
+rainSnow_Tair()
 
 m1 =  rainSnow()
 m2 = snowMelt()
@@ -19,7 +22,7 @@ forcing, timesteps = getforcing()
     values = [rand(100), rand(100), rand(100)]
     forcing = Table((; zip(variables, values)...))
     timesteps = length(forcing)
-    outTime = evolveEcosystem(forcing, models, timesteps)
+    outTime = runModels(forcing, models, timesteps)
 
     @test m1.Tair_thres == 0.5
     @test m2.melt_T == 3.0

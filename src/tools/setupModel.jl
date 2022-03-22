@@ -1,7 +1,3 @@
-using Sinbad.Models
-using Accessors
-export setupTEM!
-
 function checkModelForcingExists(info, forcingVariables)
     println("Not done")
 end
@@ -30,17 +26,17 @@ function getSelectedOrderedModels(fullModels, selModels)
 end
 
 function getSelectedApproaches(info, selModelsOrdered)
-    sel_appr_forward = []
-    sel_appr_spinup = []
+    sel_appr_forward = ()
+    sel_appr_spinup = ()
     println(selModelsOrdered)
     for sm in selModelsOrdered
         modInfo = getfield(info.modelStructure.models, sm)
         modAppr = modInfo.apprName
         sel_approach = String(sm) * "_" * modAppr
         sel_approach_func = getfield(Sinbad.Models, Symbol(sel_approach))()
-        push!(sel_appr_forward, sel_approach_func)
+        sel_appr_forward = (sel_appr_forward..., sel_approach_func)
         if modInfo.use4spinup == true
-            push!(sel_appr_spinup, sel_approach_func)
+            sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
         end
     end
     # @set info.tem.models.forward = sel_appr_forward
@@ -49,12 +45,12 @@ function getSelectedApproaches(info, selModelsOrdered)
     return info
 end
 
-function setupTEM!(info)
+function setupModel!(info)
     selModels = propertynames(info.modelStructure.models)
     # corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
     # info=(; info..., paths=(coreTEM = corePath));
     # include(corePath)
-    fullModels = propertynames(getEcoProcess())
+    fullModels = propertynames(getEcosystem())
     selected_models = getSelectedOrderedModels(fullModels, selModels)
     info = getSelectedApproaches(info, selected_models)
     return info
