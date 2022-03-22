@@ -16,10 +16,5 @@ m2 = snowMelt()
 models = (m1, m2)
 
 # some fake data
-variables = [:rain, :Tair, :Rn]
-values = [rand(100), rand(100), rand(100)]
-forcing = Table((; zip(variables, values)...))
-timesteps = length(forcing)
-
-outTime = evolveEcosystem(forcing, models, timesteps)
+# see experiment.jl
 ```

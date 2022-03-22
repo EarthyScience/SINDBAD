@@ -1,10 +1,10 @@
 """
-            getEcoProcess(info)
+            getEcosystem(info)
 
 provides the core modules of sindbad over which the TEM is run. The list is ordered and that order is maintained in the call of sindbad.
 """
 
-function getEcoProcess()
+function getEcosystem()
     ecoProcess = NamedTuple()
     # ---------------------------------------------------------------------
     # Climate: rainfall, snowfall, rainfall intensities, PET, ambCO2
