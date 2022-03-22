@@ -1,6 +1,3 @@
-using TypedTables
-
-
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)

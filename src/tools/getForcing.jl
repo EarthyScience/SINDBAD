@@ -1,12 +1,11 @@
-# data with NCDatasets
-using NCDatasets, TypedTables
-
 function checkForcingBounds(forcingVariable, bounds)
     println("Not done")
 end
 
+"""
+getForcing(info)
+"""
 function getForcing(info)
-
     if isempty(info.forcing.oneDataPath) == false
         doOnePath = true
         if isabspath(info.forcing.oneDataPath)
@@ -15,21 +14,21 @@ function getForcing(info)
             dataPath = joinpath(pwd(), info.forcing.oneDataPath)
         end
     end
-    varnames = propertynames(info.forcing.variables);
+    varnames = propertynames(info.forcing.variables)
     varlist = []
-    dataAr=[]
+    dataAr = []
     for v in varnames
         vinfo = getproperty(info.forcing.variables, v)
         if doOnePath == false
             dataPath = v.dataPath
         end
         if vinfo.spaceTimeType == "normal"
-            ds = NCDatasets.Dataset(dataPath)
+            ds = Dataset(dataPath)
             srcVar = vinfo.sourceVariableName
             tarVar = Symbol(v)
             push!(varlist, tarVar)
             data_tmp = ds[srcVar][1, 1, :]
-            push!(dataAr,  eval(Meta.parse("$data_tmp" * vinfo.source2sindbadUnit)))
+            push!(dataAr, eval(Meta.parse("$data_tmp" * vinfo.source2sindbadUnit)))
         end
     end
     forcing = Table((; zip(varlist, dataAr)...))

@@ -1,7 +1,7 @@
 export rainSnow_Tair
 
-@with_kw struct rainSnow_Tair{type} <: LandEcosystem
-    Tair_thres::type = 0.5
+@with_kw struct rainSnow_Tair{T} <: rainSnow
+    Tair_thres::T = 0.5
 end
 
 function compute(o::rainSnow_Tair, forcing, out)
@@ -12,4 +12,8 @@ function compute(o::rainSnow_Tair, forcing, out)
     # rain = rain - snow
     precip = rain + snow
     return (; out..., Tair, snow, rain, precip)
+end
+
+function update(o::rainSnow_Tair, forcing, out)
+    return out
 end
