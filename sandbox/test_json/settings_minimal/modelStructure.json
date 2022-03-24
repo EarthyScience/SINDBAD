@@ -25,10 +25,6 @@
             "apprName": "snowFrac",
             "use4spinup": true
         },
-        "updateState": {
-            "apprName": "wSimple",
-            "use4spinup": true
-        },
         "transpiration": {
             "apprName": "demSup",
             "use4spinup": true

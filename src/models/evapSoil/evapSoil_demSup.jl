@@ -3,24 +3,26 @@
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
 end
 
-function compute(o::evapSoil_demSup, forcing, diagflux, states, info)
+function compute(o::evapSoil_demSup, forcing, out, info)
     @unpack_evapSoil_demSup o
+    (; wSoil) = out.states
     (; Rn) = forcing
-    (; wSoil) = states # unpack.out, unpack.states
     PETsoil = Rn * α
     PETsoil = PETsoil < 0.0 ? 0.0 : PETsoil
     fracEvapSoil = min(PETsoil / wSoil[1], supLim) # wSoil[index]
-    (; fluxes..., PETsoil; diagnostics..., fracEvapSoil; states)
+    evapSoil = fracEvapSoil * wSoil[1]
 
-    return (; diagflux..., PETsoil, fracEvapSoil; states)
+    out = (; out..., fluxes = (; out.fluxes..., PETsoil, evapSoil))
+    out = (; out..., diagnostics = (; out.diagnostics..., fracEvapSoil))
+    return out
 end
 
-function update(o::evapSoil_demSup, forcing, diagflux, states, info)
-    (; fracEvapSoil) = diagflux
-    (; wSoil) = states
-    evapSoil = fracEvapSoil * wSoil[1]
+function update(o::evapSoil_demSup, forcing, out, info)
+    (; evapSoil) = out.fluxes
+    (; wSoil) = out.states
     wSoil[1] = wSoil[1] - evapSoil
-    return (; diagflux..., evapSoil; states..., wSoil)
+    out = (; out..., states = (; out.states..., wSoil))
+    return out
 end
 
 export evapSoil_demSup
