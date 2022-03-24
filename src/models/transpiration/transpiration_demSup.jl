@@ -5,22 +5,23 @@ export transpiration_demSup
     supLim::T2 = 0.50
 end
 
-function compute(o::transpiration_demSup, forcing, diagflux, states, info)
+function compute(o::transpiration_demSup, forcing, out, info)
     @unpack_transpiration_demSup o
     (; Rn) = forcing
-    (; wSoil) = states
+    (; wSoil) = out.states
     PETveg = Rn * α
     PETveg = PETveg < 0.0 ? 0.0 : PETveg
     fracTranspiration = min(PETveg/sum(wSoil[:,1]), supLim)
-    return (; diagflux..., fracTranspiration; states)
+    transpiration = fracTranspiration * sum(wSoil[:, 1])
+    out = (; out..., diagnostics = (; out.diagnostics..., fracTranspiration))
+    out = (; out..., fluxes = (; out.fluxes..., transpiration, PETveg))
+    return out
 end
 
-function update(o::transpiration_demSup, forcing, diagflux, states, info)
-    (; fracTranspiration) = diagflux
-    (; wSoil) = states
-    transpiration = fracTranspiration * sum(wSoil[:, 1])
+function update(o::transpiration_demSup, forcing, out, info)
+    (; transpiration) = out.fluxes
+    (; wSoil) = out.states
     wSoil[1] = wSoil[1] - transpiration
-
-
-    return (;diagflux..., transpiration), (;states..., wSoil)
+    out = (; out..., states = (; out.states..., wSoil))
+    return out
 end

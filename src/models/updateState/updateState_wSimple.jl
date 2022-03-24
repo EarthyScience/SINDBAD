@@ -3,25 +3,27 @@ export updateState_wSimple
     calcFlux :: T = true
 end
 
-function compute(o::updateState_wSimple, forcing, diagflux, states, info)
+function compute(o::updateState_wSimple, forcing, out, info)
     @unpack_updateState_wSimple o
-    (; fracTranspiration, fracEvapSoil, snowMelt, fracRoSat, rain, snow, wSnow, wSoil) = out
+    (; fracTranspiration, fracEvapSoil) = out.diagnostics
+    (; snowMelt, transpiration, evapSoil, rain, roSat, snow) = out.fluxes
+    (; wSnow, wSoil) = out.states
     # assert fracTranspiration + fracEvapSoil < 1
-    # assert 
+    # assert
     if fracTranspiration + fracEvapSoil >= 1.0
         fracEvapSoil = 1.0 - fracTranspiration
+        evapSoil = fracEvapSoil * sum(wSoil[:, 1])
     end
 
-    transpiration = fracTranspiration * sum(wSoil[:, 1])
-    evapSoil = fracEvapSoil * sum(wSoil[:, 1])
-    roSat = fracRoSat * sum(wSoil[:, 1])
     roTotal = roSat
     evapTotal = evapSoil + transpiration
     wSnow[1] = wSnow[1] + snow - snowMelt
     wSoil[1] = wSoil[1] + rain + snowMelt - roTotal - evapTotal
-    return (; out..., wSnow, wSoil, roTotal, evapTotal, evapSoil, transpiration)
+    out = (; out..., states = (; out.states..., wSoil, wSnow))
+    out = (; out..., fluxes = (; out.fluxes..., evapSoil, evapTotal, roTotal))
+    return out
 end
 
-function update(o::updateState_wSimple, forcing, diagflux, states, info)
+function update(o::updateState_wSimple, forcing, out, info)
     return out
 end

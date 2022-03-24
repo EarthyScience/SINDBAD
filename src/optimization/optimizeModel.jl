@@ -82,8 +82,10 @@ end
 getSimulationData(outsmodel, observations, modelnames, obsnames)
 """
 function getSimulationData(outsmodel, observations, modelnames, obsnames)
-    ŷ = outsmodel |> select(modelnames...) |> columntable |> matrix
+    ŷ = outsmodel.fluxes |> columntable |> select(modelnames...) |> matrix
     y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    # ŷ = outsmodel.fluxes |> select(modelnames...) |> columntable |> matrix
+    # y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
     return (y, ŷ)
 end
 
@@ -97,11 +99,12 @@ end
 """
 getLoss(pVector, approaches, initStates, forcing, observations, tblParams, obsnames, modelnames)
 """
-function getLoss(pVector, approaches, initStates, forcing,
+function getLoss(pVector, approaches, initStates, forcing, info,
     observations, tblParams, obsnames, modelnames)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
-    outevolution = runEcosystem(newApproaches, initStates, forcing; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initStates, forcing, info; nspins=3) # spinup + forward run!
+    # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, modelnames, obsnames)
     return loss(y, ŷ)
 end
@@ -109,18 +112,18 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initStates, obsnames, modelnames)
 """
-function optimizeModel(forcing, observations, selectedModels, optimParams, initStates, obsnames, modelnames; maxfevals=100)
+function optimizeModel(forcing, info, observations, selectedModels, optimParams, initStates, obsnames, modelnames; maxfevals=100)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
-    costFunc = x -> getLoss(x, selectedModels, initStates, forcing,
+    costFunc = x -> getLoss(x, selectedModels, initStates, forcing, info,
         observations, tblParams, obsnames, modelnames)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(newApproaches, initStates, forcing; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initStates, forcing, info; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end
