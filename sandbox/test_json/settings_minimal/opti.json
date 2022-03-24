@@ -23,6 +23,8 @@
 		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
 	},
 	"params2opti": [
+		"transpiration.α",
+		"transpiration.supLim",
 		"evapSoil.α",
 		"evapSoil.supLim",
 		"snowMelt.melt_T",
