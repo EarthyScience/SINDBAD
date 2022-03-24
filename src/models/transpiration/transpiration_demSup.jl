@@ -1,8 +1,8 @@
 export transpiration_demSup
 
-@with_kw struct transpiration_demSup{T1, T2} <: transpiration
-    α::T1 = 0.15
-    supLim::T2 = 0.50
+@bounds @describe @units @with_kw struct transpiration_demSup{T1, T2} <: transpiration
+    α::T1 = 0.075 | (0.051, 3.0) | "alpha parameter" | ""
+    supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
 end
 
 function compute(o::transpiration_demSup, forcing, out, info)
@@ -11,8 +11,10 @@ function compute(o::transpiration_demSup, forcing, out, info)
     (; wSoil) = out.states
     PETveg = Rn * α
     PETveg = PETveg < 0.0 ? 0.0 : PETveg
-    fracTranspiration = min(PETveg/sum(wSoil[:,1]), supLim)
-    transpiration = fracTranspiration * sum(wSoil[:, 1])
+    ∑wSoil = sum(wSoil[:,1])
+    fracTranspiration = min(PETveg/∑wSoil, supLim)
+    transpiration = fracTranspiration * ∑wSoil
+    # @show α, supLim, fracTranspiration, PETveg, transpiration
     out = (; out..., diagnostics = (; out.diagnostics..., fracTranspiration))
     out = (; out..., fluxes = (; out.fluxes..., transpiration, PETveg))
     return out
