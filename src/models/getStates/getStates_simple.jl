@@ -4,15 +4,16 @@
     # wSnow::type = 0.0
 end
 
-function compute(o::getStates_simple, forcing, diagflux, states, info)
+function compute(o::getStates_simple, forcing, out, info)
     @unpack_getStates_simple o
-    (; rain) = diagflux
+    (; rain) = out.fluxes
     WBP = rain
-    return (; diagflux..., WBP)
+    out = (; out..., diagnostics = (; out.diagnostics..., WBP))
+    return out
 end
 
-function update(o::getStates_simple, forcing, diagflux, states, info)
-    return (diagflux, states)
+function update(o::getStates_simple, forcing, out, info)
+    return out
 end
 
 export getStates_simple

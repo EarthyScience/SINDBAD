@@ -1,7 +1,6 @@
 {
 	"variables2constrain": [
-		"tranAct",
-		"evapTotal"
+		"tranAct"
 	],
 	"costFun": {
 		"funName": "costMultiConstraint",
@@ -37,7 +36,7 @@
 		"oneDataPath": "data/BE-Vie.2000-2019.nc",
 		"variables": {
 			"evapTotal": {
-				"modelFullVar": "diagflux.evapTotal",
+				"modelFullVar": "evapTotal",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
