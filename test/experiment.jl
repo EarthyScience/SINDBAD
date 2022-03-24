@@ -1,6 +1,7 @@
 using Revise
 using Sinbad
-using ProfileView
+# using ProfileView
+using BenchmarkTools
 #using GLMakie
 
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
@@ -25,4 +26,5 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti)
 
 #tableParams, outEcosystem = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
 
-@ProfileView.profview optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
+optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
+# @ProfileView.profview optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
