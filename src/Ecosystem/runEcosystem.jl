@@ -1,19 +1,19 @@
 """
-runModels(forcing, models, out)
+runModels(forcing, models, diagflux, states, info)
 """
-function runModels(forcing, models, out)
+function runModels(forcing, models, diagflux, states, info)
     for m in models
-        out = Models.compute(m, forcing, out)
-        # out = Models.update(m, forcing, out)
+        out = Models.compute(m, forcing, diagflux, states, info)
+        # out = Models.update(m, forcing, diagflux, states, info)
     end
     return out
 end
 
 """
-runForward(selectedModels, forcing, out)
+runForward(selectedModels, forcing, diagflux, states, info)
 """
-function runForward(selectedModels, forcing, out)
-    outtuples = [runModels(forcing[t], selectedModels, out) for t in 1:size(forcing, 1)]
+function runForward(selectedModels, forcing, diagflux, states, info)
+    outtuples = [runModels(forcing[t], selectedModels, diagflux, states, info) for t in 1:size(forcing, 1)]
     return columntable(outtuples)
 end
 
@@ -23,12 +23,12 @@ runSpinup(selectedModels, initStates, forcing, history=false; nspins=3)
 function runSpinup(selectedModels, initStates, forcing, history=false; nspins=3)
     out = initStates
     tsteps = size(forcing, 1)
-    spinuplog = history ? [values(out)[1:length(initStates)]] : nothing
+    spinuplog = history ? [values(diagflux, states, info)[1:length(initStates)]] : nothing
     for j in 1:nspins
         for t in 1:tsteps
-            out = runModels(forcing[t], selectedModels, out)
+            out = runModels(forcing[t], selectedModels, diagflux, states, info)
             if history
-                push!(spinuplog, values(out)[1:length(initStates)])
+                push!(spinuplog, values(diagflux, states, info)[1:length(initStates)])
             end
         end
     end
@@ -40,5 +40,5 @@ runEcosystem(selectedModels, initStates, forcing, history=false; nspins=3) # for
 """
 function runEcosystem(selectedModels, initStates, forcing, history=false; nspins=3) # forward run
     out, outlog = runSpinup(selectedModels, initStates, forcing, history; nspins=nspins)
-    return runForward(selectedModels, forcing, out)
+    return runForward(selectedModels, forcing, diagflux, states, info)
 end
