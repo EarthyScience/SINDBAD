@@ -25,6 +25,10 @@
             "apprName": "snowFrac",
             "use4spinup": true
         },
+        "sumVariables": {
+            "apprName": "simple",
+            "use4spinup": true
+        },
         "transpiration": {
             "apprName": "demSup",
             "use4spinup": true
@@ -56,6 +60,27 @@
 				["wTotal", 	1, 	400]
 			],
 			"combine":		[false,"wStates",0]
-		}
+		},
+		"c":
+		{
+			"pools" :
+                {
+                "cVeg": {
+                    "cVegRoot": [1, 1, 100.0],
+                    "cVegWood": [1, 1, 100.0],
+                    "cVegLeaf": [1, 1, 100.0],
+                    "cVegReserve": [1, 1, 100.0]
+                },
+                "cSoil": {
+                    "cSoilSlow": [1, 1, 100.0],
+                    "cSoilFast": [1, 1, 100.0]
+                },
+                "cLitter": {
+                    "cLitterSlow": [1, 1, 100.0],
+                    "cLitterFast": [1, 1, 100.0]
+                }
+            },
+			"combine": [true,"cEco"]
+		}        
 	}
 }

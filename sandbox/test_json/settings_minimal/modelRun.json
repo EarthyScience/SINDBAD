@@ -37,20 +37,14 @@
 	{
 		"roTotal":
 		{
-		"destination": "fx",
-		"components":["fx.roSurf","fx.roBase"],
+		"destination": "fluxes",
+		"components":["fluxes.roSat","fluxes.roBase"],
 		"balance": true
 		},
 		"evapTotal":
 		{
-		"destination": "fx",
-		"components":["fx.evapInt","fx.tranAct","fx.evapSoil","fx.evapSub"],
-		"balance": true
-		},
-		"wTotal":
-		{
-		"destination": "s.wd",
-		"components":"s.w.",
+		"destination": "fluxes",
+		"components":["fluxes.evapInt","fluxes.transpiration","fluxes.evapSoil","fluxes.evapSub"],
 		"balance": true
 		}
 	},
