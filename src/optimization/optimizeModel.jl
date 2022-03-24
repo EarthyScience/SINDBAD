@@ -8,11 +8,11 @@ function getParameters(selectedModels)
     nbounds = length(constrains)
     lower = [constrains[i][1] for i in 1:nbounds]
     upper = [constrains[i][2] for i in 1:nbounds]
-    vars = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
     modelsApproach = [parentnameflatten(selectedModels)...]
     models = [Symbol(supertypes(@eval $m)[2]) for m in modelsApproach]
-    varsModels = [join((models[i], vars[i]), ".") for i in 1:nbounds]
-    return Table(; defaults, optim=defaults, lower, upper, vars, modelsApproach, models, varsModels)
+    varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
+    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
 end
 
 """
@@ -21,7 +21,7 @@ retrieve all selected models parameters
 """
 function getParameters(selectedModels, listParams)
     paramstbl = getParameters(selectedModels)
-    return filter(row -> row.vars in listParams, paramstbl)
+    return filter(row -> row.names in listParams, paramstbl)
 end
 
 """
@@ -30,7 +30,7 @@ retrieve all selected models parameters by model
 """
 function getParameters(selectedModels, listParams, listModels)
     paramstbl = getParameters(selectedModels)
-    return filter(row -> row.vars in listParams && row.models in listModels, paramstbl)
+    return filter(row -> row.names in listParams && row.models in listModels, paramstbl)
 end
 
 """
@@ -47,7 +47,7 @@ updateParameters(tblParams, approaches)
 """
 function updateParameters(tblParams, approaches)
     function filtervar(var, modelName, tblParams)
-        filter(row -> row.vars == var && row.modelsApproach == modelName, tblParams).optim[1]
+        filter(row -> row.names == var && row.modelsApproach == modelName, tblParams).optim[1]
     end
     updatedModels = []
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
@@ -82,10 +82,11 @@ end
 getSimulationData(outsmodel, observations, modelnames, obsnames)
 """
 function getSimulationData(outsmodel, observations, modelnames, obsnames)
-    ŷ = outsmodel.fluxes |> columntable |> select(modelnames...) |> matrix
-    y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    # ŷ = outsmodel.fluxes |> select(modelnames...) |> columntable |> matrix
+    # ŷ = outsmodel.fluxes |> columntable |> select(modelnames...) |> matrix
     # y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    ŷ = outsmodel.fluxes |> select(modelnames...) |> columntable |> matrix
+    y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    # @show mean(skipmissing(y)), mean(ŷ), modelnames
     return (y, ŷ)
 end
 

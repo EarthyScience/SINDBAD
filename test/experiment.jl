@@ -28,15 +28,40 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti)
 
 #tableParams, outEcosystem = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
 outsp = runSpinup(approaches, initStates, forcing, info, false)
-outparams, outdata = optimizeModel(forcing, info, observationO, approaches, optimParams, initStates, obsnames, modelnames)
+outparams, outdata = optimizeModel(forcing, info, observationO, approaches, optimParams, initStates, obsnames, modelnames; maxfevals=2000);
 
+for varib in keys(info.modelRun.varsToSum)
+    @eval tmp=info.modelRun.varsToSum.$varib
+    tarfield = Symbol(tmp.destination)
+    tmpSum = 0.0
+    for comp in tmp.components
+        fieldname=Symbol(split(comp, ".")[1])
+        compname=Symbol(split(comp, ".")[2])
+        ofields = propertynames(@eval outsp[1].$fieldname)
+        if compname in ofields
+            @eval tmpComp = outsp[1].$fieldname.$compname
+            if fieldname == Symbol("states")
+                tmpComp = sum(tmpComp)
+            end
+            tmpSum = tmpSum + tmpComp
+            @show compname, tmpComp, tmpSum
+            # @show @eval $compname
+        end
+        # @show fieldname, compname, ofields
+    end
+    @show tmpSum, varib
+    @eval $varib = $tmpSum
+    @show evapTotal
+    # (; outsp[1].fluxes..., evapTotal)
+    # outsp = (; outsp..., fluxes = (; outsp.fluxes..., evapTotal))
+    # @eval outsp = (; outsp..., $String(tarfield) = (; outsp[1].$tarfield..., $varib))
+end
+# out = (; out..., fluxes = (; out.fluxes..., transpiration, PETveg))
+
+# ŷ = outdata.fluxes |> select(Symbol("rain")) |> columntable |> matrix
 outf=columntable(outdata.fluxes)
 fig = Figure(resolution = (2200, 900))
-    lines!(axs[1], outf.evapTotal)
-fig
-
-lines(outf.evapTotal)
-lines!(outf.transpiration)
+lines(outf.transpiration)
 lines!(outf.evapSoil)
 
 
