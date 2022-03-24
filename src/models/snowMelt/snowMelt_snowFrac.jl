@@ -7,25 +7,27 @@ end
 
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
 
-function compute(o::snowMelt_snowFrac, forcing, diagflux, states, info)
+function compute(o::snowMelt_snowFrac, forcing, out, info)
     @unpack_snowMelt_snowFrac o
     (; Rn, Tair) = forcing
-    (; snow, WBP) = diagflux
-    (; wSnow) = states
+    (; snow) = out.fluxes
+    (; WBP) = out.diagnostics
+    (; wSnow) = out.states
 
     potMelt = Tair * melt_T + max(0.0, Rn * melt_Rn)
     potMelt = Tair < 0.0 ? 0.0 : potMelt
     fracSnowMelt = min(1, (potMelt * SnowFrac(snow)) / sum(wSnow[:, 1]))
     snowMelt = fracSnowMelt * sum(wSnow[:, 1])
     WBP = WBP + snowMelt
-    return (; diagflux..., potMelt, snowMelt, fracSnowMelt)
+    out = (; out..., diagnostics = (; out.diagnostics..., WBP, fracSnowMelt))
+    out = (; out..., fluxes = (; out.fluxes..., snowMelt))
+    return out
 end
 
-function update(o::snowMelt_snowFrac, forcing, diagflux, states, info)
-    (; fracSnowMelt, snow) = diagflux
-    (; wSnow) = states
-    snowMelt = fracSnowMelt * sum(wSnow[:, 1])
-    @show "update", fracSnowMelt, snowMelt, wSnow[1]
+function update(o::snowMelt_snowFrac, forcing, out, info)
+    (; snowMelt, snow) = out.fluxes
+    (; wSnow) = out.states
     wSnow[1] = wSnow[1] + snow - snowMelt
-    return (; diagflux..., snowMelt; states..., wSnow)
+    out = (; out..., states = (; out.states..., wSnow))
+    return out
 end
