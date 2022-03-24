@@ -37,7 +37,7 @@
 		"oneDataPath": "data/BE-Vie.2000-2019.nc",
 		"variables": {
 			"evapTotal": {
-				"modelFullVar": "evapTotal",
+				"modelFullVar": "diagflux.evapTotal",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
