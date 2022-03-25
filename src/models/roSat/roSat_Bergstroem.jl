@@ -1,8 +1,8 @@
 export roSat_Bergstroem
 
-@with_kw struct roSat_Bergstroem{T1, T2} <: roSat
-    β::T1 = 0.5
-    s_max::T2 = 1000.0
+@bounds @describe @units @with_kw struct roSat_Bergstroem{T1, T2} <: roSat
+    β::T1 = 1.1 | (0.1, 5.0) | "shape parameter runoff-infiltration curve (Bergstroem)" | ""
+    s_max::T2 = 1000 | (100, 5000) | "maximum storage for calculating relative wetness" | "mm"
 end
 
 function compute(o::roSat_Bergstroem, forcing, out, info)
