@@ -2,18 +2,12 @@
     "variables": {
         "to": {
             "write": [
-                "fx.evapTotal",
-                "fx.evapSoil",
-                "fx.tranAct",
-                "s.wd.p_wSoilBase_wSat",
-                "fx.roBase",
-                "fx.roTotal",
-                "fx.roSurf",
-                "s.w.wSnow",
-                "s.w.wSoil",
-                "s.wd.wTotal",
-                "s.wd.pawAct",
-                "s.cd.fAPAR"
+                "fluxes.evapTotal",
+                "fluxes.transpiration",
+                "fluxes.roTotal",
+                "fluxes.roSurf",
+                "states.wSnow",
+                "states.wSoil"
             ],
             "store": [
             ],
