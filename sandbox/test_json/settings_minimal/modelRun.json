@@ -37,15 +37,13 @@
 	{
 		"roTotal":
 		{
-		"destination": "fluxes",
-		"components":["fluxes.roSat","fluxes.roBase"],
-		"balance": true
+		"outfield": "fluxes",
+		"components":["roSat","roBase"]
 		},
 		"evapTotal":
 		{
-		"destination": "fluxes",
-		"components":["fluxes.evapInt","fluxes.transpiration","fluxes.evapSoil","fluxes.evapSub"],
-		"balance": true
+		"outfield": "fluxes",
+		"components":["evapInt","transpiration","evapSoil","evapSub"]
 		}
 	},
 	"rules":

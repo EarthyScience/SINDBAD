@@ -4,6 +4,7 @@ using Sinbad
 using BenchmarkTools
 #using GLMakie
 
+
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
@@ -28,7 +29,40 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti)
 
 #tableParams, outEcosystem = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames)
 outsp = runSpinup(approaches, initStates, forcing, info, false)
-outparams, outdata = optimizeModel(forcing, info, observationO, approaches, optimParams, initStates, obsnames, modelnames; maxfevals=2000);
+outparams, outdata = optimizeModel(forcing, info, observationO, approaches, optimParams, initStates, obsnames, modelnames; maxfevals=1);
+outparams, outdata = optimizeModel(forcing, info, observationO, approaches, optimParams, initStates, obsnames, modelnames; maxfevals=30);
+
+variables = info.modelRun.varsToSum
+
+vars2sum = info.modelRun.varsToSum
+NamedTuple{(Symbol("components"),)}(vars2sum)
+tarr=propertynames(vars2sum)
+outspt=Table(outsp[1])
+outsp2=(;fluxes=(;b=2))
+for tarname in tarr
+    comps = Symbol.(getfield(vars2sum, tarname).components)
+    outfield = Symbol.(getfield(vars2sum, tarname).outfield)
+    datasubfields = getfield(outsp[1], outfield)
+    dat = sum([getfield(datasubfields, compname) for compname in comps if compname in propertynames(datasubfields)])
+    @eval $tarname = $dat
+    outsp2 = @eval (; outsp2..., $outfield = (; outsp2.$outfield..., $tarname))
+    @show tarname, dat, outfield
+end
+
+b=vars2sum[(tarr)]
+# tarr. [(:evapTotal,)]
+A = (a = 1, b = 2, c = 3)
+
+NamedTuple{(:a,:b)}(A)
+
+
+variables |> select(tarr[1])
+
+
+for varib in keys(info.modelRun.varsToSum)
+    @eval tmp=info.modelRun.varsToSum.$varib
+    @show tmp.components
+end
 
 for varib in keys(info.modelRun.varsToSum)
     @eval tmp=info.modelRun.varsToSum.$varib
@@ -40,9 +74,9 @@ for varib in keys(info.modelRun.varsToSum)
         ofields = propertynames(@eval outsp[1].$fieldname)
         if compname in ofields
             @eval tmpComp = outsp[1].$fieldname.$compname
-            if fieldname == Symbol("states")
-                tmpComp = sum(tmpComp)
-            end
+            # if fieldname == Symbol("states")
+            #     tmpComp = sum(tmpComp)
+            # end
             tmpSum = tmpSum + tmpComp
             @show compname, tmpComp, tmpSum
             # @show @eval $compname
@@ -54,7 +88,7 @@ for varib in keys(info.modelRun.varsToSum)
     @show evapTotal
     # (; outsp[1].fluxes..., evapTotal)
     # outsp = (; outsp..., fluxes = (; outsp.fluxes..., evapTotal))
-    # @eval outsp = (; outsp..., $String(tarfield) = (; outsp[1].$tarfield..., $varib))
+    # @eval outsp = (; outsp..., ($tarfield = (; outsp[1].$tarfield..., $varib)))
 end
 # out = (; out..., fluxes = (; out.fluxes..., transpiration, PETveg))
 
