@@ -1,8 +1,8 @@
 export transpiration_demSup
 
 @bounds @describe @units @with_kw struct transpiration_demSup{T1, T2} <: transpiration
-    α::T1 = 0.075 | (0.051, 3.0) | "alpha parameter" | ""
-    supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
+    α::T1 = 0.075 | (0.051, 3.0) | "alpha parameter for vegetation" | ""
+    supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter for transpiration" | ""
 end
 
 function compute(o::transpiration_demSup, forcing, out, info)

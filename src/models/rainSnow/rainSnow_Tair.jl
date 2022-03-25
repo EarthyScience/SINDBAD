@@ -1,7 +1,7 @@
 export rainSnow_Tair
 
-@with_kw struct rainSnow_Tair{T} <: rainSnow
-    Tair_thres::T = 0.5
+@bounds @describe @units @with_kw struct rainSnow_Tair{T} <: rainSnow
+    Tair_thres::T = 0.5 | (-5.0, 5.0) | "Temperature threshold for rain-snow separation" | "°C"
 end
 
 function compute(o::rainSnow_Tair, forcing, out, info)
