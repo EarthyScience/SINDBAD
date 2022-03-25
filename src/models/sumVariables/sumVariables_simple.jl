@@ -4,34 +4,26 @@ end
 
 function compute(o::sumVariables_simple, forcing, out, info)
     @unpack_sumVariables_simple o
-    @show info.modelRun
-    for varib in keys(info.modelRun.varsToSum)
-        @eval tmp=info.modelRun.varsToSum.$varib
-        tarfield = Symbol(tmp.destination)
-        tmpSum = 0.0
-        for comp in tmp.components
-            fieldname=Symbol(split(comp, ".")[1])
-            compname=Symbol(split(comp, ".")[2])
-            ofields = propertynames(@eval out.$fieldname)
-            if compname in ofields
-                @eval tmpComp = out.$fieldname.$compname
-                if fieldname == Symbol("states")
-                    tmpComp = sum(tmpComp)
-                end
-                tmpSum = tmpSum + tmpComp
-                @show compname, tmpComp, tmpSum
-                # @show @eval $compname
-            end
-            # @show fieldname, compname, ofields
-        end
-        @show tmpSum, varib
-        @eval $varib = $tmpSum
-        @show evapTotal
-        # (; outsp[1].fluxes..., evapTotal)
-        # outsp = (; outsp..., fluxes = (; outsp.fluxes..., evapTotal))
-        # @eval outsp = (; outsp..., $String(tarfield) = (; outsp[1].$tarfield..., $varib))
+    vars2sum = info.modelRun.varsToSum
+    tarr=propertynames(vars2sum)
+    # @show out
+    for tarname in tarr
+        comps = Symbol.(getfield(vars2sum, tarname).components)
+        outfield = Symbol.(getfield(vars2sum, tarname).outfield)
+        datasubfields = getfield(out, outfield)
+        dat = sum([getfield(datasubfields, compname) for compname in comps if compname in propertynames(datasubfields)])
+        # @eval $tarname = $dat
+        # out.computed.evapTotal
+        # out.computed.wTotal
+        # out.computed.roTotal
+        # a="out = (; out..., $outfield = (; out.$outfield..., $tarname))"
+        # b = Meta.parse(a)
+        # @eval $b
+        # @show a, b
+        # "out = (; out..., fluxes = (; out.fluxes..., roSat))"
+        # @set! out.computed = (; out..., computed = (; out.computed..., tarname))
+
     end
-    @show "done done"
     return out
 end
 

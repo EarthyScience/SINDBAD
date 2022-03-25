@@ -1,8 +1,8 @@
 export snowMelt_snowFrac
 
 @bounds @describe @units @with_kw struct snowMelt_snowFrac{T1, T2} <: snowMelt
-    melt_T::T1 = 3.0 | (0.051, 10.0) | "" | ""
-    melt_Rn::T2 = 2.0 | (0.01, 3.0) | "" | ""
+    melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C"
+    melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m²"
 end
 
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
