@@ -25,10 +25,6 @@
             "apprName": "snowFrac",
             "use4spinup": true
         },
-        "sumVariables": {
-            "apprName": "simple",
-            "use4spinup": true
-        },
         "transpiration": {
             "apprName": "demSup",
             "use4spinup": true
