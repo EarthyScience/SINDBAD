@@ -9,6 +9,10 @@
             "apprName": "simple",
             "use4spinup": true
         },
+        "sumVariables": {
+            "apprName": "simple",
+            "use4spinup": true
+        },
         "evapSoil": {
             "apprName": "demSup",
             "use4spinup": true
@@ -62,19 +66,16 @@
 			"pools" :
                 {
                 "cVeg": {
-                    "cVegRoot": [1, 1, 100.0],
-                    "cVegWood": [1, 1, 100.0],
-                    "cVegLeaf": [1, 1, 100.0],
-                    "cVegReserve": [1, 1, 100.0]
+                    "Root": [2, 1, 50.0],
+                    "Wood": [1, 1, 100.0],
+                    "Leaf": [1, 1, 46.0],
+                    "Reserve": [1, 1, 20.0]
                 },
                 "cSoil": {
-                    "cSoilSlow": [1, 1, 100.0],
-                    "cSoilFast": [1, 1, 100.0]
+                    "Slow": [1, 1, 1000.0],
+                    "Fast": [1, 1, 5000.0]
                 },
-                "cLitter": {
-                    "cLitterSlow": [1, 1, 100.0],
-                    "cLitterFast": [1, 1, 100.0]
-                }
+                "cLit": [5, 1, 300.0]
             },
 			"combine": [true,"cEco"]
 		}        
