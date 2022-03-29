@@ -52,7 +52,9 @@ pools = info.modelStructure.states.c
 """
 function generateStatesInfoTable(info)
     elements = keys(info.modelStructure.states)
+    # info.tem.states
     for element in elements
+        # info.tem.states.element ==> info.tem.states.c
         poolData = getfield(getfield(info.modelStructure.states, element), Symbol("pools"))
         nlayers = []
         layer = []
@@ -90,8 +92,6 @@ function generateStatesInfoTable(info)
         end
         flags = zeros(length(mainPoolName))
         for mainPool in mainPools
-            # out = (; out..., fluxes = (; out.fluxes..., roSat))
-            # tmp = (; tmp..., mainPool = (;))
             zix=Int[]
             initValues=Float64[]
             components=Symbol[]
@@ -106,6 +106,8 @@ function generateStatesInfoTable(info)
                     nZix = nZix + 1
                 end
             end
+            # info.tem.states.element.mainpool ==> info.tem.states.c.cVeg with subfields flags, zix, nZix, components, initValues
+
             @show mainPool, flags, zix, nZix, components, initValues
         end
         uniqueSubPools = Set(subPoolName)
@@ -124,6 +126,7 @@ function generateStatesInfoTable(info)
                     nZix = nZix + 1
                 end
             end
+            # info.tem.states.element.subPool ==> info.tem.states.c.cVegRoot with subfields flags, zix, nZix, components, initValues
             @show subPool, flags, zix, nZix, components, initValues
         end
         combinePools = (getfield(getfield(info.modelStructure.states, element), Symbol("combine")))
@@ -136,9 +139,12 @@ function generateStatesInfoTable(info)
             zix = 1:1:length(mainPoolName) |> collect
             flags =ones(Int, length(mainPoolName))
             nZix = length(mainPoolName)
+            # info.tem.states.element.combinedPoolName ==> info.tem.states.c.cEco with subfields flags, zix, nZix, components, initValues
             @show combinedPoolName, flags, zix, nZix, components, initValues
         else
+            # info.tem.states.element.create ==> info.tem.states.c.create
             create = Symbol.(subPoolName)
+
         end
         println("------------------")
     end
