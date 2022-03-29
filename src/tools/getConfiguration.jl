@@ -22,7 +22,7 @@ function readConfiguration(info_exp)
     for (k, v) in info_exp["configFiles"]
         info[k] = jsparse(String(jsread(v)))
     end
-    info_nocomments = removeComments(inputDict = info)
+    info_nocomments = removeComments(info)
     return info_nocomments
 end
 
@@ -30,7 +30,7 @@ end
 removeComments(; inputDict = inputDict)
 remove unnecessary comment files starting with certain expressions from the dictionary keys
 """
-function removeComments(; inputDict = inputDict)
+function removeComments(inputDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
     newDict = filter(x -> !occursin("comments", first(x)), newDict)
     newDict = filter(x -> !occursin("comment", first(x)), newDict)

@@ -20,7 +20,7 @@ function dict2tuple(d::Dict)
         if d[k] isa Array{Any,1}
             d[k] = [v for v in d[k]]
         elseif d[k] isa Dict
-            d[k] = typenarrow!(d[k])
+            d[k] = dict2tuple(d[k])
         end
     end
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
