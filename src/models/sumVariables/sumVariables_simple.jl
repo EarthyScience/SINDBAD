@@ -2,7 +2,7 @@
     doSum::T = true
 end
 
-function compute(o::sumVariables_simple, forcing, out, info)
+function compute(o::sumVariables_simple, forcing, out)
     @unpack_sumVariables_simple o
 
     function setsubfield(out, varname = :fluxes, vals = (:a, 1))
@@ -21,7 +21,7 @@ function compute(o::sumVariables_simple, forcing, out, info)
     return out
 end
 
-function update(o::sumVariables_simple, forcing, out, info)
+function update(o::sumVariables_simple, forcing, out)
     return out
 end
 

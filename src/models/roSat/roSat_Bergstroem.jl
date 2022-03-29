@@ -5,7 +5,7 @@ export roSat_Bergstroem
     s_max::T2 = 1000.0 | (100.0, 5000.0) | "maximum storage for calculating relative wetness" | "mm"
 end
 
-function compute(o::roSat_Bergstroem, forcing, out, info)
+function compute(o::roSat_Bergstroem, forcing, out)
     @unpack_roSat_Bergstroem o
     (; wSoil) = out.states
     (; WBP) = out.diagnostics
@@ -18,7 +18,7 @@ function compute(o::roSat_Bergstroem, forcing, out, info)
     return out
 end
 
-function update(o::roSat_Bergstroem, forcing, out, info)
+function update(o::roSat_Bergstroem, forcing, out)
     (; WBP) = out.diagnostics
     (; wSoil) = out.states
     wSoil[1] = wSoil[1] + WBP
