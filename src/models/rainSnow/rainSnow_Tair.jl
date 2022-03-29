@@ -4,7 +4,7 @@ export rainSnow_Tair
     Tair_thres::T = 0.5 | (-5.0, 5.0) | "Temperature threshold for rain-snow separation" | "°C"
 end
 
-function compute(o::rainSnow_Tair, forcing, out, info)
+function compute(o::rainSnow_Tair, forcing, out)
     @unpack_rainSnow_Tair o
     (; Tair, rain) = forcing
     snow = Tair < Tair_thres ? rain : 0.0
@@ -14,6 +14,6 @@ function compute(o::rainSnow_Tair, forcing, out, info)
     return out
 end
 
-function update(o::rainSnow_Tair, forcing, out, info)
+function update(o::rainSnow_Tair, forcing, out)
     return out
 end
