@@ -9,10 +9,6 @@
             "apprName": "simple",
             "use4spinup": true
         },
-        "sumVariables": {
-            "apprName": "simple",
-            "use4spinup": true
-        },
         "evapSoil": {
             "apprName": "demSup",
             "use4spinup": true

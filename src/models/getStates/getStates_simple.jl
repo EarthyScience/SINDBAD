@@ -4,7 +4,7 @@
     # wSnow::type = 0.0
 end
 
-function compute(o::getStates_simple, forcing, out, info)
+function compute(o::getStates_simple, forcing, out)
     @unpack_getStates_simple o
     (; rain) = out.fluxes
     WBP = rain
@@ -12,7 +12,7 @@ function compute(o::getStates_simple, forcing, out, info)
     return out
 end
 
-function update(o::getStates_simple, forcing, out, info)
+function update(o::getStates_simple, forcing, out)
     return out
 end
 

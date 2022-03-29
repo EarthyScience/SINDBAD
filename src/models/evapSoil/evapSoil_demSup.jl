@@ -3,7 +3,7 @@
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
 end
 
-function compute(o::evapSoil_demSup, forcing, out, info)
+function compute(o::evapSoil_demSup, forcing, out)
     @unpack_evapSoil_demSup o
     (; wSoil) = out.states
     (; Rn) = forcing
@@ -17,7 +17,7 @@ function compute(o::evapSoil_demSup, forcing, out, info)
     return out
 end
 
-function update(o::evapSoil_demSup, forcing, out, info)
+function update(o::evapSoil_demSup, forcing, out)
     (; evapSoil) = out.fluxes
     (; wSoil) = out.states
     wSoil[1] = wSoil[1] - evapSoil
