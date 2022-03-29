@@ -7,7 +7,7 @@ end
 
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
 
-function compute(o::snowMelt_snowFrac, forcing, out, info)
+function compute(o::snowMelt_snowFrac, forcing, out)
     @unpack_snowMelt_snowFrac o
     (; Rn, Tair) = forcing
     (; snow) = out.fluxes
@@ -24,7 +24,7 @@ function compute(o::snowMelt_snowFrac, forcing, out, info)
     return out
 end
 
-function update(o::snowMelt_snowFrac, forcing, out, info)
+function update(o::snowMelt_snowFrac, forcing, out)
     (; snowMelt, snow) = out.fluxes
     (; wSnow) = out.states
     wSnow[1] = wSnow[1] + snow - snowMelt

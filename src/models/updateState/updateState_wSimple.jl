@@ -3,7 +3,7 @@ export updateState_wSimple
     calcFlux :: T = true
 end
 
-function compute(o::updateState_wSimple, forcing, out, info)
+function compute(o::updateState_wSimple, forcing, out)
     @unpack_updateState_wSimple o
     (; fracTranspiration, fracEvapSoil) = out.diagnostics
     (; snowMelt, transpiration, evapSoil, rain, roSat, snow) = out.fluxes
@@ -24,6 +24,6 @@ function compute(o::updateState_wSimple, forcing, out, info)
     return out
 end
 
-function update(o::updateState_wSimple, forcing, out, info)
+function update(o::updateState_wSimple, forcing, out)
     return out
 end
