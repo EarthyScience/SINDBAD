@@ -29,7 +29,7 @@ using Reexport: @reexport
     using TableOperations:
         select
 end
-
+export setTupleField, setTupleSubfield
 include("tools/utils.jl")
 include("tools/getConfiguration.jl")
 export getConfiguration
