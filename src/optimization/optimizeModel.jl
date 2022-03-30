@@ -101,10 +101,10 @@ end
 getLoss(pVector, approaches, initStates, forcing, observations, tblParams, obsnames, modelnames)
 """
 function getLoss(pVector, approaches, initStates, forcing,
-    observations, tblParams, obsnames, modelnames, info)
+    observations, tblParams, obsnames, modelnames, modelInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
-    outevolution = runEcosystem(newApproaches, initStates, forcing, modelnames, info.tem; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initStates, forcing, modelnames, modelInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, modelnames, obsnames)
     return loss(y, ŷ)
@@ -113,18 +113,18 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initStates, obsnames, modelnames)
 """
-function optimizeModel(forcing, observations, selectedModels, optimParams, initStates, obsnames, modelnames, info; maxfevals=100)
+function optimizeModel(forcing, observations, selectedModels, optimParams, initStates, obsnames, modelnames, modelInfo, optiInfo; maxfevals=100)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
     costFunc = x -> getLoss(x, selectedModels, initStates, forcing,
-        observations, tblParams, obsnames, modelnames, info)
+        observations, tblParams, obsnames, modelnames, modelInfo, optiInfo)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(newApproaches, initStates, forcing, modelnames, info.tem; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initStates, forcing, modelnames, modelInfo; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end
