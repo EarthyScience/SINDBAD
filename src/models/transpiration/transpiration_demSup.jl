@@ -5,7 +5,7 @@ export transpiration_demSup
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter for transpiration" | ""
 end
 
-function compute(o::transpiration_demSup, forcing, out)
+function compute(o::transpiration_demSup, forcing, out, modelInfo)
     @unpack_transpiration_demSup o
     (; Rn) = forcing
     (; wSoil) = out.states
@@ -19,7 +19,7 @@ function compute(o::transpiration_demSup, forcing, out)
     return out
 end
 
-function update(o::transpiration_demSup, forcing, out)
+function update(o::transpiration_demSup, forcing, out, modelInfo)
     (; transpiration) = out.fluxes
     (; wSoil) = out.states
     wSoil[1] = wSoil[1] - transpiration

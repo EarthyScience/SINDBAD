@@ -42,3 +42,12 @@ function typenarrow!(d::Dict)
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
     return dTuple
 end
+
+function setTupleSubfield(out, fieldname = :fluxes, vals = (:a, 1))
+    return @eval (; $out..., $fieldname = (; $out.$fieldname...,$(vals[1]) = $vals[2]))
+end
+
+
+function setTupleField(out, vals = (:a, 1))
+    return @eval (; $out..., $(vals[1]) = $vals[2])
+end
