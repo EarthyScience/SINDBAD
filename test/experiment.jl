@@ -21,8 +21,8 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti)
 outsp = runSpinup(approaches, initStates, forcing, info.tem, false)
 # out = runEcosystem(approaches, initStates, forcing, info.tem, false)
 
-outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info; maxfevals=1);
-outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info; maxfevals=300);
+outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info.tem, info.opti; maxfevals=1);
+outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info.tem, info.opti; maxfevals=300);
 outf=columntable(outdata.fluxes)
 fig = Figure(resolution = (2200, 900))
 lines(outf.transpiration)
