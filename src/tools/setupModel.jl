@@ -52,29 +52,21 @@ pools = info.modelStructure.states.c
 """
 function generateStatesInfoTable(info)
     elements = keys(info.modelStructure.states)
-    # info.tem.states
-    # info.tem.states = (;)
     tmpStates = (;)
     for element in elements
         elSymbol = Symbol(element)
         tmpElem = (;)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
-        # info.tem.states.element ==> info.tem.states.c
-        poolData = getfield(getfield(info.modelStructure.states, element), Symbol("pools"))
-        # @show poolData
+        poolData = getfield(getfield(info.modelStructure.states, element), :pools)
         nlayers = []
         layer = []
         ntypes = []
         inits = []
         subPoolName = []
         mainPoolName = []
-        mainPools = Symbol.(getfield(getfield(info.modelStructure.states, element), Symbol("order")))
-        # mainPools = Symbol.(pools)
-        # poolData = OrderedDict(pairs(poolData))
+        mainPools = Symbol.(getfield(getfield(info.modelStructure.states, element), :order))
         for mainPool in mainPools
             poolInfo = getproperty(poolData, mainPool)
-            # mainPool = mainPools[index]
-            # @show mainPool, poolInfo, typeof(poolInfo)
             if poolInfo isa Array{<:Number,1}
                 lenpool = Int64(poolInfo[1])
                 append!(nlayers, fill(1, lenpool))
@@ -113,14 +105,11 @@ function generateStatesInfoTable(info)
                     nZix = nZix + 1
                 end
             end
-            # info.tem.states.element.mainpool ==> info.tem.states.c.cVeg with subfields flags, zix, nZix, components, initValues
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:components, components))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:zix, zix))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:initValues, initValues))
-
-            # @show mainPool, flags, zix, nZix, components, initValues
         end
         uniqueSubPools = Set(subPoolName)
         for subPool in uniqueSubPools
@@ -139,15 +128,13 @@ function generateStatesInfoTable(info)
                     nZix = nZix + 1
                 end
             end
-            # info.tem.states.element.subPool ==> info.tem.states.c.cVegRoot with subfields flags, zix, nZix, components, initValues
-            # @show subPool, flags, zix, nZix, components, initValues
             tmpElem = setTupleSubfield(tmpElem, subPool, (:components, components))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:zix, zix))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:initValues, initValues))
         end
-        combinePools = (getfield(getfield(info.modelStructure.states, element), Symbol("combine")))
+        combinePools = (getfield(getfield(info.modelStructure.states, element), :combine))
         doCombine = combinePools[1]
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
@@ -158,25 +145,17 @@ function generateStatesInfoTable(info)
             zix = 1:1:length(mainPoolName) |> collect
             flags =ones(Int, length(mainPoolName))
             nZix = length(mainPoolName)
-            # info.tem.states.element.combinedPoolName ==> info.tem.states.c.cEco with subfields flags, zix, nZix, components, initValues
-            # @show combinedPoolName, flags, zix, nZix, components, initValues
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:components, components))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:zix, zix))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:initValues, initValues))
         else
-            # info.tem.states.element.create ==> info.tem.states.c.create
             create = Symbol.(uniqueSubPools)
         end
-        # println(".................")
         tmpElem = setTupleField(tmpElem, (:create, create))
-        # @show propertynames(tmpElem), tmpElem
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
-
-        # println("------------------")
     end
-    # @show tmpStates
     info=(; info..., tem=(; info.tem..., states = tmpStates));
     return info
 end
@@ -187,12 +166,10 @@ Sets the initial states pools
 function getInitStates(info)
     initStates = (;)
     for element in propertynames(info.tem.states)
-        @show element
         props = getfield(info.tem.states, element)
         toCreate = getfield(props, :create)
         for tocr in toCreate
             inVals = getfield(getfield(props, tocr), :initValues)
-            @show tocr, inVals
             initStates = setTupleField(initStates, (tocr, inVals))
         end
     end
@@ -205,7 +182,6 @@ end
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
 function setAutoCompute(info)
-    # info.tem.compute.sum
     vars2sum = info.modelRun.varsToSum
     tarr=propertynames(vars2sum)
     tmp = (;sum=(;))
@@ -216,12 +192,9 @@ function setAutoCompute(info)
         tmpTarr = setTupleSubfield(tmpTarr, tarname, (:components, comps))
         outfield = Symbol.(getfield(vars2sum, tarname).outfield)
         tmpTarr = setTupleSubfield(tmpTarr, tarname, (:fieldname, outfield))
-        # @show tmpTarr
         tmp = (; tmp..., sum = (; tmp.sum..., tmpTarr...))
     end
-    # @show tmp
     info=(; info..., tem=(; compute = (; tmp...)));
-    # @show info.tem.compute
 return info
 end
 
