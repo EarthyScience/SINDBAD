@@ -23,7 +23,6 @@ outsp = runSpinup(approaches, initStates, forcing, info.tem, false)
 
 outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info; maxfevals=1);
 outparams, outdata = optimizeModel(forcing, observationO, approaches, optimParams, initStates, obsnames, modelnames, info; maxfevals=300);
-# ŷ = outdata.fluxes |> select(Symbol("rain")) |> columntable |> matrix
 outf=columntable(outdata.fluxes)
 fig = Figure(resolution = (2200, 900))
 lines(outf.transpiration)
