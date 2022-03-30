@@ -44,7 +44,7 @@
                 "wGW": [1,1,1000.0],
 				"wSnow": [1,1,0.01]
             },
-			"combine": [true,"wPools"],
+			"combine": [false,"wPools"],
 			"wSoilThickness": [50, 200,750, 1000],
             "order": ["wSnow", "wSoil", "wGW"]
 		},
