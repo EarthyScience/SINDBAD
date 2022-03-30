@@ -15,7 +15,8 @@ function compute(o::sumVariables_simple, forcing, out, modelInfo)
         outfield = getfield(variablestosum, tarname).fieldname
         datasubfields = getfield(out, outfield)
         dat = sum([getfield(datasubfields, compname) for compname in comps if compname in propertynames(datasubfields)])
-        out = setsubfield(out, outfield, (tarname, dat))
+        # out = @eval (; $out..., $outfield = (; $out.$outfield...,$(tarname) = $dat))
+                # out = setsubfield(out, outfield, (tarname, dat))
     end
     return out
 end
