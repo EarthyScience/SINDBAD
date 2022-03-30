@@ -92,6 +92,7 @@ function generateStatesInfoTable(info)
         for mainPool in mainPools
             tmpElem = setTupleField(tmpElem, (mainPool, (;)))
             zix=Int[]
+            typeDim=Int[]
             initValues=Float64[]
             components=Symbol[]
             flags = zeros(Int, length(mainPoolName))
@@ -101,6 +102,7 @@ function generateStatesInfoTable(info)
                     push!(zix, ind)
                     push!(components, subPoolName[ind])
                     push!(initValues, inits[ind])
+                    push!(typeDim, ntypes[ind])
                     flags[ind] = 1
                     nZix = nZix + 1
                 end
@@ -109,6 +111,9 @@ function generateStatesInfoTable(info)
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:zix, zix))
+            if maximum(typeDim) > 1
+                initValues = repeat(initValues, inner=[1, maximum(typeDim)])
+            end
             tmpElem = setTupleSubfield(tmpElem, mainPool, (:initValues, initValues))
         end
         uniqueSubPools = Set(subPoolName)
@@ -118,12 +123,14 @@ function generateStatesInfoTable(info)
             initValues=Float64[]
             components=Symbol[]
             nZix=0
+            typeDim=Int[]
             flags = zeros(Int, length(mainPoolName))
             for (ind, par) in enumerate(subPoolName)
                 if par == subPool
                     push!(initValues, inits[ind])
                     push!(components, subPoolName[ind])
                     push!(zix, ind)
+                    push!(typeDim, ntypes[ind])
                     flags[ind] = 1
                     nZix = nZix + 1
                 end
@@ -132,6 +139,9 @@ function generateStatesInfoTable(info)
             tmpElem = setTupleSubfield(tmpElem, subPool, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, subPool, (:zix, zix))
+            if maximum(typeDim) > 1
+                initValues = repeat(initValues, inner=[1, maximum(typeDim)])
+            end
             tmpElem = setTupleSubfield(tmpElem, subPool, (:initValues, initValues))
         end
         combinePools = (getfield(getfield(info.modelStructure.states, element), :combine))
@@ -149,6 +159,9 @@ function generateStatesInfoTable(info)
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:flags, flags))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:nZix, nZix))
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:zix, zix))
+            if maximum(ntypes) > 1
+                initValues = repeat(initValues, inner=[1, maximum(ntypes)])
+            end
             tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:initValues, initValues))
         else
             create = Symbol.(uniqueSubPools)
