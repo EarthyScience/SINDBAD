@@ -44,7 +44,7 @@
                 "wGW": [1,1,1000.0],
 				"wSnow": [1,1,0.01]
             },
-			"combine": [true,"wPools",0],
+			"combine": [true,"wPools"],
 			"wSoilThickness": [50, 200,750, 1000],
             "order": ["wSnow", "wSoil", "wGW"]
 		},
@@ -53,9 +53,9 @@
 			"pools" :
                 {
                 "cVeg": {
-                    "Root": [2, 1, 50.0],
-                    "Wood": [1, 1, 100.0],
                     "Leaf": [1, 1, 46.0],
+                    "Wood": [1, 1, 100.0],
+                    "Root": [2, 1, 50.0],
                     "Reserve": [1, 1, 20.0]
                 },
                 "cSoil": {
@@ -64,7 +64,7 @@
                 },
                 "cLit": [5, 1, 300.0]
             },
-			"combine": [true,"cEco", 1000.0],
+			"combine": [true,"cEco"],
             "order": ["cVeg", "cLit", "cSoil"]
 		}        
 	}
