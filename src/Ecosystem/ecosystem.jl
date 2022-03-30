@@ -9,7 +9,7 @@ function getEcosystem()
     # ---------------------------------------------------------------------
     # Climate: rainfall, snowfall, rainfall intensities, PET, ambCO2
     # ---------------------------------------------------------------------
-    ecoProcess = (; ecoProcess..., rainSnow = "set rain and snow to fe.rainSnow.")
+    ecoProcess = (; ecoProcess..., rainSnow = "set rain and snow to fe.rainSnow. by using ......")
     ecoProcess = (; ecoProcess..., rainInt = "set rainfall intensity")
     ecoProcess = (; ecoProcess..., PET = "set potential evapotranspiration")
     ecoProcess = (; ecoProcess..., ambCO2 = "set/get ambient CO2 concentration")

@@ -3,13 +3,14 @@
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
 end
 
-function compute(o::evapSoil_demSup, forcing, out)
+function compute(o::evapSoil_demSup, forcing, out, modelInfo)
     @unpack_evapSoil_demSup o
     (; wSoil) = out.states
     (; Rn) = forcing
+
     PETsoil = Rn * α
     PETsoil = PETsoil < 0.0 ? 0.0 : PETsoil
-    fracEvapSoil = min(PETsoil / wSoil[1], supLim) # wSoil[index]
+    fracEvapSoil = min(PETsoil / wSoil[1], supLim)
     evapSoil = fracEvapSoil * wSoil[1]
 
     out = (; out..., fluxes = (; out.fluxes..., PETsoil, evapSoil))
@@ -17,11 +18,11 @@ function compute(o::evapSoil_demSup, forcing, out)
     return out
 end
 
-function update(o::evapSoil_demSup, forcing, out)
+function update(o::evapSoil_demSup, forcing, out, modelInfo)
     (; evapSoil) = out.fluxes
     (; wSoil) = out.states
     wSoil[1] = wSoil[1] - evapSoil
-    out = (; out..., states = (; out.states..., wSoil))
+    # out = (; out..., states = (; out.states..., wSoil)) # for vectors, the unpacking is referencing the
     return out
 end
 
