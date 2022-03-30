@@ -56,6 +56,7 @@ function getConfiguration(sindbad_experiment)
         info_exp = getExperimentConfiguration(sindbad_experiment)
         info = readConfiguration(info_exp)
     end
+    
     infoTuple = typenarrow!(info)
     return infoTuple
     # return info
