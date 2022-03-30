@@ -15,3 +15,12 @@ function getforcing(; filename = "../../data/BE-Vie.2000-2019.nc",
     timesteps = size(forcing)[1]
     return forcing, timesteps
 end
+
+function setTupleSubfield(out, fieldname = :fluxes, vals = (:a, 1))
+    return @eval (; $out..., $fieldname = (; $out.$fieldname...,$(vals[1]) = $vals[2]))
+end
+
+
+function setTupleField(out, vals = (:a, 1))
+    return @eval (; $out..., $(vals[1]) = $vals[2])
+end
