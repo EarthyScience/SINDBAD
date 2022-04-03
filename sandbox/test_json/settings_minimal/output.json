@@ -6,8 +6,8 @@
                 "fluxes.transpiration",
                 "fluxes.roTotal",
                 "fluxes.roSurf",
-                "states.wSnow",
-                "states.wSoil"
+                "pools.wSnow",
+                "pools.wSoil"
             ],
             "store": [
             ],

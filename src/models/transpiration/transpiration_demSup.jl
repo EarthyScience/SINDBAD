@@ -8,7 +8,7 @@ end
 function compute(o::transpiration_demSup, forcing, out, modelInfo)
     @unpack_transpiration_demSup o
     (; Rn) = forcing
-    (; wSoil) = out.states
+    (; wSoil) = out.pools
     PETveg = Rn * α
     PETveg = PETveg < 0.0 ? 0.0 : PETveg
     ∑wSoil = sum(wSoil[:, 1])
@@ -21,8 +21,8 @@ end
 
 function update(o::transpiration_demSup, forcing, out, modelInfo)
     (; transpiration) = out.fluxes
-    (; wSoil) = out.states
+    (; wSoil) = out.pools
     wSoil[1] = wSoil[1] - transpiration
-    out = (; out..., states=(; out.states..., wSoil))
+    out = (; out..., pools=(; out.pools..., wSoil))
     return out
 end

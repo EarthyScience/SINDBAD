@@ -16,7 +16,7 @@ function getEcosystem()
     # ---------------------------------------------------------------------
     # Get variables for previous time step and keep in s.prev. or d.prev
     # ---------------------------------------------------------------------
-    ecoProcess = (; ecoProcess..., keepStates = "keep states from previous time step to s.prev")
+    ecoProcess = (; ecoProcess..., keepStates = "keep pools from previous time step to s.prev")
     ecoProcess = (; ecoProcess..., getStates = "get the amount of water at the beginning of timestep")
     # ---------------------------------------------------------------------
     # Terrain: terrain/topography params
@@ -120,7 +120,7 @@ function getEcosystem()
     ecoProcess = (; ecoProcess..., cFlowAct = "actual transfers of C between pools (of diagonal components)")
     ecoProcess = (; ecoProcess..., cCycle = "allocate carbon to vegetation components")
     # ---------------------------------------------------------------------
-    # sum up components (fluxes/states), river routing, and water balance
+    # sum up components (fluxes/pools), river routing, and water balance
     # ---------------------------------------------------------------------
     ecoProcess = (; ecoProcess..., sumVariables = "sum variables (through modelRun.json)")
     ecoProcess = (; ecoProcess..., riverRouting = "routing of runoff through river networks")
