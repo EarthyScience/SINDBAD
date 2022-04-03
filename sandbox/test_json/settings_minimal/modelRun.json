@@ -8,9 +8,9 @@
 		"step": 				"d",
 		"sDate": 				"2000-01-01",
 		"eDate": 				"2019-12-31",
-		"nYears": 				[12],
-		"nStepsDay": 			[1],
-		"nStepsYear": 			[365]
+		"nYears": 				12,
+		"nStepsDay": 			1,
+		"nStepsYear": 			365
 	},
 	"flags":
 	{

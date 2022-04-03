@@ -1,6 +1,6 @@
 
 #"1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and models 2) user selected",    
-#"2.c": "approaches 3) structure of water and carbon states",
+#"2.c": "approaches 3) structure of water and carbon pools",
 #"3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
 #"4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
 
@@ -12,7 +12,7 @@ selected_models = [getStates_simple(), rainSnow_simpleorwhatever(), snowMelt_sno
 # Might need to find a way to state spinup usage
 
 #=
-"states":
+"pools":
 	{
 		"w":
 		{
@@ -42,7 +42,7 @@ selected_models = [getStates_simple(), rainSnow_simpleorwhatever(), snowMelt_sno
     ],
         "oldNames":		[],
         "comment": "",
-		"combine":		[true,"cEco",100]
+		"combine":		[true,"carbon",100]
 		}
 	}
 =#
