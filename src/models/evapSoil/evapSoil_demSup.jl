@@ -5,7 +5,7 @@ end
 
 function compute(o::evapSoil_demSup, forcing, out, modelInfo)
     @unpack_evapSoil_demSup o
-    (; wSoil) = out.states
+    (; wSoil) = out.pools
     (; Rn) = forcing
 
     PETsoil = Rn * α
@@ -20,9 +20,9 @@ end
 
 function update(o::evapSoil_demSup, forcing, out, modelInfo)
     (; evapSoil) = out.fluxes
-    (; wSoil) = out.states
+    (; wSoil) = out.pools
     wSoil[1] = wSoil[1] - evapSoil
-    # out = (; out..., states = (; out.states..., wSoil)) # for vectors, the unpacking is referencing the
+    # out = (; out..., pools = (; out.pools..., wSoil)) # for vectors, the unpacking is referencing the
     return out
 end
 
