@@ -5,11 +5,10 @@ using ..Sinbad
 @metadata units "" String
 
 export getStates, rainSnow, roSat, snowMelt, sumVariables, evapSoil, transpiration, updateState
-export describe, bounds, units
+export describe, bounds, units, compute
 
 abstract type LandEcosystem end
 
-getEcosystem()
 abstract type sumVariables <: LandEcosystem end
 include("sumVariables/sumVariables_simple.jl")
 abstract type getStates <: LandEcosystem end
@@ -18,8 +17,9 @@ abstract type rainSnow <: LandEcosystem end
 include("rainSnow/rainSnow_Tair.jl")
 abstract type roSat <: LandEcosystem end
 include("roSat/roSat_Bergstroem.jl")
-abstract type snowMelt <: LandEcosystem end
+
 include("snowMelt/snowMelt.jl")
+
 abstract type evapSoil <: LandEcosystem end
 include("evapSoil/evapSoil_demSup.jl")
 abstract type transpiration <: LandEcosystem end
