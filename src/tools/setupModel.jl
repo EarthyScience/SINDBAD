@@ -102,8 +102,14 @@ function generateStatesInfo(info)
             end
         end
         flags = zeros(length(mainPoolName))
+        tmpElem = setTupleField(tmpElem, (:components, (;)))
+        tmpElem = setTupleField(tmpElem, (:flags, (;)))
+        tmpElem = setTupleField(tmpElem, (:nZix, (;)))
+        tmpElem = setTupleField(tmpElem, (:zix, (;)))
+        tmpElem = setTupleField(tmpElem, (:initValues, (;)))
+        tmpElem = setTupleField(tmpElem, (:layerThickness, (;)))
         for mainPool in mainPools
-            tmpElem = setTupleField(tmpElem, (mainPool, (;)))
+            # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
             zix=Int[]
             typeDim=Int[]
             initValues=Float64[]
@@ -120,18 +126,17 @@ function generateStatesInfo(info)
                     nZix = nZix + 1
                 end
             end
-            tmpElem = setTupleSubfield(tmpElem, mainPool, (:components, components))
-            tmpElem = setTupleSubfield(tmpElem, mainPool, (:flags, flags))
-            tmpElem = setTupleSubfield(tmpElem, mainPool, (:nZix, nZix))
-            tmpElem = setTupleSubfield(tmpElem, mainPool, (:zix, zix))
+            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (mainPool, flags))
+            tmpElem = setTupleSubfield(tmpElem, :nZix, (mainPool, nZix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
             end
-            tmpElem = setTupleSubfield(tmpElem, mainPool, (:initValues, initValues))
+            tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
         end
         uniqueSubPools = Set(subPoolName)
         for subPool in uniqueSubPools
-            tmpElem = setTupleField(tmpElem, (subPool, (;)))
             zix=Int[]
             initValues=Float64[]
             components=Symbol[]
@@ -148,10 +153,11 @@ function generateStatesInfo(info)
                     nZix = nZix + 1
                 end
             end
-            tmpElem = setTupleSubfield(tmpElem, subPool, (:components, components))
-            tmpElem = setTupleSubfield(tmpElem, subPool, (:flags, flags))
-            tmpElem = setTupleSubfield(tmpElem, subPool, (:nZix, nZix))
-            tmpElem = setTupleSubfield(tmpElem, subPool, (:zix, zix))
+            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (subPool, flags))
+            tmpElem = setTupleSubfield(tmpElem, :nZix, (subPool, nZix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
+
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
             end
@@ -160,29 +166,28 @@ function generateStatesInfo(info)
                 if size(layerThickness, 1) != nZix
                     throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and wSoilThickness.")
                 end
-                tmpElem = setTupleSubfield(tmpElem, subPool, (:layerThickness, Float64.(layerThickness)))
+                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Float64.(layerThickness)))
             end
-            tmpElem = setTupleSubfield(tmpElem, subPool, (:initValues, initValues))
+            tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
         end
         combinePools = (getfield(getfield(info.modelStructure.pools, element), :combine))
         doCombine = combinePools[1]
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
-            tmpElem = setTupleField(tmpElem, (combinedPoolName, (;)))
             create = [combinedPoolName]
             components=Set(Symbol.(subPoolName))
             initValues = Float64.(inits)
             zix = 1:1:length(mainPoolName) |> collect
             flags =ones(Int, length(mainPoolName))
             nZix = length(mainPoolName)
-            tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:components, components))
-            tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:flags, flags))
-            tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:nZix, nZix))
-            tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:zix, zix))
+            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, flags))
+            tmpElem = setTupleSubfield(tmpElem, :nZix, (combinedPoolName, nZix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             if maximum(ntypes) > 1
                 initValues = repeat(initValues, inner=[1, maximum(ntypes)])
             end
-            tmpElem = setTupleSubfield(tmpElem, combinedPoolName, (:initValues, initValues))
+            tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
         else
             create = Symbol.(uniqueSubPools)
         end
