@@ -46,25 +46,38 @@ function getSelectedApproaches(info, selModelsOrdered)
 end
 
 """
-generateStatesInfoTable(pools)
-
-pools = info.modelStructure.states.c
+generateDatesInfo(info)
 """
-function generateStatesInfoTable(info)
-    elements = keys(info.modelStructure.states)
+function generateDatesInfo(info)
+    tmpDates = (;)
+    timeData=getfield(info.modelRun, :time)
+    timeProps = propertynames(timeData)
+    @show timeProps
+    for timeProp in timeProps
+        tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
+    end
+    info=(; info..., tem=(; info.tem..., dates = tmpDates));
+    return info
+end
+
+"""
+generateStatesInfo(info)
+"""
+function generateStatesInfo(info)
+    elements = keys(info.modelStructure.pools)
     tmpStates = (;)
     for element in elements
         elSymbol = Symbol(element)
         tmpElem = (;)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
-        poolData = getfield(getfield(info.modelStructure.states, element), :pools)
+        poolData = getfield(getfield(info.modelStructure.pools, element), :pools)
         nlayers = []
         layer = []
         ntypes = []
         inits = []
         subPoolName = []
         mainPoolName = []
-        mainPools = Symbol.(getfield(getfield(info.modelStructure.states, element), :order))
+        mainPools = Symbol.(getfield(getfield(info.modelStructure.pools, element), :order))
         for mainPool in mainPools
             poolInfo = getproperty(poolData, mainPool)
             if poolInfo isa Array{<:Number,1}
@@ -142,9 +155,16 @@ function generateStatesInfoTable(info)
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
             end
+            if element == :water && subPool == :wSoil
+                layerThickness = getfield(getfield(info.modelStructure.pools, element), :wSoilThickness)
+                if size(layerThickness, 1) != nZix
+                    throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and wSoilThickness.")
+                end
+                tmpElem = setTupleSubfield(tmpElem, subPool, (:layerThickness, Float64.(layerThickness)))
+            end
             tmpElem = setTupleSubfield(tmpElem, subPool, (:initValues, initValues))
         end
-        combinePools = (getfield(getfield(info.modelStructure.states, element), :combine))
+        combinePools = (getfield(getfield(info.modelStructure.pools, element), :combine))
         doCombine = combinePools[1]
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
@@ -168,29 +188,30 @@ function generateStatesInfoTable(info)
         end
         tmpElem = setTupleField(tmpElem, (:create, create))
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
+        # if element == "water":
+
     end
-    info=(; info..., tem=(; info.tem..., states = tmpStates));
+    info=(; info..., tem=(; info.tem..., pools = tmpStates));
     return info
 end
 
 """
-Sets the initial states pools
+Sets the initial pools pools
 """
-function getInitStates(info)
-    initStates = (;)
-    for element in propertynames(info.tem.states)
-        props = getfield(info.tem.states, element)
+function getInitPools(info)
+    initPools = (;)
+    for element in propertynames(info.tem.pools)
+        props = getfield(info.tem.pools, element)
         toCreate = getfield(props, :create)
         for tocr in toCreate
             inVals = getfield(getfield(props, tocr), :initValues)
-            initStates = setTupleField(initStates, (tocr, inVals))
+            initPools = setTupleField(initPools, (tocr, inVals))
         end
     end
-    # info = (; info..., tem=(; info.tem..., states = (; info.tem.states..., initStates = initStates)));
-    return initStates
-
-return info
+    # info = (; info..., tem=(; info.tem..., pools = (; info.tem.pools..., initPools = initPools)));
+    return initPools
 end
+
 """
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
@@ -213,7 +234,8 @@ end
 
 function setupModel!(info)
     info = setAutoCompute(info)
-    info = generateStatesInfoTable(info)
+    info = generateStatesInfo(info)
+    info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
     # corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
     # info=(; info..., paths=(coreTEM = corePath));
@@ -224,4 +246,4 @@ function setupModel!(info)
     return info
 end
 
-export getInitStates
+export getInitPools
