@@ -208,8 +208,9 @@ function getInitPools(info)
     for element in propertynames(info.tem.pools)
         props = getfield(info.tem.pools, element)
         toCreate = getfield(props, :create)
+        initVals = getfield(props, :initValues)
         for tocr in toCreate
-            inVals = getfield(getfield(props, tocr), :initValues)
+            inVals = getfield(initVals, tocr)
             initPools = setTupleField(initPools, (tocr, inVals))
         end
     end
