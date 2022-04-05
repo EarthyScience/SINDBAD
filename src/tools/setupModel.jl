@@ -126,10 +126,10 @@ function generateStatesInfo(info)
                     nZix = nZix + 1
                 end
             end
-            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (mainPool, flags))
+            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, tuple(components...)))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (mainPool, tuple(flags...)))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (mainPool, nZix))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, tuple(zix...)))
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
             end
@@ -153,10 +153,10 @@ function generateStatesInfo(info)
                     nZix = nZix + 1
                 end
             end
-            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (subPool, flags))
+            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, tuple(components...)))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (subPool, tuple(flags...)))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (subPool, nZix))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, tuple(zix...)))
 
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
@@ -166,7 +166,7 @@ function generateStatesInfo(info)
                 if size(layerThickness, 1) != nZix
                     throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and wSoilThickness.")
                 end
-                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Float64.(layerThickness)))
+                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, tuple(Float64.(layerThickness)...)))
             end
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
         end
@@ -180,10 +180,10 @@ function generateStatesInfo(info)
             zix = 1:1:length(mainPoolName) |> collect
             flags =ones(Int, length(mainPoolName))
             nZix = length(mainPoolName)
-            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, flags))
+            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, tuple(components...)))
+            tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, tuple(flags...)))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (combinedPoolName, nZix))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
+            tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, tuple(zix...)))
             if maximum(ntypes) > 1
                 initValues = repeat(initValues, inner=[1, maximum(ntypes)])
             end
@@ -191,7 +191,7 @@ function generateStatesInfo(info)
         else
             create = Symbol.(uniqueSubPools)
         end
-        tmpElem = setTupleField(tmpElem, (:create, create))
+        tmpElem = setTupleField(tmpElem, (:create, tuple(create...)))
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         # if element == "water":
 
