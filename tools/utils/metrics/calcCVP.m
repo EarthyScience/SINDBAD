@@ -2,7 +2,7 @@ function X = calcCVP(Obs, Pre, parameter, varargin)
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % CALCULATE CALIBRATION AND VALIDATION PARAMETERS.
 % X = calc_cvp(Obs, Est, parameter)
-%
+% 
 % X         : parameter
 % Obs       : observations (vector)
 % Pre       : predictions (vector)
@@ -36,30 +36,30 @@ function X = calcCVP(Obs, Pre, parameter, varargin)
 %                       : LINEAR REGRESSION PARAMETERS
 %                       . 'r'       : PEARSON CORRELATION COEFFICIENT
 %                       . 'r2'      : r^2
-%                       . 'alpha'   : DEGREE OF CONFIDENCE -> CONFIDENCE
+%                       . 'alpha'   : DEGREE OF CONFIDENCE -> CONFIDENCE 
 %                                     LEVEL OF 100*(1 - alpha)%
 %                       : entropy and friends
 %                       . 'mic'     : maximal information coefficient
-%
+% 
 % optional inputs       : 'trim_data', 95 (use the 95% samples closer to
 %                       the one to one line
 %                       : 'do_alternative'
 %                       : 'bootstrapit'
 %                       : 'benchmark'
 %                       : 'NParams'
-%
+% 
 % REFERENCES:
-% Janssen, P. H. M. and Heuberger, P. S. C., Calibration of
+% Janssen, P. H. M. and Heuberger, P. S. C., Calibration of 
 % process-oriented models, in Ecological Modelling,  83, 55-66, 1995.
-%
+% 
 % Beven, K. J., Rainfall-Runoff Modelling � The Primer, Wiley, 2000
-%
-% Nash, J. E., and Sutcliffe, J. V., River flow forecasting through
-% conceptual models. I Discussion of principles, in Journal of Hydrology,
+% 
+% Nash, J. E., and Sutcliffe, J. V., River flow forecasting through 
+% conceptual models. I Discussion of principles, in Journal of Hydrology, 
 % 10, 282-290, 1970.
-%
-% Quinton, J. N., Reducing predictive uncertainty in model simulations: a
-% comparison of two methods using the European Soil Erosion Model
+% 
+% Quinton, J. N., Reducing predictive uncertainty in model simulations: a 
+% comparison of two methods using the European Soil Erosion Model 
 % (EUROSEM), in Catena, 30, 101-117, 1997.
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -67,7 +67,7 @@ function X = calcCVP(Obs, Pre, parameter, varargin)
 % Revised   : NC [2005-11-09 09:40:50]
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%
+% 
 % ndx         = isnan(Obs) == 1 | isnan(Pre) == 1;
 % Obs(ndx)    = [];
 % Pre(ndx)    = [];
@@ -109,15 +109,15 @@ if mregress
         end
         for i = 1:bootstrapit
             X(i, :)    = calc_cvp(Obs(ndxm(:, i)), Pre(ndxm(:, i), :), ...
-                parameter, ...
-                'mregress'          , 1         , ...
-                'trim_data'         , trim_data    , ...
-                'benchmark'         , benchmark    , ...
-                'NParams'           , NParams    , ...
-                'bootstrapit'       , 0         , ...
-                'minN'              , minN      , ...
-                'UncSigma'          , UncSigma  , ...
-                'do_alternative'    , do_alternative);
+                    parameter, ...
+                    'mregress'          , 1         , ...
+                    'trim_data'         , trim_data    , ...
+                    'benchmark'         , benchmark    , ...
+                    'NParams'           , NParams    , ...
+                    'bootstrapit'       , 0         , ...
+                    'minN'              , minN      , ...
+                    'UncSigma'          , UncSigma  , ...
+                    'do_alternative'    , do_alternative);
         end
         rmpath(bsf)
         return
@@ -132,12 +132,12 @@ if mregress
         otherwise
             newPre    = Pre * coeffs;
             X       = calc_cvp(Obs, newPre, parameter, ...
-                'trim_data'         , trim_data    , ...
-                'benchmark'         , benchmark    , ...
-                'NParams'           , NParams    , ...
-                'minN'              , minN      , ...
-                'UncSigma'          , UncSigma  , ...
-                'do_alternative'    , do_alternative);
+                    'trim_data'         , trim_data    , ...
+                    'benchmark'         , benchmark    , ...
+                    'NParams'           , NParams    , ...
+                    'minN'              , minN      , ...
+                    'UncSigma'          , UncSigma  , ...
+                    'do_alternative'    , do_alternative);
     end
     return
 end
@@ -167,13 +167,13 @@ if bootstrapit
     X       = NaN(1, bootstrapit);
     for i = 1:bootstrapit
         X(i)    = calc_cvp(Obs(ndxm(:, i)), Pre(ndxm(:, i)), parameter, ...
-            'trim_data'         , trim_data    , ...
-            'benchmark'         , benchmark    , ...
-            'NParams'           , NParams    , ...
-            'minN'              , minN      , ...
-            'r_w'               , r_w      , ...
-            'UncSigma'          , UncSigma  , ...
-            'do_alternative'    , do_alternative);
+                'trim_data'         , trim_data    , ...
+                'benchmark'         , benchmark    , ...
+                'NParams'           , NParams    , ...
+                'minN'              , minN      , ...
+                'r_w'               , r_w      , ...
+                'UncSigma'          , UncSigma  , ...
+                'do_alternative'    , do_alternative);
     end
     rmpath(bsf)
     return
@@ -191,13 +191,13 @@ if trim_data > 0
         end
     else
         r_w=[];
-    end
-    %     tmp             = polyfit(Obs, Pre, 1);
-    %     tmp2            = polyval(tmp, Obs);
-    %     e2              = abs(tmp2 - Pre);
-    %     prct95_2        = prctile(e2, trim_data);
-    %     Obs(e2 > prct95_2) = [];
-    %     Pre(e2 > prct95_2) = [];
+    end    
+%     tmp             = polyfit(Obs, Pre, 1);
+%     tmp2            = polyval(tmp, Obs);
+%     e2              = abs(tmp2 - Pre);
+%     prct95_2        = prctile(e2, trim_data);
+%     Obs(e2 > prct95_2) = [];
+%     Pre(e2 > prct95_2) = [];
     e               = abs(Obs - Pre);
     prct95          = prctile(e, trim_data);
     Obs(e > prct95) = [];
@@ -207,7 +207,7 @@ if trim_data > 0
         if ~isempty(r_w)
             r_w(e > prct95)    = [];
         end
-    end
+    end    
     
     if ~isempty(benchmark)
         benchmark(e > prct95)    = [];
@@ -280,7 +280,7 @@ switch parameter
     case lower('AbsoluteDifferencesVector')
         X    = abs(Obs - Pre) ./ abs(UncSigma);
     case lower('dObsdPre')
-        %         tic
+%         tic
         dObs    = NaN(numel(Obs)*numel(Obs),1);
         dPre    = dObs;
         k       = 0;
@@ -292,11 +292,11 @@ switch parameter
             end
         end
         X    = prctile(dObs ./ dPre,50);
-        %         toc
+%         toc
     case 'n'
         X    = numel(Obs);
         
-        % AVERAGE LEVEL COMPARISON
+    % AVERAGE LEVEL COMPARISON
     case {'ae', 'nae', 'fb', 'rb'}
         mP = mean(Pre);
         mO = mean(Obs);
@@ -316,38 +316,38 @@ switch parameter
                 X = (mP - mO) ./ sO;
         end
         
-        % POPULATION LEVEL COMPARISON
-    case {'fv', 'vr', 'ks', 'sr'}
-        vP = var(Pre);
-        vO = var(Obs);
-        
-        switch parameter
-            case 'fv'  % FRACTIONAL VARIANCE
-                X = 2 .* (vP - vO) ./ (vP + vO);
-                
-            case 'vr'  % VARIANCE RATIO
-                X = vP ./ vO;
-                
-            case 'ks'  % KOLMOGOROV-SMIRNOV
-                X    = kstest2(Obs, Pre);
-                
-            case 'sr'  % SIGNRANK
-                X    = signrank(Pre-Obs);
-        end
-        
-        % INDIVIDUAL LEVEL COMPARISON
-    case {'rmse', 'nrmse', 'ioa', 'mae', 'nmae', ...
-            'maxae', 'medae', 'uppae'}
-        
-        SDS    = sum((Pre - Obs) .^ 2);
-        N      = length(Pre);
-        mO     = mean(Obs);
-        Pline  = Pre - mO;
-        Oline  = Obs - mO;
-        SDSm   = sum((abs(Pline) - abs(Oline)) .^ 2);
-        SDA    = sum(abs(Pre - Obs));
-        AbEr   = abs(Pre - Obs); % ./ abs(Obs);
-        
+     % POPULATION LEVEL COMPARISON
+     case {'fv', 'vr', 'ks', 'sr'}
+         vP = var(Pre);
+         vO = var(Obs);
+         
+         switch parameter
+             case 'fv'  % FRACTIONAL VARIANCE
+                 X = 2 .* (vP - vO) ./ (vP + vO);
+                 
+             case 'vr'  % VARIANCE RATIO
+                 X = vP ./ vO;
+                 
+             case 'ks'  % KOLMOGOROV-SMIRNOV
+                 X    = kstest2(Obs, Pre);
+                 
+             case 'sr'  % SIGNRANK
+                 X    = signrank(Pre-Obs);
+         end
+         
+     % INDIVIDUAL LEVEL COMPARISON
+     case {'rmse', 'nrmse', 'ioa', 'mae', 'nmae', ...
+                 'maxae', 'medae', 'uppae'}
+         
+         SDS    = sum((Pre - Obs) .^ 2);
+         N      = length(Pre);
+         mO     = mean(Obs);
+         Pline  = Pre - mO;
+         Oline  = Obs - mO;
+         SDSm   = sum((abs(Pline) - abs(Oline)) .^ 2);
+         SDA    = sum(abs(Pre - Obs));
+         AbEr   = abs(Pre - Obs); % ./ abs(Obs);
+         
 %         SDSf    = @(P,O) sum((P - O) .^ 2);
 %         Nf      = @(P)length(P);
 %         mOf     = @(O)mean(O);
@@ -357,61 +357,61 @@ switch parameter
 %         SDAf    = sum(abs(Pre - Obs));
 %         AbErf   = abs(Pre - Obs); % ./ abs(Obs);
 %         sqr = @(x) x.^2;
-        % outlier sensitivity
-        switch parameter
-            case 'rmse'    % ROOT MEAN SQUARE ERROR
-                X = (SDS ./ N) .^ (1 ./ 2);
-                
-            case 'nrmse'   % NORMALIZED ROOT MEAN SQUARE ERROR
-                X = ((SDS ./ N) .^ (1 ./ 2)) ./ mO;
-                
-            case 'ioa'     % INDEX OF AGREEMENT
-                X = 1 - SDS ./ SDSm;
-        end
-        
-        % absolute value sense analysis
-        switch parameter
-            case 'mae'     % MEAN ABSOLUTE ERROR
-                X = SDA ./ N;
-                
-            case 'nmae'    % NORMALIZED MEAN ABSOLUTE ERROR
-                X = (SDA ./ N) ./ mO;
-        end
-        
-        % absolute error analysis
-        switch parameter
-            case 'maxae'   % MAXIMUM ABSOLUTE ERROR
-                X = max(AbEr);
-                
-            case 'medae'   % MEDIAN ABSOLUTE ERROR
-                X = prctile(AbEr, 50);
-                
-            case 'uppae'   % PERCENTILE 75 ABSOLUTE ERROR
-                X = prctile(AbEr, 75);
-        end
-        
-        % NOMINAL OR BENCHMARK ANALYSIS
+         % outlier sensitivity
+         switch parameter
+             case 'rmse'    % ROOT MEAN SQUARE ERROR
+                 X = (SDS ./ N) .^ (1 ./ 2);
+                 
+             case 'nrmse'   % NORMALIZED ROOT MEAN SQUARE ERROR
+                 X = ((SDS ./ N) .^ (1 ./ 2)) ./ mO;
+                 
+             case 'ioa'     % INDEX OF AGREEMENT
+                 X = 1 - SDS ./ SDSm;
+         end
+         
+         % absolute value sense analysis
+         switch parameter
+             case 'mae'     % MEAN ABSOLUTE ERROR
+                 X = SDA ./ N;
+                 
+             case 'nmae'    % NORMALIZED MEAN ABSOLUTE ERROR
+                 X = (SDA ./ N) ./ mO;
+         end
+         
+         % absolute error analysis
+         switch parameter
+             case 'maxae'   % MAXIMUM ABSOLUTE ERROR
+                 X = max(AbEr);
+                 
+             case 'medae'   % MEDIAN ABSOLUTE ERROR
+                 X = prctile(AbEr, 50);
+                 
+             case 'uppae'   % PERCENTILE 75 ABSOLUTE ERROR
+                 X = prctile(AbEr, 75);
+         end
+         
+     % NOMINAL OR BENCHMARK ANALYSIS
     case {'rs', 'me', 'meinf', 'ns', 'nsinf', 'mef', 'mefinv'}
-        mO = mean(Obs);
-        OmO = sum((Obs - mO) .^ 2);
-        PsO = sum((Pre - Obs) .^ 2);
-        
-        switch parameter
-            case 'rs'  % RATIO OF SCATTER
-                X = OmO ./ PsO;
-                
-            case {'me', 'mef'}  % MODEL EFFICIENCY
-                X = 1 - PsO ./ OmO;
-                
+         mO = mean(Obs);
+         OmO = sum((Obs - mO) .^ 2);
+         PsO = sum((Pre - Obs) .^ 2);
+         
+         switch parameter
+             case 'rs'  % RATIO OF SCATTER
+                 X = OmO ./ PsO;
+                 
+             case {'me', 'mef'}  % MODEL EFFICIENCY
+                 X = 1 - PsO ./ OmO;
+                 
             case {'meinf', 'mefinv'}
-                X = 1 - (1 - PsO ./ OmO);
-                
-            case 'ns' % NASH SUTCLIFFE (= MODEL EFFICIENCY)
-                % exactly the same as 'me'
-                S = numel(Pre);
-                D = sum((Obs - Pre) .^ 2) ./ S;
-                N = var(Obs, 1);
-                X = 1 - D ./ N;
+                 X = 1 - (1 - PsO ./ OmO);
+                 
+             case 'ns' % NASH SUTCLIFFE (= MODEL EFFICIENCY)
+                 % exactly the same as 'me'
+                 S = numel(Pre);
+                 D = sum((Obs - Pre) .^ 2) ./ S;
+                 N = var(Obs, 1);
+                 X = 1 - D ./ N;
                 
             case 'nsinf' % NASH SUTCLIFFE (= MODEL EFFICIENCY)
                 % exactly the same as 'me'
@@ -419,72 +419,72 @@ switch parameter
                 D = sum((Obs - Pre) .^ 2) ./ S;
                 N = var(Obs, 1);
                 X = D ./ N;
-        end
-        
-        % LINEAR REGRESSION PARAMETERS
+         end
+         
+     % LINEAR REGRESSION PARAMETERS
     case {'r', 'rinv', 'r2', 'alpha', 'rlo', 'rup', 'adjr2','rw','r2w'}
-        warning off MATLAB:divideByZero
-        [r, alpha, rlo, rup]   = corrcoef(Obs, Pre);
-        
-        switch parameter
-            case {'rw','r2w'}
-                if find(r_w<0,1,'first'),error('weights cannot be negative');end
-                if find(isreal(r_w)==0,1,'first'),error('weights must be real');end
-                ndx = r_w > 0 & isnan(r_w) == 0;
-                Obs = Obs(ndx);
-                Pre = Pre(ndx);
-                r_w = r_w(ndx);
-                X   = weightedcorrs([Obs(:),Pre(:)],r_w(:));
-                X   = X(1,2);
-                if strcmpi(parameter,'r2w')
-                    X    = X.^2;
-                end
-                
-            case 'r'       % PEARSON CORRELATION COEFFICIENT
-                X  = r(1, 2);
+         warning off MATLAB:divideByZero
+         [r, alpha, rlo, rup]   = corrcoef(Obs, Pre);
+         
+         switch parameter
+             case {'rw','r2w'}
+                 if find(r_w<0,1,'first'),error('weights cannot be negative');end
+                 if find(isreal(r_w)==0,1,'first'),error('weights must be real');end
+                 ndx = r_w > 0 & isnan(r_w) == 0;
+                 Obs = Obs(ndx);
+                 Pre = Pre(ndx);
+                 r_w = r_w(ndx);
+                 X   = weightedcorrs([Obs(:),Pre(:)],r_w(:));
+                 X   = X(1,2);
+                 if strcmpi(parameter,'r2w')
+                     X    = X.^2;
+                 end
+             
+             case 'r'       % PEARSON CORRELATION COEFFICIENT
+                 X  = r(1, 2);
             case 'rinv'       % PEARSON CORRELATION COEFFICIENT
                 X  = 1 - r(1, 2);
-                
-            case 'r2'      % r^2
-                X  = r(1, 2) .^ 2;
-                
-            case 'adjr2'      % r^2
-                X  = r(1, 2) .^ 2;
-                N     = numel(Obs);
-                if ~exist('adjr2P','var')
-                    P    = 2;
-                else
-                    P  = adjr2P;
-                end
-                X    = 1 - (1 - X) * ((N - 1) / (N - P - 1));
-                
-            case 'alpha'   % DEGREE OF CONFIDENCE
-                X  = alpha(1, 2);
-                
-                % THESE WERE ADDED ON 20060208
-            case 'rlo'      % LOWER CONFIDENCE INTERVAL LIMIT
-                [r, alpha, rlo, rup]   = corrcoef(Obs, Pre, 'alpha', 0.01);
-                X                      = rlo(1, 2);
-                
-            case 'rup'      % UPPER CONFIDENCE INTERVAL LIMIT
-                [r, alpha, rlo, rup]   = corrcoef(Obs, Pre, 'alpha', 0.01);
-                X                      = rup(1, 2);
-        end
-        warning on MATLAB:divideByZero
-        
+                 
+             case 'r2'      % r^2
+                 X  = r(1, 2) .^ 2;
+                 
+             case 'adjr2'      % r^2
+                 X  = r(1, 2) .^ 2;
+                 N     = numel(Obs);
+                 if ~exist('adjr2P','var')
+                     P    = 2;
+                 else
+                     P  = adjr2P;
+                 end
+                 X    = 1 - (1 - X) * ((N - 1) / (N - P - 1));
+                 
+             case 'alpha'   % DEGREE OF CONFIDENCE
+                 X  = alpha(1, 2);
+                 
+             % THESE WERE ADDED ON 20060208
+             case 'rlo'      % LOWER CONFIDENCE INTERVAL LIMIT
+                 [r, alpha, rlo, rup]   = corrcoef(Obs, Pre, 'alpha', 0.01);
+                 X                      = rlo(1, 2);
+                 
+             case 'rup'      % UPPER CONFIDENCE INTERVAL LIMIT
+                 [r, alpha, rlo, rup]   = corrcoef(Obs, Pre, 'alpha', 0.01);
+                 X                      = rup(1, 2);
+         end
+         warning on MATLAB:divideByZero
+         
     case {'rpoly', 'r2poly', 'alphapoly'}
         if ~exist('polyorder','var'),polyorder=1;end
         p       = polyfit(Pre, Obs, polyorder);
         NewObs  = polyval(p,Pre);
         X       = calc_cvp(NewObs,Obs,strrep(parameter,'poly',''));
-        
+         
     case {'r_spearman', 'r_kendall', 'alpha_spearman', 'alpha_kendall'}
         n   = strfind(parameter,'_');
         p    = parameter(1:n-1);
         t   = parameter(n+1:end);
         [r, alpha] = corr(Obs(:),Pre(:),'type',t);
         eval(['X = ' p ';'])
-        
+         
     case {'slope', 'intercept', 'offset'}
         p   = polyfit(Pre, Obs, 1);
         
@@ -498,15 +498,15 @@ switch parameter
     case 'robust_slope'
         b    = robustfit(Pre, Obs);
         X    = b(2);
-        % from LI & ZHAO 2006 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    % from LI & ZHAO 2006 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     case {'hae'}
         X    = numel(Obs) / sum(1 ./ (abs(Pre - Obs)));
         
     case {'gae'}
         X    = exp(1 / numel(Obs) * sum(log(abs(Pre - Obs))));
-        % from LI & ZHAO 2006 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        % from Paruelo 1998 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    % from LI & ZHAO 2006 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    % from Paruelo 1998 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     case {'ubias', 'uslope', 'uerror'}
         OBS     = mean(Obs);
         PRE     = mean(Pre);
@@ -525,9 +525,9 @@ switch parameter
                 Est    = b .* Obs + a;
                 X    = sum((Est - Obs) .^ 2) / SSPE;
         end
-        % from Paruelo 1998 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        % from Smith and Rose 1995 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    % from Paruelo 1998 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    % from Smith and Rose 1995 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     case 'tic' % Theil's inequality coefficient
         X    = ((sum((Pre - Obs) .^ 2)) ^ (1 / 2)) / ...
             ( ...
@@ -535,16 +535,16 @@ switch parameter
             + ...
             ((sum((Obs) .^ 2)) ^ (1 / 2)) ...
             );
-        % from Smith and Rose 1995 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        % from Schaefli and Gupta 2007 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    % from Smith and Rose 1995 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    % from Schaefli and Gupta 2007 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     case 'be'
         % get the benchmark
         Ben    = benchmark;
         X    = 1 - sum((Obs - Pre) .^ 2) / sum((Obs - Ben) .^ 2);
-        % from Schaefli and Gupta 2007 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        % regress zero for chris <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    % from Schaefli and Gupta 2007 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    % regress zero for chris <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     case 'regress0'
         if size(Obs, 2) ~= 1,   Obs    = Obs'; end
         if size(Pre, 2) ~= 1,   Pre    = Pre'; end
@@ -552,9 +552,9 @@ switch parameter
         y    = Pre;
         c    = y \ X;
         X    =  c(2);
-        % regress zero for chris <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        % information criteria from MJ [Burnham and Andersion, 2004] <<<<<<<<<<
+    % regress zero for chris <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    % information criteria from MJ [Burnham and Andersion, 2004] <<<<<<<<<<
     case {'aic', 'aic_c', 'bic'}
         N               = numel(Obs);
         K               = NParams;
@@ -568,9 +568,9 @@ switch parameter
             case 'bic'
                 X    = N * log(sigma_square) + K * log(N);
         end
-        % information criteria from MJ [Burnham and Andersion, 2004] <<<<<<<<<<
+    % information criteria from MJ [Burnham and Andersion, 2004] <<<<<<<<<<
     case {'msepart'}
-        % decomposition of MSE
+        % decomposition of MSE 
         % MSE = mean((Pre-Obs)^2)
         MSEt    = nanmean((Pre-Obs).^2);
         % MSE = 2*std(Obs)*std(Pre)*(1-corr(Obs,Pre)+(std(Pre)-std(Obs))^2+(mean(Pre)-mean(Obs))^2
@@ -585,13 +585,13 @@ switch parameter
             X    = [MSEphase MSEvariance MSEbias];
         end
         
-        % maximal information content
+    % maximal information content
     case {'mic'}
         if ~exist('micalpha','var'),micalpha=0.6;end
         if ~exist('micC','var'),micC=15;end
         X    = mine(Pre,Obs,micalpha,micC);
         X    = X.mic;
-        % Kernel-based Conditional Independence test
+    % Kernel-based Conditional Independence test
     case {'kci'}
         % X    = Obs
         % Z = Pre
@@ -605,7 +605,7 @@ switch parameter
             case 'stat'; X = stat;
             otherwise
                 error(['Not a known output for KCI : ' kci_varout])
-        end
+        end                
     otherwise
         error(['Not a known parameter measurement: ' parameter])
 end

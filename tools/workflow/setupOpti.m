@@ -43,8 +43,8 @@ end
 info.opti.constraints.variableNames = data_json.variables2constrain;
 
 %--> parameters to optimize
-paramsList  =   info.opti.params2opti;
-info.opti   =   rmfield(info.opti,'params2opti');
+paramsList  = info.opti.params2opti;
+info.opti        =   rmfield(info.opti,'params2opti');
 upbounds    =   [];
 lowbounds   =   [];
 pdefault    =   [];
@@ -88,7 +88,7 @@ for jj=1:numel(paramsList)
                     if isfield(param_settings.bounds.(module).(paramName), 'UpperBound')
                         params.(module).(paramName).UpperBound      =   param_settings.bounds.(module).(paramName).UpperBound;
                         disp(['upper bound for parameter ' module '.' paramName ' is changed  to: ' num2str(param_settings.bounds.(module).(paramName).UpperBound)]); 
-                    end     
+                    end 
                 end
             end    
         end
@@ -102,7 +102,7 @@ for jj=1:numel(paramsList)
         end
         % add the existing params to the list of params to optimize
         if ~startsWith(paramsList{jj},'p.')
-            paramsList{jj}              =   ['p.' paramsList{jj}];
+        paramsList{jj}              =   ['p.' paramsList{jj}];
         end
         lowbounds                   =   [lowbounds params.(module).(paramName).LowerBound];
         upbounds                    =   [upbounds params.(module).(paramName).UpperBound];

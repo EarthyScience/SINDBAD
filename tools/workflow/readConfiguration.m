@@ -88,7 +88,7 @@ for ii = 1:numel(fldnmsINFO)
                 
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).apprName    = approachName;
                 info.(whatWorkFlow).model.modules.(module_fields{jj}).runFull     = data_json.modules.(module_fields{jj, 1}).runFull;
-                info.(whatWorkFlow).model.modules.(module_fields{jj}).use4spinup  = data_json.modules.(module_fields{jj, 1}).use4spinup;
+                info.(whatWorkFlow).model.modules.(module_fields{jj}).use4spinup     = data_json.modules.(module_fields{jj, 1}).use4spinup;
                 
                 % read parameter information of the approaches
                 file_json   = convertToFullPaths(info,['model' '/' 'modules' '/' module_fields{jj} '/' module_fields{jj} '_' approachName  '/' module_fields{jj} '_' approachName '.json']);
@@ -123,8 +123,8 @@ for ii = 1:numel(fldnmsINFO)
         case 'params'
             paramJson = data_json.parameter;
             % loop over model parameter
-            paraDef     = [];
-            paraNew     = [];
+                paraDef     = [];
+                paraNew     = [];
             for pp=1:numel(info.tem.model.variables.paramInput)
                 paraName    = info.tem.model.variables.paramInput{pp};
                 tmp         = strsplit(paraName,'.');

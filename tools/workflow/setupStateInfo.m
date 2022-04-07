@@ -44,7 +44,7 @@ function [info] = setupStateInfo(info)
 %%
 
 if ~isfield(info.tem.model.variables.states,'input')
-    info.tem.model.variables.states.input     =   info.tem.model.variables.states;
+  info.tem.model.variables.states.input     =   info.tem.model.variables.states;
 end;
 
 
@@ -152,7 +152,7 @@ function [sStruct]  =   genStateStructure(sInfo,sStruct,combPools)
             sStruct.flags.(fullName)        =   true(1,nZix);
             sStruct.zix.(fullName)          =   1:nZix;
             sStruct.nZix.(fullName)         =   nZix;
-            sStruct.initValue.(fullName)    =   initValues{i};
+            sStruct.initValue.(fullName)   =   initValues{i};
        end
         sStruct.names                       =   allNames';
         sStruct.components                  =   allNames';
