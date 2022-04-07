@@ -69,7 +69,7 @@ end
 gaOptions                   =   optimoptions(@gamultiobj,op2nameVal{:});
 LBounds                     =   info.opti.params.lBoundsScaled;
 UBounds                     =   info.opti.params.uBoundsScaled;
-costhand                    =   @(pScales)calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU,infoSU,obs,info);
+costhand                            =   @(pScales)calcCostTEM(pScales,f,p,precOnceData,fx,fe,d,s,fSU,precOnceDataSU,fxSU,feSU,dSU,sSU,infoSU,obs,info);
 [x,fval,exitFlag,output,population,scores]                    =    feval(info.opti.algorithm.funHandle,costhand,numel(info.opti.params.defScalars),[],[],[],[],LBounds,UBounds,gaOptions);
 
 %% create the output structure of the full output of the optimization scheme

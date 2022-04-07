@@ -34,13 +34,13 @@ multiConstraintMethod = info.opti.costFun.multiConstraintMethod;
 if info.opti.algorithm.isMultiObj
     multiConstraintMethod = 'cat';
 end
-
+    
 % define cost array
 fullCost    = [];
-
+    
 % get cost metric function handle
 metric_fun          = info.opti.costMetric.funHandle;
-
+    
 cmList = {};
 % loop through the variables
 for i = 1:numel(VariableNames)
@@ -116,10 +116,10 @@ for i = 1:numel(VariableNames)
     % grids)
     if ~isempty(data_bound)
         ndx             = obs_proc < data_bound(1) | obs_proc > data_bound(2);
-        obs_proc(ndx)   = NaN;
-        obs_unc(ndx)    = NaN;
-        sim_proc(ndx)   = NaN;
-    end
+            obs_proc(ndx)   = NaN;
+            obs_unc(ndx)    = NaN;
+            sim_proc(ndx)   = NaN;
+            end
     
     % apply area weight/grid area and calculate mean. The areaWeight can be
     % 0 for false and 1 for true
@@ -145,12 +145,12 @@ for i = 1:numel(VariableNames)
             [sim_proc, obs_proc, obs_unc]   = spatial_aggregation(sim_proc, obs_proc, obs_unc, spatialAggr);
         otherwise
             error(['CRIT : costMultiConstraint : The function does not work for : ' aggrOrder ' order of space and time aggregation aggregation of data. Use either {spacetime, timespace}.'])
-    end
+        end
     
-    
+        
     % compute costs either for all grid cells or per grid cell with summary
     % statistics as cost
-    
+        
     switch spatialCostAggr
         case 'cat'
             cost        =   metric_fun({sim_proc(:)}, {obs_proc(:)}, costMetric,{obs_unc(:)});
@@ -178,16 +178,16 @@ for i = 1:numel(VariableNames)
         fullCost    = [fullCost 1e15];
     else
         fullCost    = [fullCost cost];
+        end
     end
-end
 disp([pad(' ITER OPTI COST',20) ' : ' pad('costMultiConstraint',20) ' | Cost components: '])
 costTable = table(VariableNames, cmList', fullCost','VariableNames',{'constraint', 'metric', 'cost'});
 disp(costTable)
-
+    
 % combine/produce the different method for putting the cost together
 switch multiConstraintMethod
     case 'cat'
-        cost        = fullCost;
+        cost            =   fullCost;
     case 'mult'
         cost        = prod(fullCost);
     case 'sum'
@@ -223,8 +223,8 @@ end
                 error(['CRIT : costMultiConstraint : The function does not work for : ' spatialAggr_in ' spatial aggregation/operation of data. Use either {cat, mean, median, sum}.'])
         end
     end
-
-
+    
+    
 % temporal aggregation/operation of the simulation (and observation)
     function [sim_proc, obs_proc, obs_unc]  = temporal_aggregation(sim_proc_in, obs_proc_in, obs_unc_in, timeAggrFreq_in, timeAggrFunc_in, timeAggrObs_in, info_in)
         if ~timeAggrObs_in
@@ -332,5 +332,5 @@ end
                 error(['CRIT : costMultiConstraint : The function does not work for : ' timeAggrFreq_in ' temporal aggregation/operation yet. Use either {mean, day, month, year, dayAnomaly, dayMSC, dayMSCAnomaly, monthAnomaly, monthIAV, monthMSC, monthMSCAnomaly, yearAnomaly}.'])
         end
     end
-
+    
 end
