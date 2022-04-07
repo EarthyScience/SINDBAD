@@ -60,8 +60,8 @@ keepVars                =   {};
 for ij                  =    1:numel(keepVarsSource)
     var2ks              =   keepVarsSource{ij}(1:end-1);
     if startsWith(info.tem.model.code.variables.moduleAll,'s.')
-        keepVars            =   [keepVars var2ks];
-    end
+    keepVars            =   [keepVars var2ks];
+end
 end
 
 stateVarsCode=unique(vertcat(stateVarsCode(:),keepVars(:)));
@@ -112,7 +112,7 @@ for ij                  =    1:numel(stateVarsCode)
                             s.c.cEco(:,zix) = cval;
                         end
                     end
-                    
+                
                 end
                 %--> done setting the correct carbon pools
             end

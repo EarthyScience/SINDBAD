@@ -2,7 +2,7 @@ function [info, obs] = prepOpti(info)
 % Prepares the information and data needed for optimization
 %
 % Requires:
-%   - info with the name of the algorithm and cost function
+%    - info with the name of the algorithm and cost function
 %   - variables and path for observational constraints and (associated)
 %   uncertainties
 %
@@ -123,8 +123,8 @@ info.opti.costMetric.funHandle = str2func(perfMetricFile);
 cd(oldDir);
 
 %% add scaled parameter bounds
-info.opti.params.uBoundsScaled  = info.opti.params.uBounds  ./ info.opti.params.defaults;
-info.opti.params.lBoundsScaled  = info.opti.params.lBounds  ./ info.opti.params.defaults;
-info.opti.params.defScalars     = info.opti.params.defaults  ./ info.opti.params.defaults;
+info.opti.params.uBoundsScaled  = info.opti.params.uBounds  ./ info.opti.params.defaults ;
+info.opti.params.lBoundsScaled  = info.opti.params.lBounds  ./ info.opti.params.defaults ;
+info.opti.params.defScalars     = info.opti.params.defaults  ./ info.opti.params.defaults ;
 
 end
