@@ -44,7 +44,7 @@ fx.gwRec(:,tix)         =   drain;
 
 % update storages
 s.w.wSoil(:,wSoilend)   =   s.w.wSoil(:,wSoilend)-fx.gwRec(:,tix);
-fx.gwRec(:,tix)         =   fx.gwRec(:,tix) + wSoilExc;
+fx.gwRec(:,tix)         =   fx.gwRec(:,tix) + wSoilExc ;
 s.w.wGW                 =   s.w.wGW + fx.gwRec(:,tix);
 
 end

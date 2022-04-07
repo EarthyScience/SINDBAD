@@ -187,7 +187,7 @@ for iss = 1:numel(spinSequence)
                 disp(cell2table(num2cell(round(sSU.c.cEco(1,:),2)), 'VariableNames', info.tem.model.variables.states.c.components', 'RowNames',{'Current'}))
             end
         end
-
+        
         if ~exist('tmpLS','var') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
             tmpLS                   = dSU.storedStates.cEco;
         elseif isfield(dSU,'storedStates') && isfield(dSU,'storedStates') && isfield(dSU.storedStates,'cEco') && info.tem.spinup.flags.storeFullSpinupStates
