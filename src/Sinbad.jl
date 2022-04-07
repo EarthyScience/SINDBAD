@@ -2,6 +2,7 @@ module Sinbad
 using InteractiveUtils
 using Reexport: @reexport
 @reexport begin
+    using DocStringExtensions
     using FieldMetadata
     using Parameters
     using JSON:
