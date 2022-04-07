@@ -1,0 +1,203 @@
+{
+    "params": {
+        "smax1": {
+            "Name": "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth",
+            "Unit": "-",
+            "Default": 1,
+            "LowerBound": 0.001,
+            "UpperBound": 1,
+            "Distribution": {
+                "name": "uniform",
+                "funHandle": "",
+                "params": []
+            }
+            },
+            "smaxPFT0":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 0, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT1":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 1, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT2":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 2, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT3":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 3, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT4":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 4, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT5":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 5, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT6":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 6, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT7":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 7, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT8":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 8, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT9":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 9, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT10":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 10, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": ""
+            },
+            "smaxPFT11":
+            {
+                "Name": "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth",
+                "Unit": "fraction",
+                "Default": 0.05,
+                "LowerBound": 0,
+                "UpperBound": 2,
+                "Distribution":
+                {
+                    "name": "uniform",
+                    "funHandle" : "",
+                    "params" : []
+                },
+                "Comment": " "
+            }
+        },
+    "devStage": {
+        "experimental": true,
+        "tested": false,
+        "consolidated": false,
+        "published": false,
+        "comment": "experimental: try-out, tested: runs and produces sane output, consolidated: tested and used for scientific purpose, published: for published approach"
+    }
+}

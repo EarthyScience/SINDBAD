@@ -4,7 +4,7 @@
             "Name": "melt factor for temperature",
             "Unit": "mm/degC",
             "Default": 3,
-            "LowerBound": 0.01,
+            "LowerBound": 0,
             "UpperBound": 10,
             "Distribution": {
                 "name": "uniform",
@@ -17,7 +17,7 @@
             "Name": "melt factor for radiation",
             "Unit": "mm/MJ/m2",
             "Default": 2,
-            "LowerBound": 0.01,
+            "LowerBound": 0,
             "UpperBound": 3,
             "Distribution": {
                 "name": "uniform",

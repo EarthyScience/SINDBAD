@@ -3,7 +3,7 @@ function K = calcKSaxton2006(s,p,info,sl)
 % calculates the soil hydraulic conductivity for a given moisture based on Saxton, 2006
 %
 % Inputs:
-%	- s.w.wSoil(:,sl)
+%	- s.w.wSoil(:,sl)  
 %	- s.wd.p_wSoilBase_[wSat/Beta/kSat]: hydraulic parameters for each soil layer
 %
 % Outputs:
@@ -20,10 +20,10 @@ function K = calcKSaxton2006(s,p,info,sl)
 %   - is also used by all approaches depending on kUnsat within time loop of coreTEM
 %
 % References:
-%  - Saxton, K. E., & Rawls, W. J. (2006). Soil water characteristic estimates by
-%       texture and organic matter for hydrologic solutions.
+%  - Saxton, K. E., & Rawls, W. J. (2006). Soil water characteristic estimates by 
+%       texture and organic matter for hydrologic solutions. 
 %       Soil science society of America Journal, 70(5), 1569-1578.
-%
+% 
 % Created by:
 %   - Sujan Koirala (skoirala)
 %
@@ -34,7 +34,7 @@ function K = calcKSaxton2006(s,p,info,sl)
 %
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%%
+%% 
 %--> if useLookUp is set to true in modelRun.json, run the original non-linear equation
 wSat            =   s.wd.p_wSoilBase_wSat(:,sl);
 Theta_dos       =   s.w.wSoil(:,sl) ./ wSat;
@@ -59,7 +59,7 @@ else
     lkInd(lkInd>p.wSoilBase.nLookup)            =   p.wSoilBase.nLookup;
     rowArray                                    =   1:info.tem.helpers.sizes.nPix;
     idx                                         =   sub2ind(size(lkDat),rowArray',lkInd); %subscript for all rows and the selected columns
-    K                                           =   lkDat(idx);
+    K                                           =   lkDat(idx);        
     % loop method
     % k2 = info.tem.helpers.arrays.zerospix;
     %     for rw = 1:info.tem.helpers.sizes.nPix
