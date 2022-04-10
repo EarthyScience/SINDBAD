@@ -5,10 +5,10 @@ export evapSoil_demSup
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter" | ""
 end
 
-function compute(o::evapSoil_demSup, forcing, out, modelInfo)
+function compute(o::evapSoil_demSup, forcing, land, infotem)
     @unpack_evapSoil_demSup o
     @unpack_land begin
-        wSoil ∈ out.pools
+        wSoil ∈ land.pools
         Rn ∈ forcing
     end
 
@@ -18,23 +18,23 @@ function compute(o::evapSoil_demSup, forcing, out, modelInfo)
     evapSoil = fracEvapSoil * wSoil[1]
 
     @pack_land begin
-        (PETsoil, evapSoil) ∋ out.fluxes
-        fracEvapSoil ∋ out.diagnostics
+        (PETsoil, evapSoil) ∋ land.fluxes
+        fracEvapSoil ∋ land.diagnostics
     end
-    return out
+    return land
 end
 
-function update(o::evapSoil_demSup, forcing, out, modelInfo)
+function update(o::evapSoil_demSup, forcing, land, infotem)
     @unpack_land begin
-        evapSoil ∈ out.fluxes
-        wSoil ∈ out.pools
+        evapSoil ∈ land.fluxes
+        wSoil ∈ land.pools
     end
     wSoil[1] = wSoil[1] - evapSoil
 
     @pack_land begin
-        wSoil ∋ out.pools
+        wSoil ∋ land.pools
     end
 
-    return out
+    return land
 end
 

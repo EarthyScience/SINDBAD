@@ -8,14 +8,14 @@ end
 SnowFrac(snow) = snow > 0.0 ? 1.0 : 0.0
 
 
-function compute(o::snowMelt_snowFrac, forcing, out, modelInfo)
+function compute(o::snowMelt_snowFrac, forcing, land, infotem)
     @unpack_snowMelt_snowFrac o
 
     @unpack_land begin
         (Rn, Tair) ∈ forcing
-        snow ∈ out.fluxes
-        WBP ∈ out.diagnostics
-        wSnow ∈ out.pools
+        snow ∈ land.fluxes
+        WBP ∈ land.diagnostics
+        wSnow ∈ land.pools
     end
 
     potMelt = Tair * melt_T + max(0.0, Rn * melt_Rn)
@@ -25,25 +25,25 @@ function compute(o::snowMelt_snowFrac, forcing, out, modelInfo)
     WBP = WBP + snowMelt
 
     @pack_land begin
-        (WBP, fracSnowMelt) ∋ out.diagnostics
-        # (WBP, fracSnowMelt) => (wbp_n, snm_n) ∋ out.diagnostics
-        snowMelt ∋ out.fluxes
-        # snowMelt => melt_snow ∋ out.fluxes
+        (WBP, fracSnowMelt) ∋ land.diagnostics
+        # (WBP, fracSnowMelt) => (wbp_n, snm_n) ∋ land.diagnostics
+        snowMelt ∋ land.fluxes
+        # snowMelt => melt_snow ∋ land.fluxes
     end
 
-    return out
+    return land
 end
 
-function update(o::snowMelt_snowFrac, forcing, out, modelInfo)
+function update(o::snowMelt_snowFrac, forcing, land, infotem)
     @unpack_land begin
-        (snowMelt, snow) ∈ out.fluxes
-        wSnow ∈ out.pools
+        (snowMelt, snow) ∈ land.fluxes
+        wSnow ∈ land.pools
     end
 
     wSnow[1] = wSnow[1] + snow - snowMelt
 
     @pack_land begin
-        wSnow ∋ out.pools
+        wSnow ∋ land.pools
     end
-    return out
+    return land
 end
