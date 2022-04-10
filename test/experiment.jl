@@ -17,7 +17,7 @@ optimParams = info.opti.params2opti;
 approaches = info.tem.models.forward;
 tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 info = (;info..., opti = (;));
-info = (;info..., tem = (;));
+# info = (;info..., tem = (;));
 
 initPools = getInitPools(info)
 outsp = runSpinup(approaches, initPools, forcing, info.tem, false)

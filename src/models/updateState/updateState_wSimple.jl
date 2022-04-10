@@ -3,12 +3,12 @@ export updateState_wSimple
     calcFlux :: T = true
 end
 
-function compute(o::updateState_wSimple, forcing, out, modelInfo)
+function compute(o::updateState_wSimple, forcing, land, infotem)
     @unpack_updateState_wSimple o
     @unpack_land begin
-        (fracTranspiration, fracEvapSoil) ∈ out.diagnostics
-        (snowMelt, transpiration, evapSoil, rain, roSat, snow) ∈ out.fluxes
-        (wSnow, wSoil) ∈ out.pools
+        (fracTranspiration, fracEvapSoil) ∈ land.diagnostics
+        (snowMelt, transpiration, evapSoil, rain, roSat, snow) ∈ land.fluxes
+        (wSnow, wSoil) ∈ land.pools
     end
     # assert fracTranspiration + fracEvapSoil < 1
     # assert
@@ -23,13 +23,13 @@ function compute(o::updateState_wSimple, forcing, out, modelInfo)
     wSoil[1] = wSoil[1] + rain + snowMelt - roTotal - evapTotal
 
     @pack_land begin
-        (evapSoil, evapTotal, roTotal) ∋ out.fluxes
-        (wSoil, wSnow) ∋ out.pools
+        (evapSoil, evapTotal, roTotal) ∋ land.fluxes
+        (wSoil, wSnow) ∋ land.pools
     end
 
-    return out
+    return land
 end
 
-function update(o::updateState_wSimple, forcing, out, modelInfo)
-    return out
+function update(o::updateState_wSimple, forcing, land, infotem)
+    return land
 end
