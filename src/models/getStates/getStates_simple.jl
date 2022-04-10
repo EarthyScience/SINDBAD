@@ -6,9 +6,15 @@ end
 
 function compute(o::getStates_simple, forcing, out, modelInfo)
     @unpack_getStates_simple o
-    (; rain) = out.fluxes
+    @unpack_land begin
+        rain ∈ out.fluxes
+    end
+
     WBP = rain
-    out = (; out..., diagnostics = (; out.diagnostics..., WBP))
+
+    @pack_land begin
+        WBP ∋ out.diagnostics
+    end
     return out
 end
 

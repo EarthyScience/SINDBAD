@@ -7,23 +7,35 @@ end
 
 function compute(o::roSat_Bergstroem, forcing, out, modelInfo)
     @unpack_roSat_Bergstroem o
-    (; wSoil) = out.pools
-    (; WBP) = out.diagnostics
+    @unpack_land begin
+        wSoil ∈ out.pools
+        WBP ∈ out.diagnostics
+    end
     # fracRoSat = clamp((sum(wSoil[:,1]) / s_max)^β, 0, 1)
     fracRoSat = 0.2
     roSat = fracRoSat * WBP
     WBP = WBP - roSat
-    out = (; out..., diagnostics = (; out.diagnostics..., WBP, fracRoSat))
-    out = (; out..., fluxes = (; out.fluxes..., roSat))
+    @pack_land begin
+        roSat ∋ out.fluxes
+        (WBP, fracRoSat) ∋ out.diagnostics
+    end
+
     return out
 end
 
 function update(o::roSat_Bergstroem, forcing, out, modelInfo)
-    (; WBP) = out.diagnostics
-    (; wSoil) = out.pools
+    @unpack_land begin
+        wSoil ∈ out.pools
+        WBP ∈ out.diagnostics
+    end
+
     wSoil[1] = wSoil[1] + WBP
     WBP = 0.0
-    out = (; out..., pools = (; out.pools..., wSoil))
-    out = (; out..., diagnostics = (; out.diagnostics..., WBP))
+
+    @pack_land begin
+        wSoil ∋ out.pools
+        WBP ∋ out.diagnostics
+    end
+
     return out
 end

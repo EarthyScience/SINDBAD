@@ -5,9 +5,11 @@ end
 
 function compute(o::updateState_wSimple, forcing, out, modelInfo)
     @unpack_updateState_wSimple o
-    (; fracTranspiration, fracEvapSoil) = out.diagnostics
-    (; snowMelt, transpiration, evapSoil, rain, roSat, snow) = out.fluxes
-    (; wSnow, wSoil) = out.pools
+    @unpack_land begin
+        (fracTranspiration, fracEvapSoil) ∈ out.diagnostics
+        (snowMelt, transpiration, evapSoil, rain, roSat, snow) ∈ out.fluxes
+        (wSnow, wSoil) ∈ out.pools
+    end
     # assert fracTranspiration + fracEvapSoil < 1
     # assert
     if fracTranspiration + fracEvapSoil >= 1.0
@@ -19,8 +21,12 @@ function compute(o::updateState_wSimple, forcing, out, modelInfo)
     evapTotal = evapSoil + transpiration
     wSnow[1] = wSnow[1] + snow - snowMelt
     wSoil[1] = wSoil[1] + rain + snowMelt - roTotal - evapTotal
-    out = (; out..., pools = (; out.pools..., wSoil, wSnow))
-    out = (; out..., fluxes = (; out.fluxes..., evapSoil, evapTotal, roTotal))
+
+    @pack_land begin
+        (evapSoil, evapTotal, roTotal) ∋ out.fluxes
+        (wSoil, wSnow) ∋ out.pools
+    end
+
     return out
 end
 
