@@ -9,8 +9,6 @@ export describe, bounds, units, compute
 
 abstract type LandEcosystem end
 
-abstract type sumVariables <: LandEcosystem end
-include("sumVariables/sumVariables_simple.jl")
 abstract type getStates <: LandEcosystem end
 include("getStates/getStates_simple.jl")
 abstract type rainSnow <: LandEcosystem end

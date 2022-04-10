@@ -7,22 +7,37 @@ end
 
 function compute(o::transpiration_demSup, forcing, out, modelInfo)
     @unpack_transpiration_demSup o
-    (; Rn) = forcing
-    (; wSoil) = out.pools
+    
+    @unpack_land begin
+        Rn ∈ forcing
+        wSoil ∈ out.pools
+    end
+
     PETveg = Rn * α
     PETveg = PETveg < 0.0 ? 0.0 : PETveg
     ∑wSoil = sum(wSoil[:, 1])
     fracTranspiration = min(PETveg / ∑wSoil, supLim)
     transpiration = fracTranspiration * ∑wSoil
-    out = (; out..., diagnostics=(; out.diagnostics..., fracTranspiration))
-    out = (; out..., fluxes=(; out.fluxes..., transpiration, PETveg))
+
+    @pack_land begin
+        fracTranspiration ∋ out.diagnostics
+        (transpiration, PETveg) ∋ out.fluxes
+    end
+
     return out
 end
 
 function update(o::transpiration_demSup, forcing, out, modelInfo)
-    (; transpiration) = out.fluxes
-    (; wSoil) = out.pools
+    @unpack_land begin
+        transpiration ∈ out.fluxes
+        wSoil ∈ out.pools
+    end
+
     wSoil[1] = wSoil[1] - transpiration
-    out = (; out..., pools=(; out.pools..., wSoil))
+
+    @pack_land begin
+        wSoil ∋ out.pools
+    end
+
     return out
 end

@@ -20,20 +20,20 @@ runForward(selectedModels, forcing, out, modelInfo)
 """
 function runForward(selectedModels, forcing, out, modelnames, modelInfo)
     tsteps = size(forcing, 1)
-    outtemp = []
-    modelnames = tuple(modelnames...)
-    for t in 1:tsteps
-        out = runModels(forcing[t], selectedModels, out, modelInfo)
-        push!(outtemp, NamedTuple{modelnames}(out.fluxes))
-    end
+    # outtemp = []
+    # modelnames = tuple(modelnames...)
+    # for t in 1:tsteps
+    #     out = runModels(forcing[t], selectedModels, out, modelInfo)
+    #     push!(outtemp, NamedTuple{modelnames}(out.fluxes))
+    # end
 
-    """ # proposed by fabian
+    # proposed by fabian
     modelnames = (modelnames...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelInfo)
         NamedTuple{modelnames}(out.fluxes)
     end
-    """
+    
 
     #outtuples = [runModels(forcing[t], selectedModels, out, info) for t in 1:size(forcing, 1)]
     return columntable(outtemp)
