@@ -4,22 +4,22 @@
     # wSnow::type = 0.0
 end
 
-function compute(o::getStates_simple, forcing, out, modelInfo)
+function compute(o::getStates_simple, forcing, land, infotem)
     @unpack_getStates_simple o
     @unpack_land begin
-        rain ∈ out.fluxes
+        rain ∈ land.fluxes
     end
 
     WBP = rain
 
     @pack_land begin
-        WBP ∋ out.diagnostics
+        WBP ∋ land.diagnostics
     end
-    return out
+    return land
 end
 
-function update(o::getStates_simple, forcing, out, modelInfo)
-    return out
+function update(o::getStates_simple, forcing, land, infotem)
+    return land
 end
 
 export getStates_simple

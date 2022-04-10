@@ -5,12 +5,12 @@ export transpiration_demSup
     supLim::T2 = 0.5 | (0.01, 0.99) | "supLim parameter for transpiration" | ""
 end
 
-function compute(o::transpiration_demSup, forcing, out, modelInfo)
+function compute(o::transpiration_demSup, forcing, land, infotem)
     @unpack_transpiration_demSup o
     
     @unpack_land begin
         Rn ∈ forcing
-        wSoil ∈ out.pools
+        wSoil ∈ land.pools
     end
 
     PETveg = Rn * α
@@ -20,24 +20,24 @@ function compute(o::transpiration_demSup, forcing, out, modelInfo)
     transpiration = fracTranspiration * ∑wSoil
 
     @pack_land begin
-        fracTranspiration ∋ out.diagnostics
-        (transpiration, PETveg) ∋ out.fluxes
+        fracTranspiration ∋ land.diagnostics
+        (transpiration, PETveg) ∋ land.fluxes
     end
 
-    return out
+    return land
 end
 
-function update(o::transpiration_demSup, forcing, out, modelInfo)
+function update(o::transpiration_demSup, forcing, land, infotem)
     @unpack_land begin
-        transpiration ∈ out.fluxes
-        wSoil ∈ out.pools
+        transpiration ∈ land.fluxes
+        wSoil ∈ land.pools
     end
 
     wSoil[1] = wSoil[1] - transpiration
 
     @pack_land begin
-        wSoil ∋ out.pools
+        wSoil ∋ land.pools
     end
 
-    return out
+    return land
 end
