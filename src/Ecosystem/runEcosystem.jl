@@ -16,7 +16,7 @@ function runPrecomute(forcing, models, out, modelInfo)
     return out
 end
 """
-runForward(selectedModels, forcing, out, modelInfo)
+runForward(selectedModels, forcing, out, infotem)
 """
 function runForward(selectedModels, forcing, out, modelnames, modelInfo)
     tsteps = size(forcing, 1)
