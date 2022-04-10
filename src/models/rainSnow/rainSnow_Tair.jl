@@ -4,7 +4,7 @@ export rainSnow_Tair
     Tair_thres::T = 0.5 | (-5.0, 5.0) | "Temperature threshold for rain-snow separation" | "°C"
 end
 
-function compute(o::rainSnow_Tair, forcing, out, modelInfo)
+function compute(o::rainSnow_Tair, forcing, land, infotem)
     @unpack_rainSnow_Tair o
 
     @unpack_land begin
@@ -17,12 +17,12 @@ function compute(o::rainSnow_Tair, forcing, out, modelInfo)
     precip = rain + snow
 
     @pack_land begin
-        (rain, snow, precip) ∋ out.fluxes
+        (rain, snow, precip) ∋ land.fluxes
     end
-    return out
+    return land
 end
 
-function update(o::rainSnow_Tair, forcing, out, modelInfo)
-    return out
+function update(o::rainSnow_Tair, forcing, land, infotem)
+    return land
 end
 
