@@ -12,6 +12,7 @@ function compute(o::snowMelt_snowFrac, forcing, land, infotem)
     @unpack_snowMelt_snowFrac o
 
     @unpack_land begin
+        # (rn, tair) = (Rn, Tair) ∈ forcing
         (Rn, Tair) ∈ forcing
         snow ∈ land.fluxes
         WBP ∈ land.diagnostics

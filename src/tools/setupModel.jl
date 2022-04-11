@@ -35,8 +35,12 @@ function getSelectedApproaches(info, selModelsOrdered)
         sel_approach = String(sm) * "_" * modAppr
         sel_approach_func = getfield(Sinbad.Models, Symbol(sel_approach))()
         sel_appr_forward = (sel_appr_forward..., sel_approach_func)
-        if modInfo.use4spinup == true
-            sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
+        if "use4spinup" in propertynames(modInfo)
+            if modInfo.use4spinup == true
+                sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
+            end
+        else
+            @show modAppr, "nouse4spinup"
         end
     end
     # @set info.tem.models.forward = sel_appr_forward
