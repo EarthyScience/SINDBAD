@@ -4,26 +4,29 @@
     "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
     "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
     "selected_models": ["getStates", "rainSnow", "snowMelt", "evapSoil", "transpiration"],
+    "modelTemplate":{
+        "name": {
+            "apprName": "",
+            "order": 0,
+            "use4spinup": true
+            }},
     "models": {
         "getStates": {
-            "apprName": "simple",
-            "use4spinup": true
+            "apprName": "simple"
         },
         "evapSoil": {
-            "apprName": "demSup",
-            "use4spinup": true
+            "apprName": "demSup"
         },
         "roSat": {
-            "apprName": "Bergstroem",
-            "use4spinup": true
+            "apprName": "Bergstroem"
         },
         "rainSnow": {
             "apprName": "Tair",
-            "use4spinup": true
+            "order": 1
         },
         "snowMelt": {
             "apprName": "snowFrac",
-            "use4spinup": true
+            "use4spinup": false
         },
         "transpiration": {
             "apprName": "demSup",
