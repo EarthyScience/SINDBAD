@@ -16,7 +16,7 @@ for ii=1:length(paramList)
         if paramValue < param_json.params.(paramName).LowerBound
             warning([pad('WARN BNDS',20) ' : ' pad('checkParamBounds',20) ' | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is smaller than lower bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
         elseif paramValue > param_json.params.(paramName).UpperBound
-            warning([pad('WARN BNDS',20) ' : ' pad('checkParamBounds',20) ' | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is larger than upper bound : ' num2str( param_json.params.(paramName).LowerBound) '!']);
+            warning([pad('WARN BNDS',20) ' : ' pad('checkParamBounds',20) ' | Parameter ' paramList{ii} ' (' num2str(paramValue) ') is larger than upper bound : ' num2str( param_json.params.(paramName).UpperBound) '!']);
         end
         
     end
