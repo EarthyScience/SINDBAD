@@ -5,7 +5,7 @@
 			"Unit": "-",
 			"Default": 0.02,
 			"LowerBound": 0.001,
-			"UpperBound": 0.2,
+			"UpperBound": 1,
 			"Distribution": {
 				"name": "uniform",
 				"funHandle" : "",

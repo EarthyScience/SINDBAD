@@ -108,7 +108,8 @@ end
 info.opti.costFun.funHandle             =   str2func(info.opti.costFun.funName); 
 info.opti.algorithm.funHandle           =   str2func(info.opti.algorithm.funName); 
 
-%% create metric function handle to enable having a user-defined performance metric file  
+%% create metric function handle to enable having a user-defined performance metric file  -OUTCOMMENTED TINA
+if isfield(info.opti, 'costMetric')
 fullMetricPath        = getFullPath([sindbadroot info.opti.costMetric.funName]);
 [~,~,fileEnd] = fileparts(fullMetricPath);
 if isempty(fileEnd)
@@ -121,6 +122,7 @@ oldDir = pwd;
 cd(perfMetricDir);
 info.opti.costMetric.funHandle = str2func(perfMetricFile);
 cd(oldDir);
+end
 
 %% add scaled parameter bounds
 info.opti.params.uBoundsScaled  = info.opti.params.uBounds  ./ info.opti.params.defaults ;

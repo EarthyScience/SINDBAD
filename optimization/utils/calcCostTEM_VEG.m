@@ -55,7 +55,7 @@ try
     [cost, costComp]                    =   feval(info.opti.costFun.funHandle,f,fe,fx,s,d,p,obs,info) ;
     
     if info.opti.algorithm.isMultiObj
-        compN                           =   info.opti.costFun.variables2constrain;
+        compN                           =   info.opti.variables2constrain;
         cost                            =   NaN(1,numel(compN));
         for cn                          =   1:numel(compN)
             cost(1,cn)                  =   costComp.(compN{cn});
