@@ -29,23 +29,26 @@ function getSelectedApproaches(info, selModelsOrdered)
     sel_appr_forward = ()
     sel_appr_spinup = ()
     println(selModelsOrdered)
+    defaultModel = getfield(info.modelStructure, :defaultModel)
+    @show defaultModel
     for sm in selModelsOrdered
         modInfo = getfield(info.modelStructure.models, sm)
-        modAppr = modInfo.apprName
+        modAppr = modInfo.approach
         sel_approach = String(sm) * "_" * modAppr
         sel_approach_func = getfield(Sinbad.Models, Symbol(sel_approach))()
         sel_appr_forward = (sel_appr_forward..., sel_approach_func)
         if "use4spinup" in propertynames(modInfo)
-            if modInfo.use4spinup == true
-                sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
-            end
+            use4spinup = modInfo.use4spinup
         else
-            @show modAppr, "nouse4spinup"
+            use4spinup = defaultModel.use4spinup
+        end
+        if use4spinup == true
+            sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
         end
     end
     # @set info.tem.models.forward = sel_appr_forward
     # @set info.tem.models.spinup = sel_appr_spinup
-    info=(; info..., tem=(; info.tem..., models = (; forward = sel_appr_forward, spinup = sel_appr_spinup)));
+    info=(; info..., tem=(; info.tem..., models = (; info.tem.models..., forward = sel_appr_forward, spinup = sel_appr_spinup)));
     return info
 end
 
@@ -165,12 +168,12 @@ function generateStatesInfo(info)
             if maximum(typeDim) > 1
                 initValues = repeat(initValues, inner=[1, maximum(typeDim)])
             end
-            if element == :water && subPool == :wSoil
-                layerThickness = getfield(getfield(info.modelStructure.pools, element), :wSoilThickness)
-                if size(layerThickness, 1) != nZix
-                    throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and wSoilThickness.")
+            if element == :water && subPool == :soilW
+                soilLayerDepths = getfield(getfield(info.modelStructure.pools, element), :soilLayerDepths)
+                if size(soilLayerDepths, 1) != nZix
+                    throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and soilLayerDepths.")
                 end
-                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Float64.(layerThickness)))
+                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Float64.(soilLayerDepths)))
             end
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
         end
@@ -247,10 +250,8 @@ function setupModel!(info)
     info = generateStatesInfo(info)
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
-    # corePath = joinpath(pwd(), info.modelStructure.paths.coreTEM)
-    # info=(; info..., paths=(coreTEM = corePath));
-    # include(corePath)
-    fullModels = propertynames(getEcosystem())
+    fullModels = sindbad_models.model
+    info=(; info..., tem=(; info.tem..., models = (; selected_models = selModels)));
     selected_models = getSelectedOrderedModels(fullModels, selModels)
     info = getSelectedApproaches(info, selected_models)
     return info

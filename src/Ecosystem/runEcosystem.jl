@@ -3,6 +3,7 @@ runModels(forcing, models, out)
 """
 function runModels(forcing, models, out, modelInfo)
     for model in models
+        @show model
         out = Models.compute(model, forcing, out, modelInfo)
         out = Models.update(model, forcing, out, modelInfo)
     end
@@ -41,13 +42,32 @@ end
 
 
 """
+getInitOut(initPools)
+create the initial out tuple with all models
+"""
+function getInitOut(initPools, selectedModels)
+    out = (;)
+    for model in selectedModels
+        out = setTupleField(out, (model, (;)))
+    end
+    out=(; out..., pools=(;), states=(;)=(;), fluxes=(;))
+    out = (; out..., pools = (; out.pools..., initPools...))
+    @show out
+    return out
+    
+end
+
+
+"""
 runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
 """
 function runSpinup(selectedModels, initPools, forcing, modelInfo, history=false; nspins=3)
-    out=(; pools=(;), diagnostics=(;), fluxes=(;))
-    out = (; out..., pools = (; out.pools..., initPools...))
+    out = getInitOut(initPools, modelInfo.models.selected_models)
+    # out=(; pools=(;), diagnostics=(;), fluxes=(;))
+    # out = (; out..., pools = (; out.pools..., initPools...))
     tsteps = size(forcing, 1)
     spinuplog = history ? [values(out)[1:length(initPools)]] : nothing
+    out = runPrecomute(forcing[1], selectedModels, out, modelInfo)
     for j in 1:nspins
         for t in 1:tsteps
             out = runModels(forcing[t], selectedModels, out, modelInfo)
