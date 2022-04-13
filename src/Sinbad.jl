@@ -42,8 +42,6 @@ include("tools/setupModel.jl")
 export setupModel!
 include("Ecosystem/runEcosystem.jl")
 export runEcosystem, runSpinup, runForward
-include("Ecosystem/ecosystem.jl")
-export getEcosystem
 include("optimization/optimizeModel.jl")
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss
