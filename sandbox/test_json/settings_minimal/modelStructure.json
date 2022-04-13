@@ -3,39 +3,52 @@
     "2.c": "approaches 3) structure of water and carbon pools",
     "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
     "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
-    "selected_models": ["getStates", "rainSnow", "snowMelt", "evapSoil", "transpiration"],
-    "modelTemplate":{
-        "name": {
-            "apprName": "",
+    "defaultModel":{
             "order": 0,
             "use4spinup": true
-            }},
+    },
     "models": {
-        "getStates": {
-            "apprName": "simple"
+        "getPools": {
+            "approach": "simple"
         },
-        "evapSoil": {
-            "apprName": "demSup"
+        "evaporation": {
+            "approach": "demandSupply"
         },
-        "roSat": {
-            "apprName": "Bergstroem"
+        "runoffSaturationExcess": {
+            "approach": "Bergstroem"
         },
         "rainSnow": {
-            "apprName": "Tair",
+            "approach": "Tair",
             "order": 1
         },
+        "soilWBase": {
+            "approach": "smax2Layer"
+        },
         "snowMelt": {
-            "apprName": "snowFrac",
-            "use4spinup": false
+            "approach": "simple"
+        },
+        "PET": {
+            "approach": "Lu2005"
+        },
+        "snowFraction": {
+            "approach": "HTESSEL"
         },
         "transpiration": {
-            "apprName": "demSup",
-            "use4spinup": true
+            "approach": "demandSupply"
+        },
+        "transpirationSupply": {
+            "approach": "wAWC"
+        },
+        "transpirationDemand": {
+            "approach": "fPET"
+        },
+        "vegAvailableWater": {
+            "approach": "rootFraction"
+        },
+        "rootFraction": {
+            "approach": "k2Layer"
         }
-    },
-    "paths": {
-        "coreTEM": "src/tem/ecoProcess.jl",
-        "modelsDir": "src/models/"
+
     },
 	"pools":
 	{
@@ -43,13 +56,13 @@
 		{
 			"pools" :
                 {
-                "wSoil": [4, 1, 100.0],
-                "wGW": [1,1,1000.0],
-				"wSnow": [1,1,0.01]
+                "soilW": [2, 1, 100.0],
+                "groundW": [1,1,1000.0],
+				"snowW": [1,1,0.01]
             },
 			"combine": [false,"wPools"],
-			"wSoilThickness": [50.0, 200.0,750.0, 1000.0],
-            "order": ["wSnow", "wSoil", "wGW"]
+			"soilLayerDepths": [500.0, 1000.0],
+            "order": ["snowW", "soilW", "groundW"]
 		},
 		"carbon":
 		{
