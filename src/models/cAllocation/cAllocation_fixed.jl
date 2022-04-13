@@ -1,0 +1,92 @@
+export cAllocation_fixed, cAllocation_fixed_h
+"""
+compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.treeFraction). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to Rf2Rc.
+
+# Parameters:
+$(PARAMFIELDS)
+"""
+@bounds @describe @units @with_kw struct cAllocation_fixed{T1, T2, T3} <: cAllocation
+	cVegRoot::T1 = 0.3 | (0.0, 1.0) | "fraction of NPP to cRoot" | "fraction"
+	cVegWood::T2 = 0.3 | (0.0, 1.0) | "fraction of NPP to cWood" | "fraction"
+	cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of NPP to cLeaf" | "fraction"
+end
+
+function precompute(o::cAllocation_fixed, forcing, land, infotem)
+	@unpack_cAllocation_fixed o
+
+	## instantiate variables
+	cAlloc = zeros(size(infotem.pools.carbon.initValues.cEco))
+
+	## pack variables
+	@pack_land begin
+		cAlloc ∋ land.cAllocation
+	end
+	return land
+end
+
+function compute(o::cAllocation_fixed, forcing, land, infotem)
+	@unpack_cAllocation_fixed o
+
+	## unpack variables
+	@unpack_land begin
+		cAlloc ∈ land.cAllocation
+		Tair ∈ forcing
+	end
+	# # make vectors/matrices
+	# for ii = ("cf2Root", "cf2Wood", "cf2Leaf")
+	# (ii[1]) = (ii[1]) * ones(size(Tair))
+	# end
+	# distribute the allocation according to pools
+	cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
+	for cpName in cpNames
+		zixVec = getfield(infotem.pools.carbon.zix, cpName)
+		N = length(zixVec)
+		for zix in zixVec
+			cAlloc[zix] = (cpNames[cpn]) / N
+		end
+	end
+
+	## pack variables
+	@pack_land begin
+		cAlloc ∋ land.states
+	end
+	return land
+end
+
+function update(o::cAllocation_fixed, forcing, land, infotem)
+	# @unpack_cAllocation_fixed o
+	return land
+end
+
+"""
+compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.treeFraction). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to Rf2Rc.
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocation_fixed
+
+# compute:
+Combine the different effects of carbon allocation using cAllocation_fixed
+
+*Inputs:*
+ - land.cAlloc: fraction of NPP that is allocated to the  different plant organs
+
+*Outputs:*
+ - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
+
+# update
+update pools and states in cAllocation_fixed
+ - land.states.cAlloc
+
+# Extended help
+
+*References:*
+ - Carvalhais; N.; Reichstein; M.; Ciais; P.; Collatz; G.; Mahecha; M. D.  Montagnani; L.; Papale; D.; Rambal; S.; & Seixas; J.: Identification of  Vegetation & Soil Carbon Pools out of Equilibrium in a Process Model  via Eddy Covariance & Biometric Constraints; Glob. Change Biol.; 16  2813?2829; doi: 10.1111/j.1365-2486.2009.2173.x; 2010.#
+ - Potter; C. S.; J. T. Randerson; C. B. Field; P. A. Matson; P. M.  Vitousek; H. A. Mooney; & S. A. Klooster. 1993. Terrestrial ecosystem  production: A process model based on global satellite & surface data.  Global Biogeochemical Cycles. 7: 811-841.
+
+*Versions:*
+ - 1.0 on 12.01.2020 [sbesnard]  
+
+*Created by:*
+ - ncarvalhais
+"""
+function cAllocation_fixed_h end

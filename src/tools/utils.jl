@@ -158,13 +158,13 @@ macro unpack_land(inparams)
 end
 
 function processPackingLine(ex)
-    rename, ex = if ex.args[1] == :(=>)
+    rename, ex = if ex.args[1] == :(=)
         ex.args[2], ex.args[3]
     else
         nothing, ex
     end
     @assert ex.head == :call
-    @assert ex.args[1] == :(∋)
+    @assert ex.args[1] == :(=>)
     @assert length(ex.args) == 3
     lhs = ex.args[2]
     rhs = ex.args[3]
@@ -173,7 +173,7 @@ function processPackingLine(ex)
     elseif lhs.head == :tuple
         lhs = lhs.args
     else
-        error("processinputline: could not pack:" * lhs * "=>" * rhs)
+        error("processinputline: could not pack:" * lhs * "=" * rhs)
     end
     if rename === nothing
         rename = lhs
