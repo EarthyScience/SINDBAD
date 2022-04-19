@@ -1,75 +1,57 @@
-export runoffSaturationExcess_wSoilSatFraction, runoffSaturationExcess_wSoilSatFraction_h
-"""
-calculate the saturation excess runoff as a fraction of
+export runoffSaturationExcess_wSoilSatFraction
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffSaturationExcess_wSoilSatFraction{T} <: runoffSaturationExcess
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::runoffSaturationExcess_wSoilSatFraction, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_wSoilSatFraction o
-	return land
+struct runoffSaturationExcess_wSoilSatFraction <: runoffSaturationExcess
 end
 
 function compute(o::runoffSaturationExcess_wSoilSatFraction, forcing, land, infotem)
-	@unpack_runoffSaturationExcess_wSoilSatFraction o
 
-	## unpack variables
-	@unpack_land begin
-		(WBP, soilWSatFrac) ∈ land.states
-	end
-	roSat = WBP * soilWSatFrac
+	## unpack land variables
+	@unpack_land (WBP, soilWSatFrac) ∈ land.states
+
+
+	## calculate variables
+	runoffSaturation = WBP * soilWSatFrac
 	# update the WBP
-	WBP = WBP - roSat
+	WBP = WBP - runoffSaturation
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		roSat ∋ land.fluxes
-		WBP ∋ land.states
+		runoffSaturation => land.fluxes
+		WBP => land.states
 	end
 	return land
 end
 
-function update(o::runoffSaturationExcess_wSoilSatFraction, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_wSoilSatFraction o
-	return land
-end
-
-"""
+@doc """
 calculate the saturation excess runoff as a fraction of
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSaturationExcess_wSoilSatFraction
+---
 
 # compute:
 Saturation runoff using runoffSaturationExcess_wSoilSatFraction
 
-*Inputs:*
+*Inputs*
  - land.states.WBP: amount of incoming water
  - land.states.soilWSatFrac: fraction of the grid cell that is saturated
 
-*Outputs:*
- - land.fluxes.roSat: saturation excess runoff in mm/day
-
-# update
-update pools and states in runoffSaturationExcess_wSoilSatFraction
+*Outputs*
+ - land.fluxes.runoffSaturation: saturation excess runoff in mm/day
  - land.states.WBP
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 
-*Notes:*
+*Notes*
  - only works if soilWSatFrac module is activated
 """
-function runoffSaturationExcess_wSoilSatFraction_h end
+runoffSaturationExcess_wSoilSatFraction

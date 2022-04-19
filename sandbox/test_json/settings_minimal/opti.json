@@ -1,6 +1,7 @@
 {
 	"variables2constrain": [
-		"tranAct"
+		"transpiration",
+		"evapotranspiration"
 	],
 	"costFun": {
 		"funName": "costMultiConstraint",
@@ -23,29 +24,27 @@
 		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
 	},
 	"params2opti": [
-		"transpiration.α",
-		"transpiration.supLim",
-		"evapSoil.α",
-		"evapSoil.supLim",
-		"snowMelt.melt_T",
-		"snowMelt.melt_Rn"],
+		"transpirationDemand.αVeg",
+		"evaporation.α",
+		"evaporation.supLim",
+		"snowMelt.T1"],
 	"checks": "",
 	"constraints": {
 		"funName": {
 			"import": "readObservationRoasted",
 			"check": ""
 		},
-		"oneDataPath": "data/BE-Vie.2000-2019.nc",
+		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
 		"variables": {
-			"evapTotal": {
-				"modelFullVar": "evapTotal",
+			"evapotranspiration": {
+				"modelFullVar": "evapotranspiration",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
 						0,
 						200
 					],
-					"sourceVariableName": "LE_FLUXNET",
+					"sourceVariableName": "LE",
 					"sourceVariableUnit": "W m-2",
 					"source2sindbadUnit": "*0.0864/2.45",
 					"isCategorical": false,
@@ -88,7 +87,7 @@
 					"data_bound": []
 				}
 			},
-			"tranAct": {
+			"transpiration": {
 				"modelFullVar": "transpiration",
 				"data": {
 					"variableUnit": "mm day-1",
@@ -96,7 +95,7 @@
 						0,
 						200
 					],
-					"sourceVariableName": "T_NT_75_Nelson2018",
+					"sourceVariableName": "T_NT_TEA",
 					"sourceVariableUnit": "mm day-1",
 					"source2sindbadUnit": "*1",
 					"isCategorical": false,
