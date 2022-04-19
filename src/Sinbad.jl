@@ -2,34 +2,36 @@ module Sinbad
 using InteractiveUtils
 using Reexport: @reexport
 @reexport begin
-    using DocStringExtensions
-    using FieldMetadata
-    using Parameters
-    using JSON:
-        parse as jsparse,
-        read as jsread
-    using TypedTables:
-        Table
-    using Setfield:
-        @set!
-    using Statistics:
-        mean
-    using NCDatasets:
-        Dataset
     using CMAEvolutionStrategy:
         minimize,
         xbest
+    using DocStringExtensions
+    using FieldMetadata
     using Flatten:
         flatten,
         metaflatten,
         fieldnameflatten,
         parentnameflatten
+    using JSON:
+        parse as jsparse,
+        read as jsread
+    using NCDatasets:
+        Dataset
+    using Parameters
+    using PrettyPrinting
+    using Setfield:
+        @set!
+    using Statistics:
+        mean
+    using TableOperations:
+        select
     using Tables:
         columntable,
         matrix
-    using TableOperations:
-        select
+    using TypedTables:
+        Table
 end
+
 export setTupleField, setTupleSubfield
 include("tools/utils.jl")
 include("tools/getConfiguration.jl")
