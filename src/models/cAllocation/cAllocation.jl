@@ -1,5 +1,13 @@
 export cAllocation
-"""
+
+abstract type cAllocation <: LandEcosystem end
+
+include("cAllocation_fixed.jl")
+include("cAllocation_Friedlingstein1999.jl")
+include("cAllocation_GSI.jl")
+include("cAllocation_none.jl")
+
+@doc """
 Combine the different effects of carbon allocation
 
 # Approaches:
@@ -8,8 +16,4 @@ Combine the different effects of carbon allocation
  - GSI: compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
  - none: set the allocation to zeros
 """
-abstract type cAllocation <: LandEcosystem end
-include("cAllocation_fixed.jl")
-include("cAllocation_Friedlingstein1999.jl")
-include("cAllocation_GSI.jl")
-include("cAllocation_none.jl")
+cAllocation

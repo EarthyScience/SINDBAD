@@ -1,24 +1,15 @@
-export groundWSoilWInteraction_gradientNeg, groundWSoilWInteraction_gradientNeg_h
-"""
-calculates a buffer storage that doesn"t give water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low; the buffer is only recharged by soil moisture. calculates a buffer storage that doesn"t give water to the soil when the soil dries up; while the soil gives water to the groundW[1] when the soil is wet but the groundW[1] low; the groundW[1] is only recharged by soil moisture
+export groundWSoilWInteraction_gradientNeg
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct groundWSoilWInteraction_gradientNeg{T1, T2} <: groundWSoilWInteraction
 	smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
 	maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 
-function precompute(o::groundWSoilWInteraction_gradientNeg, forcing, land, infotem)
-	# @unpack_groundWSoilWInteraction_gradientNeg o
-	return land
-end
-
 function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, infotem)
+	## unpack parameters
 	@unpack_groundWSoilWInteraction_gradientNeg o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		p_wSat ∈ land.soilWBase
 		(groundW, soilW) ∈ land.pools
@@ -41,10 +32,10 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, infotem)
 	GW2Soil = tmp
 	# update water pools
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		GW2Soil ∋ land.fluxes
-		(p_gwmax, potFlux) ∋ land.groundWSoilWInteraction
+		GW2Soil => land.fluxes
+		(p_gwmax, potFlux) => land.groundWSoilWInteraction
 	end
 	return land
 end
@@ -62,45 +53,49 @@ function update(o::groundWSoilWInteraction_gradientNeg, forcing, land, infotem)
 	soilW[soilWend] = soilW[soilWend] + GW2Soil
 	groundW[1] = groundW[1] - GW2Soil
 
-	## pack variables
-	@pack_land begin
-		(groundW, soilW) ∋ land.pools
-	end
+	## pack land variables
+	@pack_land (groundW, soilW) => land.pools
 	return land
 end
 
-"""
+@doc """
 calculates a buffer storage that doesn"t give water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low; the buffer is only recharged by soil moisture. calculates a buffer storage that doesn"t give water to the soil when the soil dries up; while the soil gives water to the groundW[1] when the soil is wet but the groundW[1] low; the groundW[1] is only recharged by soil moisture
 
-# precompute:
-precompute/instantiate time-invariant variables for groundWSoilWInteraction_gradientNeg
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Groundwater soil moisture interactions (e.g. capilary flux, water using groundWSoilWInteraction_gradientNeg
 
-*Inputs:*
+*Inputs*
  - info : infotem.pools.water.nZix.soilW = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
  - land.soilWBase.p_wSat : maximum storage capacity of soil [mm]
 
-*Outputs:*
+*Outputs*
  - land.fluxes.GW2Soil : flux between groundW[1] & soilW [mm/time], positive to soil, negative to gw
 
 # update
+
 update pools and states in groundWSoilWInteraction_gradientNeg
+
  - land.pools.groundW[1]
  - land.pools.soilW
 
+---
+
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 04.02.2020 [ttraut]:  
  - 1.0 on 23.09.2020 [ttraut]:  
 
 *Created by:*
- - Tina Trautmann [ttraut]
+ - ttraut
 """
-function groundWSoilWInteraction_gradientNeg_h end
+groundWSoilWInteraction_gradientNeg

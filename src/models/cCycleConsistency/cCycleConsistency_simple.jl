@@ -1,41 +1,33 @@
-export cCycleConsistency_simple, cCycleConsistency_simple_h
-"""
-check consistency in cCycle matrix: cAlloc; cFlow
+export cCycleConsistency_simple
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cCycleConsistency_simple{T} <: cCycleConsistency
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cCycleConsistency_simple <: cCycleConsistency
 end
 
 function precompute(o::cCycleConsistency_simple, forcing, land, infotem)
-	@unpack_cCycleConsistency_simple o
 
 	## instantiate variables
 		flagUp = triu(ones(size(flow_matrix)), 1)
 		flagLo = tril(ones(size(flow_matrix)), -1)
 
-	## pack variables
-	@pack_land begin
-		(flagUp, flagLo) ∋ land.cCycleConsistency
-	end
+	## pack land variables
+	@pack_land (flagUp, flagLo) => land.cCycleConsistency
 	return land
 end
 
 function compute(o::cCycleConsistency_simple, forcing, land, infotem)
-	@unpack_cCycleConsistency_simple o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land (flagUp, flagLo) ∈ land.cCycleConsistency
+
+	## unpack land variables
 	@unpack_land begin
-		(flagUp, flagLo) ∈ land.cCycleConsistency
 		cAlloc ∈ land.states
 		p_A ∈ land.cFlow
 	end
 	# check allocation
 	tmp0 = cAlloc; #sujan
 	tmp1 = sum(cAlloc)
-	if any(tmp0 > 1) || any(tmp0 < 0.0)
+	if any(tmp0 > 1) || any(tmp0 < infotem.helpers.zero)
 		error("SINDBAD TEM: cAlloc lt 0 | gt 1")
 	end
 	if any(abs(sum(tmp1) - 1) > 1E-6)
@@ -47,7 +39,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 	for pix in 1:info.tem.helpers.sizes.nPix
 		flow_matrix = squeeze(p_A[pix])
 		# of diagonal values of 0 must be between 0 & 1
-		anyBad = any(flow_matrix * (flagLo + flagUp) < 0.0)
+		anyBad = any(flow_matrix * (flagLo + flagUp) < infotem.helpers.zero)
 		if anyBad
 			error("negative values in the p_cFlow_A matrix!")
 		end
@@ -69,7 +61,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 	# flagUp = triu(ones(size(flow_matrix)), 1)
 	# flagLo = tril(ones(size(flow_matrix)), -1)
 	# # of diagonal values of 0 must be between 0 & 1
-	# anyBad = any(flow_matrix * (flagLo+flagUp) < 0.0)
+	# anyBad = any(flow_matrix * (flagLo+flagUp) < infotem.helpers.zero)
 	# if anyBad
 	# error("negative values in the p_cFlow_A matrix!")
 	# end
@@ -87,42 +79,39 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 	# error("sum of cols higher than one in upper in p_cFlow_A matrix")
 	# end
 
-	## pack variables
+	## pack land variables
 	return land
 end
 
-function update(o::cCycleConsistency_simple, forcing, land, infotem)
-	# @unpack_cCycleConsistency_simple o
-	return land
-end
-
-"""
+@doc """
 check consistency in cCycle matrix: cAlloc; cFlow
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleConsistency_simple
+---
 
 # compute:
 Consistency checks on the c allocation and transfers between pools using cCycleConsistency_simple
 
-*Inputs:*
+*Inputs*
  - flow_matrix: carbon flow matrix
  - land.states.cAlloc: carbon allocation matrix
 
-*Outputs:*
+*Outputs*
  -
 
-# update
-update pools and states in cCycleConsistency_simple
+# precompute:
+precompute/instantiate time-invariant variables for cCycleConsistency_simple
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 12.03.2020  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function cCycleConsistency_simple_h end
+cCycleConsistency_simple

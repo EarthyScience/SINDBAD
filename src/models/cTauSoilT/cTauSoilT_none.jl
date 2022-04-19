@@ -1,40 +1,27 @@
-export cTauSoilT_none, cTauSoilT_none_h
-"""
-set the outputs to ones
+export cTauSoilT_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cTauSoilT_none{T} <: cTauSoilT
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cTauSoilT_none <: cTauSoilT
 end
 
 function precompute(o::cTauSoilT_none, forcing, land, infotem)
-	@unpack_cTauSoilT_none o
 
 	## calculate variables
-	fT = 1.0
+	fT = infotem.helpers.one
 
-	## pack variables
-	@pack_land begin
-		fT ∋ land.cTauSoilT
-	end
+	## pack land variables
+	@pack_land fT => land.cTauSoilT
 	return land
 end
 
-function compute(o::cTauSoilT_none, forcing, land, infotem)
-	# @unpack_cTauSoilT_none o
-	return land
-end
-
-function update(o::cTauSoilT_none, forcing, land, infotem)
-	# @unpack_cTauSoilT_none o
-	return land
-end
-
-"""
+@doc """
 set the outputs to ones
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauSoilT_none
+
+
+---
 
 # Extended help
 """
-function cTauSoilT_none_h end
+cTauSoilT_none

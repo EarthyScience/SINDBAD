@@ -1,69 +1,65 @@
-export runoff_sum, runoff_sum_h
-"""
-calculates runoff as a sum of all potential components
+export runoff_sum
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoff_sum{T} <: runoff
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoff_sum <: runoff
 end
 
 function precompute(o::runoff_sum, forcing, land, infotem)
-	# @unpack_runoff_sum o
+
+	## set variables to zeros
+	runoffBase = infotem.helpers.zero
+	runoffSurface = infotem.helpers.zero
+
+	## pack land variables
+	@pack_land begin
+		(runoffBase, runoffSurface) => land.fluxes
+	end
 	return land
 end
 
 function compute(o::runoff_sum, forcing, land, infotem)
-	@unpack_runoff_sum o
 
-	## unpack variables
-	@unpack_land begin
-		(runoffBase, runoffSurface) ∈ land.fluxes
-	end
+	## unpack land variables
+	@unpack_land (runoffBase, runoffSurface) ∈ land.fluxes
+
+	## calculate variables
 	runoff = runoffSurface + runoffBase
 
-	## pack variables
-	@pack_land begin
-		runoff ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoff => land.fluxes
 	return land
 end
 
-function update(o::runoff_sum, forcing, land, infotem)
-	# @unpack_runoff_sum o
-	return land
-end
-
-"""
+@doc """
 calculates runoff as a sum of all potential components
 
-# precompute:
-precompute/instantiate time-invariant variables for runoff_sum
+---
 
 # compute:
 Calculate the total runoff as a sum of components using runoff_sum
 
-*Inputs:*
+*Inputs*
  - land.fluxes.runoffBase
  - land.fluxes.runoffSurface
 
-*Outputs:*
+*Outputs*
  - land.fluxes.runoff
-
-# update
-update pools and states in runoff_sum
  - None
+
+# precompute:
+precompute/instantiate time-invariant variables for runoff_sum
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 01.04.2022  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function runoff_sum_h end
+runoff_sum

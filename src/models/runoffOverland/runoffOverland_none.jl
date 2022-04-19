@@ -1,40 +1,27 @@
-export runoffOverland_none, runoffOverland_none_h
-"""
-sets overland runoff to zeros
+export runoffOverland_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffOverland_none{T} <: runoffOverland
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffOverland_none <: runoffOverland
 end
 
 function precompute(o::runoffOverland_none, forcing, land, infotem)
-	@unpack_runoffOverland_none o
 
 	## calculate variables
-	runoffOverland = 0.0
+	runoffOverland = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		runoffOverland ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffOverland => land.fluxes
 	return land
 end
 
-function compute(o::runoffOverland_none, forcing, land, infotem)
-	# @unpack_runoffOverland_none o
-	return land
-end
-
-function update(o::runoffOverland_none, forcing, land, infotem)
-	# @unpack_runoffOverland_none o
-	return land
-end
-
-"""
+@doc """
 sets overland runoff to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffOverland_none
+
+
+---
 
 # Extended help
 """
-function runoffOverland_none_h end
+runoffOverland_none

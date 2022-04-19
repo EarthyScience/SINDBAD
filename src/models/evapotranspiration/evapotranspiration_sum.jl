@@ -1,71 +1,70 @@
-export evapotranspiration_sum, evapotranspiration_sum_h
-"""
-calculates evapotranspiration as a sum of all potential components
+export evapotranspiration_sum
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct evapotranspiration_sum{T} <: evapotranspiration
-	noParameter::T = nothing | nothing | nothing | nothing
+struct evapotranspiration_sum <: evapotranspiration
 end
 
 function precompute(o::evapotranspiration_sum, forcing, land, infotem)
-	# @unpack_evapotranspiration_sum o
+
+	## set variables to zeros
+	evaporation = infotem.helpers.zero
+	interception = infotem.helpers.zero
+	sublimation = infotem.helpers.zero
+	transpiration = infotem.helpers.zero
+
+	## pack land variables
+	@pack_land begin
+		(evaporation, interception, sublimation, transpiration) => land.fluxes
+	end
 	return land
 end
 
 function compute(o::evapotranspiration_sum, forcing, land, infotem)
-	@unpack_evapotranspiration_sum o
 
-	## unpack variables
-	@unpack_land begin
-		(evaporation, interception, sublimation, transpiration) ∈ land.fluxes
-	end
+	## unpack land variables
+	@unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes
+
+
+	## calculate variables
 	evapotranspiration = interception + transpiration + evaporation + sublimation
 
-	## pack variables
-	@pack_land begin
-		evapotranspiration ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land evapotranspiration => land.fluxes
 	return land
 end
 
-function update(o::evapotranspiration_sum, forcing, land, infotem)
-	# @unpack_evapotranspiration_sum o
-	return land
-end
-
-"""
+@doc """
 calculates evapotranspiration as a sum of all potential components
 
-# precompute:
-precompute/instantiate time-invariant variables for evapotranspiration_sum
+---
 
 # compute:
 Calculate the evapotranspiration as a sum of components using evapotranspiration_sum
 
-*Inputs:*
+*Inputs*
  - land.fluxes.evaporation
  - land.fluxes.interception
  - land.fluxes.sublimation
  - land.fluxes.transpiration
 
-*Outputs:*
+*Outputs*
  - land.fluxes.evapotranspiration
-
-# update
-update pools and states in evapotranspiration_sum
  - None
+
+# precompute:
+precompute/instantiate time-invariant variables for evapotranspiration_sum
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 01.04.2022  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function evapotranspiration_sum_h end
+evapotranspiration_sum

@@ -1,10 +1,5 @@
-export cTauSoilW_CASA, cTauSoilW_CASA_h
-"""
-Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall & PET values at the monthly time step & it is necessary to scale it to meet that criterion.
+export cTauSoilW_CASA
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cTauSoilW_CASA{T1} <: cTauSoilW
 	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
@@ -13,21 +8,22 @@ function precompute(o::cTauSoilW_CASA, forcing, land, infotem)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
-	p_fsoilW = ones(size(infotem.pools.carbon.initValues.cEco))
+	p_fsoilW = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		p_fsoilW ∋ land.cTauSoilW
-	end
+	## pack land variables
+	@pack_land p_fsoilW => land.cTauSoilW
 	return land
 end
 
 function compute(o::cTauSoilW_CASA, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cTauSoilW_CASA o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land p_fsoilW ∈ land.cTauSoilW
+
+	## unpack land variables
 	@unpack_land begin
-		p_fsoilW ∈ land.cTauSoilW
 		rain ∈ land.rainSnow
 		soilW_prev ∈ land.pools
 		fsoilW_prev ∈ land.cTauSoilW
@@ -59,55 +55,53 @@ function compute(o::cTauSoilW_CASA, forcing, land, infotem)
 	# WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
 	ndxn = (PET <= 0.0)
 	BGME[ndxn] = pBGME[ndxn]
-	BGME = max(min(BGME, 1.0), 0.0)
+	BGME = max(min(BGME, infotem.helpers.one), infotem.helpers.zero)
 	# FEED IT TO THE STRUCTURE
 	fsoilW = BGME
 	# set the same moisture stress to all carbon pools
 	p_fsoilW[infotem.pools.carbon.zix.cEco] = fsoilW
 
-	## pack variables
-	@pack_land begin
-		(fsoilW, p_fsoilW) ∋ land.cTauSoilW
-	end
+	## pack land variables
+	@pack_land (fsoilW, p_fsoilW) => land.cTauSoilW
 	return land
 end
 
-function update(o::cTauSoilW_CASA, forcing, land, infotem)
-	# @unpack_cTauSoilW_CASA o
-	return land
-end
-
-"""
+@doc """
 Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall & PET values at the monthly time step & it is necessary to scale it to meet that criterion.
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilW_CASA
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
-*Inputs:*
+*Inputs*
  - infotem.dates.nStepsYear: number of time steps per year
  - land.PET.PET: potential evapotranspiration [mm]
  - land.cTauSoilW.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
  - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]
  - land.rainSnow.rain: rainfall
 
-*Outputs:*
+*Outputs*
  - land.cTauSoilW.fsoilW: values for below ground moisture effect on decomposition processes
-
-# update
-update pools and states in cTauSoilW_CASA
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauSoilW_CASA
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
  - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).  Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data & ecosystem  modeling 1982–1998. Global & Planetary Change, 39[3-4], 201-213.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
 *Created by:*
@@ -115,4 +109,4 @@ update pools and states in cTauSoilW_CASA
 
 Notes:  the BGME is used as a scalar dependent on soil moisture; as the  sum of soil moisture for all layers. This can be partitioned into  different soil layers in the soil & affect independently the  decomposition processes of pools that are at the surface & deeper in  the soils.
 """
-function cTauSoilW_CASA_h end
+cTauSoilW_CASA

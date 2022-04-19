@@ -1,71 +1,59 @@
-export runoffInterflow_residual, runoffInterflow_residual_h
-"""
-calculates interflow as a fraction of the available water
+export runoffInterflow_residual
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct runoffInterflow_residual{T1} <: runoffInterflow
 	rc::T1 = 0.3 | (0.0, 0.9) | "simply assume that a fraction of the still available water runs off" | ""
 end
 
-function precompute(o::runoffInterflow_residual, forcing, land, infotem)
-	# @unpack_runoffInterflow_residual o
-	return land
-end
-
 function compute(o::runoffInterflow_residual, forcing, land, infotem)
+	## unpack parameters
 	@unpack_runoffInterflow_residual o
 
-	## unpack variables
-	@unpack_land begin
-		WBP ∈ land.states
-	end
+	## unpack land variables
+	@unpack_land WBP ∈ land.states
+
+
+	## calculate variables
 	# simply assume that a fraction of the still available water runs off
-	roInt = rc * WBP
+	runoffInterflow = rc * WBP
 	# update the WBP
-	WBP = WBP - roInt
+	WBP = WBP - runoffInterflow
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		roInt ∋ land.fluxes
-		WBP ∋ land.states
+		runoffInterflow => land.fluxes
+		WBP => land.states
 	end
 	return land
 end
 
-function update(o::runoffInterflow_residual, forcing, land, infotem)
-	# @unpack_runoffInterflow_residual o
-	return land
-end
-
-"""
+@doc """
 calculates interflow as a fraction of the available water
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffInterflow_residual
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Interflow using runoffInterflow_residual
 
-*Inputs:*
+*Inputs*
 
-*Outputs:*
- - land.fluxes.roInt: interflow [mm/time]
-
-# update
-update pools and states in runoffInterflow_residual
+*Outputs*
+ - land.fluxes.runoffInterflow: interflow [mm/time]
  - land.states.WBP: water balance pool [mm]
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
 *Created by:*
- - Martin Jung [mjung]
+ - mjung
 """
-function runoffInterflow_residual_h end
+runoffInterflow_residual

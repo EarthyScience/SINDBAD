@@ -1,10 +1,5 @@
-export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986, soilProperties_Saxton1986_h
-"""
-assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.p_
+export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct soilProperties_Saxton1986{T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21} <: soilProperties
 	ψFC::T1 = 33.0 | (30.0, 35.0) | "matric potential at field capacity" | "kPa"
 	ψWP::T2 = 1500.0 | (1000.0, 1800.0) | "matric potential at wilting point" | "kPa"
@@ -33,34 +28,33 @@ function precompute(o::soilProperties_Saxton1986, forcing, land, infotem)
 	@unpack_soilProperties_Saxton1986 o
 
 	## instantiate variables
-	p_α = ones(size(infotem.pools.water.initValues.soilW))
-	p_β = ones(size(infotem.pools.water.initValues.soilW))
-	p_kFC = ones(size(infotem.pools.water.initValues.soilW))
-	p_θFC = ones(size(infotem.pools.water.initValues.soilW))
-	p_ψFC = ones(size(infotem.pools.water.initValues.soilW))
-	p_kWP = ones(size(infotem.pools.water.initValues.soilW))
-	p_θWP = ones(size(infotem.pools.water.initValues.soilW))
-	p_ψWP = ones(size(infotem.pools.water.initValues.soilW))
-	p_kSat = ones(size(infotem.pools.water.initValues.soilW))
-	p_θSat = ones(size(infotem.pools.water.initValues.soilW))
-	p_ψSat = ones(size(infotem.pools.water.initValues.soilW))
+	p_α = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_β = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_kFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_θFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_ψFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_kWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_θWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_ψWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_kSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_θSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_ψSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
 
-	## pack variables
-	@pack_land begin
-		(p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) ∋ land.soilProperties
-	end
+	## pack land variables
+	@pack_land (p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) => land.soilProperties
 	return land
 end
 
 function compute(o::soilProperties_Saxton1986, forcing, land, infotem)
+	## unpack parameters
 	@unpack_soilProperties_Saxton1986 o
 
-	## unpack variables
-	@unpack_land begin
-		(p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) ∈ land.soilProperties
-	end
-	#--> number of layers & creation of arrays
-	#--> calculate & set the soil hydraulic properties for each layer
+	## unpack land variables
+	@unpack_land (p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) ∈ land.soilProperties
+
+	## calculate variables
+	# number of layers & creation of arrays
+	# calculate & set the soil hydraulic properties for each layer
 	for sl in 1:infotem.pools.water.nZix.soilW
 		(α, β, kFC, θFC, ψFC) = soilParamsSaxton1986(land, infotem, sl, ψFC)
 		(_, _, kWP, θWP, ψWP) = soilParamsSaxton1986(land, infotem, sl, ψWP)
@@ -79,24 +73,26 @@ function compute(o::soilProperties_Saxton1986, forcing, land, infotem)
 	end
 	p_kUnsatFuncH = kSaxton1986
 
-	## pack variables
-	@pack_land begin
-		(p_kFC, p_kSat, p_kUnsatFuncH, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) ∋ land.soilProperties
-	end
+	## pack land variables
+	@pack_land (p_kFC, p_kSat, p_kUnsatFuncH, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
 	return land
 end
 
-function update(o::soilProperties_Saxton1986, forcing, land, infotem)
-	# @unpack_soilProperties_Saxton1986 o
-	return land
-end
-
-"""
+@doc """
 assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.p_
+
+# Parameters
+$(PARAMFIELDS)
+
+# precompute:
+precompute/instantiate time-invariant variables for soilProperties_Saxton1986
+
+
+---
 
 # Extended help
 """
-function soilProperties_Saxton1986_h end
+soilProperties_Saxton1986
 
 """
 calculates the soil hydraulic conductivity for a given moisture based on Saxton; 1986
@@ -105,33 +101,18 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 """
 function kSaxton1986(land, infotem, sl)
 	@unpack_land begin
-		(nLookup, p_CLAY, p_SAND, p_kLookUp, p_soilDepths) ∈ land.soilWBase
+		(p_CLAY, p_SAND, p_soilDepths) ∈ land.soilWBase
 		soilW ∈ land.pools
 	end
 
 	## calculate variables
-	#--> if useLookUp is set to true in modelRun.json; run the original non-linear equation
-	if makeLookup
-		CLAY = p_CLAY[sl] * 100
-		SAND = p_SAND[sl] * 100
-		soilD = p_soilDepths[sl]
-		θ = soilW[sl] / soilD
-		K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
-	else
-		soilD = p_soilDepths[sl]
-		θ = soilW[sl] / soilD
-		rowArray = 1:size(θ, 1)
-		θ[θ < 0.0] = 0.0
-		θ[imag(θ)!= 0] = 0.0
-		lkDat = p_kLookUp[sl]
-		lkInd = floor(θ * nLookup)
-		lkInd[lkInd == 0] = 1
-		lkInd[lkInd > p.soilWBase.nLookup] = nLookup
-		idx = sub2ind(size(lkDat), rowArray, lkInd); #subscript for all rows & the selected columns
-		K = lkDat[idx]
-	end
+	CLAY = p_CLAY[sl] * 100
+	SAND = p_SAND[sl] * 100
+	soilD = p_soilDepths[sl]
+	θ = soilW[sl] / soilD
+	K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
 
-	## pack variables
+	## pack land variables
 	return K
 end
 
@@ -141,24 +122,23 @@ calculates the soil hydraulic properties based on Saxton 1986
 # Extended help
 """
 function soilParamsSaxton1986(land, infotem, sl, WT)
-	@unpack_land begin
-		(p_CLAY, p_SAND) ∈ land.soilTexture
-	end
+	@unpack_land (p_CLAY, p_SAND) ∈ land.soilTexture
+
 
 	## calculate variables
-	#--> CONVERT SAND AND CLAY TO PERCENTAGES
+	# CONVERT SAND AND CLAY TO PERCENTAGES
 	CLAY = p_CLAY[sl] * 100
 	SAND = p_SAND[sl] * 100
-	#--> Equations
+	# Equations
 	A = exp(a + b * CLAY + c * SAND ^ 2.0 + d1 * SAND ^ 2 * CLAY) * 100
 	B = e + f1 * CLAY ^ 2.0 + g * SAND ^ 2 * CLAY
-	#--> soil matric potential; ψ; kPa
+	# soil matric potential; ψ; kPa
 	ψ = WT
-	#--> soil moisture content at saturation [m^3/m^3]
+	# soil moisture content at saturation [m^3/m^3]
 	θ_s = h + j * SAND + k * log10(CLAY)
-	#--> air entry pressure [kPa]
+	# air entry pressure [kPa]
 	ψ_e = abs(100 * (m + n * θ_s))
-	θ = zeros(size(CLAY))
+	θ = repeat(infotem.helpers.azero, size(CLAY))
 	ndx = find(ψ >= 10 & ψ <= 1500)
 	if !isempty(ndx)
 		θ[ndx] = (ψ[ndx] / A[ndx]) ^ (1 / B[ndx])
@@ -179,12 +159,12 @@ function soilParamsSaxton1986(land, infotem, sl, WT)
 		θ[ndx] = θ_s[ndx]
 	end
 	# clear ndx
-	#--> hydraulic conductivity [mm/day]: original equation for mm/s
+	# hydraulic conductivity [mm/day]: original equation for mm/s
 	K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
 	α = A
 	β = B
 
-	## pack variables
+	## pack land variables
 	return α, β, K, θ, ψ
 end
 

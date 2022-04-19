@@ -1,40 +1,27 @@
-export snowFraction_none, snowFraction_none_h
-"""
-sets the snow fraction to zeros
+export snowFraction_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct snowFraction_none{T} <: snowFraction
-	noParameter::T = nothing | nothing | nothing | nothing
+struct snowFraction_none <: snowFraction
 end
 
 function precompute(o::snowFraction_none, forcing, land, infotem)
-	@unpack_snowFraction_none o
 
 	## calculate variables
-	snowFraction = 0.0
+	snowFraction = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		snowFraction ∋ land.states
-	end
+	## pack land variables
+	@pack_land snowFraction => land.states
 	return land
 end
 
-function compute(o::snowFraction_none, forcing, land, infotem)
-	# @unpack_snowFraction_none o
-	return land
-end
-
-function update(o::snowFraction_none, forcing, land, infotem)
-	# @unpack_snowFraction_none o
-	return land
-end
-
-"""
+@doc """
 sets the snow fraction to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for snowFraction_none
+
+
+---
 
 # Extended help
 """
-function snowFraction_none_h end
+snowFraction_none

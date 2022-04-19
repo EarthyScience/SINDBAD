@@ -1,40 +1,27 @@
-export cTau_none, cTau_none_h
-"""
-set the actual τ to ones
+export cTau_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cTau_none{T} <: cTau
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cTau_none <: cTau
 end
 
 function precompute(o::cTau_none, forcing, land, infotem)
-	@unpack_cTau_none o
 
 	## calculate variables
-	p_k = ones(size(infotem.pools.carbon.initValues.cEco))
+	p_k = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		p_k ∋ land.cTau
-	end
+	## pack land variables
+	@pack_land p_k => land.cTau
 	return land
 end
 
-function compute(o::cTau_none, forcing, land, infotem)
-	# @unpack_cTau_none o
-	return land
-end
-
-function update(o::cTau_none, forcing, land, infotem)
-	# @unpack_cTau_none o
-	return land
-end
-
-"""
+@doc """
 set the actual τ to ones
+
+# precompute:
+precompute/instantiate time-invariant variables for cTau_none
+
+
+---
 
 # Extended help
 """
-function cTau_none_h end
+cTau_none

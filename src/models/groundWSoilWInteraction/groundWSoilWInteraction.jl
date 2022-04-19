@@ -1,5 +1,13 @@
 export groundWSoilWInteraction
-"""
+
+abstract type groundWSoilWInteraction <: LandEcosystem end
+
+include("groundWSoilWInteraction_gradient.jl")
+include("groundWSoilWInteraction_gradientNeg.jl")
+include("groundWSoilWInteraction_none.jl")
+include("groundWSoilWInteraction_VanDijk2010.jl")
+
+@doc """
 Groundwater soil moisture interactions (e.g. capilary flux, water
 
 # Approaches:
@@ -8,8 +16,4 @@ Groundwater soil moisture interactions (e.g. capilary flux, water
  - none: sets the groundwater capillary flux to zeros
  - VanDijk2010: calculates the upward flow of water from groundwater to lowermost soil layer
 """
-abstract type groundWSoilWInteraction <: LandEcosystem end
-include("groundWSoilWInteraction_gradient.jl")
-include("groundWSoilWInteraction_gradientNeg.jl")
-include("groundWSoilWInteraction_none.jl")
-include("groundWSoilWInteraction_VanDijk2010.jl")
+groundWSoilWInteraction

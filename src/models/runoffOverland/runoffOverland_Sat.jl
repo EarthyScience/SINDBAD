@@ -1,66 +1,46 @@
-export runoffOverland_Sat, runoffOverland_Sat_h
-"""
-calculates total overland runoff that passes to the surface storage
+export runoffOverland_Sat
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffOverland_Sat{T} <: runoffOverland
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::runoffOverland_Sat, forcing, land, infotem)
-	# @unpack_runoffOverland_Sat o
-	return land
+struct runoffOverland_Sat <: runoffOverland
 end
 
 function compute(o::runoffOverland_Sat, forcing, land, infotem)
-	@unpack_runoffOverland_Sat o
 
-	## unpack variables
-	@unpack_land begin
-		roSat ∈ land.fluxes
-	end
-	runoffOverland = roSat
+	## unpack land variables
+	@unpack_land runoffSaturation ∈ land.fluxes
 
-	## pack variables
-	@pack_land begin
-		runoffOverland ∋ land.fluxes
-	end
+
+	## calculate variables
+	runoffOverland = runoffSaturation
+
+	## pack land variables
+	@pack_land runoffOverland => land.fluxes
 	return land
 end
 
-function update(o::runoffOverland_Sat, forcing, land, infotem)
-	# @unpack_runoffOverland_Sat o
-	return land
-end
-
-"""
+@doc """
 calculates total overland runoff that passes to the surface storage
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffOverland_Sat
+---
 
 # compute:
 Land over flow (sum of saturation and infiltration excess runoff) using runoffOverland_Sat
 
-*Inputs:*
- - land.fluxes.roSat: saturation excess runoff
+*Inputs*
+ - land.fluxes.runoffSaturation: saturation excess runoff
 
-*Outputs:*
+*Outputs*
  - land.fluxes.runoffOverland : runoff over land [mm/time]
 
-# update
-update pools and states in runoffOverland_Sat
+---
 
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [skoirala]  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function runoffOverland_Sat_h end
+runoffOverland_Sat

@@ -1,40 +1,27 @@
-export runoffBase_none, runoffBase_none_h
-"""
-sets the base runoff to zeros
+export runoffBase_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffBase_none{T} <: runoffBase
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffBase_none <: runoffBase
 end
 
 function precompute(o::runoffBase_none, forcing, land, infotem)
-	@unpack_runoffBase_none o
 
 	## calculate variables
-	runoffBase = 0.0
+	runoffBase = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		runoffBase ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffBase => land.fluxes
 	return land
 end
 
-function compute(o::runoffBase_none, forcing, land, infotem)
-	# @unpack_runoffBase_none o
-	return land
-end
-
-function update(o::runoffBase_none, forcing, land, infotem)
-	# @unpack_runoffBase_none o
-	return land
-end
-
-"""
+@doc """
 sets the base runoff to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffBase_none
+
+
+---
 
 # Extended help
 """
-function runoffBase_none_h end
+runoffBase_none

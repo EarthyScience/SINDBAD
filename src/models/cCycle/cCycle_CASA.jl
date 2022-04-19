@@ -1,35 +1,27 @@
-export cCycle_CASA, spin_cCycle_CASA, cCycle_CASA_h
-"""
-Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
+export cCycle_CASA, spin_cCycle_CASA
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cCycle_CASA{T} <: cCycle
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cCycle_CASA <: cCycle
 end
 
 function precompute(o::cCycle_CASA, forcing, land, infotem)
-	@unpack_cCycle_CASA o
 
 	## instantiate variables
-	cEcoEfflux = zeros(size(infotem.pools.carbon.initValues.cEco)); #sujan moved from get states
-	cEcoInflux = zeros(size(infotem.pools.carbon.initValues.cEco))
-	cEcoFlow = zeros(size(infotem.pools.carbon.initValues.cEco))
+	cEcoEfflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan moved from get states
+	cEcoInflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cEcoFlow = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		(cEcoEfflux, cEcoInflux, cEcoFlow) ∋ land.cCycle
-	end
+	## pack land variables
+	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
 	return land
 end
 
 function compute(o::cCycle_CASA, forcing, land, infotem)
-	@unpack_cCycle_CASA o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
+
+	## unpack land variables
 	@unpack_land begin
-		(cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
 		(cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
 		cEco ∈ land.pools
 		gpp ∈ land.fluxes
@@ -66,30 +58,24 @@ function compute(o::cCycle_CASA, forcing, land, infotem)
 	cNPP = sum(cNPP)
 	NEE = cRECO - gpp
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		p_k ∋ land.cCycleBase
-		(NEE, cNPP, cRA, cRECO, cRH) ∋ land.fluxes
-		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∋ land.states
+		p_k => land.cCycleBase
+		(NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
+		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) => land.states
 	end
 	return land
 end
 
-function update(o::cCycle_CASA, forcing, land, infotem)
-	# @unpack_cCycle_CASA o
-	return land
-end
-
-"""
+@doc """
 Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycle_CASA
+---
 
 # compute:
 Allocate carbon to vegetation components using cCycle_CASA
 
-*Inputs:*
+*Inputs*
  - infotem.dates.nStepsYear: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
@@ -98,7 +84,7 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.fluxes.gpp: values for gross primary productivity
  - land.states.cAlloc: carbon allocation matrix
 
-*Outputs:*
+*Outputs*
  - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
  - land.fluxes.cNPP: values for net primary productivity
  - land.fluxes.cRA: values for autotrophic respiration
@@ -106,25 +92,28 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.fluxes.cRH: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
-
-# update
-update pools and states in cCycle_CASA
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cCycle_CASA
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
  - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).  Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data & ecosystem  modeling 1982–1998. Global & Planetary Change, 39[3-4], 201-213.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cCycle_CASA_h end
+cCycle_CASA
 
 """
 Solve the steady state of the cCycle for the CASA model based on recurrent. Returns the model C pools in equilibrium
@@ -152,17 +141,16 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
  - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on  Bt & At when nPix == 1 [single point simulation]
 
 # Created by:
- - Nuno Carvalhais [ncarval]
- - Sujan Koirala [skoirala]
+ - ncarval
+ - skoirala
 
 # Notes:
  - for model structures that loop the carbon cycle between pools this is  merely a rough approximation [the solution does not really work]  
  - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
 """
 function spin_cCycle_CASA(forcing, land, infotem, NI2E)
-	@unpack_land begin
-		Tair ∈ forcing
-	end
+	@unpack_forcing Tair ∈ forcing
+
 	@unpack_land begin
 		cEco ∈ land.pools
 		(cAlloc, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
@@ -234,7 +222,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 	## solve it for each pool individually
 	for zix in zixVecOrder
 		# general k loss
-		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 1.0), 0.0)
+		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], infotem.helpers.one), infotem.helpers.zero)
 		cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 0.9999999), 1e-7); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
 		if any(zix == infotem.pools.carbon.zix.cVeg)
@@ -303,7 +291,8 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 	cEco_prev = sCt
 	out = runForward(selectedModels, forcing, out, modelnames, infotem)
 
-	## pack variables
+	## pack land variables
+	@pack_land (cEco, cEco_prev) => land.pools
 	return land
 end
 

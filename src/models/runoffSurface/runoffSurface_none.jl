@@ -1,40 +1,27 @@
-export runoffSurface_none, runoffSurface_none_h
-"""
-sets surface runoff [runoffSurface] from the storage to zeros
+export runoffSurface_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffSurface_none{T} <: runoffSurface
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffSurface_none <: runoffSurface
 end
 
 function precompute(o::runoffSurface_none, forcing, land, infotem)
-	@unpack_runoffSurface_none o
 
 	## calculate variables
-	runoffSurface = 0.0
+	runoffSurface = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		runoffSurface ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffSurface => land.fluxes
 	return land
 end
 
-function compute(o::runoffSurface_none, forcing, land, infotem)
-	# @unpack_runoffSurface_none o
-	return land
-end
-
-function update(o::runoffSurface_none, forcing, land, infotem)
-	# @unpack_runoffSurface_none o
-	return land
-end
-
-"""
+@doc """
 sets surface runoff [runoffSurface] from the storage to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffSurface_none
+
+
+---
 
 # Extended help
 """
-function runoffSurface_none_h end
+runoffSurface_none

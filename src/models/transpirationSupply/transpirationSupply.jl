@@ -1,5 +1,13 @@
 export transpirationSupply
-"""
+
+abstract type transpirationSupply <: LandEcosystem end
+
+include("transpirationSupply_CASA.jl")
+include("transpirationSupply_Federer1982.jl")
+include("transpirationSupply_wAWC.jl")
+include("transpirationSupply_wAWCvegFraction.jl")
+
+@doc """
 Supply-limited transpiration
 
 # Approaches:
@@ -8,8 +16,4 @@ Supply-limited transpiration
  - wAWC: calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture
  - wAWCvegFraction: calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions
 """
-abstract type transpirationSupply <: LandEcosystem end
-include("transpirationSupply_CASA.jl")
-include("transpirationSupply_Federer1982.jl")
-include("transpirationSupply_wAWC.jl")
-include("transpirationSupply_wAWCvegFraction.jl")
+transpirationSupply

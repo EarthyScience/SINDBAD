@@ -1,36 +1,27 @@
-export cAllocationSoilW_none, cAllocationSoilW_none_h
-"""
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cAllocationSoilW_none{T} <: cAllocationSoilW
-	noParameter::T = nothing | nothing | nothing | nothing
+export cAllocationSoilW_none
+
+struct cAllocationSoilW_none <: cAllocationSoilW
 end
 
 function precompute(o::cAllocationSoilW_none, forcing, land, infotem)
-	@unpack_cAllocationSoilW_none o
 
 	## calculate variables
-	fW = 1.0
+	fW = infotem.helpers.one
 
-	## pack variables
-	@pack_land begin
-		fW ∋ land.cAllocationSoilW
-	end
+	## pack land variables
+	@pack_land fW => land.cAllocationSoilW
 	return land
 end
 
-function compute(o::cAllocationSoilW_none, forcing, land, infotem)
-	# @unpack_cAllocationSoilW_none o
-	return land
-end
+@doc """
 
-function update(o::cAllocationSoilW_none, forcing, land, infotem)
-	# @unpack_cAllocationSoilW_none o
-	return land
-end
 
-"""
+# precompute:
+precompute/instantiate time-invariant variables for cAllocationSoilW_none
+
+
+---
+
 # Extended help
 """
-function cAllocationSoilW_none_h end
+cAllocationSoilW_none

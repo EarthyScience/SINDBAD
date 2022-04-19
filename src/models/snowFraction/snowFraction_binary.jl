@@ -1,69 +1,45 @@
-export snowFraction_binary, snowFraction_binary_h
-"""
-compute the snow pack & fraction of snow cover.
+export snowFraction_binary
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct snowFraction_binary{T} <: snowFraction
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::snowFraction_binary, forcing, land, infotem)
-	# @unpack_snowFraction_binary o
-	return land
+struct snowFraction_binary <: snowFraction
 end
 
 function compute(o::snowFraction_binary, forcing, land, infotem)
-	@unpack_snowFraction_binary o
 
-	## unpack variables
-	@unpack_land begin
-		snowW ∈ land.pools
-	end
+	## unpack land variables
+	@unpack_land snowW ∈ land.pools
+
 	# if there is snow; then snow fraction is 1; otherwise 0
-	snowFraction = Float64[snowW[1] > 0.0]
+	snowFraction = infotem.helpers.one * (snowW[1] > infotem.helpers.zero)
 
-	## pack variables
-	@pack_land begin
-		snowFraction ∋ land.states
-	end
+	## pack land variables
+	@pack_land snowFraction => land.states
 	return land
 end
 
-function update(o::snowFraction_binary, forcing, land, infotem)
-	# @unpack_snowFraction_binary o
-	return land
-end
+@doc """
+compute the fraction of snow cover.
 
-"""
-compute the snow pack & fraction of snow cover.
-
-# precompute:
-precompute/instantiate time-invariant variables for snowFraction_binary
+---
 
 # compute:
 Calculate snow cover fraction using snowFraction_binary
 
-*Inputs:*
+*Inputs*
  - land.rainSnow.snow : snow fall [mm/time]
 
-*Outputs:*
- -
-
-# update
-update pools and states in snowFraction_binary
- - land.pools.snowW: updates the snow pack with snow fall
+*Outputs*
  - land.states.snowFraction: sets snowFraction to 1 if there is snow; to 0 if there  is now snow
+
+---
 
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
 *Created by:*
- - Martin Jung [mjung]
+ - mjung
 """
-function snowFraction_binary_h end
+snowFraction_binary

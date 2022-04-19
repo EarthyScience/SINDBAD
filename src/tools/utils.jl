@@ -1,13 +1,13 @@
-export PARAMFIELDS, @unpack_land, @pack_land
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)
     dNames = [Symbol(tpNames[i]) for i in 1:length(tpNames)]
     dValues = [[tpValues[i]] for i in 1:length(tpNames)]
     if isnothing(colNames)
-        dTable = Table((; zip(dNames, dValues)...)) 
+        dTable = Table((; zip(dNames, dValues)...))
     else
-        dTable = Table(@eval $(colNames)[1]=dNames, @eval $(colNames)[2]=dValues)
+        dTable = Table(@eval $(colNames)[1] = dNames, @eval $(colNames)[2] = dValues)
     end
     return dTable
 end
@@ -44,17 +44,17 @@ function typenarrow!(d::Dict)
     return dTuple
 end
 
-function setTupleSubfield(out, fieldname = :fluxes, vals = (:a, 1))
-    return @eval (; $out..., $fieldname = (; $out.$fieldname...,$(vals[1]) = $vals[2]))
+function setTupleSubfield(out, fieldname=:fluxes, vals=(:a, 1))
+    return @eval (; $out..., $fieldname=(; $out.$fieldname..., $(vals[1])=$vals[2]))
 end
 
 
-function setTupleField(out, vals = (:a, 1))
-    return @eval (; $out..., $(vals[1]) = $vals[2])
+function setTupleField(out, vals=(:a, 1))
+    return @eval (; $out..., $(vals[1])=$vals[2])
 end
 
 struct BoundFields <: DocStringExtensions.Abbreviation
-types::Bool
+    types::Bool
 end
 const PARAMFIELDS = BoundFields(false)
 
@@ -72,7 +72,7 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
                 println(buf, "  - `", field, "::", fieldtype(object, field), "`")
             else
                 println(buf, "  - `", field, "=",
-                bounds(object, field),"`")
+                    bounds(object, field), "`")
             end
             println(buf)
             if haskey(docs, field) && isa(docs[field], AbstractString)
@@ -89,7 +89,7 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     return nothing
 end
 
-function processUnpackingLine(ex)
+function processUnpackLand(ex)
     rename, ex = if ex.head == :(=)
         ex.args[1], ex.args[2]
     else
@@ -105,59 +105,32 @@ function processUnpackingLine(ex)
     elseif lhs.head == :tuple
         lhs = lhs.args
     else
-        error("processinputline: could not unpack:" * lhs * "=" * rhs)
+        error("processUnpackLand: could not unpack:" * lhs * "=" * rhs)
     end
     if rename === nothing
         rename = lhs
-    elseif rename isa Expr && rename.head==:tuple
+    elseif rename isa Expr && rename.head == :tuple
         rename = rename.args
     end
-    lines = broadcast(lhs,rename) do s,rn
-        Expr(:(=),esc(rn),Expr(:(.),esc(rhs),QuoteNode(s)))
+    lines = broadcast(lhs, rename) do s, rn
+        Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
     end
-    Expr(:block,lines...)
+    Expr(:block, lines...)
 end
-
-
-function processinputline_fg(ex)
-    rename, ex = if ex.head == :(=)
-        ex.args[1], ex.args[2]
-    else
-        nothing, ex
-    end
-    @assert ex.head == :call
-    @assert ex.args[1] == :(=>)
-    @assert length(ex.args) == 3
-    lhs = ex.args[2]
-    rhs = ex.args[3]
-    if rhs isa Symbol
-        rhs = [rhs]
-    elseif rhs.head == :tuple
-        rhs = rhs.args
-    else
-        error("processinputline: could not unpack:" * lhs * "=" * rhs)
-    end
-    if rename ===nothing
-        rename = rhs
-    elseif rename isa Expr && rename.head==:tuple
-        rename = rename.args
-    end
-    # @show rename, rhs
-    lines = broadcast(rhs,rename) do s,rn
-        Expr(:(=),esc(rn),Expr(:(.),esc(lhs),QuoteNode(s)))
-    end
-    Expr(:block,lines...)
-end
-
 
 
 macro unpack_land(inparams)
-    @assert inparams.head == :block
-    outputs = processUnpackingLine.(filter(i->isa(i,Expr),inparams.args))
-    Expr(:block,outputs...)
+    @assert inparams.head == :block || inparams.head == :call || inparams.head == :(=)
+    if inparams.head == :block
+        outputs = processUnpackLand.(filter(i -> isa(i, Expr), inparams.args))
+        outCode = Expr(:block, outputs...)
+    else
+        outCode = processUnpackLand(inparams)
+    end
+    return outCode
 end
 
-function processPackingLine(ex)
+function processPackLand(ex)
     rename, ex = if ex.args[1] == :(=)
         ex.args[2], ex.args[3]
     else
@@ -173,29 +146,70 @@ function processPackingLine(ex)
     elseif lhs.head == :tuple
         lhs = lhs.args
     else
-        error("processinputline: could not pack:" * lhs * "=" * rhs)
+        error("processPackLand: could not pack:" * lhs * "=" * rhs)
     end
     if rename === nothing
         rename = lhs
-    elseif rename isa Expr && rename.head==:tuple
+    elseif rename isa Expr && rename.head == :tuple
         rename = rename.args
     end
-    lines = broadcast(lhs,rename) do s,rn
+    lines = broadcast(lhs, rename) do s, rn
         depth_field = length(findall(".", string(esc(rhs)))) + 1
         if depth_field == 1
-            expr_l = Expr(:(=),esc(rhs), Expr(:tuple, Expr(:parameters, Expr(:(...),esc(rhs)), Expr(:(=), esc(s), esc(rn)))))
+            expr_l = Expr(:(=), esc(rhs), Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn)))))
             expr_l
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            expr_l = Expr(:(=),esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field) ,(Expr(:tuple, Expr(:parameters, Expr(:(...),esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
         end
     end
-    Expr(:block,lines...)
+    Expr(:block, lines...)
 end
 
 macro pack_land(outparams)
-    @assert outparams.head == :block
-    outputs = processPackingLine.(filter(i->isa(i,Expr),outparams.args))
-    Expr(:block,outputs...)
+    @assert outparams.head == :block || outparams.head == :call || outparams.head == :(=)
+    if outparams.head == :block
+        outputs = processPackLand.(filter(i -> isa(i, Expr), outparams.args))
+        outCode = Expr(:block, outputs...)
+    else
+        outCode = processPackLand(outparams)
+    end
+    return outCode
+end
+
+
+function processUnpackForcing(ex)
+    rename, ex = if ex.head == :(=)
+        ex.args[1], ex.args[2]
+    else
+        nothing, ex
+    end
+    @assert ex.head == :call
+    @assert ex.args[1] == :(∈)
+    @assert length(ex.args) == 3
+    lhs = ex.args[2]
+    rhs = ex.args[3]
+    if lhs isa Symbol
+        lhs = [lhs]
+    elseif lhs.head == :tuple
+        lhs = lhs.args
+    else
+        error("processUnpackForcing: could not unpack forcing:" * lhs * "=" * rhs)
+    end
+    if rename === nothing
+        rename = lhs
+    elseif rename isa Expr && rename.head == :tuple
+        rename = rename.args
+    end
+    lines = broadcast(lhs, rename) do s, rn
+        Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
+    end
+    Expr(:block, lines...)
+end
+
+
+macro unpack_forcing(inparams)
+    @assert inparams.head == :call || inparams.head == :(=)
+    outputs = processUnpackForcing(inparams)
 end

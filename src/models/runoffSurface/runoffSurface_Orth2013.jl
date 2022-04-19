@@ -1,10 +1,5 @@
-export runoffSurface_Orth2013, runoffSurface_Orth2013_h
-"""
-calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
+export runoffSurface_Orth2013
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct runoffSurface_Orth2013{T1} <: runoffSurface
 	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
@@ -16,23 +11,24 @@ function precompute(o::runoffSurface_Orth2013, forcing, land, infotem)
 	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61))))
 	Rdelay = z / (sum(z) * ones(1, 61))
 
-	## pack variables
-	@pack_land begin
-		(z, Rdelay) ∋ land.runoffSurface
-	end
+	## pack land variables
+	@pack_land (z, Rdelay) => land.runoffSurface
 	return land
 end
 
 function compute(o::runoffSurface_Orth2013, forcing, land, infotem)
+	## unpack parameters
 	@unpack_runoffSurface_Orth2013 o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land (z, Rdelay) ∈ land.runoffSurface
+
+	## unpack land variables
 	@unpack_land begin
-		(z, Rdelay) ∈ land.runoffSurface
 		surfaceW ∈ land.pools
 		runoffOverland ∈ land.fluxes
 	end
-	#--> calculate delay function of previous days
+	# calculate delay function of previous days
 	# calculate Q from delay of previous days
 	if tix > 60
 		tmin = maximum(tix-60, 1)
@@ -42,10 +38,10 @@ function compute(o::runoffSurface_Orth2013, forcing, land, infotem)
 	end
 	# update the water pool
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		runoffSurface ∋ land.fluxes
-		Rdelay ∋ land.runoffSurface
+		runoffSurface => land.fluxes
+		Rdelay => land.runoffSurface
 	end
 	return land
 end
@@ -62,44 +58,52 @@ function update(o::runoffSurface_Orth2013, forcing, land, infotem)
 	## update variables
 	surfaceW[1] = surfaceW[1] + runoffOverland - runoffSurface
 
-	## pack variables
-	@pack_land begin
-		surfaceW ∋ land.pools
-	end
+	## pack land variables
+	@pack_land surfaceW => land.pools
 	return land
 end
 
-"""
+@doc """
 calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_Orth2013
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Runoff from surface water storages using runoffSurface_Orth2013
 
-*Inputs:*
+*Inputs*
 
-*Outputs:*
+*Outputs*
  - land.fluxes.runoffSurface : runoff from land [mm/time]
  - land.runoffSurface.Rdelay
 
 # update
+
 update pools and states in runoffSurface_Orth2013
+
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffSurface_Orth2013
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Orth, R., Koster, R. D., & Seneviratne, S. I. (2013).  Inferring soil moisture memory from streamflow observations using a simple water balance model. Journal of Hydrometeorology, 14[6], 1773-1790.
  - used in Trautmann et al. 2018
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]  
 
 *Created by:*
- - Tina Trautmann [ttraut]
+ - ttraut
 
-*Notes:*
+*Notes*
  - how to handle 60days?!?!
 """
-function runoffSurface_Orth2013_h end
+runoffSurface_Orth2013

@@ -1,70 +1,53 @@
-export transpirationDemand_PET, transpirationDemand_PET_h
-"""
-set the climate driven demand for transpiration equal to PET
+export transpirationDemand_PET
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct transpirationDemand_PET{T} <: transpirationDemand
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::transpirationDemand_PET, forcing, land, infotem)
-	# @unpack_transpirationDemand_PET o
-	return land
+@bounds @describe @units @with_kw struct transpirationDemand_PET{T1} <: transpirationDemand
+	αVeg::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
 end
 
 function compute(o::transpirationDemand_PET, forcing, land, infotem)
+	## unpack parameters
 	@unpack_transpirationDemand_PET o
 
-	## unpack variables
-	@unpack_land begin
-		PET ∈ land.PET
-	end
-	tranDem = PET
+	## unpack land variables
+	@unpack_land PET ∈ land.PET
 
-	## pack variables
-	@pack_land begin
-		tranDem ∋ land.transpirationDemand
-	end
+	## calculate variables
+	tranDem = PET * αVeg
+
+	## pack land variables
+	@pack_land tranDem => land.transpirationDemand
 	return land
 end
 
-function update(o::transpirationDemand_PET, forcing, land, infotem)
-	# @unpack_transpirationDemand_PET o
-	return land
-end
+@doc """
+calculate the climate driven demand for transpiration as a function of PET & α for vegetation
 
-"""
-set the climate driven demand for transpiration equal to PET
+# Parameters
+$(PARAMFIELDS)
 
-# precompute:
-precompute/instantiate time-invariant variables for transpirationDemand_PET
+---
 
 # compute:
 Demand-driven transpiration using transpirationDemand_PET
 
-*Inputs:*
+*Inputs*
  - land.PET.PET : potential evapotranspiration out of PET module
+ - αVeg: α parameter for potential transpiration
 
-*Outputs:*
+*Outputs*
  - land.transpirationDemand.tranDem: demand driven transpiration
-
-# update
-update pools and states in transpirationDemand_PET
  -
+
+---
 
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 22.11.2019 [skoirala]:  
 
 *Created by:*
- - Sujan Koirala [skoirala]
-
-*Notes:*
- - Assumes potential transpiration to be equal to PET
+ - skoirala
 """
-function transpirationDemand_PET_h end
+transpirationDemand_PET

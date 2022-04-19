@@ -7,7 +7,7 @@ rainSnow_Tair()
 
 m1 =  rainSnow()
 m2 = snowMelt()
-m3 = evapSoil()
+m3 = evaporation()
 m4 = transpiration()
 mlast = updateState()
 forcing, timesteps = getforcing()

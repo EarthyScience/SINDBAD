@@ -16,39 +16,12 @@
 	{
 		"runForwardYearly": 	false,
 		"runForward": 			true,
-		"runGenCode": 			true,
-		"genCode": 				true,
-		"genRedMemCode": 		false,
 		"runOpti": 				true,
-		"calcCost":				true,
-		"useLookupK":			false,	
-		"checks":
-		{
-			"massBalance":
-			{
-				"carbon": 		false,
-				"water": 		false
-			},
-			"numeric": 			false,
-			"bounds": 			false
-		}
-	},
-	"varsToSum":
-	{
-		"roTotal":
-		{
-		"outfield": "fluxes",
-		"components":["roSat","roBase"]
-		},
-		"evapTotal":
-		{
-		"outfield": "fluxes",
-		"components":["evapInt","transpiration","evapSoil","evapSub"]
-		}
+		"calcCost":				true
 	},
 	"rules":
 	{
 		"verbosity": 5,
-		"arrayPrecision": 		"double"
+		"dataType": 		"Float64"
 	}
 }

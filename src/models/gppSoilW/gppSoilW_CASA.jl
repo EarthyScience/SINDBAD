@@ -1,25 +1,17 @@
-export gppSoilW_CASA, gppSoilW_CASA_h
-"""
-initialized in teh preallocation function. is not VPD effect; is the ET/PET effect if Tair <= 0.0 | PET <= 0.0; use the previous stress index otherwise; compute according to CASA
+export gppSoilW_CASA
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
 	Bwe::T1 = 0.5 | nothing | "CASA We" | ""
 end
 
-function precompute(o::gppSoilW_CASA, forcing, land, infotem)
-	# @unpack_gppSoilW_CASA o
-	return land
-end
-
 function compute(o::gppSoilW_CASA, forcing, land, infotem)
+	## unpack parameters and forcing
 	@unpack_gppSoilW_CASA o
+	@unpack_forcing Tair ∈ forcing
 
-	## unpack variables
+
+	## unpack land variables
 	@unpack_land begin
-		Tair ∈ forcing
 		SMScGPP_prev ∈ land.gppSoilW
 		transpiration ∈ land.fluxes
 		PET ∈ land.PET
@@ -34,21 +26,19 @@ function compute(o::gppSoilW_CASA, forcing, land, infotem)
 	We[ndx] = Bwe[ndx, 1] + OmBweOPET[ndx, tix] * transpiration.transpiration[ndx, tix]
 	SMScGPP = We
 
-	## pack variables
-	@pack_land begin
-		(OmBweOPET, SMScGPP) ∋ land.gppSoilW
-	end
+	## pack land variables
+	@pack_land (OmBweOPET, SMScGPP) => land.gppSoilW
 	return land
 end
 
-function update(o::gppSoilW_CASA, forcing, land, infotem)
-	# @unpack_gppSoilW_CASA o
-	return land
-end
-
-"""
+@doc """
 initialized in teh preallocation function. is not VPD effect; is the ET/PET effect if Tair <= 0.0 | PET <= 0.0; use the previous stress index otherwise; compute according to CASA
+
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # Extended help
 """
-function gppSoilW_CASA_h end
+gppSoilW_CASA

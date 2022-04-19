@@ -69,24 +69,24 @@ end
 getConstraintNames(info)
 """
 function getConstraintNames(info)
-    obsnames = Symbol.(info.opti.variables2constrain)
-    modelnames = Symbol[]
-    for v in obsnames
+    obsVariables = Symbol.(info.opti.variables2constrain)
+    modelVariables = Symbol[]
+    for v in obsVariables
         vinfo = getproperty(info.opti.constraints.variables, v)
-        push!(modelnames, Symbol(vinfo.modelFullVar))
+        push!(modelVariables, Symbol(vinfo.modelFullVar))
     end
-    return obsnames, modelnames
+    return obsVariables, modelVariables
 end
 
 """
-getSimulationData(outsmodel, observations, modelnames, obsnames)
+getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getSimulationData(outsmodel, observations, modelnames, obsnames)
-    # ŷ = outsmodel.fluxes |> columntable |> select(modelnames...) |> matrix
-    # y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+function getSimulationData(outsmodel, observations, modelVariables, obsVariables)
+    # ŷ = outsmodel.fluxes |> columntable |> select(modelVariables...) |> matrix
+    # y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
     ŷ = outsmodel |> matrix
-    y = observations |> select(obsnames...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    # @show mean(skipmissing(y)), mean(ŷ), modelnames
+    y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    # @show mean(skipmissing(y)), mean(ŷ), modelVariables
     return (y, ŷ)
 end
 
@@ -98,33 +98,33 @@ function loss(y::Matrix, ŷ::Matrix)
 end
 
 """
-getLoss(pVector, approaches, initPools, forcing, observations, tblParams, obsnames, modelnames)
+getLoss(pVector, approaches, initPools, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, approaches, initPools, forcing,
-    observations, tblParams, obsnames, modelnames, modelInfo, optiInfo)
+    observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
-    outevolution = runEcosystem(newApproaches, initPools, forcing, modelnames, modelInfo; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initPools, forcing, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
-    (y, ŷ) = getSimulationData(outevolution, observations, modelnames, obsnames)
+    (y, ŷ) = getSimulationData(outevolution, observations, modelVariables, obsVariables)
     return loss(y, ŷ)
 end
 
 """
-optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsnames, modelnames)
+optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsnames, modelnames, modelInfo, optiInfo; maxfevals=100)
+function optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsVariables, modelVariables, temInfo, optiInfo; maxfevals=100)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
     costFunc = x -> getLoss(x, selectedModels, initPools, forcing,
-        observations, tblParams, obsnames, modelnames, modelInfo, optiInfo)
+        observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(newApproaches, initPools, forcing, modelnames, modelInfo; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, initPools, forcing, modelVariables, temInfo; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end

@@ -1,10 +1,5 @@
-export cCycleBase_GSI, cCycleBase_GSI_h
-"""
-Compute carbon to nitrogen ratio & annual turnover rates
+export cCycleBase_GSI
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12} <: cCycleBase
 	annk_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
 	annk_Wood::T2 = 0.03 | (0.001, 10.0) | "turnover rate of wood carbon pool" | "yr-1"
@@ -31,22 +26,21 @@ function precompute(o::cCycleBase_GSI, forcing, land, infotem)
 	@unpack_cCycleBase_GSI o
 
 	## instantiate variables
-	p_C2Nveg = zeros(infotem.pools.carbon.nZix.cVeg); #sujan
+	p_C2Nveg = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cVeg); #sujan
 
-	## pack variables
-	@pack_land begin
-		p_C2Nveg ∋ land.cCycleBase
-	end
+	## pack land variables
+	@pack_land p_C2Nveg => land.cCycleBase
 	return land
 end
 
 function compute(o::cCycleBase_GSI, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cCycleBase_GSI o
 
-	## unpack variables
-	@unpack_land begin
-		p_C2Nveg ∈ land.cCycleBase
-	end
+	## unpack land variables
+	@unpack_land p_C2Nveg ∈ land.cCycleBase
+
+	## calculate variables
 	#carbon to nitrogen ratio [gC.gN-1]
 	for zix in infotem.pools.carbon.zix.cVeg
 		p_C2Nveg[zix] = C2Nveg[zix]
@@ -58,46 +52,44 @@ function compute(o::cCycleBase_GSI, forcing, land, infotem)
 	# a dummy calculation to include etaA & etaH as the components of the selected model structure
 	tm_scalar = etaA * etaH
 
-	## pack variables
-	@pack_land begin
-		(p_C2Nveg, p_annk) ∋ land.cCycleBase
-	end
+	## pack land variables
+	@pack_land (p_C2Nveg, p_annk) => land.cCycleBase
 	return land
 end
 
-function update(o::cCycleBase_GSI, forcing, land, infotem)
-	# @unpack_cCycleBase_GSI o
-	return land
-end
-
-"""
+@doc """
 Compute carbon to nitrogen ratio & annual turnover rates
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleBase_GSI
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Pool structure of the carbon cycle using cCycleBase_GSI
 
-*Inputs:*
+*Inputs*
  - annk: turnover rate of ecosystem carbon pools
 
-*Outputs:*
+*Outputs*
  - land.cCycleBase.p_annk_[Pool]: turnover rate of each ecosystem carbon pool
-
-# update
-update pools and states in cCycleBase_GSI
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cCycleBase_GSI
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Potter; C. S.; J. T. Randerson; C. B. Field; P. A. Matson; P. M.  Vitousek; H. A. Mooney; & S. A. Klooster. 1993. Terrestrial ecosystem  production: A process model based on global satellite & surface data.  Global Biogeochemical Cycles. 7: 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 28.02.2020 [skoirala]  
 
 *Created by:*
  - ncarvalhais
 """
-function cCycleBase_GSI_h end
+cCycleBase_GSI

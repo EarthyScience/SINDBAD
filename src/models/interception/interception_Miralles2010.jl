@@ -1,10 +1,5 @@
-export interception_Miralles2010, interception_Miralles2010_h
-"""
-computes canopy interception evaporation according to the Gash model
+export interception_Miralles2010
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct interception_Miralles2010{T1, T2, T3, T4, T5} <: interception
 	CanopyStorage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm"
 	fte::T2 = 0.02 | (0.02, 0.02) | "fraction of trunk evaporation" | ""
@@ -13,15 +8,11 @@ $(PARAMFIELDS)
 	pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | ""
 end
 
-function precompute(o::interception_Miralles2010, forcing, land, infotem)
-	# @unpack_interception_Miralles2010 o
-	return land
-end
-
 function compute(o::interception_Miralles2010, forcing, land, infotem)
+	## unpack parameters
 	@unpack_interception_Miralles2010 o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		(WBP, fAPAR) ∈ land.states
 		rain ∈ land.rainSnow
@@ -70,53 +61,49 @@ function compute(o::interception_Miralles2010, forcing, land, infotem)
 	# update the water budget pool
 	WBP = WBP - interception
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		interception ∋ land.fluxes
-		WBP ∋ land.states
+		interception => land.fluxes
+		WBP => land.states
 	end
 	return land
 end
 
-function update(o::interception_Miralles2010, forcing, land, infotem)
-	# @unpack_interception_Miralles2010 o
-	return land
-end
-
-"""
+@doc """
 computes canopy interception evaporation according to the Gash model
 
-# precompute:
-precompute/instantiate time-invariant variables for interception_Miralles2010
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Interception evaporation using interception_Miralles2010
 
-*Inputs:*
+*Inputs*
  - info; tix
  - land.states.fAPAR: fraction of absorbed photosynthetically active  radiation [equivalent to "canopy cover" in Gash & Miralles]
  - rain: rainfall [mm/time]
  - rainInt: rainfall intensity [mm/hr]  (1.5, or, 5.6, for, synoptic, |, convective)
 
-*Outputs:*
+*Outputs*
  - land.fluxes.interception: canopy interception evaporation [mm/time]
-
-# update
-update pools and states in interception_Miralles2010
  - land.states.WBP: water balance pool [mm]
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Miralles, D. G., Gash, J. H., Holmes, T. R., de Jeu, R. A., & Dolman, A. J. (2010).  Global canopy interception from satellite observations. Journal of Geophysical Research:  Atmospheres, 115[D16].
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.1 on 22.11.2019 [skoirala]: handle land.states.fAPAR, rainfall intensity & rainfall  
 
 *Created by:*
- - Martin Jung [mjung]
+ - mjung
 
-*Notes:*
+*Notes*
 """
-function interception_Miralles2010_h end
+interception_Miralles2010

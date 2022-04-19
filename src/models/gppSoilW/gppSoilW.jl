@@ -1,5 +1,14 @@
 export gppSoilW
-"""
+
+abstract type gppSoilW <: LandEcosystem end
+
+include("gppSoilW_CASA.jl")
+include("gppSoilW_GSI.jl")
+include("gppSoilW_Keenan2009.jl")
+include("gppSoilW_none.jl")
+include("gppSoilW_Stocker2020.jl")
+
+@doc """
 Gpp as a function of wsoil; should be set to none if coupled with transpiration
 
 # Approaches:
@@ -9,9 +18,4 @@ Gpp as a function of wsoil; should be set to none if coupled with transpiration
  - none: set the soil moisture stress on gppPot to ones (no stress)
  - Stocker2020: calculate the soil moisture stress on gpp
 """
-abstract type gppSoilW <: LandEcosystem end
-include("gppSoilW_CASA.jl")
-include("gppSoilW_GSI.jl")
-include("gppSoilW_Keenan2009.jl")
-include("gppSoilW_none.jl")
-include("gppSoilW_Stocker2020.jl")
+gppSoilW

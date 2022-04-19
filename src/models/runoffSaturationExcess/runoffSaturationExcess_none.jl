@@ -1,40 +1,27 @@
-export runoffSaturationExcess_none, runoffSaturationExcess_none_h
-"""
-set the saturation excess runoff to zeros
+export runoffSaturationExcess_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffSaturationExcess_none{T} <: runoffSaturationExcess
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffSaturationExcess_none <: runoffSaturationExcess
 end
 
 function precompute(o::runoffSaturationExcess_none, forcing, land, infotem)
-	@unpack_runoffSaturationExcess_none o
 
 	## calculate variables
-	roSat = 0.0
+	runoffSaturation = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		roSat ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffSaturation => land.fluxes
 	return land
 end
 
-function compute(o::runoffSaturationExcess_none, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_none o
-	return land
-end
-
-function update(o::runoffSaturationExcess_none, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_none o
-	return land
-end
-
-"""
+@doc """
 set the saturation excess runoff to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffSaturationExcess_none
+
+
+---
 
 # Extended help
 """
-function runoffSaturationExcess_none_h end
+runoffSaturationExcess_none

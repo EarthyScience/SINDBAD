@@ -1,31 +1,23 @@
-export snowMelt_simple, snowMelt_simple_h
-"""
-precomputes the snow melt term as function of forcing.Tair. computes the snow melt term as function of forcing.Tair
+export snowMelt_Tair
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct snowMelt_simple{T1} <: snowMelt
+@bounds @describe @units @with_kw struct snowMelt_Tair{T1} <: snowMelt
 	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
 end
 
-function precompute(o::snowMelt_simple, forcing, land, infotem)
-	# @unpack_snowMelt_simple o
-	return land
-end
+function compute(o::snowMelt_Tair, forcing, land, infotem)
+	## unpack parameters and forcing
+	@unpack_snowMelt_Tair o
+	@unpack_forcing Tair ∈ forcing
 
-function compute(o::snowMelt_simple, forcing, land, infotem)
-	@unpack_snowMelt_simple o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
-		Tair ∈ forcing
 		(WBP, snowFraction) ∈ land.states
 		snowW ∈ land.pools
 	end
 	# effect of temperature on snow melt = snowMeltRate * Tair
 	pRate = (rate * infotem.dates.nStepsDay)
-	Tterm = max(pRate * Tair, 0.0)
+	Tterm = max(pRate * Tair, infotem.helpers.zero)
 	# snow melt [mm/day] is calculated as a simple function of temperature
 	# & scaled with the snow covered fraction
 	snowMelt = min(snowW[1] , Tterm * snowFraction)
@@ -33,17 +25,17 @@ function compute(o::snowMelt_simple, forcing, land, infotem)
 	# "available"
 	WBP = WBP + snowMelt
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		snowMelt ∋ land.fluxes
-		Tterm ∋ land.snowMelt
-		WBP ∋ land.states
+		snowMelt => land.fluxes
+		Tterm => land.snowMelt
+		WBP => land.states
 	end
 	return land
 end
 
-function update(o::snowMelt_simple, forcing, land, infotem)
-	@unpack_snowMelt_simple o
+function update(o::snowMelt_Tair, forcing, land, infotem)
+	@unpack_snowMelt_Tair o
 
 	## unpack variables
 	@unpack_land begin
@@ -55,50 +47,54 @@ function update(o::snowMelt_simple, forcing, land, infotem)
 	# update snow pack
 	snowW[1] = snowW[1] - snowMelt
 
-	## pack variables
-	@pack_land begin
-		snowW ∋ land.pools
-	end
+	## pack land variables
+	@pack_land snowW => land.pools
 	return land
 end
 
-"""
+@doc """
 precomputes the snow melt term as function of forcing.Tair. computes the snow melt term as function of forcing.Tair
 
-# precompute:
-precompute/instantiate time-invariant variables for snowMelt_simple
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
-Calculate snowmelt and update s.w.wsnow using snowMelt_simple
+Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 
-*Inputs:*
+*Inputs*
  - forcing.Tair: temperature [C]
  - infotem.dates.nStepsDay: model time steps per day
  - land.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
  - land.states.snowFraction: snow cover fraction [-]
 
-*Outputs:*
+*Outputs*
  - land.fluxes.snowMelt: snow melt [mm/time]
 
 # update
-update pools and states in snowMelt_simple
+
+update pools and states in snowMelt_Tair
+
  -
  - land.pools.snowW: water storage [mm]
  - land.states.WBP: water balance pool [mm]
 
+---
+
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
 *Created by:*
- - Martin Jung [mjung]
+ - mjung
 
-*Notes:*
+*Notes*
  - may not be working well for longer time scales (like for weekly |  longer time scales). Warnings needs to be set accordingly.
  - may not be working well for longer time scales (like for weekly |  longer time scales). Warnings needs to be set accordingly.  
 """
-function snowMelt_simple_h end
+snowMelt_Tair

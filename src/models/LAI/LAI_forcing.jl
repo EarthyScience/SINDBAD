@@ -1,67 +1,43 @@
-export LAI_forcing, LAI_forcing_h
-"""
-sets the value of land.states.LAI from the forcing in every time step
+export LAI_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct LAI_forcing{T} <: LAI
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::LAI_forcing, forcing, land, infotem)
-	# @unpack_LAI_forcing o
-	return land
+struct LAI_forcing <: LAI
 end
 
 function compute(o::LAI_forcing, forcing, land, infotem)
-	@unpack_LAI_forcing o
+	## unpack forcing
+	@unpack_forcing LAI ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		LAI ∈ forcing
-	end
-
-	## pack variables
-	@pack_land begin
-		LAI ∋ land.states
-	end
+	## pack land variables
+	@pack_land LAI => land.states
 	return land
 end
 
-function update(o::LAI_forcing, forcing, land, infotem)
-	# @unpack_LAI_forcing o
-	return land
-end
-
-"""
+@doc """
 sets the value of land.states.LAI from the forcing in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for LAI_forcing
+---
 
 # compute:
 Leaf area index using LAI_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.LAI read from the forcing data set
 
-*Outputs:*
+*Outputs*
  - land.states.LAI: the value of LAI for current time step
-
-# update
-update pools and states in LAI_forcing
  - land.states.LAI
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function LAI_forcing_h end
+LAI_forcing

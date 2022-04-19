@@ -1,40 +1,27 @@
-export cAllocation_none, cAllocation_none_h
-"""
-set the allocation to zeros
+export cAllocation_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cAllocation_none{T} <: cAllocation
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cAllocation_none <: cAllocation
 end
 
 function precompute(o::cAllocation_none, forcing, land, infotem)
-	@unpack_cAllocation_none o
 
 	## calculate variables
-	cAlloc = zeros(size(infotem.pools.carbon.initValues.cEco))
+	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		cAlloc ∋ land.states
-	end
+	## pack land variables
+	@pack_land cAlloc => land.states
 	return land
 end
 
-function compute(o::cAllocation_none, forcing, land, infotem)
-	# @unpack_cAllocation_none o
-	return land
-end
-
-function update(o::cAllocation_none, forcing, land, infotem)
-	# @unpack_cAllocation_none o
-	return land
-end
-
-"""
+@doc """
 set the allocation to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocation_none
+
+
+---
 
 # Extended help
 """
-function cAllocation_none_h end
+cAllocation_none

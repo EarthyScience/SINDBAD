@@ -1,5 +1,13 @@
 export cAllocationSoilT
-"""
+
+abstract type cAllocationSoilT <: LandEcosystem end
+
+include("cAllocationSoilT_Friedlingstein1999.jl")
+include("cAllocationSoilT_gpp.jl")
+include("cAllocationSoilT_gppGSI.jl")
+include("cAllocationSoilT_none.jl")
+
+@doc """
 Effect of soil temperature on carbon allocation
 
 # Approaches:
@@ -8,8 +16,4 @@ Effect of soil temperature on carbon allocation
  - gppGSI: compute the temperature effect on C allocation based on GSI approach.
  - none: 
 """
-abstract type cAllocationSoilT <: LandEcosystem end
-include("cAllocationSoilT_Friedlingstein1999.jl")
-include("cAllocationSoilT_gpp.jl")
-include("cAllocationSoilT_gppGSI.jl")
-include("cAllocationSoilT_none.jl")
+cAllocationSoilT

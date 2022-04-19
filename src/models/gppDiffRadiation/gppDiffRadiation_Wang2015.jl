@@ -1,29 +1,19 @@
-export gppDiffRadiation_Wang2015, gppDiffRadiation_Wang2015_h
-"""
-calculate the cloudiness scalar [radiation diffusion] on gppPot
+export gppDiffRadiation_Wang2015
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct gppDiffRadiation_Wang2015{T1} <: gppDiffRadiation
 	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
 end
 
-function precompute(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
-	# @unpack_gppDiffRadiation_Wang2015 o
-	return land
-end
-
 function compute(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
+	## unpack parameters and forcing
 	@unpack_gppDiffRadiation_Wang2015 o
+	@unpack_forcing (Rg, RgPot) ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		(Rg, RgPot) ∈ forcing
-	end
+
+	## calculate variables
 	## FROM SHANNING
 	# CI = cloudiness index
-	CI = 0.0
+	CI = infotem.helpers.zero
 	valid = RgPot > 0.0
 	CI[valid] = 1 - Rg[valid] / RgPot[valid]
 	CI_nor = 1.0
@@ -37,50 +27,44 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
 	end
 	CloudScGPP = 1 - μ * (1.0 - CI_nor)
 
-	## pack variables
-	@pack_land begin
-		CloudScGPP ∋ land.gppDiffRadiation
-	end
+	## pack land variables
+	@pack_land CloudScGPP => land.gppDiffRadiation
 	return land
 end
 
-function update(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
-	# @unpack_gppDiffRadiation_Wang2015 o
-	return land
-end
-
-"""
+@doc """
 calculate the cloudiness scalar [radiation diffusion] on gppPot
 
-# precompute:
-precompute/instantiate time-invariant variables for gppDiffRadiation_Wang2015
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Effect of diffuse radiation using gppDiffRadiation_Wang2015
 
-*Inputs:*
+*Inputs*
  - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]
  - forcing.RgPot: Potential radiation [MJ/m2/time]
  - rueRatio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
 
-*Outputs:*
+*Outputs*
  - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
-
-# update
-update pools and states in gppDiffRadiation_Wang2015
  -
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Turner, D. P., Ritts, W. D., Styles, J. M., Yang, Z., Cohen, W. B., Law, B. E., & Thornton, P. E. (2006).  A diagnostic carbon flux model to monitor the effects of disturbance & interannual variation in  climate on regional NEP. Tellus B: Chemical & Physical Meteorology, 58[5], 476-490.  DOI: 10.1111/j.1600-0889.2006.00221.x
 
-*Versions:*
+*Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]
  - 1.1 on 22.01.2021 [skoirala]: minimum & maximum function had []  missing & were not working  
 
 *Created by:*
- - Martin Jung [mjung]
- - Nuno Carvalhais [ncarval]
+ - mjung
+ - ncarval
 """
-function gppDiffRadiation_Wang2015_h end
+gppDiffRadiation_Wang2015

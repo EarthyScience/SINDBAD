@@ -1,67 +1,46 @@
-export EVI_forcing, EVI_forcing_h
-"""
-sets the value of land.states.EVI from the forcing in every time step
+export EVI_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct EVI_forcing{T} <: EVI
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::EVI_forcing, forcing, land, infotem)
-	# @unpack_EVI_forcing o
-	return land
+struct EVI_forcing <: EVI
 end
 
 function compute(o::EVI_forcing, forcing, land, infotem)
-	@unpack_EVI_forcing o
+	## unpack forcing
+	@unpack_forcing EVI ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		EVI ∈ forcing
-	end
 
-	## pack variables
-	@pack_land begin
-		EVI ∋ land.states
-	end
+	## calculate variables
+
+	## pack land variables
+	@pack_land EVI => land.states
 	return land
 end
 
-function update(o::EVI_forcing, forcing, land, infotem)
-	# @unpack_EVI_forcing o
-	return land
-end
-
-"""
+@doc """
 sets the value of land.states.EVI from the forcing in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for EVI_forcing
+---
 
 # compute:
 Enhanced vegetation index using EVI_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.EVI read from the forcing data set
 
-*Outputs:*
+*Outputs*
  - land.states.EVI: the value of EVI for current time step
-
-# update
-update pools and states in EVI_forcing
  - land.states.EVI
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019 [skoirala]:  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function EVI_forcing_h end
+EVI_forcing

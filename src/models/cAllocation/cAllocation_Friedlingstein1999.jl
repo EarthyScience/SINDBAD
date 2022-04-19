@@ -1,10 +1,5 @@
-export cAllocation_Friedlingstein1999, cAllocation_Friedlingstein1999_h
-"""
-compute the fraction of NPP that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
+export cAllocation_Friedlingstein1999
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1, T2, T3} <: cAllocation
 	so::T1 = 0.3 | (0.0, 1.0) | "" | ""
 	ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
@@ -15,21 +10,22 @@ function precompute(o::cAllocation_Friedlingstein1999, forcing, land, infotem)
 	@unpack_cAllocation_Friedlingstein1999 o
 
 	## instantiate variables
-	cAlloc = zeros(size(infotem.pools.carbon.initValues.cEco)); #sujan
+	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan
 
-	## pack variables
-	@pack_land begin
-		cAlloc ∋ land.cAllocation
-	end
+	## pack land variables
+	@pack_land cAlloc => land.cAllocation
 	return land
 end
 
 function compute(o::cAllocation_Friedlingstein1999, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cAllocation_Friedlingstein1999 o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land cAlloc ∈ land.cAllocation
+
+	## unpack land variables
 	@unpack_land begin
-		cAlloc ∈ land.cAllocation
 		minWLNL ∈ land.cAllocationNutrients
 		LL ∈ land.cAllocationLAI
 	end
@@ -47,47 +43,45 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, infotem)
 		end
 	end
 
-	## pack variables
-	@pack_land begin
-		cAlloc ∋ land.states
-	end
+	## pack land variables
+	@pack_land cAlloc => land.states
 	return land
 end
 
-function update(o::cAllocation_Friedlingstein1999, forcing, land, infotem)
-	# @unpack_cAllocation_Friedlingstein1999 o
-	return land
-end
-
-"""
+@doc """
 compute the fraction of NPP that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_Friedlingstein1999
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Combine the different effects of carbon allocation using cAllocation_Friedlingstein1999
 
-*Inputs:*
+*Inputs*
  - land.cAllocationLAI.LL: values for light limitation
  - land.cAllocationNutrients.minWLNL: values for the pseudo-nutrient limitation
 
-*Outputs:*
+*Outputs*
  - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
-
-# update
-update pools and states in cAllocation_Friedlingstein1999
  - land.states.cAlloc
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocation_Friedlingstein1999
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Friedlingstein; P.; G. Joel; C.B. Field; & I.Y. Fung; 1999: Toward an allocation scheme for global terrestrial carbon models. Glob. Change Biol.; 5; 755-770; doi:10.1046/j.1365-2486.1999.00269.x.
 
-*Versions:*
+*Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cAllocation_Friedlingstein1999_h end
+cAllocation_Friedlingstein1999

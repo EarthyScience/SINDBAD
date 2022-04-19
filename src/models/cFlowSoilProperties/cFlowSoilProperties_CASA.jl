@@ -1,10 +1,5 @@
-export cFlowSoilProperties_CASA, cFlowSoilProperties_CASA_h
-"""
-effects of soil that change the transfers between carbon pools
+export cFlowSoilProperties_CASA
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1, T2, T3, T4, T5, T6} <: cFlowSoilProperties
 	effA::T1 = 0.85 | nothing | "" | ""
 	effB::T2 = 0.68 | nothing | "" | ""
@@ -18,25 +13,27 @@ function precompute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
-	p_E = repeat(zeros(size(infotem.pools.carbon.initValues.cEco)), 1, 1, infotem.pools.carbon.nZix.cEco)
+	p_E = repeat(repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco), 1, 1, infotem.pools.carbon.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		p_E ∋ land.cFlowSoilProperties
-	end
+	## pack land variables
+	@pack_land p_E => land.cFlowSoilProperties
 	return land
 end
 
 function compute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cFlowSoilProperties_CASA o
 
-	## unpack variables
-	@unpack_land begin
-		p_E ∈ land.cFlowSoilProperties
-		(p_CLAY, p_SILT) ∈ land.soilWBase
-	end
+	## unpack land variables
+	@unpack_land p_E ∈ land.cFlowSoilProperties
+
+	## unpack land variables
+	@unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
+
+
+	## calculate variables
 	# p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-	# p_fSoil = zeros(size(infotem.pools.carbon.initValues.cEco))
+	# p_fSoil = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
 	# #sujan
 	p_F = p_E
 	CLAY = mean(p_CLAY)
@@ -62,51 +59,49 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
 		end
 	end
 
-	## pack variables
-	@pack_land begin
-		(p_E, p_F) ∋ land.cFlowSoilProperties
-	end
+	## pack land variables
+	@pack_land (p_E, p_F) => land.cFlowSoilProperties
 	return land
 end
 
-function update(o::cFlowSoilProperties_CASA, forcing, land, infotem)
-	# @unpack_cFlowSoilProperties_CASA o
-	return land
-end
-
-"""
+@doc """
 effects of soil that change the transfers between carbon pools
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowSoilProperties_CASA
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
 
-*Inputs:*
+*Inputs*
  - land.soilWBase.p_CLAY: soil hydraulic properties for clay layer
  - land.soilWBase.p_SILT: soil hydraulic properties for silt layer
 
-*Outputs:*
+*Outputs*
  - land.cFlowSoilProperties.p_E: effect of soil on transfer efficiency between pools
  - land.cFlowSoilProperties.p_F: effect of soil on transfer fraction between pools
-
-# update
-update pools and states in cFlowSoilProperties_CASA
  - land.cFlowSoilProperties.p_E
  - land.cFlowSoilProperties.p_F
 
+# precompute:
+precompute/instantiate time-invariant variables for cFlowSoilProperties_CASA
+
+
+---
+
 # Extended help
 
-*References:*
+*References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
  - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).  Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data & ecosystem  modeling 1982–1998. Global & Planetary Change, 39[3-4], 201-213.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cFlowSoilProperties_CASA_h end
+cFlowSoilProperties_CASA

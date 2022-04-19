@@ -1,5 +1,16 @@
 export gppAirT
-"""
+
+abstract type gppAirT <: LandEcosystem end
+
+include("gppAirT_CASA.jl")
+include("gppAirT_GSI.jl")
+include("gppAirT_Maekelae2008.jl")
+include("gppAirT_MOD17.jl")
+include("gppAirT_none.jl")
+include("gppAirT_TEM.jl")
+include("gppAirT_Wang2014.jl")
+
+@doc """
 Effect of temperature
 
 # Approaches:
@@ -11,11 +22,4 @@ Effect of temperature
  - TEM: calculate the temperature stress for gppPot based on TEM
  - Wang2014: calculate the temperature stress on gppPot based on Wang2014
 """
-abstract type gppAirT <: LandEcosystem end
-include("gppAirT_CASA.jl")
-include("gppAirT_GSI.jl")
-include("gppAirT_Maekelae2008.jl")
-include("gppAirT_MOD17.jl")
-include("gppAirT_none.jl")
-include("gppAirT_TEM.jl")
-include("gppAirT_Wang2014.jl")
+gppAirT
