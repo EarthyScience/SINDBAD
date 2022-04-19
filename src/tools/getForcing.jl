@@ -29,13 +29,16 @@ function getForcing(info)
         ds = Dataset(dataPath)
         ds_dat = ds[srcVar][:, :, :]
         data_tmp =  eval(Meta.parse("$ds_dat" * vinfo.source2sindbadUnit))
+        bounds = vinfo.bounds
+        data_tmp = clamp.(data_tmp, bounds[1], bounds[2])
         if vinfo.spaceTimeType == "normal"
-            # forcing = setTupleField(forcing, (tarVar, data_tmp[1, 1, :]))
             push!(varlist, tarVar)
             push!(dataAr,data_tmp[1, 1, :])
-        # else
-        #     push!(varlist, tarVar)
-        #     push!(dataAr,[data_tmp])
+        else
+            push!(varlist, tarVar)
+            # data_tmp[ismissing.(data_tmp)] = 0.0
+            push!(dataAr,fill(data_tmp[1, 1, :], 14245))
+
 
         end
         @show tarVar, length(data_tmp), vinfo.spaceTimeType, size(dataAr)

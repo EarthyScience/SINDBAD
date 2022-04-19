@@ -1,5 +1,12 @@
 export cAllocationRadiation
-"""
+
+abstract type cAllocationRadiation <: LandEcosystem end
+
+include("cAllocationRadiation_gpp.jl")
+include("cAllocationRadiation_GSI.jl")
+include("cAllocationRadiation_none.jl")
+
+@doc """
 Effect of radiation on carbon allocation
 
 # Approaches:
@@ -7,7 +14,4 @@ Effect of radiation on carbon allocation
  - GSI: computation for the radiation effect on decomposition/mineralization using a GSI method
  - none: 
 """
-abstract type cAllocationRadiation <: LandEcosystem end
-include("cAllocationRadiation_gpp.jl")
-include("cAllocationRadiation_GSI.jl")
-include("cAllocationRadiation_none.jl")
+cAllocationRadiation

@@ -1,67 +1,43 @@
-export NIRv_forcing, NIRv_forcing_h
-"""
-sets the value of land.states.NIRv from the forcing in every time step
+export NIRv_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct NIRv_forcing{T} <: NIRv
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::NIRv_forcing, forcing, land, infotem)
-	# @unpack_NIRv_forcing o
-	return land
+struct NIRv_forcing <: NIRv
 end
 
 function compute(o::NIRv_forcing, forcing, land, infotem)
-	@unpack_NIRv_forcing o
+	## unpack forcing
+	@unpack_forcing NIRv ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		NIRv ∈ forcing
-	end
-
-	## pack variables
-	@pack_land begin
-		NIRv ∋ land.states
-	end
+	## pack land variables
+	@pack_land NIRv => land.states
 	return land
 end
 
-function update(o::NIRv_forcing, forcing, land, infotem)
-	# @unpack_NIRv_forcing o
-	return land
-end
-
-"""
+@doc """
 sets the value of land.states.NIRv from the forcing in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for NIRv_forcing
+---
 
 # compute:
 Near-infrared reflectance of terrestrial vegetation using NIRv_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.NIRv read from the forcing data set
 
-*Outputs:*
+*Outputs*
  - land.states.NIRv: the value of NIRv for current time step
-
-# update
-update pools and states in NIRv_forcing
  - land.states.NIRv
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 29.04.2020 [sbesnard]:  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function NIRv_forcing_h end
+NIRv_forcing

@@ -1,40 +1,27 @@
-export cTauSoilProperties_none, cTauSoilProperties_none_h
-"""
-Set soil texture effects to ones (ineficient, should be pix zix_mic)
+export cTauSoilProperties_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cTauSoilProperties_none{T} <: cTauSoilProperties
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cTauSoilProperties_none <: cTauSoilProperties
 end
 
 function precompute(o::cTauSoilProperties_none, forcing, land, infotem)
-	@unpack_cTauSoilProperties_none o
 
 	## calculate variables
-	p_kfSoil = ones(size(infotem.pools.carbon.initValues.cEco))
+	p_kfSoil = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		p_kfSoil ∋ land.cTauSoilProperties
-	end
+	## pack land variables
+	@pack_land p_kfSoil => land.cTauSoilProperties
 	return land
 end
 
-function compute(o::cTauSoilProperties_none, forcing, land, infotem)
-	# @unpack_cTauSoilProperties_none o
-	return land
-end
-
-function update(o::cTauSoilProperties_none, forcing, land, infotem)
-	# @unpack_cTauSoilProperties_none o
-	return land
-end
-
-"""
+@doc """
 Set soil texture effects to ones (ineficient, should be pix zix_mic)
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauSoilProperties_none
+
+
+---
 
 # Extended help
 """
-function cTauSoilProperties_none_h end
+cTauSoilProperties_none

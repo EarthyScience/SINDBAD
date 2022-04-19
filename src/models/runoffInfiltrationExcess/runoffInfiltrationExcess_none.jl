@@ -1,40 +1,27 @@
-export runoffInfiltrationExcess_none, runoffInfiltrationExcess_none_h
-"""
-sets infiltration excess runoff to zeros
+export runoffInfiltrationExcess_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffInfiltrationExcess_none{T} <: runoffInfiltrationExcess
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess
 end
 
 function precompute(o::runoffInfiltrationExcess_none, forcing, land, infotem)
-	@unpack_runoffInfiltrationExcess_none o
 
 	## calculate variables
-	roInf = 0.0
+	runoffInfiltration = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		roInf ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffInfiltration => land.fluxes
 	return land
 end
 
-function compute(o::runoffInfiltrationExcess_none, forcing, land, infotem)
-	# @unpack_runoffInfiltrationExcess_none o
-	return land
-end
-
-function update(o::runoffInfiltrationExcess_none, forcing, land, infotem)
-	# @unpack_runoffInfiltrationExcess_none o
-	return land
-end
-
-"""
+@doc """
 sets infiltration excess runoff to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffInfiltrationExcess_none
+
+
+---
 
 # Extended help
 """
-function runoffInfiltrationExcess_none_h end
+runoffInfiltrationExcess_none

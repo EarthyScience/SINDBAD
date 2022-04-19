@@ -1,40 +1,27 @@
-export aRespirationAirT_none, aRespirationAirT_none_h
-"""
-sets the effect of temperature on RA to none [ones = no effect]
+export aRespirationAirT_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct aRespirationAirT_none{T} <: aRespirationAirT
-	noParameter::T = nothing | nothing | nothing | nothing
+struct aRespirationAirT_none <: aRespirationAirT
 end
 
 function precompute(o::aRespirationAirT_none, forcing, land, infotem)
-	@unpack_aRespirationAirT_none o
 
 	## calculate variables
-	fT = 1.0
+	fT = infotem.helpers.one
 
-	## pack variables
-	@pack_land begin
-		fT ∋ land.aRespirationAirT
-	end
+	## pack land variables
+	@pack_land fT => land.aRespirationAirT
 	return land
 end
 
-function compute(o::aRespirationAirT_none, forcing, land, infotem)
-	# @unpack_aRespirationAirT_none o
-	return land
-end
-
-function update(o::aRespirationAirT_none, forcing, land, infotem)
-	# @unpack_aRespirationAirT_none o
-	return land
-end
-
-"""
+@doc """
 sets the effect of temperature on RA to none [ones = no effect]
+
+# precompute:
+precompute/instantiate time-invariant variables for aRespirationAirT_none
+
+
+---
 
 # Extended help
 """
-function aRespirationAirT_none_h end
+aRespirationAirT_none

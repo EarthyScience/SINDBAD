@@ -1,24 +1,15 @@
-export runoffSaturationExcess_Bergstroem1992MixedVegFraction, runoffSaturationExcess_Bergstroem1992MixedVegFraction_h
-"""
-calculates land surface runoff & infiltration to different soil layers
+export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992MixedVegFraction{T1, T2} <: runoffSaturationExcess
 	berg_scaleV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
 	berg_scaleS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
 end
 
-function precompute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
-	return land
-end
-
 function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, infotem)
+	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		(WBP, vegFraction) ∈ land.states
 		p_wSat ∈ land.soilWBase
@@ -26,57 +17,53 @@ function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forci
 	end
 	tmp_smaxVeg = sum(p_wSat)
 	tmp_SoilTotal = sum(soilW)
-	#--> get the berg parameters according the vegetation fraction
+	# get the berg parameters according the vegetation fraction
 	berg = berg_scaleV * vegFraction + berg_scaleS * (1.0 - vegFraction)
 	berg = max(0.1, berg); # do this?
-	#--> calculate land runoff from incoming water & current soil moisture
+	# calculate land runoff from incoming water & current soil moisture
 	tmp_SatExFrac = min(exp(berg * log(tmp_SoilTotal / tmp_smaxVeg)), 1)
-	roSat = WBP * tmp_SatExFrac
-	#--> update water balance
-	WBP = WBP - roSat
+	runoffSaturation = WBP * tmp_SatExFrac
+	# update water balance
+	WBP = WBP - runoffSaturation
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		roSat ∋ land.fluxes
-		WBP ∋ land.states
+		runoffSaturation => land.fluxes
+		WBP => land.states
 	end
 	return land
 end
 
-function update(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, infotem)
-	# @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
-	return land
-end
-
-"""
+@doc """
 calculates land surface runoff & infiltration to different soil layers
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSaturationExcess_Bergstroem1992MixedVegFraction
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Saturation runoff using runoffSaturationExcess_Bergstroem1992MixedVegFraction
 
-*Inputs:*
+*Inputs*
  - berg : shape parameter of runoff-infiltration curve []
 
-*Outputs:*
- - land.fluxes.roSat : runoff from land [mm/time]
-
-# update
-update pools and states in runoffSaturationExcess_Bergstroem1992MixedVegFraction
+*Outputs*
+ - land.fluxes.runoffSaturation : runoff from land [mm/time]
  - land.states.WBP : water balance pool [mm]
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Bergström, S. (1992). The HBV model–its structure & applications. SMHI.
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
 *Created by:*
  - 1.1 on 27.11.2019: skoirala: changed to handle any number of soil layers
- - Tina Trautmann [ttraut]
+ - ttraut
 """
-function runoffSaturationExcess_Bergstroem1992MixedVegFraction_h end
+runoffSaturationExcess_Bergstroem1992MixedVegFraction

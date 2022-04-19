@@ -1,26 +1,15 @@
-export cFlow_simple, cFlow_simple_h
-"""
-combine all the effects that change the transfers between carbon pools
+export cFlow_simple
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cFlow_simple{T} <: cFlow
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::cFlow_simple, forcing, land, infotem)
-	# @unpack_cFlow_simple o
-	return land
+struct cFlow_simple <: cFlow
 end
 
 function compute(o::cFlow_simple, forcing, land, infotem)
-	@unpack_cFlow_simple o
 
-	## unpack variables
-	@unpack_land begin
-		cFlowA ∈ land.cCycleBase
-	end
+	## unpack land variables
+	@unpack_land cFlowA ∈ land.cCycleBase
+
+
+	## calculate variables
 	#@nc : this needs to go in the full..
 	# Do A matrix..
 	p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
@@ -37,47 +26,40 @@ function compute(o::cFlow_simple, forcing, land, infotem)
 		end
 	end
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		fluxOrder ∋ land.cCycleBase
-		(p_A, p_giver, p_taker) ∋ land.cFlow
+		fluxOrder => land.cCycleBase
+		(p_A, p_giver, p_taker) => land.cFlow
 	end
 	return land
 end
 
-function update(o::cFlow_simple, forcing, land, infotem)
-	# @unpack_cFlow_simple o
-	return land
-end
-
-"""
+@doc """
 combine all the effects that change the transfers between carbon pools
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlow_simple
+---
 
 # compute:
 Actual transfers of c between pools (of diagonal components) using cFlow_simple
 
-*Inputs:*
+*Inputs*
  - land.cCycleBase.cFlowA: transfer matrix for carbon at ecosystem level
 
-*Outputs:*
+*Outputs*
  - land.cFlow.p_A: effect of vegetation & vegetation on actual transfer rates between pools
-
-# update
-update pools and states in cFlow_simple
  - land.cFlow.p_A
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 13.01.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cFlow_simple_h end
+cFlow_simple

@@ -1,10 +1,5 @@
-export cCycleBase_CASA, cCycleBase_CASA_h
-"""
-Compute carbon to nitrogen ratio & annual turnover rates
+export cCycleBase_CASA
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cCycleBase_CASA{T1, T2, T3, T4, T5, T6, T7} <: cCycleBase
 	annk::T1 = [1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045] | ([0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045], [3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045]) | "turnover rate of ecosystem carbon pools" | "yr-1"
 	cFlowE::T2 = 	[-1  0  0  0  0  0  0  0  0  0  0  0  0  0;
@@ -32,22 +27,21 @@ function precompute(o::cCycleBase_CASA, forcing, land, infotem)
 	@unpack_cCycleBase_CASA o
 
 	## instantiate variables
-	p_C2Nveg = zeros(infotem.pools.carbon.nZix.cVeg); #sujan
+	p_C2Nveg = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cVeg); #sujan
 
-	## pack variables
-	@pack_land begin
-		p_C2Nveg ∋ land.cCycleBase
-	end
+	## pack land variables
+	@pack_land p_C2Nveg => land.cCycleBase
 	return land
 end
 
 function compute(o::cCycleBase_CASA, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cCycleBase_CASA o
 
-	## unpack variables
-	@unpack_land begin
-		p_C2Nveg ∈ land.cCycleBase
-	end
+	## unpack land variables
+	@unpack_land p_C2Nveg ∈ land.cCycleBase
+
+	## calculate variables
 	# carbon to nitrogen ratio [gC.gN-1]
 	for zix in infotem.pools.carbon.zix.cVeg
 		p_C2Nveg[zix] = C2Nveg[zix]
@@ -55,46 +49,44 @@ function compute(o::cCycleBase_CASA, forcing, land, infotem)
 	# annual turnover rates
 	p_annk = reshape(repelem[annk], infotem.pools.carbon.nZix.cEco); #sujan
 
-	## pack variables
-	@pack_land begin
-		(p_C2Nveg, p_annk) ∋ land.cCycleBase
-	end
+	## pack land variables
+	@pack_land (p_C2Nveg, p_annk) => land.cCycleBase
 	return land
 end
 
-function update(o::cCycleBase_CASA, forcing, land, infotem)
-	# @unpack_cCycleBase_CASA o
-	return land
-end
-
-"""
+@doc """
 Compute carbon to nitrogen ratio & annual turnover rates
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleBase_CASA
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Pool structure of the carbon cycle using cCycleBase_CASA
 
-*Inputs:*
+*Inputs*
 
-*Outputs:*
-
-# update
-update pools and states in cCycleBase_CASA
+*Outputs*
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cCycleBase_CASA
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
  - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).  Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data & ecosystem  modeling 1982–1998. Global & Planetary Change, 39[3-4], 201-213.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cCycleBase_CASA_h end
+cCycleBase_CASA

@@ -1,61 +1,45 @@
-export vegProperties_PFT, vegProperties_PFT_h
-"""
-sets a uniform PFT class. all calculations are done in prec
+export vegProperties_PFT
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct vegProperties_PFT{T1} <: vegProperties
 	PFT::T1 = 1.0 | (1.0, 13.0) | "Plant functional type" | "class"
 end
 
-function precompute(o::vegProperties_PFT, forcing, land, infotem)
-	# @unpack_vegProperties_PFT o
-	return land
-end
-
 function compute(o::vegProperties_PFT, forcing, land, infotem)
+	## unpack parameters
 	@unpack_vegProperties_PFT o
 
-	## unpack variables
-
-	## calculate variables
-
-	## pack variables
+	## pack land variables
+	@pack_land PFT => land.vegProperties
 	return land
 end
 
-function update(o::vegProperties_PFT, forcing, land, infotem)
-	# @unpack_vegProperties_PFT o
-	return land
-end
+@doc """
+sets a uniform PFT class
 
-"""
-sets a uniform PFT class. all calculations are done in prec
+# Parameters
+$(PARAMFIELDS)
 
-# precompute:
-precompute/instantiate time-invariant variables for vegProperties_PFT
+---
 
 # compute:
 Vegetation/structural properties using vegProperties_PFT
 
-*Inputs:*
+*Inputs*
  -
  - info structure
 
-*Outputs:*
+*Outputs*
 
-# update
-update pools and states in vegProperties_PFT
+---
 
 # Extended help
 
-*References:*
+*References*
 
-*Versions:*
+*Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
 *Created by:*
  - unknown [xxx]
 """
-function vegProperties_PFT_h end
+vegProperties_PFT

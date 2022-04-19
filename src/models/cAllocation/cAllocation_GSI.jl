@@ -1,33 +1,25 @@
-export cAllocation_GSI, cAllocation_GSI_h
-"""
-compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
+export cAllocation_GSI
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cAllocation_GSI{T} <: cAllocation
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cAllocation_GSI <: cAllocation
 end
 
 function precompute(o::cAllocation_GSI, forcing, land, infotem)
-	@unpack_cAllocation_GSI o
 
 	## instantiate variables
-	cAlloc = zeros(size(infotem.pools.carbon.initValues.cEco));
+	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco);
 
-	## pack variables
-	@pack_land begin
-		cAlloc ∋ land.cAllocation
-	end
+	## pack land variables
+	@pack_land cAlloc => land.cAllocation
 	return land
 end
 
 function compute(o::cAllocation_GSI, forcing, land, infotem)
-	@unpack_cAllocation_GSI o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land cAlloc ∈ land.cAllocation
+
+	## unpack land variables
 	@unpack_land begin
-		cAlloc ∈ land.cAllocation
 		fW ∈ land.cAllocationSoilW
 		fT ∈ land.cAllocationSoilT
 	end
@@ -60,48 +52,45 @@ function compute(o::cAllocation_GSI, forcing, land, infotem)
 	# end
 	# end
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		(p_cpNames, p_zixVecs) ∋ land.cAllocation
-		cAlloc ∋ land.states
+		(p_cpNames, p_zixVecs) => land.cAllocation
+		cAlloc => land.states
 	end
 	return land
 end
 
-function update(o::cAllocation_GSI, forcing, land, infotem)
-	# @unpack_cAllocation_GSI o
-	return land
-end
-
-"""
+@doc """
 compute the fraction of NPP that is allocated to the different plant organs. In this case; the allocation is dynamic in time according to temperature; water & radiation stressors computed from GSI approach.
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_GSI
+---
 
 # compute:
 Combine the different effects of carbon allocation using cAllocation_GSI
 
-*Inputs:*
+*Inputs*
  - land.cAllocationRadiation.fR: radiation stressors for carbo allocation
  - land.cAllocationSoilW.fT: temperature stressors for carbon allocation
  - land.cAllocationSoilW.fW: water stressors for carbon allocation
 
-*Outputs:*
+*Outputs*
  - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
-
-# update
-update pools and states in cAllocation_GSI
  - land.states.cAlloc
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocation_GSI
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Forkel M, Carvalhais N, Schaphoff S, von Bloh W, Migliavacca M, Thurner M, Thonicke K [2014] Identifying environmental controls on vegetation greenness phenology through model–data integration. Biogeosciences, 11, 7025–7050.
  - Forkel, M., Migliavacca, M., Thonicke, K., Reichstein, M., Schaphoff, S., Weber, U., Carvalhais, N. (2015).  Codominant water control on global interannual variability and trends in land surface phenology & greenness.
  - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
 
-*Versions:*
+*Versions*
  - 1.0 on 12.01.2020 [sbesnard]  
 
 *Created by:*
@@ -109,4 +98,4 @@ update pools and states in cAllocation_GSI
 
 Notes:  Check if we can partition C to leaf & wood constrained by interception of light.
 """
-function cAllocation_GSI_h end
+cAllocation_GSI
