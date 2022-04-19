@@ -1,45 +1,32 @@
-export cFlow_none, cFlow_none_h
-"""
-set transfer between pools to 0 [i.e. nothing is transfered] set giver & taker matrices to [] get the transfer matrix transfers
+export cFlow_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cFlow_none{T} <: cFlow
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cFlow_none <: cFlow
 end
 
 function precompute(o::cFlow_none, forcing, land, infotem)
-	@unpack_cFlow_none o
 
 	## calculate variables
-	tmp = repeat(zeros(size(infotem.pools.carbon.initValues.cEco)), 1, 1, infotem.pools.carbon.nZix.cEco)
+	tmp = repeat(repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco), 1, 1, infotem.pools.carbon.nZix.cEco)
 	p_A = tmp
 	p_E = tmp
 	p_F = tmp
 	p_taker = []
 	p_giver = []
 
-	## pack variables
-	@pack_land begin
-		(p_A, p_E, p_F, p_giver, p_taker) ∋ land.cFlow
-	end
+	## pack land variables
+	@pack_land (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
 	return land
 end
 
-function compute(o::cFlow_none, forcing, land, infotem)
-	# @unpack_cFlow_none o
-	return land
-end
-
-function update(o::cFlow_none, forcing, land, infotem)
-	# @unpack_cFlow_none o
-	return land
-end
-
-"""
+@doc """
 set transfer between pools to 0 [i.e. nothing is transfered] set giver & taker matrices to [] get the transfer matrix transfers
+
+# precompute:
+precompute/instantiate time-invariant variables for cFlow_none
+
+
+---
 
 # Extended help
 """
-function cFlow_none_h end
+cFlow_none

@@ -1,40 +1,27 @@
-export runoffInterflow_none, runoffInterflow_none_h
-"""
-sets interflow runoff to zeros
+export runoffInterflow_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct runoffInterflow_none{T} <: runoffInterflow
-	noParameter::T = nothing | nothing | nothing | nothing
+struct runoffInterflow_none <: runoffInterflow
 end
 
 function precompute(o::runoffInterflow_none, forcing, land, infotem)
-	@unpack_runoffInterflow_none o
 
 	## calculate variables
-	roInt = 0.0
+	runoffInterflow = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		roInt ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land runoffInterflow => land.fluxes
 	return land
 end
 
-function compute(o::runoffInterflow_none, forcing, land, infotem)
-	# @unpack_runoffInterflow_none o
-	return land
-end
-
-function update(o::runoffInterflow_none, forcing, land, infotem)
-	# @unpack_runoffInterflow_none o
-	return land
-end
-
-"""
+@doc """
 sets interflow runoff to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for runoffInterflow_none
+
+
+---
 
 # Extended help
 """
-function runoffInterflow_none_h end
+runoffInterflow_none

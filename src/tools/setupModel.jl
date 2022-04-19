@@ -80,7 +80,6 @@ function generateStatesInfo(info)
         poolData = getfield(getfield(info.modelStructure.pools, element), :pools)
         nlayers = []
         layer = []
-        ntypes = []
         inits = []
         subPoolName = []
         mainPoolName = []
@@ -91,8 +90,7 @@ function generateStatesInfo(info)
                 lenpool = Int64(poolInfo[1])
                 append!(nlayers, fill(1, lenpool))
                 append!(layer, collect(1:poolInfo[1]))
-                append!(ntypes, fill(poolInfo[2], lenpool))
-                append!(inits, fill(poolInfo[3], lenpool))
+                append!(inits, fill(poolInfo[2], lenpool))
                 append!(subPoolName, fill(mainPool, lenpool))
                 append!(mainPoolName, fill(mainPool, lenpool))
             else
@@ -101,8 +99,7 @@ function generateStatesInfo(info)
                     lenpool = Int64(p[1])
                     append!(nlayers, fill(1, lenpool))
                     append!(layer, collect(1:p[1]))
-                    append!(ntypes, fill(p[2], lenpool))
-                    append!(inits, fill(p[3], lenpool))
+                    append!(inits, fill(p[2], lenpool))
                     append!(subPoolName, fill(Symbol(String(mainPool)*String(subpools[idx])), lenpool))
                     append!(mainPoolName, fill(mainPool, lenpool))
                 end
@@ -118,7 +115,6 @@ function generateStatesInfo(info)
         for mainPool in mainPools
             # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
             zix=Int[]
-            typeDim=Int[]
             initValues=Float64[]
             components=Symbol[]
             flags = zeros(Int, length(mainPoolName))
@@ -128,7 +124,6 @@ function generateStatesInfo(info)
                     push!(zix, ind)
                     push!(components, subPoolName[ind])
                     push!(initValues, inits[ind])
-                    push!(typeDim, ntypes[ind])
                     flags[ind] = 1
                     nZix = nZix + 1
                 end
@@ -137,9 +132,6 @@ function generateStatesInfo(info)
             tmpElem = setTupleSubfield(tmpElem, :flags, (mainPool, flags))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (mainPool, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
-            if maximum(typeDim) > 1
-                initValues = repeat(initValues, inner=[1, maximum(typeDim)])
-            end
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
         end
         uniqueSubPools = Set(subPoolName)
@@ -148,14 +140,12 @@ function generateStatesInfo(info)
             initValues=Float64[]
             components=Symbol[]
             nZix=0
-            typeDim=Int[]
             flags = zeros(Int, length(mainPoolName))
             for (ind, par) in enumerate(subPoolName)
                 if par == subPool
                     push!(initValues, inits[ind])
                     push!(components, subPoolName[ind])
                     push!(zix, ind)
-                    push!(typeDim, ntypes[ind])
                     flags[ind] = 1
                     nZix = nZix + 1
                 end
@@ -165,9 +155,6 @@ function generateStatesInfo(info)
             tmpElem = setTupleSubfield(tmpElem, :nZix, (subPool, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
 
-            if maximum(typeDim) > 1
-                initValues = repeat(initValues, inner=[1, maximum(typeDim)])
-            end
             if element == :water && subPool == :soilW
                 soilLayerDepths = getfield(getfield(info.modelStructure.pools, element), :soilLayerDepths)
                 if size(soilLayerDepths, 1) != nZix
@@ -191,9 +178,6 @@ function generateStatesInfo(info)
             tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, flags))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (combinedPoolName, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
-            if maximum(ntypes) > 1
-                initValues = repeat(initValues, inner=[1, maximum(ntypes)])
-            end
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
         else
             create = Symbol.(uniqueSubPools)
@@ -228,25 +212,19 @@ end
 """
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
-function setAutoCompute(info)
-    vars2sum = info.modelRun.varsToSum
-    tarr=propertynames(vars2sum)
-    tmp = (;sum=(;))
-    for tarname in tarr
-        tmpTarr = (;)
-        tmpTarr = setTupleField(tmpTarr, (tarname, (;)))
-        comps = Symbol.(getfield(vars2sum, tarname).components)
-        tmpTarr = setTupleSubfield(tmpTarr, tarname, (:components, comps))
-        outfield = Symbol.(getfield(vars2sum, tarname).outfield)
-        tmpTarr = setTupleSubfield(tmpTarr, tarname, (:fieldname, outfield))
-        tmp = (; tmp..., sum = (; tmp.sum..., tmpTarr...))
+function setHelpers(info)
+    if info.modelRun.rules.dataType == "Float64"
+        zero = 0.0
+        one = 1.0
+        aone = [1.0]
+        azero = [0.0]
+        info=(; info..., tem=(; helpers = (; zero=zero, one=one, aone=aone, azero=azero)));
     end
-    info=(; info..., tem=(; compute = (; tmp...)));
 return info
 end
 
 function setupModel!(info)
-    info = setAutoCompute(info)
+    info = setHelpers(info)
     info = generateStatesInfo(info)
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)

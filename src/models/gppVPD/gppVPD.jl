@@ -1,5 +1,14 @@
 export gppVPD
-"""
+
+abstract type gppVPD <: LandEcosystem end
+
+include("gppVPD_expco2.jl")
+include("gppVPD_Maekelae2008.jl")
+include("gppVPD_MOD17.jl")
+include("gppVPD_none.jl")
+include("gppVPD_PRELES.jl")
+
+@doc """
 Vpd effect
 
 # Approaches:
@@ -9,9 +18,4 @@ Vpd effect
  - none: set the VPD stress on gppPot to ones (no stress)
  - PRELES: please adjust ;) calculate the VPD stress on gppPot based on Maekelae2008 & PRELES model
 """
-abstract type gppVPD <: LandEcosystem end
-include("gppVPD_expco2.jl")
-include("gppVPD_Maekelae2008.jl")
-include("gppVPD_MOD17.jl")
-include("gppVPD_none.jl")
-include("gppVPD_PRELES.jl")
+gppVPD

@@ -1,68 +1,41 @@
-export vegFraction_forcing, vegFraction_forcing_h
-"""
-sets the value of land.states.vegFraction from the forcing in every time step
+export vegFraction_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct vegFraction_forcing{T} <: vegFraction
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::vegFraction_forcing, forcing, land, infotem)
-	# @unpack_vegFraction_forcing o
-	return land
+struct vegFraction_forcing <: vegFraction
 end
 
 function compute(o::vegFraction_forcing, forcing, land, infotem)
-	@unpack_vegFraction_forcing o
+	@unpack_forcing vegFraction ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		vegFraction ∈ forcing
-	end
-
-	## pack variables
-	@pack_land begin
-		vegFraction ∋ land.states
-	end
+	## pack land variables
+	@pack_land vegFraction => land.states
 	return land
 end
 
-function update(o::vegFraction_forcing, forcing, land, infotem)
-	# @unpack_vegFraction_forcing o
-	return land
-end
-
-"""
+@doc """
 sets the value of land.states.vegFraction from the forcing in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for vegFraction_forcing
+---
 
 # compute:
 Fractional coverage of vegetation using vegFraction_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.vegFraction read from the forcing data set
- - tix
 
-*Outputs:*
+*Outputs*
  - land.states.vegFraction: the value of vegFraction for current time step
 
-# update
-update pools and states in vegFraction_forcing
- - None
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019 [skoirala]:  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function vegFraction_forcing_h end
+vegFraction_forcing

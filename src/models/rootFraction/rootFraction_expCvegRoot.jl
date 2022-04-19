@@ -1,10 +1,5 @@
-export rootFraction_expCvegRoot, rootFraction_expCvegRoot_h
-"""
-Precomputation for maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
+export rootFraction_expCvegRoot
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct rootFraction_expCvegRoot{T1, T2, T3} <: rootFraction
 	k_cVegRoot::T1 = 0.02 | (0.001, 0.3) | "rate constant of exponential relationship" | "m2/kgC (inverse of carbon storage)"
 	fracRoot2SoilD_max::T2 = 0.95 | (0.7, 0.98) | "maximum root water uptake capacity" | ""
@@ -15,30 +10,31 @@ function precompute(o::rootFraction_expCvegRoot, forcing, land, infotem)
 	@unpack_rootFraction_expCvegRoot o
 
 	## instantiate variables
-	p_fracRoot2SoilD = ones(size(infotem.pools.water.initValues.soilW))
-	rootStop = ones(size(infotem.pools.water.initValues.soilW))
+	p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	rootStop = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
 
-	## pack variables
-	@pack_land begin
-		(p_fracRoot2SoilD, rootStop) ∋ land.rootFraction
-	end
+	## pack land variables
+	@pack_land (p_fracRoot2SoilD, rootStop) => land.rootFraction
 	return land
 end
 
 function compute(o::rootFraction_expCvegRoot, forcing, land, infotem)
+	## unpack parameters
 	@unpack_rootFraction_expCvegRoot o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land (p_fracRoot2SoilD, rootStop) ∈ land.rootFraction
+
+	## unpack land variables
 	@unpack_land begin
-		(p_fracRoot2SoilD, rootStop) ∈ land.rootFraction
 		maxRootD ∈ land.states
 		cEco ∈ land.pools
 	end
-	##p_fracRoot2SoilD = ones(size(infotem.pools.water.initValues.soilW))
+	##p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
 	soilDepths = infotem.pools.water.layerThickness.soilW
 	totalSoilDepth = sum(soilDepths)
 	maxRootDepth = min(maxRootD, totalSoilDepth); # maximum rootingdepth
-	#--> create the arrays to fill in the soil properties
+	# create the arrays to fill in the soil properties
 	for sl in 1:infotem.pools.water.nZix.soilW
 		soilD = sum(soilDepths[1:sl-1])
 		rootOver = maxRootDepth - soilD
@@ -49,50 +45,48 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, infotem)
 	cVegRoot = sum(cEco[cVegRootZix])
 	p_fracRoot2SoilD = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * cVegRoot))) * rootStop
 
-	## pack variables
-	@pack_land begin
-		p_fracRoot2SoilD ∋ land.rootFraction
-	end
+	## pack land variables
+	@pack_land p_fracRoot2SoilD => land.rootFraction
 	return land
 end
 
-function update(o::rootFraction_expCvegRoot, forcing, land, infotem)
-	# @unpack_rootFraction_expCvegRoot o
-	return land
-end
-
-"""
+@doc """
 Precomputation for maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
 
-# precompute:
-precompute/instantiate time-invariant variables for rootFraction_expCvegRoot
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Distribution of water uptake fraction/efficiency by root per soil layer using rootFraction_expCvegRoot
 
-*Inputs:*
+*Inputs*
  - infotem.pools.water.layerThickness.soilW
  - land.pools.cEco
  - land.states.maxRootD [from rootFraction_expCvegRoot]
  - maxRootDepth [from rootFraction_expCvegRoot]
 
-*Outputs:*
+*Outputs*
  - initiates land.rootFraction.p_fracRoot2SoilD as ones
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
-
-# update
-update pools and states in rootFraction_expCvegRoot
  - land.rootFraction.p_fracRoot2SoilD
+
+# precompute:
+precompute/instantiate time-invariant variables for rootFraction_expCvegRoot
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 28.04.2020  
 
 *Created by:*
- - Sujan Koirala
+ - skoirala
 """
-function rootFraction_expCvegRoot_h end
+rootFraction_expCvegRoot

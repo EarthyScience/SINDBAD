@@ -1,37 +1,29 @@
-export cCycle_simple, cCycle_simple_h
-"""
-Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
+export cCycle_simple
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cCycle_simple{T} <: cCycle
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cCycle_simple <: cCycle
 end
 
 function precompute(o::cCycle_simple, forcing, land, infotem)
-	@unpack_cCycle_simple o
 
 	## instantiate variables
-	cEcoEfflux = zeros(size(infotem.pools.carbon.initValues.cEco)); #sujan moved from get states
-	cEcoOut = ones(size(infotem.pools.carbon.initValues.cEco))
-	cEcoFlow = ones(size(infotem.pools.carbon.initValues.cEco))
-	cEcoInflux = zeros(size(infotem.pools.carbon.initValues.cEco))
-	cEcoFlow = zeros(size(infotem.pools.carbon.initValues.cEco))
+	cEcoEfflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan moved from get states
+	cEcoOut = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	cEcoFlow = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	cEcoInflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cEcoFlow = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		(cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) ∋ land.cCycle
-	end
+	## pack land variables
+	@pack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) => land.cCycle
 	return land
 end
 
 function compute(o::cCycle_simple, forcing, land, infotem)
-	@unpack_cCycle_simple o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) ∈ land.cCycle
+
+	## unpack land variables
 	@unpack_land begin
-		(cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) ∈ land.cCycle
 		(cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
 		(cEco, cEco_prev) ∈ land.pools
 		gpp ∈ land.fluxes
@@ -79,30 +71,24 @@ function compute(o::cCycle_simple, forcing, land, infotem)
 	cRH = cRECO - cRA
 	NEE = cRECO - gpp
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		p_k ∋ land.cCycleBase
-		(NEE, cNPP, cRA, cRECO, cRH) ∋ land.fluxes
-		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, del_cEco) ∋ land.states
+		p_k => land.cCycleBase
+		(NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
+		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, del_cEco) => land.states
 	end
 	return land
 end
 
-function update(o::cCycle_simple, forcing, land, infotem)
-	# @unpack_cCycle_simple o
-	return land
-end
-
-"""
+@doc """
 Calculate decay rates for the ecosystem C pools at appropriate time steps. Perform carbon cycle between pools
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycle_simple
+---
 
 # compute:
 Allocate carbon to vegetation components using cCycle_simple
 
-*Inputs:*
+*Inputs*
  - infotem.dates.nStepsYear: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
@@ -111,7 +97,7 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.fluxes.gpp: values for gross primary productivity
  - land.states.cAlloc: carbon allocation matrix
 
-*Outputs:*
+*Outputs*
  - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
  - land.fluxes.cNPP: values for net primary productivity
  - land.fluxes.cRA: values for autotrophic respiration
@@ -119,20 +105,23 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.fluxes.cRH: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
-
-# update
-update pools and states in cCycle_simple
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cCycle_simple
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Potter; C. S.; J. T. Randerson; C. B. Field; P. A. Matson; P. M.  Vitousek; H. A. Mooney; & S. A. Klooster. 1993. Terrestrial ecosystem  production: A process model based on global satellite & surface data.  Global Biogeochemical Cycles. 7: 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 28.02.2020 [sbesnard]  
 
 *Created by:*
  - ncarvalhais
 """
-function cCycle_simple_h end
+cCycle_simple

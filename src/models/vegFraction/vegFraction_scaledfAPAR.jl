@@ -1,68 +1,55 @@
-export vegFraction_scaledfAPAR, vegFraction_scaledfAPAR_h
-"""
-sets the value of vegFraction by scaling the fAPAR value
+export vegFraction_scaledfAPAR
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
 	fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
 end
 
-function precompute(o::vegFraction_scaledfAPAR, forcing, land, infotem)
-	# @unpack_vegFraction_scaledfAPAR o
-	return land
-end
-
 function compute(o::vegFraction_scaledfAPAR, forcing, land, infotem)
+	## unpack parameters
 	@unpack_vegFraction_scaledfAPAR o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		fAPAR ∈ land.states
+		one ∈ infotem.helpers		
 	end
-	vegFraction = min(fAPAR * fAPARscale, 1)
 
-	## pack variables
-	@pack_land begin
-		vegFraction ∋ land.states
-	end
+	## calculate variables
+	vegFraction = min(fAPAR * fAPARscale, one)
+
+	## pack land variables
+	@pack_land vegFraction => land.states
 	return land
 end
 
-function update(o::vegFraction_scaledfAPAR, forcing, land, infotem)
-	# @unpack_vegFraction_scaledfAPAR o
-	return land
-end
-
-"""
+@doc """
 sets the value of vegFraction by scaling the fAPAR value
 
-# precompute:
-precompute/instantiate time-invariant variables for vegFraction_scaledfAPAR
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Fractional coverage of vegetation using vegFraction_scaledfAPAR
 
-*Inputs:*
- - land.states.fAPAR : current fAPAR value
+*Inputs*
+ - land.states.fAPAR : fAPAR value
 
-*Outputs:*
+*Outputs*
  - land.states.vegFraction: current vegetation fraction
 
-# update
-update pools and states in vegFraction_scaledfAPAR
- - None
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.1 on 24.10.2020 [ttraut]: new module  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function vegFraction_scaledfAPAR_h end
+vegFraction_scaledfAPAR

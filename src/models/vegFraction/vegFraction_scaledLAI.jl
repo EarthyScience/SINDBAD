@@ -1,68 +1,55 @@
-export vegFraction_scaledLAI, vegFraction_scaledLAI_h
-"""
-sets the value of vegFraction by scaling the LAI value
+export vegFraction_scaledLAI
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct vegFraction_scaledLAI{T1} <: vegFraction
 	LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
 end
 
-function precompute(o::vegFraction_scaledLAI, forcing, land, infotem)
-	# @unpack_vegFraction_scaledLAI o
-	return land
-end
-
 function compute(o::vegFraction_scaledLAI, forcing, land, infotem)
+	## unpack parameters
 	@unpack_vegFraction_scaledLAI o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		LAI ∈ land.states
+		one ∈ infotem.helpers
 	end
-	vegFraction = min(LAI * LAIscale, 1)
 
-	## pack variables
-	@pack_land begin
-		vegFraction ∋ land.states
-	end
+	## calculate variables
+	vegFraction = min(LAI * LAIscale, one)
+
+	## pack land variables
+	@pack_land vegFraction => land.states
 	return land
 end
 
-function update(o::vegFraction_scaledLAI, forcing, land, infotem)
-	# @unpack_vegFraction_scaledLAI o
-	return land
-end
-
-"""
+@doc """
 sets the value of vegFraction by scaling the LAI value
 
-# precompute:
-precompute/instantiate time-invariant variables for vegFraction_scaledLAI
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Fractional coverage of vegetation using vegFraction_scaledLAI
 
-*Inputs:*
- - land.states.LAI : current LAI value
+*Inputs*
+ - land.states.LAI : LAI
 
-*Outputs:*
+*Outputs*
  - land.states.vegFraction: current vegetation fraction
 
-# update
-update pools and states in vegFraction_scaledLAI
- - None
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.1 on 24.10.2020 [ttraut]: new module  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function vegFraction_scaledLAI_h end
+vegFraction_scaledLAI

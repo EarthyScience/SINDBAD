@@ -1,34 +1,25 @@
-export rainSnow_forcing, rainSnow_forcing_h
-"""
-stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
+export rainSnow_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
 	SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
 end
 
-function precompute(o::rainSnow_forcing, forcing, land, infotem)
-	# @unpack_rainSnow_forcing o
-	return land
-end
-
 function compute(o::rainSnow_forcing, forcing, land, infotem)
+	## unpack parameters and forcing
 	@unpack_rainSnow_forcing o
+	@unpack_forcing (Rain, Snow) ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		(Rain, Snow) ∈ forcing
-		snowW ∈ land.pools
-	end
+	## unpack land variables
+	@unpack_land snowW ∈ land.pools
+
+	## calculate variables
 	rain = Rain
-	snow = Snow * (SF_scale); # ones as parameter has one value for each pixelf.Snow
+	snow = Snow * (SF_scale)
 	precip = rain + snow
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		(precip, rain, snow) ∋ land.rainSnow
+		(precip, rain, snow) => land.rainSnow
 	end
 	return land
 end
@@ -46,44 +37,48 @@ function update(o::rainSnow_forcing, forcing, land, infotem)
 	# update snow pack
 	snowW[1] = snowW[1] + snow
 
-	## pack variables
-	@pack_land begin
-		snowW ∋ land.pools
-	end
+	## pack land variables
+	@pack_land snowW => land.pools
 	return land
 end
 
-"""
+@doc """
 stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
 
-# precompute:
-precompute/instantiate time-invariant variables for rainSnow_forcing
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Set rain and snow to fe.rainsnow. using rainSnow_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.Rain
  - forcing.Snow
  - info
 
-*Outputs:*
+*Outputs*
  - land.rainSnow.rain: liquid rainfall from forcing input
  - land.rainSnow.snow: snowfall estimated as the rain when tair <  threshold
 
 # update
+
 update pools and states in rainSnow_forcing
+
  - forcing.Snow using the snowfall scaling parameter which can be optimized
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019 [skoirala]: creation of approach  
 
 *Created by:*
- - Sujan Koirala [skoirala]
+ - skoirala
 """
-function rainSnow_forcing_h end
+rainSnow_forcing

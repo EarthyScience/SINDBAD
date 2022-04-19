@@ -1,5 +1,12 @@
 export transpiration
-"""
+
+abstract type transpiration <: LandEcosystem end
+
+include("transpiration_coupled.jl")
+include("transpiration_demandSupply.jl")
+include("transpiration_none.jl")
+
+@doc """
 If coupled, computed from gpp and aoe from wue
 
 # Approaches:
@@ -7,7 +14,4 @@ If coupled, computed from gpp and aoe from wue
  - demandSupply: calculate the actual transpiration as the minimum of the supply & demand
  - none: sets the actual transpiration to zeros
 """
-abstract type transpiration <: LandEcosystem end
-include("transpiration_coupled.jl")
-include("transpiration_demandSupply.jl")
-include("transpiration_none.jl")
+transpiration

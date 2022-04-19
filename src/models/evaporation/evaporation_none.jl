@@ -1,40 +1,27 @@
-export evaporation_none, evaporation_none_h
-"""
-sets the soil evaporation to zeros
+export evaporation_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct evaporation_none{T} <: evaporation
-	noParameter::T = nothing | nothing | nothing | nothing
+struct evaporation_none <: evaporation
 end
 
 function precompute(o::evaporation_none, forcing, land, infotem)
-	@unpack_evaporation_none o
 
 	## calculate variables
-	evaporation = 0.0
+	evaporation = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		evaporation ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land evaporation => land.fluxes
 	return land
 end
 
-function compute(o::evaporation_none, forcing, land, infotem)
-	# @unpack_evaporation_none o
-	return land
-end
-
-function update(o::evaporation_none, forcing, land, infotem)
-	# @unpack_evaporation_none o
-	return land
-end
-
-"""
+@doc """
 sets the soil evaporation to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for evaporation_none
+
+
+---
 
 # Extended help
 """
-function evaporation_none_h end
+evaporation_none

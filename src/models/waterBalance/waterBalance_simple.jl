@@ -1,77 +1,69 @@
-export waterBalance_simple, waterBalance_simple_h
-"""
-check the water balance in every time step
+export waterBalance_simple
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct waterBalance_simple{T} <: waterBalance
-	noParameter::T = nothing | nothing | nothing | nothing
+struct waterBalance_simple <: waterBalance
 end
 
 function precompute(o::waterBalance_simple, forcing, land, infotem)
-	# @unpack_waterBalance_simple o
-	return land
-end
-
-function compute(o::waterBalance_simple, forcing, land, infotem)
-	@unpack_waterBalance_simple o
 
 	## unpack variables
+	@unpack_land totalW ∈ land.TWS
+	totalW_prev = totalW
+	## pack land variables
+	@pack_land begin
+		totalW_prev => land.waterBalance
+	end
+	return land
+end
+
+
+function compute(o::waterBalance_simple, forcing, land, infotem)
 	@unpack_land begin
-		snow ∈ land.rainSnow
-		(wTotal, wTotal_prev) ∈ land.pools
+		precip ∈ land.rainSnow
+		(totalW) ∈ land.TWS
+		(totalW_prev) ∈ land.waterBalance
 		(evapotranspiration, runoff) ∈ land.fluxes
 	end
-	precip = snow + snow
-	dS = wTotal - wTotal_prev
-	waterBalance = precip-runoff - evapotranspiration - dS
 
-	## pack variables
-	@pack_land begin
-		waterBalance ∋ land.waterBalance
+	## calculate variables
+	dS = totalW - totalW_prev
+	waterBalance = precip - runoff - evapotranspiration - dS
+	totalW_prev = totalW
+	if abs(waterBalance) > 1e-4
+		@show waterBalance, land.states.WBP, precip, runoff, evapotranspiration
 	end
+
+	## pack land variables
+	@pack_land (totalW_prev, waterBalance) => land.waterBalance
 	return land
 end
 
-function update(o::waterBalance_simple, forcing, land, infotem)
-	# @unpack_waterBalance_simple o
-	return land
-end
-
-"""
+@doc """
 check the water balance in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for waterBalance_simple
+---
 
 # compute:
 Calculate the water balance using waterBalance_simple
 
-*Inputs:*
- - check if snow exists to calculate p = rain+snow
- - info
- - tix
+*Inputs*
  - variables to sum for runoff[total runoff] & evapotranspiration [total evap]
+ - TWS and TWS_prev
 
-*Outputs:*
- - add to variables to store
- - land.waterBalance.wBal in nPix;nZix
+*Outputs*
+ - land.waterBalance.waterBalance
 
-# update
-update pools and states in waterBalance_simple
- - None
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 11.11.2019
- - 1.1 on 20.11.2019 [skoirala]: use tix for WP because land.[module].[var]  is created as nPix;nTix
+ - 1.1 on 20.11.2019 [skoirala]:
 
 *Created by:*
- - Martin Jung [mjung]
+ - skoirala
 """
-function waterBalance_simple_h end
+waterBalance_simple

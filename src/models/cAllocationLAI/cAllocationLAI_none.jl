@@ -1,40 +1,27 @@
-export cAllocationLAI_none, cAllocationLAI_none_h
-"""
-set the allocation to ones
+export cAllocationLAI_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cAllocationLAI_none{T} <: cAllocationLAI
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cAllocationLAI_none <: cAllocationLAI
 end
 
 function precompute(o::cAllocationLAI_none, forcing, land, infotem)
-	@unpack_cAllocationLAI_none o
 
 	## calculate variables
-	LL = 1.0
+	LL = infotem.helpers.one
 
-	## pack variables
-	@pack_land begin
-		LL ∋ land.cAllocationLAI
-	end
+	## pack land variables
+	@pack_land LL => land.cAllocationLAI
 	return land
 end
 
-function compute(o::cAllocationLAI_none, forcing, land, infotem)
-	# @unpack_cAllocationLAI_none o
-	return land
-end
-
-function update(o::cAllocationLAI_none, forcing, land, infotem)
-	# @unpack_cAllocationLAI_none o
-	return land
-end
-
-"""
+@doc """
 set the allocation to ones
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocationLAI_none
+
+
+---
 
 # Extended help
 """
-function cAllocationLAI_none_h end
+cAllocationLAI_none

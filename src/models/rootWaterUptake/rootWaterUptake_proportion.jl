@@ -1,100 +1,96 @@
-export rootWaterUptake_proportion, rootWaterUptake_proportion_h
-"""
-calculates the rootUptake from each of the soil layer proportional to the root fraction
+export rootWaterUptake_proportion
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct rootWaterUptake_proportion{T} <: rootWaterUptake
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::rootWaterUptake_proportion, forcing, land, infotem)
-	# @unpack_rootWaterUptake_proportion o
-	return land
+struct rootWaterUptake_proportion <: rootWaterUptake
 end
 
 function compute(o::rootWaterUptake_proportion, forcing, land, infotem)
-	@unpack_rootWaterUptake_proportion o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
-		(pawAct, wRootUptake) ∈ land.states
+		pawAct ∈ land.vegAvailableWater
 		soilW ∈ land.pools
 		transpiration ∈ land.fluxes
+		ΔsoilW ∈ land.states
 	end
-	#--> get the transpiration
+	# get the transpiration
 	transp = transpiration
 	pawActTotal = sum(pawAct)
-	#--> extract from top to bottom
+	wRootUptake = copy(pawAct)
+	# extract from top to bottom
 	for sl in 1:infotem.pools.water.nZix.soilW
-		soilWAvailProp = max(0.0, pawAct[sl] / pawActTotal); #necessary because supply can be 0 -> 0 / 0 = NaN
+		soilWAvailProp = max(0.0, pawAct[sl] / (pawActTotal + 0.0001)); # + 0.0001 is  necessary because supply can be 0 -> 0 / 0 = NaN
 		contrib = transp * soilWAvailProp
 		wRootUptake[sl] = contrib; #
+		ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
 	end
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		wRootUptake ∋ land.states
+		wRootUptake => land.states
+		ΔsoilW => land.states
 	end
 	return land
 end
 
 function update(o::rootWaterUptake_proportion, forcing, land, infotem)
-	@unpack_rootWaterUptake_proportion o
 
 	## unpack variables
 	@unpack_land begin
 		soilW ∈ land.pools
-		wRootUptake ∈ land.states
+		ΔsoilW ∈ land.states
 	end
 
 	## update variables
-	#--> update soil moisture
-	for sl in 1:infotem.pools.water.nZix.soilW 
-		soilW[sl] = soilW[sl] - wRootUptake[sl];
-	end 
+	# update soil moisture
+	soilW = soilW + ΔsoilW
 
-	## pack variables
+	# reset soil moisture changes to zero
+	ΔsoilW = ΔsoilW - ΔsoilW
+
+	## pack land variables
 	@pack_land begin
-		soilW ∋ land.pools
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 end
 
-"""
+@doc """
 calculates the rootUptake from each of the soil layer proportional to the root fraction
 
-# precompute:
-precompute/instantiate time-invariant variables for rootWaterUptake_proportion
+---
 
 # compute:
 Root water uptake (extract water from soil) using rootWaterUptake_proportion
 
-*Inputs:*
+*Inputs*
  - land.fluxes.transpiration: actual transpiration
  - land.pools.soilW: soil moisture
  - land.states.pawAct: plant available water [pix, zix]
 
-*Outputs:*
+*Outputs*
  - land.states.wRootUptake: moisture uptake from each soil layer [nPix, nZix of soilW]
 
 # update
+
 update pools and states in rootWaterUptake_proportion
+
  - land.pools.soilW
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 13.03.2020 [ttraut]:  
 
 *Created by:*
- - Tina Trautmann [ttraut]
+ - ttraut
 
-*Notes:*
+*Notes*
  - assumes that the uptake from each layer remains proportional to the root fraction
 """
-function rootWaterUptake_proportion_h end
+rootWaterUptake_proportion
