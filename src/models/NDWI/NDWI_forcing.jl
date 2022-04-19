@@ -1,67 +1,43 @@
-export NDWI_forcing, NDWI_forcing_h
-"""
-sets the value of land.states.NDWI from the forcing in every time step
+export NDWI_forcing
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct NDWI_forcing{T} <: NDWI
-	noParameter::T = nothing | nothing | nothing | nothing
-end
-
-function precompute(o::NDWI_forcing, forcing, land, infotem)
-	# @unpack_NDWI_forcing o
-	return land
+struct NDWI_forcing <: NDWI
 end
 
 function compute(o::NDWI_forcing, forcing, land, infotem)
-	@unpack_NDWI_forcing o
+	## unpack forcing
+	@unpack_forcing NDWI ∈ forcing
 
-	## unpack variables
-	@unpack_land begin
-		NDWI ∈ forcing
-	end
-
-	## pack variables
-	@pack_land begin
-		NDWI ∋ land.states
-	end
+	## pack land variables
+	@pack_land NDWI => land.states
 	return land
 end
 
-function update(o::NDWI_forcing, forcing, land, infotem)
-	# @unpack_NDWI_forcing o
-	return land
-end
-
-"""
+@doc """
 sets the value of land.states.NDWI from the forcing in every time step
 
-# precompute:
-precompute/instantiate time-invariant variables for NDWI_forcing
+---
 
 # compute:
 Normalized difference water index using NDWI_forcing
 
-*Inputs:*
+*Inputs*
  - forcing.NDWI read from the forcing data set
 
-*Outputs:*
+*Outputs*
  - land.states.NDWI: the value of NDWI for current time step
-
-# update
-update pools and states in NDWI_forcing
  - land.states.NDWI
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 29.04.2020 [sbesnard]:  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function NDWI_forcing_h end
+NDWI_forcing

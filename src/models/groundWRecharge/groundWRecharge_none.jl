@@ -1,40 +1,27 @@
-export groundWRecharge_none, groundWRecharge_none_h
-"""
-set the GW recharge to zeros
+export groundWRecharge_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct groundWRecharge_none{T} <: groundWRecharge
-	noParameter::T = nothing | nothing | nothing | nothing
+struct groundWRecharge_none <: groundWRecharge
 end
 
 function precompute(o::groundWRecharge_none, forcing, land, infotem)
-	@unpack_groundWRecharge_none o
 
 	## calculate variables
-	gwRec = 0.0
+	gwRec = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		gwRec ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land gwRec => land.fluxes
 	return land
 end
 
-function compute(o::groundWRecharge_none, forcing, land, infotem)
-	# @unpack_groundWRecharge_none o
-	return land
-end
-
-function update(o::groundWRecharge_none, forcing, land, infotem)
-	# @unpack_groundWRecharge_none o
-	return land
-end
-
-"""
+@doc """
 set the GW recharge to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for groundWRecharge_none
+
+
+---
 
 # Extended help
 """
-function groundWRecharge_none_h end
+groundWRecharge_none

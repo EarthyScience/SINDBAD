@@ -1,40 +1,27 @@
-export cAllocationNutrients_none, cAllocationNutrients_none_h
-"""
-set the pseudo-nutrient limitation to 1
+export cAllocationNutrients_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cAllocationNutrients_none{T} <: cAllocationNutrients
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cAllocationNutrients_none <: cAllocationNutrients
 end
 
 function precompute(o::cAllocationNutrients_none, forcing, land, infotem)
-	@unpack_cAllocationNutrients_none o
 
 	## calculate variables
-	minWLNL = 1.0
+	minWLNL = infotem.helpers.one
 
-	## pack variables
-	@pack_land begin
-		minWLNL ∋ land.cAllocationNutrients
-	end
+	## pack land variables
+	@pack_land minWLNL => land.cAllocationNutrients
 	return land
 end
 
-function compute(o::cAllocationNutrients_none, forcing, land, infotem)
-	# @unpack_cAllocationNutrients_none o
-	return land
-end
-
-function update(o::cAllocationNutrients_none, forcing, land, infotem)
-	# @unpack_cAllocationNutrients_none o
-	return land
-end
-
-"""
+@doc """
 set the pseudo-nutrient limitation to 1
+
+# precompute:
+precompute/instantiate time-invariant variables for cAllocationNutrients_none
+
+
+---
 
 # Extended help
 """
-function cAllocationNutrients_none_h end
+cAllocationNutrients_none

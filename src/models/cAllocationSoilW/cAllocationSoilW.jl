@@ -1,5 +1,13 @@
 export cAllocationSoilW
-"""
+
+abstract type cAllocationSoilW <: LandEcosystem end
+
+include("cAllocationSoilW_Friedlingstein1999.jl")
+include("cAllocationSoilW_gpp.jl")
+include("cAllocationSoilW_gppGSI.jl")
+include("cAllocationSoilW_none.jl")
+
+@doc """
 Effect of soil moisture on carbon allocation
 
 # Approaches:
@@ -8,8 +16,4 @@ Effect of soil moisture on carbon allocation
  - gppGSI: compute the moisture effect on C allocation computed from GSI approach.
  - none: 
 """
-abstract type cAllocationSoilW <: LandEcosystem end
-include("cAllocationSoilW_Friedlingstein1999.jl")
-include("cAllocationSoilW_gpp.jl")
-include("cAllocationSoilW_gppGSI.jl")
-include("cAllocationSoilW_none.jl")
+cAllocationSoilW

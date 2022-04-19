@@ -1,45 +1,32 @@
-export cTauVegProperties_none, cTauVegProperties_none_h
-"""
-set the outputs to ones
+export cTauVegProperties_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cTauVegProperties_none{T} <: cTauVegProperties
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cTauVegProperties_none <: cTauVegProperties
 end
 
 function precompute(o::cTauVegProperties_none, forcing, land, infotem)
-	@unpack_cTauVegProperties_none o
 
 	## calculate variables
-	p_kfVeg = ones(size(infotem.pools.carbon.initValues.cEco))
-	p_LITC2N = 0.0
-	p_LIGNIN = 0.0
-	p_MTF = 1.0
-	p_SCLIGNIN = 0.0
-	p_LIGEFF = 0.0
+	p_kfVeg = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_LITC2N = infotem.helpers.zero
+	p_LIGNIN = infotem.helpers.zero
+	p_MTF = infotem.helpers.one
+	p_SCLIGNIN = infotem.helpers.zero
+	p_LIGEFF = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		(p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) ∋ land.cTauVegProperties
-	end
+	## pack land variables
+	@pack_land (p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) => land.cTauVegProperties
 	return land
 end
 
-function compute(o::cTauVegProperties_none, forcing, land, infotem)
-	# @unpack_cTauVegProperties_none o
-	return land
-end
-
-function update(o::cTauVegProperties_none, forcing, land, infotem)
-	# @unpack_cTauVegProperties_none o
-	return land
-end
-
-"""
+@doc """
 set the outputs to ones
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauVegProperties_none
+
+
+---
 
 # Extended help
 """
-function cTauVegProperties_none_h end
+cTauVegProperties_none

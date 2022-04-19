@@ -1,68 +1,57 @@
-export vegFraction_scaledNIRv, vegFraction_scaledNIRv_h
-"""
-sets the value of vegFraction by scaling the NIRv value
+export vegFraction_scaledNIRv
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
 	NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | ""
 end
 
-function precompute(o::vegFraction_scaledNIRv, forcing, land, infotem)
-	# @unpack_vegFraction_scaledNIRv o
-	return land
-end
-
 function compute(o::vegFraction_scaledNIRv, forcing, land, infotem)
+	## unpack parameters
 	@unpack_vegFraction_scaledNIRv o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		NIRv ∈ land.states
+		(zero, one) ∈ infotem.helpers
 	end
-	vegFraction = min(NIRv * NIRvscale, 1)
 
-	## pack variables
-	@pack_land begin
-		vegFraction ∋ land.states
-	end
+
+	## calculate variables
+	vegFraction = clamp(NIRv * NIRvscale, zero, one)
+
+	## pack land variables
+	@pack_land vegFraction => land.states
 	return land
 end
 
-function update(o::vegFraction_scaledNIRv, forcing, land, infotem)
-	# @unpack_vegFraction_scaledNIRv o
-	return land
-end
-
-"""
+@doc """
 sets the value of vegFraction by scaling the NIRv value
 
-# precompute:
-precompute/instantiate time-invariant variables for vegFraction_scaledNIRv
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Fractional coverage of vegetation using vegFraction_scaledNIRv
 
-*Inputs:*
+*Inputs*
  - land.states.NIRv : current NIRv value
 
-*Outputs:*
+*Outputs*
  - land.states.vegFraction: current vegetation fraction
-
-# update
-update pools and states in vegFraction_scaledNIRv
  - None
+
+---
 
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.1 on 29.04.2020 [sbesnard]: new module  
 
 *Created by:*
- - Simon Besnard [sbesnard]
+ - sbesnard
 """
-function vegFraction_scaledNIRv_h end
+vegFraction_scaledNIRv

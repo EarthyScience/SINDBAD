@@ -1,5 +1,14 @@
 export soilWBase
-"""
+
+abstract type soilWBase <: LandEcosystem end
+
+include("soilWBase_smax1Layer.jl")
+include("soilWBase_smax2fPFT.jl")
+include("soilWBase_smax2fRD4.jl")
+include("soilWBase_smax2Layer.jl")
+include("soilWBase_uniform.jl")
+
+@doc """
 Distribution of soil hydraulic properties over depth
 
 # Approaches:
@@ -9,9 +18,4 @@ Distribution of soil hydraulic properties over depth
  - smax2Layer: defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the ModelStructure.json based on the older version of the Pre-Tokyo Model
  - uniform: distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties
 """
-abstract type soilWBase <: LandEcosystem end
-include("soilWBase_smax1Layer.jl")
-include("soilWBase_smax2fPFT.jl")
-include("soilWBase_smax2fRD4.jl")
-include("soilWBase_smax2Layer.jl")
-include("soilWBase_uniform.jl")
+soilWBase

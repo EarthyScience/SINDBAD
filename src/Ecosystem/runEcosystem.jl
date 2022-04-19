@@ -3,40 +3,29 @@ runModels(forcing, models, out)
 """
 function runModels(forcing, models, out, modelInfo)
     for model in models
-        @show model
         out = Models.compute(model, forcing, out, modelInfo)
         out = Models.update(model, forcing, out, modelInfo)
+        # @show typeof(model), out.pools.soilW
     end
     return out
 end
 
-function runPrecomute(forcing, models, out, modelInfo)
+function runPrecompute(forcing, models, out, modelInfo)
     for model in models
         out = Models.precompute(model, forcing, out, modelInfo)
     end
     return out
 end
+
 """
 runForward(selectedModels, forcing, out, infotem)
 """
 function runForward(selectedModels, forcing, out, modelnames, modelInfo)
-    tsteps = size(forcing, 1)
-    # outtemp = []
-    # modelnames = tuple(modelnames...)
-    # for t in 1:tsteps
-    #     out = runModels(forcing[t], selectedModels, out, modelInfo)
-    #     push!(outtemp, NamedTuple{modelnames}(out.fluxes))
-    # end
-
-    # proposed by fabian
     modelnames = (modelnames...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelInfo)
         NamedTuple{modelnames}(out.fluxes)
     end
-    
-
-    #outtuples = [runModels(forcing[t], selectedModels, out, info) for t in 1:size(forcing, 1)]
     return columntable(outtemp)
 end
 
@@ -47,14 +36,15 @@ create the initial out tuple with all models
 """
 function getInitOut(initPools, selectedModels)
     out = (;)
-    for model in selectedModels
+    out = (; out..., pools=(;), states=(;), fluxes=(;))
+    out = (; out..., pools=(; out.pools..., initPools...))
+    # @show selectedModels, string.(selectedModels)
+    sortedModels = sort([_sm for _sm in selectedModels])
+    for model in sortedModels
         out = setTupleField(out, (model, (;)))
     end
-    out=(; out..., pools=(;), states=(;)=(;), fluxes=(;))
-    out = (; out..., pools = (; out.pools..., initPools...))
-    @show out
     return out
-    
+
 end
 
 
@@ -67,7 +57,7 @@ function runSpinup(selectedModels, initPools, forcing, modelInfo, history=false;
     # out = (; out..., pools = (; out.pools..., initPools...))
     tsteps = size(forcing, 1)
     spinuplog = history ? [values(out)[1:length(initPools)]] : nothing
-    out = runPrecomute(forcing[1], selectedModels, out, modelInfo)
+    out = runPrecompute(forcing[1], selectedModels, out, modelInfo)
     for j in 1:nspins
         for t in 1:tsteps
             out = runModels(forcing[t], selectedModels, out, modelInfo)

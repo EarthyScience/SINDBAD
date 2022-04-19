@@ -1,31 +1,23 @@
-export groundWsurfaceWInteraction_fracWgw, groundWsurfaceWInteraction_fracWgw_h
-"""
-calculates the depletion of groundwater to the surface water
+export groundWsurfaceWInteraction_fracWgw
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct groundWsurfaceWInteraction_fracWgw{T1} <: groundWsurfaceWInteraction
 	kGW2Surf::T1 = 0.5 | (0.0001, 1.0) | "scale parameter for drainage from wGW to wSurf" | "fraction"
 end
 
-function precompute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
-	# @unpack_groundWsurfaceWInteraction_fracWgw o
-	return land
-end
-
 function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
+	## unpack parameters
 	@unpack_groundWsurfaceWInteraction_fracWgw o
 
-	## unpack variables
-	@unpack_land begin
-		(groundW, surfaceW) ∈ land.pools
-	end
+	## unpack land variables
+	@unpack_land (groundW, surfaceW) ∈ land.pools
+
+
+	## calculate variables
 	GW2Surf = kGW2Surf * groundW[1]
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		GW2Surf ∋ land.fluxes
+		GW2Surf => land.fluxes
 	end
 	return land
 end
@@ -44,44 +36,48 @@ function update(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
 	groundW[1] = groundW[1] - GW2Surf; 
 	surfaceW[1] = surfaceW[1] + GW2Surf; 
 
-	## pack variables
-	@pack_land begin
-		(groundW, surfaceW) ∋ land.pools
-	end
+	## pack land variables
+	@pack_land (groundW, surfaceW) => land.pools
 	return land
 end
 
-"""
+@doc """
 calculates the depletion of groundwater to the surface water
 
-# precompute:
-precompute/instantiate time-invariant variables for groundWsurfaceWInteraction_fracWgw
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Water exchange between surface and groundwater using groundWsurfaceWInteraction_fracWgw
 
-*Inputs:*
+*Inputs*
  - land.pools.groundW: groundwater storage
  - land.pools.surfaceW: surface water storage
  - land.runoffSurface.dc: drainage parameter from surfaceW[1]
 
-*Outputs:*
+*Outputs*
  - land.fluxes.groundW2surfaceW: groundW[1] to surfaceW[1] [always positive]
 
 # update
+
 update pools and states in groundWsurfaceWInteraction_fracWgw
+
  - land.pools.groundW[1]
  - land.pools.surfaceW[1]
 
+---
+
 # Extended help
 
-*References:*
+*References*
  -
 
-*Versions:*
+*Versions*
  - 1.0 on 04.02.2020 [ttraut]:  
 
 *Created by:*
- - Tina Trautmann [ttraut]
+ - ttraut
 """
-function groundWsurfaceWInteraction_fracWgw_h end
+groundWsurfaceWInteraction_fracWgw

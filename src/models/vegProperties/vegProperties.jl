@@ -1,9 +1,13 @@
 export vegProperties
-"""
+
+abstract type vegProperties <: LandEcosystem end
+
+include("vegProperties_PFT.jl")
+
+@doc """
 Vegetation/structural properties
 
 # Approaches:
- - PFT: sets a uniform PFT class. all calculations are done in prec
+ - PFT: sets a uniform PFT class
 """
-abstract type vegProperties <: LandEcosystem end
-include("vegProperties_PFT.jl")
+vegProperties

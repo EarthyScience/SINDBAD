@@ -1,40 +1,27 @@
-export cTauLAI_none, cTauLAI_none_h
-"""
-set values to ones
+export cTauLAI_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct cTauLAI_none{T} <: cTauLAI
-	noParameter::T = nothing | nothing | nothing | nothing
+struct cTauLAI_none <: cTauLAI
 end
 
 function precompute(o::cTauLAI_none, forcing, land, infotem)
-	@unpack_cTauLAI_none o
 
 	## calculate variables
-	p_kfLAI = ones(size(infotem.pools.carbon.initValues.cEco)); #(ineficient, should be pix zix_veg)
+	p_kfLAI = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco); #(ineficient, should be pix zix_veg)
 
-	## pack variables
-	@pack_land begin
-		p_kfLAI ∋ land.cTauLAI
-	end
+	## pack land variables
+	@pack_land p_kfLAI => land.cTauLAI
 	return land
 end
 
-function compute(o::cTauLAI_none, forcing, land, infotem)
-	# @unpack_cTauLAI_none o
-	return land
-end
-
-function update(o::cTauLAI_none, forcing, land, infotem)
-	# @unpack_cTauLAI_none o
-	return land
-end
-
-"""
+@doc """
 set values to ones
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauLAI_none
+
+
+---
 
 # Extended help
 """
-function cTauLAI_none_h end
+cTauLAI_none

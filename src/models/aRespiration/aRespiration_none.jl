@@ -1,41 +1,28 @@
-export aRespiration_none, aRespiration_none_h
-"""
-sets the outflow from all vegetation pools to zeros
+export aRespiration_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct aRespiration_none{T} <: aRespiration
-	noParameter::T = nothing | nothing | nothing | nothing
+struct aRespiration_none <: aRespiration
 end
 
 function precompute(o::aRespiration_none, forcing, land, infotem)
-	@unpack_aRespiration_none o
 
 	## calculate variables
 	zix = infotem.pools.carbon.zix.cVeg
-	cEcoEfflux[zix] = 0.0
+	cEcoEfflux[zix] = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		cEcoEfflux ∋ land.states
-	end
+	## pack land variables
+	@pack_land cEcoEfflux => land.states
 	return land
 end
 
-function compute(o::aRespiration_none, forcing, land, infotem)
-	# @unpack_aRespiration_none o
-	return land
-end
-
-function update(o::aRespiration_none, forcing, land, infotem)
-	# @unpack_aRespiration_none o
-	return land
-end
-
-"""
+@doc """
 sets the outflow from all vegetation pools to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for aRespiration_none
+
+
+---
 
 # Extended help
 """
-function aRespiration_none_h end
+aRespiration_none

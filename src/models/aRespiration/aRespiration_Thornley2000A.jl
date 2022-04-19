@@ -1,24 +1,15 @@
-export aRespiration_Thornley2000A, aRespiration_Thornley2000A_h
-"""
-Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper].
+export aRespiration_Thornley2000A
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct aRespiration_Thornley2000A{T1, T2} <: aRespiration
 	RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day"
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function precompute(o::aRespiration_Thornley2000A, forcing, land, infotem)
-	# @unpack_aRespiration_Thornley2000A o
-	return land
-end
-
 function compute(o::aRespiration_Thornley2000A, forcing, land, infotem)
+	## unpack parameters
 	@unpack_aRespiration_Thornley2000A o
 
-	## unpack variables
+	## unpack land variables
 	@unpack_land begin
 		(RA_G, RA_M, cAlloc) ∈ land.states
 		cEco ∈ land.pools
@@ -45,60 +36,56 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, infotem)
 		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
 		RA_G[zix] = (1.0 - YG) * (gpp * cAlloc[zix] - RA_M[zix])
 		# no negative growth respiration
-		RA_G[RA_G[zix] < 0.0, zix] = 0.0
+		RA_G[RA_G[zix] < infotem.helpers.zero, zix] = 0.0
 		# total respiration per pool: R_a = R_m + R_g
 		cEcoEfflux[zix] = RA_M[zix] + RA_G[zix]
 	end
 
-	## pack variables
+	## pack land variables
 	@pack_land begin
-		(p_km, p_km4su) ∋ land.aRespiration
-		(RA_G, RA_M, cEcoEfflux) ∋ land.states
+		(p_km, p_km4su) => land.aRespiration
+		(RA_G, RA_M, cEcoEfflux) => land.states
 	end
 	return land
 end
 
-function update(o::aRespiration_Thornley2000A, forcing, land, infotem)
-	# @unpack_aRespiration_Thornley2000A o
-	return land
-end
-
-"""
+@doc """
 Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper].
 
-# precompute:
-precompute/instantiate time-invariant variables for aRespiration_Thornley2000A
+# Parameters
+$(PARAMFIELDS)
+
+---
 
 # compute:
 Determine growth and maintenance respiration -> npp using aRespiration_Thornley2000A
 
-*Inputs:*
+*Inputs*
  - land.aRespiration.km[ii].value: maintenance [respiration] coefficient - dependent on  temperature and; depending on the models; degradable fraction  (δT-1)
  - land.fluxes.gpp: substrate supply rate: Gross Primary Production [gC.m-2.δT-1]
  - land.pools.cEco: carbon pools [gC.m-2]
  - land.states.cAlloc[zix]: carbon allocation in the different vegetation pools [[]]
 
-*Outputs:*
+*Outputs*
  - land.states.cEcoEfflux[zix]: autotrophic respiration from each plant pools [gC.m-2.δT-1]
  - land.states.cNPP: net primary production for each plant pool [gC.m-2.δT-1]
-
-# update
-update pools and states in aRespiration_Thornley2000A
  -
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Amthor, J. S. (2000), The McCree-de Wit-Penning de Vries-Thornley  respiration paradigms: 30 years later, Ann Bot-London, 86[1], 1-20.  Ryan, M. G. (1991), Effects of Climate Change on Plant Respiration, Ecol  Appl, 1[2], 157-167.
  - Thornley, J. H. M., & M. G. R. Cannell [2000], Modelling the components  of plant respiration: Representation & realism, Ann Bot-London, 85[1]  55-67.
 
-*Versions:*
+*Versions*
  - 1.0 on 06.02.2020 [sbesnard]: cleaned up the code
 
 *Created by:*
- - Nuno Carvalhais [ncarval]
+ - ncarval
 
-*Notes:*
+*Notes*
  - Questions - practical - leave raAct per pool; | make a field land.fluxes.ra  that has all the autotrophic respiration components together?  
 """
-function aRespiration_Thornley2000A_h end
+aRespiration_Thornley2000A

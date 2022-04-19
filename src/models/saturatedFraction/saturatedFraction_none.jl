@@ -1,40 +1,27 @@
-export saturatedFraction_none, saturatedFraction_none_h
-"""
-sets the land.states.soilWSatFrac [saturated soil fraction] to zeros (pix, 1)
+export saturatedFraction_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct saturatedFraction_none{T} <: saturatedFraction
-	noParameter::T = nothing | nothing | nothing | nothing
+struct saturatedFraction_none <: saturatedFraction
 end
 
 function precompute(o::saturatedFraction_none, forcing, land, infotem)
-	@unpack_saturatedFraction_none o
 
 	## calculate variables
-	soilWSatFrac = 0.0
+	soilWSatFrac = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		soilWSatFrac ∋ land.states
-	end
+	## pack land variables
+	@pack_land soilWSatFrac => land.states
 	return land
 end
 
-function compute(o::saturatedFraction_none, forcing, land, infotem)
-	# @unpack_saturatedFraction_none o
-	return land
-end
-
-function update(o::saturatedFraction_none, forcing, land, infotem)
-	# @unpack_saturatedFraction_none o
-	return land
-end
-
-"""
+@doc """
 sets the land.states.soilWSatFrac [saturated soil fraction] to zeros (pix, 1)
+
+# precompute:
+precompute/instantiate time-invariant variables for saturatedFraction_none
+
+
+---
 
 # Extended help
 """
-function saturatedFraction_none_h end
+saturatedFraction_none

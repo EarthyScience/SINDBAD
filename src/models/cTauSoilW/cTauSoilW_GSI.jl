@@ -1,10 +1,5 @@
-export cTauSoilW_GSI, cTauSoilW_GSI_h
-"""
-calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter. calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
+export cTauSoilW_GSI
 
-# Parameters:
-$(PARAMFIELDS)
-"""
 @bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3} <: cTauSoilW
 	Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
 	WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
@@ -15,21 +10,22 @@ function precompute(o::cTauSoilW_GSI, forcing, land, infotem)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
-	p_fsoilW = ones(size(infotem.pools.carbon.initValues.cEco))
+	p_fsoilW = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
 
-	## pack variables
-	@pack_land begin
-		p_fsoilW ∋ land.cTauSoilW
-	end
+	## pack land variables
+	@pack_land p_fsoilW => land.cTauSoilW
 	return land
 end
 
 function compute(o::cTauSoilW_GSI, forcing, land, infotem)
+	## unpack parameters
 	@unpack_cTauSoilW_GSI o
 
-	## unpack variables
+	## unpack land variables
+	@unpack_land p_fsoilW ∈ land.cTauSoilW
+
+	## unpack land variables
 	@unpack_land begin
-		p_fsoilW ∈ land.cTauSoilW
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 	end
@@ -39,15 +35,15 @@ function compute(o::cTauSoilW_GSI, forcing, land, infotem)
 	B = WoptB
 	## for the litter pools; only use the top layer"s moisture
 	soilW_top = 100 * soilW[1] / p_wSat[1]
-	#--> first half of the response curve
+	# first half of the response curve
 	W2p1 = 1 / (1 + exp(A * (-10.0))) / (1 + exp(A * (- 10.0)))
 	W2C1 = 1 / W2p1
 	W21 = W2C1 / (1 + exp(A * (WOPT - 10 - soilW_top))) / (1 + exp(A * (- WOPT - 10 + soilW_top)))
-	#--> second half of the response curve
+	# second half of the response curve
 	W2p2 = 1 / (1 + exp(B * (-10.0))) / (1 + exp(B * (- 10.0)))
 	W2C2 = 1 / W2p2
 	T22 = W2C2 / (1 + exp(B * (WOPT - 10 - soilW_top))) / (1 + exp(B * (- WOPT - 10 + soilW_top)))
-	#--> combine the response curves
+	# combine the response curves
 	v = soilW_top >= WOPT
 	T2 = W21
 	T2[v] = T22[v]
@@ -58,15 +54,15 @@ function compute(o::cTauSoilW_GSI, forcing, land, infotem)
 	end
 	## repeat for the soil pools; using all soil moisture layers
 	soilW_all = 100 * sum(soilW) / sum(p_wSat)
-	#--> first half of the response curve
+	# first half of the response curve
 	W2p1 = 1 / (1 + exp(A * (-10.0))) / (1 + exp(A * (- 10.0)))
 	W2C1 = 1 / W2p1
 	W21 = W2C1 / (1 + exp(A * (WOPT - 10 - soilW_all))) / (1 + exp(A * (- WOPT - 10 + soilW_all)))
-	#--> second half of the response curve
+	# second half of the response curve
 	W2p2 = 1 / (1 + exp(B * (-10.0))) / (1 + exp(B * (- 10.0)))
 	W2C2 = 1 / W2p2
 	T22 = W2C2 / (1 + exp(B * (WOPT - 10 - soilW_all))) / (1 + exp(B * (- WOPT - 10 + soilW_all)))
-	#--> combine the response curves
+	# combine the response curves
 	v = soilW_all >= WOPT
 	T2 = W21
 	T2[v] = T22[v]
@@ -77,50 +73,48 @@ function compute(o::cTauSoilW_GSI, forcing, land, infotem)
 	end
 	fsoilW = soilW_all_sc
 
-	## pack variables
-	@pack_land begin
-		(fsoilW, p_fsoilW) ∋ land.cTauSoilW
-	end
+	## pack land variables
+	@pack_land (fsoilW, p_fsoilW) => land.cTauSoilW
 	return land
 end
 
-function update(o::cTauSoilW_GSI, forcing, land, infotem)
-	# @unpack_cTauSoilW_GSI o
-	return land
-end
+@doc """
+calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
 
-"""
-calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter. calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
+# Parameters
+$(PARAMFIELDS)
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilW_GSI
+---
 
 # compute:
 Effect of soil moisture on decomposition rates using cTauSoilW_GSI
 
-*Inputs:*
+*Inputs*
  - land.pools.soilW: soil temperature
 
-*Outputs:*
+*Outputs*
  - land.cTauSoilW.p_fsoilW: effect of moisture on cTau for different pools
-
-# update
-update pools and states in cTauSoilW_GSI
  -
+
+# precompute:
+precompute/instantiate time-invariant variables for cTauSoilW_GSI
+
+
+---
 
 # Extended help
 
-*References:*
+*References*
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
  - Potter, C., Klooster, S., Myneni, R., Genovese, V., Tan, P. N., & Kumar, V. (2003).  Continental-scale comparisons of terrestrial carbon sinks estimated from satellite data & ecosystem  modeling 1982–1998. Global & Planetary Change, 39[3-4], 201-213.
  - Potter; C. S.; Randerson; J. T.; Field; C. B.; Matson; P. A.; Vitousek; P. M.; Mooney; H. A.  & Klooster, S. A. (1993). Terrestrial ecosystem production: a process model based on global  satellite & surface data. Global Biogeochemical Cycles, 7[4], 811-841.
 
-*Versions:*
+*Versions*
  - 1.0 on 12.02.2021 [skoirala]:  
 
 *Created by:*
- - Sujan Koirala
+ - skoirala
 
-*Notes:*
+*Notes*
 """
-function cTauSoilW_GSI_h end
+cTauSoilW_GSI

@@ -1,5 +1,14 @@
 export fAPAR
-"""
+
+abstract type fAPAR <: LandEcosystem end
+
+include("fAPAR_constant.jl")
+include("fAPAR_cVegLeaf.jl")
+include("fAPAR_forcing.jl")
+include("fAPAR_LAI.jl")
+include("fAPAR_VegFraction.jl")
+
+@doc """
 Fraction of absorbed photosynthetically active radiation
 
 # Approaches:
@@ -9,9 +18,4 @@ Fraction of absorbed photosynthetically active radiation
  - LAI: 
  - VegFrac: 
 """
-abstract type fAPAR <: LandEcosystem end
-include("fAPAR_constant.jl")
-include("fAPAR_cVegLeaf.jl")
-include("fAPAR_forcing.jl")
-include("fAPAR_LAI.jl")
-include("fAPAR_VegFrac.jl")
+fAPAR

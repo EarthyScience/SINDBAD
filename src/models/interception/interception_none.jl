@@ -1,40 +1,27 @@
-export interception_none, interception_none_h
-"""
-sets the interception evaporation to zeros
+export interception_none
 
-# Parameters:
-$(PARAMFIELDS)
-"""
-@bounds @describe @units @with_kw struct interception_none{T} <: interception
-	noParameter::T = nothing | nothing | nothing | nothing
+struct interception_none <: interception
 end
 
 function precompute(o::interception_none, forcing, land, infotem)
-	@unpack_interception_none o
 
 	## calculate variables
-	interception = 0.0
+	interception = infotem.helpers.zero
 
-	## pack variables
-	@pack_land begin
-		interception ∋ land.fluxes
-	end
+	## pack land variables
+	@pack_land interception => land.fluxes
 	return land
 end
 
-function compute(o::interception_none, forcing, land, infotem)
-	# @unpack_interception_none o
-	return land
-end
-
-function update(o::interception_none, forcing, land, infotem)
-	# @unpack_interception_none o
-	return land
-end
-
-"""
+@doc """
 sets the interception evaporation to zeros
+
+# precompute:
+precompute/instantiate time-invariant variables for interception_none
+
+
+---
 
 # Extended help
 """
-function interception_none_h end
+interception_none
