@@ -3,17 +3,17 @@ export cTau_simple
 struct cTau_simple <: cTau
 end
 
-function precompute(o::cTau_simple, forcing, land, infotem)
+function precompute(o::cTau_simple, forcing, land, helpers)
 
 	## instantiate variables
-	p_k = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_k = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_k => land.cTau
 	return land
 end
 
-function compute(o::cTau_simple, forcing, land, infotem)
+function compute(o::cTau_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land p_k ∈ land.cTau
