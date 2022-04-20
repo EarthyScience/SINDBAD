@@ -4,14 +4,14 @@ export gppDiffRadiation_Turner2006
 	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
 
-function compute(o::gppDiffRadiation_Turner2006, forcing, land, infotem)
+function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppDiffRadiation_Turner2006 o
 	@unpack_forcing (Rg, RgPot) ∈ forcing
 
 
 	## calculate variables
-	CI = infotem.helpers.zero
+	CI = helpers.numbers.zero
 	valid = RgPot > 0.0;
 	CI[valid] = Rg[valid] / RgPot[valid]
 	SCI = (CI - minimum(CI, 2)) / (maximum(CI, 2) - minimum(CI, 2))

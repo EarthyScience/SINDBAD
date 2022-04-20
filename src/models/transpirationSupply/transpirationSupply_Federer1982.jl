@@ -4,7 +4,7 @@ export transpirationSupply_Federer1982
 	maxRate::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
 end
 
-function compute(o::transpirationSupply_Federer1982, forcing, land, infotem)
+function compute(o::transpirationSupply_Federer1982, forcing, land, helpers)
 	## unpack parameters
 	@unpack_transpirationSupply_Federer1982 o
 

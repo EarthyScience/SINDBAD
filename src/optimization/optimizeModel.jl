@@ -98,33 +98,33 @@ function loss(y::Matrix, ŷ::Matrix)
 end
 
 """
-getLoss(pVector, approaches, initPools, forcing, observations, tblParams, obsVariables, modelVariables)
+getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, approaches, initPools, forcing,
+function getLoss(pVector, approaches, forcing, initOut,
     observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
-    outevolution = runEcosystem(newApproaches, initPools, forcing, modelVariables, temInfo; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, modelVariables, obsVariables)
     return loss(y, ŷ)
 end
 
 """
-optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsVariables, modelVariables)
+optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, observations, selectedModels, optimParams, initPools, obsVariables, modelVariables, temInfo, optiInfo; maxfevals=100)
+function optimizeModel(forcing, initOut, observations, selectedModels, optimParams, obsVariables, modelVariables, temInfo, optiInfo; maxfevals=100)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
-    costFunc = x -> getLoss(x, selectedModels, initPools, forcing,
+    costFunc = x -> getLoss(x, selectedModels, forcing, initOut,
         observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(newApproaches, initPools, forcing, modelVariables, temInfo; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end

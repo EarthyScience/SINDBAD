@@ -6,18 +6,18 @@ export cAllocation_fixed
 	cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of NPP to cLeaf" | "fraction"
 end
 
-function precompute(o::cAllocation_fixed, forcing, land, infotem)
+function precompute(o::cAllocation_fixed, forcing, land, helpers)
 	@unpack_cAllocation_fixed o
 
 	## instantiate variables
-	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cAlloc = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land cAlloc => land.cAllocation
 	return land
 end
 
-function compute(o::cAllocation_fixed, forcing, land, infotem)
+function compute(o::cAllocation_fixed, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cAllocation_fixed o
 
@@ -34,7 +34,7 @@ function compute(o::cAllocation_fixed, forcing, land, infotem)
 	# distribute the allocation according to pools
 	cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 	for cpName in cpNames
-		zixVec = getfield(infotem.pools.carbon.zix, cpName)
+		zixVec = getfield(helpers.pools.carbon.zix, cpName)
 		N = length(zixVec)
 		for zix in zixVec
 			cAlloc[zix] = (cpNames[cpn]) / N

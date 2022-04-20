@@ -6,7 +6,7 @@ export cAllocationRadiation_GSI
 	base_Rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
 end
 
-function compute(o::cAllocationRadiation_GSI, forcing, land, infotem)
+function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cAllocationRadiation_GSI o
 	@unpack_forcing PAR ∈ forcing

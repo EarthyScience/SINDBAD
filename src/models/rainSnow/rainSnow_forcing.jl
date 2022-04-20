@@ -4,7 +4,7 @@ export rainSnow_forcing
 	SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
 end
 
-function compute(o::rainSnow_forcing, forcing, land, infotem)
+function compute(o::rainSnow_forcing, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_rainSnow_forcing o
 	@unpack_forcing (Rain, Snow) ∈ forcing
@@ -24,7 +24,7 @@ function compute(o::rainSnow_forcing, forcing, land, infotem)
 	return land
 end
 
-function update(o::rainSnow_forcing, forcing, land, infotem)
+function update(o::rainSnow_forcing, forcing, land, helpers)
 	@unpack_rainSnow_forcing o
 
 	## unpack variables

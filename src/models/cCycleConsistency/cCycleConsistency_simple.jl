@@ -3,7 +3,7 @@ export cCycleConsistency_simple
 struct cCycleConsistency_simple <: cCycleConsistency
 end
 
-function precompute(o::cCycleConsistency_simple, forcing, land, infotem)
+function precompute(o::cCycleConsistency_simple, forcing, land, helpers)
 
 	## instantiate variables
 		flagUp = triu(ones(size(flow_matrix)), 1)
@@ -14,7 +14,7 @@ function precompute(o::cCycleConsistency_simple, forcing, land, infotem)
 	return land
 end
 
-function compute(o::cCycleConsistency_simple, forcing, land, infotem)
+function compute(o::cCycleConsistency_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (flagUp, flagLo) ∈ land.cCycleConsistency
@@ -27,7 +27,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 	# check allocation
 	tmp0 = cAlloc; #sujan
 	tmp1 = sum(cAlloc)
-	if any(tmp0 > 1) || any(tmp0 < infotem.helpers.zero)
+	if any(tmp0 > 1) || any(tmp0 < helpers.numbers.zero)
 		error("SINDBAD TEM: cAlloc lt 0 | gt 1")
 	end
 	if any(abs(sum(tmp1) - 1) > 1E-6)
@@ -39,7 +39,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 	for pix in 1:info.tem.helpers.sizes.nPix
 		flow_matrix = squeeze(p_A[pix])
 		# of diagonal values of 0 must be between 0 & 1
-		anyBad = any(flow_matrix * (flagLo + flagUp) < infotem.helpers.zero)
+		anyBad = any(flow_matrix * (flagLo + flagUp) < helpers.numbers.zero)
 		if anyBad
 			error("negative values in the p_cFlow_A matrix!")
 		end
@@ -57,11 +57,11 @@ function compute(o::cCycleConsistency_simple, forcing, land, infotem)
 			error("sum of cols higher than one in upper in p_cFlow_A matrix")
 		end
 	end
-	# flow_matrix = reshape(p_A, infotem.pools.carbon.nZix.cEco, infotem.pools.carbon.nZix.cEco)
+	# flow_matrix = reshape(p_A, helpers.pools.carbon.nZix.cEco, helpers.pools.carbon.nZix.cEco)
 	# flagUp = triu(ones(size(flow_matrix)), 1)
 	# flagLo = tril(ones(size(flow_matrix)), -1)
 	# # of diagonal values of 0 must be between 0 & 1
-	# anyBad = any(flow_matrix * (flagLo+flagUp) < infotem.helpers.zero)
+	# anyBad = any(flow_matrix * (flagLo+flagUp) < helpers.numbers.zero)
 	# if anyBad
 	# error("negative values in the p_cFlow_A matrix!")
 	# end

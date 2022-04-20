@@ -4,7 +4,7 @@ export cAllocationTreeFraction_Friedlingstein1999
 	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "fine root to coarse root fraction" | "fraction"
 end
 
-function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, infotem)
+function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cAllocationTreeFraction_Friedlingstein1999 o
 
@@ -14,26 +14,26 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, i
 
 	## calculate variables
 	# check if there are fine & coarse root pools
-	if isfield(infotem.pools.carbon.components, :cVegWoodC) && isfield(infotem.pools.carbon.components, :cVegWoodF)
+	if isfield(helpers.pools.carbon.components, :cVegWoodC) && isfield(helpers.pools.carbon.components, :cVegWoodF)
 		cpNames = [:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf]
 		zixVecs = [
-		infotem.pools.carbon.zix.cVegRootF
-		infotem.pools.carbon.zix.cVegRootC
-		infotem.pools.carbon.zix.cVegWood
-		infotem.pools.carbon.zix.cVegLeaf
+		helpers.pools.carbon.zix.cVegRootF
+		helpers.pools.carbon.zix.cVegRootC
+		helpers.pools.carbon.zix.cVegWood
+		helpers.pools.carbon.zix.cVegLeaf
 		]
 	else
 		cpNames = [:cVegRoot, :cVegWood, :cVegLeaf]
 		zixVecs = [
-		infotem.pools.carbon.zix.cVegRoot
-		infotem.pools.carbon.zix.cVegWood
-		infotem.pools.carbon.zix.cVegLeaf
+		helpers.pools.carbon.zix.cVegRoot
+		helpers.pools.carbon.zix.cVegWood
+		helpers.pools.carbon.zix.cVegLeaf
 		]
 	end
 	p_cVegZix = zixVecs
 	p_cVegName = cpNames
 	# for cp = 1:length(cpNames)
-	# zix = infotem.pools.carbon.zix.(cpNames[cp])
+	# zix = helpers.pools.carbon.zix.(cpNames[cp])
 	# p_cVegZix[cp] = zix
 	# end
 	# TreeFrac & fine to coarse root ratio
@@ -41,9 +41,9 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, i
 	rf2rc = Rf2Rc
 	# the allocation fractions according to the partitioning to root/wood/leaf
 	# - represents plant level allocation
-	r0 = sum(cAlloc[infotem.pools.carbon.zix.cVegRoot]); # this is to below ground root fine+coarse
-	s0 = sum(cAlloc[infotem.pools.carbon.zix.cVegWood])
-	l0 = sum(cAlloc[infotem.pools.carbon.zix.cVegLeaf])
+	r0 = sum(cAlloc[helpers.pools.carbon.zix.cVegRoot]); # this is to below ground root fine+coarse
+	s0 = sum(cAlloc[helpers.pools.carbon.zix.cVegWood])
+	l0 = sum(cAlloc[helpers.pools.carbon.zix.cVegLeaf])
 	# adjust for spatial consideration of TreeFrac & plant level
 	# partitioning between fine & coarse roots
 	cF.cVegWood = tc
@@ -58,19 +58,19 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, i
 		cAlloc[zix] = cF.(cpName) * cAlloc[zix]
 	end
 	# for cp = p_cVegName
-	# zix = infotem.pools.carbon.zix.(cp)
+	# zix = helpers.pools.carbon.zix.(cp)
 	# cAlloc[zix] = cF.(cp) * cAlloc[zix]
 	# end
 	# originally before 2020-11-05
 	# check if there are fine & coarse root pools
-	# if isfield(infotem.pools.carbon.components, :cVegWoodC) && # isfield(infotem.pools.carbon.components, :cVegWoodF)
+	# if isfield(helpers.pools.carbon.components, :cVegWoodC) && # isfield(helpers.pools.carbon.components, :cVegWoodF)
 	# cpNames = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 	# else
 	# cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 	# end
 	# # adjust the allocation parameters
 	# for cp = cpNames
-	# zix = infotem.pools.carbon.zix.(cp)
+	# zix = helpers.pools.carbon.zix.(cp)
 	# cAlloc[zix] = cF.(cp) * cAlloc[zix]
 	# end
 

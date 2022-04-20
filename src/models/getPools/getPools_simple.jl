@@ -3,20 +3,20 @@ export getPools_simple
 struct getPools_simple <: getPools
 end
 
-function precompute(o::getPools_simple, forcing, land, infotem)
+function precompute(o::getPools_simple, forcing, land, helpers)
 
 	## instantiate water pool changes
-	ΔsoilW = repeat(infotem.helpers.azero, infotem.pools.water.nZix.soilW)
-	ΔgroundW = repeat(infotem.helpers.azero, infotem.pools.water.nZix.groundW)
-	ΔsurfaceW = repeat(infotem.helpers.azero, infotem.pools.water.nZix.surfaceW)
-	ΔsnowW = repeat(infotem.helpers.azero, infotem.pools.water.nZix.snowW)
+	ΔsoilW = zeros(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	ΔgroundW = ones(helpers.numbers.numType, helpers.pools.water.nZix.groundW)
+	ΔsurfaceW = ones(helpers.numbers.numType, helpers.pools.water.nZix.surfaceW)
+	ΔsnowW = ones(helpers.numbers.numType, helpers.pools.water.nZix.snowW)
 
 	## pack land variables
 	@pack_land (ΔsoilW, ΔgroundW, ΔsurfaceW, ΔsnowW) => land.states
 	return land
 end
 
-function compute(o::getPools_simple, forcing, land, infotem)
+function compute(o::getPools_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land rain ∈ land.rainSnow

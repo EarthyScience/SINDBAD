@@ -3,7 +3,7 @@ export rootWaterUptake_proportion
 struct rootWaterUptake_proportion <: rootWaterUptake
 end
 
-function compute(o::rootWaterUptake_proportion, forcing, land, infotem)
+function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -17,7 +17,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, infotem)
 	pawActTotal = sum(pawAct)
 	wRootUptake = copy(pawAct)
 	# extract from top to bottom
-	for sl in 1:infotem.pools.water.nZix.soilW
+	for sl in 1:helpers.pools.water.nZix.soilW
 		soilWAvailProp = max(0.0, pawAct[sl] / (pawActTotal + 0.0001)); # + 0.0001 is  necessary because supply can be 0 -> 0 / 0 = NaN
 		contrib = transp * soilWAvailProp
 		wRootUptake[sl] = contrib; #
@@ -32,7 +32,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, infotem)
 	return land
 end
 
-function update(o::rootWaterUptake_proportion, forcing, land, infotem)
+function update(o::rootWaterUptake_proportion, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

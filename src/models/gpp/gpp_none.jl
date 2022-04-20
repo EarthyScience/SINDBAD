@@ -3,10 +3,10 @@ export gpp_none
 struct gpp_none <: gpp
 end
 
-function precompute(o::gpp_none, forcing, land, infotem)
+function precompute(o::gpp_none, forcing, land, helpers)
 
 	## calculate variables
-	gpp = infotem.helpers.zero
+	gpp = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land gpp => land.fluxes

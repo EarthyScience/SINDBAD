@@ -3,11 +3,11 @@ export gppSoilW_none
 struct gppSoilW_none <: gppSoilW
 end
 
-function precompute(o::gppSoilW_none, forcing, land, infotem)
+function precompute(o::gppSoilW_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	SMScGPP = infotem.helpers.one
+	SMScGPP = helpers.numbers.one
 
 	## pack land variables
 	@pack_land SMScGPP => land.gppSoilW

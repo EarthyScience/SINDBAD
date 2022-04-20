@@ -3,7 +3,7 @@ export groundWSoilWInteraction_VanDijk2010
 struct groundWSoilWInteraction_VanDijk2010 <: groundWSoilWInteraction
 end
 
-function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, infotem)
+function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -11,10 +11,10 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, infotem)
 		(groundW, soilW) ∈ land.pools
 	end
 	# index of the last soil layer
-	soilWend = infotem.pools.water.nZix.soilW
+	soilWend = helpers.pools.water.nZix.soilW
 	# degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
 	dosSoilend = soilW[soilWend] / p_wSat[soilWend]
-	# k_unsat = feval(kUnsatFuncH, s, p, info, soilWend)
+	# k_unsat = feval(unsatK, s, p, info, soilWend)
 	k_sat = p_kSat[soilWend]; #GW is saturated
 	k_fc = p_kFC[soilWend]; #GW is saturated
 	# get the capillary flux
@@ -33,7 +33,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, infotem)
+function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
@@ -60,7 +60,7 @@ Groundwater soil moisture interactions (e.g. capilary flux, water using groundWS
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  - land.fluxes.gwClux: capillary flux

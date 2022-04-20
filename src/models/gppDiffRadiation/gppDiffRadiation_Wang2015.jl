@@ -4,7 +4,7 @@ export gppDiffRadiation_Wang2015
 	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
 end
 
-function compute(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
+function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppDiffRadiation_Wang2015 o
 	@unpack_forcing (Rg, RgPot) ∈ forcing
@@ -13,11 +13,11 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, infotem)
 	## calculate variables
 	## FROM SHANNING
 	# CI = cloudiness index
-	CI = infotem.helpers.zero
+	CI = helpers.numbers.zero
 	valid = RgPot > 0.0
 	CI[valid] = 1 - Rg[valid] / RgPot[valid]
 	CI_nor = 1.0
-	yearsVec = infotem.dates.year
+	yearsVec = helpers.dates.year
 	yearsVec = yearsVec[1:size(CI, 2)]
 	for i in unique(yearsVec)
 		ndx = yearsVec == i

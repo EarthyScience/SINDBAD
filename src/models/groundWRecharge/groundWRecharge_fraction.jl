@@ -4,7 +4,7 @@ export groundWRecharge_fraction
 	rf::T1 = 0.1 | (0.01, 0.99) | "fraction of land runoff that percolates to groundwater" | ""
 end
 
-function compute(o::groundWRecharge_fraction, forcing, land, infotem)
+function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWRecharge_fraction o
 
@@ -17,7 +17,7 @@ function compute(o::groundWRecharge_fraction, forcing, land, infotem)
 	## calculate variables
 	# calculate recharge
 	gwRec = rf * (soilW[end] + ΔsoilW[end])
-	ΔgroundW .= gwRec / infotem.pools.water.nZix.groundW
+	ΔgroundW .= gwRec / helpers.pools.water.nZix.groundW
 	ΔsoilW[end] = ΔsoilW[end] - gwRec
 
 	## pack land variables
@@ -28,7 +28,7 @@ function compute(o::groundWRecharge_fraction, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWRecharge_fraction, forcing, land, infotem)
+function update(o::groundWRecharge_fraction, forcing, land, helpers)
 	@unpack_groundWRecharge_fraction o
 
 	## unpack variables

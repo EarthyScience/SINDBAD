@@ -5,7 +5,7 @@ export gppAirT_MOD17
 	Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
 end
 
-function compute(o::gppAirT_MOD17, forcing, land, infotem)
+function compute(o::gppAirT_MOD17, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_MOD17 o
 	@unpack_forcing TairDay ∈ forcing
@@ -16,7 +16,7 @@ function compute(o::gppAirT_MOD17, forcing, land, infotem)
 	td = (Tmax - Tmin) * tmp
 	tmax = Tmax * tmp
 	tsc = TairDay / td + 1 - tmax / td
-	tsc[tsc < infotem.helpers.zero] = infotem.helpers.zero
+	tsc[tsc < helpers.numbers.zero] = helpers.numbers.zero
 	tsc[tsc > 1] = 1
 	TempScGPP = tsc
 

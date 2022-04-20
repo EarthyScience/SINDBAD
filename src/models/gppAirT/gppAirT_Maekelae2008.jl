@@ -6,7 +6,7 @@ export gppAirT_Maekelae2008
 	Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
 end
 
-function compute(o::gppAirT_Maekelae2008, forcing, land, infotem)
+function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_Maekelae2008 o
 	@unpack_forcing TairDay ∈ forcing
@@ -23,8 +23,8 @@ function compute(o::gppAirT_Maekelae2008, forcing, land, infotem)
 		X[ii] = X[ii-1] + (1 / TimConst) * (TairDay[ii] - X[ii-1])
 	end
 	# calculate the stress & saturation
-	S = max(X - X0 , infotem.helpers.zero)
-	vsc = max(min(S / Smax, 1), infotem.helpers.zero)
+	S = max(X - X0 , helpers.numbers.zero)
+	vsc = max(min(S / Smax, 1), helpers.numbers.zero)
 	# assign stressor
 	TempScGPP = vsc
 

@@ -3,10 +3,10 @@ export cAllocationLAI_none
 struct cAllocationLAI_none <: cAllocationLAI
 end
 
-function precompute(o::cAllocationLAI_none, forcing, land, infotem)
+function precompute(o::cAllocationLAI_none, forcing, land, helpers)
 
 	## calculate variables
-	LL = infotem.helpers.one
+	LL = helpers.numbers.one
 
 	## pack land variables
 	@pack_land LL => land.cAllocationLAI

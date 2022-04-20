@@ -6,7 +6,7 @@ export gppAirT_TEM
 	Topt::T3 = 15.0 | (5.0, 30.0) | "?? Check with martin" | "°C"
 end
 
-function compute(o::gppAirT_TEM, forcing, land, infotem)
+function compute(o::gppAirT_TEM, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_TEM o
 	@unpack_forcing TairDay ∈ forcing
@@ -20,7 +20,7 @@ function compute(o::gppAirT_TEM, forcing, land, infotem)
 	pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - pTopt) ^ 2)
 	TempScGPP[TairDay > Tmax] = 0
 	TempScGPP[TairDay < Tmin] = 0
-	TempScGPP = min(max(pTScGPP, infotem.helpers.zero), 1)
+	TempScGPP = min(max(pTScGPP, helpers.numbers.zero), 1)
 
 	## pack land variables
 	@pack_land TempScGPP => land.gppAirT

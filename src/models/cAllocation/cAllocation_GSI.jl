@@ -3,17 +3,17 @@ export cAllocation_GSI
 struct cAllocation_GSI <: cAllocation
 end
 
-function precompute(o::cAllocation_GSI, forcing, land, infotem)
+function precompute(o::cAllocation_GSI, forcing, land, helpers)
 
 	## instantiate variables
-	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco);
+	cAlloc = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco);
 
 	## pack land variables
 	@pack_land cAlloc => land.cAllocation
 	return land
 end
 
-function compute(o::cAllocation_GSI, forcing, land, infotem)
+function compute(o::cAllocation_GSI, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land cAlloc ∈ land.cAllocation
@@ -25,9 +25,9 @@ function compute(o::cAllocation_GSI, forcing, land, infotem)
 	end
 	p_cpNames = [:cVegRoot, :cVegWood, :cVegLeaf]
 	p_zixVecs = [
-	infotem.pools.carbon.zix.cVegRoot
-	infotem.pools.carbon.zix.cVegWood
-	infotem.pools.carbon.zix.cVegLeaf
+	helpers.pools.carbon.zix.cVegRoot
+	helpers.pools.carbon.zix.cVegWood
+	helpers.pools.carbon.zix.cVegLeaf
 	]
 	# allocation to root; wood & leaf
 	cf2.cVegLeaf = fW / (fW + fT) / 2
@@ -45,7 +45,7 @@ function compute(o::cAllocation_GSI, forcing, land, infotem)
 	end
 	# cpNames = [:cVegRoot, :cVegWood, :cVegLeaf]
 	# for cpName = cpNames
-	# zixVec = infotem.pools.carbon.zix.(cpName)
+	# zixVec = helpers.pools.carbon.zix.(cpName)
 	# N = length(zixVec)
 	# for zix = zixVec
 	# cAlloc[zix] = cf2.(cpName) / N
