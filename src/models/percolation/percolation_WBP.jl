@@ -3,7 +3,7 @@ export percolation_WBP
 struct percolation_WBP <: percolation
 end
 
-function compute(o::percolation_WBP, forcing, land, infotem)
+function compute(o::percolation_WBP, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

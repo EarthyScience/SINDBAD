@@ -12,15 +12,15 @@ export describe, bounds, units, sindbad_models
 abstract type LandEcosystem end
 
 # fallback functions for precompute, compute and update. These functions here make the corresponding functions in the model (approaches) optional 
-function precompute(o::LandEcosystem, forcing, land, infotem)
+function precompute(o::LandEcosystem, forcing, land, helpers)
 	return land
 end
 
-function compute(o::LandEcosystem, forcing, land, infotem)
+function compute(o::LandEcosystem, forcing, land, helpers)
 	return land
 end
 
-function update(o::LandEcosystem, forcing, land, infotem)
+function update(o::LandEcosystem, forcing, land, helpers)
 	return land
 end
 

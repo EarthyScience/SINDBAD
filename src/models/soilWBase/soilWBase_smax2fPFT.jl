@@ -16,35 +16,39 @@ export soilWBase_smax2fPFT
 	smaxPFT11::T13 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth" | "fraction"
 end
 
-function precompute(o::soilWBase_smax2fPFT, forcing, land, infotem)
+function precompute(o::soilWBase_smax2fPFT, forcing, land, helpers)
+	#@needscheck
 	@unpack_soilWBase_smax2fPFT o
+
+	@unpack_land begin
+		n_soilW = soilW ∈ helpers.pools.water.nZix
+		numType ∈ helpers.numbers
+	end
 
 	## precomputations/check
 	# get the soil thickness & root distribution information from input
-	soilDepths = infotem.pools.water.layerThickness.soilW;
-	p_soilDepths = soilDepths;
-	p_nsoilLayers = infotem.pools.water.nZix.soilW;
+	p_soilDepths = helpers.pools.water.layerThickness.soilW;
 	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-	if length(soilDepths) != infotem.pools.water.nZix.soilW && length(soilDepths) != 2 
+	if length(p_soilDepths) != n_soilW || length(p_soilDepths) != 2 
 		error(["soilWBase_smax2Layer: the number of soil layers in modelStructure.json does not match with soil depths specified. This approach needs 2 soil layers."])
 	end
 
 	## instantiate variables
-	p_wSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_wFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_wWP = repeat(infotem.helpers.azero, infotem.pools.water.nZix.soilW)
+	p_wSat = ones(numType, n_soilW)
+	p_wFC = ones(numType, n_soilW)
+	p_wWP = zeros(numType, n_soilW)
 
 	## pack land variables
-	@pack_land (soilDepths, p_soilDepths, p_nsoilLayers, p_wSat, p_wFC, p_wWP) => land.soilWBase
+	@pack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) => land.soilWBase
 	return land
 end
 
-function compute(o::soilWBase_smax2fPFT, forcing, land, infotem)
+function compute(o::soilWBase_smax2fPFT, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_soilWBase_smax2fPFT o
 
 	## unpack land variables
-	@unpack_land (soilDepths, p_soilDepths, p_nsoilLayers, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+	@unpack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
 	@unpack_forcing PFT ∈ forcing
 
 
@@ -55,10 +59,8 @@ function compute(o::soilWBase_smax2fPFT, forcing, land, infotem)
 	for nC in 1:length(tmp_classes)
 		nPFT = tmp_classes[nC]
 		p_tmp = eval(char(["smaxPFT" num2str(nPFT)]))
-		p_smaxPFT[PFT == nPFT, 1] = soilDepths[2]* p_tmp; #
+		p_smaxPFT[PFT == nPFT, 1] = p_soilDepths[2]* p_tmp; #
 	end
-	# create the arrays to fill in the soil properties
-	# storages
 	# set the properties for each soil layer
 	# 1st layer
 	p_wSat[1] = smax1 * soilDepths[1]
@@ -88,7 +90,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fPFT
 
 *Inputs*
  - forcing.PFT: PFT classes
- - infotem.pools.water.: soil layers & depths
+ - helpers.pools.water.: soil layers & depths
 
 *Outputs*
  - land.soilWBase.p_nsoilLayers

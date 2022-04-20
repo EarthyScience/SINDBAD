@@ -3,7 +3,7 @@ export groundWRecharge_kUnsat
 struct groundWRecharge_kUnsat <: groundWRecharge
 end
 
-function compute(o::groundWRecharge_kUnsat, forcing, land, infotem)
+function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -13,10 +13,10 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, infotem)
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 	# index of the last soil layer
-	k_unsat = unsatK(land, infotem, infotem.pools.water.nZix.soilW)
+	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
 	gwRec = min(k_unsat, soilW[end] + ΔsoilW[end])
 
-	ΔgroundW .= gwRec / infotem.pools.water.nZix.groundW
+	ΔgroundW .= gwRec / helpers.pools.water.nZix.groundW
 	ΔsoilW[end] = ΔsoilW[end] - gwRec
 
 	## pack land variables
@@ -27,7 +27,7 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWRecharge_kUnsat, forcing, land, infotem)
+function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
@@ -62,7 +62,7 @@ Recharge the groundwater using groundWRecharge_kUnsat
 
 *Inputs*
  - land.pools.soilW: soil moisture
- - land.soilProperties.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
  - land.soilWBase.p_wSat: moisture at saturation
 
 *Outputs*

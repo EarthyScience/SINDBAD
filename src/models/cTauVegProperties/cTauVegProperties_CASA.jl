@@ -10,19 +10,19 @@ export cTauVegProperties_CASA
 	LITC2N_per_PFT::T7 = [40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
 end
 
-function precompute(o::cTauVegProperties_CASA, forcing, land, infotem)
+function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	@unpack_cTauVegProperties_CASA o
 
 	## instantiate variables
-	p_kfVeg = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco); #sujan
-		annk = infotem.helpers.zero; #sujan ones(size(AGE))
+	p_kfVeg = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan
+		annk = helpers.numbers.zero; #sujan ones(size(AGE))
 
 	## pack land variables
 	@pack_land (p_kfVeg, annk) => land.cTauVegProperties
 	return land
 end
 
-function compute(o::cTauVegProperties_CASA, forcing, land, infotem)
+function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauVegProperties_CASA o
 
@@ -39,24 +39,24 @@ function compute(o::cTauVegProperties_CASA, forcing, land, infotem)
 	p_C2LIGNIN = C2LIGNIN; #sujan
 	## adjust the annk that are pft dependent directly on the p matrix
 	pftVec = unique(PFT)
-	# AGE = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan
+	# AGE = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan
 	for cpN in (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 		# get average age from parameters
-		AGE = infotem.helpers.zero; #sujan
+		AGE = helpers.numbers.zero; #sujan
 		for ij in 1:length(pftVec)
 			AGE[p.vegProperties.PFT == pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
 		end
 		# compute annk based on age
 		annk[AGE > 0.0] = 1.0 / AGE[AGE > 0.0]
 		# feed it to the new annual turnover rates
-		zix = infotem.pools.carbon.zix.(cpN)
+		zix = helpers.pools.carbon.zix.(cpN)
 		p_annk[zix] = annk; #sujan
 		# p_annk[zix] = annk[zix]
 	end
 	# feed the parameters that are pft dependent.
 	pftVec = unique(PFT)
-	p_LITC2N = infotem.helpers.zero
-	p_LIGNIN = infotem.helpers.zero
+	p_LITC2N = helpers.numbers.zero
+	p_LIGNIN = helpers.numbers.zero
 	for ij in 1:length(pftVec)
 		p_LITC2N[p.vegProperties.PFT == pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
 		p_LIGNIN[p.vegProperties.PFT == pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
@@ -66,15 +66,15 @@ function compute(o::cTauVegProperties_CASA, forcing, land, infotem)
 	L2N = (p_LITC2N * p_LIGNIN) * NONSOL2SOLLIGNIN
 	# DETERMINE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
 	MTF = MTFA - (MTFB * L2N)
-	MTF[MTF < infotem.helpers.zero] = infotem.helpers.zero
+	MTF[MTF < helpers.numbers.zero] = helpers.numbers.zero
 	p_MTF = MTF
 	# DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
 	p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (1.0 - MTF)
 	# DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
 	p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
 	# feed the output
-	p_kfVeg[infotem.pools.carbon.zix.cLitLeafS] = p_LIGEFF
-	p_kfVeg[infotem.pools.carbon.zix.cLitRootFS] = p_LIGEFF
+	p_kfVeg[helpers.pools.carbon.zix.cLitLeafS] = p_LIGEFF
+	p_kfVeg[helpers.pools.carbon.zix.cLitRootFS] = p_LIGEFF
 
 	## pack land variables
 	@pack_land begin

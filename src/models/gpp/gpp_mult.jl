@@ -3,7 +3,7 @@ export gpp_mult
 struct gpp_mult <: gpp
 end
 
-function compute(o::gpp_mult, forcing, land, infotem)
+function compute(o::gpp_mult, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

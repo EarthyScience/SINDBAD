@@ -4,7 +4,7 @@ export runoffBase_Zhang2008
 	bc::T1 = 0.001 | (0.0001, 0.02) | "base flow coefficient" | "day-1"
 end
 
-function compute(o::runoffBase_Zhang2008, forcing, land, infotem)
+function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffBase_Zhang2008 o
 
@@ -23,7 +23,7 @@ function compute(o::runoffBase_Zhang2008, forcing, land, infotem)
 	return land
 end
 
-function update(o::runoffBase_Zhang2008, forcing, land, infotem)
+function update(o::runoffBase_Zhang2008, forcing, land, helpers)
 	@unpack_runoffBase_Zhang2008 o
 
 	## unpack variables

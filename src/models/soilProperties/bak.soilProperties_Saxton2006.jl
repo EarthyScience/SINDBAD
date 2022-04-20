@@ -8,28 +8,28 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
 	EC::T5 = 36.0 | (30.0, 40.0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
 end
 
-function precompute(o::soilProperties_Saxton2006, forcing, land, infotem)
+function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	@unpack_soilProperties_Saxton2006 o
 
 	## instantiate variables
-	p_α = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_β = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_α = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_β = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_kFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_θFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_ψFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_kWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_θWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_ψWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_kSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_θSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_ψSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
 
 	## pack land variables
 	@pack_land (p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) => land.soilProperties
 	return land
 end
 
-function compute(o::soilProperties_Saxton2006, forcing, land, infotem)
+function compute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	## unpack parameters
 	@unpack_soilProperties_Saxton2006 o
 
@@ -40,8 +40,8 @@ function compute(o::soilProperties_Saxton2006, forcing, land, infotem)
 	## calculate variables
 	# number of layers & creation of arrays
 	# calculate & set the soil hydraulic properties for each layer
-	for sl in 1:infotem.pools.water.nZix.soilW
-		# (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = soilParamsSaxton2006(land, infotem, sl)
+	for sl in 1:helpers.pools.water.nZix.soilW
+		# (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = soilParamsSaxton2006(land, helpers, sl)
 		CLAY = p_CLAY[sl]
 		SAND = p_SAND[sl]
 		# ORGM = p_ORGM[sl]
@@ -144,10 +144,10 @@ function compute(o::soilProperties_Saxton2006, forcing, land, infotem)
 		p_ψSat[sl] = ψSat
 	end
 	# generate the function handle to calculate soil hydraulic property
-	p_kUnsatFuncH = kSaxton2006
+	p_unsatK = kSaxton2006
 
 	## pack land variables
-	@pack_land (p_kFC, p_kSat, p_kUnsatFuncH, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
+	@pack_land (p_kFC, p_kSat, p_unsatK, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
 	return land
 end
 
@@ -204,8 +204,8 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Outputs:
  - K: the hydraulic conductivity at unsaturated land.pools.soilW [in mm/day]
- - is calculated using original equation if infotem.flags.useLookupK == 0.0
- - uses precomputed lookup table if infotem.flags.useLookupK == 1
+ - is calculated using original equation if helpers.flags.useLookupK == 0.0
+ - uses precomputed lookup table if helpers.flags.useLookupK == 1
 
 # Modifies:
 
@@ -225,7 +225,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
-function kSaxton2006(land, infotem, sl)
+function kSaxton2006(land, helpers, sl)
 	@unpack_land begin
 		(p_β, p_kSat, p_wSat) ∈ land.soilWBase
 		soilW ∈ land.pools
@@ -275,7 +275,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - SAT: Saturation moisture [0 kPa], #v
  - WP: Wilting point moisture [1500 kPa], #v
 """
-function soilParamsSaxton2006(land, infotem, sl)
+function soilParamsSaxton2006(land, helpers, sl)
 
 	# @unpack_soilProperties_Saxton2006 o
 

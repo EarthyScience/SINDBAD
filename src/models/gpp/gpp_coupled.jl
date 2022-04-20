@@ -3,7 +3,7 @@ export gpp_coupled
 struct gpp_coupled <: gpp
 end
 
-function compute(o::gpp_coupled, forcing, land, infotem)
+function compute(o::gpp_coupled, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -11,7 +11,7 @@ function compute(o::gpp_coupled, forcing, land, infotem)
 		SMScGPP ∈ land.gppSoilW
 		gppE ∈ land.gppDemand
 		AoE ∈ land.WUE
-		one ∈ infotem.helpers
+		one ∈ helpers.numbers
 	end
 	
 	gpp = min(one * tranSup * AoE, gppE * SMScGPP)

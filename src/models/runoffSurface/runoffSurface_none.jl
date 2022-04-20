@@ -3,10 +3,10 @@ export runoffSurface_none
 struct runoffSurface_none <: runoffSurface
 end
 
-function precompute(o::runoffSurface_none, forcing, land, infotem)
+function precompute(o::runoffSurface_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffSurface = infotem.helpers.zero
+	runoffSurface = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land runoffSurface => land.fluxes

@@ -3,11 +3,11 @@ export gppDiffRadiation_none
 struct gppDiffRadiation_none <: gppDiffRadiation
 end
 
-function precompute(o::gppDiffRadiation_none, forcing, land, infotem)
+function precompute(o::gppDiffRadiation_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	CloudScGPP = infotem.helpers.one
+	CloudScGPP = helpers.numbers.one
 
 	## pack land variables
 	@pack_land CloudScGPP => land.gppDiffRadiation

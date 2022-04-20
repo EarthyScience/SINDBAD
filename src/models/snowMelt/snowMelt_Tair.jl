@@ -4,7 +4,7 @@ export snowMelt_Tair
 	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
 end
 
-function compute(o::snowMelt_Tair, forcing, land, infotem)
+function compute(o::snowMelt_Tair, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_snowMelt_Tair o
 	@unpack_forcing Tair ∈ forcing
@@ -16,8 +16,8 @@ function compute(o::snowMelt_Tair, forcing, land, infotem)
 		snowW ∈ land.pools
 	end
 	# effect of temperature on snow melt = snowMeltRate * Tair
-	pRate = (rate * infotem.dates.nStepsDay)
-	Tterm = max(pRate * Tair, infotem.helpers.zero)
+	pRate = (rate * helpers.dates.nStepsDay)
+	Tterm = max(pRate * Tair, helpers.numbers.zero)
 	# snow melt [mm/day] is calculated as a simple function of temperature
 	# & scaled with the snow covered fraction
 	snowMelt = min(snowW[1] , Tterm * snowFraction)
@@ -34,7 +34,7 @@ function compute(o::snowMelt_Tair, forcing, land, infotem)
 	return land
 end
 
-function update(o::snowMelt_Tair, forcing, land, infotem)
+function update(o::snowMelt_Tair, forcing, land, helpers)
 	@unpack_snowMelt_Tair o
 
 	## unpack variables
@@ -65,7 +65,7 @@ Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 
 *Inputs*
  - forcing.Tair: temperature [C]
- - infotem.dates.nStepsDay: model time steps per day
+ - helpers.dates.nStepsDay: model time steps per day
  - land.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
  - land.states.snowFraction: snow cover fraction [-]
 

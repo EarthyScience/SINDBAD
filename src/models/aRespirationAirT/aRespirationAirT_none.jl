@@ -3,10 +3,10 @@ export aRespirationAirT_none
 struct aRespirationAirT_none <: aRespirationAirT
 end
 
-function precompute(o::aRespirationAirT_none, forcing, land, infotem)
+function precompute(o::aRespirationAirT_none, forcing, land, helpers)
 
 	## calculate variables
-	fT = infotem.helpers.one
+	fT = helpers.numbers.one
 
 	## pack land variables
 	@pack_land fT => land.aRespirationAirT

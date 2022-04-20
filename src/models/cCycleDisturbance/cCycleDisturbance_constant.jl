@@ -4,7 +4,7 @@ export cCycleDisturbance_constant
 	carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 
-function compute(o::cCycleDisturbance_constant, forcing, land, infotem)
+function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cCycleDisturbance_constant o
 	@unpack_forcing isDisturbed ∈ forcing
@@ -15,9 +15,9 @@ function compute(o::cCycleDisturbance_constant, forcing, land, infotem)
 		cEco ∈ land.pools
 		(p_giver, p_taker) ∈ land.cFlow
 	end
-	zixVecVeg = infotem.pools.carbon.zix.cVeg
+	zixVecVeg = helpers.pools.carbon.zix.cVeg
 	for zixVeg in zixVecVeg
-		cLoss = max(cEco[zixVeg]-carbon_remain, infotem.helpers.zero) * (isDisturbed)
+		cLoss = max(cEco[zixVeg]-carbon_remain, helpers.numbers.zero) * (isDisturbed)
 		ndxLoseToZix = p_taker[p_giver == zixVeg]
 		for tZ in 1:length(ndxLoseToZix)
 			tarZix = ndxLoseToZix[tZ]
@@ -30,7 +30,7 @@ function compute(o::cCycleDisturbance_constant, forcing, land, infotem)
 	return land
 end
 
-function update(o::cCycleDisturbance_constant, forcing, land, infotem)
+function update(o::cCycleDisturbance_constant, forcing, land, helpers)
 	@unpack_cCycleDisturbance_constant o
 
 	## unpack variables

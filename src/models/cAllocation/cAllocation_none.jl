@@ -3,10 +3,10 @@ export cAllocation_none
 struct cAllocation_none <: cAllocation
 end
 
-function precompute(o::cAllocation_none, forcing, land, infotem)
+function precompute(o::cAllocation_none, forcing, land, helpers)
 
 	## calculate variables
-	cAlloc = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cAlloc = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land cAlloc => land.states

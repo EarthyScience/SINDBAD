@@ -3,11 +3,11 @@ export gppVPD_none
 struct gppVPD_none <: gppVPD
 end
 
-function precompute(o::gppVPD_none, forcing, land, infotem)
+function precompute(o::gppVPD_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	VPDScGPP = infotem.helpers.one
+	VPDScGPP = helpers.numbers.one
 
 	## pack land variables
 	@pack_land VPDScGPP => land.gppVPD

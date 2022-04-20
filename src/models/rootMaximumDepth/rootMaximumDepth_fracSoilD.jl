@@ -4,13 +4,13 @@ export rootMaximumDepth_fracSoilD
 	fracRootD2SoilD::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | ""
 end
 
-function compute(o::rootMaximumDepth_fracSoilD, forcing, land, infotem)
+function compute(o::rootMaximumDepth_fracSoilD, forcing, land, helpers)
 	## unpack parameters
 	@unpack_rootMaximumDepth_fracSoilD o
 
 	## calculate variables
 	# get the soil thickness & root distribution information from input
-	maxRootDepth = sum(infotem.pools.water.layerThickness.soilW) * fracRootD2SoilD
+	maxRootDepth = sum(helpers.pools.water.layerThickness.soilW) * fracRootD2SoilD
 	# disp(["the maxRootD scalar: " fracRootD2SoilD])
 
 	## pack land variables
@@ -30,7 +30,7 @@ $(PARAMFIELDS)
 Maximum rooting depth using rootMaximumDepth_fracSoilD
 
 *Inputs*
- - infotem.pools.water.layerThickness.soilW
+ - helpers.pools.water.layerThickness.soilW
 
 *Outputs*
  - land.states.maxRootDepth: The maximum rooting depth in mm

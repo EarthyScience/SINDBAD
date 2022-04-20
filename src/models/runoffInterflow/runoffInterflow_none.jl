@@ -3,10 +3,10 @@ export runoffInterflow_none
 struct runoffInterflow_none <: runoffInterflow
 end
 
-function precompute(o::runoffInterflow_none, forcing, land, infotem)
+function precompute(o::runoffInterflow_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffInterflow = infotem.helpers.zero
+	runoffInterflow = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land runoffInterflow => land.fluxes

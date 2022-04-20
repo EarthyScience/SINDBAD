@@ -4,7 +4,7 @@ export cAllocationSoilT_gppGSI
 	τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | ""
 end
 
-function compute(o::cAllocationSoilT_gppGSI, forcing, land, infotem)
+function compute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cAllocationSoilT_gppGSI o
 

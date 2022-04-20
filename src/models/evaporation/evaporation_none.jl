@@ -3,10 +3,10 @@ export evaporation_none
 struct evaporation_none <: evaporation
 end
 
-function precompute(o::evaporation_none, forcing, land, infotem)
+function precompute(o::evaporation_none, forcing, land, helpers)
 
 	## calculate variables
-	evaporation = infotem.helpers.zero
+	evaporation = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land evaporation => land.fluxes

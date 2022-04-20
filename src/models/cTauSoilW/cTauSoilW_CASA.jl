@@ -4,18 +4,18 @@ export cTauSoilW_CASA
 	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
 
-function precompute(o::cTauSoilW_CASA, forcing, land, infotem)
+function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
-	p_fsoilW = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW
 	return land
 end
 
-function compute(o::cTauSoilW_CASA, forcing, land, infotem)
+function compute(o::cTauSoilW_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauSoilW_CASA o
 
@@ -30,7 +30,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, infotem)
 		PET ∈ land.PET
 	end
 	# NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
-	TSPY = infotem.dates.nStepsYear; #sujan
+	TSPY = helpers.dates.nStepsYear; #sujan
 	TSPM = TSPY / 12
 	# BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
 	BGRATIO = 0.0
@@ -55,11 +55,11 @@ function compute(o::cTauSoilW_CASA, forcing, land, infotem)
 	# WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
 	ndxn = (PET <= 0.0)
 	BGME[ndxn] = pBGME[ndxn]
-	BGME = max(min(BGME, infotem.helpers.one), infotem.helpers.zero)
+	BGME = max(min(BGME, helpers.numbers.one), helpers.numbers.zero)
 	# FEED IT TO THE STRUCTURE
 	fsoilW = BGME
 	# set the same moisture stress to all carbon pools
-	p_fsoilW[infotem.pools.carbon.zix.cEco] = fsoilW
+	p_fsoilW[helpers.pools.carbon.zix.cEco] = fsoilW
 
 	## pack land variables
 	@pack_land (fsoilW, p_fsoilW) => land.cTauSoilW
@@ -78,7 +78,7 @@ $(PARAMFIELDS)
 Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
 *Inputs*
- - infotem.dates.nStepsYear: number of time steps per year
+ - helpers.dates.nStepsYear: number of time steps per year
  - land.PET.PET: potential evapotranspiration [mm]
  - land.cTauSoilW.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
  - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]

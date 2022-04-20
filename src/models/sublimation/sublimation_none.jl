@@ -3,10 +3,10 @@ export sublimation_none
 struct sublimation_none <: sublimation
 end
 
-function precompute(o::sublimation_none, forcing, land, infotem)
+function precompute(o::sublimation_none, forcing, land, helpers)
 
 	## calculate variables
-	sublimation = infotem.helpers.zero
+	sublimation = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land sublimation => land.fluxes

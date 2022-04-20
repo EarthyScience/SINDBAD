@@ -3,7 +3,7 @@ export cFlow_CASA
 struct cFlow_CASA <: cFlow
 end
 
-function compute(o::cFlow_CASA, forcing, land, infotem)
+function compute(o::cFlow_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -18,15 +18,15 @@ function compute(o::cFlow_CASA, forcing, land, infotem)
 	# effects of soil & veg on the partitioning of c flows between carbon pools
 	p_F = p_F + p_F
 	# if there is fraction [F] & efficiency is 0, make efficiency 1
-	ndx = p_F > infotem.helpers.zero & p_E == infotem.helpers.zero
-	p_E[ndx] = infotem.helpers.one
+	ndx = p_F > helpers.numbers.zero & p_E == helpers.numbers.zero
+	p_E[ndx] = helpers.numbers.one
 	# if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
-	ndx = p_E > infotem.helpers.zero & p_F == infotem.helpers.zero
-	p_F[ndx] = infotem.helpers.one
+	ndx = p_E > helpers.numbers.zero & p_F == helpers.numbers.zero
+	p_F[ndx] = helpers.numbers.one
 	# build A
 	p_A = p_F * p_E
 	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > infotem.helpers.zero)) >= infotem.helpers.one)
+	(taker, giver) = find(squeeze(sum(p_A > helpers.numbers.zero)) >= helpers.numbers.one)
 	p_taker = taker
 	p_giver = giver
 	# if there is flux order check that is consistent

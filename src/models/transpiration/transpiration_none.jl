@@ -3,10 +3,10 @@ export transpiration_none
 struct transpiration_none <: transpiration
 end
 
-function precompute(o::transpiration_none, forcing, land, infotem)
+function precompute(o::transpiration_none, forcing, land, helpers)
 
 	## calculate variables
-	transpiration = infotem.helpers.zero
+	transpiration = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land transpiration => land.fluxes

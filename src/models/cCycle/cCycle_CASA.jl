@@ -3,19 +3,19 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle
 end
 
-function precompute(o::cCycle_CASA, forcing, land, infotem)
+function precompute(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
-	cEcoEfflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan moved from get states
-	cEcoInflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
-	cEcoFlow = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cEcoEfflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
+	cEcoInflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoFlow = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
 	return land
 end
 
-function compute(o::cCycle_CASA, forcing, land, infotem)
+function compute(o::cCycle_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
@@ -30,14 +30,14 @@ function compute(o::cCycle_CASA, forcing, land, infotem)
 		(fluxOrder, p_annk) ∈ land.cCycleBase
 	end
 	# NUMBER OF TIME STEPS PER YEAR
-	TSPY = infotem.dates.nStepsYear
+	TSPY = helpers.dates.nStepsYear
 	p_k = 1 - (exp(-p_annk) ^ (1 / TSPY))
 	## these all need to be zeros maybe is taken care automatically
-	cEcoEfflux[!infotem.pools.carbon.flags.cVeg] = 0.0
+	cEcoEfflux[!helpers.pools.carbon.flags.cVeg] = 0.0
 	## compute losses
 	cEcoOut = min(cEco, cEco * p_k)
 	## gains to vegetation
-	zix = infotem.pools.carbon.flags.cVeg
+	zix = helpers.pools.carbon.flags.cVeg
 	cNPP = gpp * cAlloc[zix] - cEcoEfflux[zix]
 	cEcoInflux[zix] = cNPP
 	## flows & losses
@@ -52,8 +52,8 @@ function compute(o::cCycle_CASA, forcing, land, infotem)
 	## balance
 	cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
 	## compute RA & RH
-	cRH = sum(cEcoEfflux[!infotem.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
-	cRA = sum(cEcoEfflux[infotem.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
+	cRH = sum(cEcoEfflux[!helpers.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
+	cRA = sum(cEcoEfflux[helpers.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
 	cRECO = cRH + cRA
 	cNPP = sum(cNPP)
 	NEE = cRECO - gpp
@@ -76,7 +76,7 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 Allocate carbon to vegetation components using cCycle_CASA
 
 *Inputs*
- - infotem.dates.nStepsYear: number of time steps per year
+ - helpers.dates.nStepsYear: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: giver pool array
@@ -148,7 +148,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
  - for model structures that loop the carbon cycle between pools this is  merely a rough approximation [the solution does not really work]  
  - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
 """
-function spin_cCycle_CASA(forcing, land, infotem, NI2E)
+function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	@unpack_forcing Tair ∈ forcing
 
 	@unpack_land begin
@@ -169,7 +169,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 	# helpers
 	nPix = 1
 	nTix = info.tem.helpers.sizes.nTix
-	nZix = infotem.pools.carbon.nZix.cEco
+	nZix = helpers.pools.carbon.nZix.cEco
 	# matrices for the calculations
 	cLossRate = zeros(nPix, nZix, nTix)
 	cGain = cLossRate
@@ -208,7 +208,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 		end
 	end
 	for zv in zixVecOrder
-		if any(zv == infotem.pools.carbon.zix.cVeg)
+		if any(zv == helpers.pools.carbon.zix.cVeg)
 			zixVecOrder_veg = [zixVecOrder_veg zv]
 		else
 			zixVecOrder_nonVeg = [zixVecOrder_nonVeg zv]
@@ -222,10 +222,10 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 	## solve it for each pool individually
 	for zix in zixVecOrder
 		# general k loss
-		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], infotem.helpers.one), infotem.helpers.zero)
+		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], helpers.numbers.one), helpers.numbers.zero)
 		cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 0.9999999), 1e-7); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
-		if any(zix == infotem.pools.carbon.zix.cVeg)
+		if any(zix == helpers.pools.carbon.zix.cVeg)
 			# additional losses [RA] in veg pools
 			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix, :], 1)
 			# gains in veg pools
@@ -234,7 +234,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 		end
 		if any(zix == p_taker)
 			# no additional gains from outside
-			if !any(zix == infotem.pools.carbon.zix.cVeg)
+			if !any(zix == helpers.pools.carbon.zix.cVeg)
 				cLoxxRate[zix, :] = 1.0
 			end
 			# gains from other carbon pools
@@ -281,7 +281,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 		cEco_prev[zix] = Ct
 		# CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
 		# POOLS CALCULATIONS
-		out = runForward(selectedModels, forcing, out, modelnames, infotem)
+		out = runForward(selectedModels, forcing, out, modelnames, helpers)
 		# FEED fCt
 		# fCt[zix, :] = cEco[zix, :]
 		fCt = cEco
@@ -289,7 +289,7 @@ function spin_cCycle_CASA(forcing, land, infotem, NI2E)
 	# make the fx consistent with the pools
 	cEco = sCt
 	cEco_prev = sCt
-	out = runForward(selectedModels, forcing, out, modelnames, infotem)
+	out = runForward(selectedModels, forcing, out, modelnames, helpers)
 
 	## pack land variables
 	@pack_land (cEco, cEco_prev) => land.pools

@@ -3,7 +3,7 @@ export runoffInfiltrationExcess_Jung
 struct runoffInfiltrationExcess_Jung <: runoffInfiltrationExcess
 end
 
-function compute(o::runoffInfiltrationExcess_Jung, forcing, land, infotem)
+function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

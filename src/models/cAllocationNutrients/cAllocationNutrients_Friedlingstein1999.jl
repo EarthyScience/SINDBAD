@@ -5,7 +5,7 @@ export cAllocationNutrients_Friedlingstein1999
 	maxL::T2 = 1.0 | (0.0, 1.0) | "" | ""
 end
 
-function precompute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, infotem)
+function precompute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
 	@unpack_cAllocationNutrients_Friedlingstein1999 o
 
 	## instantiate variables
@@ -16,7 +16,7 @@ function precompute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, i
 	return land
 end
 
-function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, infotem)
+function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cAllocationNutrients_Friedlingstein1999 o
 

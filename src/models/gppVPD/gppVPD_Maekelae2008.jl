@@ -4,11 +4,11 @@ export gppVPD_Maekelae2008
 	k::T1 = 0.4 | (0.06, 0.7) | "empirical parameter assuming typically negative values" | "kPa-1"
 end
 
-function compute(o::gppVPD_Maekelae2008, forcing, land, infotem)
+function compute(o::gppVPD_Maekelae2008, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppVPD_Maekelae2008 o
 	@unpack_forcing VPDDay ∈ forcing
-	@unpack_land (zero, one) ∈ infotem.helpers
+	@unpack_land (zero, one) ∈ helpers.numbers
 
 
 	## calculate variables

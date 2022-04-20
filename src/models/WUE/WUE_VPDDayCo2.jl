@@ -6,7 +6,7 @@ export WUE_VPDDayCo2
 	Cm::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
 end
 
-function compute(o::WUE_VPDDayCo2, forcing, land, infotem)
+function compute(o::WUE_VPDDayCo2, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_WUE_VPDDayCo2 o
 	@unpack_forcing VPDDay ∈ forcing
@@ -15,7 +15,7 @@ function compute(o::WUE_VPDDayCo2, forcing, land, infotem)
 	## unpack land variables
 	@unpack_land begin 
 		ambCO2 ∈ land.states
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 
 	## calculate variables

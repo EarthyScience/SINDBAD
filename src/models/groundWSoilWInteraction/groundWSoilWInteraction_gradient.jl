@@ -5,7 +5,7 @@ export groundWSoilWInteraction_gradient
 	maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 
-function compute(o::groundWSoilWInteraction_gradient, forcing, land, infotem)
+function compute(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWSoilWInteraction_gradient o
 
@@ -16,10 +16,10 @@ function compute(o::groundWSoilWInteraction_gradient, forcing, land, infotem)
 	end
 	# PREC: storage capacity of groundwater
 	# index of the last soil layer
-	soilWend = infotem.pools.water.nZix.soilW
+	soilWend = helpers.pools.water.nZix.soilW
 	p_gwmax = p_wSat[soilWend] * smax_scale
 	# zix of last soil layer
-	soilWend = infotem.pools.water.nZix.soilW
+	soilWend = helpers.pools.water.nZix.soilW
 	# gradient between groundW[1] & soilW
 	tmp_gradient = groundW[1] / p_gwmax - soilW[soilWend] / p_wSat[soilWend]; # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw
 	# scale gradient with pot flux rate to get pot flux
@@ -36,7 +36,7 @@ function compute(o::groundWSoilWInteraction_gradient, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWSoilWInteraction_gradient, forcing, land, infotem)
+function update(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
 	@unpack_groundWSoilWInteraction_gradient o
 
 	## unpack variables
@@ -67,7 +67,7 @@ $(PARAMFIELDS)
 Groundwater soil moisture interactions (e.g. capilary flux, water using groundWSoilWInteraction_gradient
 
 *Inputs*
- - info : infotem.pools.water.nZix.soilW = number of soil layers
+ - info : helpers.pools.water.nZix.soilW = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
  - land.soilWBase.p_wSat : maximum storage capacity of soil [mm]
 

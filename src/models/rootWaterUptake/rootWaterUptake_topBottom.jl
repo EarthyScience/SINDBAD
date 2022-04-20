@@ -3,7 +3,7 @@ export rootWaterUptake_topBottom
 struct rootWaterUptake_topBottom <: rootWaterUptake
 end
 
-function compute(o::rootWaterUptake_topBottom, forcing, land, infotem)
+function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -12,7 +12,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land, infotem)
 		transpiration ∈ land.fluxes
 	end
 	# get the transpiration
-	for sl in 1:infotem.pools.water.nZix.soilW
+	for sl in 1:helpers.pools.water.nZix.soilW
 		soilWAvail = pawAct[sl]
 		contrib = minimum(transpiration, soilWAvail)
 		wRootUptake[sl] = contrib
@@ -26,7 +26,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land, infotem)
 	return land
 end
 
-function update(o::rootWaterUptake_topBottom, forcing, land, infotem)
+function update(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
@@ -36,7 +36,7 @@ function update(o::rootWaterUptake_topBottom, forcing, land, infotem)
 
 	## update variables
 	# extract from top to bottom & update soil moisture 
-	for sl in 1:infotem.pools.water.nZix.soilW 
+	for sl in 1:helpers.pools.water.nZix.soilW 
 		soilW[sl] = soilW[sl] - wRootUptake[sl]; 
 	end 
 

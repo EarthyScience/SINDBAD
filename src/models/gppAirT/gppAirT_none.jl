@@ -3,11 +3,11 @@ export gppAirT_none
 struct gppAirT_none <: gppAirT
 end
 
-function precompute(o::gppAirT_none, forcing, land, infotem)
+function precompute(o::gppAirT_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	TempScGPP = infotem.helpers.one
+	TempScGPP = helpers.numbers.one
 
 	## pack land variables
 	@pack_land TempScGPP => land.gppAirT

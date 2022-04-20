@@ -3,10 +3,10 @@ export cAllocationNutrients_none
 struct cAllocationNutrients_none <: cAllocationNutrients
 end
 
-function precompute(o::cAllocationNutrients_none, forcing, land, infotem)
+function precompute(o::cAllocationNutrients_none, forcing, land, helpers)
 
 	## calculate variables
-	minWLNL = infotem.helpers.one
+	minWLNL = helpers.numbers.one
 
 	## pack land variables
 	@pack_land minWLNL => land.cAllocationNutrients

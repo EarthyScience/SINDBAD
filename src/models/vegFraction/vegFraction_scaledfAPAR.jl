@@ -4,14 +4,14 @@ export vegFraction_scaledfAPAR
 	fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
 end
 
-function compute(o::vegFraction_scaledfAPAR, forcing, land, infotem)
+function compute(o::vegFraction_scaledfAPAR, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegFraction_scaledfAPAR o
 
 	## unpack land variables
 	@unpack_land begin
 		fAPAR ∈ land.states
-		one ∈ infotem.helpers		
+		one ∈ helpers.numbers		
 	end
 
 	## calculate variables

@@ -5,18 +5,18 @@ export cTauLAI_CASA
 	kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
 end
 
-function precompute(o::cTauLAI_CASA, forcing, land, infotem)
+function precompute(o::cTauLAI_CASA, forcing, land, helpers)
 	@unpack_cTauLAI_CASA o
 
 	## instantiate variables
-	p_kfLAI = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco); #(inefficient, should be pix zix_veg)
+	p_kfLAI = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #(inefficient, should be pix zix_veg)
 
 	## pack land variables
 	@pack_land p_kfLAI => land.cTauLAI
 	return land
 end
 
-function compute(o::cTauLAI_CASA, forcing, land, infotem)
+function compute(o::cTauLAI_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauLAI_CASA o
 
@@ -29,12 +29,12 @@ function compute(o::cTauLAI_CASA, forcing, land, infotem)
 		(p_annk, p_k) ∈ land.cCycleBase
 	end
 	# set LAI stressor on τ to ones
-	TSPY = infotem.dates.nStepsYear; #sujan
-	p_cVegLeafZix = infotem.pools.carbon.zix.cVegLeaf
-	if isfield(infotem.pools.carbon.zix, :cVegRootF)
-		p_cVegRootZix = infotem.pools.carbon.zix.cVegRootF
+	TSPY = helpers.dates.nStepsYear; #sujan
+	p_cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
+	if isfield(helpers.pools.carbon.zix, :cVegRootF)
+		p_cVegRootZix = helpers.pools.carbon.zix.cVegRootF
 	else
-		p_cVegRootZix = infotem.pools.carbon.zix.cVegRoot
+		p_cVegRootZix = helpers.pools.carbon.zix.cVegRoot
 	end
 	# make sure TSPY is integer
 	TSPY = floor(Int, TSPY)
@@ -43,7 +43,7 @@ function compute(o::cTauLAI_CASA, forcing, land, infotem)
 	end
 	# PARAMETERS
 	# Get the number of time steps per year
-	TSPY = infotem.dates.nStepsYear
+	TSPY = helpers.dates.nStepsYear
 	# make sure TSPY is integer
 	TSPY = floor(Int, TSPY)
 	# BUILD AN ANNUAL LAI MATRIX
@@ -109,7 +109,7 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
 *Inputs*
  - forcing.LAI: leaf area index [m2/m2]
  - info.timeScale.stepsPerYear: number of years of simulations
- - infotem.dates.nStepsYear: number of years of simulations
+ - helpers.dates.nStepsYear: number of years of simulations
 
 *Outputs*
  - land.cTauLAI.p_kfLAI:

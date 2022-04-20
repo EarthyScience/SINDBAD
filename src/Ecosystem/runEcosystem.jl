@@ -1,66 +1,47 @@
 """
 runModels(forcing, models, out)
 """
-function runModels(forcing, models, out, modelInfo)
+function runModels(forcing, models, out, modelHelpers)
     for model in models
-        out = Models.compute(model, forcing, out, modelInfo)
-        out = Models.update(model, forcing, out, modelInfo)
+        out = Models.compute(model, forcing, out, modelHelpers)
+        out = Models.update(model, forcing, out, modelHelpers)
         # @show typeof(model), out.pools.soilW
     end
     return out
 end
 
-function runPrecompute(forcing, models, out, modelInfo)
+function runPrecompute(forcing, models, out, modelHelpers)
     for model in models
-        out = Models.precompute(model, forcing, out, modelInfo)
+        out = Models.precompute(model, forcing, out, modelHelpers)
     end
     return out
 end
 
 """
-runForward(selectedModels, forcing, out, infotem)
+runForward(selectedModels, forcing, out, helpers)
 """
-function runForward(selectedModels, forcing, out, modelnames, modelInfo)
-    modelnames = (modelnames...,)
+function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
+    modelVars = (modelVars...,)
     outtemp = map(forcing) do f
-        out = runModels(f, selectedModels, out, modelInfo)
-        NamedTuple{modelnames}(out.fluxes)
+        out = runModels(f, selectedModels, out, modelHelpers)
+        NamedTuple{modelVars}(out.fluxes)
     end
     return columntable(outtemp)
 end
 
 
 """
-getInitOut(initPools)
-create the initial out tuple with all models
-"""
-function getInitOut(initPools, selectedModels)
-    out = (;)
-    out = (; out..., pools=(;), states=(;), fluxes=(;))
-    out = (; out..., pools=(; out.pools..., initPools...))
-    # @show selectedModels, string.(selectedModels)
-    sortedModels = sort([_sm for _sm in selectedModels])
-    for model in sortedModels
-        out = setTupleField(out, (model, (;)))
-    end
-    return out
-
-end
-
-
-"""
 runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
 """
-function runSpinup(selectedModels, initPools, forcing, modelInfo, history=false; nspins=3)
-    out = getInitOut(initPools, modelInfo.models.selected_models)
+function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; nspins=3)
     # out=(; pools=(;), diagnostics=(;), fluxes=(;))
     # out = (; out..., pools = (; out.pools..., initPools...))
     tsteps = size(forcing, 1)
     spinuplog = history ? [values(out)[1:length(initPools)]] : nothing
-    out = runPrecompute(forcing[1], selectedModels, out, modelInfo)
+    out = runPrecompute(forcing[1], selectedModels, out, modelHelpers)
     for j in 1:nspins
         for t in 1:tsteps
-            out = runModels(forcing[t], selectedModels, out, modelInfo)
+            out = runModels(forcing[t], selectedModels, out, modelHelpers)
             if history
                 push!(spinuplog, values(out)[1:length(initPools)])
             end
@@ -72,7 +53,7 @@ end
 """
 runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forward run
 """
-function runEcosystem(selectedModels, initPools, forcing, modelnames, modelInfo, history=false; nspins=3) # forward run
-    out, outlog = runSpinup(selectedModels, initPools, forcing, modelInfo, history; nspins=nspins)
-    return runForward(selectedModels, forcing, out, modelnames, modelInfo)
+function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
+    out, outlog = runSpinup(selectedModels, forcing, out, modelInfo.helpers, history; nspins=nspins)
+    return runForward(selectedModels, forcing, out, modelVars, modelInfo.helpers)
 end

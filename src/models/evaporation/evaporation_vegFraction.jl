@@ -5,7 +5,7 @@ export evaporation_vegFraction
 	supLim::T2 = 0.2 | (0.03, 1.0) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
-function compute(o::evaporation_vegFraction, forcing, land, infotem)
+function compute(o::evaporation_vegFraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_evaporation_vegFraction o
 
@@ -15,7 +15,7 @@ function compute(o::evaporation_vegFraction, forcing, land, infotem)
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		PET ∈ land.PET
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 
 	# multiply equilibrium PET with αSoil & [1.0 - vegFraction] to get potential soil evap
@@ -37,7 +37,7 @@ function compute(o::evaporation_vegFraction, forcing, land, infotem)
 	return land
 end
 
-function update(o::evaporation_vegFraction, forcing, land, infotem)
+function update(o::evaporation_vegFraction, forcing, land, helpers)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables

@@ -3,10 +3,10 @@ export runoffSaturationExcess_none
 struct runoffSaturationExcess_none <: runoffSaturationExcess
 end
 
-function precompute(o::runoffSaturationExcess_none, forcing, land, infotem)
+function precompute(o::runoffSaturationExcess_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffSaturation = infotem.helpers.zero
+	runoffSaturation = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land runoffSaturation => land.fluxes

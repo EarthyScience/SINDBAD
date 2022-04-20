@@ -4,7 +4,7 @@ export sublimation_GLEAM
 	α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
 end
 
-function compute(o::sublimation_GLEAM, forcing, land, infotem)
+function compute(o::sublimation_GLEAM, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_sublimation_GLEAM o
 	@unpack_forcing (PsurfDay, Rn, TairDay) ∈ forcing
@@ -40,7 +40,7 @@ function compute(o::sublimation_GLEAM, forcing, land, infotem)
 	#PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 	tmp = α * Rn * (Δ / (Δ + γ)) / λ
 
-	PTtermSub = max(tmp, infotem.helpers.zero)
+	PTtermSub = max(tmp, helpers.numbers.zero)
 	# PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 
 	# Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
@@ -54,7 +54,7 @@ function compute(o::sublimation_GLEAM, forcing, land, infotem)
 	return land
 end
 
-function update(o::sublimation_GLEAM, forcing, land, infotem)
+function update(o::sublimation_GLEAM, forcing, land, helpers)
 	@unpack_sublimation_GLEAM o
 
 	## unpack variables

@@ -5,24 +5,24 @@ export rootFraction_k2fvegFraction
 	k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
 end
 
-function precompute(o::rootFraction_k2fvegFraction, forcing, land, infotem)
+function precompute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	@unpack_rootFraction_k2fvegFraction o
 
 	## precomputations/check
 
 	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-	if infotem.pools.water.nZix.soilW != 2 
+	if helpers.pools.water.nZix.soilW != 2 
 		error("rootFraction_k2Layer: the number of soil layers in modelStructure.json does not match with soil depths specified. This approach works for 2 soil layers only.")
 	end
 	# create the arrays to fill in the soil properties 
-	p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW);
+	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW);
 
 	## pack land variables
 	@pack_land (p_fracRoot2SoilD) => land.rootFraction
 	return land
 end
 
-function compute(o::rootFraction_k2fvegFraction, forcing, land, infotem)
+function compute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_rootFraction_k2fvegFraction o
 
@@ -61,7 +61,7 @@ $(PARAMFIELDS)
 Distribution of water uptake fraction/efficiency by root per soil layer using rootFraction_k2fvegFraction
 
 *Inputs*
- - infotem.pools.water.: soil layers & depths
+ - helpers.pools.water.: soil layers & depths
  - land.states.vegFraction : vegetation fraction
 
 *Outputs*

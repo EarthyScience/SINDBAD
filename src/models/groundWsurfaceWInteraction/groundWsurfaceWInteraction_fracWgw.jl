@@ -4,7 +4,7 @@ export groundWsurfaceWInteraction_fracWgw
 	kGW2Surf::T1 = 0.5 | (0.0001, 1.0) | "scale parameter for drainage from wGW to wSurf" | "fraction"
 end
 
-function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
+function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWsurfaceWInteraction_fracWgw o
 
@@ -22,7 +22,7 @@ function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWsurfaceWInteraction_fracWgw, forcing, land, infotem)
+function update(o::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
 	@unpack_groundWsurfaceWInteraction_fracWgw o
 
 	## unpack variables

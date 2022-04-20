@@ -3,7 +3,7 @@ export runoffOverland_InfIntSat
 struct runoffOverland_InfIntSat <: runoffOverland
 end
 
-function compute(o::runoffOverland_InfIntSat, forcing, land, infotem)
+function compute(o::runoffOverland_InfIntSat, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (runoffInfiltration, runoffInterflow, runoffSaturation) ∈ land.fluxes

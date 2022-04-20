@@ -4,14 +4,14 @@ export vegFraction_scaledNDVI
 	NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
 end
 
-function compute(o::vegFraction_scaledNDVI, forcing, land, infotem)
+function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegFraction_scaledNDVI o
 
 	## unpack land variables
 	@unpack_land begin
 		NDVI ∈ land.states
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 
 

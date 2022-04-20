@@ -3,7 +3,7 @@ export PET_PriestleyTaylor1972
 struct PET_PriestleyTaylor1972 <: PET
 end
 
-function compute(o::PET_PriestleyTaylor1972, forcing, land, infotem)
+function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing (Rn, Tair) ∈ forcing
 
@@ -13,7 +13,7 @@ function compute(o::PET_PriestleyTaylor1972, forcing, land, infotem)
 	Lhv = (5.147 * exp(-0.0004643 * Tair) - 2.6466); # MJ kg-1
 	γ = 0.4 / 0.622; # hPa C-1 [psychometric constant]
 	PET = 1.26 * Δ / (Δ + γ) * Rn / Lhv
-	PET = max(PET, infotem.helpers.zero)
+	PET = max(PET, helpers.numbers.zero)
 
 	## pack land variables
 	@pack_land PET => land.PET

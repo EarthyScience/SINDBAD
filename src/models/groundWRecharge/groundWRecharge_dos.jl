@@ -4,7 +4,7 @@ export groundWRecharge_dos
 	dos_exp::T1 = 1.0 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
 end
 
-function compute(o::groundWRecharge_dos, forcing, land, infotem)
+function compute(o::groundWRecharge_dos, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWRecharge_dos o
 
@@ -14,8 +14,8 @@ function compute(o::groundWRecharge_dos, forcing, land, infotem)
 		(groundW, soilW) ∈ land.pools
 	end
 	# calculate recharge
-	dosSoilEnd = soilW[infotem.pools.water.nZix.soilW] / p_wSat[infotem.pools.water.nZix.soilW]
-	gwRec = ((dosSoilEnd) ^ (dos_exp * p_β[infotem.pools.water.nZix.soilW])) * soilW[infotem.pools.water.nZix.soilW]
+	dosSoilEnd = soilW[helpers.pools.water.nZix.soilW] / p_wSat[helpers.pools.water.nZix.soilW]
+	gwRec = ((dosSoilEnd) ^ (dos_exp * p_β[helpers.pools.water.nZix.soilW])) * soilW[helpers.pools.water.nZix.soilW]
 
 	## pack land variables
 	@pack_land begin
@@ -24,7 +24,7 @@ function compute(o::groundWRecharge_dos, forcing, land, infotem)
 	return land
 end
 
-function update(o::groundWRecharge_dos, forcing, land, infotem)
+function update(o::groundWRecharge_dos, forcing, land, helpers)
 	@unpack_groundWRecharge_dos o
 
 	## unpack variables
@@ -35,7 +35,7 @@ function update(o::groundWRecharge_dos, forcing, land, infotem)
 
 	## update variables
 	# update storages pool
-	soilW[infotem.pools.water.nZix.soilW] = soilW[infotem.pools.water.nZix.soilW] - gwRec
+	soilW[helpers.pools.water.nZix.soilW] = soilW[helpers.pools.water.nZix.soilW] - gwRec
 	groundW[1] = groundW[1] + gwRec
 
 	## pack land variables

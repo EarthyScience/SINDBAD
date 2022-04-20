@@ -3,7 +3,7 @@ export runoffOverland_Inf
 struct runoffOverland_Inf <: runoffOverland
 end
 
-function compute(o::runoffOverland_Inf, forcing, land, infotem)
+function compute(o::runoffOverland_Inf, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land runoffInfiltration ∈ land.fluxes

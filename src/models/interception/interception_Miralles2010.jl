@@ -8,7 +8,7 @@ export interception_Miralles2010
 	pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | ""
 end
 
-function compute(o::interception_Miralles2010, forcing, land, infotem)
+function compute(o::interception_Miralles2010, forcing, land, helpers)
 	## unpack parameters
 	@unpack_interception_Miralles2010 o
 

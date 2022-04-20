@@ -23,18 +23,18 @@ export cCycleBase_CASA
 	C2Nveg::T7 = [25, 260, 260, 25] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_CASA, forcing, land, infotem)
+function precompute(o::cCycleBase_CASA, forcing, land, helpers)
 	@unpack_cCycleBase_CASA o
 
 	## instantiate variables
-	p_C2Nveg = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cVeg); #sujan
+	p_C2Nveg = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cVeg); #sujan
 
 	## pack land variables
 	@pack_land p_C2Nveg => land.cCycleBase
 	return land
 end
 
-function compute(o::cCycleBase_CASA, forcing, land, infotem)
+function compute(o::cCycleBase_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cCycleBase_CASA o
 
@@ -43,11 +43,11 @@ function compute(o::cCycleBase_CASA, forcing, land, infotem)
 
 	## calculate variables
 	# carbon to nitrogen ratio [gC.gN-1]
-	for zix in infotem.pools.carbon.zix.cVeg
+	for zix in helpers.pools.carbon.zix.cVeg
 		p_C2Nveg[zix] = C2Nveg[zix]
 	end
 	# annual turnover rates
-	p_annk = reshape(repelem[annk], infotem.pools.carbon.nZix.cEco); #sujan
+	p_annk = reshape(repelem[annk], helpers.pools.carbon.nZix.cEco); #sujan
 
 	## pack land variables
 	@pack_land (p_C2Nveg, p_annk) => land.cCycleBase

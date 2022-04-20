@@ -6,19 +6,19 @@ export rootFraction_expCvegRoot
 	fracRoot2SoilD_min::T3 = 0.1 | (0.05, 0.3) | "minimum root water uptake threshold" | ""
 end
 
-function precompute(o::rootFraction_expCvegRoot, forcing, land, infotem)
+function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 	@unpack_rootFraction_expCvegRoot o
 
 	## instantiate variables
-	p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	rootStop = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	rootStop = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
 
 	## pack land variables
 	@pack_land (p_fracRoot2SoilD, rootStop) => land.rootFraction
 	return land
 end
 
-function compute(o::rootFraction_expCvegRoot, forcing, land, infotem)
+function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 	## unpack parameters
 	@unpack_rootFraction_expCvegRoot o
 
@@ -30,18 +30,18 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, infotem)
 		maxRootD ∈ land.states
 		cEco ∈ land.pools
 	end
-	##p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	soilDepths = infotem.pools.water.layerThickness.soilW
+	##p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	soilDepths = helpers.pools.water.layerThickness.soilW
 	totalSoilDepth = sum(soilDepths)
 	maxRootDepth = min(maxRootD, totalSoilDepth); # maximum rootingdepth
 	# create the arrays to fill in the soil properties
-	for sl in 1:infotem.pools.water.nZix.soilW
+	for sl in 1:helpers.pools.water.nZix.soilW
 		soilD = sum(soilDepths[1:sl-1])
 		rootOver = maxRootDepth - soilD
 		rootOverID = (rootOver <= 0.0)
 		rootStop[rootOverID, sl] = 0.0
 	end
-	cVegRootZix = infotem.pools.carbon.zix.cVegRoot
+	cVegRootZix = helpers.pools.carbon.zix.cVegRoot
 	cVegRoot = sum(cEco[cVegRootZix])
 	p_fracRoot2SoilD = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * cVegRoot))) * rootStop
 
@@ -62,7 +62,7 @@ $(PARAMFIELDS)
 Distribution of water uptake fraction/efficiency by root per soil layer using rootFraction_expCvegRoot
 
 *Inputs*
- - infotem.pools.water.layerThickness.soilW
+ - helpers.pools.water.layerThickness.soilW
  - land.pools.cEco
  - land.states.maxRootD [from rootFraction_expCvegRoot]
  - maxRootDepth [from rootFraction_expCvegRoot]

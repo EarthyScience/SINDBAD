@@ -3,13 +3,13 @@ export evapotranspiration_sum
 struct evapotranspiration_sum <: evapotranspiration
 end
 
-function precompute(o::evapotranspiration_sum, forcing, land, infotem)
+function precompute(o::evapotranspiration_sum, forcing, land, helpers)
 
 	## set variables to zeros
-	evaporation = infotem.helpers.zero
-	interception = infotem.helpers.zero
-	sublimation = infotem.helpers.zero
-	transpiration = infotem.helpers.zero
+	evaporation = helpers.numbers.zero
+	interception = helpers.numbers.zero
+	sublimation = helpers.numbers.zero
+	transpiration = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land begin
@@ -18,7 +18,7 @@ function precompute(o::evapotranspiration_sum, forcing, land, infotem)
 	return land
 end
 
-function compute(o::evapotranspiration_sum, forcing, land, infotem)
+function compute(o::evapotranspiration_sum, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes

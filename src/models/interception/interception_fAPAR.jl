@@ -4,7 +4,7 @@ export interception_fAPAR
 	isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
 end
 
-function compute(o::interception_fAPAR, forcing, land, infotem)
+function compute(o::interception_fAPAR, forcing, land, helpers)
 	## unpack parameters
 	@unpack_interception_fAPAR o
 

@@ -6,7 +6,7 @@ export gppSoilW_Keenan2009
 	sSmin::T3 = 0.5 | (0.01, 0.95) | "" | ""
 end
 
-function compute(o::gppSoilW_Keenan2009, forcing, land, infotem)
+function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppSoilW_Keenan2009 o
 
@@ -21,7 +21,7 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, infotem)
 	maxAWC = max(Wsat - WP, 0)
 	Smax = sSmax * maxAWC
 	Smin = sSmin * Smax
-	SMScGPP = min(max(((maximum(SM, Smin) - Smin) / (Smax-Smin)) ^ q, infotem.helpers.zero), 1)
+	SMScGPP = min(max(((maximum(SM, Smin) - Smin) / (Smax-Smin)) ^ q, helpers.numbers.zero), 1)
 
 	## pack land variables
 	@pack_land SMScGPP => land.gppSoilW

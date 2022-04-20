@@ -3,10 +3,10 @@ export groundWRecharge_none
 struct groundWRecharge_none <: groundWRecharge
 end
 
-function precompute(o::groundWRecharge_none, forcing, land, infotem)
+function precompute(o::groundWRecharge_none, forcing, land, helpers)
 
 	## calculate variables
-	gwRec = infotem.helpers.zero
+	gwRec = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land gwRec => land.fluxes

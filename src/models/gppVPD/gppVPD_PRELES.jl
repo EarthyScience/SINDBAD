@@ -7,7 +7,7 @@ export gppVPD_PRELES
 	Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 
-function compute(o::gppVPD_PRELES, forcing, land, infotem)
+function compute(o::gppVPD_PRELES, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppVPD_PRELES o
 	@unpack_forcing VPDDay ∈ forcing

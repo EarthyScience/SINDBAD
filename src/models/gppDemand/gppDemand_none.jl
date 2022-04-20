@@ -3,7 +3,7 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand
 end
 
-function precompute(o::gppDemand_none, forcing, land, infotem)
+function precompute(o::gppDemand_none, forcing, land, helpers)
 	@unpack_land begin
 		fAPAR ∈ land.states
 		gppPot ∈ land.gppPotential
@@ -11,7 +11,7 @@ function precompute(o::gppDemand_none, forcing, land, infotem)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	AllDemScGPP = infotem.helpers.one
+	AllDemScGPP = helpers.numbers.one
 
 	# compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
 	gppE = fAPAR * gppPot * AllDemScGPP

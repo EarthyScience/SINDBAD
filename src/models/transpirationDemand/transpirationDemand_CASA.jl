@@ -3,7 +3,7 @@ export transpirationDemand_CASA
 struct transpirationDemand_CASA <: transpirationDemand
 end
 
-function compute(o::transpirationDemand_CASA, forcing, land, infotem)
+function compute(o::transpirationDemand_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -12,7 +12,7 @@ function compute(o::transpirationDemand_CASA, forcing, land, infotem)
 		soilWPerc ∈ land.fluxes
 		PET ∈ land.PET
 	end
-	VMC = min(max(sum(pawAct), infotem.helpers.zero) / sum(p_wAWC), 1)
+	VMC = min(max(sum(pawAct), helpers.numbers.zero) / sum(p_wAWC), 1)
 	RDR = (1 + mean(p_α, 2)) / (1 + mean(p_α, 2) * (VMC ^ mean(p_β, 2)))
 	tranDem = soilWPerc + (PET - soilWPerc) * RDR
 

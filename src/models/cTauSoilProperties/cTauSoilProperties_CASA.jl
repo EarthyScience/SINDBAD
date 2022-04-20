@@ -4,18 +4,18 @@ export cTauSoilProperties_CASA
 	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
 end
 
-function precompute(o::cTauSoilProperties_CASA, forcing, land, infotem)
+function precompute(o::cTauSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cTauSoilProperties_CASA o
 
 	## instantiate variables
-	p_kfSoil = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_kfSoil = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_kfSoil => land.cTauSoilProperties
 	return land
 end
 
-function compute(o::cTauSoilProperties_CASA, forcing, land, infotem)
+function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauSoilProperties_CASA o
 
@@ -31,7 +31,7 @@ function compute(o::cTauSoilProperties_CASA, forcing, land, infotem)
 	CLAY = mean(p_CLAY, 2)
 	SILT = mean(p_SILT, 2)
 	# TEXTURE EFFECT ON k OF cMicSoil
-	zix = infotem.pools.carbon.zix.cMicSoil
+	zix = helpers.pools.carbon.zix.cMicSoil
 	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
 	# (ineficient, should be pix zix_mic)
 

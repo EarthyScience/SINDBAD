@@ -4,18 +4,18 @@ export fAPAR_cVegLeaf
 	kEffExt::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | ""
 end
 
-function compute(o::fAPAR_cVegLeaf, forcing, land, infotem)
+function compute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 	## unpack parameters
 	@unpack_fAPAR_cVegLeaf o
 
 	## unpack land variables
 	@unpack_land begin 
 		cEco ∈ land.pools
-		one ∈ infotem.helpers
+		one ∈ helpers.numbers
 	end
 
 	## calculate variables
-	cVegLeafZix = infotem.pools.carbon.zix.cVegLeaf
+	cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
 	cVegLeaf = sum(cEco[cVegLeafZix])
 	fAPAR = one - exp(-(cVegLeaf * kEffExt))
 

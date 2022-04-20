@@ -4,7 +4,7 @@ export NDWI_constant
 	constantNDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
 end
 
-function compute(o::NDWI_constant, forcing, land, infotem)
+function compute(o::NDWI_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_NDWI_constant o
 

@@ -5,13 +5,13 @@ export fAPAR_LAI
 end
 
 
-function compute(o::fAPAR_LAI, forcing, land, infotem)
+function compute(o::fAPAR_LAI, forcing, land, helpers)
 	@unpack_fAPAR_LAI o
 
 	## unpack land variables
 	@unpack_land begin
 		LAI ∈ land.states
-		one ∈ infotem.helpers
+		one ∈ helpers.numbers
 	end
 	## calculate variables
 	fAPAR = one - exp(-(LAI * kEffExt))

@@ -6,7 +6,7 @@ export snowMelt_TairRn
 end
 
 
-function compute(o::snowMelt_TairRn, forcing, land, infotem)
+function compute(o::snowMelt_TairRn, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_snowMelt_TairRn o
 	@unpack_forcing (Rn, Tair) ∈ forcing
@@ -19,11 +19,11 @@ function compute(o::snowMelt_TairRn, forcing, land, infotem)
 
 	# snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
 	tmp_T = Tair * melt_T
-	tmp_Rn = max(Rn * melt_Rn, infotem.helpers.zero)
+	tmp_Rn = max(Rn * melt_Rn, helpers.numbers.zero)
 	potMelt = (tmp_T + tmp_Rn) * snowFraction
 
 	# potential snow melt if T > 0.0 deg C
-	potMelt = Tair > infotem.helpers.zero ? potMelt : infotem.helpers.zero
+	potMelt = Tair > helpers.numbers.zero ? potMelt : helpers.numbers.zero
 	snowMelt = min(snowW[1] , potMelt)
 
 	# a Water Balance Pool variable that tracks how much water is still
@@ -39,7 +39,7 @@ function compute(o::snowMelt_TairRn, forcing, land, infotem)
 	return land
 end
 
-function update(o::snowMelt_TairRn, forcing, land, infotem)
+function update(o::snowMelt_TairRn, forcing, land, helpers)
 	@unpack_snowMelt_TairRn o
 
 	## unpack variables

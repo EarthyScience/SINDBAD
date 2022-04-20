@@ -3,17 +3,17 @@ export runoffInfiltrationExcess_kUnsat
 struct runoffInfiltrationExcess_kUnsat <: runoffInfiltrationExcess
 end
 
-function compute(o::runoffInfiltrationExcess_kUnsat, forcing, land, infotem)
+function compute(o::runoffInfiltrationExcess_kUnsat, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
 		WBP ∈ land.states
-		kUnsatFuncH ∈ land.soilProperties
+		unsatK ∈ land.soilProperties
 	end
 	# get the unsaturared hydraulic conductivity based on soil properties for the first soil layer
-	k_unsat = feval(kUnsatFuncH, s, p, info, 1)
+	k_unsat = feval(unsatK, s, p, info, 1)
 	# minimum of the conductivity & the incoming water
-	runoffInfiltration = max(WBP-k_unsat, infotem.helpers.zero)
+	runoffInfiltration = max(WBP-k_unsat, helpers.numbers.zero)
 	# update remaining water
 	WBP = WBP - runoffInfiltration
 
@@ -34,7 +34,7 @@ calculates the infiltration excess runoff based on unsτrated hydraulic conducti
 Infiltration excess runoff using runoffInfiltrationExcess_kUnsat
 
 *Inputs*
- - land.p.soilProperties.kUnsatFuncH: function to calculate unsaturated K: out of pSoil [Saxtion1986 | Saxton2006] end
+ - land.p.soilProperties.unsatK: function to calculate unsaturated K: out of pSoil [Saxtion1986 | Saxton2006] end
  - land.pools.soilW of first layer
 
 *Outputs*

@@ -4,7 +4,7 @@ export runoffInterflow_residual
 	rc::T1 = 0.3 | (0.0, 0.9) | "simply assume that a fraction of the still available water runs off" | ""
 end
 
-function compute(o::runoffInterflow_residual, forcing, land, infotem)
+function compute(o::runoffInterflow_residual, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffInterflow_residual o
 

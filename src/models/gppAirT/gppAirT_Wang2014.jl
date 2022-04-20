@@ -4,7 +4,7 @@ export gppAirT_Wang2014
 	Tmax::T1 = 10.0 | (5.0, 35.0) | "?? Check with martin" | "°C"
 end
 
-function compute(o::gppAirT_Wang2014, forcing, land, infotem)
+function compute(o::gppAirT_Wang2014, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_Wang2014 o
 	@unpack_forcing TairDay ∈ forcing
@@ -13,8 +13,8 @@ function compute(o::gppAirT_Wang2014, forcing, land, infotem)
 	## calculate variables
 	pTmax = Tmax
 	tsc = TairDay / pTmax
-	tsc[tsc < infotem.helpers.zero] = infotem.helpers.zero
-	tsc[tsc > infotem.helpers.one] = infotem.helpers.one
+	tsc[tsc < helpers.numbers.zero] = helpers.numbers.zero
+	tsc[tsc > helpers.numbers.one] = helpers.numbers.one
 	TempScGPP = tsc
 
 	## pack land variables

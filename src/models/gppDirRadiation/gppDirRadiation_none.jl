@@ -3,10 +3,10 @@ export gppDirRadiation_none
 struct gppDirRadiation_none <: gppDirRadiation
 end
 
-function precompute(o::gppDirRadiation_none, forcing, land, infotem)
+function precompute(o::gppDirRadiation_none, forcing, land, helpers)
 
 	## calculate variables
-	LightScGPP = infotem.helpers.one
+	LightScGPP = helpers.numbers.one
 
 	## pack land variables
 	@pack_land LightScGPP => land.gppDirRadiation

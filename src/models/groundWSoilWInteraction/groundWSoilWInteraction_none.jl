@@ -3,10 +3,10 @@ export groundWSoilWInteraction_none
 struct groundWSoilWInteraction_none <: groundWSoilWInteraction
 end
 
-function precompute(o::groundWSoilWInteraction_none, forcing, land, infotem)
+function precompute(o::groundWSoilWInteraction_none, forcing, land, helpers)
 
 	## calculate variables
-	gwCflux = infotem.helpers.zero
+	gwCflux = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land gwCflux => land.fluxes

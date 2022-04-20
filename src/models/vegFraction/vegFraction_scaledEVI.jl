@@ -4,14 +4,14 @@ export vegFraction_scaledEVI
 	EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
 end
 
-function compute(o::vegFraction_scaledEVI, forcing, land, infotem)
+function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegFraction_scaledEVI o
 
 	## unpack land variables
 	@unpack_land begin
 		EVI ∈ land.states
-		one ∈ infotem.helpers		
+		one ∈ helpers.numbers		
 	end
 
 

@@ -22,18 +22,18 @@ export cCycleBase_GSI
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
-function precompute(o::cCycleBase_GSI, forcing, land, infotem)
+function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 	@unpack_cCycleBase_GSI o
 
 	## instantiate variables
-	p_C2Nveg = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cVeg); #sujan
+	p_C2Nveg = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cVeg); #sujan
 
 	## pack land variables
 	@pack_land p_C2Nveg => land.cCycleBase
 	return land
 end
 
-function compute(o::cCycleBase_GSI, forcing, land, infotem)
+function compute(o::cCycleBase_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cCycleBase_GSI o
 
@@ -42,13 +42,13 @@ function compute(o::cCycleBase_GSI, forcing, land, infotem)
 
 	## calculate variables
 	#carbon to nitrogen ratio [gC.gN-1]
-	for zix in infotem.pools.carbon.zix.cVeg
+	for zix in helpers.pools.carbon.zix.cVeg
 		p_C2Nveg[zix] = C2Nveg[zix]
 	end
 	# annual turnover rates
 	annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
-	# p_annk = reshape(repelem[annk], infotem.pools.carbon.nZix.cEco); #sujan
-	p_annk = reshape(annk, infotem.pools.carbon.nZix.cEco); #sujan
+	# p_annk = reshape(repelem[annk], helpers.pools.carbon.nZix.cEco); #sujan
+	p_annk = reshape(annk, helpers.pools.carbon.nZix.cEco); #sujan
 	# a dummy calculation to include etaA & etaH as the components of the selected model structure
 	tm_scalar = etaA * etaH
 

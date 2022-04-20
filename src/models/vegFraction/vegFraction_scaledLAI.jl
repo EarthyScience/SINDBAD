@@ -4,14 +4,14 @@ export vegFraction_scaledLAI
 	LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
 end
 
-function compute(o::vegFraction_scaledLAI, forcing, land, infotem)
+function compute(o::vegFraction_scaledLAI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegFraction_scaledLAI o
 
 	## unpack land variables
 	@unpack_land begin
 		LAI ∈ land.states
-		one ∈ infotem.helpers
+		one ∈ helpers.numbers
 	end
 
 	## calculate variables

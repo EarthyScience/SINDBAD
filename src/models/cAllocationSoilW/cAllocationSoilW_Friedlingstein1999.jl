@@ -5,7 +5,7 @@ export cAllocationSoilW_Friedlingstein1999
 	maxL_fW::T2 = 0.5 | (0.0, 1.0) | "" | ""
 end
 
-function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land, infotem)
+function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cAllocationSoilW_Friedlingstein1999 o
 

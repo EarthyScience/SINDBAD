@@ -3,10 +3,10 @@ export cTauSoilProperties_none
 struct cTauSoilProperties_none <: cTauSoilProperties
 end
 
-function precompute(o::cTauSoilProperties_none, forcing, land, infotem)
+function precompute(o::cTauSoilProperties_none, forcing, land, helpers)
 
 	## calculate variables
-	p_kfSoil = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_kfSoil = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_kfSoil => land.cTauSoilProperties

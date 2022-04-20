@@ -3,7 +3,7 @@ export NDWI_forcing
 struct NDWI_forcing <: NDWI
 end
 
-function compute(o::NDWI_forcing, forcing, land, infotem)
+function compute(o::NDWI_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing NDWI ∈ forcing
 
