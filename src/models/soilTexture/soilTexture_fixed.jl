@@ -35,7 +35,6 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_fix
 *Inputs*
 
 *Outputs*
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for soilTexture_fixed

@@ -34,7 +34,6 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_for
 
 *Outputs*
  - land.soilTexture.st_SAND/SILT/CLAY/ORGM
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for soilTexture_forcing
