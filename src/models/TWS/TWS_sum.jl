@@ -74,7 +74,6 @@ Calculate the total water storage as a sum of components using TWS_sum
 *Outputs*
  - land.pools.soilW_total: total soil moisture
  - land.pools.wTotal: total water storage
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for TWS_sum
