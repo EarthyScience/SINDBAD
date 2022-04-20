@@ -28,5 +28,5 @@ macro create_arrays(outparams)
     return outCode
 end
 
-infotem = (; helpers=(; aone = [1]), pools=(;water=(; nZix=(;soilW=5))))
-@create_arrays ("p_CLAY", "p_SAND", "p_SILT", "p_ORGM", "p_soilDepths", "p_wFC", "p_wWP", "p_wSat", "p_kSat", "p_kFC", "p_kWP", "p_ψSat", "p_ψFC", "p_ψWP", "p_θSat", "p_θFC", "p_θWP", "p_α", "p_β") = (infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+helpers = (; helpers=(; aone = [1]), pools=(;water=(; nZix=(;soilW=5))))
+@create_arrays ("p_CLAY", "p_SAND", "p_SILT", "p_ORGM", "p_soilDepths", "p_wFC", "p_wWP", "p_wSat", "p_kSat", "p_kFC", "p_kWP", "p_ψSat", "p_ψFC", "p_ψWP", "p_θSat", "p_θFC", "p_θWP", "p_α", "p_β") = (helpers.numbers.aone, helpers.pools.water.nZix.soilW)
