@@ -3,7 +3,7 @@ export PET_Lu2005
 struct PET_Lu2005 <: PET
 end
 
-function precompute(o::PET_Lu2005, forcing, land, infotem)
+function precompute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing Tair ∈ forcing
 
@@ -15,7 +15,7 @@ function precompute(o::PET_Lu2005, forcing, land, infotem)
 	return land
 end
 
-function compute(o::PET_Lu2005, forcing, land, infotem)
+function compute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing (Rn, Tair) ∈ forcing
 	@unpack_land Tair_prev ∈ land.PET
@@ -54,7 +54,7 @@ function compute(o::PET_Lu2005, forcing, land, infotem)
 	G = 4.2 * (ΔTair) / dt
 
 	PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
-	PET = max(PET, infotem.helpers.zero)
+	PET = max(PET, helpers.numbers.zero)
 
 	Tair_prev = Tair
 

@@ -3,7 +3,7 @@ export LAI_forcing
 struct LAI_forcing <: LAI
 end
 
-function compute(o::LAI_forcing, forcing, land, infotem)
+function compute(o::LAI_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing LAI ∈ forcing
 

@@ -3,7 +3,7 @@ export waterBalance_simple
 struct waterBalance_simple <: waterBalance
 end
 
-function precompute(o::waterBalance_simple, forcing, land, infotem)
+function precompute(o::waterBalance_simple, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land totalW ∈ land.TWS
@@ -16,7 +16,7 @@ function precompute(o::waterBalance_simple, forcing, land, infotem)
 end
 
 
-function compute(o::waterBalance_simple, forcing, land, infotem)
+function compute(o::waterBalance_simple, forcing, land, helpers)
 	@unpack_land begin
 		precip ∈ land.rainSnow
 		(totalW) ∈ land.TWS

@@ -4,12 +4,12 @@ export evaporation_Snyder2000
 	α::T1 = 1.0 | (0.5, 1.5) | "scaling factor for PET to account for maximum bare soil evaporation" | ""
 	β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
 end
-function precompute(o::evaporation_Snyder2000, forcing, land, infotem)
+function precompute(o::evaporation_Snyder2000, forcing, land, helpers)
 	## unpack parameters
 	@unpack_evaporation_Snyder2000 o
 
 	## unpack land variables
-	@unpack_land zero ∈ infotem.helpers
+	@unpack_land zero ∈ helpers.numbers
 
 	sPET_prev = zero
 
@@ -20,7 +20,7 @@ function precompute(o::evaporation_Snyder2000, forcing, land, infotem)
 	return land
 end
 
-function compute(o::evaporation_Snyder2000, forcing, land, infotem)
+function compute(o::evaporation_Snyder2000, forcing, land, helpers)
 	#@needscheck
 	## unpack parameters
 	@unpack_evaporation_Snyder2000 o
@@ -32,7 +32,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, infotem)
 		ΔsoilW ∈ land.states
 		PET ∈ land.PET
 		sPET_prev ∈ land.evaporation
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 	# set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
 	PET = PET * α * (one - fAPAR)
@@ -70,7 +70,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, infotem)
 	return land
 end
 
-function update(o::evaporation_Snyder2000, forcing, land, infotem)
+function update(o::evaporation_Snyder2000, forcing, land, helpers)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables

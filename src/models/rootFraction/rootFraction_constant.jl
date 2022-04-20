@@ -4,10 +4,10 @@ export rootFraction_constant
 	constantRootFrac::T1 = 0.5 | (0.05, 1.0) | "root fraction" | ""
 end
 
-function precompute(o::rootFraction_constant, forcing, land, infotem)
+function precompute(o::rootFraction_constant, forcing, land, helpers)
 	@unpack_rootFraction_constant o
 	## instantiate
-	p_fracRoot2SoilD = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
 
 	## pack land variables
 	@pack_land p_fracRoot2SoilD => land.rootFraction
@@ -15,7 +15,7 @@ function precompute(o::rootFraction_constant, forcing, land, infotem)
 	return land
 end
 
-function compute(o::rootFraction_constant, forcing, land, infotem)
+function compute(o::rootFraction_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_rootFraction_constant o
 
@@ -26,10 +26,10 @@ function compute(o::rootFraction_constant, forcing, land, infotem)
 	end
 
 	## calculate variables
-	soilDepths = infotem.pools.water.layerThickness.soilW
+	soilDepths = helpers.pools.water.layerThickness.soilW
 	cumulativeDepths = cumsum(soilDepths)
 	# maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth 
-	for sl in 1:infotem.pools.water.nZix.soilW
+	for sl in 1:helpers.pools.water.nZix.soilW
 		soilcumuD = cumulativeDepths[sl]
 		rootOver = maxRootDepth - soilcumuD
 		rootFrac = rootOver > 0.0 ? constantRootFrac : 0.0

@@ -8,29 +8,32 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
 	EC::T5 = 36.0 | (30.0, 40.0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
 end
 
-function precompute(o::soilProperties_Saxton2006, forcing, land, infotem)
+function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	@unpack_soilProperties_Saxton2006 o
 
-	@unpack_land (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
-
+	@unpack_land begin
+		numType ∈ helpers.numbers
+		(st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
+	end
+	
 	## instantiate variables
-	sp_α = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_β = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_kFC = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_θFC = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_ψFC = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_kWP = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_θWP = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_ψWP = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_kSat = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_θSat = repeat(infotem.helpers.aone, length(st_CLAY))
-	sp_ψSat = repeat(infotem.helpers.aone, length(st_CLAY))
+	sp_α = ones(numType, length(st_CLAY))
+	sp_β = ones(numType, length(st_CLAY))
+	sp_kFC = ones(numType, length(st_CLAY))
+	sp_θFC = ones(numType, length(st_CLAY))
+	sp_ψFC = ones(numType, length(st_CLAY))
+	sp_kWP = ones(numType, length(st_CLAY))
+	sp_θWP = ones(numType, length(st_CLAY))
+	sp_ψWP = ones(numType, length(st_CLAY))
+	sp_kSat = ones(numType, length(st_CLAY))
+	sp_θSat = ones(numType, length(st_CLAY))
+	sp_ψSat = ones(numType, length(st_CLAY))
 
 	## calculate variables
 	# number of layers & creation of arrays
 	# calculate & set the soil hydraulic properties for each layer
 	for sl in 1:length(st_CLAY)
-		# (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = soilParamsSaxton2006(land, infotem, sl)
+		# (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = soilParamsSaxton2006(land, helpers, sl)
 		CLAY = st_CLAY[sl]
 		SAND = st_SAND[sl]
 		# ORGM = sp_ORGM[sl]
@@ -194,8 +197,8 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Outputs:
  - K: the hydraulic conductivity at unsaturated land.pools.soilW [in mm/day]
- - is calculated using original equation if infotem.flags.useLookupK == 0.0
- - uses precomputed lookup table if infotem.flags.useLookupK == 1
+ - is calculated using original equation if helpers.flags.useLookupK == 0.0
+ - uses precomputed lookup table if helpers.flags.useLookupK == 1
 
 # Modifies:
 
@@ -215,7 +218,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
-function kSaxton2006(land, infotem, sl)
+function kSaxton2006(land, helpers, sl)
 	@unpack_land begin
 		(p_β, p_kSat, p_wSat) ∈ land.soilWBase
 		soilW ∈ land.pools
@@ -265,7 +268,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - SAT: Saturation moisture [0 kPa], #v
  - WP: Wilting point moisture [1500 kPa], #v
 """
-function soilParamsSaxton2006(land, infotem, sl)
+function soilParamsSaxton2006(land, helpers, sl)
 
 	# @unpack_soilProperties_Saxton2006 o
 

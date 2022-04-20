@@ -3,7 +3,7 @@ export drainage_wFC
 struct drainage_wFC <: drainage
 end
 
-function compute(o::drainage_wFC, forcing, land, infotem)
+function compute(o::drainage_wFC, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -12,9 +12,9 @@ function compute(o::drainage_wFC, forcing, land, infotem)
 		soilWPerc ∈ land.fluxes
 	end
 	# get the number of soil layers
-	infotem.pools.water.nZix.soilW = p_nsoilLayers
+	helpers.pools.water.nZix.soilW = p_nsoilLayers
 	soilWFlow[1] = soilWPerc
-	for sl in 1:infotem.pools.water.nZix.soilW-1
+	for sl in 1:helpers.pools.water.nZix.soilW-1
 		# drain excess moisture in oversaturation
 		maxDrain = max(soilW[sl] - p_wFC[sl], 0)
 		# store the drainage flux
@@ -28,7 +28,7 @@ function compute(o::drainage_wFC, forcing, land, infotem)
 	return land
 end
 
-function update(o::drainage_wFC, forcing, land, infotem)
+function update(o::drainage_wFC, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land (soilW[sl, 1], maxDrain) ∈ land.fluxes

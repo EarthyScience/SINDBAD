@@ -9,18 +9,18 @@ export cFlowSoilProperties_CASA
 	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
 
-function precompute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
+function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
-	p_E = repeat(repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco), 1, 1, infotem.pools.carbon.nZix.cEco)
+	p_E = repeat(zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco), 1, 1, helpers.pools.carbon.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_E => land.cFlowSoilProperties
 	return land
 end
 
-function compute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
+function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cFlowSoilProperties_CASA o
 
@@ -33,7 +33,7 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
 
 	## calculate variables
 	# p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-	# p_fSoil = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	# p_fSoil = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 	# #sujan
 	p_F = p_E
 	CLAY = mean(p_CLAY)
@@ -49,8 +49,8 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, infotem)
 	for vn in ("E", "F")
 		eval(["aM = aM" vn " "])
 		for ii in 1:size(aM, 1)
-			ndxSrc = infotem.pools.carbon.zix.(aM(ii, 1))
-			ndxTrg = infotem.pools.carbon.zix.(aM(ii, 2))
+			ndxSrc = helpers.pools.carbon.zix.(aM(ii, 1))
+			ndxTrg = helpers.pools.carbon.zix.(aM(ii, 2))
 			for iSrc in 1:length(ndxSrc)
 				for iTrg in 1:length(ndxTrg)
 					# (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.

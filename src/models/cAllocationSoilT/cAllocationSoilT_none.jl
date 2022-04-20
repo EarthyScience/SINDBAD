@@ -3,10 +3,10 @@ export cAllocationSoilT_none
 struct cAllocationSoilT_none <: cAllocationSoilT
 end
 
-function precompute(o::cAllocationSoilT_none, forcing, land, infotem)
+function precompute(o::cAllocationSoilT_none, forcing, land, helpers)
 
 	## calculate variables
-	fT = infotem.helpers.one; #sujan fsoilW was changed to fTSoil
+	fT = helpers.numbers.one; #sujan fsoilW was changed to fTSoil
 
 	## pack land variables
 	@pack_land fT => land.cAllocationSoilT

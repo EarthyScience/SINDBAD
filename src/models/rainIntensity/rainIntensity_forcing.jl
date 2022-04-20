@@ -3,7 +3,7 @@ export rainIntensity_forcing
 struct rainIntensity_forcing <: rainIntensity
 end
 
-function compute(o::rainIntensity_forcing, forcing, land, infotem)
+function compute(o::rainIntensity_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing rainInt ∈ forcing
 

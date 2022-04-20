@@ -5,7 +5,7 @@ export gppVPD_MOD17
 	VPDmin::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
 end
 
-function compute(o::gppVPD_MOD17, forcing, land, infotem)
+function compute(o::gppVPD_MOD17, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppVPD_MOD17 o
 	@unpack_forcing VPDDay ∈ forcing
@@ -16,8 +16,8 @@ function compute(o::gppVPD_MOD17, forcing, land, infotem)
 	td = (VPDmax - VPDmin) * tmp
 	pVPDmax = VPDmax * tmp
 	vsc = (pVPDmax - VPDDay) / td
-	vsc[vsc < infotem.helpers.zero] = infotem.helpers.zero
-	vsc[vsc > infotem.helpers.one] = infotem.helpers.one
+	vsc[vsc < helpers.numbers.zero] = helpers.numbers.zero
+	vsc[vsc > helpers.numbers.one] = helpers.numbers.one
 	VPDScGPP = vsc
 
 	## pack land variables

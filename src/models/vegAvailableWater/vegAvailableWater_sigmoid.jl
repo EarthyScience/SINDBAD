@@ -4,7 +4,7 @@ export vegAvailableWater_sigmoid
 	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing, land, infotem)
+function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegAvailableWater_sigmoid o
 
@@ -14,7 +14,7 @@ function compute(o::vegAvailableWater_sigmoid, forcing, land, infotem)
 		p_fracRoot2SoilD ∈ land.rootFraction
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 
 	θ_dos = (soilW + ΔsoilW) ./ p_wSat

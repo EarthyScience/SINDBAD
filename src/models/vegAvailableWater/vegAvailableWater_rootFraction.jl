@@ -3,7 +3,7 @@ export vegAvailableWater_rootFraction
 struct vegAvailableWater_rootFraction <: vegAvailableWater
 end
 
-function compute(o::vegAvailableWater_rootFraction, forcing, land, infotem)
+function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -13,7 +13,7 @@ function compute(o::vegAvailableWater_rootFraction, forcing, land, infotem)
 		ΔsoilW ∈ land.states
 	end
 
-	pawAct = p_fracRoot2SoilD .* (max.(soilW + ΔsoilW - p_wWP, infotem.helpers.zero))
+	pawAct = p_fracRoot2SoilD .* (max.(soilW + ΔsoilW - p_wWP, helpers.numbers.zero))
 
 	## pack land variables
 	@pack_land pawAct => land.vegAvailableWater

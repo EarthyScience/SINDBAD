@@ -3,11 +3,11 @@ export runoff_sum
 struct runoff_sum <: runoff
 end
 
-function precompute(o::runoff_sum, forcing, land, infotem)
+function precompute(o::runoff_sum, forcing, land, helpers)
 
 	## set variables to zeros
-	runoffBase = infotem.helpers.zero
-	runoffSurface = infotem.helpers.zero
+	runoffBase = helpers.numbers.zero
+	runoffSurface = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land begin
@@ -16,7 +16,7 @@ function precompute(o::runoff_sum, forcing, land, infotem)
 	return land
 end
 
-function compute(o::runoff_sum, forcing, land, infotem)
+function compute(o::runoff_sum, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (runoffBase, runoffSurface) ∈ land.fluxes

@@ -6,12 +6,12 @@ export gppSoilW_GSI
 	fW_base::T3 = 20.96 | (10.0, 80.0) | "base of sigmoid" | "fraction"
 end
 
-function precompute(o::gppSoilW_GSI, forcing, land, infotem)
+function precompute(o::gppSoilW_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppSoilW_GSI o
 
 	## unpack land variables
-	@unpack_land one ∈ infotem.helpers
+	@unpack_land one ∈ helpers.numbers
 	SMScGPP_prev = one
 	f_smooth = (f_p, f_n, τ, slope, base) -> (one - τ) * f_p + τ * (one / (one + exp(-slope * (f_n - base))))
 
@@ -20,7 +20,7 @@ function precompute(o::gppSoilW_GSI, forcing, land, infotem)
 	return land
 end
 
-function compute(o::gppSoilW_GSI, forcing, land, infotem)
+function compute(o::gppSoilW_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppSoilW_GSI o
 
@@ -29,7 +29,7 @@ function compute(o::gppSoilW_GSI, forcing, land, infotem)
 		(p_wFC, p_wWP) ∈ land.soilWBase
 		soilW ∈ land.pools
 		(SMScGPP_prev, f_smooth) ∈ land.gppSoilW
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 	f_prev = SMScGPP_prev
 	SM = sum(soilW)

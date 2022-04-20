@@ -4,7 +4,7 @@ export EVI_constant
 	constantEVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
 end
 
-function compute(o::EVI_constant, forcing, land, infotem)
+function compute(o::EVI_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_EVI_constant o
 

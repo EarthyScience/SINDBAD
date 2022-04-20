@@ -3,17 +3,17 @@ export capillaryFlow_VanDijk2010
 struct capillaryFlow_VanDijk2010 <: capillaryFlow
 end
 
-function compute(o::capillaryFlow_VanDijk2010, forcing, land, infotem)
+function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
 		(p_kFC, p_wSat) ∈ land.soilWBase
 		soilW ∈ land.pools
 	end
-	capFlow = repeat(infotem.helpers.azero, infotem.pools.water.nZix.soilW)
+	capFlow = zeros(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
 	dos_soilW = soilW ./ p_wSat
-	for sl in 1:infotem.pools.water.nZix.soilW-1
-		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (infotem.helpers.one - dos_soilW[sl])
+	for sl in 1:helpers.pools.water.nZix.soilW-1
+		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (helpers.numbers.one - dos_soilW[sl])
 		holdCap = p_wSat[sl] - soilW[sl]
 		lossCap = soilW[sl+1]
 		capFlow[sl] = min(tmpCapFlow, holdCap, lossCap)
@@ -36,7 +36,7 @@ Flux of water from lower to upper soil layers (upward soil moisture movement) us
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  -

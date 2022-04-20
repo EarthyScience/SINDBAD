@@ -3,10 +3,10 @@ export saturatedFraction_none
 struct saturatedFraction_none <: saturatedFraction
 end
 
-function precompute(o::saturatedFraction_none, forcing, land, infotem)
+function precompute(o::saturatedFraction_none, forcing, land, helpers)
 
 	## calculate variables
-	soilWSatFrac = infotem.helpers.zero
+	soilWSatFrac = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land soilWSatFrac => land.states
