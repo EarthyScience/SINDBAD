@@ -3,7 +3,7 @@ export runoffSaturationExcess_wSoilSatFraction
 struct runoffSaturationExcess_wSoilSatFraction <: runoffSaturationExcess
 end
 
-function compute(o::runoffSaturationExcess_wSoilSatFraction, forcing, land, infotem)
+function compute(o::runoffSaturationExcess_wSoilSatFraction, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (WBP, soilWSatFrac) ∈ land.states

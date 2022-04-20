@@ -3,29 +3,29 @@ export TWS_sum
 struct TWS_sum <: TWS
 end
 
-function precompute(o::TWS_sum, forcing, land, infotem)
-	@unpack_land azero ∈ infotem.helpers
+function precompute(o::TWS_sum, forcing, land, helpers)
+	@unpack_land numType ∈ helpers.numbers
 	## calculate variables
 	if !hasproperty(land.pools, :soilW)
-		soilW = azero
+		soilW = zeros(numType, helpers.pools.water.nZix.soilW)
 	else
 		@unpack_land soilW ∈ land.pools
 	end
 
 	if !hasproperty(land.pools, :groundW)
-		groundW = azero
+		groundW = zeros(numType, helpers.pools.water.nZix.groundW)
 	else
 		@unpack_land groundW ∈ land.pools
 	end
 	
 	if !hasproperty(land.pools, :surfaceW)
-		surfaceW = azero
+		surfaceW = zeros(numType, helpers.pools.water.nZix.surfaceW)
 	else
 		@unpack_land surfaceW ∈ land.pools
 	end
 	
 	if !hasproperty(land.pools, :snowW)
-		snowW = azero
+		snowW = zeros(numType, helpers.pools.water.nZix.snowW)
 	else
 		@unpack_land snowW ∈ land.pools
 	end
@@ -43,7 +43,7 @@ function precompute(o::TWS_sum, forcing, land, infotem)
 	return land
 end
 
-function compute(o::TWS_sum, forcing, land, infotem)
+function compute(o::TWS_sum, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (groundW, snowW, soilW, surfaceW) ∈ land.pools

@@ -3,7 +3,7 @@ export soilWFlow_simple
 struct soilWFlow_simple <: soilWFlow
 end
 
-function compute(o::soilWFlow_simple, forcing, land, infotem)
+function compute(o::soilWFlow_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -23,7 +23,7 @@ function compute(o::soilWFlow_simple, forcing, land, infotem)
 	ΔsoilW[1] = max(min(toAllocate, holdCapacity[1]), -(soilW[1]  + ΔsoilW[1]))
 	toAllocate = toAllocate - ΔsoilW[1]
 
-	for sl in 2:infotem.pools.water.nZix.soilW
+	for sl in 2:helpers.pools.water.nZix.soilW
 		toAllocate = toAllocate + drainage[sl-1] - drainage[sl] + capFlow[sl] - capFlow[sl-1]
 		ΔsoilW[sl] = max(min(holdCapacity[sl], toAllocate), -(soilW[sl] + ΔsoilW[sl]))
 		toAllocate = toAllocate - ΔsoilW[sl]
@@ -45,7 +45,7 @@ function compute(o::soilWFlow_simple, forcing, land, infotem)
 	return land
 end
 
-function update(o::soilWFlow_simple, forcing, land, infotem)
+function update(o::soilWFlow_simple, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
