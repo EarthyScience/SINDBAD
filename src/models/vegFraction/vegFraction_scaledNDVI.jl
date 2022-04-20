@@ -39,7 +39,6 @@ Fractional coverage of vegetation using vegFraction_scaledNDVI
 
 *Outputs*
  - land.states.vegFraction: current vegetation fraction
- - None
 
 ---
 

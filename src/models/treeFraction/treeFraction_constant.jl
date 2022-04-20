@@ -32,7 +32,6 @@ Fractional coverage of trees using treeFraction_constant
 
 *Outputs*
  - land.states.treeFraction: an extra forcing that creates a time series of constant treeFraction
- - None
 
 ---
 

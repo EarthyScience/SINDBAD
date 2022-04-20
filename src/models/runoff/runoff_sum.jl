@@ -43,7 +43,6 @@ Calculate the total runoff as a sum of components using runoff_sum
 
 *Outputs*
  - land.fluxes.runoff
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for runoff_sum
