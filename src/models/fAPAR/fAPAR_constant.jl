@@ -32,7 +32,6 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_constant
 
 *Outputs*
  - land.states.fAPAR: an extra forcing that creates a time series of constant fAPAR
- - None
 
 ---
 

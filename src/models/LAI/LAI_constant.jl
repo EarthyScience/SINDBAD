@@ -31,7 +31,6 @@ Leaf area index using LAI_constant
 
 *Outputs*
  - land.states.LAI: an extra forcing that creates a time series of constant LAI
- - None
 
 ---
 

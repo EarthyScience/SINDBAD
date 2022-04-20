@@ -31,7 +31,6 @@ Estimate wue using WUE_constant
 
 *Outputs*
  - land.WUE.AoE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
- - None
 
 ---
 

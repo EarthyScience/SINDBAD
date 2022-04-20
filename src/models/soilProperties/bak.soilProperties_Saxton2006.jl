@@ -174,7 +174,6 @@ Soil properties (hydraulic properties) using soilProperties_Saxton2006
  - land.soilProperties.p_θFC/kFC/ψFC/sFC
  - land.soilProperties.p_θSat/kSat/ψSat/sSat
  - land.soilProperties.p_θWP/kWP/ψWP/sWP
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for soilProperties_Saxton2006
@@ -209,7 +208,6 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - uses precomputed lookup table if infotem.flags.useLookupK == 1
 
 # Modifies:
- - None
 
 # Extended help
 
@@ -258,7 +256,6 @@ calculates the soil hydraulic properties based on Saxton 2006
  - properties of moisture-retention curves: (α & β)
 
 # Modifies:
- - None
 
 # Extended help
 

@@ -48,7 +48,6 @@ Calculate the evapotranspiration as a sum of components using evapotranspiration
 
 *Outputs*
  - land.fluxes.evapotranspiration
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for evapotranspiration_sum

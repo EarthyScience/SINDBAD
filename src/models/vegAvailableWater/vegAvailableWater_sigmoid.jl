@@ -45,7 +45,6 @@ Plant available water using vegAvailableWater_sigmoid
 
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for vegAvailableWater_sigmoid

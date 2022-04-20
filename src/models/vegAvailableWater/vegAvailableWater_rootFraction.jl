@@ -37,7 +37,6 @@ Plant available water using vegAvailableWater_rootFraction
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
  - land.states.pawAct as nPix;nZix for soilW
- - None
 
 # precompute:
 precompute/instantiate time-invariant variables for vegAvailableWater_rootFraction

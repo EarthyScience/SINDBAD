@@ -31,7 +31,6 @@ Set/get ambient co2 concentration using ambientCO2_constant
 
 *Outputs*
  - land.states.ambCO2: a constant state of ambient CO2
- - None
 
 ---
 

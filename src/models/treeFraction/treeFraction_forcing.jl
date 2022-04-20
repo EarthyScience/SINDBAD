@@ -7,9 +7,6 @@ function compute(o::treeFraction_forcing, forcing, land, infotem)
 	## unpack forcing
 	@unpack_forcing treeFraction ∈ forcing
 
-
-	## calculate variables
-
 	## pack land variables
 	@pack_land treeFraction => land.states
 	return land
@@ -25,11 +22,9 @@ Fractional coverage of trees using treeFraction_forcing
 
 *Inputs*
  - forcing.treeFraction read from the forcing data set
- - tix
 
 *Outputs*
  - land.states.treeFraction: the value of treeFraction for current time step
- - None
 
 ---
 
