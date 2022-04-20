@@ -4,7 +4,7 @@ export drainage_dos
 	dos_exp::T1 = 1.0 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
-function compute(o::drainage_dos, forcing, land, infotem)
+function compute(o::drainage_dos, forcing, land, helpers)
 	## unpack parameters
 	@unpack_drainage_dos o
 
@@ -17,17 +17,17 @@ function compute(o::drainage_dos, forcing, land, infotem)
 	# get the number of soil layers
 	# @show soilW
 	drainage = ((soilW ./ p_wSat) .^ (dos_exp .* p_β)) .* soilW
-	drainage[end] = infotem.helpers.zero
+	drainage[end] = helpers.numbers.zero
 
 	#
 	#
-	# for sl = 1:infotem.pools.water.nZix.soilW-1
+	# for sl = 1:helpers.pools.water.nZix.soilW-1
 	# # get the drainage flux
 	# dosSoil = soilW[sl] / p_wSat[sl]
 	#
 	# drain = ((dosSoil) ^ (dos_exp * p_β[sl])) * soilW[sl]
 	#
-	# # k_unsat = feval(kUnsatFuncH, s, p, info, sl)
+	# # k_unsat = feval(unsatK, s, p, info, sl)
 	# # drain = min(k_unsat, soilW[sl])
 	# # store the drainage flux
 	# soilWFlow[sl+1] = drain
@@ -56,7 +56,7 @@ Recharge the soil using drainage_dos
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  - drainage from the last layer is saved as groundwater recharge [gwRec]

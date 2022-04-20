@@ -5,7 +5,7 @@ export aRespiration_Thornley2000C
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function compute(o::aRespiration_Thornley2000C, forcing, land, infotem)
+function compute(o::aRespiration_Thornley2000C, forcing, land, helpers)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000C o
 
@@ -18,13 +18,13 @@ function compute(o::aRespiration_Thornley2000C, forcing, land, infotem)
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
 	end
-	p_km = repeat([1.0] , 1, infotem.pools.carbon.nZix.cVeg)
+	p_km = repeat([1.0] , 1, helpers.pools.carbon.nZix.cVeg)
 	p_km4su = p_km
 	RA_G = p_km
 	RA_M = p_km
 	# adjust nitrogen efficiency rate of maintenance respiration
-	RMN = RMN / infotem.dates.nStepsDay
-	for zix in infotem.pools.carbon.zix.cVeg
+	RMN = RMN / helpers.dates.nStepsDay
+	for zix in helpers.pools.carbon.zix.cVeg
 		# make the Fd of each pool equal to the MTF
 		if flagMTF
 			Fd[zix] = MTF

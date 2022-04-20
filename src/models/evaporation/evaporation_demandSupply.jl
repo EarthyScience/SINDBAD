@@ -5,7 +5,7 @@ export evaporation_demandSupply
 	supLim::T2 = 0.2 | (0.05, 1.0) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
-function compute(o::evaporation_demandSupply, forcing, land, infotem)
+function compute(o::evaporation_demandSupply, forcing, land, helpers)
 	## unpack parameters
 	@unpack_evaporation_demandSupply o
 
@@ -16,7 +16,7 @@ function compute(o::evaporation_demandSupply, forcing, land, infotem)
 		PET ∈ land.PET
 	end
 	# calculate potential soil evaporation
-	PETsoil = max(infotem.helpers.zero, PET * α)
+	PETsoil = max(helpers.numbers.zero, PET * α)
 
 	# calculate the soil evaporation as a fraction of scaling parameter & PET
 	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
@@ -32,7 +32,7 @@ function compute(o::evaporation_demandSupply, forcing, land, infotem)
 	return land
 end
 
-function update(o::evaporation_demandSupply, forcing, land, infotem)
+function update(o::evaporation_demandSupply, forcing, land, helpers)
 	@unpack_evaporation_demandSupply o
 
 	## unpack variables

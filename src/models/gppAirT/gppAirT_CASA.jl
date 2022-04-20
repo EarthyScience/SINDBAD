@@ -6,7 +6,7 @@ export gppAirT_CASA
 	ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
 end
 
-function compute(o::gppAirT_CASA, forcing, land, infotem)
+function compute(o::gppAirT_CASA, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_CASA o
 	@unpack_forcing TairDay ∈ forcing

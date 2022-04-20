@@ -3,11 +3,11 @@ export aRespiration_none
 struct aRespiration_none <: aRespiration
 end
 
-function precompute(o::aRespiration_none, forcing, land, infotem)
+function precompute(o::aRespiration_none, forcing, land, helpers)
 
 	## calculate variables
-	zix = infotem.pools.carbon.zix.cVeg
-	cEcoEfflux[zix] = infotem.helpers.zero
+	zix = helpers.pools.carbon.zix.cVeg
+	cEcoEfflux[zix] = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land cEcoEfflux => land.states

@@ -4,25 +4,27 @@ struct soilWBase_uniform <: soilWBase
 end
 
 
-function precompute(o::soilWBase_uniform, forcing, land, infotem)
+function precompute(o::soilWBase_uniform, forcing, land, helpers)
 	#@needscheck
 	## unpack land variables
 	@unpack_land begin
 		(sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
 		(st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
 		soilW ∈ land.pools
+		n_soilW = soilW ∈ helpers.pools.water.nZix
+		numType ∈ helpers.numbers
 	end
 
 	## precomputations/check
 	# get the soil thickness 
-	soilDepths = infotem.pools.water.layerThickness.soilW; 
+	soilDepths = helpers.pools.water.layerThickness.soilW; 
 	p_soilDepths = soilDepths;
 	# check if the number of soil layers & number of elements in soil thickness arrays are the same 
-	if length(soilDepths) != infotem.pools.water.nZix.soilW 
+	if length(soilDepths) != n_soilW 
 		error("soilWBase_uniform: the number of soil layers in modelStructure.json does not match with soil depths specified")
 	end 
 
-	if length(sp_kFC) != infotem.pools.water.nZix.soilW 
+	if length(sp_kFC) != n_soilW 
 		# println("soilWBase_uniform: the number of soil layers forcing data does not match the layers in in modelStructure.json. Using mean of input over the soil layers.")
 		st_CLAY = mean(st_CLAY)
 		st_ORGM = mean(st_ORGM)
@@ -40,29 +42,29 @@ function precompute(o::soilWBase_uniform, forcing, land, infotem)
 		sp_ψSat = mean(sp_ψSat)
 		sp_ψWP = mean(sp_ψWP)
 	end 
-	# @create_arrays (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :p_soilDepths, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) = (infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	# @create_arrays (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :p_soilDepths, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) = (helpers.numbers.aone, n_soilW)
 	# props = (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :p_soilDepths, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) 
 
 	## instantiate variables
-	p_CLAY = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_SAND = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_SILT = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ORGM = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_soilDepths = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_wFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_wWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_wSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_kWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_ψWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θSat = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θFC = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_θWP = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_α = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
-	p_β = repeat(infotem.helpers.aone, infotem.pools.water.nZix.soilW)
+	p_CLAY = ones(numType, n_soilW)
+	p_SAND = ones(numType, n_soilW)
+	p_SILT = ones(numType, n_soilW)
+	p_ORGM = ones(numType, n_soilW)
+	p_soilDepths = ones(numType, n_soilW)
+	p_wFC = ones(numType, n_soilW)
+	p_wWP = ones(numType, n_soilW)
+	p_wSat = ones(numType, n_soilW)
+	p_kSat = ones(numType, n_soilW)
+	p_kFC = ones(numType, n_soilW)
+	p_kWP = ones(numType, n_soilW)
+	p_ψSat = ones(numType, n_soilW)
+	p_ψFC = ones(numType, n_soilW)
+	p_ψWP = ones(numType, n_soilW)
+	p_θSat = ones(numType, n_soilW)
+	p_θFC = ones(numType, n_soilW)
+	p_θWP = ones(numType, n_soilW)
+	p_α = ones(numType, n_soilW)
+	p_β = ones(numType, n_soilW)
 
 	p_CLAY .= st_CLAY
 	p_SAND .= st_SAND
@@ -108,9 +110,8 @@ $(PARAMFIELDS)
 Distribution of soil hydraulic properties over depth using soilWBase_uniform
 
 *Inputs*
- - infotem.flags.useLookupK: flag for creating lookup table [modelRun.json]
- - infotem.pools.water.: soil layers & depths
- - land.soilProperties.kUnsatFuncH: function handle to calculate unsaturated hydraulic conduct.
+ - helpers.pools.water.: soil layers & depths
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
  - land.soilTexture.p_[SAND/SILT/CLAY/ORGM]: texture properties [nPix, nZix]
 
 *Outputs*

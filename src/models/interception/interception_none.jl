@@ -3,10 +3,10 @@ export interception_none
 struct interception_none <: interception
 end
 
-function precompute(o::interception_none, forcing, land, infotem)
+function precompute(o::interception_none, forcing, land, helpers)
 
 	## calculate variables
-	interception = infotem.helpers.zero
+	interception = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land interception => land.fluxes

@@ -4,7 +4,7 @@ export cAllocationSoilW_gppGSI
 	τ_wSoil::T1 = 0.8 | (0.001, 1.0) | "temporal change rate for the water-limiting function" | ""
 end
 
-function compute(o::cAllocationSoilW_gppGSI, forcing, land, infotem)
+function compute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cAllocationSoilW_gppGSI o
 

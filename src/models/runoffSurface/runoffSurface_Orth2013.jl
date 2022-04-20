@@ -4,7 +4,7 @@ export runoffSurface_Orth2013
 	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
 
-function precompute(o::runoffSurface_Orth2013, forcing, land, infotem)
+function precompute(o::runoffSurface_Orth2013, forcing, land, helpers)
 	@unpack_runoffSurface_Orth2013 o
 
 	## instantiate variables
@@ -16,7 +16,7 @@ function precompute(o::runoffSurface_Orth2013, forcing, land, infotem)
 	return land
 end
 
-function compute(o::runoffSurface_Orth2013, forcing, land, infotem)
+function compute(o::runoffSurface_Orth2013, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffSurface_Orth2013 o
 
@@ -46,7 +46,7 @@ function compute(o::runoffSurface_Orth2013, forcing, land, infotem)
 	return land
 end
 
-function update(o::runoffSurface_Orth2013, forcing, land, infotem)
+function update(o::runoffSurface_Orth2013, forcing, land, helpers)
 	@unpack_runoffSurface_Orth2013 o
 
 	## unpack variables

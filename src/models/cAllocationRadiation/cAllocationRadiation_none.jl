@@ -3,10 +3,10 @@ export cAllocationRadiation_none
 struct cAllocationRadiation_none <: cAllocationRadiation
 end
 
-function precompute(o::cAllocationRadiation_none, forcing, land, infotem)
+function precompute(o::cAllocationRadiation_none, forcing, land, helpers)
 
 	## calculate variables
-	fR = infotem.helpers.one
+	fR = helpers.numbers.one
 
 	## pack land variables
 	@pack_land fR => land.cAllocationRadiation

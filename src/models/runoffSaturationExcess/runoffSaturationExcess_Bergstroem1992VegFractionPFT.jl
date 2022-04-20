@@ -15,7 +15,7 @@ export runoffSaturationExcess_Bergstroem1992VegFractionPFT
 	berg_scale_PFT11::T12 = 3.0 | (0.1, 5.0) | "linear scaling parameter of PFT class 11 to get the berg parameter from vegFrac" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, infotem)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o
 	@unpack_forcing PFT ∈ forcing

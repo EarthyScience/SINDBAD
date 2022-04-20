@@ -3,7 +3,7 @@ export fAPAR_forcing
 struct fAPAR_forcing <: fAPAR
 end
 
-function compute(o::fAPAR_forcing, forcing, land, infotem)
+function compute(o::fAPAR_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing fAPAR ∈ forcing
 

@@ -9,10 +9,10 @@ export gppAirT_GSI
 	fT_h_base::T6 = 41.51 | (25.0, 65.0) | "base of sigmoid for heat stress" | "fraction"
 end
 
-function precompute(o::gppAirT_GSI, forcing, land, infotem)
+function precompute(o::gppAirT_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppAirT_GSI o
-	@unpack_land one ∈ infotem.helpers
+	@unpack_land one ∈ helpers.numbers
 
 	cScGPP_prev = one
 	hScGPP_prev = one
@@ -23,7 +23,7 @@ function precompute(o::gppAirT_GSI, forcing, land, infotem)
 	return land
 end
 
-function compute(o::gppAirT_GSI, forcing, land, infotem)
+function compute(o::gppAirT_GSI, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppAirT_GSI o
 	@unpack_forcing Tair ∈ forcing
@@ -31,7 +31,7 @@ function compute(o::gppAirT_GSI, forcing, land, infotem)
 	## unpack land variables
 	@unpack_land begin
 		(cScGPP_prev, hScGPP_prev, f_smooth) ∈ land.gppAirT
-		(zero, one) ∈ infotem.helpers
+		(zero, one) ∈ helpers.numbers
 	end
 
 	## calculate variables

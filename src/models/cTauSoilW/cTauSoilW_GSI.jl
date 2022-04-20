@@ -6,18 +6,18 @@ export cTauSoilW_GSI
 	WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
 end
 
-function precompute(o::cTauSoilW_GSI, forcing, land, infotem)
+function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
-	p_fsoilW = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
+	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW
 	return land
 end
 
-function compute(o::cTauSoilW_GSI, forcing, land, infotem)
+function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauSoilW_GSI o
 
@@ -49,7 +49,7 @@ function compute(o::cTauSoilW_GSI, forcing, land, infotem)
 	T2[v] = T22[v]
 	# assign it to the array
 	soilW1_sc = T2
-	for cL in infotem.pools.carbon.zix.cLit
+	for cL in helpers.pools.carbon.zix.cLit
 		p_fsoilW[cL] = soilW1_sc
 	end
 	## repeat for the soil pools; using all soil moisture layers
@@ -68,7 +68,7 @@ function compute(o::cTauSoilW_GSI, forcing, land, infotem)
 	T2[v] = T22[v]
 	# assign it to the array
 	soilW_all_sc = T2
-	for cS in infotem.pools.carbon.zix.cSoil
+	for cS in helpers.pools.carbon.zix.cSoil
 		p_fsoilW[cS] = soilW_all_sc
 	end
 	fsoilW = soilW_all_sc

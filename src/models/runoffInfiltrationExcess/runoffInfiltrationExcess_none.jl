@@ -3,10 +3,10 @@ export runoffInfiltrationExcess_none
 struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess
 end
 
-function precompute(o::runoffInfiltrationExcess_none, forcing, land, infotem)
+function precompute(o::runoffInfiltrationExcess_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffInfiltration = infotem.helpers.zero
+	runoffInfiltration = helpers.numbers.zero
 
 	## pack land variables
 	@pack_land runoffInfiltration => land.fluxes

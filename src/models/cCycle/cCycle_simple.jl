@@ -3,21 +3,21 @@ export cCycle_simple
 struct cCycle_simple <: cCycle
 end
 
-function precompute(o::cCycle_simple, forcing, land, infotem)
+function precompute(o::cCycle_simple, forcing, land, helpers)
 
 	## instantiate variables
-	cEcoEfflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco); #sujan moved from get states
-	cEcoOut = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
-	cEcoFlow = repeat(infotem.helpers.aone, infotem.pools.water.nZix.cEco)
-	cEcoInflux = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
-	cEcoFlow = repeat(infotem.helpers.azero, infotem.pools.carbon.nZix.cEco)
+	cEcoEfflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
+	cEcoOut = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoFlow = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoInflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoFlow = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) => land.cCycle
 	return land
 end
 
-function compute(o::cCycle_simple, forcing, land, infotem)
+function compute(o::cCycle_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) ∈ land.cCycle
@@ -31,13 +31,13 @@ function compute(o::cCycle_simple, forcing, land, infotem)
 		(p_A, p_giver, p_taker) ∈ land.cFlow
 		(fluxOrder, p_annk) ∈ land.cCycleBase
 	end
-	TSPY = infotem.dates.nStepsYear; # NUMBER OF TIME STEPS PER YEAR
+	TSPY = helpers.dates.nStepsYear; # NUMBER OF TIME STEPS PER YEAR
 	p_k = 1 - (exp(-p_annk) ^ (1 / TSPY))
 	## these all need to be zeros maybe is taken care automatically.
 	## compute losses
 	cEcoOut = min(cEco, cEco * p_k)
 	## gains to vegetation
-	zix = infotem.pools.carbon.flags.cVeg
+	zix = helpers.pools.carbon.flags.cVeg
 	cNPP = gpp * cAlloc[zix] - cEcoEfflux[zix]
 	cEcoInflux[zix] = cNPP
 	# flows & losses
@@ -89,7 +89,7 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 Allocate carbon to vegetation components using cCycle_simple
 
 *Inputs*
- - infotem.dates.nStepsYear: number of time steps per year
+ - helpers.dates.nStepsYear: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: giver pool array

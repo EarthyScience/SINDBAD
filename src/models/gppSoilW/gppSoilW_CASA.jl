@@ -4,7 +4,7 @@ export gppSoilW_CASA
 	Bwe::T1 = 0.5 | nothing | "CASA We" | ""
 end
 
-function compute(o::gppSoilW_CASA, forcing, land, infotem)
+function compute(o::gppSoilW_CASA, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppSoilW_CASA o
 	@unpack_forcing Tair ∈ forcing

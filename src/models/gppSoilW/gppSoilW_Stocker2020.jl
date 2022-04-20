@@ -5,7 +5,7 @@ export gppSoilW_Stocker2020
 	θStar::T2 = 0.6 | (0.1, 1.0) | "" | ""
 end
 
-function compute(o::gppSoilW_Stocker2020, forcing, land, infotem)
+function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppSoilW_Stocker2020 o
 

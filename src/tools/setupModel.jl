@@ -63,7 +63,8 @@ function generateDatesInfo(info)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
-    info=(; info..., tem=(; info.tem..., dates = tmpDates));
+    # info=(; info..., tem=(; info.tem..., dates = tmpDates));
+    info = (; info..., tem=(; helpers=(; info.tem.helpers..., dates = tmpDates))) # aone=aone, azero=azero
     return info
 end
 
@@ -187,7 +188,8 @@ function generateStatesInfo(info)
         # if element == "water":
 
     end
-    info=(; info..., tem=(; info.tem..., pools = tmpStates));
+    # info=(; info..., tem=(; info.tem..., pools = tmpStates));
+    info=(; info..., tem=(; info.tem..., helpers=(;info.tem.helpers..., pools = tmpStates)));
     return info
 end
 
@@ -196,8 +198,8 @@ Sets the initial pools pools
 """
 function getInitPools(info)
     initPools = (;)
-    for element in propertynames(info.tem.pools)
-        props = getfield(info.tem.pools, element)
+    for element in propertynames(info.tem.helpers.pools)
+        props = getfield(info.tem.helpers.pools, element)
         toCreate = getfield(props, :create)
         initVals = getfield(props, :initValues)
         for tocr in toCreate
@@ -210,18 +212,55 @@ function getInitPools(info)
 end
 
 """
+getInitOut(initPools, selected_models)
+create the initial out tuple with all models
+"""
+function getInitOut(info)
+    initPools = getInitPools(info)
+    out = (;)
+    out = (; out..., pools=(;), states=(;), fluxes=(;))
+    out = (; out..., pools=(; out.pools..., initPools...))
+    # @show selectedModels, string.(selectedModels)
+    sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
+    for model in sortedModels
+        out = setTupleField(out, (model, (;)))
+    end
+    return out
+
+end
+
+
+"""
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
-function setHelpers(info)
-    if info.modelRun.rules.dataType == "Float64"
-        zero = 0.0
-        one = 1.0
-        aone = [1.0]
-        azero = [0.0]
-        info=(; info..., tem=(; helpers = (; zero=zero, one=one, aone=aone, azero=azero)));
-    end
-return info
+function setHelpers(info, ttype=info.modelRun.rules.dataType)
+    zero = setDataType(ttype)(0)
+    one = setDataType(ttype)(1)
+    info = (; info..., tem=(;))
+    # info = (; info..., tem=(; helpers=(; zero=zero, one=one, numType=setDataType(ttype)))) # aone=aone, azero=azero
+    info = (; info..., tem=(; helpers=(; numbers = (; zero=zero, one=one, numType=setDataType(ttype))))) # aone=aone, azero=azero
+
+    return info
 end
+
+"""
+Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
+"""
+function setDataType(t="Float64")
+    ttype = getfield(Main, Symbol(t))
+    return ttype
+end
+
+# function setHelpers(info)
+#     if info.modelRun.rules.dataType == "Float64"
+#         zero = 0.0
+#         one = 1.0
+#         aone = [1.0]
+#         azero = [0.0]
+#         info=(; info..., tem=(; helpers = (; zero=zero, one=one, aone=aone, azero=azero)));
+#     end
+# return info
+# end
 
 function setupModel!(info)
     info = setHelpers(info)
@@ -235,4 +274,4 @@ function setupModel!(info)
     return info
 end
 
-export getInitPools
+export getInitPools, getInitOut

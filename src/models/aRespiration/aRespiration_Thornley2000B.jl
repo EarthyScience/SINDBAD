@@ -5,7 +5,7 @@ export aRespiration_Thornley2000B
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function compute(o::aRespiration_Thornley2000B, forcing, land, infotem)
+function compute(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000B o
 
@@ -18,15 +18,15 @@ function compute(o::aRespiration_Thornley2000B, forcing, land, infotem)
 		fT ∈ land.aRespirationAirT
 		km ∈ land.aRespiration
 	end
-	p_km = repeat([1.0] , 1, infotem.pools.carbon.nZix.cVeg)
+	p_km = repeat([1.0] , 1, helpers.pools.carbon.nZix.cVeg)
 	p_km4su = p_km
 	RA_G = p_km
 	RA_M = p_km
 	# adjust nitrogen efficiency rate of maintenance respiration
-	RMN = RMN / infotem.dates.nStepsDay
+	RMN = RMN / helpers.dates.nStepsDay
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL B - growth respiration is given priority
-	for zix in infotem.pools.carbon.cVeg.zix
+	for zix in helpers.pools.carbon.cVeg.zix
 		# scalars of maintenance respiration for models A; B & C
 		# km is the maintenance respiration coefficient [d-1]
 		p_km[zix] = 1 / p_C2Nveg[zix] * RMN * fT

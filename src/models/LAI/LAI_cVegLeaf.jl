@@ -4,11 +4,11 @@ export LAI_cVegLeaf
 	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
 end
 
-function compute(o::LAI_cVegLeaf, forcing, land, infotem)
+function compute(o::LAI_cVegLeaf, forcing, land, helpers)
 	@unpack_land cEco ∈ land.pools
 
 	## calculate variables
-	cVegLeafZix = infotem.pools.carbon.zix.cVegLeaf
+	cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
 	cVegLeaf = sum(cEco[cVegLeafZix])
 	LAI = cVegLeaf* SLA
 

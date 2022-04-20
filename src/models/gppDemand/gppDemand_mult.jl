@@ -3,21 +3,20 @@ export gppDemand_mult
 struct gppDemand_mult <: gppDemand
 end
 
-function precompute(o::gppDemand_mult, forcing, land, infotem)
+function precompute(o::gppDemand_mult, forcing, land, helpers)
 
 
 	## unpack land variables
-	@unpack_land aone ∈ infotem.helpers
 
 	# set 3d scalar matrix with current scalars
-	scall = repeat(aone, 4)
+	scall = ones(helpers.numbers.numType, 4)
 
 	@pack_land scall => land.gppDemand
 
 	return land
 end
 
-function compute(o::gppDemand_mult, forcing, land, infotem)
+function compute(o::gppDemand_mult, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
