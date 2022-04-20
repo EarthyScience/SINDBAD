@@ -33,7 +33,6 @@ Set rainfall intensity using rainIntensity_simple
 
 *Outputs*
  - land.rainIntensity.rainInt: Intesity of rainfall during the day
- - None
 
 ---
 

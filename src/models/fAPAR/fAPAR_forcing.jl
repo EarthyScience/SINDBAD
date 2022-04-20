@@ -22,7 +22,6 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_forcing
 
 *Inputs*
  - forcing.fAPAR read from the forcing data set
- - tix
 
 *Outputs*
  - land.states.fAPAR: the value of fAPAR for current time step

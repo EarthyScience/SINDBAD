@@ -40,11 +40,9 @@ Get the amount of water at the beginning of timestep using getPools_simple
 
 *Inputs*
  - amount of rainfall
- - tix
 
 *Outputs*
  - land.states.WBP: the amount of liquid water input to the system
- - None
 
 ---
 

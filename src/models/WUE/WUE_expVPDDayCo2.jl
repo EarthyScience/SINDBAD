@@ -48,7 +48,6 @@ Estimate wue using WUE_expVPDDayCo2
 
 *Outputs*
  - land.WUE.AoENoCO2: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O] without co2 effect
- - None
 
 ---
 
