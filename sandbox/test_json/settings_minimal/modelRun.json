@@ -23,5 +23,23 @@
 	{
 		"verbosity": 5,
 		"dataType": 		"Float64"
+	},
+	"dataFormat": ".nc",
+	"outputVariables": { 
+		"write": 
+			{
+				"fluxes": [
+					"evapotranspiration",
+					"transpiration",
+					"runoff",
+					"runoffSurface"
+				],
+				"pools": [
+					"snowW",
+					"soilW"
+				]
+			},
+			"store": {}
 	}
+
 }
