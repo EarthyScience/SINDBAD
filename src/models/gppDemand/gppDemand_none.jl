@@ -22,7 +22,7 @@ function precompute(o::gppDemand_none, forcing, land, helpers)
 end
 
 @doc """
-sets the scalar for demand GPP to ones & demand GPP to zeros
+sets the scalar for demand GPP to ones & demand GPP to zero
 
 ---
 

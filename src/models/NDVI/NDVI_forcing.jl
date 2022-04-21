@@ -35,7 +35,7 @@ Normalized difference vegetation index using NDVI_forcing
  -
 
 *Versions*
- - 1.0 on 29.04.2020 [sbesnard]:  
+ - 1.0 on 29.04.2020 [sbesnard]
 
 *Created by:*
  - sbesnard

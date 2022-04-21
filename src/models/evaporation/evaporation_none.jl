@@ -14,7 +14,7 @@ function precompute(o::evaporation_none, forcing, land, helpers)
 end
 
 @doc """
-sets the soil evaporation to zeros
+sets the soil evaporation to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for evaporation_none

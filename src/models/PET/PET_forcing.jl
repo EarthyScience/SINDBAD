@@ -34,7 +34,7 @@ Set potential evapotranspiration using PET_forcing
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]:  
+ - 1.0 on 11.11.2019 [skoirala]
 
 *Created by:*
  - skoirala

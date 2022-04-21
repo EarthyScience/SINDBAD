@@ -57,7 +57,7 @@ update pools and states in drainage_dos
  -
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]:  
+ - 1.0 on 18.11.2019 [skoirala]
 
 *Created by:*
  - skoirala

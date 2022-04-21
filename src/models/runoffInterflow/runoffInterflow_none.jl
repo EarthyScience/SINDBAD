@@ -14,7 +14,7 @@ function precompute(o::runoffInterflow_none, forcing, land, helpers)
 end
 
 @doc """
-sets interflow runoff to zeros
+sets interflow runoff to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffInterflow_none

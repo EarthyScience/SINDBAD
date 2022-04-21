@@ -12,6 +12,6 @@ Infiltration excess runoff
 # Approaches:
  - Jung: compute infiltration excess runoff
  - kUnsat: calculates the infiltration excess runoff based on unsτrated hydraulic conductivity
- - none: sets infiltration excess runoff to zeros
+ - none: sets infiltration excess runoff to zero
 """
 runoffInfiltrationExcess

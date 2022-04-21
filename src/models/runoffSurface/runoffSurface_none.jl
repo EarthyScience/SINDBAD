@@ -14,7 +14,7 @@ function precompute(o::runoffSurface_none, forcing, land, helpers)
 end
 
 @doc """
-sets surface runoff [runoffSurface] from the storage to zeros
+sets surface runoff [runoffSurface] from the storage to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffSurface_none

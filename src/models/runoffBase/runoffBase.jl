@@ -9,7 +9,7 @@ include("runoffBase_Zhang2008.jl")
 Baseflow
 
 # Approaches:
- - none: sets the base runoff to zeros
+ - none: sets the base runoff to zero
  - Zhang2008: computes baseflow from a linear ground water storage
 """
 runoffBase

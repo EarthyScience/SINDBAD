@@ -14,7 +14,7 @@ function compute(o::WUE_expVPDDayCo2, forcing, land, helpers)
 
 
 	## unpack land variables
-	@unpack_land begin 
+	@unpack_land begin
 		ambCO2 ∈ land.states
 		(zero, one) ∈ helpers.numbers
 	end
@@ -57,7 +57,7 @@ Estimate wue using WUE_expVPDDayCo2
  -
 
 *Versions*
- - 1.0 on 31.03.2021 [skoirala]:  
+ - 1.0 on 31.03.2021 [skoirala]
 
 *Created by:*
  - skoirala
