@@ -75,7 +75,7 @@ Effect of diffuse radiation using gppDiffRadiation_GSI
  - Forkel; M.; Carvalhais; N.; Schaphoff; S.; v. Bloh; W.; Migliavacca; M.  Thurner; M.; & Thonicke; K.: Identifying environmental controls on  vegetation greenness phenology through model–data integration  Biogeosciences; 11; 7025–7050; https://doi.org/10.5194/bg-11-7025-2014;2014.
 
 *Versions*
- - 1.1 on 22.01.2021 (skoirala:  
+ - 1.1 on 22.01.2021 (skoirala
 
 *Created by:*
  - skoirala

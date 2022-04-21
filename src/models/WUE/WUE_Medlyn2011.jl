@@ -12,7 +12,7 @@ function compute(o::WUE_Medlyn2011, forcing, land, helpers)
 
 
 	## unpack land variables
-	@unpack_land begin 
+	@unpack_land begin
 		ambCO2 ∈ land.states
 		(zero, one) ∈ helpers.numbers
 	end
@@ -64,7 +64,7 @@ Estimate wue using WUE_Medlyn2011
  - Medlyn; B.E.; Duursma; R.A.; Eamus; D.; Ellsworth; D.S.; Colin Prentice  I.; Barton; C.V.M.; Crous; K.Y.; de Angelis; P.; Freeman; M. &  Wingate, L. (2012), Reconciling the optimal & empirical approaches to  modelling stomatal conductance. Glob Change Biol; 18: 3476-3476.  doi:10.1111/j.1365-2486.2012.02790.
 
 *Versions*
- - 1.0 on 11.11.2020 [skoirala]:  
+ - 1.0 on 11.11.2020 [skoirala]
 
 *Created by:*
  - skoirala

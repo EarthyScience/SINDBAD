@@ -85,7 +85,7 @@ update pools and states in rootWaterUptake_proportion
  -
 
 *Versions*
- - 1.0 on 13.03.2020 [ttraut]:  
+ - 1.0 on 13.03.2020 [ttraut]
 
 *Created by:*
  - ttraut

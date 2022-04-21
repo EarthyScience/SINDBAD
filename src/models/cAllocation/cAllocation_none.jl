@@ -14,7 +14,7 @@ function precompute(o::cAllocation_none, forcing, land, helpers)
 end
 
 @doc """
-set the allocation to zeros
+set the allocation to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for cAllocation_none

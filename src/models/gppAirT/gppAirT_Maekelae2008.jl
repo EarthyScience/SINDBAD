@@ -56,7 +56,7 @@ Effect of temperature using gppAirT_Maekelae2008
 # Extended help
 
 *References*
- - Mäkelä, A., Pulkkinen, M., Kolari, P., et al. (2008).  Developing an empirical model of stand GPP with the LUE approach:  analysis of eddy covariance data at five contrasting conifer sites in Europe.  Global change biology, 14[1], 92-108.
+ - Mäkelä, A., Pulkkinen, M., Kolari, P., et al. (2008).  Developing an empirical model of stand GPP with the LUE approachanalysis of eddy covariance data at five contrasting conifer sites in Europe.  Global change biology, 14[1], 92-108.
 
 *Versions*
  - 1.0 on 22.11.2019 [skoirala]: documentation & clean up  

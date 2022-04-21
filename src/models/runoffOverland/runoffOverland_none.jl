@@ -14,7 +14,7 @@ function precompute(o::runoffOverland_none, forcing, land, helpers)
 end
 
 @doc """
-sets overland runoff to zeros
+sets overland runoff to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffOverland_none

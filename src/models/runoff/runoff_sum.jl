@@ -5,7 +5,7 @@ end
 
 function precompute(o::runoff_sum, forcing, land, helpers)
 
-	## set variables to zeros
+	## set variables to zero
 	runoffBase = helpers.numbers.zero
 	runoffSurface = helpers.numbers.zero
 

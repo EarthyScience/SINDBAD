@@ -12,6 +12,6 @@ Calculate snow cover fraction
 # Approaches:
  - binary: compute the snow pack & fraction of snow cover.
  - HTESSEL: computes the snow pack & fraction of snow cover following the HTESSEL approach
- - none: sets the snow fraction to zeros
+ - none: sets the snow fraction to zero
 """
 snowFraction

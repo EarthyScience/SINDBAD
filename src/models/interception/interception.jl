@@ -13,7 +13,7 @@ Interception evaporation
 # Approaches:
  - fAPAR: computes canopy interception evaporation as a fraction of fAPAR
  - Miralles2010: computes canopy interception evaporation according to the Gash model
- - none: sets the interception evaporation to zeros
+ - none: sets the interception evaporation to zero
  - vegFraction: computes canopy interception evaporation as a fraction of vegetation cover
 """
 interception

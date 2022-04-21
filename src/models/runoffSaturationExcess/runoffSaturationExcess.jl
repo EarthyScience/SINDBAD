@@ -20,7 +20,7 @@ Saturation runoff
  - Bergstroem1992VegFraction: calculates land surface runoff & infiltration to different soil layers using
  - Bergstroem1992VegFractionFroSoil: calculates land surface runoff & infiltration to different soil layers using
  - Bergstroem1992VegFractionPFT: calculates land surface runoff & infiltration to different soil layers using
- - none: set the saturation excess runoff to zeros
+ - none: set the saturation excess runoff to zero
  - wSoilSatFraction: calculate the saturation excess runoff as a fraction of
  - Zhang2008: calculate the saturation excess runoff as a fraction of incoming water
 """
