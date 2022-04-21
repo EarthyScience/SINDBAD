@@ -10,6 +10,18 @@ function runModels(forcing, models, out, modelHelpers)
     return out
 end
 
+"""
+filterVariables(out::NamedTuple, varsinfo)
+"""
+function filterVariables(out::NamedTuple, varsinfo)
+    fout = (;)
+    for k in keys(varsinfo)
+        v = getfield(varsinfo, k)
+        fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+    end
+    return fout
+end
+
 function runPrecompute(forcing, models, out, modelHelpers)
     for model in models
         out = Models.precompute(model, forcing, out, modelHelpers)
@@ -21,14 +33,23 @@ end
 runForward(selectedModels, forcing, out, helpers)
 """
 function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
-    modelVars = (modelVars...,)
+    # modelVars = (modelVars...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelHelpers)
-        NamedTuple{modelVars}(out.fluxes)
+        filterVariables(out, modelVars)
+        # NamedTuple{modelVars}(out.fluxes)
     end
     return columntable(outtemp)
 end
 
+"""
+removeEmptyFields(tpl)
+"""
+function removeEmptyFields(tpl)
+    indx = findall(x -> x != NamedTuple(), values(tpl))
+    nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
+    return NamedTuple{nkeys}(nvals)
+end
 
 """
 runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
@@ -37,13 +58,14 @@ function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; ns
     # out=(; pools=(;), diagnostics=(;), fluxes=(;))
     # out = (; out..., pools = (; out.pools..., initPools...))
     tsteps = size(forcing, 1)
-    spinuplog = history ? [values(out)[1:length(initPools)]] : nothing
+    spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
     out = runPrecompute(forcing[1], selectedModels, out, modelHelpers)
     for j in 1:nspins
         for t in 1:tsteps
             out = runModels(forcing[t], selectedModels, out, modelHelpers)
+            out = removeEmptyFields(out)
             if history
-                push!(spinuplog, values(out)[1:length(initPools)])
+                push!(spinuplog, values(out)[1:length(out.pools)])
             end
         end
     end
@@ -55,5 +77,5 @@ runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forw
 """
 function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
     out, outlog = runSpinup(selectedModels, forcing, out, modelInfo.helpers, history; nspins=nspins)
-    return runForward(selectedModels, forcing, out, modelVars, modelInfo.helpers)
+    return runForward(selectedModels, forcing, out, modelInfo.variables, modelInfo.helpers)
 end
