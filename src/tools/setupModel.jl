@@ -48,7 +48,7 @@ function getSelectedApproaches(info, selModelsOrdered)
     end
     # @set info.tem.models.forward = sel_appr_forward
     # @set info.tem.models.spinup = sel_appr_spinup
-    info=(; info..., tem=(; info.tem..., models = (; info.tem.models..., forward = sel_appr_forward, spinup = sel_appr_spinup)));
+    info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=sel_appr_forward, spinup=sel_appr_spinup)))
     return info
 end
 
@@ -57,14 +57,14 @@ generateDatesInfo(info)
 """
 function generateDatesInfo(info)
     tmpDates = (;)
-    timeData=getfield(info.modelRun, :time)
+    timeData = getfield(info.modelRun, :time)
     timeProps = propertynames(timeData)
     @show timeProps
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
     # info=(; info..., tem=(; info.tem..., dates = tmpDates));
-    info = (; info..., tem=(; helpers=(; info.tem.helpers..., dates = tmpDates))) # aone=aone, azero=azero
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates))) # aone=aone, azero=azero
     return info
 end
 
@@ -101,7 +101,7 @@ function generateStatesInfo(info)
                     append!(nlayers, fill(1, lenpool))
                     append!(layer, collect(1:p[1]))
                     append!(inits, fill(p[2], lenpool))
-                    append!(subPoolName, fill(Symbol(String(mainPool)*String(subpools[idx])), lenpool))
+                    append!(subPoolName, fill(Symbol(String(mainPool) * String(subpools[idx])), lenpool))
                     append!(mainPoolName, fill(mainPool, lenpool))
                 end
             end
@@ -115,11 +115,11 @@ function generateStatesInfo(info)
         tmpElem = setTupleField(tmpElem, (:layerThickness, (;)))
         for mainPool in mainPools
             # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
-            zix=Int[]
-            initValues=Float64[]
-            components=Symbol[]
+            zix = Int[]
+            initValues = Float64[]
+            components = Symbol[]
             flags = zeros(Int, length(mainPoolName))
-            nZix=0
+            nZix = 0
             for (ind, par) in enumerate(mainPoolName)
                 if par == mainPool
                     push!(zix, ind)
@@ -137,10 +137,10 @@ function generateStatesInfo(info)
         end
         uniqueSubPools = Set(subPoolName)
         for subPool in uniqueSubPools
-            zix=Int[]
-            initValues=Float64[]
-            components=Symbol[]
-            nZix=0
+            zix = Int[]
+            initValues = Float64[]
+            components = Symbol[]
+            nZix = 0
             flags = zeros(Int, length(mainPoolName))
             for (ind, par) in enumerate(subPoolName)
                 if par == subPool
@@ -170,10 +170,10 @@ function generateStatesInfo(info)
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
             create = [combinedPoolName]
-            components=Set(Symbol.(subPoolName))
+            components = Set(Symbol.(subPoolName))
             initValues = Float64.(inits)
             zix = 1:1:length(mainPoolName) |> collect
-            flags =ones(Int, length(mainPoolName))
+            flags = ones(Int, length(mainPoolName))
             nZix = length(mainPoolName)
             tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
             tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, flags))
@@ -189,7 +189,7 @@ function generateStatesInfo(info)
 
     end
     # info=(; info..., tem=(; info.tem..., pools = tmpStates));
-    info=(; info..., tem=(; info.tem..., helpers=(;info.tem.helpers..., pools = tmpStates)));
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=tmpStates)))
     return info
 end
 
@@ -236,7 +236,7 @@ function setHelpers(info, ttype=info.modelRun.rules.dataType)
     info = (; info..., tem=(;))
     # info = (; info..., tem=(; helpers=(; zero=zero, one=one, numType=setDataType(ttype)))) # aone=aone, azero=azero
     sDT = (a) -> setDataType(ttype)(a)
-    info = (; info..., tem=(; helpers=(; numbers = (; zero=zero, one=one, numType=setDataType(ttype), sNT=sDT)))) # aone=aone, azero=azero
+    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, numType=setDataType(ttype), sNT=sDT)))) # aone=aone, azero=azero
     return info
 end
 
@@ -258,14 +258,29 @@ end
 #     end
 # return info
 # end
+"""
+get the union of variables to write and store from modelrun[.json] and set it at info.tem.variables
+"""
+function getVariablesToStore(info)
+    namess = union(keys(info.modelRun.outputVariables.write), keys(info.modelRun.outputVariables.store))
+    valuess = union([tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.write)], [tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.store)])
+    tpl = NamedTuple{tuple(namess...)}(valuess)
+    info = (; info..., tem = (; info.tem..., variables=tpl))
+    @show info.tem.variables
+    return info
+end
 
 function setupModel!(info)
     info = setHelpers(info)
+    info = getVariablesToStore(info)
+    @show info.tem.variables
     info = generateStatesInfo(info)
+    @show info.tem.variables
     info = generateDatesInfo(info)
+    @show info.tem.variables
     selModels = propertynames(info.modelStructure.models)
     fullModels = sindbad_models.model
-    info=(; info..., tem=(; info.tem..., models = (; selected_models = selModels)));
+    info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
     selected_models = getSelectedOrderedModels(fullModels, selModels)
     info = getSelectedApproaches(info, selected_models)
     return info
