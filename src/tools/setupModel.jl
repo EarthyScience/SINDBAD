@@ -235,13 +235,13 @@ function setHelpers(info, ttype=info.modelRun.rules.dataType)
     one = setDataType(ttype)(1)
     info = (; info..., tem=(;))
     # info = (; info..., tem=(; helpers=(; zero=zero, one=one, numType=setDataType(ttype)))) # aone=aone, azero=azero
-    info = (; info..., tem=(; helpers=(; numbers = (; zero=zero, one=one, numType=setDataType(ttype))))) # aone=aone, azero=azero
-
+    sDT = (a) -> setDataType(ttype)(a)
+    info = (; info..., tem=(; helpers=(; numbers = (; zero=zero, one=one, numType=setDataType(ttype), sNT=sDT)))) # aone=aone, azero=azero
     return info
 end
 
 """
-Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
+Set the datatype to the selected data type of model in modelRun.rules.dataType
 """
 function setDataType(t="Float64")
     ttype = getfield(Main, Symbol(t))
@@ -271,4 +271,4 @@ function setupModel!(info)
     return info
 end
 
-export getInitPools, getInitOut
+export getInitPools, getInitOut, setDataType
