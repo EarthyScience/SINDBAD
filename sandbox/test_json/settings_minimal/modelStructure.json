@@ -53,6 +53,9 @@
         "groundWRecharge": {
             "approach": "kUnsat"
         },
+        "groundWSoilWInteraction":{
+            "approach": "gradientNeg"
+        },
         "percolation": {
             "approach": "WBP"
         },

@@ -12,6 +12,6 @@ Combine effects as multiplicative or minimum
 # Approaches:
  - min: compute the demand GPP as minimum of all stress scalars [most limited]
  - mult: compute the demand GPP as multipicative stress scalars
- - none: sets the scalar for demand GPP to ones & demand GPP to zeros
+ - none: sets the scalar for demand GPP to ones & demand GPP to zero
 """
 gppDemand

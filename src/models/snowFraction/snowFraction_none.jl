@@ -14,7 +14,7 @@ function precompute(o::snowFraction_none, forcing, land, helpers)
 end
 
 @doc """
-sets the snow fraction to zeros
+sets the snow fraction to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for snowFraction_none

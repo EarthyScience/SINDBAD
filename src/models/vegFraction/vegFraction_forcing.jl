@@ -33,7 +33,7 @@ Fractional coverage of vegetation using vegFraction_forcing
  -
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]:  
+ - 1.0 on 11.11.2019 [skoirala]
 
 *Created by:*
  - skoirala

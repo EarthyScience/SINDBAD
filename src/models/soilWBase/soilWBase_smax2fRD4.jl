@@ -108,7 +108,7 @@ precompute/instantiate time-invariant variables for soilWBase_smax2fRD4
 *References*
 
 *Versions*
- - 1.0 on 10.02.2020 [ttraut]:  
+ - 1.0 on 10.02.2020 [ttraut]
 
 *Created by:*
  - ttraut

@@ -41,7 +41,7 @@ If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]:  
+ - 1.0 on 22.11.2019 [skoirala]
 
 *Created by:*
  - skoirala

@@ -14,7 +14,7 @@ function precompute(o::saturatedFraction_none, forcing, land, helpers)
 end
 
 @doc """
-sets the land.states.soilWSatFrac [saturated soil fraction] to zeros (pix, 1)
+sets the land.states.soilWSatFrac [saturated soil fraction] to zero (pix, 1)
 
 # precompute:
 precompute/instantiate time-invariant variables for saturatedFraction_none

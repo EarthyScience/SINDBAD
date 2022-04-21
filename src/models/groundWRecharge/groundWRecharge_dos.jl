@@ -12,39 +12,50 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
 	@unpack_land begin
 		(p_wSat, p_β) ∈ land.soilWBase
 		(groundW, soilW) ∈ land.pools
+		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 	# calculate recharge
-	dosSoilEnd = soilW[helpers.pools.water.nZix.soilW] / p_wSat[helpers.pools.water.nZix.soilW]
-	groundWRec = ((dosSoilEnd) ^ (dos_exp * p_β[helpers.pools.water.nZix.soilW])) * soilW[helpers.pools.water.nZix.soilW]
+	dosSoilEnd = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
+	groundWRec = ((dosSoilEnd) ^ (dos_exp * p_β[end])) * soilW[end]
+
+	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
+	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
 	@pack_land begin
 		groundWRec => land.fluxes
+		(ΔsoilW, ΔgroundW) => land.states
 	end
 	return land
 end
 
 function update(o::groundWRecharge_dos, forcing, land, helpers)
-	@unpack_groundWRecharge_dos o
 
 	## unpack variables
 	@unpack_land begin
-		groundW ∈ land.pools
-		groundWRec ∈ land.fluxes
+		(soilW, groundW) ∈ land.pools
+		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 
-	## update variables
-	# update storages pool
-	soilW[helpers.pools.water.nZix.soilW] = soilW[helpers.pools.water.nZix.soilW] - groundWRec
-	groundW[1] = groundW[1] + groundWRec
+	## update storage pools
+	soilW[end] = soilW[end] + ΔsoilW[end]
+	groundW = groundW + ΔgroundW
+
+	# reset ΔsoilW[end] and ΔgroundW to zero
+	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+	ΔgroundW = ΔgroundW - ΔgroundW
+
 
 	## pack land variables
-	@pack_land (groundW, soilW) => land.pools
+	@pack_land begin
+		(groundW, soilW) => land.pools
+		(ΔsoilW, ΔgroundW) => land.states
+	end
 	return land
 end
 
 @doc """
-calculates GW recharge as a fraction of soil moisture of the lowermost layer
+GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer
 
 # Parameters
 $(PARAMFIELDS)

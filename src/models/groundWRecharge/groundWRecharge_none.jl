@@ -14,7 +14,7 @@ function precompute(o::groundWRecharge_none, forcing, land, helpers)
 end
 
 @doc """
-set the GW recharge to zeros
+sets the GW recharge to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for groundWRecharge_none

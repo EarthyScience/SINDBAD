@@ -15,7 +15,7 @@ function precompute(o::aRespiration_none, forcing, land, helpers)
 end
 
 @doc """
-sets the outflow from all vegetation pools to zeros
+sets the outflow from all vegetation pools to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for aRespiration_none

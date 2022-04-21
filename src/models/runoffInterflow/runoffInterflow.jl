@@ -9,7 +9,7 @@ include("runoffInterflow_residual.jl")
 Interflow
 
 # Approaches:
- - none: sets interflow runoff to zeros
+ - none: sets interflow runoff to zero
  - residual: calculates interflow as a fraction of the available water
 """
 runoffInterflow

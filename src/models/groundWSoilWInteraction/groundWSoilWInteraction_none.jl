@@ -6,15 +6,15 @@ end
 function precompute(o::groundWSoilWInteraction_none, forcing, land, helpers)
 
 	## calculate variables
-	gwCflux = helpers.numbers.zero
+	gwCapFlow = helpers.numbers.zero
 
 	## pack land variables
-	@pack_land gwCflux => land.fluxes
+	@pack_land gwCapFlow => land.fluxes
 	return land
 end
 
 @doc """
-sets the groundwater capillary flux to zeros
+sets the groundwater capillary flux to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for groundWSoilWInteraction_none

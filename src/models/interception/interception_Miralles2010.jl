@@ -95,7 +95,7 @@ Interception evaporation using interception_Miralles2010
 # Extended help
 
 *References*
- - Miralles, D. G., Gash, J. H., Holmes, T. R., de Jeu, R. A., & Dolman, A. J. (2010).  Global canopy interception from satellite observations. Journal of Geophysical Research:  Atmospheres, 115[D16].
+ - Miralles, D. G., Gash, J. H., Holmes, T. R., de Jeu, R. A., & Dolman, A. J. (2010).  Global canopy interception from satellite observations. Journal of Geophysical ResearchAtmospheres, 115[D16].
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
