@@ -19,13 +19,14 @@ function compute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing (Rn, Tair) ∈ forcing
 	@unpack_land Tair_prev ∈ land.PET
+	@unpack_land sNT ∈ helpers.numbers
 
 
 	## calculate variables
 	# α is the calibration constant: α = 1.26 for wet | humid
 	# conditions
 	α = 1.26
-	
+	# @show "Lu", sNT(1)
 	# slope of the saturation vapor pressure temperature curve [kPa/°C]
 	Δ = 0.200 * (0.00738 * Tair + 0.8072) ^ 7 - 0.000116
 
