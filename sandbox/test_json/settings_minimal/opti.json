@@ -37,7 +37,7 @@
 		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
 		"variables": {
 			"evapotranspiration": {
-				"modelFullVar": "evapotranspiration",
+				"modelFullVar": "fluxes.evapotranspiration",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
@@ -88,7 +88,7 @@
 				}
 			},
 			"transpiration": {
-				"modelFullVar": "transpiration",
+				"modelFullVar": "fluxes.transpiration",
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [

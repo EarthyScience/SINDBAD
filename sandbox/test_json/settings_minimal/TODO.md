@@ -7,9 +7,9 @@
 - remove comments from json (only works for top-level comments. Should extend for nested keys)
 - update JSON package to use the latest one
   - maintain order of models when reading from json and converting to namedtuple. Necessary for cCycle.
-- add settype function handle to helpers so that types can be changed on the go
+- add settype function handle to helpers so that types can be changed on the go # DONE
 - filtering the outputs based on opti and output[json]
-- handle daates with model simulation and forcing, i.e., run the model for a sub-slice of forcing time series
+- handle dates with model simulation and forcing, i.e., run the model for a sub-slice of forcing time series
   - generate forcing for spinup, esp. picking a random full year from the full forcing time series or calcuting the mean seasonal cycle
 - Lossfunctions
   - allow picking loss function metric from json
