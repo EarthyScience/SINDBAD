@@ -49,7 +49,7 @@ function compute(o::cTauLAI_CASA, forcing, land, helpers)
 	# BUILD AN ANNUAL LAI MATRIX
 	# get the LAI of previous time step in LAI13
 	LAI13 = p_LAI13
-	LAI13 = circshift(LAI13, 1, 2)
+	LAI13 = circshift(LAI13, 1)
 	# LAI13[2:TSPY + 1] = LAI13[1:TSPY]; # very slow [sujan]
 	LAI13[1] = LAI
 	LAI13_next = LAI13[2:TSPY + 1]
@@ -57,7 +57,7 @@ function compute(o::cTauLAI_CASA, forcing, land, helpers)
 	# update s
 	p_LAI13 = LAI13
 	# Calculate sum of δLAI over the year
-	dLAI = diff(LAI13, 1, 2)
+	dLAI = diff(LAI13, 1)
 	dLAI = max(dLAI, 0)
 	dLAIsum = sum(dLAI)
 	# Calculate average & minimum LAI
