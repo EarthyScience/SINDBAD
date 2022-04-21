@@ -15,11 +15,11 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
 	end
 	# calculate recharge
 	dosSoilEnd = soilW[helpers.pools.water.nZix.soilW] / p_wSat[helpers.pools.water.nZix.soilW]
-	gwRec = ((dosSoilEnd) ^ (dos_exp * p_β[helpers.pools.water.nZix.soilW])) * soilW[helpers.pools.water.nZix.soilW]
+	groundWRec = ((dosSoilEnd) ^ (dos_exp * p_β[helpers.pools.water.nZix.soilW])) * soilW[helpers.pools.water.nZix.soilW]
 
 	## pack land variables
 	@pack_land begin
-		gwRec => land.fluxes
+		groundWRec => land.fluxes
 	end
 	return land
 end
@@ -30,13 +30,13 @@ function update(o::groundWRecharge_dos, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		groundW ∈ land.pools
-		gwRec ∈ land.fluxes
+		groundWRec ∈ land.fluxes
 	end
 
 	## update variables
 	# update storages pool
-	soilW[helpers.pools.water.nZix.soilW] = soilW[helpers.pools.water.nZix.soilW] - gwRec
-	groundW[1] = groundW[1] + gwRec
+	soilW[helpers.pools.water.nZix.soilW] = soilW[helpers.pools.water.nZix.soilW] - groundWRec
+	groundW[1] = groundW[1] + groundWRec
 
 	## pack land variables
 	@pack_land (groundW, soilW) => land.pools
@@ -59,7 +59,7 @@ Recharge the groundwater using groundWRecharge_dos
  - rf
 
 *Outputs*
- - land.fluxes.gwRec
+ - land.fluxes.groundWRec
 
 # update
 

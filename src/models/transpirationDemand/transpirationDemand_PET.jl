@@ -1,7 +1,7 @@
 export transpirationDemand_PET
 
 @bounds @describe @units @with_kw struct transpirationDemand_PET{T1} <: transpirationDemand
-	αVeg::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
 end
 
 function compute(o::transpirationDemand_PET, forcing, land, helpers)
@@ -12,7 +12,7 @@ function compute(o::transpirationDemand_PET, forcing, land, helpers)
 	@unpack_land PET ∈ land.PET
 
 	## calculate variables
-	tranDem = PET * αVeg
+	tranDem = PET * α
 
 	## pack land variables
 	@pack_land tranDem => land.transpirationDemand
@@ -32,7 +32,7 @@ Demand-driven transpiration using transpirationDemand_PET
 
 *Inputs*
  - land.PET.PET : potential evapotranspiration out of PET module
- - αVeg: α parameter for potential transpiration
+ - α: α parameter for potential transpiration
 
 *Outputs*
  - land.transpirationDemand.tranDem: demand driven transpiration

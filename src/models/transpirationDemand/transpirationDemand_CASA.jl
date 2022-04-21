@@ -7,14 +7,15 @@ function compute(o::transpirationDemand_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		pawAct ∈ land.states
+		pawAct ∈ land.vegAvailableWater
 		(p_wAWC, p_α, p_β) ∈ land.soilWBase
-		soilWPerc ∈ land.fluxes
+		percolation ∈ land.percolation
 		PET ∈ land.PET
+		(zero, one) ∈ helpers.numbers
 	end
-	VMC = min(max(sum(pawAct), helpers.numbers.zero) / sum(p_wAWC), 1)
-	RDR = (1 + mean(p_α, 2)) / (1 + mean(p_α, 2) * (VMC ^ mean(p_β, 2)))
-	tranDem = soilWPerc + (PET - soilWPerc) * RDR
+	VMC = clamp(sum(pawAct) / sum(p_wAWC), zero, one)
+	RDR = (one + mean(p_α)) / (one + mean(p_α) * (VMC ^ mean(p_β)))
+	tranDem = percolation + (PET - percolation) * RDR
 
 	## pack land variables
 	@pack_land tranDem => land.transpirationDemand
@@ -30,13 +31,13 @@ calculate the supply limited transpiration as function of volumetric soil conten
 Demand-driven transpiration using transpirationDemand_CASA
 
 *Inputs*
- - land.pools.soilW : total soil moisture
+ - land.pools.pawAct : plant avaiable water
  - land.soilWBase.p_[α/β]: moisture retention characteristics
  - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
  - land.states.pawAct: actual extractable water
 
 *Outputs*
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.tranDem.transpirationDemand: supply limited transpiration
  -
 
 ---
@@ -46,7 +47,7 @@ Demand-driven transpiration using transpirationDemand_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
 *Created by:*
  - ncarval
