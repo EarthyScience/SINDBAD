@@ -6,10 +6,10 @@ end
 function precompute(o::groundWRecharge_none, forcing, land, helpers)
 
 	## calculate variables
-	gwRec = helpers.numbers.zero
+	groundWRec = helpers.numbers.zero
 
 	## pack land variables
-	@pack_land gwRec => land.fluxes
+	@pack_land groundWRec => land.fluxes
 	return land
 end
 

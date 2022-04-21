@@ -11,7 +11,7 @@ function precompute(o::rootFraction_k2fRD, forcing, land, helpers)
 
 	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
 	if helpers.pools.water.nZix.soilW != 2 
-		error("rootFraction_k2Layer: the number of soil layers in modelStructure.json does not match with soil depths specified. This approach works for 2 soil layers only.")
+		error("rootFraction_k2Layer: approach works for 2 soil layers only.")
 	end
 	# create the arrays to fill in the soil properties 
 	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW);

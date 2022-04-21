@@ -14,27 +14,8 @@ function compute(o::drainage_dos, forcing, land, helpers)
 		soilW ∈ land.pools
 	end
 
-	# get the number of soil layers
-	# @show soilW
 	drainage = ((soilW ./ p_wSat) .^ (dos_exp .* p_β)) .* soilW
 	drainage[end] = helpers.numbers.zero
-
-	#
-	#
-	# for sl = 1:helpers.pools.water.nZix.soilW-1
-	# # get the drainage flux
-	# dosSoil = soilW[sl] / p_wSat[sl]
-	#
-	# drain = ((dosSoil) ^ (dos_exp * p_β[sl])) * soilW[sl]
-	#
-	# # k_unsat = feval(unsatK, s, p, info, sl)
-	# # drain = min(k_unsat, soilW[sl])
-	# # store the drainage flux
-	# soilWFlow[sl+1] = drain
-	# drain = min(drain, p_wSat[sl+1] - soilW[sl+1])
-	# soilW[sl] = soilW[sl] - drain
-	# soilW[sl+1] = soilW[sl+1]+drain
-	# end
 
 	## pack land variables
 	@pack_land begin
@@ -59,7 +40,7 @@ Recharge the soil using drainage_dos
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
- - drainage from the last layer is saved as groundwater recharge [gwRec]
+ - drainage from the last layer is saved as groundwater recharge [groundWRec]
  - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
 
 # update
