@@ -49,7 +49,7 @@ Recharge the soil using drainage_kUnsat
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
- - drainage from the last layer is saved as groundwater recharge [gwRec]
+ - drainage from the last layer is saved as groundwater recharge [groundWRec]
  - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
 
 # update

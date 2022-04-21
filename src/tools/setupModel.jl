@@ -194,7 +194,7 @@ function generateStatesInfo(info)
 end
 
 """
-Sets the initial pools pools
+Sets the initial pools
 """
 function getInitPools(info)
     initPools = (;)
@@ -207,19 +207,16 @@ function getInitPools(info)
             initPools = setTupleField(initPools, (tocr, inVals))
         end
     end
-    # info = (; info..., tem=(; info.tem..., pools = (; info.tem.pools..., initPools = initPools)));
     return initPools
 end
 
 """
-getInitOut(initPools, selected_models)
-create the initial out tuple with all models
+getInitOut(info)
+create the initial out tuple with all models and pools
 """
 function getInitOut(info)
     initPools = getInitPools(info)
-    out = (;)
-    out = (; out..., pools=(;), states=(;), fluxes=(;))
-    out = (; out..., pools=(; out.pools..., initPools...))
+    out = (; fluxes=(;), pools=initPools, states=(;))
     # @show selectedModels, string.(selectedModels)
     sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
     for model in sortedModels

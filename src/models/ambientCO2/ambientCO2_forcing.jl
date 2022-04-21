@@ -7,9 +7,6 @@ function compute(o::ambientCO2_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing ambCO2 ∈ forcing
 
-
-	## calculate variables
-
 	## pack land variables
 	@pack_land ambCO2 => land.states
 	return land
