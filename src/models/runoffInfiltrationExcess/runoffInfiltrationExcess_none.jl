@@ -14,7 +14,7 @@ function precompute(o::runoffInfiltrationExcess_none, forcing, land, helpers)
 end
 
 @doc """
-sets infiltration excess runoff to zeros
+sets infiltration excess runoff to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffInfiltrationExcess_none

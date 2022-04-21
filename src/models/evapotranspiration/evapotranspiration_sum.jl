@@ -5,7 +5,7 @@ end
 
 function precompute(o::evapotranspiration_sum, forcing, land, helpers)
 
-	## set variables to zeros
+	## set variables to zero
 	evaporation = helpers.numbers.zero
 	interception = helpers.numbers.zero
 	sublimation = helpers.numbers.zero

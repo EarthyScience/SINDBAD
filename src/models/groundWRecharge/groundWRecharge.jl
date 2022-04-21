@@ -8,12 +8,12 @@ include("groundWRecharge_kUnsat.jl")
 include("groundWRecharge_none.jl")
 
 @doc """
-Recharge the groundwater
+Recharge to the groundwater storage
 
 # Approaches:
- - dos: calculates GW recharge as a fraction of soil moisture of the lowermost layer
- - fraction: calculates GW recharge as a fraction of soil moisture of the lowermost layer
- - kUnsat: calculates GW recharge as the unsaturated hydraulic conductivity of lowermost soil layer
- - none: set the GW recharge to zeros
+ - dos: GW recharge as a exponential functions of the degree of saturation of the lowermost soil layer
+ - fraction: GW recharge as a fraction of moisture of the lowermost soil layer
+ - kUnsat: GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer
+ - none: sets the GW recharge to zero
 """
 groundWRecharge

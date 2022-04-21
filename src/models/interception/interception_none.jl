@@ -14,7 +14,7 @@ function precompute(o::interception_none, forcing, land, helpers)
 end
 
 @doc """
-sets the interception evaporation to zeros
+sets the interception evaporation to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for interception_none

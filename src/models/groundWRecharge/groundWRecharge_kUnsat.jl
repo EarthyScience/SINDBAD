@@ -13,6 +13,7 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 
+	# calculate recharge
 	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
 	groundWRec = min(k_unsat, soilW[end] + ΔsoilW[end])
 
@@ -53,7 +54,7 @@ function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
 end
 
 @doc """
-calculates GW recharge as the unsaturated hydraulic conductivity of lowermost soil layer
+GW recharge as the unsaturated hydraulic conductivity of the lowermost soil layer
 
 ---
 

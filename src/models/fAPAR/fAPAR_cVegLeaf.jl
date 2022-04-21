@@ -9,7 +9,7 @@ function compute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 	@unpack_fAPAR_cVegLeaf o
 
 	## unpack land variables
-	@unpack_land begin 
+	@unpack_land begin
 		cEco ∈ land.pools
 		one ∈ helpers.numbers
 	end
@@ -50,7 +50,7 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_cVegLeaf
  -
 
 *Versions*
- - 1.0 on 24.04.2021 [skoirala]:  
+ - 1.0 on 24.04.2021 [skoirala]
 
 *Created by:*
  - skoirala

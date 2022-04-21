@@ -16,7 +16,7 @@ Soil evaporation
  - bareFraction: calculates the bare soil evaporation from 1-vegFraction of the grid & PETsoil
  - demandSupply: calculates the bare soil evaporation from demand-supply limited approach. calculates the bare soil evaporation from the grid using PET & supply limit
  - fAPAR: calculates the bare soil evaporation from 1-fAPAR & PET soil
- - none: sets the soil evaporation to zeros
+ - none: sets the soil evaporation to zero
  - Snyder2000: calculates the bare soil evaporation using relative drying rate of soil
  - vegFraction: calculates the bare soil evaporation from 1-vegFraction & PET soil
 """

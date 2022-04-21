@@ -14,7 +14,7 @@ function precompute(o::transpiration_none, forcing, land, helpers)
 end
 
 @doc """
-sets the actual transpiration to zeros
+sets the actual transpiration to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for transpiration_none

@@ -49,7 +49,7 @@ update pools and states in percolation_WBP
  -
 
 *Versions*
- - 1.0 on 18.11.2019 [skoirala]:  
+ - 1.0 on 18.11.2019 [skoirala]
 
 *Created by:*
  - skoirala

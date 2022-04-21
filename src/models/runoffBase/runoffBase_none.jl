@@ -14,7 +14,7 @@ function precompute(o::runoffBase_none, forcing, land, helpers)
 end
 
 @doc """
-sets the base runoff to zeros
+sets the base runoff to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffBase_none

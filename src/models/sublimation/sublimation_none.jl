@@ -14,7 +14,7 @@ function precompute(o::sublimation_none, forcing, land, helpers)
 end
 
 @doc """
-sets the snow sublimation to zeros
+sets the snow sublimation to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for sublimation_none

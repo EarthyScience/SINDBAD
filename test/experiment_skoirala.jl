@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 
-forcing = getForcing(info);
+# forcing = getForcing(info);
 
 
 obsvars, modelvars = getConstraintNames(info);
@@ -26,7 +26,7 @@ approaches = info.tem.models.forward;
 out = getInitOut(info);
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
+# outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 
 # outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
 pprint(outsp)
@@ -46,13 +46,3 @@ fig = Figure(resolution=(2200, 900))
 lines(outdata.transpiration)
 lines!(outdata.evapotranspiration)
 lines!(observations.evapotranspiration)
-
-
-function filterOut(tpl, out)
-    outs = (;)
-    for (field, vars) in tpl
-        s = NamedTuple{vars}(getfield(out, field))
-        outs = (; outs..., field=s...)
-    end
-    return outs
-end

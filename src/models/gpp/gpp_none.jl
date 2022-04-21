@@ -14,7 +14,7 @@ function precompute(o::gpp_none, forcing, land, helpers)
 end
 
 @doc """
-sets the actual GPP to zeros
+sets the actual GPP to zero
 
 ---
 

@@ -14,7 +14,7 @@ function precompute(o::runoffSaturationExcess_none, forcing, land, helpers)
 end
 
 @doc """
-set the saturation excess runoff to zeros
+set the saturation excess runoff to zero
 
 # precompute:
 precompute/instantiate time-invariant variables for runoffSaturationExcess_none

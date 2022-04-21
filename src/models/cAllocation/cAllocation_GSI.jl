@@ -96,6 +96,6 @@ precompute/instantiate time-invariant variables for cAllocation_GSI
 *Created by:*
  - ncarvalhais & sbesnard
 
-Notes:  Check if we can partition C to leaf & wood constrained by interception of light.
+NotesCheck if we can partition C to leaf & wood constrained by interception of light.
 """
 cAllocation_GSI

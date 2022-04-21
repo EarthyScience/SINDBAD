@@ -107,6 +107,6 @@ precompute/instantiate time-invariant variables for cTauSoilW_CASA
 *Created by:*
  - ncarvalhais
 
-Notes:  the BGME is used as a scalar dependent on soil moisture; as the  sum of soil moisture for all layers. This can be partitioned into  different soil layers in the soil & affect independently the  decomposition processes of pools that are at the surface & deeper in  the soils.
+Notesthe BGME is used as a scalar dependent on soil moisture; as the  sum of soil moisture for all layers. This can be partitioned into  different soil layers in the soil & affect independently the  decomposition processes of pools that are at the surface & deeper in  the soils.
 """
 cTauSoilW_CASA

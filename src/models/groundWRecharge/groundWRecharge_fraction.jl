@@ -9,7 +9,7 @@ function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 	@unpack_groundWRecharge_fraction o
 
 	## unpack land variables
-	@unpack_land begin 
+	@unpack_land begin
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
@@ -17,7 +17,8 @@ function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 	## calculate variables
 	# calculate recharge
 	groundWRec = rf * (soilW[end] + ΔsoilW[end])
-	ΔgroundW = ΔgroundW .+ groundWRec / helpers.pools.water.nZix.groundW
+
+	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
@@ -37,11 +38,11 @@ function update(o::groundWRecharge_fraction, forcing, land, helpers)
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 
-	## update storages pool
+	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
 	groundW = groundW + ΔgroundW
 
-	# reset ΔsoilW[end] to zero
+	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
 	ΔgroundW = ΔgroundW - ΔgroundW
 
@@ -55,7 +56,7 @@ function update(o::groundWRecharge_fraction, forcing, land, helpers)
 end
 
 @doc """
-calculates GW recharge as a fraction of soil moisture of the lowermost layer
+GW recharge as a fraction of moisture of the lowermost soil layer
 
 # Parameters
 $(PARAMFIELDS)

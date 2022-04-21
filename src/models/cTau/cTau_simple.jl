@@ -72,6 +72,6 @@ precompute/instantiate time-invariant variables for cTau_simple
 *Created by:*
  - ncarvalhais
 
-Notes:  we are multiplying [nPix, nZix]x[nPix, 1] should be OK!
+Noteswe are multiplying [nPix, nZix]x[nPix, 1] should be OK!
 """
 cTau_simple
