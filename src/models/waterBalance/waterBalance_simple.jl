@@ -7,7 +7,9 @@ function precompute(o::waterBalance_simple, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land totalW ∈ land.TWS
+
 	totalW_prev = totalW
+	
 	## pack land variables
 	@pack_land begin
 		totalW_prev => land.waterBalance
@@ -27,10 +29,12 @@ function compute(o::waterBalance_simple, forcing, land, helpers)
 	## calculate variables
 	dS = totalW - totalW_prev
 	waterBalance = precip - runoff - evapotranspiration - dS
-	totalW_prev = totalW
 	if abs(waterBalance) > 1e-4
-		@show waterBalance, land.states.WBP, precip, runoff, evapotranspiration
+		@show "water balance error:", waterBalance, totalW, totalW_prev, land.states.WBP, precip, runoff, evapotranspiration
 	end
+	
+	# set the previous totalW for next time step
+	totalW_prev = totalW
 
 	## pack land variables
 	@pack_land (totalW_prev, waterBalance) => land.waterBalance

@@ -12,16 +12,16 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
-	# index of the last soil layer
-	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
-	gwRec = min(k_unsat, soilW[end] + ΔsoilW[end])
 
-	ΔgroundW .= gwRec / helpers.pools.water.nZix.groundW
-	ΔsoilW[end] = ΔsoilW[end] - gwRec
+	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
+	groundWRec = min(k_unsat, soilW[end] + ΔsoilW[end])
+
+	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
+	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
 	@pack_land begin
-		gwRec => land.fluxes
+		groundWRec => land.fluxes
 		(ΔsoilW, ΔgroundW) => land.states
 	end
 	return land
@@ -35,11 +35,11 @@ function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
 		(ΔsoilW, ΔgroundW) ∈ land.states
 	end
 
-	## update storages pool
+	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
 	groundW = groundW + ΔgroundW
 
-	# reset ΔsoilW[end] to zero
+	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
 	ΔgroundW = ΔgroundW - ΔgroundW
 
@@ -66,7 +66,7 @@ Recharge the groundwater using groundWRecharge_kUnsat
  - land.soilWBase.p_wSat: moisture at saturation
 
 *Outputs*
- - land.fluxes.gwRec
+ - land.fluxes.groundWRec
 
 # update
 

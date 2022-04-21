@@ -15,8 +15,8 @@ function precompute(o::soilWBase_smax1Layer, forcing, land, helpers)
 	# get the soil thickness & root distribution information from input
 	p_soilDepths = helpers.pools.water.layerThickness.soilW;
 	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
-	if length(p_soilDepths) != n_soilW || length(p_soilDepths) != 1 
-		error(["soilWBase_smax1Layer: the number of soil layers in modelStructure.json does not match with soil depths specified. This approach needs 1 soil layer."]) 
+	if length(p_soilDepths) != 1 
+		error(["soilWBase_smax1Layer needs eactly 1 soil layer in modelStructure.json."]) 
 	end
 
 	## instantiate variables

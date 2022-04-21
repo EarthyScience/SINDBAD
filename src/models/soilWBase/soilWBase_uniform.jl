@@ -19,10 +19,6 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
 	# get the soil thickness 
 	soilDepths = helpers.pools.water.layerThickness.soilW; 
 	p_soilDepths = soilDepths;
-	# check if the number of soil layers & number of elements in soil thickness arrays are the same 
-	if length(soilDepths) != n_soilW 
-		error("soilWBase_uniform: the number of soil layers in modelStructure.json does not match with soil depths specified")
-	end 
 
 	if length(sp_kFC) != n_soilW 
 		# println("soilWBase_uniform: the number of soil layers forcing data does not match the layers in in modelStructure.json. Using mean of input over the soil layers.")

@@ -20,10 +20,10 @@ function readConfiguration(info_exp)
     info = Dict()
     info["experiment"] = info_exp
     for (k, v) in info_exp["configFiles"]
-        info[k] = jsparse(String(jsread(v)))
+        tmp = jsparse(String(jsread(v)))
+        info[k] = removeComments(tmp)
     end
-    info_nocomments = removeComments(info)
-    return info_nocomments
+    return info
 end
 
 """

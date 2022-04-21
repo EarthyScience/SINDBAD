@@ -18,7 +18,7 @@ function compute(o::soilWFlow_simple, forcing, land, helpers)
 
 
 	# reallocate excess moisture of 1st layer to deeper layers
-	holdCapacity = p_wSat - soilW + ΔsoilW
+	holdCapacity = p_wSat - (soilW + ΔsoilW)
 	toAllocate = percolation + capFlow[1] - drainage[1]
 	ΔsoilW[1] = max(min(toAllocate, holdCapacity[1]), -(soilW[1]  + ΔsoilW[1]))
 	toAllocate = toAllocate - ΔsoilW[1]

@@ -7,9 +7,6 @@ function compute(o::EVI_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing EVI ∈ forcing
 
-
-	## calculate variables
-
 	## pack land variables
 	@pack_land EVI => land.states
 	return land

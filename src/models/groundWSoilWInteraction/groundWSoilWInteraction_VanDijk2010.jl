@@ -22,13 +22,13 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	c_flux = k_fc * (1.0 - dosSoilend)
 	c_flux = minimum(c_flux, groundW[1])
 	# store the net recharge & capillary flux
-	gwRec = gwRec - c_flux
+	groundWRec = groundWRec - c_flux
 	gwCflux = c_flux
 	# adjust the storages
 
 	## pack land variables
 	@pack_land begin
-		(gwCflux, gwRec) => land.fluxes
+		(gwCflux, groundWRec) => land.fluxes
 	end
 	return land
 end
@@ -64,13 +64,13 @@ Groundwater soil moisture interactions (e.g. capilary flux, water using groundWS
 
 *Outputs*
  - land.fluxes.gwClux: capillary flux
- - land.fluxes.gwRec: net groundwater recharge
+ - land.fluxes.groundWRec: net groundwater recharge
 
 # update
 
 update pools and states in groundWSoilWInteraction_VanDijk2010
 
- - land.fluxes.gwRec
+ - land.fluxes.groundWRec
  - land.pools.groundW[1]
  - land.pools.soilW
 

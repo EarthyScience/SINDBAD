@@ -1,7 +1,7 @@
 export runoffBase_Zhang2008
 
 @bounds @describe @units @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-	bc::T1 = 0.001 | (0.0001, 0.02) | "base flow coefficient" | "day-1"
+	bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
 
 function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
@@ -9,16 +9,22 @@ function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	@unpack_runoffBase_Zhang2008 o
 
 	## unpack land variables
-	@unpack_land groundW ∈ land.pools
-
+	@unpack_land begin
+		groundW ∈ land.pools
+		ΔgroundW ∈ land.states
+	end
 
 	## calculate variables
 	# simply assume that a fraction of the GWstorage is baseflow
-	runoffBase = bc * groundW[1]
-	# update GW pool
+	runoffBase = bc * sum(groundW + ΔgroundW)
+
+	# update groundwater changes
+	ΔgroundW = ΔgroundW .- runoffBase / length(groundW)
+
 	## pack land variables
 	@pack_land begin
 		runoffBase => land.fluxes
+		ΔgroundW => land.states
 	end
 	return land
 end
@@ -27,14 +33,22 @@ function update(o::runoffBase_Zhang2008, forcing, land, helpers)
 	@unpack_runoffBase_Zhang2008 o
 
 	## unpack variables
-	@unpack_land runoffBase ∈ land.fluxes
-	@unpack_land groundW ∈ land.pools
+	@unpack_land begin
+		groundW ∈ land.pools
+		ΔgroundW ∈ land.states
+	end
 
 	## update variables
-	groundW[1] = groundW[1] - runoffBase
+	groundW = groundW + ΔgroundW
+
+	# reset groundwater changes to zero
+	ΔgroundW = ΔgroundW - ΔgroundW
 
 	## pack land variables
-	@pack_land groundW => land.pools
+	@pack_land begin
+		groundW => land.pools
+		ΔgroundW => land.states
+	end
 	return land
 end
 

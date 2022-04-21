@@ -12,7 +12,7 @@ function precompute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 
 	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
 	if helpers.pools.water.nZix.soilW != 2 
-		error("rootFraction_k2Layer: the number of soil layers in modelStructure.json does not match with soil depths specified. This approach works for 2 soil layers only.")
+		error("rootFraction_k2fvegFraction approach works for 2 soil layers only.")
 	end
 	# create the arrays to fill in the soil properties 
 	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW);
@@ -36,8 +36,8 @@ function compute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	## calculate variables
 	# check if the number of soil layers & number of elements in soil
 	# the scaling parameters can be > 1 but k1RootFrac needs to be <= 1
-	k1RootFrac = min(1.0, vegFraction * k1_scale); # the fraction of water that a root can uptake from the 1st soil layer
-	k2RootFrac = min(1.0, vegFraction * k2_scale); # the fraction of water that a root can uptake from the 1st soil layer
+	k1RootFrac = min(helpers.numbers.one, vegFraction * k1_scale); # the fraction of water that a root can uptake from the 1st soil layer
+	k2RootFrac = min(helpers.numbers.one, vegFraction * k2_scale); # the fraction of water that a root can uptake from the 1st soil layer
 	# set the properties
 	# 1st Layer
 	p_fracRoot2SoilD[1] = p_fracRoot2SoilD[1] * k1RootFrac
