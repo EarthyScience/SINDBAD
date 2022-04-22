@@ -6,7 +6,7 @@
 - doing the forward run from experiment # DONE
 - remove comments from json (only works for top-level comments. Should extend for nested keys)
 - update JSON package to use the latest one
-  - maintain order of models when reading from json and converting to namedtuple. Necessary for cCycle.
+  - maintain order of models when reading from json and converting to namedtuple. Necessary for cCycle. #DONE
 - add settype function handle to helpers so that types can be changed on the go # DONE
 - filtering the outputs based on opti and output[json] #DONE for output. Needs work for optim
 - handle dates with model simulation and forcing, i.e., run the model for a sub-slice of forcing time series

@@ -12,21 +12,32 @@ function compute(o::drainage_dos, forcing, land, helpers)
 	@unpack_land begin
 		(p_wSat, p_β) ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
 		zero ∈ helpers.numbers
 	end
 
-	drainage = ((soilW ./ p_wSat) .^ (dos_exp .* p_β)) .* soilW
+	drainage = (((soilW + ΔsoilW) ./ p_wSat) .^ (dos_exp .* p_β)) .* (soilW + ΔsoilW)
 	drainage[end] = zero
+
+	## calculate drainage
+	for sl in 1:helpers.pools.water.nZix.soilW-1
+		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+		lossCap = soilW[sl] + ΔsoilW[sl]
+		drainage[sl] = min(drainage[sl], holdCap, lossCap)
+		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
+		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
+	end
 
 	## pack land variables
 	@pack_land begin
 		drainage => land.drainage
+		ΔsoilW => land.states
 	end
 	return land
 end
 
 @doc """
-computes the downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
+downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation
 
 # Parameters
 $(PARAMFIELDS)
