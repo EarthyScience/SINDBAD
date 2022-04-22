@@ -22,6 +22,7 @@ function compute(o::drainage_kUnsat, forcing, land, helpers)
 		ΔsoilW ∈ land.states
 	end
 
+	## calculate drainage
 	for sl in 1:helpers.pools.water.nZix.soilW-1
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		lossCap = soilW[sl] + ΔsoilW[sl]
@@ -63,7 +64,7 @@ function update(o::drainage_kUnsat, forcing, land, helpers)
 end
 
 @doc """
-computes the downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
+downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
 
 ---
 
@@ -72,11 +73,12 @@ Recharge the soil using drainage_kUnsat
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conductivity.
 
 *Outputs*
- - drainage from the last layer is saved as groundwater recharge [groundWRec]
- - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
+- land.drainage.drainage
+- drainage from the last layer is calculated in groundWrecharge
+
 
 # update
 
