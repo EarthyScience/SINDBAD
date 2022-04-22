@@ -11,29 +11,26 @@ function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
 		p_kSat ∈ land.soilWBase
 		rain ∈ land.rainSnow
 		rainInt ∈ land.rainIntensity
+		(zero, one, sNT) ∈ helpers.numbers
 	end
-	# we assume that infiltration capacity is unlimited in the vegetated
-	# fraction [infiltration flux = P*fpar] the infiltration flux for the
-	# unvegetated fraction is given as the minimum of the precip & the min of
-	# precip intensity [P] & infiltration capacity [I] scaled with rain
-	# duration [P/R]
+	# assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
+
 	# get infiltration capacity of the first layer
-	pInfCapacity = p_kSat[1] / 24; # in mm/hr
-	runoffInfiltration = 0.0
-	tmp = rain > 0.0
-	runoffInfiltration[tmp] = rain[tmp] - (rain[tmp] * fAPAR[tmp] + (1.0 - fAPAR[tmp]) * min(rain[tmp], min(pInfCapacity[tmp], rainInt[tmp]) * rain[tmp] / rainInt[tmp]))
-	WBP = WBP - runoffInfiltration
+	pInfCapacity = p_kSat[1] / sNT(24); # in mm/hr
+	InfExcess = rain - (rain * fAPAR + (one - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
+	runoffInfExc = rain > zero ? InfExcess : zero
+	WBP = WBP - runoffInfExc
 
 	## pack land variables
 	@pack_land begin
-		runoffInfiltration => land.fluxes
+		runoffInfExc => land.fluxes
 		WBP => land.states
 	end
 	return land
 end
 
 @doc """
-compute infiltration excess runoff
+infiltration excess runoff as a function of rainintensity and vegetated fraction
 
 ---
 
