@@ -4,8 +4,8 @@ get the basic configuration from experiment json
 """
 function getExperimentConfiguration(expFile)
     jsonFile = String(jsread(expFile))
-    parseFile = jsparse(jsonFile)
-    info = Dict()
+    parseFile = jsparse(jsonFile; dicttype=DataStructures.OrderedDict)
+    info = DataStructures.OrderedDict()
     for (k, v) in parseFile
         info[k] = v
     end
@@ -17,10 +17,10 @@ readConfiguration(configFiles)
 read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp)
-    info = Dict()
+    info = DataStructures.OrderedDict()
     info["experiment"] = info_exp
     for (k, v) in info_exp["configFiles"]
-        tmp = jsparse(String(jsread(v)))
+        tmp = jsparse(String(jsread(v)); dicttype=DataStructures.OrderedDict)
         info[k] = removeComments(tmp)
     end
     return info
@@ -56,7 +56,6 @@ function getConfiguration(sindbad_experiment)
         info_exp = getExperimentConfiguration(sindbad_experiment)
         info = readConfiguration(info_exp)
     end
-    
     infoTuple = typenarrow!(info)
     return infoTuple
     # return info

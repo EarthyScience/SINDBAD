@@ -1,4 +1,5 @@
 module Sinbad
+import DataStructures
 using InteractiveUtils
 using Reexport: @reexport
 @reexport begin
