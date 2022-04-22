@@ -8,12 +8,12 @@ include("runoffOverland_none.jl")
 include("runoffOverland_Sat.jl")
 
 @doc """
-Land over flow (sum of saturation and infiltration excess runoff)
+calculates total overland runoff that passes to the surface storage
 
 # Approaches:
- - Inf: calculates total overland runoff that passes to the surface storage
- - InfIntSat: calculates total overland runoff that passes to the surface storage
+ - Inf: assumes overland flow to be infiltration excess runoff
+ - InfIntSat: assumes overland flow to be sum of infiltration excess, interflow, and saturation excess runoffs
  - none: sets overland runoff to zero
- - Sat: calculates total overland runoff that passes to the surface storage
+ - Sat: assumes overland flow to be saturation excess runoff
 """
 runoffOverland

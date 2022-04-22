@@ -14,27 +14,29 @@ function compute(o::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 		PET ∈ land.PET
+		ΔsoilW ∈ land.states
+		(zero, one) ∈ helpers.numbers
 	end
 	# a supply - demand limit concept cf Budyko
 	# calc demand limit [X0]
-	res_sat = sum(p_wSat) - sum(soilW)
+	res_sat = max(sum(p_wSat) - sum(soilW + ΔsoilW), zero)
 	X0 = PET + res_sat
 
-	# set runoffSaturation
-	runoffSaturation = WBP - WBP * (1 + X0 / WBP - (1 + (X0 / WBP) ^ (1 / α)) ^ α)
+	# set runoffSatExc
+	runoffSatExc = WBP - WBP * (one + X0 / WBP - (one + (X0 / WBP) ^ (one / α)) ^ α)
 	# adjust the remaining water
-	WBP = WBP - runoffSaturation
+	WBP = WBP - runoffSatExc
 
 	## pack land variables
 	@pack_land begin
-		runoffSaturation => land.fluxes
+		runoffSatExc => land.fluxes
 		WBP => land.states
 	end
 	return land
 end
 
 @doc """
-calculate the saturation excess runoff as a fraction of incoming water
+saturation excess runoff as a function of incoming water and PET
 
 # Parameters
 $(PARAMFIELDS)
@@ -50,7 +52,7 @@ Saturation runoff using runoffSaturationExcess_Zhang2008
  - land.states.WBP: amount of incoming water
 
 *Outputs*
- - land.fluxes.runoffSaturation: saturation excess runoff in mm/day
+ - land.fluxes.runoffSatExc: saturation excess runoff in mm/day
  - land.states.WBP
 
 ---

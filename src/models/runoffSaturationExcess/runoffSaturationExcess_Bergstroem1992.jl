@@ -13,27 +13,29 @@ function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helper
 		WBP ∈ land.states
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
 	end
 	# @show WBP
 	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW)
+	tmp_SoilTotal = sum(soilW + ΔsoilW)
 	# calculate land runoff from incoming water & current soil moisture
 	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg) ^ β, helpers.numbers.one)
 
-	runoffSaturation = WBP * tmp_SatExFrac
+	runoffSatExc = WBP * tmp_SatExFrac
+
 	# update water balance pool
-	WBP = WBP - runoffSaturation
+	WBP = WBP - runoffSatExc
 
 	## pack land variables
 	@pack_land begin
-		runoffSaturation => land.fluxes
+		runoffSatExc => land.fluxes
 		WBP => land.states
 	end
 	return land
 end
 
 @doc """
-calculates land surface runoff & infiltration to different soil layers using
+saturation excess runoff using original Bergström method
 
 # Parameters
 $(PARAMFIELDS)
@@ -49,7 +51,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992
  - smax2 : maximum water capacity of second soil layer [mm]
 
 *Outputs*
- - land.fluxes.runoffSaturation : runoff from land [mm/time]
+ - land.fluxes.runoffSatExc : runoff from land [mm/time]
  - land.runoffSaturationExcess.p_berg : scaled berg parameter
  - land.states.WBP : water balance pool [mm]
 

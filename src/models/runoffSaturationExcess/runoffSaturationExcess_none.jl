@@ -6,10 +6,10 @@ end
 function precompute(o::runoffSaturationExcess_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffSaturation = helpers.numbers.zero
+	runoffSatExc = helpers.numbers.zero
 
 	## pack land variables
-	@pack_land runoffSaturation => land.fluxes
+	@pack_land runoffSatExc => land.fluxes
 	return land
 end
 
