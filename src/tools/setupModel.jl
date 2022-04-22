@@ -303,6 +303,24 @@ function getInitPools(info)
                 end
             end
         end
+        tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
+        if tocombine[1]
+            combinedPoolName = Symbol(tocombine[2])
+            zixT = getfield(props, :zix)
+            components = keys(zixT)
+            # components = getfield(getfield(props, :components),Symbol(tocombine[2]))
+            poolArray = getfield(initPools, combinedPoolName)
+            for component in components
+                if component != combinedPoolName
+                    indx = getfield(zixT, component)
+                    @show component, indx
+                    compdat = @view poolArray[indx]
+                    # @eval @view :(compdat = $poolArray[$indx])
+                    initPools = setTupleField(initPools, (component, compdat))
+                end
+            end
+            @show components
+        end
     end
     return initPools
 end
