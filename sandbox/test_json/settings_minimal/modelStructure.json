@@ -135,7 +135,7 @@
 	{
 		"water":
 		{
-			"pools" :
+			"components" :
                 {
                 "soilW": [4, 100.0],
                 "groundW": [1, 1000.0],
@@ -143,12 +143,11 @@
 				"surfaceW": [1, 0.0]
             },
 			"combine": [false,"wPools"],
-			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0],
-            "order": ["snowW", "soilW", "groundW", "surfaceW"]
+			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0]
 		},
 		"carbon":
 		{
-			"pools" :
+			"components" :
                 {
                 "cVeg": {
                     "Leaf": [1, 46.0],
@@ -162,8 +161,7 @@
                 },
                 "cLit": [5, 300.0]
             },
-			"combine": [true,"cEco"],
-            "order": ["cVeg", "cLit", "cSoil"]
-		}        
+			"combine": [true,"cEco"]
+		}
 	}
 }
