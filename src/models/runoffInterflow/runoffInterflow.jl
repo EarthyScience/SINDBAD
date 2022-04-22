@@ -10,6 +10,6 @@ Interflow
 
 # Approaches:
  - none: sets interflow runoff to zero
- - residual: calculates interflow as a fraction of the available water
+ - residual: interflow as a fraction of the available water balance pool
 """
 runoffInterflow
