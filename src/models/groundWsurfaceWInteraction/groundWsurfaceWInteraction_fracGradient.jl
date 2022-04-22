@@ -20,7 +20,7 @@ function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, help
 
 	# update the delta storages
 	ΔgroundW = ΔgroundW .- GW2Surf / length(groundW)
-	ΔsurfaceW = ΔsurfaceW .+ GW2Surf / length(groundW)
+	ΔsurfaceW = ΔsurfaceW .+ GW2Surf / length(surfaceW)
 
 	## pack land variables
 	@pack_land begin
