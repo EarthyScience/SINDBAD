@@ -7,24 +7,24 @@ export gppAirT_TEM
 end
 
 function compute(o::gppAirT_TEM, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppAirT_TEM o
-	@unpack_forcing TairDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppAirT_TEM o
+    @unpack_forcing TairDay ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
 
-	## calculate variables
-	tmp = 1.0
-	pTmin = TairDay - (Tmin * tmp)
-	pTmax = TairDay - (Tmax * tmp)
-	pTopt = Topt * tmp
-	pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - pTopt) ^ 2)
-	TempScGPP[TairDay > Tmax] = 0
-	TempScGPP[TairDay < Tmin] = 0
-	TempScGPP = min(max(pTScGPP, helpers.numbers.zero), 1)
+    ## calculate variables
+    tmp = one
+    pTmin = TairDay - (Tmin * tmp)
+    pTmax = TairDay - (Tmax * tmp)
+    pTopt = Topt * tmp
+    pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - pTopt)^2)
+    pTScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? zero : pTScGPP
+    TempScGPP = clamp(pTScGPP, zero, one)
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

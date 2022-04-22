@@ -16,6 +16,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		gpp ∈ land.fluxes
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
+		zero ∈ helpers.numbers
 	end
 	p_km = repeat([1.0] , 1, helpers.pools.carbon.nZix.cVeg)
 	p_km4su = p_km
@@ -36,7 +37,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
 		RA_G[zix] = (1.0 - YG) * (gpp * cAlloc[zix] - RA_M[zix])
 		# no negative growth respiration
-		RA_G[RA_G[zix] < helpers.numbers.zero, zix] = 0.0
+		RA_G[RA_G[zix] < zero, zix] = zero
 		# total respiration per pool: R_a = R_m + R_g
 		cEcoEfflux[zix] = RA_M[zix] + RA_G[zix]
 	end

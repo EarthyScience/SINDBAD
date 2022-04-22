@@ -9,12 +9,15 @@ function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
 	@unpack_snowFraction_HTESSEL o
 
 	## unpack land variables
-	@unpack_land snowW ∈ land.pools
-
+	@unpack_land begin
+		snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+		one ∈ helpers.numbers
+	end
 
 	## calculate variables
 	# suggested by Sujan [after HTESSEL GHM]
-	snowFraction = min(helpers.numbers.one, snowW[1] / CoverParam)
+	snowFraction = min(one, sum(snowW + ΔsnowW) / CoverParam)
 
 	## pack land variables
 	@pack_land snowFraction => land.states

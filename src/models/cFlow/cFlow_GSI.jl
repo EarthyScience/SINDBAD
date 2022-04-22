@@ -34,6 +34,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 		fW ∈ land.cAllocationSoilW
 		fT ∈ land.cAllocationSoilT
 		fR ∈ land.cAllocationRadiation
+		(zero, one) ∈ helpers.numbers
 	end
 	# Do A matrix
 	p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
@@ -65,7 +66,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 	p_flowVar = flowTable.flowVar
 	p_aM = aM
 	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > helpers.numbers.zero)) >= helpers.numbers.one)
+	(taker, giver) = find(squeeze(sum(p_A > zero)) >= one)
 	p_taker = taker
 	p_giver = giver
 	# if there is flux order check that is consistent
@@ -83,7 +84,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 	# stressor from previos time step
 	f_prev = fWfTfR_prev
 	# get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
-	f_now = (helpers.numbers.one - f_τ) * f_prev + f_τ * f_tmp
+	f_now = (one - f_τ) * f_prev + f_τ * f_tmp
 	fWfTfR = f_now
 	slope_fWfTfR = f_now -f_prev
 	# get the indices of leaf & root
@@ -92,9 +93,9 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 	cVegReservezix = helpers.pools.carbon.zix.cVegReserve
 	# calculate the flow rate for exchange with reserve pools based on the slopes
 	# get the flow & shedding rates
-	LR2Re = min(max(-slope_fWfTfR, helpers.numbers.zero) * LR2ReSlp, helpers.numbers.one); # * (cVeg_growth < helpers.numbers.zero)
-	Re2LR = min(max(slope_fWfTfR, helpers.numbers.zero) * Re2LRSlp, helpers.numbers.one); # * (cVeg_growth > 0.0)
-	KShed = min(max(-slope_fWfTfR, helpers.numbers.zero) * kShed, helpers.numbers.one)
+	LR2Re = min(max(-slope_fWfTfR, zero) * LR2ReSlp, one); # * (cVeg_growth < zero)
+	Re2LR = min(max(slope_fWfTfR, zero) * Re2LRSlp, one); # * (cVeg_growth > 0.0)
+	KShed = min(max(-slope_fWfTfR, zero) * kShed, one)
 	# set the Leaf & Root to Reserve flow rate as the same
 	L2Re = LR2Re; # should it be divided by 2?
 	R2Re = LR2Re
@@ -103,7 +104,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 	# Estimate flows from reserve to leaf & root (sujan modified on
 	# 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
 	Re2L = Re2LR * (fW / (1E-15 + fR + fW)); # if water stressor is high [
-	Re2R = Re2LR * (helpers.numbers.one - Re2L)
+	Re2R = Re2LR * (one - Re2L)
 	# # Estimate flows from reserve to leaf & root
 	# Re2L = Re2LR * (fW / (fR + fW)); # if water stressor is high [
 	# Re2R = Re2LR * (fR / (fR + fW)); # if light stressor is high [
@@ -111,13 +112,13 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 	# p_k[cVegLeafzix] = p_k[cVegLeafzix] + k_Lshed + L2Re
 	# p_k[cVegRootzix] = p_k[cVegRootzix] + k_Rshed + R2Re
 	# adjust the outflow rate from the flow pools
-	p_k[cVegLeafzix] = min((p_k[cVegLeafzix] + k_Lshed + L2Re), helpers.numbers.one)
+	p_k[cVegLeafzix] = min((p_k[cVegLeafzix] + k_Lshed + L2Re), one)
 	L2ReF = L2Re / (p_k[cVegLeafzix])
 	k_LshedF = k_Lshed / (p_k[cVegLeafzix])
-	p_k[cVegRootzix] = min((p_k[cVegRootzix] + k_Rshed + R2Re), helpers.numbers.one)
+	p_k[cVegRootzix] = min((p_k[cVegRootzix] + k_Rshed + R2Re), one)
 	R2ReF = R2Re / (p_k[cVegRootzix])
 	k_RshedF = k_Rshed / (p_k[cVegRootzix])
-	p_k[cVegReservezix] = min((p_k[cVegReservezix] + Re2L + Re2R), helpers.numbers.one)
+	p_k[cVegReservezix] = min((p_k[cVegReservezix] + Re2L + Re2R), one)
 	Re2LF = Re2L / p_k[cVegReservezix]
 	Re2RF = Re2R / p_k[cVegReservezix]
 	# Adjust cFlow between reserve; leaf; root; & soil
