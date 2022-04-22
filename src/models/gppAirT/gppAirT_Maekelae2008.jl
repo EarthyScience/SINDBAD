@@ -7,30 +7,31 @@ export gppAirT_Maekelae2008
 end
 
 function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppAirT_Maekelae2008 o
-	@unpack_forcing TairDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppAirT_Maekelae2008 o
+    @unpack_forcing TairDay ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
 
-	## calculate variables
-	# create the arrays
-	tmp = 1.0
-	X0 = X0 * tmp
-	Smax = Smax * tmp
-	# calculate temperature acclimation
-	X = TairDay; #pix;tix
-	for ii in 2:info.tem.helpers.sizes.nTix
-		X[ii] = X[ii-1] + (1 / TimConst) * (TairDay[ii] - X[ii-1])
-	end
-	# calculate the stress & saturation
-	S = max(X - X0 , helpers.numbers.zero)
-	vsc = max(min(S / Smax, 1), helpers.numbers.zero)
-	# assign stressor
-	TempScGPP = vsc
+    ## calculate variables
+    # create the arrays
+    tmp = 1.0
+    X0 = X0 * tmp
+    Smax = Smax * tmp
+    # calculate temperature acclimation
+    X = TairDay #pix;tix
+    for ii in 2:info.tem.helpers.sizes.nTix
+        X[ii] = X[ii-1] + (one / TimConst) * (TairDay[ii] - X[ii-1])
+    end
+    # calculate the stress & saturation
+    S = max(X - X0, zero)
+    vsc = clamp(S / Smax, zero, one)
+    # assign stressor
+    TempScGPP = vsc
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

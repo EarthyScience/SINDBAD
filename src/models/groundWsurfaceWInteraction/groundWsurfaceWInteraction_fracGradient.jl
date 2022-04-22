@@ -25,7 +25,7 @@ function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, help
 	## pack land variables
 	@pack_land begin
 		GW2Surf => land.fluxes
-		(ΔsurfaceW, ΔgroundW) ∈ land.states
+		(ΔsurfaceW, ΔgroundW) => land.states
 	end
 
 	return land

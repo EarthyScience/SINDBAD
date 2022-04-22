@@ -7,54 +7,64 @@ end
 
 
 function compute(o::snowMelt_TairRn, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_snowMelt_TairRn o
-	@unpack_forcing (Rn, Tair) ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_snowMelt_TairRn o
+    @unpack_forcing (Rn, Tair) ∈ forcing
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, snowFraction) ∈ land.states
-		snowW ∈ land.pools
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, snowFraction) ∈ land.states
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+		(zero, one) ∈ helpers.numbers
+    end
 
-	# snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
-	tmp_T = Tair * melt_T
-	tmp_Rn = max(Rn * melt_Rn, helpers.numbers.zero)
-	potMelt = (tmp_T + tmp_Rn) * snowFraction
+    # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
+    tmp_T = Tair * melt_T
+    tmp_Rn = max(Rn * melt_Rn, zero)
+    potMelt = (tmp_T + tmp_Rn) * snowFraction
 
-	# potential snow melt if T > 0.0 deg C
-	potMelt = Tair > helpers.numbers.zero ? potMelt : helpers.numbers.zero
-	snowMelt = min(snowW[1] , potMelt)
+    # potential snow melt if T > 0.0 deg C
+    potMelt = Tair > zero ? potMelt : zero
+    snowMelt = min(sum(snowW + ΔsnowW), potMelt)
 
-	# a Water Balance Pool variable that tracks how much water is still
-	# "available"
-	WBP = WBP + snowMelt
+	# divide snowmelt loss equally from all layers
+    ΔsnowW = ΔsnowW .- snowMelt / length(snowW)
 
-	## pack land variables
-	@pack_land begin
-		snowMelt => land.fluxes
-		potMelt => land.snowMelt
-		WBP => land.states
-	end
-	return land
+    # a Water Balance Pool variable that tracks how much water is still "available"
+    WBP = WBP + snowMelt
+
+    ## pack land variables
+    @pack_land begin
+        snowMelt => land.fluxes
+        potMelt => land.snowMelt
+        WBP => land.states
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 function update(o::snowMelt_TairRn, forcing, land, helpers)
-	@unpack_snowMelt_TairRn o
+    @unpack_snowMelt_TairRn o
 
-	## unpack variables
-	@unpack_land begin
-		snowW ∈ land.pools
-		snowMelt ∈ land.fluxes
-	end
+    ## unpack variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+    end
 
-	## update variables
-	# update snow pack
-	snowW[1] = snowW[1] - snowMelt
+    # update snow pack
+    snowW = snowW + ΔsnowW
 
-	## pack land variables
-	@pack_land snowW => land.pools
-	return land
+    # reset delta storage	
+    ΔsnowW = ΔsnowW - ΔsnowW
+
+    ## pack land variables
+    @pack_land begin
+        snowW => land.pools
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 @doc """

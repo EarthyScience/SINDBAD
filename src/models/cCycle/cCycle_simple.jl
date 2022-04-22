@@ -5,12 +5,17 @@ end
 
 function precompute(o::cCycle_simple, forcing, land, helpers)
 
+	@unpack_land begin
+		(zero, one, numType) ∈ helpers.numbers
+		n_cEco = cEco ∈ helpers.pools.water.nZix
+	end
+
 	## instantiate variables
-	cEcoEfflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
-	cEcoOut = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
-	cEcoFlow = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
-	cEcoInflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
-	cEcoFlow = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoEfflux = zeros(numType, n_cEco); #sujan moved from get states
+	cEcoOut = ones(numType, n_cEco)
+	cEcoFlow = ones(numType, n_cEco)
+	cEcoInflux = zeros(numType, n_cEco)
+	cEcoFlow = zeros(numType, n_cEco)
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) => land.cCycle
@@ -30,9 +35,10 @@ function compute(o::cCycle_simple, forcing, land, helpers)
 		p_k ∈ land.cTau
 		(p_A, p_giver, p_taker) ∈ land.cFlow
 		(fluxOrder, p_annk) ∈ land.cCycleBase
+		(zero, one, numType) ∈ helpers.numbers
 	end
 	TSPY = helpers.dates.nStepsYear; # NUMBER OF TIME STEPS PER YEAR
-	p_k = 1 - (exp(-p_annk) ^ (1 / TSPY))
+	p_k = one - (exp(-p_annk) ^ (one / TSPY))
 	## these all need to be zeros maybe is taken care automatically.
 	## compute losses
 	cEcoOut = min(cEco, cEco * p_k)

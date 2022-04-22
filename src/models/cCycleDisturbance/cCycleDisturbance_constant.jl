@@ -14,10 +14,11 @@ function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		(p_giver, p_taker) ∈ land.cFlow
+		zero ∈ helpers.numbers
 	end
 	zixVecVeg = helpers.pools.carbon.zix.cVeg
 	for zixVeg in zixVecVeg
-		cLoss = max(cEco[zixVeg]-carbon_remain, helpers.numbers.zero) * (isDisturbed)
+		cLoss = max(cEco[zixVeg]-carbon_remain, zero) * (isDisturbed)
 		ndxLoseToZix = p_taker[p_giver == zixVeg]
 		for tZ in 1:length(ndxLoseToZix)
 			tarZix = ndxLoseToZix[tZ]

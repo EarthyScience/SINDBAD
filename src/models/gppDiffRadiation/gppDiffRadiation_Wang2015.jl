@@ -5,31 +5,33 @@ export gppDiffRadiation_Wang2015
 end
 
 function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppDiffRadiation_Wang2015 o
-	@unpack_forcing (Rg, RgPot) ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppDiffRadiation_Wang2015 o
+    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
 
-	## calculate variables
-	## FROM SHANNING
-	# CI = cloudiness index
-	CI = helpers.numbers.zero
-	valid = RgPot > 0.0
-	CI[valid] = 1 - Rg[valid] / RgPot[valid]
-	CI_nor = 1.0
-	yearsVec = helpers.dates.year
-	yearsVec = yearsVec[1:size(CI, 2)]
-	for i in unique(yearsVec)
-		ndx = yearsVec == i
-		CImin = min(CI[ndx], 2); #CImin is the minimum CI value of present year
-		CImax = max(CI[ndx], 2)
-		CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
-	end
-	CloudScGPP = 1 - μ * (1.0 - CI_nor)
 
-	## pack land variables
-	@pack_land CloudScGPP => land.gppDiffRadiation
-	return land
+    ## calculate variables
+    ## FROM SHANNING
+    # CI = cloudiness index
+    CI = zero
+    valid = RgPot > zero
+    CI[valid] = one - Rg[valid] / RgPot[valid]
+    CI_nor = one
+    yearsVec = helpers.dates.year
+    yearsVec = yearsVec[1:size(CI, 2)]
+    for i in unique(yearsVec)
+        ndx = yearsVec == i
+        CImin = min(CI[ndx], 2) #CImin is the minimum CI value of present year
+        CImax = max(CI[ndx], 2)
+        CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
+    end
+    CloudScGPP = one - μ * (one - CI_nor)
+
+    ## pack land variables
+    @pack_land CloudScGPP => land.gppDiffRadiation
+    return land
 end
 
 @doc """

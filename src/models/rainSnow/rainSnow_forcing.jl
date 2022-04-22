@@ -5,41 +5,50 @@ export rainSnow_forcing
 end
 
 function compute(o::rainSnow_forcing, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_rainSnow_forcing o
-	@unpack_forcing (Rain, Snow) ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_rainSnow_forcing o
+    @unpack_forcing (Rain, Snow) ∈ forcing
 
-	## unpack land variables
-	@unpack_land snowW ∈ land.pools
+    ## unpack land variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+    end
 
-	## calculate variables
-	rain = Rain
-	snow = Snow * (SF_scale)
-	precip = rain + snow
+    ## calculate variables
+    rain = Rain
+    snow = Snow * (SF_scale)
+    precip = rain + snow
+
+    # add snowfall to snowpack of the first layer
+    ΔsnowW[1] = ΔsnowW[1] + snow
 
 	## pack land variables
-	@pack_land begin
-		(precip, rain, snow) => land.rainSnow
-	end
-	return land
+    @pack_land begin
+        (precip, rain, snow) => land.rainSnow
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 function update(o::rainSnow_forcing, forcing, land, helpers)
-	@unpack_rainSnow_forcing o
+    ## unpack variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+    end
+    # update snow pack
+    snowW[1] = snowW[1] + ΔsnowW[1]
 
-	## unpack variables
-	@unpack_land begin
-		snowW ∈ land.pools
-		snow ∈ land.rainSnow
-	end
+    # reset delta storage	
+    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
 
-	## update variables
-	# update snow pack
-	snowW[1] = snowW[1] + snow
-
-	## pack land variables
-	@pack_land snowW => land.pools
-	return land
+    ## pack land variables
+    @pack_land begin
+        snowW => land.pools
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 @doc """

@@ -6,23 +6,22 @@ export gppVPD_MOD17
 end
 
 function compute(o::gppVPD_MOD17, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppVPD_MOD17 o
-	@unpack_forcing VPDDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppVPD_MOD17 o
+    @unpack_forcing VPDDay ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
+    ## calculate variables
+    tmp = 1.0
+    td = (VPDmax - VPDmin) * tmp
+    pVPDmax = VPDmax * tmp
+    vsc = (pVPDmax - VPDDay) / td
+	vsc = clamp(vsc, zero, one)
+    VPDScGPP = vsc
 
-	## calculate variables
-	tmp = 1.0
-	td = (VPDmax - VPDmin) * tmp
-	pVPDmax = VPDmax * tmp
-	vsc = (pVPDmax - VPDDay) / td
-	vsc[vsc < helpers.numbers.zero] = helpers.numbers.zero
-	vsc[vsc > helpers.numbers.one] = helpers.numbers.one
-	VPDScGPP = vsc
-
-	## pack land variables
-	@pack_land VPDScGPP => land.gppVPD
-	return land
+    ## pack land variables
+    @pack_land VPDScGPP => land.gppVPD
+    return land
 end
 
 @doc """

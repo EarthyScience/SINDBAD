@@ -8,7 +8,7 @@ function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
-	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	p_fsoilW = ones(numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW
@@ -28,6 +28,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
 		soilW_prev ∈ land.pools
 		fsoilW_prev ∈ land.cTauSoilW
 		PET ∈ land.PET
+		(zero, one) ∈ helpers.numbers
 	end
 	# NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
 	TSPY = helpers.dates.nStepsYear; #sujan
@@ -55,7 +56,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
 	# WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
 	ndxn = (PET <= 0.0)
 	BGME[ndxn] = pBGME[ndxn]
-	BGME = max(min(BGME, helpers.numbers.one), helpers.numbers.zero)
+	BGME = max(min(BGME, one), zero)
 	# FEED IT TO THE STRUCTURE
 	fsoilW = BGME
 	# set the same moisture stress to all carbon pools

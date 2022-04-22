@@ -5,21 +5,19 @@ export gppAirT_Wang2014
 end
 
 function compute(o::gppAirT_Wang2014, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppAirT_Wang2014 o
-	@unpack_forcing TairDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppAirT_Wang2014 o
+    @unpack_forcing TairDay ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
+    ## calculate variables
+    pTmax = Tmax
+    tsc = TairDay / pTmax
+    TempScGPP = clamp(tsc, zero, one)
 
-	## calculate variables
-	pTmax = Tmax
-	tsc = TairDay / pTmax
-	tsc[tsc < helpers.numbers.zero] = helpers.numbers.zero
-	tsc[tsc > helpers.numbers.one] = helpers.numbers.one
-	TempScGPP = tsc
-
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

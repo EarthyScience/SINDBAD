@@ -9,11 +9,12 @@ function compute(o::runoffInfiltrationExcess_kUnsat, forcing, land, helpers)
 	@unpack_land begin
 		WBP ∈ land.states
 		unsatK ∈ land.soilProperties
+		(zero, one) ∈ helpers.numbers
 	end
-	# get the unsaturared hydraulic conductivity based on soil properties for the first soil layer
-	k_unsat = feval(unsatK, s, p, info, 1)
+	# get the unsaturated hydraulic conductivity based on soil properties for the first soil layer
+	k_unsat = unsatK(land, helpers, 1)
 	# minimum of the conductivity & the incoming water
-	runoffInfiltration = max(WBP-k_unsat, helpers.numbers.zero)
+	runoffInfiltration = max(WBP-k_unsat, zero)
 	# update remaining water
 	WBP = WBP - runoffInfiltration
 

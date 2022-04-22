@@ -12,10 +12,11 @@ function compute(o::drainage_dos, forcing, land, helpers)
 	@unpack_land begin
 		(p_wSat, p_β) ∈ land.soilWBase
 		soilW ∈ land.pools
+		zero ∈ helpers.numbers
 	end
 
 	drainage = ((soilW ./ p_wSat) .^ (dos_exp .* p_β)) .* soilW
-	drainage[end] = helpers.numbers.zero
+	drainage[end] = zero
 
 	## pack land variables
 	@pack_land begin
