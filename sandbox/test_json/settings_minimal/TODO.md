@@ -28,7 +28,7 @@
   - saturationExcess *DONE*
   - overland *DONE*
   - infExcess *DONE*
-  - rootwateruptake
+  - rootwateruptake *DONE*
   - drainage *DONE*
   - groundWSoilWInteraction *DONE*
   - groundWsurfaceWInteraction*DONE*

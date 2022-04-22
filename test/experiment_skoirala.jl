@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 
-forcing = getForcing(info);
+# forcing = getForcing(info);
 
 
 obsvars, modelvars = getConstraintNames(info);
@@ -18,15 +18,14 @@ observations = getObservation(info); # target observation!!
 optimParams = info.opti.params2opti;
 approaches = info.tem.models.forward;
 # tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
-# info = (; info..., opti = (;));
-# info = (;info..., tem = (;));
-
 
 # initPools = getInitPools(info)
 out = getInitOut(info);
+# @show out.pools.soilW
 
-outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-# outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
+outsp = runSpinup(approaches, forcing, out, info.tem.helpers);
+typeof(outsp[1].pools.soilW)
+outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 
 # outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
 pprint(outsp)
