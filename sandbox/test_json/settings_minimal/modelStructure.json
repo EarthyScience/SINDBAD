@@ -105,9 +105,6 @@
         "soilWBase": {
             "approach": "uniform"
         },
-        "soilWFlow": {
-            "approach": "simple"
-        },
         "transpirationDemand": {
             "approach": "PET"
         },
@@ -124,6 +121,9 @@
             "approach": "sigmoid"
         },
         "waterBalance": {
+            "approach": "simple"
+        },
+        "wCycle": {
             "approach": "simple"
         },
         "WUE": {

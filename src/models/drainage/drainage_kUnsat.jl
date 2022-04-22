@@ -5,7 +5,7 @@ end
 
 function precompute(o::drainage_kUnsat, forcing, land, helpers)
 	## instantiate drainage
-	drainage = zeros(helpers.numbers.numType, helpers.pools.water.nZix.soilW) 
+	drainage = zeros(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
 	## pack land variables
 	@pack_land drainage => land.drainage
 	return land
@@ -27,12 +27,38 @@ function compute(o::drainage_kUnsat, forcing, land, helpers)
 		lossCap = soilW[sl] + ΔsoilW[sl]
 		drainage[sl] = unsatK(land, helpers, sl)
 		drainage[sl] = min(drainage[sl], holdCap, lossCap)
+		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
+		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
 	end
 
-	drainage[end] = helpers.numbers.zero
+	## pack land variables
+	@pack_land begin
+		drainage => land.drainage
+		ΔsoilW => land.states
+	end
+	return land
+end
+
+function update(o::drainage_kUnsat, forcing, land, helpers)
+
+	## unpack variables
+	@unpack_land begin
+		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+	end
+
+	## update variables
+	# update soil moisture
+	soilW = soilW + ΔsoilW
+
+	# reset soil moisture changes to zero
+	ΔsoilW = ΔsoilW - ΔsoilW
 
 	## pack land variables
-	@pack_land drainage => land.drainage
+	@pack_land begin
+		soilW => land.pools
+		ΔsoilW => land.states
+	end
 	return land
 end
 
