@@ -1,3 +1,4 @@
+export runEcosystem, runSpinup, runForward, showoutr
 """
 runModels(forcing, models, out)
 """
@@ -5,7 +6,7 @@ function runModels(forcing, models, out, modelHelpers)
     for model in models
         out = Models.compute(model, forcing, out, modelHelpers)
         # out = Models.update(model, forcing, out, modelHelpers)
-        # @show typeof(model), out.pools.soilW
+        # @show typeof(model), typeof(out.pools.soilW), typeof(out.pools.snowW)
     end
     return out
 end
@@ -25,6 +26,8 @@ end
 function runPrecompute(forcing, models, out, modelHelpers)
     for model in models
         out = Models.precompute(model, forcing, out, modelHelpers)
+        # @show typeof(model), typeof(out.pools.soilW), typeof(out.pools.snowW)
+        # println("-------------------")
     end
     return out
 end
@@ -55,8 +58,6 @@ end
 runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
 """
 function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; nspins=3)
-    # out=(; pools=(;), diagnostics=(;), fluxes=(;))
-    # out = (; out..., pools = (; out.pools..., initPools...))
     tsteps = size(forcing, 1)
     spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
     out = runPrecompute(forcing[1], selectedModels, out, modelHelpers)

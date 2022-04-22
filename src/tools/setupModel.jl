@@ -1,7 +1,3 @@
-function checkModelForcingExists(info, forcingVariables)
-    println("Not done")
-end
-
 function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
     for sm in selModels
@@ -260,33 +256,23 @@ end
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
 function setHelpers(info, ttype=info.modelRun.rules.dataType)
-    zero = setDataType(ttype)(0)
-    one = setDataType(ttype)(1)
+    zero = setNumberType(ttype)(0)
+    one = setNumberType(ttype)(1)
+    tolerance = setNumberType(ttype)(1e-5)
     info = (; info..., tem=(;))
-    # info = (; info..., tem=(; helpers=(; zero=zero, one=one, numType=setDataType(ttype)))) # aone=aone, azero=azero
-    sDT = (a) -> setDataType(ttype)(a)
-    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, numType=setDataType(ttype), sNT=sDT)))) # aone=aone, azero=azero
+    sDT = (a) -> setNumberType(ttype)(a)
+    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT)))) # aone=aone, azero=azero
     return info
 end
 
 """
-Set the datatype to the selected data type of model in modelRun.rules.dataType
+Set the number type to the selected data type for model run in modelRun.rules.dataType
 """
-function setDataType(t="Float64")
+function setNumberType(t="Float64")
     ttype = getfield(Main, Symbol(t))
     return ttype
 end
 
-# function setHelpers(info)
-#     if info.modelRun.rules.dataType == "Float64"
-#         zero = 0.0
-#         one = 1.0
-#         aone = [1.0]
-#         azero = [0.0]
-#         info=(; info..., tem=(; helpers = (; zero=zero, one=one, aone=aone, azero=azero)));
-#     end
-# return info
-# end
 """
 get the union of variables to write and store from modelrun[.json] and set it at info.tem.variables
 """
@@ -315,4 +301,4 @@ function setupModel!(info)
     return info
 end
 
-export getInitPools, getInitOut, setDataType
+export getInitPools, getInitOut, setNumberType

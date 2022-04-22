@@ -44,7 +44,7 @@ export getObservation
 include("tools/setupModel.jl")
 export setupModel!
 include("Ecosystem/runEcosystem.jl")
-export runEcosystem, runSpinup, runForward
+# export runEcosystem, runSpinup, runForward
 include("optimization/optimizeModel.jl")
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss

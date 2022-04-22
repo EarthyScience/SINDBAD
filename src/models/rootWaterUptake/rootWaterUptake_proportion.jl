@@ -5,31 +5,31 @@ end
 
 function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		pawAct ∈ land.vegAvailableWater
-		soilW ∈ land.pools
-		transpiration ∈ land.fluxes
-		ΔsoilW ∈ land.states
-	end
-	# get the transpiration
-	transp = transpiration
-	pawActTotal = sum(pawAct)
-	wRootUptake = copy(pawAct)
-	# extract from top to bottom
-	for sl in 1:helpers.pools.water.nZix.soilW
-		soilWAvailProp = max(0.0, pawAct[sl] / (pawActTotal + 0.0001)); # + 0.0001 is  necessary because supply can be 0 -> 0 / 0 = NaN
-		contrib = transp * soilWAvailProp
-		wRootUptake[sl] = contrib; #
-		ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
-	end
+    ## unpack land variables
+    @unpack_land begin
+        pawAct ∈ land.vegAvailableWater
+        soilW ∈ land.pools
+        transpiration ∈ land.fluxes
+        ΔsoilW ∈ land.states
+        (zero, tolerance) ∈ helpers.numbers
+    end
+    # get the transpiration
+    toUptake = transpiration
+    pawActTotal = sum(pawAct)
+    wRootUptake = copy(pawAct)
+    # extract from top to bottom
+    for sl in 1:helpers.pools.water.nZix.soilW
+        uptakeProportion = max(zero, pawAct[sl] / (pawActTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
+        wRootUptake[sl] = toUptake * uptakeProportion
+        ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
+    end
 
-	## pack land variables
-	@pack_land begin
-		wRootUptake => land.states
-		ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        wRootUptake => land.states
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::rootWaterUptake_proportion, forcing, land, helpers)
@@ -56,7 +56,7 @@ function update(o::rootWaterUptake_proportion, forcing, land, helpers)
 end
 
 @doc """
-calculates the rootUptake from each of the soil layer proportional to the root fraction
+rootUptake from each soil layer proportional to the relative plant water availability in the layer
 
 ---
 
