@@ -9,7 +9,7 @@ include("rootWaterUptake_topBottom.jl")
 Root water uptake (extract water from soil)
 
 # Approaches:
- - proportion: calculates the rootUptake from each of the soil layer proportional to the root fraction
- - topBottom: calculates the rootUptake from each of the soil layer from top to bottom
+ - proportion: rootUptake from each soil layer proportional to the relative plant water availability in the layer
+ - topBottom: rootUptake from each of the soil layer from top to bottom using all water in each layer
 """
 rootWaterUptake

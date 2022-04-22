@@ -5,48 +5,55 @@ end
 
 function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		(pawAct, wRootUptake) ∈ land.states
-		soilW ∈ land.pools
-		transpiration ∈ land.fluxes
-	end
-	# get the transpiration
-	for sl in 1:helpers.pools.water.nZix.soilW
-		soilWAvail = pawAct[sl]
-		contrib = minimum(transpiration, soilWAvail)
-		wRootUptake[sl] = contrib
-		transpiration = transpiration-contrib
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (pawAct, wRootUptake) ∈ land.states
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        transpiration ∈ land.fluxes
+    end
+    # get the transpiration
+    toUptake = transpiration
+    for sl in 1:helpers.pools.water.nZix.soilW
+        uptaken = minimum(toUptake, pawAct[sl])
+        wRootUptake[sl] = uptaken
+        toUptake = toUptake - uptaken
+        ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
+    end
 
-	## pack land variables
-	@pack_land begin
-		wRootUptake => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        wRootUptake => land.states
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		wRootUptake ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# extract from top to bottom & update soil moisture 
-	for sl in 1:helpers.pools.water.nZix.soilW 
-		soilW[sl] = soilW[sl] - wRootUptake[sl]; 
-	end 
+    ## update variables
+    # update soil moisture
+    soilW = soilW + ΔsoilW
 
-	## pack land variables
-	@pack_land soilW => land.pools
-	return land
+    # reset soil moisture changes to zero
+    ΔsoilW = ΔsoilW - ΔsoilW
+
+    ## pack land variables
+    @pack_land begin
+        soilW => land.pools
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 @doc """
-calculates the rootUptake from each of the soil layer from top to bottom
+rootUptake from each of the soil layer from top to bottom using all water in each layer
 
 ---
 
