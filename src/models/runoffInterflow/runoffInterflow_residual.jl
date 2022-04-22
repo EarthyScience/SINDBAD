@@ -1,7 +1,7 @@
 export runoffInterflow_residual
 
 @bounds @describe @units @with_kw struct runoffInterflow_residual{T1} <: runoffInterflow
-	rc::T1 = 0.3 | (0.0, 0.9) | "simply assume that a fraction of the still available water runs off" | ""
+	rc::T1 = 0.3 | (0.0, 0.9) | "fraction of the available water that flows out as interflow" | ""
 end
 
 function compute(o::runoffInterflow_residual, forcing, land, helpers)
@@ -27,7 +27,7 @@ function compute(o::runoffInterflow_residual, forcing, land, helpers)
 end
 
 @doc """
-calculates interflow as a fraction of the available water
+interflow as a fraction of the available water balance pool
 
 # Parameters
 $(PARAMFIELDS)
