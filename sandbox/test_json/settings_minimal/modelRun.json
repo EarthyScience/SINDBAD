@@ -37,7 +37,8 @@
 				"pools": [
 					"snowW",
 					"soilW"
-				]
+				],
+				"waterBalance": ["waterBalance"]
 			},
 			"store": {}
 	}
