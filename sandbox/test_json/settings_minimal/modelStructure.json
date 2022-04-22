@@ -142,7 +142,7 @@
 				"snowW": [1, 0.01],
 				"surfaceW": [1, 0.0]
             },
-			"combine": [false,"wPools"],
+			"combine": [true,"wPools"],
 			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0]
 		},
 		"carbon":
