@@ -13,10 +13,10 @@ function compute(o::wCycle_simple, forcing, land, helpers)
 	end
 
 	## update variables
-	groundW = groundW + ΔgroundW
-	snowW = snowW + ΔsnowW
-	soilW = soilW + ΔsoilW
-	surfaceW = surfaceW + ΔsurfaceW
+	groundW .= groundW .+ ΔgroundW
+	snowW .= snowW .+ ΔsnowW
+	soilW .= soilW .+ ΔsoilW
+	surfaceW .= surfaceW .+ ΔsurfaceW
 
 
 	# reset soil moisture changes to zero
