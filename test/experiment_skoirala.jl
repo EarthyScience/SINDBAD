@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 
-# forcing = getForcing(info);
+forcing = getForcing(info);
 
 
 obsvars, modelvars = getConstraintNames(info);

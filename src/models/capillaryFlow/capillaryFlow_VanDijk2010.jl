@@ -9,20 +9,47 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 	@unpack_land begin
 		(p_kFC, p_wSat) ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
 		(numType, one) ∈ helpers.numbers
 	end
 	capFlow = zeros(numType, helpers.pools.water.nZix.soilW)
-	dos_soilW = soilW ./ p_wSat
+	dos_soilW = (soilW + ΔsoilW) ./ p_wSat
 	for sl in 1:helpers.pools.water.nZix.soilW-1
 		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (one - dos_soilW[sl])
-		holdCap = p_wSat[sl] - soilW[sl]
-		lossCap = soilW[sl+1]
+		holdCap = p_wSat[sl] - (soilW[sl] + ΔsoilW[sl])
+		lossCap = soilW[sl+1] + ΔsoilW[sl+1]
 		capFlow[sl] = min(tmpCapFlow, holdCap, lossCap)
+		ΔsoilW[sl] = ΔsoilW[sl] + capFlow[sl]
+		ΔsoilW[sl+1] = ΔsoilW[sl+1] - capFlow[sl]
 	end
 
 	## pack land variables
 	@pack_land begin
 		capFlow => land.capillaryFlow
+		ΔsoilW => land.states
+	end
+	return land
+end
+
+function update(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
+
+	## unpack variables
+	@unpack_land begin
+		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+	end
+
+	## update variables
+	# update soil moisture of the first layer
+	soilW = soilW + ΔsoilW
+
+	# reset soil moisture changes to zero
+	ΔsoilW = ΔsoilW - ΔsoilW
+
+	## pack land variables
+	@pack_land begin
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 end
