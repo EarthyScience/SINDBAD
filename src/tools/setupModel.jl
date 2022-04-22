@@ -78,13 +78,13 @@ function generateStatesInfo(info)
         elSymbol = Symbol(element)
         tmpElem = (;)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
-        poolData = getfield(getfield(info.modelStructure.pools, element), :pools)
+        poolData = getfield(getfield(info.modelStructure.pools, element), :components)
         nlayers = []
         layer = []
         inits = []
         subPoolName = []
         mainPoolName = []
-        mainPools = Symbol.(getfield(getfield(info.modelStructure.pools, element), :order))
+        mainPools = Symbol.(keys(getfield(getfield(info.modelStructure.pools, element), :components)))
         for mainPool in mainPools
             poolInfo = getproperty(poolData, mainPool)
             if poolInfo isa Array{<:Number,1}
@@ -135,7 +135,12 @@ function generateStatesInfo(info)
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
         end
-        uniqueSubPools = Set(subPoolName)
+        uniqueSubPools = []
+        for _sp in subPoolName
+            if _sp ∉ uniqueSubPools
+                push!(uniqueSubPools, _sp)
+            end
+        end
         for subPool in uniqueSubPools
             zix = Int[]
             initValues = Float64[]
@@ -170,7 +175,13 @@ function generateStatesInfo(info)
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
             create = [combinedPoolName]
-            components = Set(Symbol.(subPoolName))
+            components = []
+            for _sp in subPoolName
+                if _sp ∉ components
+                    push!(components, _sp)
+                end
+            end
+            # components = Set(Symbol.(subPoolName))
             initValues = Float64.(inits)
             zix = 1:1:length(mainPoolName) |> collect
             flags = ones(Int, length(mainPoolName))
