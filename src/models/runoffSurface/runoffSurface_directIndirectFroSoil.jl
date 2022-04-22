@@ -13,22 +13,30 @@ function compute(o::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
 	@unpack_land begin
 		fracFrozen ∈ land.runoffSaturationExcess
 		surfaceW ∈ land.pools
+		ΔsurfaceW ∈ land.states
 		runoffOverland ∈ land.fluxes
+		(zero, one) ∈ helpers.numbers
 	end
-	# fraction of overland runoff that recharges the surface water & the
-	#fraction that flows out directly
-	fracFastQ = (1.0 - rf) * (1.0 - fracFrozen) + fracFrozen
+	# fraction of overland runoff that flows out directly
+	fracFastQ = (one - rf) * (one - fracFrozen) + fracFrozen
+
 	runoffSurfaceDirect = fracFastQ * runoffOverland
+
 	# fraction of surface storage that flows out irrespective of input
-	surfaceWRec = (1.0 - fracFastQ) * runoffOverland
-	runoffSurfaceIndirect = dc * surfaceW[1]
+	surfaceWRec = rf * runoffOverland
+	runoffSurfaceIndirect = dc * sum(surfaceW + ΔsurfaceW)
+
 	# get the total surface runoff
 	runoffSurface = runoffSurfaceDirect + runoffSurfaceIndirect
+
+	# update the delta storage
+	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
+	ΔsurfaceW = ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
 	## pack land variables
 	@pack_land begin
 		(runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) => land.fluxes
-		fracFastQ => land.runoffSurface
+		ΔsurfaceW => land.states
 	end
 	return land
 end
@@ -39,20 +47,25 @@ function update(o::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
-		(surfaceWRec, runoffSurfaceIndirect) ∈ land.fluxes
+		ΔsurfaceW ∈ land.states
 	end
 
-	## update variables
-	# update surface water storage
-	surfaceW[1] = surfaceW[1] + surfaceWRec - runoffSurfaceIndirect
+	## update storage pools
+	surfaceW = surfaceW + ΔsurfaceW
+
+	# reset ΔgroundW and ΔsurfaceW to zero
+	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
 
 	## pack land variables
-	@pack_land surfaceW => land.pools
+	@pack_land begin
+		surfaceW => land.pools
+		ΔsurfaceW => land.states
+	end
 	return land
 end
 
 @doc """
-calculate the runoff from surface water storage considering frozen soil fraction
+assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid
 
 # Parameters
 $(PARAMFIELDS)

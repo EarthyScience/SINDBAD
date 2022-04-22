@@ -17,6 +17,7 @@ function precompute(o::runoffSurface_Orth2013, forcing, land, helpers)
 end
 
 function compute(o::runoffSurface_Orth2013, forcing, land, helpers)
+	#@needscheck and redo
 	## unpack parameters
 	@unpack_runoffSurface_Orth2013 o
 
@@ -52,14 +53,20 @@ function update(o::runoffSurface_Orth2013, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
-		(runoffOverland, runoffSurface) ∈ land.fluxes
+		ΔsurfaceW ∈ land.states
 	end
 
-	## update variables
-	surfaceW[1] = surfaceW[1] + runoffOverland - runoffSurface
+	## update storage pools
+	surfaceW = surfaceW + ΔsurfaceW
+
+	# reset ΔgroundW and ΔsurfaceW to zero
+	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
 
 	## pack land variables
-	@pack_land surfaceW => land.pools
+	@pack_land begin
+		surfaceW => land.pools
+		ΔsurfaceW => land.states
+	end
 	return land
 end
 

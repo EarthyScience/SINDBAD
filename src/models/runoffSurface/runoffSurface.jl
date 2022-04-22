@@ -11,15 +11,14 @@ include("runoffSurface_Orth2013.jl")
 include("runoffSurface_Trautmann2018.jl")
 
 @doc """
-Runoff from surface water storages
-
+Surface runoff generation process
 # Approaches:
- - all: calculate the runoff from surface water storage
- - directIndirect: calculate the runoff from surface water storage
- - directIndirectFroSoil: calculate the runoff from surface water storage considering frozen soil fraction
- - indirect: calculate the runoff from surface water storage
- - none: sets surface runoff [runoffSurface] from the storage to zero
- - Orth2013: calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
- - Trautmann2018: calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018
+ - all: assumes all overland runoff is lost as surface runoff
+ - directIndirect: assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
+ - directIndirectFroSoil: assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid
+ - indirect: assumes all overland runoff is recharged to surface water first, which then generates surface runoff
+ - none: sets surface runoff to zero
+ - Orth2013: delay coefficient of first 60 days to delay the runoff generation
+ - Trautmann2018: based on Orth2013, as used in Trautmannet al. 2018
 """
 runoffSurface

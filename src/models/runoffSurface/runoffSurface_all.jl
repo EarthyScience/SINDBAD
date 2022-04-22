@@ -19,7 +19,7 @@ function compute(o::runoffSurface_all, forcing, land, helpers)
 end
 
 @doc """
-calculate the runoff from surface water storage
+assumes all overland runoff is lost as surface runoff
 
 ---
 
