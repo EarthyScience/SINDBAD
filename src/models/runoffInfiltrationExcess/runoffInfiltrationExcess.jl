@@ -10,8 +10,8 @@ include("runoffInfiltrationExcess_none.jl")
 Infiltration excess runoff
 
 # Approaches:
- - Jung: compute infiltration excess runoff
- - kUnsat: calculates the infiltration excess runoff based on unsτrated hydraulic conductivity
+ - Jung: infiltration excess runoff as a function of rainintensity and vegetated fraction
+ - kUnsat: infiltration excess runoff based on unsτrated hydraulic conductivity hydraulic conductivity
  - none: sets infiltration excess runoff to zero
 """
 runoffInfiltrationExcess
