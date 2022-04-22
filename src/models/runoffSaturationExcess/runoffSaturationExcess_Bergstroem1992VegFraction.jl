@@ -1,7 +1,7 @@
 export runoffSaturationExcess_Bergstroem1992VegFraction
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1} <: runoffSaturationExcess
-	berg_scale::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
+	β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land, helpers)
@@ -13,20 +13,22 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, l
 		(WBP, vegFraction) ∈ land.states
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+		(zero, one, sNT) ∈ helpers.numbers
 	end
 	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW)
+	tmp_SoilTotal = sum(soilW + ΔsoilW)
 	# get the berg parameters according the vegetation fraction
-	p_berg = max(0.1, berg_scale * vegFraction); # do this?
+	p_berg = max(0.1, β * vegFraction); # do this?
 	# calculate land runoff from incoming water & current soil moisture
 	tmp_SatExFrac = min(exp(p_berg * log(tmp_SoilTotal / tmp_smaxVeg)), 1)
-	runoffSaturation = WBP * tmp_SatExFrac
+	runoffSatExc = WBP * tmp_SatExFrac
 	# update water balance pool
-	WBP = WBP - runoffSaturation
+	WBP = WBP - runoffSatExc
 
 	## pack land variables
 	@pack_land begin
-		runoffSaturation => land.fluxes
+		runoffSatExc => land.fluxes
 		p_berg => land.runoffSaturationExcess
 		WBP => land.states
 	end
@@ -34,7 +36,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, l
 end
 
 @doc """
-calculates land surface runoff & infiltration to different soil layers using
+saturation excess runoff using Bergström method with parameter scaled by vegetation fraction
 
 # Parameters
 $(PARAMFIELDS)
@@ -50,7 +52,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992VegFraction
  - smax2 : maximum water capacity of second soil layer [mm]
 
 *Outputs*
- - land.fluxes.runoffSaturation : runoff from land [mm/time]
+ - land.fluxes.runoffSatExc : runoff from land [mm/time]
  - land.runoffSaturationExcess.p_berg : scaled berg parameter
  - land.states.WBP : water balance pool [mm]
 
