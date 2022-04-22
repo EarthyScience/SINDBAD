@@ -1,8 +1,8 @@
 export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992MixedVegFraction{T1, T2} <: runoffSaturationExcess
-	berg_scaleV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
-	berg_scaleS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
+	βV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
+	βS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
@@ -14,28 +14,33 @@ function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forci
 		(WBP, vegFraction) ∈ land.states
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+		(zero, one, sNT) ∈ helpers.numbers
 	end
 	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW)
+	tmp_SoilTotal = sum(soilW + ΔsoilW)
+
 	# get the berg parameters according the vegetation fraction
-	berg = berg_scaleV * vegFraction + berg_scaleS * (1.0 - vegFraction)
-	berg = max(0.1, berg); # do this?
+	p_berg = βV * vegFraction + βS * (one - vegFraction)
+	p_berg = max(0.1, berg); # do this?
+
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min(exp(berg * log(tmp_SoilTotal / tmp_smaxVeg)), 1)
-	runoffSaturation = WBP * tmp_SatExFrac
+	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg ^ p_berg), one)
+	runoffSatExc = WBP * tmp_SatExFrac
+
 	# update water balance
-	WBP = WBP - runoffSaturation
+	WBP = WBP - runoffSatExc
 
 	## pack land variables
 	@pack_land begin
-		runoffSaturation => land.fluxes
+		runoffSatExc => land.fluxes
 		WBP => land.states
 	end
 	return land
 end
 
 @doc """
-calculates land surface runoff & infiltration to different soil layers
+saturation excess runoff using Bergström method with separate berg parameters for vegetated and non-vegetated fractions
 
 # Parameters
 $(PARAMFIELDS)
@@ -49,7 +54,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992MixedVegFraction
  - berg : shape parameter of runoff-infiltration curve []
 
 *Outputs*
- - land.fluxes.runoffSaturation : runoff from land [mm/time]
+ - land.fluxes.runoffSatExc : runoff from land [mm/time]
  - land.states.WBP : water balance pool [mm]
 
 ---

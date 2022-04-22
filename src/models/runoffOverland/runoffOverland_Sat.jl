@@ -6,11 +6,11 @@ end
 function compute(o::runoffOverland_Sat, forcing, land, helpers)
 
 	## unpack land variables
-	@unpack_land runoffSaturation ∈ land.fluxes
+	@unpack_land runoffSatExc ∈ land.fluxes
 
 
 	## calculate variables
-	runoffOverland = runoffSaturation
+	runoffOverland = runoffSatExc
 
 	## pack land variables
 	@pack_land runoffOverland => land.fluxes
@@ -18,7 +18,7 @@ function compute(o::runoffOverland_Sat, forcing, land, helpers)
 end
 
 @doc """
-calculates total overland runoff that passes to the surface storage
+assumes overland flow to be saturation excess runoff
 
 ---
 
@@ -26,7 +26,7 @@ calculates total overland runoff that passes to the surface storage
 Land over flow (sum of saturation and infiltration excess runoff) using runoffOverland_Sat
 
 *Inputs*
- - land.fluxes.runoffSaturation: saturation excess runoff
+ - land.fluxes.runoffSatExc: saturation excess runoff
 
 *Outputs*
  - land.fluxes.runoffOverland : runoff over land [mm/time]

@@ -6,10 +6,10 @@ end
 function precompute(o::saturatedFraction_none, forcing, land, helpers)
 
 	## calculate variables
-	soilWSatFrac = helpers.numbers.zero
+	satFrac = helpers.numbers.zero
 
 	## pack land variables
-	@pack_land soilWSatFrac => land.states
+	@pack_land satFrac => land.states
 	return land
 end
 
