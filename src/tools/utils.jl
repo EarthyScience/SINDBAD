@@ -29,14 +29,14 @@ function dict2tuple(d::Dict)
 end
 
 """
-typenarrow!(d::Dict)
+typenarrow!(d::DataStructures.OrderedDict)
 covert nested dictionary to named Tuple
 """
-function typenarrow!(d::Dict)
+function typenarrow!(d::DataStructures.OrderedDict)
     for k in keys(d)
         if d[k] isa Array{Any,1}
             d[k] = [v for v in d[k]]
-        elseif d[k] isa Dict
+        elseif d[k] isa DataStructures.OrderedDict
             d[k] = typenarrow!(d[k])
         end
     end
