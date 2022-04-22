@@ -17,6 +17,7 @@ function precompute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 end
 
 function compute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
+	#@needscheck and redo
 	## unpack parameters
 	@unpack_runoffSurface_Trautmann2018 o
 
@@ -59,15 +60,20 @@ function update(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
-		dSurf ∈ land.runoffSurface
+		ΔsurfaceW ∈ land.states
 	end
 
-	## update variables
-	# update surface water pool 
-	surfaceW[1] = surfaceW[1] + dSurf; 
+	## update storage pools
+	surfaceW = surfaceW + ΔsurfaceW
+
+	# reset ΔgroundW and ΔsurfaceW to zero
+	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
 
 	## pack land variables
-	@pack_land surfaceW => land.pools
+	@pack_land begin
+		surfaceW => land.pools
+		ΔsurfaceW => land.states
+	end
 	return land
 end
 

@@ -12,20 +12,29 @@ function compute(o::runoffSurface_directIndirect, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
+		ΔsurfaceW ∈ land.states
 		runoffOverland ∈ land.fluxes
+		(zero, one) ∈ helpers.numbers
 	end
 	# fraction of overland runoff that recharges the surface water & the
 	#fraction that flows out directly
-	runoffSurfaceDirect = (1.0 - rf) * runoffOverland
+	runoffSurfaceDirect = (one - rf) * runoffOverland
+
 	# fraction of surface storage that flows out irrespective of input
 	surfaceWRec = rf * runoffOverland
-	runoffSurfaceIndirect = dc * surfaceW[1]
+	runoffSurfaceIndirect = dc * sum(surfaceW + ΔsurfaceW)
+
 	# get the total surface runoff
 	runoffSurface = runoffSurfaceDirect + runoffSurfaceIndirect
+
+	# update the delta storage
+	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
+	ΔsurfaceW = ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
 	## pack land variables
 	@pack_land begin
 		(runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) => land.fluxes
+		ΔsurfaceW => land.states
 	end
 	return land
 end
@@ -36,20 +45,25 @@ function update(o::runoffSurface_directIndirect, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
-		(surfaceWRec, runoffSurfaceIndirect) ∈ land.fluxes
+		ΔsurfaceW ∈ land.states
 	end
 
-	## update variables
-	# update surface water storage
-	surfaceW[1] = surfaceW[1] + surfaceWRec - runoffSurfaceIndirect; 
+	## update storage pools
+	surfaceW = surfaceW + ΔsurfaceW
+
+	# reset ΔgroundW and ΔsurfaceW to zero
+	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
 
 	## pack land variables
-	@pack_land surfaceW => land.pools
+	@pack_land begin
+		surfaceW => land.pools
+		ΔsurfaceW => land.states
+	end
 	return land
 end
 
 @doc """
-calculate the runoff from surface water storage
+assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
 
 # Parameters
 $(PARAMFIELDS)
