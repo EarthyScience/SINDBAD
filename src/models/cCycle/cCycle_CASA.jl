@@ -6,9 +6,9 @@ end
 function precompute(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
-	cEcoEfflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
-	cEcoInflux = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
-	cEcoFlow = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	cEcoEfflux = zeros(numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
+	cEcoInflux = zeros(numType, helpers.pools.water.nZix.cEco)
+	cEcoFlow = zeros(numType, helpers.pools.water.nZix.cEco)
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
@@ -157,6 +157,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		gpp ∈ land.fluxes
 		(p_giver, p_taker) ∈ land.cFlow
 		YG ∈ land.aRespiration
+		(zero, one) ∈ helpers.numbers
 	end
 
 	## calculate variables
@@ -222,7 +223,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	## solve it for each pool individually
 	for zix in zixVecOrder
 		# general k loss
-		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], helpers.numbers.one), helpers.numbers.zero)
+		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], one), zero)
 		cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 0.9999999), 1e-7); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
 		if any(zix == helpers.pools.carbon.zix.cVeg)

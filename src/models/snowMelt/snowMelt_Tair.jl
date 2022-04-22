@@ -5,55 +5,65 @@ export snowMelt_Tair
 end
 
 function compute(o::snowMelt_Tair, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_snowMelt_Tair o
-	@unpack_forcing Tair ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_snowMelt_Tair o
+    @unpack_forcing Tair ∈ forcing
 
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, snowFraction) ∈ land.states
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+		zero ∈ helpers.numbers
+    end
+    # effect of temperature on snow melt = snowMeltRate * Tair
+    pRate = (rate * helpers.dates.nStepsDay)
+    Tterm = max(pRate * Tair, zero)
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, snowFraction) ∈ land.states
-		snowW ∈ land.pools
-	end
-	# effect of temperature on snow melt = snowMeltRate * Tair
-	pRate = (rate * helpers.dates.nStepsDay)
-	Tterm = max(pRate * Tair, helpers.numbers.zero)
-	# snow melt [mm/day] is calculated as a simple function of temperature
-	# & scaled with the snow covered fraction
-	snowMelt = min(snowW[1] , Tterm * snowFraction)
-	# a Water Balance Pool variable that tracks how much water is still
-	# "available"
-	WBP = WBP + snowMelt
+    # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
+    snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
 
-	## pack land variables
-	@pack_land begin
-		snowMelt => land.fluxes
-		Tterm => land.snowMelt
-		WBP => land.states
-	end
-	return land
+	# divide snowmelt loss equally from all layers
+    ΔsnowW = ΔsnowW .- snowMelt / length(snowW)
+
+    # a Water Balance Pool variable that tracks how much water is still "available"
+    WBP = WBP + snowMelt
+
+    ## pack land variables
+    @pack_land begin
+        snowMelt => land.fluxes
+        Tterm => land.snowMelt
+        WBP => land.states
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 function update(o::snowMelt_Tair, forcing, land, helpers)
-	@unpack_snowMelt_Tair o
+    @unpack_snowMelt_Tair o
 
-	## unpack variables
-	@unpack_land begin
-		snowW ∈ land.pools
-		snowMelt ∈ land.fluxes
-	end
+    ## unpack variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+    end
 
-	## update variables
-	# update snow pack
-	snowW[1] = snowW[1] - snowMelt
+    # update snow pack
+    snowW = snowW + ΔsnowW
 
-	## pack land variables
-	@pack_land snowW => land.pools
-	return land
+    # reset delta storage	
+    ΔsnowW = ΔsnowW - ΔsnowW
+
+    ## pack land variables
+    @pack_land begin
+        snowW => land.pools
+        ΔsnowW => land.states
+    end
+    return land
 end
 
 @doc """
-precomputes the snow melt term as function of forcing.Tair. computes the snow melt term as function of forcing.Tair
+computes the snow melt term as function of air temperature
 
 # Parameters
 $(PARAMFIELDS)

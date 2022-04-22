@@ -11,15 +11,17 @@ export cTauVegProperties_CASA
 end
 
 function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
-	@unpack_cTauVegProperties_CASA o
+    @unpack_cTauVegProperties_CASA o
 
-	## instantiate variables
-	p_kfVeg = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan
-		annk = helpers.numbers.zero; #sujan ones(size(AGE))
+    @unpack_land (zero, numType) ∈ helpers.numbers
 
-	## pack land variables
-	@pack_land (p_kfVeg, annk) => land.cTauVegProperties
-	return land
+    ## instantiate variables
+    p_kfVeg = ones(numType, helpers.pools.water.nZix.cEco) #sujan
+    annk = zero #sujan ones(size(AGE))
+
+    ## pack land variables
+    @pack_land (p_kfVeg, annk) => land.cTauVegProperties
+    return land
 end
 
 function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
@@ -39,10 +41,10 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	p_C2LIGNIN = C2LIGNIN; #sujan
 	## adjust the annk that are pft dependent directly on the p matrix
 	pftVec = unique(PFT)
-	# AGE = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #sujan
+	# AGE = zeros(numType, helpers.pools.water.nZix.cEco); #sujan
 	for cpN in (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 		# get average age from parameters
-		AGE = helpers.numbers.zero; #sujan
+		AGE = zero; #sujan
 		for ij in 1:length(pftVec)
 			AGE[p.vegProperties.PFT == pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
 		end
@@ -55,8 +57,8 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	end
 	# feed the parameters that are pft dependent.
 	pftVec = unique(PFT)
-	p_LITC2N = helpers.numbers.zero
-	p_LIGNIN = helpers.numbers.zero
+	p_LITC2N = zero
+	p_LIGNIN = zero
 	for ij in 1:length(pftVec)
 		p_LITC2N[p.vegProperties.PFT == pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
 		p_LIGNIN[p.vegProperties.PFT == pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
@@ -66,7 +68,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	L2N = (p_LITC2N * p_LIGNIN) * NONSOL2SOLLIGNIN
 	# DETERMINE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
 	MTF = MTFA - (MTFB * L2N)
-	MTF[MTF < helpers.numbers.zero] = helpers.numbers.zero
+	MTF[MTF < zero] = zero
 	p_MTF = MTF
 	# DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
 	p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (1.0 - MTF)
