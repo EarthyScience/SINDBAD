@@ -13,15 +13,21 @@ function compute(o::runoffSurface_indirect, forcing, land, helpers)
 		surfaceW ∈ land.pools
 		runoffOverland ∈ land.fluxes
 	end
-	# fraction of overland runoff that recharges the surface water & the
-	#fraction that flows out directly
+
+	# fraction of overland runoff that recharges the surface water & the fraction that flows out directly
 	surfaceWRec = runoffOverland
+
 	# fraction of surface storage that flows out as surface runoff
-	runoffSurface = dc * surfaceW[1]
+	runoffSurface = dc * sum(surfaceW)
+
+	# update the delta storage
+	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
+	ΔsurfaceW = ΔsurfaceW .- runoffSurface / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
 	## pack land variables
 	@pack_land begin
 		(runoffSurface, surfaceWRec) => land.fluxes
+		ΔsurfaceW => land.states
 	end
 	return land
 end
@@ -32,20 +38,25 @@ function update(o::runoffSurface_indirect, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		surfaceW ∈ land.pools
-		(surfaceWRec, runoffSurface) ∈ land.fluxes
+		ΔsurfaceW ∈ land.states
 	end
 
-	## update variables
-	# update surface water storage
-	surfaceW[1] = surfaceW[1] + surfaceWRec - runoffSurface
+	## update storage pools
+	surfaceW = surfaceW + ΔsurfaceW
+
+	# reset ΔgroundW and ΔsurfaceW to zero
+	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
 
 	## pack land variables
-	@pack_land surfaceW => land.pools
+	@pack_land begin
+		surfaceW => land.pools
+		ΔsurfaceW => land.states
+	end
 	return land
 end
 
 @doc """
-calculate the runoff from surface water storage
+assumes all overland runoff is recharged to surface water first, which then generates surface runoff
 
 # Parameters
 $(PARAMFIELDS)
