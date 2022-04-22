@@ -10,8 +10,8 @@ include("drainage_wFC.jl")
 Recharge the soil
 
 # Approaches:
- - dos: computes the downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
- - kUnsat: computes the downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
- - wFC: computes the downward flow of moisture [drainage] in soil layers based on overflow from the upper layers
+ - dos: downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation
+ - kUnsat: downward flow of moisture [drainage] in soil layers based on unsaturated hydraulic conductivity
+ - wFC: downward flow of moisture [drainage] in soil layers based on overflow over field capacity
 """
 drainage
