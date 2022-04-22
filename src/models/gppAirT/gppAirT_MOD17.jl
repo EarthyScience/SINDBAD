@@ -6,23 +6,23 @@ export gppAirT_MOD17
 end
 
 function compute(o::gppAirT_MOD17, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppAirT_MOD17 o
-	@unpack_forcing TairDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppAirT_MOD17 o
+    @unpack_forcing TairDay ∈ forcing
+    @unpack_land (zero, one) ∈ helpers.numbers
 
 
-	## calculate variables
-	tmp = 1.0
-	td = (Tmax - Tmin) * tmp
-	tmax = Tmax * tmp
-	tsc = TairDay / td + 1 - tmax / td
-	tsc[tsc < helpers.numbers.zero] = helpers.numbers.zero
-	tsc[tsc > 1] = 1
-	TempScGPP = tsc
+    ## calculate variables
+    tmp = one
+    td = (Tmax - Tmin) * tmp
+    tmax = Tmax * tmp
+    tsc = TairDay / td + one - tmax / td
+    tsc = clamp(tsc, zero, one)
+    TempScGPP = tsc
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

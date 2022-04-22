@@ -4,20 +4,21 @@ struct PET_PriestleyTaylor1972 <: PET
 end
 
 function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing (Rn, Tair) ∈ forcing
+    ## unpack forcing
+    @unpack_forcing (Rn, Tair) ∈ forcing
+    @unpack_land zero ∈ helpers.numbers
 
 
-	## calculate variables
-	Δ = 6.11 * exp(17.26938818 * Tair / (237.3 + Tair));
-	Lhv = (5.147 * exp(-0.0004643 * Tair) - 2.6466); # MJ kg-1
-	γ = 0.4 / 0.622; # hPa C-1 [psychometric constant]
-	PET = 1.26 * Δ / (Δ + γ) * Rn / Lhv
-	PET = max(PET, helpers.numbers.zero)
+    ## calculate variables
+    Δ = 6.11 * exp(17.26938818 * Tair / (237.3 + Tair))
+    Lhv = (5.147 * exp(-0.0004643 * Tair) - 2.6466) # MJ kg-1
+    γ = 0.4 / 0.622 # hPa C-1 [psychometric constant]
+    PET = 1.26 * Δ / (Δ + γ) * Rn / Lhv
+    PET = max(PET, zero)
 
-	## pack land variables
-	@pack_land PET => land.PET
-	return land
+    ## pack land variables
+    @pack_land PET => land.PET
+    return land
 end
 
 @doc """

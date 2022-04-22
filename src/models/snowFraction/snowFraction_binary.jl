@@ -6,10 +6,13 @@ end
 function compute(o::snowFraction_binary, forcing, land, helpers)
 
 	## unpack land variables
-	@unpack_land snowW ∈ land.pools
-
+	@unpack_land begin
+		snowW ∈ land.pools
+		(zero, one) ∈ helpers.numbers
+        ΔsnowW ∈ land.states
+	end
 	# if there is snow; then snow fraction is 1; otherwise 0
-	snowFraction = helpers.numbers.one * (snowW[1] > helpers.numbers.zero)
+	snowFraction = one * (sum(snowW + ΔsnowW) > zero)
 
 	## pack land variables
 	@pack_land snowFraction => land.states
