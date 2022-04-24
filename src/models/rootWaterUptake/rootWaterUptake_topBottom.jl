@@ -79,7 +79,6 @@ update pools and states in rootWaterUptake_topBottom
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]

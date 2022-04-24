@@ -78,7 +78,6 @@ Set potential evapotranspiration using PET_Lu2005
 
 *Outputs*
  - land.PET.PET: the value of PET for current time step
- -
 
 ---
 

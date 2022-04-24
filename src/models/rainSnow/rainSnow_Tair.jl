@@ -88,7 +88,6 @@ update pools and states in rainSnow_Tair
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: creation of approach  

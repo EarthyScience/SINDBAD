@@ -88,7 +88,6 @@ update pools and states in runoffSurface_directIndirect
 # Extended help
 
 *References*
- -
 
 *Versions*
 

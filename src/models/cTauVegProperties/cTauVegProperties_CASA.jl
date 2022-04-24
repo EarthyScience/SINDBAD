@@ -107,7 +107,6 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.cTauVegProperties.p_MTF:
  - land.cTauVegProperties.p_SCLIGNIN:
  - land.cTauVegProperties.p_kfVeg:
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cTauVegProperties_CASA

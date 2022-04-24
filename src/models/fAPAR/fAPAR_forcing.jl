@@ -32,7 +32,6 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_forcing
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 23.11.2019 [skoirala]: new approach  

@@ -47,7 +47,6 @@ Fraction of absorbed photosynthetically active radiation using fAPAR_cVegLeaf
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 24.04.2021 [skoirala]

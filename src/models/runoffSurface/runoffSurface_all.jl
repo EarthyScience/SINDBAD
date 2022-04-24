@@ -39,7 +39,6 @@ Runoff from surface water storages using runoffSurface_all
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 20.11.2019 [skoirala]: combine runoffSurfaceDirect, Indir, surfaceWRec  

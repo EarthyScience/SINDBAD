@@ -38,7 +38,6 @@ Enhanced vegetation index using EVI_constant
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: cleaned up the code  

@@ -92,7 +92,6 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.fluxes.cRH: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycle_CASA
@@ -129,7 +128,6 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
  - land.pools.cEco: states of the different carbon pools
 
 # Modifies:
- -
 
 # Extended help
 

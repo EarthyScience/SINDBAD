@@ -81,7 +81,6 @@ precompute/instantiate time-invariant variables for rootFraction_expCvegRoot
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 28.04.2020  

@@ -23,11 +23,10 @@ set the temperature stress on gppPot to ones (no stress)
 Effect of temperature using gppAirT_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.gppAirT.TempScGPP: effect of temperature on potential GPP
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gppAirT_none

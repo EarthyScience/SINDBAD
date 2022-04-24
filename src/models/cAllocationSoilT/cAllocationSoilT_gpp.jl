@@ -31,7 +31,6 @@ Effect of soil temperature on carbon allocation using cAllocationSoilT_gpp
 
 *Outputs*
  - land.cAllocationSoilT.fT: values for the temperature effect on decomposition/mineralization
- -
 
 ---
 

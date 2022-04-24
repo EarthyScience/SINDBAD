@@ -55,7 +55,6 @@ precompute/instantiate time-invariant variables for vegAvailableWater_sigmoid
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 21.11.2019  

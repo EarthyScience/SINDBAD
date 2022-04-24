@@ -36,7 +36,6 @@ Effect of soil temperature on decomposition rates using cTauSoilT_Q10
 
 *Outputs*
  - land.cTauSoilT.fT: air temperature stressor on turnover rates [k]
- -
 
 ---
 
