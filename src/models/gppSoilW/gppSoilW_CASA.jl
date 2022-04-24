@@ -1,44 +1,81 @@
 export gppSoilW_CASA
 
 @bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
-	Bwe::T1 = 0.5 | nothing | "CASA We" | ""
+    Bwe::T1 = 0.5 | (0, 1) | "base water stress" | ""
+end
+
+
+function precompute(o::gppSoilW_CASA, forcing, land, helpers)
+    ## unpack parameters and forcing
+    ## unpack land variables
+    @unpack_land begin
+        zero ∈ helpers.numbers
+    end
+    SMScGPP_prev = zero
+
+    ## pack land variables
+    @pack_land SMScGPP_prev => land.gppSoilW
+    return land
 end
 
 function compute(o::gppSoilW_CASA, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppSoilW_CASA o
-	@unpack_forcing Tair ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppSoilW_CASA o
+    @unpack_forcing Tair ∈ forcing
 
 
-	## unpack land variables
-	@unpack_land begin
-		SMScGPP_prev ∈ land.gppSoilW
-		transpiration ∈ land.fluxes
-		PET ∈ land.PET
-	end
-	pBwe = Bwe
-	OmBweOPET = NaN
-	ndx = Tair > 0.0 & PET > 0.0
-	OmBweOPET[ndx] = (1.0 - pBwe[ndx]) / PET[ndx]
-	SMScGPP = 1.0; #-> should be
-	We = SMScGPP_prev
-	ndx = Tair > 0.0 & PET > 0.0
-	We[ndx] = Bwe[ndx, 1] + OmBweOPET[ndx, tix] * transpiration.transpiration[ndx, tix]
-	SMScGPP = We
+    ## unpack land variables
+    @unpack_land begin
+        SMScGPP_prev ∈ land.gppSoilW
+        PAW ∈ land.vegAvailableWater
+        PET ∈ land.PET
+        (zero, one) ∈ helpers.numbers
+    end
 
-	## pack land variables
-	@pack_land (OmBweOPET, SMScGPP) => land.gppSoilW
-	return land
+    OmBweOPET = (one - Bwe) / PET
+
+    We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
+
+    SMScGPP = (Tair > 0.0) & (PET > 0.0) ? We : SMScGPP_prev # use the current We if the temperature and PET are favorable, else use the previous one.
+
+    SMScGPP_prev = SMScGPP
+
+    ## pack land variables
+    @pack_land (OmBweOPET, SMScGPP, SMScGPP_prev) => land.gppSoilW
+    return land
 end
 
 @doc """
-initialized in teh preallocation function. is not VPD effect; is the ET/PET effect if Tair <= 0.0 | PET <= 0.0; use the previous stress index otherwise; compute according to CASA
+soil moisture stress on gpp based on base stress and relative ratio of PET and PAW (CASA)
 
 # Parameters
 $(PARAMFIELDS)
 
 ---
 
+# compute:
+Gpp as a function of soilW
+
+*Inputs*
+ - land.vegAvailableWater.PAW: values of soil moisture current time step
+ - land.PET.PET: potential ET
+
+*Outputs*
+ - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
+
+---
+
 # Extended help
+
+*References*
+ - Forkel; M.; Carvalhais; N.; Schaphoff; S.; v. Bloh; W.; Migliavacca; M.  Thurner; M.; & Thonicke; K.: Identifying environmental controls on  vegetation greenness phenology through model–data integration  Biogeosciences; 11; 7025–7050; https://doi.org/10.5194/bg-11-7025-2014;2014.
+
+*Versions*
+ - 1.1 on 22.01.2021 [skoirala]
+
+*Created by:*
+ - skoirala
+
+*Notes*
 """
 gppSoilW_CASA

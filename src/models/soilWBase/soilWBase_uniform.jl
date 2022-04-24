@@ -86,9 +86,15 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     # get the plant available water capacity
     p_wAWC = p_wFC - p_wWP
 
+    # save the sums of selected variables
+    s_wFC = sum(p_wFC)
+    s_wWP = sum(p_wWP)
+    s_wSat = sum(p_wSat)
+    s_wAWC = sum(p_wAWC)
+
     soilW .= min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
-        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, p_soilDepths, p_wAWC, p_wFC, p_wSat, p_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
+        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, p_soilDepths, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
         soilW => land.pools
     end
     return land

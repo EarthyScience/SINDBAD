@@ -15,12 +15,12 @@ function precompute(o::gppSoilW_none, forcing, land, helpers)
 end
 
 @doc """
-set the soil moisture stress on gppPot to ones (no stress)
+sets the soil moisture stress on gppPot to one (no stress)
 
 ---
 
 # compute:
-Gpp as a function of wsoil; should be set to none if coupled with transpiration using gppSoilW_none
+Gpp as a function of soilW; should be set to none if coupled with transpiration using gppSoilW_none
 
 *Inputs*
  - info
