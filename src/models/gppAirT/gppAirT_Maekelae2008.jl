@@ -1,36 +1,45 @@
 export gppAirT_Maekelae2008
 
-@bounds @describe @units @with_kw struct gppAirT_Maekelae2008{T1, T2, T3} <: gppAirT
-	TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days"
-	X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C"
-	Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
+@bounds @describe @units @with_kw struct gppAirT_Maekelae2008{T1,T2,T3} <: gppAirT
+    TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days"
+    X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C"
+    Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
+end
+
+
+function precompute(o::gppAirT_Maekelae2008, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_forcing TairDay ∈ forcing
+
+    X_prev = TairDay
+
+    ## pack land variables
+    @pack_land X_prev => land.gppAirT
+    return land
 end
 
 function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_Maekelae2008 o
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land (zero, one) ∈ helpers.numbers
-
+    @unpack_land begin
+        (zero, one) ∈ helpers.numbers
+        X_prev ∈ land.gppAirT
+    end
 
     ## calculate variables
-    # create the arrays
-    tmp = 1.0
-    X0 = X0 * tmp
-    Smax = Smax * tmp
     # calculate temperature acclimation
-    X = TairDay #pix;tix
-    for ii in 2:info.tem.helpers.sizes.nTix
-        X[ii] = X[ii-1] + (one / TimConst) * (TairDay[ii] - X[ii-1])
-    end
+    X = X_prev + (one / TimConst) * (TairDay - X_prev)
+
     # calculate the stress & saturation
     S = max(X - X0, zero)
-    vsc = clamp(S / Smax, zero, one)
-    # assign stressor
-    TempScGPP = vsc
+    TempScGPP = clamp(S / Smax, zero, one)
+
+    # replace the previous X
+    X_prev = X
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land (TempScGPP, X_prev) => land.gppAirT
     return land
 end
 
@@ -49,7 +58,7 @@ Effect of temperature using gppAirT_Maekelae2008
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
+ - land.gppAirT.TempScGPP: effect of temperature on potential GPP
  -
 
 ---

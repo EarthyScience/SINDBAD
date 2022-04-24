@@ -114,8 +114,8 @@
         "transpirationSupply": {
             "approach": "wAWC"
         },
-        "TWS": {
-            "approach": "sum"
+        "totalTWS": {
+            "approach": "sumComponents"
         },
         "vegAvailableWater": {
             "approach": "sigmoid"
@@ -124,7 +124,7 @@
             "approach": "simple"
         },
         "wCycle": {
-            "approach": "simple"
+            "approach": "combined"
         },
         "WUE": {
             "approach": "VPDDay"
@@ -142,7 +142,7 @@
 				"snowW": [1, 0.01],
 				"surfaceW": [1, 0.0]
             },
-			"combine": [true,"wPools"],
+			"combine": [true,"TWS"],
 			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0]
 		},
 		"carbon":

@@ -11,10 +11,10 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
         (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
-        n_soilW = soilW ∈ helpers.pools.water.nZix
+        # n_soilW = soilW ∈ helpers.pools.water.nZix
         numType ∈ helpers.numbers
     end
-
+    n_soilW = length(soilW)
     ## precomputations/check
     # get the soil thickness 
     soilDepths = helpers.pools.water.layerThickness.soilW
@@ -86,9 +86,9 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     # get the plant available water capacity
     p_wAWC = p_wFC - p_wWP
 
-	soilW .= min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
+    soilW .= min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
-        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, p_soilDepths, p_wAWC, p_wFC, p_wSat, p_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilWBase
+        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, p_soilDepths, p_wAWC, p_wFC, p_wSat, p_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
         soilW => land.pools
     end
     return land

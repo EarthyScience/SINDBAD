@@ -16,7 +16,7 @@ function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_land (zero, numType) ∈ helpers.numbers
 
     ## instantiate variables
-    p_kfVeg = ones(numType, helpers.pools.water.nZix.cEco) #sujan
+    p_kfVeg = ones(numType, helpers.pools.carbon.nZix.cEco) #sujan
     annk = zero #sujan ones(size(AGE))
 
     ## pack land variables
@@ -41,7 +41,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	p_C2LIGNIN = C2LIGNIN; #sujan
 	## adjust the annk that are pft dependent directly on the p matrix
 	pftVec = unique(PFT)
-	# AGE = zeros(numType, helpers.pools.water.nZix.cEco); #sujan
+	# AGE = zeros(numType, helpers.pools.carbon.nZix.cEco); #sujan
 	for cpN in (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 		# get average age from parameters
 		AGE = zero; #sujan

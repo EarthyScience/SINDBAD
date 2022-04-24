@@ -29,7 +29,7 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     snowMelt = min(sum(snowW + ΔsnowW), potMelt)
 
 	# divide snowmelt loss equally from all layers
-    ΔsnowW = ΔsnowW .- snowMelt / length(snowW)
+    ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)
 
     # a Water Balance Pool variable that tracks how much water is still "available"
     WBP = WBP + snowMelt
@@ -54,10 +54,10 @@ function update(o::snowMelt_TairRn, forcing, land, helpers)
     end
 
     # update snow pack
-    snowW = snowW + ΔsnowW
+    snowW .= snowW .+ ΔsnowW
 
     # reset delta storage	
-    ΔsnowW = ΔsnowW - ΔsnowW
+    ΔsnowW .= ΔsnowW .- ΔsnowW
 
     ## pack land variables
     @pack_land begin

@@ -12,9 +12,9 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 		ΔsoilW ∈ land.states
 		(numType, one) ∈ helpers.numbers
 	end
-	capFlow = zeros(numType, helpers.pools.water.nZix.soilW)
+	capFlow = zeros(numType, length(land.pools.soilW))
 	dos_soilW = (soilW + ΔsoilW) ./ p_wSat
-	for sl in 1:helpers.pools.water.nZix.soilW-1
+	for sl in 1:length(land.pools.soilW)-1
 		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (one - dos_soilW[sl])
 		holdCap = p_wSat[sl] - (soilW[sl] + ΔsoilW[sl])
 		lossCap = soilW[sl+1] + ΔsoilW[sl+1]

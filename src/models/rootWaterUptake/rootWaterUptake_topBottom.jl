@@ -14,7 +14,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
     end
     # get the transpiration
     toUptake = transpiration
-    for sl in 1:helpers.pools.water.nZix.soilW
+    for sl in 1:length(land.pools.soilW)
         uptaken = minimum(toUptake, pawAct[sl])
         wRootUptake[sl] = uptaken
         toUptake = toUptake - uptaken

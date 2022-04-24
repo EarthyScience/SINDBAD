@@ -6,7 +6,7 @@ end
 
 function precompute(o::drainage_wFC, forcing, land, helpers)
 	## instantiate drainage
-	drainage = zeros(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
 	## pack land variables
 	@pack_land drainage => land.drainage
 	return land
@@ -24,7 +24,7 @@ function compute(o::drainage_wFC, forcing, land, helpers)
 	end
 
 	## calculate drainage
-	for sl in 1:helpers.pools.water.nZix.soilW-1
+	for sl in 1:length(land.pools.soilW)-1
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		lossCap = soilW[sl] + ΔsoilW[sl]
 		drainage[sl] = max(soilW[sl] + ΔsoilW[sl] - p_wFC[sl], zero)

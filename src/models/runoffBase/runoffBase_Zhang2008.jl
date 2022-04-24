@@ -19,7 +19,7 @@ function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	runoffBase = bc * sum(groundW + ΔgroundW)
 
 	# update groundwater changes
-	ΔgroundW = ΔgroundW .- runoffBase / length(groundW)
+	ΔgroundW .= ΔgroundW .- runoffBase / length(groundW)
 
 	## pack land variables
 	@pack_land begin
@@ -39,10 +39,10 @@ function update(o::runoffBase_Zhang2008, forcing, land, helpers)
 	end
 
 	## update variables
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset groundwater changes to zero
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 	## pack land variables
 	@pack_land begin

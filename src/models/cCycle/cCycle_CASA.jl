@@ -6,9 +6,9 @@ end
 function precompute(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
-	cEcoEfflux = zeros(numType, helpers.pools.water.nZix.cEco); #sujan moved from get states
-	cEcoInflux = zeros(numType, helpers.pools.water.nZix.cEco)
-	cEcoFlow = zeros(numType, helpers.pools.water.nZix.cEco)
+	cEcoEfflux = zeros(numType, helpers.pools.carbon.nZix.cEco); #sujan moved from get states
+	cEcoInflux = zeros(numType, helpers.pools.carbon.nZix.cEco)
+	cEcoFlow = zeros(numType, helpers.pools.carbon.nZix.cEco)
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle

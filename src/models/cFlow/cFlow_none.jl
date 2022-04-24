@@ -6,7 +6,7 @@ end
 function precompute(o::cFlow_none, forcing, land, helpers)
 
 	## calculate variables
-	tmp = repeat(zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco), 1, 1, helpers.pools.carbon.nZix.cEco)
+	tmp = repeat(zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco), 1, 1, helpers.pools.carbon.nZix.cEco)
 	p_A = tmp
 	p_E = tmp
 	p_F = tmp

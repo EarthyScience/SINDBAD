@@ -7,7 +7,7 @@ end
 function precompute(o::rootFraction_constant, forcing, land, helpers)
 	@unpack_rootFraction_constant o
 	## instantiate
-	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
 
 	## pack land variables
 	@pack_land p_fracRoot2SoilD => land.rootFraction
@@ -29,7 +29,7 @@ function compute(o::rootFraction_constant, forcing, land, helpers)
 	soilDepths = helpers.pools.water.layerThickness.soilW
 	cumulativeDepths = cumsum(soilDepths)
 	# maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth 
-	for sl in 1:helpers.pools.water.nZix.soilW
+	for sl in 1:length(land.pools.soilW)
 		soilcumuD = cumulativeDepths[sl]
 		rootOver = maxRootDepth - soilcumuD
 		rootFrac = rootOver > 0.0 ? constantRootFrac : 0.0
