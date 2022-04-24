@@ -16,14 +16,14 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
         soilW ∈ land.pools
         (one, zero, squarer) ∈ helpers.numbers
     end
-	
-	## calculate variables
+
+    ## calculate variables
     SM = sum(soilW)
     maxAWC = max(s_wFC - s_wWP, zero)
     actAWC = max(SM - s_wWP, zero)
     SM_nor = min(actAWC / maxAWC, one)
     tfW = -q * squarer(SM_nor - θstar) + one
-	fW = SM_nor <= θstar ? tfW : one
+    fW = SM_nor <= θstar ? tfW : one
     SMScGPP = clamp(fW, zero, one)
 
     ## pack land variables
@@ -32,7 +32,7 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
 end
 
 @doc """
-calculate the soil moisture stress on gpp
+soil moisture stress on gpp based on Stocker2020
 
 # Parameters
 $(PARAMFIELDS)
@@ -44,7 +44,8 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
 
 *Inputs*
  - land.pools.soilW: values of soil moisture current time step
- - land.soilWBase.p_wWP: wilting point
+ - land.soilWBase.s_wWP: sum of wilting point
+ - land.soilWBase.s_wFC: sum of field capacity
 
 *Outputs*
  - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
