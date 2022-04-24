@@ -6,29 +6,44 @@ export cAllocationRadiation_GSI
 	base_Rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
 end
 
+function precompute(o::cAllocationRadiation_GSI, forcing, land, helpers)
+    ## unpack helper
+    @unpack_land one ∈ helpers.numbers
+
+    ## calculate variables
+    # assume the initial fR as one
+    fR_prev = one 
+
+    ## pack land variables
+    @pack_land fR_prev => land.cAllocationRadiation
+    return land
+end
+
 function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cAllocationRadiation_GSI o
 	@unpack_forcing PAR ∈ forcing
 
-
 	## unpack land variables
-	@unpack_land fR_prev ∈ land.cAllocationRadiation
-
+	@unpack_land begin
+		fR_prev ∈ land.cAllocationRadiation
+		one ∈ helpers.numbers
+	end
 
 	## calculate variables
 	# computation for the radiation effect on decomposition/mineralization
-	pfR = fR_prev
-	fR = (1 / (1 + exp(-slope_Rad * (PAR - base_Rad))))
-	fR = pfR + (fR - pfR) * τ_Rad
+	fR = (one / (one + exp(-slope_Rad * (PAR - base_Rad))))
+	fR = fR_prev + (fR - fR_prev) * τ_Rad
+	# set the prev
+	fR_prev = fR
 
 	## pack land variables
-	@pack_land fR => land.cAllocationRadiation
+	@pack_land (fR, fR_prev) => land.cAllocationRadiation
 	return land
 end
 
 @doc """
-computation for the radiation effect on decomposition/mineralization using a GSI method
+radiation effect on decomposition/mineralization using GSI method
 
 # Parameters
 $(PARAMFIELDS)
@@ -36,18 +51,13 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of radiation on carbon allocation using cAllocationRadiation_GSI
 
 *Inputs*
- - base:
- - forcing.PAR: values for PAR
- - land.cAllocationRadiation.fR_prev: previous values for the radiation effect on decomposition/mineralization
- - slope:
- - τ:
+ - forcing.PAR: Photosynthetically Active Radiation
+ - land.cAllocationRadiation.fR_prev: radiation effect on decomposition/mineralization from the previous time step
 
 *Outputs*
- - land.cAllocationRadiation.fR: values for the radiation effect on decomposition/mineralization
- - land.cAllocationRadiation.fR
+ - land.cAllocationRadiation.fR: radiation effect on decomposition/mineralization
 
 ---
 
@@ -59,9 +69,9 @@ Effect of radiation on carbon allocation using cAllocationRadiation_GSI
  - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
 
 *Versions*
- - 1.0 on 12.01.2020 [sbesnard]  
+ - 1.0 on 12.01.2020 [skoirala]  
 
 *Created by:*
- - ncarvalhais & sbesnard
+ - ncarvalhais, sbesnard, skoirala
 """
 cAllocationRadiation_GSI

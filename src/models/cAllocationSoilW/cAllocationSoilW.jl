@@ -11,9 +11,9 @@ include("cAllocationSoilW_none.jl")
 Effect of soil moisture on carbon allocation
 
 # Approaches:
- - Friedlingstein1999: Compute partial computation for the moisture effect on decomposition/mineralization
- - gpp: set the moisture effect on C allocation to the same as gpp from GSI approach.
- - gppGSI: compute the moisture effect on C allocation computed from GSI approach.
- - none: 
+ - Friedlingstein1999: partial moisture effect on decomposition/mineralization based on Friedlingstein1999
+ - gpp: moisture effect on allocation = the same as gpp
+ - gppGSI: moisture effect on allocation from same for GPP based on GSI approach
+ - none: sets the moisture effect on allocation to one (no effect)
 """
 cAllocationSoilW

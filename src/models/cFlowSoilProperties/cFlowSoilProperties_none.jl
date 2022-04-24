@@ -6,7 +6,7 @@ end
 function precompute(o::cFlowSoilProperties_none, forcing, land, helpers)
 
 	## calculate variables
-	p_E = repeat(zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco), 1, 1, helpers.pools.carbon.nZix.cEco)
+	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
 	p_F = p_E
 
 	## pack land variables

@@ -23,7 +23,7 @@ function precompute(o::cCycleBase_simple, forcing, land, helpers)
 	@unpack_cCycleBase_simple o
 
 	## instantiate variables
-	p_C2Nveg = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cVeg); #sujan
+	p_C2Nveg = ones(helpers.numbers.numType, length(land.pools.cVeg)); #sujan
 
 	## pack land variables
 	@pack_land p_C2Nveg => land.cCycleBase
@@ -43,7 +43,7 @@ function compute(o::cCycleBase_simple, forcing, land, helpers)
 		p_C2Nveg[zix] = C2Nveg[zix]
 	end
 	# annual turnover rates
-	p_annk = reshape(repelem[annk], helpers.pools.carbon.nZix.cEco); #sujan
+	p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
 
 	## pack land variables
 	@pack_land (p_C2Nveg, p_annk) => land.cCycleBase

@@ -6,9 +6,9 @@ end
 function precompute(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
-	cEcoEfflux = zeros(numType, helpers.pools.carbon.nZix.cEco); #sujan moved from get states
-	cEcoInflux = zeros(numType, helpers.pools.carbon.nZix.cEco)
-	cEcoFlow = zeros(numType, helpers.pools.carbon.nZix.cEco)
+	cEcoEfflux = zeros(numType, length(land.pools.cEco)); #sujan moved from get states
+	cEcoInflux = zeros(numType, length(land.pools.cEco))
+	cEcoFlow = zeros(numType, length(land.pools.cEco))
 
 	## pack land variables
 	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
@@ -168,7 +168,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	# helpers
 	nPix = 1
 	nTix = info.tem.helpers.sizes.nTix
-	nZix = helpers.pools.carbon.nZix.cEco
+	nZix = length(land.pools.cEco)
 	# matrices for the calculations
 	cLossRate = zeros(nPix, nZix, nTix)
 	cGain = cLossRate

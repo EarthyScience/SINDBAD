@@ -14,7 +14,7 @@ function precompute(o::aRespirationAirT_none, forcing, land, helpers)
 end
 
 @doc """
-sets the effect of temperature on RA to none [ones = no effect]
+sets the effect of temperature on RA to one [no effect]
 
 # precompute:
 precompute/instantiate time-invariant variables for aRespirationAirT_none

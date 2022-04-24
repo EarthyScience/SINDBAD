@@ -6,10 +6,10 @@ include("cAllocationLAI_Friedlingstein1999.jl")
 include("cAllocationLAI_none.jl")
 
 @doc """
-Effect of lai on carbon allocation
+Effect of LAI on carbon allocation
 
 # Approaches:
- - Friedlingstein1999: Compute the light limitation [LL] calculation
- - none: set the allocation to ones
+ - Friedlingstein1999: LAI effect on allocation based on light limitation from Friedlingstein1999
+ - none: sets the LAI effect on allocation to one (no effect)
 """
 cAllocationLAI

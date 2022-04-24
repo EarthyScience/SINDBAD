@@ -1,24 +1,27 @@
 export cAllocation_none
 
-struct cAllocation_none <: cAllocation
-end
+struct cAllocation_none <: cAllocation end
 
 function precompute(o::cAllocation_none, forcing, land, helpers)
 
-	## calculate variables
-	cAlloc = zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
+    ## calculate variables
+    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
 
-	## pack land variables
-	@pack_land cAlloc => land.states
-	return land
+    ## pack land variables
+    @pack_land cAlloc => land.states
+    return land
 end
 
 @doc """
-set the allocation to zero
+sets the carbon allocation to zero (nothing to allocated)
 
 # precompute:
-precompute/instantiate time-invariant variables for cAllocation_none
 
+*Inputs*
+- helpers.numbers.one
+
+*Outputs*
+- land.cAllocation.cAlloc: carbon allocation
 
 ---
 
