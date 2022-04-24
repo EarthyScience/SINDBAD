@@ -4,26 +4,49 @@ export gppDiffRadiation_Turner2006
 	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
 
+function precompute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_gppDiffRadiation_Turner2006 o
+    @unpack_forcing (Rg, RgPot) ∈ forcing
+
+    ## calculate variables
+    CI = Rg / RgPot
+    CI_min = CI
+    CI_max = CI
+    ## pack land variables
+    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    return land
+end
+
 function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppDiffRadiation_Turner2006 o
-	@unpack_forcing (Rg, RgPot) ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppDiffRadiation_Turner2006 o
+    @unpack_forcing (Rg, RgPot) ∈ forcing
+    @unpack_land begin
+        (CI_min, CI_max) ∈ land.gppDiffRadiation
+        (zero, one, tolerance) ∈ helpers.numbers
+    end
 
 
-	## calculate variables
-	CI = helpers.numbers.zero
-	valid = RgPot > 0.0;
-	CI[valid] = Rg[valid] / RgPot[valid]
-	SCI = (CI - minimum(CI, 2)) / (maximum(CI, 2) - minimum(CI, 2))
-	CloudScGPP = (1.0 - rueRatio) * SCI + rueRatio
+    ## calculate variables
+    CI = Rg / RgPot
+    
+	# update the minimum and maximum on the go
+	CI_min = min(CI, CI_min)
+    CI_max = min(CI, CI_max)
+
+    SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the precompute using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
+
+	cScGPP = (one - rueRatio) * SCI + rueRatio
+    CloudScGPP = RgPot > zero ? cScGPP : zero
 
 	## pack land variables
-	@pack_land CloudScGPP => land.gppDiffRadiation
-	return land
+    @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
+    return land
 end
 
 @doc """
-calculate the cloudiness scalar [radiation diffusion] on gppPot
+cloudiness scalar [radiation diffusion] on gppPot based on Turner2006
 
 # Parameters
 $(PARAMFIELDS)
@@ -31,7 +54,6 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of diffuse radiation using gppDiffRadiation_Turner2006
 
 *Inputs*
  - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]

@@ -46,7 +46,7 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
 end
 
 @doc """
-soil moisture stress on gpp based on base stress and relative ratio of PET and PAW (CASA)
+soil moisture stress on gppPot based on base stress and relative ratio of PET and PAW (CASA)
 
 # Parameters
 $(PARAMFIELDS)
@@ -60,7 +60,7 @@ $(PARAMFIELDS)
  - land.PET.PET: potential ET
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
+ - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
 
 ---
 

@@ -32,7 +32,7 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
 end
 
 @doc """
-soil moisture stress on gpp based on Stocker2020
+soil moisture stress on gppPot based on Stocker2020
 
 # Parameters
 $(PARAMFIELDS)
@@ -48,7 +48,7 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
  - land.soilWBase.s_wFC: sum of field capacity
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
+ - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
 
 ---
 

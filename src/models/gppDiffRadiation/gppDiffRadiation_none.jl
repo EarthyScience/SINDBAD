@@ -15,7 +15,7 @@ function precompute(o::gppDiffRadiation_none, forcing, land, helpers)
 end
 
 @doc """
-set the cloudiness scalar [radiation diffusion] for gppPot to ones
+sets the cloudiness scalar [radiation diffusion] for gppPot to one
 
 ---
 

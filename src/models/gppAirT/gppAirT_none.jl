@@ -15,7 +15,7 @@ function precompute(o::gppAirT_none, forcing, land, helpers)
 end
 
 @doc """
-set the temperature stress on gppPot to ones (no stress)
+sets the temperature stress on gppPot to one (no stress)
 
 ---
 

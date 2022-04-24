@@ -22,7 +22,7 @@ function compute(o::gppAirT_MOD17, forcing, land, helpers)
 end
 
 @doc """
-calculate the temperature stress on gppPot based on GPP - MOD17 model
+temperature stress on gppPot based on GPP - MOD17 model
 
 # Parameters
 $(PARAMFIELDS)

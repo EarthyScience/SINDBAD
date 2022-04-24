@@ -25,7 +25,7 @@ function compute(o::gppAirT_TEM, forcing, land, helpers)
 end
 
 @doc """
-calculate the temperature stress for gppPot based on TEM
+temperature stress for gppPot based on TEM
 
 # Parameters
 $(PARAMFIELDS)

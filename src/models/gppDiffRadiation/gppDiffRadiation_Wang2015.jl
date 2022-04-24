@@ -4,38 +4,64 @@ export gppDiffRadiation_Wang2015
 	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
 end
 
-function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function precompute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Wang2015 o
     @unpack_forcing (Rg, RgPot) ∈ forcing
-    @unpack_land (zero, one) ∈ helpers.numbers
+
+    ## calculate variables
+    CI = 1 - Rg / RgPot #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI_min = CI
+    CI_max = CI
+    ## pack land variables
+    @pack_land (CI_min, CI_max) => land.gppDiffRadiation
+    return land
+end
+
+function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_gppDiffRadiation_Wang2015 o
+
+    @unpack_forcing (Rg, RgPot) ∈ forcing
+
+    @unpack_land begin
+        (CI_min, CI_max) ∈ land.gppDiffRadiation
+        (zero, one, tolerance) ∈ helpers.numbers
+    end
 
 
 
     ## calculate variables
     ## FROM SHANNING
-    # CI = cloudiness index
-    CI = zero
-    valid = RgPot > zero
-    CI[valid] = one - Rg[valid] / RgPot[valid]
-    CI_nor = one
-    yearsVec = helpers.dates.year
-    yearsVec = yearsVec[1:size(CI, 2)]
-    for i in unique(yearsVec)
-        ndx = yearsVec == i
-        CImin = min(CI[ndx], 2) #CImin is the minimum CI value of present year
-        CImax = max(CI[ndx], 2)
-        CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
-    end
-    CloudScGPP = one - μ * (one - CI_nor)
+
+    CI = 1 - Rg / RgPot #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+
+    # update the minimum and maximum on the go
+    CI_min = min(CI, CI_min)
+    CI_max = min(CI, CI_max)
+
+    CI_nor = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were based on the year's data. see below.
+
+    # yearsVec = helpers.dates.year
+    # yearsVec = yearsVec[1:size(CI, 2)]
+    # for i in unique(yearsVec)
+    #     ndx = yearsVec == i
+    #     CImin = min(CI[ndx], 2) #CImin is the minimum CI value of present year
+    #     CImax = max(CI[ndx], 2)
+    #     CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
+    # end
+
+
+    cScGPP = one - μ * (one - CI_nor)
+    CloudScGPP = RgPot > zero ? cScGPP : zero
 
     ## pack land variables
-    @pack_land CloudScGPP => land.gppDiffRadiation
+    @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
     return land
 end
 
 @doc """
-calculate the cloudiness scalar [radiation diffusion] on gppPot
+cloudiness scalar [radiation diffusion] on gppPot based on Wang2015
 
 # Parameters
 $(PARAMFIELDS)
@@ -43,7 +69,6 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of diffuse radiation using gppDiffRadiation_Wang2015
 
 *Inputs*
  - forcing.Rg: Global radiation [SW incoming] [MJ/m2/time]
