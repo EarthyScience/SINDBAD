@@ -6,7 +6,7 @@ end
 function precompute(o::cTauSoilW_none, forcing, land, helpers)
 
 	## calculate variables
-	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
+	p_fsoilW = ones(helpers.numbers.numType, length(land.pools.cEco))
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW

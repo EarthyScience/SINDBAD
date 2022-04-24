@@ -9,7 +9,7 @@ include("aRespirationAirT_Q10.jl")
 Temperature effect on autotrophic maintenance respiration
 
 # Approaches:
- - none: sets the effect of temperature on RA to none [ones = no effect]
- - Q10: estimate the effect of temperature in autotrophic maintenance respiration - q10 model
+ - none: sets the effect of temperature on RA to one [no effect]
+ - Q10: temperature effect on autotrophic maintenance respiration - Q10 model
 """
 aRespirationAirT

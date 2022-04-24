@@ -4,26 +4,43 @@ export cAllocationSoilT_gppGSI
 	τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | ""
 end
 
-function compute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cAllocationSoilT_gppGSI o
+function precompute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cAllocationSoilT_gppGSI o
 
-	## unpack land variables
-	@unpack_land begin
-		TempScGPP ∈ land.gppAirT
-		fT_prev ∈ land.cAllocationSoilT
-	end
-	# computation for the temperature effect on decomposition/mineralization
-	pfT = fT_prev
-	fT = pfT + (TempScGPP - pfT) * τ_Tsoil
+    ## unpack land variables
+    @unpack_land begin
+        one ∈ helpers.numbers
+    end
+    # assume initial prev as one (no stress)
+    fT_prev = one
+
+    @pack_land fT_prev => land.cAllocationSoilT
+    return land
+end
+
+function compute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_cAllocationSoilT_gppGSI o
+
+    ## unpack land variables
+    @unpack_land begin
+        TempScGPP ∈ land.gppAirT
+        fT_prev ∈ land.cAllocationSoilT
+    end
+    # computation for the temperature effect on decomposition/mineralization
+    fT = fT_prev + (TempScGPP - fT_prev) * τ_Tsoil
+	
+	# set the prev
+	fT_prev = fT
 
 	## pack land variables
-	@pack_land fT => land.cAllocationSoilT
-	return land
+    @pack_land (fT, fT_prev) => land.cAllocationSoilT
+    return land
 end
 
 @doc """
-compute the temperature effect on C allocation based on GSI approach.
+temperature effect on allocation from same for GPP based on GSI approach
 
 # Parameters
 $(PARAMFIELDS)
@@ -31,15 +48,13 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of soil temperature on carbon allocation using cAllocationSoilT_gppGSI
 
 *Inputs*
- - land.cAllocationSoilT.fT_prev: previous temperature stressor value
+ - land.cAllocationSoilT.fT_prev: temperature stressor from previous time step
  - land.gppAirT.TempScGPP: temperature stressors on GPP
- - τ: temporal change rate for the light-limiting function
 
 *Outputs*
- - land.cAllocationSoilT.fT: values for the temperature effect on decomposition/mineralization
+ - land.cAllocationSoilT.fT: temperature effect on decomposition/mineralization (0-1)
 
 ---
 

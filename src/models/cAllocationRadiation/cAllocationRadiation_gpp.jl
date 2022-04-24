@@ -19,19 +19,17 @@ function compute(o::cAllocationRadiation_gpp, forcing, land, helpers)
 end
 
 @doc """
-computation for the radiation effect on decomposition/mineralization as the same for GPP
+radiation effect on decomposition/mineralization = the same for GPP
 
 ---
 
 # compute:
-Effect of radiation on carbon allocation using cAllocationRadiation_gpp
 
 *Inputs*
- - land.gppDiffRadiation.CloudScGPP: light scalar for GPP
+ - land.gppDiffRadiation.CloudScGPP: radiation effect for GPP
 
 *Outputs*
- - land.cAllocationRadiation.fR: values for the radiation effect on decomposition/mineralization
- - land.cAllocationRadiation.fR
+ - land.cAllocationRadiation.fR: radiation effect on decomposition/mineralization
 
 ---
 

@@ -18,7 +18,7 @@ function compute(o::aRespiration_Thornley2000C, forcing, land, helpers)
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
 	end
-	p_km = repeat([1.0] , 1, helpers.pools.carbon.nZix.cVeg)
+	p_km = repeat([1.0] , 1, length(land.pools.cVeg))
 	p_km4su = p_km
 	RA_G = p_km
 	RA_M = p_km
