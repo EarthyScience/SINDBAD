@@ -13,13 +13,14 @@ function compute(o::gppVPD_expco2, forcing, land, helpers)
 
 
     ## unpack land variables
-    @unpack_land ambCO2 ∈ land.states
-
+    @unpack_land begin
+        ambCO2 ∈ land.states
+        (zero, one) ∈ helpers.numbers
+    end
 
     ## calculate variables
-    ## from SHanning"s codes
     fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
-    VPDScGPP = max(0.0, min(1.0, fVPD_VPD))
+    VPDScGPP = clamp(fVPD_VPD, zero, one)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

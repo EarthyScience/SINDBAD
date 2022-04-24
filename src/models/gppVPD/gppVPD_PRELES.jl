@@ -19,9 +19,7 @@ function compute(o::gppVPD_PRELES, forcing, land, helpers)
         (zero, one) ∈ helpers.numbers
     end
 
-
     ## calculate variables
-    ## from SHanning"s codes
     fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
     fCO2_CO2 = one + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
     VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, zero, one)
