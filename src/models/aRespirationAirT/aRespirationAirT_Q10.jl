@@ -1,25 +1,26 @@
 export aRespirationAirT_Q10
 
-@bounds @describe @units @with_kw struct aRespirationAirT_Q10{T1, T2} <: aRespirationAirT
-	Q10_RM::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
-	Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
+@bounds @describe @units @with_kw struct aRespirationAirT_Q10{T1,T2,T3} <: aRespirationAirT
+    Q10_RM::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
+    Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
+    Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
 function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_aRespirationAirT_Q10 o
-	@unpack_forcing Tair ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_aRespirationAirT_Q10 o
+    @unpack_forcing Tair ∈ forcing
 
-	## calculate variables
-	fT = Q10_RM ^ ((Tair - Tref_RM) / 10.0)
+    ## calculate variables
+    fT = Q10_RM^((Tair - Tref_RM) / Q10_base)
 
-	## pack land variables
-	@pack_land fT => land.aRespirationAirT
-	return land
+    ## pack land variables
+    @pack_land fT => land.aRespirationAirT
+    return land
 end
 
 @doc """
-estimate the effect of temperature in autotrophic maintenance respiration - q10 model
+temperature effect on autotrophic maintenance respiration - Q10 model
 
 # Parameters
 $(PARAMFIELDS)

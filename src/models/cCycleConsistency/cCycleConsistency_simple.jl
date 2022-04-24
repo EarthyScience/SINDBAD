@@ -58,7 +58,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
 			error("sum of cols higher than one in upper in p_cFlow_A matrix")
 		end
 	end
-	# flow_matrix = reshape(p_A, helpers.pools.carbon.nZix.cEco, helpers.pools.carbon.nZix.cEco)
+	# flow_matrix = reshape(p_A, length(land.pools.cEco), length(land.pools.cEco))
 	# flagUp = triu(ones(size(flow_matrix)), 1)
 	# flagLo = tril(ones(size(flow_matrix)), -1)
 	# # of diagonal values of 0 must be between 0 & 1

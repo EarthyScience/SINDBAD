@@ -1,33 +1,28 @@
 export cAllocationSoilW_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationSoilW_Friedlingstein1999{T1, T2} <: cAllocationSoilW
-	mifW::T1 = 0.5 | (0.0, 1.0) | "" | ""
-	maxL_fW::T2 = 0.5 | (0.0, 1.0) | "" | ""
+@bounds @describe @units @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
+    minL_fW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | ""
+    maxL_fW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | ""
 end
 
 function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cAllocationSoilW_Friedlingstein1999 o
+    ## unpack parameters
+    @unpack_cAllocationSoilW_Friedlingstein1999 o
 
-	## unpack land variables
-	@unpack_land fW ∈ land.cTauSoilW
+    ## unpack land variables
+    @unpack_land fW_cTau = fW ∈ land.cTauSoilW
 
+    ## calculate variables
+    # computation for the moisture effect on decomposition/mineralization
+    fW = clamp(fW_cTau, minL_fW, maxL_fW)
 
-	## calculate variables
-	# computation for the moisture effect on decomposition/mineralization
-	fW[fW >= maxL_fW] = maxL_fW
-	fW[fW <= mifW] = mifW
-	# fW[fW >= maxL_fW] = maxL_fW(fW >=
-	# maxL_fW); #sujan
-	# fW[fW <= mifW] = mifW[fW <= mifW]; #sujan
-
-	## pack land variables
-	@pack_land fW => land.cAllocationSoilW
-	return land
+    ## pack land variables
+    @pack_land fW => land.cAllocationSoilW
+    return land
 end
 
 @doc """
-Compute partial computation for the moisture effect on decomposition/mineralization
+partial moisture effect on decomposition/mineralization based on Friedlingstein1999
 
 # Parameters
 $(PARAMFIELDS)
@@ -35,14 +30,12 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of soil moisture on carbon allocation using cAllocationSoilW_Friedlingstein1999
 
 *Inputs*
- - land.cTauSoilW.fW: values for effect of moisture on soil decomposition
+ - land.cTauSoilW.fW: moisture effect on soil decomposition rate
 
 *Outputs*
- - land.cAllocationSoilW.fW: values for moisture stressor on C allocation
- - land.cAllocationSoilW.fW
+ - land.cAllocationSoilW.fW: moisture stressor on C allocation
 
 ---
 

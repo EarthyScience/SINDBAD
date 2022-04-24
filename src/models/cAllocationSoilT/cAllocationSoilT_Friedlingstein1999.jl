@@ -1,35 +1,26 @@
 export cAllocationSoilT_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationSoilT_Friedlingstein1999{T1, T2} <: cAllocationSoilT
-	mifT::T1 = 0.5 | (0.0, 1.0) | "" | ""
-	maxL_fT::T2 = 1.0 | (0.0, 1.0) | "" | ""
+@bounds @describe @units @with_kw struct cAllocationSoilT_Friedlingstein1999{T1,T2} <: cAllocationSoilT
+    minL_fT::T1 = 0.5 | (0.0, 1.0) | "minimum allocation coefficient from temperature stress" | ""
+    maxL_fT::T2 = 1.0 | (0.0, 1.0) | "maximum allocation coefficient from temperature stress" | ""
 end
 
 function compute(o::cAllocationSoilT_Friedlingstein1999, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cAllocationSoilT_Friedlingstein1999 o
+    ## unpack parameters
+    @unpack_cAllocationSoilT_Friedlingstein1999 o
 
-	## unpack land variables
-	@unpack_land fT ∈ land.cTauSoilT
+    ## unpack land variables
+    @unpack_land fT ∈ land.cTauSoilT
 
+    fT = clamp(fT, minL_fT, maxL_fT)
 
-	## calculate variables
-	# Compute partial computation for the temperature effect on
-	# decomposition/mineralization
-	#sujan the right hand side of equation below has p which has one value but
-	#LHS is nPix;nTix
-	fT[fT >= maxL_fT] = maxL_fT
-	fT[fT <= mifT] = mifT
-	# fT[fT >= maxL_fT] = maxL_fT[fT >= maxL_fT]
-	# fT[fT <= mifT] = mifT[fT <= mifT]
-
-	## pack land variables
-	@pack_land fT => land.cAllocationSoilT
-	return land
+    ## pack land variables
+    @pack_land fT => land.cAllocationSoilT
+    return land
 end
 
 @doc """
-Compute partial computation for the temperature effect on decomposition/mineralization
+partial temperature effect on decomposition/mineralization based on Friedlingstein1999
 
 # Parameters
 $(PARAMFIELDS)
@@ -37,14 +28,12 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Effect of soil temperature on carbon allocation using cAllocationSoilT_Friedlingstein1999
 
 *Inputs*
- - land.cTauSoilT.fT: values for effect of temperature on soil decomposition
+ - land.cTauSoilT.fT: temperature effect on soil decomposition
 
 *Outputs*
- - land.cAllocationSoilT.fT: values for temperature stressor on C allocation
- - land.cAllocationSoilT.fT
+ - land.cAllocationSoilT.fT: temperature stressor on carbon allocation
 
 ---
 

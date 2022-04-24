@@ -13,7 +13,7 @@ function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
-	p_E = repeat(zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco), 1, 1, helpers.pools.carbon.nZix.cEco)
+	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
 
 	## pack land variables
 	@pack_land p_E => land.cFlowSoilProperties
@@ -33,7 +33,7 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 
 	## calculate variables
 	# p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-	# p_fSoil = zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
+	# p_fSoil = zeros(helpers.numbers.numType, length(land.pools.cEco))
 	# #sujan
 	p_F = p_E
 	CLAY = mean(p_CLAY)

@@ -10,7 +10,7 @@ function precompute(o::cAllocation_fixed, forcing, land, helpers)
 	@unpack_cAllocation_fixed o
 
 	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
+	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
 
 	## pack land variables
 	@pack_land cAlloc => land.cAllocation
