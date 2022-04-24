@@ -7,13 +7,13 @@ function compute(o::transpirationDemand_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		pawAct ∈ land.vegAvailableWater
+		PAW ∈ land.vegAvailableWater
 		(p_wAWC, p_α, p_β) ∈ land.soilWBase
 		percolation ∈ land.percolation
 		PET ∈ land.PET
 		(zero, one) ∈ helpers.numbers
 	end
-	VMC = clamp(sum(pawAct) / sum(p_wAWC), zero, one)
+	VMC = clamp(sum(PAW) / sum(p_wAWC), zero, one)
 	RDR = (one + mean(p_α)) / (one + mean(p_α) * (VMC ^ mean(p_β)))
 	tranDem = percolation + (PET - percolation) * RDR
 
@@ -31,10 +31,10 @@ calculate the supply limited transpiration as function of volumetric soil conten
 Demand-driven transpiration using transpirationDemand_CASA
 
 *Inputs*
- - land.pools.pawAct : plant avaiable water
+ - land.pools.PAW : plant avaiable water
  - land.soilWBase.p_[α/β]: moisture retention characteristics
  - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
- - land.states.pawAct: actual extractable water
+ - land.states.PAW: actual extractable water
 
 *Outputs*
  - land.tranDem.transpirationDemand: supply limited transpiration

@@ -276,7 +276,9 @@ function setHelpers(info, ttype=info.modelRun.rules.dataType)
     tolerance = setNumberType(ttype)(1e-5)
     info = (; info..., tem=(;))
     sDT = (a) -> setNumberType(ttype)(a)
-    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT)))) # aone=aone, azero=azero
+    squarer = (n) -> n * n
+    cuber = (n) -> n * n * n
+    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
     return info
 end
 

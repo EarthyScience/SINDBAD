@@ -25,7 +25,7 @@ function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, help
 
 	## unpack land variables
 	@unpack_land begin
-		pawAct ∈ land.states
+		PAW ∈ land.states
 		p_wAWC ∈ land.soilWBase
 		fW ∈ land.cAllocationSoilW
 		fT ∈ land.cAllocationSoilT
@@ -41,7 +41,7 @@ function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, help
 	# sujan consider root fractions
 	# water limitation calculation
 	# WL = sum(soilW * p_fracRoot2SoilD) / sum(p_wAWC * p_fracRoot2SoilD)
-	WL = sum(pawAct) / sum(p_wAWC)
+	WL = sum(PAW) / sum(p_wAWC)
 	# WL = sum(soilW) / sum(p_wAWC)
 	WL[WL <= minL] = minL; #(WL <= minL)
 	WL[WL >= maxL] = maxL; #(WL >= maxL);## check if maxL & minL should used maxL_fW?
@@ -72,7 +72,7 @@ $(PARAMFIELDS)
  - land.cAllocationSoilT.fT: values for partial computation for the temperature effect on  decomposition/mineralization
  - land.cAllocationSoilW.fW: values for partial computation for the moisture effect on  decomposition/mineralization
  - land.soilWBase.p_wAWC: values for the plant water available
- - land.states.pawAct: values for maximum fraction of water that root can uptake from soil layers as constant
+ - land.states.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
 
 *Outputs*
  - land.cAllocationNutrients.minWLNL: the pseudo-nutrient limitation [NL] calculation

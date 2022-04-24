@@ -7,7 +7,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        pawAct ∈ land.vegAvailableWater
+        PAW ∈ land.vegAvailableWater
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
         ΔsoilW ∈ land.states
@@ -15,11 +15,11 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     end
     # get the transpiration
     toUptake = transpiration
-    pawActTotal = sum(pawAct)
-    wRootUptake = copy(pawAct)
+    PAWTotal = sum(PAW)
+    wRootUptake = copy(PAW)
     # extract from top to bottom
     for sl in 1:length(land.pools.soilW)
-        uptakeProportion = max(zero, pawAct[sl] / (pawActTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
+        uptakeProportion = max(zero, PAW[sl] / (PAWTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
         wRootUptake[sl] = toUptake * uptakeProportion
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
     end
@@ -66,7 +66,7 @@ Root water uptake (extract water from soil) using rootWaterUptake_proportion
 *Inputs*
  - land.fluxes.transpiration: actual transpiration
  - land.pools.soilW: soil moisture
- - land.states.pawAct: plant available water [pix, zix]
+ - land.states.PAW: plant available water [pix, zix]
 
 *Outputs*
  - land.states.wRootUptake: moisture uptake from each soil layer [nPix, nZix of soilW]
