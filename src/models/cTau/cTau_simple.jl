@@ -6,7 +6,7 @@ end
 function precompute(o::cTau_simple, forcing, land, helpers)
 
 	## instantiate variables
-	p_k = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
+	p_k = ones(helpers.numbers.numType, length(land.pools.cEco))
 
 	## pack land variables
 	@pack_land p_k => land.cTau
@@ -26,9 +26,10 @@ function compute(o::cTau_simple, forcing, land, helpers)
 		p_kfSoil ∈ land.cTauSoilProperties
 		p_kfLAI ∈ land.cTauLAI
 		p_k ∈ land.cCycleBase
+		(zero, one) ∈ helpers.numbers
 	end
 	p_k = p_k * p_kfLAI * p_kfSoil * p_kfVeg * fT * p_fsoilW
-	p_k = min(max(p_k, 0), 1)
+	p_k = clamp.(p_k, zero, one)
 
 	## pack land variables
 	@pack_land p_k => land.cTau
