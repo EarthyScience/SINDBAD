@@ -9,11 +9,11 @@ function compute(o::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
 	@unpack_transpirationSupply_wAWCvegFraction o
 
 	## unpack land variables
-	@unpack_land (pawAct, vegFraction) ∈ land.states
+	@unpack_land (PAW, vegFraction) ∈ land.states
 
 
 	## calculate variables
-	tranSup = sum(pawAct) * tranFrac * vegFraction
+	tranSup = sum(PAW) * tranFrac * vegFraction
 
 	## pack land variables
 	@pack_land tranSup => land.transpirationSupply
@@ -34,7 +34,7 @@ Supply-limited transpiration using transpirationSupply_wAWCvegFraction
 *Inputs*
  - land.pools.soilW : total soil moisture
  - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
- - land.states.pawAct: actual extractable water
+ - land.states.PAW: actual extractable water
  - land.states.vegFraction: vegetation fraction
 
 *Outputs*
