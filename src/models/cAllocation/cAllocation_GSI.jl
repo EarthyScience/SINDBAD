@@ -6,7 +6,7 @@ end
 function precompute(o::cAllocation_GSI, forcing, land, helpers)
 
 	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco);
+	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco));
 
 	## pack land variables
 	@pack_land cAlloc => land.cAllocation
@@ -30,8 +30,8 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
 	helpers.pools.carbon.zix.cVegLeaf
 	]
 	# allocation to root; wood & leaf
-	cf2.cVegLeaf = fW / (fW + fT) / 2
-	cf2.cVegWood = fW / (fW + fT) / 2
+	cf2.cVegLeaf = fW / ((fW + fT) * 2)
+	cf2.cVegWood = fW / ((fW + fT) * 2)
 	cf2.cVegRoot = fT / (fW + fT)
 	# distribute the allocation according to pools
 	# cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)

@@ -10,8 +10,8 @@ include("cAllocationRadiation_none.jl")
 Effect of radiation on carbon allocation
 
 # Approaches:
- - gpp: computation for the radiation effect on decomposition/mineralization as the same for GPP
- - GSI: computation for the radiation effect on decomposition/mineralization using a GSI method
- - none: 
+ - gpp: radiation effect on decomposition/mineralization = the same for GPP
+ - GSI: radiation effect on decomposition/mineralization using GSI method
+ - none: sets the radiation effect on allocation to one (no effect)
 """
 cAllocationRadiation

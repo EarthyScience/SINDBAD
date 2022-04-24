@@ -1,32 +1,29 @@
 export cAllocationLAI_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocationLAI_Friedlingstein1999{T1, T2, T3} <: cAllocationLAI
-	kext::T1 = 0.5 | (0.0, 1.0) | "" | ""
-	minL::T2 = 0.1 | (0.0, 1.0) | "" | ""
-	maxL::T3 = 1.0 | (0.0, 1.0) | "" | ""
+@bounds @describe @units @with_kw struct cAllocationLAI_Friedlingstein1999{T1,T2,T3} <: cAllocationLAI
+    kext::T1 = 0.5 | (0.0, 1.0) | "extinction coefficient of LAI effect on allocation" | ""
+    minL::T2 = 0.1 | (0.0, 1.0) | "minimum LAI effect on allocation" | ""
+    maxL::T3 = 1.0 | (0.0, 1.0) | "maximum LAI effect on allocation" | ""
 end
 
 function compute(o::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cAllocationLAI_Friedlingstein1999 o
+    ## unpack parameters
+    @unpack_cAllocationLAI_Friedlingstein1999 o
 
-	## unpack land variables
-	@unpack_land LAI ∈ land.states
+    ## unpack land variables
+    @unpack_land LAI ∈ land.states
 
+    ## calculate variables
+    # light limitation [LL] calculation
+    LL = clamp(exp(-kext * LAI), minL, maxL)
 
-	## calculate variables
-	# light limitation [LL] calculation
-	LL = exp(-kext * LAI)
-	LL[LL <= minL] = minL[LL <= minL]
-	LL[LL >= maxL] = maxL[LL >= maxL]
-
-	## pack land variables
-	@pack_land LL => land.cAllocationLAI
-	return land
+    ## pack land variables
+    @pack_land LL => land.cAllocationLAI
+    return land
 end
 
 @doc """
-Compute the light limitation [LL] calculation
+LAI effect on allocation based on light limitation from Friedlingstein1999
 
 # Parameters
 $(PARAMFIELDS)

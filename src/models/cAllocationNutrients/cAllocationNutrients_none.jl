@@ -1,25 +1,27 @@
 export cAllocationNutrients_none
 
-struct cAllocationNutrients_none <: cAllocationNutrients
-end
+struct cAllocationNutrients_none <: cAllocationNutrients end
 
 function precompute(o::cAllocationNutrients_none, forcing, land, helpers)
 
-	## calculate variables
-	minWLNL = helpers.numbers.one
+    ## calculate variables
+    minWLNL = helpers.numbers.one
 
-	## pack land variables
-	@pack_land minWLNL => land.cAllocationNutrients
-	return land
+    ## pack land variables
+    @pack_land minWLNL => land.cAllocationNutrients
+    return land
 end
 
 @doc """
-set the pseudo-nutrient limitation to 1
+sets the pseudo-nutrient limitation to one (no effect)
 
 # precompute:
-precompute/instantiate time-invariant variables for cAllocationNutrients_none
 
+*Inputs*
+- helpers.numbers.one
 
+*Outputs*
+- land.cAllocationNutrients.minWLNL: Nutrient effect on cAllocation (0-1)
 ---
 
 # Extended help

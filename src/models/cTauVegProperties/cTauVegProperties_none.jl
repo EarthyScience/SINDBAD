@@ -7,7 +7,7 @@ function precompute(o::cTauVegProperties_none, forcing, land, helpers)
     @unpack_land (zero, numType) ∈ helpers.numbers
 
     ## calculate variables
-    p_kfVeg = ones(numType, helpers.pools.carbon.nZix.cEco)
+    p_kfVeg = ones(numType, length(land.pools.cEco))
     p_LITC2N = zero
     p_LIGNIN = zero
     p_MTF = one

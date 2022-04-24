@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 
-# forcing = getForcing(info);
+forcing = getForcing(info);
 
 
 obsvars, modelvars = getConstraintNames(info);
@@ -24,6 +24,7 @@ out = getInitOut(info);
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+
 typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 

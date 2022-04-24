@@ -1,24 +1,27 @@
 export cAllocationLAI_none
 
-struct cAllocationLAI_none <: cAllocationLAI
-end
+struct cAllocationLAI_none <: cAllocationLAI end
 
 function precompute(o::cAllocationLAI_none, forcing, land, helpers)
 
-	## calculate variables
-	LL = helpers.numbers.one
+    ## calculate variables
+    LL = helpers.numbers.one
 
-	## pack land variables
-	@pack_land LL => land.cAllocationLAI
-	return land
+    ## pack land variables
+    @pack_land LL => land.cAllocationLAI
+    return land
 end
 
 @doc """
-set the allocation to ones
+sets the LAI effect on allocation to one (no effect)
 
 # precompute:
-precompute/instantiate time-invariant variables for cAllocationLAI_none
 
+*Inputs*
+- helpers.numbers.one
+
+*Outputs*
+- land.cAllocationLAI.LL: LAI effect on cAllocation (0-1)
 
 ---
 

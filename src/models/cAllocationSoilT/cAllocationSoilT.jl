@@ -11,9 +11,9 @@ include("cAllocationSoilT_none.jl")
 Effect of soil temperature on carbon allocation
 
 # Approaches:
- - Friedlingstein1999: Compute partial computation for the temperature effect on decomposition/mineralization
- - gpp: compute the temperature effect on C allocation to the same as gpp.
- - gppGSI: compute the temperature effect on C allocation based on GSI approach.
- - none: 
+ - Friedlingstein1999: partial temperature effect on decomposition/mineralization based on Friedlingstein1999
+ - gpp: temperature effect on allocation = the same as gpp
+ - gppGSI: temperature effect on allocation from same for GPP based on GSI approach
+ - none: sets the temperature effect on allocation to one (no effect)
 """
 cAllocationSoilT
