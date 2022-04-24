@@ -23,7 +23,7 @@ approaches = info.tem.models.forward;
 out = getInitOut(info);
 # @show out.pools.soilW
 
-outsp = runSpinup(approaches, forcing, out, info.tem.helpers);
+outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 
@@ -31,7 +31,7 @@ outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem
 pprint(outsp)
 
 
-
+@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 for it in 1:10
     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=5)
