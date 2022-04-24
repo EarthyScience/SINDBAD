@@ -54,7 +54,7 @@ function compute(o::gppAirT_GSI, forcing, land, helpers)
 end
 
 @doc """
-calculate the light stress on gpp based on GSI implementation of LPJ
+temperature stress on gppPot based on GSI implementation of LPJ
 
 # Parameters
 $(PARAMFIELDS)

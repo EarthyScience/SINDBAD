@@ -12,10 +12,10 @@ include("gppSoilW_Stocker2020.jl")
 Gpp as a function of soilW; should be set to none if coupled with transpiration
 
 # Approaches:
- - CASA: soil moisture stress on gpp based on base stress and relative ratio of PET and PAW (CASA)
- - GSI: soil moisture stress on gpp based on GSI implementation of LPJ
- - Keenan2009: soil moisture stress on gpp based on Keenan2009
+ - CASA: soil moisture stress on gppPot based on base stress and relative ratio of PET and PAW (CASA)
+ - GSI: soil moisture stress on gppPot based on GSI implementation of LPJ
+ - Keenan2009: soil moisture stress on gppPot based on Keenan2009
  - none: sets the soil moisture stress on gppPot to one (no stress)
- - Stocker2020: soil moisture stress on gpp based on Stocker2020
+ - Stocker2020: soil moisture stress on gppPot based on Stocker2020
 """
 gppSoilW

@@ -44,7 +44,7 @@ function compute(o::gppSoilW_GSI, forcing, land, helpers)
 end
 
 @doc """
-soil moisture stress on gpp based on GSI implementation of LPJ
+soil moisture stress on gppPot based on GSI implementation of LPJ
 
 # Parameters
 $(PARAMFIELDS)
@@ -59,7 +59,7 @@ $(PARAMFIELDS)
  - land.soilWBase.p_wWP: wilting point
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
+ - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
 
 ---
 

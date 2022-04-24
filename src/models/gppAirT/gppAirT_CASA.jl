@@ -39,7 +39,7 @@ function compute(o::gppAirT_CASA, forcing, land, helpers)
 end
 
 @doc """
-calculate the temperature stress for gppPot based on CASA & Potter
+temperature stress for gppPot based on CASA & Potter
 
 # Parameters
 $(PARAMFIELDS)
