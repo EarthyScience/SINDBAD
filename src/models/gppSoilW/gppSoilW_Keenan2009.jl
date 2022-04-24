@@ -31,7 +31,7 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
 end
 
 @doc """
-calculate the soil moisture stress on gpp based on Keenan2009
+soil moisture stress on gpp based on Keenan2009
 
 # Parameters
 $(PARAMFIELDS)

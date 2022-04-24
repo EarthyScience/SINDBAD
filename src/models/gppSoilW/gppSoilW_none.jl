@@ -20,14 +20,12 @@ sets the soil moisture stress on gppPot to one (no stress)
 ---
 
 # compute:
-Gpp as a function of soilW; should be set to none if coupled with transpiration using gppSoilW_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.gppSoilW.SMScGPP: soil moisture effect on GPP [] dimensionless, between 0-1
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gppSoilW_none
