@@ -54,7 +54,6 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Gpp as a function of soilW
 
 *Inputs*
  - land.vegAvailableWater.PAW: values of soil moisture current time step

@@ -13,9 +13,9 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration
 
 # Approaches:
  - CASA: soil moisture stress on gpp based on base stress and relative ratio of PET and PAW (CASA)
- - GSI: calculate the soil moisture stress on gpp based on GSI implementation of LPJ
- - Keenan2009: calculate the soil moisture stress on gpp
+ - GSI: soil moisture stress on gpp based on GSI implementation of LPJ
+ - Keenan2009: soil moisture stress on gpp based on Keenan2009
  - none: sets the soil moisture stress on gppPot to one (no stress)
- - Stocker2020: calculate the soil moisture stress on gpp
+ - Stocker2020: soil moisture stress on gpp based on Stocker2020
 """
 gppSoilW

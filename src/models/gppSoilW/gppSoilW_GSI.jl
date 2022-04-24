@@ -55,7 +55,6 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Gpp as a function of soilW; should be set to none if coupled with transpiration using gppSoilW_GSI
 
 *Inputs*
  - fW_τ: contribution of current time step
