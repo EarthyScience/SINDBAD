@@ -45,7 +45,6 @@ Fractional coverage of vegetation using vegFraction_scaledEVI
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 06.02.2020 [ttraut]  

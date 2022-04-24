@@ -64,7 +64,6 @@ Pool structure of the carbon cycle using cCycleBase_simple
 *Inputs*
 
 *Outputs*
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycleBase_simple

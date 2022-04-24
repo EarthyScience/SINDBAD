@@ -52,7 +52,6 @@ Effect of diffuse radiation using gppDiffRadiation_Wang2015
 
 *Outputs*
  - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
- -
 
 ---
 

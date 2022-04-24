@@ -14,7 +14,7 @@ function precompute(o::gppDirRadiation_none, forcing, land, helpers)
 end
 
 @doc """
-set the light saturation scalar [light effect] on gppPot to ones
+sets the light saturation scalar [light effect] on gppPot to one
 
 ---
 
@@ -22,11 +22,10 @@ set the light saturation scalar [light effect] on gppPot to ones
 Effect of direct radiation using gppDirRadiation_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gppDirRadiation_none
@@ -39,7 +38,7 @@ precompute/instantiate time-invariant variables for gppDirRadiation_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]  
+ - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
  - mjung

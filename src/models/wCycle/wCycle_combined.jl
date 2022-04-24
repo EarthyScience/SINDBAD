@@ -54,7 +54,6 @@ computes the algebraic sum of storage and delta storage
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]

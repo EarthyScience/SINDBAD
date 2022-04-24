@@ -12,12 +12,8 @@ function compute(o::gppVPD_MOD17, forcing, land, helpers)
     @unpack_land (zero, one) ∈ helpers.numbers
 
     ## calculate variables
-    tmp = 1.0
-    td = (VPDmax - VPDmin) * tmp
-    pVPDmax = VPDmax * tmp
-    vsc = (pVPDmax - VPDDay) / td
-	vsc = clamp(vsc, zero, one)
-    VPDScGPP = vsc
+    vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
+    VPDScGPP = clamp(vsc, zero, one)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD
@@ -25,7 +21,7 @@ function compute(o::gppVPD_MOD17, forcing, land, helpers)
 end
 
 @doc """
-calculate the VPD stress on gppPot based on MOD17 model
+VPD stress on gppPot based on MOD17 model
 
 # Parameters
 $(PARAMFIELDS)
@@ -33,14 +29,12 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Vpd effect using gppVPD_MOD17
 
 *Inputs*
- - forcing. VPDDay: daytime vapor pressure deficit [kPa]
+ - forcing.VPDDay: daytime vapor pressure deficit [kPa]
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
- -
+ - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
 
 ---
 

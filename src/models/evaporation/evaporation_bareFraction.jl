@@ -86,7 +86,6 @@ update pools and states in evaporation_bareFraction
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.vegFraction  

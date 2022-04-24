@@ -33,7 +33,6 @@ Supply-limited transpiration using transpirationSupply_CASA
 
 *Outputs*
  - land.transpirationSupply.tranSup: supply limited transpiration
- -
 
 ---
 

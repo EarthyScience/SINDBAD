@@ -54,7 +54,6 @@ Estimate wue using WUE_expVPDDayCo2
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 31.03.2021 [skoirala]

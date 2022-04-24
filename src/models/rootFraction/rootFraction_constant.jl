@@ -67,7 +67,6 @@ precompute/instantiate time-invariant variables for rootFraction_constant
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 21.11.2019  

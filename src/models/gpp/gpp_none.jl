@@ -22,11 +22,10 @@ sets the actual GPP to zero
 Combine effects as multiplicative or minimum; if coupled, uses transup using gpp_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.fluxes.gpp: actual GPP [gC/m2/time]
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gpp_none
@@ -39,7 +38,7 @@ precompute/instantiate time-invariant variables for gpp_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]  
+ - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
  - ncarval

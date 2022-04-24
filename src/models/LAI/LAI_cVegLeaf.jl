@@ -40,7 +40,6 @@ Leaf area index using LAI_cVegLeaf
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 05.05.2020 [sbesnard]

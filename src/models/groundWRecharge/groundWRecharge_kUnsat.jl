@@ -81,7 +81,6 @@ update pools and states in groundWRecharge_kUnsat
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: clean up  

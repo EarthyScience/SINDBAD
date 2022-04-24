@@ -95,7 +95,6 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers
  - land.soilWBase.p_wWP: wilting point set to zero for all layers
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for soilWBase_smax2fRD4

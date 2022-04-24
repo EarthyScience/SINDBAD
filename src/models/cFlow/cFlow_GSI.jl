@@ -201,7 +201,6 @@ precompute/instantiate time-invariant variables for cFlow_GSI
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]
