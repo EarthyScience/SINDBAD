@@ -19,7 +19,7 @@ function compute(o::gppAirT_Wang2014, forcing, land, helpers)
 end
 
 @doc """
-calculate the temperature stress on gppPot based on Wang2014
+temperature stress on gppPot based on Wang2014
 
 # Parameters
 $(PARAMFIELDS)

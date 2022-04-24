@@ -44,7 +44,7 @@ function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
 end
 
 @doc """
-calculate the temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
+temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
 
 # Parameters
 $(PARAMFIELDS)
