@@ -1,6 +1,6 @@
 export gppAirT_CASA
 
-@bounds @describe @units @with_kw struct gppAirT_CASA{T1, T, T3} <: gppAirT
+@bounds @describe @units @with_kw struct gppAirT_CASA{T1, T, T3, T4} <: gppAirT
 	Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
 	ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
 	ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
