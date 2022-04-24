@@ -13,7 +13,7 @@ function compute(o::gppAirT_MOD17, forcing, land, helpers)
 
 
     ## calculate variables
-    tsc = TairDay / ((one - Tmin) * (Tmax - Tmin))
+    tsc = TairDay / ((one - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
     TempScGPP = clamp(tsc, zero, one)
 
     ## pack land variables
