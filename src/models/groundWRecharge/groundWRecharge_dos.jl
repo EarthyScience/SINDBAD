@@ -18,7 +18,7 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
 	dosSoilEnd = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
 	groundWRec = ((dosSoilEnd) ^ (dos_exp * p_β[end])) * soilW[end]
 
-	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
+	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
@@ -39,11 +39,11 @@ function update(o::groundWRecharge_dos, forcing, land, helpers)
 
 	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables

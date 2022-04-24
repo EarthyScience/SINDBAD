@@ -18,7 +18,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     pawActTotal = sum(pawAct)
     wRootUptake = copy(pawAct)
     # extract from top to bottom
-    for sl in 1:helpers.pools.water.nZix.soilW
+    for sl in 1:length(land.pools.soilW)
         uptakeProportion = max(zero, pawAct[sl] / (pawActTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
         wRootUptake[sl] = toUptake * uptakeProportion
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]

@@ -9,7 +9,7 @@ function precompute(o::cTauLAI_CASA, forcing, land, helpers)
 	@unpack_cTauLAI_CASA o
 
 	## instantiate variables
-	p_kfLAI = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #(inefficient, should be pix zix_veg)
+	p_kfLAI = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco); #(inefficient, should be pix zix_veg)
 
 	## pack land variables
 	@pack_land p_kfLAI => land.cTauLAI

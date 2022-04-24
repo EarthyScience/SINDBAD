@@ -7,7 +7,7 @@ function precompute(o::cCycle_simple, forcing, land, helpers)
 
 	@unpack_land begin
 		(zero, one, numType) ∈ helpers.numbers
-		n_cEco = cEco ∈ helpers.pools.water.nZix
+		n_cEco = cEco ∈ helpers.pools.carbon.nZix
 	end
 
 	## instantiate variables

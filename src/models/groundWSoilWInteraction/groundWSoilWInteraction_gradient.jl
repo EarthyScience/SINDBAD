@@ -29,7 +29,7 @@ function compute(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
 	gwCapFlow = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW));
 
 	# adjust the delta storages
-	ΔgroundW = ΔgroundW .- gwCapFlow / length(groundW)
+	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
 
 	## pack land variables
@@ -49,11 +49,11 @@ function update(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
 
 	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables
@@ -76,7 +76,7 @@ $(PARAMFIELDS)
 Groundwater soil moisture interactions (capilary flux) using groundWSoilWInteraction_gradient
 
 *Inputs*
- - info : helpers.pools.water.nZix.soilW = number of soil layers
+ - info : length(land.pools.soilW) = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
  - land.soilWBase.p_wSat : maximum storage capacity of soil [mm]
 
