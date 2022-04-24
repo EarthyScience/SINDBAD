@@ -86,7 +86,6 @@ update pools and states in percolation_WBP
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]

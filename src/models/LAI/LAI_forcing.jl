@@ -32,7 +32,6 @@ Leaf area index using LAI_forcing
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 11.11.2019 [skoirala]: moved LAI from land.LAI.LAI to land.states.LAI  

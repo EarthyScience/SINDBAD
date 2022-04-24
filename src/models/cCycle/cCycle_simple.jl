@@ -111,7 +111,6 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.fluxes.cRH: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycle_simple

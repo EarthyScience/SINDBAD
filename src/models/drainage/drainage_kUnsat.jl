@@ -91,7 +91,6 @@ update pools and states in drainage_kUnsat
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]

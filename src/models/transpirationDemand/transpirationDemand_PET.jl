@@ -36,7 +36,6 @@ Demand-driven transpiration using transpirationDemand_PET
 
 *Outputs*
  - land.transpirationDemand.tranDem: demand driven transpiration
- -
 
 ---
 

@@ -114,7 +114,6 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
 *Outputs*
  - land.cTauLAI.p_kfLAI:
  - land.cTauLAI.p_kfLAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cTauLAI_CASA

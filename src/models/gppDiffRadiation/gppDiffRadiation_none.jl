@@ -23,11 +23,10 @@ set the cloudiness scalar [radiation diffusion] for gppPot to ones
 Effect of diffuse radiation using gppDiffRadiation_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gppDiffRadiation_none
@@ -40,7 +39,7 @@ precompute/instantiate time-invariant variables for gppDiffRadiation_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]  
+ - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
  - mjung

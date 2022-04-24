@@ -54,7 +54,6 @@ Actual transfers of c between pools (of diagonal components) using cFlow_simple
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 13.01.2020 [sbesnard]  

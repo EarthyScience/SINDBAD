@@ -94,7 +94,6 @@ Effect of soil moisture on decomposition rates using cTauSoilW_GSI
 
 *Outputs*
  - land.cTauSoilW.p_fsoilW: effect of moisture on cTau for different pools
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cTauSoilW_GSI

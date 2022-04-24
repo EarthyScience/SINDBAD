@@ -45,7 +45,6 @@ Fractional coverage of vegetation using vegFraction_scaledNDVI
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.1 on 29.04.2020 [sbesnard]: new module  

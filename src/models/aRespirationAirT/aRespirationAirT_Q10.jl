@@ -34,7 +34,6 @@ Temperature effect on autotrophic maintenance respiration using aRespirationAirT
 
 *Outputs*
  - land.aRespirationAirT.fT: autotrophic respiration rate [gC.m-2.δT-1]
- -
 
 ---
 

@@ -129,7 +129,6 @@ precompute/instantiate time-invariant variables for soilWBase_uniform
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]: clean up & consistency

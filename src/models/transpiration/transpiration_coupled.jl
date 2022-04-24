@@ -32,7 +32,6 @@ If coupled, computed from gpp and aoe from wue using transpiration_coupled
 
 *Outputs*
  - land.fluxes.transpiration: actual transpiration
- -
 
 ---
 

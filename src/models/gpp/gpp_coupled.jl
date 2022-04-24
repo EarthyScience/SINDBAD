@@ -39,7 +39,6 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
 
 *Outputs*
  - land.fluxes.gpp: actual GPP [gC/m2/time]
- -
 
 ---
 

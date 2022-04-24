@@ -91,7 +91,6 @@ update pools and states in runoffSurface_directIndirectFroSoil
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 03.12.2020 [ttraut]  

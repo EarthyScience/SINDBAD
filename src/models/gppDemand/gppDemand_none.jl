@@ -30,12 +30,11 @@ sets the scalar for demand GPP to ones & demand GPP to zero
 Combine effects as multiplicative or minimum using gppDemand_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
  - land.gppDemand.AllDemScGPP: effective scalar of demands
  - land.gppDemand.gppE: demand-driven GPP with no stress
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for gppDemand_none
@@ -48,7 +47,7 @@ precompute/instantiate time-invariant variables for gppDemand_none
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: documentation & clean up [changed the output to nPix, nTix]  
+ - 1.0 on 22.11.2019 [skoirala]: documentation & clean up 
 
 *Created by:*
  - ncarval

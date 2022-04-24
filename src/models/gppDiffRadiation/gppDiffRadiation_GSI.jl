@@ -65,7 +65,6 @@ Effect of diffuse radiation using gppDiffRadiation_GSI
 
 *Outputs*
  - land.gppDiffRadiation.CloudScGPP: light effect on GPP between 0-1
- -
 
 ---
 

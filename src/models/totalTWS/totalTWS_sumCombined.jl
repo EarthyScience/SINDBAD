@@ -54,7 +54,6 @@ precompute/instantiate time-invariant variables for totalTWS_sumCombined
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 01.04.2022  

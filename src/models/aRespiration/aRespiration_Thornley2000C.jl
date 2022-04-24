@@ -75,7 +75,6 @@ Determine growth and maintenance respiration -> npp using aRespiration_Thornley2
 
 *Outputs*
  - land.aRespiration.km[ii].value: maintenance [respiration] coefficient - dependent on  temperature and; depending on the models; degradable fraction  (δT-1)
- -
 
 ---
 

@@ -70,7 +70,6 @@ Effect of temperature using gppAirT_GSI
 
 *Outputs*
  - land.gppAirT.TempScGPP: light effect on GPP between 0-1
- -
 
 ---
 

@@ -87,7 +87,6 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
 *Outputs*
  - land.cTauSoilW.fsoilW: values for below ground moisture effect on decomposition processes
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cTauSoilW_CASA

@@ -50,7 +50,6 @@ Interception evaporation using interception_fAPAR
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code

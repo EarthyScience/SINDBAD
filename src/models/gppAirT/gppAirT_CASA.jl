@@ -54,7 +54,6 @@ Effect of temperature using gppAirT_CASA
 
 *Outputs*
  - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
- -
 
 ---
 

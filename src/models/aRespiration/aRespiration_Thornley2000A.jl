@@ -70,7 +70,6 @@ Determine growth and maintenance respiration -> npp using aRespiration_Thornley2
 *Outputs*
  - land.states.cEcoEfflux[zix]: autotrophic respiration from each plant pools [gC.m-2.δT-1]
  - land.states.cNPP: net primary production for each plant pool [gC.m-2.δT-1]
- -
 
 ---
 

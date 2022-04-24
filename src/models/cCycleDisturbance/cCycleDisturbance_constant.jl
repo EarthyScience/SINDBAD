@@ -66,7 +66,6 @@ Disturb the carbon cycle pools using cCycleDisturbance_constant
  - land.pools.cEco: carbon pool at the end of spinup
 
 *Outputs*
- -
 
 # update
 

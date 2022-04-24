@@ -44,7 +44,6 @@ Fractional coverage of vegetation using vegFraction_scaledfAPAR
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.1 on 24.10.2020 [ttraut]: new module  

@@ -1,33 +1,33 @@
 export gppVPD_expco2
 
-@bounds @describe @units @with_kw struct gppVPD_expco2{T1, T2, T3} <: gppVPD
-	κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-	Cκ::T2 = 0.4 | (-50.0, 10.0) | "exponent of co2 modulation of vpd effect" | ""
-	Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+@bounds @describe @units @with_kw struct gppVPD_expco2{T1,T2,T3} <: gppVPD
+    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
+    Cκ::T2 = 0.4 | (-50.0, 10.0) | "exponent of co2 modulation of vpd effect" | ""
+    Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
 end
 
 function compute(o::gppVPD_expco2, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppVPD_expco2 o
-	@unpack_forcing VPDDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppVPD_expco2 o
+    @unpack_forcing VPDDay ∈ forcing
 
 
-	## unpack land variables
-	@unpack_land ambCO2 ∈ land.states
+    ## unpack land variables
+    @unpack_land ambCO2 ∈ land.states
 
 
-	## calculate variables
-	## from SHanning"s codes
-	fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0) ^ -Cκ)
-	VPDScGPP = max(0.0, min(1.0, fVPD_VPD))
+    ## calculate variables
+    ## from SHanning"s codes
+    fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
+    VPDScGPP = max(0.0, min(1.0, fVPD_VPD))
 
-	## pack land variables
-	@pack_land VPDScGPP => land.gppVPD
-	return land
+    ## pack land variables
+    @pack_land VPDScGPP => land.gppVPD
+    return land
 end
 
 @doc """
-please adjust ;) calculate the VPD stress on gppPot based on Maekelae2008 & PRELES model
+VPD stress on gppPot based on Maekelae2008 and with co2 effect
 
 # Parameters
 $(PARAMFIELDS)
@@ -44,8 +44,7 @@ Vpd effect using gppVPD_expco2
  - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
- -
+ - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
 
 ---
 

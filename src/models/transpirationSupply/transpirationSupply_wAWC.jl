@@ -37,7 +37,6 @@ Supply-limited transpiration using transpirationSupply_wAWC
 
 *Outputs*
  - land.transpirationSupply.tranSup: supply limited transpiration
- -
 
 ---
 

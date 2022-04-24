@@ -68,7 +68,6 @@ Pool structure of the carbon cycle using cCycleBase_CASA
 *Inputs*
 
 *Outputs*
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycleBase_CASA

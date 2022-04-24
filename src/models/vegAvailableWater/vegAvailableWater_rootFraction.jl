@@ -48,7 +48,6 @@ precompute/instantiate time-invariant variables for vegAvailableWater_rootFracti
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 21.11.2019  

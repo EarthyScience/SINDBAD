@@ -44,7 +44,6 @@ Fraction of absorbed photosynthetically active radiation from LAI
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 24.02.2021 [skoirala]  

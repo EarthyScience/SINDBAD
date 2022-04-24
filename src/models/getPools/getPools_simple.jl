@@ -49,7 +49,6 @@ Get the amount of water at the beginning of timestep using getPools_simple
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 19.11.2019 [skoirala]: added the documentation & cleaned the code, added json with development stage

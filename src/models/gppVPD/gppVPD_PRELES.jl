@@ -1,35 +1,38 @@
 export gppVPD_PRELES
 
-@bounds @describe @units @with_kw struct gppVPD_PRELES{T1, T2, T3, T4} <: gppVPD
-	κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-	Cκ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
-	Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
-	Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
+@bounds @describe @units @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
+    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
+    Cκ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
+    Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+    Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 
 function compute(o::gppVPD_PRELES, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppVPD_PRELES o
-	@unpack_forcing VPDDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppVPD_PRELES o
+    @unpack_forcing VPDDay ∈ forcing
 
 
-	## unpack land variables
-	@unpack_land ambCO2 ∈ land.states
+    ## unpack land variables
+    @unpack_land begin
+        ambCO2 ∈ land.states
+        (zero, one) ∈ helpers.numbers
+    end
 
 
-	## calculate variables
-	## from SHanning"s codes
-	fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0) ^ -Cκ)
-	fCO2_CO2 = 1 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
-	VPDScGPP = max(0.0, min(1.0, fVPD_VPD * fCO2_CO2))
+    ## calculate variables
+    ## from SHanning"s codes
+    fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
+    fCO2_CO2 = one + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+    VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, zero, one)
 
-	## pack land variables
-	@pack_land VPDScGPP => land.gppVPD
-	return land
+    ## pack land variables
+    @pack_land VPDScGPP => land.gppVPD
+    return land
 end
 
 @doc """
-please adjust ;) calculate the VPD stress on gppPot based on Maekelae2008 & PRELES model
+VPD stress on gppPot based on Maekelae2008 and with co2 effect based on PRELES model
 
 # Parameters
 $(PARAMFIELDS)
@@ -46,8 +49,7 @@ Vpd effect using gppVPD_PRELES
  - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
- -
+ - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
 
 ---
 

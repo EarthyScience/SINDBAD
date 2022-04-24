@@ -38,7 +38,6 @@ Demand-driven transpiration using transpirationDemand_PETvegFraction
 
 *Outputs*
  - land.transpirationDemand.tranDem: demand driven transpiration
- -
 
 ---
 
