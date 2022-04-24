@@ -1,7 +1,7 @@
 export gppAirT_Wang2014
 
 @bounds @describe @units @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
-	Tmax::T1 = 10.0 | (5.0, 35.0) | "?? Check with martin" | "°C"
+	Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
 end
 
 function compute(o::gppAirT_Wang2014, forcing, land, helpers)
@@ -11,8 +11,7 @@ function compute(o::gppAirT_Wang2014, forcing, land, helpers)
     @unpack_land (zero, one) ∈ helpers.numbers
 
     ## calculate variables
-    tsc = TairDay / Tmax
-    TempScGPP = clamp(tsc, zero, one)
+    TempScGPP = clamp(TairDay / Tmax, zero, one)
 
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT
