@@ -14,12 +14,12 @@ include("gppAirT_Wang2014.jl")
 Effect of temperature
 
 # Approaches:
- - CASA: calculate the temperature stress for gppPot based on CASA & Potter
- - GSI: calculate the light stress on gpp based on GSI implementation of LPJ
- - Maekelae2008: calculate the temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
- - MOD17: calculate the temperature stress on gppPot based on GPP - MOD17 model
- - none: set the temperature stress on gppPot to ones (no stress)
- - TEM: calculate the temperature stress for gppPot based on TEM
- - Wang2014: calculate the temperature stress on gppPot based on Wang2014
+ - CASA: temperature stress for gppPot based on CASA & Potter
+ - GSI: temperature stress on gppPot based on GSI implementation of LPJ
+ - Maekelae2008: temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
+ - MOD17: temperature stress on gppPot based on GPP - MOD17 model
+ - none: sets the temperature stress on gppPot to one (no stress)
+ - TEM: temperature stress for gppPot based on TEM
+ - Wang2014: temperature stress on gppPot based on Wang2014
 """
 gppAirT

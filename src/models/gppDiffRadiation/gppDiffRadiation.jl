@@ -11,9 +11,9 @@ include("gppDiffRadiation_Wang2015.jl")
 Effect of diffuse radiation
 
 # Approaches:
- - GSI: calculate the light stress on gpp based on GSI implementation of LPJ
- - none: set the cloudiness scalar [radiation diffusion] for gppPot to ones
- - Turner2006: calculate the cloudiness scalar [radiation diffusion] on gppPot
- - Wang2015: calculate the cloudiness scalar [radiation diffusion] on gppPot
+ - GSI: cloudiness scalar [radiation diffusion] on gppPot based on GSI implementation of LPJ
+ - none: sets the cloudiness scalar [radiation diffusion] for gppPot to one
+ - Turner2006: cloudiness scalar [radiation diffusion] on gppPot based on Turner2006
+ - Wang2015: cloudiness scalar [radiation diffusion] on gppPot based on Wang2015
 """
 gppDiffRadiation

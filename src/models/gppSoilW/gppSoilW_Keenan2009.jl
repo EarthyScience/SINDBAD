@@ -31,7 +31,7 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
 end
 
 @doc """
-soil moisture stress on gpp based on Keenan2009
+soil moisture stress on gppPot based on Keenan2009
 
 # Parameters
 $(PARAMFIELDS)
@@ -47,7 +47,7 @@ Gpp as a function of soilW
  - land.soilWBase.p_wWP: wilting point
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on GPP (0-1)
+ - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
 
 ---
 
