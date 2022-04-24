@@ -10,7 +10,7 @@ function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
-	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco)
+	p_fsoilW = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco)
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW

@@ -10,8 +10,8 @@ function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 	@unpack_rootFraction_expCvegRoot o
 
 	## instantiate variables
-	p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	rootStop = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
+	rootStop = ones(helpers.numbers.numType, length(land.pools.soilW))
 
 	## pack land variables
 	@pack_land (p_fracRoot2SoilD, rootStop) => land.rootFraction
@@ -30,12 +30,12 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 		maxRootD ∈ land.states
 		cEco ∈ land.pools
 	end
-	##p_fracRoot2SoilD = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	##p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
 	soilDepths = helpers.pools.water.layerThickness.soilW
 	totalSoilDepth = sum(soilDepths)
 	maxRootDepth = min(maxRootD, totalSoilDepth); # maximum rootingdepth
 	# create the arrays to fill in the soil properties
-	for sl in 1:helpers.pools.water.nZix.soilW
+	for sl in 1:length(land.pools.soilW)
 		soilD = sum(soilDepths[1:sl-1])
 		rootOver = maxRootDepth - soilD
 		rootOverID = (rootOver <= 0.0)

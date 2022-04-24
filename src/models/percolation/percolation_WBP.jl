@@ -19,7 +19,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	holdCapacity = p_wSat - (soilW + ΔsoilW)
 	toAllocate = percolation
 	if toAllocate > zero
-		for sl in 1:helpers.pools.water.nZix.soilW
+		for sl in 1:length(land.pools.soilW)
 			allocated = min(holdCapacity[sl], toAllocate)
 			ΔsoilW[sl] = ΔsoilW[sl] + allocated
 			toAllocate = toAllocate - allocated

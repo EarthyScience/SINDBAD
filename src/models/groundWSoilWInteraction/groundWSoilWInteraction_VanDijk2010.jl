@@ -18,14 +18,14 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	# degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
 	dosSoilend = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
 	k_sat = p_kSat[end]; # assume GW is saturated
-	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
+	k_unsat = unsatK(land, helpers, length(land.pools.soilW))
 
 	# get the capillary flux
 	c_flux = sqrt(k_unsat * k_sat) * (one - dosSoilend)
 	gwCapFlow = min(c_flux, sum(groundW + ΔgroundW))
 
 	# adjust the delta storages
-	ΔgroundW = ΔgroundW .- gwCapFlow / length(groundW)
+	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
 
 	## pack land variables
@@ -46,11 +46,11 @@ function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables

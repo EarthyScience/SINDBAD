@@ -20,7 +20,7 @@ function compute(o::drainage_dos, forcing, land, helpers)
 	drainage[end] = zero
 
 	## calculate drainage
-	for sl in 1:helpers.pools.water.nZix.soilW-1
+	for sl in 1:length(land.pools.soilW)-1
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		lossCap = soilW[sl] + ΔsoilW[sl]
 		drainage[sl] = min(drainage[sl], holdCap, lossCap)

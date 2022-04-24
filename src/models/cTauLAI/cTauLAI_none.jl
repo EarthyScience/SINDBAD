@@ -6,7 +6,7 @@ end
 function precompute(o::cTauLAI_none, forcing, land, helpers)
 
 	## calculate variables
-	p_kfLAI = ones(helpers.numbers.numType, helpers.pools.water.nZix.cEco); #(ineficient, should be pix zix_veg)
+	p_kfLAI = ones(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco); #(ineficient, should be pix zix_veg)
 
 	## pack land variables
 	@pack_land p_kfLAI => land.cTauLAI

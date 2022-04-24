@@ -13,12 +13,8 @@ function compute(o::gppAirT_MOD17, forcing, land, helpers)
 
 
     ## calculate variables
-    tmp = one
-    td = (Tmax - Tmin) * tmp
-    tmax = Tmax * tmp
-    tsc = TairDay / td + one - tmax / td
-    tsc = clamp(tsc, zero, one)
-    TempScGPP = tsc
+    tsc = TairDay / ((one - Tmin) * (Tmax - Tmin))
+    TempScGPP = clamp(tsc, zero, one)
 
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT

@@ -6,7 +6,7 @@ end
 function precompute(o::cAllocation_GSI, forcing, land, helpers)
 
 	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, helpers.pools.water.nZix.cEco);
+	cAlloc = zeros(helpers.numbers.numType, helpers.pools.carbon.nZix.cEco);
 
 	## pack land variables
 	@pack_land cAlloc => land.cAllocation
