@@ -37,7 +37,6 @@ Effect of temperature using gppAirT_MOD17
 
 *Outputs*
  - land.gppAirT.TempScGPP: effect of temperature on potential GPP
- -
 
 ---
 

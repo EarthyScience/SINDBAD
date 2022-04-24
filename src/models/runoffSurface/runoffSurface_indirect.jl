@@ -84,7 +84,6 @@ update pools and states in runoffSurface_indirect
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 20.11.2019 [skoirala]: combine runoffSurfaceDirect, Indir, surfaceWRec  

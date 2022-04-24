@@ -12,10 +12,10 @@ include("gppVPD_PRELES.jl")
 Vpd effect
 
 # Approaches:
- - expco2: please adjust ;) calculate the VPD stress on gppPot based on Maekelae2008 & PRELES model
- - Maekelae2008: calculate the VPD stress on gppPot based on Maekelae2008 [eqn 5]
- - MOD17: calculate the VPD stress on gppPot based on MOD17 model
- - none: set the VPD stress on gppPot to ones (no stress)
- - PRELES: please adjust ;) calculate the VPD stress on gppPot based on Maekelae2008 & PRELES model
+ - expco2: VPD stress on gppPot based on Maekelae2008 and with co2 effect
+ - Maekelae2008: VPD stress on gppPot based on Maekelae2008 [eqn 5]
+ - MOD17: VPD stress on gppPot based on MOD17 model
+ - none: sets the VPD stress on gppPot to one (no stress)
+ - PRELES: VPD stress on gppPot based on Maekelae2008 and with co2 effect based on PRELES model
 """
 gppVPD

@@ -95,7 +95,6 @@ update pools and states in groundWSoilWInteraction_gradient
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 04.02.2020 [ttraut]

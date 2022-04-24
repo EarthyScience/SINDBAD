@@ -38,7 +38,6 @@ Demand-driven transpiration using transpirationDemand_CASA
 
 *Outputs*
  - land.tranDem.transpirationDemand: supply limited transpiration
- -
 
 ---
 

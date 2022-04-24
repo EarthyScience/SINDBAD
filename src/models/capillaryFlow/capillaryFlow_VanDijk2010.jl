@@ -67,7 +67,6 @@ Flux of water from lower to upper soil layers (upward soil moisture movement) us
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
- -
 
 # update
 

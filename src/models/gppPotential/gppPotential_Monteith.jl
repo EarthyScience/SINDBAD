@@ -34,7 +34,6 @@ Maximum instantaneous radiation use efficiency using gppPotential_Monteith
 
 *Outputs*
  - land.gppPotential.rueGPP: potential GPP based on RUE [nPix, nTix]
- -
 
 ---
 

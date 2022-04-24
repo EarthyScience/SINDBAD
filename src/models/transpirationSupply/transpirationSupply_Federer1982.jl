@@ -38,7 +38,6 @@ Supply-limited transpiration using transpirationSupply_Federer1982
 
 *Outputs*
  - land.transpirationSupply.tranSup: demand driven transpiration
- -
 
 ---
 

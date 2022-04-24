@@ -66,7 +66,6 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for rootFraction_k2fvegFraction

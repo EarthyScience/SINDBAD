@@ -64,7 +64,6 @@ precompute/instantiate time-invariant variables for cTau_simple
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 12.01.2020 [sbesnard]  

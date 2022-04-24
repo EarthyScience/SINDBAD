@@ -1,33 +1,30 @@
 export gppVPD_none
 
-struct gppVPD_none <: gppVPD
-end
+struct gppVPD_none <: gppVPD end
 
 function precompute(o::gppVPD_none, forcing, land, helpers)
 
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	VPDScGPP = helpers.numbers.one
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    VPDScGPP = helpers.numbers.one
 
-	## pack land variables
-	@pack_land VPDScGPP => land.gppVPD
-	return land
+    ## pack land variables
+    @pack_land VPDScGPP => land.gppVPD
+    return land
 end
 
 @doc """
-set the VPD stress on gppPot to ones (no stress)
+sets the VPD stress on gppPot to one (no stress)
 
 ---
 
 # compute:
-Vpd effect using gppVPD_none
 
 *Inputs*
- - info
+ - helpers
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP [] dimensionless, between 0-1
- -
+ - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
 
 # precompute:
 precompute/instantiate time-invariant variables for gppVPD_none

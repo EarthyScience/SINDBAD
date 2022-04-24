@@ -87,7 +87,6 @@ update pools and states in groundWsurfaceWInteraction_fracGradient
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [skoirala]

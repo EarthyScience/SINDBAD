@@ -97,7 +97,6 @@ Consistency checks on the c allocation and transfers between pools using cCycleC
  - land.states.cAlloc: carbon allocation matrix
 
 *Outputs*
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycleConsistency_simple

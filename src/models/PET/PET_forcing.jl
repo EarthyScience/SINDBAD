@@ -25,7 +25,6 @@ Set potential evapotranspiration using PET_forcing
 
 *Outputs*
  - land.PET.PET: the value of PET for current time step
- -
 
 ---
 

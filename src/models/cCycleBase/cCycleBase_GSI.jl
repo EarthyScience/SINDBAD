@@ -73,7 +73,6 @@ Pool structure of the carbon cycle using cCycleBase_GSI
 
 *Outputs*
  - land.cCycleBase.p_annk_[Pool]: turnover rate of each ecosystem carbon pool
- -
 
 # precompute:
 precompute/instantiate time-invariant variables for cCycleBase_GSI

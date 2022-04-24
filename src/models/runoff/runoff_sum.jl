@@ -53,7 +53,6 @@ precompute/instantiate time-invariant variables for runoff_sum
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 01.04.2022  

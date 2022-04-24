@@ -48,7 +48,6 @@ Interflow using runoffInterflow_residual
 # Extended help
 
 *References*
- -
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
