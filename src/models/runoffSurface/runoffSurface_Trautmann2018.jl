@@ -64,10 +64,10 @@ function update(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	end
 
 	## update storage pools
-	surfaceW = surfaceW + ΔsurfaceW
+	surfaceW .= surfaceW .+ ΔsurfaceW
 
-	# reset ΔgroundW and ΔsurfaceW to zero
-	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
+	# reset ΔsurfaceW to zero
+	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
 	## pack land variables
 	@pack_land begin

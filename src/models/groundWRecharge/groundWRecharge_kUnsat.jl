@@ -14,10 +14,10 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 	end
 
 	# calculate recharge
-	k_unsat = unsatK(land, helpers, helpers.pools.water.nZix.soilW)
+	k_unsat = unsatK(land, helpers, length(land.pools.soilW))
 	groundWRec = min(k_unsat, soilW[end] + ΔsoilW[end])
 
-	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
+	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
@@ -38,11 +38,11 @@ function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
 
 	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables

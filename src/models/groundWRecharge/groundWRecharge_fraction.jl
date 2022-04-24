@@ -18,7 +18,7 @@ function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 	# calculate recharge
 	groundWRec = rf * (soilW[end] + ΔsoilW[end])
 
-	ΔgroundW = ΔgroundW .+ groundWRec / length(groundW)
+	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
 	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables
@@ -40,11 +40,11 @@ function update(o::groundWRecharge_fraction, forcing, land, helpers)
 
 	## update storage pools
 	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW = groundW + ΔgroundW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔsoilW[end] and ΔgroundW to zero
 	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables

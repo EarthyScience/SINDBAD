@@ -28,17 +28,17 @@ function precompute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	@unpack_soilProperties_Saxton1986 o
 
 	## instantiate variables
-	p_α = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_β = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_kFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_θFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_ψFC = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_kWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_θWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_ψWP = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_kSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_θSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
-	p_ψSat = ones(helpers.numbers.numType, helpers.pools.water.nZix.soilW)
+	p_α = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_β = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_kFC = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_θFC = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_ψFC = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_kWP = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_θWP = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_ψWP = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_kSat = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_θSat = ones(helpers.numbers.numType, length(land.pools.soilW))
+	p_ψSat = ones(helpers.numbers.numType, length(land.pools.soilW))
 
 	## pack land variables
 	@pack_land (p_α, p_β, p_kFC, p_θFC, p_ψFC, p_kWP, p_θWP, p_ψWP, p_kSat, p_θSat, p_ψSat) => land.soilProperties
@@ -55,7 +55,7 @@ function compute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	## calculate variables
 	# number of layers & creation of arrays
 	# calculate & set the soil hydraulic properties for each layer
-	for sl in 1:helpers.pools.water.nZix.soilW
+	for sl in 1:length(land.pools.soilW)
 		(α, β, kFC, θFC, ψFC) = soilParamsSaxton1986(land, helpers, sl, ψFC)
 		(_, _, kWP, θWP, ψWP) = soilParamsSaxton1986(land, helpers, sl, ψWP)
 		(_, _, kSat, θSat, ψSat) = soilParamsSaxton1986(land, helpers, sl, ψSat)

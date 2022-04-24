@@ -1,49 +1,41 @@
 export gppAirT_CASA
 
-@bounds @describe @units @with_kw struct gppAirT_CASA{T1, T2, T3} <: gppAirT
+@bounds @describe @units @with_kw struct gppAirT_CASA{T1, T, T3} <: gppAirT
 	Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
-	ToptA::T2 = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
+	ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
 	ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
+	Texp::T4 = 10 | (9, 11) | "reference for exponent of sensitivity" | ""
 end
 
 function compute(o::gppAirT_CASA, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppAirT_CASA o
-	@unpack_forcing TairDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppAirT_CASA o
+    @unpack_forcing TairDay ∈ forcing
+    @unpack_land begin
+        one ∈ helpers.numbers
+    end
 
 
-	## calculate variables
-	# get air temperature during the day
-	AIRT = TairDay
-	# make it varying in space
-	tmp = 1.0
-	TOPT = Topt * tmp
-	A = ToptA * tmp
-	B = ToptB * tmp
-	# CALCULATE T1: account for effects of temperature stress
-	# reflects the empirical observation that plants in very
-	# cold habitats typically have low maximum rates
-	# T1 = 0.8 + 0.02 * TOPT - 0.0005 * TOPT ^ 2
-	# this would make sense if TOPT would be the same everywhere.
-	T1 = 1
+    ## calculate variables
+    # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
+    # T1 = 0.8 + 0.02 * Topt - 0.0005 * Topt ^ 2 this would make sense if Topt would be the same everywhere.
+    
 	# first half of the response curve
-	T2p1 = 1 / (1 + exp(A * (-10.0))) / (1 + exp(A * (- 10.0)))
-	T2C1 = 1 / T2p1
-	T21 = T2C1 / (1 + exp(A * (TOPT - 10 - AIRT))) / (1 + exp(A * (- TOPT - 10 + AIRT)))
-	# second half of the response curve
-	T2p2 = 1 / (1 + exp(B * (-10.0))) / (1 + exp(B * (- 10.0)))
-	T2C2 = 1 / T2p2
-	T22 = T2C2 / (1 + exp(B * (TOPT - 10 - AIRT))) / (1 + exp(B * (- TOPT - 10 + AIRT)))
-	# combine the response curves
-	v = AIRT >= TOPT
-	T2 = T21
-	T2[v] = T22[v]
-	# assign it to the array
-	TempScGPP = T2 * T1
+    Tp1 = one / (one + exp(ToptA * (-Texp))) / (one + exp(ToptA * (-Texp)))
+    TC1 = one / Tp1
+    T1 = TC1 / (one + exp(ToptA * (Topt - Texp - TairDay))) / (one + exp(ToptA * (-Topt - Texp + TairDay)))
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    # second half of the response curve
+    Tp2 = one / (one + exp(ToptB * (-Texp))) / (one + exp(ToptB * (-Texp)))
+    TC2 = one / Tp2
+    T2 = TC2 / (one + exp(ToptB * (Topt - Texp - TairDay))) / (one + exp(ToptB * (-Topt - Texp + TairDay)))
+
+	# get the scalar
+    TempScGPP = TairDay >= Topt ? T2 : T1
+
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

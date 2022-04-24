@@ -19,8 +19,8 @@ function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, help
 
 
 	# update the delta storages
-	ΔgroundW = ΔgroundW .- GW2Surf / length(groundW)
-	ΔsurfaceW = ΔsurfaceW .+ GW2Surf / length(surfaceW)
+	ΔgroundW .= ΔgroundW .- GW2Surf / length(groundW)
+	ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / length(surfaceW)
 
 	## pack land variables
 	@pack_land begin
@@ -39,12 +39,12 @@ function update(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpe
 	end
 
 	## update storage pools
-	surfaceW = surfaceW + ΔsurfaceW
-	groundW = groundW + ΔgroundW
+	surfaceW .= surfaceW .+ ΔsurfaceW
+	groundW .= groundW .+ ΔgroundW
 
 	# reset ΔgroundW and ΔsurfaceW to zero
-	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
-	ΔgroundW = ΔgroundW - ΔgroundW
+	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
+	ΔgroundW .= ΔgroundW .- ΔgroundW
 
 
 	## pack land variables

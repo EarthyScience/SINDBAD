@@ -57,10 +57,10 @@ function update(o::runoffSurface_Orth2013, forcing, land, helpers)
 	end
 
 	## update storage pools
-	surfaceW = surfaceW + ΔsurfaceW
+	surfaceW .= surfaceW .+ ΔsurfaceW
 
-	# reset ΔgroundW and ΔsurfaceW to zero
-	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
+	# reset ΔsurfaceW to zero
+	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
 	## pack land variables
 	@pack_land begin

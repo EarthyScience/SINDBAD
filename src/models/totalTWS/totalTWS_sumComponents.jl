@@ -1,13 +1,13 @@
-export TWS_sum
+export totalTWS_sumComponents
 
-struct TWS_sum <: TWS
+struct totalTWS_sumComponents <: totalTWS
 end
 
-function precompute(o::TWS_sum, forcing, land, helpers)
+function precompute(o::totalTWS_sumComponents, forcing, land, helpers)
 	@unpack_land numType ∈ helpers.numbers
 	## calculate variables
 	if !hasproperty(land.pools, :soilW)
-		soilW = zeros(numType, helpers.pools.water.nZix.soilW)
+		soilW = zeros(numType, length(land.pools.soilW))
 	else
 		@unpack_land soilW ∈ land.pools
 	end
@@ -38,12 +38,12 @@ function precompute(o::TWS_sum, forcing, land, helpers)
 	## pack land variables
 	@pack_land begin
 		(soilW, groundW, surfaceW, snowW) => land.pools
-		(totalW, totalsoilW) => land.TWS
+		(totalW, totalsoilW) => land.totalTWS
 	end
 	return land
 end
 
-function compute(o::TWS_sum, forcing, land, helpers)
+function compute(o::totalTWS_sumComponents, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (groundW, snowW, soilW, surfaceW) ∈ land.pools
@@ -53,7 +53,7 @@ function compute(o::TWS_sum, forcing, land, helpers)
 	totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
 
 	## pack land variables
-	@pack_land (totalW, totalsoilW) => land.TWS
+	@pack_land (totalW, totalsoilW) => land.totalTWS
 	return land
 end
 
@@ -63,7 +63,7 @@ calculates total water storage as a sum of all potential components
 ---
 
 # compute:
-Calculate the total water storage as a sum of components using TWS_sum
+Calculate the total water storage as a sum of components using totalTWS_sumComponents
 
 *Inputs*
  - land.pools.groundW[1]
@@ -76,7 +76,7 @@ Calculate the total water storage as a sum of components using TWS_sum
  - land.pools.wTotal: total water storage
 
 # precompute:
-precompute/instantiate time-invariant variables for TWS_sum
+precompute/instantiate time-invariant variables for totalTWS_sumComponents
 
 
 ---
@@ -92,4 +92,4 @@ precompute/instantiate time-invariant variables for TWS_sum
 *Created by:*
  - skoirala
 """
-TWS_sum
+totalTWS_sumComponents

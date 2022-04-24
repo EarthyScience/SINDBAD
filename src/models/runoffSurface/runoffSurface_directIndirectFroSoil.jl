@@ -31,7 +31,7 @@ function compute(o::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
 
 	# update the delta storage
 	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
-	ΔsurfaceW = ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
+	ΔsurfaceW .= ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
 	## pack land variables
 	@pack_land begin
@@ -51,10 +51,10 @@ function update(o::runoffSurface_directIndirectFroSoil, forcing, land, helpers)
 	end
 
 	## update storage pools
-	surfaceW = surfaceW + ΔsurfaceW
+	surfaceW .= surfaceW .+ ΔsurfaceW
 
-	# reset ΔgroundW and ΔsurfaceW to zero
-	ΔsurfaceW = ΔsurfaceW - ΔsurfaceW
+	# reset ΔsurfaceW to zero
+	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
 	## pack land variables
 	@pack_land begin
