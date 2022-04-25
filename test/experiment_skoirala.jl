@@ -9,10 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 out = getInitOut(info);
-
 # forcing = getForcing(info);
-
-
 obsvars, modelvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
 
@@ -29,8 +26,7 @@ pprint(osp)
 
 typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
-
-# outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
+pools = outforw.pools |> columntable
 
 
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
