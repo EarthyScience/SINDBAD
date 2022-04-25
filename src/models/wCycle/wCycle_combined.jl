@@ -9,7 +9,7 @@ function compute(o::wCycle_combined, forcing, land, helpers)
 		TWS ∈ land.pools
 		ΔTWS  ∈ land.states
 		p_wSat ∈ land.soilWBase
-		zero ∈ helpers.numbers
+		𝟘 ∈ helpers.numbers
 	end
 
 	## update variables
@@ -18,7 +18,7 @@ function compute(o::wCycle_combined, forcing, land, helpers)
     # reset soil moisture changes to zero
 	ΔTWS .= ΔTWS .- ΔTWS
 
-	if minimum(TWS) < zero
+	if minimum(TWS) < 𝟘
 		@show TWS
 		error("TWS is negative. Cannot continue")
 	end

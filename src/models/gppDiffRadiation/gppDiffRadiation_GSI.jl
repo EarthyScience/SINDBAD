@@ -11,11 +11,11 @@ function precompute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing
-    @unpack_land one ∈ helpers.numbers
+    @unpack_land (𝟙, 𝟘) ∈ helpers.numbers
 
 
-    f_smooth = (f_p, f_n, τ, slope, base) -> (one - τ) * f_p + τ * (one / (one + exp(-slope * (f_n - base))))
-    CloudScGPP_prev = one
+    f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
+    CloudScGPP_prev = 𝟘
 
 
     ## pack land variables
@@ -32,7 +32,7 @@ function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (CloudScGPP_prev, f_smooth) ∈ land.gppDiffRadiation
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
 
@@ -40,7 +40,7 @@ function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     f_prev = CloudScGPP_prev
     Rg = Rg * 11.57407 # multiplied by a scalar to covert MJ/m2/day to W/m2
     fR = f_smooth(f_prev, Rg, fR_τ, fR_slope, fR_base)
-    CloudScGPP = clamp(fR, zero, one)
+    CloudScGPP = clamp(fR, 𝟘, 𝟙)
     CloudScGPP_prev = CloudScGPP
 
     ## pack land variables

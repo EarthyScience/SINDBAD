@@ -10,10 +10,10 @@ function precompute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        one ∈ helpers.numbers
+        𝟙 ∈ helpers.numbers
     end
     # assume initial prev as one (no stress)
-    fT_prev = one
+    fT_prev = 𝟙
 
     @pack_land fT_prev => land.cAllocationSoilT
     return land

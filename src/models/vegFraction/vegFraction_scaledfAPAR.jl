@@ -11,11 +11,11 @@ function compute(o::vegFraction_scaledfAPAR, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		fAPAR ∈ land.states
-		one ∈ helpers.numbers		
+		𝟙 ∈ helpers.numbers		
 	end
 
 	## calculate variables
-	vegFraction = min(fAPAR * fAPARscale, one)
+	vegFraction = min(fAPAR * fAPARscale, 𝟙)
 
 	## pack land variables
 	@pack_land vegFraction => land.states

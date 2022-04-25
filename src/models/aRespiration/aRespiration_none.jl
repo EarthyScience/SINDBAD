@@ -7,7 +7,7 @@ function precompute(o::aRespiration_none, forcing, land, helpers)
 
 	## calculate variables
 	zix = helpers.pools.carbon.zix.cVeg
-	cEcoEfflux[zix] = helpers.numbers.zero
+	cEcoEfflux[zix] = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land cEcoEfflux => land.states

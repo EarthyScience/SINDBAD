@@ -11,10 +11,10 @@ function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 		p_fracRoot2SoilD ∈ land.rootFraction
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		zero ∈ helpers.numbers
+		𝟘 ∈ helpers.numbers
 	end
 
-	PAW = p_fracRoot2SoilD .* (max.(soilW + ΔsoilW - p_wWP, zero))
+	PAW = p_fracRoot2SoilD .* (max.(soilW + ΔsoilW - p_wWP, 𝟘))
 
 	## pack land variables
 	@pack_land PAW => land.vegAvailableWater

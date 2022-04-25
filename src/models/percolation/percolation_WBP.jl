@@ -7,10 +7,9 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		WBP ∈ land.states
 		(soilW, groundW) ∈ land.pools
-		ΔsoilW ∈ land.states
-		zero ∈ helpers.numbers
+		(ΔsoilW, WBP) ∈ land.states
+		(𝟘, tolerance) ∈ helpers.numbers
 		p_wSat ∈ land.soilWBase
 	end
 
@@ -18,7 +17,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	percolation = WBP
 	holdCapacity = p_wSat - (soilW + ΔsoilW)
 	toAllocate = percolation
-	if toAllocate > zero
+	if toAllocate > 𝟘
 		for sl in 1:length(land.pools.soilW)
 			allocated = min(holdCapacity[sl], toAllocate)
 			ΔsoilW[sl] = ΔsoilW[sl] + allocated
@@ -26,10 +25,10 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 		end
 	end
 
-	if abs(toAllocate) > 1e-4
+	if abs(toAllocate) > tolerance
 		WBP = toAllocate
 	else
-		WBP = 0.0
+		WBP = 𝟘
 	end
 
 	## pack land variables

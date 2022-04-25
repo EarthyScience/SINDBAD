@@ -28,7 +28,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		(zero, one, sNT) ∈ helpers.numbers
+		(𝟘, 𝟙, sNT) ∈ helpers.numbers
 	end
 	# get the PFT data & assign parameters
 	tmp_classes = unique(PFT)
@@ -44,7 +44,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing
 	p_berg = max(sNT(0.1), p_berg * vegFraction); # do this?
 
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg ^ p_berg), one)
+	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg ^ p_berg), 𝟙)
 	runoffSatExc = WBP * tmp_SatExFrac
 	# update water balance pool
 	WBP = WBP - runoffSatExc

@@ -14,11 +14,11 @@ function compute(o::snowMelt_Tair, forcing, land, helpers)
         (WBP, snowFraction) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-		zero ∈ helpers.numbers
+		𝟘 ∈ helpers.numbers
     end
     # effect of temperature on snow melt = snowMeltRate * Tair
     pRate = (rate * helpers.dates.nStepsDay)
-    Tterm = max(pRate * Tair, zero)
+    Tterm = max(pRate * Tair, 𝟘)
 
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
     snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)

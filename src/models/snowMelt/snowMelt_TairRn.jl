@@ -16,16 +16,16 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
         (WBP, snowFraction) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
     tmp_T = Tair * melt_T
-    tmp_Rn = max(Rn * melt_Rn, zero)
+    tmp_Rn = max(Rn * melt_Rn, 𝟘)
     potMelt = (tmp_T + tmp_Rn) * snowFraction
 
     # potential snow melt if T > 0.0 deg C
-    potMelt = Tair > zero ? potMelt : zero
+    potMelt = Tair > 𝟘  ? potMelt : zero
     snowMelt = min(sum(snowW + ΔsnowW), potMelt)
 
 	# divide snowmelt loss equally from all layers
