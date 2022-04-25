@@ -40,7 +40,7 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
     # distribute the allocation according to pools
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
     for cpName in cpNames
-        zix = getfield(helpers.pools.carbon.zix, cpName)
+        zix = getzix(pools.carbon, cpName)
         cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
     end
 
