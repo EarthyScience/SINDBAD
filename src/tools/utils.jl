@@ -1,4 +1,4 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, zix
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)
@@ -212,4 +212,24 @@ end
 macro unpack_forcing(inparams)
     @assert inparams.head == :call || inparams.head == :(=)
     outputs = processUnpackForcing(inparams)
+end
+
+"""
+get zix of a subarray
+"""
+function zix(fld::Symbol, tpl::NamedTuple)
+    dat::SubArray = getfield(tpl, fld)
+    zix = parentindices(dat)[1]
+    return zix
+end
+
+function zix(fld::String, tpl::NamedTuple)
+    dat::SubArray = getfield(tpl, Symbol(fld))
+    zix = parentindices(dat)[1]
+    return zix
+end
+
+function zix(dat::SubArray)
+    zix = parentindices(dat)[1]
+    return zix
 end
