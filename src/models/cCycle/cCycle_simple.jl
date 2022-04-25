@@ -5,85 +5,76 @@ end
 
 function precompute(o::cCycle_simple, forcing, land, helpers)
 
-	@unpack_land begin
-		(𝟘, 𝟙, numType) ∈ helpers.numbers
-		n_cEco = cEco ∈ helpers.pools.carbon.nZix
-	end
+    @unpack_land begin
+        (𝟘, 𝟙, numType) ∈ helpers.numbers
+    end
+    n_cEco = length(land.pools.cEco)
+    ## instantiate variables
+    cEcoFlow = zeros(numType, n_cEco)
+    cEcoInflux = zeros(numType, n_cEco)
 
-	## instantiate variables
-	cEcoEfflux = zeros(numType, n_cEco); #sujan moved from get states
-	cEcoOut = ones(numType, n_cEco)
-	cEcoFlow = ones(numType, n_cEco)
-	cEcoInflux = zeros(numType, n_cEco)
-	cEcoFlow = zeros(numType, n_cEco)
-
-	## pack land variables
-	@pack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) => land.cCycle
-	return land
+	cEco_prev = copy(land.pools.cEco)
+    ## pack land variables
+    @pack_land (cEcoFlow, cEcoInflux, cEco_prev) => land.states
+    return land
 end
 
 function compute(o::cCycle_simple, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (cEcoEfflux, cEcoOut, cEcoFlow, cEcoInflux, cEcoFlow) ∈ land.cCycle
+    ## unpack land variables
+    @unpack_land begin
+        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev) ∈ land.states
+        cEco ∈ land.pools
+        gpp ∈ land.fluxes
+        p_k_act ∈ land.cTau
+        (p_A, giver, taker) ∈ land.cFlow
+        (fluxOrder) ∈ land.cCycleBase
+        (𝟘, 𝟙, numType) ∈ helpers.numbers
+    end
+    ## these all need to be zeros maybe is taken care automatically.
+    ## compute losses
+    cEcoOut = min.(cEco, cEco .* p_k_act)
+    ## gains to vegetation
+    zixVeg = getzix(land.pools.cVeg)
+    cNPP = gpp .* cAlloc[zixVeg] .- cEcoEfflux[zixVeg]
+    cEcoInflux[zixVeg] .= cNPP
+    # flows & losses
+    # @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
+    # find out why. Led to having zeros in most of the carbon pools of the
+    # explicit simple
+    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing fluxOrder. So; in biomascat; the fields do not exist & this block of code will not work.
+    for jix in 1:length(fluxOrder)
+        fO = fluxOrder[jix]
+        take_r = taker[fO]
+        give_r = giver[fO]
+        cEcoFlow[take_r] = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
+    end
+    # for jix = 1:length(p_taker)
+    # taker = p_taker[jix]
+    # giver = p_giver[jix]
+    # c_flow = p_A(taker, giver)
+    # take_flow = cEcoFlow[taker]
+    # give_flow = cEcoOut[giver]
+    # cEcoFlow[taker] = take_flow + give_flow * c_flow
+    # end
+    ## balance
+    cEco .= cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
+    ## compute RA & RH
+    del_cEco = cEco - cEco_prev
+    NPP = sum(cNPP)
+    backNEP = sum(cEco) - sum(cEco_prev)
+    cRA = gpp - NPP
+    cRECO = gpp - backNEP
+    cRH = cRECO - cRA
+    NEE = cRECO - gpp
+    cEco_prev = copy(land.pools.cEco)
 
-	## unpack land variables
-	@unpack_land begin
-		(cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
-		(cEco, cEco_prev) ∈ land.pools
-		gpp ∈ land.fluxes
-		p_k ∈ land.cTau
-		(p_A, p_giver, p_taker) ∈ land.cFlow
-		(fluxOrder, p_annk) ∈ land.cCycleBase
-		(𝟘, 𝟙, numType) ∈ helpers.numbers
-	end
-	TSPY = helpers.dates.nStepsYear; # NUMBER OF TIME STEPS PER YEAR
-	p_k = 𝟙 - (exp(-p_annk) ^ (𝟙 / TSPY))
-	## these all need to be zeros maybe is taken care automatically.
-	## compute losses
-	cEcoOut = min(cEco, cEco * p_k)
-	## gains to vegetation
-	zix = helpers.pools.carbon.flags.cVeg
-	cNPP = gpp * cAlloc[zix] - cEcoEfflux[zix]
-	cEcoInflux[zix] = cNPP
-	# flows & losses
-	# @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
-	# find out why. Led to having zeros in most of the carbon pools of the
-	# explicit simple
-	# old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing fluxOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-	for jix in 1:length(fluxOrder)
-		fO = fluxOrder[jix]
-		taker = p_taker[fO]
-		giver = p_giver[fO]
-		cEcoFlow[taker] = cEcoFlow[taker] + cEcoOut[giver] * p_A(taker, giver)
-	end
-	# for jix = 1:length(p_taker)
-	# taker = p_taker[jix]
-	# giver = p_giver[jix]
-	# c_flow = p_A(taker, giver)
-	# take_flow = cEcoFlow[taker]
-	# give_flow = cEcoOut[giver]
-	# cEcoFlow[taker] = take_flow + give_flow * c_flow
-	# end
-	## balance
-	prevcEco = cEco
-	cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
-	## compute RA & RH
-	del_cEco = cEco - cEco_prev
-	cNPP = sum(cNPP)
-	backNEP = sum(cEco) - sum(prevcEco)
-	cRA = gpp - cNPP
-	cRECO = gpp - backNEP
-	cRH = cRECO - cRA
-	NEE = cRECO - gpp
-
-	## pack land variables
-	@pack_land begin
-		p_k => land.cCycleBase
-		(NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
-		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, del_cEco) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
+        (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, del_cEco, cEco_prev) => land.states
+    end
+    return land
 end
 
 @doc """
