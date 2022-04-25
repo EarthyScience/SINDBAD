@@ -1,63 +1,45 @@
 export cAllocation_GSI
 
-struct cAllocation_GSI <: cAllocation
-end
+struct cAllocation_GSI <: cAllocation end
 
 function precompute(o::cAllocation_GSI, forcing, land, helpers)
 
-	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco));
+    ## instantiate variables
+    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
 
-	## pack land variables
-	@pack_land cAlloc => land.cAllocation
-	return land
+    ## pack land variables
+    @pack_land cAlloc => land.states
+    return land
 end
 
 function compute(o::cAllocation_GSI, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land cAlloc ∈ land.cAllocation
+    ## unpack land variables
+    @unpack_land cAlloc ∈ land.states
 
-	## unpack land variables
-	@unpack_land begin
-		fW ∈ land.cAllocationSoilW
-		fT ∈ land.cAllocationSoilT
-	end
-	p_cpNames = [:cVegRoot, :cVegWood, :cVegLeaf]
-	p_zixVecs = [
-	helpers.pools.carbon.zix.cVegRoot
-	helpers.pools.carbon.zix.cVegWood
-	helpers.pools.carbon.zix.cVegLeaf
-	]
-	# allocation to root; wood & leaf
-	cf2.cVegLeaf = fW / ((fW + fT) * 2)
-	cf2.cVegWood = fW / ((fW + fT) * 2)
-	cf2.cVegRoot = fT / (fW + fT)
-	# distribute the allocation according to pools
-	# cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-	for cpN in 1:length(p_cpNames)
-		cpName = p_cpNames[cpN]
-		zixVec = p_zixVecs[cpN]
-		N = length(zixVec)
-		for zix in zixVec
-			cAlloc[zix] = cf2.(cpName) / N
-		end
-	end
-	# cpNames = [:cVegRoot, :cVegWood, :cVegLeaf]
-	# for cpName = cpNames
-	# zixVec = helpers.pools.carbon.zix.(cpName)
-	# N = length(zixVec)
-	# for zix = zixVec
-	# cAlloc[zix] = cf2.(cpName) / N
-	# end
-	# end
+    ## unpack land variables
+    @unpack_land begin
+        fW ∈ land.cAllocationSoilW
+        fT ∈ land.cAllocationSoilT
+    end
+    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
-	## pack land variables
-	@pack_land begin
-		(p_cpNames, p_zixVecs) => land.cAllocation
-		cAlloc => land.states
-	end
-	return land
+    # allocation to root; wood & leaf
+    cVegLeaf = fW / ((fW + fT) * 2)
+    cVegWood = fW / ((fW + fT) * 2)
+    cVegRoot = fT / (fW + fT)
+    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
+    # distribute the allocation according to pools
+    for cpName in cpNames
+        zix = getfield(helpers.pools.carbon.zix, cpName)
+        cAlloc[zix] .= getfield(cf2, cpName) / len(zix)
+    end
+
+    ## pack land variables
+    @pack_land begin
+        cAlloc => land.states
+    end
+    return land
 end
 
 @doc """
