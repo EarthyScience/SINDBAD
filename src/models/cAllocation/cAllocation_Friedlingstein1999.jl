@@ -13,39 +13,40 @@ function precompute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
 	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco)); #sujan
 
 	## pack land variables
-	@pack_land cAlloc => land.cAllocation
+	@pack_land cAlloc => land.states
 	return land
 end
 
 function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cAllocation_Friedlingstein1999 o
+    ## unpack parameters
+    @unpack_cAllocation_Friedlingstein1999 o
 
-	## unpack land variables
-	@unpack_land cAlloc ∈ land.cAllocation
+    ## unpack land variables
+    @unpack_land begin
+        cAlloc ∈ land.states
+        one ∈ helpers.numbers
+    end
+    ## unpack land variables
+    @unpack_land begin
+        minWLNL ∈ land.cAllocationNutrients
+        LL ∈ land.cAllocationLAI
+    end
+    # allocation to root; wood & leaf
+    cVegRoot = ro * (RelY + one) * LL / (LL + RelY * minWLNL)
+    cVegWood = so * (RelY + one) * minWLNL / (RelY * LL + minWLNL)
+    cVegLeaf = one - cVegRoot - cVegWood
+    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
 
-	## unpack land variables
-	@unpack_land begin
-		minWLNL ∈ land.cAllocationNutrients
-		LL ∈ land.cAllocationLAI
-	end
-	# allocation to root; wood & leaf
-	cf2.cVegRoot = ro * (RelY + 1) * LL / (LL + RelY * minWLNL)
-	cf2.cVegWood = so * (RelY + 1) * minWLNL / (RelY * LL + minWLNL)
-	cf2.cVegLeaf = 1 - cf2.cVegRoot - cf2.cVegWood
-	# distribute the allocation according to pools
-	cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-	for cpName in cpNames
-		zixVec = getfield(helpers.pools.carbon.zix, cpName)
-		N = length(zixVec)
-		for zix in zixVec
-			cAlloc[zix] = getfield(cf2, cpName) / N
-		end
-	end
+    # distribute the allocation according to pools
+    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
+    for cpName in cpNames
+        zix = getfield(helpers.pools.carbon.zix, cpName)
+        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+    end
 
-	## pack land variables
-	@pack_land cAlloc => land.states
-	return land
+    ## pack land variables
+    @pack_land cAlloc => land.states
+    return land
 end
 
 @doc """

@@ -143,7 +143,8 @@
 				"surfaceW": [1, 0.0]
             },
 			"combine": [true,"TWS"],
-			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0]
+			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0],
+            "addStateVars": {"Δ": 0.0}
 		},
 		"carbon":
 		{
@@ -161,7 +162,11 @@
                 },
                 "cLit": [5, 300.0]
             },
-			"combine": [true,"cEco"]
-		}
+			"combine": [true,"cEco"],
+            "addStateVars": {
+                "alloc_": 0.0,
+                "k_": 1.0
+            }
+        }
 	}
 }

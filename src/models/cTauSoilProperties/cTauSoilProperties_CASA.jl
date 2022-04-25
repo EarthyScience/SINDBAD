@@ -28,8 +28,8 @@ function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
 
 	## calculate variables
 	#sujan: moving clay & silt from land.soilTexture to p_soilWBase.
-	CLAY = mean(p_CLAY, 2)
-	SILT = mean(p_SILT, 2)
+	CLAY = mean(p_CLAY)
+	SILT = mean(p_SILT)
 	# TEXTURE EFFECT ON k OF cMicSoil
 	zix = helpers.pools.carbon.zix.cMicSoil
 	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))

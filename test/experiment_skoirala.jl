@@ -8,6 +8,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
+out = getInitOut(info);
 
 forcing = getForcing(info);
 
@@ -20,7 +21,6 @@ approaches = info.tem.models.forward;
 # tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 
 # initPools = getInitPools(info)
-out = getInitOut(info);
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
@@ -35,7 +35,7 @@ pprint(outsp)
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 for it in 1:10
-    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=5)
+    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=3)
 end
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams, obsvars, modelvars, info.tem, info.opti; maxfevals=1);
 

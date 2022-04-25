@@ -113,6 +113,10 @@ function generateStatesInfo(info)
         tmpElem = setTupleField(tmpElem, (:initValues, (;)))
         tmpElem = setTupleField(tmpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
+        if hasproperty(getfield(info.modelStructure.pools, element), :addStateVars)
+            addStateVars = getfield(getfield(info.modelStructure.pools, element), :addStateVars)
+            tmpElem = setTupleField(tmpElem, (:addStateVars, addStateVars))
+        end
         for mainPool in mainPools
             # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
             zix = Int[]
@@ -160,7 +164,7 @@ function generateStatesInfo(info)
             tmpElem = setTupleSubfield(tmpElem, :flags, (subPool, flags))
             tmpElem = setTupleSubfield(tmpElem, :nZix, (subPool, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
-    
+
             if element == :water && subPool == :soilW
                 soilLayerDepths = getfield(getfield(info.modelStructure.pools, element), :soilLayerDepths)
                 if size(soilLayerDepths, 1) != nZix
@@ -212,42 +216,76 @@ Sets the initial pools
 """
 function getInitPools(info)
     initPools = (;)
-    initStates = (;)
     for element in propertynames(info.tem.pools)
         props = getfield(info.tem.pools, element)
         toCreate = getfield(props, :create)
         initVals = getfield(props, :initValues)
         for tocr in toCreate
-            Δtocr = Symbol("Δ"*string(tocr))
             inVals = deepcopy(getfield(initVals, tocr))
             initPools = setTupleField(initPools, (tocr, inVals))
-            initStates = setTupleField(initStates, (Δtocr, inVals .* 0.0))
         end
         tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
         if tocombine[1]
             combinedPoolName = Symbol(tocombine[2])
-            ΔcombinedPoolName = Symbol("Δ" * string(combinedPoolName))
             zixT = getfield(props, :zix)
             components = keys(zixT)
             # components = getfield(getfield(props, :components),Symbol(tocombine[2]))
             poolArray = getfield(initPools, combinedPoolName)
-            ΔpoolArray = getfield(initStates, ΔcombinedPoolName)
             for component in components
                 if component != combinedPoolName
-                    Δcomponent = Symbol("Δ" * string(component))
                     indx = getfield(zixT, component)
-                    @show component, indx
                     compdat = @view poolArray[indx]
-                    Δcompdat = @view ΔpoolArray[indx]
                     # @eval @view :(compdat = $poolArray[$indx])
                     initPools = setTupleField(initPools, (component, compdat))
-                    initStates = setTupleField(initStates, (Δcomponent, Δcompdat))
                 end
             end
-            @show components
         end
     end
-    return initPools, initStates
+    return initPools
+end
+
+"""
+Sets the initial states
+"""
+function getInitStates(info)
+    initStates = (;)
+    for element in propertynames(info.tem.pools)
+        props = getfield(info.tem.pools, element)
+        toCreate = getfield(props, :create)
+        addVars = getfield(props, :addStateVars)
+        @show addVars
+        initVals = getfield(props, :initValues)
+        for tocr in toCreate
+            for avk in keys(addVars)
+                avv = getproperty(addVars, avk)
+                Δtocr = Symbol(string(avk) * string(tocr))
+                vals = ones(size(getfield(initVals, tocr))) * avv
+                initStates = setTupleField(initStates, (Δtocr, vals))
+            end
+        end
+        tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
+        if tocombine[1]
+            combinedPoolName = Symbol(tocombine[2])
+            for avk in keys(addVars)
+                ΔcombinedPoolName = Symbol(string(avk) * string(combinedPoolName))
+                zixT = getfield(props, :zix)
+                components = keys(zixT)
+                # components = getfield(getfield(props, :components),Symbol(tocombine[2]))
+                ΔpoolArray = getfield(initStates, ΔcombinedPoolName)
+                for component in components
+                    if component != combinedPoolName
+                        Δcomponent = Symbol(string(avk) * string(component))
+                        indx = getfield(zixT, component)
+                        @show component, indx
+                        Δcompdat = @view ΔpoolArray[indx]
+                        # @eval @view :(compdat = $poolArray[$indx])
+                        initStates = setTupleField(initStates, (Δcomponent, Δcompdat))
+                    end
+                end
+            end
+        end
+    end
+    return initStates
 end
 
 """
@@ -255,7 +293,8 @@ getInitOut(info)
 create the initial out tuple with all models and pools
 """
 function getInitOut(info)
-    initPools, initStates = getInitPools(info)
+    initPools = getInitPools(info)
+    initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
     # @show selectedModels, string.(selectedModels)
     sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
@@ -297,7 +336,7 @@ function getVariablesToStore(info)
     namess = union(keys(info.modelRun.outputVariables.write), keys(info.modelRun.outputVariables.store))
     valuess = union([tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.write)], [tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.store)])
     tpl = NamedTuple{tuple(namess...)}(valuess)
-    info = (; info..., tem = (; info.tem..., variables=tpl))
+    info = (; info..., tem=(; info.tem..., variables=tpl))
     @show info.tem.variables
     return info
 end

@@ -1,9 +1,10 @@
 export cTauSoilW_GSI
 
-@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3} <: cTauSoilW
+@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3, T4} <: cTauSoilW
 	Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
 	WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
 	WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
+	Wexp::T4 = 10 | (nothing, nothing) | "reference for exponent of sensitivity" | "per percent"
 end
 
 function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
@@ -36,13 +37,13 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 	## for the litter pools; only use the top layer"s moisture
 	soilW_top = 100 * soilW[1] / p_wSat[1]
 	# first half of the response curve
-	W2p1 = 1 / (1 + exp(A * (-10.0))) / (1 + exp(A * (- 10.0)))
+	W2p1 = 1 / (1 + exp(A * (-Wexp))) / (1 + exp(A * (- Wexp)))
 	W2C1 = 1 / W2p1
-	W21 = W2C1 / (1 + exp(A * (WOPT - 10 - soilW_top))) / (1 + exp(A * (- WOPT - 10 + soilW_top)))
+	W21 = W2C1 / (1 + exp(A * (WOPT - Wexp - soilW_top))) / (1 + exp(A * (- WOPT - Wexp + soilW_top)))
 	# second half of the response curve
-	W2p2 = 1 / (1 + exp(B * (-10.0))) / (1 + exp(B * (- 10.0)))
+	W2p2 = 1 / (1 + exp(B * (-Wexp))) / (1 + exp(B * (- Wexp)))
 	W2C2 = 1 / W2p2
-	T22 = W2C2 / (1 + exp(B * (WOPT - 10 - soilW_top))) / (1 + exp(B * (- WOPT - 10 + soilW_top)))
+	T22 = W2C2 / (1 + exp(B * (WOPT - Wexp - soilW_top))) / (1 + exp(B * (- WOPT - Wexp + soilW_top)))
 	# combine the response curves
 	v = soilW_top >= WOPT
 	T2 = W21
@@ -52,16 +53,17 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 	for cL in helpers.pools.carbon.zix.cLit
 		p_fsoilW[cL] = soilW1_sc
 	end
+
 	## repeat for the soil pools; using all soil moisture layers
 	soilW_all = 100 * sum(soilW) / sum(p_wSat)
 	# first half of the response curve
-	W2p1 = 1 / (1 + exp(A * (-10.0))) / (1 + exp(A * (- 10.0)))
+	W2p1 = 1 / (1 + exp(A * (-Wexp))) / (1 + exp(A * (- Wexp)))
 	W2C1 = 1 / W2p1
-	W21 = W2C1 / (1 + exp(A * (WOPT - 10 - soilW_all))) / (1 + exp(A * (- WOPT - 10 + soilW_all)))
+	W21 = W2C1 / (1 + exp(A * (WOPT - Wexp - soilW_all))) / (1 + exp(A * (- WOPT - Wexp + soilW_all)))
 	# second half of the response curve
-	W2p2 = 1 / (1 + exp(B * (-10.0))) / (1 + exp(B * (- 10.0)))
+	W2p2 = 1 / (1 + exp(B * (-Wexp))) / (1 + exp(B * (- Wexp)))
 	W2C2 = 1 / W2p2
-	T22 = W2C2 / (1 + exp(B * (WOPT - 10 - soilW_all))) / (1 + exp(B * (- WOPT - 10 + soilW_all)))
+	T22 = W2C2 / (1 + exp(B * (WOPT - Wexp - soilW_all))) / (1 + exp(B * (- WOPT - Wexp + soilW_all)))
 	# combine the response curves
 	v = soilW_all >= WOPT
 	T2 = W21

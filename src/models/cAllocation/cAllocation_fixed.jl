@@ -23,22 +23,12 @@ function compute(o::cAllocation_fixed, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land cAlloc ∈ land.cAllocation
-	@unpack_forcing Tair ∈ forcing
 
-
-	## calculate variables
-	# # make vectors/matrices
-	# for ii = ("cf2Root", "cf2Wood", "cf2Leaf")
-	# (ii[1]) = (ii[1]) * ones(size(Tair))
-	# end
 	# distribute the allocation according to pools
 	cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 	for cpName in cpNames
 		zixVec = getfield(helpers.pools.carbon.zix, cpName)
-		N = length(zixVec)
-		for zix in zixVec
-			cAlloc[zix] = (cpNames[cpn]) / N
-		end
+		cAlloc[zix] .= getfield(o, cpName) / length(zixVec)
 	end
 
 	## pack land variables
