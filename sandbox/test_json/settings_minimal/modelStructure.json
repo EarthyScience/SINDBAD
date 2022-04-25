@@ -38,6 +38,9 @@
         "cAllocationSoilW": {
             "approach": "gpp"
         },
+        "cCycle": {
+            "approach": "simple"
+        },
         "cCycleBase": {
             "approach": "GSI"
         },
