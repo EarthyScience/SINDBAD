@@ -4,7 +4,7 @@
 
 - change order of the model based on order in modelStructure
 - doing the forward run from experiment *DONE*
-- remove comments from json (only works for top-level comments. Should extend for nested keys)
+- remove comments from json (only works for top-level comments. Should extend for nested keys) *DONE up to second level*
 - update JSON package to use the latest one
   - maintain order of models when reading from json and converting to namedtuple. Necessary for cCycle. *DONE*
 - add settype function handle to helpers so that types can be changed on the go *DONE*
