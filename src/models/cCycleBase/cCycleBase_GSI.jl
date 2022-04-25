@@ -26,7 +26,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 	@unpack_cCycleBase_GSI o
 
 	## instantiate variables
-	p_C2Nveg = ones(helpers.numbers.numType, length(land.pools.cVeg)); #sujan
+	p_C2Nveg = ones(helpers.numbers.numType, length(land.pools.cEco)); #sujan
 
 	## pack land variables
 	@pack_land p_C2Nveg => land.cCycleBase
@@ -42,15 +42,10 @@ function compute(o::cCycleBase_GSI, forcing, land, helpers)
 
 	## calculate variables
 	#carbon to nitrogen ratio [gC.gN-1]
-	for zix in helpers.pools.carbon.zix.cVeg
-		p_C2Nveg[zix] = C2Nveg[zix]
-	end
+	p_C2Nveg[getzix(land.pools.cVeg)] .= C2Nveg
 	# annual turnover rates
-	annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
+	p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
 	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
-	p_annk = reshape(annk, length(land.pools.cEco)); #sujan
-	# a dummy calculation to include etaA & etaH as the components of the selected model structure
-	tm_scalar = etaA * etaH
 
 	## pack land variables
 	@pack_land (p_C2Nveg, p_annk) => land.cCycleBase

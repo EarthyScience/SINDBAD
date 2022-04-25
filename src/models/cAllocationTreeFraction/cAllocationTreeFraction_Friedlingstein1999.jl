@@ -11,40 +11,35 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     ## unpack land variables
     @unpack_land begin
         (cAlloc, treeFraction) ∈ land.states
+        one ∈ helpers.numbers
     end
 
     ## calculate variables
     # check if there are fine & coarse root pools
-    if hasproperty(helpers.pools.carbon.components, :cVegWoodC) && hasproperty(helpers.pools.carbon.components, :cVegWoodF)
+    if hasproperty(land.pools, :cVegWoodC) && hasproperty(land.pools, :cVegWoodF)
         cpNames = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
     else
         cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
     end
-    p_cVegName = cpNames
-
-	# TreeFrac & fine to coarse root ratio
-    tc = treeFraction
-    rf2rc = Rf2Rc
 
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
-    r0 = sum(cAlloc[helpers.pools.carbon.zix.cVegRoot]) # this is to below ground root fine+coarse
-    s0 = sum(cAlloc[helpers.pools.carbon.zix.cVegWood])
-    l0 = sum(cAlloc[helpers.pools.carbon.zix.cVegLeaf])
+    r0 = sum(cAlloc[getzix(land.pools.cVegRoot)]) # this is to below ground root fine+coarse
+    s0 = sum(cAlloc[getzix(land.pools.cVegWood)])
+    l0 = sum(cAlloc[getzix(land.pools.cVegLeaf)])
 
 	# adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
-    cVegWood = tc
-    cVegRootF = tc * rf2rc + (r0 + s0 * (r0 / (r0 + l0))) * (one - tc)
-    cVegRootC = tc * (one - rf2rc)
+    cVegWood = treeFraction
+    cVegRootF = treeFraction * Rf2Rc + (r0 + s0 * (r0 / (r0 + l0))) * (one - treeFraction)
+    cVegRootC = treeFraction * (one - Rf2Rc)
     cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = tc + (l0 + s0 * (l0 / (r0 + l0))) * (one - tc)
+    cVegLeaf = treeFraction + (l0 + s0 * (l0 / (r0 + l0))) * (one - treeFraction)
     cF = (; cVegWood=cVegWood, cVegRootF=cVegRootF, cVegRootC=cVegRootC, cVegRoot=cVegRoot, cVegLeaf=cVegLeaf)
 
 	# adjust the allocation parameters
-    for cpN in 1:length(p_cVegName)
-        cpName = p_cVegName[cpN]
-        zix = getfield(helpers.pools.carbon.zix, cpName)
-        cAlloc[zix] = getfield(cF, cpName) * cAlloc[zix]
+    for cpName in cpNames
+        zix = getzix(land.pools, cpName)
+        cAlloc[zix] .= getfield(cF, cpName) .* cAlloc[zix]
     end
 
     ## pack land variables

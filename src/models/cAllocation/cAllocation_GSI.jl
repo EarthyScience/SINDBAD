@@ -31,8 +31,8 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
     cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
     # distribute the allocation according to pools
     for cpName in cpNames
-        zix = getfield(helpers.pools.carbon.zix, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / len(zix)
+        zix = getzix(land.pools, cpName)
+        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
     end
 
     ## pack land variables
