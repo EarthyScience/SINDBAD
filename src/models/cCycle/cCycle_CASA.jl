@@ -25,21 +25,19 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 		(cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
 		cEco ∈ land.pools
 		gpp ∈ land.fluxes
-		p_k ∈ land.cTau
+		p_k_act ∈ land.cTau
 		(p_E, p_F, p_giver, p_taker) ∈ land.cFlow
 		(fluxOrder, p_annk) ∈ land.cCycleBase
 	end
 	# NUMBER OF TIME STEPS PER YEAR
-	TSPY = helpers.dates.nStepsYear
-	p_k = 1 - (exp(-p_annk) ^ (1 / TSPY))
 	## these all need to be zeros maybe is taken care automatically
 	cEcoEfflux[!helpers.pools.carbon.flags.cVeg] = 0.0
 	## compute losses
-	cEcoOut = min(cEco, cEco * p_k)
+	cEcoOut = min.(cEco, cEco * p_k_act)
 	## gains to vegetation
-	zix = helpers.pools.carbon.flags.cVeg
-	cNPP = gpp * cAlloc[zix] - cEcoEfflux[zix]
-	cEcoInflux[zix] = cNPP
+	zix = getzix(land.pools.cVeg)
+	cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
+	cEcoInflux[zix] .= cNPP
 	## flows & losses
 	# @nc; if flux order does not matter; remove.
 	for jix in 1:length(fluxOrder)
@@ -60,7 +58,6 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 
 	## pack land variables
 	@pack_land begin
-		p_k => land.cCycleBase
 		(NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
 		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) => land.states
 	end
