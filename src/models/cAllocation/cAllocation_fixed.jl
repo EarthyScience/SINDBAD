@@ -27,7 +27,7 @@ function compute(o::cAllocation_fixed, forcing, land, helpers)
 	# distribute the allocation according to pools
 	cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 	for cpName in cpNames
-		zixVec = getfield(helpers.pools.carbon.zix, cpName)
+		zixVec = getzix(land.pools, cpName)
 		cAlloc[zix] .= getfield(o, cpName) / length(zixVec)
 	end
 
