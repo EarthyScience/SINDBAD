@@ -13,11 +13,11 @@ end
 function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA o
 
-    @unpack_land (zero, numType) ∈ helpers.numbers
+    @unpack_land (𝟘, numType) ∈ helpers.numbers
 
     ## instantiate variables
     p_kfVeg = ones(numType, length(land.pools.cEco)) #sujan
-    annk = zero #sujan ones(size(AGE))
+    annk = 𝟘#sujan ones(size(AGE))
 
     ## pack land variables
     @pack_land (p_kfVeg, annk) => land.cTauVegProperties
@@ -44,7 +44,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	# AGE = zeros(numType, length(land.pools.cEco)); #sujan
 	for cpN in (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 		# get average age from parameters
-		AGE = zero; #sujan
+		AGE = 𝟘 ; #sujan
 		for ij in 1:length(pftVec)
 			AGE[p.vegProperties.PFT == pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
 		end
@@ -57,8 +57,8 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	end
 	# feed the parameters that are pft dependent.
 	pftVec = unique(PFT)
-	p_LITC2N = zero
-	p_LIGNIN = zero
+	p_LITC2N = 𝟘 
+	p_LIGNIN = 𝟘 
 	for ij in 1:length(pftVec)
 		p_LITC2N[p.vegProperties.PFT == pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
 		p_LIGNIN[p.vegProperties.PFT == pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
@@ -68,7 +68,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	L2N = (p_LITC2N * p_LIGNIN) * NONSOL2SOLLIGNIN
 	# DETERMINE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
 	MTF = MTFA - (MTFB * L2N)
-	MTF[MTF < zero] = zero
+	MTF[MTF < 𝟘] = 𝟘 
 	p_MTF = MTF
 	# DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
 	p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (1.0 - MTF)

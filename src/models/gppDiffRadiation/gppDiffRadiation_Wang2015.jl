@@ -26,7 +26,7 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
-        (zero, one, tolerance) ∈ helpers.numbers
+        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
 
@@ -52,8 +52,8 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     # end
 
 
-    cScGPP = one - μ * (one - CI_nor)
-    CloudScGPP = RgPot > zero ? cScGPP : zero
+    cScGPP = 𝟙 - μ * (𝟙 - CI_nor)
+    CloudScGPP = RgPot > 𝟘  ? cScGPP : zero
 
     ## pack land variables
     @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation

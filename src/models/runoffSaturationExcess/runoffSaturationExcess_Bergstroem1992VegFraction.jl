@@ -14,7 +14,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, l
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		(zero, one, sNT) ∈ helpers.numbers
+		(𝟘, 𝟙, sNT) ∈ helpers.numbers
 	end
 	tmp_smaxVeg = sum(p_wSat)
 	tmp_SoilTotal = sum(soilW + ΔsoilW)

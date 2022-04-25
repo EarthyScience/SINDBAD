@@ -7,7 +7,7 @@ function precompute(o::gppDiffRadiation_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	CloudScGPP = helpers.numbers.one
+	CloudScGPP = helpers.numbers.𝟙
 
 	## pack land variables
 	@pack_land CloudScGPP => land.gppDiffRadiation

@@ -152,7 +152,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		gpp ∈ land.fluxes
 		(p_giver, p_taker) ∈ land.cFlow
 		YG ∈ land.aRespiration
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	## calculate variables
@@ -218,7 +218,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	## solve it for each pool individually
 	for zix in zixVecOrder
 		# general k loss
-		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], one), zero)
+		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
 		cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 0.9999999), 1e-7); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
 		if any(zix == helpers.pools.carbon.zix.cVeg)

@@ -7,7 +7,7 @@ function precompute(o::gppSoilW_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	SMScGPP = helpers.numbers.one
+	SMScGPP = helpers.numbers.𝟙
 
 	## pack land variables
 	@pack_land SMScGPP => land.gppSoilW

@@ -8,13 +8,13 @@ function compute(o::WUE_VPDDay, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_WUE_VPDDay o
 	@unpack_forcing VPDDay ∈ forcing
-	@unpack_land (zero, one) ∈ helpers.numbers
+	@unpack_land (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
 
 
 	## calculate variables
 	# "WUEat1hPa"
-	kpa_to_hpa = 10 * one
-	AoE = WUEatOnehPa * one / sqrt(kpa_to_hpa * (VPDDay +0.005))
+	kpa_to_hpa = sNT(10) * 𝟙
+	AoE = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
 
 	## pack land variables
 	@pack_land AoE => land.WUE

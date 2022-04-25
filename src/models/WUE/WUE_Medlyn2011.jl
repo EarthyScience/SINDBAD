@@ -14,13 +14,13 @@ function compute(o::WUE_Medlyn2011, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		ambCO2 ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 
 	## calculate variables
-	VPDDay[VPDDay < 5E-2] = one * 5E-2
-	umol_to_gC = one * 6.6667e-004
+	VPDDay[VPDDay < 5E-2] = 𝟙 * 5E-2
+	umol_to_gC = 𝟙 * 6.6667e-004
 	# umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
 	# umol_to_gC = 12 * 100/(18 * 1000)
 	ciNoCO2 = g1 / (g1 + sqrt(VPDDay)); # RHS eqn 13 in corrigendum

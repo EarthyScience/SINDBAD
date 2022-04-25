@@ -18,7 +18,7 @@ sets the carbon allocation to zero (nothing to allocated)
 # precompute:
 
 *Inputs*
-- helpers.numbers.one
+- helpers.numbers.𝟙
 
 *Outputs*
 - land.cAllocation.cAlloc: carbon allocation

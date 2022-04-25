@@ -23,17 +23,17 @@ function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
     @unpack_gppAirT_Maekelae2008 o
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
         X_prev ∈ land.gppAirT
     end
 
     ## calculate variables
     # calculate temperature acclimation
-    X = X_prev + (one / TimConst) * (TairDay - X_prev)
+    X = X_prev + (𝟙 / TimConst) * (TairDay - X_prev)
 
     # calculate the stress & saturation
-    S = max(X - X0, zero)
-    TempScGPP = clamp(S / Smax, zero, one)
+    S = max(X - X0, 𝟘)
+    TempScGPP = clamp(S / Smax, 𝟘, 𝟙)
 
     # replace the previous X
     X_prev = X

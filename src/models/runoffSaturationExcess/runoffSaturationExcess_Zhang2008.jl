@@ -15,15 +15,15 @@ function compute(o::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
 		soilW ∈ land.pools
 		PET ∈ land.PET
 		ΔsoilW ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# a supply - demand limit concept cf Budyko
 	# calc demand limit [X0]
-	res_sat = max(sum(p_wSat) - sum(soilW + ΔsoilW), zero)
+	res_sat = max(sum(p_wSat) - sum(soilW + ΔsoilW), 𝟘)
 	X0 = PET + res_sat
 
 	# set runoffSatExc
-	runoffSatExc = WBP - WBP * (one + X0 / WBP - (one + (X0 / WBP) ^ (one / α)) ^ α)
+	runoffSatExc = WBP - WBP * (𝟙 + X0 / WBP - (𝟙 + (X0 / WBP) ^ (𝟙 / α)) ^ α)
 	# adjust the remaining water
 	WBP = WBP - runoffSatExc
 

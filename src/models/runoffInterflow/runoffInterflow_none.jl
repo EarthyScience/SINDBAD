@@ -6,7 +6,7 @@ end
 function precompute(o::runoffInterflow_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffInterflow = helpers.numbers.zero
+	runoffInterflow = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land runoffInterflow => land.fluxes

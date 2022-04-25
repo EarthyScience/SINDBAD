@@ -6,7 +6,7 @@ end
 function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
-    @unpack_land zero ∈ helpers.numbers
+    @unpack_land 𝟘  ∈ helpers.numbers
 
 
     ## calculate variables
@@ -14,7 +14,7 @@ function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
     Lhv = (5.147 * exp(-0.0004643 * Tair) - 2.6466) # MJ kg-1
     γ = 0.4 / 0.622 # hPa C-1 [psychometric constant]
     PET = 1.26 * Δ / (Δ + γ) * Rn / Lhv
-    PET = max(PET, zero)
+    PET = max(PET, 𝟘)
 
     ## pack land variables
     @pack_land PET => land.PET

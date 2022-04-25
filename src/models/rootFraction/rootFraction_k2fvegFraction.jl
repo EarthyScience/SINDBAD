@@ -36,8 +36,8 @@ function compute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	## calculate variables
 	# check if the number of soil layers & number of elements in soil
 	# the scaling parameters can be > 1 but k1RootFrac needs to be <= 1
-	k1RootFrac = min(helpers.numbers.one, vegFraction * k1_scale); # the fraction of water that a root can uptake from the 1st soil layer
-	k2RootFrac = min(helpers.numbers.one, vegFraction * k2_scale); # the fraction of water that a root can uptake from the 1st soil layer
+	k1RootFrac = min(helpers.numbers.𝟙, vegFraction * k1_scale); # the fraction of water that a root can uptake from the 1st soil layer
+	k2RootFrac = min(helpers.numbers.𝟙, vegFraction * k2_scale); # the fraction of water that a root can uptake from the 1st soil layer
 	# set the properties
 	# 1st Layer
 	p_fracRoot2SoilD[1] = p_fracRoot2SoilD[1] * k1RootFrac

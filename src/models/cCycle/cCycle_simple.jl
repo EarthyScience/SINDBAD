@@ -6,7 +6,7 @@ end
 function precompute(o::cCycle_simple, forcing, land, helpers)
 
 	@unpack_land begin
-		(zero, one, numType) ∈ helpers.numbers
+		(𝟘, 𝟙, numType) ∈ helpers.numbers
 		n_cEco = cEco ∈ helpers.pools.carbon.nZix
 	end
 
@@ -35,10 +35,10 @@ function compute(o::cCycle_simple, forcing, land, helpers)
 		p_k ∈ land.cTau
 		(p_A, p_giver, p_taker) ∈ land.cFlow
 		(fluxOrder, p_annk) ∈ land.cCycleBase
-		(zero, one, numType) ∈ helpers.numbers
+		(𝟘, 𝟙, numType) ∈ helpers.numbers
 	end
 	TSPY = helpers.dates.nStepsYear; # NUMBER OF TIME STEPS PER YEAR
-	p_k = one - (exp(-p_annk) ^ (one / TSPY))
+	p_k = 𝟙 - (exp(-p_annk) ^ (𝟙 / TSPY))
 	## these all need to be zeros maybe is taken care automatically.
 	## compute losses
 	cEcoOut = min(cEco, cEco * p_k)

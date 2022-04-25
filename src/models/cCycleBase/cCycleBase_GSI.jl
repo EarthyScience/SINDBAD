@@ -9,14 +9,14 @@ export cCycleBase_GSI
 	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
 	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
 	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = 	[-1  0  0  0  0  0  0  0;
-					0  -1  0  0  0  0  0  0;
-					0  0  -1  0  0  0  0  0;
-					0  0  0  -1  0  0  0  0;
-					1  0  1  0  -1  0  0  0;
-					0  1  0  0  0  -1  0  0;
-					0  0  0  0  1  1  -1  0;
-					0  0  0  0  0  0  1  -1] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
+	cFlowA::T9 = [-1 0 0 0 0 0 0 0
+	    0 -1 0 0 0 0 0 0
+	    0 0 -1 0 0 0 0 0
+	    0 0 0 -1 0 0 0 0
+	    1.0 0 1.0 0 -1 0 0 0
+	    0 1.0 0 0 0 -1 0 0
+	    0 0 0 0 1.0 1.0 -1 0
+	    0 0 0 0 0 0 1.0 -1] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
 	C2Nveg::T10 = [25, 260, 260, 10] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
@@ -34,7 +34,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-		p_C2Nveg => land.cCycleBase
+		(p_C2Nveg, cFlowA) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
     return land
@@ -47,7 +47,7 @@ function compute(o::cCycleBase_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
 		p_C2Nveg ∈ land.cCycleBase
-		one ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 	end
     ## calculate variables
     #carbon to nitrogen ratio [gC.gN-1]
@@ -55,12 +55,12 @@ function compute(o::cCycleBase_GSI, forcing, land, helpers)
     # annual turnover rates
     p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
     TSPY = helpers.dates.nStepsYear
-    p_k = one .- (exp.(-p_annk).^(one / TSPY))
+    p_k = 𝟙 .- (exp.(-p_annk).^(𝟙 / TSPY))
     
 	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
 
     ## pack land variables
-    @pack_land (p_C2Nveg, p_k) => land.cCycleBase
+    @pack_land (p_C2Nveg, p_k, cFlowA) => land.cCycleBase
     return land
 end
 

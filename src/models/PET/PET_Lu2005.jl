@@ -19,7 +19,7 @@ function compute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing (Rn, Tair) ∈ forcing
 	@unpack_land Tair_prev ∈ land.PET
-	@unpack_land (zero, sNT) ∈ helpers.numbers
+	@unpack_land (𝟘, sNT) ∈ helpers.numbers
 
 
 	## calculate variables
@@ -55,7 +55,7 @@ function compute(o::PET_Lu2005, forcing, land, helpers)
 	G = 4.2 * (ΔTair) / dt
 
 	PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
-	PET = max(PET, zero)
+	PET = max(PET, 𝟘)
 
 	Tair_prev = Tair
 

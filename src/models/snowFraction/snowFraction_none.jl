@@ -6,7 +6,7 @@ end
 function precompute(o::snowFraction_none, forcing, land, helpers)
 
 	## calculate variables
-	snowFraction = helpers.numbers.zero
+	snowFraction = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land snowFraction => land.states

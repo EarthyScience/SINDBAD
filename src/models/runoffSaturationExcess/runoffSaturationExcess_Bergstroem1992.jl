@@ -19,7 +19,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helper
 	tmp_smaxVeg = sum(p_wSat)
 	tmp_SoilTotal = sum(soilW + ΔsoilW)
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg) ^ β, helpers.numbers.one)
+	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg) ^ β, helpers.numbers.𝟙)
 
 	runoffSatExc = WBP * tmp_SatExFrac
 

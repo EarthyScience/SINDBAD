@@ -5,7 +5,7 @@ struct cAllocationLAI_none <: cAllocationLAI end
 function precompute(o::cAllocationLAI_none, forcing, land, helpers)
 
     ## calculate variables
-    LL = helpers.numbers.one
+    LL = helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land LL => land.cAllocationLAI
@@ -18,7 +18,7 @@ sets the LAI effect on allocation to one (no effect)
 # precompute:
 
 *Inputs*
-- helpers.numbers.one
+- helpers.numbers.𝟙
 
 *Outputs*
 - land.cAllocationLAI.LL: LAI effect on cAllocation (0-1)

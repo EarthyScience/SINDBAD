@@ -8,160 +8,174 @@ export cFlow_GSI
 end
 
 function precompute(o::cFlow_GSI, forcing, land, helpers)
-	@unpack_cFlow_GSI o
+    @unpack_cFlow_GSI o
+    @unpack_land begin
+        cFlowA ∈ land.cCycleBase
+        (𝟘, 𝟙, tolerance, numType) ∈ helpers.numbers
+    end
+    ## instantiate variables
+    asrc = [:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot]
+    atrg = [:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast]
+    flow = ones(numType, length(atrg))
+    ndxSrc = [[] for x in atrg]
+    ndxTrg = [[] for x in atrg]
+    p_A = copy(cFlowA)
 
-	## instantiate variables
-	flow = ones(length(atrg))
-	ndxSrc = ones(length(atrg))
-	ndxTrg = ones(length(atrg))
+    flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
+    flowTable = DataFrame(srcName=asrc, trgName=atrg, ndxSrc=ndxSrc, ndxTrg=ndxTrg, flowVar=flowVar, flow=flow)
+    pprint(flowTable)
+    # Prepare the list of flows
+    for trow in eachrow(flowTable)
+        srcName = trow.srcName
+        trgName = trow.trgName
+        # @show trow, srcName, trgName
+        ndxSrc = getzix(land.pools, srcName)
+        ndxTrg = getzix(land.pools, trgName)
+        trow.ndxSrc = ndxSrc
+        trow.ndxTrg = ndxTrg
+        for iSrc in 1:length(ndxSrc)
+            for iTrg in 1:length(ndxTrg)
+                fT = trow.flow
+                p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
+            end
+        end
+        @show srcName
+        @show trgName
+        @show trow
 
-	## pack land variables
-	@pack_land (flow, ndxSrc, ndxTrg) => land.cFlow
-	return land
+    end
+
+
+    # transfers
+    taker = [ind[1] for ind in findall(>(𝟘), p_A)]
+    giver = [ind[2] for ind in findall(>(𝟘), p_A)]
+    # taker = [ind[1] for ind in findall(>(𝟘), p_A)]
+    # giver = [ind[2] for ind in findall(>(𝟘), p_A)]
+    # (taker, giver) = findall(squeeze(sum(p_A > 𝟘, 1)) >= 𝟙)
+    # p_taker = taker
+    # p_giver = giver
+    # if there is flux order check that is consistent
+    if !hasproperty(land.cCycleBase, :p_fluxOrder)
+        fluxOrder = 1:length(taker)
+    else
+        if length(fluxOrder) != length(taker)
+            error(["ERR:cFlowAct_gsi:" "length(fluxOrder) != length(taker)"])
+        end
+    end
+
+    fWfTfR_prev = helpers.numbers.𝟙
+    ## pack land variables
+    @pack_land begin
+		fluxOrder => land.cCycleBase
+		(p_A, fWfTfR_prev, flowTable, taker, giver) => land.cFlow
+	end
+    return land
 end
 
 function compute(o::cFlow_GSI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cFlow_GSI o
+    ## unpack parameters
+    @unpack_cFlow_GSI o
 
-	## unpack land variables
-	@unpack_land (flow, ndxSrc, ndxTrg) ∈ land.cFlow
 
-	## unpack land variables
-	@unpack_land begin
-		fWfTfR_prev ∈ land.cFlow
-		cFlowA ∈ land.cCycleBase
-		fW ∈ land.cAllocationSoilW
-		fT ∈ land.cAllocationSoilT
-		fR ∈ land.cAllocationRadiation
-		(zero, one) ∈ helpers.numbers
-	end
-	# Do A matrix
-	p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
-	# p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
-	# Prepare the list of flows
-	asrc = (:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot)
-	atrg = (:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast)
-	flowVar = (:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF)
-	flowTable = DataFrame(srcName = asrc, trgName = atrg, ndxSrc = ndxSrc, ndxTrg = ndxTrg, flowVar = flowVar, flow = flow)
-	for trow in eachrow(flowTable)
-		srcName = trow.srcName
-		trgName = trow.trgName
-		ndxSrc = helpers.pools.carbon.zix.(srcName)
-		ndxTrg = helpers.pools.carbon.zix.(trgName)
-		trow.ndxSrc = ndxSrc
-		trow.ndxTrg = ndxTrg
-		for iSrc in 1:length(ndxSrc)
-			for iTrg in 1:length(ndxTrg)
-				fT = trow.flow
-				p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
-			end
-		end
-	end
-	aM = [[1.0]; [1.0]; [1.0]; [1.0]; [1.0]; [1.0]
-	]
-	p_flowTable = flowTable
-	p_ndxSrc = flowTable.ndxSrc
-	p_ndxTrg = flowTable.ndxTrg
-	p_flowVar = flowTable.flowVar
-	p_aM = aM
-	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > zero)) >= one)
-	p_taker = taker
-	p_giver = giver
-	# if there is flux order check that is consistent
-	if !hasproperty(land.cCycleBase, :p_fluxOrder)
-		fluxOrder = 1:length(taker)
-	else
-		if length(fluxOrder) != length(taker)
-			error(["ERR:cFlowAct_gsi:" "length(fluxOrder) != length(taker)"])
-		end
-	end
-	# Compute sigmoid functions
-	# LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
-	# current time step before smoothing
-	f_tmp = fW * fT * fR
-	# stressor from previos time step
-	f_prev = fWfTfR_prev
-	# get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
-	f_now = (one - f_τ) * f_prev + f_τ * f_tmp
-	fWfTfR = f_now
-	slope_fWfTfR = f_now -f_prev
-	# get the indices of leaf & root
-	cVegLeafzix = helpers.pools.carbon.zix.cVegLeaf
-	cVegRootzix = helpers.pools.carbon.zix.cVegRoot
-	cVegReservezix = helpers.pools.carbon.zix.cVegReserve
-	# calculate the flow rate for exchange with reserve pools based on the slopes
-	# get the flow & shedding rates
-	LR2Re = min(max(-slope_fWfTfR, zero) * LR2ReSlp, one); # * (cVeg_growth < zero)
-	Re2LR = min(max(slope_fWfTfR, zero) * Re2LRSlp, one); # * (cVeg_growth > 0.0)
-	KShed = min(max(-slope_fWfTfR, zero) * kShed, one)
-	# set the Leaf & Root to Reserve flow rate as the same
-	L2Re = LR2Re; # should it be divided by 2?
-	R2Re = LR2Re
-	k_Lshed = KShed
-	k_Rshed = KShed
-	# Estimate flows from reserve to leaf & root (sujan modified on
-	# 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
-	Re2L = Re2LR * (fW / (1E-15 + fR + fW)); # if water stressor is high [
-	Re2R = Re2LR * (one - Re2L)
-	# # Estimate flows from reserve to leaf & root
-	# Re2L = Re2LR * (fW / (fR + fW)); # if water stressor is high [
-	# Re2R = Re2LR * (fR / (fR + fW)); # if light stressor is high [
-	# the following two lines lead to k larger than 1; which results in negative carbon pools.
-	# p_k[cVegLeafzix] = p_k[cVegLeafzix] + k_Lshed + L2Re
-	# p_k[cVegRootzix] = p_k[cVegRootzix] + k_Rshed + R2Re
-	# adjust the outflow rate from the flow pools
-	p_k[cVegLeafzix] = min((p_k[cVegLeafzix] + k_Lshed + L2Re), one)
-	L2ReF = L2Re / (p_k[cVegLeafzix])
-	k_LshedF = k_Lshed / (p_k[cVegLeafzix])
-	p_k[cVegRootzix] = min((p_k[cVegRootzix] + k_Rshed + R2Re), one)
-	R2ReF = R2Re / (p_k[cVegRootzix])
-	k_RshedF = k_Rshed / (p_k[cVegRootzix])
-	p_k[cVegReservezix] = min((p_k[cVegReservezix] + Re2L + Re2R), one)
-	Re2LF = Re2L / p_k[cVegReservezix]
-	Re2RF = Re2R / p_k[cVegReservezix]
-	# Adjust cFlow between reserve; leaf; root; & soil
-	# Adjust cFlow between reserve; leaf; root; & soil
-	# p_aM[1] = Re2L
-	# p_aM[2] = Re2R
-	# p_aM[3] = L2ReF
-	# p_aM[4] = R2ReF
-	# p_aM[5] = k_LshedF
-	# p_aM[6] = k_RshedF
-	# while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
-	for ii in 1:size(p_ndxSrc, 1)
-		ndxSrc = p_ndxSrc[ii]
-		ndxTrg = p_ndxTrg[ii]
-		if ii == 1
-			p_A[ndxTrg, ndxSrc] = Re2LF
-		elseif ii == 2
-			p_A[ndxTrg, ndxSrc] = Re2RF
-		elseif ii == 3
-			p_A[ndxTrg, ndxSrc] = L2ReF
-		elseif ii == 4
-			p_A[ndxTrg, ndxSrc] = R2ReF
-		elseif ii == 5
-			p_A[ndxTrg, ndxSrc] = k_LshedF
-		elseif ii == 6
-			p_A[ndxTrg, ndxSrc] = k_RshedF
-		end
-	end
-	# store the varibles in diagnostic structure
-	L2Re = LR2Re; # should it be divided by 2?
-	k_Lshed = KShed
-	k_Rshed = KShed
-	Re2L = Re2LF
-	Re2R = Re2RF
-	L2ReF = L2ReF; # should it be divided by 2?
+    ## unpack land variables
+    @unpack_land begin
+        (fWfTfR_prev, p_A, flowTable) ∈ land.cFlow
+        fW ∈ land.cAllocationSoilW
+        fT ∈ land.cAllocationSoilT
+        fR ∈ land.cAllocationRadiation
+        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
+        p_k_act ∈ land.cTau
+    end
 
-	## pack land variables
-	@pack_land begin
-		fluxOrder => land.cCycleBase
-		(L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, p_A, p_aM, p_flowTable, p_flowVar, p_giver, p_ndxSrc, p_ndxTrg, p_taker, slope_fWfTfR) => land.cFlow
-		p_k => land.cTau
-	end
-	return land
+    flowTable = flowTable
+    ndxSrc = flowTable.ndxSrc
+    ndxTrg = flowTable.ndxTrg
+
+    # Compute sigmoid functions
+    # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
+    # current time step before smoothing
+    f_tmp = fW * fT * fR
+    # stressor from previos time step
+    f_prev = fWfTfR_prev
+    # get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
+    f_now = (𝟙 - f_τ) * f_prev + f_τ * f_tmp
+    fWfTfR = f_now
+
+    slope_fWfTfR = f_now - f_prev
+
+    # get the indices of leaf & root
+    cVegLeafzix = getzix(land.pools.cVegLeaf)
+    cVegRootzix = getzix(land.pools.cVegRoot)
+    cVegReservezix = getzix(land.pools.cVegReserve)
+
+    # calculate the flow rate for exchange with reserve pools based on the slopes
+    # get the flow & shedding rates
+    LR2Re = clamp(-slope_fWfTfR * LR2ReSlp, 𝟘, 𝟙) # * (cVeg_growth < 𝟘)
+    Re2LR = clamp(slope_fWfTfR * Re2LRSlp, 𝟘, 𝟙) # * (cVeg_growth > 0.0)
+    KShed = clamp(-slope_fWfTfR * kShed, 𝟘, 𝟙)
+
+    # set the Leaf & Root to Reserve flow rate as the same
+    L2Re = LR2Re # should it be divided by 2?
+    R2Re = LR2Re
+    k_Lshed = KShed
+    k_Rshed = KShed
+
+    # Estimate flows from reserve to leaf & root (sujan modified on
+    # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
+    Re2L = Re2LR * (fW / (tolerance + fR + fW)) # if water stressor is high [
+    Re2R = Re2LR * (𝟙 - Re2L)
+    # # Estimate flows from reserve to leaf & root
+    # Re2L = Re2LR * (fW / (fR + fW)); # if water stressor is high [
+    # Re2R = Re2LR * (fR / (fR + fW)); # if light stressor is high [
+    # the following two lines lead to k larger than 1; which results in negative carbon pools.
+    # p_k_act[cVegLeafzix] = p_k_act[cVegLeafzix] + k_Lshed + L2Re
+    # p_k_act[cVegRootzix] = p_k_act[cVegRootzix] + k_Rshed + R2Re
+
+    # adjust the outflow rate from the flow pools
+    p_k_act[cVegLeafzix] .= min.((p_k_act[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
+    L2ReF = L2Re / (p_k_act[cVegLeafzix])
+    k_LshedF = k_Lshed / (p_k_act[cVegLeafzix])
+    p_k_act[cVegRootzix] .= min.((p_k_act[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
+    R2ReF = R2Re / (p_k_act[cVegRootzix])
+    k_RshedF = k_Rshed / (p_k_act[cVegRootzix])
+    p_k_act[cVegReservezix] .= min.((p_k_act[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
+    Re2LF = Re2L / p_k_act[cVegReservezix]
+    Re2RF = Re2R / p_k_act[cVegReservezix]
+
+    # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
+    for ii in 1:length(ndxSrc)
+        src = ndxSrc[ii]
+        trg = ndxTrg[ii]
+        if ii == 1
+            p_A[trg, src] = Re2LF
+        elseif ii == 2
+            p_A[trg, src] = Re2RF
+        elseif ii == 3
+            p_A[trg, src] = L2ReF
+        elseif ii == 4
+            p_A[trg, src] = R2ReF
+        elseif ii == 5
+            p_A[trg, src] = k_LshedF
+        elseif ii == 6
+            p_A[trg, src] = k_RshedF
+        end
+    end
+
+    # store the varibles in diagnostic structure
+    L2Re = LR2Re # should it be divided by 2?
+    k_Lshed = KShed
+    k_Rshed = KShed
+    Re2L = Re2LF
+    Re2R = Re2RF
+    L2ReF = L2ReF # should it be divided by 2?
+
+    fWfTfR_prev = fWfTfR
+    ## pack land variables
+    @pack_land begin
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, p_A, slope_fWfTfR, fWfTfR_prev) => land.cFlow
+        p_k_act => land.cTau
+    end
+    return land
 end
 
 @doc """

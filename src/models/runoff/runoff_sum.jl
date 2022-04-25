@@ -6,8 +6,8 @@ end
 function precompute(o::runoff_sum, forcing, land, helpers)
 
 	## set variables to zero
-	runoffBase = helpers.numbers.zero
-	runoffSurface = helpers.numbers.zero
+	runoffBase = helpers.numbers.𝟘
+	runoffSurface = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land begin

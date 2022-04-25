@@ -11,12 +11,12 @@ function compute(o::vegFraction_scaledNIRv, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		NIRv ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 
 	## calculate variables
-	vegFraction = clamp(NIRv * NIRvscale, zero, one)
+	vegFraction = clamp(NIRv * NIRvscale, 𝟘, 𝟙)
 
 	## pack land variables
 	@pack_land vegFraction => land.states

@@ -12,7 +12,7 @@ function compute(o::gppAirT_CASA, forcing, land, helpers)
     @unpack_gppAirT_CASA o
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
-        one ∈ helpers.numbers
+        𝟙 ∈ helpers.numbers
     end
 
 
@@ -21,14 +21,14 @@ function compute(o::gppAirT_CASA, forcing, land, helpers)
     # T1 = 0.8 + 0.02 * Topt - 0.0005 * Topt ^ 2 this would make sense if Topt would be the same everywhere.
     
 	# first half of the response curve
-    Tp1 = one / (one + exp(ToptA * (-Texp))) / (one + exp(ToptA * (-Texp)))
-    TC1 = one / Tp1
-    T1 = TC1 / (one + exp(ToptA * (Topt - Texp - TairDay))) / (one + exp(ToptA * (-Topt - Texp + TairDay)))
+    Tp1 = 𝟙 / (𝟙 + exp(ToptA * (-Texp))) / (𝟙 + exp(ToptA * (-Texp)))
+    TC1 = 𝟙 / Tp1
+    T1 = TC1 / (𝟙 + exp(ToptA * (Topt - Texp - TairDay))) / (𝟙 + exp(ToptA * (-Topt - Texp + TairDay)))
 
     # second half of the response curve
-    Tp2 = one / (one + exp(ToptB * (-Texp))) / (one + exp(ToptB * (-Texp)))
-    TC2 = one / Tp2
-    T2 = TC2 / (one + exp(ToptB * (Topt - Texp - TairDay))) / (one + exp(ToptB * (-Topt - Texp + TairDay)))
+    Tp2 = 𝟙 / (𝟙 + exp(ToptB * (-Texp))) / (𝟙 + exp(ToptB * (-Texp)))
+    TC2 = 𝟙 / Tp2
+    T2 = TC2 / (𝟙 + exp(ToptB * (Topt - Texp - TairDay))) / (𝟙 + exp(ToptB * (-Topt - Texp + TairDay)))
 
 	# get the scalar
     TempScGPP = TairDay >= Topt ? T2 : T1

@@ -8,12 +8,12 @@ function compute(o::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_Maekelae2008 o
     @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (zero, one) ∈ helpers.numbers
+    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
 
     ## calculate variables
     VPDScGPP = exp(-k * VPDDay)
-    VPDScGPP = min(VPDScGPP, one)
+    VPDScGPP = min(VPDScGPP, 𝟙)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

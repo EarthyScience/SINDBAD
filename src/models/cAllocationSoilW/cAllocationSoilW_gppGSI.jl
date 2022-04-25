@@ -7,11 +7,11 @@ end
 
 function precompute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack helper
-    @unpack_land one ∈ helpers.numbers
+    @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
     # assume the initial fR as one
-    fW_prev = one
+    fW_prev = 𝟙
 
     ## pack land variables
     @pack_land fW_prev => land.cAllocationSoilW

@@ -13,11 +13,11 @@ function compute(o::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         fAPAR ∈ land.states
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
-    LightScGPP = one / (γ * PAR * fAPAR + one)
+    LightScGPP = 𝟙 / (γ * PAR * fAPAR + 𝟙)
 
     ## pack land variables
     @pack_land LightScGPP => land.gppDirRadiation

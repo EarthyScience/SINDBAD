@@ -16,14 +16,14 @@ function compute(o::WUE_expVPDDayCo2, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		ambCO2 ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 
 	## calculate variables
 	# "WUEat1hPa"
 	AoENoCO2 = WUEatOnehPa * exp(κ * -VPDDay)
-	fCO2_CO2 = one + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+	fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
 	AoE = AoENoCO2 * fCO2_CO2
 
 	## pack land variables

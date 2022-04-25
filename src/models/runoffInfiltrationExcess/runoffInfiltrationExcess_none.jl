@@ -6,7 +6,7 @@ end
 function precompute(o::runoffInfiltrationExcess_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffInfExc = helpers.numbers.zero
+	runoffInfExc = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land runoffInfExc => land.fluxes

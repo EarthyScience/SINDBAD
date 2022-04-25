@@ -24,7 +24,7 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cAlloc ∈ land.states
-        one ∈ helpers.numbers
+        𝟙 ∈ helpers.numbers
     end
     ## unpack land variables
     @unpack_land begin
@@ -32,9 +32,9 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
         LL ∈ land.cAllocationLAI
     end
     # allocation to root; wood & leaf
-    cVegRoot = ro * (RelY + one) * LL / (LL + RelY * minWLNL)
-    cVegWood = so * (RelY + one) * minWLNL / (RelY * LL + minWLNL)
-    cVegLeaf = one - cVegRoot - cVegWood
+    cVegRoot = ro * (RelY + 𝟙) * LL / (LL + RelY * minWLNL)
+    cVegWood = so * (RelY + 𝟙) * minWLNL / (RelY * LL + minWLNL)
+    cVegLeaf = 𝟙 - cVegRoot - cVegWood
     cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
 
     # distribute the allocation according to pools

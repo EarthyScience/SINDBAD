@@ -6,8 +6,8 @@ end
 function precompute(o::gppAirT_none, forcing, land, helpers)
 
 	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	TempScGPP = helpers.numbers.one
+	# set scalar to a constant 𝟙 [no effect on potential GPP]
+	TempScGPP = helpers.numbers.𝟙
 
 	## pack land variables
 	@pack_land TempScGPP => land.gppAirT

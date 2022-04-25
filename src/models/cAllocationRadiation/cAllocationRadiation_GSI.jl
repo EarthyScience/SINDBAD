@@ -8,11 +8,11 @@ end
 
 function precompute(o::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
-    @unpack_land one ∈ helpers.numbers
+    @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
     # assume the initial fR as one
-    fR_prev = one 
+    fR_prev = 𝟙 
 
     ## pack land variables
     @pack_land fR_prev => land.cAllocationRadiation
@@ -27,12 +27,12 @@ function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		fR_prev ∈ land.cAllocationRadiation
-		one ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 	end
 
 	## calculate variables
 	# computation for the radiation effect on decomposition/mineralization
-	fR = (one / (one + exp(-slope_Rad * (PAR - base_Rad))))
+	fR = (𝟙 / (𝟙 + exp(-slope_Rad * (PAR - base_Rad))))
 	fR = fR_prev + (fR - fR_prev) * τ_Rad
 	# set the prev
 	fR_prev = fR

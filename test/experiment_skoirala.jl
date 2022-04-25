@@ -43,3 +43,4 @@ fig = Figure(resolution=(2200, 900))
 lines(outdata.transpiration)
 lines!(outdata.evapotranspiration)
 lines!(observations.evapotranspiration)
+

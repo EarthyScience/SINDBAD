@@ -14,16 +14,16 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
     @unpack_land begin
         (s_wSat, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-    maxAWC = max(s_wSat - s_wWP, zero)
+    maxAWC = max(s_wSat - s_wWP, 𝟘)
     Smax = sSmax * maxAWC
     Smin = sSmin * Smax
 
     SM = max(sum(soilW), Smin)
     smsc = ((SM - Smin) / (Smax - Smin))^q
-    SMScGPP = clamp(smsc, zero, one)
+    SMScGPP = clamp(smsc, 𝟘, 𝟙)
 
     ## pack land variables
     @pack_land SMScGPP => land.gppSoilW

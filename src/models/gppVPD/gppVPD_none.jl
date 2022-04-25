@@ -6,7 +6,7 @@ function precompute(o::gppVPD_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    VPDScGPP = helpers.numbers.one
+    VPDScGPP = helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

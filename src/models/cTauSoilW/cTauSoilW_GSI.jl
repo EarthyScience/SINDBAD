@@ -30,18 +30,18 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_land begin
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
-        one ∈ helpers.numbers
+        𝟙 ∈ helpers.numbers
     end
 
 	## for the litter pools; only use the top layer"s moisture
     soilW_top = 100 * soilW[1] / p_wSat[1]
-    soilW_top_sc = fSoilW_cTau(one, WoptA, WoptB, Wexp, Wopt, soilW_top)
+    soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
     p_fsoilW[getzix(land.pools.cLit)] .= soilW_top_sc
 
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = 100 * sum(soilW) / sum(p_wSat)
-    soilW_all_sc = fSoilW_cTau(one, WoptA, WoptB, Wexp, Wopt, soilW_all)
+    soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
     p_fsoilW[getzix(land.pools.cSoil)] .= soilW_all_sc
 
 
@@ -50,16 +50,16 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-function fSoilW_cTau(one, A, B, wExp, wOpt, wSoil)
+function fSoilW_cTau(𝟙, A, B, wExp, wOpt, wSoil)
 	# first half of the response curve
-	W2p1 = one / (one + exp(A * (-wExp))) / (one + exp(A * (-wExp)))
-    W2C1 = one / W2p1
-    W21 = W2C1 / (one + exp(A * (wOpt - wExp - wSoil))) / (one + exp(A * (-wOpt - wExp + wSoil)))
+	W2p1 = 𝟙 / (𝟙 + exp(A * (-wExp))) / (𝟙 + exp(A * (-wExp)))
+    W2C1 = 𝟙 / W2p1
+    W21 = W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
 
     # second half of the response curve
-    W2p2 = one / (one + exp(B * (-wExp))) / (one + exp(B * (-wExp)))
-    W2C2 = one / W2p2
-    T22 = W2C2 / (one + exp(B * (wOpt - wExp - wSoil))) / (one + exp(B * (-wOpt - wExp + wSoil)))
+    W2p2 = 𝟙 / (𝟙 + exp(B * (-wExp))) / (𝟙 + exp(B * (-wExp)))
+    W2C2 = 𝟙 / W2p2
+    T22 = W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21

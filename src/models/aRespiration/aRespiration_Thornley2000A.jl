@@ -16,7 +16,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		gpp ∈ land.fluxes
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
-		(one, zero, numType) ∈ helpers.numbers
+		(𝟙, 𝟘, numType) ∈ helpers.numbers
 	end
 	p_km = ones(numType, length(land.pools.cEco))
 	p_km4su = p_km
@@ -32,17 +32,17 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
 	# scalars of maintenance respiration for models A; B & C
 	# km is the maintenance respiration coefficient [d-1]
-	p_km[zix] .= one ./ p_C2Nveg[zix] .* RMN .* fT
+	p_km[zix] .= 𝟙 ./ p_C2Nveg[zix] .* RMN .* fT
 	p_km4su[zix] .= p_km[zix] .* YG
 	
 	# maintenance respiration first: R_m = km * C
 	RA_M[zix] .= p_km[zix] .* cEco[zix]
 	
 	# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-	RA_G[zix] .= (one - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
+	RA_G[zix] .= (𝟙 - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
 	
 	# no negative growth respiration
-	RA_G .= max.(RA_G, zero)
+	RA_G .= max.(RA_G, 𝟘)
 
 	# total respiration per pool: R_a = R_m + R_g
 	cEcoEfflux .= RA_M .+ RA_G

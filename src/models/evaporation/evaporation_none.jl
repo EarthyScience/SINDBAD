@@ -6,7 +6,7 @@ end
 function precompute(o::evaporation_none, forcing, land, helpers)
 
 	## calculate variables
-	evaporation = helpers.numbers.zero
+	evaporation = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land evaporation => land.fluxes

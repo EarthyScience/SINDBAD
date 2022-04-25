@@ -5,13 +5,13 @@ end
 
 function precompute(o::cFlowVegProperties_none, forcing, land, helpers)
 
-	## calculate variables
-	p_F = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
-	p_E = p_F
+    ## calculate variables
+    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))
+    p_F = copy(p_E)
 
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowVegProperties
-	return land
+    ## pack land variables
+    @pack_land (p_E, p_F) => land.cFlowSoilProperties
+    return land
 end
 
 @doc """

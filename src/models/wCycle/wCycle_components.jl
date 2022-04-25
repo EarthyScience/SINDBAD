@@ -9,7 +9,7 @@ function compute(o::wCycle_components, forcing, land, helpers)
         (groundW, snowW, soilW, surfaceW) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
         p_wSat ∈ land.soilWBase
-        zero ∈ helpers.numbers
+        𝟘  ∈ helpers.numbers
     end
 
     ## update variables
@@ -25,27 +25,27 @@ function compute(o::wCycle_components, forcing, land, helpers)
     ΔsoilW .= ΔsoilW .- ΔsoilW
     ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
-    if minimum(p_wSat - soilW) < zero
+    if minimum(p_wSat - soilW) < 𝟘
         @show soilW, p_wSat, soilW - p_wSat
         error("soilW is larger than soil water holding capacity (p_wSat)")
     end
 
-    if minimum(groundW) < zero
+    if minimum(groundW) < 𝟘
         @show groundW
         error("groundW is negative. Cannot continue")
     end
 
-    if minimum(snowW) < zero
+    if minimum(snowW) < 𝟘
         @show snowW
         error("snowW is negative. Cannot continue")
     end
 
-    if minimum(soilW) < zero
+    if minimum(soilW) < 𝟘
         @show soilW
         error("soilW is negative. Cannot continue")
     end
 
-    if minimum(surfaceW) < zero
+    if minimum(surfaceW) < 𝟘
         @show soilW
         error("surfaceW is negative. Cannot continue")
     end
