@@ -18,19 +18,19 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, for
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		(zero, one, sNT) ∈ helpers.numbers
+		(𝟘, 𝟙, sNT) ∈ helpers.numbers
 	end
 
 	# scale the input frozen soil fraction; maximum is 1
-	fracFrozen = min(frozenFrac * scaleFro, one)
-	tmp_smaxVeg = sum(p_wSat) * (one - fracFrozen+0.0000001)
+	fracFrozen = min(frozenFrac * scaleFro, 𝟙)
+	tmp_smaxVeg = sum(p_wSat) * (𝟙 - fracFrozen+0.0000001)
 	tmp_SoilTotal = sum(soilW + ΔsoilW)
 
 	# get the berg parameters according the vegetation fraction
 	p_berg = max(0.1, β * vegFraction); # do this?
 
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg ^ p_berg), one)
+	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg ^ p_berg), 𝟙)
 	runoffSatExc = WBP * tmp_SatExFrac
 
 	# update water balance pool

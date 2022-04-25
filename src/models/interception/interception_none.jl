@@ -6,7 +6,7 @@ end
 function precompute(o::interception_none, forcing, land, helpers)
 
 	## calculate variables
-	interception = helpers.numbers.zero
+	interception = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land interception => land.fluxes

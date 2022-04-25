@@ -6,7 +6,7 @@ end
 function precompute(o::gppDirRadiation_none, forcing, land, helpers)
 
 	## calculate variables
-	LightScGPP = helpers.numbers.one
+	LightScGPP = helpers.numbers.𝟙
 
 	## pack land variables
 	@pack_land LightScGPP => land.gppDirRadiation

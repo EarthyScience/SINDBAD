@@ -11,7 +11,7 @@ function precompute(o::gppDemand_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
-	AllDemScGPP = helpers.numbers.one
+	AllDemScGPP = helpers.numbers.𝟙
 
 	# compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
 	gppE = fAPAR * gppPot * AllDemScGPP

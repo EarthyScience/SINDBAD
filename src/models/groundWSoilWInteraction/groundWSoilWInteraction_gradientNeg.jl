@@ -14,7 +14,7 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 		p_wSat ∈ land.soilWBase
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
-		zero ∈ helpers.numbers
+		𝟘 ∈ helpers.numbers
 	end
 	# maximum groundwater storage
 	p_gwmax = p_wSat[end] * smax_scale
@@ -30,7 +30,7 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 	tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW));
 
 	# -> set all the positive values (from groundwater to soil) to zero
-	gwCapFlow = min(tmp, zero)
+	gwCapFlow = min(tmp, 𝟘)
 
 	# adjust the delta storages
 	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)

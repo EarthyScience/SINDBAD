@@ -15,14 +15,14 @@ function compute(o::WUE_VPDDayCo2, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		ambCO2 ∈ land.states
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
 	end
 
 	## calculate variables
 	# "WUEat1hPa"
-	kpa_to_hpa = 10 * one
-	AoENoCO2 = WUEatOnehPa * one / sqrt(kpa_to_hpa * (VPDDay +0.005))
-	fCO2_CO2 = one + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+	kpa_to_hpa = sNT(10) * 𝟙
+	AoENoCO2 = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
+	fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
 	AoE = AoENoCO2 * fCO2_CO2
 
 	## pack land variables

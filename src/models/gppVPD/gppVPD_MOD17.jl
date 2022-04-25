@@ -9,11 +9,11 @@ function compute(o::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 o
     @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (zero, one) ∈ helpers.numbers
+    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
     ## calculate variables
     vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
-    VPDScGPP = clamp(vsc, zero, one)
+    VPDScGPP = clamp(vsc, 𝟘, 𝟙)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

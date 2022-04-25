@@ -11,10 +11,10 @@ function compute(o::fAPAR_LAI, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		LAI ∈ land.states
-		one ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 	end
 	## calculate variables
-	fAPAR = one - exp(-(LAI * kEffExt))
+	fAPAR = 𝟙 - exp(-(LAI * kEffExt))
 
 	## pack land variables
 	@pack_land fAPAR => land.states

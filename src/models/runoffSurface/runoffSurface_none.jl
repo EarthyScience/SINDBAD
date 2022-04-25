@@ -6,7 +6,7 @@ end
 function precompute(o::runoffSurface_none, forcing, land, helpers)
 
 	## calculate variables
-	runoffSurface = helpers.numbers.zero
+	runoffSurface = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land runoffSurface => land.fluxes

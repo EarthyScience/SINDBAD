@@ -9,9 +9,9 @@ function precompute(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
-        zero ∈ helpers.numbers
+        𝟘  ∈ helpers.numbers
     end
-    SMScGPP_prev = zero
+    SMScGPP_prev = 𝟘
 
     ## pack land variables
     @pack_land SMScGPP_prev => land.gppSoilW
@@ -29,14 +29,14 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
         SMScGPP_prev ∈ land.gppSoilW
         PAW ∈ land.vegAvailableWater
         PET ∈ land.PET
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-    OmBweOPET = (one - Bwe) / PET
+    OmBweOPET = (𝟙 - Bwe) / PET
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    SMScGPP = (Tair > zero) & (PET > zero) ? We : SMScGPP_prev # use the current We if the temperature and PET are favorable, else use the previous one.
+    SMScGPP = (Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev # use the current We if the temperature and PET are favorable, else use the previous one.
 
     SMScGPP_prev = SMScGPP
 

@@ -6,6 +6,8 @@ using Reexport: @reexport
     using CMAEvolutionStrategy:
         minimize,
         xbest
+    using DataFrames:
+        DataFrame
     using DocStringExtensions
     using FieldMetadata
     using Flatten:

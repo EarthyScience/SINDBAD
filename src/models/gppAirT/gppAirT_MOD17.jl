@@ -9,12 +9,12 @@ function compute(o::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_MOD17 o
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land (zero, one) ∈ helpers.numbers
+    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
 
     ## calculate variables
-    tsc = TairDay / ((one - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
-    TempScGPP = clamp(tsc, zero, one)
+    tsc = TairDay / ((𝟙 - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
+    TempScGPP = clamp(tsc, 𝟘, 𝟙)
 
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT

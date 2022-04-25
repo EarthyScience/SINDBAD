@@ -6,7 +6,7 @@ end
 function precompute(o::gpp_none, forcing, land, helpers)
 
 	## calculate variables
-	gpp = helpers.numbers.zero
+	gpp = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land gpp => land.fluxes
