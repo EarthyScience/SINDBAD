@@ -11,36 +11,41 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		(RA_G, RA_M, cAlloc) ∈ land.states
+		(cAlloc, cEcoEfflux) ∈ land.states
 		cEco ∈ land.pools
 		gpp ∈ land.fluxes
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
 		(one, zero, numType) ∈ helpers.numbers
 	end
-	p_km = ones(numType, length(land.pools.cVeg))
+	p_km = ones(numType, length(land.pools.cEco))
 	p_km4su = p_km
 	RA_G = p_km
 	RA_M = p_km
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
+	
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL A - maintenance respiration is given priority
-	for zix in helpers.pools.carbon.zix.cVeg
-		# scalars of maintenance respiration for models A; B & C
-		# km is the maintenance respiration coefficient [d-1]
-		p_km[zix] = one / p_C2Nveg[zix] * RMN * fT
-		p_km4su[zix] = p_km[zix] * YG
-		# maintenance respiration first: R_m = km * C
-		RA_M[zix] = p_km[zix] * cEco[zix]
-		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-		RA_G[zix] = (one - YG) * (gpp * cAlloc[zix] - RA_M[zix])
-		# no negative growth respiration
-		RA_G[RA_G[zix] < zero, zix] = zero
-		# total respiration per pool: R_a = R_m + R_g
-		cEcoEfflux[zix] = RA_M[zix] + RA_G[zix]
-	end
+	zix = getzix(land.pools.cVeg)
+
+	# scalars of maintenance respiration for models A; B & C
+	# km is the maintenance respiration coefficient [d-1]
+	p_km[zix] .= one ./ p_C2Nveg[zix] .* RMN .* fT
+	p_km4su[zix] .= p_km[zix] .* YG
+	
+	# maintenance respiration first: R_m = km * C
+	RA_M[zix] .= p_km[zix] .* cEco[zix]
+	
+	# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
+	RA_G[zix] .= (one - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
+	
+	# no negative growth respiration
+	RA_G .= max.(RA_G, zero)
+
+	# total respiration per pool: R_a = R_m + R_g
+	cEcoEfflux .= RA_M .+ RA_G
 
 	## pack land variables
 	@pack_land begin
