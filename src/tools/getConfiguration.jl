@@ -18,11 +18,20 @@ read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp)
     info = DataStructures.OrderedDict()
-    info["experiment"] = info_exp
     for (k, v) in info_exp["configFiles"]
         tmp = jsparse(String(jsread(v)); dicttype=DataStructures.OrderedDict)
-        info[k] = removeComments(tmp)
+        info[k] = rmComment(tmp) # remove on first level
     end
+    # rm second level
+    for (k, v) in info
+        ks = keys(info[k])
+        tmpDict = DataStructures.OrderedDict()
+        for ki in ks
+            tmpDict[ki] = rmComment(info[k][ki])
+        end
+        info[k] = tmpDict
+    end
+    info["experiment"] = info_exp
     return info
 end
 
@@ -38,10 +47,24 @@ function removeComments(inputDict)
 end
 
 """
+rmComment(input)
+Calling removeComments on Dictionaries.
+"""
+function rmComment(input)
+    if input isa DataStructures.OrderedDict
+        return removeComments(input)
+    elseif input isa Dict
+        return removeComments(input)
+    else
+        return input
+    end
+end
+
+"""
 convertToAbsolutePath(; inputDict = inputDict)
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 """
-function convertToAbsolutePath(; inputDict = inputDict)
+function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
     newDict = filter(x -> !occursin("path", first(x)), inputDict)
     return newDict

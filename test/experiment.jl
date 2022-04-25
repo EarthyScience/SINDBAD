@@ -5,55 +5,6 @@ using BenchmarkTools
 #using GLMakie
 
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
-import JSON
-function getExperimentConfiguration(expFile)
-    jsonFile = String(JSON.read(expFile))
-    parseFile = JSON.parse(jsonFile)
-    info = Dict()
-    for (k, v) in parseFile
-        info[k] = v
-    end
-    return info
-end
-
-function removeComments(inputDict)
-    newDict = filter(x -> !occursin(".c", first(x)), inputDict)
-    newDict = filter(x -> !occursin("comments", first(x)), newDict)
-    newDict = filter(x -> !occursin("comment", first(x)), newDict)
-    return newDict
-end
-
-function rmComment(input)
-    if input isa Dict
-        return removeComments(input)
-    else
-        return input
-    end
-end
-
-
-info_exp = getExperimentConfiguration(expFile)
-info = Dict()
-info["experiment"] = info_exp
-for (k, v) in info_exp["configFiles"]
-    tmp = JSON.parse(String(JSON.read(v)))
-
-    info[k] = removeComments(tmp)
-end
-
-tmp = JSON.parse(String(JSON.read("sandbox/test_json/settings_minimal/spinup.json")))
-
-
-function readConfiguration(info_exp)
-    info = Dict()
-    info["experiment"] = info_exp
-    for (k, v) in info_exp["configFiles"]
-        tmp = JSON.parse(String(JSON.read(v)))
-        info[k] = removeComments(tmp)
-    end
-    return info
-end
-
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
@@ -81,8 +32,6 @@ outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem
 pprint(outsp)
 
 
-
-
 for it in 1:10
     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=5)
 end
@@ -95,13 +44,3 @@ fig = Figure(resolution=(2200, 900))
 lines(outdata.transpiration)
 lines!(outdata.evapotranspiration)
 lines!(observations.evapotranspiration)
-
-
-function filterOut(tpl, out)
-    outs = (;)
-    for (field, vars) in tpl
-        s = NamedTuple{vars}(getfield(out, field))
-        outs = (; outs..., field=s...)
-    end
-    return outs
-end
