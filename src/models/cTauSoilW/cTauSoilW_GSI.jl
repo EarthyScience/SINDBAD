@@ -18,67 +18,54 @@ function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	return land
 end
 
+
 function compute(o::cTauSoilW_GSI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cTauSoilW_GSI o
+    ## unpack parameters
+    @unpack_cTauSoilW_GSI o
 
-	## unpack land variables
-	@unpack_land p_fsoilW ∈ land.cTauSoilW
+    ## unpack land variables
+    @unpack_land p_fsoilW ∈ land.cTauSoilW
 
-	## unpack land variables
-	@unpack_land begin
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-	end
-	# get the parameters
-	WOPT = Wopt
-	A = WoptA
-	B = WoptB
+    ## unpack land variables
+    @unpack_land begin
+        p_wSat ∈ land.soilWBase
+        soilW ∈ land.pools
+        one ∈ helpers.numbers
+    end
+
 	## for the litter pools; only use the top layer"s moisture
-	soilW_top = 100 * soilW[1] / p_wSat[1]
-	# first half of the response curve
-	W2p1 = 1 / (1 + exp(A * (-Wexp))) / (1 + exp(A * (- Wexp)))
-	W2C1 = 1 / W2p1
-	W21 = W2C1 / (1 + exp(A * (WOPT - Wexp - soilW_top))) / (1 + exp(A * (- WOPT - Wexp + soilW_top)))
-	# second half of the response curve
-	W2p2 = 1 / (1 + exp(B * (-Wexp))) / (1 + exp(B * (- Wexp)))
-	W2C2 = 1 / W2p2
-	T22 = W2C2 / (1 + exp(B * (WOPT - Wexp - soilW_top))) / (1 + exp(B * (- WOPT - Wexp + soilW_top)))
-	# combine the response curves
-	v = soilW_top >= WOPT
-	T2 = W21
-	T2[v] = T22[v]
-	# assign it to the array
-	soilW1_sc = T2
-	for cL in helpers.pools.carbon.zix.cLit
-		p_fsoilW[cL] = soilW1_sc
-	end
+    soilW_top = 100 * soilW[1] / p_wSat[1]
+    soilW_top_sc = fSoilW_cTau(one, WoptA, WoptB, Wexp, Wopt, soilW_top)
+    p_fsoilW[getzix(land.pools.cLit)] .= soilW_top_sc
 
-	## repeat for the soil pools; using all soil moisture layers
-	soilW_all = 100 * sum(soilW) / sum(p_wSat)
-	# first half of the response curve
-	W2p1 = 1 / (1 + exp(A * (-Wexp))) / (1 + exp(A * (- Wexp)))
-	W2C1 = 1 / W2p1
-	W21 = W2C1 / (1 + exp(A * (WOPT - Wexp - soilW_all))) / (1 + exp(A * (- WOPT - Wexp + soilW_all)))
-	# second half of the response curve
-	W2p2 = 1 / (1 + exp(B * (-Wexp))) / (1 + exp(B * (- Wexp)))
-	W2C2 = 1 / W2p2
-	T22 = W2C2 / (1 + exp(B * (WOPT - Wexp - soilW_all))) / (1 + exp(B * (- WOPT - Wexp + soilW_all)))
-	# combine the response curves
-	v = soilW_all >= WOPT
-	T2 = W21
-	T2[v] = T22[v]
-	# assign it to the array
-	soilW_all_sc = T2
-	for cS in helpers.pools.carbon.zix.cSoil
-		p_fsoilW[cS] = soilW_all_sc
-	end
-	fsoilW = soilW_all_sc
 
-	## pack land variables
-	@pack_land (fsoilW, p_fsoilW) => land.cTauSoilW
-	return land
+    ## repeat for the soil pools; using all soil moisture layers
+    soilW_all = 100 * sum(soilW) / sum(p_wSat)
+    soilW_all_sc = fSoilW_cTau(one, WoptA, WoptB, Wexp, Wopt, soilW_all)
+    p_fsoilW[getzix(land.pools.cSoil)] .= soilW_all_sc
+
+
+    ## pack land variables
+    @pack_land (p_fsoilW) => land.cTauSoilW
+    return land
 end
+
+function fSoilW_cTau(one, A, B, wExp, wOpt, wSoil)
+	# first half of the response curve
+	W2p1 = one / (one + exp(A * (-wExp))) / (one + exp(A * (-wExp)))
+    W2C1 = one / W2p1
+    W21 = W2C1 / (one + exp(A * (wOpt - wExp - wSoil))) / (one + exp(A * (-wOpt - wExp + wSoil)))
+
+    # second half of the response curve
+    W2p2 = one / (one + exp(B * (-wExp))) / (one + exp(B * (-wExp)))
+    W2C2 = one / W2p2
+    T22 = W2C2 / (one + exp(B * (wOpt - wExp - wSoil))) / (one + exp(B * (-wOpt - wExp + wSoil)))
+
+    # combine the response curves
+    soilW_sc = wSoil >= wOpt ? T22 : W21
+	return soilW_sc
+end
+
 
 @doc """
 calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
