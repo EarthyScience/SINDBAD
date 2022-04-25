@@ -11,10 +11,10 @@ function compute(o::cTau_mult, forcing, land, helpers)
         p_kfSoil ∈ land.cTauSoilProperties
         p_kfLAI ∈ land.cTauLAI
         p_k ∈ land.cCycleBase
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
     p_k_act = p_k .* p_kfLAI .* p_kfSoil .* p_kfVeg .* fT .* p_fsoilW
-    p_k_act = clamp.(p_k_act, zero, one)
+    p_k_act = clamp.(p_k_act, 𝟘, 𝟙)
 
     ## pack land variables
     @pack_land p_k_act => land.cTau

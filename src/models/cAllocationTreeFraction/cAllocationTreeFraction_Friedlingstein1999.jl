@@ -11,7 +11,7 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     ## unpack land variables
     @unpack_land begin
         (cAlloc, treeFraction) ∈ land.states
-        one ∈ helpers.numbers
+        𝟙 ∈ helpers.numbers
     end
 
     ## calculate variables
@@ -30,10 +30,10 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
 	# adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
     cVegWood = treeFraction
-    cVegRootF = treeFraction * Rf2Rc + (r0 + s0 * (r0 / (r0 + l0))) * (one - treeFraction)
-    cVegRootC = treeFraction * (one - Rf2Rc)
+    cVegRootF = treeFraction * Rf2Rc + (r0 + s0 * (r0 / (r0 + l0))) * (𝟙 - treeFraction)
+    cVegRootC = treeFraction * (𝟙 - Rf2Rc)
     cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = treeFraction + (l0 + s0 * (l0 / (r0 + l0))) * (one - treeFraction)
+    cVegLeaf = treeFraction + (l0 + s0 * (l0 / (r0 + l0))) * (𝟙 - treeFraction)
     cF = (; cVegWood=cVegWood, cVegRootF=cVegRootF, cVegRootC=cVegRootC, cVegRoot=cVegRoot, cVegLeaf=cVegLeaf)
 
 	# adjust the allocation parameters

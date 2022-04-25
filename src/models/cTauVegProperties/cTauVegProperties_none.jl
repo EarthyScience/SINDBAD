@@ -4,15 +4,15 @@ struct cTauVegProperties_none <: cTauVegProperties
 end
 
 function precompute(o::cTauVegProperties_none, forcing, land, helpers)
-    @unpack_land (zero, numType) ∈ helpers.numbers
+    @unpack_land (𝟘, numType) ∈ helpers.numbers
 
     ## calculate variables
     p_kfVeg = ones(numType, length(land.pools.cEco))
-    p_LITC2N = zero
-    p_LIGNIN = zero
+    p_LITC2N = 𝟘 
+    p_LIGNIN = 𝟘 
     p_MTF = one
-    p_SCLIGNIN = zero
-    p_LIGEFF = zero
+    p_SCLIGNIN = 𝟘 
+    p_LIGEFF = 𝟘 
 
     ## pack land variables
     @pack_land (p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) => land.cTauVegProperties

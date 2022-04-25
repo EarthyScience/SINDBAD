@@ -11,7 +11,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
         ΔsoilW ∈ land.states
-        (zero, tolerance) ∈ helpers.numbers
+        (𝟘, tolerance) ∈ helpers.numbers
     end
     # get the transpiration
     toUptake = transpiration
@@ -19,7 +19,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     wRootUptake = copy(PAW)
     # extract from top to bottom
     for sl in 1:length(land.pools.soilW)
-        uptakeProportion = max(zero, PAW[sl] / (PAWTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
+        uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
         wRootUptake[sl] = toUptake * uptakeProportion
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
     end

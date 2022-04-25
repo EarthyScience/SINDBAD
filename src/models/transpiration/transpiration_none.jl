@@ -6,7 +6,7 @@ end
 function precompute(o::transpiration_none, forcing, land, helpers)
 
 	## calculate variables
-	transpiration = helpers.numbers.zero
+	transpiration = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land transpiration => land.fluxes

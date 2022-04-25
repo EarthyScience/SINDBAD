@@ -23,12 +23,12 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
 	@unpack_land begin
 		cAlloc ∈ land.states
 		p_A ∈ land.cFlow
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# check allocation
 	tmp0 = cAlloc; #sujan
 	tmp1 = sum(cAlloc)
-	if any(tmp0 > 1) || any(tmp0 < zero)
+	if any(tmp0 > 1) || any(tmp0 < 𝟘)
 		error("SINDBAD TEM: cAlloc lt 0 | gt 1")
 	end
 	if any(abs(sum(tmp1) - 1) > 1E-6)
@@ -40,7 +40,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
 	for pix in 1:info.tem.helpers.sizes.nPix
 		flow_matrix = squeeze(p_A[pix])
 		# of diagonal values of 0 must be between 0 & 1
-		anyBad = any(flow_matrix * (flagLo + flagUp) < zero)
+		anyBad = any(flow_matrix * (flagLo + flagUp) < 𝟘)
 		if anyBad
 			error("negative values in the p_cFlow_A matrix!")
 		end
@@ -62,7 +62,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
 	# flagUp = triu(ones(size(flow_matrix)), 1)
 	# flagLo = tril(ones(size(flow_matrix)), -1)
 	# # of diagonal values of 0 must be between 0 & 1
-	# anyBad = any(flow_matrix * (flagLo+flagUp) < zero)
+	# anyBad = any(flow_matrix * (flagLo+flagUp) < 𝟘)
 	# if anyBad
 	# error("negative values in the p_cFlow_A matrix!")
 	# end

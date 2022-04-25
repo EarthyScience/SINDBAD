@@ -15,12 +15,12 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
         snowFraction ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        (zero, one) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
     # convert temperature to Kelvin
     T = TairDay + 273.15
 
-    # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may want to do this derivative yourself because my calculus is not as good as it used to; what I get is:
+    # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may 𝟙t to do this derivative yourself because my calculus is not as good as it used to; what I get is:
 
     Δ = (5723.265 / T^2.0 + 3.53068 / (T - 0.00728332)) * exp(9.550426 - 5723.265 / T + 3.53068 * log(T) - 0.00728332 * T)
 
@@ -42,7 +42,7 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
     #PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
     tmp = α * Rn * (Δ / (Δ + γ)) / λ
 
-    PTtermSub = max(tmp, zero)
+    PTtermSub = max(tmp, 𝟘)
     # PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation

@@ -12,11 +12,11 @@ end
 function precompute(o::gppAirT_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppAirT_GSI o
-	@unpack_land one ∈ helpers.numbers
+	@unpack_land 𝟙 ∈ helpers.numbers
 
-	cScGPP_prev = one
-	hScGPP_prev = one
-	f_smooth = (f_p, f_n, τ, slope, base) -> (one - τ) * f_p + τ * (one / (one + exp(-slope * (f_n - base))))
+	cScGPP_prev = 𝟙
+	hScGPP_prev = 𝟙
+	f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
 
 	## pack land variables
 	@pack_land (cScGPP_prev, hScGPP_prev, f_smooth) => land.gppAirT
@@ -31,17 +31,17 @@ function compute(o::gppAirT_GSI, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		(cScGPP_prev, hScGPP_prev, f_smooth) ∈ land.gppAirT
-		(zero, one) ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	## calculate variables
 	f_c_prev = cScGPP_prev
 	fT_c = f_smooth(f_c_prev, Tair, fT_c_τ, fT_c_slope, fT_c_base)
-	cScGPP = clamp(fT_c, zero, one)
+	cScGPP = clamp(fT_c, 𝟘, 𝟙)
 	
 	f_h_prev = hScGPP_prev
 	fT_h = f_smooth(f_h_prev, Tair, fT_h_τ, -fT_h_slope, fT_h_base)
-	hScGPP = clamp(fT_h, zero, one)
+	hScGPP = clamp(fT_h, 𝟘, 𝟙)
 	
 	TempScGPP = min(cScGPP, hScGPP)
 

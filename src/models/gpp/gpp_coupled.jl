@@ -11,12 +11,12 @@ function compute(o::gpp_coupled, forcing, land, helpers)
 		SMScGPP ∈ land.gppSoilW
 		gppE ∈ land.gppDemand
 		AoE ∈ land.WUE
-		one ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 	end
 	
-	gpp = min(one * tranSup * AoE, gppE * SMScGPP)
-	# gpp = min(one * tranSup * AoE, gppE * soilWStress[2])
-	# gpp = min(one * tranSup * AoE, gppE * max(soilWStress, [], 2))
+	gpp = min(𝟙 * tranSup * AoE, gppE * SMScGPP)
+	# gpp = min(𝟙 * tranSup * AoE, gppE * soilWStress[2])
+	# gpp = min(𝟙 * tranSup * AoE, gppE * max(soilWStress, [], 2))
 
 	## pack land variables
 	@pack_land gpp => land.fluxes

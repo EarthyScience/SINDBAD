@@ -6,7 +6,7 @@ end
 function precompute(o::groundWSoilWInteraction_none, forcing, land, helpers)
 
 	## calculate variables
-	gwCapFlow = helpers.numbers.zero
+	gwCapFlow = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land gwCapFlow => land.fluxes

@@ -6,7 +6,7 @@ end
 function precompute(o::sublimation_none, forcing, land, helpers)
 
 	## calculate variables
-	sublimation = helpers.numbers.zero
+	sublimation = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land sublimation => land.fluxes

@@ -310,14 +310,14 @@ end
 Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
 """
 function setHelpers(info, ttype=info.modelRun.rules.dataType)
-    zero = setNumberType(ttype)(0)
-    one = setNumberType(ttype)(1)
+    𝟘 = setNumberType(ttype)(0)
+    𝟙 = setNumberType(ttype)(1)
     tolerance = setNumberType(ttype)(1e-5)
     info = (; info..., tem=(;))
     sDT = (a) -> setNumberType(ttype)(a)
     squarer = (n) -> n * n
     cuber = (n) -> n * n * n
-    info = (; info..., tem=(; helpers=(; numbers=(; zero=zero, one=one, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
+    info = (; info..., tem=(; helpers=(; numbers=(; 𝟘=𝟘, 𝟙=𝟙, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
     return info
 end
 
