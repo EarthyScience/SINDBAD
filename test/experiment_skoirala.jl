@@ -21,12 +21,13 @@ approaches = info.tem.models.forward;
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-osp =outsp[1];
+osp = outsp[1];
 pprint(osp)
 
 typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
+fluxes = outforw.fluxes |> columntable
 
 
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
@@ -40,7 +41,9 @@ outparams, outdata = optimizeModel(forcing, out, observations, approaches, optim
 # outf=columntable(outdata.fluxes)
 using GLMakie
 fig = Figure(resolution=(2200, 900))
-lines(outdata.transpiration)
-lines!(outdata.evapotranspiration)
-lines!(observations.evapotranspiration)
+lines(fluxes.gpp)
+lines(fluxes.NEE)
+lines(fluxes.NPP)
+# lines!(fluxes.evapotranspiration)
+# lines!(observations.evapotranspiration)
 
