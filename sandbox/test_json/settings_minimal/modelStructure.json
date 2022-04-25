@@ -8,6 +8,12 @@
             "use4spinup": true
     },
     "models": {
+        "aRespiration": {
+            "approach": "Thornley2000A"
+        },
+        "aRespirationAirT": {
+            "approach": "Q10"
+        },
         "capillaryFlow": {
             "approach": "VanDijk2010"
         },
@@ -34,6 +40,33 @@
         },
         "cCycleBase": {
             "approach": "GSI"
+        },
+        "cFlow": {
+            "approach": "GSI"
+        },
+        "cFlowSoilProperties": {
+            "approach": "none"
+        },
+        "cFlowVegProperties": {
+            "approach": "none"
+        },
+        "cTau": {
+            "approach": "mult"
+        },
+        "cTauLAI": {
+            "approach": "none"
+        },
+        "cTauSoilProperties": {
+            "approach": "none"
+        },
+        "cTauSoilT": {
+            "approach": "Q10"
+        },
+        "cTauSoilW": {
+            "approach": "GSI"
+        },
+        "cTauVegProperties": {
+            "approach": "none"
         },
         "drainage": {
             "approach": "kUnsat"
