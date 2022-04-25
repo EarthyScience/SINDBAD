@@ -11,30 +11,6 @@
         "capillaryFlow": {
             "approach": "VanDijk2010"
         },
-        "cAllocation": {
-            "approach": "GSI"
-        },
-        "cAllocationLAI": {
-            "approach": "none"
-        },
-        "cAllocationNutrients": {
-            "approach": "none"
-        },
-        "cAllocationRadiation": {
-            "approach": "gpp"
-        },
-        "cAllocationTreeFraction": {
-            "approach": "Friedlingstein1999"
-        },
-        "cAllocationSoilT": {
-            "approach": "gpp"
-        },
-        "cAllocationSoilW": {
-            "approach": "gpp"
-        },
-        "cCycleBase": {
-            "approach": "GSI"
-        },
         "drainage": {
             "approach": "kUnsat"
         },
@@ -138,9 +114,6 @@
         "transpirationSupply": {
             "approach": "wAWC"
         },
-        "treeFraction": {
-            "approach": "constant"
-        },
         "totalTWS": {
             "approach": "sumComponents"
         },
@@ -178,22 +151,21 @@
 			"components" :
                 {
                 "cVeg": {
-                    "Root": [1, 25.0],
-                    "Wood": [1, 25.0],
-                    "Leaf": [1, 25.0],
-                    "Reserve": [1, 10.0]
-                },
-                "cLit": {
-                    "Fast": [1, 100.0],
-                    "Slow": [1, 250.0]
+                    "Leaf": [1, 46.0],
+                    "Wood": [1, 100.0],
+                    "Root": [2, 50.0],
+                    "Reserve": [1, 20.0]
                 },
                 "cSoil": {
-                    "Slow": [1, 500.0],
-                    "Old": [1, 1000.0]
-                }
+                    "Slow": [1, 1000.0],
+                    "Fast": [1, 5000.0]
+                },
+                "cLit": [5, 300.0]
             },
 			"combine": [true,"cEco"],
             "addStateVars": {
+                "alloc_": 0.0,
+                "k_": 1.0
             }
         }
 	}
