@@ -29,11 +29,11 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	@unpack_cTauVegProperties_CASA o
 
 	## unpack land variables
-	@unpack_land (p_kfVeg, annk) ∈ land.cTauVegProperties
-
-	## unpack land variables
-	@unpack_land PFT ∈ land.vegProperties
-
+	@unpack_land begin
+		PFT ∈ land.vegProperties
+		(p_kfVeg, annk) ∈ land.cTauVegProperties
+		(𝟘, 𝟙) ∈ helpers.numbers	
+	end
 
 	## calculate variables
 	# p_annk = annk; #sujan
@@ -49,7 +49,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 			AGE[p.vegProperties.PFT == pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
 		end
 		# compute annk based on age
-		annk[AGE > 0.0] = 1.0 / AGE[AGE > 0.0]
+		annk[AGE > 𝟘] = 𝟙 / AGE[AGE > 𝟘]
 		# feed it to the new annual turnover rates
 		zix = helpers.pools.carbon.zix.(cpN)
 		p_annk[zix] = annk; #sujan
@@ -71,7 +71,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	MTF[MTF < 𝟘] = 𝟘 
 	p_MTF = MTF
 	# DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
-	p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (1.0 - MTF)
+	p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (𝟙 - MTF)
 	# DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
 	p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
 	# feed the output
