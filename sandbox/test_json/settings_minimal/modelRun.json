@@ -32,7 +32,10 @@
 					"evapotranspiration",
 					"transpiration",
 					"runoff",
-					"runoffSurface"
+					"runoffSurface",
+					"gpp",
+					"NPP",
+					"NEE"
 				],
 				"pools": [
 					"snowW",
