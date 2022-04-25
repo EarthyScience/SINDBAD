@@ -10,7 +10,7 @@ info = getConfiguration(expFile);
 info = setupModel!(info);
 out = getInitOut(info);
 
-forcing = getForcing(info);
+# forcing = getForcing(info);
 
 
 obsvars, modelvars = getConstraintNames(info);
@@ -24,12 +24,13 @@ approaches = info.tem.models.forward;
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+osp =outsp[1];
+pprint(osp)
 
 typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 
 # outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
-pprint(outsp)
 
 
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
