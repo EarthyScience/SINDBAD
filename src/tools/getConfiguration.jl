@@ -1,3 +1,5 @@
+export getConfiguration
+
 """
 getConfigurationFiles(expFile)
 get the basic configuration from experiment json
