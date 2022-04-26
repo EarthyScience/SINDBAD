@@ -70,11 +70,13 @@ getConstraintNames(info)
 """
 function getConstraintNames(info)
     obsVariables = Symbol.(info.opti.variables2constrain)
-    modelVariables = Symbol[]
+    modelVariables = String[]
     for v in obsVariables
         vinfo = getproperty(info.opti.constraints.variables, v)
-        push!(modelVariables, Symbol(vinfo.modelFullVar))
+        push!(modelVariables, vinfo.modelFullVar)
     end
+    modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store)) 
+    @show modelVariables
     return obsVariables, modelVariables
 end
 

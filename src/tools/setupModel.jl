@@ -203,7 +203,7 @@ function generateStatesInfo(info)
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
         # if element == "water":
-    
+
     end
     info = (; info..., tem=(; info.tem..., pools=tmpStates))
     # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=tmpStates)))
@@ -314,10 +314,10 @@ function setHelpers(info, ttype=info.modelRun.rules.dataType)
     𝟙 = setNumberType(ttype)(1)
     tolerance = setNumberType(ttype)(1e-5)
     info = (; info..., tem=(;))
-    sDT = (a) -> setNumberType(ttype)(a)
+    sNT = (a) -> setNumberType(ttype)(a)
     squarer = (n) -> n * n
     cuber = (n) -> n * n * n
-    info = (; info..., tem=(; helpers=(; numbers=(; 𝟘=𝟘, 𝟙=𝟙, tolerance=tolerance, numType=setNumberType(ttype), sNT=sDT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
+    info = (; info..., tem=(; helpers=(; numbers=(; 𝟘=𝟘, 𝟙=𝟙, tolerance=tolerance, numType=setNumberType(ttype), sNT=sNT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
     return info
 end
 
@@ -329,26 +329,44 @@ function setNumberType(t="Float64")
     return ttype
 end
 
+
+"""
+getVariableGroups(varList)
+get named tuple for variables groups from list of variables with subfields (subfield.variablename)
+"""
+function getVariableGroups(varList)
+    var_dict = Dict()
+    for var_l in varList
+        vf = split(var_l, ".")[1]
+        vvar = split(var_l, ".")[2]
+        if vf ∉ keys(var_dict)
+            var_dict[vf] = []
+            push!(var_dict[vf], vvar)
+        else
+            push!(var_dict[vf], vvar)
+        end
+    end
+    varNT = (;)
+    for (k, v) in var_dict
+        varNT = setTupleField(varNT, (Symbol(k), tuple(Symbol.(v)...)))
+    end
+    return varNT
+end
+
 """
 get the union of variables to write and store from modelrun[.json] and set it at info.tem.variables
 """
 function getVariablesToStore(info)
-    namess = union(keys(info.modelRun.outputVariables.write), keys(info.modelRun.outputVariables.store))
-    valuess = union([tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.write)], [tuple(Symbol.(vars)...) for vars in values(info.modelRun.outputVariables.store)])
-    tpl = NamedTuple{tuple(namess...)}(valuess)
-    info = (; info..., tem=(; info.tem..., variables=tpl))
-    @show info.tem.variables
+    writeStoreVars = getVariableGroups(union(info.modelRun.output.variables.write, info.modelRun.output.variables.store))
+    info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
 
 function setupModel!(info)
     info = setHelpers(info)
     info = getVariablesToStore(info)
-    @show info.tem.variables
     info = generateStatesInfo(info)
-    @show info.tem.variables
     info = generateDatesInfo(info)
-    @show info.tem.variables
     selModels = propertynames(info.modelStructure.models)
     fullModels = sindbad_models.model
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
