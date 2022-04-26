@@ -1,7 +1,7 @@
 {
-	"1.c": 						"This json defines the settings for running SINDBAD by setting 1) time period and paths 2) directory for saving generated code and info",
-	"2.c":						"3) flags for running optimization (runOpti), generate code (genCode), running generated code (true), reduce memory usage by defining ",
-	"3.c":						"variables in only one time step (genRedMemCode), and check water and carbon balance and data sanity, 4) rules for array precision during model run",
+	"1.c":	"flags for running optimization (runOpti), forward (runForward), forward run  per year (runForwardYearly), or forward run with model cost (calcCost)",
+	"2.c":	"information related to model time steps",
+	"3.c": "output and datatype",
 
 	"time":
 	{
@@ -24,26 +24,23 @@
 		"verbosity": 5,
 		"dataType": 		"Float64"
 	},
-	"dataFormat": ".nc",
-	"outputVariables": { 
-		"write": 
-			{
-				"fluxes": [
-					"evapotranspiration",
-					"transpiration",
-					"runoff",
-					"runoffSurface",
-					"gpp",
-					"NPP",
-					"NEE"
+	"output": {
+		"dirPath": "sandbox/output/",
+		"dataFormat": ".nc",
+		"variables": { 
+			"write": [
+					"fluxes.evapotranspiration",
+					"fluxes.transpiration",
+					"fluxes.runoff",
+					"fluxes.runoffSurface",
+					"fluxes.gpp",
+					"fluxes.NPP",
+					"fluxes.NEE",
+					"pools.snowW",
+					"pools.soilW",
+					"waterBalance.waterBalance"
 				],
-				"pools": [
-					"snowW",
-					"soilW"
-				],
-				"waterBalance": ["waterBalance"]
-			},
-			"store": {}
+			"store": ["pools.soilW", "cCycle.cNPP"]
+		}
 	}
-
 }

@@ -26,8 +26,8 @@ function precompute(o::soilWBase_smax2fRD4, forcing, land, helpers)
 	end 
 
 	## instantiate variables
-	p_wSat = ones(numType, n_soilW)
-	p_wFC = ones(numType, n_soilW)
+	p_wSat = zeros(numType, n_soilW)
+	p_wFC = zeros(numType, n_soilW)
 	p_wWP = zeros(numType, n_soilW)
 
 	## pack land variables

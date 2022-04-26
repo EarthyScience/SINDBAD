@@ -13,14 +13,15 @@ function compute(o::rainSnow_Tair, forcing, land, helpers)
     @unpack_land begin
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
+        𝟘 ∈ helpers.numbers
     end
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = 0
+        rain = 𝟘
     else
         rain = Rain
-        snow = 0
+        snow = 𝟘
     end
     precip = rain + snow
 
