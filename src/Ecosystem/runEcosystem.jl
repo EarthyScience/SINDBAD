@@ -78,5 +78,5 @@ runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forw
 """
 function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
     out, outlog = runSpinup(selectedModels, forcing, out, modelInfo.helpers, history; nspins=nspins)
-    return runForward(selectedModels, forcing, out, modelInfo.variables, modelInfo.helpers)
+    return runForward(selectedModels, forcing, out, modelVars, modelInfo.helpers)
 end
