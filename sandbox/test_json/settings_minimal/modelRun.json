@@ -22,12 +22,13 @@
 	"rules":
 	{
 		"verbosity": 5,
-		"dataType": 		"Float64"
+		"dataType": "Float64",
+		"tolerance": 0.0001
 	},
 	"output": {
 		"dirPath": "sandbox/output/",
 		"dataFormat": ".nc",
-		"variables": { 
+		"variables": {
 			"write": [
 					"fluxes.evapotranspiration",
 					"fluxes.transpiration",
