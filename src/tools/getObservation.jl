@@ -1,3 +1,5 @@
+export getObservation
+
 function checkObservationBounds(forcingVariable, bounds)
     println("Not done")
 end

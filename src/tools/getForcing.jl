@@ -1,3 +1,9 @@
+export getForcing
+
+"""
+checkForcingBounds(forcingVariable, bounds)
+check if the forcing data have values outside the provided bounds
+"""
 function checkForcingBounds(forcingVariable, bounds)
     println("Not done")
 end

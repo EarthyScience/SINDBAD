@@ -23,7 +23,7 @@
 	{
 		"verbosity": 5,
 		"dataType": "Float64",
-		"tolerance": 0.0001
+		"tolerance": 0.01
 	},
 	"output": {
 		"dirPath": "sandbox/output/",
@@ -35,13 +35,11 @@
 					"fluxes.runoff",
 					"fluxes.runoffSurface",
 					"fluxes.gpp",
-					"fluxes.NPP",
-					"fluxes.NEE",
 					"pools.snowW",
 					"pools.soilW",
 					"waterBalance.waterBalance"
 				],
-			"store": ["pools.soilW", "states.cNPP"]
+			"store": ["pools.soilW"]
 		}
 	}
 }

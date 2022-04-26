@@ -3,7 +3,7 @@
 	"domain": "FLUXNET",
 	"configFiles": {
 		"forcing"		: "sandbox/test_json/settings_minimal/forcing.json",
-		"modelStructure": "sandbox/test_json/settings_minimal/modelStructure.json",
+		"modelStructure": "sandbox/test_json/settings_minimal/modelStructure_noC.json",
 		"modelRun"		: "sandbox/test_json/settings_minimal/modelRun.json",
 		"spinup"		: "sandbox/test_json/settings_minimal/spinup.json",
 		"params"		: "sandbox/test_json/settings_minimal/params.json",
