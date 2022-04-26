@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 out = getInitOut(info);
-# forcing = getForcing(info);
+forcing = getForcing(info);
 obsvars, modelvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
 
@@ -41,6 +41,7 @@ outparams, outdata = optimizeModel(forcing, out, observations, approaches, optim
 # outf=columntable(outdata.fluxes)
 using GLMakie
 fig = Figure(resolution=(2200, 900))
+# lines(pools.snowW)
 lines(fluxes.gpp)
 lines(fluxes.NEE)
 lines(fluxes.NPP)

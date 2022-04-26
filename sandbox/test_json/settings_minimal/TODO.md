@@ -18,6 +18,7 @@
 - Lossfunctions
   - allow picking loss function metric from json
   - do spatio-temporal aggregation needed
+- time series of Arrays
 
 ## Sujan
 
