@@ -33,11 +33,11 @@ function getForcing(info)
         data_tmp = clamp.(data_tmp, bounds[1], bounds[2])
         if vinfo.spaceTimeType == "normal"
             push!(varlist, tarVar)
-            push!(dataAr,data_tmp[1, 1, :])
+            push!(dataAr,info.tem.helpers.numbers.numType.(skipmissing(data_tmp[1, 1, :])))
         else
             push!(varlist, tarVar)
             # data_tmp[ismissing.(data_tmp)] = 0.0
-            push!(dataAr,fill(data_tmp[1, 1, :], 14245))
+            push!(dataAr,fill(info.tem.helpers.numbers.numType.(skipmissing(data_tmp[1, 1, :])), 14245))
 
 
         end
