@@ -75,18 +75,25 @@ function getConstraintNames(info)
         vinfo = getproperty(info.opti.constraints.variables, v)
         push!(modelVariables, vinfo.modelFullVar)
     end
-    modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store)) 
+    optimizedVariables = getVariableGroups(modelVariables) #["fluxes.gpp", "fluxes.tra", "pools.cVeg"] = (; fluxes=(:gpp, :tra), pools=(:cVeg))
+    modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store))
     @show modelVariables
-    return obsVariables, modelVariables
+    return obsVariables, modelVariables, optimizedVariables
 end
 
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getSimulationData(outsmodel, observations, modelVariables, obsVariables)
-    # ŷ = outsmodel.fluxes |> columntable |> select(modelVariables...) |> matrix
-    # y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    ŷ = outsmodel |> matrix
+function getSimulationData(outsmodel, observations, optimVars, obsVariables)
+    ŷ = [] # Vector{Matrix{Float64}}
+    for k in keys(optimVars)
+        newkvals = getfield(outsmodel, k) |> columntable
+        newkvals = newkvals |> select(keys(newkvals)...)
+        newkvals = newkvals |> matrix
+        push!(ŷ, newkvals)
+    end
+    ŷ = length(ŷ) == 1 ? ŷ[1] : hcat(ŷ...)
+    #ŷ = aggregate(ŷ, :monthly)
     y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
     # @show mean(skipmissing(y)), mean(ŷ), modelVariables
     return (y, ŷ)
@@ -103,25 +110,28 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, approaches, forcing, initOut,
-    observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
+    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
-    (y, ŷ) = getSimulationData(outevolution, observations, modelVariables, obsVariables)
-    return loss(y, ŷ)
+    (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
+    ŷtmp = ŷ[1:size(y,1),:]
+    @assert size(y, 1) == size(ŷtmp, 1)
+    return loss(y, ŷtmp)
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, initOut, observations, selectedModels, optimParams, obsVariables, modelVariables, temInfo, optiInfo; maxfevals=100)
+function optimizeModel(forcing, initOut, observations, selectedModels, optimParams,
+    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
     costFunc = x -> getLoss(x, selectedModels, forcing, initOut,
-        observations, tblParams, obsVariables, modelVariables, temInfo, optiInfo)
+        observations, tblParams, obsVariables, modelVariables, optimVars, temInfo, optiInfo)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)

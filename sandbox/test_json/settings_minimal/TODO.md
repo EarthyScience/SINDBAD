@@ -8,8 +8,11 @@
 - update JSON package to use the latest one
   - maintain order of models when reading from json and converting to namedtuple. Necessary for cCycle. *DONE*
 - add settype function handle to helpers so that types can be changed on the go *DONE*
-- filtering the outputs based on opti and output[json] *DONE* for output. Needs work for optim
+- filtering the outputs based on opti and output[json] *DONE* for output. Needs work for optim # DONE
 
+### new
+- clean exports, move them to jl files
+- get the forcing size (time) and deal with the static variables and variables with depth dimension.
 - handle dates with model simulation and forcing, i.e., run the model for a sub-slice of forcing time series
   - generate forcing for spinup, esp. picking a random full year from the full forcing time series or calculating the mean seasonal cycle
 - Lossfunctions
