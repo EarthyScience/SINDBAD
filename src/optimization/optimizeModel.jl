@@ -1,3 +1,6 @@
+export optimizeModel, getParameters, updateParameters
+export getConstraintNames, getSimulationData, loss, getLoss
+
 """
 getParameters(selectedModels)
 retrieve all models parameters

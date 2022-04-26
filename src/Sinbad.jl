@@ -35,22 +35,10 @@ using Reexport: @reexport
         Table
 end
 
-export setTupleField, setTupleSubfield
-include("tools/utils.jl")
-include("tools/getConfiguration.jl")
-export getConfiguration
-include("tools/getForcing.jl")
-export getForcing
-include("tools/getObservation.jl")
-export getObservation
-include("tools/setupModel.jl")
-export setupModel!
 include("Ecosystem/runEcosystem.jl")
-# export runEcosystem, runSpinup, runForward
-include("optimization/optimizeModel.jl")
-export optimizeModel, getParameters, updateParameters
-export getConstraintNames, getSimulationData, loss, getLoss
-## reexport models/Models.jl
+include("optimization/optimization.jl")
+include("tools/tools.jl")
+
 include("models/models.jl")
 @reexport using .Models
 
