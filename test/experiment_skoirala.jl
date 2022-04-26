@@ -9,7 +9,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 info = getConfiguration(expFile);
 info = setupModel!(info);
 out = getInitOut(info);
-forcing = getForcing(info);
+# forcing = getForcing(info);
 obsvars, modelvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
 
@@ -33,7 +33,7 @@ fluxes = outforw.fluxes |> columntable
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 for it in 1:10
-    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=3)
+    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
 end
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams, obsvars, modelvars, info.tem, info.opti; maxfevals=1);
 

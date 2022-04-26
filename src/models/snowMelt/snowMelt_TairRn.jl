@@ -25,7 +25,7 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     potMelt = (tmp_T + tmp_Rn) * snowFraction
 
     # potential snow melt if T > 0.0 deg C
-    potMelt = Tair > 𝟘  ? potMelt : zero
+    potMelt = Tair > 𝟘  ? potMelt : 𝟘
     snowMelt = min(sum(snowW + ΔsnowW), potMelt)
 
 	# divide snowmelt loss equally from all layers
@@ -56,7 +56,7 @@ function update(o::snowMelt_TairRn, forcing, land, helpers)
     # update snow pack
     snowW .= snowW .+ ΔsnowW
 
-    # reset delta storage	
+    # reset delta storage
     ΔsnowW .= ΔsnowW .- ΔsnowW
 
     ## pack land variables
