@@ -1,3 +1,5 @@
+export setupModel!
+
 function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
     for sm in selModels

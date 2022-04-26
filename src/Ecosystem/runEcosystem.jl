@@ -1,4 +1,5 @@
-export runEcosystem, runSpinup, runForward, showoutr
+export runEcosystem, runSpinup, runForward
+
 """
 runModels(forcing, models, out)
 """
@@ -39,7 +40,8 @@ function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
     # modelVars = (modelVars...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelHelpers)
-        filterVariables(out, modelVars)
+        out_filtered = filterVariables(out, modelVars)
+        deepcopy(out_filtered)
         # NamedTuple{modelVars}(out.fluxes)
     end
     return columntable(outtemp)
@@ -66,7 +68,7 @@ function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; ns
             out = runModels(forcing[t], selectedModels, out, modelHelpers)
             out = removeEmptyFields(out)
             if history
-                push!(spinuplog, values(out)[1:length(out.pools)])
+                push!(spinuplog, values(deepcopy(out))[1:length(out.pools)])
             end
         end
     end

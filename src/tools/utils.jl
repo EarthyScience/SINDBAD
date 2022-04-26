@@ -1,4 +1,4 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)

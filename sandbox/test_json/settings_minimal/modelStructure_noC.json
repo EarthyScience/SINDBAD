@@ -164,8 +164,6 @@
             },
 			"combine": [true,"cEco"],
             "addStateVars": {
-                "alloc_": 0.0,
-                "k_": 1.0
             }
         }
 	}
