@@ -38,7 +38,7 @@ function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
     SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the precompute using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
 	cScGPP = (𝟙 - rueRatio) * SCI + rueRatio
-    CloudScGPP = RgPot > 𝟘  ? cScGPP : zero
+    CloudScGPP = RgPot > 𝟘  ? cScGPP : 𝟘
 
 	## pack land variables
     @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation

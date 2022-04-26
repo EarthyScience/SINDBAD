@@ -22,8 +22,8 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
     maxAWC = max(s_wFC - s_wWP, 𝟘)
     actAWC = max(SM - s_wWP, 𝟘)
     SM_nor = min(actAWC / maxAWC, 𝟙)
-    tfW = -q * squarer(SM_nor - θstar) + one
-    fW = SM_nor <= θstar ? tfW : one
+    tfW = -q * squarer(SM_nor - θstar) + 𝟙
+    fW = SM_nor <= θstar ? tfW : 𝟙
     SMScGPP = clamp(fW, 𝟘, 𝟙)
 
     ## pack land variables

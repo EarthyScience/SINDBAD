@@ -8,6 +8,9 @@
             "use4spinup": true
     },
     "models": {
+        "ambientCO2": {
+            "approach": "forcing"
+        },
         "aRespiration": {
             "approach": "Thornley2000A"
         },
@@ -72,16 +75,16 @@
             "approach": "none"
         },
         "drainage": {
-            "approach": "kUnsat"
+            "approach": "dos"
         },
         "evaporation": {
-            "approach": "demandSupply"
+            "approach": "fAPAR"
         },
         "evapotranspiration": {
             "approach": "sum"
         },
         "fAPAR": {
-            "approach": "constant"
+            "approach": "cVegLeaf"
         },
         "getPools": {
             "approach": "simple"
@@ -93,7 +96,7 @@
             "approach": "Monteith"
         },
         "gppAirT": {
-            "approach": "GSI"
+            "approach": "CASA"
         },
         "gppDemand": {
             "approach": "mult"
@@ -105,16 +108,16 @@
             "approach": "Maekelae2008"
         },
         "gppSoilW": {
-            "approach": "GSI"
+            "approach": "Stocker2020"
         },
         "gppVPD": {
-            "approach": "Maekelae2008"
+            "approach": "PRELES"
         },
         "groundWRecharge": {
-            "approach": "kUnsat"
+            "approach": "dos"
         },
         "groundWSoilWInteraction":{
-            "approach": "gradientNeg"
+            "approach": "VanDijk2010"
         },
         "percolation": {
             "approach": "WBP"
@@ -127,7 +130,7 @@
             "order": 1
         },
         "rootFraction": {
-            "approach": "constant"
+            "approach": "expCvegRoot"
         },
         "rootMaximumDepth": {
             "approach": "fracSoilD"
@@ -154,7 +157,7 @@
             "approach": "HTESSEL"
         },
         "snowMelt": {
-            "approach": "Tair"
+            "approach": "TairRn"
         },
         "soilTexture": {
             "approach": "forcing"
@@ -164,9 +167,6 @@
         },
         "soilWBase": {
             "approach": "uniform"
-        },
-        "transpirationDemand": {
-            "approach": "PET"
         },
         "transpiration": {
             "approach": "coupled"
@@ -181,7 +181,7 @@
             "approach": "sumComponents"
         },
         "vegAvailableWater": {
-            "approach": "sigmoid"
+            "approach": "rootFraction"
         },
         "waterBalance": {
             "approach": "simple"
@@ -190,7 +190,7 @@
             "approach": "combined"
         },
         "WUE": {
-            "approach": "VPDDay"
+            "approach": "expVPDDayCo2"
         }
 
     },

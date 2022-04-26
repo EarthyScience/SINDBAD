@@ -17,7 +17,7 @@ function compute(o::drainage_dos, forcing, land, helpers)
 	end
 
 	drainage = (((soilW + ΔsoilW) ./ p_wSat) .^ (dos_exp .* p_β)) .* (soilW + ΔsoilW)
-	drainage[end] = 𝟘 
+	drainage[end] = 𝟘
 
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
