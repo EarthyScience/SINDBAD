@@ -116,8 +116,7 @@ function getLoss(pVector, approaches, forcing, initOut,
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
-    ŷtmp = ŷ[1:size(y,1),:]
-    @assert size(y, 1) == size(ŷtmp, 1)
+    @assert size(y, 1) == size(ŷ, 1)
     return loss(y, ŷtmp)
 end
 
