@@ -11,10 +11,9 @@ function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 
 	## instantiate variables
 	p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
-	rootStop = ones(helpers.numbers.numType, length(land.pools.soilW))
 
 	## pack land variables
-	@pack_land (p_fracRoot2SoilD, rootStop) => land.rootFraction
+	@pack_land p_fracRoot2SoilD => land.rootFraction
 	return land
 end
 
@@ -23,30 +22,29 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 	@unpack_rootFraction_expCvegRoot o
 
 	## unpack land variables
-	@unpack_land (p_fracRoot2SoilD, rootStop) ∈ land.rootFraction
-
-	## unpack land variables
 	@unpack_land begin
-		maxRootD ∈ land.states
-		cEco ∈ land.pools
+		p_fracRoot2SoilD ∈ land.rootFraction
+		maxRootDepth ∈ land.states
+		𝟘 ∈ helpers.numbers
+		cVegRoot ∈ land.pools
 	end
-	##p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
+
+	## calculate variables
+	tmp_rootFrac = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * sum(cVegRoot)))) # root fraction/efficiency as a function of total carbon in root pools
+
 	soilDepths = helpers.pools.water.layerThickness.soilW
-	totalSoilDepth = sum(soilDepths)
-	maxRootDepth = min(maxRootD, totalSoilDepth); # maximum rootingdepth
-	# create the arrays to fill in the soil properties
+	cumulativeDepths = cumsum(soilDepths)
+	# maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
 	for sl in 1:length(land.pools.soilW)
-		soilD = sum(soilDepths[1:sl-1])
-		rootOver = maxRootDepth - soilD
-		rootOverID = (rootOver <= 0.0)
-		rootStop[rootOverID, sl] = 0.0
+		soilcumuD = cumulativeDepths[sl]
+		rootOver = maxRootDepth - soilcumuD
+		rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
+		p_fracRoot2SoilD[sl] = rootFrac
 	end
-	cVegRootZix = helpers.pools.carbon.zix.cVegRoot
-	cVegRoot = sum(cEco[cVegRootZix])
-	p_fracRoot2SoilD = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * cVegRoot))) * rootStop
 
 	## pack land variables
 	@pack_land p_fracRoot2SoilD => land.rootFraction
+
 	return land
 end
 
