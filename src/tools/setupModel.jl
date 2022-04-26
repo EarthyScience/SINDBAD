@@ -120,7 +120,7 @@ function generateStatesInfo(info)
         for mainPool in mainPools
             # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
             zix = Int[]
-            initValues = Float64[]
+            initValues = info.tem.helpers.numbers.numType[]
             components = Symbol[]
             flags = zeros(Int, length(mainPoolName))
             nZix = 0
@@ -128,7 +128,7 @@ function generateStatesInfo(info)
                 if par == mainPool
                     push!(zix, ind)
                     push!(components, subPoolName[ind])
-                    push!(initValues, inits[ind])
+                    push!(initValues, info.tem.helpers.numbers.sNT.(inits[ind]))
                     flags[ind] = 1
                     nZix = nZix + 1
                 end
@@ -222,20 +222,18 @@ function getInitPools(info)
         initVals = getfield(props, :initValues)
         for tocr in toCreate
             inVals = deepcopy(getfield(initVals, tocr))
-            initPools = setTupleField(initPools, (tocr, inVals))
+            initPools = setTupleField(initPools, (tocr, info.tem.helpers.numbers.numType.(inVals)))
         end
         tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
         if tocombine[1]
             combinedPoolName = Symbol(tocombine[2])
             zixT = getfield(props, :zix)
             components = keys(zixT)
-            # components = getfield(getfield(props, :components),Symbol(tocombine[2]))
             poolArray = getfield(initPools, combinedPoolName)
             for component in components
                 if component != combinedPoolName
                     indx = getfield(zixT, component)
                     compdat = @view poolArray[indx]
-                    # @eval @view :(compdat = $poolArray[$indx])
                     initPools = setTupleField(initPools, (component, compdat))
                 end
             end
@@ -253,13 +251,12 @@ function getInitStates(info)
         props = getfield(info.tem.pools, element)
         toCreate = getfield(props, :create)
         addVars = getfield(props, :addStateVars)
-        @show addVars
         initVals = getfield(props, :initValues)
         for tocr in toCreate
             for avk in keys(addVars)
                 avv = getproperty(addVars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
-                vals = ones(size(getfield(initVals, tocr))) * avv
+                vals = ones(info.tem.helpers.numbers.numType, size(getfield(initVals, tocr))) * info.tem.helpers.numbers.sNT(avv)
                 initStates = setTupleField(initStates, (Δtocr, vals))
             end
         end
@@ -270,15 +267,12 @@ function getInitStates(info)
                 ΔcombinedPoolName = Symbol(string(avk) * string(combinedPoolName))
                 zixT = getfield(props, :zix)
                 components = keys(zixT)
-                # components = getfield(getfield(props, :components),Symbol(tocombine[2]))
                 ΔpoolArray = getfield(initStates, ΔcombinedPoolName)
                 for component in components
                     if component != combinedPoolName
                         Δcomponent = Symbol(string(avk) * string(component))
                         indx = getfield(zixT, component)
-                        @show component, indx
                         Δcompdat = @view ΔpoolArray[indx]
-                        # @eval @view :(compdat = $poolArray[$indx])
                         initStates = setTupleField(initStates, (Δcomponent, Δcompdat))
                     end
                 end
@@ -312,7 +306,7 @@ Harmonize the information needed to autocompute variables, e.g., sum, water bala
 function setHelpers(info, ttype=info.modelRun.rules.dataType)
     𝟘 = setNumberType(ttype)(0)
     𝟙 = setNumberType(ttype)(1)
-    tolerance = setNumberType(ttype)(1e-5)
+    tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> setNumberType(ttype)(a)
     squarer = (n) -> n * n

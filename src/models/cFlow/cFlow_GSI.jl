@@ -17,13 +17,12 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     asrc = [:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot]
     atrg = [:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast]
     flow = ones(numType, length(atrg))
-    ndxSrc = [[] for x in atrg]
-    ndxTrg = [[] for x in atrg]
+    ndxSrc = [Int[] for x in atrg]
+    ndxTrg = [Int[] for x in atrg]
     p_A = copy(cFlowA)
 
     flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
     flowTable = DataFrame(srcName=asrc, trgName=atrg, ndxSrc=ndxSrc, ndxTrg=ndxTrg, flowVar=flowVar, flow=flow)
-    pprint(flowTable)
     # Prepare the list of flows
     for trow in eachrow(flowTable)
         srcName = trow.srcName
@@ -39,9 +38,6 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
                 p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
             end
         end
-        @show srcName
-        @show trgName
-        @show trow
 
     end
 
