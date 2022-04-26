@@ -41,7 +41,7 @@
 					"pools.soilW",
 					"waterBalance.waterBalance"
 				],
-			"store": ["pools.soilW", "cCycle.cNPP"]
+			"store": ["pools.soilW", "states.cNPP"]
 		}
 	}
 }
