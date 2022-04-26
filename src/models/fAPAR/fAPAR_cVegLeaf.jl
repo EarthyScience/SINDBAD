@@ -10,13 +10,12 @@ function compute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		cEco ∈ land.pools
+		cVegLeaf ∈ land.pools
 		𝟙 ∈ helpers.numbers
 	end
 
 	## calculate variables
-	cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
-	cVegLeaf = sum(cEco[cVegLeafZix])
+	cVegLeaf = sum(cVegLeaf)
 	fAPAR = 𝟙 - exp(-(cVegLeaf * kEffExt))
 
 	## pack land variables
