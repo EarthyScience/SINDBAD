@@ -29,9 +29,10 @@ function getObservation(info)
         tarVar = Symbol(v)
         push!(varlist, tarVar)
         data_tmp = ds[srcVar][1, 1, :]
+        data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
         data_obs = eval(Meta.parse("$data_tmp" * vinfo.data.source2sindbadUnit))
         # data_tmp_masked = data_tmp < 0.0 ? 0.0 : data_tmp
-        push!(dataAr, info.tem.helpers.numbers.numType.(skipmissing(data_obs)))
+        push!(dataAr, info.tem.helpers.numbers.numType.(data_obs))
     end
     observation = Table((; zip(varlist, dataAr)...))
     return observation
