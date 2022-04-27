@@ -120,7 +120,7 @@ function getLoss(pVector, approaches, forcing, initOut,
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
     @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷtmp)
+    return loss(y, ŷ)
 end
 
 """
