@@ -3,7 +3,7 @@ export PET_Lu2005
 struct PET_Lu2005 <: PET
 end
 
-function precompute(o::PET_Lu2005, forcing, land, helpers)
+function precompute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing Tair ∈ forcing
 
@@ -15,7 +15,7 @@ function precompute(o::PET_Lu2005, forcing, land, helpers)
 	return land
 end
 
-function compute(o::PET_Lu2005, forcing, land, helpers)
+function compute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing (Rn, Tair) ∈ forcing
 	@unpack_land Tair_prev ∈ land.PET

@@ -2,7 +2,7 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function compute(o::cTau_mult, forcing, land, helpers)
+function compute(o::cTau_mult, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack land variables
     @unpack_land begin
         p_kfVeg ∈ land.cTauVegProperties

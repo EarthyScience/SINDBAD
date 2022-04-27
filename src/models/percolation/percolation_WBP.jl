@@ -3,7 +3,7 @@ export percolation_WBP
 struct percolation_WBP <: percolation
 end
 
-function compute(o::percolation_WBP, forcing, land, helpers)
+function compute(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
@@ -39,7 +39,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	return land
 end
 
-function update(o::percolation_WBP, forcing, land, helpers)
+function update(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack variables
 	@unpack_land begin
 		soilW ∈ land.pools

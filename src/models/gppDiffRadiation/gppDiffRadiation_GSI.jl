@@ -7,7 +7,7 @@ export gppDiffRadiation_GSI
 end
 
 
-function precompute(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function precompute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing
@@ -23,7 +23,7 @@ function precompute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function compute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing

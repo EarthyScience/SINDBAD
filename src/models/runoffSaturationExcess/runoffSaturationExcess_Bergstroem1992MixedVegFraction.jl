@@ -5,7 +5,7 @@ export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 	βS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
+function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
 

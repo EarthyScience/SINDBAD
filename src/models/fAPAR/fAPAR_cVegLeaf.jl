@@ -4,7 +4,7 @@ export fAPAR_cVegLeaf
 	kEffExt::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | ""
 end
 
-function compute(o::fAPAR_cVegLeaf, forcing, land, helpers)
+function compute(o::fAPAR_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_fAPAR_cVegLeaf o
 

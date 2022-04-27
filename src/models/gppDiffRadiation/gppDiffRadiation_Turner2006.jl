@@ -4,7 +4,7 @@ export gppDiffRadiation_Turner2006
 	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
 
-function precompute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function precompute(o::gppDiffRadiation_Turner2006, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 o
     @unpack_forcing (Rg, RgPot) ∈ forcing
@@ -18,7 +18,7 @@ function precompute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function compute(o::gppDiffRadiation_Turner2006, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 o
     @unpack_forcing (Rg, RgPot) ∈ forcing

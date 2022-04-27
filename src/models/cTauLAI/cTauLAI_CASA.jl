@@ -5,7 +5,7 @@ export cTauLAI_CASA
 	kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
 end
 
-function precompute(o::cTauLAI_CASA, forcing, land, helpers)
+function precompute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cTauLAI_CASA o
 
 	## instantiate variables
@@ -16,7 +16,7 @@ function precompute(o::cTauLAI_CASA, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cTauLAI_CASA, forcing, land, helpers)
+function compute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cTauLAI_CASA o
 

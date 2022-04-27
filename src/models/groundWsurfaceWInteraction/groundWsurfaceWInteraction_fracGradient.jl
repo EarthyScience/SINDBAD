@@ -4,7 +4,7 @@ export groundWsurfaceWInteraction_fracGradient
 	kGW2Surf::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
 end
 
-function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_groundWsurfaceWInteraction_fracGradient o
 
@@ -31,7 +31,7 @@ function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, help
 	return land
 end
 
-function update(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function update(o::groundWsurfaceWInteraction_fracGradient, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack variables
 	@unpack_land begin
 		(groundW, surfaceW) ∈ land.pools

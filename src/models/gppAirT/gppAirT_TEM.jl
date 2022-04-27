@@ -6,7 +6,7 @@ export gppAirT_TEM
 	Topt::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
 end
 
-function compute(o::gppAirT_TEM, forcing, land, helpers)
+function compute(o::gppAirT_TEM, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppAirT_TEM o
     @unpack_forcing TairDay ∈ forcing

@@ -3,7 +3,7 @@ export groundWRecharge_kUnsat
 struct groundWRecharge_kUnsat <: groundWRecharge
 end
 
-function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
+function compute(o::groundWRecharge_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
@@ -28,7 +28,7 @@ function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 	return land
 end
 
-function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
+function update(o::groundWRecharge_kUnsat, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack variables
 	@unpack_land begin

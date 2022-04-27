@@ -9,7 +9,7 @@ export cFlowSoilProperties_CASA
 	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
 
-function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
+function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
@@ -20,7 +20,7 @@ function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
+function compute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cFlowSoilProperties_CASA o
 

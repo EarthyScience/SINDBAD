@@ -6,7 +6,7 @@ export aRespirationAirT_Q10
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
-function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
+function compute(o::aRespirationAirT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_aRespirationAirT_Q10 o
     @unpack_forcing Tair ∈ forcing

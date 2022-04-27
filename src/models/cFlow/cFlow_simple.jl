@@ -3,7 +3,7 @@ export cFlow_simple
 struct cFlow_simple <: cFlow
 end
 
-function compute(o::cFlow_simple, forcing, land, helpers)
+function compute(o::cFlow_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land cFlowA ∈ land.cCycleBase
