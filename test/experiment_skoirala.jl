@@ -21,16 +21,15 @@ approaches = info.tem.models.forward;
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 osp = outsp[1];
 pprint(osp)
 
-typeof(outsp[1].pools.soilW)
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
 fluxes = outforw.fluxes |> columntable
 
 
-@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 for it in 1:10
     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
