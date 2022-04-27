@@ -37,7 +37,7 @@ function compute(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple
 	## pack land variables
 	@pack_land begin
 		drainage => land.drainage
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
@@ -59,8 +59,8 @@ function update(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 end

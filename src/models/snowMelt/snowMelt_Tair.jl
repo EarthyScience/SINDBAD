@@ -56,7 +56,7 @@ function update(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
+        # snowW => land.pools
         ΔsnowW => land.states
     end
     return land
