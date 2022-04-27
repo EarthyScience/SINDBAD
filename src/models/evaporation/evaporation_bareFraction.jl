@@ -27,7 +27,7 @@ function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers
 	@pack_land begin
 		PETsoil => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
@@ -50,8 +50,8 @@ function update(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers:
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 end

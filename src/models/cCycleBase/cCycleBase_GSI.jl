@@ -55,12 +55,12 @@ function compute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTup
     # annual turnover rates
     p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
     TSPY = helpers.dates.nStepsYear
-    p_k = 𝟙 .- (exp.(-p_annk).^(𝟙 / TSPY))
+    p_k_base = 𝟙 .- (exp.(-p_annk).^(𝟙 / TSPY))
     
 	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
 
     ## pack land variables
-    @pack_land (p_C2Nveg, p_k, cFlowA) => land.cCycleBase
+    @pack_land (p_C2Nveg, p_k_base, cFlowA) => land.cCycleBase
     return land
 end
 

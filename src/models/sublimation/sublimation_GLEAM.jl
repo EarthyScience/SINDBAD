@@ -74,7 +74,7 @@ function update(o::sublimation_GLEAM, forcing, land::NamedTuple, helpers::NamedT
 
     ## pack land variables
     @pack_land begin
-        snowW => land.pools
+        # snowW => land.pools
         ΔsnowW => land.states
     end
     return land
