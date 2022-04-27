@@ -33,7 +33,7 @@ outparams, outdata = optimizeModel(forcing, out, observations, approaches, optim
     obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=1);
 
 # outf=columntable(outdata.fluxes)
-using GLMakie
+using GLMakies
 fig = Figure(resolution=(2200, 900))
 lines(outdata.transpiration)
 lines!(outdata.evapotranspiration)
