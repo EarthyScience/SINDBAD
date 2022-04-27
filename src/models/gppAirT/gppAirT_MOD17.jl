@@ -5,7 +5,7 @@ export gppAirT_MOD17
 	Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
 end
 
-function compute(o::gppAirT_MOD17, forcing, land, helpers)
+function compute(o::gppAirT_MOD17, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppAirT_MOD17 o
     @unpack_forcing TairDay ∈ forcing

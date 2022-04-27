@@ -3,7 +3,7 @@ export transpirationSupply_CASA
 struct transpirationSupply_CASA <: transpirationSupply
 end
 
-function compute(o::transpirationSupply_CASA, forcing, land, helpers)
+function compute(o::transpirationSupply_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land PAW ∈ land.states

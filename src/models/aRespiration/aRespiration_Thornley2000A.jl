@@ -5,7 +5,7 @@ export aRespiration_Thornley2000A
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
+function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000A o
 

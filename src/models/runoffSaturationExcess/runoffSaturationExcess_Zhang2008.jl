@@ -4,7 +4,7 @@ export runoffSaturationExcess_Zhang2008
 	α::T1 = 0.5 | (0.01, 10.0) | "an empirical Budyko parameter" | ""
 end
 
-function compute(o::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
+function compute(o::runoffSaturationExcess_Zhang2008, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Zhang2008 o
 

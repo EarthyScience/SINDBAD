@@ -2,7 +2,7 @@ export totalTWS_sumCombined
 
 struct totalTWS_sumCombined <: totalTWS end
 
-function precompute(o::totalTWS_sumCombined, forcing, land, helpers)
+function precompute(o::totalTWS_sumCombined, forcing, land::NamedTuple, helpers::NamedTuple)
     @unpack_land begin
         numType ∈ helpers.numbers
         TWS ∈ land.pools
@@ -18,7 +18,7 @@ function precompute(o::totalTWS_sumCombined, forcing, land, helpers)
     return land
 end
 
-function compute(o::totalTWS_sumCombined, forcing, land, helpers)
+function compute(o::totalTWS_sumCombined, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
     @unpack_land TWS ∈ land.pools

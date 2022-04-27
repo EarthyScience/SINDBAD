@@ -4,7 +4,7 @@ export NIRv_constant
 	constantNIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
 end
 
-function compute(o::NIRv_constant, forcing, land, helpers)
+function compute(o::NIRv_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_NIRv_constant o
 

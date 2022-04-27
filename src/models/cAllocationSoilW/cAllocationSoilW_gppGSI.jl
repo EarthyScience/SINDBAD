@@ -5,7 +5,7 @@ export cAllocationSoilW_gppGSI
 end
 
 
-function precompute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function precompute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 
@@ -19,7 +19,7 @@ function precompute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
 end
 
 
-function compute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function compute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocationSoilW_gppGSI o
 

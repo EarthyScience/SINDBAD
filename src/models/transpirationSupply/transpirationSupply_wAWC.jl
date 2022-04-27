@@ -4,7 +4,7 @@ export transpirationSupply_wAWC
 	tranFrac::T1 = 1.0 | (0.02, 1.0) | "fraction of total maximum available water that can be transpired" | ""
 end
 
-function compute(o::transpirationSupply_wAWC, forcing, land, helpers)
+function compute(o::transpirationSupply_wAWC, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_transpirationSupply_wAWC o
 

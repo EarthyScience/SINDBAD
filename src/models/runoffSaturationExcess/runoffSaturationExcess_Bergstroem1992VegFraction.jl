@@ -4,7 +4,7 @@ export runoffSaturationExcess_Bergstroem1992VegFraction
 	β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land, helpers)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992VegFraction o
 

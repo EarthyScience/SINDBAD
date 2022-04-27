@@ -3,7 +3,7 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand
 end
 
-function precompute(o::gppDemand_none, forcing, land, helpers)
+function precompute(o::gppDemand_none, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land begin
 		fAPAR ∈ land.states
 		gppPot ∈ land.gppPotential

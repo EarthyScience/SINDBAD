@@ -4,7 +4,7 @@ export WUE_constant
 	constantWUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
 end
 
-function compute(o::WUE_constant, forcing, land, helpers)
+function compute(o::WUE_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_WUE_constant o
 

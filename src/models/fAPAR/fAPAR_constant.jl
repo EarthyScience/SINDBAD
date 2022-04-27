@@ -4,7 +4,7 @@ export fAPAR_constant
 	constantfAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
 end
 
-function compute(o::fAPAR_constant, forcing, land, helpers)
+function compute(o::fAPAR_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_fAPAR_constant o
 

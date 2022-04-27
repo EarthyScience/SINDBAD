@@ -4,7 +4,7 @@ export vegAvailableWater_sigmoid
 	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
+function compute(o::vegAvailableWater_sigmoid, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegAvailableWater_sigmoid o
 

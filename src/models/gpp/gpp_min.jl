@@ -3,7 +3,7 @@ export gpp_min
 struct gpp_min <: gpp
 end
 
-function compute(o::gpp_min, forcing, land, helpers)
+function compute(o::gpp_min, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

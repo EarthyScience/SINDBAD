@@ -4,7 +4,7 @@ export cAllocationTreeFraction_Friedlingstein1999
 	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "fine root to coarse root fraction" | "fraction"
 end
 
-function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
+function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocationTreeFraction_Friedlingstein1999 o
 

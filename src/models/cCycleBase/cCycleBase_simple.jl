@@ -19,7 +19,7 @@ export cCycleBase_simple
 	C2Nveg::T3 = [25, 260, 260, 25] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_simple, forcing, land, helpers)
+function precompute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cCycleBase_simple o
 
 	## instantiate variables
@@ -30,7 +30,7 @@ function precompute(o::cCycleBase_simple, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cCycleBase_simple, forcing, land, helpers)
+function compute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cCycleBase_simple o
 

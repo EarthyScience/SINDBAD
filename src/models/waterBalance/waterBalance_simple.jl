@@ -3,7 +3,7 @@ export waterBalance_simple
 struct waterBalance_simple <: waterBalance
 end
 
-function precompute(o::waterBalance_simple, forcing, land, helpers)
+function precompute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack variables
 	@unpack_land begin
@@ -19,7 +19,7 @@ function precompute(o::waterBalance_simple, forcing, land, helpers)
 end
 
 
-function compute(o::waterBalance_simple, forcing, land, helpers)
+function compute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land begin
 		precip ∈ land.rainSnow
 		(totalW) ∈ land.totalTWS

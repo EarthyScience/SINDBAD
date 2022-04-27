@@ -3,7 +3,7 @@ export runoffOverland_none
 struct runoffOverland_none <: runoffOverland
 end
 
-function precompute(o::runoffOverland_none, forcing, land, helpers)
+function precompute(o::runoffOverland_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	runoffOverland = helpers.numbers.𝟘

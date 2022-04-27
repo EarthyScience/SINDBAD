@@ -2,7 +2,7 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function precompute(o::cAllocation_GSI, forcing, land, helpers)
+function precompute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## instantiate variables
     cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
@@ -12,7 +12,7 @@ function precompute(o::cAllocation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cAllocation_GSI, forcing, land, helpers)
+function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
     @unpack_land cAlloc ∈ land.states

@@ -3,7 +3,7 @@ export groundWSoilWInteraction_none
 struct groundWSoilWInteraction_none <: groundWSoilWInteraction
 end
 
-function precompute(o::groundWSoilWInteraction_none, forcing, land, helpers)
+function precompute(o::groundWSoilWInteraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	gwCapFlow = helpers.numbers.𝟘

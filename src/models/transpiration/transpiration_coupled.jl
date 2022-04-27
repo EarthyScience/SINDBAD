@@ -3,7 +3,7 @@ export transpiration_coupled
 struct transpiration_coupled <: transpiration
 end
 
-function compute(o::transpiration_coupled, forcing, land, helpers)
+function compute(o::transpiration_coupled, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

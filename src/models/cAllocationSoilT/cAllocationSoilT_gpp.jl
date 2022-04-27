@@ -3,7 +3,7 @@ export cAllocationSoilT_gpp
 struct cAllocationSoilT_gpp <: cAllocationSoilT
 end
 
-function compute(o::cAllocationSoilT_gpp, forcing, land, helpers)
+function compute(o::cAllocationSoilT_gpp, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land TempScGPP ∈ land.gppAirT
