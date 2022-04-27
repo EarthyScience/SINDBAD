@@ -3,7 +3,7 @@ export saturatedFraction_none
 struct saturatedFraction_none <: saturatedFraction
 end
 
-function precompute(o::saturatedFraction_none, forcing, land, helpers)
+function precompute(o::saturatedFraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	satFrac = helpers.numbers.𝟘

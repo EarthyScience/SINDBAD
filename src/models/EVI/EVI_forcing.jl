@@ -3,7 +3,7 @@ export EVI_forcing
 struct EVI_forcing <: EVI
 end
 
-function compute(o::EVI_forcing, forcing, land, helpers)
+function compute(o::EVI_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing EVI ∈ forcing
 

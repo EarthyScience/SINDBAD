@@ -7,7 +7,7 @@ export gppAirT_Maekelae2008
 end
 
 
-function precompute(o::gppAirT_Maekelae2008, forcing, land, helpers)
+function precompute(o::gppAirT_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_forcing TairDay ∈ forcing
 
@@ -18,7 +18,7 @@ function precompute(o::gppAirT_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
+function compute(o::gppAirT_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppAirT_Maekelae2008 o
     @unpack_forcing TairDay ∈ forcing

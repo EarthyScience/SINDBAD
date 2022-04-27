@@ -5,7 +5,7 @@ export fAPAR_vegFraction
 end
 
 
-function compute(o::fAPAR_vegFraction, forcing, land, helpers)
+function compute(o::fAPAR_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_fAPAR_vegFraction o
 
 	## unpack land variables

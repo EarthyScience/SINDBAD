@@ -5,7 +5,7 @@ export cAllocationSoilW_Friedlingstein1999
     maxL_fW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | ""
 end
 
-function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
+function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocationSoilW_Friedlingstein1999 o
 

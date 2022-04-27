@@ -4,7 +4,7 @@ export vegFraction_scaledNDVI
 	NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
 end
 
-function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
+function compute(o::vegFraction_scaledNDVI, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegFraction_scaledNDVI o
 

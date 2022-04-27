@@ -3,7 +3,7 @@ export cFlow_none
 struct cFlow_none <: cFlow
 end
 
-function precompute(o::cFlow_none, forcing, land, helpers)
+function precompute(o::cFlow_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	tmp = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))

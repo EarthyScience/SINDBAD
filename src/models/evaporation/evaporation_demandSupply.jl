@@ -5,7 +5,7 @@ export evaporation_demandSupply
 	supLim::T2 = 0.2 | (0.05, 1.0) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
-function compute(o::evaporation_demandSupply, forcing, land, helpers)
+function compute(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_demandSupply o
 
@@ -33,7 +33,7 @@ function compute(o::evaporation_demandSupply, forcing, land, helpers)
 	return land
 end
 
-function update(o::evaporation_demandSupply, forcing, land, helpers)
+function update(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_evaporation_demandSupply o
 
 	## unpack variables

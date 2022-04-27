@@ -3,7 +3,7 @@ export vegFraction_forcing
 struct vegFraction_forcing <: vegFraction
 end
 
-function compute(o::vegFraction_forcing, forcing, land, helpers)
+function compute(o::vegFraction_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_forcing vegFraction ∈ forcing
 
 	## pack land variables

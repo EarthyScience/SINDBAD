@@ -4,7 +4,7 @@ export evaporation_bareFraction
 	ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
 end
 
-function compute(o::evaporation_bareFraction, forcing, land, helpers)
+function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_bareFraction o
 
@@ -32,7 +32,7 @@ function compute(o::evaporation_bareFraction, forcing, land, helpers)
 	return land
 end
 
-function update(o::evaporation_bareFraction, forcing, land, helpers)
+function update(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables

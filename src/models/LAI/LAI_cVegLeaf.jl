@@ -4,7 +4,7 @@ export LAI_cVegLeaf
 	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
 end
 
-function compute(o::LAI_cVegLeaf, forcing, land, helpers)
+function compute(o::LAI_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land cEco ∈ land.pools
 
 	## calculate variables

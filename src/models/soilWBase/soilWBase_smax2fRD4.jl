@@ -9,38 +9,39 @@ export soilWBase_smax2fRD4
 	smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
 end
 
-function precompute(o::soilWBase_smax2fRD4, forcing, land, helpers)
-	@unpack_soilWBase_smax2fRD4 o
+function precompute(o::soilWBase_smax2fRD4, forcing, land::NamedTuple, helpers::NamedTuple)
+    @unpack_soilWBase_smax2fRD4 o
 
-	@unpack_land begin
-		n_soilW = soilW ∈ helpers.pools.water.nZix
-		numType ∈ helpers.numbers
-	end
+    @unpack_land begin
+        soilW ∈ land.pools
+        numType ∈ helpers.numbers
+    end
 
-	## precomputations/check
-	# get the soil thickness & root distribution information from input
-	p_soilDepths = helpers.pools.water.layerThickness.soilW;
-	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-	if length(length(p_soilDepths)) != 2 
-		error("soilWBase_smax2Layer approach needs eactly 2 soil layers in modelStructure.json.") 
-	end 
+    ## precomputations/check
+    n_soilW = length(soilW)
+    # get the soil thickness & root distribution information from input
+    soilLayerThickness = helpers.pools.water.layerThickness.soilW
+    # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
+    if length(length(soilLayerThickness)) != 2
+        error("soilWBase_smax2Layer approach needs eactly 2 soil layers in modelStructure.json.")
+    end
 
-	## instantiate variables
-	p_wSat = zeros(numType, n_soilW)
-	p_wFC = zeros(numType, n_soilW)
-	p_wWP = zeros(numType, n_soilW)
+    ## instantiate variables
+    p_wSat = zeros(numType, n_soilW)
+    p_wFC = zeros(numType, n_soilW)
+    p_wWP = zeros(numType, n_soilW)
 
-	## pack land variables
-	@pack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) => land.soilWBase
-	return land
+    ## pack land variables
+    @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP, n_soilW) => land.soilWBase
+    return land
 end
 
-function compute(o::soilWBase_smax2fRD4, forcing, land, helpers)
+function compute(o::soilWBase_smax2fRD4, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_soilWBase_smax2fRD4 o
 
 	## unpack land variables
-	@unpack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+	@unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
 	@unpack_forcing (AWC, RDeff, RDmax, SWCmax) ∈ forcing
 
 
@@ -55,8 +56,8 @@ function compute(o::soilWBase_smax2fRD4, forcing, land, helpers)
 	
 	# set the properties for each soil layer
 	# 1st layer
-	p_wSat[1] = smax1 * p_soilDepths[1]
-	p_wFC[1] = smax1 * p_soilDepths[1]
+	p_wSat[1] = smax1 * soilLayerThickness[1]
+	p_wFC[1] = smax1 * soilLayerThickness[1]
 	# 2nd layer - fill in by linaer combination of the RD data
 	p_wSat[2] = sum(p_RD)
 	p_wFC[2] = sum(p_RD)
@@ -90,7 +91,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
 *Outputs*
  - land.soilWBase.p_RD: the 4 scaled RD datas [pix, zix]
  - land.soilWBase.p_nsoilLayers
- - land.soilWBase.p_soilDepths
+ - land.soilWBase.soilLayerThickness
  - land.soilWBase.p_wAWC: = land.soilWBase.p_wSat
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers

@@ -10,7 +10,7 @@ export cTauVegProperties_CASA
 	LITC2N_per_PFT::T7 = [40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
 end
 
-function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
+function precompute(o::cTauVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
     @unpack_cTauVegProperties_CASA o
 
     @unpack_land (𝟘, numType) ∈ helpers.numbers
@@ -24,7 +24,7 @@ function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
+function compute(o::cTauVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cTauVegProperties_CASA o
 

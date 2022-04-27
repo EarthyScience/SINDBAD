@@ -3,7 +3,7 @@ export cTauVegProperties_none
 struct cTauVegProperties_none <: cTauVegProperties
 end
 
-function precompute(o::cTauVegProperties_none, forcing, land, helpers)
+function precompute(o::cTauVegProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
     @unpack_land (𝟘, numType) ∈ helpers.numbers
 
     ## calculate variables

@@ -3,7 +3,7 @@ export gppAirT_none
 struct gppAirT_none <: gppAirT
 end
 
-function precompute(o::gppAirT_none, forcing, land, helpers)
+function precompute(o::gppAirT_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	# set scalar to a constant 𝟙 [no effect on potential GPP]

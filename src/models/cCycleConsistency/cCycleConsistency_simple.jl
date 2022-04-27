@@ -3,7 +3,7 @@ export cCycleConsistency_simple
 struct cCycleConsistency_simple <: cCycleConsistency
 end
 
-function precompute(o::cCycleConsistency_simple, forcing, land, helpers)
+function precompute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## instantiate variables
 		flagUp = triu(ones(size(flow_matrix)), 1)
@@ -14,7 +14,7 @@ function precompute(o::cCycleConsistency_simple, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cCycleConsistency_simple, forcing, land, helpers)
+function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land (flagUp, flagLo) ∈ land.cCycleConsistency
