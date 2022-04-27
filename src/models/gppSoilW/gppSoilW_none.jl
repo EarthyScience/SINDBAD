@@ -3,7 +3,7 @@ export gppSoilW_none
 struct gppSoilW_none <: gppSoilW
 end
 
-function precompute(o::gppSoilW_none, forcing, land, helpers)
+function precompute(o::gppSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]

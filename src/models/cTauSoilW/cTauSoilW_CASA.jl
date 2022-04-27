@@ -4,7 +4,7 @@ export cTauSoilW_CASA
 	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
 
-function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
+function precompute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
@@ -15,7 +15,7 @@ function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cTauSoilW_CASA, forcing, land, helpers)
+function compute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cTauSoilW_CASA o
 

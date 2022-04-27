@@ -4,7 +4,7 @@ export LAI_constant
 	constantLAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2"
 end
 
-function compute(o::LAI_constant, forcing, land, helpers)
+function compute(o::LAI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_LAI_constant o
 

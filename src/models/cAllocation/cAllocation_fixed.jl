@@ -6,7 +6,7 @@ export cAllocation_fixed
 	cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of NPP to cLeaf" | "fraction"
 end
 
-function precompute(o::cAllocation_fixed, forcing, land, helpers)
+function precompute(o::cAllocation_fixed, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cAllocation_fixed o
 
 	## instantiate variables
@@ -17,7 +17,7 @@ function precompute(o::cAllocation_fixed, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cAllocation_fixed, forcing, land, helpers)
+function compute(o::cAllocation_fixed, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_cAllocation_fixed o
 

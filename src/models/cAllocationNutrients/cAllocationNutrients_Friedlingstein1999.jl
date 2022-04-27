@@ -6,7 +6,7 @@ export cAllocationNutrients_Friedlingstein1999
 end
 
 
-function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
+function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocationNutrients_Friedlingstein1999 o
 

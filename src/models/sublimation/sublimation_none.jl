@@ -3,7 +3,7 @@ export sublimation_none
 struct sublimation_none <: sublimation
 end
 
-function precompute(o::sublimation_none, forcing, land, helpers)
+function precompute(o::sublimation_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	sublimation = helpers.numbers.𝟘

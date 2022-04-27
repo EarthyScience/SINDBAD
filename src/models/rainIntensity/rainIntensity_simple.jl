@@ -4,7 +4,7 @@ export rainIntensity_simple
 	rainIntFactor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
 end
 
-function compute(o::rainIntensity_simple, forcing, land, helpers)
+function compute(o::rainIntensity_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_rainIntensity_simple o
 	@unpack_forcing Rain ∈ forcing

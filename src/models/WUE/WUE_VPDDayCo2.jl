@@ -6,7 +6,7 @@ export WUE_VPDDayCo2
 	Cm::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
 end
 
-function compute(o::WUE_VPDDayCo2, forcing, land, helpers)
+function compute(o::WUE_VPDDayCo2, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_WUE_VPDDayCo2 o
 	@unpack_forcing VPDDay ∈ forcing

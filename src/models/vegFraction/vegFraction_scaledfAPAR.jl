@@ -4,7 +4,7 @@ export vegFraction_scaledfAPAR
 	fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
 end
 
-function compute(o::vegFraction_scaledfAPAR, forcing, land, helpers)
+function compute(o::vegFraction_scaledfAPAR, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegFraction_scaledfAPAR o
 

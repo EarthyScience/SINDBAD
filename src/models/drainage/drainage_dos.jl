@@ -4,7 +4,7 @@ export drainage_dos
 	dos_exp::T1 = 1.0 | (0.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
-function compute(o::drainage_dos, forcing, land, helpers)
+function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_drainage_dos o
 

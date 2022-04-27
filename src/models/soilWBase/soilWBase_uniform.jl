@@ -4,21 +4,20 @@ struct soilWBase_uniform <: soilWBase
 end
 
 
-function precompute(o::soilWBase_uniform, forcing, land, helpers)
+function precompute(o::soilWBase_uniform, forcing, land::NamedTuple, helpers::NamedTuple)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
         (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
-        # n_soilW = soilW ∈ helpers.pools.water.nZix
         numType ∈ helpers.numbers
     end
     n_soilW = length(soilW)
     ## precomputations/check
     # get the soil thickness 
     soilDepths = helpers.pools.water.layerThickness.soilW
-    p_soilDepths = soilDepths
+    soilLayerThickness = soilDepths
 
     if length(sp_kFC) != n_soilW
         # println("soilWBase_uniform: the number of soil layers forcing data does not match the layers in in modelStructure.json. Using mean of input over the soil layers.")
@@ -38,15 +37,15 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
         sp_ψSat = mean(sp_ψSat)
         sp_ψWP = mean(sp_ψWP)
     end
-    # @create_arrays (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :p_soilDepths, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) = (helpers.numbers.aone, n_soilW)
-    # props = (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :p_soilDepths, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) 
+    # @create_arrays (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :soilLayerThickness, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) = (helpers.numbers.aone, n_soilW)
+    # props = (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :soilLayerThickness, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) 
 
     ## instantiate variables
     p_CLAY = ones(numType, n_soilW)
     p_SAND = ones(numType, n_soilW)
     p_SILT = ones(numType, n_soilW)
     p_ORGM = ones(numType, n_soilW)
-    p_soilDepths = ones(numType, n_soilW)
+    soilLayerThickness = ones(numType, n_soilW)
     p_wFC = ones(numType, n_soilW)
     p_wWP = ones(numType, n_soilW)
     p_wSat = ones(numType, n_soilW)
@@ -81,7 +80,7 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     p_wFC = p_θFC .* soilDepths
     p_wWP = p_θWP .* soilDepths
     p_wSat = p_θSat .* soilDepths
-    p_soilDepths = soilDepths
+    soilLayerThickness = soilDepths
 
     # get the plant available water capacity
     p_wAWC = p_wFC - p_wWP
@@ -94,7 +93,7 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
 
     soilW .= min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
-        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, p_soilDepths, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
+        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, soilLayerThickness, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
         soilW => land.pools
     end
     return land

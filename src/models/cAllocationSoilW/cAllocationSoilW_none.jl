@@ -2,7 +2,7 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function precompute(o::cAllocationSoilW_none, forcing, land, helpers)
+function precompute(o::cAllocationSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## calculate variables
     fW = helpers.numbers.𝟙

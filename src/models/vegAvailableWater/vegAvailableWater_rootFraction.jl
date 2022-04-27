@@ -3,7 +3,7 @@ export vegAvailableWater_rootFraction
 struct vegAvailableWater_rootFraction <: vegAvailableWater
 end
 
-function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+function compute(o::vegAvailableWater_rootFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

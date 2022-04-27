@@ -3,7 +3,7 @@ export runoffInfiltrationExcess_none
 struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess
 end
 
-function precompute(o::runoffInfiltrationExcess_none, forcing, land, helpers)
+function precompute(o::runoffInfiltrationExcess_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	runoffInfExc = helpers.numbers.𝟘

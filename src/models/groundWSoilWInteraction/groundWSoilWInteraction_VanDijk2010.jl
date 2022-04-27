@@ -3,7 +3,7 @@ export groundWSoilWInteraction_VanDijk2010
 struct groundWSoilWInteraction_VanDijk2010 <: groundWSoilWInteraction
 end
 
-function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
@@ -36,7 +36,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	return land
 end
 
-function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack variables
 	@unpack_land begin

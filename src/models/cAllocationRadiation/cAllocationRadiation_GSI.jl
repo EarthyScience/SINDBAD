@@ -6,7 +6,7 @@ export cAllocationRadiation_GSI
 	base_Rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
 end
 
-function precompute(o::cAllocationRadiation_GSI, forcing, land, helpers)
+function precompute(o::cAllocationRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 
@@ -19,7 +19,7 @@ function precompute(o::cAllocationRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
+function compute(o::cAllocationRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_cAllocationRadiation_GSI o
 	@unpack_forcing PAR ∈ forcing

@@ -4,7 +4,7 @@ export cTauSoilProperties_CASA
 	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
 end
 
-function precompute(o::cTauSoilProperties_CASA, forcing, land, helpers)
+function precompute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cTauSoilProperties_CASA o
 
 	## instantiate variables
@@ -15,7 +15,7 @@ function precompute(o::cTauSoilProperties_CASA, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
+function compute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cTauSoilProperties_CASA o
 

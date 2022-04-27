@@ -4,7 +4,7 @@ export runoffSaturationExcess_Bergstroem1992
 	β::T1 = 1.1 | (0.1, 5) | "berg exponential parameter" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992 o
 

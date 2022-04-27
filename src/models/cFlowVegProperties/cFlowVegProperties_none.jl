@@ -3,7 +3,7 @@ export cFlowVegProperties_none
 struct cFlowVegProperties_none <: cFlowVegProperties
 end
 
-function precompute(o::cFlowVegProperties_none, forcing, land, helpers)
+function precompute(o::cFlowVegProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## calculate variables
     p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))

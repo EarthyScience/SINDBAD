@@ -2,7 +2,7 @@ export cAllocationLAI_none
 
 struct cAllocationLAI_none <: cAllocationLAI end
 
-function precompute(o::cAllocationLAI_none, forcing, land, helpers)
+function precompute(o::cAllocationLAI_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## calculate variables
     LL = helpers.numbers.𝟙

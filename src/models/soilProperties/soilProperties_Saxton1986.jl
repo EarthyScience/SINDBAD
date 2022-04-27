@@ -24,7 +24,7 @@ export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986
 	v::T21 = 0.00087546 | nothing | "Saxton Parameters" | ""
 end
 
-function precompute(o::soilProperties_Saxton1986, forcing, land, helpers)
+function precompute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_soilProperties_Saxton1986 o
 
 	## instantiate variables
@@ -45,7 +45,7 @@ function precompute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	return land
 end
 
-function compute(o::soilProperties_Saxton1986, forcing, land, helpers)
+function compute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_soilProperties_Saxton1986 o
 
@@ -101,14 +101,14 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 """
 function kSaxton1986(land, helpers, sl)
 	@unpack_land begin
-		(p_CLAY, p_SAND, p_soilDepths) ∈ land.soilWBase
+		(p_CLAY, p_SAND, soilLayerThickness) ∈ land.soilWBase
 		soilW ∈ land.pools
 	end
 
 	## calculate variables
 	CLAY = p_CLAY[sl] * 100
 	SAND = p_SAND[sl] * 100
-	soilD = p_soilDepths[sl]
+	soilD = soilLayerThickness[sl]
 	θ = soilW[sl] / soilD
 	K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
 

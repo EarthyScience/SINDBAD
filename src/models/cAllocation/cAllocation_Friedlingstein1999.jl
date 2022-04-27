@@ -6,7 +6,7 @@ export cAllocation_Friedlingstein1999
 	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
 end
 
-function precompute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
+function precompute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cAllocation_Friedlingstein1999 o
 
 	## instantiate variables
@@ -17,7 +17,7 @@ function precompute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
 	return land
 end
 
-function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
+function compute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocation_Friedlingstein1999 o
 

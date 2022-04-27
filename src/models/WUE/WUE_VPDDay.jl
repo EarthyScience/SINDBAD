@@ -4,7 +4,7 @@ export WUE_VPDDay
 	WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
 end
 
-function compute(o::WUE_VPDDay, forcing, land, helpers)
+function compute(o::WUE_VPDDay, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_WUE_VPDDay o
 	@unpack_forcing VPDDay ∈ forcing

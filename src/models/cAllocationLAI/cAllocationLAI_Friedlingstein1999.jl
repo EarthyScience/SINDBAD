@@ -6,7 +6,7 @@ export cAllocationLAI_Friedlingstein1999
     maxL::T3 = 1.0 | (0.0, 1.0) | "maximum LAI effect on allocation" | ""
 end
 
-function compute(o::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
+function compute(o::cAllocationLAI_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cAllocationLAI_Friedlingstein1999 o
 

@@ -3,7 +3,7 @@ export PET_PriestleyTaylor1972
 struct PET_PriestleyTaylor1972 <: PET
 end
 
-function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
+function compute(o::PET_PriestleyTaylor1972, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
     @unpack_land 𝟘  ∈ helpers.numbers

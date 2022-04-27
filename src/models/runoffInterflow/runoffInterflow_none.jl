@@ -3,7 +3,7 @@ export runoffInterflow_none
 struct runoffInterflow_none <: runoffInterflow
 end
 
-function precompute(o::runoffInterflow_none, forcing, land, helpers)
+function precompute(o::runoffInterflow_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	runoffInterflow = helpers.numbers.𝟘

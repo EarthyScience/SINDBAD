@@ -3,7 +3,7 @@ export getPools_simple
 struct getPools_simple <: getPools
 end
 
-function compute(o::getPools_simple, forcing, land, helpers)
+function compute(o::getPools_simple, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land rain ∈ land.rainSnow

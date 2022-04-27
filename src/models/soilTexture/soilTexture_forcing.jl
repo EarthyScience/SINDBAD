@@ -3,7 +3,7 @@ export soilTexture_forcing
 struct soilTexture_forcing <: soilTexture
 end
 
-function precompute(o::soilTexture_forcing, forcing, land, helpers)
+function precompute(o::soilTexture_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
 	#@needscheck
 	## unpack forcing
 	@unpack_forcing (CLAY, ORGM, SAND, SILT) ∈ forcing

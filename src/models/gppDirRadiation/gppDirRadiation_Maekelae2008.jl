@@ -4,7 +4,7 @@ export gppDirRadiation_Maekelae2008
     γ::T1 = 0.04 | (0.001, 0.1) | "empirical light response parameter" | ""
 end
 
-function compute(o::gppDirRadiation_Maekelae2008, forcing, land, helpers)
+function compute(o::gppDirRadiation_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppDirRadiation_Maekelae2008 o
     @unpack_forcing PAR ∈ forcing

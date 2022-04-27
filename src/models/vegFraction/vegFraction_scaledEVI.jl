@@ -4,7 +4,7 @@ export vegFraction_scaledEVI
 	EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
 end
 
-function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
+function compute(o::vegFraction_scaledEVI, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegFraction_scaledEVI o
 

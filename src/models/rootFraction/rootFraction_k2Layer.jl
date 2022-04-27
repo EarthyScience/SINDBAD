@@ -5,7 +5,7 @@ export rootFraction_k2Layer
 	k1::T2 = 0.5 | (0.01, 0.99) | "fraction of 1st soil layer available for transpiration" | ""
 end
 
-function precompute(o::rootFraction_k2Layer, forcing, land, helpers)
+function precompute(o::rootFraction_k2Layer, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_rootFraction_k2Layer o
 
 	## precomputations/check
@@ -22,7 +22,7 @@ function precompute(o::rootFraction_k2Layer, forcing, land, helpers)
 	return land
 end
 
-function compute(o::rootFraction_k2Layer, forcing, land, helpers)
+function compute(o::rootFraction_k2Layer, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_rootFraction_k2Layer o
 

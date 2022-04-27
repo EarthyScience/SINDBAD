@@ -3,7 +3,7 @@ export gppDiffRadiation_none
 struct gppDiffRadiation_none <: gppDiffRadiation
 end
 
-function precompute(o::gppDiffRadiation_none, forcing, land, helpers)
+function precompute(o::gppDiffRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]

@@ -4,7 +4,7 @@ export snowMelt_Tair
 	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
 end
 
-function compute(o::snowMelt_Tair, forcing, land, helpers)
+function compute(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_snowMelt_Tair o
     @unpack_forcing Tair ∈ forcing
@@ -39,7 +39,7 @@ function compute(o::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
-function update(o::snowMelt_Tair, forcing, land, helpers)
+function update(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
     @unpack_snowMelt_Tair o
 
     ## unpack variables

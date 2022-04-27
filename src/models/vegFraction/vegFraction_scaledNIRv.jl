@@ -4,7 +4,7 @@ export vegFraction_scaledNIRv
 	NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | ""
 end
 
-function compute(o::vegFraction_scaledNIRv, forcing, land, helpers)
+function compute(o::vegFraction_scaledNIRv, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegFraction_scaledNIRv o
 

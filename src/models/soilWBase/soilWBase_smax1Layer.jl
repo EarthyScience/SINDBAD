@@ -4,50 +4,51 @@ export soilWBase_smax1Layer
 	smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
 end
 
-function precompute(o::soilWBase_smax1Layer, forcing, land, helpers)
-	@unpack_soilWBase_smax1Layer o
+function precompute(o::soilWBase_smax1Layer, forcing, land::NamedTuple, helpers::NamedTuple)
+    @unpack_soilWBase_smax1Layer o
 
-	@unpack_land begin
-		n_soilW = soilW ∈ helpers.pools.water.nZix
-		numType ∈ helpers.numbers
-	end
-	## precomputations/check
-	# get the soil thickness & root distribution information from input
-	p_soilDepths = helpers.pools.water.layerThickness.soilW;
-	# check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
-	if length(p_soilDepths) != 1 
-		error(["soilWBase_smax1Layer needs eactly 1 soil layer in modelStructure.json."]) 
-	end
+    @unpack_land begin
+        soilW ∈ land.pools
+        numType ∈ helpers.numbers
+    end
+    ## precomputations/check
+    n_soilW = length(soilW)
+    # get the soil thickness & root distribution information from input
+    soilLayerThickness = helpers.pools.water.layerThickness.soilW
+    # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
+    if length(soilLayerThickness) != 1
+        error(["soilWBase_smax1Layer needs eactly 1 soil layer in modelStructure.json."])
+    end
 
-	## instantiate variables
-	p_wSat = ones(numType, n_soilW)
-	p_wFC = ones(numType, n_soilW)
-	p_wWP = zeros(numType, n_soilW)
+    ## instantiate variables
+    p_wSat = ones(numType, n_soilW)
+    p_wFC = ones(numType, n_soilW)
+    p_wWP = zeros(numType, n_soilW)
 
-	## pack land variables
-	@pack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) => land.soilWBase
-	return land
+    ## pack land variables
+    @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
+    return land
 end
 
-function compute(o::soilWBase_smax1Layer, forcing, land, helpers)
+function compute(o::soilWBase_smax1Layer, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_soilWBase_smax1Layer o
 
 	## unpack land variables
-	@unpack_land (p_soilDepths, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+	@unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
 
 	## calculate variables
 	
 	# set the properties for each soil layer
 	# 1st layer
-	p_wSat[1] = smax * p_soilDepths[1]
-	p_wFC[1] = smax * p_soilDepths[1]
+	p_wSat[1] = smax * soilLayerThickness[1]
+	p_wFC[1] = smax * soilLayerThickness[1]
 
 	# get the plant available water available (all the water is plant available)
 	p_wAWC = p_wSat
 
 	## pack land variables
-	@pack_land (p_wAWC, p_wFC, p_wSat, p_wWP) => land.soilWBase
+	@pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW) => land.soilWBase
 	return land
 end
 
@@ -67,7 +68,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
 
 *Outputs*
  - land.soilWBase.p_nsoilLayers
- - land.soilWBase.p_soilDepths
+ - land.soilWBase.soilLayerThickness
  - land.soilWBase.p_wAWC: = land.soilWBase.p_wSat
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wWP: wilting point set to zero for all layers

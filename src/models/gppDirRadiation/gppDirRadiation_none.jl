@@ -3,7 +3,7 @@ export gppDirRadiation_none
 struct gppDirRadiation_none <: gppDirRadiation
 end
 
-function precompute(o::gppDirRadiation_none, forcing, land, helpers)
+function precompute(o::gppDirRadiation_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	LightScGPP = helpers.numbers.𝟙

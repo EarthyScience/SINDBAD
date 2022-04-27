@@ -7,7 +7,7 @@ export soilTexture_fixed
 	ORGM::T4 = 0.0 | (0.0, 1.0) | "Organic matter content" | ""
 end
 
-function precompute(o::soilTexture_fixed, forcing, land, helpers)
+function precompute(o::soilTexture_fixed, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_soilTexture_fixed o
 
 	## set parameter variables

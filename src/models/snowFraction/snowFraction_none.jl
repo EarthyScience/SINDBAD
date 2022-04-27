@@ -3,7 +3,7 @@ export snowFraction_none
 struct snowFraction_none <: snowFraction
 end
 
-function precompute(o::snowFraction_none, forcing, land, helpers)
+function precompute(o::snowFraction_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	snowFraction = helpers.numbers.𝟘

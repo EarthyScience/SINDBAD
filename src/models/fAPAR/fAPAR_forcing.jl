@@ -3,7 +3,7 @@ export fAPAR_forcing
 struct fAPAR_forcing <: fAPAR
 end
 
-function compute(o::fAPAR_forcing, forcing, land, helpers)
+function compute(o::fAPAR_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing fAPAR ∈ forcing
 

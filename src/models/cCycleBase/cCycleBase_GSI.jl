@@ -22,7 +22,7 @@ export cCycleBase_GSI
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
-function precompute(o::cCycleBase_GSI, forcing, land, helpers)
+function precompute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
@@ -40,7 +40,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cCycleBase_GSI, forcing, land, helpers)
+function compute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cCycleBase_GSI o
 

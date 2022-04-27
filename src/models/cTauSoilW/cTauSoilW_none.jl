@@ -3,7 +3,7 @@ export cTauSoilW_none
 struct cTauSoilW_none <: cTauSoilW
 end
 
-function precompute(o::cTauSoilW_none, forcing, land, helpers)
+function precompute(o::cTauSoilW_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	p_fsoilW = ones(helpers.numbers.numType, length(land.pools.cEco))

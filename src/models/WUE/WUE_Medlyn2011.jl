@@ -5,7 +5,7 @@ export WUE_Medlyn2011
 	ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | ""
 end
 
-function compute(o::WUE_Medlyn2011, forcing, land, helpers)
+function compute(o::WUE_Medlyn2011, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_WUE_Medlyn2011 o
 	@unpack_forcing (PsurfDay, VPDDay) ∈ forcing

@@ -3,7 +3,7 @@ export runoffSurface_all
 struct runoffSurface_all <: runoffSurface
 end
 
-function compute(o::runoffSurface_all, forcing, land, helpers)
+function compute(o::runoffSurface_all, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land runoffOverland ∈ land.fluxes

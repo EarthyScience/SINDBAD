@@ -7,7 +7,7 @@ export cTauSoilW_GSI
 	Wexp::T4 = 10 | (nothing, nothing) | "reference for exponent of sensitivity" | "per percent"
 end
 
-function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
+function precompute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
@@ -19,7 +19,7 @@ function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 end
 
 
-function compute(o::cTauSoilW_GSI, forcing, land, helpers)
+function compute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cTauSoilW_GSI o
 

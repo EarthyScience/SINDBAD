@@ -5,7 +5,7 @@ export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 	scaleFro::T2 = 1.0 | (0.1, 3.0) | "linear scaling parameter for rozen Soil fraction" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	#@needscheck
 	@unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil o

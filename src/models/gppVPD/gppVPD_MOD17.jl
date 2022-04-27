@@ -5,7 +5,7 @@ export gppVPD_MOD17
 	VPDmin::T2 = 0.65 | (0.0, 1.0) | "Min VPD with GPP > 0" | "kPa"
 end
 
-function compute(o::gppVPD_MOD17, forcing, land, helpers)
+function compute(o::gppVPD_MOD17, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 o
     @unpack_forcing VPDDay ∈ forcing

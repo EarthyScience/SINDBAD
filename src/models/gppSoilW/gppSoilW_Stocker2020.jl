@@ -6,7 +6,7 @@ export gppSoilW_Stocker2020
 end
 
 
-function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
+function compute(o::gppSoilW_Stocker2020, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_gppSoilW_Stocker2020 o
 

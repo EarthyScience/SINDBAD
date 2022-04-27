@@ -3,7 +3,7 @@ export gpp_coupled
 struct gpp_coupled <: gpp
 end
 
-function compute(o::gpp_coupled, forcing, land, helpers)
+function compute(o::gpp_coupled, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

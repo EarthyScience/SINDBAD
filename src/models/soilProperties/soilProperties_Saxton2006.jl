@@ -8,7 +8,7 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
 	EC::T5 = 36.0 | (30.0, 40.0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
 end
 
-function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
+function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_soilProperties_Saxton2006 o
 
 	@unpack_land begin

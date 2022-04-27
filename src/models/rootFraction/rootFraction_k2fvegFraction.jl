@@ -5,7 +5,7 @@ export rootFraction_k2fvegFraction
 	k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
 end
 
-function precompute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
+function precompute(o::rootFraction_k2fvegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_rootFraction_k2fvegFraction o
 
 	## precomputations/check
@@ -22,7 +22,7 @@ function precompute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	return land
 end
 
-function compute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
+function compute(o::rootFraction_k2fvegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_rootFraction_k2fvegFraction o
 

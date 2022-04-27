@@ -4,7 +4,7 @@ export interception_vegFraction
 	pInt::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
 end
 
-function compute(o::interception_vegFraction, forcing, land, helpers)
+function compute(o::interception_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_interception_vegFraction o
 

@@ -4,7 +4,7 @@ export runoffSurface_indirect
 	dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
 end
 
-function compute(o::runoffSurface_indirect, forcing, land, helpers)
+function compute(o::runoffSurface_indirect, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSurface_indirect o
 
@@ -32,7 +32,7 @@ function compute(o::runoffSurface_indirect, forcing, land, helpers)
 	return land
 end
 
-function update(o::runoffSurface_indirect, forcing, land, helpers)
+function update(o::runoffSurface_indirect, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_runoffSurface_indirect o
 
 	## unpack variables

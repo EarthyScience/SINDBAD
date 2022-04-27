@@ -4,7 +4,7 @@ export vegFraction_constant
 	constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
 end
 
-function compute(o::vegFraction_constant, forcing, land, helpers)
+function compute(o::vegFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegFraction_constant o
 

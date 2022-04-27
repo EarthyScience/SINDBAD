@@ -5,7 +5,7 @@ export evaporation_vegFraction
 	supLim::T2 = 0.2 | (0.03, 1.0) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
-function compute(o::evaporation_vegFraction, forcing, land, helpers)
+function compute(o::evaporation_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_vegFraction o
 
@@ -37,7 +37,7 @@ function compute(o::evaporation_vegFraction, forcing, land, helpers)
 	return land
 end
 
-function update(o::evaporation_vegFraction, forcing, land, helpers)
+function update(o::evaporation_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables

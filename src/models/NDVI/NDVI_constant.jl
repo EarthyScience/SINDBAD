@@ -4,7 +4,7 @@ export NDVI_constant
 	constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
 end
 
-function compute(o::NDVI_constant, forcing, land, helpers)
+function compute(o::NDVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_NDVI_constant o
 

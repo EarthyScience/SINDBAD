@@ -6,7 +6,7 @@ export gppVPD_expco2
     Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
 end
 
-function compute(o::gppVPD_expco2, forcing, land, helpers)
+function compute(o::gppVPD_expco2, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppVPD_expco2 o
     @unpack_forcing VPDDay ∈ forcing

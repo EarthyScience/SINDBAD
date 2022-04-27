@@ -3,7 +3,7 @@ export cFlowSoilProperties_none
 struct cFlowSoilProperties_none <: cFlowSoilProperties
 end
 
-function precompute(o::cFlowSoilProperties_none, forcing, land, helpers)
+function precompute(o::cFlowSoilProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))

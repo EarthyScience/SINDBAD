@@ -3,7 +3,7 @@ export transpiration_none
 struct transpiration_none <: transpiration
 end
 
-function precompute(o::transpiration_none, forcing, land, helpers)
+function precompute(o::transpiration_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	transpiration = helpers.numbers.𝟘

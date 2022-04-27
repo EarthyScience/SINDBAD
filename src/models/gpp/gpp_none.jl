@@ -3,7 +3,7 @@ export gpp_none
 struct gpp_none <: gpp
 end
 
-function precompute(o::gpp_none, forcing, land, helpers)
+function precompute(o::gpp_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	gpp = helpers.numbers.𝟘

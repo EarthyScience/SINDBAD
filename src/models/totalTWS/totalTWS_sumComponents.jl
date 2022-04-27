@@ -3,7 +3,7 @@ export totalTWS_sumComponents
 struct totalTWS_sumComponents <: totalTWS
 end
 
-function precompute(o::totalTWS_sumComponents, forcing, land, helpers)
+function precompute(o::totalTWS_sumComponents, forcing, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land numType ∈ helpers.numbers
 	## calculate variables
 	if !hasproperty(land.pools, :soilW)
@@ -43,7 +43,7 @@ function precompute(o::totalTWS_sumComponents, forcing, land, helpers)
 	return land
 end
 
-function compute(o::totalTWS_sumComponents, forcing, land, helpers)
+function compute(o::totalTWS_sumComponents, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land (groundW, snowW, soilW, surfaceW) ∈ land.pools

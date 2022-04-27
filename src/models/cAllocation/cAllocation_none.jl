@@ -2,7 +2,7 @@ export cAllocation_none
 
 struct cAllocation_none <: cAllocation end
 
-function precompute(o::cAllocation_none, forcing, land, helpers)
+function precompute(o::cAllocation_none, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## calculate variables
     cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))

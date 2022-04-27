@@ -6,7 +6,7 @@ export gppSoilW_Keenan2009
     sSmin::T3 = 0.5 | (0.01, 0.95) | "" | ""
 end
 
-function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
+function compute(o::gppSoilW_Keenan2009, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_gppSoilW_Keenan2009 o
 

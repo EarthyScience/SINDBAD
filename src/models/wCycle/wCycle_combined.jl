@@ -3,7 +3,7 @@ export wCycle_combined
 struct wCycle_combined <: wCycle
 end
 
-function compute(o::wCycle_combined, forcing, land, helpers)
+function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack variables
 	@unpack_land begin
 		TWS ∈ land.pools
