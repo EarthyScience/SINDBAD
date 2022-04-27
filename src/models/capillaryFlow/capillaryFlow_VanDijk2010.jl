@@ -26,7 +26,7 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helper
 	## pack land variables
 	@pack_land begin
 		capFlow => land.capillaryFlow
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
@@ -48,8 +48,8 @@ function update(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 end

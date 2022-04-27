@@ -65,7 +65,7 @@ function compute(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::
 	@pack_land begin
 		(sET, sPET_prev) => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
@@ -88,8 +88,8 @@ function update(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::N
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 end
