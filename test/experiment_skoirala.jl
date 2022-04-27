@@ -21,9 +21,9 @@ approaches = info.tem.models.forward;
 # @show out.pools.soilW
 
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 osp = outsp[1];
 pprint(osp)
+@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
