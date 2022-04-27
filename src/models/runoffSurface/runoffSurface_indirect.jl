@@ -49,7 +49,7 @@ function update(o::runoffSurface_indirect, forcing, land::NamedTuple, helpers::N
 
 	## pack land variables
 	@pack_land begin
-		surfaceW => land.pools
+		# surfaceW => land.pools
 		ΔsurfaceW => land.states
 	end
 	return land

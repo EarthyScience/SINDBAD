@@ -27,7 +27,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land::NamedTuple, helpe
     ## pack land variables
     @pack_land begin
         wRootUptake => land.states
-        ΔsoilW => land.states
+        # ΔsoilW => land.states
     end
     return land
 end
@@ -49,8 +49,8 @@ function update(o::rootWaterUptake_proportion, forcing, land::NamedTuple, helper
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 end

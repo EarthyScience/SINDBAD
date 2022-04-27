@@ -94,7 +94,7 @@ function precompute(o::soilWBase_uniform, forcing, land::NamedTuple, helpers::Na
     soilW .= min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
         (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, soilLayerThickness, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
-        soilW => land.pools
+        # soilW => land.pools
     end
     return land
 end

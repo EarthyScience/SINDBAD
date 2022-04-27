@@ -55,8 +55,8 @@ function update(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTup
 
 	## pack land variables
 	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
+		# soilW => land.pools
+		# ΔsoilW => land.states
 	end
 	return land
 

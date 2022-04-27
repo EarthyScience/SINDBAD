@@ -23,17 +23,16 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev) ∈ land.states
+        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, p_k) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
-        p_k_act ∈ land.cTau
         (p_A, giver, taker) ∈ land.cFlow
         (fluxOrder) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## these all need to be zeros maybe is taken care automatically.
     ## compute losses
-    cEcoOut = min.(cEco, cEco .* p_k_act)
+    cEcoOut = min.(cEco, cEco .* p_k)
     ## gains to vegetation
     zixVeg = getzix(land.pools.cVeg)
     cNPP = gpp .* cAlloc[zixVeg] .- cEcoEfflux[zixVeg]

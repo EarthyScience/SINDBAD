@@ -80,7 +80,7 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
         fT ∈ land.cAllocationSoilT
         fR ∈ land.cAllocationRadiation
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
-        p_k_act ∈ land.cTau
+        p_k ∈ land.states
     end
 
     flowTable = flowTable
@@ -124,19 +124,19 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     # Re2L = Re2LR * (fW / (fR + fW)); # if water stressor is high [
     # Re2R = Re2LR * (fR / (fR + fW)); # if light stressor is high [
     # the following two lines lead to k larger than 1; which results in negative carbon pools.
-    # p_k_act[cVegLeafzix] = p_k_act[cVegLeafzix] + k_Lshed + L2Re
-    # p_k_act[cVegRootzix] = p_k_act[cVegRootzix] + k_Rshed + R2Re
+    # p_k[cVegLeafzix] = p_k[cVegLeafzix] + k_Lshed + L2Re
+    # p_k[cVegRootzix] = p_k[cVegRootzix] + k_Rshed + R2Re
 
     # adjust the outflow rate from the flow pools
-    p_k_act[cVegLeafzix] .= min.((p_k_act[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
-    L2ReF = L2Re / (p_k_act[cVegLeafzix])
-    k_LshedF = k_Lshed / (p_k_act[cVegLeafzix])
-    p_k_act[cVegRootzix] .= min.((p_k_act[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
-    R2ReF = R2Re / (p_k_act[cVegRootzix])
-    k_RshedF = k_Rshed / (p_k_act[cVegRootzix])
-    p_k_act[cVegReservezix] .= min.((p_k_act[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
-    Re2LF = Re2L / p_k_act[cVegReservezix]
-    Re2RF = Re2R / p_k_act[cVegReservezix]
+    p_k[cVegLeafzix] .= min.((p_k[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
+    L2ReF = L2Re / (p_k[cVegLeafzix])
+    k_LshedF = k_Lshed / (p_k[cVegLeafzix])
+    p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
+    R2ReF = R2Re / (p_k[cVegRootzix])
+    k_RshedF = k_Rshed / (p_k[cVegRootzix])
+    p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
+    Re2LF = Re2L / p_k[cVegReservezix]
+    Re2RF = Re2R / p_k[cVegReservezix]
 
     # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
     for ii in 1:length(ndxSrc)
@@ -169,7 +169,7 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     ## pack land variables
     @pack_land begin
         (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, p_A, slope_fWfTfR, fWfTfR_prev) => land.cFlow
-        p_k_act => land.cTau
+        p_k => land.states
     end
     return land
 end

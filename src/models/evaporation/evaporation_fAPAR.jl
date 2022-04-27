@@ -30,7 +30,7 @@ function compute(o::evaporation_fAPAR, forcing, land::NamedTuple, helpers::Named
 	@pack_land begin
 		PETsoil => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
@@ -52,10 +52,10 @@ function update(o::evaporation_fAPAR, forcing, land::NamedTuple, helpers::NamedT
 	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
 	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
-	end
+	# @pack_land begin
+		# soilW => land.pools
+		# ΔsoilW => land.states
+	# end
 	return land
 end
 
