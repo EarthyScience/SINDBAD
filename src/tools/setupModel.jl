@@ -4,7 +4,7 @@ function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
     for sm in selModels
         if sm ∉ fullModels
-            println(sm, "is not a valid model from fullModels check model structure") # should throw error
+            println(sm, "is not a valid model from fullModels. check model structure") # should throw error
             return false
         end
     end
@@ -26,9 +26,7 @@ end
 function getSelectedApproaches(info, selModelsOrdered)
     sel_appr_forward = ()
     sel_appr_spinup = ()
-    println(selModelsOrdered)
     defaultModel = getfield(info.modelStructure, :defaultModel)
-    @show defaultModel
     for sm in selModelsOrdered
         modInfo = getfield(info.modelStructure.models, sm)
         modAppr = modInfo.approach
@@ -57,13 +55,46 @@ function generateDatesInfo(info)
     tmpDates = (;)
     timeData = getfield(info.modelRun, :time)
     timeProps = propertynames(timeData)
-    @show timeProps
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
     # info=(; info..., tem=(; info.tem..., dates = tmpDates));
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates))) # aone=aone, azero=azero
     return info
+end
+
+function getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", numType=Float64)
+    for mainPool in mainPools
+        prefix = prename
+        poolInfo = getproperty(poolData, mainPool)
+        if !isa(poolInfo, NamedTuple)
+            if isa(poolInfo[1], Number)
+                lenpool = poolInfo[1]
+                layerThickNess = repeat([nothing], lenpool)
+            else
+                lenpool = length(poolInfo[1])
+                layerThickNess = numType.(poolInfo[1])
+            end
+
+            append!(layerThicknesses, layerThickNess)
+            append!(nlayers, fill(1, lenpool))
+            append!(layer, collect(1:lenpool))
+            append!(inits, fill(numType(poolInfo[2]), lenpool))
+
+            if prename == ""
+                append!(subPoolName, fill(mainPool, lenpool))
+                append!(mainPoolName, fill(mainPool, lenpool))
+            else
+                append!(subPoolName, fill(Symbol(String(prename) * string(mainPool)), lenpool))
+                append!(mainPoolName, fill(Symbol(String(prename)), lenpool))
+            end
+        else
+            prefix = prename * String(mainPool)
+            subPools = propertynames(poolInfo)
+            layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName = getPoolInformation(subPools, poolInfo, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename=prefix, numType=numType)
+        end
+    end
+    return layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName
 end
 
 """
@@ -81,66 +112,39 @@ function generateStatesInfo(info)
         hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
         nlayers = []
+        layerThicknesses = []
         layer = []
         inits = []
         subPoolName = []
         mainPoolName = []
         mainPools = Symbol.(keys(getfield(getfield(info.modelStructure.pools, element), :components)))
-        for mainPool in mainPools
-            poolInfo = getproperty(poolData, mainPool)
-            if poolInfo isa Array{<:Number,1}
-                lenpool = Int64(poolInfo[1])
-                append!(nlayers, fill(1, lenpool))
-                append!(layer, collect(1:poolInfo[1]))
-                append!(inits, fill(poolInfo[2], lenpool))
-                append!(subPoolName, fill(mainPool, lenpool))
-                append!(mainPoolName, fill(mainPool, lenpool))
-            else
-                subpools = propertynames(poolInfo)
-                for (idx, p) in enumerate(poolInfo)
-                    lenpool = Int64(p[1])
-                    append!(nlayers, fill(1, lenpool))
-                    append!(layer, collect(1:p[1]))
-                    append!(inits, fill(p[2], lenpool))
-                    append!(subPoolName, fill(Symbol(String(mainPool) * String(subpools[idx])), lenpool))
-                    append!(mainPoolName, fill(mainPool, lenpool))
-                end
-            end
+        layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName = getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; numType=info.tem.helpers.numbers.numType)
+
+        # set empty tuple fields
+        tpl_fields = (:components, :zix, :initValues, :layerThickness)
+        for _tpl in tpl_fields
+            tmpElem = setTupleField(tmpElem, (_tpl, (;)))
         end
-        flags = zeros(length(mainPoolName))
-        tmpElem = setTupleField(tmpElem, (:components, (;)))
-        tmpElem = setTupleField(tmpElem, (:flags, (;)))
-        tmpElem = setTupleField(tmpElem, (:nZix, (;)))
-        tmpElem = setTupleField(tmpElem, (:zix, (;)))
-        tmpElem = setTupleField(tmpElem, (:initValues, (;)))
-        tmpElem = setTupleField(tmpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
-        if hasproperty(getfield(info.modelStructure.pools, element), :addStateVars)
-            addStateVars = getfield(getfield(info.modelStructure.pools, element), :addStateVars)
-            tmpElem = setTupleField(tmpElem, (:addStateVars, addStateVars))
-        end
-        for mainPool in mainPools
-            # tmpElem = setTupleField(tmpElem, (mainPool, (;)))
+
+        # main pools
+        for mainPool in mainPoolName
             zix = Int[]
             initValues = info.tem.helpers.numbers.numType[]
             components = Symbol[]
-            flags = zeros(Int, length(mainPoolName))
-            nZix = 0
-            for (ind, par) in enumerate(mainPoolName)
-                if par == mainPool
+            for (ind, par) in enumerate(subPoolName)
+                if startswith(String(par), String(mainPool))
                     push!(zix, ind)
                     push!(components, subPoolName[ind])
-                    push!(initValues, info.tem.helpers.numbers.sNT.(inits[ind]))
-                    flags[ind] = 1
-                    nZix = nZix + 1
+                    push!(initValues, inits[ind])
                 end
             end
             tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (mainPool, flags))
-            tmpElem = setTupleSubfield(tmpElem, :nZix, (mainPool, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
         end
+
+        # subpools
         uniqueSubPools = []
         for _sp in subPoolName
             if _sp ∉ uniqueSubPools
@@ -151,32 +155,23 @@ function generateStatesInfo(info)
             zix = Int[]
             initValues = Float64[]
             components = Symbol[]
-            nZix = 0
-            flags = zeros(Int, length(mainPoolName))
+            ltck = []
             for (ind, par) in enumerate(subPoolName)
                 if par == subPool
+                    push!(zix, ind)
                     push!(initValues, inits[ind])
                     push!(components, subPoolName[ind])
-                    push!(zix, ind)
-                    flags[ind] = 1
-                    nZix = nZix + 1
+                    push!(ltck, layerThicknesses[ind])
                 end
             end
             tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (subPool, flags))
-            tmpElem = setTupleSubfield(tmpElem, :nZix, (subPool, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
-
-            if element == :water && subPool == :soilW
-                soilLayerDepths = getfield(getfield(info.modelStructure.pools, element), :soilLayerDepths)
-                if size(soilLayerDepths, 1) != nZix
-                    throw("The number of soil layers in modelStructure[.json] does not match with soil depths specified. Check settings for wSoil and soilLayerDepths.")
-                end
-                tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Float64.(soilLayerDepths)))
-                hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, Float64.(soilLayerDepths)))
-            end
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
+            tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, ltck))
+            hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, ltck))
         end
+
+        ## combined pools
         combinePools = (getfield(getfield(info.modelStructure.pools, element), :combine))
         doCombine = combinePools[1]
         if doCombine
@@ -191,21 +186,23 @@ function generateStatesInfo(info)
             # components = Set(Symbol.(subPoolName))
             initValues = Float64.(inits)
             zix = 1:1:length(mainPoolName) |> collect
-            flags = ones(Int, length(mainPoolName))
-            nZix = length(mainPoolName)
             tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
-            tmpElem = setTupleSubfield(tmpElem, :flags, (combinedPoolName, flags))
-            tmpElem = setTupleSubfield(tmpElem, :nZix, (combinedPoolName, nZix))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
         else
             create = Symbol.(uniqueSubPools)
         end
+
+        # check if additional variables exist
+        if hasproperty(getfield(info.modelStructure.pools, element), :addStateVars)
+            addStateVars = getfield(getfield(info.modelStructure.pools, element), :addStateVars)
+            tmpElem = setTupleField(tmpElem, (:addStateVars, addStateVars))
+        end
         tmpElem = setTupleField(tmpElem, (:create, create))
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
         # if element == "water":
-
+    
     end
     info = (; info..., tem=(; info.tem..., pools=tmpStates))
     # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=tmpStates)))
@@ -292,13 +289,11 @@ function getInitOut(info)
     initPools = getInitPools(info)
     initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
-    # @show selectedModels, string.(selectedModels)
     sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
     for model in sortedModels
         out = setTupleField(out, (model, (;)))
     end
     return out
-
 end
 
 
