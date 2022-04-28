@@ -103,13 +103,6 @@ function getSimulationData(outsmodel, observations, optimVars, obsVariables)
 end
 
 """
-loss(y::Matrix, ŷ::Matrix)
-"""
-function loss(y::Matrix, ŷ::Matrix)
-    return mean(skipmissing(abs2.(y .- ŷ)))
-end
-
-"""
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, approaches, forcing, initOut,
@@ -120,7 +113,7 @@ function getLoss(pVector, approaches, forcing, initOut,
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
     @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷ)
+    return loss(y, ŷ, Val(:mse))
 end
 
 """

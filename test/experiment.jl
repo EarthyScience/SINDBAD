@@ -21,10 +21,10 @@ obsvars
 
 # initPools = getInitPools(info)
 out = getInitOut(info);
-outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+@time outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 @time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 #newApproaches = updateParameters(tblParams, approaches)
-@time outevolution = runEcosystem(approaches, forcing, outsp[1], modelvars, info.tem; nspins=3)
+#outevolution = runEcosystem(approaches, forcing, outsp[1], modelvars, info.tem; nspins=3)
 
 # outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
 #pprint(outsp)
