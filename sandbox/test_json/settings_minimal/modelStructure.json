@@ -78,7 +78,8 @@
             "approach": "dos"
         },
         "evaporation": {
-            "approach": "fAPAR"
+            "approach": "fAPAR",
+            "order": 52
         },
         "evapotranspiration": {
             "approach": "sum"
@@ -126,8 +127,7 @@
             "approach": "Lu2005"
         },
         "rainSnow": {
-            "approach": "Tair",
-            "order": 1
+            "approach": "Tair"
         },
         "rootFraction": {
             "approach": "expCvegRoot"
@@ -169,7 +169,8 @@
             "approach": "uniform"
         },
         "transpiration": {
-            "approach": "coupled"
+            "approach": "coupled",
+            "order": 53
         },
         "transpirationSupply": {
             "approach": "wAWC"
