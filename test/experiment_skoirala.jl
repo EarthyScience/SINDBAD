@@ -41,7 +41,30 @@ fluxes = outforw.fluxes |> columntable
 # for it in 1:10
 #     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
 # end
-
+function rotate!(v,n::Int)
+    l = length(v)
+    l>1 || return v
+    n = n % l
+    n = n < 0 ? n+l : n
+    n==0 && return v
+    for i=1:gcd(n,l)
+      tmp = v[i]
+      dst = i
+      src = dst+n
+      while src != i
+        v[dst] = v[src]
+        dst = src
+        src += n
+        if src > l
+          src -= l
+        end
+      end
+      v[dst] = tmp
+    end
+    return v
+  end
+a=rand(6)
+rotate!(a, 3)
 # outf=columntable(outdata.fluxes)
 using GLMakie
 fig = Figure(resolution=(2200, 900))
