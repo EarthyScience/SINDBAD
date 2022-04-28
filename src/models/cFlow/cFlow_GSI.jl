@@ -52,7 +52,7 @@ function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple
     # p_giver = giver
     # if there is flux order check that is consistent
     if !hasproperty(land.cCycleBase, :p_fluxOrder)
-        fluxOrder = 1:length(taker)
+        fluxOrder = collect(1:length(taker))
     else
         if length(fluxOrder) != length(taker)
             error(["ERR:cFlowAct_gsi:" "length(fluxOrder) != length(taker)"])
@@ -129,14 +129,14 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     # adjust the outflow rate from the flow pools
     p_k[cVegLeafzix] .= min.((p_k[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
-    L2ReF = L2Re / (p_k[cVegLeafzix])
-    k_LshedF = k_Lshed / (p_k[cVegLeafzix])
+    L2ReF = L2Re ./ (p_k[cVegLeafzix])
+    k_LshedF = k_Lshed ./ (p_k[cVegLeafzix])
     p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
-    R2ReF = R2Re / (p_k[cVegRootzix])
-    k_RshedF = k_Rshed / (p_k[cVegRootzix])
+    R2ReF = R2Re ./ (p_k[cVegRootzix])
+    k_RshedF = k_Rshed ./ (p_k[cVegRootzix])
     p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
-    Re2LF = Re2L / p_k[cVegReservezix]
-    Re2RF = Re2R / p_k[cVegReservezix]
+    Re2LF = Re2L ./ p_k[cVegReservezix]
+    Re2RF = Re2R ./ p_k[cVegReservezix]
 
     # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
     for ii in 1:length(ndxSrc)

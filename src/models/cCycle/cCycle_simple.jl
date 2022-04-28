@@ -30,7 +30,9 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
         (fluxOrder) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
-    ## these all need to be zeros maybe is taken care automatically.
+    ## reset ecoflow and influx to be zero at every time step
+    cEcoFlow = cEcoFlow .* 𝟘
+    cEcoInflux = cEcoInflux .* 𝟘
     ## compute losses
     cEcoOut = min.(cEco, cEco .* p_k)
     ## gains to vegetation
@@ -58,6 +60,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     # end
     ## balance
     cEco .= cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
+    
     ## compute RA & RH
     del_cEco = cEco - cEco_prev
     NPP = sum(cNPP)
@@ -66,7 +69,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
     NEE = cRECO - gpp
-    cEco_prev = copy(land.pools.cEco)
+    cEco_prev = copy(cEco)
 
     ## pack land variables
     @pack_land begin
