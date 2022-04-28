@@ -1,6 +1,7 @@
 module Sinbad
 import DataStructures
 using InteractiveUtils
+using StatsBase
 using Reexport: @reexport
 @reexport begin
     using CMAEvolutionStrategy:
