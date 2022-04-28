@@ -35,6 +35,7 @@
 					"fluxes.runoff",
 					"fluxes.runoffSurface",
 					"fluxes.gpp",
+					"fluxes.NEE",
 					"pools.snowW",
 					"pools.soilW",
 					"waterBalance.waterBalance"
