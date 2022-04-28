@@ -4,14 +4,37 @@ function checkSelectedModels(fullModels, selModels)
     # consistency check for selected model structure
     for sm in selModels
         if sm ∉ fullModels
-            println(sm, "is not a valid model from fullModels. check model structure") # should throw error
+            error(sm, " is not a valid model from fullModels. check model structure settings in json")
             return false
         end
     end
     return true
 end
 
-function getSelectedOrderedModels(fullModels, selModels)
+function changeModelOrder(info, selModels)
+    fullModels = sindbad_models.model
+    fullModels_reordered=deepcopy(fullModels)
+    checkSelectedModels(fullModels, selModels)
+    for sm in selModels
+        modInfo = getfield(info.modelStructure.models, sm)
+        if :order in propertynames(modInfo)
+            oldIndex = findall(x-> x == sm, fullModels_reordered)[1]
+            newIndex = modInfo.order
+            @show fullModels[oldIndex]
+            insert!(fullModels_reordered, newIndex, fullModels[oldIndex])
+            @show fullModels_reordered
+            if newIndex > oldIndex
+                deleteat!(fullModels_reordered, oldIndex)
+            end
+            @show sm, modInfo, propertynames(modInfo), oldIndex, newIndex
+        end
+    end
+    @show fullModels_reordered
+    return fullModels
+end
+
+function getSelectedOrderedModels(info, selModels)
+    fullModels = changeModelOrder(info, selModels)
     if checkSelectedModels(fullModels, selModels)
         selModelsOrdered = []
         for msm in fullModels
@@ -33,7 +56,7 @@ function getSelectedApproaches(info, selModelsOrdered)
         sel_approach = String(sm) * "_" * modAppr
         sel_approach_func = getfield(Sinbad.Models, Symbol(sel_approach))()
         sel_appr_forward = (sel_appr_forward..., sel_approach_func)
-        if "use4spinup" in propertynames(modInfo)
+        if :use4spinup in propertynames(modInfo)
             use4spinup = modInfo.use4spinup
         else
             use4spinup = defaultModel.use4spinup
@@ -359,9 +382,8 @@ function setupModel!(info)
     info = generateStatesInfo(info)
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
-    fullModels = sindbad_models.model
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
-    selected_models = getSelectedOrderedModels(fullModels, selModels)
+    selected_models = getSelectedOrderedModels(info, selModels)
     info = getSelectedApproaches(info, selected_models)
     return info
 end
