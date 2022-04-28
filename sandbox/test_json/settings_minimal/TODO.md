@@ -12,7 +12,9 @@
 - Lossfunctions
   - allow picking loss function metric from json
   - do spatio-temporal aggregation needed for cost functions
-- time series of Arrays *DONE*
+- time series of Arrays *DONE* --> need to figure out a way to save a matrix with ntime * nlayer size... now is a vector of ntime with a vector of nlayer in each time step
+- load and overwrite the default parameters.. in other words, run the model with optimized/saved parameter set
+
 
 ## Sujan
 

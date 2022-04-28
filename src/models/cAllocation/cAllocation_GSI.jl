@@ -21,18 +21,20 @@ function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTu
     @unpack_land begin
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
+        sNT ∈ helpers.numbers
     end
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     # allocation to root; wood & leaf
-    cVegLeaf = fW / ((fW + fT) * 2)
-    cVegWood = fW / ((fW + fT) * 2)
+    cVegLeaf = fW / ((fW + fT) * sNT(2))
+    cVegWood = fW / ((fW + fT) * sNT(2))
     cVegRoot = fT / (fW + fT)
     cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
+
     # distribute the allocation according to pools
     for cpName in cpNames
         zix = getzix(land.pools, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+        cAlloc[zix] .= getfield(cf2, cpName) / sNT(length(zix))
     end
 
     ## pack land variables

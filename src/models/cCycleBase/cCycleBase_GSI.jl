@@ -17,7 +17,7 @@ export cCycleBase_GSI
 	    0 1.0 0 0 0 -1 0 0
 	    0 0 0 0 1.0 1.0 -1 0
 	    0 0 0 0 0 0 1.0 -1] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-	C2Nveg::T10 = [25, 260, 260, 10] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+	C2Nveg::T10 = [25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
@@ -55,7 +55,7 @@ function compute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTup
     # annual turnover rates
     p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
     TSPY = helpers.dates.nStepsYear
-    p_k_base = 𝟙 .- (exp.(-p_annk).^(𝟙 / TSPY))
+    p_k_base = 𝟙 .- (exp.(-𝟙 .* p_annk).^(𝟙 / TSPY))
     
 	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
 

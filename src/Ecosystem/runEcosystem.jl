@@ -64,6 +64,7 @@ function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; ns
     spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
     out = runPrecompute(forcing[1], selectedModels, out, modelHelpers)
     for j in 1:nspins
+        # for t in 170:171
         for t in 1:tsteps
             out = runModels(forcing[t], selectedModels, out, modelHelpers)
             out = removeEmptyFields(out)
