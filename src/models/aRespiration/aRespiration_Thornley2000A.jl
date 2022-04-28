@@ -18,7 +18,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 		fT ∈ land.aRespirationAirT
 		(𝟙, 𝟘, numType) ∈ helpers.numbers
 	end
-	p_km = ones(numType, length(land.pools.cEco))
+	p_km = zeros(numType, length(land.pools.cEco))
 	p_km4su = p_km
 	RA_G = p_km
 	RA_M = p_km
