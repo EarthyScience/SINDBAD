@@ -1,6 +1,7 @@
 # Todo list
 
 ### new
+- fix timing issue/allocation of filterVariables(out::NamedTuple, varsinfo)
 
 - change order of the model based on order in modelStructure
 
