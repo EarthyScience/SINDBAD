@@ -10,7 +10,7 @@ info = getConfiguration(expFile);
 info = setupModel!(info);
 out = getInitOut(info);
 forcing = getForcing(info);
-obsvars, modelvars = getConstraintNames(info);
+obsvars, modelvars, optimvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
 
 optimParams = info.opti.params2opti;
@@ -20,30 +20,35 @@ approaches = info.tem.models.forward;
 # initPools = getInitPools(info)
 # @show out.pools.soilW
 
-outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=3);
 osp = outsp[1];
 pprint(osp)
-@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+# @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
 fluxes = outforw.fluxes |> columntable
 
+# outevolution = runEcosystem(approaches, forcing, outsp[1], modelvars, info.tem; nspins=3)
+
+# outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
+#pprint(outsp)
+
+# outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
+    # obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=1);
 
 
-for it in 1:10
-    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
-end
-outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams, obsvars, modelvars, info.tem, info.opti; maxfevals=1);
+# for it in 1:10
+#     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
+# end
 
-outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams, obsvars, modelvars, info.tem, info.opti; maxfevals=30);
 # outf=columntable(outdata.fluxes)
 using GLMakie
 fig = Figure(resolution=(2200, 900))
 # lines(pools.snowW)
 lines(fluxes.gpp)
-lines(fluxes.NEE)
-lines(fluxes.NPP)
+lines!(fluxes.NEE)
+lines!(fluxes.NPP)
 # lines!(fluxes.evapotranspiration)
 # lines!(observations.evapotranspiration)
 
