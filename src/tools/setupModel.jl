@@ -224,11 +224,8 @@ function generateStatesInfo(info)
         tmpElem = setTupleField(tmpElem, (:create, create))
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
-        # if element == "water":
-    
     end
     info = (; info..., tem=(; info.tem..., pools=tmpStates))
-    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=tmpStates)))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
