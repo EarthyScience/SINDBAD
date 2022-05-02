@@ -1,6 +1,6 @@
 export getObservation
 
-function checkObservationBounds(forcingVariable, bounds)
+function applyObservationBounds(forcingVariable, bounds)
     println("Not done")
 end
 
@@ -31,6 +31,7 @@ function getObservation(info)
         tarVar = Symbol(v)
         push!(varlist, tarVar)
         data_tmp = ds[srcVar][1, 1, :]
+        # data_tmp = applyObservationBounds(data_tmp, vinfo)
         data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
         data_obs = eval(Meta.parse("$data_tmp" * vinfo.data.source2sindbadUnit))
         # data_tmp_masked = data_tmp < 0.0 ? 0.0 : data_tmp
