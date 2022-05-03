@@ -1,70 +1,73 @@
-export setupModel!
+export setupModel!, getInitPools, getInitOut, setNumberType
 
+"""
+    checkSelectedModels(fullModels, selModels)
+checks if the list of selected models in modelStructure.json are available in the full list of sindbad_models defined in models.jl.
+"""
 function checkSelectedModels(fullModels, selModels)
-    # consistency check for selected model structure
     for sm in selModels
         if sm ∉ fullModels
-            error(sm, " is not a valid model from fullModels. check model structure settings in json")
+            @show fullModels
+            error(sm, " is not a valid model from fullModels. check modelStructure settings in json")
             return false
         end
     end
     return true
 end
 
+"""
+    changeModelOrder(info, selModels)
+returns a list of models reordered according to orders provided in modelStructure json. Needs further check before full implementation. Therefore, just returns the fullModels from sindbad_models for now.
+"""
 function changeModelOrder(info, selModels)
     fullModels = sindbad_models.model
     fullModels_reordered=Vector{Symbol}(undef, length(fullModels))
     checkSelectedModels(fullModels, selModels)
-    orderModelT = (;)
+    newOrders = []
     for sm in selModels
         modInfo = getfield(info.modelStructure.models, sm)
         if :order in propertynames(modInfo)
-            orderModelT = setTupleField(orderModelT, (sm, modInfo.order))
+            push!(newOrders, modInfo.order)
             fullModels_reordered[modInfo.order]=sm
         end
     end
-    # @show orderModelT
-    orderModels = collect(keys(orderModelT))
-    orders = collect(values(orderModelT))
     fmInd = 1
     for (ind, fm) in enumerate(fullModels)
-        if ind ∉ orders
+        if ind ∉ newOrders
             fullModels_reordered[fmInd] = fm
             fmInd = fmInd + 1
+        else
+            fmInd = fmInd + 1
+            fullModels_reordered[fmInd] = fm
         end
+
     end
-    # for sm in selModels
-    #     modInfo = getfield(info.modelStructure.models, sm)
-    #     if :order in propertynames(modInfo)
-    #         oldIndex = findall(x-> x == sm, fullModels_reordered)[1]
-    #         newIndex = modInfo.order
-    #         @show fullModels[oldIndex]
-    #         insert!(fullModels_reordered, newIndex, fullModels[oldIndex])
-    #         @show fullModels_reordered
-    #         if newIndex > oldIndex
-    #             deleteat!(fullModels_reordered, oldIndex)
-    #         end
-    #         @show sm, modInfo, propertynames(modInfo), oldIndex, newIndex
-    #     end
-    # end
-    @show fullModels_reordered, length(fullModels_reordered)
+    println("changeModelOrder is not fully functional yet. So, returns sindbad_models as is as full models")
+    # @show fullModels_reordered, length(fullModels_reordered)
     return fullModels
 end
 
-function getSelectedOrderedModels(info, selModels)
+"""
+    getOrderedSelectedModels(info, selModels)
+gets the list of selected models from info.modelStructure.models, and orders them as given in sindbad_models in models.jl. A consistency check is carried out using checkSelectedModels for the existence of the model.
+"""
+function getOrderedSelectedModels(info, selModels)
     fullModels = changeModelOrder(info, selModels)
-    if checkSelectedModels(fullModels, selModels)
-        selModelsOrdered = []
-        for msm in fullModels
-            if msm in selModels
-                push!(selModelsOrdered, msm)
-            end
+    checkSelectedModels(fullModels, selModels)
+    selModelsOrdered = []
+    for msm in fullModels
+        if msm in selModels
+            push!(selModelsOrdered, msm)
         end
-        return selModelsOrdered
     end
+    return selModelsOrdered
 end
 
-function getSelectedApproaches(info, selModelsOrdered)
+"""
+    getSpinupAndForwardModels(info, selModelsOrdered)
+sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. This allows for a faster spinup if some models can be turned off. Relies on use4spinup flag in modelStructure. By design, the spinup models should be subset of forward models.
+"""
+function getSpinupAndForwardModels(info, selModelsOrdered)
     sel_appr_forward = ()
     sel_appr_spinup = ()
     defaultModel = getfield(info.modelStructure, :defaultModel)
@@ -83,14 +86,13 @@ function getSelectedApproaches(info, selModelsOrdered)
             sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
         end
     end
-    # @set info.tem.models.forward = sel_appr_forward
-    # @set info.tem.models.spinup = sel_appr_spinup
     info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=sel_appr_forward, spinup=sel_appr_spinup)))
     return info
 end
 
 """
-generateDatesInfo(info)
+    generateDatesInfo(info)
+fills info.tem.helpers.dates with date and time related fields needed in the models.
 """
 function generateDatesInfo(info)
     tmpDates = (;)
@@ -99,11 +101,14 @@ function generateDatesInfo(info)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
-    # info=(; info..., tem=(; info.tem..., dates = tmpDates));
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates))) # aone=aone, azero=azero
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
 end
 
+"""
+    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", numType=Float64)
+A helper function to get the information of each pools from info.modelStructure.pools and puts them into arrays of information needed to instantiate pool variables.
+"""
 function getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", numType=Float64)
     for mainPool in mainPools
         prefix = prename
@@ -139,9 +144,10 @@ function getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, laye
 end
 
 """
-generateStatesInfo(info)
+    generatePoolsInfo(info)
+generates the info.tem.helpers.pools and info.tem.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 """
-function generateStatesInfo(info)
+function generatePoolsInfo(info)
     elements = keys(info.modelStructure.pools)
     tmpStates = (;)
     hlpStates = (;)
@@ -249,7 +255,8 @@ function generateStatesInfo(info)
 end
 
 """
-Sets the initial pools
+    getInitPools(info)
+returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array. 
 """
 function getInitPools(info)
     initPools = (;)
@@ -280,7 +287,8 @@ function getInitPools(info)
 end
 
 """
-Sets the initial states
+    getInitStates(info)
+returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from addStateVars in modelStructure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
 function getInitStates(info)
     initStates = (;)
@@ -320,8 +328,8 @@ function getInitStates(info)
 end
 
 """
-getInitOut(info)
-create the initial out tuple with all models and pools
+    getInitOut(info)
+create the initial out named tuple with subfields for pools, states, and all selected models.
 """
 function getInitOut(info)
     initPools = getInitPools(info)
@@ -336,9 +344,10 @@ end
 
 
 """
-Harmonize the information needed to autocompute variables, e.g., sum, water balance, etc.
+    setNumericHelpers(info, ttype=info.modelRun.rules.dataType)
+sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.dataType.
 """
-function setHelpers(info, ttype=info.modelRun.rules.dataType)
+function setNumericHelpers(info, ttype=info.modelRun.rules.dataType)
     𝟘 = setNumberType(ttype)(0)
     𝟙 = setNumberType(ttype)(1)
     tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
@@ -346,12 +355,13 @@ function setHelpers(info, ttype=info.modelRun.rules.dataType)
     sNT = (a) -> setNumberType(ttype)(a)
     squarer = (n) -> n .* n
     cuber = (n) -> n .* n .* n
-    info = (; info..., tem=(; helpers=(; numbers=(; 𝟘=𝟘, 𝟙=𝟙, tolerance=tolerance, numType=setNumberType(ttype), sNT=sNT, squarer=squarer, cuber=cuber)))) # aone=aone, azero=azero
+    info = (; info..., tem=(; helpers=(; numbers=(; 𝟘=𝟘, 𝟙=𝟙, tolerance=tolerance, numType=setNumberType(ttype), sNT=sNT, squarer=squarer, cuber=cuber))))
     return info
 end
 
 """
-Set the number type to the selected data type for model run in modelRun.rules.dataType
+    setNumberType(t="Float64")
+A helper function to set the number type to the specified data type
 """
 function setNumberType(t="Float64")
     ttype = getfield(Main, Symbol(t))
@@ -360,8 +370,8 @@ end
 
 
 """
-getVariableGroups(varList)
-get named tuple for variables groups from list of variables with subfields (subfield.variablename)
+    getVariableGroups(varList)
+get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
 """
 function getVariableGroups(varList)
     var_dict = Dict()
@@ -383,7 +393,8 @@ function getVariableGroups(varList)
 end
 
 """
-get the union of variables to write and store from modelrun[.json] and set it at info.tem.variables
+    getVariablesToStore(info)
+sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info)
     writeStoreVars = getVariableGroups(union(info.modelRun.output.variables.write, info.modelRun.output.variables.store))
@@ -391,16 +402,18 @@ function getVariablesToStore(info)
     return info
 end
 
+"""
+    setupModel!(info)
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+"""
 function setupModel!(info)
-    info = setHelpers(info)
+    info = setNumericHelpers(info)
     info = getVariablesToStore(info)
-    info = generateStatesInfo(info)
+    info = generatePoolsInfo(info)
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
-    selected_models = getSelectedOrderedModels(info, selModels)
-    info = getSelectedApproaches(info, selected_models)
+    selected_models = getOrderedSelectedModels(info, selModels)
+    info = getSpinupAndForwardModels(info, selected_models)
     return info
 end
-
-export getInitPools, getInitOut, setNumberType
