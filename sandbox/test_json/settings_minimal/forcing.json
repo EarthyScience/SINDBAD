@@ -9,7 +9,7 @@
 		"check": "checkInputData"
 	},
 	"comments": "to get forcing from netCDF file",
-	"size": [NaN, NaN],
+	"size": [],
 	"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
 	"variables": {
 	"ambCO2":
