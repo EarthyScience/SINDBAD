@@ -41,8 +41,8 @@
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
-						0,
-						200
+						0.0,
+						200.0
 					],
 					"sourceVariableName": "LE",
 					"sourceVariableUnit": "W m-2",
@@ -56,18 +56,18 @@
 				"unc": {
 					"dataPath": "",
 					"bounds": [
-						0,
-						500
+						0.0,
+						500.0
 					],
-					"sourceVariableName": "LE_RANDUNC_FLUXNET"
+					"sourceVariableName": "LE_RANDUNC"
 				},
 				"qflag": {
 					"dataPath": "",
 					"bounds": [
-						0,
-						1
+						0.85,
+						1.0
 					],
-					"sourceVariableName": "LE_QC_FLUXNET"
+					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
 					"trimPerc": [],
@@ -78,13 +78,8 @@
 					"temporalAggrObs": false,
 					"temporalAggrFunc": "nanmean",
 					"costMetric": "mefinv",
-					"costWeight": 1,
-					"areaWeight": false,
-					"quality_bound": [
-						0.85,
-						1
-					],
-					"data_bound": []
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"transpiration": {
@@ -92,8 +87,8 @@
 				"data": {
 					"variableUnit": "mm day-1",
 					"bounds": [
-						0,
-						200
+						0.0,
+						200.0
 					],
 					"sourceVariableName": "T_NT_TEA",
 					"sourceVariableUnit": "mm day-1",
@@ -107,18 +102,18 @@
 				"unc": {
 					"dataPath": "",
 					"bounds": [
-						0,
-						200
+						0.0,
+						200.0
 					],
-					"sourceVariableName": "LE_RANDUNC_FLUXNET"
+					"sourceVariableName": "LE_RANDUNC"
 				},
 				"qflag": {
 					"dataPath": "",
 					"bounds": [
-						0,
-						1
+						0.85,
+						1.0
 					],
-					"sourceVariableName": "LE_QC_FLUXNET"
+					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
 					"trimPerc": [],
@@ -136,6 +131,9 @@
 						1
 					],
 					"data_bound": []
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			}
 		}
