@@ -1,9 +1,9 @@
 using Revise
 using Sinbad
 # using ProfileView
-# using BenchmarkTools
+using BenchmarkTools
 #using GLMakie
-
+using Plots
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
@@ -12,7 +12,8 @@ out = getInitOut(info);
 forcing = getForcing(info);
 obsvars, modelvars, optimvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
-
+# plot(observations.transpiration)
+# plot(observations.transpiration_σ)
 optimParams = info.opti.params2opti;
 approaches = info.tem.models.forward;
 tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
@@ -25,9 +26,11 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=3);
 osp = outsp[1];
 pprint(osp)
-@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+@bprofile runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
 @time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
+outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
+@btime outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
 fluxes = outforw.fluxes |> columntable
 
@@ -42,9 +45,9 @@ pprint(info.opti)
     # obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=1);
 
 
-# for it in 1:10
-#     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
-# end
+for it in 1:10
+    @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
+end
 
 # outf=columntable(outdata.fluxes)
 using GLMakie

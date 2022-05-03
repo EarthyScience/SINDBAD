@@ -19,7 +19,8 @@ function filterVariables(out::NamedTuple, varsinfo)
     fout = (;)
     for k in keys(varsinfo)
         v = getfield(varsinfo, k)
-        fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+        fout = setTupleField(fout, (k, v, getfield(out, k)))
+        # fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
     end
     return fout
 end
@@ -40,8 +41,9 @@ function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
     # modelVars = (modelVars...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelHelpers)
-        out_filtered = filterVariables(out, modelVars)
-        deepcopy(out_filtered)
+        # out_filtered = filterVariables(out, modelVars)
+        # deepcopy(out_filtered)
+        deepcopy(out)
         #NamedTuple{modelVars}(out.fluxes)
         #out_filtered
         #deepcopy(out)
