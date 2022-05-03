@@ -1,4 +1,4 @@
-export setupModel!, getInitPools, getInitOut, setNumberType
+export setupModel!, getInitPools, createInitOut, setNumberType
 
 """
     checkSelectedModels(fullModels, selModels)
@@ -328,10 +328,10 @@ function getInitStates(info)
 end
 
 """
-    getInitOut(info)
+    createInitOut(info)
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function getInitOut(info)
+function createInitOut(info)
     initPools = getInitPools(info)
     initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
