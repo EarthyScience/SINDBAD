@@ -8,7 +8,7 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
-out = getInitOut(info);
+out = createInitOut(info);
 forcing = getForcing(info);
 obsvars, modelvars, optimvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!

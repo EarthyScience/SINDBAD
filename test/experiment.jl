@@ -20,7 +20,7 @@ approaches = info.tem.models.forward;
 obsvars
 
 # initPools = getInitPools(info)
-out = getInitOut(info);
+out = createInitOut(info);
 @time outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 @time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 #newApproaches = updateParameters(tblParams, approaches)
