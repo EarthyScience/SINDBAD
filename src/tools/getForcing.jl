@@ -1,14 +1,6 @@
 export getForcing
 
 """
-checkForcingBounds(forcingVariable, bounds)
-check if the forcing data have values outside the provided bounds
-"""
-function checkForcingBounds(forcingVariable, bounds)
-    println("Not done")
-end
-
-"""
 getForcing(info)
 """
 function getForcing(info)
@@ -34,7 +26,7 @@ function getForcing(info)
         @show srcVar
         ds = Dataset(dataPath)
         ds_dat = ds[srcVar][:, :, :]
-        data_tmp = eval(Meta.parse("$ds_dat" * vinfo.source2sindbadUnit))
+        data_tmp = applyUnitConversion(ds_dat, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
         bounds = vinfo.bounds
         data_tmp = clamp.(data_tmp, bounds[1], bounds[2])
         data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
