@@ -13,23 +13,41 @@ end
 
 function changeModelOrder(info, selModels)
     fullModels = sindbad_models.model
-    fullModels_reordered=deepcopy(fullModels)
+    fullModels_reordered=Vector{Symbol}(undef, length(fullModels))
     checkSelectedModels(fullModels, selModels)
+    orderModelT = (;)
     for sm in selModels
         modInfo = getfield(info.modelStructure.models, sm)
         if :order in propertynames(modInfo)
-            oldIndex = findall(x-> x == sm, fullModels_reordered)[1]
-            newIndex = modInfo.order
-            @show fullModels[oldIndex]
-            insert!(fullModels_reordered, newIndex, fullModels[oldIndex])
-            @show fullModels_reordered
-            if newIndex > oldIndex
-                deleteat!(fullModels_reordered, oldIndex)
-            end
-            @show sm, modInfo, propertynames(modInfo), oldIndex, newIndex
+            orderModelT = setTupleField(orderModelT, (sm, modInfo.order))
+            fullModels_reordered[modInfo.order]=sm
         end
     end
-    @show fullModels_reordered
+    # @show orderModelT
+    orderModels = collect(keys(orderModelT))
+    orders = collect(values(orderModelT))
+    fmInd = 1
+    for (ind, fm) in enumerate(fullModels)
+        if ind ∉ orders
+            fullModels_reordered[fmInd] = fm
+            fmInd = fmInd + 1
+        end
+    end
+    # for sm in selModels
+    #     modInfo = getfield(info.modelStructure.models, sm)
+    #     if :order in propertynames(modInfo)
+    #         oldIndex = findall(x-> x == sm, fullModels_reordered)[1]
+    #         newIndex = modInfo.order
+    #         @show fullModels[oldIndex]
+    #         insert!(fullModels_reordered, newIndex, fullModels[oldIndex])
+    #         @show fullModels_reordered
+    #         if newIndex > oldIndex
+    #             deleteat!(fullModels_reordered, oldIndex)
+    #         end
+    #         @show sm, modInfo, propertynames(modInfo), oldIndex, newIndex
+    #     end
+    # end
+    @show fullModels_reordered, length(fullModels_reordered)
     return fullModels
 end
 

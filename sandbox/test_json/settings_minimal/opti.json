@@ -46,7 +46,8 @@
 					],
 					"sourceVariableName": "LE",
 					"sourceVariableUnit": "W m-2",
-					"source2sindbadUnit": "*0.0864/2.45",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 0.03526530612,
 					"isCategorical": false,
 					"nameShort": "Evapotranspiration",
 					"spaceTimeType": "normal",
@@ -59,6 +60,8 @@
 						0.0,
 						500.0
 					],
+					"source2sindbadUnit": 0.03526530612,
+					"additiveUnitConversion": false,
 					"sourceVariableName": "LE_RANDUNC"
 				},
 				"qflag": {
@@ -70,7 +73,6 @@
 					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
-					"trimPerc": [],
 					"aggrOrder": "timespace",
 					"spatialAggr": "cat",
 					"spatialCostAggr": "cat",
@@ -92,7 +94,8 @@
 					],
 					"sourceVariableName": "T_NT_TEA",
 					"sourceVariableUnit": "mm day-1",
-					"source2sindbadUnit": "*1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "transpiration",
 					"spaceTimeType": "normal",
@@ -105,6 +108,8 @@
 						0.0,
 						200.0
 					],
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 0.03526530612,
 					"sourceVariableName": "LE_RANDUNC"
 				},
 				"qflag": {
@@ -116,7 +121,6 @@
 					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
-					"trimPerc": [],
 					"aggrOrder": "timespace",
 					"spatialAggr": "cat",
 					"spatialCostAggr": "cat",
