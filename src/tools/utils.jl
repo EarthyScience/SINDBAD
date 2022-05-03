@@ -1,4 +1,18 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield, applyUnitConversion
+
+"""
+applyUnitConversion(data_in, conversion, isadditive=false)
+Applies a simple factor to the input array, either additively or multiplicatively depending on isadditive flag
+"""
+function applyUnitConversion(data_in, conversion, isadditive=false)
+    if isadditive
+        data_out = data_in .+ conversion
+    else
+        data_out = data_in .* conversion
+    end
+    return data_out
+end
+
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)
