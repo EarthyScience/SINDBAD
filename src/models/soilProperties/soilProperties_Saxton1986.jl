@@ -138,7 +138,7 @@ function soilParamsSaxton1986(land, helpers, sl, WT)
 	θ_s = h + j * SAND + k * log10(CLAY)
 	# air entry pressure [kPa]
 	ψ_e = abs(100 * (m + n * θ_s))
-	θ = ones(helpers.numbers.numType, size(CLAY))
+	θ = ones(typeof(CLAY), size(CLAY))
 	ndx = find(ψ >= 10 & ψ <= 1500)
 	if !isempty(ndx)
 		θ[ndx] = (ψ[ndx] / A[ndx]) ^ (1 / B[ndx])
