@@ -41,12 +41,8 @@ function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
     # modelVars = (modelVars...,)
     outtemp = map(forcing) do f
         out = runModels(f, selectedModels, out, modelHelpers)
-        # out_filtered = filterVariables(out, modelVars)
-        # deepcopy(out_filtered)
-        deepcopy(out)
-        #NamedTuple{modelVars}(out.fluxes)
-        #out_filtered
-        #deepcopy(out)
+        out_filtered = filterVariables(out, modelVars)
+        deepcopy(out_filtered)
     end
     return columntable(outtemp)
 end
