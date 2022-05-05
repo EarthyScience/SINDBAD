@@ -28,7 +28,7 @@ function compute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
 	α = 1.26
 	# @show "Lu", sNT(1)
 	# slope of the saturation vapor pressure temperature curve [kPa/°C]
-	Δ = sNT(0.200) * (0.00738 * Tair + 0.8072) ^ 7 - 0.000116
+	Δ = 0.200 * (0.00738 * Tair + 0.8072) ^ 7.0 - 0.000116
 
 	# cp is the specific heat of moist air at constant pressure
 	# (kJ/kg/°C) & where cp = 1.013 kJ/kg/°C = 0.0010 13 MJ/kg/°C
