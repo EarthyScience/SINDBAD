@@ -5,12 +5,11 @@ export LAI_cVegLeaf
 end
 
 function compute(o::LAI_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
-	@unpack_land cEco ∈ land.pools
+	@unpack_land cVegLeaf ∈ land.pools
 
 	## calculate variables
-	cVegLeafZix = helpers.pools.carbon.zix.cVegLeaf
-	cVegLeaf = sum(cEco[cVegLeafZix])
-	LAI = cVegLeaf* SLA
+	cVegLeafTotal = sum(cVegLeaf)
+	LAI = cVegLeafTotal* SLA
 
 	## pack land variables
 	@pack_land LAI => land.states

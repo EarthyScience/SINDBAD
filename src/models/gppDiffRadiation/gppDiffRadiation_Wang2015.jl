@@ -38,7 +38,7 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land::NamedTuple, helper
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
-    CI_max = min(CI, CI_max)
+    CI_max = max(CI, CI_max)
 
     CI_nor = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were based on the year's data. see below.
 

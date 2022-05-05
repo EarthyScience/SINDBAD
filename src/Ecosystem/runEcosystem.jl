@@ -19,8 +19,8 @@ function filterVariables(out::NamedTuple, varsinfo)
     fout = (;)
     for k in keys(varsinfo)
         v = getfield(varsinfo, k)
-        fout = setTupleField(fout, (k, v, getfield(out, k)))
-        # fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+        # fout = setTupleField(fout, (k, v, getfield(out, k)))
+        fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
     end
     return fout
 end
