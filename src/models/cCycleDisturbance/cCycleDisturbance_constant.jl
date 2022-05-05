@@ -13,16 +13,18 @@ function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpe
 	## unpack land variables
 	@unpack_land begin
 		cEco ∈ land.pools
-		(p_giver, p_taker) ∈ land.cFlow
+		(giver, taker) ∈ land.cFlow
 		𝟘 ∈ helpers.numbers
 	end
-	zixVecVeg = helpers.pools.carbon.zix.cVeg
-	for zixVeg in zixVecVeg
+	zixVegAll = getzix(land.pools.cVeg)
+	for zixVeg in zixVegAll
 		cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * (isDisturbed)
-		ndxLoseToZix = p_taker[p_giver == zixVeg]
+		cEco[zixVeg] = cEco[zixVeg] - cLoss
+		ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
 		for tZ in 1:length(ndxLoseToZix)
 			tarZix = ndxLoseToZix[tZ]
-			if !any(zixVecVeg == tarZix)
+			if !any(zixVegAll == tarZix)
+				cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
 			end
 		end
 	end

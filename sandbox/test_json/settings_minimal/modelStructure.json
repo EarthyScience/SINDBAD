@@ -44,8 +44,14 @@
         "cCycle": {
             "approach": "simple"
         },
+        "cCycleConsistency": {
+            "approach": "simple"
+        },
         "cCycleBase": {
             "approach": "GSI"
+        },
+        "cCycleDisturbance": {
+            "approach": "constant"
         },
         "cFlow": {
             "approach": "GSI"

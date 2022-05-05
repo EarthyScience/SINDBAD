@@ -19,13 +19,13 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 		(𝟙, 𝟘, numType) ∈ helpers.numbers
 	end
 	p_km = zeros(numType, length(land.pools.cEco))
-	p_km4su = p_km
-	RA_G = p_km
-	RA_M = p_km
+	p_km4su = copy(p_km)
+	RA_G = copy(p_km)
+	RA_M = copy(p_km)
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
-	
+
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL A - maintenance respiration is given priority
 	zix = getzix(land.pools.cVeg)
@@ -34,13 +34,13 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 	# km is the maintenance respiration coefficient [d-1]
 	p_km[zix] .= 𝟙 ./ p_C2Nveg[zix] .* RMN .* fT
 	p_km4su[zix] .= p_km[zix] .* YG
-	
+
 	# maintenance respiration first: R_m = km * C
 	RA_M[zix] .= p_km[zix] .* cEco[zix]
-	
+
 	# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
 	RA_G[zix] .= (𝟙 - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
-	
+
 	# no negative growth respiration
 	RA_G .= max.(RA_G, 𝟘)
 
