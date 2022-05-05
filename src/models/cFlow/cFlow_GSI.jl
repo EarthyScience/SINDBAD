@@ -38,7 +38,6 @@ function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple
                 p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
             end
         end
-
     end
 
 

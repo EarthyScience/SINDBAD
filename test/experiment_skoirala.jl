@@ -23,20 +23,24 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 # initPools = getInitPools(info)
 # @show out.pools.soilW
 
+@profview outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+@time outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 osp = outsp[1];
 pprint(osp)
 
+@profview outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 @time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 states = outforw.states |> columntable;
 pools = outforw.pools |> columntable;
 fluxes = outforw.fluxes |> columntable;
+plot(fluxes.gpp)
 cEco = hcat(pools.cEco...)';
-# plot(cEco[:, 1])
+plot(cEco[:, 1])
 for z in 1:size(cEco, 2)
     println(z)
-    plot!(cEco[:, z])
+    plot(cEco[:, z])
 end
 
 # outevolution = runEcosystem(approaches, forcing, outsp[1], modelvars, info.tem; nspins=3)

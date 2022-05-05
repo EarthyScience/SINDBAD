@@ -3,17 +3,34 @@ export capillaryFlow_VanDijk2010
 struct capillaryFlow_VanDijk2010 <: capillaryFlow
 end
 
+function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+
+	## unpack land variables
+	@unpack_land begin
+		soilW ∈ land.pools
+		numType ∈ helpers.numbers
+	end
+	capFlow = zeros(numType, length(land.pools.soilW))
+	dos_soilW = zeros(numType, length(land.pools.soilW))
+
+	## pack land variables
+	@pack_land begin
+		(capFlow, dos_soilW) => land.capillaryFlow
+	end
+	return land
+end
+
 function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
 		(p_kFC, p_wSat) ∈ land.soilWBase
+		(capFlow, dos_soilW) ∈ land.capillaryFlow
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(numType, 𝟙) ∈ helpers.numbers
 	end
-	capFlow = zeros(numType, length(land.pools.soilW))
-	dos_soilW = (soilW + ΔsoilW) ./ p_wSat
+	dos_soilW .= (soilW + ΔsoilW) ./ p_wSat
 	for sl in 1:length(land.pools.soilW)-1
 		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (𝟙 - dos_soilW[sl])
 		holdCap = p_wSat[sl] - (soilW[sl] + ΔsoilW[sl])
@@ -24,7 +41,7 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helper
 	end
 
 	## pack land variables
-	@pack_land begin
+    @pack_land begin
 		capFlow => land.capillaryFlow
 		# ΔsoilW => land.states
 	end

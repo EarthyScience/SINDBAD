@@ -18,9 +18,10 @@ function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpe
 	end
 	zixVegAll = getzix(land.pools.cVeg)
 	for zixVeg in zixVegAll
-		cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * (isDisturbed)
+		cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
 		cEco[zixVeg] = cEco[zixVeg] - cLoss
-		ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
+		ndxLoseToZix = taker[giver .== zixVeg]
+		# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
 		for tZ in 1:length(ndxLoseToZix)
 			tarZix = ndxLoseToZix[tZ]
 			if !any(zixVegAll == tarZix)

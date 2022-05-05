@@ -4,9 +4,10 @@ struct aRespiration_none <: aRespiration
 end
 
 function precompute(o::aRespiration_none, forcing, land::NamedTuple, helpers::NamedTuple)
+	@unpack_land cEcoEfflux ∈ land.states
 
 	## calculate variables
-	zix = helpers.pools.carbon.zix.cVeg
+	zix = getzix(land.pools.cVeg)
 	cEcoEfflux[zix] = helpers.numbers.𝟘
 
 	## pack land variables
