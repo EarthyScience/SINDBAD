@@ -36,8 +36,10 @@
 					"fluxes.runoffSurface",
 					"fluxes.gpp",
 					"fluxes.NEE",
+					"states.fAPAR",
 					"pools.snowW",
 					"pools.soilW",
+					"pools.cEco",
 					"waterBalance.waterBalance"
 				],
 			"store": ["pools.soilW"]
