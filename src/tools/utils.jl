@@ -1,4 +1,4 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield, applyUnitConversion
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield, applyUnitConversion, offDiag, offDiagUpper, offDiagLower
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -235,7 +235,8 @@ macro unpack_forcing(inparams)
 end
 
 """
-get getzix of a subarray
+    getzix(tpl::NamedTuple, fld::Symbol)
+returns the indices of a view in the parent main array
 """
 function getzix(tpl::NamedTuple, fld::Symbol)
     dat::SubArray = getfield(tpl, fld)
@@ -252,4 +253,29 @@ end
 function getzix(dat::SubArray)
     getzix = parentindices(dat)[1]
     return getzix
+end
+
+
+"""
+    offDiag(A::AbstractMatrix)
+returns a vector comprising of off diagonal elements of a matrix
+"""
+function offDiag(A::AbstractMatrix)
+    [A[ι] for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]
+end
+
+"""
+    offDiagU(A::AbstractMatrix)
+returns a vector comprising of above diagonal elements of a matrix
+"""
+function offDiagUpper(A::AbstractMatrix)
+    [A[ι] for ι in CartesianIndices(A) if ι[1] < ι[2]]
+end
+
+"""
+    offDiagL(A::AbstractMatrix)
+returns a vector comprising of below diagonal elements of a matrix
+"""
+function offDiagLower(A::AbstractMatrix)
+    [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
 end
