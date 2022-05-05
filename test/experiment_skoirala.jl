@@ -27,7 +27,7 @@ osp = outsp[1];
 pprint(osp)
 @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 
-outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
+@time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
 pools = outforw.pools |> columntable
 fluxes = outforw.fluxes |> columntable
 

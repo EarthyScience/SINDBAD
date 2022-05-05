@@ -128,7 +128,7 @@
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
 					"temporalAggrFunc": "nanmean",
-					"costMetric": "mefinv",
+					"costMetric": "r2inv",
 					"costWeight": 1,
 					"areaWeight": false,
 					"quality_bound": [
