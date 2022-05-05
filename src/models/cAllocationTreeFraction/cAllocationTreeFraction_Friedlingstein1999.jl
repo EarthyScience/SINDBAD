@@ -1,7 +1,7 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
 @bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
-	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "fine root to coarse root fraction" | "fraction"
+	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
 end
 
 function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -30,10 +30,11 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::N
 	# adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
     cVegWood = treeFraction
-    cVegRootF = treeFraction * Rf2Rc + (r0 + s0 * (r0 / (r0 + l0))) * (𝟙 - treeFraction)
-    cVegRootC = treeFraction * (𝟙 - Rf2Rc)
-    cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = treeFraction + (l0 + s0 * (l0 / (r0 + l0))) * (𝟙 - treeFraction)
+    cVegRoot = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
+    cVegRootF = cVegRoot * (Rf2Rc * treeFraction + (𝟙 - treeFraction))
+    cVegRootC = cVegRoot * (𝟙 - Rf2Rc) * treeFraction
+    # cVegRoot = cVegRootF + cVegRootC
+    cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
     cF = (; cVegWood=cVegWood, cVegRootF=cVegRootF, cVegRootC=cVegRootC, cVegRoot=cVegRoot, cVegLeaf=cVegLeaf)
 
 	# adjust the allocation parameters
@@ -46,6 +47,7 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::N
     @pack_land begin
         cAlloc => land.states
     end
+    # @show cAlloc, sum(cAlloc)
     return land
 end
 

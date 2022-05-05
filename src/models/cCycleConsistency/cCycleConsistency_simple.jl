@@ -3,84 +3,51 @@ export cCycleConsistency_simple
 struct cCycleConsistency_simple <: cCycleConsistency
 end
 
-function precompute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## instantiate variables
-		flagUp = triu(ones(size(flow_matrix)), 1)
-		flagLo = tril(ones(size(flow_matrix)), -1)
-
-	## pack land variables
-	@pack_land (flagUp, flagLo) => land.cCycleConsistency
-	return land
-end
-
 function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
-
-	## unpack land variables
-	@unpack_land (flagUp, flagLo) ∈ land.cCycleConsistency
 
 	## unpack land variables
 	@unpack_land begin
 		cAlloc ∈ land.states
 		p_A ∈ land.cFlow
-		(𝟘, 𝟙) ∈ helpers.numbers
+		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
 	end
+
 	# check allocation
-	tmp0 = cAlloc; #sujan
-	tmp1 = sum(cAlloc)
-	if any(tmp0 > 1) || any(tmp0 < 𝟘)
-		error("SINDBAD TEM: cAlloc lt 0 | gt 1")
+	if any(cAlloc .> 𝟙)
+		@show cAlloc
+		error("cAllocation is greater than 1. Cannot continue")
 	end
-	if any(abs(sum(tmp1) - 1) > 1E-6)
-		error("SINDBAD TEM: sum(cAlloc) ne1")
+	if any(cAlloc .< 𝟘)
+		@show cAlloc
+		error("cAllocation is negative. Cannot continue")
 	end
+	if !isapprox(sum(cAlloc), 𝟙; atol=tolerance)
+		@show cAlloc, sum(cAlloc)
+		error("cAllocation does not sum to 1. Cannot continue")
+	end
+
 	# Check carbon flow matrix
 	# the sum of A per column below the diagonals is always < 1
-	# sujan: 22/03/2021: the flow_matrix reshape here is extremely slow..Also; it will not work when there is more than 1 pixel.
-	for pix in 1:info.tem.helpers.sizes.nPix
-		flow_matrix = squeeze(p_A[pix])
-		# of diagonal values of 0 must be between 0 & 1
-		anyBad = any(flow_matrix * (flagLo + flagUp) < 𝟘)
-		if anyBad
-			error("negative values in the p_cFlow_A matrix!")
-		end
-		anyBad = any(flow_matrix * (flagLo + flagUp) > 1 + 1E-6)
-		if anyBad
-			error("values in the p_cFlow_A matrix greater than 1!")
-		end
-		# in the lower & upper part of the matrix A the sums have to be lower than 1
-		anyBad = any(sum(flow_matrix * flagLo) > 1 + 1E-6)
-		if anyBad
-			error("sum of cols higher than one in lower in p_cFlow_A matrix")
-		end
-		anyBad = any(sum(flow_matrix * flagUp) > 1 + 1E-6)
-		if anyBad
-			error("sum of cols higher than one in upper in p_cFlow_A matrix")
-		end
+	offDiagA = offDiag(p_A)
+	offDiagU = offDiagUpper(p_A)
+	offDiagL = offDiagLower(p_A)
+	if any(offDiagA .< 𝟘)
+		@show offDiagA, p_A
+		error("negative values in flow matrix. Cannot continue")
 	end
-	# flow_matrix = reshape(p_A, length(land.pools.cEco), length(land.pools.cEco))
-	# flagUp = triu(ones(size(flow_matrix)), 1)
-	# flagLo = tril(ones(size(flow_matrix)), -1)
-	# # of diagonal values of 0 must be between 0 & 1
-	# anyBad = any(flow_matrix * (flagLo+flagUp) < 𝟘)
-	# if anyBad
-	# error("negative values in the p_cFlow_A matrix!")
-	# end
-	# anyBad = any(flow_matrix * (flagLo+flagUp) > 1 + 1E-6)
-	# if anyBad
-	# error("values in the p_cFlow_A matrix greater than 1!")
-	# end
-	# # in the lower & upper part of the matrix A the sums have to be lower than 1
-	# anyBad = any(sum(flow_matrix * flagLo) > 1 + 1E-6)
-	# if anyBad
-	# error("sum of cols higher than one in lower in p_cFlow_A matrix")
-	# end
-	# anyBad = any(sum(flow_matrix * flagUp) > 1 + 1E-6)
-	# if anyBad
-	# error("sum of cols higher than one in upper in p_cFlow_A matrix")
-	# end
+	if any(offDiagA .> 𝟙)
+		@show offDiagA, p_A
+		error("flow is greater than 1. Cannot continue")
+	end
 
-	## pack land variables
+	# if !isapprox(sum(offDiagL), 𝟙; atol=tolerance)
+	# 	@show sum(offDiagL), offDiagL, p_A
+	# 	error("sum of cols greater than one in lower cFlow matrix")
+	# end
+	# if !isapprox(sum(offDiagU), 𝟙; atol=tolerance)
+	# 	@show sum(offDiagU), offDiagU, p_A
+	# 	error("sum of cols greater than one in upper cFlow matrix")
+	# end
 	return land
 end
 
