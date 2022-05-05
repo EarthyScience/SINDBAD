@@ -4,7 +4,8 @@ export getForcing
 getForcing(info)
 """
 function getForcing(info)
-    if isempty(info.forcing.oneDataPath) == false
+    doOnePath = false
+    if !isempty(info.forcing.oneDataPath)
         doOnePath = true
         if isabspath(info.forcing.oneDataPath)
             dataPath = info.forcing.oneDataPath
@@ -16,15 +17,17 @@ function getForcing(info)
     varlist = []
     dataAr = []
     # forcing = (;)
+    if doOnePath
+        ds = Dataset(dataPath)
+    end
     for v in varnames
         vinfo = getproperty(info.forcing.variables, v)
-        if doOnePath == false
+        if !doOnePath
             dataPath = v.dataPath
+            ds = Dataset(dataPath)
         end
         srcVar = vinfo.sourceVariableName
         tarVar = Symbol(v)
-        @show srcVar
-        ds = Dataset(dataPath)
         ds_dat = ds[srcVar][:, :, :]
         data_tmp = applyUnitConversion(ds_dat, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
         bounds = vinfo.bounds
@@ -38,8 +41,8 @@ function getForcing(info)
             push!(varlist, tarVar)
             push!(dataAr, fill(data_to_push, 14245))
         end
-        @show tarVar, length(data_tmp), vinfo.spaceTimeType, size(dataAr)
     end
+    println("forcing is still replicating the static variables 14245 times. Needs refinement and automation.")
     forcing = Table((; zip(varlist, dataAr)...))
     return forcing
 end
