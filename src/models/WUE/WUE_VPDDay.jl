@@ -13,7 +13,7 @@ function compute(o::WUE_VPDDay, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## calculate variables
 	# "WUEat1hPa"
-	kpa_to_hpa = sNT(10) * 𝟙
+	kpa_to_hpa = 10 * 𝟙
 	AoE = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
 
 	## pack land variables

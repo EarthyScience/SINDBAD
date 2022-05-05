@@ -5,12 +5,33 @@ export aRespiration_Thornley2000A
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
+function precompute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpers::NamedTuple)
+	@unpack_land begin
+		cEco ∈ land.pools
+		numType ∈ helpers.numbers
+	end
+	
+	p_km = zeros(numType, length(land.pools.cEco))
+	p_km4su = copy(p_km)
+	RA_G = copy(p_km)
+	RA_M = copy(p_km)
+
+	## pack land variables
+	@pack_land begin
+		(p_km, p_km4su) => land.aRespiration
+		(RA_G, RA_M) => land.states
+	end
+	return land
+end
+
 function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000A o
 
 	## unpack land variables
 	@unpack_land begin
+		(p_km, p_km4su) ∈ land.aRespiration
+		(RA_G, RA_M) ∈ land.states
 		(cAlloc, cEcoEfflux) ∈ land.states
 		cEco ∈ land.pools
 		gpp ∈ land.fluxes
@@ -18,10 +39,6 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 		fT ∈ land.aRespirationAirT
 		(𝟙, 𝟘, numType) ∈ helpers.numbers
 	end
-	p_km = zeros(numType, length(land.pools.cEco))
-	p_km4su = copy(p_km)
-	RA_G = copy(p_km)
-	RA_M = copy(p_km)
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay

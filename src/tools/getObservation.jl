@@ -26,6 +26,7 @@ end
 getObservation(info)
 """
 function getObservation(info)
+    doOnePath = true
     if isempty(info.opti.constraints.oneDataPath) == false
         doOnePath = true
         if isabspath(info.opti.constraints.oneDataPath)

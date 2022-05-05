@@ -21,7 +21,6 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing
 	@unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o
 	@unpack_forcing PFT ∈ forcing
 
-
 	## unpack land variables
 	@unpack_land begin
 		(WBP, vegFraction) ∈ land.states

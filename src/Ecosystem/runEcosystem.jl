@@ -67,12 +67,12 @@ function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; ns
         # for t in 170:171
         for t in 1:tsteps
             out = runModels(forcing[t], selectedModels, out, modelHelpers)
-            out = removeEmptyFields(out)
             if history
                 push!(spinuplog, values(deepcopy(out))[1:length(out.pools)])
             end
         end
     end
+    out = removeEmptyFields(out)
     return (out, spinuplog)
 end
 
