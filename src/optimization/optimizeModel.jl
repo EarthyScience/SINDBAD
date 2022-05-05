@@ -55,11 +55,12 @@ function updateParameters(tblParams, approaches)
     updatedModels = []
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
-        global approachx = approaches[idx] # bad, bad, bad !!
+        global approachx = approaches[idx] # bad, bad, bad !! #TODO
         if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
             for var in vars
                 inOptim = filtervar(var, modelName, tblParams)
+                #TODO
                 @eval (@set! approachx.$var = $inOptim)
             end
         end

@@ -44,14 +44,20 @@ function typenarrow!(d::DataStructures.OrderedDict)
     return dTuple
 end
 
-function setTupleSubfield(out, fieldname=:fluxes, vals=(:a, 1))
-    return @eval (; $out..., $fieldname=(; $out.$fieldname..., $(vals[1])=$vals[2]))
-end
+#function setTupleSubfield(out, fieldname=:fluxes, vals=(:a, 1))
+#    return @eval (; $out..., $fieldname=(; $out.$fieldname..., $(vals[1])=$vals[2]))
+#end
+
+#function setTupleField(out, vals=(:a, 1))
+#    return @eval (; $out..., $(vals[1])=$vals[2])
+#end
 
 
-function setTupleField(out, vals=(:a, 1))
-    return @eval (; $out..., $(vals[1])=$vals[2])
+function setTupleSubfield(out, fieldname, vals)
+    return (;out..., fieldname=>(;getfield(out, fieldname)...,first(vals)=>last(vals)))
 end
+
+setTupleField(out, vals) = (;out..., first(vals)=>last(vals))
 
 struct BoundFields <: DocStringExtensions.Abbreviation
     types::Bool
