@@ -113,7 +113,7 @@
             "approach": "GSI"
         },
         "gppDirRadiation": {
-            "approach": "Maekelae2008"
+            "approach": "none"
         },
         "gppSoilW": {
             "approach": "Stocker2020"
@@ -126,6 +126,9 @@
         },
         "groundWSoilWInteraction":{
             "approach": "VanDijk2010"
+        },
+        "LAI": {
+            "approach": "cVegLeaf"
         },
         "percolation": {
             "approach": "WBP"
