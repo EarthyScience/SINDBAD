@@ -5,6 +5,9 @@ export LAI_cVegLeaf
 end
 
 function compute(o::LAI_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)
+	## unpack parameters
+	@unpack_LAI_cVegLeaf o
+
 	@unpack_land cVegLeaf ∈ land.pools
 
 	## calculate variables
