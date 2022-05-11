@@ -49,22 +49,32 @@ end
 updateParameters(tblParams, approaches)
 """
 function updateParameters(tblParams, approaches)
-    function filtervar(var, modelName, tblParams)
-        filter(row -> row.names == var && row.modelsApproach == modelName, tblParams).optim[1]
+    function filtervar(var, modelName, tblParams, approachx)
+        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+        if isempty(subtbl)
+            return getproperty(approachx, var)
+        else 
+            return subtbl.optim[1]
+        end
     end
-    updatedModels = []
+    updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
-        global approachx = approaches[idx] # bad, bad, bad !! #TODO
-        if modelName in tblParams.modelsApproach
+        approachx = approaches[idx] # bad, bad, bad !! #TODO
+        newapproachx = if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
+            newvals = Pair[]
             for var in vars
-                inOptim = filtervar(var, modelName, tblParams)
-                #TODO
-                @eval (@set! approachx.$var = $inOptim)
+                inOptim = filtervar(var, modelName, tblParams, approachx)
+                #TODO Check whether this works correctly
+                push!(newvals, var => inOptim)
+                #    @eval (@set! approachx.$var = $inOptim)
             end
+            typeof(approachx)(; newvals...)
+        else
+            approachx
         end
-        push!(updatedModels, approachx)
+        push!(updatedModels, newapproachx)
     end
     return (updatedModels...,)
 end
