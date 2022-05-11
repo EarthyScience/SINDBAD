@@ -3,7 +3,7 @@ using Sinbad
 # using ProfileView
 using BenchmarkTools
 using JSONTables, CSV
-
+import JSON3
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
@@ -23,5 +23,13 @@ outparams, outdata = optimizeModel(forcing, out, observations, approaches, optim
 CSV.write("./data/outparams.csv", outparams)
 
 #readin back!
-rdback = CSV.File("./data/outparams.csv");
+rdback = CSV.File("./data/outparams.csv")
 rdbackparams = Table(rdback)
+
+jsformat = JSONTables.objecttable(outparams)
+open("./data/test_table.json", "w") do io
+    JSON3.pretty(io, jsformat)
+end
+json_string = read("./data/test_table.json", String)
+rdjs = JSON3.read(json_string)
+tableback = Table((; zip(keys(rdjs), values(rdjs))...))
