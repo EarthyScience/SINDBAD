@@ -81,17 +81,20 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Determine growth and maintenance respiration -> npp using aRespiration_Thornley2000A
+Determine growth and maintenance respiration using aRespiration_Thornley2000A
 
 *Inputs*
- - land.aRespiration.km[ii].value: maintenance [respiration] coefficient - dependent on  temperature and; depending on the models; degradable fraction  (δT-1)
- - land.fluxes.gpp: substrate supply rate: Gross Primary Production [gC.m-2.δT-1]
- - land.pools.cEco: carbon pools [gC.m-2]
- - land.states.cAlloc[zix]: carbon allocation in the different vegetation pools [[]]
+ - info.timeScale.stepsPerDay: number of time steps per day
+ - land.aRespirationAirT.fT: temperature effect on autrotrophic respiration [δT-1]
+ - land.cCycleBase.C2Nveg: carbon to nitrogen ratio [gC.gN-1]
+ - land.states.cAlloc: carbon allocation []
+ - land.pools.cEco: ecosystem carbon pools [gC.m2]
+ - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
 
 *Outputs*
- - land.states.cEcoEfflux[zix]: autotrophic respiration from each plant pools [gC.m-2.δT-1]
- - land.states.cNPP: net primary production for each plant pool [gC.m-2.δT-1]
+ - land.states.cEcoEfflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.RA_G: growth respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.RA_M: maintenance respiration from each plant pools [gC.m-2.δT-1]
 
 ---
 
@@ -102,7 +105,7 @@ Determine growth and maintenance respiration -> npp using aRespiration_Thornley2
  - Thornley, J. H. M., & M. G. R. Cannell [2000], Modelling the components  of plant respiration: Representation & realism, Ann Bot-London, 85[1]  55-67.
 
 *Versions*
- - 1.0 on 06.02.2020 [sbesnard]: cleaned up the code
+ - 1.0 on 06.05.2022 [ncarval/skoirala]: cleaned up the code
 
 *Created by:*
  - ncarval
