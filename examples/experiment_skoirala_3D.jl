@@ -4,7 +4,7 @@ using ProfileView
 using BenchmarkTools
 using GLMakie
 # using Plots
-expFile = "sandbox/test_json/settings_minimal/experiment.json"
+expFile = "sandbox/test_json/settings_minimal/experiment.json";
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
@@ -33,9 +33,14 @@ outforw = runForward(approaches, forcing, out, info.tem.variables, info.tem.help
 states = outforw.states |> columntable;
 pools = outforw.pools |> columntable;
 fluxes = outforw.fluxes |> columntable;
+gppD = outforw.gppDemand |> columntable
 # using GR
-plot(fluxes.gpp)
-mm(fluxes.gpp)
+fig = Figure(resolution=(2200, 900))
+lines(gppD.AllDemScGPP)
+
+
+# plot(fluxes.gpp)
+# mm(fluxes.gpp)
 pprint(outforw)
 function mm(dat)
     minn = minimum(dat)
