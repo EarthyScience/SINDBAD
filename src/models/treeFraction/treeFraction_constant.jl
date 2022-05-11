@@ -1,7 +1,7 @@
 export treeFraction_constant
 
 @bounds @describe @units @with_kw struct treeFraction_constant{T1} <: treeFraction
-	constantTreeFrac::T1 = 0.5 | (0.3, 1.0) | "Tree fraction" | ""
+	constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
 end
 
 function compute(o::treeFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
