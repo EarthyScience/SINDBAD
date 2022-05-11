@@ -1,5 +1,4 @@
-export runEcosystem, runSpinup, runForward
-export removeEmptyFields
+export runEcosystem, runSpinup, runForward, runPrecompute
 
 """
 runModels(forcing, models, out)
@@ -8,6 +7,7 @@ function runModels(forcing, models, out, modelHelpers)
     for model in models
         out = Models.compute(model, forcing, out, modelHelpers)
         # out = Models.update(model, forcing, out, modelHelpers)
+        # @show typeof(model), typeof(out.pools.soilW), typeof(out.pools.snowW)
     end
     return out
 end
@@ -28,6 +28,8 @@ end
 function runPrecompute(forcing, models, out, modelHelpers)
     for model in models
         out = Models.precompute(model, forcing, out, modelHelpers)
+        # @show typeof(model), typeof(out.pools.soilW), typeof(out.pools.snowW)
+        # println("-------------------")
     end
     return out
 end
@@ -35,13 +37,18 @@ end
 """
 runForward(selectedModels, forcing, out, helpers)
 """
-function runForward(forward_models, forcing, out, modelVars, modelHelpers)
+function runForward(selectedModels, forcing, out, modelVars, modelHelpers)
+    # modelVars = (modelVars...,)
     outtemp = map(forcing) do f
-        out = runModels(f, forward_models, out, modelHelpers)
-        out_filtered = filterVariables(out, modelVars)
+        out = runModels(f, selectedModels, out, modelHelpers)
+        out_filtered = out
+        # out_filtered = filterVariables(out, modelVars)
         deepcopy(out_filtered)
     end
-    return columntable(outtemp)
+    out_temporal = columntable(outtemp)
+    # out_temporal = columntable(outtemp)
+    return out_temporal
+    # return outtemp[1]
 end
 
 """
@@ -56,28 +63,28 @@ end
 """
 runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
 """
-function runSpinup(spinup_models, forcing, out, modelHelpers; history=false, nspins=3)
+function runSpinup(selectedModels, forcing, out, modelHelpers, history=false; nspins=3)
     tsteps = size(forcing, 1)
     spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
+    out = runPrecompute(forcing[1], selectedModels, out, modelHelpers)
     for j in 1:nspins
+        # for t in 170:171
         for t in 1:tsteps
-            out = runModels(forcing[t], spinup_models, out, modelHelpers)
+            out = runModels(forcing[t], selectedModels, out, modelHelpers)
             if history
                 push!(spinuplog, values(deepcopy(out))[1:length(out.pools)])
             end
         end
     end
+    out = removeEmptyFields(out)
     return (out, spinuplog)
 end
 
 """
 runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forward run
 """
-function runEcosystem(approaches, forcing, init_out, modelInfo, history=false; nspins=3) # forward run
-    spinup_models = approaches[modelInfo.models.is_spinup .== 1]
-    out_prec = runPrecompute(forcing[1], approaches, init_out, modelInfo.helpers)
-    out_spin, spinuplog = runSpinup(spinup_models, forcing, out_prec, modelInfo.helpers; history, nspins=nspins)
-    out_forw = runForward(approaches, forcing, out_spin, modelInfo.variables, modelInfo.helpers)
-    out_forw = removeEmptyFields(out_forw)
-    return out_forw
+function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
+    outspin, outlog = runSpinup(selectedModels, forcing, out, modelInfo.helpers, history; nspins=nspins)
+    outforw = runForward(selectedModels, forcing, outspin, modelVars, modelInfo.helpers)
+    return outforw
 end

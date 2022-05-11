@@ -50,10 +50,10 @@ function compute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
 	# G = 4.2 * (Tair_ip1 - Tair_im1) / dt
 	# where Ti is the mean air temperature [°C] for the period i; &
 	# dt the difference of time [days]..
-	ΔTair = Tair - Tair_prev
-	dt = 2.0
-	G = 4.2 * (ΔTair) / dt
-
+	# ΔTair = Tair - Tair_prev
+	# dt = 2.0
+	# G = 4.2 * (ΔTair) / dt
+	G = 0.0
 	PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
 	PET = max(PET, 𝟘)
 
