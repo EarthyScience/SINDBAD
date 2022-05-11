@@ -13,7 +13,8 @@ function getParameters(selectedModels)
     upper = [constrains[i][2] for i in 1:nbounds]
     names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
     modelsApproach = [parentnameflatten(selectedModels)...]
-    models = [Symbol(supertypes(@eval $m)[2]) for m in modelsApproach]
+    #models = [Symbol(supertypes(@eval $m)[2]) for m in modelsApproach]
+    models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
 end
