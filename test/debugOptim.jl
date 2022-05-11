@@ -25,4 +25,12 @@ outevolution = runEcosystem(approaches, forcing, out, modelvars, info.tem; nspin
 #cor(y[idxs], ŷ[idxs])
 
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
-    obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=10, lossym=(:mse, :cor));
+    obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=50, lossym=(:mse, :cor));
+
+fluxes = outdata.fluxes |> columntable;
+pools = outdata.pools |> columntable;
+soilW = hcat(pools.soilW...)';
+
+using Plots
+plot(fluxes.evapotranspiration)
+plot(soilW)
