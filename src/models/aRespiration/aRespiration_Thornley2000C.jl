@@ -43,9 +43,6 @@ function compute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpe
 	# adjust nitrogen efficiency rate of maintenance respiration
 	RMN = RMN / helpers.dates.nStepsDay
 
-	# compute maintenance & growth respiration terms for each vegetation pool
-	# according to MODEL C - growth; degradation & resynthesis view of
-	# respiration
 	zix = getzix(land.pools.cVeg)
 	
 	#@needscheck: MTF, metabolic fraction, may be inconsistent with the rest of the model structure
@@ -64,6 +61,9 @@ function compute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpe
 	p_km[zix] .= km .* kd
 	p_km4su[zix] .= p_km[zix] .* (𝟙 - YG)
 
+	# compute maintenance & growth respiration terms for each vegetation pool
+	# according to MODEL C - growth; degradation & resynthesis view of
+	# respiration
 	# maintenance respiration: R_m = km * (1.0 - YG) * C; km = km * MTF [before equivalent to kd]
 	RA_M[zix] .= p_km[zix] .* (𝟙 - YG) .* cEco[zix]
 
@@ -94,22 +94,16 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Determine growth and maintenance respiration using aRespiration_Thornley2000C (model C)
+Determine growth and maintenance respiration -> npp using aRespiration_Thornley2000C
 
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
  - land.aRespirationAirT.fT: temperature effect on autrotrophic respiration [δT-1]
- - land.cCycle.MTF: metabolic fraction []
- - land.cCycleBase.C2Nveg: carbon to nitrogen ratio [gC.gN-1]
- - land.states.cAlloc: carbon allocation []
- - land.pools.cEco: ecosystem carbon pools [gC.m2]
- - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
-
+ - land.cCycle.MTF: metabolic fraction [[]]
+ - land.cCycleBase.C2Nveg[zix]: carbon to nitrogen ratio [gC.gN-1]
 
 *Outputs*
- - land.states.cEcoEfflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
- - land.states.RA_G: growth respiration from each plant pools [gC.m-2.δT-1]
- - land.states.RA_M: maintenance respiration from each plant pools [gC.m-2.δT-1]
+ - land.aRespiration.km[ii].value: maintenance [respiration] coefficient - dependent on  temperature and; depending on the models; degradable fraction  (δT-1)
 
 ---
 
@@ -120,7 +114,7 @@ Determine growth and maintenance respiration using aRespiration_Thornley2000C (m
  - Thornley, J. H. M., & M. G. R. Cannell [2000], Modelling the components  of plant respiration: Representation & realism, Ann Bot-London, 85[1]  55-67.
 
 *Versions*
- - 1.0 on 06.05.2022 [ncarval/skoirala]: cleaned up the code
+ - 1.0 on 06.02.2020 [sbesnard]: cleaned up the code  
 
 *Created by:*
  - ncarval
