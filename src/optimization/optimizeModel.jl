@@ -13,7 +13,6 @@ function getParameters(selectedModels)
     upper = [constrains[i][2] for i in 1:nbounds]
     names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
     modelsApproach = [parentnameflatten(selectedModels)...]
-    #models = [Symbol(supertypes(@eval $m)[2]) for m in modelsApproach]
     models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
@@ -61,7 +60,7 @@ function updateParameters(tblParams, approaches)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
-        approachx = approaches[idx] # bad, bad, bad !! #TODO
+        approachx = approaches[idx]
         newapproachx = if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
             newvals = Pair[]
@@ -69,7 +68,6 @@ function updateParameters(tblParams, approaches)
                 inOptim = filtervar(var, modelName, tblParams, approachx)
                 #TODO Check whether this works correctly
                 push!(newvals, var => inOptim)
-                #    @eval (@set! approachx.$var = $inOptim)
             end
             typeof(approachx)(; newvals...)
         else
@@ -92,7 +90,7 @@ function getConstraintNames(info)
     end
     optimizedVariables = getVariableGroups(modelVariables) #["fluxes.gpp", "fluxes.tra", "pools.cVeg"] = (; fluxes=(:gpp, :tra), pools=(:cVeg))
     modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store))
-    @show modelVariables
+    #@show modelVariables
     return obsVariables, modelVariables, optimizedVariables
 end
 
@@ -118,27 +116,27 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, approaches, forcing, initOut,
-    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo)
+    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo; lossym = :mse)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
     @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷ, Val(:mse))
+    return loss(y, ŷ, Val(lossym))
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing, initOut, observations, selectedModels, optimParams,
-    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100)
+    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100, lossym = :mse)
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
     defaults = tblParams.defaults
     costFunc = x -> getLoss(x, selectedModels, forcing, initOut,
-        observations, tblParams, obsVariables, modelVariables, optimVars, temInfo, optiInfo)
+        observations, tblParams, obsVariables, modelVariables, optimVars, temInfo, optiInfo; lossym=lossym)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
     optim_para = xbest(results)
