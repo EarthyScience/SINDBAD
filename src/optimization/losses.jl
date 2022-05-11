@@ -11,3 +11,6 @@ function loss(y::Matrix, ŷ::Matrix, ::Val{:cor})
     return cor(y[idxs], ŷ[idxs])
 end
 
+function loss(y::Matrix, ŷ::Matrix, symbs)
+    return sum([loss(y, ŷ, Val(s)) for s in symbs])
+end

@@ -116,21 +116,21 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, approaches, forcing, initOut,
-    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo; lossym = :mse)
+    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo; lossym = Val(:mse))
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, approaches)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
     (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
     @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷ, Val(lossym))
+    return loss(y, ŷ, lossym)
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing, initOut, observations, selectedModels, optimParams,
-    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100, lossym = :mse)
+    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100, lossym = Val(:mse))
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
