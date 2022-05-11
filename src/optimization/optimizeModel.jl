@@ -1,6 +1,6 @@
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss
-export getData
+
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -13,7 +13,7 @@ function getParameters(selectedModels)
     upper = [constrains[i][2] for i in 1:nbounds]
     names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
     modelsApproach = [parentnameflatten(selectedModels)...]
-    models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
+    models = [Symbol(supertypes(@eval $m)[2]) for m in modelsApproach]
     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
 end
@@ -49,66 +49,39 @@ end
 updateParameters(tblParams, approaches)
 """
 function updateParameters(tblParams, approaches)
-    function filtervar(var, modelName, tblParams, approachx)
-        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-        if isempty(subtbl)
-            return getproperty(approachx, var)
-        else 
-            return subtbl.optim[1]
-        end
+    function filtervar(var, modelName, tblParams)
+        filter(row -> row.names == var && row.modelsApproach == modelName, tblParams).optim[1]
     end
-    updatedModels = Models.LandEcosystem[]
+    updatedModels = []
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
-        approachx = approaches[idx]
-        newapproachx = if modelName in tblParams.modelsApproach
+        global approachx = approaches[idx] # bad, bad, bad !! #TODO
+        if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
-            newvals = Pair[]
             for var in vars
-                inOptim = filtervar(var, modelName, tblParams, approachx)
-                #TODO Check whether this works correctly
-                push!(newvals, var => inOptim)
+                inOptim = filtervar(var, modelName, tblParams)
+                #TODO
+                @eval (@set! approachx.$var = $inOptim)
             end
-            typeof(approachx)(; newvals...)
-        else
-            approachx
         end
-        push!(updatedModels, newapproachx)
+        push!(updatedModels, approachx)
     end
     return (updatedModels...,)
 end
 
 """
-    getConstraintNames(info)
-returns
-- obsVariables: a list of observation variables that will be used to calculate cost
-- optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
-- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
+getConstraintNames(info)
 """
-function getConstraintNames(optiInfo, storeVarsList)
-    obsVariables = Symbol.(optiInfo.variables2constrain)
+function getConstraintNames(info)
+    obsVariables = Symbol.(info.opti.variables2constrain)
     modelVariables = String[]
-    optimVariables = (;)
     for v in obsVariables
-        vinfo = getproperty(optiInfo.constraints.variables, v)
+        vinfo = getproperty(info.opti.constraints.variables, v)
         push!(modelVariables, vinfo.modelFullVar)
-        vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
-        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
-    # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(union(modelVariables, storeVarsList))
-    return obsVariables, optimVariables, storeVariables
-end
-
-"""
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getData(outsmodel, observations, obsV, modelVarInfo)
-    ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix
-    y = observations |> select(obsV) |> matrix
-    yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix
-    return (y, yσ, ŷ)
+    optimizedVariables = getVariableGroups(modelVariables) #["fluxes.gpp", "fluxes.tra", "pools.cVeg"] = (; fluxes=(:gpp, :tra), pools=(:cVeg))
+    modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store))
+    return obsVariables, modelVariables, optimizedVariables
 end
 
 """
@@ -118,71 +91,47 @@ function getSimulationData(outsmodel, observations, optimVars, obsVariables)
     ŷ = [] # Vector{Matrix{Float64}}
     for k in keys(optimVars)
         newkvals = getfield(outsmodel, k) |> columntable
-        newkvals = newkvals |> select(keys(getfield(optimVars, k))...)
-        # newkvals = newkvals |> select(keys(newkvals)...)
+        newkvals = newkvals |> select(keys(newkvals)...)
         newkvals = newkvals |> matrix
-        newkvals = vcat(newkvals...)
         push!(ŷ, newkvals)
     end
     ŷ = length(ŷ) == 1 ? ŷ[1] : hcat(ŷ...)
     #ŷ = aggregate(ŷ, :monthly)
-    y = observations |> select(obsVariables[1:2:end-1]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    yσ = observations |> select(obsVariables[2:2:end]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
     # @show mean(skipmissing(y)), mean(ŷ), modelVariables
-    return (y, yσ, ŷ)
+    return (y, ŷ)
 end
 
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, forcing, initOut,
-    observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+function getLoss(pVector, approaches, forcing, initOut,
+    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
-    newApproaches = updateParameters(tblParams, modelInfo.models.forward)
-    @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
-    lossVec=[]
-    cost_options=optiInfo.costOptions;
-    for var_row in cost_options
-        obsV = var_row.variable
-        lossMetric = var_row.costMetric
-        (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
-        push!(lossVec, loss(y, ŷ, yσ, Val(lossMetric)))
-    end
-
-    return sum(lossVec)
+    newApproaches = updateParameters(tblParams, approaches)
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
+    # @show propertynames(outevolution)
+    (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
+    @assert size(y, 1) == size(ŷ, 1)
+    return loss(y, ŷ, Val(:mse))
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, initOut, observations,
-    modelInfo, optiInfo; maxfevals=100, nspins=3)
-    optimVars = optiInfo.variables.optim;
-    # get the list of observed variables, model variables to compare observation against, 
-    # obsVars, optimVars, storeVars = getConstraintNames(info);
-
-    # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(modelInfo.models.forward, optiInfo.params2opti)
-
-    # get the defaults and bounds
-    defaults = tblParams.defaults
+function optimizeModel(forcing, initOut, observations, selectedModels, optimParams,
+    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100)
+    tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
-
-    # make the cost function handle
-    costFunc = x -> getLoss(x, forcing, initOut,
-        observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
-
-    # minimize the cost
+    defaults = tblParams.defaults
+    costFunc = x -> getLoss(x, selectedModels, forcing, initOut,
+        observations, tblParams, obsVariables, modelVariables, optimVars, temInfo, optiInfo)
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
-
-    # get the best results and do a forward run with the optimized parameters
     optim_para = xbest(results)
-
-    # update the parameter table with the optimized values
     tblParams.optim .= optim_para
-    newApproaches = updateParameters(tblParams, modelInfo.models.forward);
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins); # spinup + forward run!
+    newApproaches = updateParameters(tblParams, selectedModels)
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end
