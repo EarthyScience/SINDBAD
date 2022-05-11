@@ -2,10 +2,12 @@
 loss(y::Matrix, ŷ::Matrix)
 """
 function loss(y::Matrix, ŷ::Matrix, ::Val{:mse})
-    return mean(skipmissing(abs2.(y .- ŷ)))
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
 
 function loss(y::Matrix, ŷ::Matrix, ::Val{:cor})
-    return cor(skipmissing(abs2.(y .- ŷ)))
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return cor(y[idxs], ŷ[idxs])
 end
 
