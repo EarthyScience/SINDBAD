@@ -34,7 +34,8 @@ using Reexport: @reexport
     using TypedTables:
         Table
     using StatsBase:
-        mean
+        mean,
+        cor
 end
 
 include("Ecosystem/runEcosystem.jl")
