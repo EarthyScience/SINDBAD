@@ -11,7 +11,7 @@ function precompute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, he
 		numType ∈ helpers.numbers
 	end
 	
-	p_km = zeros(numType, length(land.pools.cEco))
+	p_km = ones(numType, length(land.pools.cEco))
 	p_km4su = copy(p_km)
 	RA_G = copy(p_km)
 	RA_M = copy(p_km)
@@ -31,8 +31,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 	## unpack land variables
 	@unpack_land begin
 		(p_km, p_km4su) ∈ land.aRespiration
-		(RA_G, RA_M) ∈ land.states
-		(cAlloc, cEcoEfflux) ∈ land.states
+		(cAlloc, cEcoEfflux, RA_G, RA_M) ∈ land.states
 		cEco ∈ land.pools
 		gpp ∈ land.fluxes
 		p_C2Nveg ∈ land.cCycleBase
@@ -58,8 +57,9 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 	# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
 	RA_G[zix] .= (𝟙 - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
 
-	# no negative growth respiration
+	# no negative growth or maintenance respiration
 	RA_G .= max.(RA_G, 𝟘)
+	RA_M .= max.(RA_M, 𝟘)
 
 	# total respiration per pool: R_a = R_m + R_g
 	cEcoEfflux .= RA_M .+ RA_G
