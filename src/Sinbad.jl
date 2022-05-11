@@ -1,7 +1,6 @@
 module Sinbad
 import DataStructures
 using InteractiveUtils
-using StatsBase
 using Reexport: @reexport
 @reexport begin
     using CMAEvolutionStrategy:
@@ -34,6 +33,8 @@ using Reexport: @reexport
         matrix
     using TypedTables:
         Table
+    using StatsBase:
+        mean
 end
 
 include("Ecosystem/runEcosystem.jl")
