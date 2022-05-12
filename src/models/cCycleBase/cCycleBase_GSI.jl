@@ -9,14 +9,14 @@ export cCycleBase_GSI
 	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
 	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
 	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = [-1 0 0 0 0 0 0 0
-	    0 -1 0 0 0 0 0 0
-	    0 0 -1 0 0 0 0 0
-	    0 0 0 -1 0 0 0 0
-	    1.0 0 1.0 0 -1 0 0 0
-	    0 1.0 0 0 0 -1 0 0
-	    0 0 0 0 1.0 1.0 -1 0
-	    0 0 0 0 0 0 1.0 -1] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
+	cFlowA::T9 = [-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
+	    0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
+	    0.0 0.0 -1.0 0.0 0.0 0 0.0 0.0
+	    0.0 0.0 0 -1.0 0.0 0.0 0.0 0.0
+	    1.0 0.0 1.0 0.0 -1.0 0.0 0.0 0.0
+	    0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
+	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
+	    0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
 	C2Nveg::T10 = [25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
