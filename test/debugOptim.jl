@@ -25,7 +25,7 @@ outevolution = runEcosystem(approaches, forcing, out, modelvars, info.tem; nspin
 #cor(y[idxs], ŷ[idxs])
 
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
-    obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=50, lossym=(:mse, :cor));
+    obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=50, lossym=(:mse, :pcor));
 
 fluxes = outdata.fluxes |> columntable;
 pools = outdata.pools |> columntable;
