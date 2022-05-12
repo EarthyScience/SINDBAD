@@ -1,7 +1,4 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
-export getzix, setTupleField, setTupleSubfield, applyUnitConversion
-export offDiag, offDiagUpper, offDiagLower
-export setoptparameters
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield, applyUnitConversion, offDiag, offDiagUpper, offDiagLower, flagLower, flagUpper
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -71,10 +68,10 @@ end
 
 
 function setTupleSubfield(out, fieldname, vals)
-    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
+    return (;out..., fieldname=>(;getfield(out, fieldname)...,first(vals)=>last(vals)))
 end
 
-setTupleField(out, vals) = (; out..., first(vals) => last(vals))
+setTupleField(out, vals) = (;out..., first(vals)=>last(vals))
 
 struct BoundFields <: DocStringExtensions.Abbreviation
     types::Bool
@@ -268,7 +265,7 @@ function offDiag(A::AbstractMatrix)
 end
 
 """
-    offDiagU(A::AbstractMatrix)
+    offDiagUpper(A::AbstractMatrix)
 returns a vector comprising of above diagonal elements of a matrix
 """
 function offDiagUpper(A::AbstractMatrix)
@@ -276,7 +273,7 @@ function offDiagUpper(A::AbstractMatrix)
 end
 
 """
-    offDiagL(A::AbstractMatrix)
+    offDiagLower(A::AbstractMatrix)
 returns a vector comprising of below diagonal elements of a matrix
 """
 function offDiagLower(A::AbstractMatrix)
@@ -284,22 +281,29 @@ function offDiagLower(A::AbstractMatrix)
 end
 
 """
-setoptparameters(originTable::Table, optTable::Table)
-returns a new Table with the optimised values from optTable.
+    flagUpper(A::AbstractMatrix)
+returns a matrix of same shape as input with 1 for all above diagonal elements and 0 elsewhere
 """
-function setoptparameters(originTable::Table, optTable::Table)
-    upoTable = copy(originTable)
-    for i in 1:length(optTable)
-        subtbl = filter(row -> row.names == Symbol(optTable[i].names) && row.models == Symbol(optTable[i].models), originTable)
-        if isempty(subtbl)
-            error("model $(optTable[i].names) and model $(optTable[i].models) not found")
-        else
-            posmodel = findall(x -> x == Symbol(optTable[i].models), upoTable.models)
-            posvar = findall(x -> x == Symbol(optTable[i].names), upoTable.names)
-            pindx = intersect(posmodel, posvar)
-            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
-            upoTable.optim[pindx] = optTable.optim[i]
+function flagUpper(A::AbstractMatrix)
+    o_mat = zeros(size(A))
+    for ι in CartesianIndices(A)
+        if ι[1] < ι[2]
+            o_mat[ι] = 1
         end
     end
-    return upoTable
+    return o_mat
+end
+
+"""
+    flagLower(A::AbstractMatrix)
+returns a matrix of same shape as input with 1 for all below diagonal elements and 0 elsewhere
+"""
+function flagLower(A::AbstractMatrix)
+    o_mat = zeros(size(A))
+    for ι in CartesianIndices(A)
+        if ι[1] > ι[2]
+            o_mat[ι] = 1
+        end
+    end
+    return o_mat
 end
