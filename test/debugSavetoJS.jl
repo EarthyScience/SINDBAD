@@ -7,6 +7,11 @@ import JSON3
 expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
+
+prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.csv")
+prmt = Table(prm)
+
+
 info = setupModel!(info);
 out = createInitOut(info);
 forcing = getForcing(info);
@@ -25,6 +30,7 @@ CSV.write("./data/outparams.csv", outparams)
 #readin back!
 rdback = CSV.File("./data/outparams.csv")
 rdbackparams = Table(rdback)
+
 
 jsformat = JSONTables.objecttable(outparams)
 open("./data/test_table.json", "w") do io
