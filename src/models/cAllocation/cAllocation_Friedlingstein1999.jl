@@ -41,7 +41,8 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, h
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
     for cpName in cpNames
         zix = getzix(pools.carbon, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+        nZix = length(zix) * 𝟙
+        cAlloc[zix] .= getfield(cf2, cpName) / nZix
     end
 
     ## pack land variables
