@@ -4,7 +4,7 @@ using ProfileView
 using BenchmarkTools
 using GLMakie
 # using Plots
-expFile = "sandbox/test_json/settings_minimal/experiment.json";
+expFile = "sandbox/test_json/settings_minimal/experiment_3D.json";
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
