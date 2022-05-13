@@ -23,8 +23,27 @@ prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.
 prmt = Table(prm)
 
 optTable = setoptparameters(originTable, prmt)
-optTable.optim == originTable.optim
+#optTable.optim == originTable.optim
 
+newApproaches = updateParameters(optTable, approaches)
+out = createInitOut(info);
+
+outevolution = runEcosystem(approaches, forcing, out, info.tem.variables, info.tem; nspins=3)
+
+pools = outevolution.pools |> columntable;
+fluxes = outevolution.fluxes |> columntable;
+
+using Plots
+plot(fluxes.gpp)
+plot!(observations.gpp)
+
+
+cEco = hcat(pools.cEco...)';
+plot(cEco[:, 1])
+for z in 1:size(cEco, 2)
+    println(z)
+    plot(cEco[:, z])
+end
 
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
     obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=10, lossym=(:mse, :cor));
