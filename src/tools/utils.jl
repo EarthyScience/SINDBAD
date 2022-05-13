@@ -1,4 +1,7 @@
-export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing, getzix, setTupleField, setTupleSubfield, applyUnitConversion, offDiag, offDiagUpper, offDiagLower
+export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
+export getzix, setTupleField, setTupleSubfield, applyUnitConversion
+export offDiag, offDiagUpper, offDiagLower
+export setoptparameters
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -68,10 +71,10 @@ end
 
 
 function setTupleSubfield(out, fieldname, vals)
-    return (;out..., fieldname=>(;getfield(out, fieldname)...,first(vals)=>last(vals)))
+    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
 end
 
-setTupleField(out, vals) = (;out..., first(vals)=>last(vals))
+setTupleField(out, vals) = (; out..., first(vals) => last(vals))
 
 struct BoundFields <: DocStringExtensions.Abbreviation
     types::Bool
@@ -278,4 +281,25 @@ returns a vector comprising of below diagonal elements of a matrix
 """
 function offDiagLower(A::AbstractMatrix)
     [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
+end
+
+"""
+setoptparameters(originTable::Table, optTable::Table)
+returns a new Table with the optimised values from optTable.
+"""
+function setoptparameters(originTable::Table, optTable::Table)
+    upoTable = copy(originTable)
+    for i in 1:length(optTable)
+        subtbl = filter(row -> row.names == Symbol(optTable[i].names) && row.models == Symbol(optTable[i].models), originTable)
+        if isempty(subtbl)
+            println("model $(optTable[i].names) and model $(optTable[i].models) not found")
+        else
+            posmodel = findall(x -> x == Symbol(optTable[i].models), upoTable.models)
+            posvar = findall(x -> x == Symbol(optTable[i].names), upoTable.names)
+            pindx = intersect(posmodel, posvar)
+            pindx = length(pindx) == 1 ? pindx[1] : error("variable and model mismatch")
+            upoTable.optim[pindx] = optTable.optim[i]
+        end
+    end
+    return upoTable
 end
