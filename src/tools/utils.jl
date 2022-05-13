@@ -292,12 +292,12 @@ function setoptparameters(originTable::Table, optTable::Table)
     for i in 1:length(optTable)
         subtbl = filter(row -> row.names == Symbol(optTable[i].names) && row.models == Symbol(optTable[i].models), originTable)
         if isempty(subtbl)
-            println("model $(optTable[i].names) and model $(optTable[i].models) not found")
+            error("model $(optTable[i].names) and model $(optTable[i].models) not found")
         else
             posmodel = findall(x -> x == Symbol(optTable[i].models), upoTable.models)
             posvar = findall(x -> x == Symbol(optTable[i].names), upoTable.names)
             pindx = intersect(posmodel, posvar)
-            pindx = length(pindx) == 1 ? pindx[1] : error("variable and model mismatch")
+            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
             upoTable.optim[pindx] = optTable.optim[i]
         end
     end
