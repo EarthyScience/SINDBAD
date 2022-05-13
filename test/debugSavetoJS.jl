@@ -18,26 +18,34 @@ optimParams = info.opti.params2opti;
 approaches = info.tem.models.forward;
 tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 
-originTable = getParameters(info.tem.models.forward)
+originTable = getParameters(info.tem.models.forward);
 prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.csv");
 prmt = Table(prm)
 
-optTable = setoptparameters(originTable, prmt)
+optTable = setoptparameters(originTable, prmt);
 #optTable.optim == originTable.optim
 
-newApproaches = updateParameters(optTable, approaches)
+newApproaches = updateParameters(optTable, approaches);
 out = createInitOut(info);
 
-outevolution = runEcosystem(approaches, forcing, out, info.tem.variables, info.tem; nspins=3)
+doutevolution = runEcosystem(approaches, forcing, out, info.tem.variables, info.tem; nspins=1)
+outevolution = runEcosystem(newApproaches, forcing, out, info.tem.variables, info.tem; nspins=1)
 
 pools = outevolution.pools |> columntable;
 fluxes = outevolution.fluxes |> columntable;
+dfluxes = doutevolution.fluxes |> columntable;
 
 using Plots
-plot(fluxes.gpp)
-plot!(observations.gpp)
+pyplot()
+p1=plot(fluxes.gpp, label="opt")
+plot!(dfluxes.gpp, label="def")
+plot!(observations.gpp, label="obs")
 
 
+p2 = plot(fluxes.gpp, observations.gpp, seriestype = :scatter)
+xlims!(0,16)
+ylims!(0, 16)
+plot(p1, p2)
 cEco = hcat(pools.cEco...)';
 plot(cEco[:, 1])
 for z in 1:size(cEco, 2)
