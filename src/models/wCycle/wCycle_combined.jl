@@ -9,7 +9,7 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 		TWS ∈ land.pools
 		ΔTWS  ∈ land.states
 		p_wSat ∈ land.soilWBase
-		(𝟘, tolerance) ∈ helpers.numbers
+		𝟘, tolerance ∈ helpers.numbers
 	end
 
 	## update variables
@@ -20,7 +20,7 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 
 	if minimum(TWS) < 𝟘
 		@show TWS
-		TWS .= max.(TWS, tolerance)
+		TWS .= maximum.(TWS, tolerance)
 		# error("TWS is negative. Cannot continue")
 	end
 
