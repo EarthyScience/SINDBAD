@@ -8,10 +8,6 @@ expFile = "sandbox/test_json/settings_minimal/experiment.json"
 
 info = getConfiguration(expFile);
 
-prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.csv");
-prmt = Table(prm)
-
-
 info = setupModel!(info);
 out = createInitOut(info);
 forcing = getForcing(info);
@@ -23,36 +19,11 @@ approaches = info.tem.models.forward;
 tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 
 originTable = getParameters(info.tem.models.forward)
-upoTable = copy(originTable)
+prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.csv");
+prmt = Table(prm)
 
-upoptim = upoTable.optim
-for i in 1:length(prmt)
-    subtbl = filter(row -> row.names == Symbol(prmt[i].names) && row.models == Symbol(prmt[i].models), originTable)
-    if isempty(subtbl)
-        println("model $(prmt[i].names) and model $(prmt[i].models) not found")
-    else
-        println("hurra!!")
-        posmodel = findall(x -> x == Symbol(prmt[i].models), upoTable.models)
-        posvar = findall(x -> x == Symbol(prmt[i].names), upoTable.names)
-        @show posmodel
-        @show posvar
-        #@show idxtrue
-        #upoptim[posvar[1]] = subtbl.optim[1]
-    end
-end
-
-idxtrue = posmodel .== posvar
-
-posvar[idxtrue]
-
-function filtervar(var, modelName, tblParams, approachx)
-    subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-    if isempty(subtbl)
-        return getproperty(approachx, var)
-    else
-        return subtbl.optim[1]
-    end
-end
+optTable = setoptparameters(originTable, prmt)
+optTable.optim == originTable.optim
 
 
 outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
