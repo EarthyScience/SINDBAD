@@ -23,7 +23,7 @@ function getForcing(info)
     for v in varnames
         vinfo = getproperty(info.forcing.variables, v)
         if !doOnePath
-            dataPath = v.dataPath
+            dataPath = vinfo.dataPath
             ds = Dataset(dataPath)
         end
         srcVar = vinfo.sourceVariableName
