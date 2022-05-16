@@ -3,10 +3,15 @@ using Sinbad
 # using ProfileView
 using BenchmarkTools
 
-expFile = "sandbox/test_json/settings_minimal/experiment.json"
+expFilejs = "sandbox/test_json/settings_minimal/experiment.json"
+local_root ="/Users/lalonso/.julia/dev/Sinbad/"
+expFile = local_root*expFilejs
+info_exp = getExperimentConfiguration(expFile)
+readConfiguration(info_exp, local_root)
 
-info = getConfiguration(expFile);
-info = setupModel!(info);
+info = getConfiguration(expFile, local_root)
+
+info = setupModel!(info); # fails do to wCycle
 out = createInitOut(info);
 forcing = getForcing(info);
 obsvars, modelvars, optimvars = getConstraintNames(info);

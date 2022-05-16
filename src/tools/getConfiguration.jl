@@ -1,4 +1,4 @@
-export getConfiguration
+export getConfiguration, getExperimentConfiguration, readConfiguration
 
 """
 getConfigurationFiles(expFile)
@@ -18,10 +18,10 @@ end
 readConfiguration(configFiles)
 read configuration experiment json and return dictionary
 """
-function readConfiguration(info_exp)
+function readConfiguration(info_exp, local_root)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
-        tmp = jsparse(String(jsread(v)); dicttype=DataStructures.OrderedDict)
+        tmp = jsparse(String(jsread(local_root*v)); dicttype=DataStructures.OrderedDict)
         info[k] = rmComment(tmp) # remove on first level
     end
     # rm second level
@@ -76,10 +76,10 @@ end
 getConfiguration(sindbad_experiment)
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment)
+function getConfiguration(sindbad_experiment, local_root)
     if typeof(sindbad_experiment) == String
         info_exp = getExperimentConfiguration(sindbad_experiment)
-        info = readConfiguration(info_exp)
+        info = readConfiguration(info_exp, local_root)
     end
     infoTuple = typenarrow!(info)
     return infoTuple
