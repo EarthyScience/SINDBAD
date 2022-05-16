@@ -1,3 +1,4 @@
+using CSV
 export getConfiguration, getExperimentConfiguration, readConfiguration
 
 """
@@ -21,17 +22,26 @@ read configuration experiment json and return dictionary
 function readConfiguration(info_exp, local_root)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
-        tmp = jsparse(String(jsread(local_root*v)); dicttype=DataStructures.OrderedDict)
-        info[k] = rmComment(tmp) # remove on first level
+        if endswith(v, ".json")
+            tmp = jsparse(String(jsread(local_root*v)); dicttype=DataStructures.OrderedDict)
+            info[k] = rmComment(tmp) # remove on first level
+        elseif endswith(v, ".csv")
+            prm = CSV.File((local_root*v));
+            tmp = Table(prm)
+            info[k] = tmp
+        end
     end
+    
     # rm second level
     for (k, v) in info
-        ks = keys(info[k])
-        tmpDict = DataStructures.OrderedDict()
-        for ki in ks
-            tmpDict[ki] = rmComment(info[k][ki])
+        if typeof(v) <: Dict
+            ks = keys(info[k])
+            tmpDict = DataStructures.OrderedDict()
+            for ki in ks
+                tmpDict[ki] = rmComment(info[k][ki])
+            end
+            info[k] = tmpDict
         end
-        info[k] = tmpDict
     end
     info["experiment"] = info_exp
     return info
