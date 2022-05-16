@@ -1,9 +1,10 @@
 export gppSoilW_GSI
 
-@bounds @describe @units @with_kw struct gppSoilW_GSI{T1, T2, T3} <: gppSoilW
+@bounds @describe @units @with_kw struct gppSoilW_GSI{T1, T2, T3, T4} <: gppSoilW
 	fW_τ::T1 = 0.8 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
 	fW_slope::T2 = 5.24 | (1.0, 10.0) | "slope of sigmoid" | "fraction"
-	fW_base::T3 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
+	fW_slope_mult::T3 = 100.0 | (nothing, nothing) | "multiplier for the slope of sigmoid" | "fraction"
+	fW_base::T4 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
 end
 
 function precompute(o::gppSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -13,7 +14,7 @@ function precompute(o::gppSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTu
 	## unpack land variables
 	@unpack_land (𝟙, sNT) ∈ helpers.numbers
 	SMScGPP_prev = 𝟙
-	f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * 100.0 * (f_n - base))))
+	f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * fW_slope_mult * (f_n - base))))
 
 	## pack land variables
 	@pack_land (SMScGPP_prev, f_smooth) => land.gppSoilW

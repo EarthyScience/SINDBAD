@@ -34,8 +34,8 @@ function compute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTup
 	TSPY = helpers.dates.nStepsYear; #sujan
 	TSPM = TSPY / 12
 	# BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
-	BGRATIO = 0.0
-	BGME = 1.0
+	BGRATIO = 𝟘
+	BGME = 𝟙
 	# PREVIOUS TIME STEP VALUES
 	pBGME = fsoilW_prev; #sujan
 	# FOR PET > 0
