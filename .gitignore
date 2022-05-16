@@ -3,6 +3,8 @@
 *.jl.mem
 *_raw.jl
 /Manifest.toml
+data/3Ddata
+data/DE-All.1979.2017.daily.nc
 /docs/build/
 .vscode
 .gitlab-ci.yml
