@@ -1,8 +1,9 @@
 export cTauSoilT_Q10
 
-@bounds @describe @units @with_kw struct cTauSoilT_Q10{T1, T2} <: cTauSoilT
+@bounds @describe @units @with_kw struct cTauSoilT_Q10{T1, T2, T3} <: cTauSoilT
 	Q10::T1 = 1.4 | (1.05, 3.0) | "" | ""
 	Tref::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
+    Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
 function compute(o::cTauSoilT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -13,7 +14,7 @@ function compute(o::cTauSoilT_Q10, forcing, land::NamedTuple, helpers::NamedTupl
 
 	## calculate variables
 	# CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-	fT = Q10 ^ ((Tair - Tref) / 10.0)
+	fT = Q10 ^ ((Tair - Tref) / Q10_base)
 
 	## pack land variables
 	@pack_land fT => land.cTauSoilT

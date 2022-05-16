@@ -20,7 +20,7 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land::NamedTup
 	p_gwmax = p_wSat[end] * smax_scale
 
 	# gradient between groundW[1] & soilW
-	tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - soilW[end] / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
+	tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - (soilW[end] +  ΔsoilW[end])/ p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
 	# scale gradient with pot flux rate to get pot flux
 	potFlux = tmp_gradient * maxFlux; # need to make sure that the flux does not overflow | underflow storages

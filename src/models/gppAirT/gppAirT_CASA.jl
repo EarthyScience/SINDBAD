@@ -4,7 +4,7 @@ export gppAirT_CASA
 	Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
 	ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
 	ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
-	Texp::T4 = 10 | (9, 11) | "reference for exponent of sensitivity" | ""
+	Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
 end
 
 function compute(o::gppAirT_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
