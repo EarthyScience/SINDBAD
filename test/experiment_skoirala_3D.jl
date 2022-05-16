@@ -4,7 +4,7 @@ using ProfileView
 using BenchmarkTools
 using GLMakie
 # using Plots
-expFile = "sandbox/test_json/settings_minimal/experiment.json";
+expFile = "sandbox/test_json/settings_minimal/experiment_3D.json";
 
 info = getConfiguration(expFile);
 info = setupModel!(info);
@@ -26,30 +26,6 @@ out = createInitOut(info);
 # outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 # osp = outsp[1];
 # fluxes = osp.fluxes |> columntable;
-
-out = runPrecompute(forcing[1], approaches, out, info.tem.helpers);
-outforw = runForward(approaches, forcing, out, info.tem.variables, info.tem.helpers);
-# outforw= runEcosystem(approaches, forcing, out, info.tem.variables, info.tem, false; nspins=1);
-states = outforw.states |> columntable;
-pools = outforw.pools |> columntable;
-fluxes = outforw.fluxes |> columntable;
-gppD = outforw.gppDemand |> columntable
-# using GR
-fig = Figure(resolution=(2200, 900))
-lines(gppD.AllDemScGPP)
-
-
-# plot(fluxes.gpp)
-# mm(fluxes.gpp)
-pprint(outforw)
-function mm(dat)
-    minn = minimum(dat)
-    maxx = maximum(dat)
-    @show minn, maxx
-end
-runEcosystem(approaches, forcing, out, info.tem.variables, info.tem, false; nspins=3);
-# @profview runEcosystem(approaches, forcing, out, info.tem.variables, info.tem, false; nspins=3);
-# function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
 
 out = runPrecompute(forcing[1], approaches, out, info.tem.helpers);
 outforw = runForward(approaches, forcing, out, info.tem.variables, info.tem.helpers);
