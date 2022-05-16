@@ -79,7 +79,7 @@ end
 """
 runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forward run
 """
-function runEcosystem(selectedModels, forcing, out, modelVars, modelInfo, history=false; nspins=3) # forward run
-    out, outlog = runSpinup(selectedModels, forcing, out, modelInfo.helpers, history; nspins=nspins)
-    return runForward(selectedModels, forcing, out, modelVars, modelInfo.helpers)
+function runEcosystem(forcing, out, modelInfo, history=false; nspins=3) # forward run
+    out, outlog = runSpinup(modelInfo.models.spinup, forcing, out, modelInfo.helpers, history; nspins=nspins)
+    return runForward(modelInfo.models.forward, forcing, out, modelInfo.variables, modelInfo.helpers)
 end
