@@ -2,8 +2,8 @@ export wCycle
 
 abstract type wCycle <: LandEcosystem end
 
-include("wCycle_components.jl")
-include("wCycle_combined.jl")
+#include("wCycle_components.jl")
+#include("wCycle_combined.jl")
 
 @doc """
 Apply the delta storage changes to storage variables
