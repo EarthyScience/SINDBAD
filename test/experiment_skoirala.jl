@@ -1,12 +1,13 @@
 using Revise
 using Sinbad
 # using ProfileView
-using BenchmarkTools
-using JSONTables, CSV
-import JSON3
-expFile = "sandbox/test_json/settings_minimal/experiment.json"
+# using BenchmarkTools
+expFilejs = "sandbox/test_json/settings_minimal/experiment.json"
+local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
+expFile = local_root*expFilejs
 
-info = getConfiguration(expFile);
+
+info = getConfiguration(expFile, local_root);
 
 info = setupModel!(info);
 out = createInitOut(info);
@@ -16,31 +17,17 @@ observations = getObservation(info); # target observation!!
 
 optimParams = info.opti.params2opti;
 approaches = info.tem.models.forward;
-tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
-
-originTable = getParameters(info.tem.models.forward);
-prm = CSV.File("./data/optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_BE-Vie.csv");
-prmt = Table(prm)
-
-optTable = setoptparameters(originTable, prmt);
-#optTable.optim == originTable.optim
-
-newApproaches = updateParameters(optTable, approaches);
 out = createInitOut(info);
 
-doutevolution = runEcosystem(approaches, forcing, out, info.tem.variables, info.tem; nspins=1);
-
-out = createInitOut(info);
-outevolution = runEcosystem(newApproaches, forcing, out, info.tem.variables, info.tem; nspins=1);
+outevolution = runEcosystem(forcing, out, info.tem; nspins=1);
+@time outevolution = runEcosystem(forcing, out, info.tem; nspins=1);
 
 pools = outevolution.pools |> columntable;
 fluxes = outevolution.fluxes |> columntable;
-dfluxes = doutevolution.fluxes |> columntable;
 
 using Plots
 pyplot()
 p1=plot(fluxes.gpp, label="opt")
-plot!(dfluxes.gpp, label="def")
 plot!(observations.gpp, label="obs")
 
 
