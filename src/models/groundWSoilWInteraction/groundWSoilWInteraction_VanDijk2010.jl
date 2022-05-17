@@ -11,7 +11,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
 		unsatK ∈ land.soilProperties
-		𝟙 ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	# calculate recharge
@@ -22,7 +22,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 
 	# get the capillary flux
 	c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-	gwCapFlow = min(c_flux, sum(groundW + ΔgroundW))
+	gwCapFlow = max(min(c_flux, sum(groundW + ΔgroundW), soilW[end] + ΔsoilW[end]), 𝟘)
 
 	# adjust the delta storages
 	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
