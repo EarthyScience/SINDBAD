@@ -31,7 +31,7 @@ function readConfiguration(info_exp, local_root)
             info[k] = tmp
         end
     end
-    
+
     # rm second level
     for (k, v) in info
         if typeof(v) <: Dict
@@ -92,6 +92,7 @@ function getConfiguration(sindbad_experiment, local_root)
         info = readConfiguration(info_exp, local_root)
     end
     infoTuple = typenarrow!(info)
+    infoTuple = (;infoTuple..., sinbad_root=local_root)
     return infoTuple
     # return info
 end

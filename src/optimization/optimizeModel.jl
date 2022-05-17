@@ -1,6 +1,6 @@
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss
-
+export getData
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -79,19 +79,42 @@ function updateParameters(tblParams, approaches)
 end
 
 """
-getConstraintNames(info)
+    getConstraintNames(info)
+returns
+- obsVariables: a list of observation variables that will be used to calculate cost
+- optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
+- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
-function getConstraintNames(info)
-    obsVariables = Symbol.(info.opti.variables2constrain)
-    modelVariables = String[]
-    for v in obsVariables
-        vinfo = getproperty(info.opti.constraints.variables, v)
-        push!(modelVariables, vinfo.modelFullVar)
+function getConstraintNames(optiInfo, storeVarsList)
+    obsVariables = Symbol.(optiInfo.variables2constrain)
+    obsVariablesWithSigma = Symbol[]
+    for obs in obsVariables
+        push!(obsVariablesWithSigma, obs)
+        # push!(obsVariablesWithSigma, Symbol(string(obs)*"_σ"))
     end
-    optimizedVariables = getVariableGroups(modelVariables) #["fluxes.gpp", "fluxes.tra", "pools.cVeg"] = (; fluxes=(:gpp, :tra), pools=(:cVeg))
-    modelVariables = getVariableGroups(union(modelVariables, info.modelRun.output.variables.store))
-    #@show modelVariables
-    return obsVariables, modelVariables, optimizedVariables
+    modelVariables = String[]
+    optimVariables = (;)
+    for v in obsVariables
+        vinfo = getproperty(optiInfo.constraints.variables, v)
+        push!(modelVariables, vinfo.modelFullVar)
+        vf = Symbol(split(vinfo.modelFullVar, ".")[1])
+        vvar = Symbol(split(vinfo.modelFullVar, ".")[2])
+        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
+    end
+    # optimVariables = getVariableGroups(modelVariables)
+    storeVariables = getVariableGroups(union(modelVariables, storeVarsList))
+    return obsVariablesWithSigma, optimVariables, storeVariables
+end
+
+"""
+getSimulationData(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getData(outsmodel, observations, obsV, modelVarInfo)
+    ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
+    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)'
+    y = observations |> select(obsV) |> matrix
+    yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix
+    return (y, yσ, ŷ)
 end
 
 """
@@ -101,48 +124,69 @@ function getSimulationData(outsmodel, observations, optimVars, obsVariables)
     ŷ = [] # Vector{Matrix{Float64}}
     for k in keys(optimVars)
         newkvals = getfield(outsmodel, k) |> columntable
-        newkvals = newkvals |> select(keys(newkvals)...)
+        newkvals = newkvals |> select(keys(getfield(optimVars, k))...)
+        # newkvals = newkvals |> select(keys(newkvals)...)
         newkvals = newkvals |> matrix
+        newkvals = vcat(newkvals...)
         push!(ŷ, newkvals)
     end
     ŷ = length(ŷ) == 1 ? ŷ[1] : hcat(ŷ...)
     #ŷ = aggregate(ŷ, :monthly)
-    y = observations |> select(obsVariables...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    y = observations |> select(obsVariables[1:2:end-1]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
+    yσ = observations |> select(obsVariables[2:2:end]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
     # @show mean(skipmissing(y)), mean(ŷ), modelVariables
-    return (y, ŷ)
+    return (y, yσ, ŷ)
 end
 
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, approaches, forcing, initOut,
-    observations, tblParams, obsVariables, modelVariables, optimVars,modelInfo, optiInfo; lossym = Val(:mse))
+function getLoss(pVector, forcing, initOut,
+    observations, tblParams, obsVariables, optimVars, modelInfo, optiInfo; lossym = Val(:mse))
     tblParams.optim .= pVector # update the parameters with pVector
-    newApproaches = updateParameters(tblParams, approaches)
+    newApproaches = updateParameters(tblParams, modelInfo.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
     # @show propertynames(outevolution)
-    (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
-    @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷ, lossym)
+    lossVec=[]
+    for obsV in obsVariables
+        (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
+        push!(lossVec, loss(y, ŷ, Val(:mse)))
+    end
+    # (y, yσ, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
+    # @assert size(y, 1) == size(ŷ, 1)
+    return sum(lossVec)
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, initOut, observations, selectedModels,
-    obsVariables, modelVariables, optimVars, modelInfo, optiInfo; maxfevals=100, lossym = Val(:mse))
-    optimParams = optiInfo.params2opti;
-    tblParams = getParameters(selectedModels, optimParams)
+function optimizeModel(forcing, initOut, observations,
+    obsVars, optimVars, modelInfo, optiInfo; maxfevals=100, lossym = Val(:mse))
+    # get the list of observed variables, model variables to compare observation against, 
+    # obsVars, optimVars, storeVars = getConstraintNames(info);
+    
+    # get the subset of parameters table that consists of only optimized parameters
+    tblParams = getParameters(modelInfo.models.forward, optiInfo.params2opti)
+    
+    # get the defaults and bounds
+    defaults = tblParams.defaults
     lo = tblParams.lower
     hi = tblParams.upper
-    defaults = tblParams.defaults
+
+    # make the cost function handle
     costFunc = x -> getLoss(x, forcing, initOut,
-        observations, tblParams, obsVariables, optimVars, modelInfo, optiInfo; lossym=lossym)
+        observations, tblParams, obsVars, optimVars, modelInfo, optiInfo; lossym=lossym)
+    
+    # minimize the cost
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
+    
+    # get the best results and do a forward run with the optimized parameters
     optim_para = xbest(results)
+
+    # update the parameter table with the optimized values
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
     return tblParams, outevolution
 end

@@ -32,7 +32,7 @@ function getObservation(info)
         if isabspath(info.opti.constraints.oneDataPath)
             dataPath = info.opti.constraints.oneDataPath
         else
-            dataPath = joinpath(pwd(), info.opti.constraints.oneDataPath)
+            dataPath = joinpath(info.sinbad_root, info.opti.constraints.oneDataPath)
         end
     end
     varnames = info.opti.variables2constrain

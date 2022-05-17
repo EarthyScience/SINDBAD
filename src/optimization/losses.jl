@@ -1,7 +1,14 @@
+export loss
+
 """
 loss(y::Matrix, ŷ::Matrix)
 """
 function loss(y::Matrix, ŷ::Matrix, ::Val{:mse})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end
+
+function loss(y, ŷ, ::Val{:mse})
     idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
