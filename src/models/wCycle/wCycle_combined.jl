@@ -19,9 +19,12 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 	ΔTWS .= ΔTWS .- ΔTWS
 
 	if minimum(TWS) < 𝟘
-		@show TWS
-		TWS .= max.(TWS, tolerance)
-		# error("TWS is negative. Cannot continue")
+		if abs(minimum(TWS)) < tolerance
+			@warn "Numerically small negative TWS $(TWS) were replaced with tolerance $(tolerance)" 
+			TWS .= max.(TWS, tolerance)
+		else
+			@error "TWS is negative. Cannot continue. $(TWS)"
+		end
 	end
 
 	## pack land variables
