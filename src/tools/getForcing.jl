@@ -10,7 +10,7 @@ function getForcing(info)
         if isabspath(info.forcing.oneDataPath)
             dataPath = info.forcing.oneDataPath
         else
-            dataPath = joinpath(pwd(), info.forcing.oneDataPath)
+            dataPath = joinpath(info.sinbad_root, info.forcing.oneDataPath)
         end
     end
     varnames = propertynames(info.forcing.variables)

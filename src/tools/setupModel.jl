@@ -70,6 +70,7 @@ sets the spinup and forward subfields of info.tem.models to select a separated s
 function getSpinupAndForwardModels(info, selModelsOrdered)
     sel_appr_forward = ()
     sel_appr_spinup = ()
+    is_spinup = Int64[]
     defaultModel = getfield(info.modelStructure, :defaultModel)
     for sm in selModelsOrdered
         modInfo = getfield(info.modelStructure.models, sm)
@@ -84,26 +85,29 @@ function getSpinupAndForwardModels(info, selModelsOrdered)
         end
         if use4spinup == true
             sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
+            push!(is_spinup, 1)
+        else
+            push!(is_spinup, 0)
         end
     end
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :params) & !isempty(info.params)
-        original_params_forward = getParameters(sel_appr_forward);
-        input_params = info.params;
-        updated_params = setoptparameters(original_params_forward, input_params);
-        updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
+    if hasproperty(info, :params) 
+        if !isempty(info.params)
+            original_params_forward = getParameters(sel_appr_forward);
+            input_params = info.params;
+            updated_params = setoptparameters(original_params_forward, input_params);
+            updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
 
-        original_params_spinup = getParameters(sel_appr_spinup);
-        updated_params = setoptparameters(original_params_spinup, input_params);
-        updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
+            original_params_spinup = getParameters(sel_appr_spinup);
+            updated_params = setoptparameters(original_params_spinup, input_params);
+            updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
 
-        info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, spinup=updated_appr_spinup)))
+            info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, is_spinup=is_spinup, spinup=updated_appr_spinup)))
+        end
     else
-        info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=sel_appr_forward, spinup=sel_appr_spinup)))
+        info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=sel_appr_forward, is_spinup=is_spinup, spinup=sel_appr_spinup)))
     end
-
-
     return info
 end
 

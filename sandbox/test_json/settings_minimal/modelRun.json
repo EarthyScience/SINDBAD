@@ -42,7 +42,7 @@
 					"pools.cEco",
 					"waterBalance.waterBalance"
 				],
-			"store": ["pools.soilW"]
+			"store": ["pools.soilW", "pools.cVegWood"]
 		}
 	}
 }
