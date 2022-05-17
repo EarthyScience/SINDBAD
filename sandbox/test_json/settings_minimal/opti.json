@@ -319,7 +319,7 @@
 				}
 			},
 			"agb": {
-				"modelFullVar": "pools.cVeg",
+				"modelFullVar": "pools.cVegWood",
 				"data": {
 					"variableUnit": "gC m-2",
 					"bounds": [
@@ -360,7 +360,7 @@
 				}
 			},
 			"ndvi": {
-				"modelFullVar": "states.fAPAR)'",
+				"modelFullVar": "states.fAPAR",
 				"data": {
 					"variableUnit": "adimensional",
 					"bounds": [
