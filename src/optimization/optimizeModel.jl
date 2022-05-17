@@ -142,18 +142,15 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, forcing, initOut,
-    observations, tblParams, obsVariables, optimVars, modelInfo, optiInfo; lossym = Val(:mse))
+    observations, tblParams, obsVariables, optimVars, modelInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
-    # @show propertynames(outevolution)
     lossVec=[]
     for obsV in obsVariables
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
         push!(lossVec, loss(y, ŷ, Val(:mse)))
     end
-    # (y, yσ, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
-    # @assert size(y, 1) == size(ŷ, 1)
     return sum(lossVec)
 end
 
@@ -161,7 +158,7 @@ end
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing, initOut, observations,
-    obsVars, optimVars, modelInfo, optiInfo; maxfevals=100, lossym = Val(:mse))
+    obsVars, optimVars, modelInfo, optiInfo; maxfevals=100, nspins=3)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
     
@@ -175,7 +172,7 @@ function optimizeModel(forcing, initOut, observations,
 
     # make the cost function handle
     costFunc = x -> getLoss(x, forcing, initOut,
-        observations, tblParams, obsVars, optimVars, modelInfo, optiInfo; lossym=lossym)
+        observations, tblParams, obsVars, optimVars, modelInfo, optiInfo)
     
     # minimize the cost
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
@@ -186,7 +183,7 @@ function optimizeModel(forcing, initOut, observations,
 
     # update the parameter table with the optimized values
     tblParams.optim .= optim_para
-    newApproaches = updateParameters(tblParams, selectedModels)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
+    newApproaches = updateParameters(tblParams, modelInfo.models.forward)
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
     return tblParams, outevolution
 end
