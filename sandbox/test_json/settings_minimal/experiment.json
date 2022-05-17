@@ -6,7 +6,7 @@
 		"modelStructure": "sandbox/test_json/settings_minimal/modelStructure.json",
 		"modelRun"		: "sandbox/test_json/settings_minimal/modelRun.json",
 		"spinup"		: "sandbox/test_json/settings_minimal/spinup.json",
-		"params"		: "sandbox/test_json/settings_minimal/params.csv",
+		"params2"		: "sandbox/test_json/settings_minimal/params.csv",
 		"opti"			: "sandbox/test_json/settings_minimal/opti.json"
 	}
 }
