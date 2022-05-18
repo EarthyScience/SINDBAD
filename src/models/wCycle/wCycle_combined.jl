@@ -16,14 +16,13 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 	TWS .= TWS .+ ΔTWS
 
     # reset soil moisture changes to zero
-	ΔTWS .= ΔTWS .- ΔTWS
-
+	ΔTWS .= zero(ΔTWS)
 	if minimum(TWS) < 𝟘
 		if abs(minimum(TWS)) < tolerance
-			@warn "Numerically small negative TWS $(TWS) were replaced with tolerance $(tolerance)" 
-			TWS .= max.(TWS, tolerance)
+		    @warn "Numerically small negative TWS $(TWS) were replaced with tolerance $(tolerance)"
+		    TWS .= max.(TWS, 𝟘)
 		else
-			@error "TWS is negative. Cannot continue. $(TWS)"
+		    @error "TWS is negative. Cannot continue. $(TWS)"
 		end
 	end
 
