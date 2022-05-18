@@ -3,8 +3,9 @@
 *.jl.mem
 *_raw.jl
 /Manifest.toml
+/examples/Manifest.toml
+/examples/Project.toml
 examples/data/
-examples/data/DE-All.1979.2017.daily.nc
 /docs/build/
 .vscode
 .gitlab-ci.yml
