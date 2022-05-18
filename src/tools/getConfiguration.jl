@@ -1,42 +1,84 @@
+export getConfiguration, getExperimentConfiguration, readConfiguration
 
-function getConfigurationFiles(; expFile=expFile)
-    jsonFile = String(read(expFile))    
-    parseFile = JSON.parse(jsonFile)
-    newDict = rmComments(; inputDict = parseFile) # filter(x -> !occursin(".c", first(x)), parseFile)
-    return newDict
-end
-
-function readConfiguration(; configuration=nothing)
-    configFiles = getConfigurationFiles(; expFile=configuration)
-    info = Dict()
-    for jsonFile in configFiles
-        nameFile = jsonFile[20:end-5]
-        jsonFile = String(read(jsonFile))
-        parseFile = JSON.parse(jsonFile)
-        newDict = rmComments(; inputDict = parseFile) # filter(x -> !occursin(".c", first(x)), parseFile)
-        info[nameFile] = newDict
+"""
+getConfigurationFiles(expFile)
+get the basic configuration from experiment json
+"""
+function getExperimentConfiguration(expFile)
+    parseFile = parsefile(expFile; dicttype=DataStructures.OrderedDict)
+    info = DataStructures.OrderedDict()
+    for (k, v) in parseFile
+        info[k] = v
     end
     return info
 end
 
+"""
+readConfiguration(configFiles)
+read configuration experiment json and return dictionary
+"""
+function readConfiguration(info_exp, local_root)
+    info = DataStructures.OrderedDict()
+    for (k, v) in info_exp["configFiles"]
+        if endswith(v, ".json")
+            tmp = parsefile(joinpath(local_root,v); dicttype=DataStructures.OrderedDict)
+            info[k] = removeComments(tmp) # remove on first level
+        elseif endswith(v, ".csv")
+            prm = CSV.File(joinpath(local_root,v));
+            tmp = Table(prm)
+            info[k] = tmp
+        end
+    end
 
-info = readConfiguration()
+    # rm second level
+    for (k, v) in info
+        if typeof(v) <: Dict
+            ks = keys(info[k])
+            tmpDict = DataStructures.OrderedDict()
+            for ki in ks
+                tmpDict[ki] = removeComments(info[k][ki])
+            end
+            info[k] = tmpDict
+        end
+    end
+    info["experiment"] = info_exp
+    return info
+end
 
-
-function rmComments(; inputDict = inputDict)
+"""
+removeComments(; inputDict = inputDict)
+remove unnecessary comment files starting with certain expressions from the dictionary keys
+"""
+function removeComments(inputDict::AbstractDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
     newDict = filter(x -> !occursin("comments", first(x)), newDict)
     newDict = filter(x -> !occursin("comment", first(x)), newDict)
     return newDict
 end
 
-function typenarrow!(d::Dict)
-    for k in keys(d)
-        if d[k] isa Array{Any,1}
-            d[k] = [v for v in d[k]]
-        elseif d[k] isa Dict
-            d[k] = typenarrow!(d[k])
-        end
+removeComments(input) = input
+
+"""
+convertToAbsolutePath(; inputDict = inputDict)
+find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
+"""
+function convertToAbsolutePath(; inputDict=inputDict)
+    #### NOT DONE YET
+    newDict = filter(x -> !occursin("path", first(x)), inputDict)
+    return newDict
+end
+
+"""
+getConfiguration(sindbad_experiment)
+get the experiment info from either json or load the named tuple
+"""
+function getConfiguration(sindbad_experiment, local_root)
+    if typeof(sindbad_experiment) == String
+        info_exp = getExperimentConfiguration(sindbad_experiment)
+        info = readConfiguration(info_exp, local_root)
     end
-    NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    infoTuple = typenarrow!(info)
+    infoTuple = (;infoTuple..., sinbad_root=local_root)
+    return infoTuple
+    # return info
 end
