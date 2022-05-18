@@ -7,6 +7,7 @@
 		"modelRun"		: "settings_minimal/modelRun.json",
 		"spinup"		: "settings_minimal/spinup.json",
 		"params"		: "settings_minimal/params.csv",
+		"params2"		: "settings_minimal/params.csv",
 		"opti"			: "settings_minimal/opti.json"
 	}
 }
