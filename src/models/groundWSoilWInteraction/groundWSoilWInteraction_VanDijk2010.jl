@@ -1,9 +1,13 @@
 export groundWSoilWInteraction_VanDijk2010
 
-struct groundWSoilWInteraction_VanDijk2010 <: groundWSoilWInteraction
+
+@bounds @describe @units @with_kw struct groundWSoilWInteraction_VanDijk2010{T1} <: groundWSoilWInteraction
+	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
 
 function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+	## unpack parameters
+	@unpack_groundWSoilWInteraction_VanDijk2010 o
 
 	## unpack land variables
 	@unpack_land begin
@@ -11,23 +15,22 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
 		unsatK ∈ land.soilProperties
-		𝟙 ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	# calculate recharge
 	# degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
 	dosSoilend = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
 	k_sat = p_kSat[end]; # assume GW is saturated
-	k_fc = p_kFC[end]; # assume GW is saturated
 	k_unsat = unsatK(land, helpers, length(land.pools.soilW))
 
 	# get the capillary flux
-	# c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-	c_flux = sqrt(k_fc) * (𝟙 - dosSoilend)
-	gwCapFlow = min(c_flux, sum(groundW + ΔgroundW))
+	c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
+	gwCapFlow = max(min(c_flux, max_fraction * sum(groundW + ΔgroundW), soilW[end] + ΔsoilW[end]), 𝟘)
 
 	# adjust the delta storages
-	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
+	nGroundW = 𝟙 * length(groundW)
+	ΔgroundW .= ΔgroundW .- gwCapFlow / nGroundW
 	ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
 
 	## pack land variables
