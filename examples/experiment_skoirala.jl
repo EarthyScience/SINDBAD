@@ -3,9 +3,9 @@ using Sinbad
 using CSV
 # using ProfileView
 # using BenchmarkTools
-expFilejs = "sandbox/test_json/settings_minimal/experiment.json"
+expFilejs = "settings_minimal/experiment.json"
 #local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
-local_root = pwd()
+local_root = dirname(Base.active_project())
 expFile = joinpath(local_root,expFilejs)
 
 

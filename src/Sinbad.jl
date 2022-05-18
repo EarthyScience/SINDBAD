@@ -1,7 +1,7 @@
 module Sinbad
 import DataStructures
 using InteractiveUtils
-
+using Reexport: @reexport
 using CMAEvolutionStrategy:
     minimize,
     xbest
