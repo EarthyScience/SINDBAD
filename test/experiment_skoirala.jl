@@ -4,8 +4,9 @@ using CSV
 # using ProfileView
 # using BenchmarkTools
 expFilejs = "sandbox/test_json/settings_minimal/experiment.json"
-local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
-expFile = local_root*expFilejs
+#local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
+local_root = pwd()
+expFile = joinpath(local_root,expFilejs)
 
 
 info = getConfiguration(expFile, local_root);
