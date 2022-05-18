@@ -87,23 +87,17 @@ returns
 """
 function getConstraintNames(optiInfo, storeVarsList)
     obsVariables = Symbol.(optiInfo.variables2constrain)
-    obsVariablesWithSigma = Symbol[]
-    for obs in obsVariables
-        push!(obsVariablesWithSigma, obs)
-        # push!(obsVariablesWithSigma, Symbol(string(obs)*"_σ"))
-    end
     modelVariables = String[]
     optimVariables = (;)
     for v in obsVariables
         vinfo = getproperty(optiInfo.constraints.variables, v)
         push!(modelVariables, vinfo.modelFullVar)
-        vf = Symbol(split(vinfo.modelFullVar, ".")[1])
-        vvar = Symbol(split(vinfo.modelFullVar, ".")[2])
+        vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
         optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
     # optimVariables = getVariableGroups(modelVariables)
     storeVariables = getVariableGroups(union(modelVariables, storeVarsList))
-    return obsVariablesWithSigma, optimVariables, storeVariables
+    return obsVariables, optimVariables, storeVariables
 end
 
 """
@@ -158,13 +152,15 @@ end
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing, initOut, observations,
-    obsVars, optimVars, modelInfo, optiInfo; maxfevals=100, nspins=3)
+    modelInfo, optiInfo; maxfevals=100, nspins=3)
+    obsVars = optiInfo.variables.obs;
+    optimVars = optiInfo.variables.optim;
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
-    
+
     # get the subset of parameters table that consists of only optimized parameters
     tblParams = getParameters(modelInfo.models.forward, optiInfo.params2opti)
-    
+
     # get the defaults and bounds
     defaults = tblParams.defaults
     lo = tblParams.lower
@@ -173,11 +169,11 @@ function optimizeModel(forcing, initOut, observations,
     # make the cost function handle
     costFunc = x -> getLoss(x, forcing, initOut,
         observations, tblParams, obsVars, optimVars, modelInfo, optiInfo)
-    
+
     # minimize the cost
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
         multi_threading=false, maxfevals=maxfevals)
-    
+
     # get the best results and do a forward run with the optimized parameters
     optim_para = xbest(results)
 
