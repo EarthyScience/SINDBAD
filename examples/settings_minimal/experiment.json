@@ -1,0 +1,12 @@
+{
+	"name": "minimal",
+	"domain": "FLUXNET",
+	"configFiles": {
+		"forcing"		: "settings_minimal/forcing.json",
+		"modelStructure": "settings_minimal/modelStructure.json",
+		"modelRun"		: "settings_minimal/modelRun.json",
+		"spinup"		: "settings_minimal/spinup.json",
+		"params2"		: "settings_minimal/params.csv",
+		"opti"			: "settings_minimal/opti.json"
+	}
+}
