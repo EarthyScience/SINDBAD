@@ -36,3 +36,13 @@ function loss(y::Matrix, ŷ::Matrix, ::Val{:nse})
     idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return 1 .- (1 .- sum(abs2.(y[idxs] .- mean(ŷ[idxs]))) / (sum(abs2.(y[idxs] .- mean(y[idxs])))))
 end
+
+function loss(y, ŷ, ::Val{:nmae1r})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end
+
+function loss(y, ŷ, ::Val{:mefinv})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end

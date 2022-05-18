@@ -11,6 +11,7 @@ function getCostOptions(optInfo)
 
     varlist = Symbol.(optInfo.variables2constrain)
     all_options = []
+    push!(all_options, varlist)
     for (pn, prop) in enumerate(defNames)
         defProp = defValues[pn]
         vValues = typeof(defProp)[]
@@ -25,7 +26,7 @@ function getCostOptions(optInfo)
         end
         push!(all_options, vValues)
     end
-    Table((; Pair.(defNames, all_options)...))
+    Table((; Pair.([:variable, defNames...], all_options)...))
 end
 
 function setupOptimization(info)
