@@ -34,13 +34,18 @@ function compute(o::rootFraction_expCvegRoot, forcing, land::NamedTuple, helpers
     tmp_rootFrac = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * sum(cVegRoot)))) # root fraction/efficiency as a function of total carbon in root pools
 
     cumulativeDepths = cumsum(soilLayerThickness)
-    # maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
-    for sl in 1:length(land.pools.soilW)
-        soilcumuD = cumulativeDepths[sl]
-        rootOver = maxRootDepth - soilcumuD
-        rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
-        p_fracRoot2SoilD[sl] = rootFrac
-    end
+
+    rootOver = maxRootDepth .- cumulativeDepths
+    
+    p_fracRoot2SoilD .= (rootOver .> 𝟘) .* tmp_rootFrac
+
+    # # maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
+    # for sl in 1:length(land.pools.soilW)
+    #     soilcumuD = cumulativeDepths[sl]
+    #     rootOver = maxRootDepth - soilcumuD
+    #     rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
+    #     p_fracRoot2SoilD[sl] = rootFrac
+    # end
 
     ## pack land variables
     @pack_land p_fracRoot2SoilD => land.rootFraction

@@ -13,13 +13,14 @@ function compute(o::groundWRecharge_dos, forcing, land::NamedTuple, helpers::Nam
 		(p_wSat, p_β) ∈ land.soilWBase
 		(groundW, soilW) ∈ land.pools
 		(ΔsoilW, ΔgroundW) ∈ land.states
-		𝟘 ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# calculate recharge
 	dosSoilEnd = (soilW[end]) / p_wSat[end]
 	groundWRec = max(((dosSoilEnd) ^ (dos_exp * p_β[end])) * (soilW[end] + ΔsoilW[end]), 𝟘)
+	nGroundW = length(groundW) * 𝟙
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
+	ΔgroundW .= ΔgroundW .+ groundWRec / nGroundW
 	ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
 	## pack land variables

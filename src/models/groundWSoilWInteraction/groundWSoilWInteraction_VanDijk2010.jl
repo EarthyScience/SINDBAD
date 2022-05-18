@@ -1,9 +1,13 @@
 export groundWSoilWInteraction_VanDijk2010
 
-struct groundWSoilWInteraction_VanDijk2010 <: groundWSoilWInteraction
+
+@bounds @describe @units @with_kw struct groundWSoilWInteraction_VanDijk2010{T1} <: groundWSoilWInteraction
+	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
 
 function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+	## unpack parameters
+	@unpack_groundWSoilWInteraction_VanDijk2010 o
 
 	## unpack land variables
 	@unpack_land begin
@@ -22,10 +26,11 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 
 	# get the capillary flux
 	c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-	gwCapFlow = max(min(c_flux, sum(groundW + ΔgroundW), soilW[end] + ΔsoilW[end]), 𝟘)
+	gwCapFlow = max(min(c_flux, max_fraction * sum(groundW + ΔgroundW), soilW[end] + ΔsoilW[end]), 𝟘)
 
 	# adjust the delta storages
-	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
+	nGroundW = 𝟙 * length(groundW)
+	ΔgroundW .= ΔgroundW .- gwCapFlow / nGroundW
 	ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
 
 	## pack land variables
