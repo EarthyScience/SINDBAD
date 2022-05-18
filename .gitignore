@@ -3,11 +3,8 @@
 *.jl.mem
 *_raw.jl
 /Manifest.toml
-examples/Manifest.toml
-examples/Project.toml
 examples/data/
-data/3Ddata
-data/DE-All.1979.2017.daily.nc
+examples/data/DE-All.1979.2017.daily.nc
 /docs/build/
 /data/3Ddata/
 .vscode

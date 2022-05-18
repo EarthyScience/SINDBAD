@@ -113,7 +113,7 @@
             "approach": "GSI"
         },
         "gppDirRadiation": {
-            "approach": "none"
+            "approach": "Maekelae2008"
         },
         "gppSoilW": {
             "approach": "Stocker2020"
@@ -126,9 +126,6 @@
         },
         "groundWSoilWInteraction":{
             "approach": "VanDijk2010"
-        },
-        "LAI": {
-            "approach": "cVegLeaf"
         },
         "percolation": {
             "approach": "WBP"
@@ -211,10 +208,10 @@
 		{
 			"components" :
                 {
-                "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+                "soilW": [[50.0, 100.0, 200.0, 1000.0], 100.0],
                 "groundW": [1, 1000.0],
 				"snowW": [1, 0.01],
-				"surfaceW": [1, 0.01]
+				"surfaceW": [1, 0.0]
             },
 			"combine": [true,"TWS"],
             "addStateVars": {"Δ": 0.0}

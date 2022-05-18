@@ -64,6 +64,7 @@
 		"snowMelt.melt_T",
 		"snowMelt.melt_Rn",
 		"treeFraction.constantTreeFrac",
+		"drainage.dos_exp",
 		"WUE.WUEatOnehPa",
 		"WUE.κ"
 			],
@@ -74,17 +75,6 @@
 			"check": ""
 		},
 		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
-		"defaultCostOptions": {
-			"aggrOrder": "timespace",
-			"spatialAggr": "cat",
-			"spatialCostAggr": "spatial",
-			"temporalAggr": "day",
-			"temporalAggrObs": false,
-			"temporalAggrFunc": "nanmean",
-			"costMetric": "mse",
-			"costWeight": 1.0,
-			"areaWeight": false
-		},
 		"variables": {
 			"gpp": {
 				"modelFullVar": "fluxes.gpp",
@@ -123,9 +113,15 @@
 					"sourceVariableName": "GPP_QC_NT_merged"
 				},
 				"costOptions": {
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"nee": {
@@ -165,9 +161,15 @@
 					"sourceVariableName": "NEE_QC_merged"
 				},
 				"costOptions": {
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"reco": {
@@ -207,9 +209,15 @@
 					"sourceVariableName": "RECO_QC_NT_merged"
 				},
 				"costOptions": {
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"evapotranspiration": {
@@ -249,9 +257,16 @@
 					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"transpiration": {
@@ -291,9 +306,16 @@
 					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"agb": {
@@ -325,9 +347,16 @@
 					"source2sindbadUnit": 1.0
 				},
 				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "mean",
 					"temporalAggrObs": true,
-					"costMetric": "nmae1r"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "nmae1r",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			},
 			"ndvi": {
@@ -359,9 +388,16 @@
 					"source2sindbadUnit": 1.0
 				},
 				"costOptions": {
+					"trimPerc": [],
+					"aggrOrder": "timespace",
+					"spatialAggr": "cat",
+					"spatialCostAggr": "spatial",
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "nseinv"
+					"temporalAggrFunc": "nanmean",
+					"costMetric": "mefinv",
+					"costWeight": 1.0,
+					"areaWeight": false
 				}
 			}
 		}
