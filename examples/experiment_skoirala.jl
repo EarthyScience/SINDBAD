@@ -1,9 +1,6 @@
 using Revise
 using Sinbad
-using TypedTables: Table, columntable
-using Suppressor
-using PrettyPrinting
-
+using TypedTables: Table
 # using ProfileView
 # using BenchmarkTools
 expFilejs = "settings_minimal/experiment.json"
@@ -36,38 +33,6 @@ selTime = 1:13650;
 # @profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
-# pools = outevolution.pools |> columntable;
-# fluxes = outevolution.fluxes |> columntable;
-# cEco = hcat(pools.cEco...)';
-# using Plots
-# pyplot()
-
-# p = plot()
-# for i in 1:size(cEco,2)
-#     plot!(cEco[:,i])
-# end
-# p
-
-
-# p1 = plot(snowW, label="opt")
-
-
-# doPlot = false
-
-# if doPlot
-#     pools = outevolution.pools |> columntable
-#     fluxes = outevolution.fluxes |> columntable
-#     snowW = hcat(pools.snowW...)'
-#     using Plots
-#     pyplot()
-#     p1 = plot(snowW, label="opt")
-# end
-
-
-doOptimize = true
-observations = getObservation(info); # target observation!!
-# observations=observations[selTime]
-info = setupOptimization(info);
 out = createInitOut(info);
 outparams, outdata = optimizeModel(forcing, out, observations,
 info.tem, info.optim; maxfevals=10, nspins=1);    
@@ -112,29 +77,16 @@ tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
 # initPools = getInitPools(info)
 # @show out.pools.soilW
 
-outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=3);
-osp = outsp[1];
-pprint(osp)
-@time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-
-@time outforw = runForward(approaches, forcing, outsp[1], info.tem.variables, info.tem.helpers);
-pools = outforw.pools |> columntable
-fluxes = outforw.fluxes |> columntable
-
-pprint(info.opti)
-
-# outevolution = runEcosystem(approaches, forcing, outsp[1], modelvars, info.tem; nspins=3)
-
-# outfor = runEcosystem(approaches, forcing, out, info.tem.helpers);
-#pprint(outsp)
-
-# outparams, outdata = optimizeModel(forcing, out, observations, approaches, optimParams,
-    # obsvars, modelvars, optimvars, info.tem, info.opti; maxfevals=1);
+if doPlot
+    pools = outevolution.pools |> columntable
+    fluxes = outevolution.fluxes |> columntable
+    snowW = hcat(pools.snowW...)'
 
 
-# for it in 1:10
-#     @time runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=4)
-# end
+    using Plots
+    pyplot()
+    p1 = plot(snowW, label="opt")
+end
 
 # outf=columntable(outdata.fluxes)
 using GLMakie
@@ -146,3 +98,13 @@ lines!(fluxes.NPP)
 # lines!(fluxes.evapotranspiration)
 # lines!(observations.evapotranspiration)
 
+doOptimize = true
+if doOptimize
+    observations = getObservation(info) # target observation!!
+    info = setupOptimization(info)
+
+    out = createInitOut(info)
+    outparams, outdata = optimizeModel(forcing, out, observations,
+        info.tem, info.optim; maxfevals=10, nspins=1);
+    # CSV.write("../data/outparams.csv", outparams)
+end
