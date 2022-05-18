@@ -1,6 +1,8 @@
 using Revise
 using Sinbad
-using TypedTables: Table
+using TypedTables: Table, columntable
+using Suppressor
+
 # using ProfileView
 # using BenchmarkTools
 expFilejs = "settings_minimal/experiment.json"
@@ -18,59 +20,29 @@ selTime = 1:13650;
 
 # info = setupOptimization(info);
 
-# doForward = false
-# if doForward
-#     out = createInitOut(info);
-#     outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-#     @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# end
-# for i = 1:10
-#     out = createInitOut(info);
-#     @time out = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# end
-# out = createInitOut(info);
-# outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# @profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+doForward = false
+if doForward
+    out = createInitOut(info);
+    outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+    @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+end
+outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
-out = createInitOut(info);
-outparams, outdata = optimizeModel(forcing, out, observations,
-info.tem, info.optim; maxfevals=10, nspins=1);    
+pools = outevolution.pools |> columntable;
+fluxes = outevolution.fluxes |> columntable;
+cEco = hcat(pools.cEco...)';
+using Plots
+pyplot()
 
-# @suppress begin
-#     outparams, outdata = optimizeModel(forcing, out, observations,
-#     info.tem, info.optim; maxfevals=10, nspins=1);    
-# end
+p = plot(cEco)
+for i in 1:size(cEco,2)
+    plot!(cEco[:,i])
+end
+p
 
-# if doOptimize
-#     observations = getObservation(info) # target observation!!
-#     info = setupOptimization(info)
 
-#     out = createInitOut(info);
-#     outparams, outdata = optimizeModel(forcing, out, observations,
-#         info.tem, info.optim; maxfevals=10, nspins=1);
-#     # CSV.write("../data/outparams.csv", outparams)
-# end
-# using ProfileView
-# using BenchmarkTools
-#using GLMakie
-expFilejs = "settings_minimal/experiment.json"
-#local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root,expFilejs)
-
-expFile = "sandbox/test_json/settings_minimal/experiment.json"
-
-info = getConfiguration(expFile);
-info = setupModel!(info);
-out = createInitOut(info);
-forcing = getForcing(info);
-obsvars, modelvars, optimvars = getConstraintNames(info);
-observations = getObservation(info); # target observation!!
-
-optimParams = info.opti.params2opti;
-approaches = info.tem.models.forward;
-tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
+p1 = plot(snowW, label="opt")
 
 
 # hcat(info.opti.constraints.variables.evapotranspiration.costOptions, info.opti.constraints.variables.transpiration.costOptions)
@@ -99,11 +71,20 @@ lines!(fluxes.NPP)
 # lines!(observations.evapotranspiration)
 
 doOptimize = true
+observations = getObservation(info); # target observation!!
+info = setupOptimization(info);
+
+out = createInitOut(info);
+@suppress begin
+    outparams, outdata = optimizeModel(forcing, out, observations,
+    info.tem, info.optim; maxfevals=10, nspins=1);    
+end
+
 if doOptimize
     observations = getObservation(info) # target observation!!
     info = setupOptimization(info)
 
-    out = createInitOut(info)
+    out = createInitOut(info);
     outparams, outdata = optimizeModel(forcing, out, observations,
         info.tem, info.optim; maxfevals=10, nspins=1);
     # CSV.write("../data/outparams.csv", outparams)

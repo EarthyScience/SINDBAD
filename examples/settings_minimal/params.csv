@@ -13,7 +13,7 @@ Re2LRSlp,,0.2548035699,,,,cFlow,cFlow.Re2LRSlp
 Q10,,1.05,,,,cTauSoilT,cTauSoilT.Q10
 Wopt,,87.64241295,,,,cTauSoilW,cTauSoilW.Wopt
 α,,1.092217616,,,,evaporation,evaporation.α
-supLim,,0.05,,,,evaporation,evaporation.supLim
+supLim,,0.08,,,,evaporation,evaporation.supLim
 kEffExt,,0.03876686097,,,,fAPAR,fAPAR.kEffExt
 εmax,,1.540382956,,,,gppPotential,gppPotential.εmax
 Topt,,20.26302673,,,,gppAirT,gppAirT.Topt
@@ -35,6 +35,6 @@ fracRootD2SoilD,,0.8,,,,rootMaximumDepth,rootMaximumDepth.fracRootD2SoilD
 melt_T,,0.01,,,,snowMelt,snowMelt.melt_T
 melt_Rn,,3,,,,snowMelt,snowMelt.melt_Rn
 constantTreeFrac,,0.6458480735,,,,treeFraction,treeFraction.constantTreeFrac
-dos_exp,,1.063984684,,,,drainage,drainage.dos_exp
+dos_exp,,1.163984684,,,,drainage,drainage.dos_exp
 WUEatOnehPa,,6.644842058,,,,WUE,WUE.WUEatOnehPa
 κ,,0.2932910496,,,,WUE,WUE.κ

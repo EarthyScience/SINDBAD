@@ -211,7 +211,7 @@
                 "soilW": [[50.0, 100.0, 200.0, 1000.0], 100.0],
                 "groundW": [1, 1000.0],
 				"snowW": [1, 0.01],
-				"surfaceW": [1, 0.0]
+				"surfaceW": [1, 0.01]
             },
 			"combine": [true,"TWS"],
             "addStateVars": {"Δ": 0.0}

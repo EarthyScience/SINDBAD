@@ -1,55 +1,48 @@
 export loss
 
 """
-loss(y::T, ŷ::T, yσ::T, ::Val{:mse}) where T <:DenseArray
+loss(y::Matrix, ŷ::Matrix)
 """
-function loss(y::T, ŷ::T, yσ::T, ::Val{:mse}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
-    return mean(abs2.(y[idxs] .- ŷ[idxs]))
-end
-
-function loss(y::T, ŷ::T, yσ::T, ::Val{:nmae1r}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
+function loss(y::Matrix, ŷ::Matrix, ::Val{:mse})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
 
 function loss(y, ŷ, ::Val{:mse})
-    idxs = (.!isnan.(y .* ŷ))
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
 
-function loss(y::T, ŷ::T, yσ::T, ::Val{:pcor}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
+function loss(y::Matrix, ŷ::Matrix, ::Val{:pcor})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return cor(y[idxs], ŷ[idxs])
 end
 
-function loss(y::T, ŷ::T, yσ::T, ::Val{:pcor2}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
-    return cor(y[idxs], ŷ[idxs])^2
-end
-
-function loss(y::T, ŷ::T, yσ::T, ::Val{:pcor2inv}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
+function loss(y::Matrix, ŷ::Matrix, ::Val{:pcor2})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
     return 1.0 - cor(y[idxs], ŷ[idxs])^2
 end
 
-function loss(y::T, ŷ::T, yσ::T, symbs::Tuple) where T <:DenseArray
-    return sum([loss(y, ŷ, yσ, Val(s)) for s in symbs])
+function loss(y::Matrix, ŷ::Matrix, symbs)
+    return sum([loss(y, ŷ, Val(s)) for s in symbs])
 end
 
-nse(y, ŷ, yσ) = 1 .- sum(abs2.((y .- mean(ŷ) ./ yσ))) / (sum(abs2.(y .- mean(y)) ./ yσ))
-
-function loss(y::T, ŷ::T, yσ::T, ::Val{:nseinv}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
-    return 1 .- nse(y[idxs], ŷ[idxs], yσ[idxs])
+function loss(y::Matrix, ŷ::Matrix, yσ, ::Val{:nse})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return 1 .- (1 .- sum(abs2.(y[idxs] .- mean(ŷ[idxs])))/(sum(abs2.(y[idxs] .- mean(y[idxs]))./yσ)))
 end
 
-function loss(y::T, ŷ::T, yσ::T, ::Val{:nse}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
-    return nse(y[idxs], ŷ[idxs], yσ[idxs])
+function loss(y::Matrix, ŷ::Matrix, ::Val{:nse})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return 1 .- (1 .- sum(abs2.(y[idxs] .- mean(ŷ[idxs]))) / (sum(abs2.(y[idxs] .- mean(y[idxs])))))
 end
 
-function loss(y::T, ŷ::T, yσ::T, ::Val{:nnse}) where T <:DenseArray
-    idxs = (.!isnan.(y .* ŷ))
-    return 1 .- (1 ./ (2 .- nse(y[idxs], ŷ[idxs], yσ[idxs])))
+function loss(y, ŷ, ::Val{:nmae1r})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end
+
+function loss(y, ŷ, ::Val{:mefinv})
+    idxs = (.!isnan.(y)) .& (.!isnan.(ŷ))
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
