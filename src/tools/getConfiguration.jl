@@ -1,4 +1,3 @@
-using CSV
 export getConfiguration, getExperimentConfiguration, readConfiguration
 
 """
@@ -6,8 +5,7 @@ getConfigurationFiles(expFile)
 get the basic configuration from experiment json
 """
 function getExperimentConfiguration(expFile)
-    jsonFile = String(jsread(expFile))
-    parseFile = jsparse(jsonFile; dicttype=DataStructures.OrderedDict)
+    parseFile = parsefile(expFile; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
     for (k, v) in parseFile
         info[k] = v
@@ -23,10 +21,10 @@ function readConfiguration(info_exp, local_root)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
         if endswith(v, ".json")
-            tmp = jsparse(String(jsread(local_root*v)); dicttype=DataStructures.OrderedDict)
-            info[k] = rmComment(tmp) # remove on first level
+            tmp = parsefile(joinpath(local_root,v); dicttype=DataStructures.OrderedDict)
+            info[k] = removeComments(tmp) # remove on first level
         elseif endswith(v, ".csv")
-            prm = CSV.File((local_root*v));
+            prm = CSV.File(joinpath(local_root,v));
             tmp = Table(prm)
             info[k] = tmp
         end
@@ -38,7 +36,7 @@ function readConfiguration(info_exp, local_root)
             ks = keys(info[k])
             tmpDict = DataStructures.OrderedDict()
             for ki in ks
-                tmpDict[ki] = rmComment(info[k][ki])
+                tmpDict[ki] = removeComments(info[k][ki])
             end
             info[k] = tmpDict
         end
@@ -51,26 +49,14 @@ end
 removeComments(; inputDict = inputDict)
 remove unnecessary comment files starting with certain expressions from the dictionary keys
 """
-function removeComments(inputDict)
+function removeComments(inputDict::AbstractDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
     newDict = filter(x -> !occursin("comments", first(x)), newDict)
     newDict = filter(x -> !occursin("comment", first(x)), newDict)
     return newDict
 end
 
-"""
-rmComment(input)
-Calling removeComments on Dictionaries.
-"""
-function rmComment(input)
-    if input isa DataStructures.OrderedDict
-        return removeComments(input)
-    elseif input isa Dict
-        return removeComments(input)
-    else
-        return input
-    end
-end
+removeComments(input) = input
 
 """
 convertToAbsolutePath(; inputDict = inputDict)
