@@ -5,6 +5,7 @@
 *.nc
 /Manifest.toml
 examples/Manifest.toml
+examples/Project.toml
 examples/data/
 docs/build/
 docs/Manifest.toml
