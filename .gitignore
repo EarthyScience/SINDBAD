@@ -11,6 +11,7 @@ examples/data/
 .vscode
 .gitlab-ci.yml
 .DS_Store
+data/DE-All.1979.2017.daily.nc
 examples/data/3Ddata/Africa.era5.PET_PT.2010.nc
 examples/data/3Ddata/Africa.era5.snr.2010.nc
 examples/data/3Ddata/Africa.era5.sp.2010.nc
@@ -37,4 +38,3 @@ examples/data/DE-All.1979.2017.daily.nc
 examples/data/outparams.csv
 examples/data/test_new_file.json
 examples/data/test_table.json
-data/DE-All.1979.2017.daily.nc
