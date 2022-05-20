@@ -6,8 +6,8 @@
 	"time":
 	{
 		"step": 				"d",
-		"sDate": 				"2000-01-01",
-		"eDate": 				"2019-12-31",
+		"sDate": 				"1979-01-01",
+		"eDate": 				"2017-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
 		"nStepsYear": 			365
@@ -23,7 +23,7 @@
 	{
 		"verbosity": 5,
 		"dataType": "Float64",
-		"tolerance": 0.01
+		"tolerance": 1.0e-5
 	},
 	"output": {
 		"dirPath": "sandbox/output/",
