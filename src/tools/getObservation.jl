@@ -77,10 +77,13 @@ function getObservation(info)
             data_unc[ismissing.(data_unc)] .= info.tem.helpers.numbers.sNT(NaN)
             data_unc = applyUnitConversion(data_unc, vinfo.unc.source2sindbadUnit, vinfo.unc.additiveUnitConversion)
             data_unc = applyObservationBounds(data_unc, vinfo.unc.bounds)
-            push!(dataAr, info.tem.helpers.numbers.numType.(data_unc))
+        else
+            data_unc = ones(info.tem.helpers.numbers.numType, size(data_obs))
         end
-
+        idxs = isnan.(data_obs)
+        data_unc[idxs] .= info.tem.helpers.numbers.sNT(NaN)
+        push!(dataAr, info.tem.helpers.numbers.numType.(data_unc))
     end
-    observation = Table((; zip(varlist, dataAr)...))
+    observation = Table((; Pair.(varlist, dataAr)...))
     return observation
 end
