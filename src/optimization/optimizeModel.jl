@@ -105,7 +105,7 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
 function getData(outsmodel, observations, obsV, modelVarInfo)
     ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)'
+    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix
     y = observations |> select(obsV) |> matrix
     yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix
     return (y, yσ, ŷ)
@@ -136,17 +136,17 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, forcing, initOut,
-    observations, tblParams, optimVars, modelInfo, optiInfo)
+    observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
     tblParams.optim .= pVector # update the parameters with pVector
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=3) # spinup + forward run!
+    @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
     lossVec=[]
     cost_options=optiInfo.costOptions;
     for var_row in cost_options
         obsV = var_row.variable
         lossMetric = var_row.costMetric
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
-        push!(lossVec, loss(y, ŷ, Val(lossMetric)))
+        push!(lossVec, loss(y, ŷ, yσ, Val(lossMetric)))
     end
 
     return sum(lossVec)
@@ -171,7 +171,7 @@ function optimizeModel(forcing, initOut, observations,
 
     # make the cost function handle
     costFunc = x -> getLoss(x, forcing, initOut,
-        observations, tblParams, optimVars, modelInfo, optiInfo)
+        observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
 
     # minimize the cost
     results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
