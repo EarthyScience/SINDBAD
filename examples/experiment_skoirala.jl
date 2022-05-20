@@ -24,7 +24,9 @@ if doForward
     outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
     @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 end
+out = createInitOut(info);
 outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+@time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
 pools = outevolution.pools |> columntable;
@@ -33,7 +35,7 @@ cEco = hcat(pools.cEco...)';
 using Plots
 pyplot()
 
-p = plot(cEco)
+p = plot()
 for i in 1:size(cEco,2)
     plot!(cEco[:,i])
 end
@@ -60,8 +62,10 @@ end
 doOptimize = true
 observations = getObservation(info); # target observation!!
 info = setupOptimization(info);
-
 out = createInitOut(info);
+outparams, outdata = optimizeModel(forcing, out, observations,
+info.tem, info.optim; maxfevals=10, nspins=1);    
+
 @suppress begin
     outparams, outdata = optimizeModel(forcing, out, observations,
     info.tem, info.optim; maxfevals=10, nspins=1);    
