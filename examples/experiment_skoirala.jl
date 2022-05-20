@@ -55,8 +55,6 @@ if doPlot
     pools = outevolution.pools |> columntable
     fluxes = outevolution.fluxes |> columntable
     snowW = hcat(pools.snowW...)'
-
-
     using Plots
     pyplot()
     p1 = plot(snowW, label="opt")
