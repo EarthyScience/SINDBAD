@@ -20,7 +20,8 @@ using JSON:
 using NCDatasets:
     Dataset
 using Parameters
-using PrettyPrinting
+using PrettyPrinting:
+    pprint
 using Setfield:
     @set!
 using TableOperations:

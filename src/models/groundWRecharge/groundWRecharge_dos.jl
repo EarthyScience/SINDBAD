@@ -16,8 +16,9 @@ function compute(o::groundWRecharge_dos, forcing, land::NamedTuple, helpers::Nam
 		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# calculate recharge
-	dosSoilEnd = (soilW[end]) / p_wSat[end]
-	groundWRec = max(((dosSoilEnd) ^ (dos_exp * p_β[end])) * (soilW[end] + ΔsoilW[end]), 𝟘)
+	dosSoilEnd = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
+	recharge_fraction = max((dosSoilEnd) ^ (dos_exp * p_β[end]), 𝟙)
+	groundWRec = max(recharge_fraction * (soilW[end] + ΔsoilW[end]), 𝟘)
 	nGroundW = length(groundW) * 𝟙
 
 	ΔgroundW .= ΔgroundW .+ groundWRec / nGroundW
