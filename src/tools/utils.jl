@@ -10,9 +10,9 @@ Applies a simple factor to the input array, either additively or multiplicativel
 """
 function applyUnitConversion(data_in, conversion, isadditive=false)
     if isadditive
-        data_out = data_in .+ conversion
+        data_out = data_in + conversion
     else
-        data_out = data_in .* conversion
+        data_out = data_in * conversion
     end
     return data_out
 end
