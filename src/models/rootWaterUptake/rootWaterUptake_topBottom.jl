@@ -3,21 +3,38 @@ export rootWaterUptake_topBottom
 struct rootWaterUptake_topBottom <: rootWaterUptake
 end
 
+function precompute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+
+    ## unpack land variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        numType ∈ helpers.numbers
+    end
+    wRootUptake = zeros(helpers.numbers.numType, size(soilW))
+
+    ## pack land variables
+    @pack_land begin
+        wRootUptake => land.states
+    end
+    return land
+end
+
 function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
     @unpack_land begin
-        (PAW, wRootUptake) ∈ land.states
+        PAW ∈ land.vegAvailableWater
         soilW ∈ land.pools
-        ΔsoilW ∈ land.states
+        (ΔsoilW, wRootUptake) ∈ land.states
         transpiration ∈ land.fluxes
+        𝟘 ∈ helpers.numbers
     end
+    wRootUptake .= 𝟘
     # get the transpiration
     toUptake = transpiration
     for sl in 1:length(land.pools.soilW)
-        uptaken = minimum(toUptake, PAW[sl])
-        wRootUptake[sl] = uptaken
-        toUptake = toUptake - uptaken
+        wRootUptake[sl] = min(toUptake, PAW[sl])
+        toUptake = toUptake - wRootUptake[sl]
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
     end
 

@@ -35,6 +35,5 @@ fracRootD2SoilD,,0.8,,,,rootMaximumDepth,rootMaximumDepth.fracRootD2SoilD
 melt_T,,0.01,,,,snowMelt,snowMelt.melt_T
 melt_Rn,,3,,,,snowMelt,snowMelt.melt_Rn
 constantTreeFrac,,0.6458480735,,,,treeFraction,treeFraction.constantTreeFrac
-dos_exp,,1.163984684,,,,drainage,drainage.dos_exp
 WUEatOnehPa,,6.644842058,,,,WUE,WUE.WUEatOnehPa
 κ,,0.2932910496,,,,WUE,WUE.κ
