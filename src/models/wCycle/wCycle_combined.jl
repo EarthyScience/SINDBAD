@@ -11,20 +11,23 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 		p_wSat ∈ land.soilWBase
 		(𝟘, tolerance) ∈ helpers.numbers
 	end
-
+	TWS_old = deepcopy(TWS)
 	## update variables
 	TWS .= TWS .+ ΔTWS
 
     # reset soil moisture changes to zero
-	ΔTWS .= zero(ΔTWS)
 	if minimum(TWS) < 𝟘
 		if abs(minimum(TWS)) < tolerance
 		    @warn "Numerically small negative TWS $(TWS) were replaced with tolerance $(tolerance)"
+			@show TWS, TWS_old, ΔTWS
+			@show land.rootFraction.p_fracRoot2SoilD, land.fluxes, land.percolation, land.drainage, land.capillaryFlow, land.states.WBP
+			# pprint(land)
 		    TWS .= max.(TWS, 𝟘)
 		else
 		    @error "TWS is negative. Cannot continue. $(TWS)"
 		end
 	end
+	ΔTWS .= zero(ΔTWS)
 
 	## pack land variables
 	# @pack_land begin

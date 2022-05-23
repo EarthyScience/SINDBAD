@@ -64,7 +64,6 @@
 		"snowMelt.melt_T",
 		"snowMelt.melt_Rn",
 		"treeFraction.constantTreeFrac",
-		"drainage.dos_exp",
 		"WUE.WUEatOnehPa",
 		"WUE.κ"
 			],

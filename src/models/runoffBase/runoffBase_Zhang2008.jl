@@ -12,6 +12,7 @@ function compute(o::runoffBase_Zhang2008, forcing, land::NamedTuple, helpers::Na
 	@unpack_land begin
 		groundW ∈ land.pools
 		ΔgroundW ∈ land.states
+		𝟙 ∈ helpers.numbers
 	end
 
 	## calculate variables
@@ -19,7 +20,8 @@ function compute(o::runoffBase_Zhang2008, forcing, land::NamedTuple, helpers::Na
 	runoffBase = bc * sum(groundW + ΔgroundW)
 
 	# update groundwater changes
-	ΔgroundW .= ΔgroundW .- runoffBase / length(groundW)
+	n_groundW = length(groundW) * 𝟙
+	ΔgroundW .= ΔgroundW .- runoffBase / n_groundW
 
 	## pack land variables
 	@pack_land begin
