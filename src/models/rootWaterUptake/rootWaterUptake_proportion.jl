@@ -3,6 +3,23 @@ export rootWaterUptake_proportion
 struct rootWaterUptake_proportion <: rootWaterUptake
 end
 
+
+function precompute(o::rootWaterUptake_proportion, forcing, land::NamedTuple, helpers::NamedTuple)
+
+    ## unpack land variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        numType ∈ helpers.numbers
+    end
+    wRootUptake = zeros(helpers.numbers.numType, size(soilW))
+
+    ## pack land variables
+    @pack_land begin
+        wRootUptake => land.states
+    end
+    return land
+end
+
 function compute(o::rootWaterUptake_proportion, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
@@ -10,20 +27,21 @@ function compute(o::rootWaterUptake_proportion, forcing, land::NamedTuple, helpe
         PAW ∈ land.vegAvailableWater
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
-        ΔsoilW ∈ land.states
+        (wRootUptake, ΔsoilW) ∈ land.states
         (𝟘, tolerance) ∈ helpers.numbers
     end
     # get the transpiration
     toUptake = transpiration
     PAWTotal = sum(PAW)
-    wRootUptake = copy(PAW)
+    wRootUptake .= 𝟘
     # extract from top to bottom
-    for sl in 1:length(land.pools.soilW)
-        uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal + tolerance)) # + tolerance is  necessary because supply can be 0 -> 0 / 0 = NaN
-        wRootUptake[sl] = toUptake * uptakeProportion
-        ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
+    if PAWTotal > 𝟘
+        for sl in 1:length(land.pools.soilW)
+            uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal))
+            wRootUptake[sl] = toUptake * uptakeProportion
+            ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
+        end
     end
-
     ## pack land variables
     @pack_land begin
         wRootUptake => land.states
