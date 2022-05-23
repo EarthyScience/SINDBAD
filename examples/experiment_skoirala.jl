@@ -1,6 +1,9 @@
 using Revise
 using Sinbad
 # using Suppressor
+using TypedTables: Table, columntable
+using Suppressor
+using PrettyPrinting
 
 # using ProfileView
 # using BenchmarkTools
@@ -29,6 +32,12 @@ forcing = getForcing(info,Val(:table));
 # out = createInitOut(info);
 # outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 # @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# for i = 1:10
+#     out = createInitOut(info);
+#     @time out = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# end
+# out = createInitOut(info);
+# outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 # @profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
