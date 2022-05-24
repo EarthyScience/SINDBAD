@@ -8,6 +8,11 @@ using NetCDF
 using YAXArrays, NetCDF, EarthDataLab, DiskArrayTools
 using AxisKeys
 using TypedTables, Tables
+using Plots
+using Pkg
+using NetCDF
+using YAXArrays, NetCDF, EarthDataLab, DiskArrayTools
+
 
 
 struct AllNaN <: YAXArrays.DAT.ProcFilter
@@ -17,6 +22,7 @@ YAXArrays.DAT.checkskip(::AllNaN,x) = all(isnan,x)
 expFilejs = "settings_minimal/experiment.json"
 #local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
 local_root = @__DIR__
+local_root = dirname(Base.active_project())
 expFile = joinpath(local_root, expFilejs)
 
 
@@ -34,6 +40,27 @@ forcing_variables = keys(info.forcing.variables)
 
 nc = NetCDF.open(file)
 incubes = map(forcing_variables) do k
+info = setupModel!(info);
+out = createInitOut(info);
+observations = getObservation(info); # target observation!!
+# plot(observations.transpiration)
+# plot(observations.transpiration_σ)
+optimParams = info.opti.params2opti;
+approaches = info.tem.models.forward;
+tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
+forcing = nothing
+modelvars = info.tem.variables
+# hcat(info.opti.constraints.variables.evapotranspiration.costOptions, info.opti.constraints.variables.transpiration.costOptions)
+# initPools = getInitPools(info)
+# @show out.pools.soilW
+
+
+file = info.forcing.oneDataPath
+#ds = open_dataset(file)
+varnames = keys(info.forcing.variables)
+
+nc = NetCDF.open(file)
+incubes = map(varnames) do k
     v = nc[info.forcing.variables[k].sourceVariableName]
     atts = v.atts
     if any(in(keys(atts)), ["missing_value", "scale_factor", "add_offset"])
@@ -74,6 +101,7 @@ function getOutDims(info,vname)
 end
 
 outdims = map(Iterators.flatten(info.tem.variables)) do vn
+outdims = map(Iterators.flatten(modelvars)) do vn
     getOutDims(info,vn)
 end
 
@@ -104,6 +132,12 @@ using YAXArrayBase: getdata
 function unpack_yax(args;modelinfo,forcing_variables,nts)
     nin = length(forcing_variables)
     nout = sum(length,modelinfo.variables)
+function unpack_yax(args)
+    nts = args[end]
+    varnames = args[end-1]
+    modelvars = args[end-2]
+    nin = length(varnames)
+    nout = sum(length,modelvars)
     outputs = args[1:nout]
     inputs = args[(nout+1):(nout+nin)]
     #Make fillarrays for constant inputs
@@ -112,6 +146,9 @@ function unpack_yax(args;modelinfo,forcing_variables,nts)
         (!in(:time,dn) && !in(:Time,dn)) ? Fill(getdata(i),nts) : getdata(i)
     end
     return  outputs, inputs
+    other = args[(nout+nin+1):end]
+    @assert length(other) == 6
+    return  outputs, inputs, other...
 end
 
 using FillArrays
@@ -127,6 +164,11 @@ function rungridcell(args...;out,modelinfo,forcing_variables,nts,history=false,n
     # outforw = runEcosystem(selectedModels, forcing, out, modelvars, modelinfo, history; nspins)
     i = 1
     modelvars = modelinfo.variables
+function rungridcell(args...;history=false,nspins=1)
+    outputs,inputs,selectedModels,out,modelinfo,modelvars,varnames,nts = unpack_yax(args)
+    forcing = Table((; Pair.(varnames, inputs)...))
+    outforw = runEcosystem(selectedModels, forcing, out, modelinfo)
+    i = 1
     for group in keys(modelvars)
         data = columntable(outforw[group])
         for k in modelvars[group]
@@ -156,3 +198,13 @@ res = mapCube(rungridcell,
 
 
 res[1]
+    (incubes...,),
+    approaches,
+    out,
+    info.tem,
+    modelvars,
+    varnames,
+    getnts(incubes);
+    indims=indims, 
+    outdims=outdims,
+)
