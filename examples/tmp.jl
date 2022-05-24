@@ -167,7 +167,7 @@ function rungridcell(args...;out,modelinfo,forcing_variables,nts,history=false,n
 function rungridcell(args...;history=false,nspins=1)
     outputs,inputs,selectedModels,out,modelinfo,modelvars,varnames,nts = unpack_yax(args)
     forcing = Table((; Pair.(varnames, inputs)...))
-    outforw = runEcosystem(selectedModels, forcing, out, modelinfo)
+    outforw = runEcosystem(selectedModels, forcing, out, modelvars, modelinfo, history; nspins)
     i = 1
     for group in keys(modelvars)
         data = columntable(outforw[group])
