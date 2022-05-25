@@ -1,13 +1,16 @@
 using Revise
 using Sinbad
 # using ProfileView
-using BenchmarkTools
+# using BenchmarkTools
 #using GLMakie
 using Pkg
 using NetCDF
-using YAXArrays, NetCDF, EarthDataLab, DiskArrayTools
+using YAXArrays, NetCDF, DiskArrayTools
 using AxisKeys
+using AxisKeys: KeyedArray, AxisKeys
 using TypedTables, Tables
+using FillArrays
+using YAXArrayBase: getdata
 
 
 struct AllNaN <: YAXArrays.DAT.ProcFilter
@@ -28,7 +31,7 @@ out = createInitOut(info);
 
 #observations = getObservation(info); # target observation!!
 
-file = joinpath(info.sinbad_root, "..", info.forcing.oneDataPath)
+file = joinpath(info.sinbad_root, info.forcing.oneDataPath)
 
 forcing_variables = keys(info.forcing.variables)
 
@@ -51,33 +54,6 @@ incubes = map(forcing_variables) do k
 end;
 
 
-
-outpath = joinpath(@__DIR__(),info.modelRun.output.dirPath)
-outformat = info.modelRun.output.dataFormat
-
-function layersize(vname, pools)
-    if vname in keys(pools.water.zix)
-        length(pools.water.zix[vname])
-    elseif vname in keys(pools.carbon.zix)
-        length(pools.carbon.zix[vname])
-    else
-        1
-    end
-end
-function getOutDims(info,vname)
-    ls = layersize(vname, info.tem.pools)
-    if ls > 1
-        OutDims("Time",RangeAxis("$(vname)_idx",1:ls),path = joinpath(outpath,"vname$outformat"),overwrite=true)
-    else
-        OutDims("Time",path = joinpath(outpath,"vname$outformat"),overwrite=true)
-    end
-end
-
-outdims = map(Iterators.flatten(info.tem.variables)) do vn
-    getOutDims(info,vn)
-end
-
-using AxisKeys: KeyedArray, AxisKeys
 #Fix: only time 
 function getInDims(c)
     inax = String[]
@@ -98,8 +74,37 @@ function getnts(incubes)
 end
 getnts(incubes)
 
-using FillArrays
-using YAXArrayBase: getdata
+## outputs
+
+
+outpath = joinpath(@__DIR__(),info.modelRun.output.dirPath)
+outformat = info.modelRun.output.dataFormat
+
+function layersize(vname, pools)
+    if vname in keys(pools.water.zix)
+        length(pools.water.zix[vname])
+    elseif vname in keys(pools.carbon.zix)
+        length(pools.carbon.zix[vname])
+    else
+        1
+    end
+end
+function getOutDims(info,vname)
+    ls = layersize(vname, info.tem.pools)
+    if ls > 1
+        OutDims("Time",RangeAxis("$(vname)_idx",1:ls),path = joinpath(outpath,"$(vname)$(outformat)"),overwrite=true)
+    else
+        OutDims("Time",path = joinpath(outpath,"$(vname)$(outformat)"),overwrite=true)
+    end
+end
+
+outdims = map(Iterators.flatten(info.tem.variables)) do vn
+    getOutDims(info,vn)
+end
+
+
+
+## run things
 
 function unpack_yax(args;modelinfo,forcing_variables,nts)
     nin = length(forcing_variables)
@@ -114,10 +119,7 @@ function unpack_yax(args;modelinfo,forcing_variables,nts)
     return  outputs, inputs
 end
 
-using FillArrays
-#capt = []
-#@profview outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-#@time outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
+
 function rungridcell(args...;out,modelinfo,forcing_variables,nts,history=false,nspins=1)
     # outputs,inputs,selectedModels,out,modelinfo,modelvars,forcing_variables,nts = unpack_yax(args)
     outputs,inputs = unpack_yax(args;modelinfo,forcing_variables,nts)
