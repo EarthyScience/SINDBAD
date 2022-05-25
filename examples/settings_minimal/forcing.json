@@ -10,7 +10,7 @@
 	},
 	"comments": "to get forcing from netCDF file",
 	"size": [],
-	"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
+	"oneDataPath": "data/DE-All.1979.2017.daily.nc",
 	"variables": {
 	"ambCO2":
     {
