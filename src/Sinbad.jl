@@ -20,7 +20,7 @@ using JSON:
 using NCDatasets:
     Dataset
 using Parameters
-using PrettyPrinting:
+@reexport using PrettyPrinting:
     pprint
 using Setfield:
     @set!
