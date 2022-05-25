@@ -17,8 +17,8 @@ function applyQualityFlag(data, qdata, qbounds)
 end
 
 function getDataFromPath(dataPath, srcVar)
-    ds = Dataset(dataPath)
-    data_tmp = ds[srcVar][1, 1, :]
+    ds = NetCDF.ncread(dataPath, srcVar)
+    data_tmp = ds[1, 1, :] # TODO multidimensional input
     return data_tmp
 end
 

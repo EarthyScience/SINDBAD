@@ -18,6 +18,7 @@ info = setupModel!(info);
 forcing = getForcing(info);
 selTime = 1:13650;
 # forcing=forcing[selTime];
+forcing = getForcing(info,Val(:table));
 
 # info = setupOptimization(info);
 
