@@ -21,8 +21,8 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
-		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		lossCap = soilW[sl] + ΔsoilW[sl]
+		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		drain = min(drainage[sl], holdCap, lossCap)
 		drainage[sl] = drain > tolerance ? drain : 𝟘
 		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
