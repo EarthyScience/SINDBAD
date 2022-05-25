@@ -13,17 +13,18 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 		(p_wSat, p_β) ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
+		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
 	end
 	drain_fraction = clamp.(((soilW) ./ p_wSat) .^ (dos_exp .* p_β), 𝟘, 𝟙)
-	drainage =  drain_fraction .* (soilW)
+	drainage =  drain_fraction .* (soilW +  ΔsoilW)
 	drainage[end] = 𝟘
 
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		lossCap = soilW[sl] + ΔsoilW[sl]
-		drainage[sl] = max(min(drainage[sl], holdCap, lossCap), 𝟘)
+		drain = min(drainage[sl], holdCap, lossCap)
+		drainage[sl] = drain > tolerance ? drain : 𝟘
 		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
 		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
 	end
