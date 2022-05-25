@@ -78,7 +78,7 @@ end
 """
 runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forward run
 """
-function runEcosystem(approaches, forcing, init_out, modelInfo, history=false; nspins=3) # forward run
+function runEcosystem(approaches, forcing, init_out, modelInfo; history=false, nspins=3) # forward run
     spinup_models = approaches[modelInfo.models.is_spinup.==1]
     out_prec = runPrecompute(forcing[1], approaches, init_out, modelInfo.helpers)
     out_spin, spinuplog = runSpinup(spinup_models, forcing, out_prec, modelInfo.helpers; history, nspins=nspins)
@@ -103,12 +103,9 @@ end
 
 
 function rungridcell(args...; out, modelinfo, forcing_variables, nts, history=false, nspins=1)
-    # outputs,inputs,selectedModels,out,modelinfo,modelvars,forcing_variables,nts = unpack_yax(args)
     outputs, inputs = unpack_yax(args; modelinfo, forcing_variables, nts)
     forcing = Table((; Pair.(forcing_variables, inputs)...))
-    # outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-    outforw = runEcosystem(modelinfo.models.forward, forcing, out, modelinfo; nspins=1)
-    # outforw = runEcosystem(selectedModels, forcing, out, modelvars, modelinfo, history; nspins)
+    outforw = runEcosystem(modelinfo.models.forward, forcing, out, modelinfo; nspins=nspins, history=history)
     i = 1
     modelvars = modelinfo.variables
     for group in keys(modelvars)
@@ -143,4 +140,5 @@ function mapRunEcosystem(forcing, output, modelInfo)
         indims=indims,
         outdims=outdims
     )
+    return res
 end

@@ -108,12 +108,19 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 function getLoss(pVector, approaches, forcing, initOut,
     observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo)
     tblParams.optim .= pVector # update the parameters with pVector
-    newApproaches = updateParameters(tblParams, approaches)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
-    # @show propertynames(outevolution)
-    (y, ŷ) = getSimulationData(outevolution, observations, optimVars, obsVariables)
-    @assert size(y, 1) == size(ŷ, 1)
-    return loss(y, ŷ, Val(:mse))
+    newApproaches = updateParameters(tblParams, modelInfo.models.forward)
+    # outyaks = mapRunEcosystem(forcing, output, info.tem)
+    @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    lossVec=[]
+    cost_options=optiInfo.costOptions;
+    for var_row in cost_options
+        obsV = var_row.variable
+        lossMetric = var_row.costMetric
+        (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
+        push!(lossVec, loss(y, ŷ, yσ, Val(lossMetric)))
+    end
+
+    return sum(lossVec)
 end
 
 """
