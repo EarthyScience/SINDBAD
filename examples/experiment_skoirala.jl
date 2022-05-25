@@ -1,6 +1,5 @@
 using Revise
 using Sinbad
-using TypedTables: Table, columntable
 using Suppressor
 using PrettyPrinting
 
@@ -22,19 +21,16 @@ forcing = getForcing(info,Val(:table));
 
 # info = setupOptimization(info);
 
-# doForward = false
-# if doForward
-#     out = createInitOut(info);
-#     outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-#     @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# end
-# for i = 1:10
-#     out = createInitOut(info);
-#     @time out = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# end
-# out = createInitOut(info);
-# outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# @profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+doForward = false
+if doForward
+    out = createInitOut(info);
+    outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+    @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+end
+out = createInitOut(info);
+outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+@time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+@profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
 # pools = outevolution.pools |> columntable;
