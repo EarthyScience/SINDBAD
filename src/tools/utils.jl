@@ -3,6 +3,7 @@ export getzix, setTupleField, setTupleSubfield, applyUnitConversion
 export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
 export setoptparameters
+export AllNaN
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -332,3 +333,6 @@ function flagLower(A::AbstractMatrix)
     end
     return o_mat
 end
+
+struct AllNaN <: YAXArrays.DAT.ProcFilter end
+YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)

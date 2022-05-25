@@ -4,3 +4,5 @@ include("getForcing.jl")
 include("getObservation.jl")
 include("setupModel.jl")
 include("setupOptimization.jl")
+include("setupOutput.jl")
+
