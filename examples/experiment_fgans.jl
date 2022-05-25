@@ -3,11 +3,11 @@ using Sinbad
 # using ProfileView
 using BenchmarkTools
 #using GLMakie
-using Plots
 using Pkg
 using NetCDF
 using YAXArrays, NetCDF, EarthDataLab, DiskArrayTools
 using AxisKeys
+using TypedTables, Tables
 
 
 struct AllNaN <: YAXArrays.DAT.ProcFilter
@@ -16,7 +16,7 @@ YAXArrays.DAT.checkskip(::AllNaN,x) = all(isnan,x)
 
 expFilejs = "settings_minimal/experiment.json"
 #local_root ="/Users/skoirala/research/sjindbad/sinbad.jl/"
-local_root = dirname(Base.active_project())
+local_root = @__DIR__
 expFile = joinpath(local_root, expFilejs)
 
 
@@ -26,11 +26,9 @@ info = setupModel!(info);
 
 out = createInitOut(info);
 
-observations = getObservation(info); # target observation!!
+#observations = getObservation(info); # target observation!!
 
-forcing = nothing
-
-file = joinpath(info.sinbad_root, info.forcing.oneDataPath)
+file = joinpath(info.sinbad_root, "..", info.forcing.oneDataPath)
 
 forcing_variables = keys(info.forcing.variables)
 
@@ -51,6 +49,7 @@ incubes = map(forcing_variables) do k
     numtype = Val{info.tem.helpers.numbers.numType}()
     map(v->Sinbad.clean_inputs(v,vinfo,numtype),yax)
 end;
+
 
 
 outpath = joinpath(@__DIR__(),info.modelRun.output.dirPath)
@@ -102,12 +101,9 @@ getnts(incubes)
 using FillArrays
 using YAXArrayBase: getdata
 
-function unpack_yax(args)
-    nts = args[end]
-    forcing_variables = args[end-1]
-    modelvars = args[end-2]
+function unpack_yax(args;modelinfo,forcing_variables,nts)
     nin = length(forcing_variables)
-    nout = sum(length,modelvars)
+    nout = sum(length,modelinfo.variables)
     outputs = args[1:nout]
     inputs = args[(nout+1):(nout+nin)]
     #Make fillarrays for constant inputs
@@ -115,18 +111,16 @@ function unpack_yax(args)
         dn = AxisKeys.dimnames(i)
         (!in(:time,dn) && !in(:Time,dn)) ? Fill(getdata(i),nts) : getdata(i)
     end
-    other = args[(nout+nin+1):end]
-    @assert length(other) == 6
-    return  outputs, inputs, other...
+    return  outputs, inputs
 end
 
 using FillArrays
 #capt = []
 #@profview outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
 #@time outsp = runSpinup(approaches, forcing, out, info.tem.helpers, false; nspins=1);
-function rungridcell(args...;history=false,nspins=1)
+function rungridcell(args...;out,modelinfo,forcing_variables,nts,history=false,nspins=1)
     # outputs,inputs,selectedModels,out,modelinfo,modelvars,forcing_variables,nts = unpack_yax(args)
-    outputs,inputs,out,modelinfo,forcing_variables,nts = unpack_yax(args)
+    outputs,inputs = unpack_yax(args;modelinfo,forcing_variables,nts)
     forcing = Table((; Pair.(forcing_variables, inputs)...))
     # outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
     outforw = runEcosystem(modelinfo.models.forward, forcing, out, modelinfo; nspins=1);
@@ -151,11 +145,14 @@ end
 
 
 res = mapCube(rungridcell,
-    (incubes...,),
-    out,
-    info.tem,
-    forcing_variables,
-    getnts(incubes);
+    (incubes...,);
+    out=out,
+    modelinfo=info.tem,
+    forcing_variables = forcing_variables,
+    nts = getnts(incubes),
     indims=indims, 
     outdims=outdims,
 )
+
+
+res[1]
