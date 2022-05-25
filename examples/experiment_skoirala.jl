@@ -16,9 +16,6 @@ expFile = joinpath(local_root, expFilejs)
 info = getConfiguration(expFile, local_root);
 
 info = setupModel!(info);
-forcing = getForcing(info);
-selTime = 1:13650;
-# forcing=forcing[selTime];
 forcing = getForcing(info,Val(:table));
 
 # info = setupOptimization(info);
