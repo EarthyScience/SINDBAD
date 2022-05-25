@@ -22,7 +22,7 @@
 	"rules":
 	{
 		"verbosity": 5,
-		"dataType": "Float64",
+		"dataType": "Float32",
 		"tolerance": 1.0e-3
 	},
 	"output": {
