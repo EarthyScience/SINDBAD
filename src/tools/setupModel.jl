@@ -1,4 +1,4 @@
-export setupModel!, getInitPools, createInitOut, setNumberType
+export setupModel!, getInitPools, setNumberType
 
 """
     checkSelectedModels(fullModels, selModels)
@@ -364,21 +364,6 @@ function getInitStates(info)
         end
     end
     return initStates
-end
-
-"""
-    createInitOut(info)
-create the initial out named tuple with subfields for pools, states, and all selected models.
-"""
-function createInitOut(info)
-    initPools = getInitPools(info)
-    initStates = getInitStates(info)
-    out = (; fluxes=(;), pools=initPools, states=initStates)
-    sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
-    for model in sortedModels
-        out = setTupleField(out, (model, (;)))
-    end
-    return out
 end
 
 
