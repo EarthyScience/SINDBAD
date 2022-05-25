@@ -2,7 +2,7 @@ export evaporation_fAPAR
 
 @bounds @describe @units @with_kw struct evaporation_fAPAR{T1, T2} <: evaporation
 	α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-	supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+	supLim::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
 function compute(o::evaporation_fAPAR, forcing, land::NamedTuple, helpers::NamedTuple)
