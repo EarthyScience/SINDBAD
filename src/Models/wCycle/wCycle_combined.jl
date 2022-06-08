@@ -18,12 +18,12 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
     # reset soil moisture changes to zero
 	if minimum(TWS) < 𝟘
 		if abs(minimum(TWS)) < tolerance
-			pprint(land)
-		    @error "Numerically small negative TWS $(TWS) were replaced with tolerance $(tolerance)"
+			# pprint(land)
+		    @warn "Numerically small negative TWS ($(TWS)) smalled than tolerance ($(tolerance)) were replaced with absolute value of the storage"
 			# @show TWS, TWS_old, ΔTWS
 			# @show land.rootFraction.p_fracRoot2SoilD, land.fluxes, land.percolation, land.drainage, land.capillaryFlow, land.states.WBP
 			# pprint(land)
-		    TWS .= max.(TWS, 𝟘)
+		    TWS .= abs.(TWS)
 		else
 		    @error "TWS is negative. Cannot continue. $(TWS)"
 		end

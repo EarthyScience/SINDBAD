@@ -14,9 +14,9 @@ obsvars, modelvars, optimvars = getConstraintNames(info);
 observations = getObservation(info); # target observation!!
 # plot(observations.transpiration)
 # plot(observations.transpiration_σ)
-optimParams = info.opti.params2opti;
+optimParams = info.opti.optimized_paramaters;
 approaches = info.tem.models.forward;
-tblParams = getParameters(info.tem.models.forward, info.opti.params2opti);
+tblParams = getParameters(info.tem.models.forward, info.opti.optimized_paramaters);
 
 
 # hcat(info.opti.constraints.variables.evapotranspiration.costOptions, info.opti.constraints.variables.transpiration.costOptions)

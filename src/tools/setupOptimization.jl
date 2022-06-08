@@ -34,8 +34,24 @@ function setupOptimization(info)
     info = setTupleField(info, (:optim, (;)))
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
-    info = setTupleSubfield(info, :optim, (:params2opti, info.opti.params2opti))
-    info = setTupleSubfield(info, :optim, (:algorithm, info.opti.algorithm))
+    info = setTupleSubfield(info, :optim, (:optimized_paramaters, info.opti.optimized_paramaters))
+
+    # set algorithm related options
+    tmp_algorithm = (;)
+    algo_method = info.opti.algorithm.package * "_" * info.opti.algorithm.method
+    tmp_algorithm = setTupleField(tmp_algorithm, (:method, Symbol(algo_method)))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
+    if length(strip(info.opti.algorithm.options_file)) > 0
+        options_path = info.opti.algorithm.options_file
+        if !isabspath(options_path)
+            options_path = joinpath(info.sinbad_root, options_path)
+        end
+        options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
+    else
+        options = (;)
+    end
+    tmp_algorithm = setTupleField(tmp_algorithm, (:options, typenarrow!(options)))
+    info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
 
     obsVars, optimVars, storeVars = getConstraintNames(info.opti, info.modelRun.output.variables.store)
     varibInfo = (;)
