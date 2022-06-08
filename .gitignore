@@ -4,9 +4,10 @@
 *_raw.jl
 *.nc
 /Manifest.toml
-/examples/Manifest.toml
-/examples/data/
-/docs/build/
+examples/Manifest.toml
+examples/data/
+docs/build/
+docs/Manifest.toml
 /data/3Ddata/
 .vscode
 .gitlab-ci.yml
