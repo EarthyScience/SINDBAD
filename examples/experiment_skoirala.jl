@@ -1,7 +1,6 @@
 using Revise
 using Sinbad
-using Suppressor
-using PrettyPrinting
+# using Suppressor
 
 # using ProfileView
 # using BenchmarkTools
@@ -21,16 +20,16 @@ forcing = getForcing(info,Val(:table));
 
 # info = setupOptimization(info);
 
-doForward = false
-if doForward
-    out = createInitOut(info);
-    outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-    @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-end
-out = createInitOut(info);
-outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-@time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-@profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# doForward = false
+# if doForward
+#     out = createInitOut(info);
+#     outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+#     @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# end
+# out = createInitOut(info);
+# outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# @time outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+# @profview outevolution = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 
 
 # pools = outevolution.pools |> columntable;

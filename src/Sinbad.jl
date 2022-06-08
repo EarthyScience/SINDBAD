@@ -8,6 +8,7 @@ using CMAEvolutionStrategy:
 using CSV: CSV
 using DocStringExtensions
 #using FieldMetadata
+using ForwardDiff
 using Flatten:
     flatten,
     metaflatten,
@@ -17,7 +18,7 @@ using JSON:
     parsefile
 #parse as jsparse,
 #read as jsread
-
+using Optim
 using Parameters
 @reexport using PrettyPrinting:
     pprint
