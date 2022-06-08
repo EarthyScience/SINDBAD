@@ -105,9 +105,11 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, approaches, forcing, initOut,
-    observations, tblParams, obsVariables, modelVariables, optimVars,temInfo, optiInfo)
-    tblParams.optim .= pVector # update the parameters with pVector
+function getLoss(pVector, forcing, initOut,
+    observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+    #tblParams.optim .= pVector # update the parameters with pVector
+    tblParams.optim .= ForwardDiff.value(pVector) # update the parameters with pVector
+    # tblParams.optim .= rand(length(pVector)) # update the parameters with pVector
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
     # outyaks = mapRunEcosystem(forcing, output, info.tem)
     @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
@@ -131,11 +133,25 @@ function optimizeModel(forcing, initOut, observations, selectedModels, optimPara
     tblParams = getParameters(selectedModels, optimParams)
     lo = tblParams.lower
     hi = tblParams.upper
-    defaults = tblParams.defaults
-    costFunc = x -> getLoss(x, selectedModels, forcing, initOut,
-        observations, tblParams, obsVariables, modelVariables, optimVars, temInfo, optiInfo)
-    results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
-        multi_threading=false, maxfevals=maxfevals)
+
+    # make the cost function handle
+    costFunc = x -> getLoss(x, forcing, initOut,
+        observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+
+    # # minimize the cost
+    # results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
+    #     multi_threading=false, maxfevals=maxfevals)
+
+    results = optimize(costFunc, defaults, LBFGS(),Optim.Options(show_trace=true, iterations = 5); autodiff=:forward)
+
+    optim_para = if results.converged
+        results.minimizer
+    else
+        error("Did not converge")
+    end
+
+
+    # get the best results and do a forward run with the optimized parameters
     optim_para = xbest(results)
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
