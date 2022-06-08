@@ -8,27 +8,45 @@ function clean_inputs(datapoint, vinfo, ::Val{T}) where {T}
 end
 
 """
+    get_variable_info(default_info, var_info)
+combines the property values of the default forcing with the properties set for the particular variable
+"""
+function get_variable_info(default_info, var_info)
+    combined_info = (;)
+    default_fields = propertynames(default_info)
+    for var_field in default_fields
+        if hasproperty(var_info, var_field)
+            var_prop = getfield(var_info, var_field)
+            if !isempty(var_prop) || length(var_prop) > 0
+                combined_info = setTupleField(combined_info, (var_field, getfield(var_info, var_field)))
+            end
+        else
+            combined_info = setTupleField(combined_info, (var_field, getfield(default_info, var_field)))
+        end
+    end
+    return combined_info
+end
+
+"""
 getForcing(info)
 """
 function getForcing(info, ::Val{:table})
     doOnePath = false
-    if !isempty(info.forcing.oneDataPath)
+    if !isempty(info.forcing.defaultForcing.dataPath)
         doOnePath = true
-        if isabspath(info.forcing.oneDataPath)
-            dataPath = info.forcing.oneDataPath
+        if isabspath(info.forcing.defaultForcing.dataPath)
+            dataPath = info.forcing.defaultForcing.dataPath
         else
-            dataPath = joinpath(info.sinbad_root, info.forcing.oneDataPath)
+            dataPath = joinpath(info.sinbad_root, info.forcing.defaultForcing.dataPath)
         end
     end
     varnames = propertynames(info.forcing.variables)
     varlist = []
     dataAr = []
-    # forcing = (;)
-    #if doOnePath
-    #    ds = Dataset(dataPath)
-    #end
+
+    default_info = info.forcing.defaultForcing
     for v in varnames
-        vinfo = getproperty(info.forcing.variables, v)
+        vinfo = get_variable_info(default_info, getproperty(info.forcing.variables, v))
         if !doOnePath
             dataPath = vinfo.dataPath
             #ds = Dataset(dataPath)
@@ -39,21 +57,21 @@ function getForcing(info, ::Val{:table})
         tarVar = Symbol(v)
         ds_dat = ds[:, :, :]
         data_to_push = clean_inputs.(ds_dat, Ref(vinfo), Val{info.tem.helpers.numbers.numType}())[1, 1, :]
-        if vinfo.spaceTimeType == "normal"
+        if vinfo.spaceTimeType == "spatiotemporal"
             push!(varlist, tarVar)
             push!(dataAr, data_to_push)
         else
             push!(varlist, tarVar)
-            push!(dataAr, fill(data_to_push, 14245))
+            push!(dataAr, fill(data_to_push, info.forcing.size.time))
         end
     end
-    println("forcing is still replicating the static variables 14245 times. Needs refinement and automation.")
     forcing = Table((; zip(varlist, dataAr)...))
     return forcing
 end
 
 function getForcing(info, ::Val{:yaxarray})
-    file = joinpath(info.sinbad_root, info.forcing.oneDataPath)
+    file = joinpath(info.sinbad_root, info.forcing.defaultForcing.dataPath)
+    default_info = info.forcing.defaultForcing
     forcing_variables = keys(info.forcing.variables)
     nc = NetCDF.open(file)
     incubes = map(forcing_variables) do k
@@ -68,15 +86,16 @@ function getForcing(info, ::Val{:yaxarray})
             RangeAxis(dn, dv)
         end
         yax = YAXArray(ax, v)
-        vinfo = info.forcing.variables[k]
+        vinfo = get_variable_info(default_info, info.forcing.variables[k])
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> Sinbad.clean_inputs(v, vinfo, numtype), yax)
     end
     indims = getInDims.(incubes)
-    nts = getnts(incubes)
+    nts = getnts(incubes, info.forcing.dimensions.time)
     forcing_variables = keys(info.forcing.variables)
     return (; data=incubes, dims=indims, n_timesteps=nts, variables = forcing_variables)
 end
+
 function getInDims(c)
     inax = String[]
     YAXArrays.Axes.findAxis("Time", c) === nothing || push!(inax, "Time")
@@ -88,7 +107,7 @@ function getInDims(c)
     InDims(inax...; artype=KeyedArray, filter=AllNaN())
 end
 
-function getnts(incubes)
-    i1 = findfirst(c -> YAXArrays.Axes.findAxis("Time", c) !== nothing, incubes)
-    length(getAxis("Time", incubes[i1]).values)
+function getnts(incubes, time_name)
+    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
+    length(getAxis(time_name, incubes[i1]).values)
 end
