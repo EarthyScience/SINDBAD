@@ -1,5 +1,5 @@
 {
-	"funName":
+	"function_name":
 	{
 		"import": "readForcing",
 		"check": "checkInputData"
@@ -14,9 +14,6 @@
 		"bounds": [0.0, 100.0], 
 		"sourceVariableName": "PET_PT",
 		"sourceVariableUnit": "mm d-1",
-		"source2sindbadUnit": 1.0,
-		"additiveUnitConversion": false,
-		"isCategorical": false,
 		"nameShort": "PET",
 		"spaceTimeType": "normal",
 		"sourceDataProductName": "FLUXNET",
@@ -28,9 +25,6 @@
 		"bounds": [0.0, 1000.0], 
 		"sourceVariableName": "tp",
 		"sourceVariableUnit": "mm d-1",
-		"source2sindbadUnit": 1.0,
-		"additiveUnitConversion": false,
-		"isCategorical": false,
 		"nameShort": "Rain",
 		"spaceTimeType": "normal",
 		"sourceDataProductName": "FLUXNET",
@@ -168,9 +162,6 @@
 		"bounds": [0.0, 1.0], 
 		"sourceVariableName": "FVC",
 		"sourceVariableUnit": "-",
-		"source2sindbadUnit": 1.0,
-		"additiveUnitConversion": false,
-		"isCategorical": false,
 		"nameShort": "fAPAR from ndvi",
 		"spaceTimeType": "normal",
 		"sourceDataProductName": "FLUXNET",
@@ -234,9 +225,6 @@
 		"bounds": [0.0, 1.0], 
 		"sourceVariableName": "FVC",
 		"sourceVariableUnit": "-",
-		"source2sindbadUnit": 1.0,
-		"additiveUnitConversion": false,
-		"isCategorical": false,
 		"nameShort": "vegFrac",
 		"spaceTimeType": "normal",
 		"sourceDataProductName": "soilgrids",
