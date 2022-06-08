@@ -1,27 +1,99 @@
-@with_kw struct rainSnow{type} <: TerEcosystem
 export rainSnow_Tair
 
-@with_kw struct rainSnow_Tair{type} <: LandEcosystem
-    Tair_thres::type = 0.5
+@bounds @describe @units @with_kw struct rainSnow_Tair{T1} <: rainSnow
+	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 
-function run(o::rainSnow, forcing, out)
-    @unpack_rainSnow o # repetition
-    (; Tair, Rain) = forcing
-    # if Tair < Tair_thres
-    #     snow = rain
-    #     rain = 0.0
-    # else
-    #     snow = 0.0
-    # end
-    snow = Tair < Tair_thres ? Rain : 0.0
-    rain = Tair >= Tair_thres ? Rain : 0.0
-function compute(o::rainSnow_Tair, forcing, out)
+function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
+    ## unpack parameters and forcing
     @unpack_rainSnow_Tair o
-    (; Tair, rain) = forcing
-    snow = Tair < Tair_thres ? rain : 0.0
-    rain = Tair >= Tair_thres ? rain : 0.0
-    # rain = rain - snow
+    @unpack_forcing (Rain, Tair) ∈ forcing
+
+    ## unpack land variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+        𝟘 ∈ helpers.numbers
+    end
+    ## calculate variables
+    if Tair < Tair_thres
+        snow = Rain
+        rain = 𝟘
+    else
+        rain = Rain
+        snow = 𝟘
+    end
     precip = rain + snow
-    return (; out..., Tair, snow, rain, precip)
+
+	# add snowfall to snowpack of the first layer
+    ΔsnowW[1] = ΔsnowW[1] + snow
+
+    ## pack land variables
+    @pack_land begin
+        (precip, rain, snow) => land.rainSnow
+        ΔsnowW => land.states
+    end
+    return land
 end
+
+function update(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
+    @unpack_rainSnow_Tair o
+
+    ## unpack variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        ΔsnowW ∈ land.states
+    end
+
+    ## update variables
+    # update snow pack
+    snowW[1] = snowW[1] + ΔsnowW[1]
+
+    # reset delta storage	
+    ΔsnowW[1] = ΔsnowW[1] - ΔsnowW[1]
+
+    ## pack land variables
+    @pack_land begin
+        # snowW => land.pools
+        ΔsnowW => land.states
+    end
+    return land
+end
+
+@doc """
+separates the rain & snow based on temperature threshold
+
+# Parameters
+$(PARAMFIELDS)
+
+---
+
+# compute:
+Set rain and snow to fe.rainsnow. using rainSnow_Tair
+
+*Inputs*
+ - forcing.Rain
+ - forcing.Tair
+
+*Outputs*
+ - land.rainSnow.rain: liquid rainfall from forcing input
+ - land.rainSnow.snow: snowfall estimated as the rain when tair <  threshold
+
+# update
+
+update pools and states in rainSnow_Tair
+
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 11.11.2019 [skoirala]: creation of approach  
+
+*Created by:*
+ - skoirala
+"""
+rainSnow_Tair
