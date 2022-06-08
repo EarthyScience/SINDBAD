@@ -7,27 +7,20 @@
 		"transpiration",
 		"evapotranspiration"
 	],
-	"costFun": {
-		"funName": "",
-		"nonDefOptFile": "",
-		"multiConstraintMethod": "sum"
-	},
-	"costMetric": {
-		"funName": "tools/utils/metrics/perfMetric",
-		"comment": "the function that calculates the performance metric. Uses perfMetric.m"
+	"multiConstraintMethod": "sum",
+	"algorithm_optim": {
+		"package": "Optim",
+		"method": "LBFGS",
+		"options_file": "settings_minimal/optim_LBFGS.json",
+		"isMultiObj": false
 	},
 	"algorithm": {
-		"funName": "pcmaes",
-		"nonDefOptFile": "sandbox/sb_wroasted/settings_wroasted/extraOptions_pcmaes.json",
-		"isMultiObj": false,
-		"maxParN": 150
-
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "settings_minimal/optim_cmaes.json",
+		"isMultiObj": false
 	},
-	"optimizer": {
-		"funName": "",
-		"comment": "the function that puts together cost function and call optimization algorithm; empty: uses algorithm name, else uses the function in optimizer.funName"
-	},
-	"params2opti": [
+	"optimized_paramaters": [
 		"cCycleBase.annk_Root",
 		"cCycleBase.annk_Wood",
 		"cCycleBase.annk_LitSlow",
@@ -67,11 +60,9 @@
 		"WUE.WUEatOnehPa",
 		"WUE.κ"
 			],
-	"checks": "",
 	"constraints": {
-		"funName": {
-			"import": "readObservationRoasted",
-			"check": ""
+		"function_name": {
+			"import": "readObservation"
 		},
 		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
 		"defaultCostOptions": {
