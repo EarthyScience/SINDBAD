@@ -15,6 +15,6 @@ info = setupModel!(info);
 forcing = getForcing(info, Val(:yaxarray));
 output = setupOutput(info);
 
-mapRunEcosystem(forcing, output, info.tem)
+outcubes = mapRunEcosystem(forcing, output, info.tem)
 
-outcubes[1]
+outcubes[2]
