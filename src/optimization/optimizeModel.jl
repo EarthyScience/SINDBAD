@@ -107,9 +107,14 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 """
 function getLoss(pVector, forcing, initOut,
     observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
-    #tblParams.optim .= pVector # update the parameters with pVector
-    tblParams.optim .= ForwardDiff.value(pVector) # update the parameters with pVector
-    # tblParams.optim .= rand(length(pVector)) # update the parameters with pVector
+    # tblParams.optim .= pVector # update the parameters with pVector
+    # @show pVector, typeof(pVector)
+    if eltype(pVector) <: ForwardDiff.Dual
+        tblParams.optim .= [modelInfo.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
+    else
+        tblParams.optim .= pVector # update the parameters with pVector    
+    end
+
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
     # outyaks = mapRunEcosystem(forcing, output, info.tem)
     @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
@@ -119,7 +124,9 @@ function getLoss(pVector, forcing, initOut,
         obsV = var_row.variable
         lossMetric = var_row.costMetric
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
-        push!(lossVec, loss(y, ŷ, yσ, Val(lossMetric)))
+        metr = loss(y, ŷ, yσ, Val(lossMetric))
+        @show obsV, lossMetric, metr
+        push!(lossVec, metr)
     end
 
     return sum(lossVec)
@@ -128,31 +135,28 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, initOut, observations, selectedModels, optimParams,
-    obsVariables, modelVariables, optimVars, temInfo, optiInfo; maxfevals=100)
-    tblParams = getParameters(selectedModels, optimParams)
-    lo = tblParams.lower
-    hi = tblParams.upper
+function optimizeModel(forcing, initOut, observations,
+    modelInfo, optiInfo; nspins=3)
+    optimVars = optiInfo.variables.optim;
+    # get the list of observed variables, model variables to compare observation against, 
+    # obsVars, optimVars, storeVars = getConstraintNames(info);
+
+    # get the subset of parameters table that consists of only optimized parameters
+    tblParams = getParameters(modelInfo.models.forward, optiInfo.optimized_paramaters)
+
+    # get the defaults and bounds
+    default_values = tblParams.defaults
+    lower_bounds = tblParams.lower
+    upper_bounds = tblParams.upper
 
     # make the cost function handle
     costFunc = x -> getLoss(x, forcing, initOut,
         observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
 
-    # # minimize the cost
-    # results = minimize(costFunc, defaults, 1; lower=lo, upper=hi,
-    #     multi_threading=false, maxfevals=maxfevals)
+    # run the optimizer
+    optim_para = optimizer(costFunc, default_values, lower_bounds, upper_bounds, optiInfo.algorithm.options, Val(optiInfo.algorithm.method))
 
-    results = optimize(costFunc, defaults, LBFGS(),Optim.Options(show_trace=true, iterations = 5); autodiff=:forward)
-
-    optim_para = if results.converged
-        results.minimizer
-    else
-        error("Did not converge")
-    end
-
-
-    # get the best results and do a forward run with the optimized parameters
-    optim_para = xbest(results)
+    # update the parameter table with the optimized values
     tblParams.optim .= optim_para
     newApproaches = updateParameters(tblParams, selectedModels)
     outevolution = runEcosystem(newApproaches, forcing, initOut, modelVariables, temInfo; nspins=3) # spinup + forward run!
