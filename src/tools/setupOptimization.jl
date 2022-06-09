@@ -32,8 +32,12 @@ end
 function setupOptimization(info)
     costOpt = getCostOptions(info.opti)
     info = setTupleField(info, (:optim, (;)))
+
+    # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
+
+    # set the list of paramaters to be optimized
     info = setTupleSubfield(info, :optim, (:optimized_paramaters, info.opti.optimized_paramaters))
 
     # set algorithm related options
@@ -47,18 +51,20 @@ function setupOptimization(info)
             options_path = joinpath(info.Sindbad_root, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
+        options = typenarrow!(options)
     else
         options = (;)
     end
-    tmp_algorithm = setTupleField(tmp_algorithm, (:options, typenarrow!(options)))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
 
+    # get the variables to be used during optimization
     obsVars, optimVars, storeVars = getConstraintNames(info.opti, info.modelRun.output.variables.store)
     varibInfo = (;)
     varibInfo = setTupleField(varibInfo, (:obs, obsVars))
     varibInfo = setTupleField(varibInfo, (:optim, optimVars))
     varibInfo = setTupleField(varibInfo, (:store, storeVars))
-
     info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
+    
     return info
 end

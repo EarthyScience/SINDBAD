@@ -1,7 +1,7 @@
 using Revise
 using Sindbad
-using Suppressor
-
+# using Suppressor
+# using Optimization
 expFilejs = "settings_minimal/experiment.json"
 local_root = dirname(Base.active_project())
 expFile = joinpath(local_root, expFilejs)
@@ -16,3 +16,6 @@ info = setupOptimization(info);
 out = createInitOut(info);
 outparams, outdata = optimizeModel(forcing, out, observations,
 info.tem, info.optim; nspins=1);    
+outdata.fluxes
+using Plots
+plot(outdata.fluxes)

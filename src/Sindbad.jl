@@ -7,7 +7,6 @@ using CMAEvolutionStrategy:
     xbest
 using CSV: CSV
 using DocStringExtensions
-#using FieldMetadata
 using ForwardDiff
 using Flatten:
     flatten,
@@ -16,7 +15,7 @@ using Flatten:
     parentnameflatten
 using JSON:
     parsefile
-using Optim
+using Optim, Optimization, OptimizationOptimJL, OptimizationBBO, OptimizationGCMAES
 using Parameters
 @reexport using PrettyPrinting:
     pprint
