@@ -179,11 +179,11 @@ function optimizeModel(forcing, initOut, observations,
     upper_bounds = tblParams.upper
 
     # make the cost function handle
-    costFunc = x -> getLoss(x, forcing, initOut,
+    cost_function = x -> getLoss(x, forcing, initOut,
         observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
 
     # run the optimizer
-    optim_para = optimizer(costFunc, default_values, lower_bounds, upper_bounds, optiInfo.algorithm.options, Val(optiInfo.algorithm.method))
+    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optiInfo.algorithm.options, Val(optiInfo.algorithm.method))
 
     # update the parameter table with the optimized values
     tblParams.optim .= optim_para
