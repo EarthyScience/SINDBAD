@@ -1,0 +1,74 @@
+export cAllocationSoilW_gppGSI
+
+@bounds @describe @units @with_kw struct cAllocationSoilW_gppGSI{T1} <: cAllocationSoilW
+    τ_soilW::T1 = 0.8 | (0.001, 1.0) | "temporal change rate for the water-limiting function" | ""
+end
+
+
+function precompute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
+    ## unpack helper
+    @unpack_land 𝟙 ∈ helpers.numbers
+
+    ## calculate variables
+    # assume the initial fR as one
+    fW_prev = 𝟙
+
+    ## pack land variables
+    @pack_land fW_prev => land.cAllocationSoilW
+    return land
+end
+
+
+function compute(o::cAllocationSoilW_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)
+    ## unpack parameters
+    @unpack_cAllocationSoilW_gppGSI o
+
+    ## unpack land variables
+    @unpack_land begin
+        SMScGPP ∈ land.gppSoilW
+        fW_prev ∈ land.cAllocationSoilW
+    end
+    # computation for the moisture effect on decomposition/mineralization
+    fW = fW_prev + (SMScGPP - fW_prev) * τ_soilW
+
+    # set the prev
+    fW_prev = fW
+
+    ## pack land variables
+    @pack_land (fW, fW_prev) => land.cAllocationSoilW
+    return land
+end
+
+@doc """
+moisture effect on allocation from same for GPP based on GSI approach
+
+# Parameters
+$(PARAMFIELDS)
+
+---
+
+# compute:
+
+*Inputs*
+ - land.cAllocationSoilW.fW_prev: moisture stressor from previous time step
+ - land.gppSoilW.SMScGPP: moisture stressors on GPP
+
+*Outputs*
+ - land.cAllocationSoilW.fW: moisture effect on allocation
+
+---
+
+# Extended help
+
+*References*
+ - Forkel M, Carvalhais N, Schaphoff S, von Bloh W, Migliavacca M, Thurner M, Thonicke K [2014] Identifying environmental controls on vegetation greenness phenology through model–data integration. Biogeosciences, 11, 7025–7050.
+ - Forkel, M., Migliavacca, M., Thonicke, K., Reichstein, M., Schaphoff, S., Weber, U., Carvalhais, N. (2015).  Codominant water control on global interannual variability and trends in land surface phenology & greenness.
+ - Jolly, William M., Ramakrishna Nemani, & Steven W. Running. "A generalized, bioclimatic index to predict foliar phenology in response to climate." Global Change Biology 11.4 [2005]: 619-632.
+
+*Versions*
+ - 1.0 on 12.01.2020 [sbesnard]  
+
+*Created by:*
+ - ncarvalhais & sbesnard
+"""
+cAllocationSoilW_gppGSI
