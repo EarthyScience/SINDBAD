@@ -1,6 +1,7 @@
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss
 export getData
+
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -112,27 +113,6 @@ function getData(outsmodel, observations, obsV, modelVarInfo)
 end
 
 """
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getSimulationData(outsmodel, observations, optimVars, obsVariables)
-    ŷ = [] # Vector{Matrix{Float64}}
-    for k in keys(optimVars)
-        newkvals = getfield(outsmodel, k) |> columntable
-        newkvals = newkvals |> select(keys(getfield(optimVars, k))...)
-        # newkvals = newkvals |> select(keys(newkvals)...)
-        newkvals = newkvals |> matrix
-        newkvals = vcat(newkvals...)
-        push!(ŷ, newkvals)
-    end
-    ŷ = length(ŷ) == 1 ? ŷ[1] : hcat(ŷ...)
-    #ŷ = aggregate(ŷ, :monthly)
-    y = observations |> select(obsVariables[1:2:end-1]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    yσ = observations |> select(obsVariables[2:2:end]...) |> columntable |> matrix # 2x, no needed, but is here for completeness.
-    # @show mean(skipmissing(y)), mean(ŷ), modelVariables
-    return (y, yσ, ŷ)
-end
-
-"""
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, forcing, initOut,
@@ -152,9 +132,10 @@ function getLoss(pVector, forcing, initOut,
     for var_row in cost_options
         obsV = var_row.variable
         lossMetric = var_row.costMetric
-        (y, yσ, ŷ) = getData(outevolution, observations, obsV, getfield(optimVars, obsV))
-        metr = loss(y, ŷ, yσ, Val(lossMetric))
-        @show obsV, lossMetric, metr
+        mod_variable = getfield(optimVars, obsV)
+        (y, yσ, ŷ) = getData(outevolution, observations, obsV, mod_variable)
+        metr = loss(y, yσ, ŷ, Val(lossMetric))
+        @show obsV, lossMetric, mod_variable, metr
         push!(lossVec, metr)
     end
 
