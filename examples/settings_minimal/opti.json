@@ -20,6 +20,12 @@
 		"isMultiObj": false
 	},
 	"algorithm": {
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "settings_minimal/optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithm-gcmaes": {
 		"package": "Optimization",
 		"method": "GCMAES_FD",
 		"options_file": "",
@@ -121,7 +127,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			},
 			"nee": {
@@ -163,7 +169,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			},
 			"reco": {
@@ -205,7 +211,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			},
 			"evapotranspiration": {
@@ -247,7 +253,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			},
 			"transpiration": {
@@ -289,7 +295,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			},
 			"agb": {
@@ -357,7 +363,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "pcor2inv"
+					"costMetric": "mse"
 				}
 			}
 		}
