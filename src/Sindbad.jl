@@ -30,6 +30,7 @@ using TypedTables:
     Table
 using StatsBase:
     mean,
+    percentile,
     cor
 using YAXArrays, NetCDF, DiskArrayTools
 using AxisKeys
@@ -41,7 +42,7 @@ include("Ecosystem/runEcosystem.jl")
 include("optimization/optimization.jl")
 include("tools/tools.jl")
 
-include("models/models.jl")
+include("Models/models.jl")
 @reexport using .Models
 
 end

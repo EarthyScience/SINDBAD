@@ -1,10 +1,8 @@
 {
 	"variables2constrain": [
-		"gpp",
-		"ndvi",
-		"nee",
 		"transpiration",
-		"evapotranspiration"
+		"evapotranspiration",
+		"gpp"
 	],
 	"multiConstraintMethod": "sum",
 	"algorithm_optim": {
@@ -20,9 +18,9 @@
 		"isMultiObj": false
 	},
 	"algorithm": {
-		"package": "CMAEvolutionStrategy",
-		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"package": "Optimization",
+		"method": "GCMAES",
+		"options_file": "",
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
@@ -32,22 +30,9 @@
 		"isMultiObj": false
 	},
 	"optimized_paramaters": [
-		"cCycleBase.annk_Root",
-		"cCycleBase.annk_Wood",
-		"cCycleBase.annk_LitSlow",
-		"cCycleBase.annk_LitFast",
-		"cCycleBase.annk_SoilSlow",
-		"cCycleBase.annk_SoilOld",
-		"cCycleBase.etaH",
-		"cFlow.f_τ",
-		"cFlow.kShed",
-		"cFlow.LR2ReSlp",
-		"cFlow.Re2LRSlp",
-		"cTauSoilT.Q10",
-		"cTauSoilW.Wopt",
 		"evaporation.α",
 		"evaporation.supLim",
-		"fAPAR.kEffExt",
+		"fAPAR.constantfAPAR",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
@@ -57,19 +42,13 @@
 		"gppVPD.Cm",
 		"gppSoilW.q",
 		"gppSoilW.θstar",
-		"groundWRecharge.dos_exp",
-		"aRespiration.YG",
-		"aRespiration.RMN",
-		"aRespirationAirT.Q10_RM",
 		"runoffBase.bc",
-		"rootFraction.k_cVegRoot",
+		"rootFraction.constantRootFrac",
 		"rootMaximumDepth.fracRootD2SoilD",
 		"runoffSaturationExcess.β",
 		"snowMelt.melt_T",
 		"snowMelt.melt_Rn",
-		"treeFraction.constantTreeFrac",
-		"WUE.WUEatOnehPa",
-		"WUE.κ"
+		"WUE.WUEatOnehPa"
 			],
 	"constraints": {
 		"function_name": {
@@ -83,7 +62,7 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "mse",
+			"costMetric": "nseinv",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -127,7 +106,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"nee": {
@@ -169,7 +148,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"reco": {
@@ -211,7 +190,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"evapotranspiration": {
@@ -253,7 +232,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"transpiration": {
@@ -295,7 +274,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"agb": {
@@ -363,7 +342,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			}
 		}
