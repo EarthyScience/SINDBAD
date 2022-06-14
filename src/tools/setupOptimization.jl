@@ -36,6 +36,7 @@ function setupOptimization(info)
     # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
+    info = setTupleSubfield(info, :optim, (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))
 
     # set the list of paramaters to be optimized
     info = setTupleSubfield(info, :optim, (:optimized_paramaters, info.opti.optimized_paramaters))

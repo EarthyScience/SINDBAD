@@ -54,7 +54,7 @@ function updateParameters(tblParams, approaches)
         subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
         if isempty(subtbl)
             return getproperty(approachx, var)
-        else 
+        else
             return subtbl.optim[1]
         end
     end
@@ -113,6 +113,39 @@ function getData(outsmodel, observations, obsV, modelVarInfo)
 end
 
 """
+    combineLoss(lossVector, ::Val{:sum})
+return the total of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:sum})
+    return sum(lossVector)
+end
+
+"""
+    combineLoss(lossVector, ::Val{:minimum})
+return the minimum of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:minimum})
+    return minimum(lossVector)
+end
+
+
+"""
+    combineLoss(lossVector, ::Val{:maximum})
+return the maximum of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:maximum})
+    return maximum(lossVector)
+end
+
+"""
+    combineLoss(lossVector, percentile_value)
+return the percentile_value^th percentile of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, percentile_value)
+    return percentile(lossVector, percentile_value)
+end
+
+"""
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, forcing, initOut,
@@ -122,7 +155,7 @@ function getLoss(pVector, forcing, initOut,
     if eltype(pVector) <: ForwardDiff.Dual
         tblParams.optim .= [modelInfo.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
     else
-        tblParams.optim .= pVector # update the parameters with pVector    
+        tblParams.optim .= pVector # update the parameters with pVector
     end
 
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
@@ -135,11 +168,15 @@ function getLoss(pVector, forcing, initOut,
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
-        @show obsV, lossMetric, mod_variable, metr
-        push!(lossVec, metr)
+        if isnan(metr)
+            push!(lossVec, 1.0E19)
+        else
+            push!(lossVec, metr)
+        end
+        @show obsV, lossMetric, lossVec
     end
 
-    return sum(lossVec)
+    return combineLoss(lossVec, Val(optiInfo.multiConstraintMethod))
 end
 
 """
