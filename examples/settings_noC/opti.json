@@ -1,25 +1,25 @@
 {
 	"variables2constrain": [
 		"transpiration",
-		"evapotranspiration",
 		"gpp"
 	],
 	"multiConstraintMethod": "sum",
-	"algorithm_optim": {
+	"useUncertainty": false,
+	"algorithm1": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "settings_minimal/optim_LBFGS.json",
-		"isMultiObj": false
-	},
-	"algorithm_cmaes": {
-		"package": "CMAEvolutionStrategy",
-		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"options_file": "settings_noC/optim_LBFGS.json",
 		"isMultiObj": false
 	},
 	"algorithm": {
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "settings_noC/optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithm_": {
 		"package": "Optimization",
-		"method": "GCMAES",
+		"method": "Fminbox_GradientDescent_FD",
 		"options_file": "",
 		"isMultiObj": false
 	},

@@ -141,7 +141,7 @@ end
     combineLoss(lossVector, percentile_value)
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector, percentile_value)
+function combineLoss(lossVector, percentile_value::T) where T <: Real
     return percentile(lossVector, percentile_value)
 end
 
@@ -159,7 +159,8 @@ function getLoss(pVector, forcing, initOut,
     end
 
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
-    @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    # @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
     lossVec=[]
     cost_options=optiInfo.costOptions;
     for var_row in cost_options
@@ -168,7 +169,10 @@ function getLoss(pVector, forcing, initOut,
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
-        if isnan(metr)
+        if isnan(metr)            
+            pprint(tblParams.optim)
+            pprint(y)
+            pprint(mean(y))
             push!(lossVec, 1.0E19)
         else
             push!(lossVec, metr)

@@ -12,6 +12,7 @@ docs/Manifest.toml
 
 examples/data/
 docs/build/
+examples/exp_*
 
 .vscode
 .gitlab-ci.yml
