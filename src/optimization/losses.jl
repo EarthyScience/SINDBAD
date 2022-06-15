@@ -28,11 +28,13 @@ function loss(y::T, yσ::T, ŷ::T, ::Val{:pcor2inv}) where T <:DenseArray
     return pcor2inv
 end
 
-nse(y, yσ, ŷ) = 1.0 .- sum(abs2.((y .- mean(ŷ) ./ yσ))) / (sum(abs2.(y .- mean(y)) ./ yσ))
+# nse(y, yσ, ŷ) = 1.0 .- sum(abs2.((y .- ŷ) ./ yσ)) / sum(abs2.((y .- mean(y)) ./ yσ))
 
 function loss(y::T, yσ::T, ŷ::T, ::Val{:nse}) where T <:DenseArray
     idxs = (.!isnan.(y .* yσ .* ŷ))
-    return nse(y[idxs], yσ[idxs], ŷ[idxs])
+    nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]))) / sum(abs2.((y[idxs] .- mean(y[idxs]))))
+    # nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]) ./ yσ[idxs])) / sum(abs2.((y[idxs] .- mean(y[idxs])) ./ yσ[idxs]))
+    return nse
 end
 
 function loss(y::T, yσ::T, ŷ::T, ::Val{:nseinv}) where T <:DenseArray

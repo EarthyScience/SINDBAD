@@ -11,12 +11,6 @@
         "ambientCO2": {
             "approach": "forcing"
         },
-        "capillaryFlow": {
-            "approach": "VanDijk2010"
-        },
-        "drainage": {
-            "approach": "kUnsat"
-        },
         "evaporation": {
             "approach": "demandSupply"
         },
@@ -53,12 +47,6 @@
         "gppVPD": {
             "approach": "PRELES"
         },
-        "groundWRecharge": {
-            "approach": "kUnsat"
-        },
-        "groundWSoilWInteraction":{
-            "approach": "gradientNeg"
-        },
         "percolation": {
             "approach": "WBP"
         },
@@ -80,9 +68,6 @@
         },
         "runoff": {
             "approach": "sum"
-        },
-        "runoffBase": {
-            "approach": "Zhang2008"
         },
         "runoffOverland": {
             "approach": "Sat"
@@ -140,7 +125,7 @@
 		{
 			"components" :
                 {
-                    "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+                    "soilW": [[1000.0, 1000.0], 100.0],
                     "groundW": [1, 1000.0],
 				"snowW": [1, 0.01],
 				"surfaceW": [1, 0.01]
