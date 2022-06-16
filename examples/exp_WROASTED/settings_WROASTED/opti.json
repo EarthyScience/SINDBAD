@@ -1,7 +1,6 @@
 {
 	"variables2constrain": [
 		"gpp",
-		"ndvi",
 		"nee",
 		"transpiration",
 		"evapotranspiration"

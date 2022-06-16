@@ -41,24 +41,24 @@ outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.o
 
 
 obsV = :transpiration
-y = observations |> select(obsV) |> matrix;
-yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix;
+y = getproperty(observations, obsV);
+yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 
 modelVarInfo = [:fluxes, :transpiration]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 loss(y, yσ, ŷ, Val(:nse))
 
 plot(ŷ)
 plot!(y)
 
 obsV = :evapotranspiration
-y = observations |> select(obsV) |> matrix;
-yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix;
+y = getproperty(observations, obsV);
+yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 
 modelVarInfo = [:fluxes, :evapotranspiration]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 loss(y, yσ, ŷ, Val(:nse))
 
 plot(ŷ)

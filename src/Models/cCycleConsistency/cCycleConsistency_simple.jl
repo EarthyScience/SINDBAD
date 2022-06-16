@@ -61,15 +61,17 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	p_A_L = p_A .* flagL
 	# the sum of A per column below the diagonals is always < 1
 	if any(sum(p_A_L, dims=1) .> 𝟙)
-		@show p_A
-		error("sum of cols greater than one in lower cFlow matrix. Cannot continue")
+		@show p_A_L, sum(p_A_L, dims=1)
+		@error  "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+		# error("sum of cols greater than one in lower cFlow matrix. Cannot continue")
 	end
 
 	# above the diagonal
 	p_A_U = p_A .* flagU
 	if any(sum(p_A_U, dims=1) .> 𝟙)
-		@show p_A
-		error("sum of cols greater than one in upper cFlow matrix. Cannot continue")
+		@show p_A_U, sum(p_A_U, dims=1)
+		@error "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+		# error("sum of cols greater than one in upper cFlow matrix. Cannot continue")
 	end
 
 	return land

@@ -29,9 +29,9 @@ outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.o
 obsV = :gpp
 modelVarInfo = [:fluxes, :gpp]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
-y = observations |> select(obsV) |> matrix;
-yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
+y = getproperty(observations, obsV);
+yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 loss(y, yσ, ŷ, Val(:nse))
 
 using Plots
