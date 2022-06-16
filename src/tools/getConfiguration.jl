@@ -17,14 +17,14 @@ end
 readConfiguration(configFiles)
 read configuration experiment json and return dictionary
 """
-function readConfiguration(info_exp, local_root)
+function readConfiguration(info_exp, base_path)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
         if endswith(v, ".json")
-            tmp = parsefile(joinpath(local_root,v); dicttype=DataStructures.OrderedDict)
+            tmp = parsefile(joinpath(base_path,v); dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
         elseif endswith(v, ".csv")
-            prm = CSV.File(joinpath(local_root,v));
+            prm = CSV.File(joinpath(base_path,v));
             tmp = Table(prm)
             info[k] = tmp
         end
@@ -75,10 +75,12 @@ get the experiment info from either json or load the named tuple
 function getConfiguration(sindbad_experiment, local_root)
     if typeof(sindbad_experiment) == String
         info_exp = getExperimentConfiguration(sindbad_experiment)
-        info = readConfiguration(info_exp, local_root)
+        exp_base_path=dirname(sindbad_experiment)
+        info = readConfiguration(info_exp, exp_base_path)
     end
     infoTuple = typenarrow!(info)
     infoTuple = (;infoTuple..., Sindbad_root=local_root)
+    infoTuple = (;infoTuple..., settings_root=exp_base_path)
     return infoTuple
     # return info
 end

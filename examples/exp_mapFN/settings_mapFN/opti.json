@@ -1,26 +1,29 @@
 {
 	"variables2constrain": [
+		"gpp",
+		"ndvi",
+		"nee",
 		"transpiration",
-		"gpp"
+		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm1": {
+	"algorithm_optim": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "settings_noC/optim_LBFGS.json",
+		"options_file": "optim_LBFGS.json",
+		"isMultiObj": false
+	},
+	"algorithm_cmaes": {
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
-		"options_file": "settings_noC/optim_cmaes.json",
-		"isMultiObj": false
-	},
-	"algorithm_": {
-		"package": "Optimization",
-		"method": "Fminbox_GradientDescent_FD",
-		"options_file": "",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
@@ -30,9 +33,22 @@
 		"isMultiObj": false
 	},
 	"optimized_paramaters": [
+		"cCycleBase.annk_Root",
+		"cCycleBase.annk_Wood",
+		"cCycleBase.annk_LitSlow",
+		"cCycleBase.annk_LitFast",
+		"cCycleBase.annk_SoilSlow",
+		"cCycleBase.annk_SoilOld",
+		"cCycleBase.etaH",
+		"cFlow.f_τ",
+		"cFlow.kShed",
+		"cFlow.LR2ReSlp",
+		"cFlow.Re2LRSlp",
+		"cTauSoilT.Q10",
+		"cTauSoilW.Wopt",
 		"evaporation.α",
 		"evaporation.supLim",
-		"fAPAR.constantfAPAR",
+		"fAPAR.kEffExt",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
@@ -42,13 +58,19 @@
 		"gppVPD.Cm",
 		"gppSoilW.q",
 		"gppSoilW.θstar",
+		"groundWRecharge.dos_exp",
+		"aRespiration.YG",
+		"aRespiration.RMN",
+		"aRespirationAirT.Q10_RM",
 		"runoffBase.bc",
-		"rootFraction.constantRootFrac",
+		"rootFraction.k_cVegRoot",
 		"rootMaximumDepth.fracRootD2SoilD",
 		"runoffSaturationExcess.β",
 		"snowMelt.melt_T",
 		"snowMelt.melt_Rn",
-		"WUE.WUEatOnehPa"
+		"treeFraction.constantTreeFrac",
+		"WUE.WUEatOnehPa",
+		"WUE.κ"
 			],
 	"constraints": {
 		"function_name": {
@@ -62,7 +84,7 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "nseinv",
+			"costMetric": "mse",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -106,7 +128,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"nee": {
@@ -148,7 +170,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"reco": {
@@ -190,7 +212,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"evapotranspiration": {
@@ -232,7 +254,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"transpiration": {
@@ -274,7 +296,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"agb": {
@@ -342,7 +364,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			}
 		}

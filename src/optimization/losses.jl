@@ -10,7 +10,8 @@ end
 
 function loss(y::T, yσ::T, ŷ::T, ::Val{:nmae1r}) where T <:DenseArray
     idxs = (.!isnan.(y .* yσ .* ŷ))
-    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+    nmae1r = mean(abs.(y[idxs]-ŷ[idxs])) / (1.0 + mean(y[idxs]))
+    return nmae1r
 end
 
 function loss(y::T, yσ::T, ŷ::T, ::Val{:pcor}) where T <:DenseArray
@@ -28,12 +29,10 @@ function loss(y::T, yσ::T, ŷ::T, ::Val{:pcor2inv}) where T <:DenseArray
     return pcor2inv
 end
 
-# nse(y, yσ, ŷ) = 1.0 .- sum(abs2.((y .- ŷ) ./ yσ)) / sum(abs2.((y .- mean(y)) ./ yσ))
-
 function loss(y::T, yσ::T, ŷ::T, ::Val{:nse}) where T <:DenseArray
     idxs = (.!isnan.(y .* yσ .* ŷ))
-    nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]))) / sum(abs2.((y[idxs] .- mean(y[idxs]))))
-    # nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]) ./ yσ[idxs])) / sum(abs2.((y[idxs] .- mean(y[idxs])) ./ yσ[idxs]))
+    # nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]))) / sum(abs2.((y[idxs] .- mean(y[idxs]))))
+    nse = 1.0 .- sum(abs2.((y[idxs] .- ŷ[idxs]) ./ yσ[idxs])) / sum(abs2.((y[idxs] .- mean(y[idxs])) ./ yσ[idxs]))
     return nse
 end
 
@@ -43,8 +42,7 @@ function loss(y::T, yσ::T, ŷ::T, ::Val{:nseinv}) where T <:DenseArray
 end
 
 function loss(y::T, yσ::T, ŷ::T, ::Val{:nnse}) where T <:DenseArray
-    idxs = (.!isnan.(y .* yσ .* ŷ))
-    nse_v = nse(y[idxs], yσ[idxs], ŷ[idxs])
+    nse_v = loss(y, yσ, ŷ, Val(:nse))
     nnse = 1.0 / (2.0 - nse_v)
     return nnse
 end

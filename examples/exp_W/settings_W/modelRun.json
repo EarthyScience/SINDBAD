@@ -16,6 +16,7 @@
 	{
 		"runForwardYearly": 	false,
 		"runForward": 			true,
+		"runUpdateModels": 		false,
 		"runOpti": 				true,
 		"calcCost":				true
 	},
@@ -26,6 +27,7 @@
 		"tolerance": 1.0e-3
 	},
 	"output": {
+		"all": true,
 		"dirPath": "sandbox/output/",
 		"dataFormat": ".nc",
 		"variables": {
@@ -34,14 +36,11 @@
 					"fluxes.transpiration",
 					"fluxes.runoff",
 					"fluxes.runoffSurface",
-					"fluxes.gpp",
-					"gppDemand.gppE",
-					"states.fAPAR",
 					"pools.snowW",
 					"pools.soilW",
 					"waterBalance.waterBalance"
 				],
-			"store": ["pools.soilW", "pools.cVegWood"]
+			"store": ["pools.soilW"]
 		}
 	}
 }

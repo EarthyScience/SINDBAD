@@ -5,14 +5,18 @@
 *.nc
 *_tmp.jl
 *.bson
-
+*.zarr
+*.tar
+*.tar.gz
+*.zip
+*.rar
+tmp_*
 /Manifest.toml
 examples/Manifest.toml
 docs/Manifest.toml
 
 examples/data/
 docs/build/
-examples/exp_*
 
 .vscode
 .gitlab-ci.yml

@@ -106,9 +106,9 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
 function getData(outsmodel, observations, obsV, modelVarInfo)
     ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix
-    y = observations |> select(obsV) |> matrix
-    yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix
+    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
+    y = getproperty(observations, obsV); 
+    yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
     return (y, yσ, ŷ)
 end
 
@@ -177,8 +177,9 @@ function getLoss(pVector, forcing, initOut,
         else
             push!(lossVec, metr)
         end
-        @show obsV, lossMetric, lossVec
+        @info "$(obsV) => $(lossMetric): $(metr)"
     end
+    @info "-------------------"
 
     return combineLoss(lossVec, Val(optiInfo.multiConstraintMethod))
 end
@@ -196,9 +197,9 @@ function optimizeModel(forcing, initOut, observations,
     tblParams = getParameters(modelInfo.models.forward, optiInfo.optimized_paramaters)
 
     # get the defaults and bounds
-    default_values = tblParams.defaults
-    lower_bounds = tblParams.lower
-    upper_bounds = tblParams.upper
+    default_values = modelInfo.helpers.numbers.sNT.(tblParams.defaults)
+    lower_bounds = modelInfo.helpers.numbers.sNT.(tblParams.lower)
+    upper_bounds = modelInfo.helpers.numbers.sNT.(tblParams.upper)
 
     # make the cost function handle
     cost_function = x -> getLoss(x, forcing, initOut,
