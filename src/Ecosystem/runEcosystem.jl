@@ -9,20 +9,26 @@ runModels(forcing, models, out)
 function runModels(forcing, models, out, modelHelpers)
     for model in models
         out = Models.compute(model, forcing, out, modelHelpers)
-        # out = Models.update(model, forcing, out, modelHelpers)
+        if modelHelpers.run.runUpdateModels
+            out = Models.update(model, forcing, out, modelHelpers)
+        end
     end
     return out
 end
 
 """
-filterVariables(out::NamedTuple, varsinfo)
+filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
-function filterVariables(out::NamedTuple, varsinfo)
-    fout = (;)
-    for k in keys(varsinfo)
-        v = getfield(varsinfo, k)
-        # fout = setTupleField(fout, (k, v, getfield(out, k)))
-        fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+function filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
+    if !filter_variables
+        fout=out
+    else
+        fout = (;)
+        for k in keys(varsinfo)
+            v = getfield(varsinfo, k)
+            # fout = setTupleField(fout, (k, v, getfield(out, k)))
+            fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+        end
     end
     return fout
 end
@@ -40,7 +46,7 @@ runForward(selectedModels, forcing, out, helpers)
 function runForward(forward_models, forcing, out, modelVars, modelHelpers)
     outtemp = map(forcing) do f
         out = runModels(f, forward_models, out, modelHelpers)
-        out_filtered = filterVariables(out, modelVars)
+        out_filtered = filterVariables(out, modelVars; filter_variables=!modelHelpers.run.output_all)
         deepcopy(out_filtered)
     end
     out_temporal = columntable(outtemp)

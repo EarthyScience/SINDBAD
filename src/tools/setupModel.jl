@@ -42,7 +42,7 @@ function changeModelOrder(info, selModels)
         end
 
     end
-    println("changeModelOrder is not fully functional yet. So, returns sindbad_models as is as full models")
+    @warn "changeModelOrder is not fully functional yet. So, returns sindbad_models as is as full models"
     # @show fullModels_reordered, length(fullModels_reordered)
     return fullModels
 end
@@ -421,5 +421,8 @@ function setupModel!(info)
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
     selected_models = getOrderedSelectedModels(info, selModels)
     info = getSpinupAndForwardModels(info, selected_models)
+    # add information related to model run
+    run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     return info
 end

@@ -49,7 +49,7 @@ function setupOptimization(info)
     if length(strip(info.opti.algorithm.options_file)) > 0
         options_path = info.opti.algorithm.options_file
         if !isabspath(options_path)
-            options_path = joinpath(info.Sindbad_root, options_path)
+            options_path = joinpath(info.settings_root, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = typenarrow!(options)
