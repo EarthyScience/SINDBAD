@@ -4,6 +4,7 @@ export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
 export setoptparameters
 export AllNaN
+export nanmax, nanmin
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -336,3 +337,8 @@ end
 
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
+
+
+nanmax(dat) = maximum(dat[.!isnan.(dat)])
+nanmin(dat) = minimum(dat[.!isnan.(dat)])
+

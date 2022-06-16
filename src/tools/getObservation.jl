@@ -64,21 +64,23 @@ function getObservation(info)
         data_obs = applyObservationBounds(data_obs, vinfo.data.bounds)
         push!(dataAr, info.tem.helpers.numbers.numType.(data_obs))
 
-        # get uncertainty data and add to data
-        if hasproperty(vinfo, :unc)
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
+        uncTarVar = Symbol(v*"_σ")
+        push!(varlist, uncTarVar)
+        if hasproperty(vinfo, :unc) && info.opti.useUncertainty
             uncvar = vinfo.unc.sourceVariableName
+            @info "Using $(uncvar) as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
             if !isempty(vinfo.unc.dataPath)
                 data_unc = getDataFromPath(vinfo.unc.dataPath, uncvar)
             else
                 data_unc = getDataFromPath(dataPath, uncvar)
             end
-            uncTarVar = Symbol(v*"_σ")
-            push!(varlist, uncTarVar)
             data_unc[ismissing.(data_unc)] .= info.tem.helpers.numbers.sNT(NaN)
             data_unc = applyUnitConversion(data_unc, vinfo.unc.source2sindbadUnit, vinfo.unc.additiveUnitConversion)
             data_unc = applyObservationBounds(data_unc, vinfo.unc.bounds)
         else
             data_unc = ones(info.tem.helpers.numbers.numType, size(data_obs))
+            @info "Using ones as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
         end
         idxs = isnan.(data_obs)
         data_unc[idxs] .= info.tem.helpers.numbers.sNT(NaN)

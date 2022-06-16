@@ -16,6 +16,7 @@
 	{
 		"runForwardYearly": 	false,
 		"runForward": 			true,
+		"runUpdateModels": 		false,
 		"runOpti": 				true,
 		"calcCost":				true
 	},
@@ -26,7 +27,8 @@
 		"tolerance": 1.0e-3
 	},
 	"output": {
-		"dirPath": "sandbox/output/",
+		"all": false,
+		"dirPath": "exp_mapFN/output/",
 		"dataFormat": ".nc",
 		"variables": {
 			"write": [

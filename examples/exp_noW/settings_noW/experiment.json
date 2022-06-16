@@ -1,0 +1,12 @@
+{
+	"name": "noC",
+	"domain": "FLUXNET",
+	"configFiles": {
+		"forcing"		: "forcing.json",
+		"modelStructure": "modelStructure.json",
+		"modelRun"		: "modelRun.json",
+		"spinup"		: "spinup.json",
+		"params2"		: "params.csv",
+		"opti"			: "opti.json"
+	}
+}

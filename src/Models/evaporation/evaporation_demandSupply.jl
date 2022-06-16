@@ -18,17 +18,18 @@ function compute(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers
 	end
 	# calculate potential soil evaporation
 	PETsoil = max(𝟘, PET * α)
+	evaporationSupply = max(𝟘, supLim * (soilW[1] + ΔsoilW[1]))
 
 	# calculate the soil evaporation as a fraction of scaling parameter & PET
-	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
+	evaporation = min(PETsoil, evaporationSupply)
 
 	# update soil moisture changes
 	ΔsoilW[1] = ΔsoilW[1] - evaporation
 	## pack land variables
 	@pack_land begin
-		PETsoil => land.evaporation
+		(PETsoil, evaporationSupply) => land.evaporation
 		evaporation => land.fluxes
-		# ΔsoilW => land.states
+		ΔsoilW => land.states
 	end
 	return land
 end
@@ -51,8 +52,8 @@ function update(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers:
 
 	## pack land variables
 	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 end

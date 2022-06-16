@@ -7,22 +7,23 @@
 		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
+	"useUncertainty": false,
 	"algorithm_optim": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "settings_minimal/optim_LBFGS.json",
+		"options_file": "optim_LBFGS.json",
 		"isMultiObj": false
 	},
 	"algorithm_cmaes": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
@@ -83,7 +84,7 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "mse",
+			"costMetric": "nseinv",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -127,7 +128,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"nee": {
@@ -169,7 +170,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"reco": {
@@ -211,7 +212,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"evapotranspiration": {
@@ -253,7 +254,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"transpiration": {
@@ -295,7 +296,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"agb": {
@@ -363,7 +364,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			}
 		}

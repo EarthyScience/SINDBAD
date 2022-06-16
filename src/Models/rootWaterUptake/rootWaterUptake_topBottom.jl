@@ -41,7 +41,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helper
     ## pack land variables
     @pack_land begin
         wRootUptake => land.states
-        # ΔsoilW => land.states
+        ΔsoilW => land.states
     end
     return land
 end
@@ -56,15 +56,15 @@ function update(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers
 
     ## update variables
     # update soil moisture
-    soilW = soilW + ΔsoilW
+    soilW .= soilW .+ ΔsoilW
 
     # reset soil moisture changes to zero
-    ΔsoilW = ΔsoilW - ΔsoilW
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
     ## pack land variables
     @pack_land begin
-        # soilW => land.pools
-        # ΔsoilW => land.states
+        soilW => land.pools
+        ΔsoilW => land.states
     end
     return land
 end
