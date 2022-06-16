@@ -19,15 +19,14 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 observations = getObservation(info); 
 info = setupOptimization(info);
 out = createInitOut(info);
-outparams, outdata = optimizeModel(forcing, out, observations,
+outparams, outsmodel = optimizeModel(forcing, out, observations,
 info.tem, info.optim; nspins=1);    
 
-outdata = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-outsmodel=outdata;
+# outdata = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 obsV = :gpp
 modelVarInfo = [:fluxes, :gpp]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 y = getproperty(observations, obsV);
 yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 

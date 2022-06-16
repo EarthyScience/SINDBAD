@@ -37,7 +37,7 @@ info.tem, info.optim; nspins=1);
 obsV = :evapotranspiration
 modelVarInfo = [:fluxes, :evapotranspiration]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 y = getproperty(observations, obsV);
 yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 
@@ -48,7 +48,7 @@ plot!(y)
 obsV = :gpp
 modelVarInfo = [:fluxes, :gpp]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix;
+ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 y = getproperty(observations, obsV);
 yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
 
