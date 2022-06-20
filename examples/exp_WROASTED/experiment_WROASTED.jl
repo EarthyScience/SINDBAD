@@ -1,5 +1,5 @@
 using Revise
-using Sindbad
+;;using Sindbad
 # using Suppressor
 # using Optimization
 using Tables:
@@ -23,6 +23,7 @@ out = createInitOut(info);
 info.tem, info.optim; nspins=1);    
 
 @enter outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 obsV = :gpp;
 modelVarInfo = [:fluxes, :gpp];
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;

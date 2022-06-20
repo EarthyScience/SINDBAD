@@ -27,7 +27,6 @@ function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTupl
 
 	# add snowfall to snowpack of the first layer
     ΔsnowW[1] = ΔsnowW[1] + snow
-    @bp
     ## pack land variables
     @pack_land begin
         (precip, rain, snow) => land.rainSnow
