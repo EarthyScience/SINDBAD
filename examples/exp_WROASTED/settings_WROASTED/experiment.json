@@ -6,7 +6,7 @@
 		"modelStructure": "modelStructure.json",
 		"modelRun"		: "modelRun.json",
 		"spinup"		: "spinup.json",
-		"params"		: "params.csv",
+		"params2"		: "params.csv",
 		"opti"			: "opti.json"
 	}
 }

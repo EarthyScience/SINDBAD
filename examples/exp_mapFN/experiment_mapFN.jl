@@ -1,7 +1,8 @@
 using Revise
 using Distributed
-addprocs(Sys.CPU_THREADS - 1)
-@everywhere using Sindbad
+# addprocs(Sys.CPU_THREADS - 20)
+# @everywhere using Sindbad
+using Sindbad
 using ProgressMeter
 # using ProfileView
 # using BenchmarkTools
