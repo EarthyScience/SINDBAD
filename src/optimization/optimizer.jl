@@ -6,7 +6,7 @@ export optimizer
 Optimize model parameters using CMAES method of Evolutionary.jl package
 """
 function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Evolutionary_CMAES})
-    optim_results = Evolutionary.optimize(cost_function, Evolutionary.BoxConstraints(lower_bounds, upper_bounds), default_values, Evolutionary.CMAES())
+    optim_results = Evolutionary.optimize(cost_function, Evolutionary.BoxConstraints(lower_bounds, upper_bounds), default_values, Evolutionary.CMAES(), Evolutionary.Options(parallelization=:serial, iterations=100))
     optim_para = Evolutionary.minimizer(optim_results)
     return optim_para
 end
