@@ -19,12 +19,12 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 observations = getObservation(info); 
 info = setupOptimization(info);
 out = createInitOut(info);
-outparams, outsmodel = optimizeModel(forcing, out, observations,
+@enter outparams, outsmodel = optimizeModel(forcing, out, observations,
 info.tem, info.optim; nspins=1);    
 
-# outdata = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-obsV = :gpp
-modelVarInfo = [:fluxes, :gpp]
+@enter outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+obsV = :gpp;
+modelVarInfo = [:fluxes, :gpp];
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
 ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
 y = getproperty(observations, obsV);
@@ -35,9 +35,9 @@ plot(ŷ)
 plot!(y)
 plot!(yσ)
 
-states = outdata.states |> columntable;
-pools = outdata.pools |> columntable;
-fluxes = outdata.fluxes |> columntable;
+states = outsmodel.states |> columntable;
+pools = outsmodel.pools |> columntable;
+fluxes = outsmodel.fluxes |> columntable;
 
 using Plots
 plot(fluxes.NEE)

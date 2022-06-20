@@ -56,7 +56,6 @@ function compute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTup
     p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
     TSPY = helpers.dates.nStepsYear
     p_k_base = 𝟙 .- (exp.(-𝟙 .* p_annk).^(𝟙 / TSPY))
-    
 	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
 
     ## pack land variables

@@ -13,6 +13,8 @@ using Flatten:
     metaflatten,
     fieldnameflatten,
     parentnameflatten
+@reexport using Debugger:
+    @bp
 using JSON:
     parsefile
 using Optim, Optimization, OptimizationOptimJL, OptimizationBBO, OptimizationGCMAES

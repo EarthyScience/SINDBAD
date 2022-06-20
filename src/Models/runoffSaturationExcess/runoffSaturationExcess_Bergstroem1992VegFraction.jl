@@ -1,7 +1,8 @@
 export runoffSaturationExcess_Bergstroem1992VegFraction
 
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1} <: runoffSaturationExcess
+@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1, T2} <: runoffSaturationExcess
 	β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
+	β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -19,9 +20,9 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, l
 	tmp_smaxVeg = sum(p_wSat)
 	tmp_SoilTotal = sum(soilW + ΔsoilW)
 	# get the berg parameters according the vegetation fraction
-	p_berg = max(0.1, β * vegFraction); # do this?
+	β_veg = max(β_min, β * vegFraction); # do this?
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min(exp(p_berg * log(tmp_SoilTotal / tmp_smaxVeg)), 1)
+	tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg) ^ β_veg, 𝟘, 𝟙)
 	runoffSatExc = WBP * tmp_SatExFrac
 	# update water balance pool
 	WBP = WBP - runoffSatExc
@@ -29,7 +30,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, l
 	## pack land variables
 	@pack_land begin
 		runoffSatExc => land.fluxes
-		p_berg => land.runoffSaturationExcess
+		β_veg => land.runoffSaturationExcess
 		WBP => land.states
 	end
 	return land
