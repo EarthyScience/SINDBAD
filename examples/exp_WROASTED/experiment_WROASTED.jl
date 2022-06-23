@@ -1,5 +1,5 @@
 using Revise
-;;using Sindbad
+using Sindbad
 # using Suppressor
 # using Optimization
 using Tables:
