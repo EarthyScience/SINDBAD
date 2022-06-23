@@ -33,8 +33,10 @@ pkg > add https://git.bgc-jena.mpg.de/sindbad/sindbad.jl.git
 
 ### Usage
 
-```julia
-using Sindbad
+Before running the experiments, download the example by running the following script in the ````examples``` directory
 
-see experiment*.jl scripts in the examples directory
-```
+````bash
+bash download_example_data.sh
+````
+
+The example directory consists of several experiments for different model structure. Browse through the folders (starting with exp_*), and use experiment*.jl scripts there to run the experiments.
