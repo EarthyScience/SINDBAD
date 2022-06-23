@@ -28,6 +28,21 @@ end
 
 
 """
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optim_LBFGS})
+Optimize model parameters using BFGS method of Optim.jl package
+"""
+function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optim_BFGS})
+    results = optimize(cost_function, default_values, BFGS(initial_stepnorm=0.001))
+    optim_para = if results.ls_success
+        results.minimizer
+    else
+        @warn "Optim_BFGS did not converge. Returning default as optimized parameters"
+        defaults
+    end
+    return optim_para
+end
+
+"""
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:CMAEvolutionStrategy_CMAES})
 Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
 """
@@ -59,6 +74,18 @@ function optimizer(cost_function, default_values, lower_bounds, upper_bounds, al
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values)
     optim_para = solve(optim_prob, NelderMead())
+    return optim_para
+end
+
+
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optimization_BFGS}) 
+Optimize model parameters using BFGS method of Optimization.jl package
+"""
+function optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optimization_BFGS})
+    optim_cost = (p, tmp=nothing) -> cost_function(p)
+    optim_prob = OptimizationProblem(optim_cost, default_values)
+    optim_para = solve(optim_prob, BFGS(initial_stepnorm=0.001))
     return optim_para
 end
 

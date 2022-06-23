@@ -27,8 +27,9 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 		    @error "TWS is negative. Cannot continue. $(TWS)"
 		end
 	end
-
+	ΔTWS_copy = deepcopy(ΔTWS)
 	ΔTWS .= zero(ΔTWS)
+	@pack_land ΔTWS_copy => land.states
 	## pack land variables
 	# @pack_land begin
 	# 	(groundW, snowW, soilW, surfaceW) => land.pools
