@@ -15,46 +15,20 @@
             "approach": "kUnsat"
         },
         "evaporation": {
-            "approach": "demandSupply"
+            "approach": "demandSupply",
+            "order": 52
         },
         "evapotranspiration": {
             "approach": "sum"
         },
-        "fAPAR": {
-            "approach": "constant"
-        },
         "getPools": {
             "approach": "simple"
         },
-        "gpp": {
-            "approach": "coupled"
-        },
-        "gppPotential": {
-            "approach": "Monteith"
-        },
-        "gppAirT": {
-            "approach": "GSI"
-        },
-        "gppDemand": {
-            "approach": "mult"
-        },
-        "gppDiffRadiation": {
-            "approach": "GSI"
-        },
-        "gppDirRadiation": {
-            "approach": "Maekelae2008"
-        },
-        "gppSoilW": {
-            "approach": "GSI"
-        },
-        "gppVPD": {
-            "approach": "Maekelae2008"
-        },
         "groundWRecharge": {
-            "approach": "kUnsat"
+            "approach": "dos"
         },
         "groundWSoilWInteraction":{
-            "approach": "gradientNeg"
+            "approach": "VanDijk2010"
         },
         "percolation": {
             "approach": "WBP"
@@ -63,8 +37,7 @@
             "approach": "Lu2005"
         },
         "rainSnow": {
-            "approach": "Tair",
-            "order": 1
+            "approach": "Tair"
         },
         "rootFraction": {
             "approach": "constant"
@@ -94,7 +67,7 @@
             "approach": "HTESSEL"
         },
         "snowMelt": {
-            "approach": "Tair"
+            "approach": "TairRn"
         },
         "soilTexture": {
             "approach": "forcing"
@@ -105,17 +78,18 @@
         "soilWBase": {
             "approach": "uniform"
         },
+        "transpiration": {
+            "approach": "demandSupply",
+            "order": 53
+        },
         "transpirationDemand": {
             "approach": "PET"
-        },
-        "transpiration": {
-            "approach": "coupled"
         },
         "transpirationSupply": {
             "approach": "wAWC"
         },
         "totalTWS": {
-            "approach": "sumComponents"
+            "approach": "sumCombined"
         },
         "vegAvailableWater": {
             "approach": "sigmoid"
@@ -125,9 +99,6 @@
         },
         "wCycle": {
             "approach": "combined"
-        },
-        "WUE": {
-            "approach": "VPDDay"
         }
 
     },
@@ -137,37 +108,12 @@
 		{
 			"components" :
                 {
-                "soilW": [[50.0, 100.0, 200.0, 1000.0], 100.0],
+                "soilW": [[50.0, 200.0, 750.0, 1000.0], 10.0],
                 "groundW": [1, 1000.0],
-				"snowW": [1, 0.01],
-				"surfaceW": [1, 0.0]
+				"snowW": [1, 0.01]
             },
 			"combine": [true,"TWS"],
-			"soilLayerDepths": [50.0, 100.0, 200.0, 1000.0],
             "addStateVars": {"Δ": 0.0}
-		},
-		"carbon":
-		{
-			"components" :
-                {
-                "cVeg": {
-                    "Leaf": [1, 46.0],
-                    "Wood": [1, 100.0],
-                    "Root": {
-                        "C": [3, 50.0],
-                        "F": [1, 50.0]
-                    },
-                    "Reserve": [1, 20.0]
-                },
-                "cSoil": {
-                    "Slow": [1, 1000.0],
-                    "Fast": [1, 5000.0]
-                },
-                "cLit": [1, 300.0]
-            },
-			"combine": [true,"cEco"],
-            "addStateVars": {
-            }
-        }
+		}
 	}
 }

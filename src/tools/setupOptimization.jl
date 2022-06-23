@@ -36,6 +36,7 @@ function setupOptimization(info)
     # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
+    info = setTupleSubfield(info, :optim, (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))
 
     # set the list of paramaters to be optimized
     info = setTupleSubfield(info, :optim, (:optimized_paramaters, info.opti.optimized_paramaters))
@@ -48,7 +49,7 @@ function setupOptimization(info)
     if length(strip(info.opti.algorithm.options_file)) > 0
         options_path = info.opti.algorithm.options_file
         if !isabspath(options_path)
-            options_path = joinpath(info.Sindbad_root, options_path)
+            options_path = joinpath(info.settings_root, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = typenarrow!(options)

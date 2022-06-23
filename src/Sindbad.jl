@@ -16,6 +16,11 @@ using Flatten:
 using JSON:
     parsefile
 using Optim, Optimization, OptimizationOptimJL, OptimizationBBO, OptimizationGCMAES
+import Evolutionary
+import MultistartOptimization
+import NLopt
+# @reexport using Optimization:FD
+#     OptimizationFunction
 using Parameters
 @reexport using PrettyPrinting:
     pprint
@@ -30,8 +35,9 @@ using TypedTables:
     Table
 using StatsBase:
     mean,
+    percentile,
     cor
-using YAXArrays, NetCDF, DiskArrayTools
+using YAXArrays, NetCDF, DiskArrayTools, Zarr
 using AxisKeys
 using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
@@ -41,7 +47,7 @@ include("Ecosystem/runEcosystem.jl")
 include("optimization/optimization.jl")
 include("tools/tools.jl")
 
-include("models/models.jl")
+include("Models/models.jl")
 @reexport using .Models
 
 end

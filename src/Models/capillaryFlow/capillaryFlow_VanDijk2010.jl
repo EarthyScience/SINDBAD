@@ -1,6 +1,7 @@
 export capillaryFlow_VanDijk2010
 
-struct capillaryFlow_VanDijk2010 <: capillaryFlow
+@bounds @describe @units @with_kw struct capillaryFlow_VanDijk2010{T1} <: capillaryFlow
+	max_frac::T1 = 0.95 | (0.02, 0.98) | "max fraction of soil moisture that can be lost as capillary flux" | ""
 end
 
 function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -11,33 +12,34 @@ function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, hel
 		numType ∈ helpers.numbers
 	end
 	capFlow = zeros(numType, length(land.pools.soilW))
-	dos_soilW = zeros(numType, length(land.pools.soilW))
 
 	## pack land variables
 	@pack_land begin
-		(capFlow, dos_soilW) => land.capillaryFlow
+		capFlow => land.capillaryFlow
 	end
 	return land
 end
 
 function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+	## unpack parameters
+	@unpack_capillaryFlow_VanDijk2010 o
 
 	## unpack land variables
 	@unpack_land begin
 		(p_kFC, p_wSat) ∈ land.soilWBase
-		(capFlow, dos_soilW) ∈ land.capillaryFlow
+		capFlow ∈ land.capillaryFlow
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(numType, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
 	end
-	dos_soilW .= (soilW + ΔsoilW) ./ p_wSat
 	
 	for sl in 1:length(land.pools.soilW)-1
-		tmpCapFlow = sqrt(p_kFC[sl] * p_kFC[sl+1]) * (𝟙 - dos_soilW[sl])
-		holdCap = p_wSat[sl] - (soilW[sl] + ΔsoilW[sl])
-		lossCap = soilW[sl+1] + ΔsoilW[sl+1]
+		dos_soilW = clamp((soilW[sl] + ΔsoilW[sl]) ./ p_wSat[sl], 𝟘, 𝟙)
+		tmpCapFlow = sqrt(p_kFC[sl+1] * p_kFC[sl]) * (𝟙 - dos_soilW)
+		holdCap = max(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), 𝟘)
+		lossCap = max(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]), 𝟘)
 		minFlow = min(tmpCapFlow, holdCap, lossCap)
-		capFlow[sl] = minFlow > tolerance ? minFlow : 𝟘
+		capFlow[sl] = minFlow > tolerance ? minFlow : 𝟘 
 		ΔsoilW[sl] = ΔsoilW[sl] + capFlow[sl]
 		ΔsoilW[sl+1] = ΔsoilW[sl+1] - capFlow[sl]
 	end
@@ -67,8 +69,8 @@ function update(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers
 
 	## pack land variables
 	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 end

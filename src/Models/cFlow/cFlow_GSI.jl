@@ -54,7 +54,7 @@ function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple
         fluxOrder = collect(1:length(taker))
     else
         if length(fluxOrder) != length(taker)
-            error(["ERR:cFlowAct_gsi:" "length(fluxOrder) != length(taker)"])
+            error("cFlow_GSI: length(fluxOrder) [$(length(fluxOrder))] != length(taker) [$(length(taker))]")
         end
     end
 
@@ -117,7 +117,7 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
-    Re2L = Re2LR * (fW / (tolerance + fR + fW)) # if water stressor is high [
+    Re2L = Re2LR * (fW / (tolerance + fR + fW)) # if water stressor is high
     Re2R = Re2LR * (𝟙 - Re2L)
     # # Estimate flows from reserve to leaf & root
     # Re2L = Re2LR * (fW / (fR + fW)); # if water stressor is high [
@@ -217,8 +217,7 @@ precompute/instantiate time-invariant variables for cFlow_GSI
  - 1.1 on 05.02.2021 [skoirala]: move code from dyna. Add table etc.  
 
 *Created by:*
- - ncarvalhais & sbesnard
- - ncarvalhais & skoirala
+ - ncarvalhais, sbesnard, skoirala
 
 *Notes*
 """

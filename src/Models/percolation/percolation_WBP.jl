@@ -48,15 +48,15 @@ function update(o::percolation_WBP, forcing, land::NamedTuple, helpers::NamedTup
 
 	## update variables
 	# update soil moisture of the first layer
-	soilW = soilW + ΔsoilW
+	soilW .= soilW .+ ΔsoilW
 
 	# reset soil moisture changes to zero
-	ΔsoilW = ΔsoilW - ΔsoilW
+	ΔsoilW .= ΔsoilW .- ΔsoilW
 
 	## pack land variables
 	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 
