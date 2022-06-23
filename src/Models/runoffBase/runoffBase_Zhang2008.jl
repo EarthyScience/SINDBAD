@@ -48,7 +48,7 @@ function update(o::runoffBase_Zhang2008, forcing, land::NamedTuple, helpers::Nam
 
 	## pack land variables
 	@pack_land begin
-		# groundW => land.pools
+		groundW => land.pools
 		ΔgroundW => land.states
 	end
 	return land

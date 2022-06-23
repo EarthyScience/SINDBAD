@@ -10,7 +10,7 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 
 	## unpack land variables
 	@unpack_land begin
-		(p_wSat, p_β) ∈ land.soilWBase
+		(p_wSat, p_β, p_wFC) ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
@@ -21,7 +21,8 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
-		lossCap = soilW[sl] + ΔsoilW[sl]
+		max_drain = p_wSat[sl] - p_wFC[sl]
+		lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		drain = min(drainage[sl], holdCap, lossCap)
 		drainage[sl] = drain > tolerance ? drain : 𝟘
@@ -32,7 +33,30 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 	## pack land variables
 	@pack_land begin
 		drainage => land.drainage
-		# ΔsoilW => land.states
+		ΔsoilW => land.states
+	end
+	return land
+end
+
+function update(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+
+	## unpack variables
+	@unpack_land begin
+		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+	end
+
+	## update variables
+	# update soil moisture
+	soilW .= soilW .+ ΔsoilW
+
+	# reset soil moisture changes to zero
+	ΔsoilW .= ΔsoilW .- ΔsoilW
+
+	## pack land variables
+	@pack_land begin
+		soilW => land.pools
+		ΔsoilW => land.states
 	end
 	return land
 end

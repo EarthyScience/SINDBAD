@@ -54,7 +54,7 @@ function updateParameters(tblParams, approaches)
         subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
         if isempty(subtbl)
             return getproperty(approachx, var)
-        else 
+        else
             return subtbl.optim[1]
         end
     end
@@ -106,10 +106,43 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
 function getData(outsmodel, observations, obsV, modelVarInfo)
     ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix
-    y = observations |> select(obsV) |> matrix
-    yσ = observations |> select(Symbol(string(obsV)*"_σ")) |> matrix
+    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
+    y = getproperty(observations, obsV); 
+    yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
     return (y, yσ, ŷ)
+end
+
+"""
+    combineLoss(lossVector, ::Val{:sum})
+return the total of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:sum})
+    return sum(lossVector)
+end
+
+"""
+    combineLoss(lossVector, ::Val{:minimum})
+return the minimum of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:minimum})
+    return minimum(lossVector)
+end
+
+
+"""
+    combineLoss(lossVector, ::Val{:maximum})
+return the maximum of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, ::Val{:maximum})
+    return maximum(lossVector)
+end
+
+"""
+    combineLoss(lossVector, percentile_value)
+return the percentile_value^th percentile of cost of each constraint as the overall cost
+"""
+function combineLoss(lossVector, percentile_value::T) where T <: Real
+    return percentile(lossVector, percentile_value)
 end
 
 """
@@ -122,11 +155,12 @@ function getLoss(pVector, forcing, initOut,
     if eltype(pVector) <: ForwardDiff.Dual
         tblParams.optim .= [modelInfo.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
     else
-        tblParams.optim .= pVector # update the parameters with pVector    
+        tblParams.optim .= pVector # update the parameters with pVector
     end
 
     newApproaches = updateParameters(tblParams, modelInfo.models.forward)
-    @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    # @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
     lossVec=[]
     cost_options=optiInfo.costOptions;
     for var_row in cost_options
@@ -135,11 +169,19 @@ function getLoss(pVector, forcing, initOut,
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
-        @show obsV, lossMetric, mod_variable, metr
-        push!(lossVec, metr)
+        if isnan(metr)            
+            pprint(tblParams.optim)
+            pprint(y)
+            pprint(mean(y))
+            push!(lossVec, 1.0E19)
+        else
+            push!(lossVec, metr)
+        end
+        @info "$(obsV) => $(lossMetric): $(metr)"
     end
+    @info "-------------------"
 
-    return sum(lossVec)
+    return combineLoss(lossVec, Val(optiInfo.multiConstraintMethod))
 end
 
 """
@@ -155,9 +197,9 @@ function optimizeModel(forcing, initOut, observations,
     tblParams = getParameters(modelInfo.models.forward, optiInfo.optimized_paramaters)
 
     # get the defaults and bounds
-    default_values = tblParams.defaults
-    lower_bounds = tblParams.lower
-    upper_bounds = tblParams.upper
+    default_values = modelInfo.helpers.numbers.sNT.(tblParams.defaults)
+    lower_bounds = modelInfo.helpers.numbers.sNT.(tblParams.lower)
+    upper_bounds = modelInfo.helpers.numbers.sNT.(tblParams.upper)
 
     # make the cost function handle
     cost_function = x -> getLoss(x, forcing, initOut,

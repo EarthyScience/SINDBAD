@@ -4,10 +4,11 @@ export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
 export setoptparameters
 export AllNaN
+export nanmax, nanmin
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
-Applies a simple factor to the input array, either additively or multiplicatively depending on isadditive flag
+Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 """
 function applyUnitConversion(data_in, conversion, isadditive=false)
     if isadditive
@@ -245,19 +246,19 @@ returns the indices of a view in the parent main array
 """
 function getzix(tpl::NamedTuple, fld::Symbol)
     dat::SubArray = getfield(tpl, fld)
-    getzix = parentindices(dat)[1]
-    return getzix
+    zix = parentindices(dat)[1]
+    return zix
 end
 
 function getzix(tpl::NamedTuple, fld::String)
     dat::SubArray = getfield(tpl, Symbol(fld))
-    getzix = parentindices(dat)[1]
-    return getzix
+    zix = parentindices(dat)[1]
+    return zix
 end
 
 function getzix(dat::SubArray)
-    getzix = parentindices(dat)[1]
-    return getzix
+    zix = parentindices(dat)[1]
+    return zix
 end
 
 
@@ -336,3 +337,8 @@ end
 
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
+
+
+nanmax(dat) = maximum(dat[.!isnan.(dat)])
+nanmin(dat) = minimum(dat[.!isnan.(dat)])
+

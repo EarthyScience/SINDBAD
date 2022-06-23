@@ -28,6 +28,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     @unpack_land begin
         (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k) ∈ land.states
         cEco ∈ land.pools
+        ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A, giver, taker) ∈ land.cFlow
         (fluxOrder) ∈ land.cCycleBase
@@ -62,6 +63,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     # cEcoFlow[taker] = take_flow + give_flow * c_flow
     # end
     ## balance
+    ΔcEco .= cEcoFlow .+ cEcoInflux .- cEcoOut
     cEco .= cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
     
     ## compute RA & RH
@@ -76,6 +78,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     ## pack land variables
     @pack_land begin
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
+        ΔcEco => land.states
         (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
     end
     return land

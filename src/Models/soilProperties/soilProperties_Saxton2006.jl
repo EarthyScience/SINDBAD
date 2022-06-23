@@ -222,16 +222,19 @@ function kSaxton2006(land, helpers, sl)
 	@unpack_land begin
 		(p_β, p_kSat, p_wSat) ∈ land.soilWBase
 		soilW ∈ land.pools
+		ΔsoilW ∈ land.states
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	## calculate variables
 	# if useLookUp is set to true in modelRun.json; run the original non-linear equation
 	wSat = p_wSat[sl]
-	θ_dos = soilW[sl] / wSat
+	θ_dos = (soilW[sl] + ΔsoilW[sl])/ wSat
+	θ_dos = clamp(θ_dos, 𝟘, 𝟙)	
 	β = p_β[sl]
 	kSat = p_kSat[sl]
-	λ = 1 / β
-	K = kSat * ((θ_dos) ^ (3 + (2 / λ)))
+	λ = 𝟙 / β
+	K = kSat * ((θ_dos) ^ (3.0 + (2.0 / λ)))
 	return K
 end
 
