@@ -51,10 +51,10 @@ function update(o::drainage_wFC, forcing, land::NamedTuple, helpers::NamedTuple)
 
 	## update variables
 	# update soil moisture
-	soilW = soilW + ΔsoilW
+	soilW .= soilW .+ ΔsoilW
 
 	# reset soil moisture changes to zero
-	ΔsoilW = ΔsoilW - ΔsoilW
+	ΔsoilW .= ΔsoilW .- ΔsoilW
 
 
 	## pack land variables

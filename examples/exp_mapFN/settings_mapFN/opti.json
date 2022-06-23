@@ -7,22 +7,23 @@
 		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
+	"useUncertainty": false,
 	"algorithm_optim": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "settings_minimal/optim_LBFGS.json",
+		"options_file": "optim_LBFGS.json",
 		"isMultiObj": false
 	},
 	"algorithm_cmaes": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
-		"options_file": "settings_minimal/optim_cmaes.json",
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
@@ -45,10 +46,10 @@
 		"cFlow.Re2LRSlp",
 		"cTauSoilT.Q10",
 		"cTauSoilW.Wopt",
-		"evaporation.alpha",
+		"evaporation.α",
 		"evaporation.supLim",
 		"fAPAR.kEffExt",
-		"gppPotential.maxrue",
+		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
 		"gppAirT.ToptB",

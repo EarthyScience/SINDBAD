@@ -1,7 +1,7 @@
 export runoffSaturationExcess_Bergstroem1992
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
-	β::T1 = 1.1 | (0.1, 5) | "berg exponential parameter" | ""
+	β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -14,12 +14,13 @@ function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land::NamedT
 		p_wSat ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
+		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# @show WBP
 	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW + ΔsoilW)
+	tmp_SoilTotal = sum(soilW)
 	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg) ^ β, helpers.numbers.𝟙)
+	tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg) ^ β, 𝟘, 𝟙)
 
 	runoffSatExc = WBP * tmp_SatExFrac
 

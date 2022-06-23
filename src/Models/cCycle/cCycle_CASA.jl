@@ -167,7 +167,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	nTix = info.tem.helpers.sizes.nTix
 	nZix = length(land.pools.cEco)
 	# matrices for the calculations
-	cLossRate = zeros(nPix, nZix, nTix)
+	cLossRate = zeros(numType, nZix)
 	cGain = cLossRate
 	cLoxxRate = cLossRate
 	## some debugging
@@ -180,7 +180,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	# p.aRespiration.YG = 1.0
 	# end
 	## ORDER OF CALCULATIONS [1 to the end of pools]
-	zixVec = 1:size(cEco, 2)
+	zixVec = getzix(cEco)
 	# BUT, we sort from left to right [veg to litter to soil] & prioritize
 	# without loops
 	kmoves = 0
@@ -219,11 +219,11 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	for zix in zixVecOrder
 		# general k loss
 		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
-		cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 0.9999999), 1e-7); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
+		cLossRate[zix, :] = clamp(p_cTau_k[zix], 𝟘, 𝟙); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
 		if any(zix == helpers.pools.carbon.zix.cVeg)
 			# additional losses [RA] in veg pools
-			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix, :], 1)
+			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
 			# gains in veg pools
 			gppShp = reshape(gpp, nPix, 1, nTix); # could be fxT?
 			cGain[zix, :] = cAlloc[zix, :] * gppShp * YG

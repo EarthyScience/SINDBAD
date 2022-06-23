@@ -13,19 +13,19 @@ function precompute(o::totalTWS_sumComponents, forcing, land::NamedTuple, helper
 	end
 
 	if !hasproperty(land.pools, :groundW)
-		groundW = zeros(numType, helpers.pools.water.nZix.groundW)
+		groundW = zeros(numType, 1)
 	else
 		@unpack_land groundW ∈ land.pools
 	end
 	
 	if !hasproperty(land.pools, :surfaceW)
-		surfaceW = zeros(numType, helpers.pools.water.nZix.surfaceW)
+		surfaceW = zeros(numType, 1)
 	else
 		@unpack_land surfaceW ∈ land.pools
 	end
 	
 	if !hasproperty(land.pools, :snowW)
-		snowW = zeros(numType, helpers.pools.water.nZix.snowW)
+		snowW = zeros(numType, 1)
 	else
 		@unpack_land snowW ∈ land.pools
 	end
