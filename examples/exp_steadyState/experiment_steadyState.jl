@@ -24,7 +24,8 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 function get_steady_state(pool_dat, p_info, t)
     out = p_info.init_out;
     out = setTupleSubfield(out, :pools, (p_info.pool, pool_dat));
-    @time outsmodel = runForward(p_info.spinup_models, p_info.spinup_forcing, out, p_info.info.variables, p_info.info.helpers)
+    outsmodel = runForward(p_info.spinup_models, p_info.spinup_forcing, out, p_info.info.variables, p_info.info.helpers)
+    # @time outsmodel = runForward(p_info.spinup_models, p_info.spinup_forcing, out, p_info.info.variables, p_info.info.helpers)
     states = outsmodel.states |> columntable;
     tmp = getfield(states, p_info.Δpool)
     Δpool = tmp[1]
