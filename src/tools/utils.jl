@@ -5,6 +5,7 @@ export flagUpper, flagLower
 export setoptparameters
 export AllNaN
 export nanmax, nanmin
+export OutWrapper
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
@@ -342,3 +343,33 @@ YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 nanmax(dat) = maximum(dat[.!isnan.(dat)])
 nanmin(dat) = minimum(dat[.!isnan.(dat)])
 
+"""
+Wrap the nested fields of namedtuple output of sindbad into a nested structure of views that can be easily accessed with a dot notation
+"""
+struct OutWrapper{S}
+    s::S
+end
+struct GroupView{S}
+    groupname::Symbol
+    s::S
+end
+Base.getproperty(s::OutWrapper,f::Symbol) = GroupView(f,getfield(s,:s))
+function Base.getproperty(g::GroupView,f::Symbol)
+    group = columntable(getfield(g,:s))[getfield(g,:groupname)]
+    v = columntable(group)[f]
+    if eltype(v) <: AbstractArray
+        if length(first(v))==1
+            getindex.(v,1)
+        else
+            VectorOfArray(v)
+        end
+    else
+        v
+    end
+end
+Base.propertynames(o::OutWrapper) = propertynames(first(getfield(o,:s)))
+Base.keys(o::OutWrapper) = propertynames(o)
+Base.getindex(o::OutWrapper,s::Symbol) = getproperty(o,s)
+Base.propertynames(o::GroupView) = propertynames(first(getfield(o,:s))[getfield(o,:groupname)])
+Base.keys(o::GroupView) = propertynames(o)
+Base.getindex(o::GroupView,i::Symbol) = getproperty(o,i)

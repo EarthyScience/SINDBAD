@@ -122,7 +122,9 @@ function generateDatesInfo(info)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
-    tmpDates = setTupleField(tmpDates, (:size, info.forcing.size.time)) #needs to come from the date vector
+    time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+    tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
 end
@@ -409,6 +411,20 @@ function getVariablesToStore(info)
     return info
 end
 
+
+"""
+    getLoopingInfo(info)
+sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
+"""
+function getLoopingInfo(info)
+    run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
+    run_info = setTupleField(run_info, (:loop, (;)))
+    for dim in info.modelRun.mapping.runEcosystem
+        run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    end
+    return run_info
+end
+
 """
     setupModel!(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
@@ -423,7 +439,7 @@ function setupModel!(info)
     selected_models = getOrderedSelectedModels(info, selModels)
     info = getSpinupAndForwardModels(info, selected_models)
     # add information related to model run
-    run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
+    run_info = getLoopingInfo(info);
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     return info
 end
