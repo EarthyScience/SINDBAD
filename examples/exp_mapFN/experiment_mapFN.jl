@@ -22,3 +22,7 @@ output = setupOutput(info);
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 
 outcubes[2]
+
+Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NamedTuple with ")
+
+(typeof((a=3,b=4)))

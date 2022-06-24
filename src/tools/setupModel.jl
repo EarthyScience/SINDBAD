@@ -122,6 +122,7 @@ function generateDatesInfo(info)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
+    tmpDates = setTupleField(tmpDates, (:size, info.forcing.size.time)) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
 end

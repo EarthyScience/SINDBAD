@@ -19,6 +19,8 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 out = createInitOut(info);
 outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
 # @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+ŷField = getfield(outsmodel, :fluxes) |> columntable
+ŷ = hcat(getfield(ŷField, :gpp)...)' |> Matrix |> vec
 
 
 observations = getObservation(info); 
