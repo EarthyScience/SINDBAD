@@ -239,7 +239,7 @@
                 }
             },
 			"combine": [true,"cEco"],
-            "addStateVars": {
+            "addStateVars": {"Δ": 0.0
             }
         }
 	}

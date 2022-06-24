@@ -15,7 +15,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, hel
 		numType ∈ helpers.numbers
 		(st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
 	end
-	
+	@show st_CLAY, st_ORGM, st_SAND
 	## instantiate variables
 	sp_α = ones(numType, length(st_CLAY))
 	sp_β = ones(numType, length(st_CLAY))
