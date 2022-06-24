@@ -31,24 +31,30 @@ function get_steady_state(pool_dat, p_info, t)
     Δpool = tmp[1]
     return Δpool
 end
+
+function set_spinup_info(info_reduced, forcing_spinup, spinup_pool_name, spinup_delta_pool_name, init_out)
+    p_info = (;)
+    spinup_models = info_reduced.models.forward[info_reduced.models.is_spinup.==1];
+    out_prec = runPrecompute(spinup_forcing[1], info_reduced.models.forward, init_out, info_reduced.helpers);
+    p_info = setTupleField(p_info, (:pool, spinup_pool_name));
+    p_info = setTupleField(p_info, (:Δpool, spinup_delta_pool_name));
+    p_info = setTupleField(p_info, (:init_out, out_prec));
+    p_info = setTupleField(p_info, (:spinup_forcing, spinup_forcing));
+    p_info = setTupleField(p_info, (:spinup_models, spinup_models));
+    p_info = setTupleField(p_info, (:info, info.tem));
+    return p_info
+end
+
 out = createInitOut(info);
+sel_pool = :TWS;
+sel_pool_delta = :ΔTWS_copy;
+sel_pool = :cEco;
+sel_pool_delta = :ΔcEco;
 
 # selTimeStep = 1
 # spinup_forcing = forcing[[selTimeStep]];
 selTimeStep = 1:365
 spinup_forcing = forcing[selTimeStep];
-spinup_models = info.tem.models.forward[info.tem.models.is_spinup.==1];
-out_prec = runPrecompute(spinup_forcing[1], info.tem.models.forward, out, info.tem.helpers);
-sel_pool = :TWS;
-sel_pool_delta = :ΔTWS_copy;
-sel_pool = :cEco;
-sel_pool_delta = :ΔcEco;
-p_info = setTupleField(p_info, (:pool, sel_pool));
-p_info = setTupleField(p_info, (:Δpool, sel_pool_delta));
-p_info = setTupleField(p_info, (:init_out, out_prec));
-p_info = setTupleField(p_info, (:spinup_forcing, spinup_forcing));
-p_info = setTupleField(p_info, (:spinup_models, spinup_models));
-p_info = setTupleField(p_info, (:info, info.tem));
 
 init_pool = getfield(out_prec.pools, sel_pool);
 tspan = (0.0,1000.0);

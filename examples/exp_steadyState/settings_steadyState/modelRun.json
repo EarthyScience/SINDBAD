@@ -21,7 +21,7 @@
 		"calcCost":				true
 	},
 	"rules":
-	{
+	{	
 		"verbosity": 5,
 		"dataType": "Float64",
 		"tolerance": 1.0e-3
