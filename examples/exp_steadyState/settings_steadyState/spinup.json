@@ -3,25 +3,36 @@
 	[
 		{
 			"spinupMode": "forward",
+			"forcing": "recycleMSC",
 			"stopCriteria": "",
 			"nLoops": 1
 		},
 		{
-			"spinupMode": "ODE",
+			"spinupMode": "SSP_DynamicSS_Tsit5",
+			"forcing": "yearOne",
+			"stopCriteria": "",
+			"nLoops": 1
+		},
+		{
+			"spinupMode": "forward",
+			"forcing": "full",
 			"stopCriteria": "",
 			"nLoops": 1
 		}
 	],
+	"diffEq":{
+		"pools": ["cEco"],
+		"timeJump": 200.0,
+		"reltol":1e-2, 
+		"abstol":10.0
+	},
 	"paths": 
 	{
-		"restart_file": ""
-	},
-	"forcing": {
-		"path": "",
-		"method": "recycleMSC"
+		"restartFile": ""
 	},
 	"flags":
 	{
+		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false
 	}
