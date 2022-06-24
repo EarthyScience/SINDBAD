@@ -425,5 +425,6 @@ function setupModel!(info)
     # add information related to model run
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
+    info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
     return info
 end

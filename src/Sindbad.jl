@@ -7,6 +7,7 @@ using CMAEvolutionStrategy:
     xbest
 using CSV: CSV
 using DocStringExtensions
+using DifferentialEquations
 using ForwardDiff
 using Flatten:
     flatten,
@@ -43,7 +44,7 @@ using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
 using YAXArrayBase: getdata
 
-include("Ecosystem/runEcosystem.jl")
+include("Ecosystem/Ecosystem.jl")
 include("optimization/optimization.jl")
 include("tools/tools.jl")
 
