@@ -6,6 +6,7 @@ using CMAEvolutionStrategy:
     minimize,
     xbest
 using CSV: CSV
+using Dates
 using DocStringExtensions
 using ForwardDiff
 using Flatten:
@@ -24,6 +25,7 @@ import NLopt
 using Parameters
 @reexport using PrettyPrinting:
     pprint
+using RecursiveArrayTools
 using Setfield:
     @set!
 using TableOperations:

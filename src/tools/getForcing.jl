@@ -90,19 +90,16 @@ function getForcing(info, ::Val{:yaxarray})
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> Sindbad.clean_inputs(v, vinfo, numtype), yax)
     end
-    indims = getInDims.(incubes)
+    indims = getInDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     nts = getnts(incubes, info.forcing.dimensions.time)
     forcing_variables = keys(info.forcing.variables)
     return (; data=incubes, dims=indims, n_timesteps=nts, variables = forcing_variables)
 end
 
-function getInDims(c)
+function getInDims(c,mappinginfo)
     inax = String[]
-    YAXArrays.Axes.findAxis("Time", c) === nothing || push!(inax, "Time")
-    #Look for remaining axes
-    islonlattime(n) = lowercase(n[1:min(3, length(n))]) in ("lon", "lat", "tim")
     axnames = YAXArrays.Axes.axname.(caxes(c))
-    inollt = findall(!islonlattime, axnames)
+    inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
     InDims(inax...; artype=KeyedArray, filter=AllNaN())
 end

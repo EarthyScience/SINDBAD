@@ -46,20 +46,41 @@ function extracttimestep(forcing, ts)
     end
 end
 
-"""
-runForward(selectedModels, forcing, out, helpers)
-"""
-function runForward(forward_models, forcing, out, modelVars, modelHelpers)
-    
-    outtemp = map(1: modelHelpers.dates.size) do ts
+function runtimeloop(forward_models, forcing, out, modelVars, modelHelpers)
+    res = map(1: modelHelpers.dates.size) do ts
         f = extracttimestep(forcing, ts)
         out = runModels(f, forward_models, out, modelHelpers)
         out_filtered = filterVariables(out, modelVars; filter_variables=!modelHelpers.run.output_all)
         deepcopy(out_filtered)
     end
-    out_temporal = columntable(outtemp)
+    # push!(debugcatcherr,res)
+    OutWrapper(res)
+end
+
+"""
+runForward(selectedModels, forcing, out, helpers)
+"""
+function runForward(forward_models, forcing, out, modelVars, modelHelpers)
+    additionaldims = setdiff(keys(modelHelpers.run.loop),[:time])
+    allout = if !isempty(additionaldims)
+        spacesize = values(modelHelpers.run.loop[additionaldims])
+        @show spacesize
+        loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
+        @show loopvars
+        res = broadcast(loopvars...) do lI
+            outnow = deepcopy(out)
+            runtimeloop(forward_models, forcing, outnow,modelVars, modelHelpers)
+        end
+        for d in ndims(res)
+            res = reducedim(catnt,res,dims=d)
+        end 
+        res[1]
+    else
+        res = runtimeloop(forward_models, forcing, out,modelVars, modelHelpers)
+    end
+    # push!(debugcatch, allout)
     # out_temporal = columntable(outtemp)
-    return out_temporal
+    return allout
     # return outtemp[1]
 end
 
@@ -98,7 +119,7 @@ function runEcosystem(approaches, forcing, init_out, modelInfo; history=false, n
     out_prec = runPrecompute(extracttimestep(forcing,1), approaches, init_out, modelInfo.helpers)
     out_spin, spinuplog = runSpinup(spinup_models, forcing, out_prec, modelInfo.helpers; history, nspins=nspins)
     out_forw = runForward(approaches, forcing, out_spin, modelInfo.variables, modelInfo.helpers)
-    out_forw = removeEmptyFields(out_forw)
+    # out_forw = removeEmptyFields(out_forw)
     return out_forw
 end
 
@@ -124,19 +145,18 @@ function rungridcell(args...; out, modelinfo, forcing_variables, nts, history=fa
     i = 1
     modelvars = modelinfo.variables
     for group in keys(modelvars)
-        data = columntable(outforw[group])
+        data = outforw[group]
         for k in modelvars[group]
-            if eltype(data[k]) <: AbstractArray
-                for j in axes(outputs[i], 1)
-                    outputs[i][j, :] = data[k][j]
-                end
-            else
-                outputs[i][:] .= data[k]
-            end
+            @show size(outputs[i])
+            @show size(data[k])
+            # push!(debugcatch,(size(outputs[i]),size(data[k]), k, typeof(outputs[i]), typeof(data[k])))
+            outputs[i] .= deepcopy(data[k])
             i += 1
         end
     end
 end
+
+
 
 function mapRunEcosystem(forcing, output, modelInfo)
     incubes = forcing.data
