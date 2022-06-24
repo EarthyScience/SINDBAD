@@ -42,7 +42,7 @@ end
 
 function extracttimestep(forcing, ts)
     map(forcing) do v
-        in(:time,AxisKeys.dimnames(v)) ? v[time=ts] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
 
@@ -76,7 +76,7 @@ function runForward(forward_models, forcing, out, modelVars, modelHelpers)
         end 
         res[1]
     else
-        res = runtimeloop(forward_models, forcing, out,modelVars, modelHelpers)
+        res = runtimeloop(forward_models, forcing, out, modelVars, modelHelpers)
     end
     # push!(debugcatch, allout)
     # out_temporal = columntable(outtemp)

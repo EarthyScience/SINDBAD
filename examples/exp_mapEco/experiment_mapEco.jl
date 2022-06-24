@@ -21,7 +21,12 @@ output = setupOutput(info);
 
 Sindbad.eval(:(debugcatch = []))
 Sindbad.eval(:(debugcatcherr = []))
+out = createInitOut(info);
+forcing2 = (; Pair.(forcing.variables, forcing.dims)...)
 
+outsmodel = runEcosystem(info.tem.models.forward, forcing2, out, info.tem; nspins=1);
+
+@time outcubes = mapRunEcosystem(forcing, output, info.tem);
 
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 
