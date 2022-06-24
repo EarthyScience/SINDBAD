@@ -27,7 +27,7 @@ end
 function getOutDims(info, vname, outpath, outformat)
     ls = layersize(vname, info.tem.pools)
     if ls > 1
-        OutDims("Time", RangeAxis("$(vname)_idx", 1:ls), path=joinpath(outpath, "$(vname)$(outformat)"), overwrite=true)
+        OutDims(RangeAxis("$(vname)_idx", 1:ls),"Time", path=joinpath(outpath, "$(vname)$(outformat)"), overwrite=true)
     else
         OutDims("Time", path=joinpath(outpath, "$(vname)$(outformat)"), overwrite=true)
     end
