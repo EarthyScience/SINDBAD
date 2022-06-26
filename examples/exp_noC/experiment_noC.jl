@@ -22,6 +22,13 @@ out = createInitOut(info);
 outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 @time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 
+
+
+
+observations = getObservation(info); 
+info = setupOptimization(info);
+
+
 tblParams = getParameters(info.tem.models.forward, info.optim.optimized_paramaters)
 
 # get the defaults and bounds
@@ -30,8 +37,6 @@ lower_bounds = tblParams.lower
 upper_bounds = tblParams.upper
 
 
-observations = getObservation(info); 
-info = setupOptimization(info);
 out = createInitOut(info);
 outparams, outsmodel = optimizeModel(forcing, out, observations,
 info.tem, info.optim; spinup_forcing=spinup_forcing);    

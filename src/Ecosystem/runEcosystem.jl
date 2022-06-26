@@ -43,6 +43,20 @@ end
 """
 runForward(selectedModels, forcing, out, helpers)
 """
+function runForward(forward_models, forcing, out, modelHelpers)
+    outtemp = map(forcing) do f
+        out = runModels(f, forward_models, out, modelHelpers)
+        deepcopy(out)
+    end
+    out_temporal = columntable(outtemp)
+    # out_temporal = columntable(outtemp)
+    return out_temporal
+    # return outtemp[1]
+end
+
+"""
+runForward(selectedModels, forcing, out, helpers)
+"""
 function runForward(forward_models, forcing, out, modelVars, modelHelpers)
     outtemp = map(forcing) do f
         out = runModels(f, forward_models, out, modelHelpers)
@@ -68,9 +82,13 @@ end
 """
 runEcosystem(approaches, forcing, init_out, modelInfo; spinup_forcing=nothing)
 """
-function runEcosystem(approaches, forcing, init_out, modelInfo; spinup_forcing=nothing) # forward run
+function runEcosystem(approaches, forcing, init_out, modelInfo; spinup_forcing=nothing)
     out_prec = runPrecompute(forcing[1], approaches, init_out, modelInfo.helpers)
-    out_spin, spinuplog = runSpinup(approaches, forcing, out_prec, modelInfo; spinup_forcing=spinup_forcing)
+    if modelInfo.spinup.flags.doSpinup
+        out_spin = runSpinup(approaches, forcing, out_prec, modelInfo; spinup_forcing=spinup_forcing)
+    else
+        out_spin = out_prec
+    end
     out_forw = runForward(approaches, forcing, out_spin, modelInfo.variables, modelInfo.helpers)
     out_forw = removeEmptyFields(out_forw)
     return out_forw
