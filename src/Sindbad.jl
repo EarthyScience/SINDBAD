@@ -44,9 +44,9 @@ using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
 using YAXArrayBase: getdata
 
+include("tools/tools.jl")
 include("Ecosystem/Ecosystem.jl")
 include("optimization/optimization.jl")
-include("tools/tools.jl")
 
 include("Models/models.jl")
 @reexport using .Models
