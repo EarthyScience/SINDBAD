@@ -149,7 +149,7 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLoss(pVector, forcing, spinup_forcing, initOut,
-    observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+    observations, tblParams, optimVars, modelInfo, optiInfo)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -202,7 +202,7 @@ function optimizeModel(forcing, initOut, observations,
 
     # make the cost function handle
     cost_function = x -> getLoss(x, forcing, spinup_forcing, initOut,
-        observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+        observations, tblParams, optimVars, modelInfo, optiInfo)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optiInfo.algorithm.options, Val(optiInfo.algorithm.method))

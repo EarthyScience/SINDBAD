@@ -5,13 +5,7 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": "",
-			"nLoops": 1
-		},
-		{
-			"spinupMode": "SSP_DynamicSS_Tsit5",
-			"forcing": "yearOne",
-			"stopCriteria": "",
-			"nLoops": 1
+			"nLoops": 40
 		},
 		{
 			"spinupMode": "forward",
@@ -21,7 +15,7 @@
 		}
 	],
 	"diffEq":{
-		"pools": ["cEco"],
+		"pools": [],
 		"timeJump": 200.0,
 		"reltol":1e-2, 
 		"abstol":10.0
@@ -32,6 +26,7 @@
 	},
 	"flags":
 	{
+		"doSpinup": true,
 		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false

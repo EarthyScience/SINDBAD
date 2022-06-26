@@ -5,13 +5,7 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": "",
-			"nLoops": 1
-		},
-		{
-			"spinupMode": "forward",
-			"forcing": "full",
-			"stopCriteria": "",
-			"nLoops": 1
+			"nLoops": 20
 		}
 	],
 	"diffEq":{
@@ -26,6 +20,7 @@
 	},
 	"flags":
 	{
+		"doSpinup": true,
 		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false

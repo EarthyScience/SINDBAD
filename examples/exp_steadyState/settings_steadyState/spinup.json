@@ -32,6 +32,7 @@
 	},
 	"flags":
 	{
+		"doSpinup": true,
 		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false
