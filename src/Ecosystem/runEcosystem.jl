@@ -42,11 +42,13 @@ function runPrecompute(forcing, models, out, tem_helpers)
 end
 
 function getForcingTimeStep(forcing, ts)
-    forcing_t = map(forcing) do v
+    @show "GFS", typeof(forcing), typeof(forcing.ambCO2), AxisKeys.dimnames(forcing.Tair)
+    map(forcing) do v
+        @show typeof(forcing), typeof(v)
+        # error("fuck it")
         push!(debugcatcherr,v)
         in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
-    return forcing_t
 end
 
 function timeLoopForward(forward_models, forcing, out, tem_variables, tem_helpers)
@@ -101,7 +103,8 @@ end
 runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
-    out_prec = runPrecompute(getForcingTimeStep(forcing,1), approaches, init_out, tem.helpers)
+    @show "RE", typeof(forcing), typeof(forcing.Tair), AxisKeys.dimnames(forcing.Tair)
+    out_prec = runPrecompute(getForcingTimeStep(forcing, 1), approaches, init_out, tem.helpers)
     out_spin = out_prec
     if tem.spinup.flags.doSpinup
         out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
@@ -125,6 +128,7 @@ function runGridCell(args...; out, tem, forcing_variables, spinup_forcing)
     outputs, inputs = unpackYax(args; tem, forcing_variables)
     @show typeof(inputs)
     forcing = Table((; Pair.(forcing_variables, inputs)...))
+    @show typeof(forcing), typeof(forcing.Tair), AxisKeys.dimnames(forcing.Tair)
     outforw = runEcosystem(tem.models.forward, forcing, out, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
