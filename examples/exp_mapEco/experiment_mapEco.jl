@@ -31,6 +31,6 @@ out = createInitOut(info);
 
 outcubes[2]
 
-Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NamedTuple with ")
+Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
 
 (typeof((a=3,b=4)))
