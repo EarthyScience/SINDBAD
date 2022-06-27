@@ -14,7 +14,7 @@ local_root = dirname(Base.active_project())
 expFile = joinpath(local_root, expFilejs);
 
 info = getConfiguration(expFile, local_root);
-info = setupModel!(info);
+info = setupExperiment(info);
 #observations = getObservation(info); # target observation!!
 forcing = getForcing(info, Val(:yaxarray));
 output = setupOutput(info);
