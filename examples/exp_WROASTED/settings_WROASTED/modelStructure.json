@@ -195,7 +195,8 @@
             "approach": "rootFraction"
         },
         "waterBalance": {
-            "approach": "simple"
+            "approach": "simple",
+            "use4spinup": false
         },
         "wCycle": {
             "approach": "combined"

@@ -18,10 +18,11 @@ info = setupModel!(info);
 
 
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+spinup_forcing = getSpinupForcing(forcing, info);
 
 out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 pools = outsmodel.pools |> columntable;
 soilW=hcat(pools.soilW...)';
 plot(soilW[:, 1])
@@ -37,7 +38,7 @@ observations = getObservation(info);
 info = setupOptimization(info);
 out = createInitOut(info);
 optimizeit=true
-outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; nspins=1);  
+outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);  
 
 
 obsV = :transpiration

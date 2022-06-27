@@ -16,19 +16,18 @@ info = getConfiguration(expFile, local_root);
 info = setupModel!(info);
 #observations = getObservation(info); # target observation!!
 forcing = getForcing(info, Val(:yaxarray));
+spinup_forcing = getSpinupForcing(forcing, info);
+
 output = setupOutput(info);
 
 
 Sindbad.eval(:(debugcatch = []))
 Sindbad.eval(:(debugcatcherr = []))
 out = createInitOut(info);
-forcing2 = (; Pair.(forcing.variables, forcing.dims)...)
 
-outsmodel = runEcosystem(info.tem.models.forward, forcing2, out, info.tem; nspins=1);
+# outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; spinup_forcing=spinup_forcing);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem);
-
-@time outcubes = mapRunEcosystem(forcing, output, info.tem);
+@time outcubes = mapRunEcosystem(forcing, spinup_forcing, output, info.tem);
 
 outcubes[2]
 
