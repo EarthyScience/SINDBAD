@@ -134,10 +134,7 @@ function rungridcell(args...; out, modelinfo, forcing_variables, spinup_forcing,
     for group in keys(modelvars)
         data = outforw[group]
         for k in modelvars[group]
-            @show size(outputs[i])
-            @show size(data[k])
-            # push!(debugcatch,(size(outputs[i]),size(data[k]), k, typeof(outputs[i]), typeof(data[k])))
-            outputs[i] .= deepcopy(data[k])
+            outputs[i] .= convert(Array, deepcopy(data[k]))
             i += 1
         end
     end

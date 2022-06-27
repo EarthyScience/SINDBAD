@@ -13,7 +13,7 @@ using DataFrames: DataFrame
 export describe, bounds, units
 
 export sindbad_models
-
+export LandEcosystem
 
 ## Define SINDBAD supertype
 abstract type LandEcosystem end
