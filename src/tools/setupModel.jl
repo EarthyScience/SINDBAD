@@ -426,6 +426,21 @@ function getLoopingInfo(info)
 end
 
 """
+    getRestartFilePath(info)
+Checks if the restartFile in spinup.json is an absolute path. If not, uses Sindbad_root as the base path to create an absolute path.
+"""
+function getRestartFilePath(info)
+    restartFile = info.spinup.paths.restartFile
+    if isabspath(restartFile)
+        restart_file = restartFile
+    else
+        restart_file = joinpath(info.Sindbad_root, restartFile)
+    end
+    info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFile=restart_file)))
+    return info
+end
+
+"""
     setupModel!(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
@@ -441,5 +456,7 @@ function setupModel!(info)
     # add information related to model run
     run_info = getLoopingInfo(info);
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
+    info = getRestartFilePath(info)
+    info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
     return info
 end
