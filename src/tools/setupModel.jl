@@ -1,4 +1,4 @@
-export setupModel!, getInitPools, setNumberType
+export setupExperiment, getInitPools, setNumberType
 
 """
     checkSelectedModels(fullModels, selModels)
@@ -64,6 +64,27 @@ function getOrderedSelectedModels(info, selModels)
 end
 
 """
+setInputParameters(original_table::Table, updated_table::Table)
+returns a new Table with the optimised values from updated_table.
+"""
+function setInputParameters(original_table::Table, updated_table::Table)
+    upoTable = copy(original_table)
+    for i in 1:length(updated_table)
+        subtbl = filter(row -> row.names == Symbol(updated_table[i].names) && row.models == Symbol(updated_table[i].models), original_table)
+        if isempty(subtbl)
+            error("model: $(updated_table[i].names) and model $(updated_table[i].models) not found")
+        else
+            posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
+            posvar = findall(x -> x == Symbol(updated_table[i].names), upoTable.names)
+            pindx = intersect(posmodel, posvar)
+            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
+            upoTable.optim[pindx] = updated_table.optim[i]
+        end
+    end
+    return upoTable
+end
+
+"""
     getSpinupAndForwardModels(info, selModelsOrdered)
 sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. This allows for a faster spinup if some models can be turned off. Relies on use4spinup flag in modelStructure. By design, the spinup models should be subset of forward models.
 """
@@ -96,11 +117,11 @@ function getSpinupAndForwardModels(info, selModelsOrdered)
         if !isempty(info.params)
             original_params_forward = getParameters(sel_appr_forward);
             input_params = info.params;
-            updated_params = setoptparameters(original_params_forward, input_params);
+            updated_params = setInputParameters(original_params_forward, input_params);
             updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
 
             original_params_spinup = getParameters(sel_appr_spinup);
-            updated_params = setoptparameters(original_params_spinup, input_params);
+            updated_params = setInputParameters(original_params_spinup, input_params);
             updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
 
             info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, is_spinup=is_spinup, spinup=updated_appr_spinup)))
@@ -441,10 +462,10 @@ function getRestartFilePath(info)
 end
 
 """
-    setupModel!(info)
+    setupExperiment(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function setupModel!(info)
+function setupExperiment(info)
     info = setNumericHelpers(info)
     info = getVariablesToStore(info)
     info = generatePoolsInfo(info)

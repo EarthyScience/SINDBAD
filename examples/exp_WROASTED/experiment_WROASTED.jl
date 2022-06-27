@@ -13,7 +13,7 @@ expFile = joinpath(local_root, expFilejs)
 
 
 info = getConfiguration(expFile, local_root);
-info = setupModel!(info);
+info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 spinup_forcing = getSpinupForcing(forcing, info);
 

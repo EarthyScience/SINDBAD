@@ -2,7 +2,6 @@ export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
 export getzix, setTupleField, setTupleSubfield, applyUnitConversion
 export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
-export setoptparameters
 export AllNaN
 export nanmax, nanmin
 export OutWrapper
@@ -242,7 +241,7 @@ macro unpack_forcing(inparams)
 end
 
 """
-    getzix(tpl::NamedTuple, fld::Symbol)
+getzix(tpl::NamedTuple, fld::Symbol)
 returns the indices of a view in the parent main array
 """
 function getzix(tpl::NamedTuple, fld::Symbol)
@@ -251,12 +250,20 @@ function getzix(tpl::NamedTuple, fld::Symbol)
     return zix
 end
 
+"""
+getzix(tpl::NamedTuple, fld::String)
+returns the indices of a view in the parent main array
+"""
 function getzix(tpl::NamedTuple, fld::String)
     dat::SubArray = getfield(tpl, Symbol(fld))
     zix = parentindices(dat)[1]
     return zix
 end
 
+"""
+getzix(dat::SubArray)
+returns the indices of a view for a subArray
+"""
 function getzix(dat::SubArray)
     zix = parentindices(dat)[1]
     return zix
@@ -285,27 +292,6 @@ returns a vector comprising of below diagonal elements of a matrix
 """
 function offDiagLower(A::AbstractMatrix)
     [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
-end
-
-"""
-setoptparameters(originTable::Table, optTable::Table)
-returns a new Table with the optimised values from optTable.
-"""
-function setoptparameters(originTable::Table, optTable::Table)
-    upoTable = copy(originTable)
-    for i in 1:length(optTable)
-        subtbl = filter(row -> row.names == Symbol(optTable[i].names) && row.models == Symbol(optTable[i].models), originTable)
-        if isempty(subtbl)
-            error("model $(optTable[i].names) and model $(optTable[i].models) not found")
-        else
-            posmodel = findall(x -> x == Symbol(optTable[i].models), upoTable.models)
-            posvar = findall(x -> x == Symbol(optTable[i].names), upoTable.names)
-            pindx = intersect(posmodel, posvar)
-            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
-            upoTable.optim[pindx] = optTable.optim[i]
-        end
-    end
-    return upoTable
 end
 
 """
@@ -340,7 +326,16 @@ struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 
+"""
 nanmax(dat) = maximum(dat[.!isnan.(dat)])
+Calculate the maximum of an array while skipping nan
+"""
+nanmax(dat) = maximum(dat[.!isnan.(dat)])
+
+"""
+nanmax(dat) = minimum(dat[.!isnan.(dat)])
+Calculate the minimum of an array while skipping nan
+"""
 nanmin(dat) = minimum(dat[.!isnan.(dat)])
 
 """
