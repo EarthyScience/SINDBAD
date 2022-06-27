@@ -12,6 +12,10 @@
 		"nStepsDay": 			1,
 		"nStepsYear": 			365
 	},
+	"mapping": {
+		"yaxarray": ["longitude", "latitude"],
+		"runEcosystem": ["time"]
+	},
 	"flags":
 	{
 		"runForwardYearly": 	false,

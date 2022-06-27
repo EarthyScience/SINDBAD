@@ -8,6 +8,7 @@ using CMAEvolutionStrategy:
 using CSV: CSV
 using Dates
 using DocStringExtensions
+using DifferentialEquations
 using ForwardDiff
 using Flatten:
     flatten,
@@ -45,9 +46,9 @@ using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
 using YAXArrayBase: getdata
 
-include("Ecosystem/runEcosystem.jl")
-include("optimization/optimization.jl")
 include("tools/tools.jl")
+include("Ecosystem/Ecosystem.jl")
+include("optimization/optimization.jl")
 
 include("Models/models.jl")
 @reexport using .Models

@@ -1,7 +1,8 @@
-export runEcosystem, runSpinup, runForward
+export runEcosystem, runForward
 export removeEmptyFields
 export runPrecompute
 export mapRunEcosystem
+export extracttimestep
 
 """
 runModels(forcing, models, out)
@@ -93,31 +94,17 @@ function removeEmptyFields(tpl)
     return NamedTuple{nkeys}(nvals)
 end
 
+
 """
-runSpinup(selectedModels, initPools, forcing, history=false; nspins=3)
+runEcosystem(approaches, forcing, init_out, modelInfo; spinup_forcing=nothing)
 """
-function runSpinup(spinup_models, forcing, out, modelHelpers; history=false, nspins=3)
-    tsteps = modelHelpers.dates.size
-    spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
-    for j in 1:nspins
-        for t in 1:tsteps
-            out = runModels(extracttimestep(forcing,t), spinup_models, out, modelHelpers)
-            if history
-                push!(spinuplog, values(deepcopy(out))[1:length(out.pools)])
-            end
-        end
+function runEcosystem(approaches, forcing, init_out, modelInfo; spinup_forcing=nothing)
+    out_prec = runPrecompute(forcing[1], approaches, init_out, modelInfo.helpers)
+    if modelInfo.spinup.flags.doSpinup
+        out_spin = runSpinup(approaches, forcing, out_prec, modelInfo; spinup_forcing=spinup_forcing)
+    else
+        out_spin = out_prec
     end
-    return (out, spinuplog)
-end
-
-"""
-runEcosystem(selectedModels, initPools, forcing, history=false; nspins=3) # forward run
-"""
-function runEcosystem(approaches, forcing, init_out, modelInfo; history=false, nspins=3) # forward run
-    spinup_models = approaches[modelInfo.models.is_spinup.==1]
-
-    out_prec = runPrecompute(extracttimestep(forcing,1), approaches, init_out, modelInfo.helpers)
-    out_spin, spinuplog = runSpinup(spinup_models, forcing, out_prec, modelInfo.helpers; history, nspins=nspins)
     out_forw = runForward(approaches, forcing, out_spin, modelInfo.variables, modelInfo.helpers)
     # out_forw = removeEmptyFields(out_forw)
     return out_forw
@@ -130,18 +117,18 @@ function unpack_yax(args; modelinfo, forcing_variables, nts)
     outputs = args[1:nout]
     inputs = args[(nout+1):(nout+nin)]
     #Make fillarrays for constant inputs
-    # inputs = map(inputs) do i
-    #     dn = AxisKeys.dimnames(i)
-    #     (!in(:time, dn) && !in(:Time, dn)) ? Fill(getdata(i), nts) : getdata(i)
-    # end
+    inputs = map(inputs) do i
+        dn = AxisKeys.dimnames(i)
+        (!in(:time, dn) && !in(:Time, dn)) ? Fill(getdata(i), nts) : getdata(i)
+    end
     return outputs, inputs
 end
 
 
-function rungridcell(args...; out, modelinfo, forcing_variables, nts, history=false, nspins=1)
+function rungridcell(args...; out, modelinfo, forcing_variables, spinup_forcing, nts)
     outputs, inputs = unpack_yax(args; modelinfo, forcing_variables, nts)
-    forcing = (; Pair.(forcing_variables, inputs)...)
-    outforw = runEcosystem(modelinfo.models.forward, forcing, out, modelinfo; nspins=nspins, history=history)
+    forcing = Table((; Pair.(forcing_variables, inputs)...))
+    outforw = runEcosystem(modelinfo.models.forward, forcing, out, modelinfo; spinup_forcing=spinup_forcing)
     i = 1
     modelvars = modelinfo.variables
     for group in keys(modelvars)
@@ -156,9 +143,7 @@ function rungridcell(args...; out, modelinfo, forcing_variables, nts, history=fa
     end
 end
 
-
-
-function mapRunEcosystem(forcing, output, modelInfo)
+function mapRunEcosystem(forcing, spinup_forcing, output, modelInfo)
     incubes = forcing.data
     indims = forcing.dims
     nts = forcing.n_timesteps
@@ -171,6 +156,7 @@ function mapRunEcosystem(forcing, output, modelInfo)
         out=out,
         modelinfo=modelInfo, #info.tem,
         forcing_variables=forcing_variables,
+        spinup_forcing=spinup_forcing,
         nts=nts,
         indims=indims,
         outdims=outdims
