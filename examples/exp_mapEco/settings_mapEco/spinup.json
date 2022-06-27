@@ -19,7 +19,7 @@
 		"restartFile": ""
 	},
 	"flags": {
-		"doSpinup": true,
+		"doSpinup": false,
 		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false
