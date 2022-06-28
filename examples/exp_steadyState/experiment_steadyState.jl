@@ -23,7 +23,7 @@ out = createInitOut(info);
 
 # selTimeStep = 1
 # spinup_forcing = forcing[[selTimeStep]];
-spinup_forcing = getSpinupForcing(forcing, info);
+spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 init_out = runPrecompute(forcing[1], info.tem.models.forward, out, info.tem.helpers);
 sel_pool = :cEco

@@ -15,7 +15,7 @@ info = getConfiguration(expFile, local_root);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
-spinup_forcing = getSpinupForcing(forcing, info);
+spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 out = createInitOut(info);
 outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
