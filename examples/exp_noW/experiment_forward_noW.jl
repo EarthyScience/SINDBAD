@@ -15,10 +15,15 @@ info = getConfiguration(expFile, local_root);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
-spinup_forcing = getSpinupForcing(forcing, info.tem);
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+
+output = setupOutput(info);
+
+@time outcubes = mapRunEcosystem(forcing, output, info.tem);
+
+# outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 # @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 ŷField = getfield(outsmodel, :fluxes) |> columntable
 ŷ = hcat(getfield(ŷField, :gpp)...)' |> Matrix |> vec
