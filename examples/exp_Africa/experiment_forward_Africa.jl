@@ -7,6 +7,7 @@ using TableOperations:
     select
 
 
+expFile = "exp_Africa/settings_Africa/experiment.json"
 
 info = getConfiguration(expFile);
 

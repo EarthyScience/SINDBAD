@@ -486,17 +486,24 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function setupExperiment(info)
+    @info "Setting Numeric Helpers..."
     info = setNumericHelpers(info)
+    @info "Setting Variable Helpers..."
     info = getVariablesToStore(info)
+    @info "Setting Pools Info..."
     info = generatePoolsInfo(info)
+    @info "Setting Dates Helpers..."
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
+    @info "Setting Models..."
     selected_models = getOrderedSelectedModels(info, selModels)
     info = getSpinupAndForwardModels(info, selected_models)
     # add information related to model run
+    @info "Setting Mapping Info..."
     run_info = getLoopingInfo(info);
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
+    @info "Setting Spinup Info..."
     info = getRestartFilePath(info)
     info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
     return info
