@@ -84,10 +84,12 @@ function getForcing(info, ::Val{:yaxarray})
         file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
         nc = NetCDF.open(file)
     end
-    file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
+    if !isnothing(info.forcing.defaultForcing.dataPath)
+        file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
+        nc = NetCDF.open(file)
+    end
     default_info = info.forcing.defaultForcing
     forcing_variables = keys(info.forcing.variables)
-    nc = NetCDF.open(file)
     incubes = map(forcing_variables) do k
         vinfo = getVariableInfo(default_info, info.forcing.variables[k])
         if !doOnePath
