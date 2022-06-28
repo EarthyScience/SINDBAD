@@ -14,15 +14,15 @@
 	},
 	"data_backend": "table",
 	"defaultForcing": {
-		"variableUnit": "",
+		"variableUnit": null,
 		"bounds": [],
-		"sourceVariableName": "",
-		"sourceVariableUnit": "",
-		"nameShort": "",
+		"sourceVariableName": null,
+		"sourceVariableUnit": null,
+		"nameShort": null,
 		"source2sindbadUnit": 1.0,
 		"additiveUnitConversion": false,
 		"isCategorical": false,
-		"depth_dimension": "",
+		"depth_dimension": null,
 		"spaceTimeType": "spatiotemporal",
 		"sourceDataProductName": "FLUXNET",
 		"dataPath": "data/BE-Vie.1979.2017.daily.nc"
@@ -79,10 +79,10 @@
 	},
 	"isDisturbed":
     {
-		"variableUnit": "",
+		"variableUnit": null,
 		"bounds": [-0.001, 1.1],
 		"sourceVariableName": "dist_frac_sb2018",
-		"sourceVariableUnit": "",
+		"sourceVariableUnit": null,
 		"isCategorical": true,
 		"nameShort": "isDisturbed flag for disturbance",
 		"sourceDataProductName": "Besnard2018"

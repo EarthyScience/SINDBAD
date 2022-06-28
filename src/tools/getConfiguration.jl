@@ -72,14 +72,25 @@ end
 getConfiguration(sindbad_experiment)
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment, local_root)
+function getConfiguration(sindbad_experiment)
+    local_root = dirname(Base.active_project())
     if typeof(sindbad_experiment) == String
+        if !isabspath(sindbad_experiment)
+            sindbad_experiment = joinpath(local_root, sindbad_experiment)
+        end
         info_exp = getExperimentConfiguration(sindbad_experiment)
         exp_base_path=dirname(sindbad_experiment)
         info = readConfiguration(info_exp, exp_base_path)
     end
     infoTuple = typenarrow!(info)
-    infoTuple = (;infoTuple..., Sindbad_root=local_root)
+    infoTuple = (;infoTuple..., experiment_root=local_root)
+    @show keys(infoTuple)
+    outpath = infoTuple[:modelRun][:output][:path]
+    if !isabspath(outpath)
+        outpath = joinpath(@__DIR__(), outpath)
+    end
+    infoTuple = (;infoTuple..., output_root=outpath)
+
     infoTuple = (;infoTuple..., settings_root=exp_base_path)
     return infoTuple
     # return info

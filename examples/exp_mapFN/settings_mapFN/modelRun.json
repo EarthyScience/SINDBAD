@@ -32,23 +32,25 @@
 	},
 	"output": {
 		"all": false,
-		"dirPath": "sandbox/output/",
+		"path": "sandbox/output/",
 		"dataFormat": ".nc",
+		"depth_dimensions":{
+			"d_soil": "soilW",
+			"d_cEco": 8,
+			"d_snow": "snowW"
+		},
 		"variables": {
-			"write": [
-					"fluxes.evapotranspiration",
-					"fluxes.transpiration",
-					"fluxes.runoff",
-					"fluxes.runoffSurface",
-					"fluxes.gpp",
-					"fluxes.NEE",
-					"states.fAPAR",
-					"pools.snowW",
-					"pools.soilW",
-					"pools.cEco",
-					"waterBalance.waterBalance"
-				],
-			"store": ["pools.soilW", "pools.cVegWood"]
+					"fluxes.evapotranspiration": null,
+					"fluxes.transpiration": null,
+					"fluxes.runoff": null,
+					"fluxes.runoffSurface": null,
+					"fluxes.gpp": null,
+					"fluxes.NEE": null,
+					"states.fAPAR": null,
+					"pools.snowW": "d_snow",
+					"pools.soilW": "d_soil",
+					"pools.cEco": "d_cEco",
+					"waterBalance.waterBalance": null
 		}
 	}
 }

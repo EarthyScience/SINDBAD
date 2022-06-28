@@ -34,21 +34,23 @@
 		"all": true,
 		"dirPath": "exp_mapFN/output/",
 		"dataFormat": ".nc",
+		"depth_dimensions":{
+			"d_soil": "soilW",
+			"d_cEco": 8,
+			"d_snow": "snowW"
+		},
 		"variables": {
-			"write": [
-					"fluxes.evapotranspiration",
-					"fluxes.transpiration",
-					"fluxes.runoff",
-					"fluxes.runoffSurface",
-					"fluxes.gpp",
-					"fluxes.NEE",
-					"states.fAPAR",
-					"pools.snowW",
-					"pools.soilW",
-					"pools.cEco",
-					"waterBalance.waterBalance"
-				],
-			"store": ["pools.soilW", "pools.cVegWood"]
+					"fluxes.evapotranspiration": null,
+					"fluxes.transpiration": null,
+					"fluxes.runoff": null,
+					"fluxes.runoffSurface": null,
+					"fluxes.gpp": null,
+					"fluxes.NEE": null,
+					"states.fAPAR": null,
+					"pools.snowW": null,
+					"pools.soilW": null,
+					"pools.cEco": null,
+					"waterBalance.waterBalance": null
 		}
 	}
 }

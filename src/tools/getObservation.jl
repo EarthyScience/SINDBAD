@@ -27,12 +27,12 @@ getObservation(info)
 """
 function getObservation(info)
     doOnePath = true
-    if isempty(info.opti.constraints.oneDataPath) == false
+    if !isnothing(info.opti.constraints.oneDataPath)
         doOnePath = true
         if isabspath(info.opti.constraints.oneDataPath)
             dataPath = info.opti.constraints.oneDataPath
         else
-            dataPath = joinpath(info.Sindbad_root, info.opti.constraints.oneDataPath)
+            dataPath = joinpath(info.experiment_root, info.opti.constraints.oneDataPath)
         end
     end
     varnames = info.opti.variables2constrain
@@ -49,7 +49,7 @@ function getObservation(info)
         # apply quality flag to the data        
         if hasproperty(vinfo, :qflag)
             qcvar = vinfo.qflag.sourceVariableName
-            if !isempty(vinfo.qflag.dataPath)
+            if !isnothing(vinfo.qflag.dataPath)
                 data_q_flag = getDataFromPath(vinfo.qflag.dataPath, qcvar)
             else
                 data_q_flag = getDataFromPath(dataPath, qcvar)
@@ -70,7 +70,7 @@ function getObservation(info)
         if hasproperty(vinfo, :unc) && info.opti.useUncertainty
             uncvar = vinfo.unc.sourceVariableName
             @info "Using $(uncvar) as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
-            if !isempty(vinfo.unc.dataPath)
+            if !isnothing(vinfo.unc.dataPath)
                 data_unc = getDataFromPath(vinfo.unc.dataPath, uncvar)
             else
                 data_unc = getDataFromPath(dataPath, uncvar)

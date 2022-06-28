@@ -7,12 +7,10 @@ using TableOperations:
     select
 using Plots
 
-expFilejs = "exp_W/settings_W/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_W/settings_W/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 
 info = setupExperiment(info);
 

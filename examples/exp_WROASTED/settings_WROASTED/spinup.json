@@ -4,19 +4,19 @@
 		{
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": "",
+			"stopCriteria": null,
 			"nLoops": 15
 		},
 		{
 			"spinupMode": "ODE_Tsit5",
 			"forcing": "yearOne",
-			"stopCriteria": "",
+			"stopCriteria": null,
 			"nLoops": 1
 		},
 		{
 			"spinupMode": "forward",
 			"forcing": "full",
-			"stopCriteria": "",
+			"stopCriteria": null,
 			"nLoops": 1
 		}
 	],
@@ -28,7 +28,7 @@
 	},
 	"paths": 
 	{
-		"restartFile": ""
+		"restartFile": null
 	},
 	"flags":
 	{
