@@ -17,7 +17,7 @@ function getVariableInfo(default_info, var_info)
     for var_field in default_fields
         if hasproperty(var_info, var_field)
             var_prop = getfield(var_info, var_field)
-            if !isempty(var_prop) || length(var_prop) > 0
+            if !isnothing(var_prop) || length(var_prop) > 0
                 combined_info = setTupleField(combined_info, (var_field, getfield(var_info, var_field)))
             end
         else
@@ -32,12 +32,12 @@ getForcing(info)
 """
 function getForcing(info, ::Val{:table})
     doOnePath = false
-    if !isempty(info.forcing.defaultForcing.dataPath)
+    if !isnothing(info.forcing.defaultForcing.dataPath)
         doOnePath = true
         if isabspath(info.forcing.defaultForcing.dataPath)
             dataPath = info.forcing.defaultForcing.dataPath
         else
-            dataPath = joinpath(info.Sindbad_root, info.forcing.defaultForcing.dataPath)
+            dataPath = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
         end
     end
     varnames = propertynames(info.forcing.variables)
@@ -71,27 +71,27 @@ end
 
 function getForcing(info, ::Val{:yaxarray})
     doOnePath = false
-    if !isempty(info.forcing.defaultForcing.dataPath)
+    if !isnothing(info.forcing.defaultForcing.dataPath)
         doOnePath = true
         if isabspath(info.forcing.defaultForcing.dataPath)
             dataPath = info.forcing.defaultForcing.dataPath
         else
-            dataPath = joinpath(info.Sindbad_root, info.forcing.defaultForcing.dataPath)
+            dataPath = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
         end
     end
     nc = Any
     if doOnePath
-        file = joinpath(info.Sindbad_root, info.forcing.defaultForcing.dataPath)
+        file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
         nc = NetCDF.open(file)
     end
-    file = joinpath(info.Sindbad_root, info.forcing.defaultForcing.dataPath)
+    file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
     default_info = info.forcing.defaultForcing
     forcing_variables = keys(info.forcing.variables)
     nc = NetCDF.open(file)
     incubes = map(forcing_variables) do k
         vinfo = getVariableInfo(default_info, info.forcing.variables[k])
         if !doOnePath
-            file = joinpath(info.Sindbad_root, getfield(vinfo, :dataPath))
+            file = joinpath(info.experiment_root, getfield(vinfo, :dataPath))
             nc = NetCDF.open(file)
         end
         v = nc[info.forcing.variables[k].sourceVariableName]

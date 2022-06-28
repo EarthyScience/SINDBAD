@@ -405,7 +405,8 @@ get named tuple for variables groups from list of variables. Assumes that the en
 """
 function getVariableGroups(varList)
     var_dict = Dict()
-    for var_l in varList
+    for var in varList
+        var_l = String(var)
         vf = split(var_l, ".")[1]
         vvar = split(var_l, ".")[2]
         if vf ∉ keys(var_dict)
@@ -427,7 +428,7 @@ end
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info)
-    writeStoreVars = getVariableGroups(union(info.modelRun.output.variables.write, info.modelRun.output.variables.store))
+    writeStoreVars = getVariableGroups(keys(info.modelRun.output.variables))
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
@@ -448,16 +449,35 @@ end
 
 """
     getRestartFilePath(info)
-Checks if the restartFile in spinup.json is an absolute path. If not, uses Sindbad_root as the base path to create an absolute path.
+Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output_root as the base for saveSpinup
 """
 function getRestartFilePath(info)
-    restartFile = info.spinup.paths.restartFile
-    if isabspath(restartFile)
-        restart_file = restartFile
-    else
-        restart_file = joinpath(info.Sindbad_root, restartFile)
+    restartFileOri = info.spinup.paths.restartFile
+    if info.spinup.flags.saveSpinup
+        if isnothing(restartFileOri)
+            error("info.spinup.paths.restartFile is null, but info.spinup.flags.saveSpinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false")
+        else
+            if isabspath(restartFileOri)
+                restart_file = restartFileOri
+            else
+                restart_file = joinpath(info.output_root, restartFileOri)
+            end
+            info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileOut=restart_file)))
+        end
     end
-    info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFile=restart_file)))
+
+    if info.spinup.flags.loadSpinup
+        if isnothing(restartFileOri)
+            error("info.spinup.paths.restartFile is null, but info.spinup.flags.loadSpinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false")
+        else
+            if isabspath(restartFileOri)
+                restart_file = restartFileOri
+            else
+                restart_file = joinpath(info.experiment_root, restartFile)
+            end
+        end
+        info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileIn=restart_file)))
+    end
     return info
 end
 

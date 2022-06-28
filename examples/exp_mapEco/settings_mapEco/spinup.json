@@ -3,7 +3,7 @@
 		{
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": "",
+			"stopCriteria": null,
 			"nLoops": 7
 		}
 	],
@@ -16,7 +16,7 @@
 		"abstol": 10.0
 	},
 	"paths": {
-		"restartFile": ""
+		"restartFile": null
 	},
 	"flags": {
 		"doSpinup": true,
