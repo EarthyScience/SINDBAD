@@ -22,6 +22,5 @@ output = setupOutput(info);
 Sindbad.eval(:(debugcatch = []))
 Sindbad.eval(:(debugcatcherr = []))
 
-
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 outcubes[2]

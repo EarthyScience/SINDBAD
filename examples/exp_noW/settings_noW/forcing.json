@@ -12,7 +12,7 @@
 		"longitude": "longitude",
 		"time": "time"
 	},
-	"data_backend": "table",
+	"data_backend": "yaxarray",
 	"defaultForcing": {
 		"variableUnit": "",
 		"bounds": [],

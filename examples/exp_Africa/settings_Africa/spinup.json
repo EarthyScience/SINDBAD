@@ -2,20 +2,14 @@
 	"sequence": 
 	[
 		{
-			"spinupMode": "ODE_Tsit5",
-			"forcing": "yearOne",
-			"stopCriteria": "",
-			"nLoops": 1
-		},
-		{
 			"spinupMode": "forward",
-			"forcing": "full",
+			"forcing": "recycleMSC",
 			"stopCriteria": "",
-			"nLoops": 1
+			"nLoops": 20
 		}
 	],
 	"diffEq":{
-		"pools": [],
+		"pools": ["cEco"],
 		"timeJump": 200.0,
 		"reltol":1e-2, 
 		"abstol":10.0
