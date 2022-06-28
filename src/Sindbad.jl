@@ -41,6 +41,7 @@ using StatsBase:
     percentile,
     cor
 using YAXArrays, NetCDF, DiskArrayTools, Zarr
+using YAXArrays: savecube
 using AxisKeys
 using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
