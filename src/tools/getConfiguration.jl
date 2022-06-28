@@ -20,16 +20,18 @@ read configuration experiment json and return dictionary
 function readConfiguration(info_exp, base_path)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
+        config_path = joinpath(base_path,v)
         if endswith(v, ".json")
-            tmp = parsefile(joinpath(base_path,v); dicttype=DataStructures.OrderedDict)
+            tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
         elseif endswith(v, ".csv")
-            prm = CSV.File(joinpath(base_path,v));
+            prm = CSV.File(config_path);
             tmp = Table(prm)
             info[k] = tmp
         end
+        @info "Read: configuration:: $(k) ::: $(config_path)"
     end
-
+    println("----------------------------------------------")
     # rm second level
     for (k, v) in info
         if typeof(v) <: Dict
@@ -84,7 +86,6 @@ function getConfiguration(sindbad_experiment)
     end
     infoTuple = typenarrow!(info)
     infoTuple = (;infoTuple..., experiment_root=local_root)
-    @show keys(infoTuple)
     outpath = infoTuple[:modelRun][:output][:path]
     if !isabspath(outpath)
         outpath = joinpath(@__DIR__(), outpath)
