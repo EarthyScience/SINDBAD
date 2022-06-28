@@ -2,9 +2,9 @@
 	"sequence": [
 		{
 			"spinupMode": "forward",
-			"forcing": "yearOne",
+			"forcing": "recycleMSC",
 			"stopCriteria": "",
-			"nLoops": 1
+			"nLoops": 7
 		}
 	],
 	"diffEq": {
