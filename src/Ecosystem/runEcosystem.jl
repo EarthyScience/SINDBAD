@@ -162,5 +162,6 @@ function mapRunEcosystem(forcing, output, tem; spinup_forcing=nothing)
         indims=indims,
         outdims=outdims
     )
-    return res
+    #TODO: save the output cubes
+    return (; Pair.(output.variables, res)...)
 end

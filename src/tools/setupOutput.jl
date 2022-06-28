@@ -40,5 +40,8 @@ function setupOutput(info)
     outdims = map(Iterators.flatten(info.tem.variables)) do vn
         getOutDims(info, vn, outpath, outformat)
     end
-    return (; init_out=out, dims=outdims)
+    vnames = map(Iterators.flatten(info.tem.variables)) do vn
+        vn
+    end
+    return (; init_out=out, dims=outdims, variables = vnames)
 end
