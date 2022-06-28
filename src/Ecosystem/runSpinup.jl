@@ -99,11 +99,11 @@ doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_Dynami
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the out/land is overwritten with every iteration. Only the state at the end is returned.
 """
 function loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, out, tem_helpers)
-    # tsteps = size(sel_spinup_forcing, 1)
-    tsteps = tem_helpers.dates.size
-    for t in 1:tsteps
-        f = sel_spinup_forcing[t]
-        # f = getForcingTimeStep(sel_spinup_forcing, t)
+    time_steps = getForcingTimeSize(sel_spinup_forcing)
+    # time_steps = tem_helpers.dates.size
+    for t in 1:time_steps
+        # f = sel_spinup_forcing[t]
+        f = getForcingForTimeStep(sel_spinup_forcing, t)
         out = runModels(f, sel_spinup_models, out, tem_helpers)
     end
     return out
@@ -135,7 +135,9 @@ function runSpinup(forward_models, forcing, init_out, tem; spinup_forcing=nothin
         spinupMode = Symbol(spin_seq["spinupMode"])
 
         sel_forcing = forcing
-        if !isnothing(spinup_forcing)
+        if isnothing(spinup_forcing)
+            sel_forcing = getSpinupForcing(forcing, tem, Val(forc))
+        else
             sel_forcing = spinup_forcing[forc]
         end
 

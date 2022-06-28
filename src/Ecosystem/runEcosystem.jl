@@ -2,7 +2,7 @@ export runEcosystem, runForward
 export removeEmptyFields
 export runPrecompute
 export mapRunEcosystem
-export getForcingTimeStep
+export getForcingForTimeStep
 
 """
 runModels(forcing, models, out)
@@ -41,15 +41,27 @@ function runPrecompute(forcing, models, out, tem_helpers)
     return out
 end
 
-function getForcingTimeStep(forcing, ts)
+function getForcingTimeSize(forcing)
+    forcingTimeSize = 1
+    for v in forcing
+        if in(:time, AxisKeys.dimnames(v)) 
+            forcingTimeSize = size(v, 1)
+        end
+    end
+    return forcingTimeSize
+end
+
+function getForcingForTimeStep(forcing, ts)
     map(forcing) do v
         in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
 
 function timeLoopForward(forward_models, forcing, out, tem_variables, tem_helpers)
-    res = map(1: tem_helpers.dates.size) do ts
-        f = getForcingTimeStep(forcing, ts)
+    time_steps = getForcingTimeSize(forcing)
+    # time_steps = tem_helpers.dates.size
+    res = map(1: time_steps) do ts
+        f = getForcingForTimeStep(forcing, ts)
         out = runModels(f, forward_models, out, tem_helpers)
         out_filtered = filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
         deepcopy(out_filtered)
@@ -99,7 +111,7 @@ end
 runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
-    out_prec = runPrecompute(getForcingTimeStep(forcing, 1), approaches, init_out, tem.helpers)
+    out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
     out_spin = out_prec
     if tem.spinup.flags.doSpinup
         out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
@@ -134,7 +146,7 @@ function runGridCell(args...; out, tem, forcing_variables, spinup_forcing)
     end
 end
 
-function mapRunEcosystem(forcing, spinup_forcing, output, tem)
+function mapRunEcosystem(forcing, output, tem; spinup_forcing=nothing)
     incubes = forcing.data
     indims = forcing.dims
     forcing_variables = forcing.variables

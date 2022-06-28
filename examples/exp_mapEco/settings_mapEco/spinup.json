@@ -2,7 +2,7 @@
 	"sequence": [
 		{
 			"spinupMode": "forward",
-			"forcing": "full",
+			"forcing": "yearOne",
 			"stopCriteria": "",
 			"nLoops": 1
 		}
@@ -19,7 +19,7 @@
 		"restartFile": ""
 	},
 	"flags": {
-		"doSpinup": false,
+		"doSpinup": true,
 		"loadSpinup": false,
 		"saveSpinup": false,
 		"storeSpinupHistory": false
