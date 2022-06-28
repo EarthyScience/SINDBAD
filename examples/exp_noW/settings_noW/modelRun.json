@@ -32,15 +32,17 @@
 	},
 	"output": {
 		"all": false,
-		"dirPath": "sandbox/output/",
+		"path": "sandbox/output/",
 		"dataFormat": ".nc",
+		"depth_dimensions":{
+			"d_soil": "soilW",
+			"d_cEco": 8,
+			"d_snow": "snowW"
+		},
 		"variables": {
-			"write": [
-					"fluxes.gpp",
-					"gppDemand.gppE",
-					"states.fAPAR"
-				],
-			"store": []
+					"fluxes.gpp": null,
+					"gppDemand.gppE": null,
+					"states.fAPAR": null
 		}
 	}
 }

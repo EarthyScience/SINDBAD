@@ -4,7 +4,7 @@
 		{
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": "",
+			"stopCriteria": null,
 			"nLoops": 20
 		}
 	],
@@ -16,7 +16,7 @@
 	},
 	"paths": 
 	{
-		"restartFile": ""
+		"restartFile": null
 	},
 	"flags":
 	{

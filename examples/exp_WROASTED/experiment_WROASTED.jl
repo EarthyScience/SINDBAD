@@ -7,12 +7,10 @@ using Tables:
     matrix
 using TableOperations:
     select
-expFilejs = "exp_WROASTED/settings_WROASTED/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_WROASTED/settings_WROASTED/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 spinup_forcing = getSpinupForcing(forcing, info.tem);

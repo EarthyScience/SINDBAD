@@ -10,12 +10,10 @@ using TableOperations:
 
 using Plots
 
-expFilejs = "exp_steadyState/settings_steadyState/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_steadyState/settings_steadyState/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 

@@ -6,12 +6,9 @@ using Tables:
 using TableOperations:
     select
 
-expFilejs = "exp_MLP/settings_MLP/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_MLP/settings_MLP/experiment.json"
 
-
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
