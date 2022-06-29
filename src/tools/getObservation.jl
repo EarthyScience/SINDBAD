@@ -89,3 +89,74 @@ function getObservation(info)
     observation = Table((; Pair.(varlist, dataAr)...))
     return observation
 end
+
+
+
+
+"""
+getObservation(info)
+"""
+function getObservation(info)
+    doOnePath = true
+    if !isnothing(info.opti.constraints.oneDataPath)
+        doOnePath = true
+        if isabspath(info.opti.constraints.oneDataPath)
+            dataPath = info.opti.constraints.oneDataPath
+        else
+            dataPath = joinpath(info.experiment_root, info.opti.constraints.oneDataPath)
+        end
+    end
+    varnames = info.opti.variables2constrain
+    varlist = []
+    dataAr = []
+
+    for v in varnames
+        vinfo = getproperty(info.opti.constraints.variables, Symbol(v))
+        if doOnePath == false
+            dataPath = v.dataPath
+        end
+        data_tmp = getDataFromPath(dataPath, vinfo.data.sourceVariableName)
+
+        # apply quality flag to the data        
+        if hasproperty(vinfo, :qflag)
+            qcvar = vinfo.qflag.sourceVariableName
+            if !isnothing(vinfo.qflag.dataPath)
+                data_q_flag = getDataFromPath(vinfo.qflag.dataPath, qcvar)
+            else
+                data_q_flag = getDataFromPath(dataPath, qcvar)
+            end
+            data_q_flag[ismissing.(data_q_flag)] .= info.tem.helpers.numbers.sNT(NaN)
+            data_tmp = applyQualityFlag(data_tmp, data_q_flag, vinfo.qflag.bounds)
+        end
+        tarVar = Symbol(v)
+        push!(varlist, tarVar)
+        data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
+        data_obs = applyUnitConversion(data_tmp, vinfo.data.source2sindbadUnit, vinfo.data.additiveUnitConversion)
+        data_obs = applyObservationBounds(data_obs, vinfo.data.bounds)
+        push!(dataAr, info.tem.helpers.numbers.numType.(data_obs))
+
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
+        uncTarVar = Symbol(v*"_σ")
+        push!(varlist, uncTarVar)
+        if hasproperty(vinfo, :unc) && info.opti.useUncertainty
+            uncvar = vinfo.unc.sourceVariableName
+            @info "Using $(uncvar) as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            if !isnothing(vinfo.unc.dataPath)
+                data_unc = getDataFromPath(vinfo.unc.dataPath, uncvar)
+            else
+                data_unc = getDataFromPath(dataPath, uncvar)
+            end
+            data_unc[ismissing.(data_unc)] .= info.tem.helpers.numbers.sNT(NaN)
+            data_unc = applyUnitConversion(data_unc, vinfo.unc.source2sindbadUnit, vinfo.unc.additiveUnitConversion)
+            data_unc = applyObservationBounds(data_unc, vinfo.unc.bounds)
+        else
+            data_unc = ones(info.tem.helpers.numbers.numType, size(data_obs))
+            @info "Using ones as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+        end
+        idxs = isnan.(data_obs)
+        data_unc[idxs] .= info.tem.helpers.numbers.sNT(NaN)
+        push!(dataAr, info.tem.helpers.numbers.numType.(data_unc))
+    end
+    observation = Table((; Pair.(varlist, dataAr)...))
+    return observation
+end
