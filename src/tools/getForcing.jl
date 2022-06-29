@@ -1,10 +1,17 @@
 export getForcing
-
+export getInDims, cleanInputData, getAbsDataPath
 function cleanInputData(datapoint, vinfo, ::Val{T}) where {T}
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
     bounds = vinfo.bounds
     datapoint = clamp(datapoint, bounds[1], bounds[2])
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
+end
+
+function getAbsDataPath(info, dataPath)
+    if !isabspath(dataPath)
+        dataPath = joinpath(info.experiment_root, dataPath)
+    end
+    return dataPath
 end
 
 """
@@ -69,34 +76,25 @@ function getForcing(info, ::Val{:table})
     return forcing
 end
 
+
 function getForcing(info, ::Val{:yaxarray})
     doOnePath = false
-    if !isnothing(info.forcing.defaultForcing.dataPath)
-        doOnePath = true
-        if isabspath(info.forcing.defaultForcing.dataPath)
-            dataPath = info.forcing.defaultForcing.dataPath
-        else
-            dataPath = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
-        end
-    end
+    dataPath = info.forcing.defaultForcing.dataPath
     nc = Any
-    if doOnePath
-        file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
-        nc = NetCDF.open(file)
-    end
-    if !isnothing(info.forcing.defaultForcing.dataPath)
-        file = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
-        nc = NetCDF.open(file)
+    if !isnothing(dataPath)
+        doOnePath = true
+        dataPath = getAbsDataPath(info, dataPath)
+        nc = NetCDF.open(dataPath)
     end
     default_info = info.forcing.defaultForcing
     forcing_variables = keys(info.forcing.variables)
     incubes = map(forcing_variables) do k
         vinfo = getVariableInfo(default_info, info.forcing.variables[k])
         if !doOnePath
-            file = joinpath(info.experiment_root, getfield(vinfo, :dataPath))
-            nc = NetCDF.open(file)
+            dataPath = getAbsDataPath(info, getfield(vinfo, :dataPath))
+            nc = NetCDF.open(dataPath)
         end
-        v = nc[info.forcing.variables[k].sourceVariableName]
+        v = nc[vinfo.sourceVariableName]
         atts = v.atts
         if any(in(keys(atts)), ["missing_value", "scale_factor", "add_offset"])
             v = CFDiskArray(v, atts)
