@@ -71,6 +71,37 @@ function convertToAbsolutePath(; inputDict=inputDict)
 end
 
 """
+setupOutputDirectory(infoTuple)
+sets up and creates output directory for the model simulation
+"""
+function setupOutputDirectory(infoTuple)
+    outpath = infoTuple[:modelRun][:output][:path]
+    if !isabspath(outpath)
+        if !occursin("/", outpath)
+            outfoldername = "output_" * split(outpath,'/')[end]
+            base_path = join(split(outpath,"/")[1:end-1], "/")
+            out_path_new = joinpath(base_path, outfoldername)
+        else
+            base_root = "output_" * split(outpath,'/')[1]
+            base_path = join(split(outpath,"/")[2:end], "/")
+            out_path_new = joinpath(base_root, base_path)
+        end
+        out_path_new = joinpath(join(split(infoTuple.settings_root,"/")[1:end-1], "/"), out_path_new)
+    else
+        sindbad_root = join(split(infoTuple.experiment_root,"/")[1:end-1], "/")
+        if occursin(sindbad_root, outpath)
+            error("You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to a relative path or set output directory outside sindbad.")
+        else
+            out_path_new = outpath
+        end
+    end
+    @show out_path_new
+    mkpath(out_path_new)
+    infoTuple = (;infoTuple..., output_root=out_path_new)
+    return infoTuple
+end
+
+"""
 getConfiguration(sindbad_experiment)
 get the experiment info from either json or load the named tuple
 """
@@ -86,13 +117,8 @@ function getConfiguration(sindbad_experiment)
     end
     infoTuple = typenarrow!(info)
     infoTuple = (;infoTuple..., experiment_root=local_root)
-    outpath = infoTuple[:modelRun][:output][:path]
-    if !isabspath(outpath)
-        outpath = joinpath(@__DIR__(), outpath)
-    end
-    infoTuple = (;infoTuple..., output_root=outpath)
-
     infoTuple = (;infoTuple..., settings_root=exp_base_path)
+    infoTuple = setupOutputDirectory(infoTuple)
     return infoTuple
     # return info
 end
