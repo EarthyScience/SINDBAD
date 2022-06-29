@@ -1,4 +1,4 @@
-export setupModel!, getInitPools, setNumberType
+export setupExperiment, getInitPools, setNumberType
 
 """
     checkSelectedModels(fullModels, selModels)
@@ -64,6 +64,27 @@ function getOrderedSelectedModels(info, selModels)
 end
 
 """
+setInputParameters(original_table::Table, updated_table::Table)
+returns a new Table with the optimised values from updated_table.
+"""
+function setInputParameters(original_table::Table, updated_table::Table)
+    upoTable = copy(original_table)
+    for i in 1:length(updated_table)
+        subtbl = filter(row -> row.names == Symbol(updated_table[i].names) && row.models == Symbol(updated_table[i].models), original_table)
+        if isempty(subtbl)
+            error("model: $(updated_table[i].names) and model $(updated_table[i].models) not found")
+        else
+            posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
+            posvar = findall(x -> x == Symbol(updated_table[i].names), upoTable.names)
+            pindx = intersect(posmodel, posvar)
+            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
+            upoTable.optim[pindx] = updated_table.optim[i]
+        end
+    end
+    return upoTable
+end
+
+"""
     getSpinupAndForwardModels(info, selModelsOrdered)
 sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. This allows for a faster spinup if some models can be turned off. Relies on use4spinup flag in modelStructure. By design, the spinup models should be subset of forward models.
 """
@@ -96,11 +117,11 @@ function getSpinupAndForwardModels(info, selModelsOrdered)
         if !isempty(info.params)
             original_params_forward = getParameters(sel_appr_forward);
             input_params = info.params;
-            updated_params = setoptparameters(original_params_forward, input_params);
+            updated_params = setInputParameters(original_params_forward, input_params);
             updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
 
             original_params_spinup = getParameters(sel_appr_spinup);
-            updated_params = setoptparameters(original_params_spinup, input_params);
+            updated_params = setInputParameters(original_params_spinup, input_params);
             updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
 
             info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, is_spinup=is_spinup, spinup=updated_appr_spinup)))
@@ -122,6 +143,9 @@ function generateDatesInfo(info)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
+    time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+    tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
 end
@@ -381,7 +405,8 @@ get named tuple for variables groups from list of variables. Assumes that the en
 """
 function getVariableGroups(varList)
     var_dict = Dict()
-    for var_l in varList
+    for var in varList
+        var_l = String(var)
         vf = split(var_l, ".")[1]
         vvar = split(var_l, ".")[2]
         if vf ∉ keys(var_dict)
@@ -403,26 +428,83 @@ end
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info)
-    writeStoreVars = getVariableGroups(union(info.modelRun.output.variables.write, info.modelRun.output.variables.store))
+    writeStoreVars = getVariableGroups(keys(info.modelRun.output.variables))
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
 
+
 """
-    setupModel!(info)
+    getLoopingInfo(info)
+sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
+"""
+function getLoopingInfo(info)
+    run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
+    run_info = setTupleField(run_info, (:loop, (;)))
+    for dim in info.modelRun.mapping.runEcosystem
+        run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    end
+    return run_info
+end
+
+"""
+    getRestartFilePath(info)
+Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output_root as the base for saveSpinup
+"""
+function getRestartFilePath(info)
+    restartFileOri = info.spinup.paths.restartFile
+    if info.spinup.flags.saveSpinup
+        if isnothing(restartFileOri)
+            error("info.spinup.paths.restartFile is null, but info.spinup.flags.saveSpinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false")
+        else
+            if isabspath(restartFileOri)
+                restart_file = restartFileOri
+            else
+                restart_file = joinpath(info.output_root, restartFileOri)
+            end
+            info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileOut=restart_file)))
+        end
+    end
+
+    if info.spinup.flags.loadSpinup
+        if isnothing(restartFileOri)
+            error("info.spinup.paths.restartFile is null, but info.spinup.flags.loadSpinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false")
+        else
+            if isabspath(restartFileOri)
+                restart_file = restartFileOri
+            else
+                restart_file = joinpath(info.experiment_root, restartFile)
+            end
+        end
+        info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileIn=restart_file)))
+    end
+    return info
+end
+
+"""
+    setupExperiment(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function setupModel!(info)
+function setupExperiment(info)
+    @info "Setting Numeric Helpers..."
     info = setNumericHelpers(info)
+    @info "Setting Variable Helpers..."
     info = getVariablesToStore(info)
+    @info "Setting Pools Info..."
     info = generatePoolsInfo(info)
+    @info "Setting Dates Helpers..."
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
+    @info "Setting Models..."
     selected_models = getOrderedSelectedModels(info, selModels)
     info = getSpinupAndForwardModels(info, selected_models)
     # add information related to model run
-    run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
+    @info "Setting Mapping Info..."
+    run_info = getLoopingInfo(info);
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
+    @info "Setting Spinup Info..."
+    info = getRestartFilePath(info)
+    info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
     return info
 end

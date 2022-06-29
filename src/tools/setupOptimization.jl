@@ -60,7 +60,7 @@ function setupOptimization(info)
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
 
     # get the variables to be used during optimization
-    obsVars, optimVars, storeVars = getConstraintNames(info.opti, info.modelRun.output.variables.store)
+    obsVars, optimVars, storeVars = getConstraintNames(info.opti)
     varibInfo = (;)
     varibInfo = setTupleField(varibInfo, (:obs, obsVars))
     varibInfo = setTupleField(varibInfo, (:optim, optimVars))

@@ -36,19 +36,20 @@
 		"dataFormat": ".nc",
 		"depth_dimensions":{
 			"d_soil": "soilW",
+			"d_cEco": 8,
 			"d_snow": "snowW"
 		},
 		"variables": {
-					"fluxes.evapotranspiration": null,
-					"fluxes.transpiration": null,
-					"fluxes.runoff": null,
-					"fluxes.runoffSurface": null,
-					"fluxes.gpp": null,
-					"gppDemand.gppE": null,
-					"states.fAPAR": null,
-					"pools.snowW": "d_snow",
-					"pools.soilW": "d_soil",
-					"waterBalance.waterBalance": null
+			"fluxes.evapotranspiration": null,
+			"fluxes.transpiration": null,
+			"fluxes.runoff": null,
+			"fluxes.runoffSurface": null,
+			"fluxes.gpp": null,
+			"fluxes.NEE": null,
+			"pools.snowW": "d_snow",
+			"pools.soilW": "d_soil",
+			"pools.cEco": "d_cEco",
+			"waterBalance.waterBalance": null
 		}
 	}
 }
