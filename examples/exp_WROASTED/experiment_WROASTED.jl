@@ -7,23 +7,19 @@ using Tables:
     matrix
 using TableOperations:
     select
-expFilejs = "exp_WROASTED/settings_WROASTED/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_WROASTED/settings_WROASTED/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
-info = setupModel!(info);
+info = getConfiguration(expFile);
+info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 observations = getObservation(info); 
 info = setupOptimization(info);
 out = createInitOut(info);
-# @enter outparams, outsmodel = optimizeModel(forcing, out, observations,
-# info.tem, info.optim; nspins=1);    
 
-# @enter outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 obsV = :gpp;
 modelVarInfo = [:fluxes, :gpp];
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;

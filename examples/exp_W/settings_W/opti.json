@@ -14,7 +14,7 @@
 	"algorithm": {
 		"package": "Evolutionary",
 		"method": "CMAES",
-		"options_file": "",
+		"options_file": null,
 		"isMultiObj": false
 	},
 	"algorithmc": {
@@ -26,19 +26,19 @@
 	"algorithm_": {
 		"package": "Optimization",
 		"method": "Fminbox_GradientDescent_FD",
-		"options_file": "",
+		"options_file": null,
 		"isMultiObj": false
 	},
 	"algorithmn": {
 		"package": "Optimization",
 		"method": "NelderMead",
-		"options_file": "",
+		"options_file": null,
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
 		"package": "Optimization",
 		"method": "GCMAES_FD",
-		"options_file": "",
+		"options_file": null,
 		"isMultiObj": false
 	},
 	"optimized_paramaters": [
@@ -86,10 +86,10 @@
 					"nameShort": "Gross Primary Productivity",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						100.0
@@ -99,7 +99,7 @@
 					"sourceVariableName": "NEE_RANDUNC"
 				},
 				"qflag": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.85,
 						1.0
@@ -128,10 +128,10 @@
 					"nameShort": "Net Ecosystem Exchange",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						400.0
@@ -141,7 +141,7 @@
 					"source2sindbadUnit": 1.0
 				},
 				"qflag": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.85,
 						1.0
@@ -170,10 +170,10 @@
 					"nameShort": "Ecosystem Respiration",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						100.0
@@ -183,7 +183,7 @@
 					"source2sindbadUnit": 1.0
 				},
 				"qflag": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.85,
 						1.0
@@ -212,10 +212,10 @@
 					"nameShort": "Evapotranspiration",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						100.0
@@ -225,7 +225,7 @@
 					"source2sindbadUnit": 0.4081632653
 				},
 				"qflag": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.85,
 						1.0
@@ -254,10 +254,10 @@
 					"nameShort": "transpiration",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						100.0
@@ -267,7 +267,7 @@
 					"source2sindbadUnit": 0.4081632653
 				},
 				"qflag": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.85,
 						1.0
@@ -296,10 +296,10 @@
 					"nameShort": "Above-ground biomass",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						400.0
@@ -330,10 +330,10 @@
 					"nameShort": "kNDVI",
 					"spaceTimeType": "normal",
 					"sourceDataProductName": "FLUXNET",
-					"dataPath": ""
+					"dataPath": null
 				},
 				"unc": {
-					"dataPath": "",
+					"dataPath": null,
 					"bounds": [
 						0.0,
 						1.0

@@ -7,21 +7,20 @@ using TableOperations:
     select
 using Plots
 
-expFilejs = "exp_W/settings_W/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_W/settings_W/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 
-info = setupModel!(info);
+info = setupExperiment(info);
 
 
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 pools = outsmodel.pools |> columntable;
 soilW=hcat(pools.soilW...)';
 plot(soilW[:, 1])
@@ -37,7 +36,7 @@ observations = getObservation(info);
 info = setupOptimization(info);
 out = createInitOut(info);
 optimizeit=true
-outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; nspins=1);  
+outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);  
 
 
 obsV = :transpiration
