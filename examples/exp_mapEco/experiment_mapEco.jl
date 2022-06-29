@@ -18,6 +18,8 @@ forcing = getForcing(info, Val(:yaxarray));
 
 output = setupOutput(info);
 
+observations = getObservation(info); 
+info = setupOptimization(info);
 
 a=zopen("exp_mapEco/output_sandbox/output/soilW.zarr/")
 dat = replace(a["layer"][4,1:365, 7,1], missing => NaN)
@@ -26,3 +28,5 @@ dat = replace(a["layer"][4,1:365, 7,1], missing => NaN)
 UnicodePlots.lineplot(dat)
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 outcubes[2]
+
+outparams, outsmodel = optimizeModel(forcing, output, info.tem, info.optim, observations);  
