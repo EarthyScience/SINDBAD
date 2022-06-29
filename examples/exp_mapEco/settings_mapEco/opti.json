@@ -7,6 +7,10 @@
 		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
+	"mapping": {
+		"yaxarray": ["longitude", "latitude"],
+		"runEcosystem": ["time"]
+	},
 	"useUncertainty": false,
 	"algorithm_optim": {
 		"package": "Optim",
@@ -76,7 +80,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
+		"oneDataPath": "data/DE-All.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",
