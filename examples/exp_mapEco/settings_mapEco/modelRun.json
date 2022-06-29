@@ -33,7 +33,7 @@
 	"output": {
 		"all": false,
 		"path": "sandbox/output/",
-		"dataFormat": ".nc",
+		"dataFormat": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",
 			"d_cEco": 8,

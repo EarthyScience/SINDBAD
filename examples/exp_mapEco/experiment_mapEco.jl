@@ -19,8 +19,10 @@ forcing = getForcing(info, Val(:yaxarray));
 output = setupOutput(info);
 
 
-Sindbad.eval(:(debugcatch = []))
-Sindbad.eval(:(debugcatcherr = []))
-
+a=zopen("exp_mapEco/output_sandbox/output/soilW.zarr/")
+dat = replace(a["layer"][4,1:365, 7,1], missing => NaN)
+# Sindbad.eval(:(debugcatch = []))
+# Sindbad.eval(:(debugcatcherr = []))
+UnicodePlots.lineplot(dat)
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 outcubes[2]

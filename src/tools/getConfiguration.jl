@@ -95,7 +95,6 @@ function setupOutputDirectory(infoTuple)
             out_path_new = outpath
         end
     end
-    @show out_path_new
     mkpath(out_path_new)
     infoTuple = (;infoTuple..., output_root=out_path_new)
     return infoTuple
@@ -118,7 +117,9 @@ function getConfiguration(sindbad_experiment)
     infoTuple = typenarrow!(info)
     infoTuple = (;infoTuple..., experiment_root=local_root)
     infoTuple = (;infoTuple..., settings_root=exp_base_path)
+    @info "Setup output directory:"
     infoTuple = setupOutputDirectory(infoTuple)
+    @info " $(infoTuple.output_root)"
     return infoTuple
     # return info
 end
