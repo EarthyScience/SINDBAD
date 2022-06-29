@@ -86,18 +86,18 @@ returns
 - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
 - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
-function getConstraintNames(optiInfo, storeVarsList)
-    obsVariables = Symbol.(optiInfo.variables2constrain)
+function getConstraintNames(info_optim)
+    obsVariables = Symbol.(info_optim.variables2constrain)
     modelVariables = String[]
     optimVariables = (;)
     for v in obsVariables
-        vinfo = getproperty(optiInfo.constraints.variables, v)
+        vinfo = getproperty(info_optim.constraints.variables, v)
         push!(modelVariables, vinfo.modelFullVar)
         vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
         optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
     # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(union(modelVariables, storeVarsList))
+    storeVariables = getVariableGroups(modelVariables)
     return obsVariables, optimVariables, storeVariables
 end
 
@@ -148,21 +148,20 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, forcing, initOut,
-    observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+function getLoss(pVector, forcing, spinup_forcing, initOut,
+    observations, tblParams, optimVars, tem, info_optim)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
-        tblParams.optim .= [modelInfo.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
+        tblParams.optim .= [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
     else
         tblParams.optim .= pVector # update the parameters with pVector
     end
 
-    newApproaches = updateParameters(tblParams, modelInfo.models.forward)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
-    # @time outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins) # spinup + forward run!
+    newApproaches = updateParameters(tblParams, tem.models.forward)
+    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     lossVec=[]
-    cost_options=optiInfo.costOptions;
+    cost_options=info_optim.costOptions;
     for var_row in cost_options
         obsV = var_row.variable
         lossMetric = var_row.costMetric
@@ -181,36 +180,36 @@ function getLoss(pVector, forcing, initOut,
     end
     @info "-------------------"
 
-    return combineLoss(lossVec, Val(optiInfo.multiConstraintMethod))
+    return combineLoss(lossVec, Val(info_optim.multiConstraintMethod))
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing, initOut, observations,
-    modelInfo, optiInfo; nspins=3)
-    optimVars = optiInfo.variables.optim;
+    tem, info_optim; spinup_forcing=nothing)
+    optimVars = info_optim.variables.optim;
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(modelInfo.models.forward, optiInfo.optimized_paramaters)
+    tblParams = getParameters(tem.models.forward, info_optim.optimized_paramaters)
 
     # get the defaults and bounds
-    default_values = modelInfo.helpers.numbers.sNT.(tblParams.defaults)
-    lower_bounds = modelInfo.helpers.numbers.sNT.(tblParams.lower)
-    upper_bounds = modelInfo.helpers.numbers.sNT.(tblParams.upper)
+    default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+    lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
+    upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
     # make the cost function handle
-    cost_function = x -> getLoss(x, forcing, initOut,
-        observations, tblParams, optimVars, modelInfo, optiInfo, nspins)
+    cost_function = x -> getLoss(x, forcing, spinup_forcing, initOut,
+        observations, tblParams, optimVars, tem, info_optim)
 
     # run the optimizer
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optiInfo.algorithm.options, Val(optiInfo.algorithm.method))
+    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, info_optim.algorithm.options, Val(info_optim.algorithm.method))
 
     # update the parameter table with the optimized values
     tblParams.optim .= optim_para
-    newApproaches = updateParameters(tblParams, modelInfo.models.forward);
-    outevolution = runEcosystem(newApproaches, forcing, initOut, modelInfo; nspins=nspins); # spinup + forward run!
+    newApproaches = updateParameters(tblParams, tem.models.forward);
+    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing); # spinup + forward run!
     return tblParams, outevolution
 end

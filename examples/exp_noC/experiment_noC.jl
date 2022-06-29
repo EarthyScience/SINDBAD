@@ -7,19 +7,25 @@ using TableOperations:
     select
 
 
-expFilejs = "exp_noC/settings_noC/experiment.json"
-local_root = dirname(Base.active_project())
-expFile = joinpath(local_root, expFilejs)
+expFile = "exp_noC/settings_noC/experiment.json"
 
 
-info = getConfiguration(expFile, local_root);
+info = getConfiguration(expFile);
 
-info = setupModel!(info);
+info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
-@time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem; nspins=1);
+outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+@time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+
+
+
+
+observations = getObservation(info); 
+info = setupOptimization(info);
+
 
 tblParams = getParameters(info.tem.models.forward, info.optim.optimized_paramaters)
 
@@ -29,11 +35,9 @@ lower_bounds = tblParams.lower
 upper_bounds = tblParams.upper
 
 
-observations = getObservation(info); 
-info = setupOptimization(info);
 out = createInitOut(info);
 outparams, outsmodel = optimizeModel(forcing, out, observations,
-info.tem, info.optim; nspins=1);    
+info.tem, info.optim; spinup_forcing=spinup_forcing);    
 obsV = :evapotranspiration
 modelVarInfo = [:fluxes, :evapotranspiration]
 ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;

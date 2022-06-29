@@ -7,18 +7,19 @@ using ProgressMeter
 # using ProfileView
 # using BenchmarkTools
 
-expFilejs = "exp_mapFN/settings_mapFN/experiment.json"
-#local_root ="/Users/skoirala/research/sjindbad/Sindbad.jl/"
-local_root = dirname(Base.active_project())
-# local_root = @__DIR__
-expFile = joinpath(local_root, expFilejs);
+expFile = "exp_mapFN/settings_mapFN/experiment.json"
 
-info = getConfiguration(expFile, local_root);
-info = setupModel!(info);
+info = getConfiguration(expFile);
+info = setupExperiment(info);
 #observations = getObservation(info); # target observation!!
 forcing = getForcing(info, Val(:yaxarray));
 output = setupOutput(info);
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 
 outcubes[2]
+
+Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NamedTuple with ")
+
+(typeof((a=3,b=4)))

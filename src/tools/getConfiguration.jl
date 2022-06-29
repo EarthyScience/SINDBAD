@@ -20,16 +20,18 @@ read configuration experiment json and return dictionary
 function readConfiguration(info_exp, base_path)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
+        config_path = joinpath(base_path,v)
         if endswith(v, ".json")
-            tmp = parsefile(joinpath(base_path,v); dicttype=DataStructures.OrderedDict)
+            tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
         elseif endswith(v, ".csv")
-            prm = CSV.File(joinpath(base_path,v));
+            prm = CSV.File(config_path);
             tmp = Table(prm)
             info[k] = tmp
         end
+        @info "Read: configuration:: $(k) ::: $(config_path)"
     end
-
+    println("----------------------------------------------")
     # rm second level
     for (k, v) in info
         if typeof(v) <: Dict
@@ -72,14 +74,24 @@ end
 getConfiguration(sindbad_experiment)
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment, local_root)
+function getConfiguration(sindbad_experiment)
+    local_root = dirname(Base.active_project())
     if typeof(sindbad_experiment) == String
+        if !isabspath(sindbad_experiment)
+            sindbad_experiment = joinpath(local_root, sindbad_experiment)
+        end
         info_exp = getExperimentConfiguration(sindbad_experiment)
         exp_base_path=dirname(sindbad_experiment)
         info = readConfiguration(info_exp, exp_base_path)
     end
     infoTuple = typenarrow!(info)
-    infoTuple = (;infoTuple..., Sindbad_root=local_root)
+    infoTuple = (;infoTuple..., experiment_root=local_root)
+    outpath = infoTuple[:modelRun][:output][:path]
+    if !isabspath(outpath)
+        outpath = joinpath(@__DIR__(), outpath)
+    end
+    infoTuple = (;infoTuple..., output_root=outpath)
+
     infoTuple = (;infoTuple..., settings_root=exp_base_path)
     return infoTuple
     # return info
