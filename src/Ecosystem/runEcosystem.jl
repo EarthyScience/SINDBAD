@@ -140,10 +140,6 @@ function runGridCell(args...; out, tem, forcing_variables, spinup_forcing)
     for group in keys(tem_variables)
         data = outforw[group]
         for k in tem_variables[group]
-            tmpRes = convert(Array, deepcopy(data[k]))
-            push!(debugcatcherr,"$(group), $(k)")
-            push!(debugcatcherr,size(tmpRes))
-            push!(debugcatcherr, size(outputs[i]))
             outputs[i] .= convert(Array, deepcopy(data[k]))
             i += 1
         end

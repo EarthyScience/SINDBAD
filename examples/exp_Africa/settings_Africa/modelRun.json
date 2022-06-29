@@ -32,7 +32,7 @@
 	},
 	"output": {
 		"all": false,
-		"path": "sandbox/output/",
+		"path": "africa",
 		"dataFormat": ".nc",
 		"depth_dimensions":{
 			"d_soil": "soilW",
