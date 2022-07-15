@@ -13,6 +13,7 @@
 		"time": "time"
 	},
 	"data_backend": "table",
+	"sel_mask": null,
 	"defaultForcing": {
 		"variableUnit": null,
 		"bounds": [],

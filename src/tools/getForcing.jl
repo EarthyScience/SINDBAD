@@ -76,6 +76,11 @@ function getForcing(info, ::Val{:table})
     return forcing
 end
 
+function get_forcing_sel_mask(mask_path)
+    mask = NetCDF.open(mask_path)
+    mask_data = mask["mask"]
+    return mask_data
+end
 
 function getForcing(info, ::Val{:yaxarray})
     doOnePath = false
@@ -86,6 +91,16 @@ function getForcing(info, ::Val{:yaxarray})
         dataPath = getAbsDataPath(info, dataPath)
         nc = NetCDF.open(dataPath)
     end
+
+    forcing_mask = nothing
+    if :sel_mask ∈ keys(info.forcing)
+        @show info.forcing.sel_mask
+        if !isnothing(info.forcing.sel_mask)
+            mask_path = getAbsDataPath(info, info.forcing.sel_mask)
+            forcing_mask = get_forcing_sel_mask(mask_path)
+        end
+    end
+
     default_info = info.forcing.defaultForcing
     forcing_variables = keys(info.forcing.variables)
     incubes = map(forcing_variables) do k
@@ -103,6 +118,9 @@ function getForcing(info, ::Val{:yaxarray})
             dn = d.name
             dv = nc[dn][:]
             RangeAxis(dn, dv)
+        end
+        if !isnothing(forcing_mask)
+            v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
         yax = YAXArray(ax, v)
         numtype = Val{info.tem.helpers.numbers.numType}()
