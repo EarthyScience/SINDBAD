@@ -17,12 +17,12 @@ forcing = getForcing(info, Val(:yaxarray));
 
 
 output = setupOutput(info);
-
+Sindbad.eval(:(debugcatcherr = []))
 @time outcubes = mapRunEcosystem(forcing, output, info.tem);
 outcubes[2]
 
 # optimization
 info = setupOptimization(info);
-observations = getObservation(info, Val(:yaxarray)); 
+observations = getObservation(info, Val(:yaxarray_s)); 
 tmp = observations.data[1]
 outparams, outsmodel = optimizeModel(forcing, output, info.tem, info.optim, observations);  
