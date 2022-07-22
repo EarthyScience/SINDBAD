@@ -19,7 +19,7 @@ out = createInitOut(info);
 
 output = setupOutput(info);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem);
+@time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
 
 # outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 # @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);

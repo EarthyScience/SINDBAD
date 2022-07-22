@@ -23,5 +23,5 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 
 output = setupOutput(info);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem);
+@time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
 
