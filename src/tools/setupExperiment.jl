@@ -42,7 +42,7 @@ function changeModelOrder(info, selModels)
         end
 
     end
-    @warn "changeModelOrder is not fully functional yet. So, returns sindbad_models as is as full models"
+    @warn "changeModelOrder: not fully functional yet. So, returns sindbad_models as is as full models"
     # @show fullModels_reordered, length(fullModels_reordered)
     return fullModels
 end
@@ -486,25 +486,29 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function setupExperiment(info)
-    @info "Setting Numeric Helpers..."
+    @info "SetupExperiment: setting Numeric Helpers..."
     info = setNumericHelpers(info)
-    @info "Setting Variable Helpers..."
+    @info "SetupExperiment: setting Variable Helpers..."
     info = getVariablesToStore(info)
-    @info "Setting Pools Info..."
+    @info "SetupExperiment: setting Pools Info..."
     info = generatePoolsInfo(info)
-    @info "Setting Dates Helpers..."
+    @info "SetupExperiment: setting Dates Helpers..."
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models)
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
-    @info "Setting Models..."
+    @info "SetupExperiment: setting Models..."
     selected_models = getOrderedSelectedModels(info, selModels)
     info = getSpinupAndForwardModels(info, selected_models)
     # add information related to model run
-    @info "Setting Mapping Info..."
+    @info "SetupExperiment: setting Mapping info..."
     run_info = getLoopingInfo(info);
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
-    @info "Setting Spinup Info..."
+    @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
     info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
+    if info.modelRun.flags.runOpti
+        @info "SetupExperiment: setting Optimization info..."
+            end
+    println("----------------------------------------------")
     return info
 end

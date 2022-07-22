@@ -1,6 +1,7 @@
 export optimizeModel, getParameters, updateParameters
 export getConstraintNames, getSimulationData, loss, getLoss
 export getData
+export mapOptimizeModel
 
 """
 getParameters(selectedModels)
@@ -105,8 +106,11 @@ end
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
 function getData(outsmodel, observations, obsV, modelVarInfo)
-    ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
+    ŷField = getproperty(outsmodel, modelVarInfo[1])
+    ŷ = getproperty(ŷField, modelVarInfo[2])
+    #...)' |> Matrix |> vec
+    # ŷField = getproperty(outsmodel, modelVarInfo[1]).evap
+    # ŷ = hcat(getproperty(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
     y = getproperty(observations, obsV); 
     yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
     return (y, yσ, ŷ)
@@ -214,69 +218,47 @@ function optimizeModel(forcing, initOut, observations,
     return tblParams, outevolution
 end
 
-
-function optimizeGridCell(args...; out, tem, forcing_variables, spinup_forcing)
-    outputs, inputs = unpackYax(args; tem, forcing_variables)
-    forcing = (; Pair.(forcing_variables, inputs)...)
-    outforw = runEcosystem(tem.models.forward, forcing, out, tem; spinup_forcing=spinup_forcing)
-    i = 1
-    tem_variables = tem.variables
-    for group in keys(tem_variables)
-        data = outforw[group]
-        for k in tem_variables[group]
-            outputs[i] .= convert(Array, deepcopy(data[k]))
-            i += 1
-        end
-    end
+function unpackOpti(args; forcing_variables)
+    nforc = length(forcing_variables)
+    outputs = first(args)
+    forcings = args[2:(nforc+1)]
+    observations = args[(nforc+2):end]
+    return outputs,forcings, observations
 end
 
 
-"""
-optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
-"""
+function optimizeModelInner(args...; out, tem, info_optim, forcing_variables, obs_variables, spinup_forcing)
+    output, forcing, observation = unpackOpti(args; forcing_variables)
+    forcing = (; Pair.(forcing_variables, forcing)...)
+    observation = (; Pair.(obs_variables, observation)...)
+    params, _ = optimizeModel(forcing, out, observation,
+    tem, info_optim; spinup_forcing=spinup_forcing)
+    output[:] = params.optim
+end
+
+
 function mapOptimizeModel(forcing, output, tem, info_optim, observations,
-    ; spinup_forcing=nothing)
-    incubes = forcing.data
-    indims = forcing.dims
+    ; spinup_forcing=nothing, max_cache=1e9)
+    incubes = (forcing.data..., observations.data...)
+    indims = (forcing.dims..., observations.dims...)
     forcing_variables = forcing.variables
     outdims = output.dims
     out = output.init_out
-    obscubes = observations.data
+    # obscubes = observations.data
     obs_variables = observations.variables
 
 
-    res = mapCube(runGridCell,
+    params = mapCube(optimizeModelInner,
     (incubes...,);
     out=out,
     tem=tem,
+    info_optim = info_optim,
     forcing_variables=forcing_variables,
+    obs_variables=obs_variables,
     spinup_forcing=spinup_forcing,
     indims=indims,
-    outdims=outdims
+    outdims=output.paramdims,
+    max_cache=max_cache,
     )
-
-    optimVars = info_optim.variables.optim;
-    # get the list of observed variables, model variables to compare observation against, 
-    # obsVars, optimVars, storeVars = getConstraintNames(info);
-
-    # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(tem.models.forward, info_optim.optimized_paramaters)
-
-    # get the defaults and bounds
-    default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
-    lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
-    upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
-
-    # make the cost function handle
-    cost_function = x -> getLoss(x, forcing, spinup_forcing, initOut,
-        observations, tblParams, optimVars, tem, info_optim)
-
-    # run the optimizer
-    optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, info_optim.algorithm.options, Val(info_optim.algorithm.method))
-
-    # update the parameter table with the optimized values
-    tblParams.optim .= optim_para
-    newApproaches = updateParameters(tblParams, tem.models.forward);
-    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing); # spinup + forward run!
-    return tblParams, outevolution
+    return params   
 end

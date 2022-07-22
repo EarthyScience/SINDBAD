@@ -29,9 +29,8 @@ function readConfiguration(info_exp, base_path)
             tmp = Table(prm)
             info[k] = tmp
         end
-        @info "Read: configuration:: $(k) ::: $(config_path)"
+        @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
     end
-    println("----------------------------------------------")
     # rm second level
     for (k, v) in info
         if typeof(v) <: Dict
@@ -117,9 +116,9 @@ function getConfiguration(sindbad_experiment)
     infoTuple = typenarrow!(info)
     infoTuple = (;infoTuple..., experiment_root=local_root)
     infoTuple = (;infoTuple..., settings_root=exp_base_path)
-    @info "Setup output directory:"
     infoTuple = setupOutputDirectory(infoTuple)
-    @info " $(infoTuple.output_root)"
+    @info "Setup output directory: $(infoTuple.output_root)"
+    println("----------------------------------------------")
     return infoTuple
     # return info
 end
