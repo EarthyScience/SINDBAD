@@ -34,7 +34,7 @@ optimVars = info_optim.variables.optim;
 
 # get the subset of parameters table that consists of only optimized parameters
 tblParams = getParameters(tem.models.forward)
-tblParams = getParameters(tem.models.forward, Symbol.(info_optim.optimized_paramaters))
+tblParams = getParameters(tem.models.forward, info_optim.optimized_paramaters)
 
 # get the defaults and bounds
 default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
