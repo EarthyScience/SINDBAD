@@ -20,7 +20,6 @@ outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup
 
 
 observations = getObservation(info); 
-info = setupOptimization(info);
 out = createInitOut(info);
 optimizeit=true
 outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);   
