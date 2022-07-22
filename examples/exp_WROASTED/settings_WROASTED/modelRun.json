@@ -18,7 +18,6 @@
 	},
 	"flags":
 	{
-		"runForwardYearly": 	false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
@@ -28,7 +27,8 @@
 	{
 		"verbosity": 5,
 		"dataType": "Float64",
-		"tolerance": 1.0e-3
+		"tolerance": 1.0e-3,
+		"yax_max_cache": 2e9
 	},
 	"output": {
 		"all": true,

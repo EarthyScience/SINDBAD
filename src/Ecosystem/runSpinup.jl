@@ -129,6 +129,7 @@ function runSpinup(forward_models, forcing, init_out, tem; spinup_forcing=nothin
     history = tem.spinup.flags.storeSpinupHistory;
     out = deepcopy(init_out)
     spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
+    @info "runSpinup:: running spinup sequences..."
     for spin_seq in tem.spinup.sequence
         forc = Symbol(spin_seq["forcing"])
         nLoops = spin_seq["nLoops"]
@@ -146,8 +147,13 @@ function runSpinup(forward_models, forcing, init_out, tem; spinup_forcing=nothin
         else
             spinup_models = forward_models[tem.models.is_spinup.==1]
         end
+        if !tem.helpers.run.runOpti
+            @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
+        end
         for nL in 1:nLoops
-            @info "Spinup:: sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc), Loop: $(nL)/$(nLoops)"
+            if !tem.helpers.run.runOpti
+                @info "         Loop: $(nL)/$(nLoops)"
+            end
             out = doSpinup(spinup_models, sel_forcing, out, tem, Val(spinupMode))
             if history
                 push!(spinuplog, values(deepcopy(out))[1:length(out.pools)])
