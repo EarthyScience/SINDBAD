@@ -45,7 +45,7 @@ using YAXArrays: savecube
 using AxisKeys
 using AxisKeys: KeyedArray, AxisKeys
 using FillArrays
-using YAXArrayBase: getdata
+using YAXArrayBase: getdata, YAXArrayBase
 
 include("tools/tools.jl")
 include("Ecosystem/Ecosystem.jl")
