@@ -11,13 +11,13 @@
 		"runEcosystem": ["time"]
 	},
 	"useUncertainty": false,
-	"algorithm": {
+	"algorithm_LBFGS": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "optim_LBFGS.json",
+		"options_file": "",
 		"isMultiObj": false
 	},
-	"algorithm_cmaes": {
+	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
