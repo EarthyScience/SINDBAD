@@ -3,10 +3,6 @@
 		"gpp"
 	],
 	"multiConstraintMethod": "sum",
-	"mapping": {
-		"yaxarray": ["longitude", "latitude"],
-		"runEcosystem": ["time"]
-	},
 	"useUncertainty": false,
 	"algorithm1": {
 		"package": "Optim",
