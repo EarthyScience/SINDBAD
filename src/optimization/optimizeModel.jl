@@ -105,8 +105,11 @@ end
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
 function getData(outsmodel, observations, obsV, modelVarInfo)
-    ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable
-    ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
+    ŷField = getproperty(outsmodel, modelVarInfo[1])
+    ŷ = getproperty(ŷField, modelVarInfo[2])
+    #...)' |> Matrix |> vec
+    # ŷField = getproperty(outsmodel, modelVarInfo[1]).evap
+    # ŷ = hcat(getproperty(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
     y = getproperty(observations, obsV); 
     yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
     return (y, yσ, ŷ)
