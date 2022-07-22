@@ -13,7 +13,7 @@ using DataFrames: DataFrame
 export describe, bounds, units
 
 export sindbad_models
-export LandEcosystem
+# export LandEcosystem
 
 ## Define SINDBAD supertype
 abstract type LandEcosystem end
@@ -49,6 +49,6 @@ for model_name_symbol in model_list
 end
 
 # shorten the stacktrace when there are errors in models
-Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
+# Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
 
 end
