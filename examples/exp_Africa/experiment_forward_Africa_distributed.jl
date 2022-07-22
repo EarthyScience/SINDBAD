@@ -1,16 +1,10 @@
 using Revise
 using Distributed
-addprocs(20)
+addprocs(2)
 @everywhere using Pkg
-@everywhere Pkg.activate(".")
+@everywhere Pkg.activate(joinpath(@__DIR__,".."))
 
 @everywhere using Sindbad
-@everywhere using Tables:
-    columntable,
-    matrix
-@everywhere using TableOperations:
-    select
-
 
 expFile = "exp_Africa/settings_Africa/experiment.json"
 
@@ -23,5 +17,5 @@ forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
 
 output = setupOutput(info);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
+outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
 

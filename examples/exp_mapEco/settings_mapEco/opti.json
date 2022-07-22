@@ -1,7 +1,6 @@
 {
 	"variables2constrain": [
 		"gpp",
-		"ndvi",
 		"nee",
 		"transpiration",
 		"evapotranspiration"
@@ -12,19 +11,19 @@
 		"runEcosystem": ["time"]
 	},
 	"useUncertainty": false,
-	"algorithm_optim": {
+	"algorithm_LBFGS": {
 		"package": "Optim",
 		"method": "LBFGS",
-		"options_file": "optim_LBFGS.json",
+		"options_file": "",
 		"isMultiObj": false
 	},
-	"algorithm_cmaes": {
+	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
-	"algorithm": {
+	"algorithm_d": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",

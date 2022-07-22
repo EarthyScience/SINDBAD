@@ -24,7 +24,6 @@ outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup
 
 
 observations = getObservation(info); 
-info = setupOptimization(info);
 
 
 tblParams = getParameters(info.tem.models.forward, info.optim.optimized_paramaters)
