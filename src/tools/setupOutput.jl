@@ -1,4 +1,4 @@
-export createInitOut, setupOutput
+export createInitOut, setupOutput, setupOptiOutput
 
 """
     createInitOut(info)
@@ -91,4 +91,14 @@ function setupOutput(info)
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
     return (; init_out=out, dims=outdims, variables = vnames)
+end
+
+function setupOptiOutput(info, output)
+    params = info.optim.optimized_paramaters
+    paramaxis = CategoricalAxis("Parameter", params)
+    od = OutDims(paramaxis, params, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.dataFormat)"), overwrite=true)
+    # od = OutDims(paramaxis)
+     # list of parameter
+    output = setTupleField(output, (:paramdims, od))
+    return output
 end

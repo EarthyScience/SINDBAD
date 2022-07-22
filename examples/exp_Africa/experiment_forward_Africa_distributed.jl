@@ -1,8 +1,8 @@
 using Revise
 using Distributed
-addprocs(20)
+addprocs(10)
 @everywhere using Pkg
-@everywhere Pkg.activate(".")
+@everywhere Pkg.activate(joinpath(@__DIR__,".."))
 
 @everywhere using Sindbad
 @everywhere using Tables:
