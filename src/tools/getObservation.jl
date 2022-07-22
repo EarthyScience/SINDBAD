@@ -69,6 +69,8 @@ function get_yax_data(v, nc)
         RangeAxis(dn, dv)
     end
     yax = YAXArray(ax, v)
+    #todo: make another yaxarray so that the fileID is shared across workers in multiprocessor. Similar to what is done in the getForcing
+    # yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath,vinfo.sourceVariableName,size(v)))
     return yax
 end
 
@@ -189,7 +191,7 @@ function getObservation(info, ::Val{:yaxarray})
         push!(incubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getInDims.(incubes, Ref(info.optim.mapping.yaxarray))
+    indims = getInDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
     nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
     @info "getObservation: getting variable names..."
