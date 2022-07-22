@@ -16,7 +16,7 @@ forcing = getForcing(info, Val(:yaxarray));
 output = setupOutput(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem);
+@time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
 
 outcubes[2]
 

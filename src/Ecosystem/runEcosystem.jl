@@ -131,10 +131,10 @@ function unpackYax(args; tem, forcing_variables)
 end
 
 
-function runGridCell(args...; out, tem, forcing_variables, spinup_forcing)
+function runGridCell(args...; out, tem, forward_models, forcing_variables, spinup_forcing)
     outputs, inputs = unpackYax(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    outforw = runEcosystem(tem.models.forward, forcing, out, tem; spinup_forcing=spinup_forcing)
+    outforw = runEcosystem(forward_models, forcing, out, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
     for group in keys(tem_variables)
@@ -146,7 +146,8 @@ function runGridCell(args...; out, tem, forcing_variables, spinup_forcing)
     end
 end
 
-function mapRunEcosystem(forcing, output, tem; spinup_forcing=nothing)
+
+function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=nothing)
     incubes = forcing.data
     indims = forcing.dims
     forcing_variables = forcing.variables
@@ -157,6 +158,7 @@ function mapRunEcosystem(forcing, output, tem; spinup_forcing=nothing)
         (incubes...,);
         out=out,
         tem=tem,
+        forward_models=forward_models,
         forcing_variables=forcing_variables,
         spinup_forcing=spinup_forcing,
         indims=indims,
