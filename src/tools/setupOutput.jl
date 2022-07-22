@@ -1,4 +1,4 @@
-export createInitOut, setupOutput
+export createInitOut, setupOutput, setupOptiOutput
 
 """
     createInitOut(info)
@@ -81,14 +81,33 @@ function getOrderedOutputList(varlist, var_o)
 end
 
 function setupOutput(info)
+    @info "setupOutput: creating initial out/land..."
     out = createInitOut(info)
     outformat = info.modelRun.output.dataFormat
+    @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
         getOrderedOutputList(keys(info.modelRun.output.variables), vn)
     end
+    @info "setupOutput: getting output dimension..."
     outdims = map(datavars) do vn
         getOutDims(info, vn, info.output_root, outformat)
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
-    return (; init_out=out, dims=outdims, variables = vnames)
+    output_tuple = (; init_out=out, dims=outdims, variables = vnames)
+    if info.modelRun.flags.runOpti
+        @info "setupOutput: getting parameter output for optimization..."
+        output_tuple = setupOptiOutput(info, output_tuple);
+    end
+    println("----------------------------------------------")
+    return output_tuple
+end
+
+function setupOptiOutput(info, output)
+    params = info.optim.optimized_paramaters
+    paramaxis = CategoricalAxis("Parameter", params)
+    od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.dataFormat)"), overwrite=true)
+    # od = OutDims(paramaxis)
+     # list of parameter
+    output = setTupleField(output, (:paramdims, od))
+    return output
 end
