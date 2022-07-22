@@ -6,10 +6,6 @@
 		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
-	"mapping": {
-		"yaxarray": ["longitude", "latitude"],
-		"runEcosystem": ["time"]
-	},
 	"useUncertainty": false,
 	"algorithm_LBFGS": {
 		"package": "Optim",
