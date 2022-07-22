@@ -508,7 +508,8 @@ function setupExperiment(info)
     info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
     if info.modelRun.flags.runOpti
         @info "SetupExperiment: setting Optimization info..."
-            end
+        info = setupOptimization(info)
+    end
     println("----------------------------------------------")
     return info
 end
