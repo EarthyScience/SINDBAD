@@ -91,10 +91,7 @@ function runForward(forward_models, forcing, out, tem_variables, tem_helpers)
     else
         res = timeLoopForward(forward_models, forcing, out, tem_variables, tem_helpers)
     end
-    # push!(debugcatch, allout)
-    # out_temporal = columntable(outtemp)
     return allout
-    # return outtemp[1]
 end
 
 """
