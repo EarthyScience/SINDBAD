@@ -4,7 +4,7 @@ using ProgressMeter
 # Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
 Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 
-expFile = "exp_mapEco/settings_mapEco/experiment.json"
+expFile = "exp_mapEco/settings_mapEco/experiment.json";
 
 
 info = getConfiguration(expFile);
@@ -19,7 +19,6 @@ output = setupOutput(info);
 #Sindbad.eval(:(debugcatcherr = []))
 
 outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
-
 # optimization
 observations = getObservation(info, Val(:yaxarray)); 
 
