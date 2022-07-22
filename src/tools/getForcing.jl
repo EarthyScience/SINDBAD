@@ -122,7 +122,7 @@ function getForcing(info, ::Val{:yaxarray})
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
-        yax = YAXArray(ax, v)
+        yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath,vinfo.sourceVariableName,size(v)))
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> Sindbad.cleanInputData(v, vinfo, numtype), yax)
     end
