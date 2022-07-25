@@ -46,7 +46,7 @@ function setupOptimization(info)
     algo_method = info.opti.algorithm.package * "_" * info.opti.algorithm.method
     tmp_algorithm = setTupleField(tmp_algorithm, (:method, Symbol(algo_method)))
     tmp_algorithm = setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
-    if length(strip(info.opti.algorithm.options_file)) > 0
+    if !isnothing(info.opti.algorithm.options_file)
         options_path = info.opti.algorithm.options_file
         if !isabspath(options_path)
             options_path = joinpath(info.settings_root, options_path)
