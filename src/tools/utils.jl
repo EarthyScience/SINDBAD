@@ -5,6 +5,24 @@ export flagUpper, flagLower
 export AllNaN
 export nanmax, nanmin
 export OutWrapper
+export nonUnique
+
+
+"""
+nonUnique(x::AbstractArray{T}) where T
+returns a vector of duplicates in the input vector
+"""
+function nonUnique(x::AbstractArray{T}) where T
+    xs = sort(x)
+    duplicatedvector = T[]
+    for i=2:length(xs)
+        if (isequal(xs[i],xs[i-1]) && (length(duplicatedvector)==0 || !isequal(duplicatedvector[end], xs[i])))
+            push!(duplicatedvector,xs[i])
+        end
+    end
+    duplicatedvector
+end
+
 
 """
     applyUnitConversion(data_in, conversion, isadditive=false)

@@ -23,14 +23,42 @@ function changeModelOrder(info, selModels)
     fullModels = sindbad_models.model
     fullModels_reordered=Vector{Symbol}(undef, length(fullModels))
     checkSelectedModels(fullModels, selModels)
-    newOrders = []
+    newOrders = Int64[]
+    newModels = (;)
     for sm in selModels
         modInfo = getfield(info.modelStructure.models, sm)
         if :order in propertynames(modInfo)
             push!(newOrders, modInfo.order)
+            newModels = setTupleField(newModels,(sm, modInfo.order))
             fullModels_reordered[modInfo.order]=sm
         end
     end
+    #check for duplicates in the order
+    if length(newOrders) != length(unique(newOrders))
+        nun = nonUnique(newOrders)
+        error("There are duplicates in the order [$nun] set in modelStructure.json. Cannot set the same order for different models.")
+    end
+    newOrders = sort(newOrders, rev=true)
+    nmd=deepcopy(selModels)
+    for nord in newOrders
+        sm=nothing
+        for nm in keys(newModels)
+            if getproperty(newModels, nm) == nord
+                sm = nm
+            end
+        end
+        # @show nord, sm
+        tmp=[]
+        for mod in nmd
+            if mod == sm
+                continue
+            else
+                push!(tmp, sm)
+            end
+        end
+    end    
+
+    # @show newOrders, newModels
     fmInd = 1
     for (ind, fm) in enumerate(fullModels)
         if ind ∉ newOrders
