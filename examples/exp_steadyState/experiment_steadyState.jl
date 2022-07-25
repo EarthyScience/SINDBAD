@@ -15,7 +15,7 @@ expFile = "exp_steadyState/settings_steadyState/experiment.json"
 
 info = getConfiguration(expFile);
 info = setupExperiment(info);
-forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
 out = createInitOut(info);
 

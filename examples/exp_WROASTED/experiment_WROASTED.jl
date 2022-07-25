@@ -2,39 +2,23 @@ using Revise
 using Sindbad
 # using Suppressor
 # using Optimization
-using Tables:
-    columntable,
-    matrix
-using TableOperations:
-    select
+Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 expFile = "exp_WROASTED/settings_WROASTED/experiment.json"
 
 
 info = getConfiguration(expFile);
 info = setupExperiment(info);
-forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
-spinup_forcing = getSpinupForcing(forcing, info.tem);
+forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
 
-observations = getObservation(info); 
-out = createInitOut(info);
+output = setupOutput(info);
 
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-obsV = :gpp;
-modelVarInfo = [:fluxes, :gpp];
-ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
-y = getproperty(observations, obsV);
-yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
+#Sindbad.eval(:(debugcatcherr = []))
 
-using Plots
-plot(ŷ)
-plot!(y)
-plot!(yσ)
+outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
 
-states = outsmodel.states |> columntable;
-pools = outsmodel.pools |> columntable;
-fluxes = outsmodel.fluxes |> columntable;
+# optimization
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend))); 
 
-using Plots
-plot(fluxes.NEE)
-plot!(observations.nee)
+res = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
+    ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
