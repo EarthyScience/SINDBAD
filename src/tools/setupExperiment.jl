@@ -21,8 +21,12 @@ returns a list of models reordered according to orders provided in modelStructur
 """
 function changeModelOrder(info, selModels)
     fullModels = sindbad_models.model
-    fullModels_reordered=Vector{Symbol}(undef, length(fullModels))
     checkSelectedModels(fullModels, selModels)
+    # get orders of fixed models that cannot be changed
+    order_getPools = findfirst(e->e==:getPools, fullModels)
+    order_cCycle = findfirst(e->e==:cCycle, fullModels)
+
+    # get the new orders and models from modelStructure.json
     newOrders = Int64[]
     newModels = (;)
     for sm in selModels
@@ -30,49 +34,46 @@ function changeModelOrder(info, selModels)
         if :order in propertynames(modInfo)
             push!(newOrders, modInfo.order)
             newModels = setTupleField(newModels,(sm, modInfo.order))
-            fullModels_reordered[modInfo.order]=sm
+            if modInfo.order <= order_getPools
+                error("The model order for $(sm) is set at $(modInfo.order). Any order earlier than or same as getPools ($order_getPools) is not permitted.")
+            end
+            if modInfo.order >= order_cCycle
+                error("The model order for $(sm) is set at $(modInfo.order). Any order later than or same as cCycle ($order_cCycle) is not permitted.")
+            end
         end
     end
+
     #check for duplicates in the order
     if length(newOrders) != length(unique(newOrders))
         nun = nonUnique(newOrders)
         error("There are duplicates in the order [$nun] set in modelStructure.json. Cannot set the same order for different models.")
     end
+
+    # sort the orders
     newOrders = sort(newOrders, rev=true)
-    nmd=deepcopy(selModels)
-    for nord in newOrders
+
+    # create re-ordered list of full models
+    fullModels_reordered = deepcopy(fullModels)
+    for new_order in newOrders
         sm=nothing
         for nm in keys(newModels)
-            if getproperty(newModels, nm) == nord
+            if getproperty(newModels, nm) == new_order
                 sm = nm
             end
         end
-        # @show nord, sm
-        tmp=[]
-        for mod in nmd
-            if mod == sm
-                continue
-            else
-                push!(tmp, sm)
-            end
-        end
-    end    
-
-    # @show newOrders, newModels
-    fmInd = 1
-    for (ind, fm) in enumerate(fullModels)
-        if ind ∉ newOrders
-            fullModels_reordered[fmInd] = fm
-            fmInd = fmInd + 1
+        old_order = findfirst(e->e==sm, fullModels_reordered)
+        # get the models without the model to be re-ordered
+        tmp = filter!(e->e≠sm, fullModels_reordered)
+        # insert the re-ordered model to the right place
+        if old_order >= new_order
+            insert!(tmp, new_order, sm)
         else
-            fmInd = fmInd + 1
-            fullModels_reordered[fmInd] = fm
+            insert!(tmp, new_order-1, sm)
         end
-
-    end
-    @warn "changeModelOrder: not fully functional yet. So, returns sindbad_models as is as full models"
-    # @show fullModels_reordered, length(fullModels_reordered)
-    return fullModels
+        fullModels_reordered = deepcopy(tmp)
+    end    
+    # @warn "changeModelOrder: not fully functional yet. So, returns sindbad_models as is as full models"
+    return fullModels_reordered
 end
 
 """
@@ -402,10 +403,10 @@ end
 
 
 """
-    setNumericHelpers(info, ttype=info.modelRun.rules.dataType)
-sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.dataType.
+    setNumericHelpers(info, ttype=info.modelRun.rules.data_type)
+sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.data_type.
 """
-function setNumericHelpers(info, ttype=info.modelRun.rules.dataType)
+function setNumericHelpers(info, ttype=info.modelRun.rules.data_type)
     𝟘 = setNumberType(ttype)(0)
     𝟙 = setNumberType(ttype)(1)
     tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
