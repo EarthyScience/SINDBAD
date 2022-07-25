@@ -83,7 +83,7 @@ end
 function setupOutput(info)
     @info "setupOutput: creating initial out/land..."
     out = createInitOut(info)
-    outformat = info.modelRun.output.dataFormat
+    outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
         getOrderedOutputList(keys(info.modelRun.output.variables), vn)
@@ -105,7 +105,7 @@ end
 function setupOptiOutput(info, output)
     params = info.optim.optimized_paramaters
     paramaxis = CategoricalAxis("Parameter", params)
-    od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.dataFormat)"), overwrite=true)
+    od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
     # od = OutDims(paramaxis)
      # list of parameter
     output = setTupleField(output, (:paramdims, od))

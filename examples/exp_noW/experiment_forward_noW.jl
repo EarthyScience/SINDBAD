@@ -12,7 +12,7 @@ expFile = "exp_noW/settings_noW/experiment.json"
 info = getConfiguration(expFile);
 
 info = setupExperiment(info);
-forcing = getForcing(info, Val(Symbol(info.forcing.data_backend)));
+forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 out = createInitOut(info);

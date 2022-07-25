@@ -26,14 +26,15 @@
 	"rules":
 	{
 		"verbosity": 5,
-		"dataType": "Float64",
+		"data_type": "Float64",
+		"data_backend": "yaxarray",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},
 	"output": {
-		"all": false,
-		"path": "sandbox/output/",
-		"dataFormat": ".zarr",
+		"all": true,
+		"path": "exp_mapFN/output/",
+		"format": ".nc",
 		"depth_dimensions":{
 			"d_soil": "soilW",
 			"d_cEco": 8,
