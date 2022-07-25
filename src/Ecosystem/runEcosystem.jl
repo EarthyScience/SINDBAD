@@ -131,7 +131,7 @@ function runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing
         if tem.spinup.flags.doSpinup
             out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
         end
-    res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+        res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
     end
     return allout
 
@@ -170,12 +170,12 @@ function runGridCell(args...; out, tem, forward_models, forcing_variables, spinu
 end
 
 
-function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=nothing)
+function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=nothing, max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
     forcing_variables = forcing.variables
     outdims = output.dims
-    out = output.init_out
+    out = deepcopy(output.init_out)
 
     res = mapCube(runGridCell,
         (incubes...,);
@@ -185,7 +185,8 @@ function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=no
         forcing_variables=forcing_variables,
         spinup_forcing=spinup_forcing,
         indims=indims,
-        outdims=outdims
+        outdims=outdims,
+        max_cache=max_cache
     )
     #TODO: save the output cubes
     return (; Pair.(output.variables, res)...)

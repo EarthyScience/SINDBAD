@@ -86,7 +86,7 @@
         },
         "evaporation": {
             "approach": "fAPAR",
-            "order": 52
+            "order": 51
         },
         "evapotranspiration": {
             "approach": "sum"
@@ -180,7 +180,7 @@
         },
         "transpiration": {
             "approach": "coupled",
-            "order": 53
+            "order": 52
         },
         "transpirationSupply": {
             "approach": "wAWC"
