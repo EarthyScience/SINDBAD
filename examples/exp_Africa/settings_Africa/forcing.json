@@ -9,7 +9,6 @@
 		"longitude": "longitude",
 		"time": "time"
 	},
-	"data_backend": "yaxarray",
 	"sel_mask": null,
 	"defaultForcing": {
 		"variableUnit": null,
