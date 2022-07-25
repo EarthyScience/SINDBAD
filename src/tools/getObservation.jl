@@ -153,17 +153,18 @@ function getObservation(info, ::Val{:yaxarray})
         end
 
         # get the mask to apply to data and save to observation cube
-        # get the mask for selecting the data
-        has_mask = true
+        has_mask = false
         v_mask_path=mask_path
         if hasproperty(vinfo, :sel_mask)
             v_mask_path = vinfo.sel_mask
             if !isnothing(v_mask_path)
                 nc_mask = getNCForMask(v_mask_path)
+                has_mask = true
             else
-                has_mask = false
                 nc_mask = nc
             end
+        else
+            nc_mask = nc
         end
 
         v_mask = nothing
@@ -173,7 +174,7 @@ function getObservation(info, ::Val{:yaxarray})
             v_mask = nc_mask[maskvar]
         else
             v_mask = v #todo: make ones with the same characteristics as v
-            @info "          Mask: selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are both set as null in json [$(info.opti.constraints.one_sel_mask)]"
+            @info "          Mask: selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are either non-existent or set as null in json"
         end
 
         yax = get_yax_data(v, nc)
