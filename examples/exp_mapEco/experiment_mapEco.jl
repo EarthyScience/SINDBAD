@@ -18,11 +18,11 @@ output = setupOutput(info);
 
 #Sindbad.eval(:(debugcatcherr = []))
 
-outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
+outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
 # optimization
 observations = getObservation(info, Val(:yaxarray)); 
 
 res = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
-    ; spinup_forcing=nothing,max_cache=info.modelRun.rules.yax_max_cache)
+    ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
 
 savecube(res,"./optiparams.zarr")
