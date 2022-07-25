@@ -7,19 +7,19 @@
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm_LBFGS": {
-		"package": "Optim",
-		"method": "LBFGS",
+	"algorithm": {
+		"package": "Evolutionary",
+		"method": "CMAES",
 		"options_file": null,
 		"isMultiObj": false
 	},
-	"algorithm": {
+	"algorithm_cmaes": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
-	"algorithm_d": {
+	"algorithmcc": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
@@ -75,8 +75,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/DE-All.1979.2017.daily.nc",
-		"one_sel_mask": null,
+		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",
@@ -84,13 +83,12 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "mse",
+			"costMetric": "nseinv",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
 		"variables": {
 			"gpp": {
-				"sel_mask": null,
 				"modelFullVar": "fluxes.gpp",
 				"data": {
 					"variableUnit": "gC m-2 day-1",
@@ -129,11 +127,10 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"nee": {
-				"sel_mask": null,
 				"modelFullVar": "fluxes.NEE",
 				"data": {
 					"variableUnit": "gC m-2 day-1",
@@ -172,11 +169,10 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"reco": {
-				"sel_mask": null,
 				"modelFullVar": "fluxes.cRECO",
 				"data": {
 					"variableUnit": "gC m-2 day-1",
@@ -215,11 +211,10 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"evapotranspiration": {
-				"sel_mask": null,
 				"modelFullVar": "fluxes.evapotranspiration",
 				"data": {
 					"variableUnit": "mm day-1",
@@ -258,11 +253,10 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"transpiration": {
-				"sel_mask": null,
 				"modelFullVar": "fluxes.transpiration",
 				"data": {
 					"variableUnit": "mm day-1",
@@ -301,11 +295,10 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"agb": {
-				"sel_mask": null,
 				"modelFullVar": "pools.cVegWood",
 				"data": {
 					"variableUnit": "gC m-2",
@@ -340,7 +333,6 @@
 				}
 			},
 			"ndvi": {
-				"sel_mask": null,
 				"modelFullVar": "states.fAPAR",
 				"data": {
 					"variableUnit": "adimensional",
@@ -371,7 +363,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			}
 		}
