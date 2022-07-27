@@ -2,6 +2,8 @@ using Revise
 using Sindbad
 # using Suppressor
 # using Optimization
+using Aqua
+Aqua.test_all(Sindbad)
 Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 expFile = "exp_WROASTED/settings_WROASTED/experiment.json"
 
