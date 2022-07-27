@@ -242,9 +242,8 @@ function mapOptimizeModel(forcing, output, tem, info_optim, observations,
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
     forcing_variables = forcing.variables
-    outdims = output.dims
+    outdims = output.paramdims
     out = output.init_out
-    # obscubes = observations.data
     obs_variables = observations.variables
 
 
@@ -257,7 +256,7 @@ function mapOptimizeModel(forcing, output, tem, info_optim, observations,
     obs_variables=obs_variables,
     spinup_forcing=spinup_forcing,
     indims=indims,
-    outdims=output.paramdims,
+    outdims=outdims,
     max_cache=max_cache,
     )
     return params   
