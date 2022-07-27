@@ -16,12 +16,19 @@ info = setupExperiment(info);
 
 
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-spinup_forcing = getSpinupForcing(forcing, info.tem);
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
+output = setupOutput(info);
 
-out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-pools = outsmodel.pools |> columntable;
+#Sindbad.eval(:(debugcatcherr = []))
+
+outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
+
+# # optimization
+# observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend))); 
+
+# res = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
+#     ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
+
 soilW=hcat(pools.soilW...)';
 plot(soilW[:, 1])
 plot!(soilW[:, 2])
