@@ -7,7 +7,7 @@ export getForcingForTimeStep
 """
 runModels(forcing, models, out)
 """
-function runModels(forcing, models, out, tem_helpers)
+function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     for model in models
         out = Models.compute(model, forcing, out, tem_helpers)
         if tem_helpers.run.runUpdateModels
@@ -20,7 +20,7 @@ end
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
-function filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
+function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables=true)
     if !filter_variables
         fout=out
     else
@@ -34,14 +34,14 @@ function filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
     return fout
 end
 
-function runPrecompute(forcing, models, out, tem_helpers)
+function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     for model in models
         out = Models.precompute(model, forcing, out, tem_helpers)
     end
     return out
 end
 
-function getForcingTimeSize(forcing)
+function getForcingTimeSize(forcing::NamedTuple)
     forcingTimeSize = 1
     for v in forcing
         if in(:time, AxisKeys.dimnames(v)) 
@@ -51,13 +51,13 @@ function getForcingTimeSize(forcing)
     return forcingTimeSize
 end
 
-function getForcingForTimeStep(forcing, ts)
+function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     map(forcing) do v
         in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
 
-function timeLoopForward(forward_models, forcing, out, tem_variables, tem_helpers)
+function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple, tem_variables::NamedTuple, tem_helpers::NamedTuple)
     time_steps = getForcingTimeSize(forcing)
     # time_steps = tem_helpers.dates.size
     res = map(1: time_steps) do ts
@@ -73,7 +73,7 @@ end
 """
 runForward(selectedModels, forcing, out, helpers)
 """
-function runForward(forward_models, forcing, out, tem_variables, tem_helpers)
+function runForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple, tem_variables::NamedTuple, tem_helpers::NamedTuple)
     additionaldims = setdiff(keys(tem_helpers.run.loop),[:time])
     allout = if !isempty(additionaldims)
         spacesize = values(tem_helpers.run.loop[additionaldims])
@@ -97,7 +97,7 @@ end
 """
 removeEmptyFields(tpl)
 """
-function removeEmptyFields(tpl)
+function removeEmptyFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
     nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
     return NamedTuple{nkeys}(nvals)
@@ -107,47 +107,52 @@ end
 """
 runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
 """
-function runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing, run_forward=false)
-    out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
-    if run_forward == false
-        additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-        allout = if !isempty(additionaldims)
-            spacesize = values(tem.helpers.run.loop[additionaldims])
-            @show spacesize
-            loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
-            @show loopvars
-            res = broadcast(loopvars...) do lI
-                outnow_spin = deepcopy(out_prec)
-                if tem.spinup.flags.doSpinup
-                    outnow_spin = runSpinup(approaches, forcing, outnow_spin, tem; spinup_forcing=spinup_forcing)
+function runEcosystem(approaches::Tuple, forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=false)
+    @info "runEcosystem:: running Ecosystem"
+    @time begin
+        out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
+        outEco=nothing
+        if run_forward == false
+            additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+            allout = if !isempty(additionaldims)
+                spacesize = values(tem.helpers.run.loop[additionaldims])
+                @show spacesize
+                loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
+                @show loopvars
+                res = broadcast(loopvars...) do lI
+                    outnow_spin = deepcopy(out_prec)
+                    if tem.spinup.flags.doSpinup
+                        outnow_spin = runSpinup(approaches, forcing, outnow_spin, tem; spinup_forcing=spinup_forcing)
+                    end
+                    timeLoopForward(forward_models, forcing, outnow_spin, tem.variables, tem.helpers)
                 end
-                timeLoopForward(forward_models, forcing, outnow_spin, tem.variables, tem.helpers)
+                for d in ndims(res)
+                    res = reducedim(catnt,res,dims=d)
+                end 
+                res[1]
+            else
+                out_spin = out_prec
+                if tem.spinup.flags.doSpinup
+                    out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
+                end
+                res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
             end
-            for d in ndims(res)
-                res = reducedim(catnt,res,dims=d)
-            end 
-            res[1]
+            outEco = allout
         else
             out_spin = out_prec
             if tem.spinup.flags.doSpinup
                 out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
             end
-            res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+            out_forw = runForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+            # out_forw = removeEmptyFields(out_forw)
+            outEco = out_forw
         end
-        return allout
-    else
-        out_spin = out_prec
-        if tem.spinup.flags.doSpinup
-            out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
-        end
-        out_forw = runForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
-        # out_forw = removeEmptyFields(out_forw)
-        return out_forw
     end
+    return outEco
 end
 
 
-function unpackYax(args; tem, forcing_variables)
+function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
     nin = length(forcing_variables)
     nout = sum(length, tem.variables)
     outputs = args[1:nout]
@@ -156,8 +161,8 @@ function unpackYax(args; tem, forcing_variables)
 end
 
 
-function runGridCell(args...; out, tem, forward_models, forcing_variables, spinup_forcing)
-    outputs, inputs = unpackYax(args; tem, forcing_variables)
+function doRunEcosystem(args...; out::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray, spinup_forcing::Any)
+    outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
     outforw = runEcosystem(forward_models, forcing, out, tem; spinup_forcing=spinup_forcing)
     i = 1
@@ -172,14 +177,14 @@ function runGridCell(args...; out, tem, forward_models, forcing_variables, spinu
 end
 
 
-function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=nothing, max_cache=1e9)
+function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, forward_models::Tuple; spinup_forcing=nothing, max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
-    forcing_variables = forcing.variables
+    forcing_variables = forcing.variables |> collect
     outdims = output.dims
     out = deepcopy(output.init_out)
 
-    res = mapCube(runGridCell,
+    outcubes = mapCube(doRunEcosystem,
         (incubes...,);
         out=out,
         tem=tem,
@@ -191,5 +196,5 @@ function mapRunEcosystem(forcing, output, tem, forward_models; spinup_forcing=no
         max_cache=max_cache
     )
     #TODO: save the output cubes
-    return (; Pair.(output.variables, res)...)
+    return (; Pair.(output.variables, outcubes)...)
 end
