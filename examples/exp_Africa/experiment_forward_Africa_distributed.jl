@@ -1,6 +1,6 @@
 using Revise
 using Distributed
-addprocs(20)
+# addprocs(20)
 @everywhere using Pkg
 @everywhere Pkg.activate(joinpath(@__DIR__,".."))
 
