@@ -20,8 +20,8 @@
 	{
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				true
+		"runOpti": 				false,
+		"calcCost":				false
 	},
 	"rules":
 	{
