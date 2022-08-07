@@ -46,7 +46,7 @@ function changeModelOrder(info, selModels)
     #check for duplicates in the order
     if length(newOrders) != length(unique(newOrders))
         nun = nonUnique(newOrders)
-        error("There are duplicates in the order [$nun] set in modelStructure.json. Cannot set the same order for different models.")
+        error("There are duplicates in the order [$(nun)] set in modelStructure.json. Cannot set the same order for different models.")
     end
 
     # sort the orders
@@ -98,7 +98,7 @@ returns a new Table with the optimised values from updated_table.
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)
-    for i in 1:length(updated_table)
+    for i in eachindex(updated_table)
         subtbl = filter(row -> row.names == Symbol(updated_table[i].names) && row.models == Symbol(updated_table[i].models), original_table)
         if isempty(subtbl)
             error("model: $(updated_table[i].names) and model $(updated_table[i].models) not found")

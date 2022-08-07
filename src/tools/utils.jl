@@ -15,9 +15,11 @@ returns a vector of duplicates in the input vector
 function nonUnique(x::AbstractArray{T}) where T
     xs = sort(x)
     duplicatedvector = T[]
-    for i=2:length(xs)
-        if (isequal(xs[i],xs[i-1]) && (length(duplicatedvector)==0 || !isequal(duplicatedvector[end], xs[i])))
-            push!(duplicatedvector,xs[i])
+    for i=eachindex(xs)
+        if i > 1
+            if (isequal(xs[i],xs[i-1]) && (length(duplicatedvector)==0 || !isequal(duplicatedvector[end], xs[i])))
+                push!(duplicatedvector,xs[i])
+            end
         end
     end
     duplicatedvector
@@ -40,8 +42,8 @@ end
 function tuple2table(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)
-    dNames = [Symbol(tpNames[i]) for i in 1:length(tpNames)]
-    dValues = [[tpValues[i]] for i in 1:length(tpNames)]
+    dNames = [Symbol(tpNames[i]) for i in eachindex(tpNames)]
+    dValues = [[tpValues[i]] for i in eachindex(tpNames)]
     if isnothing(colNames)
         dTable = Table((; zip(dNames, dValues)...))
     else
