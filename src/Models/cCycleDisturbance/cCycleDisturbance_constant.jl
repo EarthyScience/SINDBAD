@@ -22,7 +22,7 @@ function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpe
 		cEco[zixVeg] = cEco[zixVeg] - cLoss
 		ndxLoseToZix = taker[giver .== zixVeg]
 		# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
-		for tZ in 1:length(ndxLoseToZix)
+		for tZ in eachindex(ndxLoseToZix)
 			tarZix = ndxLoseToZix[tZ]
 			if !any(zixVegAll == tarZix)
 				cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
