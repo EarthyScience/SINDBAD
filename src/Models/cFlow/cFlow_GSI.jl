@@ -32,8 +32,8 @@ function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple
         ndxTrg = getzix(land.pools, trgName)
         trow.ndxSrc = ndxSrc
         trow.ndxTrg = ndxTrg
-        for iSrc in 1:length(ndxSrc)
-            for iTrg in 1:length(ndxTrg)
+        for iSrc in eachindex(ndxSrc)
+            for iTrg in eachindex(ndxTrg)
                 fT = trow.flow
                 p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
             end
