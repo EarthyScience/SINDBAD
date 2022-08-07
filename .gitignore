@@ -10,6 +10,9 @@
 *.tar.gz
 *.zip
 *.rar
+*.out
+*.e
+*.o
 tmp_*
 output_*
 /Manifest.toml
