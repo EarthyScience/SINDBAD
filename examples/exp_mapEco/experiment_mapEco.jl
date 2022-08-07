@@ -6,7 +6,6 @@ Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 
 expFile = "exp_mapEco/settings_mapEco/experiment.json";
 
-
 info = getConfiguration(expFile);
 
 info = setupExperiment(info);

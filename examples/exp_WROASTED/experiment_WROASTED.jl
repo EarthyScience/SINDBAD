@@ -2,8 +2,6 @@ using Revise
 using Sindbad
 # using Suppressor
 # using Optimization
-using Aqua
-Aqua.test_all(Sindbad)
 Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 expFile = "exp_WROASTED/settings_WROASTED/experiment.json"
 
@@ -24,3 +22,7 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 
 res = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
     ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
+
+
+
+    tem_helpers = info.tem.helpers;
