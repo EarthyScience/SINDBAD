@@ -4,7 +4,7 @@ export getConfiguration, getExperimentConfiguration, readConfiguration
 getConfigurationFiles(expFile)
 get the basic configuration from experiment json
 """
-function getExperimentConfiguration(expFile)
+function getExperimentConfiguration(expFile::String)
     parseFile = parsefile(expFile; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
     for (k, v) in parseFile
@@ -17,7 +17,7 @@ end
 readConfiguration(configFiles)
 read configuration experiment json and return dictionary
 """
-function readConfiguration(info_exp, base_path)
+function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
     for (k, v) in info_exp["configFiles"]
         config_path = joinpath(base_path,v)
@@ -73,7 +73,7 @@ end
 setupOutputDirectory(infoTuple)
 sets up and creates output directory for the model simulation
 """
-function setupOutputDirectory(infoTuple)
+function setupOutputDirectory(infoTuple::NamedTuple)
     outpath = infoTuple[:modelRun][:output][:path]
     if !isabspath(outpath)
         if !occursin("/", outpath)
@@ -103,7 +103,7 @@ end
 getConfiguration(sindbad_experiment)
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment)
+function getConfiguration(sindbad_experiment::String)
     local_root = dirname(Base.active_project())
     if typeof(sindbad_experiment) == String
         if !isabspath(sindbad_experiment)
