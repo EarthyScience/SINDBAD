@@ -1,24 +1,10 @@
 export getForcing
-export getInDims, cleanInputData, getAbsDataPath
-function cleanInputData(datapoint, vinfo, ::Val{T}) where {T}
-    datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
-    bounds = vinfo.bounds
-    datapoint = clamp(datapoint, bounds[1], bounds[2])
-    return ismissing(datapoint) ? T(NaN) : T(datapoint)
-end
-
-function getAbsDataPath(info, dataPath)
-    if !isabspath(dataPath)
-        dataPath = joinpath(info.experiment_root, dataPath)
-    end
-    return dataPath
-end
 
 """
     getVariableInfo(default_info, var_info)
 combines the property values of the default forcing with the properties set for the particular variable
 """
-function getVariableInfo(default_info, var_info)
+function getVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
     combined_info = (;)
     default_fields = propertynames(default_info)
     for var_field in default_fields
@@ -37,7 +23,7 @@ end
 """
 getForcing(info)
 """
-function getForcing(info, ::Val{:table})
+function getForcing(info::NamedTuple, ::Val{:table})
     doOnePath = false
     if !isnothing(info.forcing.defaultForcing.dataPath)
         doOnePath = true
@@ -76,13 +62,13 @@ function getForcing(info, ::Val{:table})
     return forcing
 end
 
-function get_forcing_sel_mask(mask_path)
+function get_forcing_sel_mask(mask_path::String)
     mask = NetCDF.open(mask_path)
     mask_data = mask["mask"]
     return mask_data
 end
 
-function getForcing(info, ::Val{:yaxarray})
+function getForcing(info::NamedTuple, ::Val{:yaxarray})
     doOnePath = false
     dataPath = info.forcing.defaultForcing.dataPath
     nc = Any
@@ -123,29 +109,16 @@ function getForcing(info, ::Val{:yaxarray})
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
-        yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath,vinfo.sourceVariableName,size(v)))
+        yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath, vinfo.sourceVariableName, size(v)))
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> Sindbad.cleanInputData(v, vinfo, numtype), yax)
     end
     @info "getForcing: getting forcing dimensions..."
-    indims = getInDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
+    indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getForcing: getting number of time steps..."
     nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
     @info "getForcing: getting variable names..."
     forcing_variables = keys(info.forcing.variables)
     println("----------------------------------------------")
-    return (; data=incubes, dims=indims, n_timesteps=nts, variables = forcing_variables)
-end
-
-function getInDims(c,mappinginfo)
-    inax = String[]
-    axnames = YAXArrays.Axes.axname.(caxes(c))
-    inollt = findall(∉(mappinginfo), axnames)
-    !isempty(inollt) && append!(inax, axnames[inollt])
-    InDims(inax...; artype=KeyedArray, filter=AllNaN())
-end
-
-function getNumberOfTimeSteps(incubes, time_name)
-    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
-    length(getAxis(time_name, incubes[i1]).values)
+    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
 end
