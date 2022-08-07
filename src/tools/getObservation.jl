@@ -28,37 +28,37 @@ function applyQualityFlag(data, qdata, qbounds)
     return data
 end
 
-function getDataFromPath(dataPath, srcVar)
+function getDataFromPath(dataPath::String, srcVar::String)
     ds = NetCDF.ncread(dataPath, srcVar)
     data_tmp = ds[1, 1, :] # TODO multidimensional input
     return data_tmp
 end
 
 
-function getNCFromPath(dataPath, ::Val{:yaxarray})
+function getNCFromPath(dataPath::String, ::Val{:yaxarray})
     nc_data = NetCDF.open(dataPath)
     return nc_data
 end
 
-function getDataFromPath(dataPath, srcVar, ::Val{:yaxarray})
+function getDataFromPath(dataPath::String, srcVar::String, ::Val{:yaxarray})
     nc_data = NetCDF.open(dataPath)
     return nc_data[srcVar]
 end
 
 
-function getNCForMask(mask_path)
+function getNCForMask(mask_path::String)
     nc_mask = NetCDF.open(mask_path)
     return nc_mask
 end
 
-function get_obs_sel_mask(mask_path)
+function getSelObsMask(mask_path::String)
     mask = NetCDF.open(mask_path)
     mask_data = mask["mask"]
     return mask_data
 end
 
 
-function get_yax_data(v, nc)
+function getObsYax(v, nc, variable_name::String, data_path::String)
     atts = v.atts
     if any(in(keys(atts)), ["missing_value", "scale_factor", "add_offset"])
         v = CFDiskArray(v, atts)
@@ -68,7 +68,9 @@ function get_yax_data(v, nc)
         dv = nc[dn][:]
         RangeAxis(dn, dv)
     end
-    yax = YAXArray(ax, v)
+    # yax = YAXArray(ax, v)
+    @show variable_name, data_path
+    yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path,variable_name, size(v)))
     #todo: make another yaxarray so that the fileID is shared across workers in multiprocessor. Similar to what is done in the getForcing
     # yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath,vinfo.sourceVariableName,size(v)))
     return yax
@@ -77,7 +79,7 @@ end
 """
 getObservation(info)
 """
-function getObservation(info, ::Val{:yaxarray})
+function getObservation(info::NamedTuple, ::Val{:yaxarray})
     doOnePath = false
     dataPath = info.opti.constraints.oneDataPath
     nc = Any
@@ -97,7 +99,7 @@ function getObservation(info, ::Val{:yaxarray})
             nc_mask = getNCForMask(mask_path)
         end
     end
-    incubes = []
+    obscubes = []
     @info "getObservation: getting observation variables..."
     map(varnames) do k
         v = Any
@@ -135,9 +137,10 @@ function getObservation(info, ::Val{:yaxarray})
         dataPath_unc = nothing
         v_unc = Any
         nc_unc = nc
+        unc_var = vinfo.unc.sourceVariableName
         if hasproperty(vinfo, :unc) && info.opti.useUncertainty
-            uncvar = vinfo.unc.sourceVariableName
-            # @info "UNCERTAINTY: Using $(uncvar) as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            unc_var = vinfo.unc.sourceVariableName
+            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
             dataPath_unc = dataPath
             if !isnothing(vinfo.unc.dataPath)
                 dataPath_unc = getAbsDataPath(info, vinfo.unc.dataPath)
@@ -145,41 +148,45 @@ function getObservation(info, ::Val{:yaxarray})
             else
                 nc_unc = nc
             end
-            v_unc = nc_unc[uncvar]
-            @info "          Unc: source_var: $(uncvar), source_file: $(dataPath_unc)"
+            v_unc = nc_unc[unc_var]
+            @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
+            dataPath_unc = dataPath
             v_unc = v #todo: make ones with the same characteristics as v
             @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
         end
 
         # get the mask to apply to data and save to observation cube
         has_mask = false
-        v_mask_path=mask_path
+        dataPath_mask=mask_path
         if hasproperty(vinfo, :sel_mask)
-            v_mask_path = vinfo.sel_mask
-            if !isnothing(v_mask_path)
-                nc_mask = getNCForMask(v_mask_path)
+            dataPath_mask = vinfo.sel_mask
+            if !isnothing(dataPath_mask)
+                nc_mask = getNCForMask(dataPath_mask)
                 has_mask = true
             else
+                dataPath_mask = dataPath
                 nc_mask = nc
             end
         else
+            dataPath_mask = dataPath
             nc_mask = nc
         end
 
         v_mask = nothing
         maskvar = "mask"
         if has_mask
-            @info "          Mask: using mask from $(v_mask_path)"
+            @info "          Mask: using mask from $(dataPath_mask)"
             v_mask = nc_mask[maskvar]
         else
             v_mask = v #todo: make ones with the same characteristics as v
             @info "          Mask: selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are either non-existent or set as null in json"
         end
-
-        yax = get_yax_data(v, nc)
-        yax_unc = get_yax_data(v_unc, nc_unc)
-        yax_mask = get_yax_data(v_mask, nc_mask)
+        unc_tar_name = string(unc_var)
+        mask_tar_name = string(src_var)
+        yax = getObsYax(v, nc, src_var, dataPath)
+        yax_unc = getObsYax(v_unc, nc_unc, unc_tar_name, dataPath_unc)
+        yax_mask = getObsYax(v_mask, nc_mask, mask_tar_name, dataPath_mask)
 
         numtype = Val{info.tem.helpers.numbers.numType}()
         
@@ -187,14 +194,14 @@ function getObservation(info, ::Val{:yaxarray})
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
         cyax = map(da -> Sindbad.cleanObsData(da, vinfo, numtype), yax)
         cyax_unc = map(da -> Sindbad.cleanObsData(da, vinfo, numtype), yax_unc)
-        push!(incubes, cyax)
-        push!(incubes, cyax_unc)
-        push!(incubes, yax_mask)
+        push!(obscubes, cyax)
+        push!(obscubes, cyax_unc)
+        push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getInDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
+    indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
-    nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
+    nts = getNumberOfTimeSteps(obscubes, info.forcing.dimensions.time)
     @info "getObservation: getting variable names..."
     varnames_all = []
     for v in varnames
@@ -203,14 +210,14 @@ function getObservation(info, ::Val{:yaxarray})
         push!(varnames_all, Symbol(string(v) * "_mask"))
     end
     println("----------------------------------------------")
-    return (; data=incubes, dims=indims, n_timesteps=nts, variables=varnames_all)
+    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
 end
 
 
 """
 getObservation(info)
 """
-function getObservation(info, ::Val{:table})
+function getObservation(info::NamedTuple, ::Val{:table})
     doOnePath = true
     if !isnothing(info.opti.constraints.oneDataPath)
         doOnePath = true
@@ -253,12 +260,12 @@ function getObservation(info, ::Val{:table})
         uncTarVar = Symbol(v * "_σ")
         push!(varlist, uncTarVar)
         if hasproperty(vinfo, :unc) && info.opti.useUncertainty
-            uncvar = vinfo.unc.sourceVariableName
-            @info "Using $(uncvar) as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            unc_var = vinfo.unc.sourceVariableName
+            @info "Using $(unc_var) as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
             if !isnothing(vinfo.unc.dataPath)
-                data_unc = getDataFromPath(vinfo.unc.dataPath, uncvar)
+                data_unc = getDataFromPath(vinfo.unc.dataPath, unc_var)
             else
-                data_unc = getDataFromPath(dataPath, uncvar)
+                data_unc = getDataFromPath(dataPath, unc_var)
             end
             data_unc[ismissing.(data_unc)] .= info.tem.helpers.numbers.sNT(NaN)
             data_unc = applyUnitConversion(data_unc, vinfo.unc.source2sindbadUnit, vinfo.unc.additiveUnitConversion)
