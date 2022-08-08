@@ -1,3 +1,4 @@
+include("dataUtils.jl")
 include("utils.jl")
 include("getConfiguration.jl")
 include("getForcing.jl")

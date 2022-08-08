@@ -21,7 +21,7 @@ outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; m
 # optimization
 observations = getObservation(info, Val(:yaxarray)); 
 
-res = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
+opt_params = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
     ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
 
-savecube(res,"./optiparams.zarr")
+Sindbad.savecube(opt_params,"./optiparams.zarr")
