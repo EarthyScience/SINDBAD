@@ -11,8 +11,13 @@
 *.zip
 *.rar
 *.out
+*.log
+*.tmp
+*.csv
 *.e
 *.o
+.*
+~*
 tmp_*
 output_*
 /Manifest.toml
