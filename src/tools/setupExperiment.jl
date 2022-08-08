@@ -4,7 +4,7 @@ export setupExperiment, getInitPools, setNumberType
     checkSelectedModels(fullModels, selModels)
 checks if the list of selected models in modelStructure.json are available in the full list of sindbad_models defined in models.jl.
 """
-function checkSelectedModels(fullModels, selModels)
+function checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
     for sm in selModels
         if sm ∉ fullModels
             @show fullModels
@@ -19,7 +19,7 @@ end
     changeModelOrder(info, selModels)
 returns a list of models reordered according to orders provided in modelStructure json. Needs further check before full implementation. Therefore, just returns the fullModels from sindbad_models for now.
 """
-function changeModelOrder(info, selModels)
+function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     fullModels = sindbad_models.model
     checkSelectedModels(fullModels, selModels)
     # get orders of fixed models that cannot be changed
@@ -80,7 +80,7 @@ end
     getOrderedSelectedModels(info, selModels)
 gets the list of selected models from info.modelStructure.models, and orders them as given in sindbad_models in models.jl. A consistency check is carried out using checkSelectedModels for the existence of the model.
 """
-function getOrderedSelectedModels(info, selModels)
+function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
     fullModels = changeModelOrder(info, selModels)
     checkSelectedModels(fullModels, selModels)
     selModelsOrdered = []
@@ -117,7 +117,7 @@ end
     getSpinupAndForwardModels(info, selModelsOrdered)
 sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. This allows for a faster spinup if some models can be turned off. Relies on use4spinup flag in modelStructure. By design, the spinup models should be subset of forward models.
 """
-function getSpinupAndForwardModels(info, selModelsOrdered)
+function getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
     sel_appr_forward = ()
     sel_appr_spinup = ()
     is_spinup = Int64[]
@@ -165,7 +165,7 @@ end
     generateDatesInfo(info)
 fills info.tem.helpers.dates with date and time related fields needed in the models.
 """
-function generateDatesInfo(info)
+function generateDatesInfo(info::NamedTuple)
     tmpDates = (;)
     timeData = getfield(info.modelRun, :time)
     timeProps = propertynames(timeData)
@@ -221,7 +221,7 @@ end
     generatePoolsInfo(info)
 generates the info.tem.helpers.pools and info.tem.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 """
-function generatePoolsInfo(info)
+function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.modelStructure.pools)
     tmpStates = (;)
     hlpStates = (;)
@@ -332,7 +332,7 @@ end
     getInitPools(info)
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array. 
 """
-function getInitPools(info)
+function getInitPools(info::NamedTuple)
     initPools = (;)
     for element in propertynames(info.tem.pools)
         props = getfield(info.tem.pools, element)
@@ -364,7 +364,7 @@ end
     getInitStates(info)
 returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from addStateVars in modelStructure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
-function getInitStates(info)
+function getInitStates(info::NamedTuple)
     initStates = (;)
     for element in propertynames(info.tem.pools)
         props = getfield(info.tem.pools, element)
@@ -406,7 +406,7 @@ end
     setNumericHelpers(info, ttype=info.modelRun.rules.data_type)
 sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.data_type.
 """
-function setNumericHelpers(info, ttype=info.modelRun.rules.data_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.modelRun.rules.data_type)
     𝟘 = setNumberType(ttype)(0)
     𝟙 = setNumberType(ttype)(1)
     tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
@@ -432,7 +432,7 @@ end
     getVariableGroups(varList)
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
 """
-function getVariableGroups(varList)
+function getVariableGroups(varList::AbstractArray)
     var_dict = Dict()
     for var in varList
         var_l = String(var)
@@ -456,8 +456,8 @@ end
     getVariablesToStore(info)
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
-function getVariablesToStore(info)
-    writeStoreVars = getVariableGroups(keys(info.modelRun.output.variables))
+function getVariablesToStore(info::NamedTuple)
+    writeStoreVars = getVariableGroups(propertynames(info.modelRun.output.variables) |> collect)
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
@@ -467,7 +467,7 @@ end
     getLoopingInfo(info)
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
-function getLoopingInfo(info)
+function getLoopingInfo(info::NamedTuple)
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
     run_info = setTupleField(run_info, (:loop, (;)))
     for dim in info.modelRun.mapping.runEcosystem
@@ -480,7 +480,7 @@ end
     getRestartFilePath(info)
 Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output_root as the base for saveSpinup
 """
-function getRestartFilePath(info)
+function getRestartFilePath(info::NamedTuple)
     restartFileOri = info.spinup.paths.restartFile
     if info.spinup.flags.saveSpinup
         if isnothing(restartFileOri)
@@ -514,7 +514,7 @@ end
     setupExperiment(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function setupExperiment(info)
+function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Numeric Helpers..."
     info = setNumericHelpers(info)
     @info "SetupExperiment: setting Variable Helpers..."
@@ -523,7 +523,7 @@ function setupExperiment(info)
     info = generatePoolsInfo(info)
     @info "SetupExperiment: setting Dates Helpers..."
     info = generateDatesInfo(info)
-    selModels = propertynames(info.modelStructure.models)
+    selModels = propertynames(info.modelStructure.models) |> collect
     info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
     @info "SetupExperiment: setting Models..."
     selected_models = getOrderedSelectedModels(info, selModels)

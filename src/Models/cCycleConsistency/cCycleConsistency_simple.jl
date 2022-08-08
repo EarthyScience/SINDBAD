@@ -31,15 +31,15 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	# check allocation
 	if any(cAlloc .> 𝟙)
 		@show cAlloc
-		error("cAllocation is greater than 1. Cannot continue")
+		@warn "cAllocation is greater than 1. Cannot continue"
 	end
 	if any(cAlloc .< 𝟘)
 		@show cAlloc
-		error("cAllocation is negative. Cannot continue")
+		@warn "cAllocation is negative. Cannot continue"
 	end
 	if !isapprox(sum(cAlloc), 𝟙; atol=tolerance)
 		@show cAlloc, sum(cAlloc)
-		error("cAllocation does not sum to 1. Cannot continue")
+		@warn "cAllocation does not sum to 1. Cannot continue"
 	end
 
 	# Check carbon flow matrix
@@ -47,13 +47,13 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	offDiagA = offDiag(p_A)
 	if any(offDiagA .< 𝟘)
 		@show offDiagA, p_A
-		error("negative values in flow matrix. Cannot continue")
+		@warn "negative values in flow matrix. Cannot continue"
 	end
 
 	# check if any of the off-diagonal values of flow matrix is larger than 1.
 	if any(offDiagA .> 𝟙)
 		@show offDiagA, p_A
-		error("flow is greater than 1. Cannot continue")
+		@warn "flow is greater than 1. Cannot continue"
 	end
 
 	# check if the flow to different pools add up to 1
@@ -62,16 +62,16 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	# the sum of A per column below the diagonals is always < 1
 	if any(sum(p_A_L, dims=1) .> 𝟙)
 		@show p_A_L, sum(p_A_L, dims=1)
-		@error  "sum of cols greater than one in lower cFlow matrix. Cannot continue"
-		# error("sum of cols greater than one in lower cFlow matrix. Cannot continue")
+		@warn  "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+		# @warn "sum of cols greater than one in lower cFlow matrix. Cannot continue"
 	end
 
 	# above the diagonal
 	p_A_U = p_A .* flagU
 	if any(sum(p_A_U, dims=1) .> 𝟙)
 		@show p_A_U, sum(p_A_U, dims=1)
-		@error "sum of cols greater than one in lower cFlow matrix. Cannot continue"
-		# error("sum of cols greater than one in upper cFlow matrix. Cannot continue")
+		@warn "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+		# @warn "sum of cols greater than one in upper cFlow matrix. Cannot continue"
 	end
 
 	return land

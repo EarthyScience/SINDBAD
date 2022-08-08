@@ -4,7 +4,7 @@ export doSpinup, getDeltaPool, getSpinupInfo, runSpinup, loopTimeSpinup
 getDeltaPool(pool_dat, spinup_info, t)
 helper function to run the spinup models and return the delta in a given pool over the simulation. Used in solvers from DifferentialEquations.jl.
 """
-function getDeltaPool(pool_dat, spinup_info, t)
+function getDeltaPool(pool_dat::AbstractArray, spinup_info::NamedTuple, t::Any)
     out = spinup_info.init_out;
     out = setTupleSubfield(out, :pools, (spinup_info.pool, pool_dat))
     outsmodel = loopTimeSpinup(spinup_info.sel_spinup_models, spinup_info.sel_spinup_forcing, spinup_info.init_out, spinup_info.helpers)
@@ -19,7 +19,7 @@ end
 getSpinupInfo(sel_spinup_models, sel_spinup_forcing, spinup_pool_name, init_out, tem_helpers)
 helper function to create a NamedTuple with all the variables needed to run the spinup models in getDeltaPool. Used in solvers from DifferentialEquations.jl.
 """
-function getSpinupInfo(sel_spinup_models, sel_spinup_forcing, spinup_pool_name, init_out, tem_helpers)
+function getSpinupInfo(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, spinup_pool_name::Symbol, init_out::NamedTuple, tem_helpers::NamedTuple)
     spinup_info = (;)
     spinup_info = setTupleField(spinup_info, (:pool, spinup_pool_name));
     spinup_info = setTupleField(spinup_info, (:init_out, init_out));
@@ -33,7 +33,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:spinup})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :spinup, only the models chosen as use4spinup in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:spinup})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple, ::Val{:spinup})
     out_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem.helpers)
     return out_spin
 end
@@ -42,7 +42,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :forward, all the models chosen in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:forward})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple, ::Val{:forward})
     out_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem.helpers)
     return out_spin
 end
@@ -52,7 +52,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:ODE_Tsit5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:ODE_Tsit5})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple, ::Val{:ODE_Tsit5})
     for sel_pool in tem.spinup.diffEq.pools
         p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), init_out, tem.helpers);
         tspan = (0.0, tem.spinup.diffEq.timeJump)
@@ -68,7 +68,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_DynamicSS_Tsit5})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple, ::Val{:SSP_DynamicSS_Tsit5})
     for sel_pool in tem.spinup.diffEq.pools
         p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), init_out, tem.helpers);
         init_pool = deepcopy(getfield(p_info.init_out[:pools], p_info.pool));
@@ -83,7 +83,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and SSRootfind method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_SSRootfind})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple, ::Val{:SSP_SSRootfind})
     for sel_pool in tem.spinup.diffEq.pools
         p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), init_out, tem.helpers);
         init_pool = deepcopy(getfield(p_info.init_out[:pools], p_info.pool));
@@ -98,7 +98,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, init_out, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the out/land is overwritten with every iteration. Only the state at the end is returned.
 """
-function loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, out, tem_helpers)
+function loopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, out::NamedTuple, tem_helpers::NamedTuple)
     time_steps = getForcingTimeSize(sel_spinup_forcing)
     # time_steps = tem_helpers.dates.size
     for t in 1:time_steps
@@ -113,7 +113,7 @@ end
 runSpinup(forward_models, forcing, out, tem; spinup_forcing=nothing)
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using doSpinup functions for different spinup methods.
 """
-function runSpinup(forward_models, forcing, init_out, tem; spinup_forcing=nothing)
+function runSpinup(forward_models::Tuple, forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple; spinup_forcing=nothing)
     if tem.spinup.flags.loadSpinup
         out = init_out
         # TODO replace here by loading spinup from restartFile
@@ -130,7 +130,7 @@ function runSpinup(forward_models, forcing, init_out, tem; spinup_forcing=nothin
     out = deepcopy(init_out)
     spinuplog = history ? [values(out)[1:length(out.pools)]] : nothing
     @info "runSpinup:: running spinup sequences..."
-    for spin_seq in tem.spinup.sequence
+    @time for spin_seq in tem.spinup.sequence
         forc = Symbol(spin_seq["forcing"])
         nLoops = spin_seq["nLoops"]
         spinupMode = Symbol(spin_seq["spinupMode"])

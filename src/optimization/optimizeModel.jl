@@ -50,7 +50,7 @@ end
 """
 updateParameters(tblParams, approaches)
 """
-function updateParameters(tblParams, approaches)
+function updateParameters(tblParams::Table, approaches::Tuple)
     function filtervar(var, modelName, tblParams, approachx)
         subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
         if isempty(subtbl)
@@ -87,7 +87,7 @@ returns
 - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
 - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
-function getConstraintNames(info_optim)
+function getConstraintNames(info_optim::NamedTuple)
     obsVariables = Symbol.(info_optim.variables2constrain)
     modelVariables = String[]
     optimVariables = (;)
@@ -105,14 +105,14 @@ end
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getData(outsmodel, observations, obsV, modelVarInfo)
+function getData(outsmodel::OutWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
     #...)' |> Matrix |> vec
     # ŷField = getproperty(outsmodel, modelVarInfo[1]).evap
     # ŷ = hcat(getproperty(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
-    y = getproperty(observations, obsV); 
-    yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
+    y = getproperty(observations, obsV)
+    yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     return (y, yσ, ŷ)
 end
 
@@ -120,7 +120,7 @@ end
     combineLoss(lossVector, ::Val{:sum})
 return the total of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector, ::Val{:sum})
+function combineLoss(lossVector::AbstractArray, ::Val{:sum})
     return sum(lossVector)
 end
 
@@ -128,7 +128,7 @@ end
     combineLoss(lossVector, ::Val{:minimum})
 return the minimum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector, ::Val{:minimum})
+function combineLoss(lossVector::AbstractArray, ::Val{:minimum})
     return minimum(lossVector)
 end
 
@@ -137,7 +137,7 @@ end
     combineLoss(lossVector, ::Val{:maximum})
 return the maximum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector, ::Val{:maximum})
+function combineLoss(lossVector::AbstractArray, ::Val{:maximum})
     return maximum(lossVector)
 end
 
@@ -145,15 +145,15 @@ end
     combineLoss(lossVector, percentile_value)
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector, percentile_value::T) where T <: Real
+function combineLoss(lossVector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(lossVector, percentile_value)
 end
 
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector, forcing, spinup_forcing, initOut,
-    observations, tblParams, optimVars, tem, info_optim)
+function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::Any, initOut::NamedTuple,
+    observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, tem::NamedTuple, info_optim::NamedTuple)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -164,15 +164,15 @@ function getLoss(pVector, forcing, spinup_forcing, initOut,
 
     newApproaches = updateParameters(tblParams, tem.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
-    lossVec=[]
-    cost_options=info_optim.costOptions;
+    lossVec = []
+    cost_options = info_optim.costOptions
     for var_row in cost_options
         obsV = var_row.variable
         lossMetric = var_row.costMetric
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(outevolution, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
-        if isnan(metr)            
+        if isnan(metr)
             pprint(tblParams.optim)
             pprint(y)
             pprint(mean(y))
@@ -190,9 +190,9 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing, initOut, observations,
-    tem, info_optim; spinup_forcing=nothing)
-    optimVars = info_optim.variables.optim;
+function optimizeModel(forcing::NamedTuple, initOut::NamedTuple, observations::NamedTuple,
+    tem::NamedTuple, info_optim::NamedTuple; spinup_forcing=nothing)
+    optimVars = info_optim.variables.optim
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
@@ -213,51 +213,51 @@ function optimizeModel(forcing, initOut, observations,
 
     # update the parameter table with the optimized values
     tblParams.optim .= optim_para
-    newApproaches = updateParameters(tblParams, tem.models.forward);
-    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing); # spinup + forward run!
+    newApproaches = updateParameters(tblParams, tem.models.forward)
+    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     return tblParams, outevolution
 end
 
-function unpackOpti(args; forcing_variables)
+function unpackYaxOpti(args; forcing_variables::AbstractArray)
     nforc = length(forcing_variables)
     outputs = first(args)
     forcings = args[2:(nforc+1)]
     observations = args[(nforc+2):end]
-    return outputs,forcings, observations
+    return outputs, forcings, observations
 end
 
 
-function optimizeModelInner(args...; out, tem, info_optim, forcing_variables, obs_variables, spinup_forcing)
-    output, forcing, observation = unpackOpti(args; forcing_variables)
+function doOptimizeModel(args...; out::NamedTuple, tem::NamedTuple, info_optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray, spinup_forcing::Any)
+    output, forcing, observation = unpackYaxOpti(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
     params, _ = optimizeModel(forcing, out, observation,
-    tem, info_optim; spinup_forcing=spinup_forcing)
+        tem, info_optim; spinup_forcing=spinup_forcing)
     output[:] = params.optim
 end
 
 
-function mapOptimizeModel(forcing, output, tem, info_optim, observations,
+function mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, info_optim::NamedTuple, observations::NamedTuple,
     ; spinup_forcing=nothing, max_cache=1e9)
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
-    forcing_variables = forcing.variables
+    forcing_variables = forcing.variables |> collect
     outdims = output.paramdims
     out = output.init_out
-    obs_variables = observations.variables
+    obs_variables = observations.variables |> collect
 
 
-    params = mapCube(optimizeModelInner,
-    (incubes...,);
-    out=out,
-    tem=tem,
-    info_optim = info_optim,
-    forcing_variables=forcing_variables,
-    obs_variables=obs_variables,
-    spinup_forcing=spinup_forcing,
-    indims=indims,
-    outdims=outdims,
-    max_cache=max_cache,
+    params = mapCube(doOptimizeModel,
+        (incubes...,);
+        out=out,
+        tem=tem,
+        info_optim=info_optim,
+        forcing_variables=forcing_variables,
+        obs_variables=obs_variables,
+        spinup_forcing=spinup_forcing,
+        indims=indims,
+        outdims=outdims,
+        max_cache=max_cache
     )
-    return params   
+    return params
 end

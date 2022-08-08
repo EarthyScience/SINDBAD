@@ -4,7 +4,7 @@ export createInitOut, setupOutput, setupOptiOutput
     createInitOut(info)
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function createInitOut(info)
+function createInitOut(info::NamedTuple)
     initPools = getInitPools(info)
     initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
@@ -15,7 +15,7 @@ function createInitOut(info)
     return out
 end
 
-function getPoolSize(info, poolName)
+function getPoolSize(info::NamedTuple, poolName::Symbol)
     poolsize = nothing
     for elem in keys(info.tem.pools)
         zixelem = getfield(info.tem.pools, elem)[:zix]
@@ -28,7 +28,7 @@ function getPoolSize(info, poolName)
     end
 end
 
-function getDepthDimensionSizeName(vname, info)
+function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple)
     vname_s = split(string(vname), '.')[end]
     tmp_vars = info.modelRun.output.variables
     vdim = tmp_vars[vname]
@@ -71,7 +71,7 @@ function getOutDims(info, vname_full, outpath, outformat)
 end
 
 
-function getOrderedOutputList(varlist, var_o)
+function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
     for var in varlist
         vname = Symbol(split(string(var), '.')[end])
         if vname === var_o
@@ -80,13 +80,13 @@ function getOrderedOutputList(varlist, var_o)
     end
 end
 
-function setupOutput(info)
+function setupOutput(info::NamedTuple)
     @info "setupOutput: creating initial out/land..."
     out = createInitOut(info)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
-        getOrderedOutputList(keys(info.modelRun.output.variables), vn)
+        getOrderedOutputList(keys(info.modelRun.output.variables) |> collect, vn)
     end
     @info "setupOutput: getting output dimension..."
     outdims = map(datavars) do vn
@@ -102,7 +102,7 @@ function setupOutput(info)
     return output_tuple
 end
 
-function setupOptiOutput(info, output)
+function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.optimized_paramaters
     paramaxis = CategoricalAxis("Parameter", params)
     od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
