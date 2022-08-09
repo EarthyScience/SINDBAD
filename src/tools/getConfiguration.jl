@@ -75,25 +75,25 @@ sets up and creates output directory for the model simulation
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
     outpath = infoTuple[:modelRun][:output][:path]
-    if !isabspath(outpath)
+    if isnothing(outpath)
+        out_path_new = "output_"
+        out_path_new = joinpath(join(split(infoTuple.settings_root,"/")[1:end-1], "/"), out_path_new)
+    elseif !isabspath(outpath)
         if !occursin("/", outpath)
-            outfoldername = "output_" * split(outpath,'/')[end]
-            base_path = join(split(outpath,"/")[1:end-1], "/")
-            out_path_new = joinpath(base_path, outfoldername)
+            out_path_new = "output_" * outpath
         else
-            base_root = "output_" * split(outpath,'/')[1]
-            base_path = join(split(outpath,"/")[2:end], "/")
-            out_path_new = joinpath(base_root, base_path)
+            out_path_new = "output_" * replace(outpath,"/" => "_")
         end
         out_path_new = joinpath(join(split(infoTuple.settings_root,"/")[1:end-1], "/"), out_path_new)
     else
         sindbad_root = join(split(infoTuple.experiment_root,"/")[1:end-1], "/")
         if occursin(sindbad_root, outpath)
-            error("You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to a relative path or set output directory outside sindbad.")
+            error("You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad.")
         else
             out_path_new = outpath
         end
     end
+    out_path_new = out_path_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
     mkpath(out_path_new)
     infoTuple = (;infoTuple..., output_root=out_path_new)
     return infoTuple
