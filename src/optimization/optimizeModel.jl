@@ -162,7 +162,7 @@ end
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
-function getLossVector(observations::NamedTuple, model_output::NamedTuple, optim::NamedTuple)
+function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple)
     lossVec = []
     cost_options = optim.costOptions
     optimVars = optim.variables.optim
@@ -173,8 +173,6 @@ function getLossVector(observations::NamedTuple, model_output::NamedTuple, optim
         (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
         if isnan(metr)
-            pprint(y)
-            pprint(mean(y))
             push!(lossVec, 1.0E19)
         else
             push!(lossVec, metr)
@@ -199,7 +197,6 @@ function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::An
 
     newApproaches = updateParameters(tblParams, tem.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
-    pprint(tblParams.optim)
     loss_vector = getLossVector(observations, outevolution, optim)
     @info "-------------------"
 
@@ -215,7 +212,7 @@ function optimizeModel(forcing::NamedTuple, initOut::NamedTuple, observations::N
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(tem.models.forward, optim.optimized_paramaters)
+    tblParams = getParameters(tem.models.forward, optim.optimized_parameters)
 
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
