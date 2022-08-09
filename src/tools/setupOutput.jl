@@ -103,8 +103,8 @@ function setupOutput(info::NamedTuple)
 end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
-    params = info.optim.optimized_paramaters
-    paramaxis = CategoricalAxis("Parameter", params)
+    params = info.optim.optimized_parameters
+    paramaxis = CategoricalAxis("parameter", params)
     od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
     # od = OutDims(paramaxis)
      # list of parameter

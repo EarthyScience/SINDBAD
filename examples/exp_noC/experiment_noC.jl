@@ -9,52 +9,22 @@ using TableOperations:
 
 expFile = "exp_noC/settings_noC/experiment.json"
 
+# do the full experiment at once based purely on json
+run_output = runExperiment(expFile);
 
-output = runExperiment(expFile);
+# play around with each step 
+info = getConfiguration(expFile);
 
-# info = setupExperiment(info);
-# forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+info = setupExperiment(info);
 
-# out = createInitOut(info);
-# outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-# @time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
+output = setupOutput(info);
 
+outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward, max_cache=info.modelRun.rules.yax_max_cache);
 
+# optimization
+observations = getObservation(info, Val(:yaxarray)); 
 
-observations = getObservation(info); 
-
-
-tblParams = getParameters(info.tem.models.forward, info.optim.optimized_paramaters)
-
-# get the defaults and bounds
-default_values = tblParams.defaults
-lower_bounds = tblParams.lower
-upper_bounds = tblParams.upper
-
-
-out = createInitOut(info);
-outparams, outsmodel = optimizeModel(forcing, out, observations,
-info.tem, info.optim; spinup_forcing=spinup_forcing);    
-obsV = :evapotranspiration
-modelVarInfo = [:fluxes, :evapotranspiration]
-ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
-y = getproperty(observations, obsV);
-yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
-
-plot(ŷ)
-plot!(y)
-# plot!(yσ)
-
-obsV = :gpp
-modelVarInfo = [:fluxes, :gpp]
-ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
-y = getproperty(observations, obsV);
-yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
-
-using Plots
-plot(ŷ)
-plot!(y)
+opt_params = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,
+    ; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
