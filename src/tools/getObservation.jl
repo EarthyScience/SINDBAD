@@ -69,10 +69,7 @@ function getObsYax(v, nc, variable_name::String, data_path::String)
         RangeAxis(dn, dv)
     end
     # yax = YAXArray(ax, v)
-    @show variable_name, data_path
     yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path,variable_name, size(v)))
-    #todo: make another yaxarray so that the fileID is shared across workers in multiprocessor. Similar to what is done in the getForcing
-    # yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath,vinfo.sourceVariableName,size(v)))
     return yax
 end
 
