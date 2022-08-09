@@ -18,6 +18,7 @@
 	},
 	"flags":
 	{
+		"showWarnings": 		true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				false,
@@ -34,7 +35,7 @@
 	"output": {
 		"all": false,
 		"path": "africa",
-		"format": ".nc",
+		"format": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",
 			"d_cEco": 8,
