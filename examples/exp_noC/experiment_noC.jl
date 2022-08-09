@@ -10,15 +10,15 @@ using TableOperations:
 expFile = "exp_noC/settings_noC/experiment.json"
 
 
-info = getConfiguration(expFile);
+output = runExperiment(expFile);
 
-info = setupExperiment(info);
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-spinup_forcing = getSpinupForcing(forcing, info.tem);
+# info = setupExperiment(info);
+# forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
 
-out = createInitOut(info);
-outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-@time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+# out = createInitOut(info);
+# outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
+# @time outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 
 
 
