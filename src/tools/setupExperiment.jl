@@ -535,7 +535,7 @@ function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
     info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
-    if info.modelRun.flags.runOpti
+    if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end
