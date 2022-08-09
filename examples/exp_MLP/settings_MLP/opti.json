@@ -28,7 +28,7 @@
 		"options_file": null,
 		"isMultiObj": false
 	},
-	"optimized_paramaters": [
+	"optimized_parameters": [
 		"fAPAR.constantfAPAR",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
