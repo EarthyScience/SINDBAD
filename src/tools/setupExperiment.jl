@@ -17,7 +17,9 @@ end
 
 """
     changeModelOrder(info, selModels)
-returns a list of models reordered according to orders provided in modelStructure json. Needs further check before full implementation. Therefore, just returns the fullModels from sindbad_models for now.
+returns a list of models reordered according to orders provided in modelStructure json.
+- default order is taken from sindbad_models
+- models cannot be set before getPools or after cCycle
 """
 function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     fullModels = sindbad_models.model
@@ -77,8 +79,10 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
 end
 
 """
-    getOrderedSelectedModels(info, selModels)
-gets the list of selected models from info.modelStructure.models, and orders them as given in sindbad_models in models.jl. A consistency check is carried out using checkSelectedModels for the existence of the model.
+    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
+gets the ordered list of selected models from info.modelStructure.models
+- orders them as given in sindbad_models in models.jl. 
+- consistency check using checkSelectedModels for the existence of user-provided model.
 """
 function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
     fullModels = changeModelOrder(info, selModels)
@@ -93,8 +97,9 @@ function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
 end
 
 """
-setInputParameters(original_table::Table, updated_table::Table)
-returns a new Table with the optimised values from updated_table.
+    setInputParameters(original_table::Table, updated_table::Table)
+updates the model parameters based on input from params.json
+- new table with the optimised/modified values from params.json.
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)
@@ -114,8 +119,11 @@ function setInputParameters(original_table::Table, updated_table::Table)
 end
 
 """
-    getSpinupAndForwardModels(info, selModelsOrdered)
-sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. This allows for a faster spinup if some models can be turned off. Relies on use4spinup flag in modelStructure. By design, the spinup models should be subset of forward models.
+    getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
+sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. 
+- allows for a faster spinup if some models can be turned off
+- relies on use4spinup flag in modelStructure
+- by design, the spinup models should be subset of forward models
 """
 function getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
     sel_appr_forward = ()
@@ -535,7 +543,7 @@ function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
     info = setTupleSubfield(info, :tem, (:spinup, info.spinup))
-    if info.modelRun.flags.runOpti
+    if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end

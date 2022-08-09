@@ -18,10 +18,11 @@
 	},
 	"flags":
 	{
+		"showWarnings": 		true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
-		"calcCost":				true
+		"calcCost":				false
 	},
 	"rules":
 	{
@@ -33,8 +34,8 @@
 	},
 	"output": {
 		"all": false,
-		"path": "sandbox/output/",
-		"format": ".nc",
+		"path": null,
+		"format": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",
 			"d_snow": "snowW"
