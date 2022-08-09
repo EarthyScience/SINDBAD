@@ -32,8 +32,9 @@ function compute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::Nam
 	dS = totalW - totalW_prev
 	waterBalance = precip - runoff - evapotranspiration - dS
 	if abs(waterBalance) > tolerance
-		@warn "water balance error:, waterBalance: $(waterBalance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
-		# error("water balance error")
+		if helpers.run.showWarnings
+			@warn "water balance error:, waterBalance: $(waterBalance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
+		end
 	end
 
 	# set the previous totalW for next time step
