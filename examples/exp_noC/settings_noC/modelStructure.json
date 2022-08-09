@@ -60,8 +60,7 @@
             "approach": "Lu2005"
         },
         "rainSnow": {
-            "approach": "Tair",
-            "order": 1
+            "approach": "Tair"
         },
         "rootFraction": {
             "approach": "constant"
