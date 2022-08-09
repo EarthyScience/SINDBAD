@@ -1,6 +1,5 @@
-using Revise
-using Distributed
-addprocs(16)
+using SlurmClusterManager, Distributed
+addprocs(SlurmManager())
 @everywhere using Pkg
 @everywhere Pkg.activate(joinpath(@__DIR__,".."))
 
