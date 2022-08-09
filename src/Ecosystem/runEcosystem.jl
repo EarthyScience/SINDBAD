@@ -60,7 +60,8 @@ end
 function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple, tem_variables::NamedTuple, tem_helpers::NamedTuple)
     time_steps = getForcingTimeSize(forcing)
     # time_steps = tem_helpers.dates.size
-    res = map(1: time_steps) do ts
+    @info "runEcosystem:: running forward time loop"
+    @time res = map(1: time_steps) do ts
         f = getForcingForTimeStep(forcing, ts)
         out = runModels(f, forward_models, out, tem_helpers)
         out_filtered = filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
@@ -107,46 +108,43 @@ end
 """
 runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
 """
-function runEcosystem(approaches::Tuple, forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=false)
+function runEcosystem(approaches::Tuple, forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=true)
     @info "runEcosystem:: running Ecosystem"
-    @time begin
-        out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
-        outEco=nothing
-        if run_forward == false
-            additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-            allout = if !isempty(additionaldims)
-                spacesize = values(tem.helpers.run.loop[additionaldims])
-                @show spacesize
-                loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
-                @show loopvars
-                res = broadcast(loopvars...) do lI
-                    outnow_spin = deepcopy(out_prec)
-                    if tem.spinup.flags.doSpinup
-                        outnow_spin = runSpinup(approaches, forcing, outnow_spin, tem; spinup_forcing=spinup_forcing)
-                    end
-                    timeLoopForward(forward_models, forcing, outnow_spin, tem.variables, tem.helpers)
-                end
-                for d in ndims(res)
-                    res = reducedim(catnt,res,dims=d)
-                end 
-                res[1]
-            else
-                out_spin = out_prec
+    @info "runEcosystem:: running precomputation"
+    @time out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
+    outEco=nothing
+    if run_forward == false
+        additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+        allout = if !isempty(additionaldims)
+            spacesize = values(tem.helpers.run.loop[additionaldims])
+            loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
+            res = broadcast(loopvars...) do lI
+                outnow_spin = deepcopy(out_prec)
                 if tem.spinup.flags.doSpinup
-                    out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
+                    outnow_spin = runSpinup(approaches, forcing, outnow_spin, tem; spinup_forcing=spinup_forcing)
                 end
-                res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+                timeLoopForward(forward_models, forcing, outnow_spin, tem.variables, tem.helpers)
             end
-            outEco = allout
+            for d in ndims(res)
+                res = reducedim(catnt,res,dims=d)
+            end 
+            res[1]
         else
             out_spin = out_prec
             if tem.spinup.flags.doSpinup
                 out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
             end
-            out_forw = runForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
-            # out_forw = removeEmptyFields(out_forw)
-            outEco = out_forw
+            res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
         end
+        outEco = allout
+    else
+        out_spin = out_prec
+        if tem.spinup.flags.doSpinup
+            out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
+        end
+        out_forw = runForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+        # out_forw = removeEmptyFields(out_forw)
+        outEco = out_forw
     end
     return outEco
 end
@@ -195,7 +193,5 @@ function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTupl
         outdims=outdims,
         max_cache=max_cache
     )
-    #TODO: save the output cubes
-    # return outcubes
-    return (; Pair.(output.variables, outcubes)...)
+    return outcubes
 end
