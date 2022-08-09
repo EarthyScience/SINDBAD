@@ -196,5 +196,6 @@ function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTupl
         max_cache=max_cache
     )
     #TODO: save the output cubes
+    # return outcubes
     return (; Pair.(output.variables, outcubes)...)
 end
