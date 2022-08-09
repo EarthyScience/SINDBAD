@@ -4,7 +4,7 @@ export getCostOptions, setupOptimization
 getCostOptions(optInfo)
 info.opti
 """
-function getCostOptions(optInfo)
+function getCostOptions(optInfo::NamedTuple)
     defNames = Symbol.(keys(optInfo.constraints.defaultCostOptions))
     vals = values(optInfo.constraints.defaultCostOptions)
     defValues = [typeof(v) == String ? Symbol(v) : v for v in vals]
@@ -29,7 +29,23 @@ function getCostOptions(optInfo)
     Table((; Pair.([:variable, defNames...], all_options)...))
 end
 
-function setupOptimization(info)
+"""
+    checkOptimizedParametersInModels(info::NamedTuple)
+checks if the parameters listed in optimized_parameters of opti.json exists in the selected model structure of modelStructure.json
+"""
+function checkOptimizedParametersInModels(info::NamedTuple)
+    model_parameters = getParameters(info.tem.models.forward, info.opti.optimized_parameters).varsModels;
+    optim_parameters = info.opti.optimized_parameters
+    for omp in eachindex(optim_parameters)
+        if optim_parameters[omp] ∉ model_parameters
+            @warn "Model Inconsistency: the parameter $(optim_parameters[omp]) does not exist in the selected model structure."
+            @show model_parameters
+            error("Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of opti.json, or check model structure to provide correct parameter name")
+        end
+    end
+end
+
+function setupOptimization(info::NamedTuple)
     costOpt = getCostOptions(info.opti)
     info = setTupleField(info, (:optim, (;)))
 
@@ -38,8 +54,9 @@ function setupOptimization(info)
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
     info = setTupleSubfield(info, :optim, (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))
 
-    # set the list of paramaters to be optimized
-    info = setTupleSubfield(info, :optim, (:optimized_paramaters, info.opti.optimized_paramaters))
+    # check and set the list of parameters to be optimized
+    checkOptimizedParametersInModels(info)
+    info = setTupleSubfield(info, :optim, (:optimized_parameters, info.opti.optimized_parameters))
 
     # set algorithm related options
     tmp_algorithm = (;)
