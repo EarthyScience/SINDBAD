@@ -4,9 +4,20 @@ export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
 export AllNaN
 export nanmax, nanmin
-export OutWrapper
+export landWrapper
 export nonUnique
+export noStackTrace
 
+"""
+noStackTrace()
+Modifies Base.show to reduce the size of error stacktrace of sindbad errors
+"""
+
+function noStackTrace()
+    eval(:(Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")))
+    eval(:(Base.show(io::IO,nt::Type{<:Tuple}) = print(io,"T")))
+    eval(:(Base.show(io::IO,nt::Type{<:NTuple}) = print(io,"NT")))
+end
 
 """
 nonUnique(x::AbstractArray{T}) where T
@@ -359,16 +370,16 @@ Calculate the minimum of an array while skipping nan
 nanmin(dat) = minimum(dat[.!isnan.(dat)])
 
 """
-Wrap the nested fields of namedtuple output of sindbad into a nested structure of views that can be easily accessed with a dot notation
+Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
 """
-struct OutWrapper{S}
+struct landWrapper{S}
     s::S
 end
 struct GroupView{S}
     groupname::Symbol
     s::S
 end
-Base.getproperty(s::OutWrapper,f::Symbol) = GroupView(f,getfield(s,:s))
+Base.getproperty(s::landWrapper,f::Symbol) = GroupView(f,getfield(s,:s))
 function Base.getproperty(g::GroupView,f::Symbol)
     group = columntable(getfield(g,:s))[getfield(g,:groupname)]
     v = columntable(group)[f]
@@ -382,9 +393,9 @@ function Base.getproperty(g::GroupView,f::Symbol)
         v
     end
 end
-Base.propertynames(o::OutWrapper) = propertynames(first(getfield(o,:s)))
-Base.keys(o::OutWrapper) = propertynames(o)
-Base.getindex(o::OutWrapper,s::Symbol) = getproperty(o,s)
+Base.propertynames(o::landWrapper) = propertynames(first(getfield(o,:s)))
+Base.keys(o::landWrapper) = propertynames(o)
+Base.getindex(o::landWrapper,s::Symbol) = getproperty(o,s)
 Base.propertynames(o::GroupView) = propertynames(first(getfield(o,:s))[getfield(o,:groupname)])
 Base.keys(o::GroupView) = propertynames(o)
 Base.getindex(o::GroupView,i::Symbol) = getproperty(o,i)

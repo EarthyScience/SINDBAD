@@ -7,9 +7,9 @@ using ProgressMeter
 # using ProfileView
 # using BenchmarkTools
 
-expFile = "exp_mapFN/settings_mapFN/experiment.json"
+experiment_json = "exp_mapFN/settings_mapFN/experiment.json"
 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 #observations = getObservation(info); # target observation!!
 forcing = getForcing(info, Val(:yaxarray));

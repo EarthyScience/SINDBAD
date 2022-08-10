@@ -7,13 +7,13 @@ using TableOperations:
     select
 
 
-expFile = "exp_noC/settings_noC/experiment.json"
+experiment_json = "exp_noC/settings_noC/experiment.json"
 
 # do the full experiment at once based purely on json
-run_output = runExperiment(expFile);
+run_output = runExperiment(experiment_json);
 
 # play around with each step 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 

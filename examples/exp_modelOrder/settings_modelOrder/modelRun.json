@@ -18,11 +18,11 @@
 	},
 	"flags":
 	{
-		"showWarnings": 		true,
+		"catchErrors": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				true
+		"runOpti": 				false,
+		"calcCost":				false
 	},
 	"rules":
 	{
@@ -34,7 +34,7 @@
 	},
 	"output": {
 		"all": true,
-		"path": "exp_mapFN/output/",
+		"path": null,
 		"format": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",

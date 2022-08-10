@@ -68,7 +68,7 @@ function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedT
         deepcopy(out_filtered)
     end
     # push!(debugcatcherr,res)
-    OutWrapper(res)
+    landWrapper(res)
 end
 
 """
@@ -76,7 +76,7 @@ runForward(selectedModels, forcing, out, helpers)
 """
 function runForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple, tem_variables::NamedTuple, tem_helpers::NamedTuple)
     additionaldims = setdiff(keys(tem_helpers.run.loop),[:time])
-    allout = if !isempty(additionaldims)
+    land_all = if !isempty(additionaldims)
         spacesize = values(tem_helpers.run.loop[additionaldims])
         @show spacesize
         loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
@@ -92,7 +92,7 @@ function runForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     else
         res = timeLoopForward(forward_models, forcing, out, tem_variables, tem_helpers)
     end
-    return allout
+    return land_all
 end
 
 """
@@ -106,47 +106,47 @@ end
 
 
 """
-runEcosystem(approaches, forcing, init_out, tem; spinup_forcing=nothing)
+runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
-function runEcosystem(approaches::Tuple, forcing::NamedTuple, init_out::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=true)
+function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=true)
     @info "runEcosystem:: running Ecosystem"
     @info "runEcosystem:: running precomputation"
-    @time out_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, init_out, tem.helpers)
-    outEco=nothing
+    @time land_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, land_init, tem.helpers)
+    land_out=nothing
     if run_forward == false
         additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-        allout = if !isempty(additionaldims)
+        land_all = if !isempty(additionaldims)
             spacesize = values(tem.helpers.run.loop[additionaldims])
             loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
             res = broadcast(loopvars...) do lI
-                outnow_spin = deepcopy(out_prec)
+                land_spin_now = deepcopy(land_prec)
                 if tem.spinup.flags.doSpinup
-                    outnow_spin = runSpinup(approaches, forcing, outnow_spin, tem; spinup_forcing=spinup_forcing)
+                    land_spin_now = runSpinup(approaches, forcing, land_spin_now, tem; spinup_forcing=spinup_forcing)
                 end
-                timeLoopForward(forward_models, forcing, outnow_spin, tem.variables, tem.helpers)
+                timeLoopForward(forward_models, forcing, land_spin_now, tem.variables, tem.helpers)
             end
             for d in ndims(res)
                 res = reducedim(catnt,res,dims=d)
             end 
             res[1]
         else
-            out_spin = out_prec
+            land_spin = land_prec
             if tem.spinup.flags.doSpinup
-                out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
+                land_spin = runSpinup(approaches, forcing, land_prec, tem; spinup_forcing=spinup_forcing)
             end
-            res = timeLoopForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
+            res = timeLoopForward(approaches, forcing, land_spin, tem.variables, tem.helpers)
         end
-        outEco = allout
+        land_out = land_all
     else
-        out_spin = out_prec
+        land_spin = land_prec
         if tem.spinup.flags.doSpinup
-            out_spin = runSpinup(approaches, forcing, out_prec, tem; spinup_forcing=spinup_forcing)
+            land_spin = runSpinup(approaches, forcing, land_prec, tem; spinup_forcing=spinup_forcing)
         end
-        out_forw = runForward(approaches, forcing, out_spin, tem.variables, tem.helpers)
-        # out_forw = removeEmptyFields(out_forw)
-        outEco = out_forw
+        land_forw = runForward(approaches, forcing, land_spin, tem.variables, tem.helpers)
+        # land_forw = removeEmptyFields(land_forw)
+        land_out = land_forw
     end
-    return outEco
+    return land_out
 end
 
 
@@ -159,14 +159,14 @@ function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArra
 end
 
 
-function doRunEcosystem(args...; out::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray, spinup_forcing::Any)
+function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray, spinup_forcing::Any)
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    outforw = runEcosystem(forward_models, forcing, out, tem; spinup_forcing=spinup_forcing)
+    land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
     for group in keys(tem_variables)
-        data = outforw[group]
+        data = land_out[group]
         for k in tem_variables[group]
             outputs[i] .= convert(Array, deepcopy(data[k]))
             i += 1
@@ -180,11 +180,11 @@ function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTupl
     indims = forcing.dims
     forcing_variables = forcing.variables |> collect
     outdims = output.dims
-    out = deepcopy(output.init_out)
+    land_init = deepcopy(output.land_init)
 
     outcubes = mapCube(doRunEcosystem,
         (incubes...,);
-        out=out,
+        land_init=land_init,
         tem=tem,
         forward_models=forward_models,
         forcing_variables=forcing_variables,

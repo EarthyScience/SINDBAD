@@ -6,10 +6,10 @@ using Tables:
 using TableOperations:
     select
 
-expFile = "exp_noW/settings_noW/experiment.json"
+experiment_json = "exp_noW/settings_noW/experiment.json"
 
 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
