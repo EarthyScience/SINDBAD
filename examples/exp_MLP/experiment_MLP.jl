@@ -6,9 +6,9 @@ using Tables:
 using TableOperations:
     select
 
-expFile = "exp_MLP/settings_MLP/experiment.json"
+experiment_json = "exp_MLP/settings_MLP/experiment.json"
 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));

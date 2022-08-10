@@ -18,7 +18,7 @@
 	},
 	"flags":
 	{
-		"showWarnings": 		true,
+		"catchErrors": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
