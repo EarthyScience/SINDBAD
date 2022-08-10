@@ -20,6 +20,7 @@ end
 returns a list of models reordered according to orders provided in modelStructure json.
 - default order is taken from sindbad_models
 - models cannot be set before getPools or after cCycle
+USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
 """
 function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     fullModels = sindbad_models.model
@@ -31,6 +32,7 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     # get the new orders and models from modelStructure.json
     newOrders = Int64[]
     newModels = (;)
+    order_changed_warn=true
     for sm in selModels
         modInfo = getfield(info.modelStructure.models, sm)
         if :order in propertynames(modInfo)
@@ -42,6 +44,11 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
             if modInfo.order >= order_cCycle
                 error("The model order for $(sm) is set at $(modInfo.order). Any order later than or same as cCycle ($order_cCycle) is not permitted.")
             end
+            if order_changed_warn
+                @info " changeModelOrder:: Model order has been changed through modelStructure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
+                order_changed_warn=false
+            end
+            @info "     $(sm) order:: old: $(findfirst(e->e==sm, fullModels)), new: $(modInfo.order)"
         end
     end
 
@@ -74,8 +81,8 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
         end
         fullModels_reordered = deepcopy(tmp)
     end    
-    # @warn "changeModelOrder: not fully functional yet. So, returns sindbad_models as is as full models"
     return fullModels_reordered
+    #todo make sure that this function is functioning correctly before deploying it
 end
 
 """
@@ -125,10 +132,11 @@ sets the spinup and forward subfields of info.tem.models to select a separated s
 - relies on use4spinup flag in modelStructure
 - by design, the spinup models should be subset of forward models
 """
-function getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
+function getSpinupAndForwardModels(info::NamedTuple)
     sel_appr_forward = ()
     sel_appr_spinup = ()
     is_spinup = Int64[]
+    selModelsOrdered = info.tem.models.selected_models.model
     defaultModel = getfield(info.modelStructure, :defaultModel)
     for sm in selModelsOrdered
         modInfo = getfield(info.modelStructure.models, sm)
@@ -532,10 +540,10 @@ function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Dates Helpers..."
     info = generateDatesInfo(info)
     selModels = propertynames(info.modelStructure.models) |> collect
-    info = (; info..., tem=(; info.tem..., models=(; selected_models=selModels)))
     @info "SetupExperiment: setting Models..."
     selected_models = getOrderedSelectedModels(info, selModels)
-    info = getSpinupAndForwardModels(info, selected_models)
+    info = (; info..., tem=(; info.tem..., models=(; selected_models=Table((; model=[selected_models...])))))
+    info = getSpinupAndForwardModels(info)
     # add information related to model run
     @info "SetupExperiment: setting Mapping info..."
     run_info = getLoopingInfo(info);

@@ -7,10 +7,10 @@ using TableOperations:
     select
 using Plots
 
-expFile = "exp_W/settings_W/experiment.json"
+experiment_json = "exp_W/settings_W/experiment.json"
 
 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 

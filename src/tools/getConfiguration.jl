@@ -1,11 +1,11 @@
 export getConfiguration, getExperimentConfiguration, readConfiguration
 
 """
-getConfigurationFiles(expFile)
+getConfigurationFiles(experiment_json)
 get the basic configuration from experiment json
 """
-function getExperimentConfiguration(expFile::String)
-    parseFile = parsefile(expFile; dicttype=DataStructures.OrderedDict)
+function getExperimentConfiguration(experiment_json::String)
+    parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
     for (k, v) in parseFile
         info[k] = v

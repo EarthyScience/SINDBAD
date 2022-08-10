@@ -114,7 +114,7 @@ end
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getData(outsmodel::OutWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
+function getData(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
     #...)' |> Matrix |> vec
@@ -197,6 +197,7 @@ function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::An
 
     newApproaches = updateParameters(tblParams, tem.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
+    @info ".........................................."
     loss_vector = getLossVector(observations, outevolution, optim)
     @info "-------------------"
 
@@ -256,7 +257,7 @@ function mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTup
     indims = (forcing.dims..., observations.dims...)
     forcing_variables = forcing.variables |> collect
     outdims = output.paramdims
-    out = output.init_out
+    out = output.land_init
     obs_variables = observations.variables |> collect
 
 
