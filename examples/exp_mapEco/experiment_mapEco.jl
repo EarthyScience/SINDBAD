@@ -4,9 +4,9 @@ using ProgressMeter
 # Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
 Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")
 
-expFile = "exp_mapEco/settings_mapEco/experiment.json";
+experiment_json = "exp_mapEco/settings_mapEco/experiment.json";
 
-info = getConfiguration(expFile);
+info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 

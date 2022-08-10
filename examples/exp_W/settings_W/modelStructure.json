@@ -15,8 +15,7 @@
             "approach": "kUnsat"
         },
         "evaporation": {
-            "approach": "demandSupply",
-            "order": 52
+            "approach": "demandSupply"
         },
         "evapotranspiration": {
             "approach": "sum"
@@ -79,8 +78,7 @@
             "approach": "uniform"
         },
         "transpiration": {
-            "approach": "demandSupply",
-            "order": 53
+            "approach": "demandSupply"
         },
         "transpirationDemand": {
             "approach": "PET"
