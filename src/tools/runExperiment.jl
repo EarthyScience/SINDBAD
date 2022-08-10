@@ -16,12 +16,17 @@ end
     runExperiment(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(expFile::String)
+function runExperiment(experiment_json::String)
     @info "runExperiment: load configurations..."
-    info = getConfiguration(expFile);
+    info = getConfiguration(experiment_json);
 
     @info "runExperiment: setup experiment..."
     info = setupExperiment(info);
+
+    if info.tem.helpers.run.catchErrors
+        @info "runExperiment: setting error catcher..."
+        Sindbad.eval(:(error_catcher = []))    
+    end
 
     @info "runExperiment: get forcing data..."
     forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -41,7 +46,7 @@ function runExperiment(expFile::String)
     end
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         @info "runExperiment: get observations..."
-        observations = getObservation(info, Val(:yaxarray));
+        observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
         if info.tem.helpers.run.runOpti
             @info "runExperiment: do optimization..."
             output_params = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
@@ -68,7 +73,7 @@ function runExperiment(expFile::String)
         # model_data = (; Pair.(output.variables, run_output)...)
         obs_data = (; Pair.(observations.variables, observations.data)...)
         #todo make the loss functions work with disk arrays
-        getLossVector(obs_data, model_output, info.optim)
+        # getLossVector(obs_data, model_output, info.optim)
     end
     return info, run_output
 end
