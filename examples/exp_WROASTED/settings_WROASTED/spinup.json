@@ -6,6 +6,12 @@
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
 			"nLoops": 15
+		},
+		{
+			"spinupMode": "forward",
+			"forcing": "full",
+			"stopCriteria": null,
+			"nLoops": 1
 		}
 	],
 	"diffEq":{
