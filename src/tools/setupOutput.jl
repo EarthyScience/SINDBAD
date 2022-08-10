@@ -8,7 +8,7 @@ function createInitOut(info::NamedTuple)
     initPools = getInitPools(info)
     initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
-    sortedModels = sort([_sm for _sm in info.tem.models.selected_models])
+    sortedModels = sort([_sm for _sm in info.tem.models.selected_models.model])
     for model in sortedModels
         out = setTupleField(out, (model, (;)))
     end
@@ -93,7 +93,7 @@ function setupOutput(info::NamedTuple)
         getOutDims(info, vn, info.output_root, outformat)
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
-    output_tuple = (; init_out=out, dims=outdims, variables = vnames)
+    output_tuple = (; land_init=out, dims=outdims, variables = vnames)
     if info.modelRun.flags.runOpti
         @info "setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple);
