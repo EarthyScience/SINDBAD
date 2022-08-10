@@ -114,6 +114,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         dataPath_qc = nothing
         v_qc = nothing
         nc_qc = nc
+        one_qc = false
         if hasproperty(vinfo, :qflag)
             qcvar = vinfo.qflag.sourceVariableName
             dataPath_qc = dataPath
@@ -127,7 +128,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             @info "          QFlag: source_var: $(qcvar), source_file: $(dataPath_qc)"
         else
             @info "          QFlag: No qflag provided. All data points assumed to be the highest quality of 1."
-            v_qc = v #todo: make ones with the same characteristics as v
+            one_qc = true
         end
 
         # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
@@ -135,6 +136,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         v_unc = Any
         nc_unc = nc
         unc_var = vinfo.unc.sourceVariableName
+        one_unc = false
         if hasproperty(vinfo, :unc) && info.opti.useUncertainty
             unc_var = vinfo.unc.sourceVariableName
             # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
@@ -149,8 +151,8 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
             dataPath_unc = dataPath
-            v_unc = v #todo: make ones with the same characteristics as v
             @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            one_unc = true
         end
 
         # get the mask to apply to data and save to observation cube
@@ -172,18 +174,29 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
 
         v_mask = nothing
         maskvar = "mask"
+        no_mask = false
         if has_mask
             @info "          Mask: using mask from $(dataPath_mask)"
             v_mask = nc_mask[maskvar]
         else
-            v_mask = v #todo: make ones with the same characteristics as v
             @info "          Mask: selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are either non-existent or set as null in json"
+            no_mask = true
         end
         unc_tar_name = string(unc_var)
         mask_tar_name = string(src_var)
         yax = getObsYax(v, nc, src_var, dataPath)
-        yax_unc = getObsYax(v_unc, nc_unc, unc_tar_name, dataPath_unc)
-        yax_mask = getObsYax(v_mask, nc_mask, mask_tar_name, dataPath_mask)
+        yax_unc = nothing
+        if one_unc
+            yax_unc = map(x -> one(x), yax)
+        else
+            yax_unc = getObsYax(v_unc, nc_unc, unc_tar_name, dataPath_unc)
+        end
+        yax_mask = nothing
+        if no_mask
+            yax_mask = map(x -> one(x), yax)
+        else
+            yax_mask = getObsYax(v_mask, nc_mask, mask_tar_name, dataPath_mask)
+        end
 
         numtype = Val{info.tem.helpers.numbers.numType}()
         
