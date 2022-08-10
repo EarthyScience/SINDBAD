@@ -256,7 +256,7 @@ function mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTup
     indims = (forcing.dims..., observations.dims...)
     forcing_variables = forcing.variables |> collect
     outdims = output.paramdims
-    out = output.init_out
+    out = output.land_init
     obs_variables = observations.variables |> collect
 
 
