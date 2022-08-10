@@ -48,7 +48,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 
 	# scalars of maintenance respiration for models A; B & C
 	# km is the maintenance respiration coefficient [d-1]
-	p_km[zix] .= min(𝟙 ./ p_C2Nveg[zix] .* RMN .* fT, 𝟙)
+	p_km[zix] .= min.(𝟙 ./ p_C2Nveg[zix] .* RMN .* fT, 𝟙)
 	p_km4su[zix] .= p_km[zix] .* YG
 
 	# maintenance respiration first: R_m = km * C
