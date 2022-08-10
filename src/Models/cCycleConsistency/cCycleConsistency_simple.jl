@@ -30,21 +30,27 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 
 	# check allocation
 	if any(cAlloc .> 𝟙)
-		if helpers.run.showWarnings
-			@show cAlloc
-			@warn "cAllocation is greater than 1. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "cAllocation is greater than 1. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			error(msg)
 		end
 	end
 	if any(cAlloc .< 𝟘)
-		if helpers.run.showWarnings
-			@show cAlloc
-			@warn "cAllocation is negative. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "cAllocation is negative. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			error(msg)
 		end
 	end
 	if !isapprox(sum(cAlloc), 𝟙; atol=tolerance)
-		if helpers.run.showWarnings
-			@show cAlloc, sum(cAlloc)
-			@warn "cAllocation does not sum to 1. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "cAllocation does not sum to 1. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			error(msg)
 		end
 	end
 
@@ -52,17 +58,23 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	# check if any of the off-diagonal values of flow matrix is negative
 	offDiagA = offDiag(p_A)
 	if any(offDiagA .< 𝟘)
-		if helpers.run.showWarnings
-			@show offDiagA, p_A
-			@warn "negative values in flow matrix. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "negative values in flow matrix. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			push!(Sindbad.error_catcher, offDiagA)
+			error(msg)
 		end
 	end
 
 	# check if any of the off-diagonal values of flow matrix is larger than 1.
 	if any(offDiagA .> 𝟙)
-		if helpers.run.showWarnings
-			@show offDiagA, p_A
-			@warn "flow is greater than 1. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "flow is greater than 1. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			push!(Sindbad.error_catcher, offDiagA)
+			error(msg)
 		end
 	end
 
@@ -71,19 +83,23 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	p_A_L = p_A .* flagL
 	# the sum of A per column below the diagonals is always < 1
 	if any(sum(p_A_L, dims=1) .> 𝟙)
-		if helpers.run.showWarnings
-			@show p_A_L, sum(p_A_L, dims=1)
-			@warn  "sum of cols greater than one in lower cFlow matrix. Cannot continue"
-			# @warn "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			push!(Sindbad.error_catcher, p_A_L)
+			error(msg)
 		end
 	end
 	# above the diagonal
 	p_A_U = p_A .* flagU
 	if any(sum(p_A_U, dims=1) .> 𝟙)
-		if helpers.run.showWarnings
-			@show p_A_U, sum(p_A_U, dims=1)
-			@warn "sum of cols greater than one in lower cFlow matrix. Cannot continue"
-			# @warn "sum of cols greater than one in upper cFlow matrix. Cannot continue"
+		if helpers.run.catchErrors
+			msg = "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+			push!(Sindbad.error_catcher, land)
+			push!(Sindbad.error_catcher, msg)
+			push!(Sindbad.error_catcher, p_A_U)
+			error(msg)
 		end
 	end
 
