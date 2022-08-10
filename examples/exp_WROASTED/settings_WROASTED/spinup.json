@@ -8,12 +8,6 @@
 			"nLoops": 15
 		},
 		{
-			"spinupMode": "ODE_Tsit5",
-			"forcing": "yearOne",
-			"stopCriteria": null,
-			"nLoops": 1
-		},
-		{
 			"spinupMode": "forward",
 			"forcing": "full",
 			"stopCriteria": null,
