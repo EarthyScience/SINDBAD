@@ -163,6 +163,9 @@ function setupOutputDirectory(infoTuple::NamedTuple)
             error("You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad.")
         else
             out_path_new = outpath
+            if !endswith(out_path_new, "/")
+                out_path_new = out_path_new * "/"
+            end
         end
     end
     out_path_new = out_path_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
