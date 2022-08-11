@@ -7,12 +7,12 @@ export nanmax, nanmin
 export landWrapper
 export nonUnique
 export noStackTrace
+export dictToNamedTuple
 
 """
-noStackTrace()
-Modifies Base.show to reduce the size of error stacktrace of sindbad errors
+    noStackTrace()
+Modifies Base.show to reduce the size of error stacktrace of sindbad
 """
-
 function noStackTrace()
     eval(:(Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")))
     eval(:(Base.show(io::IO,nt::Type{<:Tuple}) = print(io,"T")))
@@ -36,7 +36,6 @@ function nonUnique(x::AbstractArray{T}) where T
     duplicatedvector
 end
 
-
 """
     applyUnitConversion(data_in, conversion, isadditive=false)
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
@@ -50,7 +49,11 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
     return data_out
 end
 
-function tuple2table(dTuple; colNames=nothing)
+"""
+    tupleToTable(dTuple; colNames=nothing)
+covert Tuple to Table
+"""
+function tupleToTable(dTuple; colNames=nothing)
     tpNames = propertynames(dTuple)
     tpValues = values(dTuple)
     dNames = [Symbol(tpNames[i]) for i in eachindex(tpNames)]
@@ -64,44 +67,20 @@ function tuple2table(dTuple; colNames=nothing)
 end
 
 """
-dict2tuple(d::Dict)
-covert nested dictionary to named Tuple
+    dictToNamedTuple(d::DataStructures.OrderedDict)
+covert nested dictionary to NamedTuple
 """
-function dict2tuple(d::Dict)
-    for k in keys(d)
-        if d[k] isa Array{Any,1}
-            d[k] = [v for v in d[k]]
-        elseif d[k] isa Dict
-            d[k] = dict2tuple(d[k])
-        end
-    end
-    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
-    return dTuple
-end
-
-"""
-typenarrow!(d::DataStructures.OrderedDict)
-covert nested dictionary to named Tuple
-"""
-function typenarrow!(d::DataStructures.OrderedDict)
+function dictToNamedTuple(d::AbstractDict)
     for k in keys(d)
         if d[k] isa Array{Any,1}
             d[k] = [v for v in d[k]]
         elseif d[k] isa DataStructures.OrderedDict
-            d[k] = typenarrow!(d[k])
+            d[k] = dictToNamedTuple(d[k])
         end
     end
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
     return dTuple
 end
-
-#function setTupleSubfield(out, fieldname=:fluxes, vals=(:a, 1))
-#    return @eval (; $out..., $fieldname=(; $out.$fieldname..., $(vals[1])=$vals[2]))
-#end
-
-#function setTupleField(out, vals=(:a, 1))
-#    return @eval (; $out..., $(vals[1])=$vals[2])
-#end
 
 
 function setTupleSubfield(out, fieldname, vals)
@@ -353,23 +332,28 @@ function flagLower(A::AbstractMatrix)
     return o_mat
 end
 
+"""
+    AllNaN <: YAXArrays.DAT.ProcFilter
+Add skipping filter for pixels with all nans in YAXArrays 
+"""
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 
 """
-nanmax(dat) = maximum(dat[.!isnan.(dat)])
+    nanmax(dat) = maximum(dat[.!isnan.(dat)])
 Calculate the maximum of an array while skipping nan
 """
 nanmax(dat) = maximum(dat[.!isnan.(dat)])
 
 """
-nanmax(dat) = minimum(dat[.!isnan.(dat)])
+    nanmax(dat) = minimum(dat[.!isnan.(dat)])
 Calculate the minimum of an array while skipping nan
 """
 nanmin(dat) = minimum(dat[.!isnan.(dat)])
 
 """
+    landWrapper{S}
 Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
 """
 struct landWrapper{S}

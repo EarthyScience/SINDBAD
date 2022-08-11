@@ -1,4 +1,7 @@
 export runExperiment
+export getExperimentInfo
+
+
 """
     saveOutCubes(data_vars::Tuple, data_dims::Vector)
 saves the output varibles from the forward run
@@ -12,33 +15,50 @@ function saveOutCubes(data_vars::Tuple, data_dims::Vector)
         savecube(data_var, data_path, overwrite=true)
     end
 end
+
+
+"""
+    getExperimentInfo(experiment_json::String; replace_info=nothing)
+A helper function just to get info after experiment has been loaded and modified
+"""
+function getExperimentInfo(experiment_json::String; replace_info=nothing)
+    @info "runExperiment: load configurations..."
+    info = getConfiguration(experiment_json; replace_info=replace_info);
+
+    @info "runExperiment: setup experiment..."
+    info = setupExperiment(info);
+    return info
+end
+
 """
     runExperiment(info)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(experiment_json::String)
-    @info "runExperiment: load configurations..."
-    info = getConfiguration(experiment_json);
-
-    @info "runExperiment: setup experiment..."
-    info = setupExperiment(info);
+function runExperiment(experiment_json::String; replace_info=nothing)
+    println("----------------------------------------------")
+    @info "runExperiment: getting experiment info..."
+    info = getExperimentInfo(experiment_json; replace_info=replace_info)
 
     if info.tem.helpers.run.catchErrors
         @info "runExperiment: setting error catcher..."
         Sindbad.eval(:(error_catcher = []))    
     end
 
+    println("----------------------------------------------")
     @info "runExperiment: get forcing data..."
     forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
+    println("----------------------------------------------")
     
     @info "runExperiment: setup output..."
+    println("----------------------------------------------")
     output = setupOutput(info);
 
-    model_output=nothing
+    run_output=nothing
     observations=nothing
     if info.tem.helpers.run.runForward
         @info "runExperiment: do forward run..."
+        println("----------------------------------------------")
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
         # save the output cubes
         # todo move this to the end of the function when the optimization takes care of one forward run from optimized_paramaters
@@ -46,9 +66,11 @@ function runExperiment(experiment_json::String)
     end
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         @info "runExperiment: get observations..."
+        println("----------------------------------------------")
         observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
         if info.tem.helpers.run.runOpti
             @info "runExperiment: do optimization..."
+            println("----------------------------------------------")
             output_params = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
             # save the parameters cube
             savecube(output_params,output.paramdims.backendargs[1], overwrite=true)
@@ -70,10 +92,10 @@ function runExperiment(experiment_json::String)
             @info "runExperiment: doing forward run"
             run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
         end
-        # model_data = (; Pair.(output.variables, run_output)...)
-        obs_data = (; Pair.(observations.variables, observations.data)...)
         #todo make the loss functions work with disk arrays
+        # model_data = (; Pair.(output.variables, run_output)...)
+        # obs_data = (; Pair.(observations.variables, observations.data)...)
         # getLossVector(obs_data, model_output, info.optim)
     end
-    return info, run_output
+    return run_output
 end
