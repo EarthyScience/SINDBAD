@@ -69,7 +69,7 @@ function setupOptimization(info::NamedTuple)
             options_path = joinpath(info.settings_root, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
-        options = typenarrow!(options)
+        options = dictToNamedTuple(options)
     else
         options = (;)
     end
