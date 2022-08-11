@@ -12,6 +12,7 @@
 *.rar
 *.out
 *.log
+*logs
 *.tmp
 *.csv
 *.e

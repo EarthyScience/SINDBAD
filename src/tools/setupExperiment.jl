@@ -188,7 +188,13 @@ function generateDatesInfo(info::NamedTuple)
     for timeProp in timeProps
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
-    time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+    if info.modelRun.time.step == "daily"
+        time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+    elseif info.modelRun.time.step == "hourly"
+        time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate))
+    else
+        error("Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json")
+    end
     tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
@@ -488,6 +494,12 @@ function getLoopingInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:loop, (;)))
     for dim in info.modelRun.mapping.runEcosystem
         run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+        # todo: create the time dimesion using the dates vector
+        # if dim == "time"
+        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
+        # else
+        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+        # end
     end
     return run_info
 end
