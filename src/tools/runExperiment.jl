@@ -35,6 +35,7 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(experiment_json::String; replace_info=nothing)
+    println("----------------------------------------------")
     @info "runExperiment: getting experiment info..."
     info = getExperimentInfo(experiment_json; replace_info=replace_info)
 
@@ -43,17 +44,21 @@ function runExperiment(experiment_json::String; replace_info=nothing)
         Sindbad.eval(:(error_catcher = []))    
     end
 
+    println("----------------------------------------------")
     @info "runExperiment: get forcing data..."
     forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
+    println("----------------------------------------------")
     
     @info "runExperiment: setup output..."
+    println("----------------------------------------------")
     output = setupOutput(info);
 
     run_output=nothing
     observations=nothing
     if info.tem.helpers.run.runForward
         @info "runExperiment: do forward run..."
+        println("----------------------------------------------")
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
         # save the output cubes
         # todo move this to the end of the function when the optimization takes care of one forward run from optimized_paramaters
@@ -61,9 +66,11 @@ function runExperiment(experiment_json::String; replace_info=nothing)
     end
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         @info "runExperiment: get observations..."
+        println("----------------------------------------------")
         observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
         if info.tem.helpers.run.runOpti
             @info "runExperiment: do optimization..."
+            println("----------------------------------------------")
             output_params = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
             # save the parameters cube
             savecube(output_params,output.paramdims.backendargs[1], overwrite=true)
