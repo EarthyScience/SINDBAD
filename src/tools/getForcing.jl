@@ -110,6 +110,10 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         end
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
         yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath, vinfo.sourceVariableName, size(v)))
+        #todo: slice the time series using dates in helpers
+        # if hasproperty(yax,:time)
+        #     yax = yax[time=info.tem.helpers.dates.vector]
+        # end
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> Sindbad.cleanInputData(v, vinfo, numtype), yax)
     end
