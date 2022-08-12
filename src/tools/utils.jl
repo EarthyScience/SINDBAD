@@ -100,17 +100,19 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     local object = Docs.resolve(binding)
     local fields = isabstracttype(object) ? Symbol[] : fieldnames(object)
     if !isempty(fields)
-
-        println(buf)
         for field in fields
-            println(buf, describe(object, field))
             if abbrv.types
                 println(buf, "  - `", field, "::", fieldtype(object, field), "`")
             else
-                println(buf, "  - `", field, "=",
-                    bounds(object, field), "`")
+                bnds = [nothing, nothing]
+                try
+                    bnds = collect(bounds(object, field))
+                catch 
+                    bnds = [nothing, nothing]
+                end
+                println(buf, "  - `", field, " = ",
+                    getfield(getfield(Sindbad.Models, Symbol(object))(), field) , ", ",  bnds, ", (", units(object, field), ")", "` => " * describe(object, field))
             end
-            println(buf)
             if haskey(docs, field) && isa(docs[field], AbstractString)
                 println(buf)
                 println(docs[field])
