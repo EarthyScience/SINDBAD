@@ -24,6 +24,9 @@ end
 @doc """
 Calculates the value of land.PET.PET from the forcing variables
 
+# Parameters
+$(PARAMFIELDS)
+
 ---
 
 # compute:
