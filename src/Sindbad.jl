@@ -15,6 +15,7 @@ using Flatten:
     metaflatten,
     fieldnameflatten,
     parentnameflatten
+using JLD2
 using JSON:
     parsefile
 using Optim, Optimization, OptimizationOptimJL, OptimizationBBO, OptimizationGCMAES

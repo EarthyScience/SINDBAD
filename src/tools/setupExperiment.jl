@@ -506,31 +506,40 @@ end
 
 """
     getRestartFilePath(info)
-Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output_root as the base for saveSpinup
+Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
-    restartFileOri = info.spinup.paths.restartFile
+    restartFileIn = info.spinup.paths.restartFileIn
+    restartFileOut = info.spinup.paths.restartFileOut
+    restart_file = nothing
     if info.spinup.flags.saveSpinup
-        if isnothing(restartFileOri)
+        if isnothing(restartFileOut)
             error("info.spinup.paths.restartFile is null, but info.spinup.flags.saveSpinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false")
         else
-            if isabspath(restartFileOri)
-                restart_file = restartFileOri
+            # ensure that the output file for spinup is jld2 format
+            if restartFileOut[end-4:end] != ".jld2"
+                restartFileOut = restartFileOut * ".jld2"
+            end
+            if isabspath(restartFileOut)
+                restart_file = restartFileOut
             else
-                restart_file = joinpath(info.output_root, restartFileOri)
+                restart_file = joinpath(info.output.spinup, restartFileOut)
             end
             info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileOut=restart_file)))
         end
     end
 
     if info.spinup.flags.loadSpinup
-        if isnothing(restartFileOri)
+        if isnothing(restartFileIn)
             error("info.spinup.paths.restartFile is null, but info.spinup.flags.loadSpinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false")
         else
-            if isabspath(restartFileOri)
-                restart_file = restartFileOri
+            if restartFileIn[end-4:end] != ".jld2"
+                error("info.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.spinup.flags.loadSpinup to false.")
+            end
+            if isabspath(restartFileIn)
+                restart_file = restartFileIn
             else
-                restart_file = joinpath(info.experiment_root, restartFile)
+                restart_file = joinpath(info.experiment_root, restartFileIn)
             end
         end
         info = (; info..., spinup=(; info.spinup..., paths=(; info.spinup.paths..., restartFileIn=restart_file)))
@@ -545,6 +554,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Numeric Helpers..."
     info = setNumericHelpers(info)
+    @info "SetupExperiment: setting Output Helpers..."
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., output=info.output)))
     @info "SetupExperiment: setting Variable Helpers..."
     info = getVariablesToStore(info)
     @info "SetupExperiment: setting Pools Info..."

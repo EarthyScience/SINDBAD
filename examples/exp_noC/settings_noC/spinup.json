@@ -22,7 +22,8 @@
 	},
 	"paths": 
 	{
-		"restartFile": null
+		"restartFileIn": null,
+		"restartFileOut": null	
 	},
 	"flags":
 	{

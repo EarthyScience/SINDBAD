@@ -16,7 +16,8 @@
 		"abstol": 10.0
 	},
 	"paths": {
-		"restartFile": null
+		"restartFileIn": null,
+		"restartFileOut": null
 	},
 	"flags": {
 		"doSpinup": true,
