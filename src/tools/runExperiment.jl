@@ -21,9 +21,9 @@ end
     getExperimentInfo(experiment_json::String; replace_info=nothing)
 A helper function just to get info after experiment has been loaded and modified
 """
-function getExperimentInfo(experiment_json::String; replace_info=nothing)
+function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     @info "runExperiment: load configurations..."
-    info = getConfiguration(experiment_json; replace_info=replace_info);
+    info = getConfiguration(sindbad_experiment; replace_info=replace_info);
 
     @info "runExperiment: setup experiment..."
     info = setupExperiment(info);
@@ -31,13 +31,18 @@ function getExperimentInfo(experiment_json::String; replace_info=nothing)
 end
 
 """
-    runExperiment(info)
+    runExperiment(sindbad_experiment::String; replace_info=nothing)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(experiment_json::String; replace_info=nothing)
+function runExperiment(sindbad_experiment::String; replace_info=nothing)
     println("----------------------------------------------")
     @info "runExperiment: getting experiment info..."
-    info = getExperimentInfo(experiment_json; replace_info=replace_info)
+    info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
+
+    if info.tem.helpers.run.saveInfo
+        @info "runExperiment: saving info..."
+        @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
+    end
 
     if info.tem.helpers.run.catchErrors
         @info "runExperiment: setting error catcher..."

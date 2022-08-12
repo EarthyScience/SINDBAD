@@ -90,7 +90,7 @@ function setupOutput(info::NamedTuple)
     end
     @info "setupOutput: getting output dimension..."
     outdims = map(datavars) do vn
-        getOutDims(info, vn, info.output_root, outformat)
+        getOutDims(info, vn, info.output.data, outformat)
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
     output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
@@ -105,7 +105,7 @@ end
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.optimized_parameters
     paramaxis = CategoricalAxis("parameter", params)
-    od = OutDims(paramaxis, path=joinpath(info.output_root, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
+    od = OutDims(paramaxis, path=joinpath(info.output.optim, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
     # od = OutDims(paramaxis)
      # list of parameter
     output = setTupleField(output, (:paramdims, od))
