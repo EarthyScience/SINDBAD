@@ -4,8 +4,8 @@ using Sindbad
 noStackTrace()
 
 site_index = 1
-# site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"]) #Int64(ARGS[1])
-site_index = Base.parse(Int, ARGS[1])
+site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = Base.parse(Int, ARGS[1])
 forcing="erai"
 site_info=Sindbad.CSV.File("/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing).csv", header=false);
 domain=site_info[site_index][2]
@@ -14,7 +14,7 @@ experiment_json = "exp_WROASTED/settings_WROASTED/experiment.json";
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
 obspath = inpath;
 forcingConfig="forcing_$(forcing).json";
-optimize_it = false;
+optimize_it = true;
 outpath="/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad";
 
 
