@@ -39,7 +39,6 @@ model_list = (:rainSnow, :rainIntensity, :PET, :ambientCO2, :landProperties, :so
 
 ## create a table to view all sindbad models and their orders.
 sindbad_models = Table((; model=[model_list...]))
-# sindbad_models = Table((; model=[model_list...], approaches=[subtypes(eval(_md)) for _md in model_list]))
 
 ## Import all models.
 for model_name_symbol in model_list
@@ -48,7 +47,5 @@ for model_name_symbol in model_list
 	include(model_path)
 end
 
-# shorten the stacktrace when there are errors in models
-# Base.show(io::IO,nt::Type{<:LandEcosystem}) = print(io,supertype(nt))
 
 end
