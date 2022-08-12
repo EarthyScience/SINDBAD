@@ -15,7 +15,10 @@
 *logs
 *.tmp
 *.csv
+*.CSV
 *.e
+*.jld2
+*.jld
 *.o
 .*
 ~*
