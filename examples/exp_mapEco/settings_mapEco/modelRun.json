@@ -18,6 +18,7 @@
 	},
 	"flags":
 	{
+		"saveInfo": 			true,
 		"catchErrors": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
