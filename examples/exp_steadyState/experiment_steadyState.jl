@@ -17,7 +17,7 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
-out = createInitOut(info);
+land_init = createLandInit(info);
 
 # selTimeStep = 1
 # spinup_forcing = forcing[[selTimeStep]];

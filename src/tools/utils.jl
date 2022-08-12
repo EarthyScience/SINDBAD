@@ -8,6 +8,7 @@ export landWrapper
 export nonUnique
 export noStackTrace
 export dictToNamedTuple
+export getSindbadModels
 
 """
     noStackTrace()
@@ -17,6 +18,20 @@ function noStackTrace()
     eval(:(Base.show(io::IO,nt::Type{<:NamedTuple}) = print(io,"NT")))
     eval(:(Base.show(io::IO,nt::Type{<:Tuple}) = print(io,"T")))
     eval(:(Base.show(io::IO,nt::Type{<:NTuple}) = print(io,"NT")))
+end
+
+"""
+    getSindbadModels()
+helper function to return a table of sindbad model and approaches
+"""
+function getSindbadModels()
+    approaches = []
+
+    for _md in sindbad_models.model
+        push!(approaches, join(subtypes(getfield(Sindbad.Models, _md)), ", "))
+    end
+    model_approaches = Table((; model=[sindbad_models.model...], approaches=[approaches...]))
+    return model_approaches
 end
 
 """

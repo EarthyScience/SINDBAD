@@ -15,7 +15,7 @@ info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 
-out = createInitOut(info);
+land_init = createLandInit(info);
 
 output = setupOutput(info);
 
@@ -28,7 +28,7 @@ ŷ = hcat(getfield(ŷField, :gpp)...)' |> Matrix |> vec
 
 
 observations = getObservation(info); 
-out = createInitOut(info);
+land_init = createLandInit(info);
 optimizeit=true
 outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);   
 obsV = :gpp
