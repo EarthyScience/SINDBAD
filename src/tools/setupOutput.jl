@@ -1,10 +1,10 @@
-export createInitOut, setupOutput, setupOptiOutput
+export createLandInit, setupOutput, setupOptiOutput
 
 """
-    createInitOut(info)
+    createLandInit(info)
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function createInitOut(info::NamedTuple)
+function createLandInit(info::NamedTuple)
     initPools = getInitPools(info)
     initStates = getInitStates(info)
     out = (; fluxes=(;), pools=initPools, states=initStates)
@@ -82,7 +82,7 @@ end
 
 function setupOutput(info::NamedTuple)
     @info "setupOutput: creating initial out/land..."
-    out = createInitOut(info)
+    land_init = createLandInit(info)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
@@ -93,7 +93,7 @@ function setupOutput(info::NamedTuple)
         getOutDims(info, vn, info.output_root, outformat)
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
-    output_tuple = (; land_init=out, dims=outdims, variables = vnames)
+    output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
     if info.modelRun.flags.runOpti
         @info "setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple);

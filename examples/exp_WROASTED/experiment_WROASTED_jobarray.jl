@@ -42,7 +42,7 @@ if doitstepwise
     output = setupOutput(info)
 
     # forward run
-    outcubes = mapRunEcosystem(forcing, output, info.tem, info.models.forward; max_cache=info.modelRun.rules.yax_max_cache)
+    outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache)
 
     # optimization
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))

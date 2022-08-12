@@ -19,7 +19,6 @@ forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
-#Sindbad.eval(:(debugcatcherr = []))
 
 outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
 
@@ -40,7 +39,7 @@ plot(groundW[:, 1])
 
 
 observations = getObservation(info); 
-out = createInitOut(info);
+land_init = createLandInit(info);
 optimizeit=true
 outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);  
 

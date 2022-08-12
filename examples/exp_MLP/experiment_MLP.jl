@@ -14,13 +14,13 @@ info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 spinup_forcing = getSpinupForcing(forcing, info);
 
-out = createInitOut(info);
+land_init = createLandInit(info);
 outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 # @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
 
 
 observations = getObservation(info); 
-out = createInitOut(info);
+land_init = createLandInit(info);
 optimizeit=true
 outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);   
 obsV = :gpp
