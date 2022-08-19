@@ -75,7 +75,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/DE-2.1979.2017.daily.nc",
+		"oneDataPath": "data/DE-2p.1979.2017.daily.nc",
 		"one_sel_mask": null,
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",

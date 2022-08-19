@@ -70,7 +70,8 @@ function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedT
         deepcopy(out_filtered)
     end
     # push!(debugcatcherr,res)
-    landWrapper(res)
+    res
+    # landWrapper(res)
 end
 
 """
@@ -87,8 +88,10 @@ function runForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
             outnow = deepcopy(out)
             timeLoopForward(forward_models, forcing, outnow,tem_variables, tem_helpers)
         end
-        for d in ndims(res)
-            res = reducedim(catnt,res,dims=d)
+        push!(Sindbad.error_catcher,res)
+        restuples = res.s
+        for d in ndims(restuples)
+            res = reduce((i,j)->cat(i,j,dims=d),res,dims=d)
         end 
         res[1]
     else
@@ -114,6 +117,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
     @info "runEcosystem:: running Ecosystem"
     @info "runEcosystem:: running precomputation"
     land_out=nothing
+    nts = nothing
     if run_forward == false
         additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
         #@info additionaldims
@@ -135,11 +139,13 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
                 end
                 timeLoopForward(approaches, newforcing, land_spin_now, tem.variables, tem.helpers)
             end
-            push!(Sindbad.error_catcher, res)
-            for d in ndims(res)
-                res = reduce(catnt,res,dims=d)
-            end 
-            res[1]
+            #push!(Sindbad.error_catcher, res)
+            nts = length(first(res))
+            fullarrayoftuples = map(Iterators.product(1:nts,CartesianIndices(res))) do (its,iouter)
+                res[iouter][its]
+            end
+            #push!(Sindbad.error_catcher, fullarrayoftuples)
+            landWrapper(fullarrayoftuples)
         else
             @time land_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, land_init, tem.helpers)
             land_spin = deepcopy(land_prec)
@@ -147,6 +153,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
                 land_spin = runSpinup(approaches, forcing, land_prec, tem; spinup_forcing=spinup_forcing)
             end
             res = timeLoopForward(approaches, forcing, land_spin, tem.variables, tem.helpers)
+            landWrapper(res)
         end
         land_out = land_all
     else
@@ -177,15 +184,28 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
+    # push!(Sindbad.error_catcher,(;outputs,tem_variables,land_out))
     for group in keys(tem_variables)
         data = land_out[group]
         for k in tem_variables[group]
-            outputs[i] .= convert(Array, deepcopy(data[k]))
+            viewcopy(outputs[i],data[k])
             i += 1
         end
     end
 end
 
+
+function viewcopy(xout, xin)
+    if ndims(xout) == ndims(xin)
+        for i in eachindex(xin)
+            xout[i] = xin[i][1]
+        end
+    else
+        for i in CartesianIndices(xin)
+            xout[:,i] .= xin[i]
+        end
+    end
+end
 
 function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, forward_models::Tuple; spinup_forcing=nothing, max_cache=1e9)
     incubes = forcing.data

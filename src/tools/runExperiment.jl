@@ -67,7 +67,7 @@ function runExperiment(sindbad_experiment::String; replace_info=nothing)
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
         # save the output cubes
         # todo move this to the end of the function when the optimization takes care of one forward run from optimized_paramaters
-        saveOutCubes(run_output, output.dims)
+        # saveOutCubes(run_output, output.dims)
     end
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         @info "runExperiment: get observations..."
