@@ -9,6 +9,8 @@ runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     for model in models
+        # @show map(size,(forcing))
+        # @show map(typeof,(forcing))
         out = Models.compute(model, forcing, out, tem_helpers)
         if tem_helpers.run.runUpdateModels
             out = Models.update(model, forcing, out, tem_helpers)
@@ -108,29 +110,39 @@ end
 """
 runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
-function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=true)
+function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple; spinup_forcing=nothing, run_forward=false)
     @info "runEcosystem:: running Ecosystem"
     @info "runEcosystem:: running precomputation"
-    @time land_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, land_init, tem.helpers)
     land_out=nothing
     if run_forward == false
         additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+        #@info additionaldims
         land_all = if !isempty(additionaldims)
             spacesize = values(tem.helpers.run.loop[additionaldims])
-            loopvars = ntuple(i->reshape(1:i,ones(Int,i-1)...,i),length(spacesize))
-            res = broadcast(loopvars...) do lI
-                land_spin_now = deepcopy(land_prec)
-                if tem.spinup.flags.doSpinup
-                    land_spin_now = runSpinup(approaches, forcing, land_spin_now, tem; spinup_forcing=spinup_forcing)
+            res = broadcast(Iterators.product(Base.OneTo.(spacesize)...)) do lI
+                newforcing = map(forcing) do a
+                    inds = map(zip(lI,additionaldims)) do (i,lv)
+                        lv=>i
+                    end
+                    view(a;inds...)
+                    # getindex(a;inds...)
                 end
-                timeLoopForward(forward_models, forcing, land_spin_now, tem.variables, tem.helpers)
+                @time land_prec = runPrecompute(getForcingForTimeStep(newforcing, 1), approaches, deepcopy(land_init), tem.helpers)
+                #@show first(newforcing)
+                land_spin_now = land_prec
+                if tem.spinup.flags.doSpinup
+                    land_spin_now = runSpinup(approaches, newforcing, land_spin_now, tem; spinup_forcing=spinup_forcing)
+                end
+                timeLoopForward(approaches, newforcing, land_spin_now, tem.variables, tem.helpers)
             end
+            push!(Sindbad.error_catcher, res)
             for d in ndims(res)
-                res = reducedim(catnt,res,dims=d)
+                res = reduce(catnt,res,dims=d)
             end 
             res[1]
         else
-            land_spin = land_prec
+            @time land_prec = runPrecompute(getForcingForTimeStep(forcing, 1), approaches, land_init, tem.helpers)
+            land_spin = deepcopy(land_prec)
             if tem.spinup.flags.doSpinup
                 land_spin = runSpinup(approaches, forcing, land_prec, tem; spinup_forcing=spinup_forcing)
             end
