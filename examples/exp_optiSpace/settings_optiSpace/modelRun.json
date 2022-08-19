@@ -13,13 +13,13 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": ["latitude", "longitude"],
-		"runEcosystem": ["time"]
+		"yaxarray": [],
+		"runEcosystem": ["time", "latitude", "longitude"]
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
-		"catchErrors": 			true,
+		"catchErrors": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,

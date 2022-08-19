@@ -2,8 +2,8 @@ using Revise
 using Sindbad
 using ProgressMeter
 noStackTrace()
-domain = "DE"
-optimize_it = false
+domain = "DE-2";
+optimize_it = false;
 replace_info = Dict(
     "experiment.domain" => domain,
     "modelRun.flags.runOpti" => optimize_it,
@@ -11,10 +11,8 @@ replace_info = Dict(
 );
 
 experiment_json = "exp_optiSpace/settings_optiSpace/experiment.json";
-
+Sindbad.eval(:(error_catcher = []))
 run_output = runExperiment(experiment_json; replace_info=replace_info);
-
-
 
 
 
