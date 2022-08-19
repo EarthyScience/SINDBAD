@@ -3,7 +3,7 @@ using Sindbad
 using ProgressMeter
 noStackTrace()
 domain = "DE-2";
-optimize_it = false;
+optimize_it = true;
 replace_info = Dict(
     "experiment.domain" => domain,
     "modelRun.flags.runOpti" => optimize_it,
@@ -19,6 +19,8 @@ run_output = runExperiment(experiment_json; replace_info=replace_info);
 info = getConfiguration(experiment_json; replace_info=replace_info);
 
 info = setupExperiment(info);
+
+forcing = getForcing(info, Val(:yaxarray));
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
 output = setupOutput(info);

@@ -25,7 +25,7 @@
 		"depth_dimension": null,
 		"spaceTimeType": "spatiotemporal",
 		"sourceDataProductName": "FLUXNET",
-		"dataPath": "data/DE-2.1979.2017.daily.nc"
+		"dataPath": "data/DE-2p.1979.2017.daily.nc"
 	},
 	"variables": {
 	"ambCO2":

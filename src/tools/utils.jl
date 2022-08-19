@@ -361,13 +361,13 @@ YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
     nanmax(dat) = maximum(dat[.!isnan.(dat)])
 Calculate the maximum of an array while skipping nan
 """
-nanmax(dat) = maximum(dat[.!isnan.(dat)])
+nanmax(dat) = maximum(filter(!isnan,dat))
 
 """
     nanmax(dat) = minimum(dat[.!isnan.(dat)])
 Calculate the minimum of an array while skipping nan
 """
-nanmin(dat) = minimum(dat[.!isnan.(dat)])
+nanmin(dat) = minimum(filter(!isnan,dat))
 
 """
     landWrapper{S}
@@ -380,20 +380,34 @@ struct GroupView{S}
     groupname::Symbol
     s::S
 end
+struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
+    s::S
+    groupname::Symbol
+    arrayname::Symbol
+end
 Base.getproperty(s::landWrapper,f::Symbol) = GroupView(f,getfield(s,:s))
 function Base.getproperty(g::GroupView,f::Symbol)
-    group = columntable(getfield(g,:s))[getfield(g,:groupname)]
-    v = columntable(group)[f]
-    if eltype(v) <: AbstractArray
-        if length(first(v))==1
-            getindex.(v,1)
-        else
-            VectorOfArray(v)
-        end
-    else
-        v
-    end
+    allarrays = getfield(g,:s)
+    groupname = getfield(g,:groupname)
+    T = typeof(first(allarrays)[groupname][f])
+    ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays,groupname,f)
 end
+Base.size(a::ArrayView) = size(a.s)
+Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
+Base.getindex(a::ArrayView,i::Int) = a.s[i][a.groupname][a.arrayname]
+# function Base.getproperty(g::GroupView,f::Symbol)
+#     group = columntable(getfield(g,:s))[getfield(g,:groupname)]
+#     v = columntable(group)[f]
+#     if eltype(v) <: AbstractArray
+#         if length(first(v))==1
+#             getindex.(v,1)
+#         else
+#             VectorOfArray(v)
+#         end
+#     else
+#         v
+#     end
+# end
 Base.propertynames(o::landWrapper) = propertynames(first(getfield(o,:s)))
 Base.keys(o::landWrapper) = propertynames(o)
 Base.getindex(o::landWrapper,s::Symbol) = getproperty(o,s)
