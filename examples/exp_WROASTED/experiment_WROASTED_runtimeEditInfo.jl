@@ -20,9 +20,9 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => false,
     "spinup.flags.saveSpinup" => false,
-    "forcing.defaultForcing.dataPath" => inpath,
+    # "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
-    "opti.constraints.oneDataPath" => obspath
+    # "opti.constraints.oneDataPath" => obspath
 );
 
 output = setupOutput(info)
