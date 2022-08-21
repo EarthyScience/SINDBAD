@@ -84,7 +84,7 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "mse",
+			"costMetric": "nseinv",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -129,7 +129,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"nee": {
@@ -172,7 +172,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"reco": {
@@ -215,7 +215,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"evapotranspiration": {
@@ -258,7 +258,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"transpiration": {
@@ -301,7 +301,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			},
 			"agb": {
@@ -371,7 +371,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "mse"
+					"costMetric": "nseinv"
 				}
 			}
 		}

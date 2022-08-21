@@ -110,10 +110,6 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         end
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
         yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath, vinfo.sourceVariableName, size(v)))
-        # # todo: check if permuting the dimensions is the best way to rearrange the data dimensions from lat, lon, time to time, lat, lon --> does not work due to iscontiguous error of yax
-        # if ndims(yax) == 3
-        #     yax = permutedims(yax, (3, 1, 2))
-        # end
         #todo: slice the time series using dates in helpers
         # if hasproperty(yax,:time)
         #     yax = yax[time=info.tem.helpers.dates.vector]
