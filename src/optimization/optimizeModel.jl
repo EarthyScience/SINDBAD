@@ -237,6 +237,8 @@ function unpackYaxOpti(args; forcing_variables::AbstractArray)
     outputs = first(args)
     forcings = args[2:(nforc+1)]
     observations = args[(nforc+2):end]
+    #todo: check the hack below for the best way to permute the dimensions of yaxarray obs in time, lat, lon dimensions to have time, lat, lon as the model output
+    # observations = map(x-> permutedims(x, (3, 1, 2)), observations)
     return outputs, forcings, observations
 end
 
