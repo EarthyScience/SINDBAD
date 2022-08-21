@@ -10,6 +10,9 @@ mse = {|y - ŷ|}^2
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:mse})
     # push!(Sindbad.error_catcher, (; y, yσ, ŷ))
+    # the following two lines are hacks to permute the dimensions of yaxarray obs in time, lat, lon dimensions to have time, lat, lon as the model output
+    # y = permutedims(y, (3, 1, 2))
+    # yσ = permutedims(yσ, (3, 1, 2))
     idxs = (.!isnan.(y .* yσ .* ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end

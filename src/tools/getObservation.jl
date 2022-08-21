@@ -70,6 +70,10 @@ function getObsYax(v, nc, variable_name::String, data_path::String)
     end
     # yax = YAXArray(ax, v)
     yax = YAXArray(ax, Sindbad.YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path,variable_name, size(v)))
+    # # todo: check if permuting the dimensions is the best way to rearrange the data dimensions from lat, lon, time to time, lat, lon --> does not work due to iscontiguous error of yax
+    # if ndims(yax) == 3
+    #     yax = permutedims(yax, (3, 1, 2))
+    # end
     return yax
 end
 
