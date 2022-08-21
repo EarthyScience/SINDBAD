@@ -61,7 +61,7 @@ function runExperiment(sindbad_experiment::String; replace_info=nothing)
 
     run_output=nothing
     observations=nothing
-    if info.tem.helpers.run.runForward
+    if (info.tem.helpers.run.runForward || info.tem.helpers.run.calcCost) && !info.tem.helpers.run.runOpti
         @info "runExperiment: do forward run..."
         println("----------------------------------------------")
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
