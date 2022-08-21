@@ -8,7 +8,7 @@ mean squared error
 mse = {|y - ŷ|}^2
 ``
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:mse}) 
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:mse})
     idxs = (.!isnan.(y .* yσ .* ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
 end
