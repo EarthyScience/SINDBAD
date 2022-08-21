@@ -8,7 +8,7 @@ eYear = "2017"
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 obspath = inpath
 forcingConfig = "forcing_erai.json"
-optimize_it = false
+optimize_it = true
 outpath = nothing
 domain = "DE-Hai"
 
@@ -20,9 +20,9 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => false,
     "spinup.flags.saveSpinup" => false,
-    "forcing.defaultForcing.dataPath" => inpath,
+    # "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
-    "opti.constraints.oneDataPath" => obspath
+    # "opti.constraints.oneDataPath" => obspath
 );
 
 output = setupOutput(info)
@@ -31,7 +31,7 @@ run_output=nothing
 
 doitstepwise = true
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
-
+run_output = runExperiment(experiment_json; replace_info=replace_info);
 if doitstepwise
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
     # info = getExperimentInfo(experiment_json) # note that the modification will not work with this

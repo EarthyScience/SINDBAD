@@ -62,11 +62,12 @@ end
 
 function getOutDims(info, vname_full, outpath, outformat)
     vname = Symbol(split(string(vname_full), '.')[end])
+    inax =  info.modelRun.mapping.runEcosystem
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
     if isnothing(depth_size) || depth_size == 1
-        OutDims("Time", path=joinpath(outpath, "$(vname)$(outformat)"), overwrite=true)
+        OutDims(inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend = :zarr, overwrite=true)
     else
-        OutDims(RangeAxis(depth_name, 1:depth_size),"Time", path=joinpath(outpath, "$(vname)$(outformat)"), overwrite=true)
+        OutDims(RangeAxis(depth_name, 1:depth_size),inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend=:zarr, overwrite=true)
     end
 end
 
@@ -105,7 +106,7 @@ end
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.optimized_parameters
     paramaxis = CategoricalAxis("parameter", params)
-    od = OutDims(paramaxis, path=joinpath(info.output.optim, "optimized_parameters$(info.modelRun.output.format)"), overwrite=true)
+    od = OutDims(paramaxis, path=joinpath(info.output.optim, "optimized_parameters$(info.modelRun.output.format)"), backend=:zarr, overwrite=true)
     # od = OutDims(paramaxis)
      # list of parameter
     output = setTupleField(output, (:paramdims, od))
