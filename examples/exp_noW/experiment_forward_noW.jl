@@ -10,6 +10,7 @@ experiment_json = "exp_noW/settings_noW/experiment.json"
 
 
 info = getConfiguration(experiment_json);
+outcubes = runExperiment(experiment_json);
 
 info = setupExperiment(info);
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));

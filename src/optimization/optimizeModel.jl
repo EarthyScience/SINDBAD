@@ -109,6 +109,11 @@ function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, 
     ŷ =  getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
+    # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
+    if size(ŷ) != size(y)
+        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        ŷ = permutedims(ŷ, (2, 3, 1))
+    end
     return (y, yσ, ŷ)
 end
 """
@@ -117,11 +122,13 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 function getData(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
-    #...)' |> Matrix |> vec
-    # ŷField = getproperty(outsmodel, modelVarInfo[1]).evap
-    # ŷ = hcat(getproperty(ŷField, modelVarInfo[2])...)' |> Matrix |> vec
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
+    # todo: get rid of the permutedims hack ...
+    if size(ŷ) != size(y)
+        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        ŷ = permutedims(ŷ, (2, 3, 1))
+    end
     return (y, yσ, ŷ)
 end
 
