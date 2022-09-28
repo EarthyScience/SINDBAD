@@ -93,22 +93,23 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
-        res = broadcast(Iterators.product(Base.OneTo.(spacesize)...)) do lI
-            newforcing = map(forcing) do a
-                inds = map(zip(lI,additionaldims)) do (i,lv)
-                    lv=>i
+        # res = Iterators.product(Base.OneTo.(spacesize)...) do loc_names
+        res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
+            loc_forcing = map(forcing) do a
+                inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
+                    lv=>loc_index
                 end
                 view(a;inds...)
                 # getindex(a;inds...)
             end
             @info "runEcosystem:: running precomputation"
-            @time land_prec = runPrecompute(getForcingForTimeStep(newforcing, 1), approaches, deepcopy(land_init), tem.helpers)
+            @time land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, deepcopy(land_init), tem.helpers)
             #@show first(newforcing)
             land_spin_now = land_prec
             if tem.spinup.flags.doSpinup
-                land_spin_now = runSpinup(approaches, newforcing, land_spin_now, tem; spinup_forcing=spinup_forcing)
+                land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=spinup_forcing)
             end
-            timeLoopForward(approaches, newforcing, land_spin_now, tem.variables, tem.helpers)
+            timeLoopForward(approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers)
         end
         nts = length(first(res))
         fullarrayoftuples = map(Iterators.product(1:nts,CartesianIndices(res))) do (its,iouter)
