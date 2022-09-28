@@ -4,7 +4,8 @@ using ProgressMeter
 noStackTrace()
 domain = "DE-2";
 optimize_it = true;
-# optimize_it = false;
+optimize_it = false;
+
 replace_info_spatial = Dict(
     "experiment.domain" => domain * "_spatial",
     "modelRun.flags.runOpti" => optimize_it,
@@ -12,6 +13,8 @@ replace_info_spatial = Dict(
     "modelRun.mapping.yaxarray" => [],
     "modelRun.mapping.runEcosystem" => ["time", "latitude", "longitude"]
 ); #one parameter set for whole domain
+
+
 replace_info_site = Dict(
     "experiment.domain" => domain * "_site",
     "modelRun.flags.runOpti" => optimize_it,
@@ -26,3 +29,25 @@ Sindbad.eval(:(error_catcher = []))
 run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
 
 run_output_site = runExperiment(experiment_json; replace_info=replace_info_site);
+
+using Strided: Strided, @strided
+spacesize = (3,4)
+
+using ThreadPools
+
+function myfunc(loc_names)
+    println(Threads.threadid())
+    sleep(1)
+   (a=5,b=(c=4,d=6)) 
+end
+
+it = Iterators.product(Base.OneTo.(spacesize)...)
+
+out = qbmap(myfunc,it)
+
+out
+
+@strided res = broadcast(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
+    println(Threads.threadid())
+    1.5
+end
