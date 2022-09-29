@@ -1,7 +1,7 @@
 export vegFraction_scaledfAPAR
 
 @bounds @describe @units @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
-	fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
+	fAPARscale::T1 = 10.0f0 | (0.0f0, 20.0f0) | "scalar for fAPAR" | ""
 end
 
 function compute(o::vegFraction_scaledfAPAR, forcing, land::NamedTuple, helpers::NamedTuple)

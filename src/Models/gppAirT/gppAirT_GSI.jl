@@ -1,12 +1,12 @@
 export gppAirT_GSI
 
 @bounds @describe @units @with_kw struct gppAirT_GSI{T1, T2, T3, T4, T5, T6} <: gppAirT
-	fT_c_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor for cold stress" | "fraction"
-	fT_c_slope::T2 = 0.25 | (0.0, 100.0) | "slope of sigmoid for cold stress" | "fraction"
-	fT_c_base::T3 = 7.0 | (1.0, 15.0) | "base of sigmoid for cold stress" | "fraction"
-	fT_h_τ::T4 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor for heat stress" | "fraction"
-	fT_h_slope::T5 = 1.74 | (0.0, 100.0) | "slope of sigmoid for heat stress" | "fraction"
-	fT_h_base::T6 = 41.51 | (25.0, 65.0) | "base of sigmoid for heat stress" | "fraction"
+	fT_c_τ::T1 = 0.2f0 | (0.01f0, 1.0f0) | "contribution factor for current stressor for cold stress" | "fraction"
+	fT_c_slope::T2 = 0.25f0 | (0.0f0, 100.0f0) | "slope of sigmoid for cold stress" | "fraction"
+	fT_c_base::T3 = 7.0f0 | (1.0f0, 15.0f0) | "base of sigmoid for cold stress" | "fraction"
+	fT_h_τ::T4 = 0.2f0 | (0.01f0, 1.0f0) | "contribution factor for current stressor for heat stress" | "fraction"
+	fT_h_slope::T5 = 1.74f0 | (0.0f0, 100.0f0) | "slope of sigmoid for heat stress" | "fraction"
+	fT_h_base::T6 = 41.51f0 | (25.0f0, 65.0f0) | "base of sigmoid for heat stress" | "fraction"
 end
 
 function precompute(o::gppAirT_GSI, forcing, land::NamedTuple, helpers::NamedTuple)

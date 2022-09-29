@@ -1,7 +1,7 @@
 export runoffBase_Zhang2008
 
 @bounds @describe @units @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-	bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
+	bc::T1 = 0.001f0 | (0.00001f0, 0.02f0) | "base flow coefficient" | "day-1"
 end
 
 function compute(o::runoffBase_Zhang2008, forcing, land::NamedTuple, helpers::NamedTuple)

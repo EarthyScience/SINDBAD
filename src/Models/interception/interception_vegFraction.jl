@@ -1,7 +1,7 @@
 export interception_vegFraction
 
 @bounds @describe @units @with_kw struct interception_vegFraction{T1} <: interception
-	pInt::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
+	pInt::T1 = 1.0f0 | (0.01f0, 5.0f0) | "maximum interception storage" | "mm"
 end
 
 function compute(o::interception_vegFraction, forcing, land::NamedTuple, helpers::NamedTuple)

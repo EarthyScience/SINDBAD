@@ -1,7 +1,7 @@
 export WUE_VPDDay
 
 @bounds @describe @units @with_kw struct WUE_VPDDay{T1} <: WUE
-	WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
+	WUEatOnehPa::T1 = 9.2f0 | (4.0f0, 17.0f0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
 end
 
 function compute(o::WUE_VPDDay, forcing, land::NamedTuple, helpers::NamedTuple)

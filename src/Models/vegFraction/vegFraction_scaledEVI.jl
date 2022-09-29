@@ -1,7 +1,7 @@
 export vegFraction_scaledEVI
 
 @bounds @describe @units @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
-	EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
+	EVIscale::T1 = 1.0f0 | (0.0f0, 5.0f0) | "scalar for EVI" | ""
 end
 
 function compute(o::vegFraction_scaledEVI, forcing, land::NamedTuple, helpers::NamedTuple)

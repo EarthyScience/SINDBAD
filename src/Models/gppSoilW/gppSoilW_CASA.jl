@@ -1,7 +1,7 @@
 export gppSoilW_CASA
 
 @bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
-    Bwe::T1 = 0.5 | (0, 1) | "base water stress" | ""
+    Bwe::T1 = 0.5f0 | (0f0, 1f0) | "base water stress" | ""
 end
 
 

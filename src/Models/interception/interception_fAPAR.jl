@@ -1,7 +1,7 @@
 export interception_fAPAR
 
 @bounds @describe @units @with_kw struct interception_fAPAR{T1} <: interception
-	isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
+	isp::T1 = 1.0f0 | (0.1f0, 5.0f0) | "fapar dependent storage" | ""
 end
 
 function compute(o::interception_fAPAR, forcing, land::NamedTuple, helpers::NamedTuple)
