@@ -32,7 +32,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helper
     wRootUptake .= 𝟘
     # get the transpiration
     toUptake = transpiration
-    for sl in 1:length(land.pools.soilW)
+    for sl in eachindex(land.pools.soilW)
         wRootUptake[sl] = min(toUptake, PAW[sl])
         toUptake = toUptake - wRootUptake[sl]
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]

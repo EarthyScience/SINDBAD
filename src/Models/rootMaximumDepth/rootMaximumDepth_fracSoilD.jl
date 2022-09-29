@@ -1,7 +1,7 @@
 export rootMaximumDepth_fracSoilD
 
 @bounds @describe @units @with_kw struct rootMaximumDepth_fracSoilD{T1} <: rootMaximumDepth
-    fracRootD2SoilD::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | ""
+    fracRootD2SoilD::T1 = 0.5f0 | (0.1f0, 0.8f0) | "root depth as a fraction of soil depth" | ""
 end
 
 function precompute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, helpers::NamedTuple)

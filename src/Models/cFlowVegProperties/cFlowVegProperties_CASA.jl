@@ -1,7 +1,7 @@
 export cFlowVegProperties_CASA
 
 @bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
+	WOODLIGFRAC::T1 = 0.4f0 | nothing | "fraction of wood that is lignin" | ""
 end
 
 function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -30,8 +30,8 @@ function compute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers:
 	for ii in 1:size(aM, 1)
 		ndxSrc = helpers.pools.carbon.zix.(aM[ii, 1])
 		ndxTrg = helpers.pools.carbon.zix.(aM[ii, 2]); #sujan is this 2 | 1?
-		for iSrc in 1:length(ndxSrc)
-			for iTrg in 1:length(ndxTrg)
+		for iSrc in eachindex(ndxSrc)
+			for iTrg in eachindex(ndxTrg)
 				# p_fVeg[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3)
 				p_F[ndxTrg[iTrg], ndxSrc[iSrc]] = aM[ii, 3]; #sujan
 			end

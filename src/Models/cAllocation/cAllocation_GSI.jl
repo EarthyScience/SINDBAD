@@ -26,8 +26,8 @@ function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTu
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     # allocation to root; wood & leaf
-    cVegLeaf = fW / ((fW + fT) * 2.0)
-    cVegWood = fW / ((fW + fT) * 2.0)
+    cVegLeaf = fW / ((fW + fT) * 2.0f0)
+    cVegWood = fW / ((fW + fT) * 2.0f0)
     cVegRoot = fT / (fW + fT)
     cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
 

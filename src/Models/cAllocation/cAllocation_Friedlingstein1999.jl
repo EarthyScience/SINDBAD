@@ -1,9 +1,9 @@
 export cAllocation_Friedlingstein1999
 
 @bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1, T2, T3} <: cAllocation
-	so::T1 = 0.3 | (0.0, 1.0) | "" | ""
-	ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
-	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
+	so::T1 = 0.3f0 | (0.0f0, 1.0f0) | "" | ""
+	ro::T2 = 0.3f0 | (0.0f0, 1.0f0) | "" | ""
+	RelY::T3 = 2.0f0 | (1.0f0, Inf32) | "" | ""
 end
 
 function precompute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)

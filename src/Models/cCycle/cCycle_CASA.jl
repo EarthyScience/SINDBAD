@@ -31,7 +31,7 @@ function compute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	end
 	# NUMBER OF TIME STEPS PER YEAR
 	## these all need to be zeros maybe is taken care automatically
-	cEcoEfflux[!helpers.pools.carbon.flags.cVeg] = 0.0
+	cEcoEfflux[!helpers.pools.carbon.flags.cVeg] = 0.0f0
 	## compute losses
 	cEcoOut = min.(cEco, cEco * p_k_act)
 	## gains to vegetation
@@ -40,12 +40,12 @@ function compute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	cEcoInflux[zix] .= cNPP
 	## flows & losses
 	# @nc; if flux order does not matter; remove.
-	for jix in 1:length(fluxOrder)
+	for jix in eachindex(fluxOrder)
 		taker = p_taker[fluxOrder[jix]]
 		giver = p_giver[fluxOrder[jix]]
 		flow_tmp = cEcoOut[giver] * p_F(taker, giver)
 		cEcoFlow[taker] = cEcoFlow[taker] + flow_tmp * p_E(taker, giver)
-		cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0 - p_E(taker, giver))
+		cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0f0 - p_E(taker, giver))
 	end
 	## balance
 	cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
@@ -163,7 +163,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	dT = d
 	fxT = fx
 	# helpers
-	nPix = 1
+	nPix = 1f0
 	nTix = info.tem.helpers.sizes.nTix
 	nZix = length(land.pools.cEco)
 	# matrices for the calculations
@@ -191,7 +191,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		move = false
 		ndxGainFrom = find(p_taker == zix)
 		ndxLoseToZix = p_taker[p_giver == zix]
-		for ii in 1:length(ndxGainFrom)
+		for ii in eachindex(ndxGainFrom)
 			giver = p_giver[ndxGainFrom[ii]]
 			if any(giver == ndxLoseToZix)
 				move = true
@@ -223,7 +223,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		# so that pools are not NaN
 		if any(zix == helpers.pools.carbon.zix.cVeg)
 			# additional losses [RA] in veg pools
-			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
+			cLoxxRate[zix, :] = min(1.0f0 - p_aRespiration_km4su[zix], 1)
 			# gains in veg pools
 			gppShp = reshape(gpp, nPix, 1, nTix); # could be fxT?
 			cGain[zix, :] = cAlloc[zix, :] * gppShp * YG
@@ -231,13 +231,13 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		if any(zix == p_taker)
 			# no additional gains from outside
 			if !any(zix == helpers.pools.carbon.zix.cVeg)
-				cLoxxRate[zix, :] = 1.0
+				cLoxxRate[zix, :] = 1.0f0
 			end
 			# gains from other carbon pools
 			ndxGainFrom = find(p_taker == zix)
-			for ii in 1:length(ndxGainFrom)
+			for ii in eachindex(ndxGainFrom)
 				taker = p_taker[ndxGainFrom[ii]]; # @nc : taker always has to be the same as zix giver = p_giver[ndxGainFrom[ii]]
-				denom = (1.0 - cLossRate[giver, :])
+				denom = (1.0f0 - cLossRate[giver, :])
 				adjustGain = p_cFlow_A[taker, giver, :]
 				adjustGain3D = reshape(adjustGain, nPix, 1, nTix)
 				cGain[taker, :] = cGain[taker, :] + (fCt[giver, :] / denom) * cLossRate[giver, :] * adjustGain3D
@@ -245,7 +245,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		end
 		## GET THE POOLS GAINS [Gt] AND LOSSES [Lt]
 		# CALCULATE At = 1 - Lt
-		At = squeeze((1.0 - cLossRate[zix, :]) * cLoxxRate[zix, :])
+		At = squeeze((1.0f0 - cLossRate[zix, :]) * cLoxxRate[zix, :])
 		#sujan 29.10.2019: the squeeze removes the first dimension while
 		#running for a single point when nPix == 1
 		if size(cLossRate, 1) == 1
@@ -267,7 +267,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 			sumB_piA[ii] = Bt[ii] * prod(At2[ii + 1:nTix + 1], 2)
 		end
 		sumB_piA = sum(sumB_piA)
-		T2 = 0:1:NI2E - 1
+		T2 = 0f0:1f0:NI2E - 1f0
 		piA2 = (prod(At, 2) * ones(1, length(T2))) ^ (ones(size(At, 1), 1) * T2)
 		piA2 = sum(piA2)
 		# FINAL CARBON AT POOL zix

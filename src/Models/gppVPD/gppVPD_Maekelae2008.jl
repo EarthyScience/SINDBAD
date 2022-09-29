@@ -1,7 +1,7 @@
 export gppVPD_Maekelae2008
 
 @bounds @describe @units @with_kw struct gppVPD_Maekelae2008{T1} <: gppVPD
-    k::T1 = 0.4 | (0.06, 0.7) | "empirical parameter assuming typically negative values" | "kPa-1"
+    k::T1 = 0.4f0 | (0.06f0, 0.7f0) | "empirical parameter assuming typically negative values" | "kPa-1"
 end
 
 function compute(o::gppVPD_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)
