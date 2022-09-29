@@ -1,7 +1,7 @@
 export snowMelt_Tair
 
 @bounds @describe @units @with_kw struct snowMelt_Tair{T1} <: snowMelt
-	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
+	rate::T1 = 1.0f0 | (0.1f0, 10.0f0) | "snow melt rate" | "mm/°C"
 end
 
 function compute(o::snowMelt_Tair, forcing, land::NamedTuple, helpers::NamedTuple)

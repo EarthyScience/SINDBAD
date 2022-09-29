@@ -1,7 +1,7 @@
 export vegFraction_scaledNIRv
 
 @bounds @describe @units @with_kw struct vegFraction_scaledNIRv{T1} <: vegFraction
-	NIRvscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NIRv" | ""
+	NIRvscale::T1 = 1.0f0 | (0.0f0, 5.0f0) | "scalar for NIRv" | ""
 end
 
 function compute(o::vegFraction_scaledNIRv, forcing, land::NamedTuple, helpers::NamedTuple)

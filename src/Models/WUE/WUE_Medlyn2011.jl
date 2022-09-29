@@ -1,8 +1,8 @@
 export WUE_Medlyn2011
 
 @bounds @describe @units @with_kw struct WUE_Medlyn2011{T1, T2} <: WUE
-	g1::T1 = 3.0 | (0.5, 12.0) | "stomatal conductance parameter" | "kPa^0.5"
-	ζ::T2 = 1.0 | (0.85, 3.5) | "sensitivity of WUE to ambient co2" | ""
+	g1::T1 = 3.0f0 | (0.5f0, 12.0f0) | "stomatal conductance parameter" | "kPa^0.5"
+	ζ::T2 = 1.0f0 | (0.85f0, 3.5f0) | "sensitivity of WUE to ambient co2" | ""
 end
 
 function compute(o::WUE_Medlyn2011, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -20,11 +20,11 @@ function compute(o::WUE_Medlyn2011, forcing, land::NamedTuple, helpers::NamedTup
 
 	## calculate variables
 	VPDDay = max(VPDDay, tolerance)
-	umol_to_gC = 𝟙 * 6.6667e-004
+	umol_to_gC = 𝟙 * 6.6667f-004
 	# umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
 	# umol_to_gC = 12 * 100/(18 * 1000)
 	ciNoCO2 = g1 / (g1 + sqrt(VPDDay)); # RHS eqn 13 in corrigendum
-	AoENoCO2 = umol_to_gC * PsurfDay / (1.6 * (VPDDay + g1 * sqrt(VPDDay))); # eqn 14 #? gC/mol of H2o?
+	AoENoCO2 = umol_to_gC * PsurfDay / (1.6f0 * (VPDDay + g1 * sqrt(VPDDay))); # eqn 14 #? gC/mol of H2o?
 	AoE = AoENoCO2 * ζ * ambCO2
 	ci = ciNoCO2 * ambCO2
 

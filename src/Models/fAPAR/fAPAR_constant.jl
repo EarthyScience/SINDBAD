@@ -1,7 +1,7 @@
 export fAPAR_constant
 
 @bounds @describe @units @with_kw struct fAPAR_constant{T1} <: fAPAR
-	constantfAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
+	constantfAPAR::T1 = 0.2f0 | (0.0f0, 1.0f0) | "a constant fAPAR" | ""
 end
 
 function compute(o::fAPAR_constant, forcing, land::NamedTuple, helpers::NamedTuple)

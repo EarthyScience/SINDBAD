@@ -1,7 +1,7 @@
 export rootFraction_constant
 
 @bounds @describe @units @with_kw struct rootFraction_constant{T1} <: rootFraction
-	constantRootFrac::T1 = 0.5 | (0.05, 1.0) | "root fraction" | ""
+	constantRootFrac::T1 = 0.5f0 | (0.05f0, 1.0f0) | "root fraction" | ""
 end
 
 function precompute(o::rootFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)

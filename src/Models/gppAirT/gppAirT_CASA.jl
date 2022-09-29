@@ -1,10 +1,10 @@
 export gppAirT_CASA
 
 @bounds @describe @units @with_kw struct gppAirT_CASA{T1, T, T3, T4} <: gppAirT
-	Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
-	ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
-	ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
-	Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
+	Topt::T1 = 25.0f0 | (5.0f0, 35.0f0) | "check in CASA code" | "°C"
+	ToptA::T = 0.2f0 | (0.1f0, 0.3f0) | "increasing slope of sensitivity" | ""
+	ToptB::T3 = 0.3f0 | (0.15f0, 0.5f0) | "decreasing slope of sensitivity" | ""
+	Texp::T4 = 10.0f0 | (9.0f0, 11.0f0) | "reference for exponent of sensitivity" | ""
 end
 
 function compute(o::gppAirT_CASA, forcing, land::NamedTuple, helpers::NamedTuple)

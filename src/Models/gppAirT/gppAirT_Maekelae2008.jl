@@ -1,9 +1,9 @@
 export gppAirT_Maekelae2008
 
 @bounds @describe @units @with_kw struct gppAirT_Maekelae2008{T1,T2,T3} <: gppAirT
-    TimConst::T1 = 5.0 | (1.0, 20.0) | "time constant for temp delay" | "days"
-    X0::T2 = -5.0 | (-15.0, 1.0) | "threshold of delay temperature" | "°C"
-    Smax::T3 = 20.0 | (10.0, 30.0) | "temperature at saturation" | "°C"
+    TimConst::T1 = 5.0f0 | (1.0f0, 20.0f0) | "time constant for temp delay" | "days"
+    X0::T2 = -5.0f0 | (-15.0f0, 1.0f0) | "threshold of delay temperature" | "°C"
+    Smax::T3 = 20.0f0 | (10.0f0, 30.0f0) | "temperature at saturation" | "°C"
 end
 
 
