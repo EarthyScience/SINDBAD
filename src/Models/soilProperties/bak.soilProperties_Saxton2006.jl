@@ -95,7 +95,7 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		# Ks: Saturated conductivity [matric soil], mm h-1
 		# K_θ: Unsaturated conductivity at moisture θ; mm h-1
 		λ = 1 / B
-		Ks = 1930f0 * ((θ_s - θ_33) ^ (3f0 - λ)) * 24f0
+		Ks = 1930f0 * ((θ_s - θ_33) ^ (3 - λ)) * 24f0
 		# K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
 		## Gravel Effects
 		# rho_B: Bulk soil density [matric plus gravel], g cm-3
@@ -123,12 +123,12 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		ψSat = 0.0f0
 		# θFC = θ_33_DF
 		θFC = θ_33
-		kFC = kSat * ((θFC / θSat) ^ (3f0 + (2f0 / λ)))
+		kFC = kSat * ((θFC / θSat) ^ (3 + (2 / λ)))
 		ψFC = 33f0
 		# θWP = θ_1500_DF
 		θWP = θ_1500
 		ψWP = 1500f0
-		kWP = kSat * ((θWP / θSat) ^ (3f0 + (2f0 / λ)))
+		kWP = kSat * ((θWP / θSat) ^ (3 + (2 / λ)))
 		# @show CLAY, SAND, α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP
 
 		p_α[sl] = α
@@ -238,7 +238,7 @@ function kSaxton2006(land, helpers, sl)
 	β = p_β[sl]
 	kSat = p_kSat[sl]
 	λ = 1 / β
-	K = kSat * ((θ_dos) ^ (3f0 + (2f0 / λ)))
+	K = kSat * ((θ_dos) ^ (3 + (2 / λ)))
 	return K
 end
 
@@ -343,7 +343,7 @@ function soilParamsSaxton2006(land, helpers, sl)
 	# Ks: Saturated conductivity [matric soil], mm h-1
 	# K_θ: Unsaturated conductivity at moisture θ; mm h-1
 	λ = 1 / B
-	Ks = 1930f0 * ((θ_s - θ_33) ^ (3f0 - λ)) * 24f0
+	Ks = 1930f0 * ((θ_s - θ_33) ^ (3 - λ)) * 24f0
 	# K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
 	## Gravel Effects
 	# rho_B: Bulk soil density [matric plus gravel], g cm-3
@@ -371,12 +371,12 @@ function soilParamsSaxton2006(land, helpers, sl)
 	ψSat = 0.0f0
 	# θFC = θ_33_DF
 	θFC = θ_33
-	kFC = kSat * ((θFC / θSat) ^ (3f0 + (2f0 / λ)))
+	kFC = kSat * ((θFC / θSat) ^ (3 + (2 / λ)))
 	ψFC = 33f0
 	# θWP = θ_1500_DF
 	θWP = θ_1500
 	ψWP = 1500
-	kWP = kSat * ((θWP / θSat) ^ (3f0 + (2f0 / λ)))
+	kWP = kSat * ((θWP / θSat) ^ (3 + (2 / λ)))
 
 	## pack land variables
 	return α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP

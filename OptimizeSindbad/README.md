@@ -31,19 +31,6 @@ julia]
 pkg > add https://git.bgc-jena.mpg.de/sindbad/sindbad.jl.git
 ```
 
-### How to dev/use the different packages
-
-```julia
-julia]
-pkg > dev --local https://git.bgc-jena.mpg.de/sindbad/sindbad.jl.git # local will clone the repository at ./dev/Sindbad
-```
-Now, `dev` the sub packages
-
-```julia
-julia]
-pkg > dev dev/Sindbad/ForwardSindbad dev/Sindbad/OptimizeSindbad  # local will clone the repository at ./dev/Sindbad
-```
-
 ### Usage
 
 Before running the experiments, download the example by running the following script in the ````examples``` directory

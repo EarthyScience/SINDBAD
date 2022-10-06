@@ -94,7 +94,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
         # res = Iterators.product(Base.OneTo.(spacesize)...) do loc_names
-        res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
+        res = Iterators.product(Base.OneTo.(spacesize)...) do loc_names
             loc_forcing = map(forcing) do a
                 inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
                     lv=>loc_index
