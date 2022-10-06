@@ -48,7 +48,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, hel
 		# θ_33t: 33 kPa moisture; first solution; #v
 		# θ_33: 33 kPa moisture; normal density; #v
 		θ_33t = -0.251f0 * SAND + 0.195f0 * CLAY + 0.011f0 * ORGM + 0.006f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) + 0.452f0 * (SAND * CLAY) + 0.299f0
-		θ_33 = θ_33t + (1.283f0 * (θ_33t) ^ 2f0 - 0.374f0 * θ_33t - 0.015f0)
+		θ_33 = θ_33t + (1.283f0 * (θ_33t) ^ 2 - 0.374f0 * θ_33t - 0.015f0)
 		# θ_s_33t: SAT-33 kPa moisture; first solution; #v
 		# θ_s_33: SAT-33 kPa moisture; normal density #v
 		θ_s_33t = 0.278f0 * SAND + 0.034f0 * CLAY + 0.022f0 * ORGM - 0.018f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) - 0.584f0 * (SAND * CLAY) + 0.078f0
@@ -57,7 +57,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, hel
 		# ψ_e: Tension at air entry [bubbling pressure], kPa
 		ψ_et = abs(-21.67f0 * SAND - 27.93f0 * CLAY - 81.97f0 * θ_s_33 + 71.12f0 * (SAND * θ_s_33) + 8.29f0 * (CLAY * θ_s_33)
 		- 14.05f0 * (SAND * CLAY) + 27.16f0)
-		ψ_e = abs(ψ_et + (0.02f0 * (ψ_et ^ 2f0) - 0.113f0 * ψ_et - 0.70f0))
+		ψ_e = abs(ψ_et + (0.02f0 * (ψ_et ^ 2) - 0.113f0 * ψ_et - 0.70f0))
 		# θ_s: Saturated moisture [0 kPa], normal density, #v
 		# rho_N: Normal density; g cm-3
 		θ_s = θ_33 + θ_s_33 - 0.097f0 * SAND + 0.043f0
@@ -233,7 +233,7 @@ function kSaxton2006(land, helpers, sl)
 	β = p_β[sl]
 	kSat = p_kSat[sl]
 	λ = 𝟙 / β
-	K = kSat * ((θ_dos) ^ (3.0f0 + (2.0f0 / λ)))
+	K = kSat * ((θ_dos) ^ (3 + (2 / λ)))
 	return K
 end
 
