@@ -1,11 +1,11 @@
 export cTauSoilW_GSI
 
-@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3, T4} <: cTauSoilW
+@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3, T4, T5} <: cTauSoilW
 	Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
 	WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
 	WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
 	Wexp::T4 = 10.0 | (nothing, nothing) | "reference for exponent of sensitivity" | "per percent"
-	frac2perc::T4 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
+	frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
 end
 
 function precompute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
