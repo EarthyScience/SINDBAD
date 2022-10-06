@@ -8,7 +8,7 @@ eYear = "2017"
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 obspath = inpath
 forcingConfig = "forcing_erai.json"
-optimize_it = true
+optimize_it = false
 outpath = nothing
 domain = "DE-Hai"
 
@@ -25,7 +25,7 @@ replace_info = Dict(
     # "opti.constraints.oneDataPath" => obspath
 );
 
-output = setupOutput(info)
+# output = setupOutput(info)
 
 run_output=nothing
 
