@@ -1,58 +1,24 @@
 module Sindbad
+using Reexport: @reexport
+
 import DataStructures
 using InteractiveUtils
-using Reexport: @reexport
-using CMAEvolutionStrategy:
-    minimize,
-    xbest
-using CSV: CSV
-using Dates
 using DocStringExtensions
-using DifferentialEquations
-using ForwardDiff
+using Parameters
+using Dates
+using JLD2
+using JSON: parsefile
+using CSV: CSV
+using TypedTables: Table
 using Flatten:
     flatten,
     metaflatten,
     fieldnameflatten,
     parentnameflatten
-using JLD2
-using JSON:
-    parsefile
-using Optim, Optimization, OptimizationOptimJL, OptimizationBBO, OptimizationGCMAES
-import Evolutionary
-import MultistartOptimization
-import NLopt
-# @reexport using Optimization:FD
-#     OptimizationFunction
-using Parameters
-@reexport using PrettyPrinting:
-    pprint
-using RecursiveArrayTools
-using Setfield:
-    @set!
-using ThreadPools: qbmap
-using TableOperations:
-    select
-using Tables:
-    columntable,
-    matrix
-using TypedTables:
-    Table
-using StatsBase:
-    mean,
-    percentile,
-    cor
-using YAXArrays, NetCDF, DiskArrayTools, Zarr
-using YAXArrays: savecube
-using AxisKeys
-using AxisKeys: KeyedArray, AxisKeys
-using FillArrays
-using YAXArrayBase: getdata, YAXArrayBase
+
+@reexport using PrettyPrinting: pprint
 
 include("tools/tools.jl")
-include("Ecosystem/Ecosystem.jl")
-include("optimization/optimization.jl")
-
 include("Models/models.jl")
 @reexport using .Models
 

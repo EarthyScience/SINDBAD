@@ -130,8 +130,8 @@ function soilParamsSaxton1986(land, helpers, sl, WT)
 	CLAY = p_CLAY[sl] * 100f0
 	SAND = p_SAND[sl] * 100f0
 	# Equations
-	A = exp(a + b * CLAY + c * SAND ^ 2.0f0 + d1 * SAND ^ 2f0 * CLAY) * 100f0
-	B = e + f1 * CLAY ^ 2.0f0 + g * SAND ^ 2f0 * CLAY
+	A = exp(a + b * CLAY + c * SAND ^ 2 + d1 * SAND ^ 2 * CLAY) * 100f0
+	B = e + f1 * CLAY ^ 2 + g * SAND ^ 2 * CLAY
 	# soil matric potential; ψ; kPa
 	ψ = WT
 	# soil moisture content at saturation [m^3/m^3]
