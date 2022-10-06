@@ -1,8 +1,8 @@
 export runoffSurface_directIndirectFroSoil
 
 @bounds @describe @units @with_kw struct runoffSurface_directIndirectFroSoil{T1, T2} <: runoffSurface
-	dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
-	rf::T2 = 0.5 | (0.0, 1.0) | "fraction of overland runoff that recharges the surface water storage" | ""
+	dc::T1 = 0.01f0 | (0.0f0, 1.0f0) | "delayed surface runoff coefficient" | ""
+	rf::T2 = 0.5f0 | (0.0f0, 1.0f0) | "fraction of overland runoff that recharges the surface water storage" | ""
 end
 
 function compute(o::runoffSurface_directIndirectFroSoil, forcing, land::NamedTuple, helpers::NamedTuple)

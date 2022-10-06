@@ -1,7 +1,7 @@
 export gppDiffRadiation_Wang2015
 
 @bounds @describe @units @with_kw struct gppDiffRadiation_Wang2015{T1} <: gppDiffRadiation
-	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
+	μ::T1 = 0.46f0 | (0.0001f0, 1.0f0) | "" | ""
 end
 
 function precompute(o::gppDiffRadiation_Wang2015, forcing, land::NamedTuple, helpers::NamedTuple)

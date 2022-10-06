@@ -1,7 +1,7 @@
 export LAI_constant
 
 @bounds @describe @units @with_kw struct LAI_constant{T1} <: LAI
-	constantLAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2"
+	constantLAI::T1 = 3.0f0 | (1.0f0, 12.0f0) | "LAI" | "m2/m2"
 end
 
 function compute(o::LAI_constant, forcing, land::NamedTuple, helpers::NamedTuple)

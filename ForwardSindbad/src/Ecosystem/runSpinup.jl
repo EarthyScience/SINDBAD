@@ -47,7 +47,7 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     return land_spin
 end
 
-
+#=
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_Tsit5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
@@ -94,8 +94,9 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     return land_in
 end
 
+=#
 """
-doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
+doSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem)
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land_spin/land is overwritten with every iteration. Only the state at the end is returned.
 """
 function loopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_spin::NamedTuple, tem_helpers::NamedTuple)

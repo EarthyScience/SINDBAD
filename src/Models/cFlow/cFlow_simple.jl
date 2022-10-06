@@ -14,7 +14,7 @@ function compute(o::cFlow_simple, forcing, land::NamedTuple, helpers::NamedTuple
 	# Do A matrix..
 	p_A = repeat(reshape(cFlowA, [1 size(cFlowA)]), 1, 1)
 	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > 0.0)) >= 1)
+	(taker, giver) = find(squeeze(sum(p_A > 0.0f0)) >= 1f0)
 	p_taker = taker
 	p_giver = giver
 	# if there is flux order check that is consistent

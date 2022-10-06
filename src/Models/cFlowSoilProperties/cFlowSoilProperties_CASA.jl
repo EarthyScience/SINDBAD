@@ -1,12 +1,12 @@
 export cFlowSoilProperties_CASA
 
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1, T2, T3, T4, T5, T6} <: cFlowSoilProperties
-	effA::T1 = 0.85 | nothing | "" | ""
-	effB::T2 = 0.68 | nothing | "" | ""
-	effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
-	effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
-	effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
-	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
+	effA::T1 = 0.85f0 | nothing | "" | ""
+	effB::T2 = 0.68f0 | nothing | "" | ""
+	effCLAY_cMicSoil_A::T3 = 0.003f0 | nothing | "" | ""
+	effCLAY_cMicSoil_B::T4 = 0.032f0 | nothing | "" | ""
+	effCLAY_cSoilSlow_A::T5 = 0.003f0 | nothing | "" | ""
+	effCLAY_cSoilSlow_B::T6 = 0.009f0 | nothing | "" | ""
 end
 
 function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -51,8 +51,8 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers
 		for ii in 1:size(aM, 1)
 			ndxSrc = helpers.pools.carbon.zix.(aM(ii, 1))
 			ndxTrg = helpers.pools.carbon.zix.(aM(ii, 2))
-			for iSrc in 1:length(ndxSrc)
-				for iTrg in 1:length(ndxTrg)
+			for iSrc in eachindex(ndxSrc)
+				for iTrg in eachindex(ndxTrg)
 					# (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
 				end
 			end

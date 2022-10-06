@@ -1,7 +1,7 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
 @bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
-	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
+	Rf2Rc::T1 = 1.0f0 | (0.0f0, 1.0f0) | "carbon fraction allocated to fine roots" | "fraction"
 end
 
 function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)

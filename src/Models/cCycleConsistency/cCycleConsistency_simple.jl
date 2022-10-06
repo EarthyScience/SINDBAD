@@ -81,8 +81,8 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	# check if the flow to different pools add up to 1
 	# below the diagonal
 	p_A_L = p_A .* flagL
-	# the sum of A per column below the diagonals is always < 1
-	if any(sum(p_A_L, dims=1) .> 𝟙)
+	# the sum of A per column below the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
+	if any((sum(p_A_L, dims=1) .- 𝟙) .> helpers.numbers.tolerance)
 		if helpers.run.catchErrors
 			msg = "sum of cols greater than one in lower cFlow matrix. Cannot continue"
 			push!(Sindbad.error_catcher, land)
@@ -93,12 +93,16 @@ function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers
 	end
 	# above the diagonal
 	p_A_U = p_A .* flagU
-	if any(sum(p_A_U, dims=1) .> 𝟙)
+
+	# the sum of A per column above the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
+	if any((sum(p_A_U, dims=1) .- 𝟙) .> helpers.numbers.tolerance)
 		if helpers.run.catchErrors
-			msg = "sum of cols greater than one in lower cFlow matrix. Cannot continue"
+			msg = "sum of cols greater than one in upper cFlow matrix. Cannot continue"
 			push!(Sindbad.error_catcher, land)
 			push!(Sindbad.error_catcher, msg)
 			push!(Sindbad.error_catcher, p_A_U)
+			push!(Sindbad.error_catcher, any(sum(p_A_U, dims=1) .> 𝟙))
+			push!(Sindbad.error_catcher, sum(p_A_U, dims=1))
 			error(msg)
 		end
 	end

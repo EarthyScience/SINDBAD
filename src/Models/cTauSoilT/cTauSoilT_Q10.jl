@@ -1,9 +1,9 @@
 export cTauSoilT_Q10
 
 @bounds @describe @units @with_kw struct cTauSoilT_Q10{T1, T2, T3} <: cTauSoilT
-	Q10::T1 = 1.4 | (1.05, 3.0) | "" | ""
-	Tref::T2 = 30.0 | (0.01, 40.0) | "" | "°C"
-    Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
+	Q10::T1 = 1.4f0 | (1.05f0, 3.0f0) | "" | ""
+	Tref::T2 = 30.0f0 | (0.01f0, 40.0f0) | "" | "°C"
+    Q10_base::T3 = 10.0f0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
 function compute(o::cTauSoilT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)

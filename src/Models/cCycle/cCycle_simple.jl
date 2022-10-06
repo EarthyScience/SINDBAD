@@ -48,7 +48,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
     # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing fluxOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix in 1:length(fluxOrder)
+    for jix in eachindex(fluxOrder)
         fO = fluxOrder[jix]
         take_r = taker[fO]
         give_r = giver[fO]
