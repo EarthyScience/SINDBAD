@@ -1,8 +1,8 @@
 export soilWBase_smax2Layer
 
 @bounds @describe @units @with_kw struct soilWBase_smax2Layer{T1, T2} <: soilWBase
-	smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-	smax2::T2 = 0.3 | (0.01, 1.0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
+	smax1::T1 = 1.0f0 | (0.001f0, 1.0f0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+	smax2::T2 = 0.3f0 | (0.01f0, 1.0f0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
 end
 
 function precompute(o::soilWBase_smax2Layer, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,7 +1,7 @@
 export ambientCO2_constant
 
 @bounds @describe @units @with_kw struct ambientCO2_constant{T1} <: ambientCO2
-	constantambCO2::T1 = 400.0 | (200.0, 5000.0) | "atmospheric CO2 concentration" | "ppm"
+	constantambCO2::T1 = 400.0f0 | (200.0f0, 5000.0f0) | "atmospheric CO2 concentration" | "ppm"
 end
 
 function compute(o::ambientCO2_constant, forcing, land::NamedTuple, helpers::NamedTuple)

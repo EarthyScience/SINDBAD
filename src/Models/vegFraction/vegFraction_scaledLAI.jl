@@ -1,7 +1,7 @@
 export vegFraction_scaledLAI
 
 @bounds @describe @units @with_kw struct vegFraction_scaledLAI{T1} <: vegFraction
-	LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
+	LAIscale::T1 = 1.0f0 | (0.0f0, 5.0f0) | "scalar for LAI" | ""
 end
 
 function compute(o::vegFraction_scaledLAI, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,9 +1,9 @@
 export cAllocationRadiation_GSI
 
 @bounds @describe @units @with_kw struct cAllocationRadiation_GSI{T1, T2, T3} <: cAllocationRadiation
-	τ_Rad::T1 = 0.02 | (0.001, 1.0) | "temporal change rate for the light-limiting function" | ""
-	slope_Rad::T2 = 1.0 | (0.01, 200.0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
-	base_Rad::T3 = 10.0 | (0.0, 100.0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
+	τ_Rad::T1 = 0.02f0 | (0.001f0, 1.0f0) | "temporal change rate for the light-limiting function" | ""
+	slope_Rad::T2 = 1.0f0 | (0.01f0, 200.0f0) | "slope parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
+	base_Rad::T3 = 10.0f0 | (0.0f0, 100.0f0) | "inflection point parameters of a logistic function based on mean daily y shortwave downward radiation" | ""
 end
 
 function precompute(o::cAllocationRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,7 +1,7 @@
 export runoffSaturationExcess_Bergstroem1992
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
-	β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | ""
+	β::T1 = 1.1f0 | (0.1f0, 5.0f0) | "berg exponential parameter" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land::NamedTuple, helpers::NamedTuple)

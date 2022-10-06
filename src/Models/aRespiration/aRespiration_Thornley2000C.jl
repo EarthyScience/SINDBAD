@@ -1,8 +1,8 @@
 export aRespiration_Thornley2000C
 
 @bounds @describe @units @with_kw struct aRespiration_Thornley2000C{T1, T2} <: aRespiration
-	RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day"
-	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
+	RMN::T1 = 0.009085714285714286f0 | (0.0009085714285714285f0, 0.09085714285714286f0) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day"
+	YG::T2 = 0.75f0 | (0.0f0, 1.0f0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
 function precompute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpers::NamedTuple)

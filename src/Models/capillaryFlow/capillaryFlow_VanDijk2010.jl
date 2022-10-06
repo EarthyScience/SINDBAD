@@ -1,7 +1,7 @@
 export capillaryFlow_VanDijk2010
 
 @bounds @describe @units @with_kw struct capillaryFlow_VanDijk2010{T1} <: capillaryFlow
-	max_frac::T1 = 0.95 | (0.02, 0.98) | "max fraction of soil moisture that can be lost as capillary flux" | ""
+	max_frac::T1 = 0.95f0 | (0.02f0, 0.98f0) | "max fraction of soil moisture that can be lost as capillary flux" | ""
 end
 
 function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)

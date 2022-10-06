@@ -1,19 +1,19 @@
 export soilWBase_smax2fPFT
 
 @bounds @describe @units @with_kw struct soilWBase_smax2fPFT{T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13} <: soilWBase
-	smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-	smaxPFT0::T2 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 0, as % of defined soil depth" | "fraction"
-	smaxPFT1::T3 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 1, as % of defined soil depth" | "fraction"
-	smaxPFT2::T4 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 2, as % of defined soil depth" | "fraction"
-	smaxPFT3::T5 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 3, as % of defined soil depth" | "fraction"
-	smaxPFT4::T6 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 4, as % of defined soil depth" | "fraction"
-	smaxPFT5::T7 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 5, as % of defined soil depth" | "fraction"
-	smaxPFT6::T8 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 6, as % of defined soil depth" | "fraction"
-	smaxPFT7::T9 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 7, as % of defined soil depth" | "fraction"
-	smaxPFT8::T10 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 8, as % of defined soil depth" | "fraction"
-	smaxPFT9::T11 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 9, as % of defined soil depth" | "fraction"
-	smaxPFT10::T12 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 10, as % of defined soil depth" | "fraction"
-	smaxPFT11::T13 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth" | "fraction"
+	smax1::T1 = 1.0f0 | (0.001f0, 1.0f0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+	smaxPFT0::T2 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 0, as % of defined soil depth" | "fraction"
+	smaxPFT1::T3 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 1, as % of defined soil depth" | "fraction"
+	smaxPFT2::T4 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 2, as % of defined soil depth" | "fraction"
+	smaxPFT3::T5 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 3, as % of defined soil depth" | "fraction"
+	smaxPFT4::T6 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 4, as % of defined soil depth" | "fraction"
+	smaxPFT5::T7 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 5, as % of defined soil depth" | "fraction"
+	smaxPFT6::T8 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 6, as % of defined soil depth" | "fraction"
+	smaxPFT7::T9 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 7, as % of defined soil depth" | "fraction"
+	smaxPFT8::T10 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 8, as % of defined soil depth" | "fraction"
+	smaxPFT9::T11 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 9, as % of defined soil depth" | "fraction"
+	smaxPFT10::T12 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 10, as % of defined soil depth" | "fraction"
+	smaxPFT11::T13 = 0.05f0 | (0.0f0, 2.0f0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth" | "fraction"
 end
 
 function precompute(o::soilWBase_smax2fPFT, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -57,7 +57,7 @@ function compute(o::soilWBase_smax2fPFT, forcing, land::NamedTuple, helpers::Nam
 	# get the PFT data & assign parameters
 	tmp_classes = unique(PFT)
 	p_smaxPFT = 1.0
-	for nC in 1:length(tmp_classes)
+	for nC in eachindex(tmp_classes)
 		nPFT = tmp_classes[nC]
 		p_tmp = eval(char(["smaxPFT" num2str(nPFT)]))
 		p_smaxPFT[PFT == nPFT, 1] = soilLayerThickness[2]* p_tmp; #

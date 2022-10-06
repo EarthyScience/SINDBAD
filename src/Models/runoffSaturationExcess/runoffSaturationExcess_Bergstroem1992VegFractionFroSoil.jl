@@ -1,9 +1,9 @@
 export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFractionFroSoil{T1, T2, T3} <: runoffSaturationExcess
-	β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
-	scaleFro::T2 = 1.0 | (0.1, 3.0) | "linear scaling parameter for rozen Soil fraction" | ""
-	β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+	β::T1 = 3.0f0 | (0.1f0, 10.0f0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
+	scaleFro::T2 = 1.0f0 | (0.1f0, 3.0f0) | "linear scaling parameter for rozen Soil fraction" | ""
+	β_min::T3 = 0.1f0 | (0.08f0, 0.120f0) | "minimum effective β" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -24,7 +24,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, for
 
 	# scale the input frozen soil fraction; maximum is 1
 	fracFrozen = min(frozenFrac * scaleFro, 𝟙)
-	tmp_smaxVeg = sum(p_wSat) * (𝟙 - fracFrozen+0.0000001)
+	tmp_smaxVeg = sum(p_wSat) * (𝟙 - fracFrozen+0.0000001f0)
 	tmp_SoilTotal = sum(soilW + ΔsoilW)
 
 	# get the berg parameters according the vegetation fraction

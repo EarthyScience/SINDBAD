@@ -1,13 +1,13 @@
 export cTauVegProperties_CASA
 
 @bounds @describe @units @with_kw struct cTauVegProperties_CASA{T1, T2, T3, T4, T5, T6, T7} <: cTauVegProperties
-	LIGNIN_per_PFT::T1 = [0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | nothing | "fraction of litter that is lignin" | ""
-	NONSOL2SOLLIGNIN::T2 = 2.22 | nothing | "" | ""
-	MTFA::T3 = 0.85 | nothing | "" | ""
-	MTFB::T4 = 0.018 | nothing | "" | ""
-	C2LIGNIN::T5 = 0.65 | nothing | "" | ""
-	LIGEFFA::T6 = 3.0 | nothing | "" | ""
-	LITC2N_per_PFT::T7 = [40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
+	LIGNIN_per_PFT::T1 = Float32[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | nothing | "fraction of litter that is lignin" | ""
+	NONSOL2SOLLIGNIN::T2 = 2.22f0 | nothing | "" | ""
+	MTFA::T3 = 0.85f0 | nothing | "" | ""
+	MTFB::T4 = 0.018f0 | nothing | "" | ""
+	C2LIGNIN::T5 = 0.65f0 | nothing | "" | ""
+	LIGEFFA::T6 = 3.0f0 | nothing | "" | ""
+	LITC2N_per_PFT::T7 = Float32[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
 end
 
 function precompute(o::cTauVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -45,7 +45,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land::NamedTuple, helpers::
 	for cpN in (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
 		# get average age from parameters
 		AGE = 𝟘 ; #sujan
-		for ij in 1:length(pftVec)
+		for ij in eachindex(pftVec)
 			AGE[p.vegProperties.PFT == pftVec[ij]] = p.cCycleBase.([cpN "_AGE_per_PFT"])(pftVec[ij])
 		end
 		# compute annk based on age
@@ -59,7 +59,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land::NamedTuple, helpers::
 	pftVec = unique(PFT)
 	p_LITC2N = 𝟘 
 	p_LIGNIN = 𝟘 
-	for ij in 1:length(pftVec)
+	for ij in eachindex(pftVec)
 		p_LITC2N[p.vegProperties.PFT == pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
 		p_LIGNIN[p.vegProperties.PFT == pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
 	end
