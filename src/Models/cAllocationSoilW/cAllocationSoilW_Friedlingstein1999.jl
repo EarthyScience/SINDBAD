@@ -1,8 +1,8 @@
 export cAllocationSoilW_Friedlingstein1999
 
 @bounds @describe @units @with_kw struct cAllocationSoilW_Friedlingstein1999{T1,T2} <: cAllocationSoilW
-    minL_fW::T1 = 0.5 | (0.0, 1.0) | "minimum value for moisture stressor" | ""
-    maxL_fW::T2 = 0.8 | (0.0, 1.0) | "maximum value for moisture stressor" | ""
+    minL_fW::T1 = 0.5f0 | (0.0f0, 1.0f0) | "minimum value for moisture stressor" | ""
+    maxL_fW::T2 = 0.8f0 | (0.0f0, 1.0f0) | "maximum value for moisture stressor" | ""
 end
 
 function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)

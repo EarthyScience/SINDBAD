@@ -1,7 +1,7 @@
 export NIRv_constant
 
 @bounds @describe @units @with_kw struct NIRv_constant{T1} <: NIRv
-	constantNIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
+	constantNIRv::T1 = 1.0f0 | (0.0f0, 1.0f0) | "NIRv" | ""
 end
 
 function compute(o::NIRv_constant, forcing, land::NamedTuple, helpers::NamedTuple)

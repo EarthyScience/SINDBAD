@@ -1,7 +1,7 @@
 export EVI_constant
 
 @bounds @describe @units @with_kw struct EVI_constant{T1} <: EVI
-	constantEVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
+	constantEVI::T1 = 1.0f0 | (0.0f0, 1.0f0) | "EVI" | ""
 end
 
 function compute(o::EVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)

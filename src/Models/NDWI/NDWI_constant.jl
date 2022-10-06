@@ -1,7 +1,7 @@
 export NDWI_constant
 
 @bounds @describe @units @with_kw struct NDWI_constant{T1} <: NDWI
-	constantNDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
+	constantNDWI::T1 = 1.0f0 | (0.0f0, 1.0f0) | "NDWI" | ""
 end
 
 function compute(o::NDWI_constant, forcing, land::NamedTuple, helpers::NamedTuple)

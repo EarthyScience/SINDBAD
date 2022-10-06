@@ -1,10 +1,10 @@
 export cFlow_GSI
 
 @bounds @describe @units @with_kw struct cFlow_GSI{T1, T2, T3, T4} <: cFlow
-	LR2ReSlp::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction"
-	Re2LRSlp::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction"
-	kShed::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction"
-	f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
+	LR2ReSlp::T1 = 0.1f0 | (0.01f0, 0.99f0) | "Leaf-Root to Reserve" | "fraction"
+	Re2LRSlp::T2 = 0.1f0 | (0.01f0, 0.99f0) | "Reserve to Leaf-Root" | "fraction"
+	kShed::T3 = 0.1f0 | (0.01f0, 0.99f0) | "rate of shedding" | "fraction"
+	f_τ::T4 = 0.1f0 | (0.01f0, 0.99f0) | "contribution factor for current stressor" | "fraction"
 end
 
 function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -109,8 +109,8 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     L2Re = LR2Re # should it be divided by 2?
     R2Re = LR2Re
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the fWfTfR suddenly drops from 1 to near zero.
-    k_Lshed = min(KShed, 1-L2Re)
-    k_Rshed = min(KShed, 1-R2Re)
+    k_Lshed = min(KShed, 1f0-L2Re)
+    k_Rshed = min(KShed, 1f0-R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)

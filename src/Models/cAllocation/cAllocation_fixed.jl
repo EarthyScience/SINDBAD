@@ -1,9 +1,9 @@
 export cAllocation_fixed
 
 @bounds @describe @units @with_kw struct cAllocation_fixed{T1, T2, T3} <: cAllocation
-	cVegRoot::T1 = 0.3 | (0.0, 1.0) | "fraction of NPP to cRoot" | "fraction"
-	cVegWood::T2 = 0.3 | (0.0, 1.0) | "fraction of NPP to cWood" | "fraction"
-	cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of NPP to cLeaf" | "fraction"
+	cVegRoot::T1 = 0.3f0 | (0.0f0, 1.0f0) | "fraction of NPP to cRoot" | "fraction"
+	cVegWood::T2 = 0.3f0 | (0.0f0, 1.0f0) | "fraction of NPP to cWood" | "fraction"
+	cVegLeaf::T3 = 0.4f0 | (0.0f0, 1.0f0) | "fraction of NPP to cLeaf" | "fraction"
 end
 
 function precompute(o::cAllocation_fixed, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,7 +1,7 @@
 export transpirationSupply_Federer1982
 
 @bounds @describe @units @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
-	maxRate::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
+	maxRate::T1 = 5.0f0 | (0.1f0, 20.0f0) | "Maximum rate of transpiration in mm/day" | "mm/day"
 end
 
 function compute(o::transpirationSupply_Federer1982, forcing, land::NamedTuple, helpers::NamedTuple)

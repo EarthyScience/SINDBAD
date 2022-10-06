@@ -1,0 +1,20 @@
+name = "ForwardSindbad"
+uuid = "f6108451-10cb-42fa-b0c1-67671cf08f15"
+authors = ["lazarusA <lazarus.alon@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+DiskArrayTools = "fcd2136c-9f69-4db6-97e5-f31981721d63"
+FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
+Flatten = "4c728ea3-d9ee-5c9a-9642-b6f7d7dc04fa"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+NetCDF = "30363a11-5582-574a-97bb-aa9a979735b9"
+RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
+Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
+YAXArrayBase = "90b8fcef-0c2d-428d-9c56-5f86629e9d14"
+YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
+Zarr = "0a941bbe-ad1d-11e8-39d9-ab76183a1d99"

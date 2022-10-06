@@ -1,10 +1,10 @@
 export soilTexture_fixed
 
 @bounds @describe @units @with_kw struct soilTexture_fixed{T1, T2, T3, T4} <: soilTexture
-	CLAY::T1 = 0.2 | (0.0, 1.0) | "Clay content" | ""
-	SILT::T2 = 0.3 | (0.0, 1.0) | "Silt content" | ""
-	SAND::T3 = 0.5 | (0.0, 1.0) | "Sand content" | ""
-	ORGM::T4 = 0.0 | (0.0, 1.0) | "Organic matter content" | ""
+	CLAY::T1 = 0.2f0 | (0.0f0, 1.0f0) | "Clay content" | ""
+	SILT::T2 = 0.3f0 | (0.0f0, 1.0f0) | "Silt content" | ""
+	SAND::T3 = 0.5f0 | (0.0f0, 1.0f0) | "Sand content" | ""
+	ORGM::T4 = 0.0f0 | (0.0f0, 1.0f0) | "Organic matter content" | ""
 end
 
 function precompute(o::soilTexture_fixed, forcing, land::NamedTuple, helpers::NamedTuple)
