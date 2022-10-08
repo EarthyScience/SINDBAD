@@ -63,7 +63,7 @@ function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedT
     time_steps = getForcingTimeSize(forcing)
     # time_steps = tem_helpers.dates.size
     @info "runEcosystem:: running forward time loop"
-    @time res = map(1: time_steps) do ts
+    res = map(1: time_steps) do ts
         f = getForcingForTimeStep(forcing, ts)
         out = runModels(f, forward_models, out, tem_helpers)
         out_filtered = filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
@@ -88,7 +88,7 @@ end
 
 function coreEcosystem(approaches, loc_forcing, land_init, tem)
     @info "runEcosystem:: running ecosystem"
-    @time land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init, tem.helpers)
+    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init, tem.helpers)
     #@show first(newforcing)
     land_spin_now = land_prec
     if tem.spinup.flags.doSpinup
@@ -101,7 +101,7 @@ end
 runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple; spinup_forcing=nothing)
-    @info "runEcosystem:: running Ecosystem"
+    #@info "runEcosystem:: running Ecosystem"
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
