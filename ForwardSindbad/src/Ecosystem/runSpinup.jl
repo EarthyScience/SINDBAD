@@ -101,9 +101,13 @@ do/run the time loop of the spinup models to update the pool. Note that, in this
 """
 function loopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_spin::NamedTuple, tem_helpers::NamedTuple)
     time_steps = getForcingTimeSize(sel_spinup_forcing)
-    # time_steps = tem_helpers.dates.size
-    for t in 1:time_steps
-        # f = sel_spinup_forcing[t]
+    f = getForcingForTimeStep(sel_spinup_forcing, 1)
+    land_spin = runModels(f, sel_spinup_models, land_spin, tem_helpers)
+    return realloopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem_helpers,time_steps)
+end
+
+@noinline function realloopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_spin::NamedTuple, tem_helpers::NamedTuple,time_steps)
+    for t in 2:time_steps
         f = getForcingForTimeStep(sel_spinup_forcing, t)
         land_spin = runModels(f, sel_spinup_models, land_spin, tem_helpers)
     end
@@ -133,7 +137,7 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
     land_spin = deepcopy(land_in)
     spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
     @info "runSpinup:: running spinup sequences..."
-    @time for spin_seq in tem.spinup.sequence
+    for spin_seq in tem.spinup.sequence
         forc = Symbol(spin_seq["forcing"])
         nLoops = spin_seq["nLoops"]
         spinupMode = Symbol(spin_seq["spinupMode"])
