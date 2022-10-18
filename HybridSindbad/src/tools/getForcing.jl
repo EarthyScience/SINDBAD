@@ -9,7 +9,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         # flag to indicate if subsets are needed.
         dim = YAXArrayBase.yaxconvert(DimArray, dsk) 
         # site, lon, lat should be options to consider here
-        subset = dim[site=1:info.forcing.size.site, time = 1:info.forcing.size.time]
+        subset = dim[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
         # support for subsets by name and numbers is also supported. Option to be added later.
         YAXArrayBase.yaxconvert(YAXArray, subset)
     end
