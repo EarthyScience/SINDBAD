@@ -21,6 +21,8 @@ using Flatten:
 using TypedTables:
     Table
 using JLD2: @save
+using TimerOutputs
+const tmr = TimerOutput()
 
 include("tools/tools.jl")
 include("Ecosystem/Ecosystem.jl")
