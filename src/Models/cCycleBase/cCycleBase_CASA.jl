@@ -37,7 +37,7 @@ function precompute(o::cCycleBase_CASA, forcing, land::NamedTuple, helpers::Name
 
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, cFlowA) => land.cCycleBase
+		(p_C2Nveg, cFlowA, cFlowE) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
 	return land
@@ -62,7 +62,8 @@ function compute(o::cCycleBase_CASA, forcing, land::NamedTuple, helpers::NamedTu
     p_k_base = 𝟙 .- (exp.(-𝟙 .* annk).^(𝟙 / TSPY))
 
 	## pack land variables
-    @pack_land (p_C2Nveg, p_k_base, cFlowE) => land.cCycleBase
+    @pack_land (p_k_base) => land.cCycleBase
+    # @pack_land (p_C2Nveg, p_k_base, cFlowE) => land.cCycleBase
 	return land
 end
 

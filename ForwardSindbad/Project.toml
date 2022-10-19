@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
 DiskArrayTools = "fcd2136c-9f69-4db6-97e5-f31981721d63"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
 Flatten = "4c728ea3-d9ee-5c9a-9642-b6f7d7dc04fa"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"

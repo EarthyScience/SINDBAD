@@ -23,6 +23,7 @@ using TypedTables:
 using JLD2: @save
 using TimerOutputs
 const tmr = TimerOutput()
+#using Distributed
 
 include("tools/tools.jl")
 include("Ecosystem/Ecosystem.jl")
