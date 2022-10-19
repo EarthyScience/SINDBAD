@@ -124,7 +124,7 @@ function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, t
 end
 
 function fany(x, approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims)
-    @show "fany", Threads.threadid()
+    #@show "fany", Threads.threadid()
     @time oute = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, x)
     oute
 end
@@ -172,7 +172,7 @@ end
 
 
 function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray, spinup_forcing::Any)
-    @show "doRun", Threads.threadid()
+    #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
     land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)

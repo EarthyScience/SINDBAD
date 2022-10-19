@@ -163,8 +163,8 @@ function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
     fWfTfR_prev = fWfTfR
     ## pack land variables
     @pack_land begin
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, p_A, slope_fWfTfR, fWfTfR_prev) => land.cFlow
-        p_k => land.states
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev) => land.cFlow
+        #p_k => land.states
     end
     return land
 end
