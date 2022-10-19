@@ -11,7 +11,7 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 		p_wSat ∈ land.soilWBase
 		(𝟘, tolerance) ∈ helpers.numbers
 	end
-	TWS_old = deepcopy(TWS)
+	#TWS_old = deepcopy(TWS)
 	## update variables
 	TWS .= TWS .+ ΔTWS
 
