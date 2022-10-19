@@ -6,16 +6,25 @@ function precompute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::Name
 
     ## instantiate variables
     cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
+    cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
+    cAllocVegZix = ones(helpers.numbers.numType, length(cpNames))
+
+    for cpI in eachindex(cpNames)
+        zix = getzix(land.pools, cpNames[cpI])
+        cAllocVegZix[cpI] = length(zix)
+    end
 
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_land (cAlloc, cpNames, cAllocVeg, cAllocVegZix) => land.states
+
     return land
 end
 
 function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
-    @unpack_land cAlloc ∈ land.states
+    @unpack_land (cAlloc, cpNames, cAllocVeg, cAllocVegZix) ∈ land.states
 
     ## unpack land variables
     @unpack_land begin
@@ -23,24 +32,22 @@ function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTu
         fT ∈ land.cAllocationSoilT
         sNT ∈ helpers.numbers
     end
-    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     # allocation to root; wood & leaf
-    cVegLeaf = fW / ((fW + fT) * 2.0f0)
-    cVegWood = fW / ((fW + fT) * 2.0f0)
-    cVegRoot = fT / (fW + fT)
-    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
-
+    cAllocVeg[1] = fW / ((fW + fT) * 2.0f0)
+    cAllocVeg[2] = fW / ((fW + fT) * 2.0f0)
+    cAllocVeg[3] = fT / (fW + fT)
+    
     # distribute the allocation according to pools
-    for cpName in cpNames
-        zix = getzix(land.pools, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+    for cpI in eachindex(cpNames)
+        zix = getzix(land.pools, cpNames[cpI])
+        cAlloc[zix] .= cAllocVeg[cpI] / cAllocVegZix[cpI]
     end
 
     ## pack land variables
-    @pack_land begin
-        cAlloc => land.states
-    end
+    # @pack_land begin
+    #     cAlloc => land.states
+    # end
     return land
 end
 

@@ -73,13 +73,14 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
     NEE = cRECO - gpp
-    cEco_prev = copy(cEco)
+    cEco_prev .= copy(cEco)
 
     ## pack land variables
     @pack_land begin
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
-        ΔcEco => land.states
-        (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
+        # (cEco_prev) => land.states
+        # ΔcEco => land.states
+        # (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
     end
     return land
 end
