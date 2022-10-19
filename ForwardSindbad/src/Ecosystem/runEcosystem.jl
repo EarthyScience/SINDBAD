@@ -9,10 +9,7 @@ runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     for model in models
-        # println("---------")
         out = Models.compute(model, forcing, out, tem_helpers)
-        # @show model
-        # println("---------")
         if tem_helpers.run.runUpdateModels
             out = Models.update(model, forcing, out, tem_helpers)
         end
@@ -60,28 +57,29 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
-function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, in_out::NamedTuple,
-    tem_variables::NamedTuple, tem_helpers::NamedTuple, res, time_steps)
+function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
+    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps)
     #time_steps = getForcingTimeSize(forcing)
     # time_steps = tem_helpers.dates.size
     #@info "runEcosystem:: running forward time loop"
     #res = Array{NamedTuple}(time_steps, undef)
     #res = Array{NamedTuple}(undef, time_steps)
-    #res = map(1: time_steps) do ts
-    #    f = getForcingForTimeStep(forcing, ts)
-    #    out = runModels(f, forward_models, out, tem_helpers)
-    #    out_filtered = filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
-    #    deepcopy(out_filtered)
-    #end
+    res = map(1:time_steps) do ts
+        f = getForcingForTimeStep(forcing, ts)
+        out = runModels(f, forward_models, out, tem_helpers)
+        filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
+    end
+    #=
     for ts in 1:time_steps
         f = getForcingForTimeStep(forcing, ts)
         out = runModels(f, forward_models, deepcopy(in_out), tem_helpers)
         out_filtered = filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
-        res[ts] =  deepcopy(out_filtered)
-        out_filtered = nothing
-        out = nothing
+        res[ts] = out_filtered
+        #out_filtered = nothing
+        #out = nothing
         # GC.gc()
     end
+    =#
     # push!(debugcatcherr,res)
     res
     # landWrapper(res)
@@ -108,9 +106,8 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
         land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
     end
     time_steps = getForcingTimeSize(loc_forcing)
-    res = Array{NamedTuple}(undef, time_steps)
-    tf = timeLoopForward(approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, res,  time_steps)
-    tf
+    #res = Array{NamedTuple}(undef, time_steps)
+    timeLoopForward(approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
 end
 
 function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, loc_names)
@@ -120,13 +117,13 @@ function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, t
         end
         view(a;inds...)
     end
-    coreEcosystem(approaches, loc_forcing, deepcopy(land_init), tem)
+    coreEcosystem(approaches, loc_forcing, land_init, tem)
 end
 
 function fany(x, approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims)
     #@show "fany", Threads.threadid()
-    @time oute = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, x)
-    oute
+    eout = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, x)
+    eout
 end
 
 """
@@ -146,8 +143,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
         # @Threads for site in 1:spacesize
         #     res_site[site] = tmp(site)
         # end
-
-        res = qbmap(x -> fany(x,approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
+        res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
 
         nts = length(first(res))
         fullarrayoftuples = map(Iterators.product(1:nts,CartesianIndices(res))) do (its,iouter)
@@ -155,7 +151,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
         end
         landWrapper(fullarrayoftuples)
     else
-        res = coreEcosystem(approaches, forcing, deepcopy(land_init), tem)
+        res = coreEcosystem(approaches, forcing, land_init, tem)
         landWrapper(res)
     end
     return land_all
@@ -206,7 +202,7 @@ function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTupl
     indims = forcing.dims
     forcing_variables = forcing.variables |> collect
     outdims = output.dims
-    land_init = deepcopy(output.land_init)
+    land_init = output.land_init
     #additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     #nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
 

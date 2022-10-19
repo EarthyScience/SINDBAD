@@ -51,8 +51,7 @@ function compute(o::rootFraction_expCvegRoot, forcing, land::NamedTuple, helpers
     #     p_fracRoot2SoilD[sl] = rootFrac
     # end
     ## pack land variables
-    @pack_land p_fracRoot2SoilD => land.rootFraction
-
+    #@pack_land p_fracRoot2SoilD => land.rootFraction
     return land
 end
 
