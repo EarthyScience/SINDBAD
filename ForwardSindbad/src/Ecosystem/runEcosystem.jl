@@ -67,7 +67,7 @@ function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedT
     res = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, ts)
         out = runModels(f, forward_models, out, tem_helpers)
-        filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
+        deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
     #=
     for ts in 1:time_steps
@@ -151,7 +151,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
         end
         landWrapper(fullarrayoftuples)
     else
-        res = coreEcosystem(approaches, forcing, land_init, tem)
+        res = coreEcosystem(approaches, forcing, deepcopy(land_init), tem)
         landWrapper(res)
     end
     return land_all
@@ -171,7 +171,7 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
+    @time land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
     # push!(Sindbad.error_catcher,(;outputs,tem_variables,land_out))
