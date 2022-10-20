@@ -321,6 +321,21 @@ function offDiagLower(A::AbstractMatrix)
     [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
 end
 
+
+"""
+    flagOffDiag(A::AbstractMatrix)
+returns a matrix of same shape as input with 1 for all non diagonal elements
+"""
+function flagOffDiag(A::AbstractMatrix)
+    o_mat = zeros(size(A))
+    for ι in CartesianIndices(A)
+        if ι[1] ≠ ι[2]
+            o_mat[ι] = 1
+        end
+    end
+    return o_mat
+end
+
 """
     flagUpper(A::AbstractMatrix)
 returns a matrix of same shape as input with 1 for all above diagonal elements and 0 elsewhere

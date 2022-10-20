@@ -23,13 +23,11 @@ function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTu
 		    @error "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage"
 			# @assert(false, "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage") 
 		    TWS .= abs.(TWS)
-	else
+		else
 		    @error "TWS is negative. Cannot continue. $(TWS)"
 		end
 	end
-	ΔTWS_copy = deepcopy(ΔTWS)
-	ΔTWS .= zero(ΔTWS)
-	@pack_land ΔTWS_copy => land.states
+	ΔTWS .= ΔTWS .* 𝟘 
 	## pack land variables
 	# @pack_land begin
 	# 	(groundW, snowW, soilW, surfaceW) => land.pools
