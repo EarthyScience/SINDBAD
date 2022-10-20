@@ -17,8 +17,9 @@ function precompute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedT
     cNPP = zeros(numType, n_cVeg)
 
 	cEco_prev = copy(land.pools.cEco)
+    zixVeg = getzix(land.pools.cVeg)
     ## pack land variables
-    @pack_land (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP) => land.states
+    @pack_land (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg) => land.states
     return land
 end
 
@@ -26,7 +27,7 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k) ∈ land.states
+        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k, zixVeg) ∈ land.states
         cEco ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
@@ -35,14 +36,18 @@ function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTupl
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    cEcoFlow .= cEcoFlow .* 𝟘
-    cEcoInflux .= cEcoInflux .* 𝟘
+    cEcoFlow .= zero(cEcoFlow)
+    cEcoInflux .= zero(cEcoInflux)
     ## compute losses
     cEcoOut .= min.(cEco, cEco .* p_k)
+
     ## gains to vegetation
-    zixVeg = getzix(land.pools.cVeg)
-    cNPP .= gpp .* cAlloc[zixVeg] .- cEcoEfflux[zixVeg]
-    cEcoInflux[zixVeg] .= cNPP
+    for zvI in eachindex(zixVeg)
+        zv = zixVeg[zvI]
+        cNPP[zvI] = gpp * cAlloc[zv] - cEcoEfflux[zv]
+        cEcoInflux[zv] = cNPP[zvI]
+    end
+
     # flows & losses
     # @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
     # find out why. Led to having zeros in most of the carbon pools of the

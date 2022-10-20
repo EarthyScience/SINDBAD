@@ -7,16 +7,18 @@ function precompute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::Name
     ## instantiate variables
     cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-    cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
-    cAllocVegZix = ones(helpers.numbers.numType, length(cpNames))
 
-    for cpI in eachindex(cpNames)
-        zix = getzix(land.pools, cpNames[cpI])
-        cAllocVegZix[cpI] = length(zix)
+    cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
+    zixVegAlloc = Dict()
+    for cpName in cpNames
+        zixVegAlloc[cpName] = Dict()
+        zix = getzix(land.pools, cpName)
+        zixVegAlloc[cpName][:zix] = zix
+        zixVegAlloc[cpName][:nZix] = length(zix)
     end
 
     ## pack land variables
-    @pack_land (cAlloc, cpNames, cAllocVeg, cAllocVegZix) => land.states
+    @pack_land (cAlloc, cpNames, cAllocVeg, zixVegAlloc) => land.states
 
     return land
 end
@@ -24,7 +26,7 @@ end
 function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
-    @unpack_land (cAlloc, cpNames, cAllocVeg, cAllocVegZix) ∈ land.states
+    @unpack_land (cAlloc, cpNames, cAllocVeg, zixVegAlloc) ∈ land.states
 
     ## unpack land variables
     @unpack_land begin
@@ -40,8 +42,11 @@ function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTu
     
     # distribute the allocation according to pools
     for cpI in eachindex(cpNames)
-        zix = getzix(land.pools, cpNames[cpI])
-        cAlloc[zix] .= cAllocVeg[cpI] / cAllocVegZix[cpI]
+        # push!(Sindbad.error_catcher, [zixVegAlloc, cpNames])
+        zix = zixVegAlloc[cpNames[cpI]][:zix]
+        for zv in eachindex(zix)
+            cAlloc[zix[zv]] = cAllocVeg[cpI] / zixVegAlloc[cpNames[cpI]][:nZix]
+        end
     end
 
     ## pack land variables
