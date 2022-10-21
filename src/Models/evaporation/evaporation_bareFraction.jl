@@ -1,7 +1,7 @@
 export evaporation_bareFraction
 
 @bounds @describe @units @with_kw struct evaporation_bareFraction{T1} <: evaporation
-	ks::T1 = 0.5f0 | (0.1f0, 0.95f0) | "resistance against soil evaporation" | ""
+	ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
 end
 
 function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)

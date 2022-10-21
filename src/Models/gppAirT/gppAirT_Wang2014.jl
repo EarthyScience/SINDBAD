@@ -1,7 +1,7 @@
 export gppAirT_Wang2014
 
 @bounds @describe @units @with_kw struct gppAirT_Wang2014{T1} <: gppAirT
-	Tmax::T1 = 10.0f0 | (5.0f0, 45.0f0) | "maximum temperature at which GPP ceases" | "°C"
+	Tmax::T1 = 10.0 | (5.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
 end
 
 function compute(o::gppAirT_Wang2014, forcing, land::NamedTuple, helpers::NamedTuple)

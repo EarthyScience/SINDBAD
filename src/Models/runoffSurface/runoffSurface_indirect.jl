@@ -1,7 +1,7 @@
 export runoffSurface_indirect
 
 @bounds @describe @units @with_kw struct runoffSurface_indirect{T1} <: runoffSurface
-	dc::T1 = 0.01f0 | (0.0f0, 1.0f0) | "delayed surface runoff coefficient" | ""
+	dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
 end
 
 function compute(o::runoffSurface_indirect, forcing, land::NamedTuple, helpers::NamedTuple)

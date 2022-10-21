@@ -1,7 +1,7 @@
 export cCycleDisturbance_constant
 
 @bounds @describe @units @with_kw struct cCycleDisturbance_constant{T1} <: cCycleDisturbance
-	carbon_remain::T1 = 10.0f0 | (0.1f0, 100.0f0) | "remaining carbon after disturbance" | ""
+	carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 
 function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpers::NamedTuple)

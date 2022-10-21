@@ -1,7 +1,7 @@
 export sublimation_GLEAM
 
 @bounds @describe @units @with_kw struct sublimation_GLEAM{T1} <: sublimation
-	α::T1 = 0.95f0 | (0.0f0, 3.0f0) | "Priestley Taylor Coefficient for Sublimation" | "none"
+	α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
 end
 
 function compute(o::sublimation_GLEAM, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -18,26 +18,26 @@ function compute(o::sublimation_GLEAM, forcing, land::NamedTuple, helpers::Named
         (𝟘, 𝟙) ∈ helpers.numbers
     end
     # convert temperature to Kelvin
-    T = TairDay + 273.15f0
+    T = TairDay + 273.15
 
     # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may 𝟙t to do this derivative yourself because my calculus is not as good as it used to; what I get is:
 
-    Δ = (5723.265f0 / T^2.0f0 + 3.53068f0 / (T - 0.00728332f0)) * exp(9.550426f0 - 5723.265f0 / T + 3.53068f0 * log(T) - 0.00728332f0 * T)
+    Δ = (5723.265 / T^2.0 + 3.53068 / (T - 0.00728332)) * exp(9.550426 - 5723.265 / T + 3.53068 * log(T) - 0.00728332 * T)
 
     # That you can convert from [Pa/K] to [kPa/K] by multiplying times 0.001.
-    Δ = Δ * 0.001f0
+    Δ = Δ * 0.001
 
     # The latent heat of sublimation of ice [λ] can be found in eq. (5):
-    λ = 46782.5f0 + 35.8925f0 * T - 0.07414f0 * T^2.0f0 + 541.5f0 * exp(-(T / 123.75f0)^2)
+    λ = 46782.5 + 35.8925 * T - 0.07414 * T^2.0 + 541.5 * exp(-(T / 123.75)^2)
 
     # To convert from [J/mol] to [MJ/kg] I assume a molecular mass of water of
     # 18.01528 g/mol:
-    λ = λ * 0.000001f0 / (18.01528f0 * 0.001f0)
+    λ = λ * 0.000001 / (18.01528 * 0.001)
 
     # Then the psychrometer "constant" (γ) can be calculated in [kPa/K] according to Brunt [1952] as: Where P is the air pressure in [kPa], which I consider as a function of the elevation [DEM] but can otherwise be set to 101.3, & ca is the specific heat of air which I assume 0.001 MJ/kg/K.
     # ca = 101.3
-    pa = 0.001f0 #MJ/kg/K
-    γ = PsurfDay * pa / (0.622f0 * λ)
+    pa = 0.001 #MJ/kg/K
+    γ = PsurfDay * pa / (0.622 * λ)
 
     #PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
     tmp = α * Rn * (Δ / (Δ + γ)) / λ

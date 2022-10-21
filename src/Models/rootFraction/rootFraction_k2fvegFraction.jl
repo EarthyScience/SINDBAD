@@ -1,8 +1,8 @@
 export rootFraction_k2fvegFraction
 
 @bounds @describe @units @with_kw struct rootFraction_k2fvegFraction{T1, T2} <: rootFraction
-	k2_scale::T1 = 0.02f0 | (0.001f0, 10.0f0) | "scales vegFrac to define fraction of 2nd soil layer available for transpiration" | ""
-	k1_scale::T2 = 0.5f0 | (0.001f0, 10.0f0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
+	k2_scale::T1 = 0.02 | (0.001, 10.0) | "scales vegFrac to define fraction of 2nd soil layer available for transpiration" | ""
+	k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
 end
 
 function precompute(o::rootFraction_k2fvegFraction, forcing, land::NamedTuple, helpers::NamedTuple)

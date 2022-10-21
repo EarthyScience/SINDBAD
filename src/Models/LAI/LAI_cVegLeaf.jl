@@ -1,7 +1,7 @@
 export LAI_cVegLeaf
 
 @bounds @describe @units @with_kw struct LAI_cVegLeaf{T1} <: LAI
-	SLA::T1 = 0.016f0 | (0.01f0, 0.024f0) | "specific leaf area" | "m^2.gC^-1"
+	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
 end
 
 function compute(o::LAI_cVegLeaf, forcing, land::NamedTuple, helpers::NamedTuple)

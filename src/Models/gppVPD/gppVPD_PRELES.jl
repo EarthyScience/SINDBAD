@@ -1,10 +1,10 @@
 export gppVPD_PRELES
 
 @bounds @describe @units @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
-    κ::T1 = 0.4f0 | (0.06f0, 0.7f0) | "" | "kPa-1"
-    Cκ::T2 = 0.4f0 | (-50.0f0, 10.0f0) | "" | ""
-    Ca0::T3 = 380.0f0 | (300.0f0, 500.0f0) | "" | "ppm"
-    Cm::T4 = 2000.0f0 | (400.0f0, 4000.0f0) | "" | "ppm"
+    κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
+    Cκ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
+    Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+    Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 
 function compute(o::gppVPD_PRELES, forcing, land::NamedTuple, helpers::NamedTuple)

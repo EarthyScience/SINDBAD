@@ -10,10 +10,10 @@ function compute(o::PET_PriestleyTaylor1972, forcing, land::NamedTuple, helpers:
 
 
     ## calculate variables
-    Δ = 6.11f0 * exp(17.26938818f0 * Tair / (237.3f0 + Tair))
-    Lhv = (5.147f0 * exp(-0.0004643f0 * Tair) - 2.6466f0) # MJ kg-1
-    γ = 0.4f0 / 0.622f0 # hPa C-1 [psychometric constant]
-    PET = 1.26f0 * Δ / (Δ + γ) * Rn / Lhv
+    Δ = 6.11 * exp(17.26938818 * Tair / (237.3 + Tair))
+    Lhv = (5.147 * exp(-0.0004643 * Tair) - 2.6466) # MJ kg-1
+    γ = 0.4 / 0.622 # hPa C-1 [psychometric constant]
+    PET = 1.26 * Δ / (Δ + γ) * Rn / Lhv
     PET = max(PET, 𝟘)
 
     ## pack land variables

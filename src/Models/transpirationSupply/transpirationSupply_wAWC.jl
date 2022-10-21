@@ -1,7 +1,7 @@
 export transpirationSupply_wAWC
 
 @bounds @describe @units @with_kw struct transpirationSupply_wAWC{T1} <: transpirationSupply
-	tranFrac::T1 = 0.1f0 | (0.02f0, 0.98f0) | "fraction of total maximum available water that can be transpired" | ""
+	tranFrac::T1 = 0.1 | (0.02, 0.98) | "fraction of total maximum available water that can be transpired" | ""
 end
 
 function compute(o::transpirationSupply_wAWC, forcing, land::NamedTuple, helpers::NamedTuple)

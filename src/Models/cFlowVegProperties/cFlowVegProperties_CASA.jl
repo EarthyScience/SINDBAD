@@ -1,7 +1,7 @@
 export cFlowVegProperties_CASA
 
 @bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-	WOODLIGFRAC::T1 = 0.4f0 | nothing | "fraction of wood that is lignin" | ""
+	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
 end
 
 function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)

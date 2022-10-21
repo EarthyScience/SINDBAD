@@ -1,9 +1,9 @@
 export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992MixedVegFraction{T1, T2, T3} <: runoffSaturationExcess
-	βV::T1 = 5.0f0 | (0.1f0, 20.0f0) | "linear scaling parameter for berg for vegetated fraction" | ""
-	βS::T2 = 2.0f0 | (0.1f0, 20.0f0) | "linear scaling parameter for berg for non vegetated fraction" | ""
-	β_min::T3 = 0.1f0 | (0.08f0, 0.120f0) | "minimum effective β" | ""
+	βV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
+	βS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
+	β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land::NamedTuple, helpers::NamedTuple)

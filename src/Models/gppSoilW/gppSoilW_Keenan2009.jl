@@ -1,9 +1,9 @@
 export gppSoilW_Keenan2009
 
 @bounds @describe @units @with_kw struct gppSoilW_Keenan2009{T1,T2,T3} <: gppSoilW
-    q::T1 = 0.6f0 | (0.0f0, 15.0f0) | "sensitivity of GPP to soil moisture " | ""
-    sSmax::T2 = 0.7f0 | (0.2f0, 1.0f0) | "" | ""
-    sSmin::T3 = 0.5f0 | (0.01f0, 0.95f0) | "" | ""
+    q::T1 = 0.6 | (0.0, 15.0) | "sensitivity of GPP to soil moisture " | ""
+    sSmax::T2 = 0.7 | (0.2, 1.0) | "" | ""
+    sSmin::T3 = 0.5 | (0.01, 0.95) | "" | ""
 end
 
 function compute(o::gppSoilW_Keenan2009, forcing, land::NamedTuple, helpers::NamedTuple)
