@@ -13,8 +13,8 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": ["site"],
-		"runEcosystem": ["time"]
+		"yaxarray": [],
+		"runEcosystem": ["time", "site"]
 	},
 	"flags":
 	{
