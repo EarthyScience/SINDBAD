@@ -1,0 +1,35 @@
+{
+	"sequence": 
+	[
+		{
+			"spinupMode": "forward",
+			"forcing": "recycleMSC",
+			"stopCriteria": null,
+			"nLoops": 15
+		},
+		{
+			"spinupMode": "forward",
+			"forcing": "full",
+			"stopCriteria": null,
+			"nLoops": 1
+		}
+	],
+	"diffEq":{
+		"pools": ["cEco"],
+		"timeJump": 200.0,
+		"reltol":1e-2, 
+		"abstol":1e-2
+	},
+	"paths": 
+	{
+		"restartFileIn": null,
+		"restartFileOut": null	
+	},
+	"flags":
+	{
+		"doSpinup": false,
+		"loadSpinup": false,
+		"saveSpinup": false,
+		"storeSpinupHistory": false
+	}
+}

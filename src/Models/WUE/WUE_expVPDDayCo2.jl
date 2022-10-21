@@ -1,10 +1,10 @@
 export WUE_expVPDDayCo2
 
 @bounds @describe @units @with_kw struct WUE_expVPDDayCo2{T1, T2, T3, T4} <: WUE
-	WUEatOnehPa::T1 = 9.2f0 | (2.0f0, 20.0f0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-	κ::T2 = 0.4f0 | (0.06f0, 0.7f0) | "" | "kPa-1"
-	Ca0::T3 = 380.0f0 | (300.0f0, 500.0f0) | "" | "ppm"
-	Cm::T4 = 500.0f0 | (10.0f0, 2000.0f0) | "" | "ppm"
+	WUEatOnehPa::T1 = 9.2 | (2.0, 20.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
+	κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
+	Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+	Cm::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
 end
 
 function compute(o::WUE_expVPDDayCo2, forcing, land::NamedTuple, helpers::NamedTuple)

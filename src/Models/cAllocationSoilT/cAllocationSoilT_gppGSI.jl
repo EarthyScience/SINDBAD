@@ -1,7 +1,7 @@
 export cAllocationSoilT_gppGSI
 
 @bounds @describe @units @with_kw struct cAllocationSoilT_gppGSI{T1} <: cAllocationSoilT
-	τ_Tsoil::T1 = 0.2f0 | (0.001f0, 1.0f0) | "temporal change rate for the temperature-limiting function" | ""
+	τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | ""
 end
 
 function precompute(o::cAllocationSoilT_gppGSI, forcing, land::NamedTuple, helpers::NamedTuple)

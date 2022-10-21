@@ -1,11 +1,11 @@
 export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
 
 @bounds @describe @units @with_kw struct soilProperties_Saxton2006{T1, T2, T3, T4, T5} <: soilProperties
-	DF::T1 = 1.0f0 | (0.9f0, 1.3f0) | "Density correction factor" | ""
-	Rw::T2 = 0.0f0 | (0.0f0, 1.0f0) | "Weight fraction of gravel (decimal)" | "g g-1"
-	matricSoilDensity::T3 = 2.65f0 | (2.5f0, 3.0f0) | "Matric soil density" | "g cm-3"
-	gravelDensity::T4 = 2.65f0 | (2.5f0, 3.0f0) | "density of gravel material" | "g cm-3"
-	EC::T5 = 36.0f0 | (30.0f0, 40.0f0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
+	DF::T1 = 1.0 | (0.9, 1.3) | "Density correction factor" | ""
+	Rw::T2 = 0.0 | (0.0, 1.0) | "Weight fraction of gravel (decimal)" | "g g-1"
+	matricSoilDensity::T3 = 2.65 | (2.5, 3.0) | "Matric soil density" | "g cm-3"
+	gravelDensity::T4 = 2.65 | (2.5, 3.0) | "density of gravel material" | "g cm-3"
+	EC::T5 = 36.0 | (30.0, 40.0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
 end
 
 function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -45,32 +45,32 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		CLAY = p_CLAY[sl]
 		SAND = p_SAND[sl]
 		# ORGM = p_ORGM[sl]
-		ORGM = 0.0f0
+		ORGM = 0.0
 		# CLAY = CLAY
 		# SAND = SAND
 		# ORGM = ORGM
 		## Moisture regressions
 		# θ_1500t: 1500 kPa moisture; first solution; #v
 		# θ_1500: 1500 kPa moisture; #v
-		θ_1500t = -0.024f0 * SAND + 0.487f0 * CLAY + 0.006f0 * ORGM + 0.005f0 * (SAND * ORGM) - 0.013f0 * (CLAY * ORGM) + 0.068f0 * (SAND * CLAY) + 0.031f0
-		θ_1500 = θ_1500t + (0.14f0 * θ_1500t - 0.02f0)
+		θ_1500t = -0.024 * SAND + 0.487 * CLAY + 0.006 * ORGM + 0.005 * (SAND * ORGM) - 0.013 * (CLAY * ORGM) + 0.068 * (SAND * CLAY) + 0.031
+		θ_1500 = θ_1500t + (0.14 * θ_1500t - 0.02)
 		# θ_33t: 33 kPa moisture; first solution; #v
 		# θ_33: 33 kPa moisture; normal density; #v
-		θ_33t = -0.251f0 * SAND + 0.195f0 * CLAY + 0.011f0 * ORGM + 0.006f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) + 0.452f0 * (SAND * CLAY) + 0.299f0
-		θ_33 = θ_33t + (1.283f0 * (θ_33t) ^ 2 - 0.374f0 * θ_33t - 0.015f0)
+		θ_33t = -0.251 * SAND + 0.195 * CLAY + 0.011 * ORGM + 0.006 * (SAND * ORGM) - 0.027 * (CLAY * ORGM) + 0.452 * (SAND * CLAY) + 0.299
+		θ_33 = θ_33t + (1.283 * (θ_33t) ^ 2 - 0.374 * θ_33t - 0.015)
 		# θ_s_33t: SAT-33 kPa moisture; first solution; #v
 		# θ_s_33: SAT-33 kPa moisture; normal density #v
-		θ_s_33t = 0.278f0 * SAND + 0.034f0 * CLAY + 0.022f0 * ORGM - 0.018f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) - 0.584f0 * (SAND * CLAY) + 0.078f0
-		θ_s_33 = θ_s_33t + (0.636f0 * θ_s_33t - 0.107f0)
+		θ_s_33t = 0.278 * SAND + 0.034 * CLAY + 0.022 * ORGM - 0.018 * (SAND * ORGM) - 0.027 * (CLAY * ORGM) - 0.584 * (SAND * CLAY) + 0.078
+		θ_s_33 = θ_s_33t + (0.636 * θ_s_33t - 0.107)
 		# ψ_et: Tension at air entry; first solution; kPa
 		# ψ_e: Tension at air entry [bubbling pressure], kPa
-		ψ_et = abs(-21.67f0 * SAND - 27.93f0 * CLAY - 81.97f0 * θ_s_33 + 71.12f0 * (SAND * θ_s_33) + 8.29f0 * (CLAY * θ_s_33)
-		- 14.05f0 * (SAND * CLAY) + 27.16f0)
-		ψ_e = abs(ψ_et + (0.02f0 * (ψ_et ^ 2) - 0.113f0 * ψ_et - 0.70f0))
+		ψ_et = abs(-21.67 * SAND - 27.93 * CLAY - 81.97 * θ_s_33 + 71.12 * (SAND * θ_s_33) + 8.29 * (CLAY * θ_s_33)
+		- 14.05 * (SAND * CLAY) + 27.16)
+		ψ_e = abs(ψ_et + (0.02 * (ψ_et ^ 2) - 0.113 * ψ_et - 0.70))
 		# θ_s: Saturated moisture [0 kPa], normal density, #v
 		# rho_N: Normal density; g cm-3
-		θ_s = θ_33 + θ_s_33 - 0.097f0 * SAND + 0.043f0
-		rho_N = (1.0f0 - θ_s) * 2.65f0
+		θ_s = θ_33 + θ_s_33 - 0.097 * SAND + 0.043
+		rho_N = (1.0 - θ_s) * 2.65
 		## Density effects
 		# rho_DF: Adjusted density; g cm-3
 		# θ_s_DF: Saturated moisture [0 kPa], adjusted density, #v
@@ -79,15 +79,15 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		# DF: Density adjustment Factor [0.9-1.3]
 		rho_DF = rho_N * DF
 		# θ_s_DF = 1 - (rho_DF / 2.65); # original but does not include θ_s
-		θ_s_DF = θ_s * (1.0f0 - (rho_DF / 2.65f0)); # may be includes θ_s
-		θ_33_DF = θ_33 - 0.2f0 * (θ_s - θ_s_DF)
-		θ_1500_DF = θ_1500 - 0.2f0 * (θ_s - θ_s_DF)
+		θ_s_DF = θ_s * (1.0 - (rho_DF / 2.65)); # may be includes θ_s
+		θ_33_DF = θ_33 - 0.2 * (θ_s - θ_s_DF)
+		θ_1500_DF = θ_1500 - 0.2 * (θ_s - θ_s_DF)
 		θ_s_33_DF = θ_s_DF - θ_33_DF
 		## Moisture-Tension
 		# A, B: Coefficients of moisture-tension, Eq. [11]
 		# ψ_θ: Tension at moisture θ; kPa
-		B = (log(1500f0) - log(33f0)) / (log(θ_33) - log(θ_1500))
-		A = exp(log(33f0) + B * log(θ_33))
+		B = (log(1500) - log(33)) / (log(θ_33) - log(θ_1500))
+		A = exp(log(33) + B * log(θ_33))
 		# ψ_θ = A * ((θ) ^ (-B))
 		# ψ_33 = 33.0 - ((θ - θ_33) * (33.0 - ψ_e)) / (θ_s - θ_33)
 		## Moisture-Conductivity
@@ -95,7 +95,7 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		# Ks: Saturated conductivity [matric soil], mm h-1
 		# K_θ: Unsaturated conductivity at moisture θ; mm h-1
 		λ = 1 / B
-		Ks = 1930f0 * ((θ_s - θ_33) ^ (3 - λ)) * 24f0
+		Ks = 1930 * ((θ_s - θ_33) ^ (3 - λ)) * 24
 		# K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
 		## Gravel Effects
 		# rho_B: Bulk soil density [matric plus gravel], g cm-3
@@ -104,15 +104,15 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		# Rw: Weight fraction of gravel [decimal], g g-1
 		# Kb: Saturated conductivity [bulk soil], mm h-1
 		αRho = matricSoilDensity / gravelDensity
-		Rv = (αRho * Rw) / (1.0f0 - Rw * (1.0f0 - αRho))
-		rho_B = rho_N * (1.0f0 - Rv) + Rv * 2.65f0
+		Rv = (αRho * Rw) / (1.0 - Rw * (1.0 - αRho))
+		rho_B = rho_N * (1.0 - Rv) + Rv * 2.65
 		# PAW_B = PAW * (1.0 - Rv)
-		Kb = Ks * ((1.0f0 - Rw) / (1.0f0 - Rw * (1.0f0 - (3 * αRho / 2))))
+		Kb = Ks * ((1.0 - Rw) / (1.0 - Rw * (1.0 - (3 * αRho / 2))))
 		## Salinity Effects
 		# ϕ_o: Osmotic potential at θ = θ_s; kPa
 		# ϕ_o_θ: Osmotic potential at θ < θ_s; kPa
 		# EC: Electrical conductance of a saturated soil extract, dS m-1 [dS/m = mili-mho cm-1]
-		phi_o = 36f0 * EC
+		phi_o = 36 * EC
 		# ϕ_o_θ = (θ_s / θ) * 36 / EC
 		## Assign the variables for returning
 		α = A
@@ -120,14 +120,14 @@ function compute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helper
 		# θSat = θ_s_DF
 		θSat = θ_s
 		kSat = Kb
-		ψSat = 0.0f0
+		ψSat = 0.0
 		# θFC = θ_33_DF
 		θFC = θ_33
 		kFC = kSat * ((θFC / θSat) ^ (3 + (2 / λ)))
-		ψFC = 33f0
+		ψFC = 33
 		# θWP = θ_1500_DF
 		θWP = θ_1500
-		ψWP = 1500f0
+		ψWP = 1500
 		kWP = kSat * ((θWP / θSat) ^ (3 + (2 / λ)))
 		# @show CLAY, SAND, α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP
 
@@ -300,25 +300,25 @@ function soilParamsSaxton2006(land, helpers, sl)
 	## Moisture regressions
 	# θ_1500t: 1500 kPa moisture; first solution; #v
 	# θ_1500: 1500 kPa moisture; #v
-	θ_1500t = -0.024f0 * SAND + 0.487f0 * CLAY + 0.006f0 * ORGM + 0.005f0 * (SAND * ORGM) - 0.013f0 * (CLAY * ORGM) + 0.068f0 * (SAND * CLAY) + 0.031f0
-	θ_1500 = θ_1500t + (0.14f0 * θ_1500t - 0.02f0)
+	θ_1500t = -0.024 * SAND + 0.487 * CLAY + 0.006 * ORGM + 0.005 * (SAND * ORGM) - 0.013 * (CLAY * ORGM) + 0.068 * (SAND * CLAY) + 0.031
+	θ_1500 = θ_1500t + (0.14 * θ_1500t - 0.02)
 	# θ_33t: 33 kPa moisture; first solution; #v
 	# θ_33: 33 kPa moisture; normal density; #v
-	θ_33t = -0.251f0 * SAND + 0.195f0 * CLAY + 0.011f0 * ORGM + 0.006f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) + 0.452f0 * (SAND * CLAY) + 0.299f0
-	θ_33 = θ_33t + (1.283f0 * (θ_33t) ^ 2 - 0.374f0 * θ_33t - 0.015f0)
+	θ_33t = -0.251 * SAND + 0.195 * CLAY + 0.011 * ORGM + 0.006 * (SAND * ORGM) - 0.027 * (CLAY * ORGM) + 0.452 * (SAND * CLAY) + 0.299
+	θ_33 = θ_33t + (1.283 * (θ_33t) ^ 2 - 0.374 * θ_33t - 0.015)
 	# θ_s_33t: SAT-33 kPa moisture; first solution; #v
 	# θ_s_33: SAT-33 kPa moisture; normal density #v
-	θ_s_33t = 0.278f0 * SAND + 0.034f0 * CLAY + 0.022f0 * ORGM - 0.018f0 * (SAND * ORGM) - 0.027f0 * (CLAY * ORGM) - 0.584f0 * (SAND * CLAY) + 0.078f0
-	θ_s_33 = θ_s_33t + (0.636f0 * θ_s_33t - 0.107f0)
+	θ_s_33t = 0.278 * SAND + 0.034 * CLAY + 0.022 * ORGM - 0.018 * (SAND * ORGM) - 0.027 * (CLAY * ORGM) - 0.584 * (SAND * CLAY) + 0.078
+	θ_s_33 = θ_s_33t + (0.636 * θ_s_33t - 0.107)
 	# ψ_et: Tension at air entry; first solution; kPa
 	# ψ_e: Tension at air entry [bubbling pressure], kPa
-	ψ_et = abs(-21.67f0 * SAND - 27.93f0 * CLAY - 81.97f0 * θ_s_33 + 71.12f0 * (SAND * θ_s_33) + 8.29f0 * (CLAY * θ_s_33)
-	- 14.05f0 * (SAND * CLAY) + 27.16f0)
-	ψ_e = abs(ψ_et + (0.02f0 * (ψ_et ^ 2) - 0.113f0 * ψ_et - 0.70f0))
+	ψ_et = abs(-21.67 * SAND - 27.93 * CLAY - 81.97 * θ_s_33 + 71.12 * (SAND * θ_s_33) + 8.29 * (CLAY * θ_s_33)
+	- 14.05 * (SAND * CLAY) + 27.16)
+	ψ_e = abs(ψ_et + (0.02 * (ψ_et ^ 2) - 0.113 * ψ_et - 0.70))
 	# θ_s: Saturated moisture [0 kPa], normal density, #v
 	# rho_N: Normal density; g cm-3
-	θ_s = θ_33 + θ_s_33 - 0.097f0 * SAND + 0.043f0
-	rho_N = (1.0f0 - θ_s) * 2.65f0
+	θ_s = θ_33 + θ_s_33 - 0.097 * SAND + 0.043
+	rho_N = (1.0 - θ_s) * 2.65
 	## Density effects
 	# rho_DF: Adjusted density; g cm-3
 	# θ_s_DF: Saturated moisture [0 kPa], adjusted density, #v
@@ -327,15 +327,15 @@ function soilParamsSaxton2006(land, helpers, sl)
 	# DF: Density adjustment Factor [0.9-1.3]
 	rho_DF = rho_N * DF
 	# θ_s_DF = 1 - (rho_DF / 2.65); # original but does not include θ_s
-	θ_s_DF = θ_s * (1.0f0 - (rho_DF / 2.65f0)); # may be includes θ_s
-	θ_33_DF = θ_33 - 0.2f0 * (θ_s - θ_s_DF)
-	θ_1500_DF = θ_1500 - 0.2f0 * (θ_s - θ_s_DF)
+	θ_s_DF = θ_s * (1.0 - (rho_DF / 2.65)); # may be includes θ_s
+	θ_33_DF = θ_33 - 0.2 * (θ_s - θ_s_DF)
+	θ_1500_DF = θ_1500 - 0.2 * (θ_s - θ_s_DF)
 	θ_s_33_DF = θ_s_DF - θ_33_DF
 	## Moisture-Tension
 	# A, B: Coefficients of moisture-tension, Eq. [11]
 	# ψ_θ: Tension at moisture θ; kPa
-	B = (log(1500f0) - log(33f0)) / (log(θ_33) - log(θ_1500))
-	A = exp(log(33f0) + B * log(θ_33))
+	B = (log(1500) - log(33)) / (log(θ_33) - log(θ_1500))
+	A = exp(log(33) + B * log(θ_33))
 	# ψ_θ = A * ((θ) ^ (-B))
 	# ψ_33 = 33.0 - ((θ - θ_33) * (33.0 - ψ_e)) / (θ_s - θ_33)
 	## Moisture-Conductivity
@@ -343,7 +343,7 @@ function soilParamsSaxton2006(land, helpers, sl)
 	# Ks: Saturated conductivity [matric soil], mm h-1
 	# K_θ: Unsaturated conductivity at moisture θ; mm h-1
 	λ = 1 / B
-	Ks = 1930f0 * ((θ_s - θ_33) ^ (3 - λ)) * 24f0
+	Ks = 1930 * ((θ_s - θ_33) ^ (3 - λ)) * 24
 	# K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
 	## Gravel Effects
 	# rho_B: Bulk soil density [matric plus gravel], g cm-3
@@ -352,15 +352,15 @@ function soilParamsSaxton2006(land, helpers, sl)
 	# Rw: Weight fraction of gravel [decimal], g g-1
 	# Kb: Saturated conductivity [bulk soil], mm h-1
 	αRho = matricSoilDensity / gravelDensity
-	Rv = (αRho * Rw) / (1.0f0 - Rw * (1.0f0 - αRho))
-	rho_B = rho_N * (1.0f0 - Rv) + Rv * 2.65f0
+	Rv = (αRho * Rw) / (1.0 - Rw * (1.0 - αRho))
+	rho_B = rho_N * (1.0 - Rv) + Rv * 2.65
 	# PAW_B = PAW * (1.0 - Rv)
-	Kb = Ks * ((1.0 - Rw) / (1.0f0 - Rw * (1.0f0 - (3f0 * αRho / 2f0))))
+	Kb = Ks * ((1.0 - Rw) / (1.0 - Rw * (1.0 - (3 * αRho / 2))))
 	## Salinity Effects
 	# ϕ_o: Osmotic potential at θ = θ_s; kPa
 	# ϕ_o_θ: Osmotic potential at θ < θ_s; kPa
 	# EC: Electrical conductance of a saturated soil extract, dS m-1 [dS/m = mili-mho cm-1]
-	phi_o = 36f0 * EC
+	phi_o = 36 * EC
 	# ϕ_o_θ = (θ_s / θ) * 36 / EC
 	## Assign the variables for returning
 	α = A
@@ -368,11 +368,11 @@ function soilParamsSaxton2006(land, helpers, sl)
 	# θSat = θ_s_DF
 	θSat = θ_s
 	kSat = Kb
-	ψSat = 0.0f0
+	ψSat = 0.0
 	# θFC = θ_33_DF
 	θFC = θ_33
 	kFC = kSat * ((θFC / θSat) ^ (3 + (2 / λ)))
-	ψFC = 33f0
+	ψFC = 33
 	# θWP = θ_1500_DF
 	θWP = θ_1500
 	ψWP = 1500

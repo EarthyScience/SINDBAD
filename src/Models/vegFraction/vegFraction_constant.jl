@@ -1,7 +1,7 @@
 export vegFraction_constant
 
 @bounds @describe @units @with_kw struct vegFraction_constant{T1} <: vegFraction
-	constantVegFrac::T1 = 0.5f0 | (0.3f0, 0.9f0) | "Vegetation fraction" | ""
+	constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
 end
 
 function compute(o::vegFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)

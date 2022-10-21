@@ -1,7 +1,7 @@
 export runoffSurface_Orth2013
 
 @bounds @describe @units @with_kw struct runoffSurface_Orth2013{T1} <: runoffSurface
-	qt::T1 = 2.0f0 | (0.5f0, 100.0f0) | "delay parameter for land runoff" | "time"
+	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
 
 function precompute(o::runoffSurface_Orth2013, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -35,7 +35,7 @@ function compute(o::runoffSurface_Orth2013, forcing, land::NamedTuple, helpers::
 		tmin = maximum(tix-60, 1)
 		runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
 	else # | accumulate land runoff in surface storage
-		runoffSurface = 0.0f0
+		runoffSurface = 0.0
 	end
 	# update the water pool
 

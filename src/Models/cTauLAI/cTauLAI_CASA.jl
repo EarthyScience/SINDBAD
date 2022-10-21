@@ -1,8 +1,8 @@
 export cTauLAI_CASA
 
 @bounds @describe @units @with_kw struct cTauLAI_CASA{T1, T2} <: cTauLAI
-	maxMinLAI::T1 = 12.0f0 | (11.0f0, 13.0f0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
-	kRTLAI::T2 = 0.3f0 | (0.0f0, 1.0f0) | "constant fraction of root litter imputs" | ""
+	maxMinLAI::T1 = 12.0 | (11.0, 13.0) | "maximum value for the minimum LAI for litter scalars" | "m2/m2"
+	kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
 end
 
 function precompute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -39,7 +39,7 @@ function compute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple
 	# make sure TSPY is integer
 	TSPY = floor(Int, TSPY)
 	if !hasproperty(land.cTaufLAI, :p_LAI13)
-		p_LAI13 = repeat([0.0f0], 1, TSPY + 1)
+		p_LAI13 = repeat([0.0], 1, TSPY + 1)
 	end
 	# PARAMETERS
 	# Get the number of time steps per year
@@ -58,7 +58,7 @@ function compute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple
 	p_LAI13 = LAI13
 	# Calculate sum of δLAI over the year
 	dLAI = diff(LAI13)
-	dLAI = max(dLAI, 0f0)
+	dLAI = max(dLAI, 0)
 	dLAIsum = sum(dLAI)
 	# Calculate average & minimum LAI
 	LAIsum = sum(LAI13_next)
@@ -66,24 +66,24 @@ function compute(o::cTauLAI_CASA, forcing, land::NamedTuple, helpers::NamedTuple
 	LAImin = minimum(LAI13_next)
 	LAImin[LAImin > maxMinLAI] = maxMinLAI[LAImin > maxMinLAI]
 	# Calculate constant fraction of LAI [LTCON]
-	LTCON = 0.0f0
-	ndx = (LAIave > 0.0f0)
+	LTCON = 0.0
+	ndx = (LAIave > 0.0)
 	LTCON[ndx] = LAImin[ndx] / LAIave[ndx]
 	# Calculate δLAI
 	dLAI = dLAI[1]
 	# Calculate variable fraction of LAI [LTCON]
-	LTVAR = 0.0f0
-	LTVAR[dLAI <= 0.0f0 | dLAIsum <= 0.0f0] = 0.0f0
-	ndx = (dLAI > 0.0f0 | dLAIsum > 0.0f0)
+	LTVAR = 0.0
+	LTVAR[dLAI <= 0.0 | dLAIsum <= 0.0] = 0.0
+	ndx = (dLAI > 0.0 | dLAIsum > 0.0)
 	LTVAR[ndx] = (dLAI[ndx] / dLAIsum[ndx])
 	# Calculate the scalar for litterfall
-	LTLAI = LTCON / TSPY + (1.0f0 - LTCON) * LTVAR
+	LTLAI = LTCON / TSPY + (1.0 - LTCON) * LTVAR
 	# Calculate the scalar for root litterfall
 	# RTLAI = zeros(size(LTLAI))
-	RTLAI = 0.0f0
-	ndx = (LAIsum > 0.0f0)
+	RTLAI = 0.0
+	ndx = (LAIsum > 0.0)
 	LAI131st = LAI13[1]
-	RTLAI[ndx] = (1.0f0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0f0 + kRTLAI / TSPY
+	RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
 	# Feed the output fluxes to cCycle components
 	zix_veg = p_cVegLeafZix
 	p_kfLAI[zix_veg] = p_annk[zix_veg] * LTLAI / p_k[zix_veg]; # leaf litter scalar

@@ -1,7 +1,7 @@
 export fAPAR_LAI
 
 @bounds @describe @units @with_kw struct fAPAR_LAI{T1} <: fAPAR
-	kEffExt::T1 = 0.5f0 | (0.00001f0, 0.99f0) | "effective light extinction coefficient" | ""
+	kEffExt::T1 = 0.5 | (0.00001, 0.99) | "effective light extinction coefficient" | ""
 end
 
 

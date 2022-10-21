@@ -8,11 +8,11 @@ Random.seed!(rng, 0)
 ps, st = Lux.setup(rng, model)
 ps_new = ComponentArray(ps)
 
-ŷ, st = Lux.apply(model, rand(Float32,2,10), ps_new, st)
+ŷ, st = Lux.apply(model, rand(Float64,2,10), ps_new, st)
 
-y = rand(Float32, 10)
+y = rand(Float64, 10)
 function loss(y, model, ps_new, st)
-  ŷ, st = Lux.apply(model, rand(Float32,2,10), ps_new, st)
+  ŷ, st = Lux.apply(model, rand(Float64,2,10), ps_new, st)
   #ŷ .+= ps_new[1]
   mean(abs2.(y .- ŷ))
 end

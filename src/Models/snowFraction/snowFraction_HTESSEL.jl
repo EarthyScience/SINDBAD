@@ -1,7 +1,7 @@
 export snowFraction_HTESSEL
 
 @bounds @describe @units @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
-	CoverParam::T1 = 15.0f0 | (1.0f0, 100.0f0) | "Snow Cover Parameter" | "mm"
+	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
 
 function compute(o::snowFraction_HTESSEL, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,9 +1,9 @@
 export gppAirT_TEM
 
 @bounds @describe @units @with_kw struct gppAirT_TEM{T1, T2, T3} <: gppAirT
-	Tmin::T1 = 5.0f0 | (-10.0f0, 15.0f0) | "minimum temperature at which GPP ceases" | "°C"
-	Tmax::T2 = 20.0f0 | (10.0f0, 45.0f0) | "maximum temperature at which GPP ceases" | "°C"
-	Topt::T3 = 15.0f0 | (5.0f0, 30.0f0) | "optimal temperature for GPP" | "°C"
+	Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C"
+	Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
+	Topt::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
 end
 
 function compute(o::gppAirT_TEM, forcing, land::NamedTuple, helpers::NamedTuple)

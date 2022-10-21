@@ -1,7 +1,7 @@
 export vegAvailableWater_sigmoid
 
 @bounds @describe @units @with_kw struct vegAvailableWater_sigmoid{T1} <: vegAvailableWater
-	exp_factor::T1 = 1.0f0 | (0.02f0, 3.0f0) | "multiplier of B factor of exponential rate" | ""
+	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
 end
 
 function compute(o::vegAvailableWater_sigmoid, forcing, land::NamedTuple, helpers::NamedTuple)

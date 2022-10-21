@@ -1,12 +1,12 @@
 export cFlowSoilProperties_CASA
 
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1, T2, T3, T4, T5, T6} <: cFlowSoilProperties
-	effA::T1 = 0.85f0 | nothing | "" | ""
-	effB::T2 = 0.68f0 | nothing | "" | ""
-	effCLAY_cMicSoil_A::T3 = 0.003f0 | nothing | "" | ""
-	effCLAY_cMicSoil_B::T4 = 0.032f0 | nothing | "" | ""
-	effCLAY_cSoilSlow_A::T5 = 0.003f0 | nothing | "" | ""
-	effCLAY_cSoilSlow_B::T6 = 0.009f0 | nothing | "" | ""
+	effA::T1 = 0.85 | nothing | "" | ""
+	effB::T2 = 0.68 | nothing | "" | ""
+	effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
+	effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
+	effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
+	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
 
 function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)

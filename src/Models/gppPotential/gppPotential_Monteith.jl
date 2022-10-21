@@ -1,7 +1,7 @@
 export gppPotential_Monteith
 
 @bounds @describe @units @with_kw struct gppPotential_Monteith{T1} <: gppPotential
-	εmax::T1 = 2.0f0 | (0.1f0, 5.0f0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
+	εmax::T1 = 2.0 | (0.1, 5.0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
 end
 
 function compute(o::gppPotential_Monteith, forcing, land::NamedTuple, helpers::NamedTuple)

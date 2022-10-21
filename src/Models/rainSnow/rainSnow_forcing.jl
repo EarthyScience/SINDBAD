@@ -1,7 +1,7 @@
 export rainSnow_forcing
 
 @bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
-	SF_scale::T1 = 1.0f0 | (0.0f0, 3.0f0) | "scaling factor for snow fall" | ""
+	SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
 end
 
 function compute(o::rainSnow_forcing, forcing, land::NamedTuple, helpers::NamedTuple)

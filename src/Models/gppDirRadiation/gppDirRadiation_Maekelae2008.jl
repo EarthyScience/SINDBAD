@@ -1,7 +1,7 @@
 export gppDirRadiation_Maekelae2008
 
 @bounds @describe @units @with_kw struct gppDirRadiation_Maekelae2008{T1} <: gppDirRadiation
-    γ::T1 = 0.04f0 | (0.001f0, 0.1f0) | "empirical light response parameter" | ""
+    γ::T1 = 0.04 | (0.001, 0.1) | "empirical light response parameter" | ""
 end
 
 function compute(o::gppDirRadiation_Maekelae2008, forcing, land::NamedTuple, helpers::NamedTuple)

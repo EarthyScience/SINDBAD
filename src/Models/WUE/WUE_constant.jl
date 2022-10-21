@@ -1,7 +1,7 @@
 export WUE_constant
 
 @bounds @describe @units @with_kw struct WUE_constant{T1} <: WUE
-	constantWUE::T1 = 4.1f0 | (1.0f0, 10.0f0) | "mean FluxNet WUE" | "gC/mmH2O"
+	constantWUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
 end
 
 function compute(o::WUE_constant, forcing, land::NamedTuple, helpers::NamedTuple)
