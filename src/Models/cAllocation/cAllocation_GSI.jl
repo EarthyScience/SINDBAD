@@ -36,8 +36,8 @@ function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTu
     end
 
     # allocation to root; wood & leaf
-    cAllocVeg[1] = fW / ((fW + fT) * 2.0f0)
-    cAllocVeg[2] = fW / ((fW + fT) * 2.0f0)
+    cAllocVeg[1] = fW / ((fW + fT) * 2.0)
+    cAllocVeg[2] = fW / ((fW + fT) * 2.0)
     cAllocVeg[3] = fT / (fW + fT)
     
     # distribute the allocation according to pools

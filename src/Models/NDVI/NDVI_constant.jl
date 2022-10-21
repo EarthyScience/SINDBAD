@@ -1,7 +1,7 @@
 export NDVI_constant
 
 @bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-	constantNDVI::T1 = 1.0f0 | (0.0f0, 1.0f0) | "NDVI" | ""
+	constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
 end
 
 function compute(o::NDVI_constant, forcing, land::NamedTuple, helpers::NamedTuple)

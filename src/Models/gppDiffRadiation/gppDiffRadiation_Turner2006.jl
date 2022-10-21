@@ -1,7 +1,7 @@
 export gppDiffRadiation_Turner2006
 
 @bounds @describe @units @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
-	rueRatio::T1 = 0.5f0 | (0.0001f0, 1.0f0) | "ratio of clear sky LUE to max LUE" | ""
+	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
 
 function precompute(o::gppDiffRadiation_Turner2006, forcing, land::NamedTuple, helpers::NamedTuple)

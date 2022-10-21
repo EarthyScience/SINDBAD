@@ -1,7 +1,7 @@
 export fAPAR_vegFraction
 
 @bounds @describe @units @with_kw struct fAPAR_vegFraction{T1} <: fAPAR
-	vegFracTofAPAR::T1 = 0.00002f0 | (0.00001f0, 0.99f0) | "linear fraction of fAPAR and vegFraction" | ""
+	vegFracTofAPAR::T1 = 0.00002 | (0.00001, 0.99) | "linear fraction of fAPAR and vegFraction" | ""
 end
 
 

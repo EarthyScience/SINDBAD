@@ -1,8 +1,8 @@
 export evaporation_demandSupply
 
 @bounds @describe @units @with_kw struct evaporation_demandSupply{T1, T2} <: evaporation
-	α::T1 = 1.0f0 | (0.1f0, 3.0f0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-	supLim::T2 = 0.2f0 | (0.05f0, 0.98f0) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+	α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
+	supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
 function compute(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)

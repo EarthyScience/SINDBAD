@@ -1,7 +1,7 @@
 export transpirationDemand_PETvegFraction
 
 @bounds @describe @units @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
-	α::T1 = 1.0f0 | (0.2f0, 3.0f0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
 end
 
 function compute(o::transpirationDemand_PETvegFraction, forcing, land::NamedTuple, helpers::NamedTuple)

@@ -1,8 +1,8 @@
 export snowMelt_TairRn
 
 @bounds @describe @units @with_kw struct snowMelt_TairRn{T1, T2} <: snowMelt
-	melt_T::T1 = 3.0f0 | (0.01f0, 10.0f0) | "melt factor for temperature" | "mm/°C"
-	melt_Rn::T2 = 2.0f0 | (0.01f0, 3.0f0) | "melt factor for radiation" | "mm/MJ/m2"
+	melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C"
+	melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
 end
 
 

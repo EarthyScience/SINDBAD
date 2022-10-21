@@ -1,7 +1,7 @@
 export vegFraction_scaledNDVI
 
 @bounds @describe @units @with_kw struct vegFraction_scaledNDVI{T1} <: vegFraction
-	NDVIscale::T1 = 1.0f0 | (0.0f0, 5.0f0) | "scalar for NDVI" | ""
+	NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
 end
 
 function compute(o::vegFraction_scaledNDVI, forcing, land::NamedTuple, helpers::NamedTuple)

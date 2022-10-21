@@ -2,7 +2,7 @@ export getObservations
 
 function getObservations(info::NamedTuple, ::Val{:zarr})
     dataPath = info.opti.constraints.oneDataPath
-    ds = YAXArrays.open_dataset(dataPath)
+    ds = YAXArrays.open_dataset(zopen(dataPath))
     varnames = Symbol.(info.opti.variables2constrain)
     obscubes = map(varnames) do k
         dsk = ds[k]

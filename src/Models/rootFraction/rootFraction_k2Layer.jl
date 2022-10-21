@@ -1,8 +1,8 @@
 export rootFraction_k2Layer
 
 @bounds @describe @units @with_kw struct rootFraction_k2Layer{T1, T2} <: rootFraction
-	k2::T1 = 0.02f0 | (0.001f0, 0.2f0) | "fraction of 2nd soil layer available for transpiration" | ""
-	k1::T2 = 0.5f0 | (0.01f0, 0.99f0) | "fraction of 1st soil layer available for transpiration" | ""
+	k2::T1 = 0.02 | (0.001, 0.2) | "fraction of 2nd soil layer available for transpiration" | ""
+	k1::T2 = 0.5 | (0.01, 0.99) | "fraction of 1st soil layer available for transpiration" | ""
 end
 
 function precompute(o::rootFraction_k2Layer, forcing, land::NamedTuple, helpers::NamedTuple)

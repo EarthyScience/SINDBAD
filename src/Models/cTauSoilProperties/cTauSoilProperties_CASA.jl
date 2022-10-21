@@ -1,7 +1,7 @@
 export cTauSoilProperties_CASA
 
 @bounds @describe @units @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
-	TEXTEFFA::T1 = 0.75f0 | (0.0f0, 1.0f0) | "effect of soil texture on turnove times" | ""
+	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
 end
 
 function precompute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -32,7 +32,7 @@ function compute(o::cTauSoilProperties_CASA, forcing, land::NamedTuple, helpers:
 	SILT = mean(p_SILT)
 	# TEXTURE EFFECT ON k OF cMicSoil
 	zix = helpers.pools.carbon.zix.cMicSoil
-	p_kfSoil[zix] = (1.0f0 - (TEXTEFFA * (SILT + CLAY)))
+	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
 	# (ineficient, should be pix zix_mic)
 
 	## pack land variables

@@ -1,7 +1,7 @@
 export groundWRecharge_fraction
 
 @bounds @describe @units @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
-	rf::T1 = 0.1f0 | (0.02f0, 0.98f0) | "fraction of land runoff that percolates to groundwater" | ""
+	rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | ""
 end
 
 function compute(o::groundWRecharge_fraction, forcing, land::NamedTuple, helpers::NamedTuple)

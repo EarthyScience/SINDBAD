@@ -1,7 +1,7 @@
 export groundWRecharge_dos
 
 @bounds @describe @units @with_kw struct groundWRecharge_dos{T1} <: groundWRecharge
-	dos_exp::T1 = 1.5f0 | (1.1f0, 3.0f0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
+	dos_exp::T1 = 1.5 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
 end
 
 function compute(o::groundWRecharge_dos, forcing, land::NamedTuple, helpers::NamedTuple)

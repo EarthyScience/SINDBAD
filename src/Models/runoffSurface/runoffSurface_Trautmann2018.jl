@@ -1,7 +1,7 @@
 export runoffSurface_Trautmann2018
 
 @bounds @describe @units @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
-	qt::T1 = 2.0f0 | (0.5f0, 100.0f0) | "delay parameter for land runoff" | "time"
+	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
 
 function precompute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
@@ -42,7 +42,7 @@ function compute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, help
 		delSoil = sum(soilW) - sum(soilW_prev)
 		dSurf = input- loss - delSnow - delSoil
 	else
-		runoffSurface = 0.0f0
+		runoffSurface = 0.0
 		dSurf = runoffOverland
 	end
 

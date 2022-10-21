@@ -1,15 +1,15 @@
 export cCycleBase_GSI
 
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12} <: cCycleBase
-	annk_Root::T1 = 1.0f0 | (0.05f0, 3.3f0) | "turnover rate of root carbon pool" | "yr-1"
-	annk_Wood::T2 = 0.03f0 | (0.001f0, 10.0f0) | "turnover rate of wood carbon pool" | "yr-1"
-	annk_Leaf::T3 = 1.0f0 | (0.05f0, 10.0f0) | "turnover rate of leaf carbon pool" | "yr-1"
-	annk_Reserve::T4 = 1.0f-11 | (1.0f-12, 1.0f0) | "Reserve does not respire, but has a small value to avoid  numerical error" | "yr-1"
-	annk_LitSlow::T5 = 3.9f0 | (0.39f0, 39.0f0) | "turnover rate of slow litter carbon (wood litter) pool" | "yr-1"
-	annk_LitFast::T6 = 14.8f0 | (0.5f0, 148.0f0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
-	annk_SoilSlow::T7 = 0.2f0 | (0.02f0, 2.0f0) | "turnover rate of slow soil carbon pool" | "yr-1"
-	annk_SoilOld::T8 = 0.0045f0 | (0.00045f0, 0.045f0) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = Float32[-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
+	annk_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
+	annk_Wood::T2 = 0.03 | (0.001, 10.0) | "turnover rate of wood carbon pool" | "yr-1"
+	annk_Leaf::T3 = 1.0 | (0.05, 10.0) | "turnover rate of leaf carbon pool" | "yr-1"
+	annk_Reserve::T4 = 1.0e-11 | (1.0e-12, 1.0) | "Reserve does not respire, but has a small value to avoid  numerical error" | "yr-1"
+	annk_LitSlow::T5 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "yr-1"
+	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
+	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
+	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
+	cFlowA::T9 = Float64[-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
 	    0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
 	    0.0 0.0 -1.0 0.0 0.0 0 0.0 0.0
 	    0.0 0.0 0 -1.0 0.0 0.0 0.0 0.0
@@ -17,9 +17,9 @@ export cCycleBase_GSI
 	    0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
 	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
 	    0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-	C2Nveg::T10 = Float32[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
-	etaH::T11 = 1.0f0 | (0.01f0, 100.0f0) | "scaling factor for heterotrophic pools after spinup" | ""
-	etaA::T12 = 1.0f0 | (0.01f0, 100.0f0) | "scaling factor for vegetation pools after spinup" | ""
+	C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
+	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
 function precompute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTuple)

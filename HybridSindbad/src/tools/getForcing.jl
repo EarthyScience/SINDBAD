@@ -1,8 +1,8 @@
 export getForcing
 
-function getForcing(info::NamedTuple, ::Val{:zarr})
-    dataPath = info.forcing.defaultForcing.dataPath
-    ds = YAXArrays.open_dataset(dataPath)
+function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
+    #dataPath = info.forcing.defaultForcing.dataPath
+    ds = YAXArrays.open_dataset(zopen(dpath))
     forcing_variables = propertynames(info.forcing.variables)
     incubes = map(forcing_variables) do k
         dsk = ds[k]

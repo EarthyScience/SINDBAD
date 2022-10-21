@@ -1,7 +1,7 @@
 export rainIntensity_simple
 
 @bounds @describe @units @with_kw struct rainIntensity_simple{T1} <: rainIntensity
-	rainIntFactor::T1 = 0.04167f0 | (0.0f0, 1.0f0) | "factor to convert daily rainfall to rainfall intensity" | ""
+	rainIntFactor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
 end
 
 function compute(o::rainIntensity_simple, forcing, land::NamedTuple, helpers::NamedTuple)

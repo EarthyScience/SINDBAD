@@ -1,8 +1,8 @@
 export groundWSoilWInteraction_gradient
 
 @bounds @describe @units @with_kw struct groundWSoilWInteraction_gradient{T1, T2} <: groundWSoilWInteraction
-	smax_scale::T1 = 0.5f0 | (0.0f0, 50.0f0) | "scale param to yield storage capacity of wGW" | ""
-	maxFlux::T2 = 10.0f0 | (0.0f0, 20.0f0) | "maximum flux between wGW and wSoil" | "[mm d]"
+	smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
+	maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 
 function compute(o::groundWSoilWInteraction_gradient, forcing, land::NamedTuple, helpers::NamedTuple)

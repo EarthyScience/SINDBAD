@@ -1,9 +1,9 @@
 export gppDiffRadiation_GSI
 
 @bounds @describe @units @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
-    fR_τ::T1 = 0.2f0 | (0.01f0, 1.0f0) | "contribution factor for current stressor" | "fraction"
-    fR_slope::T2 = 58.0f0 | (1.0f0, 100.0f0) | "slope of sigmoid" | "fraction"
-    fR_base::T3 = 59.78f0 | (1.0f0, 120.0f0) | "base of sigmoid" | "fraction"
+    fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
+    fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction"
+    fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction"
 end
 
 
@@ -38,7 +38,7 @@ function compute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::Na
 
     ## calculate variables
     f_prev = CloudScGPP_prev
-    Rg = Rg * 11.57407f0 # multiplied by a scalar to covert MJ/m2/day to W/m2
+    Rg = Rg * 11.57407 # multiplied by a scalar to covert MJ/m2/day to W/m2
     fR = f_smooth(f_prev, Rg, fR_τ, fR_slope, fR_base)
     CloudScGPP = clamp(fR, 𝟘, 𝟙)
     CloudScGPP_prev = CloudScGPP

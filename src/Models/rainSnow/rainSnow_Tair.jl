@@ -1,12 +1,12 @@
 export rainSnow_Tair
 
 @bounds @describe @units @with_kw struct rainSnow_Tair{T1} <: rainSnow
-	Tair_thres::T1 = 0.0f0 | (-5.0f0, 5.0f0) | "threshold for separating rain and snow" | "°C"
+	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 
 function precompute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
-    precip = 0f0 #helpers.numbers.𝟘
+    precip = helpers.numbers.𝟘
     rain = precip
     snow = precip
     @pack_land (precip, rain, snow) => land.rainSnow
@@ -28,10 +28,10 @@ function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTupl
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = 0f0 #𝟘
+        rain = 𝟘
     else
         rain = Rain
-        snow = 0f0 #𝟘
+        snow = 𝟘
     end
     precip = rain + snow
 

@@ -1,7 +1,7 @@
 export drainage_dos
 
 @bounds @describe @units @with_kw struct drainage_dos{T1} <: drainage
-	dos_exp::T1 = 1.1f0 | (1.1f0, 3.0f0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
+	dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
 function precompute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
