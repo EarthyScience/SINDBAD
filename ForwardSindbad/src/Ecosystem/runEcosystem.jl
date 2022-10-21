@@ -118,16 +118,18 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
-        #res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
-        #    @show Threads.threadid()
-        #    ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, loc_names)
-        #end
-        res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
-
+        res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
+            ccall(:malloc, Cvoid, (Cint,), 0)
+            #GC.safepoint()
+            @show Threads.threadid()
+            return ecoLoc(approaches, forcing, deepcopy(land_init), tem, additionaldims, loc_names)
+        end
+        #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
         fullarrayoftuples = map(Iterators.product(1:nts,CartesianIndices(res))) do (its,iouter)
             res[iouter][its]
         end
+        res = nothing
         landWrapper(fullarrayoftuples)
     else
         res = coreEcosystem(approaches, forcing, deepcopy(land_init), tem)
