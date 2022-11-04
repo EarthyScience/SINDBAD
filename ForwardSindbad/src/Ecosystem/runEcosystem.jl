@@ -8,14 +8,18 @@ export getForcingForTimeStep
 runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    for model in models
-        out = Models.compute(model, forcing, out, tem_helpers)
-        if tem_helpers.run.runUpdateModels
-            out = Models.update(model, forcing, out, tem_helpers)
-        end
+    return foldl(models, init=out) do o,model 
+        #@show typeof(o)
+        # @show typeof(model)
+        # @time o = Models.compute(model, forcing, o, tem_helpers)
+        o = Models.compute(model, forcing, o, tem_helpers)
+        # if tem_helpers.run.runUpdateModels
+        #     o = Models.update(model, forcing, o, tem_helpers)
+        # end
+        o
     end
-    return out
 end
+
 
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
@@ -57,13 +61,24 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
-function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
-    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps)
-    res = map(1:time_steps) do ts
-        f = getForcingForTimeStep(forcing, ts)
-        out = runModels(f, forward_models, out, tem_helpers)
+@noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
+    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps,otype, oforc)
+    res = map(1:1) do ts
+        f = getForcingForTimeStep(forcing, ts)::oforc
+        out = runModels(f, forward_models, out, tem_helpers)::otype
         deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
+    # push!(debugcatcherr,res)
+    res
+    # landWrapper(res)
+end
+
+function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
+    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps)
+    f = getForcingForTimeStep(forcing, 1)
+    out2 = runModels(f, forward_models, out, tem_helpers);
+    res = theRealtimeLoopForward(forward_models, forcing, out2, tem_variables, tem_helpers,time_steps,
+    typeof(out2), typeof(f))
     # push!(debugcatcherr,res)
     res
     # landWrapper(res)
@@ -119,9 +134,9 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
         res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
-            ccall(:malloc, Cvoid, (Cint,), 0)
+            #ccall(:malloc, Cvoid, (Cint,), 0)
             #GC.safepoint()
-            @show Threads.threadid()
+            #@show Threads.threadid()
             return ecoLoc(approaches, forcing, deepcopy(land_init), tem, additionaldims, loc_names)
         end
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
@@ -152,7 +167,7 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    @time land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
+    land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
     # push!(Sindbad.error_catcher,(;outputs,tem_variables,land_out))

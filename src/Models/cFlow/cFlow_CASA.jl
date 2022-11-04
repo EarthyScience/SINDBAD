@@ -3,7 +3,7 @@ export cFlow_CASA
 struct cFlow_CASA <: cFlow
 end
 
-function compute(o::cFlow_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlow_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

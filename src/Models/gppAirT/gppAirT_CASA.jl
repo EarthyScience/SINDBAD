@@ -7,7 +7,7 @@ export gppAirT_CASA
 	Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
 end
 
-function compute(o::gppAirT_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppAirT_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA o
     @unpack_forcing TairDay ∈ forcing

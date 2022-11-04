@@ -4,7 +4,7 @@ export rootMaximumDepth_fracSoilD
     fracRootD2SoilD::T1 = 0.5 | (0.1, 0.8) | "root depth as a fraction of soil depth" | ""
 end
 
-function precompute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootMaximumDepth_fracSoilD, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_rootMaximumDepth_fracSoilD o
     @unpack_land soilLayerThickness ∈ land.soilWBase
@@ -15,7 +15,7 @@ function precompute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, he
     return land
 end
 
-function compute(o::rootMaximumDepth_fracSoilD, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootMaximumDepth_fracSoilD, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_rootMaximumDepth_fracSoilD o
     @unpack_land sumSoilDepth ∈ land.rootMaximumDepth

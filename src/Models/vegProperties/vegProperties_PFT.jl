@@ -4,7 +4,7 @@ export vegProperties_PFT
 	PFT::T1 = 1.0 | (1.0, 13.0) | "Plant functional type" | "class"
 end
 
-function compute(o::vegProperties_PFT, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::vegProperties_PFT, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_vegProperties_PFT o
 

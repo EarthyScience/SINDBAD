@@ -7,7 +7,17 @@ export WUE_expVPDDayCo2
 	Cm::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
 end
 
-function compute(o::WUE_expVPDDayCo2, forcing, land::NamedTuple, helpers::NamedTuple)
+
+function precompute(o::WUE_expVPDDayCo2, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	## unpack parameters and forcing
+	## pack land variables
+	AoE = helpers.numbers.𝟙
+	AoENoCO2 = helpers.numbers.𝟙
+	@pack_land (AoE, AoENoCO2) => land.WUE
+	return land
+end
+
+function compute(o::WUE_expVPDDayCo2, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_WUE_expVPDDayCo2 o
 	@unpack_forcing VPDDay ∈ forcing

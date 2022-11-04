@@ -4,7 +4,7 @@ export cFlowVegProperties_CASA
 	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
 end
 
-function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cFlowVegProperties_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cFlowVegProperties_CASA o
 
 	## instantiate variables
@@ -15,7 +15,7 @@ function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpe
 	return land
 end
 
-function compute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlowVegProperties_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cFlowVegProperties_CASA o
 

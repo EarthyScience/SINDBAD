@@ -2,8 +2,19 @@ export cAllocationRadiation_gpp
 
 struct cAllocationRadiation_gpp <: cAllocationRadiation
 end
+function precompute(o::cAllocationRadiation_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
-function compute(o::cAllocationRadiation_gpp, forcing, land::NamedTuple, helpers::NamedTuple)
+
+	## calculate variables
+	# computation for the radiation effect on decomposition/mineralization
+	fR = helpers.numbers.𝟙
+
+	## pack land variables
+	@pack_land fR => land.cAllocationRadiation
+	return land
+end
+
+function compute(o::cAllocationRadiation_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land CloudScGPP ∈ land.gppDiffRadiation

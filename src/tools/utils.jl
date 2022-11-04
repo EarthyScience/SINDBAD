@@ -195,8 +195,10 @@ function processPackLand(ex)
     lhs = ex.args[2]
     rhs = ex.args[3]
     if lhs isa Symbol
+        #println("symbol")
         lhs = [lhs]
     elseif lhs.head == :tuple
+        #println("tuple")
         lhs = lhs.args
     else
         error("processPackLand: could not pack:" * lhs * "=" * rhs)
@@ -214,7 +216,9 @@ function processPackLand(ex)
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            #expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            tmp = Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
+            tmp
         end
     end
     Expr(:block, lines...)
@@ -273,7 +277,7 @@ returns the indices of a view in the parent main array
 """
 function getzix(tpl::NamedTuple, fld::Symbol)
     dat::SubArray = getfield(tpl, fld)
-    zix = parentindices(dat)[1]
+    zix = first(parentindices(dat))
     return zix
 end
 
@@ -283,7 +287,7 @@ returns the indices of a view in the parent main array
 """
 function getzix(tpl::NamedTuple, fld::String)
     dat::SubArray = getfield(tpl, Symbol(fld))
-    zix = parentindices(dat)[1]
+    zix = first(parentindices(dat))
     return zix
 end
 
@@ -292,7 +296,7 @@ getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
 function getzix(dat::SubArray)
-    zix = parentindices(dat)[1]
+    zix = first(parentindices(dat))
     return zix
 end
 

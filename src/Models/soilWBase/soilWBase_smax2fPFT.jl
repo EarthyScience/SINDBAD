@@ -16,7 +16,7 @@ export soilWBase_smax2fPFT
 	smaxPFT11::T13 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth" | "fraction"
 end
 
-function precompute(o::soilWBase_smax2fPFT, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_smax2fPFT, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     #@needscheck
     @unpack_soilWBase_smax2fPFT o
 
@@ -44,7 +44,7 @@ function precompute(o::soilWBase_smax2fPFT, forcing, land::NamedTuple, helpers::
     return land
 end
 
-function compute(o::soilWBase_smax2fPFT, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilWBase_smax2fPFT, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters and forcing
 	@unpack_soilWBase_smax2fPFT o
 

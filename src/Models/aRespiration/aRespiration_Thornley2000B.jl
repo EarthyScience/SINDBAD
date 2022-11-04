@@ -6,7 +6,7 @@ export aRespiration_Thornley2000B
 end
 
 
-function precompute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_Thornley2000B, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
@@ -25,7 +25,7 @@ function precompute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, he
 	return land
 end
 
-function compute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::aRespiration_Thornley2000B, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000B o
 

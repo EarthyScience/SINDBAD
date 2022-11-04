@@ -2,7 +2,19 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function compute(o::cTau_mult, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTau_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+    ## unpack land variables
+    @unpack_land begin
+        cEco ∈ land.pools
+    end
+    p_k = zero(cEco)
+
+    ## pack land variables
+    @pack_land p_k => land.states
+    return land
+end
+
+function compute(o::cTau_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack land variables
     @unpack_land begin
         p_kfVeg ∈ land.cTauVegProperties
@@ -11,13 +23,14 @@ function compute(o::cTau_mult, forcing, land::NamedTuple, helpers::NamedTuple)
         p_kfSoil ∈ land.cTauSoilProperties
         p_kfLAI ∈ land.cTauLAI
         p_k_base ∈ land.cCycleBase
+        p_k ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
     end
-    p_k = p_k_base .* p_kfLAI .* p_kfSoil .* p_kfVeg .* fT .* p_fsoilW
-    p_k = clamp.(p_k, 𝟘, 𝟙)
+    p_k .= p_k_base .* p_kfLAI .* p_kfSoil .* p_kfVeg .* fT .* p_fsoilW
+    p_k .= clamp.(p_k, 𝟘, 𝟙)
 
     ## pack land variables
-    @pack_land p_k => land.states
+    # @pack_land p_k => land.states
     return land
 end
 
