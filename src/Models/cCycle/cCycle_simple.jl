@@ -3,7 +3,7 @@ export cCycle_simple
 struct cCycle_simple <: cCycle
 end
 
-function precompute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
@@ -23,7 +23,7 @@ function precompute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedT
     return land
 end
 
-function compute(o::cCycle_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
     @unpack_land begin

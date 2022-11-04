@@ -20,15 +20,15 @@ abstract type LandEcosystem end
 
 ## fallback functions for precompute, compute and update. 
 ## These functions here make the corresponding functions in the model (approaches) optional
-function precompute(o::LandEcosystem, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::LandEcosystem, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	return land
 end
 
-function compute(o::LandEcosystem, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::LandEcosystem, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	return land
 end
 
-function update(o::LandEcosystem, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::LandEcosystem, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	return land
 end
 

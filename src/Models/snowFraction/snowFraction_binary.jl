@@ -3,7 +3,7 @@ export snowFraction_binary
 struct snowFraction_binary <: snowFraction
 end
 
-function compute(o::snowFraction_binary, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::snowFraction_binary, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

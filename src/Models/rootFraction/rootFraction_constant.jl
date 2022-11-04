@@ -4,7 +4,7 @@ export rootFraction_constant
 	constantRootFrac::T1 = 0.5 | (0.05, 1.0) | "root fraction" | ""
 end
 
-function precompute(o::rootFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootFraction_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_rootFraction_constant o
 	## instantiate
 	p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
@@ -15,7 +15,7 @@ function precompute(o::rootFraction_constant, forcing, land::NamedTuple, helpers
 	return land
 end
 
-function compute(o::rootFraction_constant, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootFraction_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_rootFraction_constant o
 

@@ -3,7 +3,7 @@ export gppDemand_mult
 struct gppDemand_mult <: gppDemand
 end
 
-function precompute(o::gppDemand_mult, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppDemand_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 
 	## unpack land variables
@@ -16,7 +16,7 @@ function precompute(o::gppDemand_mult, forcing, land::NamedTuple, helpers::Named
 	return land
 end
 
-function compute(o::gppDemand_mult, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppDemand_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

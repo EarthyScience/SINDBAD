@@ -5,7 +5,7 @@ export aRespiration_Thornley2000A
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function precompute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_Thornley2000A, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
@@ -24,7 +24,7 @@ function precompute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, he
 	return land
 end
 
-function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::aRespiration_Thornley2000A, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000A o
 
@@ -41,29 +41,31 @@ function compute(o::aRespiration_Thornley2000A, forcing, land::NamedTuple, helpe
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
+    zix = first(parentindices(getfield(land.pools, :cVeg)))
+    for ix in zix
 
-	# compute maintenance & growth respiration terms for each vegetation pool
-	# according to MODEL A - maintenance respiration is given priority
-	zix = getzix(land.pools.cVeg)
+		# compute maintenance & growth respiration terms for each vegetation pool
+		# according to MODEL A - maintenance respiration is given priority
 
-	# scalars of maintenance respiration for models A; B & C
-	# km is the maintenance respiration coefficient [d-1]
-	p_km[zix] .= min.(𝟙 ./ p_C2Nveg[zix] .* RMN .* fT, 𝟙)
-	p_km4su[zix] .= p_km[zix] .* YG
+		# scalars of maintenance respiration for models A; B & C
+		# km is the maintenance respiration coefficient [d-1]
+		p_km[ix] = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
+		p_km4su[ix] = p_km[ix] * YG
 
-	# maintenance respiration first: R_m = km * C
-	RA_M[zix] .= p_km[zix] .* cEco[zix]
+		# maintenance respiration first: R_m = km * C
+		RA_M[ix] = p_km[ix] * cEco[ix]
 	# no negative maintenance respiration
-	RA_M .= max.(RA_M, 𝟘)
+		RA_M[ix] = max(RA_M[ix], 𝟘)
 
-	# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-	RA_G[zix] .= (𝟙 - YG) .* (gpp .* cAlloc[zix] .- RA_M[zix])
+		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
+		RA_G[ix] = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M[ix])
 
-	# no negative growth respiration
-	RA_G .= max.(RA_G, 𝟘)
+		# no negative growth respiration
+		RA_G[ix] = max(RA_G[ix], 𝟘)
 
-	# total respiration per pool: R_a = R_m + R_g
-	cEcoEfflux .= RA_M .+ RA_G
+		# total respiration per pool: R_a = R_m + R_g
+		cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
+	end
 
 	## pack land variables
 	# @pack_land begin

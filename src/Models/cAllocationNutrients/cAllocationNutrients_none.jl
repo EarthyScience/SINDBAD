@@ -2,7 +2,7 @@ export cAllocationNutrients_none
 
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
-function precompute(o::cAllocationNutrients_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationNutrients_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
     ## calculate variables
     minWLNL = helpers.numbers.𝟙

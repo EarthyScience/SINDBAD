@@ -3,7 +3,7 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle
 end
 
-function precompute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycle_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## instantiate variables
 	cEcoEfflux = zeros(numType, length(land.pools.cEco)); #sujan moved from get states
@@ -15,7 +15,7 @@ function precompute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTup
 	return land
 end
 
-function compute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycle_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle

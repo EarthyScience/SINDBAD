@@ -7,7 +7,7 @@ export cFlow_GSI
 	f_τ::T4 = 0.1f0 | (0.01f0, 0.99f0) | "contribution factor for current stressor" | "fraction"
 end
 
-function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     @unpack_cFlow_GSI o
     @unpack_land begin
         cFlowA ∈ land.cCycleBase
@@ -63,7 +63,7 @@ function precompute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple
     return land
 end
 
-function compute(o::cFlow_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cFlow_GSI o
 

@@ -6,7 +6,7 @@ export snowMelt_TairRn
 end
 
 
-function compute(o::snowMelt_TairRn, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
     @unpack_snowMelt_TairRn o
     @unpack_forcing (Rn, Tair) ∈ forcing
@@ -39,12 +39,12 @@ function compute(o::snowMelt_TairRn, forcing, land::NamedTuple, helpers::NamedTu
         snowMelt => land.fluxes
         potMelt => land.snowMelt
         WBP => land.states
-        ΔsnowW => land.states
+        #ΔsnowW => land.states
     end
     return land
 end
 
-function update(o::snowMelt_TairRn, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     @unpack_snowMelt_TairRn o
 
     ## unpack variables

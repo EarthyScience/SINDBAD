@@ -4,7 +4,7 @@ struct soilWBase_uniform <: soilWBase
 end
 
 
-function precompute(o::soilWBase_uniform, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_uniform, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
