@@ -154,13 +154,13 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
         else
             spinup_models = forward_models[tem.models.is_spinup.==1]
         end
-        if !tem.helpers.run.runOpti
-            @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
-        end
-        for nL in 1:nLoops
-            if !tem.helpers.run.runOpti
-                @info "         Loop: $(nL)/$(nLoops)"
-            end
+        #if !tem.helpers.run.runOpti
+        #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
+        #end
+        @showprogress "Computing nLoops..." for nL in 1:nLoops
+            #if !tem.helpers.run.runOpti
+            #    @info "         Loop: $(nL)/$(nLoops)"
+            #end
             land_spin = doSpinup(spinup_models, sel_forcing, land_spin, tem, Val(spinupMode))
             if history
                 push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])

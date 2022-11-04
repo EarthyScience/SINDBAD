@@ -7,6 +7,7 @@ using DocStringExtensions
 using Parameters
 using Dates
 using JLD2
+using Accessors
 using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table

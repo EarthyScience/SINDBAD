@@ -5,7 +5,7 @@ export runoffSurface_directIndirectFroSoil
 	rf::T2 = 0.5 | (0.0, 1.0) | "fraction of overland runoff that recharges the surface water storage" | ""
 end
 
-function compute(o::runoffSurface_directIndirectFroSoil, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoffSurface_directIndirectFroSoil, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffSurface_directIndirectFroSoil o
 
@@ -41,7 +41,7 @@ function compute(o::runoffSurface_directIndirectFroSoil, forcing, land::NamedTup
 	return land
 end
 
-function update(o::runoffSurface_directIndirectFroSoil, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::runoffSurface_directIndirectFroSoil, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_runoffSurface_directIndirectFroSoil o
 
 	## unpack variables

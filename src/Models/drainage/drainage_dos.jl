@@ -4,7 +4,7 @@ export drainage_dos
 	dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
-function precompute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::drainage_dos, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 
 	## unpack land variables
@@ -21,7 +21,7 @@ function precompute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTu
 	return land
 end
 
-function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::drainage_dos, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_drainage_dos o
 
@@ -58,7 +58,7 @@ function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple
 	return land
 end
 
-function update(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::drainage_dos, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack variables
 	@unpack_land begin
@@ -74,10 +74,10 @@ function update(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
 	ΔsoilW .= ΔsoilW .- ΔsoilW
 
 	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
-	end
+	# @pack_land begin
+	# 	soilW => land.pools
+	# 	ΔsoilW => land.states
+	# end
 	return land
 end
 

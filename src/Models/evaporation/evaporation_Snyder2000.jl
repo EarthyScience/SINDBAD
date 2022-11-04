@@ -4,7 +4,7 @@ export evaporation_Snyder2000
 	α::T1 = 1.0 | (0.5, 1.5) | "scaling factor for PET to account for maximum bare soil evaporation" | ""
 	β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
 end
-function precompute(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::evaporation_Snyder2000, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_Snyder2000 o
 
@@ -20,7 +20,7 @@ function precompute(o::evaporation_Snyder2000, forcing, land::NamedTuple, helper
 	return land
 end
 
-function compute(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::evaporation_Snyder2000, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	#@needscheck
 	## unpack parameters
 	@unpack_evaporation_Snyder2000 o
@@ -65,12 +65,12 @@ function compute(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::
 	@pack_land begin
 		(sET, sPET_prev) => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
 
-function update(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::evaporation_Snyder2000, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables
@@ -89,7 +89,7 @@ function update(o::evaporation_Snyder2000, forcing, land::NamedTuple, helpers::N
 	## pack land variables
 	@pack_land begin
 		soilW => land.pools
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end

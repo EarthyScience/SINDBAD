@@ -3,20 +3,21 @@ export runoff_sum
 struct runoff_sum <: runoff
 end
 
-function precompute(o::runoff_sum, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoff_sum, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## set variables to zero
 	runoffBase = helpers.numbers.𝟘
+	runoff = helpers.numbers.𝟘
 	runoffSurface = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land begin
-		(runoffBase, runoffSurface) => land.fluxes
+		(runoff, runoffBase, runoffSurface) => land.fluxes
 	end
 	return land
 end
 
-function compute(o::runoff_sum, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoff_sum, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land (runoffBase, runoffSurface) ∈ land.fluxes

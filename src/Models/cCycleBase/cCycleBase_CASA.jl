@@ -23,7 +23,7 @@ export cCycleBase_CASA
 	C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycleBase_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_cCycleBase_CASA o
 
 	@unpack_land begin
@@ -43,7 +43,7 @@ function precompute(o::cCycleBase_CASA, forcing, land::NamedTuple, helpers::Name
 	return land
 end
 
-function compute(o::cCycleBase_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycleBase_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_cCycleBase_CASA o
 

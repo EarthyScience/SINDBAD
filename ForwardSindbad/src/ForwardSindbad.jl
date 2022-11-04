@@ -22,6 +22,7 @@ using Flatten:
 using TypedTables:
     Table
 using JLD2: @save
+using ProgressMeter
 using TimerOutputs
 const tmr = TimerOutput()
 

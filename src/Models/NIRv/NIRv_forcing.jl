@@ -3,7 +3,7 @@ export NIRv_forcing
 struct NIRv_forcing <: NIRv
 end
 
-function compute(o::NIRv_forcing, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::NIRv_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing NIRv ∈ forcing
 

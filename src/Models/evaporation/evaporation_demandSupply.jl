@@ -5,7 +5,7 @@ export evaporation_demandSupply
 	supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
-function compute(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::evaporation_demandSupply, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_demandSupply o
 
@@ -29,12 +29,12 @@ function compute(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers
 	@pack_land begin
 		(PETsoil, evaporationSupply) => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
 
-function update(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::evaporation_demandSupply, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	@unpack_evaporation_demandSupply o
 
 	## unpack variables
@@ -53,7 +53,7 @@ function update(o::evaporation_demandSupply, forcing, land::NamedTuple, helpers:
 	## pack land variables
 	@pack_land begin
 		soilW => land.pools
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end

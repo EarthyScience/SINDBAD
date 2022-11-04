@@ -3,7 +3,7 @@ export cCycleConsistency_simple
 struct cCycleConsistency_simple <: cCycleConsistency
 end
 
-function precompute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycleConsistency_simple, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
@@ -18,7 +18,7 @@ function precompute(o::cCycleConsistency_simple, forcing, land::NamedTuple, help
 	return land
 end
 
-function compute(o::cCycleConsistency_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycleConsistency_simple, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin

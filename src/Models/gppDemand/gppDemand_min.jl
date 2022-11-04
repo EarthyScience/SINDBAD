@@ -3,7 +3,7 @@ export gppDemand_min
 struct gppDemand_min <: gppDemand
 end
 
-function precompute(o::gppDemand_min, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppDemand_min, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 
@@ -14,7 +14,7 @@ function precompute(o::gppDemand_min, forcing, land::NamedTuple, helpers::NamedT
 	return land
 end
 
-function compute(o::gppDemand_min, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppDemand_min, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
 	@unpack_land begin
