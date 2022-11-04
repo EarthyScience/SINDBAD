@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../ForwardSindbad"
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"julia.environmentPath": "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/exp_distri"
+	}
+}
