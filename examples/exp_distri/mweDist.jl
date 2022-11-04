@@ -4,7 +4,7 @@ using HybridSindbad
 using YAXArrays
 
 using Distributed
-addprocs(2)
+addprocs(7)
 
 @everywhere using Pkg
 @everywhere Pkg.activate(".")

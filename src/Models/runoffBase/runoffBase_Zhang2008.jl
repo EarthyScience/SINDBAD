@@ -4,6 +4,15 @@ export runoffBase_Zhang2008
 	bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
 
+function precompute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	runoffBase = helpers.numbers.𝟘
+
+	@pack_land begin
+		runoffBase => land.fluxes
+	end
+	return land
+end
+
 function compute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_runoffBase_Zhang2008 o
@@ -26,7 +35,7 @@ function compute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple,
 	## pack land variables
 	@pack_land begin
 		runoffBase => land.fluxes
-		ΔgroundW => land.states
+		# ΔgroundW => land.states
 	end
 	return land
 end
@@ -46,11 +55,11 @@ function update(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, 
 	# reset groundwater changes to zero
 	ΔgroundW .= ΔgroundW .- ΔgroundW
 
-	## pack land variables
-	@pack_land begin
-		groundW => land.pools
-		ΔgroundW => land.states
-	end
+	# ## pack land variables
+	# @pack_land begin
+	# 	groundW => land.pools
+	# 	# ΔgroundW => land.states
+	# end
 	return land
 end
 

@@ -63,7 +63,7 @@ end
 
 @noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps,otype, oforc)
-    res = map(1:1) do ts
+    res = map(1:7200) do ts
         f = getForcingForTimeStep(forcing, ts)::oforc
         out = runModels(f, forward_models, out, tem_helpers)::otype
         deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
