@@ -20,7 +20,7 @@ output = setupOutput(info);
 #GC.enable_logging(false)
 using BenchmarkTools
 for x = 1:5
-    GC.gc()
+    # GC.gc()
 @time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
     max_cache=1e9);
 end
