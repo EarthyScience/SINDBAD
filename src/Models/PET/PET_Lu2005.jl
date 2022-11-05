@@ -21,12 +21,11 @@ end
 function precompute(o::PET_Lu2005, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing Tair ∈ forcing
-
 	## calculate variables
 	Tair_prev = Tair
-
+	PET = helpers.numbers.𝟘
 	## pack land variables
-	@pack_land Tair_prev => land.PET
+	@pack_land (PET, Tair_prev) => land.PET
 	return land
 end
 
@@ -40,22 +39,16 @@ function compute(o::PET_Lu2005, forcing::NamedTuple, land::NamedTuple, helpers::
 		Tair_prev ∈ land.PET
 		(𝟘, sNT) ∈ helpers.numbers
 	end
-
-
 	## calculate variables
 	# slope of the saturation vapor pressure temperature curve [kPa/°C]
 	Δ = svp_1 * (svp_2 * Tair + svp_3) ^ svp_4 - svp_5
-
 	# atmp is the atmospheric pressure [kPa], elev = elevation
 	atmp = pres_sl - pres_elev * elev
-
 	# λ is the latent heat of vaporization [MJ/kg]
 	λ = λ_base - λ_tair * Tair
-
 	# γ is the the psychrometric constant modified by the ratio of
 	# canopy resistance to atmospheric resistance [kPa/°C].
 	γ = sh_cp * atmp / (γ_resistance * λ)
-	
 	# G is the heat flux density to the ground [MJ/m^2/day]
 	# G = 4.2[T[i+1]-T[i-1]]/dt → adopted to T[i]-T[i-1] by skoirala
 	# G = 4.2 * (Tair_ip1 - Tair_im1) / dt

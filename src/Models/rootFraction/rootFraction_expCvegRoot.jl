@@ -8,13 +8,15 @@ end
 
 function precompute(o::rootFraction_expCvegRoot, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     @unpack_rootFraction_expCvegRoot o
-    @unpack_land soilLayerThickness ∈ land.soilWBase
-
+    @unpack_land begin
+        soilLayerThickness ∈ land.soilWBase
+        maxRootDepth ∈ land.states
+    end
     ## instantiate variables
     p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
     rootOver = zeros(helpers.numbers.numType, length(land.pools.soilW))
     cumulativeDepths = cumsum(soilLayerThickness)
-
+    rootOver .= maxRootDepth .- cumulativeDepths
     ## pack land variables
     @pack_land begin
         (p_fracRoot2SoilD, cumulativeDepths, rootOver) => land.rootFraction
@@ -25,33 +27,19 @@ end
 function compute(o::rootFraction_expCvegRoot, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_rootFraction_expCvegRoot o
-
     ## unpack land variables
     @unpack_land begin
         soilLayerThickness ∈ land.soilWBase
         (p_fracRoot2SoilD, cumulativeDepths, rootOver) ∈ land.rootFraction
-        maxRootDepth ∈ land.states
         𝟘 ∈ helpers.numbers
         cVegRoot ∈ land.pools
     end
-    rootOver .= 𝟘
     ## calculate variables
     tmp_rootFrac = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * sum(cVegRoot)))) # root fraction/efficiency as a function of total carbon in root pools
 
-
-    rootOver .= maxRootDepth .- cumulativeDepths
-    
-    p_fracRoot2SoilD .= (rootOver .> 𝟘) .* tmp_rootFrac
-
-    # # maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
-    # for sl in 1:length(land.pools.soilW)
-    #     soilcumuD = cumulativeDepths[sl]
-    #     rootOver = maxRootDepth - soilcumuD
-    #     rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
-    #     p_fracRoot2SoilD[sl] = rootFrac
-    # end
-    ## pack land variables
-    #@pack_land p_fracRoot2SoilD => land.rootFraction
+    for k in eachindex(rootOver)
+        p_fracRoot2SoilD[k] =  rootOver[k] > 𝟘 ? tmp_rootFrac : 𝟘
+    end
     return land
 end
 
