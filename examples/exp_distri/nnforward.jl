@@ -41,6 +41,8 @@ for x=1:2
     land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
     out = land_prec;
     @time out2 = ForwardSindbad.runModels(forcetuple, info.tem.models.forward, out, info.tem.helpers);
+    println("second... second.....................................")
+    println("second... second.....................................")
 end
 
 

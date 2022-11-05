@@ -5,6 +5,27 @@ export snowMelt_TairRn
 	melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
 end
 
+function precompute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+    ## unpack land variables
+    @unpack_land begin
+        WBP ∈ land.states
+		𝟘 ∈ helpers.numbers
+    end
+    # potential snow melt if T > 0.0 deg C
+    potMelt = 𝟘
+    snowMelt = 𝟘
+    # a Water Balance Pool variable that tracks how much water is still "available"
+    WBP = WBP + snowMelt
+    ## pack land variables
+    @pack_land begin
+        snowMelt => land.fluxes
+        potMelt => land.snowMelt
+        WBP => land.states
+        #ΔsnowW => land.states
+    end
+    return land
+end
+
 
 function compute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing

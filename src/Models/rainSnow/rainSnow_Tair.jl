@@ -6,7 +6,7 @@ end
 
 function precompute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters and forcing
-    precip = 0f0 #helpers.numbers.𝟘
+    precip = helpers.numbers.𝟘
     rain = precip
     snow = precip
     @pack_land (precip, rain, snow) => land.rainSnow
@@ -28,10 +28,10 @@ function compute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helper
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = 0f0 #𝟘
+        rain = 𝟘
     else
         rain = Rain
-        snow = 0f0 #𝟘
+        snow = 𝟘
     end
     precip = rain + snow
 

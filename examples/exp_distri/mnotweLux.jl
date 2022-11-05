@@ -35,6 +35,8 @@ a=1
 
 
 
+
+
 # observations 
 observations = HybridSindbad.getObservations(info, Val{:zarr}())
 chunkedObs = setchunks.(observations.data, ((site=2,),))
