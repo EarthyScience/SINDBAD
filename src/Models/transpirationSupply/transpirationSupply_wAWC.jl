@@ -4,12 +4,21 @@ export transpirationSupply_wAWC
 	tranFrac::T1 = 0.1 | (0.02, 0.98) | "fraction of total maximum available water that can be transpired" | ""
 end
 
+function precompute(o::transpirationSupply_wAWC, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	tranSup = helpers.numbers.𝟘
+
+	@pack_land tranSup => land.transpirationSupply
+	return land
+end
+
+
 function compute(o::transpirationSupply_wAWC, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_transpirationSupply_wAWC o
 
 	## unpack land variables
 	@unpack_land PAW ∈ land.vegAvailableWater
+
 
 	## calculate variables
 	tranSup = sum(PAW) * tranFrac

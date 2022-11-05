@@ -16,20 +16,21 @@ function compute(o::cCycleDisturbance_constant, forcing::NamedTuple, land::Named
 		(giver, taker) ∈ land.cFlow
 		𝟘 ∈ helpers.numbers
 	end
-	zixVegAll = getzix(land.pools.cVeg)
-	for zixVeg in zixVegAll
-		cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
-		cEco[zixVeg] = cEco[zixVeg] - cLoss
-		ndxLoseToZix = taker[giver .== zixVeg]
-		# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
-		for tZ in eachindex(ndxLoseToZix)
-			tarZix = ndxLoseToZix[tZ]
-			if !any(zixVegAll == tarZix)
-				cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
+	if isDisturbed > 𝟘
+		zixVegAll = vcat(first(parentindices(getfield(land.pools, :cVeg)))...)
+		for zixVeg in zixVegAll
+			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
+			cEco[zixVeg] = cEco[zixVeg] - cLoss
+			ndxLoseToZix = taker[giver .== zixVeg]
+			# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
+			for tZ in eachindex(ndxLoseToZix)
+				tarZix = ndxLoseToZix[tZ]
+				if !any(zixVegAll == tarZix)
+					cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
+				end
 			end
 		end
 	end
-
 	## pack land variables
 	return land
 end

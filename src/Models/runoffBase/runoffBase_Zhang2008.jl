@@ -26,7 +26,7 @@ function compute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple,
 
 	## calculate variables
 	# simply assume that a fraction of the GWstorage is baseflow
-	runoffBase = bc * sum(groundW + ΔgroundW)
+	runoffBase = bc * addS(groundW, ΔgroundW)
 
 	# update groundwater changes
 	n_groundW = length(groundW) * 𝟙

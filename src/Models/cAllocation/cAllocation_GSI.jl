@@ -3,51 +3,78 @@ export cAllocation_GSI
 struct cAllocation_GSI <: cAllocation end
 
 function precompute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+    @unpack_land sNT ∈ helpers.numbers
 
     ## instantiate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    cAlloc = zero(land.pools.cEco)
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
-    zixVegAlloc = Dict()
+    zixVegs=[]
+    nzixVegs=[]
     for cpName in cpNames
-        zixVegAlloc[cpName] = Dict()
-        zix = getzix(land.pools, cpName)
-        zixVegAlloc[cpName][:zix] = zix
-        zixVegAlloc[cpName][:nZix] = length(zix)
+        zix = first(parentindices(getfield(land.pools, cpName)))
+        # zix = getzix(land.pools, cpName)
+        # zixVegAlloc = (; zixVegAlloc..., Symbol(cPName)=)
+        nZix=sNT(length(zix))
+        push!(zixVegs, zix)
+        push!(nzixVegs, nZix)
     end
-
+    ttwo = sNT(2.0)
     ## pack land variables
-    @pack_land (cAlloc, cpNames, cAllocVeg, zixVegAlloc) => land.states
+    @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
 
     return land
 end
 
+
+function adjustCAlloc(cAlloc, cAllocValue, landPools, poolName)
+    zix = first(parentindices(getfield(landPools, poolName)))
+    nZix = length(zix)
+    for ix in zix
+        cAlloc[ix] = cAllocValue  / nZix
+    end
+    cAlloc
+end
+
+
 function compute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
     ## unpack land variables
-    @unpack_land (cAlloc, cpNames, cAllocVeg, zixVegAlloc) ∈ land.states
-
-    ## unpack land variables
     @unpack_land begin
+        (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) ∈ land.states
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
         sNT ∈ helpers.numbers
     end
 
     # allocation to root; wood & leaf
-    cAllocVeg[1] = fW / ((fW + fT) * 2.0)
-    cAllocVeg[2] = fW / ((fW + fT) * 2.0)
+    cAllocVeg[1] = fW / ((fW + fT) * ttwo)
+    cAllocVeg[2] = fW / ((fW + fT) * ttwo)
     cAllocVeg[3] = fT / (fW + fT)
-    
-    # distribute the allocation according to pools
-    for cpI in eachindex(cpNames)
-        # push!(Sindbad.error_catcher, [zixVegAlloc, cpNames])
-        zix = zixVegAlloc[cpNames[cpI]][:zix]
-        for zv in eachindex(zix)
-            cAlloc[zix[zv]] = cAllocVeg[cpI] / zixVegAlloc[cpNames[cpI]][:nZix]
-        end
+
+
+    # zix = zixVegs[1]
+    # nZix = nzixVegs[1]
+    # for zv in zixVegs[1]
+        # @show zv, nZix, cAllocVeg[1]
+        # cAlloc[zv] = cAllocVeg[1] / nZix
+    # end
+
+    for ind in 1:3
+        adjustCAlloc(cAlloc, cAllocVeg[ind], land.pools, cpNames[ind])
     end
+    # zix = first(parentindices(getfield(land.pools, cpNames[cpI])))
+    # cAlloc[1] = cAllocVeg[1] / nZix
+    # # # distribute the allocation according to pools
+    # for cpI in eachindex(nzixVegs)
+    #     zix = first(parentindices(getfield(land.pools, cpNames[cpI])))
+    #     # zix = zixVegs[cpI]
+    #     nZix = nzixVegs[cpI]
+    #     for zv in zix
+    #         cAlloc[zv] = cAllocVeg[cpI] / nZix
+    #     end
+    # end
 
     ## pack land variables
     # @pack_land begin

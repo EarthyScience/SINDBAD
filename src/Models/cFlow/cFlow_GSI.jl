@@ -34,12 +34,12 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
         trow.ndxTrg = ndxTrg
         for iSrc in eachindex(ndxSrc)
             for iTrg in eachindex(ndxTrg)
-                fT = trow.flow
+                fT = one(eltype(cFlowA))
                 p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
             end
         end
     end
-
+    # @show flowTable, p_A
 
     # transfers
     taker = [ind[1] for ind in findall(>(𝟘), p_A)]
@@ -70,29 +70,47 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
     k_RshedF = helpers.numbers.𝟙
     slope_fWfTfR = helpers.numbers.𝟙
 
+    ndxSrc = vcat(flowTable.ndxSrc...)
+    ndxTrg = vcat(flowTable.ndxTrg...)
+
     @pack_land begin
 		fluxOrder => land.cCycleBase
-		(p_A, fWfTfR_prev, flowTable, taker, giver) => land.cFlow
+		(p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
         (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR) => land.cFlow
 	end
+
     return land
 end
+
+
+function adjust_pk(p_k, kValue, flowValue, maxValue, landPools, poolName)
+    zix = first(parentindices(getfield(landPools, poolName)))
+    p_k_sum = zero(eltype(p_k))
+    for ix in zix
+        # @show ix, p_k[ix]
+        tmp = p_k[ix] + kValue + flowValue
+        if tmp > maxValue
+            tmp = maxValue
+        end
+        p_k[ix] = tmp
+        p_k_sum = p_k_sum + tmp
+    end
+    return p_k_sum
+end
+
 
 function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cFlow_GSI o
     ## unpack land variables
     @unpack_land begin
-        (fWfTfR_prev, p_A, flowTable) ∈ land.cFlow
+        (fWfTfR_prev, p_A, ndxSrc, ndxTrg) ∈ land.cFlow
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
         fR ∈ land.cAllocationRadiation
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
         p_k ∈ land.states
     end
-
-    ndxSrc = flowTable.ndxSrc
-    ndxTrg = flowTable.ndxTrg
 
     # Compute sigmoid functions
     # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
@@ -103,11 +121,6 @@ function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::N
     fWfTfR = (𝟙 - f_τ) * fWfTfR_prev + f_τ * f_tmp
 
     slope_fWfTfR = fWfTfR - fWfTfR_prev
-
-    # get the indices of leaf & root
-    cVegLeafzix = getzix(land.pools.cVegLeaf)
-    cVegRootzix = getzix(land.pools.cVegRoot)
-    cVegReservezix = getzix(land.pools.cVegReserve)
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
@@ -122,8 +135,8 @@ function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::N
     L2Re = LR2Re # should it be divided by 2?
     R2Re = LR2Re
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the fWfTfR suddenly drops from 1 to near zero.
-    k_Lshed = min(KShed, 1f0-L2Re)
-    k_Rshed = min(KShed, 1f0-R2Re)
+    k_Lshed = min(KShed, one(L2Re)-L2Re)
+    k_Rshed = min(KShed, one(L2Re)-R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
@@ -134,22 +147,46 @@ function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::N
     Re2R = Re2LR * (𝟙 - Re2L) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
     
     # adjust the outflow rate from the flow pools
-    p_k[cVegLeafzix] .= min.((p_k[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
-    L2ReF = L2Re ./ (p_k[cVegLeafzix])
-    k_LshedF = k_Lshed / (p_k[cVegLeafzix])
 
-    p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
-    R2ReF = R2Re ./ (p_k[cVegRootzix])
-    k_RshedF = k_Rshed / (p_k[cVegRootzix])
+
+    # # get the indices of leaf & root
+    # cVegLeafzix = getzix(land.pools.cVegLeaf)
+    # cVegRootzix = getzix(land.pools.cVegRoot)
+    # cVegReservezix = getzix(land.pools.cVegReserve)
+
+    # p_k[cVegLeafzix] .= min.((p_k[cVegLeafzix] .+ k_Lshed .+ L2Re), 𝟙)
+    # L2ReF = L2Re ./ (p_k[cVegLeafzix])
+    # k_LshedF = k_Lshed / (p_k[cVegLeafzix])
+
+    # p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
+    # R2ReF = R2Re ./ (p_k[cVegRootzix])
+    # k_RshedF = k_Rshed / (p_k[cVegRootzix])
     
-    p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
-    Re2LF = Re2L ./ p_k[cVegReservezix]
-    Re2RF = Re2R ./ p_k[cVegReservezix]
+    # p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
+    # Re2LF = Re2L ./ p_k[cVegReservezix]
+    # Re2RF = Re2R ./ p_k[cVegReservezix]
+
+    # @show Re2LF, Re2RF
+
+
+
+    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, land.pools, :cVegLeaf)
+    L2ReF = L2Re / p_k_sum
+    k_LshedF = k_Lshed / p_k_sum
+
+    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, land.pools, :cVegRoot)
+    R2ReF = R2Re / p_k_sum
+    k_RshedF = k_Rshed / p_k_sum
+
+    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, land.pools, :cVegReserve)
+    Re2LF = Re2L / p_k_sum
+    Re2RF = Re2R / p_k_sum
 
     # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
     for ii in eachindex(ndxSrc)
         src = ndxSrc[ii]
         trg = ndxTrg[ii]
+        # @show p_A[trg[1], src[1]]
         if ii == 1
             p_A[trg, src] = Re2LF
         elseif ii == 2

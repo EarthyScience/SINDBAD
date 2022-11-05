@@ -3,6 +3,25 @@ export percolation_WBP
 struct percolation_WBP <: percolation
 end
 
+function precompute(o::percolation_WBP, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+
+	## unpack land variables
+	@unpack_land begin
+		𝟘 ∈ helpers.numbers
+	end
+
+	# set WBP as the soil percolation
+	percolation = 𝟘
+	WBP = 𝟘
+
+	## pack land variables
+	@pack_land begin
+		percolation => land.percolation
+		WBP => land.states
+	end
+	return land
+end
+
 function compute(o::percolation_WBP, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables
@@ -15,11 +34,10 @@ function compute(o::percolation_WBP, forcing::NamedTuple, land::NamedTuple, help
 
 	# set WBP as the soil percolation
 	percolation = WBP
-	holdCapacity = p_wSat - (soilW + ΔsoilW)
 	toAllocate = percolation
 	if toAllocate > 𝟘
 		for sl in eachindex(land.pools.soilW)
-			allocated = min(holdCapacity[sl], toAllocate)
+			allocated = min(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
 			ΔsoilW[sl] = ΔsoilW[sl] + allocated
 			toAllocate = toAllocate - allocated
 		end
@@ -34,7 +52,7 @@ function compute(o::percolation_WBP, forcing::NamedTuple, land::NamedTuple, help
 	## pack land variables
 	@pack_land begin
 		percolation => land.percolation
-		(ΔsoilW, WBP) => land.states
+		WBP => land.states
 	end
 	return land
 end
