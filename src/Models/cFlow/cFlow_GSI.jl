@@ -56,9 +56,24 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
 
     fWfTfR_prev = helpers.numbers.𝟙
     ## pack land variables
+    # dummy init
+    L2Re = helpers.numbers.𝟙
+    L2ReF = helpers.numbers.𝟙
+    R2Re = helpers.numbers.𝟙
+    R2ReF = helpers.numbers.𝟙
+    Re2L = helpers.numbers.𝟙
+    Re2R = helpers.numbers.𝟙
+    fWfTfR = helpers.numbers.𝟙
+    k_Lshed = helpers.numbers.𝟙
+    k_LshedF = helpers.numbers.𝟙
+    k_Rshed = helpers.numbers.𝟙
+    k_RshedF = helpers.numbers.𝟙
+    slope_fWfTfR = helpers.numbers.𝟙
+
     @pack_land begin
 		fluxOrder => land.cCycleBase
 		(p_A, fWfTfR_prev, flowTable, taker, giver) => land.cFlow
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR) => land.cFlow
 	end
     return land
 end
@@ -66,8 +81,6 @@ end
 function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
     ## unpack parameters
     @unpack_cFlow_GSI o
-
-
     ## unpack land variables
     @unpack_land begin
         (fWfTfR_prev, p_A, flowTable) ∈ land.cFlow

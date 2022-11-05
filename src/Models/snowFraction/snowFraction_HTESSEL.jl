@@ -4,6 +4,13 @@ export snowFraction_HTESSEL
 	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
 
+function precompute(o::snowFraction_HTESSEL, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	snowFraction = helpers.numbers.𝟙
+	## pack land variables
+	@pack_land snowFraction => land.states
+	return land
+end
+
 function compute(o::snowFraction_HTESSEL, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_snowFraction_HTESSEL o

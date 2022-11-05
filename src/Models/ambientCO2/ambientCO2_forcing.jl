@@ -3,6 +3,15 @@ export ambientCO2_forcing
 struct ambientCO2_forcing <: ambientCO2
 end
 
+function precompute(o::ambientCO2_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	## unpack forcing
+	@unpack_forcing ambCO2 ∈ forcing
+
+	## pack land variables
+	@pack_land ambCO2 => land.states
+	return land
+end
+
 function compute(o::ambientCO2_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack forcing
 	@unpack_forcing ambCO2 ∈ forcing
