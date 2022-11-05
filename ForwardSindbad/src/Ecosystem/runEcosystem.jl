@@ -8,10 +8,10 @@ export getForcingForTimeStep
 runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    return foldl(models, init=out) do o,model 
+    return foldl(models, init=out) do o, model 
         #@show typeof(o)
-        #@show typeof(model)
-        #@time o = Models.compute(model, forcing, o, tem_helpers)
+        # @show typeof(model)
+        # @time o = Models.compute(model, forcing, o, tem_helpers)
         o = Models.compute(model, forcing, o, tem_helpers)
         # if tem_helpers.run.runUpdateModels
         #     o = Models.update(model, forcing, o, tem_helpers)
@@ -63,8 +63,11 @@ end
 
 @noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps,otype, oforc)
-    res = map(1:1) do ts
+    # time_steps = time_steps
+    time_steps = 1
+    res = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, ts)::oforc
+        # @show typeof(out), typeof(otype), ts
         out = runModels(f, forward_models, out, tem_helpers)::otype
         deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end

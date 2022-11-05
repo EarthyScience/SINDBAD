@@ -47,7 +47,7 @@ function compute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, help
 
     # potential snow melt if T > 0.0 deg C
     potMelt = Tair > 𝟘  ? potMelt : 𝟘
-    snowMelt = min(sum(snowW + ΔsnowW), potMelt)
+    snowMelt = min(addS(snowW, ΔsnowW), potMelt)
 
 	# divide snowmelt loss equally from all layers
     ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)

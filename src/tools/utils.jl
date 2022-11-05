@@ -9,6 +9,7 @@ export nonUnique
 export noStackTrace
 export dictToNamedTuple
 export getSindbadModels
+export addS
 
 """
     noStackTrace()
@@ -366,4 +367,28 @@ function flagLower(A::AbstractMatrix)
         end
     end
     return o_mat
+end
+
+"""
+addS(s, sΔ)
+return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
+"""
+function addS(s, sΔ)
+	sm = zero(eltype(s))
+	for si in eachindex(s)
+		sm = sm + s[si] + sΔ[si]
+	end
+	sm
+end
+
+"""
+addS(s)
+return total storage amount given the storage without creating an allocation for a temporary array
+"""
+function addS(s)
+	sm = zero(eltype(s))
+	for si in eachindex(s)
+		sm = sm + s[si]
+	end
+	sm
 end

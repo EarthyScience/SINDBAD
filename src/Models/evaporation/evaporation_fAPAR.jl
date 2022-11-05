@@ -5,6 +5,21 @@ export evaporation_fAPAR
 	supLim::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 
+function precompute(o::evaporation_fAPAR, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	## unpack land variables
+	@unpack_land begin
+		𝟘 ∈ helpers.numbers
+	end
+	PETsoil = 𝟘
+	evaporation = 𝟘
+	## pack land variables
+	@pack_land begin
+		PETsoil => land.evaporation
+		evaporation => land.fluxes
+	end
+	return land
+end
+
 function compute(o::evaporation_fAPAR, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 	## unpack parameters
 	@unpack_evaporation_fAPAR o
@@ -30,7 +45,6 @@ function compute(o::evaporation_fAPAR, forcing::NamedTuple, land::NamedTuple, he
 	@pack_land begin
 		PETsoil => land.evaporation
 		evaporation => land.fluxes
-		# ΔsoilW => land.states
 	end
 	return land
 end

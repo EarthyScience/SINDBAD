@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.0"
+julia_version = "1.8.1"
 manifest_format = "2.0"
-project_hash = "787a48f62ea83b40e9a19d5564931f50ef528aca"
+project_hash = "23d7a7f3a8ce985d2d2bb2044ac08e17ef741f75"
 
 [[deps.AWS]]
 deps = ["Base64", "Compat", "Dates", "Downloads", "GitHub", "HTTP", "IniFile", "JSON", "MbedTLS", "Mocking", "OrderedCollections", "Retry", "Sockets", "URIs", "UUIDs", "XMLDict"]
@@ -20,6 +20,12 @@ version = "1.2.1"
 git-tree-sha1 = "52b3b436f8f73133d7bc3a6c71ee7ed6ab2ab754"
 uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
 version = "0.4.3"
+
+[[deps.Accessors]]
+deps = ["Compat", "CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "MacroTools", "Requires", "Test"]
+git-tree-sha1 = "eb7a1342ff77f4f9b6552605f27fd432745a53a3"
+uuid = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
+version = "0.1.22"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra"]
@@ -200,6 +206,11 @@ deps = ["ArrayInterface", "ChainRulesCore", "LinearAlgebra", "Requires"]
 git-tree-sha1 = "e2b74499fc7a7bef2d01d999cc7935765c93b5de"
 uuid = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
 version = "0.13.4"
+
+[[deps.CompositionsBase]]
+git-tree-sha1 = "455419f7e328a1a2493cabc6428d79e951349769"
+uuid = "a33af91c-f02d-484b-be07-31d278c5ca2b"
+version = "0.1.1"
 
 [[deps.ConsoleProgressMonitor]]
 deps = ["Logging", "ProgressMeter"]
@@ -990,8 +1001,8 @@ deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Sindbad]]
-deps = ["CSV", "DataFrames", "DataStructures", "Dates", "DocStringExtensions", "FieldMetadata", "Flatten", "InteractiveUtils", "JLD2", "JSON", "JuliaFormatter", "Missings", "Parameters", "PrettyPrinting", "Reexport", "Statistics", "TypedTables"]
-path = ".."
+deps = ["Accessors", "CSV", "DataFrames", "DataStructures", "Dates", "DocStringExtensions", "FieldMetadata", "Flatten", "InteractiveUtils", "JLD2", "JSON", "JuliaFormatter", "Missings", "Parameters", "PrettyPrinting", "Reexport", "Statistics", "TypedTables"]
+path = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/"
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 version = "0.1.0"
 
