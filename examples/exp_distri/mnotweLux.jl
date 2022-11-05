@@ -9,6 +9,7 @@ experiment_json = "./settings_optiSpace/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
+ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
 
 chunkeddata = setchunks.(forcing.data, ((site=1,),))
@@ -19,6 +20,7 @@ output = setupOutput(info);
 #GC.gc()
 #GC.enable_logging(false)
 using BenchmarkTools
+outcubes=nothing
 for x = 1:5
     # GC.gc()
 @time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;

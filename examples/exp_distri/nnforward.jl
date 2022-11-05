@@ -1,4 +1,5 @@
 # using Lux, Zygote, Optimisers
+using Revise
 using Sindbad
 using ForwardSindbad
 using HybridSindbad
@@ -13,7 +14,8 @@ toyax(dimset) = YAXArrayBase.yaxconvert(YAXArray, dimset)
 experiment_json = "./settings_optiSpace/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
-ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
+# ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
+ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
 output = setupOutput(info);
 
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
@@ -31,11 +33,12 @@ forcedata = [replace(forcing.data[i].data[:,1], missing=>NaN) for i in 1:15]
 f = map(forcing.data) do v
     extractdata = replace(v.data[:,1], missing=>NaN)
     length(extractdata)>7 ? extractdata[1] : extractdata
-end
+end;
 
 
-forcetuple = (; Pair.(forcing_variables, f)...)
+forcetuple = (; Pair.(forcing_variables, f)...);
 
+out2=nothing
 for x=1:2
     land_init = deepcopy(output.land_init)
     land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
@@ -49,6 +52,7 @@ end
 
 
 
+
 out2 = ForwardSindbad.runModels(forcetuple, (info.tem.models.forward[53],), out2, info.tem.helpers);
     
 
@@ -56,7 +60,7 @@ function runit(forcetuple, info::NamedTuple, out::NamedTuple)
     i_forw = info.tem.models.forward;
     i_help = info.tem.helpers;
     otype = typeof(out)
-    for i=1:10
+    for i=1:15000
         out = ForwardSindbad.runModels(forcetuple, i_forw, out, i_help)::otype;
         #@show typeof(out)
     end
@@ -64,9 +68,9 @@ function runit(forcetuple, info::NamedTuple, out::NamedTuple)
 end
         
 
-@time runit(forcetuple,info,out);
+@time runit(forcetuple,info,out2);
 
-@code_warntype runit(forcetuple,info,out2);
+@profview runit(forcetuple,info,out2);
 @time runit(forcetuple, info, out2);
 
 
