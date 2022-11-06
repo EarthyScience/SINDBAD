@@ -1,5 +1,6 @@
 using Revise
 using Sindbad
+using ForwardSindbad
 using ProgressMeter
 noStackTrace()
 domain = "DE-2";
@@ -27,6 +28,6 @@ replace_info_site = Dict(
 
 experiment_json = "exp_optiSpace/settings_optiSpace/experiment.json";
 
-run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
+@time run_output_spatial = ForwardSindbad.runExperiment(experiment_json; replace_info=replace_info_spatial);
 
 run_output_site = runExperiment(experiment_json; replace_info=replace_info_site);
