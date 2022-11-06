@@ -10,13 +10,12 @@ function precompute(o::rootMaximumDepth_fracSoilD, forcing::NamedTuple, land::Na
     @unpack_land soilLayerThickness ∈ land.soilWBase
     ## calculate variables
     sumSoilDepth = sum(soilLayerThickness)
-    maxRootDepth = sumSoilDepth * fracRootD2SoilD
+    maxRootDepth = 0.5 * sumSoilDepth
     ## pack land variables
     @pack_land begin
         sumSoilDepth => land.rootMaximumDepth
         maxRootDepth => land.states
     end
-
     return land
 end
 
@@ -28,6 +27,7 @@ function compute(o::rootMaximumDepth_fracSoilD, forcing::NamedTuple, land::Named
     # get the soil thickness & root distribution information from input
     maxRootDepth = sumSoilDepth * fracRootD2SoilD
     # disp(["the maxRootD scalar: " fracRootD2SoilD])
+
     ## pack land variables
     @pack_land maxRootDepth => land.states
     return land
