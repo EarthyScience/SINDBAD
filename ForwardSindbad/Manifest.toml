@@ -39,9 +39,9 @@ version = "1.1.1"
 
 [[deps.Arpack]]
 deps = ["Arpack_jll", "Libdl", "LinearAlgebra", "Logging"]
-git-tree-sha1 = "91ca22c4b8437da89b030f08d71db55a379ce958"
+git-tree-sha1 = "9b9b347613394885fd1c8c7729bfc60528faa436"
 uuid = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
-version = "0.5.3"
+version = "0.5.4"
 
 [[deps.Arpack_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg"]
@@ -780,7 +780,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Sindbad]]
 deps = ["Accessors", "CSV", "DataFrames", "DataStructures", "Dates", "DocStringExtensions", "FieldMetadata", "Flatten", "InteractiveUtils", "JLD2", "JSON", "JuliaFormatter", "Missings", "Parameters", "PrettyPrinting", "Reexport", "Statistics", "TypedTables"]
-path = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/"
+path = ".."
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 version = "0.1.0"
 
