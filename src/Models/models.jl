@@ -6,7 +6,6 @@ using FieldMetadata: @metadata
 using TypedTables: Table
 using Parameters: @with_kw
 using Statistics: mean
-using DataFrames: DataFrame
 @metadata describe "" String
 @metadata bounds (nothing, nothing) Tuple
 @metadata units "" String

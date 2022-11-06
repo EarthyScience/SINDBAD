@@ -19,12 +19,12 @@ ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
 output = setupOutput(info);
 
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
-chunkeddata = setchunks.(forcing.data, ((site=1,),))
-forcing = (; forcing..., data = (chunkeddata))
+chunkeddata = setchunks.(forcing.data, ((site=1,),));
+forcing = (; forcing..., data = (chunkeddata));
 
-forcing_variables = forcing.variables |> collect
+forcing_variables = forcing.variables |> collect;
 
-forcedata = [replace(forcing.data[i].data[:,1], missing=>NaN) for i in 1:15]
+forcedata = [replace(forcing.data[i].data[:,1], missing=>NaN) for i in 1:15];
 
 #forcing_pair = (; Pair.(forcing_variables, forcedata)...)
 #land_init = deepcopy(output.land_init)

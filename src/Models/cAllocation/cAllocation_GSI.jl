@@ -10,32 +10,22 @@ function precompute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, h
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
-    zixVegs=[]
-    nzixVegs=[]
+    zixVegs = [Int[] for x in cpNames]
+    nzixVegs=helpers.numbers.numType[]
+    cpI = 1
     for cpName in cpNames
-        zix = first(parentindices(getfield(land.pools, cpName)))
-        # zix = getzix(land.pools, cpName)
-        # zixVegAlloc = (; zixVegAlloc..., Symbol(cPName)=)
+        zix = getzix(land.pools, cpName)
         nZix=sNT(length(zix))
-        push!(zixVegs, zix)
+        zixVegs[cpI] = zix
         push!(nzixVegs, nZix)
+        cpI = cpI + 1
     end
     ttwo = sNT(2.0)
     ## pack land variables
     @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
-
     return land
 end
 
-
-function adjustCAlloc(cAlloc, cAllocValue, landPools, poolName)
-    zix = first(parentindices(getfield(landPools, poolName)))
-    nZix = length(zix)
-    for ix in zix
-        cAlloc[ix] = cAllocValue  / nZix
-    end
-    cAlloc
-end
 
 
 function compute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
@@ -53,33 +43,12 @@ function compute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, help
     cAllocVeg[2] = fW / ((fW + fT) * ttwo)
     cAllocVeg[3] = fT / (fW + fT)
 
-
-    # zix = zixVegs[1]
-    # nZix = nzixVegs[1]
-    # for zv in zixVegs[1]
-        # @show zv, nZix, cAllocVeg[1]
-        # cAlloc[zv] = cAllocVeg[1] / nZix
-    # end
-
     for ind in 1:3
-        adjustCAlloc(cAlloc, cAllocVeg[ind], land.pools, cpNames[ind])
+        foreach(zixVegs[ind]) do ix
+            cAlloc[ix] = cAllocVeg[ind]  / nzixVegs[ind]
+        end
     end
-    # zix = first(parentindices(getfield(land.pools, cpNames[cpI])))
-    # cAlloc[1] = cAllocVeg[1] / nZix
-    # # # distribute the allocation according to pools
-    # for cpI in eachindex(nzixVegs)
-    #     zix = first(parentindices(getfield(land.pools, cpNames[cpI])))
-    #     # zix = zixVegs[cpI]
-    #     nZix = nzixVegs[cpI]
-    #     for zv in zix
-    #         cAlloc[zv] = cAllocVeg[cpI] / nZix
-    #     end
-    # end
 
-    ## pack land variables
-    # @pack_land begin
-    #     cAlloc => land.states
-    # end
     return land
 end
 

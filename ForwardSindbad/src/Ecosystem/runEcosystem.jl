@@ -8,9 +8,9 @@ export getForcingForTimeStep
 runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    return foldl(models, init=out) do o, model 
+    mout = foldl(models, init=out) do o, model
         #@show typeof(o)
-        # @show typeof(model)
+        # println(typeof(model))
         # @time o = Models.compute(model, forcing, o, tem_helpers)
         o = Models.compute(model, forcing, o, tem_helpers)
         # if tem_helpers.run.runUpdateModels
@@ -18,6 +18,8 @@ function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_help
         # end
         o
     end
+    # @show typeof(mout)
+    mout
 end
 
 
@@ -26,7 +28,7 @@ filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
 function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables=true)
     if !filter_variables
-        fout=out
+        fout = out
     else
         fout = (;)
         for k in keys(varsinfo)
@@ -48,7 +50,7 @@ end
 function getForcingTimeSize(forcing::NamedTuple)
     forcingTimeSize = 1
     for v in forcing
-        if in(:time, AxisKeys.dimnames(v)) 
+        if in(:time, AxisKeys.dimnames(v))
             forcingTimeSize = size(v, 1)
         end
     end
@@ -62,12 +64,14 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
 end
 
 @noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
-    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps,otype, oforc)
+    tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps, otype, oforc)
     # time_steps = time_steps
     time_steps = 1
+    # time_steps = 7200
     res = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, ts)::oforc
-        # @show typeof(out), typeof(otype), ts
+        # @show typeof(out), otype, ts
+        # out = runModels(f, forward_models, out, tem_helpers)
         out = runModels(f, forward_models, out, tem_helpers)::otype
         deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
@@ -79,9 +83,9 @@ end
 function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps)
     f = getForcingForTimeStep(forcing, 1)
-    out2 = runModels(f, forward_models, out, tem_helpers);
-    res = theRealtimeLoopForward(forward_models, forcing, out2, tem_variables, tem_helpers,time_steps,
-    typeof(out2), typeof(f))
+    out2 = runModels(f, forward_models, out, tem_helpers)
+    res = theRealtimeLoopForward(forward_models, forcing, out2, tem_variables, tem_helpers, time_steps,
+        typeof(out2), typeof(f))
     # push!(debugcatcherr,res)
     res
     # landWrapper(res)
@@ -114,10 +118,10 @@ end
 
 function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, loc_names)
     loc_forcing = map(forcing) do a
-        inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
-            lv=>loc_index
+        inds = map(zip(loc_names, additionaldims)) do (loc_index, lv)
+            lv => loc_index
         end
-        view(a;inds...)
+        view(a; inds...)
     end
     coreEcosystem(approaches, loc_forcing, land_init, tem)
 end
@@ -133,7 +137,7 @@ runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple; spinup_forcing=nothing)
     #@info "runEcosystem:: running Ecosystem"
-    additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+    additionaldims = setdiff(keys(tem.helpers.run.loop), [:time])
     land_all = if !isempty(additionaldims)
         spacesize = values(tem.helpers.run.loop[additionaldims])
         res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
@@ -144,7 +148,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
         end
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
-        fullarrayoftuples = map(Iterators.product(1:nts,CartesianIndices(res))) do (its,iouter)
+        fullarrayoftuples = map(Iterators.product(1:nts, CartesianIndices(res))) do (its, iouter)
             res[iouter][its]
         end
         res = nothing
@@ -177,7 +181,7 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     for group in keys(tem_variables)
         data = land_out[group]
         for k in tem_variables[group]
-            viewcopy(outputs[i],data[k])
+            viewcopy(outputs[i], data[k])
             i += 1
         end
     end
@@ -191,7 +195,7 @@ function viewcopy(xout, xin)
         end
     else
         for i in CartesianIndices(xin)
-            xout[:,i] .= xin[i]
+            xout[:, i] .= xin[i]
         end
     end
 end
@@ -215,7 +219,7 @@ function mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTupl
         indims=indims,
         outdims=outdims,
         max_cache=max_cache,
-        ispar = true,
+        ispar=true
         #nthreads = [1],
     )
     return outcubes
