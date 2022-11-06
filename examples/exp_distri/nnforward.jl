@@ -40,6 +40,7 @@ forcetuple = (; Pair.(forcing_variables, f)...);
 
 out2=nothing
 for x=1:2
+    println("new run... new run... new run...")
     land_init = deepcopy(output.land_init)
     land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
     out = land_prec;
