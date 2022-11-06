@@ -14,32 +14,26 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
         (𝟘, 𝟙, tolerance, numType) ∈ helpers.numbers
     end
     ## instantiate variables
+    flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
     asrc = [:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot]
     atrg = [:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast]
-    flow = ones(numType, length(atrg))
     ndxSrc = [Int[] for x in atrg]
-    ndxTrg = [Int[] for x in atrg]
+    ndxTrg = copy(ndxSrc)
     p_A = copy(cFlowA)
 
-    flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
-    flowTable = DataFrame(srcName=asrc, trgName=atrg, ndxSrc=ndxSrc, ndxTrg=ndxTrg, flowVar=flowVar, flow=flow)
     # Prepare the list of flows
-    for trow in eachrow(flowTable)
-        srcName = trow.srcName
-        trgName = trow.trgName
+    for trow in eachindex(flowVar)
         # @show trow, srcName, trgName
-        ndxSrc = getzix(land.pools, srcName)
-        ndxTrg = getzix(land.pools, trgName)
-        trow.ndxSrc = ndxSrc
-        trow.ndxTrg = ndxTrg
-        for iSrc in eachindex(ndxSrc)
-            for iTrg in eachindex(ndxTrg)
-                fT = one(eltype(cFlowA))
-                p_A[ndxTrg[iTrg], ndxSrc[iSrc]] = fT
+        zixSrc = getzix(land.pools, asrc[trow])
+        zixTrg = getzix(land.pools, atrg[trow])
+        push!(ndxSrc, zixSrc)
+        push!(ndxTrg, zixTrg)
+        for iSrc in zixSrc
+            for iTrg in zixTrg
+                p_A[iTrg, iSrc] = one(eltype(cFlowA))
             end
         end
     end
-    # @show flowTable, p_A
 
     # transfers
     taker = [ind[1] for ind in findall(>(𝟘), p_A)]
@@ -54,24 +48,24 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
         end
     end
 
-    fWfTfR_prev = helpers.numbers.𝟙
+    fWfTfR_prev = 𝟙
     ## pack land variables
     # dummy init
-    L2Re = helpers.numbers.𝟙
-    L2ReF = helpers.numbers.𝟙
-    R2Re = helpers.numbers.𝟙
-    R2ReF = helpers.numbers.𝟙
-    Re2L = helpers.numbers.𝟙
-    Re2R = helpers.numbers.𝟙
-    fWfTfR = helpers.numbers.𝟙
-    k_Lshed = helpers.numbers.𝟙
-    k_LshedF = helpers.numbers.𝟙
-    k_Rshed = helpers.numbers.𝟙
-    k_RshedF = helpers.numbers.𝟙
-    slope_fWfTfR = helpers.numbers.𝟙
+    L2Re = 𝟙
+    L2ReF = 𝟙
+    R2Re = 𝟙
+    R2ReF = 𝟙
+    Re2L = 𝟙
+    Re2R = 𝟙
+    fWfTfR = 𝟙
+    k_Lshed = 𝟙
+    k_LshedF = 𝟙
+    k_Rshed = 𝟙
+    k_RshedF = 𝟙
+    slope_fWfTfR = 𝟙
 
-    ndxSrc = vcat(flowTable.ndxSrc...)
-    ndxTrg = vcat(flowTable.ndxTrg...)
+    ndxSrc = vcat(ndxSrc...)
+    ndxTrg = vcat(ndxTrg...)
 
     @pack_land begin
 		fluxOrder => land.cCycleBase

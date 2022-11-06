@@ -39,9 +39,9 @@ version = "1.1.1"
 
 [[deps.Arpack]]
 deps = ["Arpack_jll", "Libdl", "LinearAlgebra", "Logging"]
-git-tree-sha1 = "91ca22c4b8437da89b030f08d71db55a379ce958"
+git-tree-sha1 = "9b9b347613394885fd1c8c7729bfc60528faa436"
 uuid = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
-version = "0.5.3"
+version = "0.5.4"
 
 [[deps.Arpack_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg"]
@@ -51,9 +51,9 @@ version = "3.5.1+1"
 
 [[deps.ArrayInterface]]
 deps = ["ArrayInterfaceCore", "Compat", "IfElse", "LinearAlgebra", "Static"]
-git-tree-sha1 = "d6173480145eb632d6571c148d94b9d3d773820e"
+git-tree-sha1 = "d956c0606a3bc1112a1f99a8b2309b79558d9921"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "6.0.23"
+version = "6.0.17"
 
 [[deps.ArrayInterfaceCore]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
@@ -68,10 +68,10 @@ uuid = "dd5226c6-a4d4-4bc7-8575-46859f9c95b9"
 version = "0.1.3"
 
 [[deps.ArraysOfArrays]]
-deps = ["Adapt", "ChainRulesCore", "Requires", "Statistics", "UnsafeArrays"]
-git-tree-sha1 = "cbc76e824d185fd310cb7f6af02c566e10500e68"
+deps = ["Adapt", "ChainRulesCore", "StaticArraysCore", "Statistics"]
+git-tree-sha1 = "c59b725b0aadf7df93fb3de05b5e1b14029af2da"
 uuid = "65a8f2f4-9b39-5baf-92e2-a9cc46fdf018"
-version = "0.5.10"
+version = "0.6.1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -117,9 +117,9 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BenchmarkTools]]
 deps = ["JSON", "Logging", "Printf", "Profile", "Statistics", "UUIDs"]
-git-tree-sha1 = "4c10eee4af024676200bc7752e536f858c6b8f93"
+git-tree-sha1 = "d9a9701b899b30332bbcb3e1679c41cce81fb0e8"
 uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.3.1"
+version = "1.3.2"
 
 [[deps.Blosc]]
 deps = ["Blosc_jll"]
@@ -320,9 +320,9 @@ version = "1.12.0"
 
 [[deps.DimensionalData]]
 deps = ["Adapt", "ArrayInterfaceCore", "ConstructionBase", "Dates", "Extents", "IntervalSets", "IteratorInterfaceExtensions", "LinearAlgebra", "Random", "RecipesBase", "SparseArrays", "Statistics", "TableTraits", "Tables"]
-git-tree-sha1 = "51d31d4f1926b50b8b40d56d729b3e3841604a9c"
+git-tree-sha1 = "d27931da7e3ec81c355e6895ba53034c03e17a7e"
 uuid = "0703355e-b756-11e9-17c0-8b28908087d0"
-version = "0.22.2"
+version = "0.23.0"
 
 [[deps.DiskArrayTools]]
 deps = ["DiskArrays", "Interpolations", "IterTools", "OffsetArrays"]
@@ -436,7 +436,7 @@ version = "0.10.32"
 
 [[deps.ForwardSindbad]]
 deps = ["AxisKeys", "DiskArrayTools", "FillArrays", "Flatten", "InteractiveUtils", "JLD2", "NetCDF", "ProgressMeter", "RecursiveArrayTools", "Reexport", "Sindbad", "StatsBase", "ThreadPools", "TimerOutputs", "TypedTables", "YAXArrayBase", "YAXArrays", "Zarr"]
-path = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/ForwardSindbad/"
+path = "../../ForwardSindbad"
 uuid = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 version = "0.1.0"
 
@@ -510,7 +510,7 @@ version = "0.9.17"
 
 [[deps.HybridSindbad]]
 deps = ["ComponentArrays", "DimensionalData", "ForwardSindbad", "Lux", "Optim", "Optimization", "Random", "Sindbad", "StatsBase", "YAXArrayBase", "YAXArrays", "Zarr", "Zygote"]
-path = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/HybridSindbad/"
+path = "../../HybridSindbad"
 uuid = "0bea38b2-e736-4245-bd9b-cecd04ee2595"
 version = "0.1.0"
 
@@ -840,15 +840,15 @@ uuid = "356022a1-0364-5f58-8944-0da4b18d706f"
 version = "1.2.1"
 
 [[deps.NamedTupleTools]]
-git-tree-sha1 = "63831dcea5e11db1c0925efe5ef5fc01d528c522"
+git-tree-sha1 = "17eeb975b00de066fb343aa8d56884f51d4a651c"
 uuid = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
-version = "0.13.7"
+version = "0.14.1"
 
 [[deps.NestedTuples]]
-deps = ["Accessors", "ArraysOfArrays", "BangBang", "GeneralizedGenerated", "NamedTupleTools"]
-git-tree-sha1 = "49df3ad4d13d617a77981e2cbfcd62c290ad0ec9"
+deps = ["Accessors", "ArraysOfArrays", "BangBang", "GeneralizedGenerated", "NamedTupleTools", "Static"]
+git-tree-sha1 = "3f9217cee8728997e46b541da3599b20bf9dc19b"
 uuid = "a734d2a7-8d68-409b-9419-626914d4061d"
-version = "0.3.6"
+version = "0.3.11"
 
 [[deps.NetCDF]]
 deps = ["DiskArrays", "Formatting", "NetCDF_jll"]
@@ -942,10 +942,10 @@ uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 version = "0.12.3"
 
 [[deps.Parsers]]
-deps = ["Dates"]
-git-tree-sha1 = "6c01a9b494f6d2a9fc180a08b182fcb06f0958a0"
+deps = ["Dates", "SnoopPrecompile"]
+git-tree-sha1 = "cceb0257b662528ecdf0b4b4302eb00e767b38e7"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.4.2"
+version = "2.5.0"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1084,9 +1084,9 @@ version = "0.7.0"
 
 [[deps.SciMLBase]]
 deps = ["ArrayInterfaceCore", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "Preferences", "RecipesBase", "RecursiveArrayTools", "RuntimeGeneratedFunctions", "StaticArraysCore", "Statistics", "Tables"]
-git-tree-sha1 = "12e532838db2f2a435a84ab7c01003ceb45baa53"
+git-tree-sha1 = "7b72bb32b2bdf5b7c9365aa9a7001e15a84a9c2c"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "1.67.0"
+version = "1.69.0"
 
 [[deps.SentinelArrays]]
 deps = ["Dates", "Random"]
@@ -1109,7 +1109,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Sindbad]]
 deps = ["Accessors", "CSV", "DataFrames", "DataStructures", "Dates", "DocStringExtensions", "FieldMetadata", "Flatten", "InteractiveUtils", "JLD2", "JSON", "JuliaFormatter", "Missings", "Parameters", "PrettyPrinting", "Reexport", "Statistics", "TypedTables"]
-path = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/"
+path = "../.."
 uuid = "6686e6de-2010-4bf8-9178-b2bcc470766e"
 version = "0.1.0"
 
@@ -1157,9 +1157,9 @@ version = "0.1.15"
 
 [[deps.Static]]
 deps = ["IfElse"]
-git-tree-sha1 = "de4f0a4f049a4c87e4948c04acff37baf1be01a6"
+git-tree-sha1 = "5d2c08cef80c7a3a8ba9ca023031a85c263012c5"
 uuid = "aedffcd0-7271-4cad-89d0-dc628f76c6d3"
-version = "0.7.7"
+version = "0.6.6"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
@@ -1275,11 +1275,6 @@ version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
-
-[[deps.UnsafeArrays]]
-git-tree-sha1 = "3350f94f6caa02f324a23645bf524fc9334c7488"
-uuid = "c4a57d5a-5b31-53a6-b365-19f8c011fbd6"
-version = "1.0.4"
 
 [[deps.UnsafeAtomics]]
 git-tree-sha1 = "6331ac3440856ea1988316b46045303bef658278"
