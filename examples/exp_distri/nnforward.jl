@@ -20,6 +20,8 @@ output = setupOutput(info);
 
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
 chunkeddata = setchunks.(forcing.data, ((site=1,),));
+
+
 forcing = (; forcing..., data = (chunkeddata));
 
 forcing_variables = forcing.variables |> collect;
@@ -32,11 +34,57 @@ forcedata = [replace(forcing.data[i].data[:,1], missing=>NaN) for i in 1:15];
 
 f = map(forcing.data) do v
     extractdata = replace(v.data[:,1], missing=>NaN)
-    length(extractdata)>7 ? extractdata[1] : extractdata
+    length(extractdata)>7 ? extractdata : extractdata
 end;
 
+forceyax = (; Pair.(forcing_variables, forcing.data)...);
+
+f = ForwardSindbad.getForcingForTimeStep(forceyax, 1)
+using AxisKeys
+
+AxisKeys.dimnames(forcing.data[1])
+YAXArrays.names(forcing.data[1])
 
 forcetuple = (; Pair.(forcing_variables, f)...);
+
+fall = map(forcing.data) do v
+    extractdata = replace(v.data[:,1], missing=>NaN)
+    length(extractdata)>7 ? extractdata : extractdata
+end;
+
+function get_force_at_time_t(forcing, forcing_variables, ts)
+    f = map(forcing) do v
+        extractdata = replace(v.data[:,1], missing=>NaN)
+        length(extractdata)>7 ? extractdata[ts] : extractdata
+    end;
+    (; Pair.(forcing_variables, f)...)
+end
+
+get_force_at_time_t(forcing.data, forcing_variables, 3)
+
+forcetupletime = (; Pair.(forcing_variables, fall)...)
+
+
+function main()
+    land_init = deepcopy(output.land_init);
+    land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
+    out = land_prec;
+    out2 = ForwardSindbad.runModels(forcetuple, info.tem.models.forward, out, info.tem.helpers);
+    time_steps = 10000
+    resloop = map(1:time_steps) do ts
+            f = get_force_at_time_t(forcing.data, forcing_variables, ts);
+            out =  ForwardSindbad.runModels(forcetuple, info.tem.models.forward, out, info.tem.helpers);
+            #deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
+        end;
+end
+
+@time main();
+
+#approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
+
+f = ForwardSindbad.getForcingForTimeStep(forcetupletime, 1)
+
+
 
 #out2=nothing
 for x=1:2
@@ -54,6 +102,7 @@ end
 function profforward(forcetuple, forward, out, helpers)
     for i in 1:100000
         out = ForwardSindbad.runModels(forcetuple, forward, out, helpers)
+        
     end
     out
 end
@@ -63,6 +112,9 @@ land_init = deepcopy(output.land_init)
 land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
 out = land_prec;
 @profview out2 = profforward(forcetuple, info.tem.models.forward, out, info.tem.helpers);
+
+map(eltype, values(ds.cubes))
+
 
 println("second... second.....................................")
 println("second... second.....................................")
