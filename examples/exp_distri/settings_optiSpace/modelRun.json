@@ -10,11 +10,11 @@
 		"eDate": 				"2017-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
-		"nStepsYear": 			365
+		"nStepsYear": 			365.0
 	},
 	"mapping": {
-		"yaxarray": ["site"],
-		"runEcosystem": ["time"]
+		"yaxarray": [],
+		"runEcosystem": ["time", "site"]
 	},
 	"flags":
 	{
