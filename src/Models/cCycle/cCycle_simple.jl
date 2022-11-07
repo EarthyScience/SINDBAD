@@ -14,15 +14,21 @@ function precompute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, hel
     cEcoFlow = zeros(numType, n_cEco)
     cEcoOut = zeros(numType, n_cEco)
     cEcoInflux = zeros(numType, n_cEco)
-    cNPP = zeros(numType, n_cVeg)
+    zerocEcoFlow = zero(cEcoFlow)
+    zerocEcoInflux = zero(cEcoInflux)
+    cNPP = zeros(numType, n_cEco)
 
 	cEco_prev = copy(land.pools.cEco)
     zixVeg = getzix(land.pools.cVeg)
-    ## check this with sujan
-    NEE, NPP, cRA, cRECO, cRH = 𝟙,𝟙,𝟙,𝟙,𝟙
     ## pack land variables
+    NEE = 𝟘
+    NPP = 𝟘
+    cRA = 𝟘
+    cRECO = 𝟘
+    cRH = 𝟘
+
     @pack_land begin 
-        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg) => land.states
+        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) => land.states
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
     end
     return land
@@ -32,7 +38,7 @@ function compute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, helper
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k, zixVeg) ∈ land.states
+        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k, zixVeg, zerocEcoFlow, zerocEcoInflux) ∈ land.states
         cEco ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
@@ -41,16 +47,15 @@ function compute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, helper
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    cEcoFlow .= zero(cEcoFlow)
-    cEcoInflux .= zero(cEcoInflux)
+    cEcoFlow .= zerocEcoFlow
+    cEcoInflux .= cEcoInflux
     ## compute losses
     cEcoOut .= min.(cEco, cEco .* p_k)
 
     ## gains to vegetation
-    for zvI in eachindex(zixVeg)
-        zv = zixVeg[zvI]
-        cNPP[zvI] = gpp * cAlloc[zv] - cEcoEfflux[zv]
-        cEcoInflux[zv] = cNPP[zvI]
+    for zv in zixVeg
+        cNPP[zv] = gpp * cAlloc[zv] - cEcoEfflux[zv]
+        cEcoInflux[zv] = cNPP[zv]
     end
 
     # flows & losses
@@ -83,7 +88,7 @@ function compute(o::cCycle_simple, forcing::NamedTuple, land::NamedTuple, helper
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
     NEE = cRECO - gpp
-    cEco_prev .= copy(cEco)
+    cEco_prev .= cEco
 
     ## pack land variables
     @pack_land begin
