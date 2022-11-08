@@ -10,20 +10,29 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
+using Zarr
+ds = YAXArrays.open_dataset(zopen(ds))
 
 chunkeddata = setchunks.(forcing.data, ((site=1,),))
 
 forcing = (; forcing..., data = (chunkeddata))
 
+#T=Union{Float32,Missing}
+
 output = setupOutput(info);
+@profview outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
+    max_cache=1e9);
+
 #GC.gc()
 #GC.enable_logging(false)
 using BenchmarkTools
-for x = 1:5
-    #GC.gc()
+for x = 1:4
+    GC.gc()
     @time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
         max_cache=1e9);
 end
+
+
 
 for x = 1:2
 @time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
@@ -33,7 +42,7 @@ a=1
 
 
 
-
+7864
 
 # observations 
 observations = HybridSindbad.getObservations(info, Val{:zarr}())
