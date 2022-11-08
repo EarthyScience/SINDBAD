@@ -14,8 +14,8 @@ toyax(dimset) = YAXArrayBase.yaxconvert(YAXArray, dimset)
 experiment_json = "./settings_optiSpace/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
-# ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
-ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
+ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
+#ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
 output = setupOutput(info);
 
 forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
@@ -38,8 +38,9 @@ end;
 
 forcetuple = (; Pair.(forcing_variables, f)...);
 
-out2=nothing
+#out2=nothing
 for x=1:2
+    println("new run... new run... new run...")
     land_init = deepcopy(output.land_init)
     land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
     out = land_prec;
@@ -48,6 +49,23 @@ for x=1:2
     println("second... second.....................................")
 end
 
+
+
+function profforward(forcetuple, forward, out, helpers)
+    for i in 1:100000
+        out = ForwardSindbad.runModels(forcetuple, forward, out, helpers)
+    end
+    out
+end
+
+println("new run... new run... new run...")
+land_init = deepcopy(output.land_init)
+land_prec = runPrecompute(forcetuple, info.tem.models.forward, land_init, info.tem.helpers);
+out = land_prec;
+@profview out2 = profforward(forcetuple, info.tem.models.forward, out, info.tem.helpers);
+
+println("second... second.....................................")
+println("second... second.....................................")
 
 
 
