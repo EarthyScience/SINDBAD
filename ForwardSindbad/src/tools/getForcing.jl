@@ -10,7 +10,8 @@ function getVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
     for var_field in default_fields
         if hasproperty(var_info, var_field)
             var_prop = getfield(var_info, var_field)
-            if !isnothing(var_prop) && length(var_prop) > 0 # || to && ?
+            # @show var_prop, var_info, var_field
+            if !isnothing(var_prop) && length(var_prop) > 0
                 combined_info = setTupleField(combined_info, (var_field, getfield(var_info, var_field)))
             end
         else
@@ -75,6 +76,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
     if !isnothing(dataPath)
         doOnePath = true
         dataPath = getAbsDataPath(info, dataPath)
+        @show dataPath
         nc = NetCDF.open(dataPath)
     end
 
@@ -115,14 +117,34 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         #     yax = yax[time=info.tem.helpers.dates.vector]
         # end
         numtype = Val{info.tem.helpers.numbers.numType}()
-        map(v -> cleanInputData(v, vinfo, numtype), yax)
+        map(v -> Sindbad.cleanInputData(v, vinfo, numtype), yax)
     end
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getForcing: getting number of time steps..."
-    #nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
+    nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
     @info "getForcing: getting variable names..."
     forcing_variables = keys(info.forcing.variables)
     println("----------------------------------------------")
-    return (; data=incubes, dims=indims, variables=forcing_variables) #n_timesteps=nts,
+    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
+end
+
+
+
+function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
+    #dataPath = info.forcing.defaultForcing.dataPath
+    ds = YAXArrays.open_dataset(zopen(dpath))
+    forcing_variables = propertynames(info.forcing.variables)
+    incubes = map(forcing_variables) do k
+        dsk = ds[k]
+        # flag to indicate if subsets are needed.
+        dim = YAXArrayBase.yaxconvert(DimArray, dsk) 
+        # site, lon, lat should be options to consider here
+        subset = dim[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
+        # support for subsets by name and numbers is also supported. Option to be added later.
+        YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
+    end
+    nts = length(incubes[1].time) # look for time instead of using the first yaxarray
+    indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
+    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
 end
