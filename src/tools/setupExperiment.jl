@@ -396,6 +396,7 @@ function generatePoolsInfo(info::NamedTuple)
         ## combined pools
         combinePools = (getfield(getfield(info.modelStructure.pools, element), :combine))
         doCombine = combinePools[1]
+        tmpElem = setTupleField(tmpElem, (:combine, combinePools))
         if doCombine
             combinedPoolName = Symbol.(combinePools[2])
             create = [combinedPoolName]
@@ -433,17 +434,17 @@ end
     getInitPools(info)
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array. 
 """
-function getInitPools(info::NamedTuple)
+function getInitPools(info_tem::NamedTuple)
     initPools = (;)
-    for element in propertynames(info.tem.pools)
-        props = getfield(info.tem.pools, element)
+    for element in propertynames(info_tem.pools)
+        props = getfield(info_tem.pools, element)
         toCreate = getfield(props, :create)
         initVals = getfield(props, :initValues)
         for tocr in toCreate
             inVals = deepcopy(getfield(initVals, tocr))
-            initPools = setTupleField(initPools, (tocr, info.tem.helpers.numbers.numType.(inVals)))
+            initPools = setTupleField(initPools, (tocr, info_tem.helpers.numbers.numType.(inVals)))
         end
-        tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
+        tocombine = getfield(getfield(info_tem.pools, element), :combine)
         if tocombine[1]
             combinedPoolName = Symbol(tocombine[2])
             zixT = getfield(props, :zix)
@@ -465,10 +466,10 @@ end
     getInitStates(info)
 returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from addStateVars in modelStructure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
-function getInitStates(info::NamedTuple)
+function getInitStates(info_tem::NamedTuple)
     initStates = (;)
-    for element in propertynames(info.tem.pools)
-        props = getfield(info.tem.pools, element)
+    for element in propertynames(info_tem.pools)
+        props = getfield(info_tem.pools, element)
         toCreate = getfield(props, :create)
         addVars = getfield(props, :addStateVars)
         initVals = getfield(props, :initValues)
@@ -476,11 +477,11 @@ function getInitStates(info::NamedTuple)
             for avk in keys(addVars)
                 avv = getproperty(addVars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
-                vals = ones(info.tem.helpers.numbers.numType, size(getfield(initVals, tocr))) * info.tem.helpers.numbers.sNT(avv)
+                vals = ones(info_tem.helpers.numbers.numType, size(getfield(initVals, tocr))) * info_tem.helpers.numbers.sNT(avv)
                 initStates = setTupleField(initStates, (Δtocr, vals))
             end
         end
-        tocombine = getfield(getfield(info.modelStructure.pools, element), :combine)
+        tocombine = getfield(getfield(info_tem.pools, element), :combine)
         if tocombine[1]
             combinedPoolName = Symbol(tocombine[2])
             for avk in keys(addVars)
