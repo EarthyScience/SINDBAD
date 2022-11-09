@@ -1,6 +1,7 @@
 module ForwardSindbad
 using Reexport: @reexport
 using Sindbad
+using DimensionalData
 using InteractiveUtils
 using YAXArrays, NetCDF, DiskArrayTools, Zarr
 using YAXArrayBase
@@ -23,8 +24,6 @@ using TypedTables:
     Table
 using JLD2: @save
 using ProgressMeter
-using TimerOutputs
-const tmr = TimerOutput()
 
 
 include("tools/tools.jl")

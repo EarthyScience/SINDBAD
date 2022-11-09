@@ -2,9 +2,6 @@ export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
 export getzix, setTupleField, setTupleSubfield, applyUnitConversion
 export offDiag, offDiagUpper, offDiagLower
 export flagUpper, flagLower
-#export AllNaN
-#export nanmax, nanmin
-#export landWrapper
 export nonUnique
 export noStackTrace
 export dictToNamedTuple

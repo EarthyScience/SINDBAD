@@ -1,13 +1,5 @@
-export AllNaN
 export nanmax, nanmin
 export landWrapper
-
-"""
-    AllNaN <: YAXArrays.DAT.ProcFilter
-Add skipping filter for pixels with all nans in YAXArrays 
-"""
-struct AllNaN <: YAXArrays.DAT.ProcFilter end
-YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 """
     nanmax(dat) = maximum(dat[.!isnan.(dat)])

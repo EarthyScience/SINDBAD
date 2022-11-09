@@ -186,7 +186,8 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
-    # push!(Sindbad.error_catcher,(;outputs,tem_variables,land_out))
+    push!(Sindbad.error_catcher,(;outputs,forcing, inputs))
+    geda
     for group in keys(tem_variables)
         data = land_out[group]
         for k in tem_variables[group]
