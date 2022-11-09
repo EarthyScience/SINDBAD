@@ -1,11 +1,14 @@
 using Revise
 using Sindbad
 using ForwardSindbad
-using ProgressMeter
+using HybridSindbad
+# using ProgressMeter
 noStackTrace()
 domain = "DE-2";
 optimize_it = true;
-optimize_it = false;
+# optimize_it = false;
+
+
 
 replace_info_spatial = Dict(
     "experiment.domain" => domain * "_spatial",
@@ -26,7 +29,15 @@ replace_info_site = Dict(
     "spinup.flags.doSpinup" => true
 ); #one parameter set per each site
 
-experiment_json = "exp_optiSpace/settings_optiSpace/experiment.json";
+
+experiment_json = "../exp_optiSpace/settings_optiSpace/experiment.json";
+
+info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
+# info = getExperimentInfo(experiment_json) # note that the modification will not work with this
+forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+# spinup_forcing = getSpinupForcing(forcing, info.tem);
+output = setupOutput(info);
+
 
 @time run_output_spatial = ForwardSindbad.runExperiment(experiment_json; replace_info=replace_info_spatial);
 
