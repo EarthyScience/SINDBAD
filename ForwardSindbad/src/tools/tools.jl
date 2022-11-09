@@ -1,9 +1,5 @@
-include("utils.jl")
-include("dataUtils.jl")
 include("runExperiment.jl")
+include("dataUtils.jl")
 include("getForcing.jl")
-include("getSpinupForcing.jl")
-include("getObservation.jl")
 include("setupOutput.jl")
-
-
+include("utils.jl")

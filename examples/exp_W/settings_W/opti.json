@@ -57,7 +57,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
+		"oneDataPath": "../data/BE-Vie.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",

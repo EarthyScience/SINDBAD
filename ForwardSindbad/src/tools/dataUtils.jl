@@ -1,4 +1,12 @@
 export getDataDims, getNumberOfTimeSteps, cleanInputData, getAbsDataPath
+export AllNaN
+
+"""
+    AllNaN <: YAXArrays.DAT.ProcFilter
+Add skipping filter for pixels with all nans in YAXArrays 
+"""
+struct AllNaN <: YAXArrays.DAT.ProcFilter end
+YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 function cleanInputData(datapoint, vinfo, ::Val{T}) where {T}
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)

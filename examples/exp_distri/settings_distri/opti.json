@@ -75,7 +75,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/fluxnet_observations.zarr",
+		"oneDataPath": "../data/fluxnet_observations.zarr",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",
