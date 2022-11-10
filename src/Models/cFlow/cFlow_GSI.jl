@@ -1,10 +1,10 @@
 export cFlow_GSI
 
 @bounds @describe @units @with_kw struct cFlow_GSI{T1, T2, T3, T4} <: cFlow
-	LR2ReSlp::T1 = 0.1f0 | (0.01f0, 0.99f0) | "Leaf-Root to Reserve" | "fraction"
-	Re2LRSlp::T2 = 0.1f0 | (0.01f0, 0.99f0) | "Reserve to Leaf-Root" | "fraction"
-	kShed::T3 = 0.1f0 | (0.01f0, 0.99f0) | "rate of shedding" | "fraction"
-	f_τ::T4 = 0.1f0 | (0.01f0, 0.99f0) | "contribution factor for current stressor" | "fraction"
+	LR2ReSlp::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction"
+	Re2LRSlp::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction"
+	kShed::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction"
+	f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
 end
 
 function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
