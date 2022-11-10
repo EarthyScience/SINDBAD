@@ -22,7 +22,7 @@
 		"catchErrors": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				false,
+		"runOpti": 				true,
 		"calcCost":				false
 	},
 	"rules":

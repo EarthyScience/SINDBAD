@@ -100,17 +100,21 @@ function setupOutput(info::NamedTuple)
         getOrderedOutputList(keys(info.modelRun.output.variables) |> collect, vn)
     end
     @info "setupOutput: getting output dimension..."
+    output_tuple = (;)
+    output_tuple = setTupleField(output_tuple, (:land_init, land_init))
+    outdims = map(datavars) do vn
+        getOutDims(info, vn, info.output.data, outformat)
+    end
+    output_tuple = setTupleField(output_tuple, (:dims, outdims))
     if info.tem.helpers.run.runOpti
-        outdims = map(datavars) do vn
+        outarray = map(datavars) do vn
             getOutDims(info, vn, Val(:array))
         end
-    else
-        outdims = map(datavars) do vn
-            getOutDims(info, vn, info.output.data, outformat)
-        end
+        output_tuple = setTupleField(output_tuple, (:data, outarray))
     end
     vnames = collect(Iterators.flatten(info.tem.variables))
-    output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
+    output_tuple = setTupleField(output_tuple, (:variables, vnames))
+    # output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
     # if info.modelRun.flags.runOpti
     #     @info "setupOutput: getting parameter output for optimization..."
     #     output_tuple = setupOptiOutput(info, output_tuple);
