@@ -26,6 +26,7 @@ function precompute(o::cCycleBase_GSI, forcing::NamedTuple, land::NamedTuple, he
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 		cEco ∈ land.pools
 	end
     ## instantiate variables
@@ -34,31 +35,14 @@ function precompute(o::cCycleBase_GSI, forcing::NamedTuple, land::NamedTuple, he
     cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
 	p_k_base = zero(cEco)
     p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
+	for i in eachindex(p_k_base)
+	    p_k_base[i] = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+	end
     ## pack land variables
     @pack_land begin
 		(p_C2Nveg, cFlowA, p_k_base, p_annk) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
-    return land
-end
-
-function compute(o::cCycleBase_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
-    ## unpack parameters
-    @unpack_cCycleBase_GSI o
-
-    ## unpack land variables
-    @unpack_land begin
-		(p_annk, p_k_base) ∈ land.cCycleBase
-		𝟙 ∈ helpers.numbers
-	end
-    ## calculate variables
-    #carbon to nitrogen ratio [gC.gN-1]
-    # annual turnover rates
-    p_k_base .= 𝟙 .- (exp.(-𝟙 .* p_annk).^(𝟙 / helpers.dates.nStepsYear))
-	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
-
-    ## pack land variables
-    # @pack_land (p_k_base, cFlowA) => land.cCycleBase
     return land
 end
 
