@@ -34,7 +34,7 @@ output = ForwardSindbad.setupOutput(info);
 forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-# @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
+@benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
