@@ -22,44 +22,11 @@ function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_help
 end
 
 
-"""
-filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
-"""
-function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables=true)
-    if !filter_variables
-        fout=out
-    else
-        fout = (;)
-        for k in keys(varsinfo)
-            v = getfield(varsinfo, k)
-            # fout = setTupleField(fout, (k, v, getfield(out, k)))
-            fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
-        end
-    end
-    return fout
-end
-
 function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     for model in models
         out = Models.precompute(model, forcing, out, tem_helpers)
     end
     return out
-end
-
-function getForcingTimeSize(forcing::NamedTuple)
-    forcingTimeSize = 1
-    for v in forcing
-        if in(:time, AxisKeys.dimnames(v)) 
-            forcingTimeSize = size(v, 1)
-        end
-    end
-    return forcingTimeSize
-end
-
-function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
-    map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
-    end
 end
 
 @noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
