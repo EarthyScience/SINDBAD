@@ -28,8 +28,15 @@ output = ForwardSindbad.setupOutput(info);
 
 # @time land_init = createLandInit(info.tem);
 
+yx_forc, yx_out = yx_get_dat(forcing, output, info.tem; max_cache=1e9);
+
 for x = 1:4
-    @show x
+    println("nomapcube " * string(x))
+    @time yx_runEcosystem(info.tem.models.forward, yx_forc, info.tem, output.data);
+end
+
+for x = 1:4
+    println("mapcube " * string(x))
     @time outcubes = yx_mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
     max_cache=1e9);
 end
@@ -148,9 +155,9 @@ function yx_coreEcosystem(approaches, loc_forcing, tem, loc_output)
     land_init = createLandInit(tem);
     land_prec = yx_runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init, tem.helpers)
     land_spin_now = land_prec
-    # if tem.spinup.flags.doSpinup
-    #     land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
-    # end
+    if tem.spinup.flags.doSpinup
+        land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
+    end
     time_steps = yx_getForcingTimeSize(loc_forcing)
     yx_timeLoopForward(approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps, loc_output)
 end
@@ -224,28 +231,28 @@ function yx_mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedT
 end
 
 
-function yx_dum(args...; tem_var::NamedTuple, forcing_variables::AbstractArray)
+function yx_dum(args...; tem::NamedTuple, forcing_variables::AbstractArray, op)
     #@show "doRun", Threads.threadid()
-    op = []
-    outputs, inputs = yx_unpackYaxForward(args; tem_var, forcing_variables)
+    outputs, inputs = yx_unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    push!(op, forcing)
-    push!(op, outputs)
+    push!(op, forcing);
+    push!(op, outputs);
     # push!(Sindbad.error_catcher,(;outputs,forcing))
-    return op
 end
 
 
-function yx_get_dat(forcing::NamedTuple, output::NamedTuple, tem_var::NamedTuple; max_cache=1e9)
+function yx_get_dat(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple; max_cache=1e9)
     forcing_variables = forcing.variables |> collect
+    op=[]
     mapCube(yx_dum,
         (forcing.data...,);
-        tem_var=tem_var,
+        tem=tem,
+        op=op,
         forcing_variables=forcing_variables,
         indims=forcing.dims,
         outdims=output.dims,
         max_cache=max_cache
-    )
+    );
     # push!(Sindbad.error_catcher,(;op))
-    return op
+    return op[1], op[2]
 end
