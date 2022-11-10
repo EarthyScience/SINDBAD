@@ -1,6 +1,8 @@
 export getDataDims, getNumberOfTimeSteps, cleanInputData, getAbsDataPath
 export AllNaN
-
+export getForcingTimeSize
+export getForcingForTimeStep
+export filterVariables
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 Add skipping filter for pixels with all nans in YAXArrays 
@@ -33,4 +35,38 @@ end
 function getNumberOfTimeSteps(incubes, time_name)
     i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
     length(getAxis(time_name, incubes[i1]).values)
+end
+
+function getForcingTimeSize(forcing::NamedTuple)
+    forcingTimeSize = 1
+    for v in forcing
+        if in(:time, AxisKeys.dimnames(v)) 
+            forcingTimeSize = size(v, 1)
+        end
+    end
+    return forcingTimeSize
+end
+
+function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
+    map(forcing) do v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+    end
+end
+
+
+"""
+filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
+"""
+function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables=true)
+    if !filter_variables
+        fout=out
+    else
+        fout = (;)
+        for k in keys(varsinfo)
+            v = getfield(varsinfo, k)
+            # fout = setTupleField(fout, (k, v, getfield(out, k)))
+            fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
+        end
+    end
+    return fout
 end

@@ -45,7 +45,9 @@ function compute(o::waterBalance_simple, forcing::NamedTuple, land::NamedTuple, 
 	totalW_prev = totalW
 
 	## pack land variables
-	@pack_land (totalW_prev, waterBalance) => land.waterBalance
+	@pack_land begin
+		(totalW_prev, waterBalance) => land.waterBalance
+	end
 	return land
 end
 

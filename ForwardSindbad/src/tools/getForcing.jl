@@ -130,7 +130,6 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
 end
 
 
-
 function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
     #dataPath = info.forcing.defaultForcing.dataPath
     ds = YAXArrays.open_dataset(zopen(dpath))
