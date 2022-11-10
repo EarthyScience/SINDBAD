@@ -5,7 +5,9 @@ using ForwardSindbad
 using HybridSindbad
 using ThreadPools
 using AxisKeys
-using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+# using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+using Zarr
+using BenchmarkTools
 
 # using Accessors
 # copy data from 
@@ -17,24 +19,21 @@ info = setupExperiment(info);
 dsPath = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/";
 # dsPath = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
 forcing = HybridSindbad.getForcing(info, dsPath, Val{:zarr}());
-using Zarr
 ds = YAXArrays.open_dataset(zopen(dsPath));
 
 chunkeddata = setchunks.(forcing.data, ((site=1,),));
 
 forcing = (; forcing..., data = (chunkeddata));
-# Sindbad.error_catcher
-Sindbad.eval(:(error_catcher = []));
+
+# Sindbad.eval(:(error_catcher = []));
 
 output = ForwardSindbad.setupOutput(info);
 # outcubes = runEcosystem(info.tem.models.forward, forcing, output.land_init, info.tem, output.dims);
 
-@time land_init = createLandInit(info.tem);
 
 forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-using BenchmarkTools
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
@@ -52,6 +51,7 @@ end
 # end
 
 # outcubes=nothing
+# @time land_init = createLandInit(info.tem);
 # for x = 1:4
 #     println("mapcube " * string(x))
 #     @time outcubes = mapRunEcosystemArray(forcing, output, info.tem, info.tem.models.forward;

@@ -579,7 +579,7 @@ version = "0.10.32"
 
 [[deps.ForwardSindbad]]
 deps = ["AxisKeys", "DimensionalData", "DiskArrayTools", "FillArrays", "Flatten", "InteractiveUtils", "JLD2", "NetCDF", "ProgressMeter", "RecursiveArrayTools", "Reexport", "Sindbad", "StatsBase", "ThreadPools", "TimerOutputs", "TypedTables", "YAXArrayBase", "YAXArrays", "Zarr"]
-path = "../../ForwardSindbad"
+path = "../../lib/ForwardSindbad"
 uuid = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 version = "0.1.0"
 
@@ -735,8 +735,8 @@ uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
 
 [[deps.HybridSindbad]]
-deps = ["ComponentArrays", "DimensionalData", "ForwardSindbad", "Lux", "Optim", "Optimization", "Random", "Sindbad", "StatsBase", "YAXArrayBase", "YAXArrays", "Zarr", "Zygote"]
-path = "../../HybridSindbad"
+deps = ["ComponentArrays", "DimensionalData", "ForwardSindbad", "Lux", "Optim", "Optimization", "Random", "StatsBase", "YAXArrayBase", "YAXArrays", "Zarr", "Zygote"]
+path = "../../lib/HybridSindbad"
 uuid = "0bea38b2-e736-4245-bd9b-cecd04ee2595"
 version = "0.1.0"
 
@@ -1165,9 +1165,9 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.Mocking]]
 deps = ["Compat", "ExprTools"]
-git-tree-sha1 = "29714d0a7a8083bba8427a4fbfb00a540c681ce7"
+git-tree-sha1 = "c272302b22479a24d1cf48c114ad702933414f80"
 uuid = "78c3b35d-d492-501b-9361-3d52fe80e533"
-version = "0.7.3"
+version = "0.7.5"
 
 [[deps.MosaicViews]]
 deps = ["MappedArrays", "OffsetArrays", "PaddedViews", "StackViews"]
@@ -1612,9 +1612,9 @@ version = "0.3.3"
 
 [[deps.SciMLBase]]
 deps = ["ArrayInterfaceCore", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "Preferences", "RecipesBase", "RecursiveArrayTools", "RuntimeGeneratedFunctions", "StaticArraysCore", "Statistics", "Tables"]
-git-tree-sha1 = "3c99fc37cd2b7809b2dfcdc2eb89e87392811da8"
+git-tree-sha1 = "5686a5c9660c5fb571e3a8be63ff1848de82bdbd"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "1.70.0"
+version = "1.71.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]

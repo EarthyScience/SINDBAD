@@ -162,6 +162,30 @@ end
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
+function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:distributed})
+    additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+    spacesize = values(tem.helpers.run.loop[additionaldims])
+    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
+    qbmap(spaceLocs) do loc_names
+        ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
+    end
+end
+
+"""
+runEcosystem(approaches, forcing, land_init, tem)
+"""
+function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:qbmap})
+    additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+    spacesize = values(tem.helpers.run.loop[additionaldims])
+    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
+    qbmap(spaceLocs) do loc_names
+        ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
+    end
+end
+
+"""
+runEcosystem(approaches, forcing, land_init, tem)
+"""
 function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple)
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     spacesize = values(tem.helpers.run.loop[additionaldims])
