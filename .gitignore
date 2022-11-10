@@ -20,6 +20,9 @@
 *.jld2
 *.jld
 *.o
+*.mem
+*.png
+*.jpg
 .*
 ~*
 tmp_*

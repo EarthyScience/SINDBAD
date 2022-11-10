@@ -11,8 +11,71 @@
         "ambientCO2": {
             "approach": "forcing"
         },
+        "aRespiration": {
+            "approach": "Thornley2000A"
+        },
+        "aRespirationAirT": {
+            "approach": "Q10"
+        },
         "capillaryFlow": {
             "approach": "VanDijk2010"
+        },
+        "cAllocation": {
+            "approach": "GSI"
+        },
+        "cAllocationLAI": {
+            "approach": "none"
+        },
+        "cAllocationNutrients": {
+            "approach": "none"
+        },
+        "cAllocationRadiation": {
+            "approach": "gpp"
+        },
+        "cAllocationTreeFraction": {
+            "approach": "Friedlingstein1999"
+        },
+        "cAllocationSoilT": {
+            "approach": "gpp"
+        },
+        "cAllocationSoilW": {
+            "approach": "gpp"
+        },
+        "cCycle": {
+            "approach": "simple"
+        },
+        "cCycleBase": {
+            "approach": "GSI"
+        },
+        "cCycleDisturbance": {
+            "approach": "constant"
+        },
+        "cFlow": {
+            "approach": "GSI"
+        },
+        "cFlowSoilProperties": {
+            "approach": "none"
+        },
+        "cFlowVegProperties": {
+            "approach": "none"
+        },
+        "cTau": {
+            "approach": "mult"
+        },
+        "cTauLAI": {
+            "approach": "none"
+        },
+        "cTauSoilProperties": {
+            "approach": "none"
+        },
+        "cTauSoilT": {
+            "approach": "Q10"
+        },
+        "cTauSoilW": {
+            "approach": "GSI"
+        },
+        "cTauVegProperties": {
+            "approach": "none"
         },
         "drainage": {
             "approach": "dos"
@@ -24,7 +87,7 @@
             "approach": "sum"
         },
         "fAPAR": {
-            "approach": "constant"
+            "approach": "cVegLeaf"
         },
         "getPools": {
             "approach": "simple"
@@ -59,6 +122,9 @@
         "groundWSoilWInteraction":{
             "approach": "VanDijk2010"
         },
+        "LAI": {
+            "approach": "cVegLeaf"
+        },
         "percolation": {
             "approach": "WBP"
         },
@@ -69,7 +135,7 @@
             "approach": "Tair"
         },
         "rootFraction": {
-            "approach": "constant"
+            "approach": "expCvegRoot"
         },
         "rootMaximumDepth": {
             "approach": "fracSoilD"
@@ -147,6 +213,29 @@
             },
 			"combine": [true,"TWS"],
             "addStateVars": {"Δ": 0.0}
-		}
+		},
+		"carbon":
+		{
+			"components" :
+                {
+                "cVeg": {
+                    "Root": [1, 25.0],
+                    "Wood": [1, 25.0],
+                    "Leaf": [1, 25.0],
+                    "Reserve": [1, 10.0]
+                },
+                "cLit": {
+                    "Fast": [1, 100.0],
+                    "Slow": [1, 250.0]
+                },
+                "cSoil": {
+                    "Slow": [1, 500.0],
+                    "Old": [1, 1000.0]
+                }
+            },
+			"combine": [true,"cEco"],
+            "addStateVars": {"Δ": 0.0
+            }
+        }
 	}
 }

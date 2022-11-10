@@ -136,7 +136,7 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
     history = tem.spinup.flags.storeSpinupHistory;
     land_spin = deepcopy(land_in)
     spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
-    @info "runSpinup:: running spinup sequences..."
+    # @info "runSpinup:: running spinup sequences..."
     for spin_seq in tem.spinup.sequence
         forc = Symbol(spin_seq["forcing"])
         nLoops = spin_seq["nLoops"]
@@ -157,7 +157,8 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
         #if !tem.helpers.run.runOpti
         #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
         #end
-        @showprogress "Computing nLoops..." for nL in 1:nLoops
+        for nL in 1:nLoops
+            # @showprogress "Computing nLoops..." for nL in 1:nLoops
             #if !tem.helpers.run.runOpti
             #    @info "         Loop: $(nL)/$(nLoops)"
             #end
