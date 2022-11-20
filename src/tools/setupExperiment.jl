@@ -572,6 +572,7 @@ sets info.tem.variables as the union of variables to write and store from modelr
 function getLoopingInfo(info::NamedTuple)
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
     run_info = setTupleField(run_info, (:loop, (;)))
+    run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
     for dim in info.modelRun.mapping.runEcosystem
         run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
         # todo: create the time dimesion using the dates vector
