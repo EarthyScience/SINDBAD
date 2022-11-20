@@ -1,28 +1,25 @@
 {
 	"variables2constrain": [
-		"gpp",
-		"nee",
-		"transpiration",
-		"evapotranspiration"
+		"gpp"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
+	"algorithm1": {
+		"package": "Optim",
+		"method": "LBFGS",
+		"options_file": "optim_LBFGS.json",
+		"isMultiObj": false
+	},
 	"algorithm": {
-		"package": "Evolutionary",
+		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
+		"options_file": "optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithmms": {
+		"package": "Optimization",
+		"method": "MultistartOptimization",
 		"options_file": null,
-		"isMultiObj": false
-	},
-	"algorithm_cmaes": {
-		"package": "CMAEvolutionStrategy",
-		"method": "CMAES",
-		"options_file": "optim_cmaes.json",
-		"isMultiObj": false
-	},
-	"algorithmcc": {
-		"package": "CMAEvolutionStrategy",
-		"method": "CMAES",
-		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm-gcmaes": {
@@ -32,50 +29,20 @@
 		"isMultiObj": false
 	},
 	"optimized_parameters": [
-		"cCycleBase.annk_Root",
-		"cCycleBase.annk_Wood",
-		"cCycleBase.annk_LitSlow",
-		"cCycleBase.annk_LitFast",
-		"cCycleBase.annk_SoilSlow",
-		"cCycleBase.annk_SoilOld",
-		"cCycleBase.etaH",
-		"cFlow.f_τ",
-		"cFlow.kShed",
-		"cFlow.LR2ReSlp",
-		"cFlow.Re2LRSlp",
-		"cTauSoilT.Q10",
-		"cTauSoilW.Wopt",
-		"evaporation.α",
-		"evaporation.supLim",
-		"fAPAR.kEffExt",
+		"fAPAR.constantfAPAR",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
 		"gppAirT.ToptB",
 		"gppVPD.κ",
 		"gppVPD.Cκ",
-		"gppVPD.Cm",
-		"gppSoilW.q",
-		"gppSoilW.θstar",
-		"groundWRecharge.dos_exp",
-		"aRespiration.YG",
-		"aRespiration.RMN",
-		"aRespirationAirT.Q10_RM",
-		"runoffBase.bc",
-		"rootFraction.k_cVegRoot",
-		"rootMaximumDepth.fracRootD2SoilD",
-		"runoffSaturationExcess.β",
-		"snowMelt.melt_T",
-		"snowMelt.melt_Rn",
-		"treeFraction.constantTreeFrac",
-		"WUE.WUEatOnehPa",
-		"WUE.κ"
+		"gppVPD.Cm"
 			],
 	"constraints": {
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "../data/fluxnet_cube/fluxnet_observations.zarr",
+		"oneDataPath": "../data/DE-2.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",
@@ -96,7 +63,7 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "gpp",
+					"sourceVariableName": "GPP_NT",
 					"sourceVariableUnit": "gC m-2 day-1",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -114,7 +81,15 @@
 					],
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
-					"sourceVariableName": "nee_σ"
+					"sourceVariableName": "NEE_RANDUNC"
+				},
+				"qflag": {
+					"dataPath": null,
+					"bounds": [
+						0.85,
+						1.0
+					],
+					"sourceVariableName": "GPP_QC_NT_merged"
 				},
 				"costOptions": {
 					"temporalAggr": "day",
@@ -130,7 +105,7 @@
 						-100.0,
 						100.0
 					],
-					"sourceVariableName": "nee",
+					"sourceVariableName": "NEE",
 					"sourceVariableUnit": "gC m-2 day-1",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -146,9 +121,17 @@
 						0.0,
 						400.0
 					],
-					"sourceVariableName": "nee_σ",
+					"sourceVariableName": "NEE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0
+				},
+				"qflag": {
+					"dataPath": null,
+					"bounds": [
+						0.85,
+						1.0
+					],
+					"sourceVariableName": "NEE_QC_merged"
 				},
 				"costOptions": {
 					"temporalAggr": "day",
@@ -164,7 +147,7 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "reco",
+					"sourceVariableName": "RECO_NT",
 					"sourceVariableUnit": "gC m-2 day-1",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -180,9 +163,17 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "nee_σ",
+					"sourceVariableName": "NEE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0
+				},
+				"qflag": {
+					"dataPath": null,
+					"bounds": [
+						0.85,
+						1.0
+					],
+					"sourceVariableName": "RECO_QC_NT_merged"
 				},
 				"costOptions": {
 					"temporalAggr": "day",
@@ -198,7 +189,7 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "evapotranspiration",
+					"sourceVariableName": "LE",
 					"sourceVariableUnit": "MJ m-2 d-1",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 0.4081632653,
@@ -214,9 +205,17 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "le_σ",
+					"sourceVariableName": "LE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 0.4081632653
+				},
+				"qflag": {
+					"dataPath": null,
+					"bounds": [
+						0.85,
+						1.0
+					],
+					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
 					"temporalAggr": "day",
@@ -232,7 +231,7 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "transpiration",
+					"sourceVariableName": "T_NT_TEA",
 					"sourceVariableUnit": "mm day-1",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -248,9 +247,17 @@
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "le_σ",
+					"sourceVariableName": "LE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 0.4081632653
+				},
+				"qflag": {
+					"dataPath": null,
+					"bounds": [
+						0.85,
+						1.0
+					],
+					"sourceVariableName": "LE_QC_merged"
 				},
 				"costOptions": {
 					"temporalAggr": "day",
@@ -266,7 +273,7 @@
 						0.0,
 						100000.0
 					],
-					"sourceVariableName": "agb",
+					"sourceVariableName": "agb_merged",
 					"sourceVariableUnit": "gC m-2",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -282,7 +289,7 @@
 						0.0,
 						400.0
 					],
-					"sourceVariableName": "nee_σ",
+					"sourceVariableName": "NEE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0
 				},
@@ -300,7 +307,7 @@
 						0.0,
 						1.0
 					],
-					"sourceVariableName": "ndvi",
+					"sourceVariableName": "mergedNDVI_MCD43A",
 					"sourceVariableUnit": "adimensional",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
@@ -316,7 +323,7 @@
 						0.0,
 						1.0
 					],
-					"sourceVariableName": "nee_σ",
+					"sourceVariableName": "NEE_RANDUNC",
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0
 				},

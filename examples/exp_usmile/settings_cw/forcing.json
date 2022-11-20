@@ -1,10 +1,12 @@
 {
 	"size": {
-		"site": 2,
-		"time": 730
+		"latitude": 2,
+		"longitude": 2,
+		"time": 14245
 	},
 	"dimensions": {
-		"site": "site",
+		"latitude": "latitude",
+		"longitude": "longitude",
 		"time": "time"
 	},
 	"sel_mask": null,
@@ -20,14 +22,14 @@
 		"depth_dimension": null,
 		"spaceTimeType": "spatiotemporal",
 		"sourceDataProductName": "FLUXNET",
-		"dataPath": "../data/fluxnet_cube/fluxnet_forcing.zarr"
+		"dataPath": "../data/DE-2.1979.2017.daily.nc"
 	},
 	"variables": {
 	"ambCO2":
     {
 		"variableUnit": "ppm",
 		"bounds": [200.0, 500.0],
-		"sourceVariableName": "ambCO2",
+		"sourceVariableName": "atmCO2_SCRIPPS_global",
 		"sourceVariableUnit": "ppm",
 		"nameShort": "ambCO2"
 	},
@@ -35,7 +37,7 @@
     {
 		"variableUnit": "mm d-1",
 		"bounds": [0.0, 300.0],
-		"sourceVariableName": "Rain",
+		"sourceVariableName": "P_ERAIv2_gfld",
 		"sourceVariableUnit": "mm d-1",
 		"nameShort": "Rain"
 	},
@@ -43,7 +45,7 @@
     {
 		"variableUnit": "MJ m-2 d-1",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "Rg",
+		"sourceVariableName": "SW_IN_ERAIv2_gfld",
 		"sourceVariableUnit": "MJ m-2 d-1",
 		"nameShort": "Global Radiation"
 	},
@@ -51,7 +53,7 @@
     {
 		"variableUnit": "MJ m-2 d-1",
 		"bounds": [0.0, 50.0],
-		"sourceVariableName": "PAR",
+		"sourceVariableName": "SW_IN_ERAIv2_gfld",
 		"sourceVariableUnit": "MJ m-2 d-1",
 		"source2sindbadUnit": 0.50,
 		"nameShort": "Photosynthetically active radiation (=Rg*.5)"
@@ -60,7 +62,7 @@
     {
 		"variableUnit": "MJ m-2 d-1",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "RgPot",
+		"sourceVariableName": "SW_IN_POT_ONEFlux",
 		"sourceVariableUnit": "MJ m-2 d-1",
 		"nameShort": "Potential Global Radiation"
 	},
@@ -68,7 +70,7 @@
     {
 		"variableUnit": "MJ m-2 d-1",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "Rn",
+		"sourceVariableName": "NETRAD_ERAIv2_gfld",
 		"sourceVariableUnit": "MJ m-2 d-1",
 		"nameShort": "Net radiation"
 	},
@@ -76,7 +78,7 @@
     {
 		"variableUnit": null,
 		"bounds": [-0.001, 1.1],
-		"sourceVariableName": "isDisturbed",
+		"sourceVariableName": "dist_frac_sb2018",
 		"sourceVariableUnit": null,
 		"isCategorical": true,
 		"nameShort": "isDisturbed flag for disturbance",
@@ -86,7 +88,7 @@
     {
 		"variableUnit": "°C",
 		"bounds": [-80.0, 60.0],
-		"sourceVariableName": "Tair",
+		"sourceVariableName": "TA_ERAIv2_gfld",
 		"sourceVariableUnit": "°C",
 		"nameShort": "Tair"
 	},
@@ -94,7 +96,7 @@
     {
 		"variableUnit": "°C",
 		"bounds": [-80.0, 60.0],
-		"sourceVariableName": "TairDay",
+		"sourceVariableName": "TA_DayTime_ERAIv2_gfld",
 		"sourceVariableUnit": "°C",
 		"nameShort": "TairDay"
 	},
@@ -102,7 +104,7 @@
     {
 		"variableUnit": "kPa",
 		"bounds": [0.01, 100.0],
-		"sourceVariableName": "VPD",
+		"sourceVariableName": "VPD_ERAIv2_gfld",
 		"sourceVariableUnit": "Pa",
 		"source2sindbadUnit": 0.001,
 		"nameShort": "Vapor pressure deficit"
@@ -111,7 +113,7 @@
     {
 		"variableUnit": "kPa",
 		"bounds": [0.01, 100.0],
-		"sourceVariableName": "VPDDay",
+		"sourceVariableName": "VPD_DayTime_ERAIv2_gfld",
 		"sourceVariableUnit": "Pa",
 		"source2sindbadUnit": 0.001,
 		"nameShort": "Vapor pressure deficit Day"
@@ -119,7 +121,7 @@
 	"CLAY": {
 		"variableUnit": "-",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "CLAY",
+		"sourceVariableName": "CLYPPT_SoilGrids",
 		"sourceVariableUnit": "%",
 		"source2sindbadUnit": 0.01,
 		"nameShort": "CLAY",
@@ -130,7 +132,7 @@
 	"SAND": {
 		"variableUnit": "-",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "SAND",
+		"sourceVariableName": "SNDPPT_SoilGrids",
 		"sourceVariableUnit": "%",
 		"source2sindbadUnit": 0.01,
 		"nameShort": "SAND",
@@ -140,7 +142,7 @@
 	"SILT": {
 		"variableUnit": "-",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "SILT",
+		"sourceVariableName": "SLTPPT_SoilGrids",
 		"sourceVariableUnit": "%",
 		"source2sindbadUnit": 0.01,
 		"nameShort": "CLAY",
@@ -150,7 +152,7 @@
 	"ORGM": {
 		"variableUnit": "-",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "ORGM",
+		"sourceVariableName": "OCSTHA_SoilGrids",
 		"sourceVariableUnit": "%",
 		"source2sindbadUnit": 0.0,
 		"nameShort": "CLAY",
