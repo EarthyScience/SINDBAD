@@ -28,7 +28,7 @@ function compute(o::gppVPD_PRELES, forcing::NamedTuple, land::NamedTuple, helper
     end
 
     ## calculate variables
-    fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
+    fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambCO2)^-Cκ)
     fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
     VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, 𝟘, 𝟙)
 
