@@ -1,7 +1,4 @@
 {
-	"1.c": 							"This json info file explains the forcing variables and all related information",
-	"2.c":							"add more comments",
-	"3.c":							"and some more",
 	"size": {
 		"site": 150,
 		"time": 730
