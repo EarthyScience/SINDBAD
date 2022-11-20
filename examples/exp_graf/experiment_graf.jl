@@ -20,7 +20,7 @@ optimize_it = false;
 replace_info_spatial = Dict(
     "experiment.domain" => domain * "_spatial",
     "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => false,
+    "modelRun.flags.calcCost" => true,
     "modelRun.mapping.yaxarray" => [],
     "modelRun.mapping.runEcosystem" => ["time", "id"],
     "spinup.flags.doSpinup" => true
@@ -52,7 +52,8 @@ forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e12);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
 
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));

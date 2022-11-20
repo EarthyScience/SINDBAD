@@ -134,6 +134,7 @@ function setupOutput(info::NamedTuple)
     end
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
+        @info "setupOutput: creating array output for optimization/cost..."
         outarray = map(datavars) do vn
             getOutDims(info, vn, Val(:array))
         end

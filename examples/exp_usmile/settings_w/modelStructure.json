@@ -5,7 +5,7 @@
     },
     "models": {
         "ambientCO2": {
-            "approach": "constant"
+            "approach": "forcing"
         },
         "capillaryFlow": {
             "approach": "VanDijk2010"
@@ -20,7 +20,7 @@
             "approach": "sum"
         },
         "fAPAR": {
-            "approach": "vegFraction"
+            "approach": "constant"
         },
         "getPools": {
             "approach": "simple"
@@ -62,7 +62,7 @@
             "approach": "Lu2005"
         },
         "rainSnow": {
-            "approach": "rain"
+            "approach": "Tair"
         },
         "rootFraction": {
             "approach": "constant"
@@ -88,6 +88,12 @@
         "runoffSurface": {
             "approach": "all"
         },
+        "snowFraction": {
+            "approach": "HTESSEL"
+        },
+        "snowMelt": {
+            "approach": "TairRn"
+        },
         "soilTexture": {
             "approach": "forcing"
         },
@@ -103,18 +109,18 @@
         "transpirationSupply": {
             "approach": "wAWC"
         },
+        "treeFraction": {
+            "approach": "constant"
+        },
         "totalTWS": {
             "approach": "sumComponents"
         },
-        "vegFraction": {
-            "approach": "forcing",
-            "order": 12
-        },
         "vegAvailableWater": {
-            "approach": "sigmoid"
+            "approach": "rootFraction"
         },
         "waterBalance": {
-            "approach": "simple"
+            "approach": "simple",
+            "use4spinup": false
         },
         "wCycle": {
             "approach": "combined"
@@ -137,29 +143,6 @@
             },
 			"combine": [true,"TWS"],
             "addStateVars": {"Δ": 0.0}
-		},
-		"carbon":
-		{
-			"components" :
-                {
-                "cVeg": {
-                    "Root": [1, 25.0],
-                    "Wood": [1, 25.0],
-                    "Leaf": [1, 25.0],
-                    "Reserve": [1, 10.0]
-                },
-                "cLit": {
-                    "Fast": [1, 100.0],
-                    "Slow": [1, 250.0]
-                },
-                "cSoil": {
-                    "Slow": [1, 500.0],
-                    "Old": [1, 1000.0]
-                }
-            },
-			"combine": [true,"cEco"],
-            "addStateVars": {"Δ": 0.0
-            }
-        }
+		}
 	}
 }

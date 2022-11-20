@@ -1,4 +1,5 @@
 {
+
 	"time":
 	{
 		"step": 				"daily",
@@ -10,14 +11,14 @@
 	},
 	"mapping": {
 		"yaxarray": [],
-		"runEcosystem": ["time", "id"],
+		"runEcosystem": ["time", "longitude", "latitude"],
 		"parallelization": "threads"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
-		"catchErrors": 			false,
-		"runSpinup": 			false,
+		"catchErrors": 			true,
+		"runSpinup":            true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
@@ -32,23 +33,17 @@
 		"yax_max_cache": 2e9
 	},
 	"output": {
-		"all": true,
-		"path": null,
+		"all": false,
+		"path": "sandbox/output/",
 		"format": ".zarr",
 		"depth_dimensions":{
-			"d_soil": "soilW",
-			"d_cEco": 8,
-			"d_snow": "snowW"
+			"d_scall": 4
 		},
 		"variables": {
-			"fluxes.evapotranspiration": null,
-			"fluxes.transpiration": null,
-			"fluxes.runoff": null,
-			"fluxes.runoffSurface": null,
 			"fluxes.gpp": null,
-			"pools.snowW": "d_snow",
-			"pools.soilW": "d_soil",
-			"waterBalance.waterBalance": null
+			"gppDemand.gppE": null,
+			"states.fAPAR": null,
+			"gppDemand.scall": "d_scall"
 		}
 	}
 }
