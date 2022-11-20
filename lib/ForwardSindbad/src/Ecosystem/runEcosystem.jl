@@ -84,7 +84,7 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
     land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init, tem.helpers)
     #@show first(newforcing)
     land_spin_now = land_prec
-    if tem.spinup.flags.doSpinup
+    if tem.helpers.run.runSpinup
         land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
     end
     time_steps = getForcingTimeSize(loc_forcing)
@@ -153,8 +153,6 @@ function doRunEcosystem(args...; land_init::NamedTuple, tem::NamedTuple, forward
     land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
     i = 1
     tem_variables = tem.variables
-    push!(Sindbad.error_catcher,(;outputs,forcing, inputs))
-    geda
     for group in keys(tem_variables)
         data = land_out[group]
         for k in tem_variables[group]

@@ -1,93 +1,102 @@
 export getDataUsingMapCube
 export runEcosystem!
-export mapRunEcosystemArray
+export ecoLoc!
 
 function getArrayView(a::AbstractArray{Float64,2}, inds)
-    return view(a, :, inds..., 1)
+    return view(a, inds...)
+    # return view(a, :, inds..., 1)
 end
-function getArrayView(a::AbstractArray{Float32,2}, inds)
-    return view(a, :, inds..., 1)
-end
-# function getArrayView(a::Matrix{Union{Missing, Float64}, 2}, inds)
-#     return view(a, :, inds..., 1)
-# end
 
 function getArrayView(a::AbstractArray{Float64,3}, inds)
-    return view(a, :, :, inds..., 1)
+    # @show size(a), inds
+    return view(a, :, inds...)
+    # return view(a, :, :, inds..., 1)
 end
-function getArrayView(a::AbstractArray{Float32,3}, inds)
-    return view(a, :, :, inds..., 1)
+
+function getArrayView(a::AbstractArray{Float64,4}, inds)
+    # @show size(a), inds
+    return view(a, :, :, inds...)
+    # return view(a, :, :, inds..., 1)
 end
+
+# function getArrayView(a::AbstractArray{Float32,2}, inds)
+#     return view(a, :, inds..., 1)
+# end
+# # function getArrayView(a::Matrix{Union{Missing, Float64}, 2}, inds)
+# #     return view(a, :, inds..., 1)
+# # end
+
+
+# function getArrayView(a::AbstractArray{Float32,3}, inds)
+#     return view(a, :, :, inds..., 1)
+# end
 # function getArrayView(a::Matrix{Union{Missing, Float64}, 3}, inds)
 #     return view(a, :, :, inds..., 1)
 # end
-
-function ecoLoc!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, additionaldims, loc_names, land_init::NamedTuple)
+function getLocData(outcubes, forcing::NamedTuple, additionaldims, loc_names)
     loc_forcing = map(forcing) do a
         inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
             lv=>loc_index
         end
         view(a;inds...)
     end
-    # @show loc_forcing
     loc_output = map(outcubes) do a
         inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
             loc_index
         end
         getArrayView(a, inds)
-        # tmp = nothing
-        # if ndims(a) == 2
-        #     tmp = view(a, :, inds..., 1)
-        # else
-        #     tmp = view(a, :, :, inds..., 1)
-        # end
-        # tmp
     end
-    coreEcosystem!(loc_output, approaches, loc_forcing, tem, land_init)
+    return loc_forcing, loc_output
+end
+
+
+function ecoLoc!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, additionaldims, loc_names, land_init::NamedTuple)
+    loc_forcing, loc_output = getLocData(outcubes, forcing, additionaldims, loc_names)
+    all_nan = all(isnan, loc_forcing[1])
+    if !all_nan
+        coreEcosystem!(loc_output, approaches, loc_forcing, tem, land_init)
+    end
 end
 
 function ecoLoc!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, additionaldims, loc_names)
-    loc_forcing = map(forcing) do a
-        inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
-            lv=>loc_index
-        end
-        view(a;inds...)
+    loc_forcing, loc_output = getLocData(outcubes, forcing, additionaldims, loc_names)
+    all_nan = all(isnan, loc_forcing[1])
+    if !all_nan
+        coreEcosystem!(loc_output, approaches, loc_forcing, tem)
     end
-    loc_output = map(outcubes) do a
-        inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
-            loc_index
-        end
-        getArrayView(a, inds)
-    end
-    coreEcosystem!(loc_output, approaches, loc_forcing, tem)
 end
 
 
 function setOuputT!(outputs, land::NamedTuple, tem_variables::NamedTuple, ts::Int64)
     var_index = 1
     for group in keys(tem_variables)
-        data = land[group]
         for k in tem_variables[group]            
-            datak = data[k]
-            viewcopyT!(outputs[var_index],datak, ts)
+            data_ts = selectdim(outputs[var_index], 1, ts) #assumes that the first dimension is always time
+            data_ts .= land[group][k]
+            # viewcopyT!(outputs[var_index],datak, ts)
             var_index += 1
         end
     end
 end
 
 
-function viewcopyT!(xout::AbstractArray, xin::Number, ts)
-        xout[ts] = xin
-end
+# function viewcopyT!(xout::AbstractArray, xin::Number, ts)
+#         xout[ts] = xin
+# end
     
 
-function viewcopyT!(xout::AbstractArray, xin::AbstractArray, ts)
-    if length(xin) == 1
-        xout[ts] = first(xin)
-    else
-        xout[:, ts] .= xin
-    end
-end
+# function viewcopyT!(xout::AbstractArray, xin::AbstractArray, ts)
+#     # @show xout[ts], xin
+#     xout[ts] .= xin
+# end
+
+# function viewcopyTOri!(xout::AbstractArray, xin::AbstractArray, ts)
+#     if length(xin) == 1
+#         xout[ts] = first(xin)
+#     else
+#         xout[:, ts] .= xin
+#     end
+# end
     
     
 """
@@ -128,12 +137,25 @@ end
 function coreEcosystem!(loc_output, approaches, loc_forcing, tem, land_init)
     land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     land_spin_now = land_prec
-    if tem.spinup.flags.doSpinup
+    if tem.helpers.run.runSpinup
         land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
     end
     time_steps = getForcingTimeSize(loc_forcing)
     timeLoopForward!(loc_output,  approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
 end
+
+function coreEcosystem!(loc_output, approaches, loc_forcing, tem)
+    #@info "runEcosystem:: running ecosystem"
+    land_init = createLandInit(tem);
+    land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
+    land_spin_now = land_prec
+    if tem.helpers.run.runSpinup
+        land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
+    end
+    time_steps = getForcingTimeSize(loc_forcing)
+    timeLoopForward!(loc_output,  approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
+end
+
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
@@ -147,26 +169,29 @@ function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::Na
     end
 end
 
-function coreEcosystem!(loc_output, approaches, loc_forcing, tem)
-    #@info "runEcosystem:: running ecosystem"
-    land_init = createLandInit(tem);
-    land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
-    land_spin_now = land_prec
-    if tem.spinup.flags.doSpinup
-        land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
-    end
-    time_steps = getForcingTimeSize(loc_forcing)
-    timeLoopForward!(loc_output,  approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
+"""
+runEcosystem(approaches, forcing, land_init, tem)
+"""
+function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:pmap})
+    additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+    spacesize = values(tem.helpers.run.loop[additionaldims])
+    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
+    # @everywere ecofunc = x ->  ecoLoc!(Ref(outcubes), Ref(approaches), Ref(forcing), Ref(tem), Ref(additionaldims), x)
+
+    # @everywere ecofunc = x ->  ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, x)
+    # _ = pmap(ecofunc, 1:length(spaceLocs));
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:distributed})
+function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:threads})
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     spacesize = values(tem.helpers.run.loop[additionaldims])
-    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
-    qbmap(spaceLocs) do loc_names
+    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+
+    Threads.@threads for i = eachindex(spaceLocs)
+        loc_names = spaceLocs[i]
         ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
     end
 end
@@ -175,18 +200,6 @@ end
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:qbmap})
-    additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-    spacesize = values(tem.helpers.run.loop[additionaldims])
-    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
-    qbmap(spaceLocs) do loc_names
-        ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
-    end
-end
-
-"""
-runEcosystem(approaches, forcing, land_init, tem)
-"""
-function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple)
     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     spacesize = values(tem.helpers.run.loop[additionaldims])
     spaceLocs = Iterators.product(Base.OneTo.(spacesize)...)
@@ -205,39 +218,8 @@ function unpackYaxForwardArray(args; tem::NamedTuple, forcing_variables::Abstrac
 end
 
 
-function doRunEcosystemArray(args...; tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray)
-    outputs, inputs = unpackYaxForwardArray(args; tem, forcing_variables)
-    forcing = (; Pair.(forcing_variables, inputs)...)
-    runEcosystem!(outputs, forward_models, forcing, tem)
-    outputs
-end
-
-
-function mapRunEcosystemArray(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, forward_models::Tuple; max_cache=1e9)
-    incubes = forcing.data
-    indims = forcing.dims
-    forcing_variables = forcing.variables |> collect
-    outdims = output.dims
-    # additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-    # nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
-
-    outcubes = mapCube(doRunEcosystemArray,
-        (incubes...,);
-        tem=tem,
-        forward_models=forward_models,
-        forcing_variables=forcing_variables,
-        indims=indims,
-        outdims=outdims,
-        max_cache=max_cache,
-        ispar = true,
-        #nthreads = [nthreads],
-    )
-    return outcubes
-end
-
-
 function dummyGetDataCubes(args...; op, tem::NamedTuple, forcing_variables::AbstractArray)
-    outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
+    outputs, inputs = unpackYaxForwardArray(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
     push!(op, forcing);
     push!(op, outputs);

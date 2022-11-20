@@ -104,7 +104,11 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         end
         ax = map(v.dim) do d
             dn = d.name
-            dv = nc[dn][:]
+            if dn in keys(nc)
+                dv = nc[dn][:]
+            else
+                dv=1:getfield(info.forcing.size, Symbol(dn))
+            end
             RangeAxis(dn, dv)
         end
         if !isnothing(forcing_mask)
@@ -117,7 +121,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         #     yax = yax[time=info.tem.helpers.dates.vector]
         # end
         numtype = Val{info.tem.helpers.numbers.numType}()
-        map(v -> Sindbad.cleanInputData(v, vinfo, numtype), yax)
+        map(v -> cleanInputData(v, vinfo, numtype), yax)
     end
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
