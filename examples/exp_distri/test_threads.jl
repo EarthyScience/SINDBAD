@@ -1,21 +1,17 @@
-using Revise 
+
 using YAXArrays
 using Sindbad
 using ForwardSindbad
 using HybridSindbad
 using ThreadPools
-using AxisKeys
-# using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 using Zarr
-using BenchmarkTools
-
-# using Accessors
 # copy data from 
 # rsync -avz lalonso@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_observations.zarr
 Sindbad.noStackTrace()
 experiment_json = "./settings_distri/experimentW.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
+
 dsPath = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/";
 # dsPath = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
 forcing = HybridSindbad.getForcing(info, dsPath, Val{:zarr}());
@@ -34,34 +30,35 @@ output = ForwardSindbad.setupOutput(info);
 forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-@benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
+# @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 
-for x = 1:4
-    println("nomapcube " * string(x))
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+
+
+additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
+spacesize = values(info.tem.helpers.run.loop[additionaldims])
+spaceLocs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+approaches = info.tem.models.forward;
+tem = info.tem;
+ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem, additionaldims, x)
+
+ecoLoc!(output.data, approaches, forc, tem, additionaldims, 1)
+@time Threads.@threads for i = 1:length(spaceLocs)
+    ecoLoc!(output.data, approaches, forc, tem, additionaldims, i)
+    # ecofunc(i)
 end
 
-# for x = 1:4
-#     println("deepcopy: nomapcube " * string(x))
-#     @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, land_init);
-# end
-
-# outcubes=nothing
-# @time land_init = createLandInit(info.tem);
-# for x = 1:4
-#     println("mapcube " * string(x))
-#     @time outcubes = mapRunEcosystemArray(forcing, output, info.tem, info.tem.models.forward;
-#     max_cache=1e9);
-# end
+fig, ax, obj = heatmap(output.data[end-1])
+Colorbar(fig[1,2], obj)
+save("gpp.png", fig)
 
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 site = 1
 for site in 1:16
-    df = DataFrame(time = ds.time, gpp = output.data[end-1][:,site], nee = output.data[end][:,site], soilw1 = output.data[2][1,:,site]);
+    df = DataFrame(time = 1:730, gpp = output.data[end-1][:,site], nee = output.data[end][:,site], soilw1 = output.data[2][1,:,site]);
 
     for var = (:gpp, :nee, :soilw1)
         d = data(df)*mapping(:time, var)*visual(Lines, linewidth=0.5);
@@ -72,3 +69,5 @@ for site in 1:16
         save("testfig_$(var)_$(site).png", fig)
     end
 end
+
+# @time _ = pmap(ecofunc, 1:length(spaceLocs));
