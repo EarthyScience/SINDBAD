@@ -134,7 +134,65 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
 end
 
 
+function getForcing(info::NamedTuple, ::Val{:zarr})
+    doOnePath = false
+    dataPath = info.forcing.defaultForcing.dataPath
+    nc = Any
+    if !isnothing(dataPath)
+        doOnePath = true
+        dataPath = getAbsDataPath(info, dataPath)
+        @show dataPath
+        nc = YAXArrays.open_dataset(zopen(dataPath))
+    end
+
+    forcing_mask = nothing
+    if :sel_mask ∈ keys(info.forcing)
+        if !isnothing(info.forcing.sel_mask)
+            mask_path = getAbsDataPath(info, info.forcing.sel_mask)
+            forcing_mask = get_forcing_sel_mask(mask_path)
+        end
+    end
+
+    default_info = info.forcing.defaultForcing
+    forcing_variables = keys(info.forcing.variables)
+    @info "getForcing: getting forcing variables..."
+    incubes = map(forcing_variables) do k
+        vinfo = getVariableInfo(default_info, info.forcing.variables[k])
+        if !doOnePath
+            dataPath = getAbsDataPath(info, getfield(vinfo, :dataPath))
+            nc = YAXArrays.open_dataset(zopen(dataPath))
+        end
+        dv = nc[vinfo.sourceVariableName]
+        v = YAXArrayBase.yaxconvert(DimArray, dv) 
+        # site, lon, lat should be options to consider here
+        if !isnothing(forcing_mask)
+            v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
+        end
+        subset = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
+
+        @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
+        yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
+        #todo: slice the time series using dates in helpers
+        # if hasproperty(yax,:time)
+        #     yax = yax[time=info.tem.helpers.dates.vector]
+        # end
+        numtype = Val{info.tem.helpers.numbers.numType}()
+        map(v -> cleanInputData(v, vinfo, numtype), yax)
+    end
+    @info "getForcing: getting forcing dimensions..."
+    indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
+    @info "getForcing: getting number of time steps..."
+    nts = length(incubes[1].time) # look for time instead of using the first yaxarray
+    # nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
+    @info "getForcing: getting variable names..."
+    forcing_variables = keys(info.forcing.variables)
+    println("----------------------------------------------")
+    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
+end
+
+
 function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
+
     #dataPath = info.forcing.defaultForcing.dataPath
     ds = YAXArrays.open_dataset(zopen(dpath))
     forcing_variables = propertynames(info.forcing.variables)

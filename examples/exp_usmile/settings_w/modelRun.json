@@ -1,4 +1,5 @@
 {
+
 	"time":
 	{
 		"step": 				"daily",
@@ -6,22 +7,22 @@
 		"eDate": 				"2017-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
-		"nStepsYear": 			365
+		"nStepsYear": 			365.0
 	},
 	"mapping": {
 		"yaxarray": [],
-		"runEcosystem": ["time", "id"],
+		"runEcosystem": ["time", "latitude", "longitude"],
 		"parallelization": "threads"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
 		"catchErrors": 			false,
-		"runSpinup": 			false,
+		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
-		"calcCost":				true
+		"calcCost":				false
 	},
 	"rules":
 	{
@@ -32,7 +33,7 @@
 		"yax_max_cache": 2e9
 	},
 	"output": {
-		"all": true,
+		"all": false,
 		"path": null,
 		"format": ".zarr",
 		"depth_dimensions":{

@@ -6,7 +6,7 @@ using YAXArrays
 # using opti
 noStackTrace()
 
-experiment_json = "../exp_noW/settings_noW/experiment.json"
+experiment_json = "../exp_usmile/settings_cw/experiment.json"
 # experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 
 info, forcing, output = prepExperimentForward(experiment_json);
@@ -21,6 +21,10 @@ end
 
 @time outcubes = runExperimentOpti(experiment_json);  
 # outcubes = runExperiment(experiment_json, Val(:forward));
+
+
+
+
 
 
 
