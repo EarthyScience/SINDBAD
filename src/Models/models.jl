@@ -55,6 +55,17 @@ model_list = (:rainSnow, :rainIntensity, :PET, :ambientCO2,
 ## create a table to view all sindbad models and their orders.
 sindbad_models = Table((; model=[model_list...]))
 
+# ## create a table to view all sindbad models and their orders.
+# apprs = []
+# for _mod in model_list:
+# 	st = subtypes(getproperty(Sindbad, _mod))
+# 	push!(apprs, join(st, ", "))
+# 	# for _st in st:
+# 	# 	appr = 
+# end
+
+# sindbad_models = Table((; model=[model_list...], approaches = [apprs...]))
+
 ## Import all models.
 for model_name_symbol in model_list
 	model_name = string(model_name_symbol)
