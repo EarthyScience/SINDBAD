@@ -33,7 +33,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     println("-------------------Cost Calculation Mode---------------------------")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    runEcosystem!(output.data, info.tem.models.forward, forc_array, info.tem);
+    runEcosystem!(output.data, info.tem.models.forward, forc_array, info.tem, info.tem.helpers.run.parallelization);
     #todo make the loss functions work with disk arrays
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")

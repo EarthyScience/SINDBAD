@@ -10,14 +10,15 @@
 		"nStepsYear": 			365.0
 	},
 	"mapping": {
-		"yaxarray": ["site"],
-		"runEcosystem": ["time"],
+		"yaxarray": [],
+		"runEcosystem": ["time", "site"],
 		"parallelization": "threads"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
 		"catchErrors": 			false,
+		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
@@ -27,7 +28,7 @@
 	{
 		"verbosity": 5,
 		"data_type": "Float64",
-		"data_backend": "yaxarray",
+		"data_backend": "zarr",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},
