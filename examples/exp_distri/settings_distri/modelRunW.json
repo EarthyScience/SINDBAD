@@ -18,16 +18,17 @@
 	{
 		"saveInfo": 			true,
 		"catchErrors": 			false,
+		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				false
+		"runOpti": 				false,
+		"calcCost":				true
 	},
 	"rules":
 	{
 		"verbosity": 5,
 		"data_type": "Float64",
-		"data_backend": "yaxarray",
+		"data_backend": "zarr",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},

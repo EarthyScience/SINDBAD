@@ -5,10 +5,73 @@
     },
     "models": {
         "ambientCO2": {
-            "approach": "constant"
+            "approach": "forcing"
+        },
+        "aRespiration": {
+            "approach": "Thornley2000A"
+        },
+        "aRespirationAirT": {
+            "approach": "Q10"
         },
         "capillaryFlow": {
             "approach": "VanDijk2010"
+        },
+        "cAllocation": {
+            "approach": "GSI"
+        },
+        "cAllocationLAI": {
+            "approach": "none"
+        },
+        "cAllocationNutrients": {
+            "approach": "none"
+        },
+        "cAllocationRadiation": {
+            "approach": "gpp"
+        },
+        "cAllocationTreeFraction": {
+            "approach": "Friedlingstein1999"
+        },
+        "cAllocationSoilT": {
+            "approach": "gpp"
+        },
+        "cAllocationSoilW": {
+            "approach": "gpp"
+        },
+        "cCycle": {
+            "approach": "simple"
+        },
+        "cCycleBase": {
+            "approach": "GSI"
+        },
+        "cCycleDisturbance": {
+            "approach": "constant"
+        },
+        "cFlow": {
+            "approach": "GSI"
+        },
+        "cFlowSoilProperties": {
+            "approach": "none"
+        },
+        "cFlowVegProperties": {
+            "approach": "none"
+        },
+        "cTau": {
+            "approach": "mult"
+        },
+        "cTauLAI": {
+            "approach": "none"
+        },
+        "cTauSoilProperties": {
+            "approach": "none"
+        },
+        "cTauSoilT": {
+            "approach": "Q10"
+        },
+        "cTauSoilW": {
+            "approach": "GSI"
+        },
+        "cTauVegProperties": {
+            "approach": "none"
         },
         "drainage": {
             "approach": "dos"
@@ -20,7 +83,7 @@
             "approach": "sum"
         },
         "fAPAR": {
-            "approach": "vegFraction"
+            "approach": "cVegLeaf"
         },
         "getPools": {
             "approach": "simple"
@@ -55,6 +118,9 @@
         "groundWSoilWInteraction":{
             "approach": "VanDijk2010"
         },
+        "LAI": {
+            "approach": "cVegLeaf"
+        },
         "percolation": {
             "approach": "WBP"
         },
@@ -62,10 +128,10 @@
             "approach": "Lu2005"
         },
         "rainSnow": {
-            "approach": "rain"
+            "approach": "Tair"
         },
         "rootFraction": {
-            "approach": "constant"
+            "approach": "expCvegRoot"
         },
         "rootMaximumDepth": {
             "approach": "fracSoilD"
@@ -88,6 +154,12 @@
         "runoffSurface": {
             "approach": "all"
         },
+        "snowFraction": {
+            "approach": "HTESSEL"
+        },
+        "snowMelt": {
+            "approach": "TairRn"
+        },
         "soilTexture": {
             "approach": "forcing"
         },
@@ -103,18 +175,18 @@
         "transpirationSupply": {
             "approach": "wAWC"
         },
+        "treeFraction": {
+            "approach": "constant"
+        },
         "totalTWS": {
             "approach": "sumComponents"
         },
-        "vegFraction": {
-            "approach": "forcing",
-            "order": 12
-        },
         "vegAvailableWater": {
-            "approach": "sigmoid"
+            "approach": "rootFraction"
         },
         "waterBalance": {
-            "approach": "simple"
+            "approach": "simple",
+            "use4spinup": false
         },
         "wCycle": {
             "approach": "combined"

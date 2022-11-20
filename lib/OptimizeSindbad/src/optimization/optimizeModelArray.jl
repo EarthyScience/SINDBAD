@@ -130,7 +130,6 @@ function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vecto
     model_data = (; Pair.(output_variables, output)...)
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
-    @info ".........................................."
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
 
@@ -179,7 +178,7 @@ function unpackYaxOptiArray(args; forcing_variables::AbstractArray)
 end
 
 
-function dummyGetObsCubes(args...; op, forcing_variables::AbstractArray, obs_variables::AbstractArray, tem)
+function dummyGetObsCubes(args...; op, forcing_variables::AbstractArray, obs_variables::AbstractArray)
     output, forcing, observation = unpackYaxOptiArray(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
@@ -204,7 +203,6 @@ function getObsUsingMapCube(forcing::NamedTuple, output::NamedTuple, observation
         op=op,
         forcing_variables=forcing_variables,
         obs_variables=obs_variables,
-        tem=tem,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache

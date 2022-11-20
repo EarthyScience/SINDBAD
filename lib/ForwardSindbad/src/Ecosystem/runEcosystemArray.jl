@@ -2,21 +2,39 @@ export getDataUsingMapCube
 export runEcosystem!
 export ecoLoc!
 
+# function getArrayView(a::AbstractArray{Float64,2}, inds::AbstractArray{Int64,2})
+#     return view(a, inds...)
+# end
+
+# function getArrayView(a::AbstractArray{Float64,3}, inds::AbstractArray{Int64,2})
+#     return view(a, :, inds...)
+# end
+
+# function getArrayView(a::AbstractArray{Float64,4}, inds::AbstractArray{Int64,2})
+#     return view(a, :, :, inds...)
+# end
+
 function getArrayView(a::AbstractArray{Float64,2}, inds)
-    return view(a, inds...)
-    # return view(a, :, inds..., 1)
+        view(a, :, inds...)
+    # return view(a, inds...)
 end
 
 function getArrayView(a::AbstractArray{Float64,3}, inds)
-    # @show size(a), inds
-    return view(a, :, inds...)
-    # return view(a, :, :, inds..., 1)
+    # @show inds, length(inds)
+    if length(inds) == 1
+        view(a, :, :, inds...)
+    else
+        view(a, :, inds...)
+    end
 end
 
 function getArrayView(a::AbstractArray{Float64,4}, inds)
     # @show size(a), inds
-    return view(a, :, :, inds...)
-    # return view(a, :, :, inds..., 1)
+    if length(inds) == 1
+        view(a, :, :, :, inds...)
+    else
+        view(a, :, :, inds...)
+    end
 end
 
 # function getArrayView(a::AbstractArray{Float32,2}, inds)
@@ -44,6 +62,7 @@ function getLocData(outcubes, forcing::NamedTuple, additionaldims, loc_names)
         inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
             loc_index
         end
+        # @show size(a), inds, typeof(inds)
         getArrayView(a, inds)
     end
     return loc_forcing, loc_output
@@ -69,8 +88,10 @@ end
 
 function setOuputT!(outputs, land::NamedTuple, tem_variables::NamedTuple, ts::Int64)
     var_index = 1
+    # @show size.(outputs)         
     for group in keys(tem_variables)
-        for k in tem_variables[group]            
+        for k in tem_variables[group]
+            # @show k            
             data_ts = selectdim(outputs[var_index], 1, ts) #assumes that the first dimension is always time
             data_ts .= land[group][k]
             # viewcopyT!(outputs[var_index],datak, ts)
