@@ -60,7 +60,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple)
     return dimSize, dimName      
 end
 
-function getOutDims(info, vname_full, outpath, outformat)
+function getOutDimsOri(info, vname_full, outpath, outformat)
     vname = Symbol(split(string(vname_full), '.')[end])
     inax =  info.modelRun.mapping.runEcosystem
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
@@ -71,7 +71,7 @@ function getOutDims(info, vname_full, outpath, outformat)
     end
 end
 
-function getOutDims(info, vname_full, ::Val{:array})
+function getOutDimsOri(info, vname_full, ::Val{:array})
     # vname = Symbol(split(string(vname_full), '.')[end])
     # inax =  info.modelRun.mapping.runEcosystem
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
@@ -80,6 +80,33 @@ function getOutDims(info, vname_full, ::Val{:array})
     else
         Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, depth_size, values(info.tem.helpers.run.loop)...);
     end
+end
+
+function getOutDims(info, vname_full, outpath, outformat)
+    vname = Symbol(split(string(vname_full), '.')[end])
+    inax =  info.modelRun.mapping.runEcosystem
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+    if isnothing(depth_size)
+        OutDims(inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend = :zarr, overwrite=true)
+    else
+        OutDims(inax[1], RangeAxis(depth_name, 1:depth_size),inax[2:end]..., path=joinpath(outpath, "$(vname)$(outformat)"), backend=:zarr, overwrite=true)
+        # OutDims(RangeAxis(depth_name, 1:depth_size),inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend=:zarr, overwrite=true)
+    end
+end
+
+function getOutDims(info, vname_full, ::Val{:array})
+    # vname = Symbol(split(string(vname_full), '.')[end])
+    # inax =  info.modelRun.mapping.runEcosystem
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+    ar = nothing
+    if isnothing(depth_size)
+        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))}(undef, values(info.tem.helpers.run.loop)...);
+    else
+        ax_vals = values(info.tem.helpers.run.loop)
+        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+        # Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, depth_size, values(info.tem.helpers.run.loop)...);
+    end
+    ar .= info.tem.helpers.numbers.sNT(NaN)
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -106,7 +133,7 @@ function setupOutput(info::NamedTuple)
         getOutDims(info, vn, info.output.data, outformat)
     end
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
-    if info.tem.helpers.run.runOpti
+    if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         outarray = map(datavars) do vn
             getOutDims(info, vn, Val(:array))
         end
@@ -115,10 +142,10 @@ function setupOutput(info::NamedTuple)
     vnames = collect(Iterators.flatten(info.tem.variables))
     output_tuple = setTupleField(output_tuple, (:variables, vnames))
     # output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
-    # if info.modelRun.flags.runOpti
-    #     @info "setupOutput: getting parameter output for optimization..."
-    #     output_tuple = setupOptiOutput(info, output_tuple);
-    # end
+    if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
+        @info "setupOutput: getting parameter output for optimization..."
+        output_tuple = setupOptiOutput(info, output_tuple);
+    end
     println("----------------------------------------------")
     return output_tuple
 end
