@@ -1,4 +1,7 @@
 {
+	"1.c":	"flags for running optimization (runOpti), forward (runForward), forward run  per year (runForwardYearly), or forward run with model cost (calcCost)",
+	"2.c":	"information related to model time steps",
+	"3.c": "output and datatype",
 
 	"time":
 	{
@@ -10,18 +13,17 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": ["longitude", "latitude"],
-		"runEcosystem": ["time"],
-		"parallelization": "threads"
+		"yaxarray": [],
+		"runEcosystem": ["time", "id"]
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
-		"catchErrors": 			true,
+		"catchErrors": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				false,
-		"calcCost":				false
+		"runOpti": 				true,
+		"calcCost":				true
 	},
 	"rules":
 	{
@@ -46,10 +48,8 @@
 			"fluxes.runoff": null,
 			"fluxes.runoffSurface": null,
 			"fluxes.gpp": null,
-			"fluxes.NEE": null,
 			"pools.snowW": "d_snow",
 			"pools.soilW": "d_soil",
-			"pools.cEco": "d_cEco",
 			"waterBalance.waterBalance": null
 		}
 	}
