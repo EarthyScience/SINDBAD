@@ -1,11 +1,12 @@
 module OptimizeSindbad
 using InteractiveUtils
+using Sindbad
 using ForwardSindbad
 using CMAEvolutionStrategy:
     minimize,
     xbest
 using Dates
-using DifferentialEquations
+# using DifferentialEquations
 using ForwardDiff
 using Flatten:
     flatten,
@@ -33,19 +34,14 @@ using StatsBase:
     mean,
     percentile,
     cor
-using YAXArrays, NetCDF, DiskArrayTools, Zarr
-using YAXArrays: savecube
-using AxisKeys
-using AxisKeys: KeyedArray, AxisKeys
-using FillArrays
-using YAXArrayBase: getdata, YAXArrayBase
+
 using JLD2: @save
 
-# include("tools/tools.jl")
-#include("Ecosystem/Ecosystem.jl")
-include("optimization/optimization.jl")
+using YAXArrays
+using YAXArrayBase
+using YAXArrays: savecube
+using YAXArrayBase: getdata
 
-#include("Models/models.jl")
-#@reexport using .Models
+include("optimization/optimization.jl")
 
 end

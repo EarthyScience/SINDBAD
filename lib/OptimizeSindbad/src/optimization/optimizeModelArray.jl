@@ -1,8 +1,8 @@
-export optimizeModel
-export getConstraintNames, getSimulationData, loss, getLoss
-export getData
-export mapOptimizeModel
-export getLossVector
+export optimizeModelArray
+export getConstraintNames, getSimulationDataArray,  getLossArray
+export getDataArray
+export getLossVectorArray
+export getObsUsingMapCube
 """
     getConstraintNames(info)
 returns
@@ -10,7 +10,7 @@ returns
 - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
 - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
-function getConstraintNames(optim::NamedTuple)
+function getConstraintNamesArray(optim::NamedTuple)
     obsVariables = Symbol.(optim.variables2constrain)
     modelVariables = String[]
     optimVariables = (;)
@@ -28,30 +28,29 @@ end
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
+function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷ =  getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
         ŷ = permutedims(ŷ, (2, 3, 1))
     end
-    @show size(y[:]), size(yσ[:]), size(ŷ)
-    return (y[:], yσ[:], ŷ)
+    return (y, yσ, ŷ)
 end
 
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getData(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
+function getDataArray(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
         ŷ = permutedims(ŷ, (2, 3, 1))
     end
     return (y, yσ, ŷ)
@@ -61,7 +60,7 @@ end
     combineLoss(lossVector, ::Val{:sum})
 return the total of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:sum})
+function combineLossArray(lossVector::AbstractArray, ::Val{:sum})
     return sum(lossVector)
 end
 
@@ -69,7 +68,7 @@ end
     combineLoss(lossVector, ::Val{:minimum})
 return the minimum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:minimum})
+function combineLossArray(lossVector::AbstractArray, ::Val{:minimum})
     return minimum(lossVector)
 end
 
@@ -78,7 +77,7 @@ end
     combineLoss(lossVector, ::Val{:maximum})
 return the maximum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:maximum})
+function combineLossArray(lossVector::AbstractArray, ::Val{:maximum})
     return maximum(lossVector)
 end
 
@@ -86,7 +85,7 @@ end
     combineLoss(lossVector, percentile_value)
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, percentile_value::T) where {T<:Real}
+function combineLossArray(lossVector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(lossVector, percentile_value)
 end
 
@@ -94,7 +93,7 @@ end
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
-function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple)
+function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
     lossVec = []
     cost_options = optim.costOptions
     optimVars = optim.variables.optim
@@ -102,7 +101,7 @@ function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple
         obsV = var_row.variable
         lossMetric = var_row.costMetric
         mod_variable = getfield(optimVars, obsV)
-        (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
+        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
         if isnan(metr)
             push!(lossVec, 1.0E19)
@@ -117,8 +116,7 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::Any, initOut::NamedTuple,
-    observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple)
+function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -126,34 +124,37 @@ function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::An
     else
         tblParams.optim .= pVector # update the parameters with pVector
     end
-
+    
     newApproaches = updateParameters(tblParams, tem.models.forward)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
+    runEcosystem!(output, newApproaches, forcing, tem, tem.helpers.run.parallelization);
+    model_data = (; Pair.(output_variables, output)...)
+    # run_output = output.data;
+    # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     @info ".........................................."
-    loss_vector = getLossVector(observations, outevolution, optim)
+    loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
 
-    return combineLoss(loss_vector, Val(optim.multiConstraintMethod))
+    return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing::NamedTuple, initOut::NamedTuple, observations::NamedTuple,
-    tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
+function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple,tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(tem.models.forward, optim.optimized_parameters)
+    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters)
 
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
+
     # make the cost function handle
-    cost_function = x -> getLoss(x, forcing, spinup_forcing, initOut,
+    cost_function = x -> getLossArray(x, forcing, output, output_variables,
         observations, tblParams, tem, optim)
 
     # run the optimizer
@@ -164,46 +165,52 @@ function optimizeModel(forcing::NamedTuple, initOut::NamedTuple, observations::N
     return tblParams
 end
 
-function unpackYaxOpti(args; forcing_variables::AbstractArray)
+
+
+function unpackYaxOptiArray(args; forcing_variables::AbstractArray)
     nforc = length(forcing_variables)
     outputs = first(args)
     forcings = args[2:(nforc+1)]
     observations = args[(nforc+2):end]
+    # outputs = args[1:nout]
+    # forcings = args[(nout+1):(nforc+nout)]
+    # observations = args[(nforc+nout+1):end]
     return outputs, forcings, observations
 end
 
 
-function doOptimizeModel(args...; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray, spinup_forcing::Any)
-    output, forcing, observation = unpackYaxOpti(args; forcing_variables)
+function dummyGetObsCubes(args...; op, forcing_variables::AbstractArray, obs_variables::AbstractArray, tem)
+    output, forcing, observation = unpackYaxOptiArray(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
-    params = optimizeModel(forcing, out, observation,
-        tem, optim; spinup_forcing=spinup_forcing)
-    output[:] = params.optim
+    push!(op, forcing);
+    push!(op, output);
+    push!(op, observation);
 end
 
 
-function mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, optim::NamedTuple, observations::NamedTuple,
-    ; spinup_forcing=nothing, max_cache=1e9)
+
+function getObsUsingMapCube(forcing::NamedTuple, output::NamedTuple, observations::NamedTuple, tem; max_cache=1e9)
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
     forcing_variables = forcing.variables |> collect
     outdims = output.paramdims
-    out = output.land_init
     obs_variables = observations.variables |> collect
+    tem = tem
+    op=[]
 
-
-    params = mapCube(doOptimizeModel,
+    mapCube(dummyGetObsCubes,
         (incubes...,);
-        out=out,
-        tem=tem,
-        optim=optim,
+        op=op,
         forcing_variables=forcing_variables,
         obs_variables=obs_variables,
-        spinup_forcing=spinup_forcing,
+        tem=tem,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache
     )
-    return params
+    return op[1], op[2], op[3]
 end
+
+
+
