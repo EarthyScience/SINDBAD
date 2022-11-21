@@ -4,7 +4,7 @@
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm1": {
+	"algorithm_bfgs": {
 		"package": "Optim",
 		"method": "LBFGS",
 		"options_file": "optim_LBFGS.json",
@@ -14,18 +14,6 @@
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
-		"isMultiObj": false
-	},
-	"algorithmms": {
-		"package": "Optimization",
-		"method": "MultistartOptimization",
-		"options_file": null,
-		"isMultiObj": false
-	},
-	"algorithm-gcmaes": {
-		"package": "Optimization",
-		"method": "GCMAES_FD",
-		"options_file": null,
 		"isMultiObj": false
 	},
 	"optimized_parameters": [

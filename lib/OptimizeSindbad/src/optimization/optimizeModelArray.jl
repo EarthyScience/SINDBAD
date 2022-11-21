@@ -2,7 +2,6 @@ export optimizeModelArray
 export getSimulationDataArray,  getLossArray
 export getDataArray
 export getLossVectorArray
-export getObsUsingMapCube
 
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
@@ -142,52 +141,4 @@ function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variable
     tblParams.optim .= optim_para
     return tblParams
 end
-
-
-
-function unpackYaxOptiArray(args; forcing_variables::AbstractArray)
-    nforc = length(forcing_variables)
-    outputs = first(args)
-    forcings = args[2:(nforc+1)]
-    observations = args[(nforc+2):end]
-    # outputs = args[1:nout]
-    # forcings = args[(nout+1):(nforc+nout)]
-    # observations = args[(nforc+nout+1):end]
-    return outputs, forcings, observations
-end
-
-
-function dummyGetObsCubes(args...; op, forcing_variables::AbstractArray, obs_variables::AbstractArray)
-    output, forcing, observation = unpackYaxOptiArray(args; forcing_variables)
-    forcing = (; Pair.(forcing_variables, forcing)...)
-    observation = (; Pair.(obs_variables, observation)...)
-    push!(op, forcing);
-    push!(op, output);
-    push!(op, observation);
-end
-
-
-
-function getObsUsingMapCube(forcing::NamedTuple, output::NamedTuple, observations::NamedTuple, tem; max_cache=1e9)
-    incubes = (forcing.data..., observations.data...)
-    indims = (forcing.dims..., observations.dims...)
-    forcing_variables = forcing.variables |> collect
-    outdims = output.paramdims
-    obs_variables = observations.variables |> collect
-    tem = tem
-    op=[]
-
-    mapCube(dummyGetObsCubes,
-        (incubes...,);
-        op=op,
-        forcing_variables=forcing_variables,
-        obs_variables=obs_variables,
-        indims=indims,
-        outdims=outdims,
-        max_cache=max_cache
-    )
-    return op[1], op[2], op[3]
-end
-
-
 
