@@ -1,6 +1,6 @@
 {
 	"size": {
-		"site": 2,
+		"site": 50,
 		"time": 730
 	},
 	"dimensions": {
@@ -53,7 +53,6 @@
 		"bounds": [0.0, 50.0],
 		"sourceVariableName": "PAR",
 		"sourceVariableUnit": "MJ m-2 d-1",
-		"source2sindbadUnit": 0.50,
 		"nameShort": "Photosynthetically active radiation (=Rg*.5)"
 	},
 	"RgPot":
@@ -104,7 +103,6 @@
 		"bounds": [0.01, 100.0],
 		"sourceVariableName": "VPD",
 		"sourceVariableUnit": "Pa",
-		"source2sindbadUnit": 0.001,
 		"nameShort": "Vapor pressure deficit"
 	},
 	"VPDDay":
@@ -121,7 +119,6 @@
 		"bounds": [0.0, 100.0],
 		"sourceVariableName": "CLAY",
 		"sourceVariableUnit": "%",
-		"source2sindbadUnit": 0.01,
 		"nameShort": "CLAY",
 		"spaceTimeType": "spatiovertical",
 		"sourceDataProductName": "soilgrids"
@@ -132,7 +129,6 @@
 		"bounds": [0.0, 100.0],
 		"sourceVariableName": "SAND",
 		"sourceVariableUnit": "%",
-		"source2sindbadUnit": 0.01,
 		"nameShort": "SAND",
 		"spaceTimeType": "spatiovertical",
 		"sourceDataProductName": "soilgrids"
@@ -142,7 +138,6 @@
 		"bounds": [0.0, 100.0],
 		"sourceVariableName": "SILT",
 		"sourceVariableUnit": "%",
-		"source2sindbadUnit": 0.01,
 		"nameShort": "CLAY",
 		"spaceTimeType": "spatiovertical",
 		"sourceDataProductName": "soilgrids"
@@ -152,7 +147,6 @@
 		"bounds": [0.0, 100.0],
 		"sourceVariableName": "ORGM",
 		"sourceVariableUnit": "%",
-		"source2sindbadUnit": 0.0,
 		"nameShort": "CLAY",
 		"spaceTimeType": "spatiovertical",
 		"sourceDataProductName": "soilgrids"

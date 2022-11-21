@@ -2,7 +2,7 @@
 
 julia_version = "1.8.1"
 manifest_format = "2.0"
-project_hash = "054c59ec24bee341515632888658148b091bfdb0"
+project_hash = "ffcbcae38c32ae42ccbc6026b1fd57226ba44608"
 
 [[deps.AWS]]
 deps = ["Base64", "Compat", "Dates", "Downloads", "GitHub", "HTTP", "IniFile", "JSON", "MbedTLS", "Mocking", "OrderedCollections", "Random", "Sockets", "URIs", "UUIDs", "XMLDict"]

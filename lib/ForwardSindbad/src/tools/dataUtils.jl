@@ -3,6 +3,8 @@ export AllNaN
 export getForcingTimeSize
 export getForcingForTimeStep
 export filterVariables
+export getKeyedArrayFromYaxArray
+
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
 Add skipping filter for pixels with all nans in YAXArrays 
@@ -69,4 +71,16 @@ function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables
         end
     end
     return fout
+end
+
+"""
+getKeyedArrayFromYaxArray(input::NamedTuple)
+"""
+function getKeyedArrayFromYaxArray(input::NamedTuple)
+    ks = input.variables;
+    keyedData = map(input.data) do c
+    namesCube = YAXArrayBase.dimnames(c)
+        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k in namesCube)...)
+    end
+    return (; Pair.(ks, keyedData)...);
 end

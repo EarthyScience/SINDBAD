@@ -14,7 +14,7 @@ using BenchmarkTools
 # copy data from 
 # rsync -avz lalonso@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_observations.zarr
 Sindbad.noStackTrace()
-experiment_json = "./settings_distri/experimentW.json"
+experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
@@ -23,17 +23,13 @@ forcing = getForcing(info, Val{:zarr}());
 # Sindbad.eval(:(error_catcher = []));
 
 output = setupOutput(info);
-
+forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-
-forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
+obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
 @time outcubes = runExperimentForward(experiment_json);  
 
-
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forc, out, obs = getObsUsingMapCube(forcing, output, observations, info.tem; max_cache=1e9);
 
 @time outcubes = runExperimentOpti(experiment_json);  
 

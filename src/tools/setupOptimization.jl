@@ -20,7 +20,7 @@ function getConstraintNames(optim::NamedTuple)
     end
     # optimVariables = getVariableGroups(modelVariables)
     storeVariables = getVariableGroups(modelVariables)
-    return obsVariables, optimVariables, storeVariables
+    return obsVariables, optimVariables, storeVariables, modelVariables
 end
 
 
@@ -102,11 +102,12 @@ function setupOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optim, (:mapping, info.modelRun.mapping))
 
     # get the variables to be used during optimization
-    obsVars, optimVars, storeVars = getConstraintNames(info.opti)
+    obsVars, optimVars, storeVars, modelVars = getConstraintNames(info.opti)
     varibInfo = (;)
     varibInfo = setTupleField(varibInfo, (:obs, obsVars))
     varibInfo = setTupleField(varibInfo, (:optim, optimVars))
     varibInfo = setTupleField(varibInfo, (:store, storeVars))
+    varibInfo = setTupleField(varibInfo, (:model, modelVars))
     info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
     
     return info
