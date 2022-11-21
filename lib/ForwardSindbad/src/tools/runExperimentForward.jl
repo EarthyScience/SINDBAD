@@ -11,7 +11,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
     if isempty(additionaldims)
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
     else
-        forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
+        forc = getKeyedArrayFromYaxArray(forcing);
         runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
         run_output = output.data;
     end

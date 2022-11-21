@@ -14,9 +14,10 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
         run_output = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        forc_array, run_output, obs_array = getObsUsingMapCube(forcing, output, observations, info.tem; max_cache=1e9);
+        forc_array = getKeyedArrayFromYaxArray(forcing);
+        obs_array = getKeyedArrayFromYaxArray(observations);
         optim_params = optimizeModelArray(forc_array, output.data, output_vars, obs_array, info.tem, info.optim)
-        run_output[:] =  optim_params.optim
+        run_output =  optim_params.optim
     end    
     return run_output
 end
@@ -29,7 +30,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:cost})
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-    forc_array, out, obs_array = getObsUsingMapCube(forcing, output, observations, info.tem; max_cache=1e9);
+    forc_array = getKeyedArrayFromYaxArray(forcing);
+    obs_array = getKeyedArrayFromYaxArray(observations);
+
     println("-------------------Cost Calculation Mode---------------------------")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
