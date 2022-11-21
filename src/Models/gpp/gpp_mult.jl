@@ -3,6 +3,21 @@ export gpp_mult
 struct gpp_mult <: gpp
 end
 
+function precompute(o::gpp_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+	@unpack_land begin
+		𝟘 ∈ helpers.numbers
+	end
+
+	AllScGPP = 𝟘
+	gpp = 𝟘
+	## pack land variables
+	@pack_land begin
+		AllScGPP => land.gpp
+		gpp => land.fluxes
+	end
+	return land
+end
+
 function compute(o::gpp_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
 
 	## unpack land variables

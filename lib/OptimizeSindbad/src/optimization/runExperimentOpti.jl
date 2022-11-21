@@ -5,12 +5,11 @@ export runExperimentOpti
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:opti})
-    println("-------------------Optimization Mode---------------------------")
+    @info "-------------------Optimization Mode---------------------------"
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
     additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
-        println("----------------------------------------------")
         run_output = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
@@ -33,7 +32,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     forc_array = getKeyedArrayFromYaxArray(forcing);
     obs_array = getKeyedArrayFromYaxArray(observations);
 
-    println("-------------------Cost Calculation Mode---------------------------")
+    @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
     runEcosystem!(output.data, info.tem.models.forward, forc_array, info.tem, info.tem.helpers.run.parallelization);
@@ -42,7 +41,6 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     println("----------------------------------------------")
     model_data = (; Pair.(output_vars, output.data)...)
     run_output = getLossVectorArray(obs_array, model_data, info.optim)
-
     return run_output
 end
 

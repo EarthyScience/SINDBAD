@@ -47,7 +47,7 @@ forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_ba
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
-forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e12);
+forc = getKeyedArrayFromYaxArray(forcing);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
@@ -96,7 +96,7 @@ addprocs(28)
 end
 forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 output = setupOutput(info);
-forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e12);
+forc = getKeyedArrayFromYaxArray(forcing);
 
 
 for x = 1:5

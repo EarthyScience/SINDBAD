@@ -5,7 +5,7 @@ export runExperimentForward
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:forward})
-    println("-------------------Forward Mode---------------------------")
+    @info "-------------------Forward Run Mode---------------------------"
 
     additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
     if isempty(additionaldims)
@@ -26,10 +26,6 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    run_output=nothing
-    info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
-        # if (info.tem.helpers.run.runForward && !info.tem.helpers.run.calcCost)
     run_output = runExperiment(info, forcing, output, Val(:forward));
-
     return run_output
 end
