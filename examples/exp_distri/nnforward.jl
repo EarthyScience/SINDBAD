@@ -18,7 +18,7 @@ ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_
 #ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
 output = setupOutput(info);
 
-forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
+forcing = getForcing(info, ds, Val{:zarr}());
 chunkeddata = setchunks.(forcing.data, ((site=1,),));
 
 

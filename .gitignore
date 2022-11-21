@@ -29,6 +29,7 @@ tmp_*
 output_*
 /Manifest.toml
 examples/Manifest.toml
+examples/*/Manifest.toml
 docs/Manifest.toml
 
 examples/data/

@@ -11,7 +11,8 @@ experiment_json = "../exp_noW/settings_noW/experiment.json"
 
 info, forcing, output = prepExperimentForward(experiment_json);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forc, out, obs = getObsUsingMapCube(forcing, output, observations, info.tem; max_cache=1e9);
+forc = getKeyedArrayFromYaxArray(forcing);
+obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
 for tt = 1:5

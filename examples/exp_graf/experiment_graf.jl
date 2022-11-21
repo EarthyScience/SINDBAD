@@ -40,13 +40,13 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
-forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e12);
+forc = getKeyedArrayFromYaxArray(forcing);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)

@@ -1,18 +1,6 @@
-export getDataUsingMapCube
 export runEcosystem!
 export ecoLoc!
 
-# function getArrayView(a::AbstractArray{Float64,2}, inds::AbstractArray{Int64,2})
-#     return view(a, inds...)
-# end
-
-# function getArrayView(a::AbstractArray{Float64,3}, inds::AbstractArray{Int64,2})
-#     return view(a, :, inds...)
-# end
-
-# function getArrayView(a::AbstractArray{Float64,4}, inds::AbstractArray{Int64,2})
-#     return view(a, :, :, inds...)
-# end
 
 function getArrayView(a::AbstractArray{Float64,2}, inds)
         view(a, :, inds...)
@@ -37,20 +25,6 @@ function getArrayView(a::AbstractArray{Float64,4}, inds)
     end
 end
 
-# function getArrayView(a::AbstractArray{Float32,2}, inds)
-#     return view(a, :, inds..., 1)
-# end
-# # function getArrayView(a::Matrix{Union{Missing, Float64}, 2}, inds)
-# #     return view(a, :, inds..., 1)
-# # end
-
-
-# function getArrayView(a::AbstractArray{Float32,3}, inds)
-#     return view(a, :, :, inds..., 1)
-# end
-# function getArrayView(a::Matrix{Union{Missing, Float64}, 3}, inds)
-#     return view(a, :, :, inds..., 1)
-# end
 function getLocData(outcubes, forcing::NamedTuple, additionaldims, loc_names)
     loc_forcing = map(forcing) do a
         inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
@@ -88,37 +62,15 @@ end
 
 function setOuputT!(outputs, land::NamedTuple, tem_variables::NamedTuple, ts::Int64)
     var_index = 1
-    # @show size.(outputs)         
     for group in keys(tem_variables)
         for k in tem_variables[group]
-            # @show k            
             data_ts = selectdim(outputs[var_index], 1, ts) #assumes that the first dimension is always time
             data_ts .= land[group][k]
-            # viewcopyT!(outputs[var_index],datak, ts)
             var_index += 1
         end
     end
 end
 
-
-# function viewcopyT!(xout::AbstractArray, xin::Number, ts)
-#         xout[ts] = xin
-# end
-    
-
-# function viewcopyT!(xout::AbstractArray, xin::AbstractArray, ts)
-#     # @show xout[ts], xin
-#     xout[ts] .= xin
-# end
-
-# function viewcopyTOri!(xout::AbstractArray, xin::AbstractArray, ts)
-#     if length(xin) == 1
-#         xout[ts] = first(xin)
-#     else
-#         xout[:, ts] .= xin
-#     end
-# end
-    
     
 """
 runModels(forcing, models, out)
@@ -203,6 +155,20 @@ function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::Na
     # _ = pmap(ecofunc, 1:length(spaceLocs));
 end
 
+# """
+# runEcosystem(approaches, forcing, land_init, tem)
+# """
+# function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, ::Val{:tturbo})
+#     additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
+#     spacesize = values(tem.helpers.run.loop[additionaldims])
+#     spaceLocs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+
+#     @tturbo for i = eachindex(spaceLocs)
+#         loc_names = spaceLocs[i]
+#         ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
+#     end
+# end
+
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
@@ -227,37 +193,4 @@ function runEcosystem!(outcubes, approaches::Tuple, forcing::NamedTuple, tem::Na
     qbmap(spaceLocs) do loc_names
         ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, loc_names)
     end
-end
-
-
-function unpackYaxForwardArray(args; tem::NamedTuple, forcing_variables::AbstractArray)
-    nin = length(forcing_variables)
-    nout = sum(length, tem.variables)
-    outputs = args[1:nout]
-    inputs = args[(nout+1):(nout+nin)]
-    return outputs, inputs
-end
-
-
-function dummyGetDataCubes(args...; op, tem::NamedTuple, forcing_variables::AbstractArray)
-    outputs, inputs = unpackYaxForwardArray(args; tem, forcing_variables)
-    forcing = (; Pair.(forcing_variables, inputs)...)
-    push!(op, forcing);
-    push!(op, outputs);
-end
-
-
-function getDataUsingMapCube(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple; max_cache=1e9)
-    forcing_variables = forcing.variables |> collect
-    op=[]
-    mapCube(dummyGetDataCubes,
-        (forcing.data...,);
-        op=op,
-        tem=tem,
-        forcing_variables=forcing_variables,
-        indims=forcing.dims,
-        outdims=output.dims,
-        max_cache=max_cache
-    );
-    return op[1], op[2]
 end
