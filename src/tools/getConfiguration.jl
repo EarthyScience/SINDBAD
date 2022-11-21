@@ -1,5 +1,5 @@
 export getConfiguration, getExperimentConfiguration, readConfiguration
-export createNestedDict
+export createNestedDict, deep_merge
 
 """
     deep_merge(d::AbstractDict...) = merge(deep_merge, d...)

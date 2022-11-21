@@ -2,18 +2,22 @@ using Revise
 using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
-using YAXArrays
-# using opti
 noStackTrace()
+using YAXArrayBase
+using AxisKeys
+using YAXArrays
 
 experiment_json = "../exp_usmile/settings_cw/experiment.json"
 # experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-
+info = getExperimentInfo(experiment_json);
 info, forcing, output = prepExperimentForward(experiment_json);
+
+forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forc, out, obs = getObsUsingMapCube(forcing, output, observations, info.tem; max_cache=1e9);
+obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+@time runEcosystem!(output.data, info.tem.models.forward, nf, info.tem, info.tem.helpers.run.parallelization);
 for tt = 1:5
     @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
 end
@@ -21,10 +25,6 @@ end
 
 @time outcubes = runExperimentOpti(experiment_json);  
 # outcubes = runExperiment(experiment_json, Val(:forward));
-
-
-
-
 
 
 

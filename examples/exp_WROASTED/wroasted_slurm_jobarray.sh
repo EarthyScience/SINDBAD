@@ -5,7 +5,7 @@
 #SBATCH -p interactive
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --array=1-10%3
+#SBATCH --array=1-205%100
 
 module load julia/1.7.3
 
