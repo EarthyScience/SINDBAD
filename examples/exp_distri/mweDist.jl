@@ -21,7 +21,7 @@ experiment_json = "./settings_optiSpace/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
-forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
+forcing = getForcing(info, ds, Val{:zarr}());
 
 chunkeddata = setchunks.(forcing.data, ((site=1,),))
 

@@ -2,9 +2,7 @@
 	"variables2constrain": [
 		"gpp",
 		"transpiration",
-		"evapotranspiration",
-		"nee",
-		"reco"
+		"evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,

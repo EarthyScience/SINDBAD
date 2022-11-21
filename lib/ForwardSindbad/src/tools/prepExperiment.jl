@@ -1,6 +1,7 @@
 export saveOutCubes
 export getExperimentInfo
 export prepExperimentForward
+export prepExperimentOpti
 
 
 """
@@ -68,10 +69,10 @@ end
 
 
 """
-prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
+prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function prepExperimentObservation(sindbad_experiment::String; replace_info=nothing)
+function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     println("----------------------------------------------")
 
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
