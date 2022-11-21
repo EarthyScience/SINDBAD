@@ -659,6 +659,20 @@ function setupExperiment(info::NamedTuple)
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end
+    # adjust the model variable list for different model runSpinup
+    sel_vars = nothing
+    if info.modelRun.flags.runOpti
+        sel_vars = info.optim.variables.store
+    elseif info.tem.helpers.run.calcCost
+        if info.modelRun.flags.runForward
+            sel_vars = getVariableGroups(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model));
+        else
+            sel_vars = info.optim.variables.store
+        end
+    else
+        sel_vars = info.tem.variables
+    end
+    info = (; info..., tem=(; info.tem..., variables=sel_vars))
     println("----------------------------------------------")
     return info
 end

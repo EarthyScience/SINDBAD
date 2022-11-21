@@ -28,42 +28,53 @@ function getPoolSize(info::NamedTuple, poolName::Symbol)
     end
 end
 
-function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple)
+function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
+    field_name = first(split(string(vname), '.'))
     vname_s = split(string(vname), '.')[end]
     tmp_vars = info.modelRun.output.variables
-    vdim = tmp_vars[vname]
-    dimSize = 1
-    dimName = vname_s * "_idx"
-    if !isnothing(vdim) && isa(vdim, String)
-        dimName = vdim
-    end
-    if isnothing(vdim)
-        dimSize = nothing
-    elseif isa(vdim, Int64)
-        dimSize = vdim
-    elseif isa(vdim, String)
-        if Symbol(vdim) in keys(info.modelRun.output.depth_dimensions)
-            dimSizeK = getfield(info.modelRun.output.depth_dimensions, Symbol(vdim))
-            if isa(dimSizeK, Int64)
-                dimSize = dimSizeK
-            elseif isa(dimSizeK, String)
-                dimSize = getPoolSize(info, Symbol(dimSizeK))
+    dimName = ""
+    dimSize = nothing
+    if vname in keys(tmp_vars)
+        vdim = tmp_vars[vname]
+        dimSize = 1
+        dimName = vname_s * "_idx"
+        if !isnothing(vdim) && isa(vdim, String)
+            dimName = vdim
+        end
+        if isnothing(vdim)
+            dimSize = nothing
+        elseif isa(vdim, Int64)
+            dimSize = vdim
+        elseif isa(vdim, String)
+            if Symbol(vdim) in keys(info.modelRun.output.depth_dimensions)
+                dimSizeK = getfield(info.modelRun.output.depth_dimensions, Symbol(vdim))
+                if isa(dimSizeK, Int64)
+                    dimSize = dimSizeK
+                elseif isa(dimSizeK, String)
+                    dimSize = getPoolSize(info, Symbol(dimSizeK))
+                end
+            else
+                error("The output depth dimension for $(vname) is specified as $(vdim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value.")
             end
         else
-            error("The output depth dimension for $(vname) is specified as $(vdim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value.")
+            error("The depth dimension for $(vname) is specified as $(typeof(vdim)). Only null, integers, or string keys to depth_dimensions are accepted.")
         end
+        dimName = isnothing(dimSize) ? nothing : dimName
+            
+    elseif field_name == "pools"
+        dimName = vname_s * "_idx"
+        dimSize = length(getfield(land_init.pools, Symbol(vname_s)))
     else
-        error("The depth dimension for $(vname) is specified as $(typeof(vdim)). Only null, integers, or string keys to depth_dimensions are accepted.")
+        dimName = ""
+        dimSize = nothing
     end
-    dimName = isnothing(dimSize) ? nothing : dimName
-        
-    return dimSize, dimName      
+    return dimSize, dimName
 end
 
-function getOutDimsOri(info, vname_full, outpath, outformat)
+function getOutDimsOri(info, vname_full, outpath, outformat, land_init)
     vname = Symbol(split(string(vname_full), '.')[end])
     inax =  info.modelRun.mapping.runEcosystem
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     if isnothing(depth_size) || depth_size == 1
         OutDims(inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend = :zarr, overwrite=true)
     else
@@ -71,10 +82,10 @@ function getOutDimsOri(info, vname_full, outpath, outformat)
     end
 end
 
-function getOutDimsOri(info, vname_full, ::Val{:array})
+function getOutDimsOri(info, vname_full, land_init, ::Val{:array})
     # vname = Symbol(split(string(vname_full), '.')[end])
     # inax =  info.modelRun.mapping.runEcosystem
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     if isnothing(depth_size) || depth_size == 1
         Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))}(undef, values(info.tem.helpers.run.loop)...);
     else
@@ -82,10 +93,11 @@ function getOutDimsOri(info, vname_full, ::Val{:array})
     end
 end
 
-function getOutDims(info, vname_full, outpath, outformat)
+function getOutDims(info, vname_full, outpath, outformat, land_init)
     vname = Symbol(split(string(vname_full), '.')[end])
     inax =  info.modelRun.mapping.runEcosystem
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     if isnothing(depth_size)
         OutDims(inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend = :zarr, overwrite=true)
     else
@@ -94,10 +106,10 @@ function getOutDims(info, vname_full, outpath, outformat)
     end
 end
 
-function getOutDims(info, vname_full, ::Val{:array})
+function getOutDims(info, vname_full, land_init, ::Val{:array})
     # vname = Symbol(split(string(vname_full), '.')[end])
     # inax =  info.modelRun.mapping.runEcosystem
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info)
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     if isnothing(depth_size)
         ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))}(undef, values(info.tem.helpers.run.loop)...);
@@ -124,19 +136,19 @@ function setupOutput(info::NamedTuple)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
-        getOrderedOutputList(keys(info.modelRun.output.variables) |> collect, vn)
+        getOrderedOutputList(Symbol.(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model)) |> collect, vn)
     end
-    @info "setupOutput: getting output dimension..."
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
+    @info "setupOutput: getting output dimension for yaxarray..."
     outdims = map(datavars) do vn
-        getOutDims(info, vn, info.output.data, outformat)
+        getOutDims(info, vn, info.output.data, outformat, land_init)
     end
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
         @info "setupOutput: creating array output for optimization/cost..."
         outarray = map(datavars) do vn
-            getOutDims(info, vn, Val(:array))
+            getOutDims(info, vn, land_init, Val(:array))
         end
         output_tuple = setTupleField(output_tuple, (:data, outarray))
     end

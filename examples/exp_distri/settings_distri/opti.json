@@ -1,16 +1,13 @@
 {
 	"variables2constrain": [
-		"gpp",
-		"nee",
-		"transpiration",
-		"evapotranspiration"
+		"gpp"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
 	"algorithm": {
 		"package": "Evolutionary",
 		"method": "CMAES",
-		"options_file": null,
+		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
 	"algorithm_cmaes": {
