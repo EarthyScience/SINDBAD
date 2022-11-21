@@ -1,4 +1,4 @@
 {
-    "multi_threading": false, 
-    "maxfevals": 100
+    "multi_threading": true, 
+    "maxfevals": 300
 }

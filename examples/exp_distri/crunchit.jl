@@ -13,7 +13,7 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/";
 # ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
-forcing = HybridSindbad.getForcing(info, ds, Val{:zarr}());
+forcing = getForcing(info, ds, Val{:zarr}());
 using Zarr
 ds = YAXArrays.open_dataset(zopen(ds));
 

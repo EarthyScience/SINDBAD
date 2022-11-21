@@ -14,12 +14,8 @@ info = setupExperiment(info);
 
 dsPath = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/";
 # dsPath = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
-forcing = HybridSindbad.getForcing(info, dsPath, Val{:zarr}());
+forcing = getForcing(info, dsPath, Val{:zarr}());
 ds = YAXArrays.open_dataset(zopen(dsPath));
-
-chunkeddata = setchunks.(forcing.data, ((site=1,),));
-
-forcing = (; forcing..., data = (chunkeddata));
 
 # Sindbad.eval(:(error_catcher = []));
 
@@ -27,7 +23,7 @@ output = ForwardSindbad.setupOutput(info);
 # outcubes = runEcosystem(info.tem.models.forward, forcing, output.land_init, info.tem, output.dims);
 
 
-forc, out = getDataUsingMapCube(forcing, output, info.tem; max_cache=1e9);
+forc = getKeyedArrayFromYaxArray(forcing);
 # @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
