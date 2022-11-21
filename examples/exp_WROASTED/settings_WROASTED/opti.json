@@ -3,7 +3,10 @@
 		"gpp",
 		"nee",
 		"transpiration",
-		"evapotranspiration"
+		"evapotranspiration",
+		"agb",
+		"reco",
+		"ndvi"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
@@ -363,7 +366,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "nseinv"
+					"costMetric": "dynseinv"
 				}
 			}
 		}

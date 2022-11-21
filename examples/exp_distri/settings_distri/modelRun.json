@@ -21,8 +21,8 @@
 		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				false
+		"runOpti": 				false,
+		"calcCost":				true
 	},
 	"rules":
 	{

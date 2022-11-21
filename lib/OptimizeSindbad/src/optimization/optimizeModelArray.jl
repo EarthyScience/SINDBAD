@@ -1,29 +1,8 @@
 export optimizeModelArray
-export getConstraintNames, getSimulationDataArray,  getLossArray
+export getSimulationDataArray,  getLossArray
 export getDataArray
 export getLossVectorArray
 export getObsUsingMapCube
-"""
-    getConstraintNames(info)
-returns
-- obsVariables: a list of observation variables that will be used to calculate cost
-- optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
-- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
-"""
-function getConstraintNamesArray(optim::NamedTuple)
-    obsVariables = Symbol.(optim.variables2constrain)
-    modelVariables = String[]
-    optimVariables = (;)
-    for v in obsVariables
-        vinfo = getproperty(optim.constraints.variables, v)
-        push!(modelVariables, vinfo.modelFullVar)
-        vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
-        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
-    end
-    # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(modelVariables)
-    return obsVariables, optimVariables, storeVariables
-end
 
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
