@@ -1,0 +1,7 @@
+run(`cp ../base_experiment.toml Project.toml`)
+Pkg.activate(".")
+Pkg.develop(path="../../")
+Pkg.develop(path="../../lib/ForwardSindbad")
+Pkg.develop(path="../../lib/OptimizeSindbad")
+Pkg.develop(path="../../lib/HybridSindbad")
+Pkg.instantiate()
