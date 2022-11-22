@@ -5,8 +5,8 @@ using OptimizeSindbad
 noStackTrace()
 
 experiment_json = "../exp_usmile/settings_lue/experiment.json"
-experiment_json = "../exp_usmile/settings_w/experiment.json"
-experiment_json = "../exp_usmile/settings_cw/experiment.json"
+# experiment_json = "../exp_usmile/settings_w/experiment.json"
+# experiment_json = "../exp_usmile/settings_cw/experiment.json"
 
 
 outcubes = runExperimentForward(experiment_json);  
