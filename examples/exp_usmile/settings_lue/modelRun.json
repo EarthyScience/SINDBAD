@@ -10,8 +10,8 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": [],
-		"runEcosystem": ["time", "longitude", "latitude"],
+		"yaxarray": ["longitude", "latitude"],
+		"runEcosystem": ["time"],
 		"parallelization": "threads"
 	},
 	"flags":
