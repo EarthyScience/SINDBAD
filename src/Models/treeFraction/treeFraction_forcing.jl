@@ -3,7 +3,7 @@ export treeFraction_forcing
 struct treeFraction_forcing <: treeFraction
 end
 
-function compute(o::treeFraction_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::treeFraction_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing treeFraction ∈ forcing
 

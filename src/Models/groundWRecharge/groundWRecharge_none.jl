@@ -3,7 +3,7 @@ export groundWRecharge_none
 struct groundWRecharge_none <: groundWRecharge
 end
 
-function precompute(o::groundWRecharge_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::groundWRecharge_none, forcing, land, helpers)
 
 	## calculate variables
 	groundWRec = helpers.numbers.𝟘

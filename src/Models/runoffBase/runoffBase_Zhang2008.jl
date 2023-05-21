@@ -4,7 +4,7 @@ export runoffBase_Zhang2008
 	bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
 
-function precompute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	runoffBase = helpers.numbers.𝟘
 
 	@pack_land begin
@@ -13,7 +13,7 @@ function precompute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTup
 	return land
 end
 
-function compute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffBase_Zhang2008 o
 
@@ -40,7 +40,7 @@ function compute(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple,
 	return land
 end
 
-function update(o::runoffBase_Zhang2008, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::runoffBase_Zhang2008, forcing, land, helpers)
 	@unpack_runoffBase_Zhang2008 o
 
 	## unpack variables

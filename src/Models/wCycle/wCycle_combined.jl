@@ -3,7 +3,7 @@ export wCycle_combined
 struct wCycle_combined <: wCycle
 end
 
-function precompute(o::wCycle_combined, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::wCycle_combined, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		ΔTWS ∈ land.states
@@ -14,7 +14,7 @@ function precompute(o::wCycle_combined, forcing::NamedTuple, land::NamedTuple, h
 	return land
 end
 
-function compute(o::wCycle_combined, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::wCycle_combined, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		TWS ∈ land.pools

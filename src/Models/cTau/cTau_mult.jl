@@ -2,7 +2,7 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function precompute(o::cTau_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
@@ -14,7 +14,7 @@ function precompute(o::cTau_mult, forcing::NamedTuple, land::NamedTuple, helpers
     return land
 end
 
-function compute(o::cTau_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         p_kfVeg ∈ land.cTauVegProperties

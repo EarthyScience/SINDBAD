@@ -4,7 +4,22 @@ export vegAvailableWater_sigmoid
 	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
+	## unpack parameters
+	@unpack_vegAvailableWater_sigmoid o
+
+	## unpack land variables
+	@unpack_land begin
+		soilW ∈ land.pools
+	end
+
+	θ_dos = zero(soilW)
+	## pack land variables
+	@pack_land θ_dos => land.vegAvailableWater
+	return land
+end
+
+function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegAvailableWater_sigmoid o
 
@@ -15,6 +30,7 @@ function compute(o::vegAvailableWater_sigmoid, forcing::NamedTuple, land::NamedT
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(𝟘, 𝟙) ∈ helpers.numbers
+		θ_dos ∈ land.vegAvailableWater
 	end
 
 	θ_dos = (soilW + ΔsoilW) ./ p_wSat

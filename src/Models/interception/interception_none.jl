@@ -3,7 +3,7 @@ export interception_none
 struct interception_none <: interception
 end
 
-function precompute(o::interception_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::interception_none, forcing, land, helpers)
 
 	## calculate variables
 	interception = helpers.numbers.𝟘

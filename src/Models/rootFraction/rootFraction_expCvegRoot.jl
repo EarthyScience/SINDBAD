@@ -6,7 +6,7 @@ export rootFraction_expCvegRoot
     fracRoot2SoilD_min::T3 = 0.1 | (0.05, 0.3) | "minimum root water uptake threshold" | ""
 end
 
-function precompute(o::rootFraction_expCvegRoot, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
     @unpack_rootFraction_expCvegRoot o
     @unpack_land begin
         soilLayerThickness ∈ land.soilWBase
@@ -24,7 +24,7 @@ function precompute(o::rootFraction_expCvegRoot, forcing::NamedTuple, land::Name
     return land
 end
 
-function compute(o::rootFraction_expCvegRoot, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
     ## unpack parameters
     @unpack_rootFraction_expCvegRoot o
     ## unpack land variables
