@@ -40,10 +40,6 @@
         "cCycle": {
             "approach": "simple"
         },
-        "cCycleConsistency": {
-            "approach": "simple",
-            "use4spinup": false
-        },
         "cCycleBase": {
             "approach": "GSI"
         },
