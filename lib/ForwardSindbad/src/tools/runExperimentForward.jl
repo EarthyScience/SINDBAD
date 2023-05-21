@@ -12,7 +12,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
         run_output = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
     else
         forc = getKeyedArrayFromYaxArray(forcing);
-        runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+        runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
         run_output = output.data;
     end
     return run_output
