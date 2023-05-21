@@ -3,7 +3,7 @@ export drainage_kUnsat
 struct drainage_kUnsat <: drainage
 end
 
-function precompute(o::drainage_kUnsat, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::drainage_kUnsat, forcing, land, helpers)
 	## instantiate drainage
 	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
 	## pack land variables
@@ -11,7 +11,7 @@ function precompute(o::drainage_kUnsat, forcing::NamedTuple, land::NamedTuple, h
 	return land
 end
 
-function compute(o::drainage_kUnsat, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::drainage_kUnsat, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -43,7 +43,7 @@ function compute(o::drainage_kUnsat, forcing::NamedTuple, land::NamedTuple, help
 	return land
 end
 
-function update(o::drainage_kUnsat, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::drainage_kUnsat, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

@@ -5,7 +5,7 @@ export gppSoilW_CASA
 end
 
 
-function precompute(o::gppSoilW_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
@@ -18,7 +18,7 @@ function precompute(o::gppSoilW_CASA, forcing::NamedTuple, land::NamedTuple, hel
     return land
 end
 
-function compute(o::gppSoilW_CASA, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppSoilW_CASA o
     @unpack_forcing Tair ∈ forcing

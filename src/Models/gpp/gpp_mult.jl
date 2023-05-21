@@ -3,7 +3,7 @@ export gpp_mult
 struct gpp_mult <: gpp
 end
 
-function precompute(o::gpp_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gpp_mult, forcing, land, helpers)
 	@unpack_land begin
 		𝟘 ∈ helpers.numbers
 	end
@@ -18,7 +18,7 @@ function precompute(o::gpp_mult, forcing::NamedTuple, land::NamedTuple, helpers:
 	return land
 end
 
-function compute(o::gpp_mult, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gpp_mult, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

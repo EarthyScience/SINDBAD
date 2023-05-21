@@ -4,7 +4,7 @@ export gppPotential_Monteith
 	εmax::T1 = 2.0 | (0.1, 5.0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
 end
 
-function precompute(o::gppPotential_Monteith, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppPotential_Monteith, forcing, land, helpers)
 	# set rueGPP to a constant
 	gppPot = helpers.numbers.𝟘
 
@@ -13,7 +13,7 @@ function precompute(o::gppPotential_Monteith, forcing::NamedTuple, land::NamedTu
 	return land
 end
 
-function compute(o::gppPotential_Monteith, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppPotential_Monteith, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_gppPotential_Monteith o
 	@unpack_forcing PAR ∈ forcing

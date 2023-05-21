@@ -3,7 +3,7 @@ export runoffSurface_none
 struct runoffSurface_none <: runoffSurface
 end
 
-function precompute(o::runoffSurface_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoffSurface_none, forcing, land, helpers)
 
 	## calculate variables
 	runoffSurface = helpers.numbers.𝟘

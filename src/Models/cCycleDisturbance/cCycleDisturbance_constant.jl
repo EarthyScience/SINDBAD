@@ -4,7 +4,7 @@ export cCycleDisturbance_constant
 	carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 
-function compute(o::cCycleDisturbance_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cCycleDisturbance_constant o
 	@unpack_forcing isDisturbed ∈ forcing
@@ -35,7 +35,7 @@ function compute(o::cCycleDisturbance_constant, forcing::NamedTuple, land::Named
 	return land
 end
 
-function update(o::cCycleDisturbance_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::cCycleDisturbance_constant, forcing, land, helpers)
 	@unpack_cCycleDisturbance_constant o
 
 	## unpack variables

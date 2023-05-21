@@ -2,7 +2,7 @@ export cAllocationSoilT_none
 
 struct cAllocationSoilT_none <: cAllocationSoilT end
 
-function precompute(o::cAllocationSoilT_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationSoilT_none, forcing, land, helpers)
 
     ## calculate variables
     fT = helpers.numbers.𝟙 #sujan fsoilW was changed to fTSoil

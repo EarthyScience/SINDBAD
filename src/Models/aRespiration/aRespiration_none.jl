@@ -3,7 +3,7 @@ export aRespiration_none
 struct aRespiration_none <: aRespiration
 end
 
-function precompute(o::aRespiration_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_none, forcing, land, helpers)
 	@unpack_land cEcoEfflux ∈ land.states
 
 	## calculate variables

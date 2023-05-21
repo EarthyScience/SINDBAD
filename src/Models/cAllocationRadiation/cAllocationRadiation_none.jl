@@ -2,7 +2,7 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function precompute(o::cAllocationRadiation_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationRadiation_none, forcing, land, helpers)
 
     ## calculate variables
     fR = helpers.numbers.𝟙

@@ -4,7 +4,7 @@ export transpirationDemand_PETfAPAR
 	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
 end
 
-function compute(o::transpirationDemand_PETfAPAR, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::transpirationDemand_PETfAPAR, forcing, land, helpers)
 	## unpack parameters
 	@unpack_transpirationDemand_PETfAPAR o
 

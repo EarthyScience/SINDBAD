@@ -2,7 +2,7 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function precompute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocation_GSI, forcing, land, helpers)
     @unpack_land sNT ∈ helpers.numbers
 
     ## instantiate variables
@@ -28,7 +28,7 @@ end
 
 
 
-function compute(o::cAllocation_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

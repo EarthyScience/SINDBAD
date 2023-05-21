@@ -6,7 +6,7 @@ export cTauSoilT_Q10
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
-function precompute(o::cTauSoilT_Q10, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilT_Q10, forcing, land, helpers)
 	## unpack parameters and forcing
 
 	## calculate variables
@@ -18,7 +18,7 @@ function precompute(o::cTauSoilT_Q10, forcing::NamedTuple, land::NamedTuple, hel
 	return land
 end
 
-function compute(o::cTauSoilT_Q10, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cTauSoilT_Q10, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cTauSoilT_Q10 o
 	@unpack_forcing Tair ∈ forcing
