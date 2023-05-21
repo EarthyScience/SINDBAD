@@ -5,7 +5,7 @@ export groundWSoilWInteraction_VanDijk2010
 	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
 
-function precompute(o::groundWSoilWInteraction_VanDijk2010, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		𝟘 ∈ helpers.numbers
@@ -20,7 +20,7 @@ function precompute(o::groundWSoilWInteraction_VanDijk2010, forcing::NamedTuple,
 	return land
 end
 
-function compute(o::groundWSoilWInteraction_VanDijk2010, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWSoilWInteraction_VanDijk2010 o
 
@@ -57,7 +57,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing::NamedTuple, la
 	return land
 end
 
-function update(o::groundWSoilWInteraction_VanDijk2010, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

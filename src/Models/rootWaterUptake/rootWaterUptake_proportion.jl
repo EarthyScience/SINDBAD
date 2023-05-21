@@ -4,7 +4,7 @@ struct rootWaterUptake_proportion <: rootWaterUptake
 end
 
 
-function precompute(o::rootWaterUptake_proportion, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -20,7 +20,7 @@ function precompute(o::rootWaterUptake_proportion, forcing::NamedTuple, land::Na
     return land
 end
 
-function compute(o::rootWaterUptake_proportion, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -50,7 +50,7 @@ function compute(o::rootWaterUptake_proportion, forcing::NamedTuple, land::Named
     return land
 end
 
-function update(o::rootWaterUptake_proportion, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::rootWaterUptake_proportion, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

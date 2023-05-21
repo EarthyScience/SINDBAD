@@ -3,7 +3,7 @@ export cAllocationSoilT_gpp
 struct cAllocationSoilT_gpp <: cAllocationSoilT
 end
 
-function precompute(o::cAllocationSoilT_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationSoilT_gpp, forcing, land, helpers)
 
 	## calculate variables
 	# computation for the temperature effect on decomposition/mineralization
@@ -13,7 +13,7 @@ function precompute(o::cAllocationSoilT_gpp, forcing::NamedTuple, land::NamedTup
 	return land
 end
 
-function compute(o::cAllocationSoilT_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cAllocationSoilT_gpp, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land TempScGPP ∈ land.gppAirT

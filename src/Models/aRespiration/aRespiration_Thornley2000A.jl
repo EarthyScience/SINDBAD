@@ -5,7 +5,7 @@ export aRespiration_Thornley2000A
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function precompute(o::aRespiration_Thornley2000A, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
@@ -24,7 +24,7 @@ function precompute(o::aRespiration_Thornley2000A, forcing::NamedTuple, land::Na
 	return land
 end
 
-function compute(o::aRespiration_Thornley2000A, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000A o
 

@@ -8,7 +8,7 @@ export WUE_expVPDDayCo2
 end
 
 
-function precompute(o::WUE_expVPDDayCo2, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::WUE_expVPDDayCo2, forcing, land, helpers)
 	## unpack parameters and forcing
 	## pack land variables
 	AoE = helpers.numbers.𝟙
@@ -17,7 +17,7 @@ function precompute(o::WUE_expVPDDayCo2, forcing::NamedTuple, land::NamedTuple, 
 	return land
 end
 
-function compute(o::WUE_expVPDDayCo2, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::WUE_expVPDDayCo2, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_WUE_expVPDDayCo2 o
 	@unpack_forcing VPDDay ∈ forcing

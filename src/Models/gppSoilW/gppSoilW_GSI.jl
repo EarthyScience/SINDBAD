@@ -7,7 +7,7 @@ export gppSoilW_GSI
 	fW_base::T4 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
 end
 
-function precompute(o::gppSoilW_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppSoilW_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppSoilW_GSI o
 
@@ -21,7 +21,7 @@ function precompute(o::gppSoilW_GSI, forcing::NamedTuple, land::NamedTuple, help
 	return land
 end
 
-function compute(o::gppSoilW_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_gppSoilW_GSI o
 

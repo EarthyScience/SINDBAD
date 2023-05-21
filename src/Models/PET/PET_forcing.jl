@@ -3,7 +3,7 @@ export PET_forcing
 struct PET_forcing <: PET
 end
 
-function compute(o::PET_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::PET_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing PET ∈ forcing
 

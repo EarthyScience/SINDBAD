@@ -4,7 +4,7 @@ export treeFraction_constant
 	constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
 end
 
-function precompute(o::treeFraction_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::treeFraction_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_treeFraction_constant o
 	## calculate variables
@@ -14,7 +14,7 @@ function precompute(o::treeFraction_constant, forcing::NamedTuple, land::NamedTu
 	return land
 end
 
-function compute(o::treeFraction_constant, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::treeFraction_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_treeFraction_constant o
 

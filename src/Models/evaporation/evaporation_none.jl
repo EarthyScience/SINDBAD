@@ -3,7 +3,7 @@ export evaporation_none
 struct evaporation_none <: evaporation
 end
 
-function precompute(o::evaporation_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::evaporation_none, forcing, land, helpers)
 
 	## calculate variables
 	evaporation = helpers.numbers.𝟘

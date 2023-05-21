@@ -4,7 +4,7 @@ export rainSnow_Tair
 	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 
-function precompute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     precip = helpers.numbers.𝟘
     rain = precip
@@ -13,7 +13,7 @@ function precompute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, hel
     return land
 end
 
-function compute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_Tair o
     @unpack_forcing (Rain, Tair) ∈ forcing
@@ -43,7 +43,7 @@ function compute(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helper
     return land
 end
 
-function update(o::rainSnow_Tair, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::rainSnow_Tair, forcing, land, helpers)
     @unpack_rainSnow_Tair o
 
     ## unpack variables
