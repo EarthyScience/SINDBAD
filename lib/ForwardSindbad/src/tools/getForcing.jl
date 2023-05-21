@@ -168,7 +168,14 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
-        subset = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
+        subset = v
+        if !isnothing(info.forcing.size.site)
+            subset = subset[site=1:info.forcing.size.site]
+        end
+        if !isnothing(info.forcing.size.time)
+            subset = subset[time=1:info.forcing.size.time]
+        end
+        # subset = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
 
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
         yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
@@ -201,7 +208,13 @@ function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
         # flag to indicate if subsets are needed.
         dim = YAXArrayBase.yaxconvert(DimArray, dsk) 
         # site, lon, lat should be options to consider here
-        subset = dim[site=1:info.forcing.size.site, time = 1:info.forcing.size.time] # info.tem.helpers.dates.range
+        subset = dim
+        if !isnothing(info.forcing.size.site)
+            subset = subset[site=1:info.forcing.size.site]
+        end
+        if !isnothing(info.forcing.size.time)
+            subset = subset[time=1:info.forcing.size.time]
+        end
         # support for subsets by name and numbers is also supported. Option to be added later.
         YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
     end

@@ -64,14 +64,18 @@ function getObsZarr(v)
 end
 
 
-function getObsYax(v, nc, variable_name::String, data_path::String)
+function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::String)
     atts = v.atts
     if any(in(keys(atts)), ["missing_value", "scale_factor", "add_offset"])
         v = CFDiskArray(v, atts)
     end
     ax = map(v.dim) do d
         dn = d.name
-        dv = nc[dn][:]
+        if dn in keys(nc)
+            dv = nc[dn][:]
+        else
+            dv=1:getfield(info.forcing.size, Symbol(dn))
+        end
         RangeAxis(dn, dv)
     end
     # yax = YAXArray(ax, v)
@@ -118,7 +122,14 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         ov = nc[src_var]
         v = YAXArrayBase.yaxconvert(DimArray, ov) 
         # site, lon, lat should be options to consider here
-        v = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time]
+        subset = v
+        if !isnothing(info.forcing.size.site)
+            subset = subset[site=1:info.forcing.size.site]
+        end
+        if !isnothing(info.forcing.size.time)
+            subset = subset[time=1:info.forcing.size.time]
+        end
+        # v = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time]
 
         # get the quality flag data
         dataPath_qc = nothing
@@ -264,7 +275,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         src_var = vinfo.data.sourceVariableName
 
         if !doOnePath
-            dataPath = getAbsDataPath(info, v.dataPath)
+            dataPath = getAbsDataPath(info, vinfo.data.dataPath)
             nc = getNCFromPath(dataPath, Val(:yaxarray))
         end
         @info "     $(k): Data: source_var: $(src_var), source_file: $(dataPath)"
@@ -295,7 +306,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         dataPath_unc = nothing
         v_unc = Any
         nc_unc = nc
-        unc_var = vinfo.unc.sourceVariableName
+        unc_var = Any
         one_unc = false
         if hasproperty(vinfo, :unc) && info.opti.useUncertainty
             unc_var = vinfo.unc.sourceVariableName
@@ -344,18 +355,18 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         end
         unc_tar_name = string(unc_var)
         mask_tar_name = string(src_var)
-        yax = getObsYax(v, nc, src_var, dataPath)
+        yax = getObsYax(v, nc, info, src_var, dataPath)
         yax_unc = nothing
         if one_unc
             yax_unc = map(x -> one(x), yax)
         else
-            yax_unc = getObsYax(v_unc, nc_unc, unc_tar_name, dataPath_unc)
+            yax_unc = getObsYax(v_unc, nc_unc, info, unc_tar_name, dataPath_unc)
         end
         yax_mask = nothing
         if no_mask
             yax_mask = map(x -> one(x), yax)
         else
-            yax_mask = getObsYax(v_mask, nc_mask, mask_tar_name, dataPath_mask)
+            yax_mask = getObsYax(v_mask, nc_mask, info, mask_tar_name, dataPath_mask)
         end
 
         numtype = Val{info.tem.helpers.numbers.numType}()
