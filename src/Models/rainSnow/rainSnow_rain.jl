@@ -3,7 +3,7 @@ export rainSnow_rain
 struct rainSnow_rain <: rainSnow
 end
 
-function precompute(o::rainSnow_rain, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing Rain ∈ forcing
 
@@ -19,7 +19,7 @@ function precompute(o::rainSnow_rain, forcing::NamedTuple, land::NamedTuple, hel
     return land
 end
 
-function compute(o::rainSnow_rain, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing Rain ∈ forcing
 

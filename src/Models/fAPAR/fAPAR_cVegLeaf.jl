@@ -3,7 +3,7 @@ export fAPAR_cVegLeaf
 @bounds @describe @units @with_kw struct fAPAR_cVegLeaf{T1} <: fAPAR
 	kEffExt::T1 = 0.005 | (0.0005, 0.05) | "effective light extinction coefficient" | ""
 end
-function precompute(o::fAPAR_cVegLeaf, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 	## unpack parameters
 	@unpack_fAPAR_cVegLeaf o
 	## unpack land variables
@@ -21,7 +21,7 @@ function precompute(o::fAPAR_cVegLeaf, forcing::NamedTuple, land::NamedTuple, he
 	return land
 end
 
-function compute(o::fAPAR_cVegLeaf, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 	## unpack parameters
 	@unpack_fAPAR_cVegLeaf o
 

@@ -5,7 +5,7 @@ export runoffSaturationExcess_Bergstroem1992
 end
 
 
-function precompute(o::runoffSaturationExcess_Bergstroem1992, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
 
 	runoffSatExc = helpers.numbers.𝟘
 
@@ -16,7 +16,7 @@ function precompute(o::runoffSaturationExcess_Bergstroem1992, forcing::NamedTupl
 	return land
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992 o
 

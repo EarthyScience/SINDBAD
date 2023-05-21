@@ -5,7 +5,7 @@ export fAPAR_LAI
 end
 
 
-function compute(o::fAPAR_LAI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::fAPAR_LAI, forcing, land, helpers)
 	@unpack_fAPAR_LAI o
 
 	## unpack land variables

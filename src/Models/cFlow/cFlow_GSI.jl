@@ -7,7 +7,7 @@ export cFlow_GSI
 	f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
 end
 
-function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
         cFlowA ∈ land.cCycleBase
@@ -30,7 +30,7 @@ function precompute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers
         push!(ndxTrg, zixTrg)
         for iSrc in zixSrc
             for iTrg in zixTrg
-                p_A[iTrg, iSrc] = one(eltype(cFlowA))
+                p_A[iTrg, iSrc] = 𝟙
             end
         end
     end
@@ -93,7 +93,7 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, landPools, poolName)
 end
 
 
-function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cFlow_GSI o
     ## unpack land variables
@@ -129,8 +129,8 @@ function compute(o::cFlow_GSI, forcing::NamedTuple, land::NamedTuple, helpers::N
     L2Re = LR2Re # should it be divided by 2?
     R2Re = LR2Re
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the fWfTfR suddenly drops from 1 to near zero.
-    k_Lshed = min(KShed, one(L2Re)-L2Re)
-    k_Rshed = min(KShed, one(L2Re)-R2Re)
+    k_Lshed = min(KShed, 𝟙-L2Re)
+    k_Rshed = min(KShed, 𝟙-R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)

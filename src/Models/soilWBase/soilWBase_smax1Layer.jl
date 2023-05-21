@@ -4,7 +4,7 @@ export soilWBase_smax1Layer
 	smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
 end
 
-function precompute(o::soilWBase_smax1Layer, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_smax1Layer, forcing, land, helpers)
     @unpack_soilWBase_smax1Layer o
 
     @unpack_land begin
@@ -30,7 +30,7 @@ function precompute(o::soilWBase_smax1Layer, forcing::NamedTuple, land::NamedTup
     return land
 end
 
-function compute(o::soilWBase_smax1Layer, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilWBase_smax1Layer, forcing, land, helpers)
 	## unpack parameters
 	@unpack_soilWBase_smax1Layer o
 

@@ -3,7 +3,7 @@ export rootWaterUptake_topBottom
 struct rootWaterUptake_topBottom <: rootWaterUptake
 end
 
-function precompute(o::rootWaterUptake_topBottom, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -19,7 +19,7 @@ function precompute(o::rootWaterUptake_topBottom, forcing::NamedTuple, land::Nam
     return land
 end
 
-function compute(o::rootWaterUptake_topBottom, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -46,7 +46,7 @@ function compute(o::rootWaterUptake_topBottom, forcing::NamedTuple, land::NamedT
     return land
 end
 
-function update(o::rootWaterUptake_topBottom, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

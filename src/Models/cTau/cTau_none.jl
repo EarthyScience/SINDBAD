@@ -3,7 +3,7 @@ export cTau_none
 struct cTau_none <: cTau
 end
 
-function precompute(o::cTau_none, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTau_none, forcing, land, helpers)
 
 	## calculate variables
 	p_k = ones(helpers.numbers.numType, length(land.pools.cEco))

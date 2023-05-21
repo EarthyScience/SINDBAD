@@ -3,7 +3,7 @@ export NDVI_forcing
 struct NDVI_forcing <: NDVI
 end
 
-function compute(o::NDVI_forcing, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::NDVI_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing NDVI ∈ forcing
 

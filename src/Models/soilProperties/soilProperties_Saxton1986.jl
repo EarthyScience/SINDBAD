@@ -24,7 +24,7 @@ export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986
 	v::T21 = 0.00087546 | nothing | "Saxton Parameters" | ""
 end
 
-function precompute(o::soilProperties_Saxton1986, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	@unpack_soilProperties_Saxton1986 o
 
 	## instantiate variables
@@ -45,7 +45,7 @@ function precompute(o::soilProperties_Saxton1986, forcing::NamedTuple, land::Nam
 	return land
 end
 
-function compute(o::soilProperties_Saxton1986, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	## unpack parameters
 	@unpack_soilProperties_Saxton1986 o
 
@@ -71,7 +71,7 @@ function compute(o::soilProperties_Saxton1986, forcing::NamedTuple, land::NamedT
 		p_θSat[sl] = θSat
 		p_ψSat[sl] = ψSat
 	end
-	p_unsatK = kSaxton1986
+	p_unsatK = kSaxton1986::typeof(kSaxton1986)
 
 	## pack land variables
 	@pack_land (p_kFC, p_kSat, p_unsatK, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties

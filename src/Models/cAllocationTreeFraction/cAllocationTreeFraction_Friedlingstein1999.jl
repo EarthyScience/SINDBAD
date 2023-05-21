@@ -4,7 +4,7 @@ export cAllocationTreeFraction_Friedlingstein1999
 	Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
 end
 
-function precompute(o::cAllocationTreeFraction_Friedlingstein1999, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
     ## calculate variables
     # check if there are fine & coarse root pools
@@ -25,7 +25,7 @@ function setCAlloc(cAlloc, cAllocValue, landPools, poolName)
 end
 
 
-function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
     @unpack_cAllocationTreeFraction_Friedlingstein1999 o
 
