@@ -33,10 +33,7 @@
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
-		"gppAirT.ToptB",
-		"gppVPD.κ",
-		"gppVPD.Cκ",
-		"gppVPD.Cm"
+		"gppAirT.ToptB"
 			],
 	"constraints": {
 		"function_name": {

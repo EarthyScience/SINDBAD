@@ -5,8 +5,7 @@
 		"transpiration",
 		"evapotranspiration",
 		"agb",
-		"reco",
-		"ndvi"
+		"reco"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
@@ -366,7 +365,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "dynseinv"
+					"costMetric": "nseinv"
 				}
 			}
 		}

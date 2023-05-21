@@ -25,11 +25,11 @@ forc = getKeyedArrayFromYaxArray(forcing);
 obs = getKeyedArrayFromYaxArray(observations);
 
 ## run the main ecosystem loop
-runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 ##test timing
 for tt = 1:5
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 end
 
 # using output of opti to update parameters and do a forward run
@@ -37,7 +37,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_
 tblParams.optim .= outparams; # update the parameters with pVector
 
 newApproaches = updateParameters(tblParams, info.tem.models.forward);
-runEcosystem!(output.data, newApproaches, forc, info.tem, info.tem.helpers.run.parallelization);
+runEcosystem!(output.data, newApproaches, forc, info.tem);
 
 model_data_d = (; Pair.(output.variables, outcubes)...);
 model_data_o = (; Pair.(output.variables, output.data)...);

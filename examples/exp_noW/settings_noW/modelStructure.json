@@ -10,29 +10,11 @@
         "fAPAR": {
             "approach": "constant"
         },
-        "gpp": {
-            "approach": "mult"
-        },
         "gppPotential": {
             "approach": "Monteith"
         },
         "gppAirT": {
             "approach": "CASA"
-        },
-        "gppDemand": {
-            "approach": "mult"
-        },
-        "gppDiffRadiation": {
-            "approach": "none"
-        },
-        "gppDirRadiation": {
-            "approach": "Maekelae2008"
-        },
-        "gppSoilW": {
-            "approach": "none"
-        },
-        "gppVPD": {
-            "approach": "PRELES"
         }
 
     },
