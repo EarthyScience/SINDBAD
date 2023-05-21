@@ -11,7 +11,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple, ::Val{:full})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:full})
     return forcing
 end
 
@@ -19,7 +19,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:recycleMSC})
 Set the spinup forcing as the mean seasonal cycle of the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple, ::Val{:recycleMSC})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:recycleMSC})
     spinup_forcing = getForcingForTimePeriod(forcing, 1, 365)
     # spinup_forcing = forcing[1:365]
     return spinup_forcing
@@ -29,7 +29,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:mean})
 Set the spinup forcing as the mean of the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple, ::Val{:mean})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:mean})
     spinup_forcing = mean(forcing)
     return spinup_forcing
 end
@@ -38,7 +38,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:yearOne})
 Set the spinup forcing as the forcing of the first year from the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple, ::Val{:yearOne})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:yearOne})
     spinup_forcing = getForcingForTimePeriod(forcing, 1, 365)
     return spinup_forcing
 end
@@ -47,7 +47,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:yearRandom})
 Set the spinup forcing as the forcing of a random full year from the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple, ::Val{:yearRandom})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:yearRandom})
     ## select a forcing for random year between start and end date
     # dates = tem.tem.helpers.dates.date_range
     # years = dates.Year
@@ -61,7 +61,7 @@ end
 getSpinupForcing(forcing, tem)
 A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
 """
-function getSpinupForcing(forcing::NamedTuple, tem::NamedTuple)
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple)
     forcing_methods = []
     for seq in tem.spinup.sequence
         forc = Symbol(seq["forcing"])
