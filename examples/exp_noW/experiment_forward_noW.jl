@@ -1,22 +1,30 @@
 using Revise
 using Sindbad
 using ForwardSindbad
-using OptimizeSindbad
+# using OptimizeSindbad
 using YAXArrays
 # using opti
-noStackTrace()
+# noStackTrace()
+
+
 
 experiment_json = "../exp_noW/settings_noW/experiment.json"
 # experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 
 info, forcing, output = prepExperimentForward(experiment_json);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forc = getKeyedArrayFromYaxArray(forcing);
-obs = getKeyedArrayFromYaxArray(observations);
+# observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+forc = getKeyedArrayFromYaxArray(forcing);
+# obs = getKeyedArrayFromYaxArray(observations);
+
+linit = createLandInit(info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+@code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+
+a=1
+
 for tt = 1:5
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, info.tem.helpers.run.parallelization);
+    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 end
 @time outcubes = runExperimentForward(experiment_json);  
 

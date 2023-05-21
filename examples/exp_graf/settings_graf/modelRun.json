@@ -9,15 +9,15 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": [],
-		"runEcosystem": ["time", "id"],
+		"yaxarray": ["id"],
+		"runEcosystem": ["time"],
 		"parallelization": "threads"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
 		"catchErrors": 			false,
-		"runSpinup": 			false,
+		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,

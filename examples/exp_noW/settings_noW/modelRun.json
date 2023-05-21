@@ -21,8 +21,8 @@
 		"runSpinup":            true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				true
+		"runOpti": 				false,
+		"calcCost":				false
 	},
 	"rules":
 	{
@@ -40,10 +40,7 @@
 			"d_scall": 4
 		},
 		"variables": {
-			"fluxes.gpp": null,
-			"gppDemand.gppE": null,
-			"states.fAPAR": null,
-			"gppDemand.scall": "d_scall"
+			"states.fAPAR": null
 		}
 	}
 }
