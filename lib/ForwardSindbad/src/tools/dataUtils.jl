@@ -49,13 +49,47 @@ function getForcingTimeSize(forcing::NamedTuple)
     return forcingTimeSize
 end
 
-function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
-    map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+# function getForcingForTimeStep(forcing, ts::Int64, forctype)
+#     a = (map(forcing) do v
+#         in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+#     end)
+#     return a
+# end
+@generated function getForcingForTimeStep(forcing, ::Val{forc_vars}, ts, f_t) where forc_vars
+    output = quote
     end
+    foreach(forc_vars) do forc
+            push!(output.args,Expr(:(=),:v,Expr(:.,:forcing,QuoteNode(forc))))
+            push!(output.args,quote
+                    d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+                end)
+            push!(output.args, Expr(:(=), :f_t, Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d))))
+    end
+    output
+end
+
+macro get_it(forc)
+    # @show forc, QuoteNode(forc)
+    a = quote Expr(Symbol("@set"), :(#= none:1 =#), Expr(:., :forcing_t, :forc),Expr(:if, Expr(:call, :in, :time, Expr(:call, Expr(:., :AxisKeys, :(:dimnames)), :v)), Expr(:ref, :v, :($(Expr(:kw, :time, :ts)))),:v)) end
+    @show a
 end
 
 
+function getForcingForTimeStep(forcing::NamedTuple, ts::Int64, forcing_t)
+    for f=keys(forcing)
+        v = forcing[f]
+        forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+    end
+    return forcing_t;
+end
+
+function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
+     map(forcing) do v
+        # @show typeof(v)
+        # @time in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+    end
+end
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
