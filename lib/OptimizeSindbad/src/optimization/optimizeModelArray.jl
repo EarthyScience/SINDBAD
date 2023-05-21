@@ -12,8 +12,9 @@ function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Sym
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
-        # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = permutedims(ŷ, (2, 3, 1))
+        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        # ŷ = permutedims(ŷ, (2, 3, 1))
+        ŷ = y .* rand()
     end
     return (y, yσ, ŷ)
 end
@@ -29,7 +30,8 @@ function getDataArray(outsmodel::landWrapper, observations::NamedTuple, obsV::Sy
     # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
         # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = permutedims(ŷ, (2, 3, 1))
+        ŷ = y .* rand()
+        # ŷ = permutedims(ŷ, (2, 3, 1))
     end
     return (y, yσ, ŷ)
 end
