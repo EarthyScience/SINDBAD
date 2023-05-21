@@ -12,12 +12,12 @@
 	"mapping": {
 		"yaxarray": [],
 		"runEcosystem": ["time", "longitude", "latitude"],
-		"parallelization": "threads"
+		"parallelization": "qbmap"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
-		"catchErrors": 			true,
+		"catchErrors": 			false,
 		"runSpinup":            false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
