@@ -2,7 +2,7 @@ using Revise
 using Sindbad
 
 
-experiment_json = "exp_Africa/settings_Africa/experiment.json"
+experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getConfiguration(experiment_json);
 

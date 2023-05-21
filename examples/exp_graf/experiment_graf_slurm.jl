@@ -1,5 +1,7 @@
-using SlurmClusterManager, Distributed
+using SlurmClusterManager
+using Distributed
 addprocs(SlurmManager())
+addprocs(16)
 @everywhere using Pkg
 @everywhere Pkg.activate(joinpath(@__DIR__,"../exp_distri/"))
 
@@ -12,13 +14,13 @@ addprocs(SlurmManager())
 
 noStackTrace()
 @everywhere domain = "africa";
-@everywhere optimize_it = true;
-# optimize_it = false;
+# @everywhere optimize_it = true;
+@everywhere optimize_it = false;
 
 @everywhere replace_info_spatial = Dict(
     "experiment.domain" => domain * "_spatial",
     "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => false,
+    "modelRun.flags.calcCost" => true,
     "modelRun.mapping.yaxarray" => [],
     "modelRun.mapping.runEcosystem" => ["time", "id"],
     "spinup.flags.doSpinup" => true
@@ -49,8 +51,9 @@ noStackTrace()
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
-runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
