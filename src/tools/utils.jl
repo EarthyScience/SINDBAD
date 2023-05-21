@@ -33,7 +33,7 @@ function getSindbadModels()
 end
 
 """
-nonUnique(x::AbstractArray{T}) where T
+    nonUnique(x::AbstractArray{T}) where T
 returns a vector of duplicates in the input vector
 """
 function nonUnique(x::AbstractArray{T}) where T
@@ -214,7 +214,7 @@ function processPackLand(ex)
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            #expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            # tmp = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
             tmp = Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
             tmp
         end
@@ -304,7 +304,7 @@ end
 returns a vector comprising of off diagonal elements of a matrix
 """
 function offDiag(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]]
 end
 
 """
@@ -312,7 +312,7 @@ end
 returns a vector comprising of above diagonal elements of a matrix
 """
 function offDiagUpper(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] < ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] < ι[2]]]
 end
 
 """
@@ -320,7 +320,7 @@ end
 returns a vector comprising of below diagonal elements of a matrix
 """
 function offDiagLower(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] > ι[2]]]
 end
 
 
