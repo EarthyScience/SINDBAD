@@ -16,6 +16,8 @@ using YAXArrayBase
 using YAXArrays: savecube
 using YAXArrayBase: getdata
 using Zarr
+using Cthulhu
+using LoopVectorization
 
 using InteractiveUtils
 using ThreadPools 

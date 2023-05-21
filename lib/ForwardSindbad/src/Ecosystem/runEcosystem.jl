@@ -2,13 +2,12 @@ export runEcosystem
 export removeEmptyFields
 export runPrecompute
 export mapRunEcosystem
-export getForcingForTimeStep
 
 """
 runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    return foldl(models, init=out) do o,model 
+    return foldl_unrolled(models, init=out) do o,model 
         #@show typeof(o)
         #@show typeof(model)
         #@show typeof(o)
