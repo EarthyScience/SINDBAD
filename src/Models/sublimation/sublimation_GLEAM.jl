@@ -4,7 +4,7 @@ export sublimation_GLEAM
 	α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
 end
 
-function compute(o::sublimation_GLEAM, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_sublimation_GLEAM o
     @unpack_forcing (PsurfDay, Rn, TairDay) ∈ forcing
@@ -60,7 +60,7 @@ function compute(o::sublimation_GLEAM, forcing::NamedTuple, land::NamedTuple, he
     return land
 end
 
-function update(o::sublimation_GLEAM, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::sublimation_GLEAM, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools

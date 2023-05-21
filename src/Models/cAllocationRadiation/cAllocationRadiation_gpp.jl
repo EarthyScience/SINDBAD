@@ -2,7 +2,7 @@ export cAllocationRadiation_gpp
 
 struct cAllocationRadiation_gpp <: cAllocationRadiation
 end
-function precompute(o::cAllocationRadiation_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocationRadiation_gpp, forcing, land, helpers)
 
 
 	## calculate variables
@@ -14,7 +14,7 @@ function precompute(o::cAllocationRadiation_gpp, forcing::NamedTuple, land::Name
 	return land
 end
 
-function compute(o::cAllocationRadiation_gpp, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cAllocationRadiation_gpp, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land CloudScGPP ∈ land.gppDiffRadiation

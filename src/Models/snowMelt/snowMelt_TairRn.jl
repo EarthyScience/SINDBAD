@@ -5,7 +5,7 @@ export snowMelt_TairRn
 	melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
 end
 
-function precompute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::snowMelt_TairRn, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
@@ -27,7 +27,7 @@ function precompute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, h
 end
 
 
-function compute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::snowMelt_TairRn, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_TairRn o
     @unpack_forcing (Rn, Tair) ∈ forcing
@@ -65,7 +65,7 @@ function compute(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, help
     return land
 end
 
-function update(o::snowMelt_TairRn, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::snowMelt_TairRn, forcing, land, helpers)
     @unpack_snowMelt_TairRn o
 
     ## unpack variables

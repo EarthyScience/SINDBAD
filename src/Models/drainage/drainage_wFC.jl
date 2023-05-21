@@ -4,7 +4,7 @@ struct drainage_wFC <: drainage
 end
 
 
-function precompute(o::drainage_wFC, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::drainage_wFC, forcing, land, helpers)
 	## instantiate drainage
 	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
 	## pack land variables
@@ -12,7 +12,7 @@ function precompute(o::drainage_wFC, forcing::NamedTuple, land::NamedTuple, help
 	return land
 end
 
-function compute(o::drainage_wFC, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::drainage_wFC, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -42,7 +42,7 @@ function compute(o::drainage_wFC, forcing::NamedTuple, land::NamedTuple, helpers
 	return land
 end
 
-function update(o::drainage_wFC, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::drainage_wFC, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		soilW ∈ land.pools

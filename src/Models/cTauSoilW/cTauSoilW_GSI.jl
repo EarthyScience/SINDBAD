@@ -8,7 +8,7 @@ export cTauSoilW_GSI
 	frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
 end
 
-function precompute(o::cTauSoilW_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
@@ -20,7 +20,7 @@ function precompute(o::cTauSoilW_GSI, forcing::NamedTuple, land::NamedTuple, hel
 end
 
 
-function compute(o::cTauSoilW_GSI, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cTauSoilW_GSI o
 

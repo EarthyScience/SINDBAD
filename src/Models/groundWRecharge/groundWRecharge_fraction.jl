@@ -4,7 +4,7 @@ export groundWRecharge_fraction
 	rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | ""
 end
 
-function compute(o::groundWRecharge_fraction, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWRecharge_fraction o
 
@@ -29,7 +29,7 @@ function compute(o::groundWRecharge_fraction, forcing::NamedTuple, land::NamedTu
 	return land
 end
 
-function update(o::groundWRecharge_fraction, forcing::NamedTuple, land::NamedTuple, helpers::NamedTuple)
+function update(o::groundWRecharge_fraction, forcing, land, helpers)
 	@unpack_groundWRecharge_fraction o
 
 	## unpack variables
