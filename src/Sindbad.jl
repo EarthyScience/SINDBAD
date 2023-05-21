@@ -7,10 +7,11 @@ using DocStringExtensions
 using Parameters
 using Dates
 using JLD2
-using Accessors
+@reexport using Accessors: @set
 using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table
+using Cthulhu
 using Flatten:
     flatten,
     metaflatten,
