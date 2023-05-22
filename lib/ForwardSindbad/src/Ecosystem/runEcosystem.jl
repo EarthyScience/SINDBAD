@@ -8,32 +8,27 @@ runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models, init=out) do o,model 
-        #@show typeof(o)
-        #@show typeof(model)
-        #@show typeof(o)
-        #@time o = Models.compute(model, forcing, o, tem_helpers)
         o = Models.compute(model, forcing, o, tem_helpers)
         # if tem_helpers.run.runUpdateModels
         #     o = Models.update(model, forcing, o, tem_helpers)
         # end
-        o
     end
 end
 
 
 function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    for model in models
-        out = Models.precompute(model, forcing, out, tem_helpers)
+    return foldl_unrolled(models, init=out) do o,model 
+        o = Models.precompute(model, forcing, o, tem_helpers)
     end
-    return out
 end
 
 @noinline function theRealtimeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps, otype, oforc)
     # time_steps = 1
     # time_steps = 7200
+    f_t = getForcingForTimeStep(forcing, 1)::oforc
     res = map(1:time_steps) do ts
-        f = getForcingForTimeStep(forcing, ts)::oforc
+        f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_t)#::oforc
         #if ts==7864
         #    println("------------------------------------------")
         #    println("$(typeof(f) <: oforc)")
@@ -42,7 +37,7 @@ end
             #@show pprint(out)
         #end
         #outold = out
-        out = runModels(f, forward_models, out, tem_helpers)::otype
+        out = runModels(f, forward_models, out, tem_helpers)#::otype
         #@show typeof.(outold)
         #@show [typeof(onew) for onew in out]
         #@show [typeof(onew) <: typeof(outold[i]) for (i,onew) in enumerate(out)]
@@ -84,7 +79,8 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
     #@show first(newforcing)
     land_spin_now = land_prec
     if tem.helpers.run.runSpinup
-        land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
+        land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem.helpers, tem.spinup, tem.models, typeof(land_init); spinup_forcing=nothing)
+        # land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
     end
     time_steps = getForcingTimeSize(loc_forcing)
     #res = Array{NamedTuple}(undef, time_steps)
