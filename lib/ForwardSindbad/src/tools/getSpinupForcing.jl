@@ -1,5 +1,18 @@
 export getSpinupForcing
 
+@generated function getForcingForTimePeriod(forcing, ::Val{forc_vars}, tstart::Int64, tend::Int64, f_t) where forc_vars
+    output = quote
+    end
+    foreach(forc_vars) do forc
+        push!(output.args,Expr(:(=),:v,Expr(:.,:forcing,QuoteNode(forc))))
+        push!(output.args,quote
+                d = in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
+            end)
+        push!(output.args, Expr(:(=), :f_t, Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d))))
+    end
+    output
+end
+
 function getForcingForTimePeriod(forcing::NamedTuple, tstart::Int64, tend::Int64)
     map(forcing) do v
         in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
@@ -11,7 +24,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:full})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1, ::Val{:full})
     return forcing
 end
 
@@ -19,8 +32,8 @@ end
 getSpinupForcing(forcing, tem, ::Val{:recycleMSC})
 Set the spinup forcing as the mean seasonal cycle of the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:recycleMSC})
-    spinup_forcing = getForcingForTimePeriod(forcing, 1, 365)
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1, ::Val{:recycleMSC})
+    spinup_forcing = getForcingForTimePeriod(forcing, Val(keys(forcing)), 1, 365, f_1)
     # spinup_forcing = forcing[1:365]
     return spinup_forcing
 end
@@ -29,7 +42,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:mean})
 Set the spinup forcing as the mean of the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:mean})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1, ::Val{:mean})
     spinup_forcing = mean(forcing)
     return spinup_forcing
 end
@@ -38,8 +51,8 @@ end
 getSpinupForcing(forcing, tem, ::Val{:yearOne})
 Set the spinup forcing as the forcing of the first year from the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:yearOne})
-    spinup_forcing = getForcingForTimePeriod(forcing, 1, 365)
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1, ::Val{:yearOne})
+    spinup_forcing = getForcingForTimePeriod(forcing, Val(keys(forcing)), 1, 365, f_1)
     return spinup_forcing
 end
 
@@ -47,13 +60,13 @@ end
 getSpinupForcing(forcing, tem, ::Val{:yearRandom})
 Set the spinup forcing as the forcing of a random full year from the full input forcing.
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, ::Val{:yearRandom})
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1, ::Val{:yearRandom})
     ## select a forcing for random year between start and end date
     # dates = tem.tem.helpers.dates.date_range
     # years = dates.Year
     # sel_year = random(dates.Year)
     # spinup_forcing = forcing(Date=sel_year)
-    spinup_forcing = getForcingForTimePeriod(forcing, 1, 365)
+    spinup_forcing = getForcingForTimePeriod(forcing, Val(keys(forcing)), 1, 365, f_1)
     return spinup_forcing
 end
 
@@ -61,8 +74,8 @@ end
 getSpinupForcing(forcing, tem)
 A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
 """
-function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple)
-    forcing_methods = []
+function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple, f_1)
+    forcing_methods = Symbol[]
     for seq in tem.spinup.sequence
         forc = Symbol(seq["forcing"])
         if forc ∉ forcing_methods
@@ -71,7 +84,7 @@ function getSpinupForcing(forcing::NamedTuple, tem_helpers::NamedTuple)
     end
     spinup_forcing = (;)
     for forc in forcing_methods
-        spinup_forc = getSpinupForcing(forcing, tem, Val(forc))
+        spinup_forc = getSpinupForcing(forcing, tem, f_1, Val(forc))
         spinup_forcing = setTupleField(spinup_forcing, (forc, spinup_forc))
     end
     return spinup_forcing
