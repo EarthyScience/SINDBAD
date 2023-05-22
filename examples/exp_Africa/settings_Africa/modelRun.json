@@ -19,6 +19,7 @@
 		"saveInfo": 			true,
 		"catchErrors": 			true,
 		"runForward": 			true,
+		"runSpinup": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				false,
 		"calcCost":				false

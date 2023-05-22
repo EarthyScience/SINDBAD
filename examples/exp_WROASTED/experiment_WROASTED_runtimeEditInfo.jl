@@ -8,11 +8,15 @@ using BenchmarkTools
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
+
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-obspath = inpath
+
 forcingConfig = "forcing_erai.json"
+# inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
+# forcingConfig = "forcing_DE-2.json"
+obspath = inpath
+optimize_it = true
 optimize_it = false
-# optimize_it = true
 outpath = nothing
 
 domain = "DE-Hai"
@@ -27,7 +31,7 @@ replace_info = Dict(
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.runSpinup" => true,
     "spinup.flags.doSpinup" => true,
-    # "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "modelRun.mapping.parallelization" => pl
     # "opti.constraints.oneDataPath" => obspath
@@ -65,16 +69,16 @@ linit= createLandInit(info.tem);
 GC.gc()
 Sindbad.eval(:(error_catcher = []))    
 # Sindbad.eval(:(error_catcher = []))    
-additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
 
 @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
-@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list)
+@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
 a=1
-@code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 # @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 @descend_code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
@@ -93,6 +97,38 @@ a=1
 # @descend runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 run_output = runExperimentForward(experiment_json; replace_info=replace_info);
 run_output = runExperimentOpti(experiment_json; replace_info=replace_info);
+a
+
+
+
+function getForcingTimeSize(forcing::NamedTuple)
+    forcingTimeSize = 1
+    for v in forcing
+        if in(:time, AxisKeys.dimnames(v)) 
+            forcingTimeSize = size(v, 1)
+        end
+    end
+    return forcingTimeSize
+end
+@generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where forc_vars
+    output = quote
+        forcingTimeSize = 1
+    end
+    foreach(forc_vars) do forc
+            push!(output.args,Expr(:(=),:v,Expr(:.,:forcing,QuoteNode(forc))))
+            push!(output.args,quote
+                forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) : 1
+            end)
+    end
+    push!(output.args,quote
+        return forcingTimeSize
+    end)
+    output
+end
+
+
+getForcingTimeSize(forcing, Val(keys(forcing)))
+
 # if doitstepwise
 #     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 #     # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
