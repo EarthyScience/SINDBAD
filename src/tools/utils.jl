@@ -1,6 +1,6 @@
 export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
 export getzix, setTupleField, setTupleSubfield, applyUnitConversion
-export offDiag, offDiagUpper, offDiagLower
+export offDiag, offDiagUpper, offDiagLower, cumSum!
 export flagUpper, flagLower
 export nonUnique
 export noStackTrace
@@ -296,6 +296,18 @@ returns the indices of a view for a subArray
 function getzix(dat::SubArray)
     zix = first(parentindices(dat))
     return zix
+end
+
+
+"""
+    cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
+fill out the output vector with the cumulative sum of elements from input vector
+"""
+function cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
+    for i=eachindex(i_n)
+        o_ut[i] = sum(i_n[1:i])
+    end
+    return o_ut
 end
 
 

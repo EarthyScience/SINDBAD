@@ -28,6 +28,12 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
+
+additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+
 # @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
 a=1
@@ -46,10 +52,10 @@ site = 1
 plotdat = output.data;
 fig, ax, obj = heatmap(plotdat[end][:,1,:])
 Colorbar(fig[1,2], obj)
-save("afgpp.png", fig)
+save("gpp.png", fig)
 
 for site in 1:16
-    df = DataFrame(time = ds.time, gpp = output.data[end-1][:,site], nee = output.data[end][:,site], soilw1 = output.data[2][:,1,site]);
+    df = DataFrame(time = ds.time, gpp = output.data[end-1][:,1,site], nee = output.data[end][:,1,site], soilw1 = output.data[2][:,1,site]);
 
     for var = (:gpp, :nee, :soilw1)
         d = data(df)*mapping(:time, var)*visual(Lines, linewidth=0.5);
