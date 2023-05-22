@@ -58,12 +58,15 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list)
+additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+for x=1:10
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+end
+@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 
-@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, spaceLocs, l_init_threads, dtypes, dtypes_list)
+@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
 
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);

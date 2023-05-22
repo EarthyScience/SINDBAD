@@ -1,6 +1,7 @@
 using Revise
 using Sindbad
-
+using ForwardSindbad
+noStackTrace()
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 

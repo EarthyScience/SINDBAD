@@ -90,7 +90,7 @@ addprocs(28)
 
     additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
     spacesize = values(info.tem.helpers.run.loop[additionaldims])
-    spaceLocs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+    space_locs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
 
     ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem, additionaldims, x)
 end
@@ -101,5 +101,5 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 for x = 1:5
     println("pmap " * string(x))
-    @time _ = pmap(ecofunc, 1:length(spaceLocs));
+    @time _ = pmap(ecofunc, 1:length(space_locs));
 end
