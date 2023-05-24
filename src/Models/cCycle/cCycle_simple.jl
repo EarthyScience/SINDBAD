@@ -19,7 +19,7 @@ function precompute(o::cCycle_simple, forcing, land, helpers)
     cNPP = zeros(numType, n_cEco)
 
 	cEco_prev = copy(land.pools.cEco)
-    zixVeg = getzix(land.pools.cVeg)
+    zixVeg = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
     ## pack land variables
     NEE = 𝟘
     NPP = 𝟘
