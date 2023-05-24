@@ -6,7 +6,19 @@ export cTauSoilT_Q10
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
-function compute(o::cTauSoilT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilT_Q10, forcing, land, helpers)
+	## unpack parameters and forcing
+
+	## calculate variables
+	# CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
+	fT = helpers.numbers.𝟙
+
+	## pack land variables
+	@pack_land fT => land.cTauSoilT
+	return land
+end
+
+function compute(o::cTauSoilT_Q10, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cTauSoilT_Q10 o
 	@unpack_forcing Tair ∈ forcing

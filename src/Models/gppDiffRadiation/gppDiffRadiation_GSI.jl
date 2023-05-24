@@ -7,7 +7,7 @@ export gppDiffRadiation_GSI
 end
 
 
-function precompute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing
@@ -16,14 +16,15 @@ function precompute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers:
 
     f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
     CloudScGPP_prev = 𝟘
+    CloudScGPP = 𝟙
 
 
     ## pack land variables
-    @pack_land (CloudScGPP_prev, f_smooth) => land.gppDiffRadiation
+    @pack_land (CloudScGPP, CloudScGPP_prev, f_smooth) => land.gppDiffRadiation
     return land
 end
 
-function compute(o::gppDiffRadiation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing

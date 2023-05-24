@@ -3,7 +3,7 @@ export wCycle_components
 struct wCycle_components <: wCycle
 end
 
-function compute(o::wCycle_components, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW) ∈ land.pools

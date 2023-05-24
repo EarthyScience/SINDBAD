@@ -5,7 +5,7 @@ export soilWBase_smax2Layer
 	smax2::T2 = 0.3 | (0.01, 1.0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
 end
 
-function precompute(o::soilWBase_smax2Layer, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_smax2Layer, forcing, land, helpers)
     @unpack_soilWBase_smax2Layer o
 
     @unpack_land begin
@@ -31,7 +31,7 @@ function precompute(o::soilWBase_smax2Layer, forcing, land::NamedTuple, helpers:
     return land
 end
 
-function compute(o::soilWBase_smax2Layer, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilWBase_smax2Layer, forcing, land, helpers)
 	## unpack parameters
 	@unpack_soilWBase_smax2Layer o
 

@@ -5,7 +5,7 @@ export aRespiration_Thornley2000C
 	YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 
-function precompute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_Thornley2000C, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
@@ -25,7 +25,7 @@ function precompute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, he
 	return land
 end
 
-function compute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::aRespiration_Thornley2000C, forcing, land, helpers)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000C o
 
@@ -46,7 +46,7 @@ function compute(o::aRespiration_Thornley2000C, forcing, land::NamedTuple, helpe
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL C - growth; degradation & resynthesis view of
 	# respiration
-	zix = getzix(land.pools.cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
 	
 	#@needscheck: MTF, metabolic fraction, may be inconsistent with the rest of the model structure
 	Fd[zix] .= 𝟙

@@ -4,7 +4,7 @@ export capillaryFlow_VanDijk2010
 	max_frac::T1 = 0.95 | (0.02, 0.98) | "max fraction of soil moisture that can be lost as capillary flux" | ""
 end
 
-function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -20,7 +20,7 @@ function precompute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, hel
 	return land
 end
 
-function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 	## unpack parameters
 	@unpack_capillaryFlow_VanDijk2010 o
 
@@ -52,7 +52,7 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helper
 	return land
 end
 
-function update(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
@@ -70,7 +70,7 @@ function update(o::capillaryFlow_VanDijk2010, forcing, land::NamedTuple, helpers
 	## pack land variables
 	@pack_land begin
 		soilW => land.pools
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end

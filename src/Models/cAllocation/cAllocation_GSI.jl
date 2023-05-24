@@ -2,45 +2,53 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function precompute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocation_GSI, forcing, land, helpers)
+    @unpack_land sNT ∈ helpers.numbers
 
     ## instantiate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    cAlloc = zero(land.pools.cEco)
+    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
+    cAllocVeg = zeros(helpers.numbers.numType, length(cpNames))
+    zixVegs = [Int[] for x in cpNames]
+    nzixVegs=helpers.numbers.numType[]
+    cpI = 1
+    for cpName in cpNames
+        zix = getzix(getfield(land.pools, cpName), helpers.pools.carbon.zix, cpName)
+        nZix=sNT(length(zix))
+        zixVegs[cpI] = zix
+        push!(nzixVegs, nZix)
+        cpI = cpI + 1
+    end
+    ttwo = sNT(2.0)
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
     return land
 end
 
-function compute(o::cAllocation_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
 
-    ## unpack land variables
-    @unpack_land cAlloc ∈ land.states
+
+function compute(o::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
+        (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) ∈ land.states
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
         sNT ∈ helpers.numbers
     end
-    cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     # allocation to root; wood & leaf
-    cVegLeaf = fW / ((fW + fT) * 2.0)
-    cVegWood = fW / ((fW + fT) * 2.0)
-    cVegRoot = fT / (fW + fT)
-    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
+    cAllocVeg[1] = fW / ((fW + fT) * ttwo)
+    cAllocVeg[2] = fW / ((fW + fT) * ttwo)
+    cAllocVeg[3] = fT / (fW + fT)
 
-    # distribute the allocation according to pools
-    for cpName in cpNames
-        zix = getzix(land.pools, cpName)
-        cAlloc[zix] .= getfield(cf2, cpName) / length(zix)
+    for ind in 1:3
+        foreach(zixVegs[ind]) do ix
+            cAlloc[ix] = cAllocVeg[ind]  / nzixVegs[ind]
+        end
     end
 
-    ## pack land variables
-    @pack_land begin
-        cAlloc => land.states
-    end
     return land
 end
 

@@ -5,7 +5,22 @@ export groundWSoilWInteraction_VanDijk2010
 	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
 
-function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+	## unpack land variables
+	@unpack_land begin
+		𝟘 ∈ helpers.numbers
+	end
+
+	# calculate recharge
+	gwCapFlow = 𝟘
+	## pack land variables
+	@pack_land begin
+		gwCapFlow => land.fluxes
+	end
+	return land
+end
+
+function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWSoilWInteraction_VanDijk2010 o
 
@@ -27,7 +42,7 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 
 	# get the capillary flux
 	c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-	gwCapFlow = max(min(c_flux, max_fraction * sum(groundW + ΔgroundW), soilW[end] + ΔsoilW[end]), 𝟘)
+	gwCapFlow = max(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)), soilW[end] + ΔsoilW[end]), 𝟘)
 
 	# adjust the delta storages
 	n_groundW = 𝟙 * length(groundW)
@@ -37,12 +52,12 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTup
 	## pack land variables
 	@pack_land begin
 		gwCapFlow => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
+		# (ΔsoilW, ΔgroundW) => land.states
 	end
 	return land
 end
 
-function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

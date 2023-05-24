@@ -20,13 +20,24 @@
 *.jld2
 *.jld
 *.o
+*.mem
+*.png
+*.jpg
 .*
 ~*
 tmp_*
 output_*
+*Manifest.toml
+*/Manifest.toml
+*/*/Manifest.toml
+/*/*/*/Manifest.toml
+
 /Manifest.toml
 examples/Manifest.toml
+examples/*/Manifest.toml
 docs/Manifest.toml
+lib/*/Manifest.toml
+lib/Manifest.toml
 
 examples/data/
 docs/build/

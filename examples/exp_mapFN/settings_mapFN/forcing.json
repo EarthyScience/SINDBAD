@@ -1,13 +1,11 @@
 {
-	"1.c": 							"This json info file explains the forcing variables and all related information",
-	"2.c":							"add more comments",
-	"3.c":							"and some more",
 	"size": {
 		"latitude": 15,
 		"longitude": 15,
 		"time": 14245
 	},
 	"dimensions": {
+		"permute": null,
 		"latitude": "latitude",
 		"longitude": "longitude",
 		"time": "time"
@@ -25,7 +23,7 @@
 		"depth_dimension": null,
 		"spaceTimeType": "spatiotemporal",
 		"sourceDataProductName": "FLUXNET",
-		"dataPath": "data/DE-All.1979.2017.daily.nc"
+		"dataPath": "../data/DE-All.1979.2017.daily.nc"
 	},
 	"variables": {
 	"ambCO2":
