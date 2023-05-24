@@ -4,7 +4,14 @@ export snowFraction_HTESSEL
 	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
 
-function compute(o::snowFraction_HTESSEL, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::snowFraction_HTESSEL, forcing, land, helpers)
+	snowFraction = helpers.numbers.𝟙
+	## pack land variables
+	@pack_land snowFraction => land.states
+	return land
+end
+
+function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
 	## unpack parameters
 	@unpack_snowFraction_HTESSEL o
 
@@ -17,7 +24,7 @@ function compute(o::snowFraction_HTESSEL, forcing, land::NamedTuple, helpers::Na
 
 	## calculate variables
 	# suggested by Sujan [after HTESSEL GHM]
-	snowFraction = min(𝟙, sum(snowW + ΔsnowW) / CoverParam)
+	snowFraction = min(𝟙, addS(snowW, ΔsnowW) / CoverParam)
 
 	## pack land variables
 	@pack_land snowFraction => land.states

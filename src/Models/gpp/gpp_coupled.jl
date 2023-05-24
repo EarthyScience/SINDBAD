@@ -3,7 +3,14 @@ export gpp_coupled
 struct gpp_coupled <: gpp
 end
 
-function compute(o::gpp_coupled, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gpp_coupled, forcing, land, helpers)
+
+	gpp = helpers.numbers.𝟘
+	@pack_land gpp => land.fluxes
+	return land
+end
+
+function compute(o::gpp_coupled, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

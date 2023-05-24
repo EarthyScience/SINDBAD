@@ -5,7 +5,7 @@ export runoffSaturationExcess_Bergstroem1992VegFraction
 	β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_runoffSaturationExcess_Bergstroem1992VegFraction o
 

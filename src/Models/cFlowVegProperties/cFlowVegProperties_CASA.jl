@@ -4,7 +4,7 @@ export cFlowVegProperties_CASA
 	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
 end
 
-function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cFlowVegProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowVegProperties_CASA o
 
 	## instantiate variables
@@ -15,7 +15,7 @@ function precompute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpe
 	return land
 end
 
-function compute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlowVegProperties_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cFlowVegProperties_CASA o
 
@@ -30,8 +30,8 @@ function compute(o::cFlowVegProperties_CASA, forcing, land::NamedTuple, helpers:
 	for ii in 1:size(aM, 1)
 		ndxSrc = helpers.pools.carbon.zix.(aM[ii, 1])
 		ndxTrg = helpers.pools.carbon.zix.(aM[ii, 2]); #sujan is this 2 | 1?
-		for iSrc in 1:length(ndxSrc)
-			for iTrg in 1:length(ndxTrg)
+		for iSrc in eachindex(ndxSrc)
+			for iTrg in eachindex(ndxTrg)
 				# p_fVeg[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3)
 				p_F[ndxTrg[iTrg], ndxSrc[iSrc]] = aM[ii, 3]; #sujan
 			end

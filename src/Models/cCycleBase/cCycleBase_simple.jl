@@ -1,8 +1,8 @@
 export cCycleBase_simple
 
 @bounds @describe @units @with_kw struct cCycleBase_simple{T1, T2, T3} <: cCycleBase
-	annk::T1 = [1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045] | ([0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045], [3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045]) | "turnover rate of ecosystem carbon pools" | "yr-1"
-	cFlowA::T2 = 	[-1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0;
+	annk::T1 = Float64[1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045] | (Float64[0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045], Float64[3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045]) | "turnover rate of ecosystem carbon pools" | "yr-1"
+	cFlowA::T2 = Float64[-1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0;
 					0.0  -1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0;
 					0.0  0.0  -1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0;
 					0.0  0.0  0.0  -1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0;
@@ -16,10 +16,10 @@ export cCycleBase_simple
 					0.0  0.0  0.0  0.0  0.0  0.0  0.45  0.17  0.0  0.24  0.0  -1.0  0.0  0.0;
 					0.0  0.0  0.0  0.0  0.0  0.43  0.0  0.43  0.28  0.28  0.4  0.43  -1.0  0.0;
 					0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.005  0.0026  -1.0] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-	C2Nveg::T3 = [25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+	C2Nveg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycleBase_simple, forcing, land, helpers)
 	@unpack_cCycleBase_simple o
 
 	@unpack_land begin
@@ -38,7 +38,7 @@ function precompute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::Na
 	return land
 end
 
-function compute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycleBase_simple, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cCycleBase_simple o
 
@@ -50,7 +50,7 @@ function compute(o::cCycleBase_simple, forcing, land::NamedTuple, helpers::Named
 
 	## calculate variables
 	#carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg)] .= C2Nveg
+    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)] .= C2Nveg
 
 	# turnover rates
     TSPY = helpers.dates.nStepsYear

@@ -3,33 +3,39 @@ export wCycle_combined
 struct wCycle_combined <: wCycle
 end
 
-function compute(o::wCycle_combined, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::wCycle_combined, forcing, land, helpers)
+	## unpack variables
+	@unpack_land begin
+		ΔTWS ∈ land.states
+	end
+	zeroΔTWS = zero(ΔTWS)
+
+	@pack_land zeroΔTWS => land.states
+	return land
+end
+
+function compute(o::wCycle_combined, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		TWS ∈ land.pools
-		ΔTWS  ∈ land.states
-		p_wSat ∈ land.soilWBase
+		(ΔTWS, zeroΔTWS)  ∈ land.states
 		(𝟘, tolerance) ∈ helpers.numbers
 	end
-	TWS_old = deepcopy(TWS)
+	#TWS_old = deepcopy(TWS)
 	## update variables
 	TWS .= TWS .+ ΔTWS
 
     # reset soil moisture changes to zero
 	if minimum(TWS) < 𝟘
 		if abs(minimum(TWS)) < tolerance
-			pprint(land)
-
 		    @error "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage"
 			# @assert(false, "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage") 
 		    TWS .= abs.(TWS)
-	else
-		    @error "TWS is negative. Cannot continue. $(TWS)"
+		else
+		    error("TWS is negative. Cannot continue. $(TWS)")
 		end
 	end
-	ΔTWS_copy = deepcopy(ΔTWS)
-	ΔTWS .= zero(ΔTWS)
-	@pack_land ΔTWS_copy => land.states
+	ΔTWS .= zeroΔTWS
 	## pack land variables
 	# @pack_land begin
 	# 	(groundW, snowW, soilW, surfaceW) => land.pools
@@ -51,7 +57,6 @@ computes the algebraic sum of storage and delta storage
 *Inputs*
 - land.pools.storages: water storages
 - land.states.Δstorages: water storage changes
-- land.soilWBase.p_wSat: water holding capacity
 
 *Outputs*
  - land.states.Δstorages: soil percolation

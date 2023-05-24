@@ -9,7 +9,7 @@ export soilWBase_smax2fRD4
 	smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
 end
 
-function precompute(o::soilWBase_smax2fRD4, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 o
 
     @unpack_land begin
@@ -36,7 +36,7 @@ function precompute(o::soilWBase_smax2fRD4, forcing, land::NamedTuple, helpers::
     return land
 end
 
-function compute(o::soilWBase_smax2fRD4, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilWBase_smax2fRD4, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_soilWBase_smax2fRD4 o
 

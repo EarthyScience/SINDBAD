@@ -3,7 +3,7 @@ export cTauLAI_none
 struct cTauLAI_none <: cTauLAI
 end
 
-function precompute(o::cTauLAI_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauLAI_none, forcing, land, helpers)
 
 	## calculate variables
 	p_kfLAI = ones(helpers.numbers.numType, length(land.pools.cEco)); #(ineficient, should be pix zix_veg)

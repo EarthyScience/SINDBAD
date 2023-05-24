@@ -4,12 +4,12 @@ export cCycleBase_GSI
 	annk_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
 	annk_Wood::T2 = 0.03 | (0.001, 10.0) | "turnover rate of wood carbon pool" | "yr-1"
 	annk_Leaf::T3 = 1.0 | (0.05, 10.0) | "turnover rate of leaf carbon pool" | "yr-1"
-	annk_Reserve::T4 = 1e-11 | (1e-12, 1.0) | "Reserve does not respire, but has a small value to avoid  numerical error" | "yr-1"
+	annk_Reserve::T4 = 1.0e-11 | (1.0e-12, 1.0) | "Reserve does not respire, but has a small value to avoid  numerical error" | "yr-1"
 	annk_LitSlow::T5 = 3.9 | (0.39, 39.0) | "turnover rate of slow litter carbon (wood litter) pool" | "yr-1"
 	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
 	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
 	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = [-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
+	cFlowA::T9 = Float64[-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
 	    0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
 	    0.0 0.0 -1.0 0.0 0.0 0 0.0 0.0
 	    0.0 0.0 0 -1.0 0.0 0.0 0.0 0.0
@@ -17,49 +17,32 @@ export cCycleBase_GSI
 	    0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
 	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
 	    0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-	C2Nveg::T10 = [25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+	C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
-function precompute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
+		𝟙 ∈ helpers.numbers
 		cEco ∈ land.pools
 	end
     ## instantiate variables
     p_C2Nveg = ones(numType, length(cEco)) #sujan
+    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)] .= C2Nveg
     cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
-
+	p_k_base = zero(cEco)
+    p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
+	for i in eachindex(p_k_base)
+	    p_k_base[i] = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+	end
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, cFlowA) => land.cCycleBase
+		(p_C2Nveg, cFlowA, p_k_base, p_annk) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
-    return land
-end
-
-function compute(o::cCycleBase_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
-    ## unpack parameters
-    @unpack_cCycleBase_GSI o
-
-    ## unpack land variables
-    @unpack_land begin
-		p_C2Nveg ∈ land.cCycleBase
-		𝟙 ∈ helpers.numbers
-	end
-    ## calculate variables
-    #carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg)] .= C2Nveg
-    # annual turnover rates
-    p_annk = [annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld]
-    TSPY = helpers.dates.nStepsYear
-    p_k_base = 𝟙 .- (exp.(-𝟙 .* p_annk).^(𝟙 / TSPY))
-	# p_annk = reshape(repelem[annk], length(land.pools.cEco)); #sujan
-
-    ## pack land variables
-    @pack_land (p_C2Nveg, p_k_base, cFlowA) => land.cCycleBase
     return land
 end
 

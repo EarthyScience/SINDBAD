@@ -3,7 +3,16 @@ export runoffOverland_Sat
 struct runoffOverland_Sat <: runoffOverland
 end
 
-function compute(o::runoffOverland_Sat, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoffOverland_Sat, forcing, land, helpers)
+
+	runoffOverland = helpers.numbers.𝟘
+
+	## pack land variables
+	@pack_land runoffOverland => land.fluxes
+	return land
+end
+
+function compute(o::runoffOverland_Sat, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land runoffSatExc ∈ land.fluxes

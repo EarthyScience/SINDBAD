@@ -1,0 +1,12 @@
+[deps]
+AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+ForwardSindbad = "f6108451-10cb-42fa-b0c1-67671cf08f15"
+HybridSindbad = "0bea38b2-e736-4245-bd9b-cecd04ee2595"
+ImageMagick = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
+OptimizeSindbad = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"
