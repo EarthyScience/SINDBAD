@@ -4,6 +4,8 @@ export getForcingTimeSize
 export getForcingForTimeStep
 export filterVariables
 export getKeyedArrayFromYaxArray
+export getNamedDimsArrayFromYaxArray
+export getDimArrayFromYaxArray
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -113,9 +115,33 @@ function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables
 end
 
 """
+getNamedDimsArrayFromYaxArray(input::NamedTuple)
+"""
+function getNamedDimsArrayFromYaxArray(input)
+    ks = input.variables;
+    keyedData = map(input.data) do c
+    namesCube = YAXArrayBase.dimnames(c)
+        NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k in namesCube)...)
+    end
+    return (; Pair.(ks, keyedData)...);
+end
+
+"""
+getDimArrayFromYaxArray(input::NamedTuple)
+"""
+function getDimArrayFromYaxArray(input)
+    ks = input.variables;
+    keyedData = map(input.data) do c
+    namesCube = YAXArrayBase.dimnames(c)
+        YAXArrayBase.yaxconvert(DimArray, Array(c.data))
+    end
+    return (; Pair.(ks, keyedData)...);
+end
+
+"""
 getKeyedArrayFromYaxArray(input::NamedTuple)
 """
-function getKeyedArrayFromYaxArray(input::NamedTuple)
+function getKeyedArrayFromYaxArray(input)
     ks = input.variables;
     keyedData = map(input.data) do c
     namesCube = YAXArrayBase.dimnames(c)
