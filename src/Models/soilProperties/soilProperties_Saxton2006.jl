@@ -8,7 +8,7 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
 	EC::T5 = 36.0 | (30.0, 40.0) | "SElectrical conductance of a saturated soil extract" | "dS m-1 (dS/m = mili-mho cm-1)"
 end
 
-function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	@unpack_soilProperties_Saxton2006 o
 
 	@unpack_land begin
@@ -135,7 +135,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land::NamedTuple, hel
 		sp_ψSat[sl] = ψSat
 	end
 	# generate the function handle to calculate soil hydraulic property
-	unsatK = kSaxton2006
+	unsatK = kSaxton2006::typeof(kSaxton2006)
 
 	## pack land variables
 	@pack_land (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
@@ -233,7 +233,7 @@ function kSaxton2006(land, helpers, sl)
 	β = p_β[sl]
 	kSat = p_kSat[sl]
 	λ = 𝟙 / β
-	K = kSat * ((θ_dos) ^ (3.0 + (2.0 / λ)))
+	K = kSat * ((θ_dos) ^ (3 + (2 / λ)))
 	return K
 end
 

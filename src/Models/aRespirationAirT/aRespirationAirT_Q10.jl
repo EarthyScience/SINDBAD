@@ -5,8 +5,20 @@ export aRespirationAirT_Q10
     Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
+function precompute(o::aRespirationAirT_Q10, forcing, land, helpers)
+    ## unpack parameters and forcing
 
-function compute(o::aRespirationAirT_Q10, forcing, land::NamedTuple, helpers::NamedTuple)
+    ## calculate variables
+    fT = helpers.numbers.𝟘
+
+    ## pack land variables
+    @pack_land begin
+        fT => land.aRespirationAirT
+    end
+    return land
+end
+
+function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_aRespirationAirT_Q10 o
     @unpack_forcing Tair ∈ forcing
@@ -15,7 +27,9 @@ function compute(o::aRespirationAirT_Q10, forcing, land::NamedTuple, helpers::Na
     fT = Q10_RM^((Tair - Tref_RM) / Q10_base)
 
     ## pack land variables
-    @pack_land fT => land.aRespirationAirT
+    @pack_land begin
+        fT => land.aRespirationAirT
+    end
     return land
 end
 

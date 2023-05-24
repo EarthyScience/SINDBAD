@@ -6,7 +6,15 @@ export gppSoilW_Stocker2020
 end
 
 
-function compute(o::gppSoilW_Stocker2020, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppSoilW_Stocker2020, forcing, land, helpers)
+    SMScGPP = helpers.numbers.𝟙
+
+    ## pack land variables
+    @pack_land SMScGPP => land.gppSoilW
+    return land
+end
+
+function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
     ## unpack parameters
     @unpack_gppSoilW_Stocker2020 o
 

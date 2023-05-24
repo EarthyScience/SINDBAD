@@ -3,7 +3,7 @@ export cTauSoilProperties_none
 struct cTauSoilProperties_none <: cTauSoilProperties
 end
 
-function precompute(o::cTauSoilProperties_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilProperties_none, forcing, land, helpers)
 
 	## calculate variables
 	p_kfSoil = ones(helpers.numbers.numType, length(land.pools.cEco))

@@ -3,7 +3,7 @@ export cTauSoilT_none
 struct cTauSoilT_none <: cTauSoilT
 end
 
-function precompute(o::cTauSoilT_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilT_none, forcing, land, helpers)
 
 	## calculate variables
 	fT = helpers.numbers.𝟙

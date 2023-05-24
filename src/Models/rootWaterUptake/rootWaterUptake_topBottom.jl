@@ -3,7 +3,7 @@ export rootWaterUptake_topBottom
 struct rootWaterUptake_topBottom <: rootWaterUptake
 end
 
-function precompute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -19,7 +19,7 @@ function precompute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, hel
     return land
 end
 
-function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -32,7 +32,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helper
     wRootUptake .= 𝟘
     # get the transpiration
     toUptake = transpiration
-    for sl in 1:length(land.pools.soilW)
+    for sl in eachindex(land.pools.soilW)
         wRootUptake[sl] = min(toUptake, PAW[sl])
         toUptake = toUptake - wRootUptake[sl]
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]
@@ -46,7 +46,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helper
     return land
 end
 
-function update(o::rootWaterUptake_topBottom, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

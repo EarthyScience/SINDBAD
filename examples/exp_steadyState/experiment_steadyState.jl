@@ -2,15 +2,15 @@ using Revise
 using Sindbad
 # using Suppressor
 # using Optimization
-using Tables:
-    columntable,
-    matrix
-using TableOperations:
-    select
+# using Tables:
+#     columntable,
+#     matrix
+# using TableOperations:
+#     select
 
-using Plots
+# using Plots
 
-experiment_json = "exp_steadyState/settings_steadyState/experiment.json"
+experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
 
 info = getConfiguration(experiment_json);

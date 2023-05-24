@@ -4,7 +4,7 @@ struct soilWBase_uniform <: soilWBase
 end
 
 
-function precompute(o::soilWBase_uniform, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
@@ -16,7 +16,7 @@ function precompute(o::soilWBase_uniform, forcing, land::NamedTuple, helpers::Na
     n_soilW = length(soilW)
     ## precomputations/check
     # get the soil thickness 
-    soilDepths = helpers.pools.water.layerThickness.soilW
+    soilDepths = helpers.numbers.sNT.(helpers.pools.water.layerThickness.soilW)
     soilLayerThickness = soilDepths
 
     if length(sp_kFC) != n_soilW

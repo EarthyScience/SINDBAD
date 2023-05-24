@@ -3,7 +3,7 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle
 end
 
-function precompute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
 	cEcoEfflux = zeros(numType, length(land.pools.cEco)); #sujan moved from get states
@@ -15,7 +15,7 @@ function precompute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTup
 	return land
 end
 
-function compute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycle_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
@@ -35,12 +35,12 @@ function compute(o::cCycle_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	## compute losses
 	cEcoOut = min.(cEco, cEco * p_k_act)
 	## gains to vegetation
-	zix = getzix(land.pools.cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
 	cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
 	cEcoInflux[zix] .= cNPP
 	## flows & losses
 	# @nc; if flux order does not matter; remove.
-	for jix in 1:length(fluxOrder)
+	for jix in eachindex(fluxOrder)
 		taker = p_taker[fluxOrder[jix]]
 		giver = p_giver[fluxOrder[jix]]
 		flow_tmp = cEcoOut[giver] * p_F(taker, giver)
@@ -180,7 +180,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	# p.aRespiration.YG = 1.0
 	# end
 	## ORDER OF CALCULATIONS [1 to the end of pools]
-	zixVec = getzix(cEco)
+	zixVec = getzix(cEco, helpers.pools.carbon.zix, :cEco)
 	# BUT, we sort from left to right [veg to litter to soil] & prioritize
 	# without loops
 	kmoves = 0
@@ -191,7 +191,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		move = false
 		ndxGainFrom = find(p_taker == zix)
 		ndxLoseToZix = p_taker[p_giver == zix]
-		for ii in 1:length(ndxGainFrom)
+		for ii in eachindex(ndxGainFrom)
 			giver = p_giver[ndxGainFrom[ii]]
 			if any(giver == ndxLoseToZix)
 				move = true
@@ -235,7 +235,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 			end
 			# gains from other carbon pools
 			ndxGainFrom = find(p_taker == zix)
-			for ii in 1:length(ndxGainFrom)
+			for ii in eachindex(ndxGainFrom)
 				taker = p_taker[ndxGainFrom[ii]]; # @nc : taker always has to be the same as zix giver = p_giver[ndxGainFrom[ii]]
 				denom = (1.0 - cLossRate[giver, :])
 				adjustGain = p_cFlow_A[taker, giver, :]

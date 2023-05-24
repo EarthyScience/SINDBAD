@@ -5,6 +5,7 @@
 		"time": 365
 	},
 	"dimensions": {
+		"permute": null,
 		"latitude": "latitude",
 		"longitude": "longitude",
 		"time": "time"
@@ -32,7 +33,7 @@
 			"sourceVariableName": "PET_PT",
 			"sourceVariableUnit": "mm d-1",
 			"nameShort": "PET",
-			"dataPath": "data/3Ddata/Africa.era5.PET_PT.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.PET_PT.2010.nc"
 		},
 		"Rain":
 		{
@@ -41,7 +42,7 @@
 			"sourceVariableName": "tp",
 			"sourceVariableUnit": "mm d-1",
 			"nameShort": "Rain",
-			"dataPath": "data/3Ddata/Africa.era5.tp.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.tp.2010.nc"
 		},
 		"Rg":
 		{
@@ -51,7 +52,7 @@
 			"sourceVariableUnit": "MJ m-2",
 			"source2sindbadUnit": 11.5740740741,
 			"nameShort": "Global Radiation",
-			"dataPath": "data/3Ddata/Africa.era5.ssrd.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.ssrd.2010.nc"
 		},
 		"PAR":
 		{
@@ -61,7 +62,7 @@
 			"sourceVariableUnit": "MJ m-2",
 			"source2sindbadUnit": 5.78703703704,
 			"nameShort": "Photosynthetically active radiation (=Rg*.5)",
-			"dataPath": "data/3Ddata/Africa.era5.ssrd.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.ssrd.2010.nc"
 		},
 		"PsurfDay":
 		{
@@ -71,7 +72,7 @@
 			"sourceVariableUnit": "pa",
 			"source2sindbadUnit": 0.0001,
 			"nameShort": "surface pressure",
-			"dataPath": "data/3Ddata/Africa.era5.sp.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.sp.2010.nc"
 		},
 		"RgPot":
 		{
@@ -81,7 +82,7 @@
 			"sourceVariableUnit": "W m-2",
 			"source2sindbadUnit": 0.0864,
 			"nameShort": "Potential Global Radiation",
-			"dataPath": "data/3Ddata/Africa.era5.snr.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.snr.2010.nc"
 		},
 		"Rn":
 		{
@@ -91,7 +92,7 @@
 			"sourceVariableUnit": "W m-2",
 			"source2sindbadUnit": 0.0864,
 			"nameShort": "Net radiation",
-			"dataPath": "data/3Ddata/Africa.era5.snr.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.snr.2010.nc"
 		},
 		"Tair":
 		{
@@ -102,7 +103,7 @@
 			"source2sindbadUnit": -273.15,
 			"additiveUnitConversion": true,
 			"nameShort": "Tair",
-			"dataPath": "data/3Ddata/Africa.era5.t2m.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.t2m.2010.nc"
 		},
 		"TairDay":
 		{
@@ -113,7 +114,7 @@
 			"source2sindbadUnit": 273.15,
 			"additiveUnitConversion": true,
 			"nameShort": "TairDay",
-			"dataPath": "data/3Ddata/Africa.era5.t2m_daytime_mean.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.t2m_daytime_mean.2010.nc"
 		},
 		"VPD":
 		{
@@ -123,7 +124,7 @@
 			"sourceVariableUnit": "hPa",
 			"source2sindbadUnit": 0.1,
 			"nameShort": "Vapor pressure deficit Day",
-			"dataPath": "data/3Ddata/Africa.era5.vpd.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.vpd.2010.nc"
 		},
 		"VPDDay":
 		{
@@ -133,7 +134,7 @@
 			"sourceVariableUnit": "hPa",
 			"source2sindbadUnit": 0.1,
 			"nameShort": "Vapor pressure deficit Day",
-			"dataPath": "data/3Ddata/Africa.era5.vpd_daytime_mean.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.era5.vpd_daytime_mean.2010.nc"
 		},
 		"fAPAR":
 		{
@@ -142,7 +143,7 @@
 			"sourceVariableName": "FVC",
 			"sourceVariableUnit": "-",
 			"nameShort": "fAPAR from FVC",
-			"dataPath": "data/3Ddata/Africa.seviri.FVC.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.seviri.FVC.2010.nc"
 		},
 		"vegFrac": {
 			"variableUnit": "-",
@@ -151,7 +152,7 @@
 			"sourceVariableUnit": "-",
 			"nameShort": "vegFrac",
 			"sourceDataProductName": "soilgrids",
-			"dataPath": "data/3Ddata/Africa.seviri.FVC.2010.nc"
+			"dataPath": "../data/3Ddata/Africa.seviri.FVC.2010.nc"
 		}
 	}
 	}

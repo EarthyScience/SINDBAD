@@ -18,19 +18,19 @@ export PET_Lu2005
 	G_base::T15 = 4.2 | (nothing, nothing) | "base groundheat flux" | ""
 end
 
-function precompute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing Tair ∈ forcing
-
+	PET = helpers.numbers.𝟘
 	## calculate variables
 	Tair_prev = Tair
 
 	## pack land variables
-	@pack_land Tair_prev => land.PET
+	@pack_land (PET, Tair_prev) => land.PET
 	return land
 end
 
-function compute(o::PET_Lu2005, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::PET_Lu2005, forcing, land, helpers)
 	## unpack parameters
     @unpack_PET_Lu2005 o
 	## unpack forcing
