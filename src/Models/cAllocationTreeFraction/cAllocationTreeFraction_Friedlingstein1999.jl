@@ -38,15 +38,15 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
 
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
     r0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegRoot)
+    for ix in getzix(land.pools.cVegRoot, helpers.pools.carbon.zix, :cVegRoot)
         r0 = r0 + cAlloc[ix]
     end
     s0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegWood)
+    for ix in getzix(land.pools.cVegWood, helpers.pools.carbon.zix, :cVegWood)
         s0 = s0 + cAlloc[ix]
     end
     l0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegLeaf)
+    for ix in getzix(land.pools.cVegLeaf, helpers.pools.carbon.zix, :cVegLeaf)
         l0 = l0 + cAlloc[ix]
     end     # this is to below ground root fine+coarse
     # s0 = 0.2 #sum(@view cAlloc[getzix(land.pools.cVegWood)])
