@@ -207,7 +207,8 @@
 				"snowW": [1, 0.01],
 				"surfaceW": [1, 0.01]
             },
-			"combine": [true,"TWS"],
+			"combine": "TWS",
+            "arraytype": "view",
             "addStateVars": {"Δ": 0.0}
 		},
 		"carbon":
@@ -229,7 +230,8 @@
                     "Old": [1, 1000.0]
                 }
             },
-			"combine": [true,"cEco"],
+			"combine": "cEco",
+            "arraytype": "view",
             "addStateVars": {"Δ": 0.0
             }
         }

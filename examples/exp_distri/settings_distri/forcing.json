@@ -1,9 +1,10 @@
 {
 	"size": {
-		"site": 205,
-		"time": 10000
+		"site": 50,
+		"time": 1000
 	},
 	"dimensions": {
+		"permute": null,
 		"site": "site",
 		"time": "time"
 	},
