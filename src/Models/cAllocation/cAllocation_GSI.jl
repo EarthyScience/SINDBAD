@@ -14,7 +14,7 @@ function precompute(o::cAllocation_GSI, forcing, land, helpers)
     nzixVegs=helpers.numbers.numType[]
     cpI = 1
     for cpName in cpNames
-        zix = getzix(land.pools, cpName)
+        zix = getzix(getfield(land.pools, cpName), helpers.pools.carbon.zix, cpName)
         nZix=sNT(length(zix))
         zixVegs[cpI] = zix
         push!(nzixVegs, nZix)
