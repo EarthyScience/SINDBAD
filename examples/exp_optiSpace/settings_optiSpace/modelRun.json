@@ -17,6 +17,7 @@
 	"flags":
 	{
 		"saveInfo": 			true,
+		"debugit": 				false, 
 		"catchErrors": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,

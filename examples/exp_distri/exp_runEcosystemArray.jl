@@ -6,18 +6,13 @@ using ForwardSindbad
 # using HybridSindbad
 using ThreadPools
 using AxisKeys
-# using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 using Zarr
 using BenchmarkTools
 
-# using Accessors
-# copy data from 
-# rsync -avz lalonso@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_observations.zarr
 # Sindbad.noStackTrace()
 experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
-# @code_warntype info = setupExperiment(info);
 
 forcing = getForcing(info, Val{:zarr}());
 
@@ -29,21 +24,17 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 
 # @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
 a=1
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-# @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
-# @time outcubes = runExperimentForward(experiment_json);  
 
 
-# @time outcubes = runExperimentOpti(experiment_json);  
-
+# some plots
 ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 site = 1

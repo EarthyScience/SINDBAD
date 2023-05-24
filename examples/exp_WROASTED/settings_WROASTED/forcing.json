@@ -5,6 +5,7 @@
 		"time": 14245
 	},
 	"dimensions": {
+		"permute": null,
 		"latitude": "latitude",
 		"longitude": "longitude",
 		"time": "time"
