@@ -31,6 +31,8 @@ output_*
 examples/Manifest.toml
 examples/*/Manifest.toml
 docs/Manifest.toml
+lib/*/Manifest.toml
+lib/Manifest.toml
 
 examples/data/
 docs/build/
