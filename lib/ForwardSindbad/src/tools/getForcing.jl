@@ -120,6 +120,20 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         # if hasproperty(yax,:time)
         #     yax = yax[time=info.tem.helpers.dates.vector]
         # end
+        @info "getForcing: checking if permutation of data is needed..."
+        if !isnothing(info.forcing.dimensions.permute)
+            @info "permuting dimensions $(info.forcing.dimensions.permute)..."
+            yax = permutedims(yax, info.forcing.dimensions.permute)
+        end
+        # yax = yax[time=info.tem.helpers.dates.vector]
+    # if hasproperty(yax,:time)
+    #         @info "getForcing: checking if permutation of data is needed..."
+    #         if !isnothing(info.forcing.dimensions.permute)
+    #             @info "permuting dimensions $(info.forcing.dimensions.permute)..."
+    #             yax = permutedims(yax, info.forcing.dimensions.permute)
+    #         end
+    #         # yax = yax[time=info.tem.helpers.dates.vector]
+    #     end
         numtype = Val{info.tem.helpers.numbers.numType}()
         map(v -> cleanInputData(v, vinfo, numtype), yax)
     end
@@ -180,6 +194,18 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
         yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
         #todo: slice the time series using dates in helpers
+        if !isnothing(info.forcing.dimensions.permute)
+            @info "permuting dimensions $(info.forcing.dimensions.permute)..."
+            yax = permutedims(yax, info.forcing.dimensions.permute)
+        end
+        # if hasproperty(yax,:time)
+        #     @info "getForcing: checking if permutation of data is needed..."
+        #     if !isnothing(info.forcing.dimensions.permute)
+        #         @info "permuting dimensions $(info.forcing.dimensions.permute)..."
+        #         yax = permutedims(yax, info.forcing.dimensions.permute)
+        #     end
+        #     # yax = yax[time=info.tem.helpers.dates.vector]
+        # end
         # if hasproperty(yax,:time)
         #     yax = yax[time=info.tem.helpers.dates.vector]
         # end
