@@ -47,7 +47,6 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     return land_spin
 end
 
-#=
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_Tsit5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
@@ -64,6 +63,7 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     return land_in
 end
 
+#=
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl.
@@ -165,7 +165,8 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
 
         sel_forcing = forcing
         if isnothing(spinup_forcing)
-            sel_forcing = getSpinupForcing(forcing, tem_helpers, f_1, Val(forc))
+            sel_forcing = getSpinupForcing(forcing, tem_helpers, Val(forc))
+            # sel_forcing = getSpinupForcing(forcing, tem_helpers, f_1, Val(forc))
         else
             sel_forcing = spinup_forcing[forc]
         end
