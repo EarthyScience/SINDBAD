@@ -270,32 +270,29 @@ macro unpack_forcing(inparams)
 end
 
 """
-getzix(tpl::NamedTuple, fld::Symbol)
-returns the indices of a view in the parent main array
+getzix(dat::SubArray)
+returns the indices of a view for a subArray
 """
-function getzix(tpl::NamedTuple, fld::Symbol)
-    dat::SubArray = getfield(tpl, fld)
-    zix = first(parentindices(dat))
-    return zix
+function getzix(dat::SubArray)
+    first(parentindices(dat))
 end
 
-"""
-getzix(tpl::NamedTuple, fld::String)
-returns the indices of a view in the parent main array
-"""
-function getzix(tpl::NamedTuple, fld::String)
-    dat::SubArray = getfield(tpl, Symbol(fld))
-    zix = first(parentindices(dat))
-    return zix
-end
 
 """
 getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
-function getzix(dat::SubArray)
-    zix = first(parentindices(dat))
-    return zix
+function getzix(dat::SubArray, zixhelpers::NamedTuple, poolName::Symbol)
+    first(parentindices(dat))
+end
+
+
+"""
+getzix(dat::SubArray)
+returns the indices of a view for a subArray
+"""
+function getzix(dat::Array, zixhelpers::NamedTuple, poolName::Symbol)
+    getfield(zixhelpers, poolName)
 end
 
 
