@@ -17,6 +17,8 @@ using Flatten:
     metaflatten,
     fieldnameflatten,
     parentnameflatten
+using Zygote: Buffer
+
 @reexport using PrettyPrinting: pprint
 
 include("tools/tools.jl")
