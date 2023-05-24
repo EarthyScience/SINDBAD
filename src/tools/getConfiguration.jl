@@ -1,5 +1,5 @@
 export getConfiguration, getExperimentConfiguration, readConfiguration
-export createNestedDict
+export createNestedDict, deep_merge
 
 """
     deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
@@ -174,7 +174,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
     sub_output = ["data", "settings", "root"]
-    if infoTuple.modelRun.flags.runOpti
+    if infoTuple.modelRun.flags.runOpti || infoTuple.modelRun.flags.calcCost
         push!(sub_output, "optim")
     end
     if infoTuple.spinup.flags.saveSpinup

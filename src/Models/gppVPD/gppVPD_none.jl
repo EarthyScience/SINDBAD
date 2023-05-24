@@ -2,7 +2,7 @@ export gppVPD_none
 
 struct gppVPD_none <: gppVPD end
 
-function precompute(o::gppVPD_none, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppVPD_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]

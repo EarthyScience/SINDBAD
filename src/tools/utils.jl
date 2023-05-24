@@ -1,14 +1,12 @@
 export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
 export getzix, setTupleField, setTupleSubfield, applyUnitConversion
-export offDiag, offDiagUpper, offDiagLower
+export offDiag, offDiagUpper, offDiagLower, cumSum!
 export flagUpper, flagLower
-export AllNaN
-export nanmax, nanmin
-export landWrapper
 export nonUnique
 export noStackTrace
 export dictToNamedTuple
 export getSindbadModels
+export addS
 
 """
     noStackTrace()
@@ -35,7 +33,7 @@ function getSindbadModels()
 end
 
 """
-nonUnique(x::AbstractArray{T}) where T
+    nonUnique(x::AbstractArray{T}) where T
 returns a vector of duplicates in the input vector
 """
 function nonUnique(x::AbstractArray{T}) where T
@@ -195,8 +193,10 @@ function processPackLand(ex)
     lhs = ex.args[2]
     rhs = ex.args[3]
     if lhs isa Symbol
+        #println("symbol")
         lhs = [lhs]
     elseif lhs.head == :tuple
+        #println("tuple")
         lhs = lhs.args
     else
         error("processPackLand: could not pack:" * lhs * "=" * rhs)
@@ -214,7 +214,9 @@ function processPackLand(ex)
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            # tmp = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
+            tmp = Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
+            tmp
         end
     end
     Expr(:block, lines...)
@@ -268,32 +270,41 @@ macro unpack_forcing(inparams)
 end
 
 """
-getzix(tpl::NamedTuple, fld::Symbol)
-returns the indices of a view in the parent main array
+getzix(dat::SubArray)
+returns the indices of a view for a subArray
 """
-function getzix(tpl::NamedTuple, fld::Symbol)
-    dat::SubArray = getfield(tpl, fld)
-    zix = parentindices(dat)[1]
-    return zix
+function getzix(dat::SubArray)
+    first(parentindices(dat))
 end
 
-"""
-getzix(tpl::NamedTuple, fld::String)
-returns the indices of a view in the parent main array
-"""
-function getzix(tpl::NamedTuple, fld::String)
-    dat::SubArray = getfield(tpl, Symbol(fld))
-    zix = parentindices(dat)[1]
-    return zix
-end
 
 """
 getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
-function getzix(dat::SubArray)
-    zix = parentindices(dat)[1]
-    return zix
+function getzix(dat::SubArray, zixhelpers::NamedTuple, poolName::Symbol)
+    first(parentindices(dat))
+end
+
+
+"""
+getzix(dat::SubArray)
+returns the indices of a view for a subArray
+"""
+function getzix(dat::Array, zixhelpers::NamedTuple, poolName::Symbol)
+    getfield(zixhelpers, poolName)
+end
+
+
+"""
+    cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
+fill out the output vector with the cumulative sum of elements from input vector
+"""
+function cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
+    for i=eachindex(i_n)
+        o_ut[i] = sum(i_n[1:i])
+    end
+    return o_ut
 end
 
 
@@ -302,7 +313,7 @@ end
 returns a vector comprising of off diagonal elements of a matrix
 """
 function offDiag(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] ≠ ι[2]]]
 end
 
 """
@@ -310,7 +321,7 @@ end
 returns a vector comprising of above diagonal elements of a matrix
 """
 function offDiagUpper(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] < ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] < ι[2]]]
 end
 
 """
@@ -318,7 +329,22 @@ end
 returns a vector comprising of below diagonal elements of a matrix
 """
 function offDiagLower(A::AbstractMatrix)
-    [A[ι] for ι in CartesianIndices(A) if ι[1] > ι[2]]
+    @view A[[ι for ι in CartesianIndices(A) if ι[1] > ι[2]]]
+end
+
+
+"""
+    flagOffDiag(A::AbstractMatrix)
+returns a matrix of same shape as input with 1 for all non diagonal elements
+"""
+function flagOffDiag(A::AbstractMatrix)
+    o_mat = zeros(size(A))
+    for ι in CartesianIndices(A)
+        if ι[1] ≠ ι[2]
+            o_mat[ι] = 1
+        end
+    end
+    return o_mat
 end
 
 """
@@ -350,67 +376,25 @@ function flagLower(A::AbstractMatrix)
 end
 
 """
-    AllNaN <: YAXArrays.DAT.ProcFilter
-Add skipping filter for pixels with all nans in YAXArrays 
+addS(s, sΔ)
+return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
 """
-struct AllNaN <: YAXArrays.DAT.ProcFilter end
-YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
-
-
-"""
-    nanmax(dat) = maximum(dat[.!isnan.(dat)])
-Calculate the maximum of an array while skipping nan
-"""
-nanmax(dat) = maximum(filter(!isnan,dat))
+function addS(s, sΔ)
+	sm = zero(eltype(s))
+	for si in eachindex(s)
+		sm = sm + s[si] + sΔ[si]
+	end
+	sm
+end
 
 """
-    nanmax(dat) = minimum(dat[.!isnan.(dat)])
-Calculate the minimum of an array while skipping nan
+addS(s)
+return total storage amount given the storage without creating an allocation for a temporary array
 """
-nanmin(dat) = minimum(filter(!isnan,dat))
-
-"""
-    landWrapper{S}
-Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
-"""
-struct landWrapper{S}
-    s::S
+function addS(s)
+	sm = zero(eltype(s))
+	for si in eachindex(s)
+		sm = sm + s[si]
+	end
+	sm
 end
-struct GroupView{S}
-    groupname::Symbol
-    s::S
-end
-struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
-    s::S
-    groupname::Symbol
-    arrayname::Symbol
-end
-Base.getproperty(s::landWrapper,f::Symbol) = GroupView(f,getfield(s,:s))
-function Base.getproperty(g::GroupView,f::Symbol)
-    allarrays = getfield(g,:s)
-    groupname = getfield(g,:groupname)
-    T = typeof(first(allarrays)[groupname][f])
-    ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays,groupname,f)
-end
-Base.size(a::ArrayView) = size(a.s)
-Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
-Base.getindex(a::ArrayView,i::Int) = a.s[i][a.groupname][a.arrayname]
-# function Base.getproperty(g::GroupView,f::Symbol)
-#     group = columntable(getfield(g,:s))[getfield(g,:groupname)]
-#     v = columntable(group)[f]
-#     if eltype(v) <: AbstractArray
-#         if length(first(v))==1
-#             getindex.(v,1)
-#         else
-#             VectorOfArray(v)
-#         end
-#     else
-#         v
-#     end
-# end
-Base.propertynames(o::landWrapper) = propertynames(first(getfield(o,:s)))
-Base.keys(o::landWrapper) = propertynames(o)
-Base.getindex(o::landWrapper,s::Symbol) = getproperty(o,s)
-Base.propertynames(o::GroupView) = propertynames(first(getfield(o,:s))[getfield(o,:groupname)])
-Base.keys(o::GroupView) = propertynames(o)
-Base.getindex(o::GroupView,i::Symbol) = getproperty(o,i)

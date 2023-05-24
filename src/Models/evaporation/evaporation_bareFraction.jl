@@ -4,7 +4,7 @@ export evaporation_bareFraction
 	ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
 end
 
-function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::evaporation_bareFraction, forcing, land, helpers)
 	## unpack parameters
 	@unpack_evaporation_bareFraction o
 
@@ -27,12 +27,12 @@ function compute(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers
 	@pack_land begin
 		PETsoil => land.evaporation
 		evaporation => land.fluxes
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end
 
-function update(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::evaporation_bareFraction, forcing, land, helpers)
 	@unpack_evaporation_bareFraction o
 
 	## unpack variables
@@ -48,11 +48,11 @@ function update(o::evaporation_bareFraction, forcing, land::NamedTuple, helpers:
 	# reset soil moisture changes to zero
 	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
-	end
+	# ## pack land variables
+	# @pack_land begin
+	# 	soilW => land.pools
+	# 	ΔsoilW => land.states
+	# end
 	return land
 end
 

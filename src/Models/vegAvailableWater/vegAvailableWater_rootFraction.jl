@@ -3,7 +3,21 @@ export vegAvailableWater_rootFraction
 struct vegAvailableWater_rootFraction <: vegAvailableWater
 end
 
-function compute(o::vegAvailableWater_rootFraction, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+
+	## unpack land variables
+	@unpack_land begin
+		soilW ∈ land.pools
+	end
+
+	PAW = zero(soilW)
+
+	## pack land variables
+	@pack_land PAW => land.vegAvailableWater
+	return land
+end
+
+function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -12,12 +26,11 @@ function compute(o::vegAvailableWater_rootFraction, forcing, land::NamedTuple, h
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		𝟘 ∈ helpers.numbers
+		PAW ∈ land.vegAvailableWater
 	end
 
-	PAW = p_fracRoot2SoilD .* (max.(soilW + ΔsoilW - p_wWP, 𝟘))
+	PAW .= p_fracRoot2SoilD .* (max.(soilW .+ ΔsoilW .- p_wWP, 𝟘))
 
-	## pack land variables
-	@pack_land PAW => land.vegAvailableWater
 	return land
 end
 

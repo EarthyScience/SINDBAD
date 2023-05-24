@@ -6,7 +6,7 @@ export aRespiration_Thornley2000B
 end
 
 
-function precompute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
@@ -25,7 +25,7 @@ function precompute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, he
 	return land
 end
 
-function compute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	## unpack parameters
 	@unpack_aRespiration_Thornley2000B o
 
@@ -45,7 +45,7 @@ function compute(o::aRespiration_Thornley2000B, forcing, land::NamedTuple, helpe
 	
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL B - growth respiration is given priority
-	zix = getzix(land.pools.cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
 
 	# scalars of maintenance respiration for models A; B & C
 	# km is the maintenance respiration coefficient [d-1]

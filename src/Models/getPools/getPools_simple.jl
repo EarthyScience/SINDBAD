@@ -2,8 +2,16 @@ export getPools_simple
 
 struct getPools_simple <: getPools
 end
+function precompute(o::getPools_simple, forcing, land, helpers)
+	## unpack land variables
+	@unpack_land rain ∈ land.rainSnow
+	WBP = rain
+	## pack land variables
+	@pack_land WBP => land.states
+	return land
+end
 
-function compute(o::getPools_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::getPools_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land rain ∈ land.rainSnow

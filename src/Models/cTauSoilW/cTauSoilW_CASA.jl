@@ -4,7 +4,7 @@ export cTauSoilW_CASA
 	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
 
-function precompute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
@@ -15,7 +15,7 @@ function precompute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::Named
 	return land
 end
 
-function compute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cTauSoilW_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cTauSoilW_CASA o
 
@@ -63,7 +63,7 @@ function compute(o::cTauSoilW_CASA, forcing, land::NamedTuple, helpers::NamedTup
 	p_fsoilW[helpers.pools.carbon.zix.cEco] = fsoilW
 
 	## pack land variables
-	@pack_land (fsoilW, p_fsoilW) => land.cTauSoilW
+	@pack_land fsoilW => land.cTauSoilW
 	return land
 end
 

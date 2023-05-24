@@ -2,13 +2,13 @@ export interception_Miralles2010
 
 @bounds @describe @units @with_kw struct interception_Miralles2010{T1, T2, T3, T4, T5} <: interception
 	CanopyStorage::T1 = 1.2 | (0.4, 2.0) | "Canopy storage" | "mm"
-	fte::T2 = 0.02 | (0.02, 0.02) | "fraction of trunk evaporation" | ""
+	fte::T2 = 0.02| (0.02, 0.02) | "fraction of trunk evaporation" | ""
 	evapRate::T3 = 0.3 | (0.1, 0.5) | "mean evaporation rate" | "mm/hr"
 	St::T4 = 0.02 | (0.02, 0.02) | "trunk capacity" | "mm"
 	pd::T5 = 0.02 | (0.02, 0.02) | "fraction rain to trunks" | ""
 end
 
-function compute(o::interception_Miralles2010, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::interception_Miralles2010, forcing, land, helpers)
 	## unpack parameters
 	@unpack_interception_Miralles2010 o
 

@@ -33,16 +33,13 @@
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
-		"gppAirT.ToptB",
-		"gppVPD.κ",
-		"gppVPD.Cκ",
-		"gppVPD.Cm"
+		"gppAirT.ToptB"
 			],
 	"constraints": {
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": "data/BE-Vie.1979.2017.daily.nc",
+		"oneDataPath": "../data/DE-2.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
 			"spatialAggr": "cat",

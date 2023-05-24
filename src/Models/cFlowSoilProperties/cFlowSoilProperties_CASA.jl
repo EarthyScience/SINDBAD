@@ -9,7 +9,7 @@ export cFlowSoilProperties_CASA
 	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
 
-function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
@@ -20,7 +20,7 @@ function precompute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, help
 	return land
 end
 
-function compute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	## unpack parameters
 	@unpack_cFlowSoilProperties_CASA o
 
@@ -51,8 +51,8 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land::NamedTuple, helpers
 		for ii in 1:size(aM, 1)
 			ndxSrc = helpers.pools.carbon.zix.(aM(ii, 1))
 			ndxTrg = helpers.pools.carbon.zix.(aM(ii, 2))
-			for iSrc in 1:length(ndxSrc)
-				for iTrg in 1:length(ndxTrg)
+			for iSrc in eachindex(ndxSrc)
+				for iTrg in eachindex(ndxTrg)
 					# (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
 				end
 			end
