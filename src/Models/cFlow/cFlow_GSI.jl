@@ -24,8 +24,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     # Prepare the list of flows
     for trow in eachindex(flowVar)
         # @show trow, srcName, trgName
-        zixSrc = getzix(land.pools, asrc[trow])
-        zixTrg = getzix(land.pools, atrg[trow])
+        zixSrc = getzix(getfield(land.pools, asrc[trow]), helpers.pools.carbon.zix, asrc[trow])
+        zixTrg = getzix(getfield(land.pools, atrg[trow]), helpers.pools.carbon.zix, atrg[trow])
         push!(ndxSrc, zixSrc)
         push!(ndxTrg, zixTrg)
         for iSrc in zixSrc
