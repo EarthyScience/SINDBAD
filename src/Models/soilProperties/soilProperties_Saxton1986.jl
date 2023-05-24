@@ -24,7 +24,7 @@ export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986
 	v::T21 = 0.00087546 | nothing | "Saxton Parameters" | ""
 end
 
-function precompute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	@unpack_soilProperties_Saxton1986 o
 
 	## instantiate variables
@@ -45,7 +45,7 @@ function precompute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, hel
 	return land
 end
 
-function compute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::soilProperties_Saxton1986, forcing, land, helpers)
 	## unpack parameters
 	@unpack_soilProperties_Saxton1986 o
 
@@ -55,7 +55,7 @@ function compute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helper
 	## calculate variables
 	# number of layers & creation of arrays
 	# calculate & set the soil hydraulic properties for each layer
-	for sl in 1:length(land.pools.soilW)
+	for sl in eachindex(land.pools.soilW)
 		(α, β, kFC, θFC, ψFC) = soilParamsSaxton1986(land, helpers, sl, ψFC)
 		(_, _, kWP, θWP, ψWP) = soilParamsSaxton1986(land, helpers, sl, ψWP)
 		(_, _, kSat, θSat, ψSat) = soilParamsSaxton1986(land, helpers, sl, ψSat)
@@ -71,7 +71,7 @@ function compute(o::soilProperties_Saxton1986, forcing, land::NamedTuple, helper
 		p_θSat[sl] = θSat
 		p_ψSat[sl] = ψSat
 	end
-	p_unsatK = kSaxton1986
+	p_unsatK = kSaxton1986::typeof(kSaxton1986)
 
 	## pack land variables
 	@pack_land (p_kFC, p_kSat, p_unsatK, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
@@ -110,7 +110,7 @@ function kSaxton1986(land, helpers, sl)
 	SAND = p_SAND[sl] * 100
 	soilD = soilLayerThickness[sl]
 	θ = soilW[sl] / soilD
-	K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
+	K = 2.778e-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
 
 	## pack land variables
 	return K
@@ -130,8 +130,8 @@ function soilParamsSaxton1986(land, helpers, sl, WT)
 	CLAY = p_CLAY[sl] * 100
 	SAND = p_SAND[sl] * 100
 	# Equations
-	A = exp(a + b * CLAY + c * SAND ^ 2.0 + d1 * SAND ^ 2 * CLAY) * 100
-	B = e + f1 * CLAY ^ 2.0 + g * SAND ^ 2 * CLAY
+	A = exp(a + b * CLAY + c * SAND ^ 2 + d1 * SAND ^ 2 * CLAY) * 100
+	B = e + f1 * CLAY ^ 2 + g * SAND ^ 2 * CLAY
 	# soil matric potential; ψ; kPa
 	ψ = WT
 	# soil moisture content at saturation [m^3/m^3]
@@ -160,7 +160,7 @@ function soilParamsSaxton1986(land, helpers, sl, WT)
 	end
 	# clear ndx
 	# hydraulic conductivity [mm/day]: original equation for mm/s
-	K = 2.778E-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
+	K = 2.778e-6 * (exp(p + q * SAND + (r + t * SAND + u * CLAY + v * CLAY ^ 2) * (1 / θ))) * 1000 * 3600 * 24
 	α = A
 	β = B
 

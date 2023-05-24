@@ -6,7 +6,7 @@ export cAllocation_Friedlingstein1999
 	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
 end
 
-function precompute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
 	@unpack_cAllocation_Friedlingstein1999 o
 
 	## instantiate variables
@@ -17,7 +17,7 @@ function precompute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple
 	return land
 end
 
-function compute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
     @unpack_cAllocation_Friedlingstein1999 o
 
@@ -40,7 +40,7 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land::NamedTuple, h
     # distribute the allocation according to pools
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
     for cpName in cpNames
-        zix = getzix(pools.carbon, cpName)
+        zix = getzix(getfield(pools.carbon, cpName), helpers.pools.carbon.zix, cpName)
         nZix = length(zix) * 𝟙
         cAlloc[zix] .= getfield(cf2, cpName) / nZix
     end

@@ -1,45 +1,54 @@
 using Revise
 using Sindbad
-using Tables:
-    columntable,
-    matrix
-using TableOperations:
-    select
-
-experiment_json = "exp_noW/settings_noW/experiment.json"
+using ForwardSindbad
+# using OptimizeSindbad
+using YAXArrays
+# using opti
+# noStackTrace()
 
 
-info = getConfiguration(experiment_json);
-outcubes = runExperiment(experiment_json);
 
-info = setupExperiment(info);
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+experiment_json = "../exp_noW/settings_noW/experiment.json"
+# experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 
-land_init = createLandInit(info);
+info, forcing, output = prepExperimentForward(experiment_json);
+# observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
-output = setupOutput(info);
+forc = getKeyedArrayFromYaxArray(forcing);
+# obs = getKeyedArrayFromYaxArray(observations);
 
-@time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);
+linit = createLandInit(info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+@code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
-# outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-# @profview outsmodel = runEcosystem(info.tem.models.forward, forcing, out, info.tem, spinup_forcing=spinup_forcing);
-ŷField = getfield(outsmodel, :fluxes) |> columntable
-ŷ = hcat(getfield(ŷField, :gpp)...)' |> Matrix |> vec
+a=1
+
+for tt = 1:5
+    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+end
+@time outcubes = runExperimentForward(experiment_json);  
+
+@time outcubes = runExperimentOpti(experiment_json);  
+# outcubes = runExperiment(experiment_json, Val(:forward));
 
 
-observations = getObservation(info); 
-land_init = createLandInit(info);
-optimizeit=true
-outparams, outsmodel = optimizeModel(forcing, out, observations,info.tem, info.optim; spinup_forcing=spinup_forcing);   
-obsV = :gpp
-modelVarInfo = [:fluxes, :gpp]
-ŷField = getfield(outsmodel, modelVarInfo[1]) |> columntable;
-ŷ = hcat(getfield(ŷField, modelVarInfo[2])...)' |> Matrix |> vec;
-y = getproperty(observations, obsV);
-yσ = getproperty(observations, Symbol(string(obsV)*"_σ"));
-loss(y, yσ, ŷ, Val(:nse))
 
-using Plots
-plot(ŷ)
-plot!(y)
+using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+
+plotdat = output.data
+fig, ax, obj = heatmap(plotdat[end])
+Colorbar(fig[1,2], obj)
+save("gpp.png", fig)
+
+for site in 1:16
+    df = DataFrame(time = 1:730, gpp = plotdat[end-1][:,site], nee = plotdat[end][:,site], soilw1 = plotdat[2][1,:,site]);
+
+    for var = (:gpp, :nee, :soilw1)
+        d = data(df)*mapping(:time, var)*visual(Lines, linewidth=0.5);
+
+        fig = with_theme(theme_ggplot2(), resolution = (1200,400)) do
+            draw(d)
+        end
+        save("testfig_$(var)_$(site).png", fig)
+    end
+end

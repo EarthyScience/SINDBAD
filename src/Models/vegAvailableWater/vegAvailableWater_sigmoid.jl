@@ -4,7 +4,27 @@ export vegAvailableWater_sigmoid
 	exp_factor::T1 = 1.0 | (0.02, 3.0) | "multiplier of B factor of exponential rate" | ""
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
+	## unpack parameters
+	@unpack_vegAvailableWater_sigmoid o
+
+	## unpack land variables
+	@unpack_land begin
+		soilW ∈ land.pools
+	end
+
+	θ_dos = zero(soilW)
+	θ_fc_dos = zero(soilW)
+	PAW = zero(soilW)
+	soilWStress = zero(soilW)
+	maxWater = zero(soilW)
+
+	## pack land variables
+	@pack_land (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) => land.vegAvailableWater
+	return land
+end
+
+function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
 	## unpack parameters
 	@unpack_vegAvailableWater_sigmoid o
 
@@ -15,13 +35,14 @@ function compute(o::vegAvailableWater_sigmoid, forcing, land::NamedTuple, helper
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(𝟘, 𝟙) ∈ helpers.numbers
+		(θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.vegAvailableWater
 	end
 
-	θ_dos = (soilW + ΔsoilW) ./ p_wSat
-	θ_fc_dos = p_wFC ./ p_wSat
-	soilWStress = clamp.(𝟙 ./ (𝟙 .+ exp.(-exp_factor .* p_β .* (θ_dos - θ_fc_dos))), 𝟘, 𝟙)
-	maxWater =  clamp.(soilW + ΔsoilW - p_wWP, 𝟘, 𝟙)
-	PAW = p_fracRoot2SoilD .* maxWater .* soilWStress
+	θ_dos .= (soilW .+ ΔsoilW) ./ p_wSat
+	θ_fc_dos .= p_wFC ./ p_wSat
+	soilWStress .= clamp.(𝟙 ./ (𝟙 .+ exp.(-exp_factor .* p_β .* (θ_dos .- θ_fc_dos))), 𝟘, 𝟙)
+	maxWater .=  clamp.(soilW .+ ΔsoilW .- p_wWP, 𝟘, 𝟙)
+	PAW .= p_fracRoot2SoilD .* maxWater .* soilWStress
 
 	## pack land variables
 	@pack_land (PAW, soilWStress) => land.vegAvailableWater

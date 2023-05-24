@@ -4,7 +4,7 @@ export cCycleDisturbance_constant
 	carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 
-function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cCycleDisturbance_constant o
 	@unpack_forcing isDisturbed ∈ forcing
@@ -16,25 +16,26 @@ function compute(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpe
 		(giver, taker) ∈ land.cFlow
 		𝟘 ∈ helpers.numbers
 	end
-	zixVegAll = getzix(land.pools.cVeg)
-	for zixVeg in zixVegAll
-		cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
-		cEco[zixVeg] = cEco[zixVeg] - cLoss
-		ndxLoseToZix = taker[giver .== zixVeg]
-		# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
-		for tZ in eachindex(ndxLoseToZix)
-			tarZix = ndxLoseToZix[tZ]
-			if !any(zixVegAll == tarZix)
-				cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
+	if isDisturbed > 𝟘
+		zixVegAll = vcat(first(parentindices(getfield(land.pools, :cVeg)))...)
+		for zixVeg in zixVegAll
+			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
+			cEco[zixVeg] = cEco[zixVeg] - cLoss
+			ndxLoseToZix = taker[giver .== zixVeg]
+			# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
+			for tZ in eachindex(ndxLoseToZix)
+				tarZix = ndxLoseToZix[tZ]
+				if !any(zixVegAll == tarZix)
+					cEco[tarZix] = cEco[tarZix] + cLoss / length(ndxLoseToZix)
+				end
 			end
 		end
 	end
-
 	## pack land variables
 	return land
 end
 
-function update(o::cCycleDisturbance_constant, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::cCycleDisturbance_constant, forcing, land, helpers)
 	@unpack_cCycleDisturbance_constant o
 
 	## unpack variables

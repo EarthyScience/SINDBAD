@@ -8,7 +8,7 @@ export cTauSoilW_GSI
 	frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
 end
 
-function precompute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
@@ -20,7 +20,7 @@ function precompute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedT
 end
 
 
-function compute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cTauSoilW_GSI o
 
@@ -37,13 +37,13 @@ function compute(o::cTauSoilW_GSI, forcing, land::NamedTuple, helpers::NamedTupl
 	## for the litter pools; only use the top layer"s moisture
     soilW_top = frac2perc * soilW[1] / p_wSat[1]
     soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
-    p_fsoilW[getzix(land.pools.cLit)] .= soilW_top_sc
+    p_fsoilW[getzix(land.pools.cLit, helpers.pools.carbon.zix, :cLit)] .= soilW_top_sc
 
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = 100 * sum(soilW) / sum(p_wSat)
     soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
-    p_fsoilW[getzix(land.pools.cSoil)] .= soilW_all_sc
+    p_fsoilW[getzix(land.pools.cSoil, helpers.pools.carbon.zix, :cSoil)] .= soilW_all_sc
 
 
     ## pack land variables

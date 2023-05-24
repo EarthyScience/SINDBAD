@@ -7,7 +7,15 @@ export gppVPD_PRELES
     Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 
-function compute(o::gppVPD_PRELES, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::gppVPD_PRELES, forcing, land, helpers)
+    VPDScGPP = helpers.numbers.𝟙
+
+    ## pack land variables
+    @pack_land VPDScGPP => land.gppVPD
+    return land
+end
+
+function compute(o::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_PRELES o
     @unpack_forcing VPDDay ∈ forcing
@@ -20,7 +28,7 @@ function compute(o::gppVPD_PRELES, forcing, land::NamedTuple, helpers::NamedTupl
     end
 
     ## calculate variables
-    fVPD_VPD = exp(κ * -VPDDay * (ambCO2 / Ca0)^-Cκ)
+    fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambCO2)^-Cκ)
     fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
     VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, 𝟘, 𝟙)
 

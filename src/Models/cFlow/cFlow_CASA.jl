@@ -3,7 +3,7 @@ export cFlow_CASA
 struct cFlow_CASA <: cFlow
 end
 
-function compute(o::cFlow_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::cFlow_CASA, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -20,10 +20,10 @@ function compute(o::cFlow_CASA, forcing, land::NamedTuple, helpers::NamedTuple)
 	p_F = p_F + p_F
 	# if there is fraction [F] & efficiency is 0, make efficiency 1
 	ndx = p_F > 𝟘  & p_E == zero
-	p_E[ndx] = one
+	p_E[ndx] = 𝟙
 	# if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
 	ndx = p_E > 𝟘  & p_F == zero
-	p_F[ndx] = one
+	p_F[ndx] = 𝟙
 	# build A
 	p_A = p_F * p_E
 	# transfers

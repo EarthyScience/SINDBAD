@@ -3,27 +3,28 @@ export waterBalance_simple
 struct waterBalance_simple <: waterBalance
 end
 
-function precompute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::waterBalance_simple, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
 		totalW ∈ land.totalTWS
 	end
 	totalW_prev = totalW
-
+	dS = totalW
+	waterBalance = totalW
 	## pack land variables
 	@pack_land begin
-		totalW_prev => land.waterBalance
+		(totalW_prev, dS, waterBalance) => land.waterBalance
 	end
 	return land
 end
 
 
-function compute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::waterBalance_simple, forcing, land, helpers)
 	@unpack_land begin
 		precip ∈ land.rainSnow
 		(totalW) ∈ land.totalTWS
-		(totalW_prev) ∈ land.waterBalance
+		(totalW_prev, dS, waterBalance) ∈ land.waterBalance
 		(evapotranspiration, runoff) ∈ land.fluxes
 		tolerance ∈ helpers.numbers
 	end
@@ -44,7 +45,9 @@ function compute(o::waterBalance_simple, forcing, land::NamedTuple, helpers::Nam
 	totalW_prev = totalW
 
 	## pack land variables
-	@pack_land (totalW_prev, waterBalance) => land.waterBalance
+	@pack_land begin
+		(totalW_prev, waterBalance) => land.waterBalance
+	end
 	return land
 end
 

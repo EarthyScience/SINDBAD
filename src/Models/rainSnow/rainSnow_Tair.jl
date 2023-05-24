@@ -4,7 +4,16 @@ export rainSnow_Tair
 	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 
-function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::rainSnow_Tair, forcing, land, helpers)
+    ## unpack parameters and forcing
+    precip = helpers.numbers.𝟘
+    rain = precip
+    snow = precip
+    @pack_land (precip, rain, snow) => land.rainSnow
+    return land
+end
+
+function compute(o::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_Tair o
     @unpack_forcing (Rain, Tair) ∈ forcing
@@ -14,6 +23,7 @@ function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTupl
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         𝟘 ∈ helpers.numbers
+        (precip, rain, snow) ∈ land.rainSnow
     end
     ## calculate variables
     if Tair < Tair_thres
@@ -28,14 +38,12 @@ function compute(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTupl
 	# add snowfall to snowpack of the first layer
     ΔsnowW[1] = ΔsnowW[1] + snow
     ## pack land variables
-    @pack_land begin
-        (precip, rain, snow) => land.rainSnow
-        ΔsnowW => land.states
-    end
+    @pack_land (precip, rain, snow) => land.rainSnow
+        # ΔsnowW => land.states
     return land
 end
 
-function update(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::rainSnow_Tair, forcing, land, helpers)
     @unpack_rainSnow_Tair o
 
     ## unpack variables
@@ -54,7 +62,7 @@ function update(o::rainSnow_Tair, forcing, land::NamedTuple, helpers::NamedTuple
     ## pack land variables
     @pack_land begin
         snowW => land.pools
-        ΔsnowW => land.states
+        # ΔsnowW => land.states
     end
     return land
 end

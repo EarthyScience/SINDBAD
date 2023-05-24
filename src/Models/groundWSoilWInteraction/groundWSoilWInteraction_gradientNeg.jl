@@ -5,7 +5,7 @@ export groundWSoilWInteraction_gradientNeg
 	maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 
-function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 	## unpack parameters
 	@unpack_groundWSoilWInteraction_gradientNeg o
 
@@ -44,7 +44,7 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land::NamedTup
 	return land
 end
 
-function update(o::groundWSoilWInteraction_gradientNeg, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

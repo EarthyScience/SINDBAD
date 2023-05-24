@@ -4,41 +4,61 @@ export drainage_dos
 	dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
-function compute(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::drainage_dos, forcing, land, helpers)
+	## unpack parameters
+
+	## unpack land variables
+	@unpack_land begin
+		ΔsoilW ∈ land.states
+	end
+	drain_fraction = similar(ΔsoilW)
+	drainage = similar(ΔsoilW)
+
+	## pack land variables
+	@pack_land begin
+		drainage => land.drainage
+	end
+	return land
+end
+
+function compute(o::drainage_dos, forcing, land, helpers)
 	## unpack parameters
 	@unpack_drainage_dos o
 
 	## unpack land variables
 	@unpack_land begin
+		drainage ∈ land.drainage
 		(p_wSat, p_β, p_wFC) ∈ land.soilWBase
 		soilW ∈ land.pools
 		ΔsoilW ∈ land.states
 		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
 	end
-	drain_fraction = clamp.(((soilW) ./ p_wSat) .^ (dos_exp .* p_β), 𝟘, 𝟙)
-	drainage =  drain_fraction .* (soilW +  ΔsoilW)
-	drainage[end] = 𝟘
+	# drain_fraction .= clamp.(((soilW) ./ p_wSat) .^ (dos_exp .* p_β), 𝟘, 𝟙)
+	# drainage .=  drain_fraction .* (soilW +  ΔsoilW)
 
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
+		drain_fraction = clamp(((soilW[sl]) / p_wSat[sl]) ^ (dos_exp * p_β[sl]), 𝟘, 𝟙)
+		drainage_tmp =  drain_fraction * (soilW[sl] +  ΔsoilW[sl])
 		max_drain = p_wSat[sl] - p_wFC[sl]
 		lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-		drain = min(drainage[sl], holdCap, lossCap)
+		drain = min(drainage_tmp, holdCap, lossCap)
 		drainage[sl] = drain > tolerance ? drain : 𝟘
 		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
 		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
 	end
+	drainage[end] = 𝟘
 
 	## pack land variables
-	@pack_land begin
-		drainage => land.drainage
-		ΔsoilW => land.states
-	end
+	# @pack_land begin
+	# 	drainage => land.drainage
+	# 	ΔsoilW => land.states
+	# end
 	return land
 end
 
-function update(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::drainage_dos, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin
@@ -54,10 +74,10 @@ function update(o::drainage_dos, forcing, land::NamedTuple, helpers::NamedTuple)
 	ΔsoilW .= ΔsoilW .- ΔsoilW
 
 	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		ΔsoilW => land.states
-	end
+	# @pack_land begin
+	# 	soilW => land.pools
+	# 	ΔsoilW => land.states
+	# end
 	return land
 end
 

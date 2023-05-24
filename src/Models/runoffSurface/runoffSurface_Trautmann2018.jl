@@ -4,11 +4,11 @@ export runoffSurface_Trautmann2018
 	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
 
-function precompute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
+function precompute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	@unpack_runoffSurface_Trautmann2018 o
 
 	## instantiate variables
-	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61))))
+	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
 	Rdelay = z / (sum(z) * ones(1, 61))
 
 	## pack land variables
@@ -16,7 +16,7 @@ function precompute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, h
 	return land
 end
 
-function compute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
+function compute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	#@needscheck and redo
 	## unpack parameters
 	@unpack_runoffSurface_Trautmann2018 o
@@ -54,7 +54,7 @@ function compute(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, help
 	return land
 end
 
-function update(o::runoffSurface_Trautmann2018, forcing, land::NamedTuple, helpers::NamedTuple)
+function update(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	@unpack_runoffSurface_Trautmann2018 o
 
 	## unpack variables
