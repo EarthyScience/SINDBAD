@@ -297,9 +297,7 @@ end
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function parallelizeIt(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, ::Val{:qbmap})  
-    i = 1  
     qbmap(loc_space_maps) do loc_space_map
         ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, l_init_threads[Threads.threadid()], dtypes, dtypes_list, f_1, loc_forcing, loc_output)
-        i += 1
     end
 end

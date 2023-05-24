@@ -4,6 +4,7 @@
 		"time": 3287
 	},
 	"dimensions": {
+		"permute": null,
 		"id": "id",
 		"time": "time"
 	},
