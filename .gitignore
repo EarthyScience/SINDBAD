@@ -27,6 +27,11 @@
 ~*
 tmp_*
 output_*
+*Manifest.toml
+*/Manifest.toml
+*/*/Manifest.toml
+/*/*/*/Manifest.toml
+
 /Manifest.toml
 examples/Manifest.toml
 examples/*/Manifest.toml

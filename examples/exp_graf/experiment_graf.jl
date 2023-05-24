@@ -1,13 +1,8 @@
 using Revise 
-# using YAXArrays
 @time using Sindbad
 @time using ForwardSindbad
 # @time using OptimizeSindbad
 # @time using HybridSindbad
-using ThreadPools
-using AxisKeys
-# using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
-using Zarr
 using BenchmarkTools
 # noStackTrace()
 domain = "africa";
@@ -44,48 +39,23 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-# chunkeddata = setchunks.(forcing.data, ((id=1,),));
-# forcing = (; forcing..., data = (chunkeddata));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
 
 forc = getKeyedArrayFromYaxArray(forcing);
-# @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-# @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
-# @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
 GC.gc()
 
-additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 for x=1:10
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 end
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
+@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
-
-@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output, loc_inds)
-
-
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-@benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-
-a=1
-# info = getExperimentInfo(experiment_json) # note that the modification will not work with this
-# forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
-# output = setupOutput(info);
-# obs = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);  
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_site);  
-
-# run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
-
-
-# run_output_site = runExperiment(experiment_json; replace_info=replace_info_site);

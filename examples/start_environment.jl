@@ -1,4 +1,6 @@
-run(`cp ../base_experiment.toml Project.toml`)
+run(`module load proxy`)
+run(`cp -f ../base_experiment.toml Project.toml`)
+using Pkg
 Pkg.activate(".")
 Pkg.develop(path="../../")
 Pkg.develop(path="../../lib/ForwardSindbad")

@@ -16,6 +16,7 @@
 	"flags":
 	{
 		"saveInfo": 			true,
+		"debugit": 				false, 
 		"catchErrors": 			false,
 		"runSpinup": 			true,
 		"runForward": 			true,
