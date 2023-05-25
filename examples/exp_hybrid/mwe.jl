@@ -5,7 +5,7 @@ using ForwardSindbad
 using ForwardSindbad: timeLoopForward
 using HybridSindbad
 using AxisKeys: KeyedArray as KA
-using Flux, Zygote, Optimisers
+using Lux, Zygote, Optimisers, ComponentArrays
 using Random
 Random.seed!(13)
 
@@ -63,7 +63,7 @@ end
 
 
 
-function floss(p)
+function floss(p, y)
     omods = o_models(p[1], p[2])
     out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10000)
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
@@ -80,7 +80,7 @@ using ForwardDiff
 
 
 
-test_gradient(model, data, sloss; opt=Optimisers.Adam())
+# test_gradient(model, data, sloss; opt=Optimisers.Adam())
 
 # https://github.com/mcabbott/AxisKeys.jl/issues/140
 
@@ -88,54 +88,92 @@ test_gradient(model, data, sloss; opt=Optimisers.Adam())
 
 # generate fake target parameters
 
-function get_target(m, x)
-    target_param = m(x)
-    omods = o_models(target_param[1], target_param[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-    y = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-    return (y, target_param)
-end
+# function get_target(m, x)
+#     target_param = m(x)
+#     omods = o_models(target_param[1], target_param[2])
+#     out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
+#     y = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
+#     return (y, target_param)
+# end
 
 Random.seed!(122)
 d = [rand(Float32,4) for i in 1:50]
-nn_mod_d = nn_model(4, 5, 2; seed = 5234)
-
-y, target_param = get_target(nn_mod_d, d[1]) # get an initial target
-trainloader = [(di, y) for di in d]
-
-# my awful loss
-function loss(nn_mod, trainloader)
-    l = 0f0
-    for data in trainloader
-        l += sloss(nn_mod, data)
-    end
-    return l/size(trainloader,1)
-end
-
-new_model = nn_model(4, 5, 2; seed = 534)
-
-loss(new_model, trainloader)
-
-machine(trainloader, target_param, loss, sloss, new_model; is_logging=true)
-
-# TODO, x -> batched
+NNmodel = Lux.Chain(
+    Lux.Dense(4 => 5, relu),
+    Lux.Dense(5 => 2, relu),
+)
+rng = Random.default_rng()
+Random.seed!(rng, 0)
+# Initialize Model
+ps_NN, st = Lux.setup(rng, NNmodel)
+# Parameters must be a ComponentArray or an Array,
+# Zygote Jacobian won't loop through NamedTuple
+ps_NN = ps_NN |> ComponentArray
 
 # i.e. Input x  now should be 
 
-x = rand(Float32, 4, 10)
-opt_p = new_model(x)
+x = rand(Float32, 4)
+function reshape_weight(arr, weights)
+    """
+    Reshapes a flat array into a weights ComponentArray.
+    This method is not mutating.
+    Rudimentary implementation, uses an index counter to progressively
+    fill the weights array.
+    arr: Array to be reshaped
+    weights: Sample array to reshape to
+    """
+    i = 1
+    return_arr = similar(ps_NN)
+    for layer in keys(weights)
+        weight = weights[layer][:weight]
+        bias = weights[layer][:bias]
+        new_weight = arr[i:i+length(weight)-1]
+        i += length(weight)
+        new_bias = arr[i:i+length(bias)-1]
+        i += length(bias)
+        return_arr[layer][:weight] = reshape(new_weight, size(weight))
+        return_arr[layer][:bias] = reshape(new_bias, size(bias))
+    end
+    return_arr
+end
+function full_gradient(x, y_real; NNmodel=NNmodel, loss=floss,
+    ps_NN=ps_NN, st=st)
+    """
+    Function that outpus the full gradient of the loss w.r.t. the weights
+    of the NNmodel.
+    """
+    # First pass through the NN to output the predicted parameters
+    ps_phys_pred = NNmodel(x, ps_NN, st)[1]
 
-# omods -> ?
-# ŷ -> 
+    # Gradient of the loss w.r.t. the process-based model's parameters
+    f_grad = ForwardDiff.gradient(ps -> loss(ps, y_real), ps_phys_pred)
+    # Jacobian of the process-based model's parameters w.r.t. the
+    # Weights of the NN
+    NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
+    # Apply Chain rules to get ∂loss/∂NN_parameters
+    full_grad = sum(f_grad .* NN_grad, dims=1)
+    # Reshape output for the optimization
+    return reshape_weight(full_grad, ps_NN)
+end
 
-function sloss(m, data)
-    x, y = data
-    opt_ps = m(x)
-    omods = o_models(opt_ps[1], opt_ps[2])
+y_real = y
 
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 5)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-    #out_land = out_land |> landWrapper
-    #ŷ = #out_land[:rainSnow][:snow]
-    return Flux.mse(ŷ,y)
+
+# Example
+dist_arr = []
+predicted_vmax = []
+loss_arr = []
+# Optimization
+st_opt = Optimisers.setup(Optimisers.ADAM(0.01), ps_NN)
+for i = 1:300
+    global st_opt, ps_NN
+    gs = full_gradient(x, y_real; ps_NN=ps_NN)
+    st_opt, ps_NN = Optimisers.update(st_opt, ps_NN, gs)
+    if i % 10 == 1 || i == 100
+        dist = abs(NNmodel(x, ps_NN, st)[1][1] - 2.37e-1)
+        println("Distance from real value: $dist")
+        push!(dist_arr, dist)
+        push!(predicted_vmax,NNmodel(x, ps_NN, st)[1][1])
+        push!(loss_arr, floss(NNmodel(x, ps_NN, st)[1],y))
+    end
 end
