@@ -81,7 +81,8 @@ do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of Di
 """
 function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:SSP_DynamicSS_Tsit5})
     for sel_pool in tem_spinup.diffEq.pools
-        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers);
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (0.0, tem_spinup.diffEq.timeJump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
         ssp_sol = solve(ssp_prob,DynamicSS(Tsit5()))
@@ -96,7 +97,8 @@ do/run the spinup using SteadyState solver and SSRootfind method of Differential
 """
 function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:SSP_SSRootfind})
     for sel_pool in tem_spinup.diffEq.pools
-        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers);
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (0.0, tem_spinup.diffEq.timeJump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
         ssp_sol = solve(ssp_prob,SSRootfind())
