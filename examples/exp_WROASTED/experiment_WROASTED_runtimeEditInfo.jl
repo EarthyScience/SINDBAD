@@ -12,8 +12,8 @@ eYear = "2017"
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 
 forcingConfig = "forcing_erai.json"
-# inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
+inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
+forcingConfig = "forcing_DE-2.json"
 obspath = inpath
 optimize_it = true
 optimize_it = false
@@ -30,6 +30,7 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.runSpinup" => true,
+    "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -46,7 +47,7 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
 a
