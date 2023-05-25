@@ -24,7 +24,9 @@ function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
 
 	## calculate variables
 	# suggested by Sujan [after HTESSEL GHM]
-	snowFraction = min(𝟙, addS(snowW, ΔsnowW) / CoverParam)
+
+
+	snowFraction = min(𝟙, sum(snowW) / CoverParam)
 
 	## pack land variables
 	@pack_land snowFraction => land.states

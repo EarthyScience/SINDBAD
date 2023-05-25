@@ -44,7 +44,8 @@ end
         #@show [typeof(onew) for onew in out]
         #@show [typeof(onew) <: typeof(outold[i]) for (i,onew) in enumerate(out)]
         #@show out[46], outold[46]
-        deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
+        deepcopy(out)
+        # deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
     # push!(debugcatcherr,res)
     res
