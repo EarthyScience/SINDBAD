@@ -1,5 +1,5 @@
 export rainSnow_Tair_buffer
-
+using StaticArrays: SVector
 @bounds @describe @units @with_kw struct rainSnow_Tair_buffer{T1} <: rainSnow
 	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
@@ -40,8 +40,10 @@ function compute(o::rainSnow_Tair_buffer, forcing, land, helpers)
     precip = rain + snow
 
 	# add snowfall to snowpack of the first layer
-    #ΔsnowW[1] = ΔsnowW[1] + snow 
-    ΔsnowW = cusp(ΔsnowW, snow)
+    v1 = zeros(SVector{length(ΔsnowW)})
+    v1 = Base.setindex(v1,one(Float64),1)
+    ΔsnowW = ΔsnowW .+ v1.*snow
+    #ΔsnowW = cusp(ΔsnowW, snow)
 
     ## pack land variables
     @pack_land begin
