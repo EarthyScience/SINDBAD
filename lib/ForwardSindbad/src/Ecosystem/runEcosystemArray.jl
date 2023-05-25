@@ -73,20 +73,20 @@ end
 end
 
 
-function getLocDataArray(outcubes, forcing, loc_space_map)
-    forcing_array = values(forcing)
-    loc_forcing=[]
-    inds = last.(loc_space_map)
-    foreach(forcing_array) do a
-        push!(loc_forcing, getArrayView(a, inds))
-    end
+# function getLocDataArray(outcubes, forcing, loc_space_map)
+#     forcing_array = values(forcing)
+#     loc_forcing=[]
+#     inds = last.(loc_space_map)
+#     foreach(forcing_array) do a
+#         push!(loc_forcing, getArrayView(a, inds))
+#     end
 
-    loc_output=[]
-    foreach(outcubes) do a
-        push!(loc_output, getArrayView(a, ar_inds))
-    end
-    return loc_forcing, loc_output
-end
+#     loc_output=[]
+#     foreach(outcubes) do a
+#         push!(loc_output, getArrayView(a, ar_inds))
+#     end
+#     return loc_forcing, loc_output
+# end
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
