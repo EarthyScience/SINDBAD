@@ -5,6 +5,8 @@ using Random
 using AxisKeys: KeyedArray as KA
 using HybridSindbad: nn_model, test_gradient
 
+using WGLMakie
+
 function full_eco(forcing, Tair_thres)
     Rains, Tairs = forcing
     ΔsnowW = [0.0f0]
@@ -40,6 +42,9 @@ forcing = (;
     )
 
 snow = full_eco(forcing, 0.0f0)
+
+lines(snow[1,:])
+
 
 function sos_loss(m, data)
     x, y = data
