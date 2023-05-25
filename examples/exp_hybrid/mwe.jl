@@ -99,3 +99,25 @@ new_model = nn_model(4, 5, 2; seed = 534)
 loss(new_model, trainloader)
 
 machine(trainloader, target_param, loss, sloss, new_model; is_logging=true)
+
+# TODO, x -> batched
+
+# i.e. Input x  now should be 
+
+x = rand(Float32, 4, 10)
+opt_p = new_model(x)
+
+# omods -> ?
+# ŷ -> 
+
+function sloss(m, data)
+    x, y = data
+    opt_ps = m(x)
+    omods = o_models(opt_ps[1], opt_ps[2])
+
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 5)
+    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
+    #out_land = out_land |> landWrapper
+    #ŷ = #out_land[:rainSnow][:snow]
+    return Flux.mse(ŷ,y)
+end
