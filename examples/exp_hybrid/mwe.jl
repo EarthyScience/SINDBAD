@@ -9,11 +9,19 @@ using Flux, Zygote, Optimisers
 using Random
 Random.seed!(13)
 
-forcing = (;
-    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
-    Tair = KA([-2.0f0, 0.1f0, -1.0f0, 3.0f0, 10.0f0]; time=1:5),
-    )
-pprint(forcing)
+experiment_json = "./settings_distri/experiment.json"
+info = getConfiguration(experiment_json);
+info = setupExperiment(info);
+forcing = getForcing(info, Val{:zarr}());
+forc = getKeyedArrayFromYaxArray(forcing);
+
+forcing = (; Tair = forc.Tair, Rain = forc.Rain)
+
+#forcing = (;
+#    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
+#    Tair = KA([-2.0f0, 0.1f0, -1.0f0, 3.0f0, 10.0f0]; time=1:5),
+#    )
+#pprint(forcing)
 
 # Instantiate land components
 land = (;
@@ -36,7 +44,10 @@ function o_models(p1, p2)
     return (rainSnow_Tair_buffer(p1),  snowMelt_Tair_buffer(p2))
 end
 
-f = getForcingForTimeStep(forcing, 1)
+#f = getForcingForTimeStep(forcing, 1)
+#f = getForcingForTimeStep(forcing, 1)
+f = ForwardSindbad.get_force_at_time_t(forcing, 1)
+
 omods = o_models(0.0f0, 0.0f0)
 land = runPrecompute(f, omods, land, helpers)
 
@@ -45,7 +56,7 @@ function sloss(m, data)
     opt_ps = m(x)
     omods = o_models(opt_ps[1], opt_ps[2])
 
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 5)
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, length(forcing.Tair))
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
     #out_land = out_land |> landWrapper
     #ŷ = #out_land[:rainSnow][:snow]
@@ -55,7 +66,7 @@ end
 # training data
 x = rand(Float32, 4)
 # Fake ground truth
-y = [5f0, 0f0, 1f0, 0f0, 1f0]
+y = rand(Float32, length(forcing.Tair))#[5f0, 0f0, 1f0, 0f0, 1f0]
 data = (x,y)
 
 model = nn_model(4, 5, 2; seed = 13)
