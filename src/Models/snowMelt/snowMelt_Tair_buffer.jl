@@ -4,6 +4,20 @@ export snowMelt_Tair_buffer
 	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
 end
 
+function precompute(o::snowMelt_Tair_buffer, forcing, land, helpers)
+    ## unpack parameters and forcing
+    @unpack_land begin
+		𝟘 ∈ helpers.numbers
+    end
+    WBP = 𝟘
+
+    ## pack land variables
+    @pack_land begin
+        WBP => land.states
+    end
+    return land
+end
+
 function compute(o::snowMelt_Tair_buffer, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_Tair_buffer o
@@ -24,9 +38,9 @@ function compute(o::snowMelt_Tair_buffer, forcing, land, helpers)
     snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
 
 	# divide snowmelt loss equally from all layers
-    #ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)
+    ΔsnowW = ΔsnowW .- (snowMelt / length(snowW))
     #@show ΔsnowW, snowMelt
-    ΔsnowW = cusp(ΔsnowW, snowMelt)
+    #ΔsnowW = cusp(ΔsnowW, snowMelt)
 
 
     # a Water Balance Pool variable that tracks how much water is still "available"

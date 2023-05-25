@@ -8,53 +8,27 @@ function compute(o::wCycle_components, forcing, land, helpers)
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
-        p_wSat ∈ land.soilWBase
         𝟘  ∈ helpers.numbers
     end
 
     ## update variables
-    groundW .= groundW .+ ΔgroundW
-    snowW .= snowW .+ ΔsnowW
-    soilW .= soilW .+ ΔsoilW
-    surfaceW .= surfaceW .+ ΔsurfaceW
+    groundW = groundW .+ ΔgroundW
+    snowW = snowW .+ ΔsnowW
+    soilW = soilW .+ ΔsoilW
+    surfaceW = surfaceW .+ ΔsurfaceW
 
     # @show ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS
     # reset soil moisture changes to zero
-    ΔgroundW .= ΔgroundW .- ΔgroundW
-    ΔsnowW .= ΔsnowW .- ΔsnowW
-    ΔsoilW .= ΔsoilW .- ΔsoilW
-    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-
-    if minimum(p_wSat - soilW) < 𝟘
-        @show soilW, p_wSat, soilW - p_wSat
-        error("soilW is larger than soil water holding capacity (p_wSat)")
-    end
-
-    if minimum(groundW) < 𝟘
-        @show groundW
-        error("groundW is negative. Cannot continue")
-    end
-
-    if minimum(snowW) < 𝟘
-        @show snowW
-        error("snowW is negative. Cannot continue")
-    end
-
-    if minimum(soilW) < 𝟘
-        @show soilW
-        error("soilW is negative. Cannot continue")
-    end
-
-    if minimum(surfaceW) < 𝟘
-        @show soilW
-        error("surfaceW is negative. Cannot continue")
-    end
+    ΔgroundW = ΔgroundW .- ΔgroundW
+    ΔsnowW = ΔsnowW .- ΔsnowW
+    ΔsoilW = ΔsoilW .- ΔsoilW
+    ΔsurfaceW = ΔsurfaceW .- ΔsurfaceW
 
     ## pack land variables
-    # @pack_land begin
-    # 	(groundW, snowW, soilW, surfaceW) => land.pools
-    # 	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW)  => land.states
-    # end
+    @pack_land begin
+    	(groundW, snowW, soilW, surfaceW) => land.pools
+    	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW)  => land.states
+    end
     return land
 end
 

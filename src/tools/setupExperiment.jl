@@ -1,7 +1,7 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateParameters
-
+using StaticArrays: SVector
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -461,8 +461,8 @@ end
 
 
 function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:staticarray})
-    #todo staticarray
-    numType.(inVals)
+    @show "I am static"
+    SVector{length(inVals)}(numType(ix) for ix in inVals)
 end
 
 
@@ -475,6 +475,7 @@ function getInitPools(info_tem::NamedTuple)
     for element in propertynames(info_tem.pools)
         props = getfield(info_tem.pools, element)
         arrayType = getfield(props, :arraytype)
+        @show arrayType
         toCreate = getfield(props, :create)
         initVals = getfield(props, :initValues)
         for tocr in toCreate

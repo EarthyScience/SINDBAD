@@ -10,6 +10,7 @@ using Random
 Random.seed!(13)
 
 experiment_json = "./settings_distri/experiment.json"
+
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 forcing = getForcing(info, Val{:zarr}());
@@ -24,24 +25,20 @@ forcing = (; Tair = forc.Tair, Rain = forc.Rain)
 #pprint(forcing)
 
 # Instantiate land components
-land = (;
-    pools = (; snowW = [0.0f0]),
-    states = (; ΔsnowW = [0.1f0], WBP=0.01f0, snowFraction=0.1f0),
-    fluxes = (; snowMelt = 0.2f0),
-    rainSnow = (;),
-    snowMelt = (;)
-    )
-helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-    dates = (; nStepsDay=1),
-    run = (; output_all=true, runSpinup=false),
-    );
-tem = (;
-    helpers,
-    variables = (;),
-    );
+land = createLandInit(info.tem)
+helpers = info.tem.helpers; 
+tem = info.tem;
+# helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
+#     dates = (; nStepsDay=1),
+#     run = (; output_all=true, runSpinup=false),
+#     );
+# tem = (;
+#     helpers,
+#     variables = (;),
+#     );
 
 function o_models(p1, p2)
-    return (rainSnow_Tair_buffer(p1),  snowMelt_Tair_buffer(p2))
+    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components())
 end
 
 #f = getForcingForTimeStep(forcing, 1)
@@ -56,22 +53,32 @@ function sloss(m, data)
     opt_ps = m(x)
     omods = o_models(opt_ps[1], opt_ps[2])
 
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, length(forcing.Tair))
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10)
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
+
     #out_land = out_land |> landWrapper
     #ŷ = #out_land[:rainSnow][:snow]
     return Flux.mse(ŷ,y)
 end
 
-# training data
-x = rand(Float32, 4)
-# Fake ground truth
-y = rand(Float32, length(forcing.Tair))#[5f0, 0f0, 1f0, 0f0, 1f0]
-data = (x,y)
 
-model = nn_model(4, 5, 2; seed = 13)
 
-@show sloss(model, data) # initial loss
+function floss(p)
+    omods = o_models(p[1], p[2])
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10000)
+    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
+    sum((ŷ.-y).^2)
+end
+y = rand(10000)
+
+floss((0.5,0.5))
+
+
+using ForwardDiff
+
+@time ForwardDiff.gradient(floss, [1.0,1000.0])
+
+
 
 test_gradient(model, data, sloss; opt=Optimisers.Adam())
 
@@ -84,7 +91,7 @@ test_gradient(model, data, sloss; opt=Optimisers.Adam())
 function get_target(m, x)
     target_param = m(x)
     omods = o_models(target_param[1], target_param[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 5)
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
     y = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
     return (y, target_param)
 end
