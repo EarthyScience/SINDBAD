@@ -2,7 +2,8 @@ using Revise
 using Sindbad
 
 noStackTrace()
-experiment_json = "exp_WROASTED/settings_WROASTED/experiment.json"
+#experiment_json = "exp_WROASTED/settings_WROASTED/experiment.json"
+experiment_json = "examples/exp_WROASTED/settings_WROASTED/experiment.json"
 
 run_output = runExperiment(experiment_json);
 
