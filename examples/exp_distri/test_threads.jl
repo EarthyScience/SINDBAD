@@ -36,14 +36,14 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
 spacesize = values(info.tem.helpers.run.loop[additionaldims])
-space_locs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+loc_space_maps = Iterators.product(Base.OneTo.(spacesize)...) |> collect
 approaches = info.tem.models.forward;
 tem = info.tem;
-ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem, additionaldims, x)
+ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem,  x)
 
-ecoLoc!(output.data, approaches, forc, tem, additionaldims, 1)
-@time Threads.@threads for i = 1:length(space_locs)
-    ecoLoc!(output.data, approaches, forc, tem, additionaldims, i)
+ecoLoc!(output.data, approaches, forc, tem,  1)
+@time Threads.@threads for i = 1:length(loc_space_maps)
+    ecoLoc!(output.data, approaches, forc, tem,  i)
     # ecofunc(i)
 end
 
@@ -66,4 +66,4 @@ for site in 1:16
     end
 end
 
-# @time _ = pmap(ecofunc, 1:length(space_locs));
+# @time _ = pmap(ecofunc, 1:length(loc_space_maps));
