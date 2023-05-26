@@ -87,7 +87,7 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
     timeLoopForward(approaches, loc_forcing, land_spin_now, tem.variables, tem.helpers, time_steps)
 end
 
-function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, loc_names)
+function ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple,  loc_names)
     loc_forcing = map(forcing) do a
         inds = map(zip(loc_names,additionaldims)) do (loc_index,lv)
             lv=>loc_index
@@ -99,7 +99,7 @@ end
 
 function fany(x, approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims)
     #@show "fany", Threads.threadid()
-    eout = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, additionaldims, x)
+    eout = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple,  x)
     eout
 end
 
@@ -115,7 +115,7 @@ function runEcosystem(approaches::Tuple, forcing::NamedTuple, land_init::NamedTu
             #ccall(:malloc, Cvoid, (Cint,), 0)
             #GC.safepoint()
             #@show Threads.threadid()
-            return ecoLoc(approaches, forcing, deepcopy(land_init), tem, additionaldims, loc_names)
+            return ecoLoc(approaches, forcing, deepcopy(land_init), tem,  loc_names)
         end
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))

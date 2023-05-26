@@ -1,16 +1,17 @@
+# modification to develop getting priors
 using Revise
 using Sindbad
+#using DistributionFits
 using ForwardSindbad
 using OptimizeSindbad
-# using Cthulhu
-using BenchmarkTools
-noStackTrace()
+# noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
+
+# forcingConfig = "forcing_erai.json"
 # inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
 obspath = inpath
@@ -38,23 +39,6 @@ replace_info = Dict(
 );
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
-
-develop_f = () -> begin
-    #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
-    #code run from @infiltrate in optimizeModelArray
-    # d = shifloNormal(2,5)
-    # using StatsPlots
-    # plot(d)
-    using DistributionFits
-    priors = shifloNormal.(lower_bounds,upper_bounds)
-    x = default_values
-
-    loss = getLossArray(x, forcing, output, output_variables,
-    observations, tblParams, tem, optim,  loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
-
-
-
-end
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
@@ -62,7 +46,7 @@ output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.tem);
 
-#Sindbad.eval(:(error_catcher = []))    
+# Sindbad.eval(:(error_catcher = []))    
 loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
