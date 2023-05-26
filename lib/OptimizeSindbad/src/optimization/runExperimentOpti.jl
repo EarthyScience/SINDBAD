@@ -15,6 +15,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
         @info "runExperiment: do spatial optimization..."
         forc_array = getKeyedArrayFromYaxArray(forcing);
         obs_array = getKeyedArrayFromYaxArray(observations);
+        @show typeof(output), keys(output)
         optim_params = optimizeModelArray(forc_array, output.data, output_vars, obs_array, info.tem, info.optim)
         run_output =  optim_params.optim
     end    
