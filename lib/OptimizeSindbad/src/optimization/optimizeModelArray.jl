@@ -96,7 +96,7 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple, additionaldims, space_locs, land_init_space, dtypes, dtypes_list)
+function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple,  loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -105,11 +105,15 @@ function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vecto
         tblParams.optim .= pVector # update the parameters with pVector
     end
     
+    
     newApproaches = updateParameters(tblParams, tem.models.forward)
-    runEcosystem!(output, newApproaches, forcing, tem, additionaldims, space_locs, land_init_space, dtypes, dtypes_list);
+    runEcosystem!(output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
     model_data = (; Pair.(output_variables, output)...)
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
+
+    @infiltrate
+    
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
 
@@ -131,11 +135,14 @@ function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variable
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    additionaldims, space_locs, land_init_space, f_one = prepRunEcosystem(output, tem.models.forward, forcing, tem)
+
+    loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output, tem.models.forward, forcing, tem);
+
+    @infiltrate
 
     # make the cost function handle
     cost_function = x -> getLossArray(x, forcing, output, output_variables,
-        observations, tblParams, tem, optim, additionaldims, space_locs, land_init_space, dtypes, dtypes_list)
+        observations, tblParams, tem, optim,  loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optim.algorithm.options, Val(optim.algorithm.method))

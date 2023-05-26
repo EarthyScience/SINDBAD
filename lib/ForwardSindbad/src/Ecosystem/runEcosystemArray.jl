@@ -243,9 +243,9 @@ function prepRunEcosystem(outcubes::AbstractArray, approaches::Tuple, forcing::N
     loopvars = keys(tem.helpers.run.loop) |> collect
     additionaldims = setdiff(loopvars,[:time])::Vector{Symbol}
     spacesize = values(tem.helpers.run.loop[additionaldims])::Tuple
-    space_locs = vec(Iterators.product(Base.OneTo.(spacesize)...) |> collect)::Vector{NTuple{length(tem.helpers.run.loop)-1,Int}}
+    loc_space_maps = vec(Iterators.product(Base.OneTo.(spacesize)...) |> collect)::Vector{NTuple{length(tem.helpers.run.loop)-1,Int}}
 
-    loc_space_maps = map(space_locs) do loc_names
+    loc_space_maps = map(loc_space_maps) do loc_names
         map(zip(loc_names,additionaldims)) do (loc_index,lv)
             lv=>loc_index
         end
