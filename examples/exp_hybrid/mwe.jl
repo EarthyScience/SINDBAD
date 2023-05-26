@@ -5,7 +5,7 @@ using ForwardSindbad
 using ForwardSindbad: timeLoopForward
 using HybridSindbad
 using AxisKeys: KeyedArray as KA
-using Lux, Zygote, Optimisers, ComponentArrays
+using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 using Random
 Random.seed!(13)
 
@@ -71,7 +71,8 @@ function floss(p, y)
 end
 y = rand(10000)
 
-floss((0.5,0.5))
+floss((0.5,0.5), y)
+floss(p) = floss(p,y)
 
 
 using ForwardDiff
