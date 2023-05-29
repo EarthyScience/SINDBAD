@@ -29,7 +29,8 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.runSpinup" => true,
+    "modelRun.flags.debugit" => true,
+    "modelRun.flags.runSpinup" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -43,10 +44,10 @@ forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
-linit= createLandInit(info.tem);
+linit= createLandInit(info.pools, info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 a

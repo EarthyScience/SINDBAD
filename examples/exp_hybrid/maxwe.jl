@@ -7,14 +7,25 @@ using HybridSindbad
 using AxisKeys: KeyedArray as KA
 using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 using Random
-Random.seed!(13)
+noStackTrace()
+Random.seed!(7)
 
-experiment_json = "./settings_distri/experiment.json"
+experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
+info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 
-info = getConfiguration(experiment_json);
-info = setupExperiment(info);
 forcing = getForcing(info, Val{:zarr}());
+
+# Sindbad.eval(:(error_catcher = []));
+land_init = createLandInit(info.pools, info.tem);
+output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
+
+@time loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+
 
 forcing = (; Tair = forc.Tair, Rain = forc.Rain)
 
@@ -32,7 +43,7 @@ tem = info.tem;
 #     dates = (; nStepsDay=1),
 #     run = (; output_all=true, runSpinup=false),
 #     );
-# tem = (;
+# tem = (;x
 #     helpers,
 #     variables = (;),
 #     );
@@ -65,11 +76,11 @@ end
 
 function floss(p, y)
     omods = o_models(p[1], p[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10000)
+    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
     sum((ŷ.-y).^2)
 end
-y = rand(10000)
+y = rand(100)
 
 floss((0.5,0.5), y)
 floss(p) = floss(p,y)
@@ -77,7 +88,7 @@ floss(p) = floss(p,y)
 
 using ForwardDiff
 
-@time ForwardDiff.gradient(floss, [1.0,1000.0])
+@time ForwardDiff.gradient(floss, [1.0, 1000.0])
 
 
 

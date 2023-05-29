@@ -1,5 +1,5 @@
 export update_state_pools
-export cusp
+export cusp, ups
 
 function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T}) where T<:Number
     sp[:] = sp .+ Δs
@@ -66,20 +66,107 @@ end
 """
 update_state_pools
 
-function cusp(sp, Δsp) # cusp
-    b_sp = Buffer(sp)
-    copyto!(b_sp, sp)
-    b_sp = update_state_pools(b_sp, Δsp)
-    return copy(b_sp)
+# function cusp(sp, Δsp) # cusp
+#     b_sp = Buffer(sp)
+#     copyto!(b_sp, sp)
+#     b_sp = update_state_pools(b_sp, Δsp)
+#     return copy(b_sp)
+# end
+
+# function cusp(sp, Δsp, split_level::Union{Symbol, Int})
+#     b_sp = Buffer(sp)
+#     copyto!(b_sp, sp)
+#     b_sp = update_state_pools(b_sp, Δsp, split_level)
+#     return copy(b_sp)
+# end
+
+function cusp(sp::SubArray, Δsp)
+    sp .= sp .+ Δsp
 end
 
-function cusp(sp, Δsp, split_level::Union{Symbol, Int})
-    b_sp = Buffer(sp)
-    copyto!(b_sp, sp)
-    b_sp = update_state_pools(b_sp, Δsp, split_level)
-    return copy(b_sp)
+function cusp(sp::SubArray, Δsp, sp_zero, split_level::Int)
+    sp[split_level] = sp[split_level] .+ Δsp
+    return sp
 end
 
+function cusp(sp::SubArray, Δsp, sp_zero, split_level::Vector{Int})
+    for sp_sl in split_level
+        sp[sp_sl] = sp[sp_sl] + Δsp
+    end
+    return sp
+end
+
+function ups(sp::SubArray, sp_elem, split_level::Int)
+    sp[split_level] = sp_elem
+    return sp
+end
+
+function ups(sp::SubArray, sp_elem, split_level::Vector{Int})
+    for sp_sl in split_level
+        sp[sp_sl] = sp_elem
+    end
+    return sp
+end
+
+function cusp(sp::Array, Δsp)
+    sp .= sp .+ Δsp
+end
+
+function cusp(sp::Array, Δsp, sp_zero, split_level::Int)
+    sp[split_level] = sp[split_level] .+ Δsp
+    return sp
+end
+
+
+function cusp(sp::Array, Δsp, sp_zero, split_level::Vector{Int})
+    for sp_sl in split_level
+        cusp(sp, Δsp, sp_zero, sp_sl)
+    end
+    return sp
+end
+
+function ups(sp::Array, sp_elem, split_level::Int)
+    sp[split_level] = sp_elem
+    return sp
+end
+
+function ups(sp::Array, sp_elem, split_level::Vector{Int})
+    for sp_sl in split_level
+        sp=ups(sp, sp_elem, sp_sl)
+    end
+    return sp
+end
+
+
+function cusp(sp::SVector, Δsp)
+    sp = sp .+ Δsp
+end
+
+function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
+    sp_zero = Base.setindex(sp_zero, one(Δsp), split_level)
+    sp = sp .+ sp_zero .* Δsp
+    return sp
+end
+
+
+function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Vector{Int})
+    for sp_sl in split_level
+        sp = cusp(sp, Δsp, sp_zero, sp_sl)
+    end
+    return sp
+end
+
+function ups(sp::SVector, sp_elem, split_level::Int)
+    sp = Base.setindex(sp, sp_elem, split_level)
+    return sp
+end
+
+function ups(sp::SVector, sp_elem, split_level::Vector{Int})
+    for sp_sl in split_level
+        sp = ups(sp, sp_elem, sp_sl)
+    end
+    return sp
+end
 @doc """
 `cusp(sp, Δsp)`
 

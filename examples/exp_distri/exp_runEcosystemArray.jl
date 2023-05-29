@@ -24,13 +24,13 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
 
-# @benchmark runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem)
+# @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 a=1
 
 
