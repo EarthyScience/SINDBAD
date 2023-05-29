@@ -47,13 +47,13 @@ noStackTrace()
 @everywhere output = setupOutput(info);
 
 @everywhere forc = getKeyedArrayFromYaxArray(forcing);
-# @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+# @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-# runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this

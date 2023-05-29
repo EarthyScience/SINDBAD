@@ -36,15 +36,16 @@ function compute(o::evaporation_fAPAR, forcing, land, helpers)
 	tmp = PET * α * (𝟙 - fAPAR)
 	PETsoil = max(tmp, 𝟘)
 	# scale the potential with the a fraction of available water & get the minimum of the current moisture
-	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
+	evaporation = min(PETsoil, supLim * soilW[1] + ΔsoilW[1])
 
 	# update soil moisture changes
-	ΔsoilW[1] = ΔsoilW[1] - evaporation
+	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.water.zeros.soilW .* 𝟘, 1)
 
 	## pack land variables
 	@pack_land begin
 		PETsoil => land.evaporation
 		evaporation => land.fluxes
+		ΔsoilW => land.states
 	end
 	return land
 end

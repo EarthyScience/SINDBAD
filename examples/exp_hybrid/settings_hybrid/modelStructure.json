@@ -127,7 +127,7 @@
             "use4spinup": false
         },
         "wCycle": {
-            "approach": "combined"
+            "approach": "components"
         },
         "WUE": {
             "approach": "expVPDDayCo2"

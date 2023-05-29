@@ -17,9 +17,9 @@
 	"flags":
 	{
 		"saveInfo": 			true,
-		"debugit": 				false, 
+		"debugit": 				true, 
 		"catchErrors": 			false,
-		"runSpinup": 			true,
+		"runSpinup": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				false,
