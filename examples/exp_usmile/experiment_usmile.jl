@@ -25,11 +25,11 @@ forc = getKeyedArrayFromYaxArray(forcing);
 obs = getKeyedArrayFromYaxArray(observations);
 
 ## run the main ecosystem loop
-runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 ##test timing
 for tt = 1:5
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 end
 
 # using output of opti to update parameters and do a forward run

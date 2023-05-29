@@ -12,17 +12,17 @@ function compute(o::wCycle_components, forcing, land, helpers)
     end
 
     ## update variables
-    groundW = groundW .+ ΔgroundW
-    snowW = snowW .+ ΔsnowW
-    soilW = soilW .+ ΔsoilW
-    surfaceW = surfaceW .+ ΔsurfaceW
+    groundW = cusp(groundW, ΔgroundW)
+    snowW = cusp(snowW, ΔsnowW)
+    soilW = cusp(soilW, ΔsoilW)
+    surfaceW = cusp(surfaceW, ΔsurfaceW)
 
     # @show ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS
     # reset soil moisture changes to zero
-    ΔgroundW = ΔgroundW .- ΔgroundW
-    ΔsnowW = ΔsnowW .- ΔsnowW
-    ΔsoilW = ΔsoilW .- ΔsoilW
-    ΔsurfaceW = ΔsurfaceW .- ΔsurfaceW
+    ΔgroundW = ΔgroundW .* 𝟘
+    ΔsnowW = ΔsnowW .* 𝟘
+    ΔsoilW = ΔsoilW .* 𝟘
+    ΔsurfaceW = ΔsurfaceW .* 𝟘
 
     ## pack land variables
     @pack_land begin
