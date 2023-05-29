@@ -46,12 +46,12 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
 for x=1:10
-    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
 end
-@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 
