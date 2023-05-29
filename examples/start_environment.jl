@@ -1,4 +1,4 @@
-run(`module load proxy`)
+# run(`module load proxy`)
 run(`cp -f ../base_experiment.toml Project.toml`)
 using Pkg
 Pkg.activate(".")

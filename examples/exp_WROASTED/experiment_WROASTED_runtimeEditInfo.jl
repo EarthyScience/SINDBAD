@@ -4,15 +4,15 @@ using ForwardSindbad
 # using OptimizeSindbad
 using Cthulhu
 using BenchmarkTools
-noStackTrace()
+# noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
-inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-
+# inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
+inpath = "../data/BE-Vie.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
-# inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
+# inpath = "../data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
 obspath = inpath
 optimize_it = true
