@@ -1,12 +1,12 @@
 using Revise 
-using YAXArrays
+# using YAXArrays
 using Sindbad
 using ForwardSindbad
 # using OptimizeSindbad
 # using HybridSindbad
-using ThreadPools
+# using ThreadPools
 using AxisKeys
-using Zarr
+# using Zarr
 using BenchmarkTools
 
 # Sindbad.noStackTrace()
@@ -24,10 +24,10 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
-@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
+@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
 
 # @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
