@@ -66,19 +66,7 @@ end
 
 
 function ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, land_init, f_one, loc_forcing, loc_output)
-    # loc_forcing, loc_output, _ = getLocData(outcubes, forcing, loc_space_map)
-
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map) #312
-    # loc_forcing::get_dtype(dtypes, dtypes_list, :loc_forcing_type), loc_output::get_dtype(dtypes, dtypes_list, :loc_output_type) = getLocData(outcubes, forcing, loc_space_map) #312
-
-    # loc_space_inds = Tuple(last.(loc_space_map))
-    # getLocData!(outcubes, Val(keys(forcing)), Val(keys(loc_output_array)), forcing, loc_space_inds, loc_output_array, loc_forcing_array);
-    # loc_forcing_from_array = (; Pair.(keys(forcing), loc_forcing_array)...);
-
-    # loc_forcing2::get_dtype(dtypes, dtypes_list, :loc_forcing_type), loc_output2::get_dtype(dtypes, dtypes_list, :loc_output_type) = getLocData(outcubes, forcing, loc_space_map, loc_forcing, loc_output, loc_inds) #312
-    # push!(Sindbad.error_catcher, (outcubes, forcing, keys(forcing), loc_space_map, loc_forcing, loc_output))
-
-    # coreEcosystem!(loc_output_array, approaches, loc_forcing_from_array, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
 
     coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
 end
@@ -153,7 +141,6 @@ end
 
 
 function coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
-    # land_one_type = get_dtype(dtypes, dtypes_list, :land_one_type)
     land_spin_now = land_init
 
     if tem_helpers.run.runSpinup
@@ -165,9 +152,7 @@ end
 
 function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, tem, loc_space_map)
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map)
-    loc_space_inds = Tuple(last.(loc_space_map))
 
-    # loc_forcing_array, loc_output_array = getLocDataArray(outcubes, forcing, loc_space_inds);
     land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers);
@@ -197,10 +182,7 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
     end
     loc_space_maps = loc_space_maps[allNans .== false]
     land_one, f_one, loc_forcing, loc_output  = doOneLocation(outcubes, land_init, approaches, forcing, tem, loc_space_maps[1])
-    # l_init_threads = Tuple([deepcopy(land_one) for _ in 1:Threads.nthreads()])
     l_init_threads = Tuple([deepcopy(land_one) for _ in 1:length(loc_space_maps)])
-    # loc_forcing_arrays = Tuple([deepcopy(loc_forcing_array) for _ in 1:Threads.nthreads()])
-    # loc_output_arrays = Tuple([deepcopy(loc_output_array) for _ in 1:length(loc_space_maps)])
     return loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output
 end
 
