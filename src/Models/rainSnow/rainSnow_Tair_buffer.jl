@@ -40,10 +40,7 @@ function compute(o::rainSnow_Tair_buffer, forcing, land, helpers)
     precip = rain + snow
 
 	# add snowfall to snowpack of the first layer
-    v1 = zeros(SVector{length(ΔsnowW)})
-    v1 = Base.setindex(v1,one(Float64),1)
-    ΔsnowW = ΔsnowW .+ v1.*snow
-    #ΔsnowW = cusp(ΔsnowW, snow)
+    ΔsnowW = cusp(ΔsnowW, snow, helpers.pools.water.zeros.snowW .* 𝟘, 1)
 
     ## pack land variables
     @pack_land begin
