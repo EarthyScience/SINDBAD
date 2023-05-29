@@ -4,7 +4,7 @@ using ForwardSindbad
 # using OptimizeSindbad
 using Cthulhu
 using BenchmarkTools
-# noStackTrace()
+noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
@@ -29,8 +29,8 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.debugit" => true,
-    "modelRun.flags.runSpinup" => false,
+    "modelRun.flags.debugit" => false,
+    "modelRun.flags.runSpinup" => true,
     "spinup.flags.doSpinup" => true,
     "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -47,7 +47,7 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, dtypes, dtypes_list, f_1, loc_forcing, loc_output)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output)
 a

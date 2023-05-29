@@ -96,7 +96,7 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list)
+function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple, additionaldims, space_locs, l_init_threads)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -106,7 +106,7 @@ function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vecto
     end
     
     newApproaches = updateParameters(tblParams, tem.models.forward)
-    runEcosystem!(output, newApproaches, forcing, tem, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list);
+    runEcosystem!(output, newApproaches, forcing, tem, additionaldims, space_locs, l_init_threads);
     model_data = (; Pair.(output_variables, output)...)
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
@@ -131,11 +131,11 @@ function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variable
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    additionaldims, space_locs, l_init_threads, dtypes, dtypes_list, f_1 = prepRunEcosystem(output, tem.models.forward, forcing, tem)
+    additionaldims, space_locs, l_init_threads, f_one = prepRunEcosystem(output, tem.models.forward, forcing, tem)
 
     # make the cost function handle
     cost_function = x -> getLossArray(x, forcing, output, output_variables,
-        observations, tblParams, tem, optim, additionaldims, space_locs, l_init_threads, dtypes, dtypes_list)
+        observations, tblParams, tem, optim, additionaldims, space_locs, l_init_threads)
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optim.algorithm.options, Val(optim.algorithm.method))
