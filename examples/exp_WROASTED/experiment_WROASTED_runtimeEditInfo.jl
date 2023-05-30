@@ -46,11 +46,35 @@ develop_f = () -> begin
     # using StatsPlots
     # plot(d)
     using DistributionFits
-    priors = shifloNormal.(lower_bounds,upper_bounds)
+    priors_opt = shifloNormal.(lower_bounds,upper_bounds)
     x = default_values
 
     loss = getLossArray(x, forcing, output, output_variables,
     observations, tblParams, tem, optim,  loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+
+
+    Turing.@model function sesamfit(obs, ::Type{T} = Float64) where {T}
+        #assumptions/priors
+        local popt = Vector{T}(undef, length(priors_opt))
+        #popt_unscaled = Vector{T}(undef, length(popt_dist))
+        #pl =  Vector{T}(undef, length(srl2))
+        #local (i,r) = first(enumerate(priors_opt))
+        for (i,r) = enumerate(priors_opt)
+            popt[i] ~ r
+        end
+        local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
+        #
+        tblParams.optim .= popt  # TODO replace mutation
+        
+        newApproaches = updateParameters(tblParams, tem.models.forward)
+        runEcosystem!(output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+        model_data = (; Pair.(output_variables, output)...)
+
+        obs.cstocks ~ dist_pred.cstocks
+        obs.cn ~ dist_pred.cn
+        obs.cp ~ dist_pred.cp
+    end
+
 
 
 
