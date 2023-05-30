@@ -10,11 +10,18 @@ function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Sym
     ŷ =  getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
+    if size(ŷ, 2) == 1
+        if ndims(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndims(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        end
+    end
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match")
         # ŷ = permutedims(ŷ, (2, 3, 1))
-        ŷ = y .* rand()
+        # ŷ = y .* rand()
     end
     return (y, yσ, ŷ)
 end
@@ -25,12 +32,19 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 function getDataArray(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
+    if size(ŷ, 2) == 1
+        if ndim(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndim(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        end
+    end
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
-        # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = y .* rand()
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ")
+        # ŷ = y .* rand()
         # ŷ = permutedims(ŷ, (2, 3, 1))
     end
     return (y, yσ, ŷ)
