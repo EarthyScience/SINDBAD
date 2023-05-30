@@ -108,6 +108,14 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         end
     end
     obscubes = []
+    tar_dims = nothing
+    if !isnothing(info.forcing.dimensions.permute)
+        tar_dims = Symbol[]
+        for pd in info.forcing.dimensions.permute
+            tdn = Symbol(getfield(info.forcing.dimensions, Symbol(pd)))
+            push!(tar_dims, tdn)
+        end
+    end
     @info "getObservation: getting observation variables..."
     map(varnames) do k
         v = Any
@@ -205,7 +213,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         end
         unc_tar_name = string(unc_var)
         mask_tar_name = string(src_var)
-        yax = getObsZarr(v)
+        yax = getObsZarr(subset)
         yax_unc = nothing
         if one_unc
             yax_unc = map(x -> one(x), yax)
@@ -225,6 +233,14 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
         cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
         cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
+        @info "getObservation: checking if permutation of data is needed..."
+        if !isnothing(tar_dims)
+            permutes = getPermutation(YAXArrayBase.dimnames(cyax), tar_dims)
+            @info "permuting dimensions to $(tar_dims)..."
+            cyax = permutedims(cyax, permutes)
+            cyax_unc = permutedims(cyax_unc, permutes)
+            yax_mask = permutedims(yax_mask, permutes)
+        end
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask)
@@ -269,6 +285,15 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
+    tar_dims = nothing
+    if !isnothing(info.forcing.dimensions.permute)
+        tar_dims = Symbol[]
+        for pd in info.forcing.dimensions.permute
+            tdn = Symbol(getfield(info.forcing.dimensions, Symbol(pd)))
+            push!(tar_dims, tdn)
+        end
+    end
+    @show tar_dims
     map(varnames) do k
         v = Any
         vinfo = getproperty(info.opti.constraints.variables, k)
@@ -375,6 +400,14 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
         cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
         cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
+        @info "getObservation: checking if permutation of data is needed..."
+        if !isnothing(tar_dims)
+            permutes = getPermutation(YAXArrayBase.dimnames(cyax), tar_dims)
+            @info "permuting dimensions to $(tar_dims)..."
+            cyax = permutedims(cyax, permutes)
+            cyax_unc = permutedims(cyax_unc, permutes)
+            yax_mask = permutedims(yax_mask, permutes)
+        end
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask)

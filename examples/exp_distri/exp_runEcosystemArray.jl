@@ -29,6 +29,8 @@ loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.l
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
+@time outcubes = runExperimentOpti(experiment_json);  
+
 # @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 a=1
