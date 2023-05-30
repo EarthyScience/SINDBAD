@@ -65,7 +65,7 @@ function getLocDataArray(outcubes, forcing, loc_space_inds)
 end
 
 
-function ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, land_init, f_one, loc_forcing, loc_output)
+function ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, land_init, f_one)
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map) #312
 
     coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
@@ -156,7 +156,7 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers);
-    return land_one, f_one, loc_forcing, loc_output  
+    return land_one, f_one  
 end
 
 
@@ -181,9 +181,9 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
         push!(allNans, all(isnan, loc_forcing[1]))
     end
     loc_space_maps = loc_space_maps[allNans .== false]
-    land_one, f_one, loc_forcing, loc_output  = doOneLocation(outcubes, land_init, approaches, forcing, tem, loc_space_maps[1])
-    l_init_threads = Tuple([deepcopy(land_one) for _ in 1:length(loc_space_maps)])
-    return loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output
+    land_one, f_one  = doOneLocation(outcubes, land_init, approaches, forcing, tem, loc_space_maps[1])
+    land_init_space = Tuple([deepcopy(land_one) for _ in 1:length(loc_space_maps)])
+    return loc_space_maps, land_init_space, f_one
 end
 
 
@@ -191,28 +191,28 @@ end
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple)
-    loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output = prepRunEcosystem(outcubes, land_init, approaches, forcing, tem)
-    parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, l_init_threads, f_one, loc_forcing, loc_output, tem.helpers.run.parallelization)
+    loc_space_maps, land_init_space, f_one = prepRunEcosystem(outcubes, land_init, approaches, forcing, tem)
+    parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, land_init_space, f_one, tem.helpers.run.parallelization)
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
-    parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, land_init_space, f_one, loc_forcing, loc_output, tem.helpers.run.parallelization)
+function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, loc_space_maps, land_init_space, f_one)
+    parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, land_init_space, f_one, tem.helpers.run.parallelization)
 end
 
-function parallelizeIt(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output, ::Val{:threads})
+function parallelizeIt(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps, land_init_space, f_one, ::Val{:threads})
     Threads.@threads for i = eachindex(loc_space_maps)
-        ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps[i], land_init_space[i], f_one, loc_forcing, loc_output)
+        ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps[i], land_init_space[i], f_one)
         end
 end    
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function parallelizeIt(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output, ::Val{:qbmap})  
+function parallelizeIt(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_maps, land_init_space, f_one, ::Val{:qbmap})  
     qbmap(loc_space_maps) do loc_space_map
-        ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, land_init_space[Threads.threadid()], f_one, loc_forcing, loc_output)
+        ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_map, land_init_space[Threads.threadid()], f_one)
     end
 end
