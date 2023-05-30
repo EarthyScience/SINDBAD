@@ -97,7 +97,6 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
-    @show "IMHERE"
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -114,7 +113,6 @@ function getLossArray(pVector::AbstractArray, forcing, output, output_variables,
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
-
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
