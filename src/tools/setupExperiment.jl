@@ -649,6 +649,7 @@ function getLoopingInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:loop, (;)))
     run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
     for dim in info.modelRun.mapping.runEcosystem
+        @show dim, info.modelRun.mapping.runEcosystem
         run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
         # todo: create the time dimesion using the dates vector
         # if dim == "time"
