@@ -18,7 +18,7 @@ forcingConfig = "forcing_erai.json"
 # forcingConfig = "forcing_DE-2.json"
 obspath = inpath
 optimize_it = true
-optimize_it = false
+# optimize_it = false
 outpath = nothing
 
 domain = "DE-Hai"
