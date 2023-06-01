@@ -143,7 +143,7 @@ function cusp(sp::SVector, Δsp)
 end
 
 function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
-    sp_zero = Base.setindex(sp_zero, one(Δsp), split_level)
+    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
     sp = sp .+ sp_zero .* Δsp
     return sp
 end
