@@ -2,6 +2,9 @@ using Revise
 using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
+
+# TODO add to OptimizeSindbad
+using Distributions, PDMats, DistributionFits, Turing, MCMCChains
 # using Cthulhu
 using BenchmarkTools
 noStackTrace()
@@ -17,7 +20,7 @@ obspath = inpath
 optimize_it = true
 optimize_it = true
 outpath = nothing
-
+t
 domain = "DE-Hai"
 pl = "threads"
 replace_info = Dict(
@@ -39,46 +42,7 @@ replace_info = Dict(
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-develop_f = () -> begin
-    #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
-    #code run from @infiltrate in optimizeModelArray
-    # d = shifloNormal(2,5)
-    # using StatsPlots
-    # plot(d)
-    using DistributionFits
-    priors_opt = shifloNormal.(lower_bounds,upper_bounds)
-    x = default_values
 
-    loss = getLossArray(x, forcing, output, output_variables,
-    observations, tblParams, tem, optim,  loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
-
-
-    Turing.@model function sesamfit(obs, ::Type{T} = Float64) where {T}
-        #assumptions/priors
-        local popt = Vector{T}(undef, length(priors_opt))
-        #popt_unscaled = Vector{T}(undef, length(popt_dist))
-        #pl =  Vector{T}(undef, length(srl2))
-        #local (i,r) = first(enumerate(priors_opt))
-        for (i,r) = enumerate(priors_opt)
-            popt[i] ~ r
-        end
-        local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
-        #
-        tblParams.optim .= popt  # TODO replace mutation
-        
-        newApproaches = updateParameters(tblParams, tem.models.forward)
-        runEcosystem!(output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
-        model_data = (; Pair.(output_variables, output)...)
-
-        obs.cstocks ~ dist_pred.cstocks
-        obs.cn ~ dist_pred.cn
-        obs.cp ~ dist_pred.cp
-    end
-
-
-
-
-end
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
@@ -92,7 +56,89 @@ loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosys
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
 
 
-@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
+outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
 
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+
+"""
+    getPredAndObsVector(observations::NamedTuple, model_output, optim::NamedTuple)
+
+extract a matrix with columns:
+- observations
+- observation uncertainties (stdev)
+- model prediction
+"""
+function getPredAndObsVector(observations::NamedTuple, model_output, optim::NamedTuple; removeNaN=true)
+    cost_options = optim.costOptions
+    optimVars = optim.variables.optim
+    res = map(cost_options) do var_row
+        obsV = var_row.variable
+        mod_variable = getfield(optimVars, obsV)
+        #TODO care for equal size
+        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
+        [vec(y) vec(yσ) vec(ŷ)]
+    end
+    resM = vcat(res...)
+    resM, isfinite.(resM[:,1])
+    #TODO do with fewer allocations
+end
+
+
+outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+
+
+develop_f = () -> begin
+    #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
+    #code run from @infiltrate in optimizeModelArray
+    # d = shifloNormal(2,5)
+    # using StatsPlots
+    # plot(d)
+
+    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters)
+    # get the defaults and bounds
+    default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+    lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
+    upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
+    loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output, tem.models.forward, forcing, tem);
+
+    priors_opt = shifloNormal.(lower_bounds,upper_bounds)
+    x = default_values
+
+    #TODO get y and sigmay beforehand and construct MvNormal
+
+    #priors_opt, dObs, is_finite_obs
+    #output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output
+    #output_variables, optim
+    m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T} = Float64) where {T}
+        #assumptions/priors
+        local popt = Vector{T}(undef, length(priors_opt))
+        #popt_unscaled = Vector{T}(undef, length(popt_dist))
+        #pl =  Vector{T}(undef, length(srl2))
+        #local (i,r) = first(enumerate(priors_opt))
+        for (i,r) = enumerate(priors_opt)
+            popt[i] ~ r
+        end
+        local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
+        #
+        tblParams.optim .= popt  # TODO replace mutation
+        
+        newApproaches = updateParameters(tblParams, tem.models.forward)
+        # TODO run model with updated parameters
+        runEcosystem!(output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+        # get predictions and observations
+        model_output = (; Pair.(output_variables, output)...)
+        pred_obs, is_finite_obs = getPredAndObsVector(observations, model_output, optim)
+
+        dObs = MvNormal(pred_obs[is_finite_obs,1], PDiagMat(pred_obs[is_finite_obs,2]))
+        # pdf(dObs, pred_obs[is_finite_obs,3])
+        pred_obs[is_finite_obs,3] ~ dObs
+
+    end
+
+    n_burnin = 0; n_sample = 10
+    #Turing.sample(sesamfit, MCMC(n_burnin, 0.65, init_ϵ = 1e-2),  n_sample, init_params=popt0)
+    Turing.sample(m_sesamfit, MH(),  n_sample)
+
+
+
+end
