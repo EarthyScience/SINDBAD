@@ -282,27 +282,19 @@ end
 getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
-function getzix(dat::SubArray, zixhelpersPool)
+function getzix(dat::SubArray, zixhelpers::NamedTuple, poolName::Symbol)
     first(parentindices(dat))
 end
 
 
 """
-getzix(dat::Array)
+getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
-function getzix(dat::Array, zixhelpersPool)
-    zixhelpersPool
+function getzix(dat::Array, zixhelpers::NamedTuple, poolName::Symbol)
+    getfield(zixhelpers, poolName)
 end
 
-
-"""
-getzix(dat::SVector)
-returns the indices of a view for a subArray
-"""
-function getzix(dat::SVector, zixhelpersPool)
-    zixhelpersPool
-end
 
 """
     cumSum!(i_n::AbstractVector, o_ut::AbstractVector)

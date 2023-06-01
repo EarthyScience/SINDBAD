@@ -9,13 +9,7 @@
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm_BFGS": {
-		"package": "Optim",
-		"method": "LBFGS",
-		"options_file": "optim_LBFGS.json",
-		"isMultiObj": false
-	},
-	"algorithm_ev": {
+	"algorithm": {
 		"package": "Evolutionary",
 		"method": "CMAES",
 		"options_file": null,
@@ -27,7 +21,7 @@
 		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
-	"algorithm": {
+	"algorithmcc": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",

@@ -41,7 +41,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
-    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.carbon.zix.cVeg)
+    zix = first(parentindices(getfield(land.pools, :cVeg)))
     for ix in zix
 
 		# compute maintenance & growth respiration terms for each vegetation pool
@@ -68,10 +68,10 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	end
 
 	## pack land variables
-	@pack_land begin
-		(p_km, p_km4su) => land.aRespiration
-		(RA_G, RA_M, cEcoEfflux) => land.states
-	end
+	# @pack_land begin
+	# 	(p_km, p_km4su) => land.aRespiration
+	# 	(RA_G, RA_M, cEcoEfflux) => land.states
+	# end
 	return land
 end
 

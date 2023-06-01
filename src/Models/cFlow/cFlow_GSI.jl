@@ -24,8 +24,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     # Prepare the list of flows
     for trow in eachindex(flowVar)
         # @show trow, srcName, trgName
-        zixSrc = getzix(getfield(land.pools, asrc[trow]), getfield(helpers.pools.carbon.zix, asrc[trow]))
-        zixTrg = getzix(getfield(land.pools, atrg[trow]), getfield(helpers.pools.carbon.zix, atrg[trow]))
+        zixSrc = getzix(getfield(land.pools, asrc[trow]), helpers.pools.carbon.zix, asrc[trow])
+        zixTrg = getzix(getfield(land.pools, atrg[trow]), helpers.pools.carbon.zix, atrg[trow])
         push!(ndxSrc, zixSrc)
         push!(ndxTrg, zixTrg)
         for iSrc in zixSrc
@@ -77,7 +77,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
 end
 
 
-function adjust_pk(p_k, kValue, flowValue, maxValue, zix)
+function adjust_pk(p_k, kValue, flowValue, maxValue, landPools, poolName)
+    zix = first(parentindices(getfield(landPools, poolName)))
     p_k_sum = zero(eltype(p_k))
     for ix in zix
         # @show ix, p_k[ix]
@@ -85,7 +86,7 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix)
         if tmp > maxValue
             tmp = maxValue
         end
-        p_k = ups(p_k, tmp, ix)
+        p_k[ix] = tmp
         p_k_sum = p_k_sum + tmp
     end
     return p_k_sum
@@ -163,15 +164,15 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
 
-    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.carbon.zix.cVegLeaf)
+    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, land.pools, :cVegLeaf)
     L2ReF = L2Re / p_k_sum
     k_LshedF = k_Lshed / p_k_sum
 
-    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.carbon.zix.cVegRoot)
+    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, land.pools, :cVegRoot)
     R2ReF = R2Re / p_k_sum
     k_RshedF = k_Rshed / p_k_sum
 
-    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, helpers.pools.carbon.zix.cVegReserve)
+    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, land.pools, :cVegReserve)
     Re2LF = Re2L / p_k_sum
     Re2RF = Re2R / p_k_sum
 
