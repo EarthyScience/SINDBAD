@@ -5,7 +5,7 @@ import DataStructures
 using InteractiveUtils
 using DocStringExtensions
 using Parameters
-@reexport using StaticArraysCore: StaticArray, SVector, MArray
+@reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
 using Dates
 using JLD2
 @reexport using Accessors: @set
