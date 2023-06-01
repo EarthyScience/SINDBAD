@@ -24,12 +24,12 @@ output = ForwardSindbad.setupOutput(info);
 
 
 forc = getKeyedArrayFromYaxArray(forcing);
-# @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-# @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+# @code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
 # @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
 
-# @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+# @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
 
 
 

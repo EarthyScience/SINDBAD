@@ -37,14 +37,12 @@ function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
 		(𝟘, 𝟙) ∈ helpers.numbers
 		(θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.vegAvailableWater
 	end
-	for sl in eachindex(soilW)
-		θ_dos = (soilW[sl] + ΔsoilW[sl]) / p_wSat[sl]
-		θ_fc_dos = p_wFC[sl] / p_wSat[sl]
-		tmpSoilWStress = clamp(𝟙 / (𝟙 + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))), 𝟘, 𝟙)
-		soilWStress = ups(soilWStress, tmpSoilWStress, sl)
-		maxWater =  clamp(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘, 𝟙)
-		PAW = ups(PAW, p_fracRoot2SoilD[sl] * maxWater * tmpSoilWStress, sl)		
-	end
+
+	θ_dos .= (soilW .+ ΔsoilW) ./ p_wSat
+	θ_fc_dos .= p_wFC ./ p_wSat
+	soilWStress .= clamp.(𝟙 ./ (𝟙 .+ exp.(-exp_factor .* p_β .* (θ_dos .- θ_fc_dos))), 𝟘, 𝟙)
+	maxWater .=  clamp.(soilW .+ ΔsoilW .- p_wWP, 𝟘, 𝟙)
+	PAW .= p_fracRoot2SoilD .* maxWater .* soilWStress
 
 	## pack land variables
 	@pack_land (PAW, soilWStress) => land.vegAvailableWater

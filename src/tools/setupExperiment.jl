@@ -1,7 +1,7 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateParameters
-using StaticArrays: SVector
+
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -206,30 +206,6 @@ function setInputParameters(original_table::Table, updated_table::Table)
 end
 
 """
-    getTypedModel(model, sNT)
-- get Sindbad model, and instatiate them with the datatype set in modelRun
-"""
-function getTypedModel(model, sNT)
-    model_obj = getfield(Sindbad.Models, Symbol(model))
-    model_instance = model_obj()
-    param_names = fieldnames(model_obj)
-    if length(param_names) > 0
-        param_vals = []
-        for pn=param_names
-            param = getfield(model_obj(), pn)
-            param_typed = if typeof(param) <: Array
-                sNT.(param)
-            else
-                sNT(param)
-            end
-            push!(param_vals, param_typed)
-        end
-        model_instance = model_obj(param_vals...)
-    end
-    return model_instance
-end
-
-"""
     getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
 sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run. 
 - allows for a faster spinup if some models can be turned off
@@ -246,8 +222,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
         modInfo = getfield(info.modelStructure.models, sm)
         modAppr = modInfo.approach
         sel_approach = String(sm) * "_" * modAppr
-        sel_approach_func = getTypedModel(Symbol(sel_approach), info.tem.helpers.numbers.sNT)
-        # sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
+        sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
         sel_appr_forward = (sel_appr_forward..., sel_approach_func)
         if :use4spinup in propertynames(modInfo)
             use4spinup = modInfo.use4spinup
@@ -353,7 +328,7 @@ end
 
 """
     generatePoolsInfo(info)
-generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
+generates the info.tem.helpers.pools and info.tem.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 """
 function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.modelStructure.pools)
@@ -366,7 +341,6 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
         hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
-        arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
         nlayers = Int64[]
         layerThicknesses = info.tem.helpers.numbers.numType[]
         layer = Int64[]
@@ -383,7 +357,6 @@ function generatePoolsInfo(info::NamedTuple)
         end
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
-        hlpElem = setTupleField(hlpElem, (:zeros, (;)))
 
         # main pools
         for mainPool in mainPoolName
@@ -397,13 +370,10 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(initValues, inits[ind])
                 end
             end
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
-    
             tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
-            hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zero(initValues)))
         end
 
         # subpools
@@ -426,7 +396,6 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(ltck, layerThicknesses[ind])
                 end
             end
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
@@ -450,7 +419,6 @@ function generatePoolsInfo(info::NamedTuple)
             end
             # components = Set(Symbol.(subPoolName))
             initValues = inits
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             zix = 1:1:length(mainPoolName) |> collect
             tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
@@ -474,8 +442,7 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
-    info = (; info..., pools=tmpStates)
-    # info = (; info..., tem=(; info.tem..., pools=tmpStates))
+    info = (; info..., tem=(; info.tem..., pools=tmpStates))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
@@ -494,7 +461,8 @@ end
 
 
 function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:staticarray})
-    SVector{length(inVals)}(numType(ix) for ix in inVals)
+    #todo staticarray
+    numType.(inVals)
 end
 
 
@@ -502,18 +470,18 @@ end
     getInitPools(info)
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array. 
 """
-function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+function getInitPools(info_tem::NamedTuple)
     initPools = (;)
-    for element in propertynames(info_pools)
-        props = getfield(info_pools, element)
+    for element in propertynames(info_tem.pools)
+        props = getfield(info_tem.pools, element)
         arrayType = getfield(props, :arraytype)
         toCreate = getfield(props, :create)
         initVals = getfield(props, :initValues)
         for tocr in toCreate
             inVals = deepcopy(getfield(initVals, tocr))
-            initPools = setTupleField(initPools, (tocr, createArrayofType(inVals, Nothing[], tem_helpers.numbers.numType, nothing, true, Val(arrayType))))
+            initPools = setTupleField(initPools, (tocr, createArrayofType(inVals, Nothing[], info_tem.helpers.numbers.numType, nothing, true, Val(arrayType))))
         end
-        tocombine = getfield(getfield(info_pools, element), :combine)
+        tocombine = getfield(getfield(info_tem.pools, element), :combine)
         if tocombine.docombine
             combinedPoolName = tocombine.pool
             zixT = getfield(props, :zix)
@@ -523,7 +491,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 if component != combinedPoolName
                     indx = getfield(zixT, component)
                     inVals = deepcopy(getfield(initVals, component))
-                    compdat = createArrayofType(inVals, poolArray, tem_helpers.numbers.numType, indx, false, Val(arrayType))
+                    compdat = createArrayofType(inVals, poolArray, info_tem.helpers.numbers.numType, indx, false, Val(arrayType))
                     # compdat::AbstractArray = @view poolArray[indx]
                     initPools = setTupleField(initPools, (component, compdat))
                 end
@@ -537,10 +505,10 @@ end
     getInitStates(info)
 returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from addStateVars in modelStructure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
-function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
+function getInitStates(info_tem::NamedTuple)
     initStates = (;)
-    for element in propertynames(info_pools)
-        props = getfield(info_pools, element)
+    for element in propertynames(info_tem.pools)
+        props = getfield(info_tem.pools, element)
         toCreate = getfield(props, :create)
         addVars = getfield(props, :addStateVars)
         initVals = getfield(props, :initValues)
@@ -549,12 +517,12 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
             for avk in keys(addVars)
                 avv = getproperty(addVars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
-                vals = ones(tem_helpers.numbers.numType, size(getfield(initVals, tocr))) * tem_helpers.numbers.sNT(avv)
-                newvals = createArrayofType(vals, Nothing[], tem_helpers.numbers.numType, nothing, true, Val(arrayType))
+                vals = ones(info_tem.helpers.numbers.numType, size(getfield(initVals, tocr))) * info_tem.helpers.numbers.sNT(avv)
+                newvals = createArrayofType(vals, Nothing[], info_tem.helpers.numbers.numType, nothing, true, Val(arrayType))
                 initStates = setTupleField(initStates, (Δtocr, newvals))
             end
         end
-        tocombine = getfield(getfield(info_pools, element), :combine)
+        tocombine = getfield(getfield(info_tem.pools, element), :combine)
         if tocombine.docombine
             combinedPoolName = Symbol(tocombine.pool)
             for avk in keys(addVars)
@@ -567,7 +535,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     if component != combinedPoolName
                         Δcomponent = Symbol(string(avk) * string(component))
                         indx = getfield(zixT, component)
-                        Δcompdat = createArrayofType(ones(length(indx)) * tem_helpers.numbers.sNT(avv), ΔpoolArray, tem_helpers.numbers.numType, indx, false, Val(arrayType))
+                        Δcompdat = createArrayofType(ones(length(indx)) * info_tem.helpers.numbers.sNT(avv), ΔpoolArray, info_tem.helpers.numbers.numType, indx, false, Val(arrayType))
                         # Δcompdat::AbstractArray = @view ΔpoolArray[indx]
                         initStates = setTupleField(initStates, (Δcomponent, Δcompdat))
                     end
@@ -649,7 +617,6 @@ function getLoopingInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:loop, (;)))
     run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
     for dim in info.modelRun.mapping.runEcosystem
-        @show dim, info.modelRun.mapping.runEcosystem
         run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
         # todo: create the time dimesion using the dates vector
         # if dim == "time"
