@@ -45,7 +45,7 @@ function compute(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL B - growth respiration is given priority
-	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
 
 	# scalars of maintenance respiration for models A; B & C
 	# km is the maintenance respiration coefficient [d-1]

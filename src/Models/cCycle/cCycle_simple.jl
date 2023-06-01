@@ -11,15 +11,15 @@ function precompute(o::cCycle_simple, forcing, land, helpers)
     n_cEco = length(land.pools.cEco)
     n_cVeg = length(land.pools.cVeg)
     ## instantiate variables
-    cEcoFlow = zero(land.pools.cEco)
-    cEcoOut = zero(land.pools.cEco)
-    cEcoInflux = zero(land.pools.cEco)
+    cEcoFlow = zeros(numType, n_cEco)
+    cEcoOut = zeros(numType, n_cEco)
+    cEcoInflux = zeros(numType, n_cEco)
     zerocEcoFlow = zero(cEcoFlow)
     zerocEcoInflux = zero(cEcoInflux)
-    cNPP = zero(land.pools.cEco)
+    cNPP = zeros(numType, n_cEco)
 
 	cEco_prev = copy(land.pools.cEco)
-    zixVeg = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
+    zixVeg = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
     ## pack land variables
     NEE = 𝟘
     NPP = 𝟘
@@ -47,15 +47,15 @@ function compute(o::cCycle_simple, forcing, land, helpers)
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    cEcoFlow = zerocEcoFlow .* 𝟘
-    cEcoInflux = cEcoInflux
+    cEcoFlow .= zerocEcoFlow
+    cEcoInflux .= cEcoInflux
     ## compute losses
-    cEcoOut = min.(cEco, cEco .* p_k)
+    cEcoOut .= min.(cEco, cEco .* p_k)
 
     ## gains to vegetation
     for zv in zixVeg
-        cNPP = ups(cNPP, gpp * cAlloc[zv] - cEcoEfflux[zv], zv)
-        cEcoInflux = ups(cEcoInflux, cNPP[zv], zv)
+        cNPP[zv] = gpp * cAlloc[zv] - cEcoEfflux[zv]
+        cEcoInflux[zv] = cNPP[zv]
     end
 
     # flows & losses
@@ -67,8 +67,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
         fO = fluxOrder[jix]
         take_r = taker[fO]
         give_r = giver[fO]
-        tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        cEcoFlow = ups(cEcoFlow, tmp_flow, take_r) 
+        cEcoFlow[take_r] = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]
@@ -79,8 +78,8 @@ function compute(o::cCycle_simple, forcing, land, helpers)
     # cEcoFlow[taker] = take_flow + give_flow * c_flow
     # end
     ## balance
-    ΔcEco = cEcoFlow .+ cEcoInflux .- cEcoOut
-    cEco = cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
+    ΔcEco .= cEcoFlow .+ cEcoInflux .- cEcoOut
+    cEco .= cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
     
     ## compute RA & RH
     NPP = sum(cNPP)
@@ -89,13 +88,14 @@ function compute(o::cCycle_simple, forcing, land, helpers)
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
     NEE = cRECO - gpp
-    cEco_prev = cEco
+    cEco_prev .= cEco
 
     ## pack land variables
     @pack_land begin
-        cEco => land.pools
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
-        (ΔcEco, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
+        # (cEco_prev) => land.states
+        # ΔcEco => land.states
+        # (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
     end
     return land
 end
