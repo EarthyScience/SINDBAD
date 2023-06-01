@@ -26,11 +26,14 @@ function compute(o::cTau_mult, forcing, land, helpers)
         p_k ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
     end
-    p_k .= p_k_base .* p_kfLAI .* p_kfSoil .* p_kfVeg .* fT .* p_fsoilW
-    p_k .= clamp.(p_k, 𝟘, 𝟙)
+    for i in eachindex(p_k)
+        tmp = p_k_base[i] * p_kfLAI[i] * p_kfSoil[i] * p_kfVeg[i] * fT * p_fsoilW[i]
+        tmp = clamp(tmp, 𝟘, 𝟙)
+        p_k = ups(p_k, tmp, i)
+    end
 
     ## pack land variables
-    # @pack_land p_k => land.states
+    @pack_land p_k => land.states
     return land
 end
 

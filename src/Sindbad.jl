@@ -5,6 +5,7 @@ import DataStructures
 using InteractiveUtils
 using DocStringExtensions
 using Parameters
+@reexport using StaticArraysCore: StaticArray, SVector
 using Dates
 using JLD2
 @reexport using Accessors: @set
@@ -17,6 +18,8 @@ using Flatten:
     metaflatten,
     fieldnameflatten,
     parentnameflatten
+using Zygote: Buffer
+
 @reexport using PrettyPrinting: pprint
 
 include("tools/tools.jl")
