@@ -34,6 +34,7 @@
 		"yax_max_cache": 2e9
 	},
 	"output": {
+		"arraytype": "array",		
 		"all": false,
 		"path": null,
 		"format": ".zarr",
