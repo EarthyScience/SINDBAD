@@ -20,7 +20,7 @@ obspath = inpath
 optimize_it = true
 optimize_it = true
 outpath = nothing
-t
+# t
 domain = "DE-Hai"
 pl = "threads"
 replace_info = Dict(
@@ -57,8 +57,34 @@ loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosys
 
 
 outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
+outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
 
 
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
+
+
+
+"""
+getObsAndUnc(observations::NamedTuple, optim::NamedTuple; removeNaN=true)
+
+extract a matrix with columns:
+- observations
+- observation uncertainties (stdev)
+"""
+function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
+    cost_options = optim.costOptions
+    optimVars = optim.variables.optim
+    res = map(cost_options) do var_row
+        obsV = var_row.variable
+        y = getproperty(obs, obsV)
+        yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
+        [vec(y) vec(yσ)]
+    end
+    resM = vcat(res...)
+    resM, isfinite.(resM[:,1])
+    #TODO do with fewer allocations
+end
 
 """
     getPredAndObsVector(observations::NamedTuple, model_output, optim::NamedTuple)
@@ -84,7 +110,42 @@ function getPredAndObsVector(observations::NamedTuple, model_output, optim::Name
 end
 
 
+
+"""
+updateParameters(tblParams, approaches)
+"""
+function updateParameters(tblParams::Table, approaches::Tuple, popt)
+    function filtervar(var, modelName, tblParams, approachx)
+        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+        if isempty(subtbl)
+            return getproperty(approachx, var)
+        else
+            return subtbl.optim[1]
+        end
+    end
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    for (idx, modelName) in enumerate(namesApproaches)
+        approachx = approaches[idx]
+        newapproachx = if modelName in tblParams.modelsApproach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var in vars
+                inOptim = filtervar(var, modelName, tblParams, approachx)
+                #TODO Check whether this works correctly
+                push!(newvals, var => inOptim)
+            end
+            typeof(approachx)(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
 outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
 
 
 develop_f = () -> begin
@@ -103,6 +164,7 @@ develop_f = () -> begin
 
     priors_opt = shifloNormal.(lower_bounds,upper_bounds)
     x = default_values
+    pred_obs, is_finite_obs = getObsAndUnc(obs, optim)
 
     #TODO get y and sigmay beforehand and construct MvNormal
 
@@ -122,9 +184,9 @@ develop_f = () -> begin
         #
         tblParams.optim .= popt  # TODO replace mutation
         
-        newApproaches = updateParameters(tblParams, tem.models.forward)
+        newApproaches = updateParameters(tblParams, tem.models.forward, popt)
         # TODO run model with updated parameters
-        runEcosystem!(output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+        runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
         # get predictions and observations
         model_output = (; Pair.(output_variables, output)...)
         pred_obs, is_finite_obs = getPredAndObsVector(observations, model_output, optim)
