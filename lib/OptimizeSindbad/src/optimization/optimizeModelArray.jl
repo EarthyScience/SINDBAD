@@ -112,8 +112,6 @@ function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vecto
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
 
-    @infiltrate
-    
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
 
