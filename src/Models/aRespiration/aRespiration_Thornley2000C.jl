@@ -46,7 +46,7 @@ function compute(o::aRespiration_Thornley2000C, forcing, land, helpers)
 	# compute maintenance & growth respiration terms for each vegetation pool
 	# according to MODEL C - growth; degradation & resynthesis view of
 	# respiration
-	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
 	
 	#@needscheck: MTF, metabolic fraction, may be inconsistent with the rest of the model structure
 	Fd[zix] .= 𝟙

@@ -26,9 +26,11 @@ end
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps, otype, oforc)
     # time_steps = 1
     # time_steps = 7200
-    f_t = getForcingForTimeStep(forcing, 1)::oforc
+    #f_t = getForcingForTimeStep(forcing, 1)::oforc
+    #f_t = get_force_at_time_t(forcing, 1)::oforc
     res = map(1:time_steps) do ts
-        f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_t)#::oforc
+        #f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_t)#::oforc
+        f = get_force_at_time_t(forcing, ts)
         #if ts==7864
         #    println("------------------------------------------")
         #    println("$(typeof(f) <: oforc)")
@@ -42,7 +44,8 @@ end
         #@show [typeof(onew) for onew in out]
         #@show [typeof(onew) <: typeof(outold[i]) for (i,onew) in enumerate(out)]
         #@show out[46], outold[46]
-        deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
+        deepcopy(out)
+        # deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
     # push!(debugcatcherr,res)
     res
@@ -51,7 +54,8 @@ end
 
 function timeLoopForward(forward_models::Tuple, forcing::NamedTuple, out::NamedTuple,
     tem_variables::NamedTuple, tem_helpers::NamedTuple, time_steps)
-    f = getForcingForTimeStep(forcing, 1)
+    #f = getForcingForTimeStep(forcing, 1)
+    f = get_force_at_time_t(forcing, 1)
     #@show f
     out2 = runModels(f, forward_models, out, tem_helpers);
     res = theRealtimeLoopForward(forward_models, forcing, out2, tem_variables, tem_helpers,time_steps,
