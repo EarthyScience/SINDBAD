@@ -31,12 +31,12 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.debugit" => false,
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.defaultForcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
+    "modelRun.output.arraytype" => "array",
     "modelRun.mapping.parallelization" => pl,
     "opti.constraints.oneDataPath" => obspath
 );
@@ -56,6 +56,10 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+for x=1:10
+    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+end
+
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
 
 forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one = Sindbad.error_catcher[1];
