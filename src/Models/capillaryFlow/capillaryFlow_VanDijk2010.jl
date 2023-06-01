@@ -11,7 +11,7 @@ function precompute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 		soilW ∈ land.pools
 		numType ∈ helpers.numbers
 	end
-	capFlow = zero(land.pools.soilW)
+	capFlow = zeros(numType, length(land.pools.soilW))
 
 	## pack land variables
 	@pack_land begin
@@ -39,17 +39,15 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 		holdCap = max(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), 𝟘)
 		lossCap = max(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]), 𝟘)
 		minFlow = min(tmpCapFlow, holdCap, lossCap)
-		tmp = minFlow > tolerance ? minFlow : 𝟘
-		capFlow = ups(capFlow, tmp, sl) 
-		ΔsoilW = cusp(ΔsoilW, capFlow[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl)
-		ΔsoilW = cusp(ΔsoilW, -capFlow[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl+1)
-		
+		capFlow[sl] = minFlow > tolerance ? minFlow : 𝟘 
+		ΔsoilW[sl] = ΔsoilW[sl] + capFlow[sl]
+		ΔsoilW[sl+1] = ΔsoilW[sl+1] - capFlow[sl]
 	end
 
 	## pack land variables
     @pack_land begin
 		capFlow => land.capillaryFlow
-		ΔsoilW => land.states
+		# ΔsoilW => land.states
 	end
 	return land
 end

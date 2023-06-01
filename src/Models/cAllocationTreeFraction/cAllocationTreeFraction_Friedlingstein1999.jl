@@ -17,12 +17,11 @@ function precompute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land
     return land
 end
 
-function setCAlloc(cAlloc, cAllocValue, landPool, zixPools)
-    zix = getzix(landPool, zixPools)
-    for ix in eachindex(zix)
-        cAlloc = ups(cAlloc, cAllocValue * cAlloc[zix[ix]], zix[ix])
+function setCAlloc(cAlloc, cAllocValue, landPools, poolName)
+    zix = first(parentindices(getfield(landPools, poolName)))
+    for ix in zix
+        cAlloc[ix] = cAllocValue * cAlloc[ix]
     end
-    return cAlloc
 end
 
 
@@ -39,17 +38,19 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
 
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
     r0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegRoot, helpers.pools.carbon.zix.cVegRoot)
+    for ix in getzix(land.pools.cVegRoot, helpers.pools.carbon.zix, :cVegRoot)
         r0 = r0 + cAlloc[ix]
     end
     s0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegWood, helpers.pools.carbon.zix.cVegWood)
+    for ix in getzix(land.pools.cVegWood, helpers.pools.carbon.zix, :cVegWood)
         s0 = s0 + cAlloc[ix]
     end
     l0 = zero(eltype(cAlloc)) 
-    for ix in getzix(land.pools.cVegLeaf, helpers.pools.carbon.zix.cVegLeaf)
+    for ix in getzix(land.pools.cVegLeaf, helpers.pools.carbon.zix, :cVegLeaf)
         l0 = l0 + cAlloc[ix]
     end     # this is to below ground root fine+coarse
+    # s0 = 0.2 #sum(@view cAlloc[getzix(land.pools.cVegWood)])
+    # l0 = 0.1#sum(@view cAlloc[getzix(land.pools.cVegLeaf)])
 
 	# adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
@@ -60,15 +61,38 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     # cVegRoot = cVegRootF + cVegRootC
     cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
 
-    setCAlloc(cAlloc, cVegWood, land.pools.cVegWood, helpers.pools.carbon.zix.cVegWood)
+    setCAlloc(cAlloc, cVegWood, land.pools, :cVegWood)
     if hasproperty(cpNamesTFAlloc, :cVegRootC)
-        setCAlloc(cAlloc, cVegRootC, land.pools.cVegRootC, helpers.pools.carbon.zix.cVegRootC)
-        setCAlloc(cAlloc, cVegRootF, land.pools.cVegRootF, helpers.pools.carbon.zix.cVegRootF)
+        setCAlloc(cAlloc, cVegRootC, land.pools, :cVegRootC)
+        setCAlloc(cAlloc, cVegRootF, land.pools, :cVegRootF)
     else
-        setCAlloc(cAlloc, cVegRoot, land.pools.cVegRoot, helpers.pools.carbon.zix.cVegRoot)
+        setCAlloc(cAlloc, cVegRoot, land.pools, :cVegRoot)
     end
+    setCAlloc(cAlloc, cVegLeaf, land.pools, :cVegLeaf)
 
-    setCAlloc(cAlloc, cVegLeaf, land.pools.cVegLeaf, helpers.pools.carbon.zix.cVegLeaf)
+    # zix = first(parentindices(getfield(land.pools, :cVegWood)))
+    # for ix in zix
+    #     cAlloc[ix] = cVegWood * cAlloc[ix]
+    # end
+    # if hasproperty(cpNamesTFAlloc, :cVegRootC)
+    #     zix = first(parentindices(getfield(land.pools, :cVegRootC)))
+    #     for ix in zix
+    #         cAlloc[ix] = cVegRootC * cAlloc[ix]
+    #     end
+    #     zix = first(parentindices(getfield(land.pools, :cVegRootF)))
+    #     for ix in zix
+    #         cAlloc[ix] = cVegRootF * cAlloc[ix]
+    #     end
+    # else
+    #     zix = first(parentindices(getfield(land.pools, :cVegRoot)))
+    #     for ix in zix
+    #         cAlloc[ix] = cVegRoot * cAlloc[ix]
+    #     end
+    # end
+    # zix = first(parentindices(getfield(land.pools, :cVegLeaf)))
+    # for ix in zix
+    #     cAlloc[ix] = cVegLeaf * cAlloc[ix]
+    # end
 
     return land
 end

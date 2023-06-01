@@ -23,24 +23,24 @@ function compute(o::wCycle_combined, forcing, land, helpers)
 	end
 	#TWS_old = deepcopy(TWS)
 	## update variables
-	TWS = cusp(TWS, ΔTWS)
+	TWS .= TWS .+ ΔTWS
 
     # reset soil moisture changes to zero
 	if minimum(TWS) < 𝟘
 		if abs(minimum(TWS)) < tolerance
 		    @error "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage"
 			# @assert(false, "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage") 
-		    TWS = abs.(TWS)
+		    TWS .= abs.(TWS)
 		else
 		    error("TWS is negative. Cannot continue. $(TWS)")
 		end
 	end
-	ΔTWS = zeroΔTWS
-	# pack land variables
-	@pack_land begin
-		(TWS) => land.pools
-		(ΔTWS)  => land.states
-	end
+	ΔTWS .= zeroΔTWS
+	## pack land variables
+	# @pack_land begin
+	# 	(groundW, snowW, soilW, surfaceW) => land.pools
+	# 	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW)  => land.states
+	# end
 	return land
 end
 
