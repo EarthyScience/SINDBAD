@@ -31,17 +31,18 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
 		(𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# calculate recharge
-	dosSoilEnd = (soilW[end] + ΔsoilW[end]) / p_wSat[end]
+	dosSoilEnd = clamp((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟘, 𝟙)
 	recharge_fraction = clamp((dosSoilEnd) ^ (dos_exp * p_β[end]), 𝟘, 𝟙)
 	groundWRec = recharge_fraction * (soilW[end] + ΔsoilW[end])
 	nGroundW = length(groundW) * 𝟙
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / nGroundW
-	ΔsoilW[end] = ΔsoilW[end] - groundWRec
+	ΔgroundW = cusp(ΔgroundW, groundWRec / nGroundW)
+	ΔsoilW = cusp(ΔsoilW, -groundWRec, helpers.pools.water.zeros.soilW .* 𝟘, lastindex(ΔsoilW))
 
 	## pack land variables
 	@pack_land begin
 		groundWRec => land.fluxes
+		(ΔsoilW, ΔgroundW) => land.states
 	end
 	return land
 end
