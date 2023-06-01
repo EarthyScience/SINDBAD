@@ -13,6 +13,7 @@ using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table
 using Cthulhu
+using ForwardDiff
 using Flatten:
     flatten,
     metaflatten,
