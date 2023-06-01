@@ -31,12 +31,13 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 	end
     ## instantiate variables
     p_C2Nveg = ones(numType, length(cEco)) #sujan
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)] .= C2Nveg
+    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)] .= C2Nveg
     cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
 	p_k_base = zero(cEco)
     p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
 	for i in eachindex(p_k_base)
-	    p_k_base[i] = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+	    p_k_base = ups(p_k_base, tmp, i)
 	end
     ## pack land variables
     @pack_land begin
