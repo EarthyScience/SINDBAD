@@ -14,6 +14,11 @@ eYear = "2017"
 
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
+# inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
+# inpath = "../data/BE-Vie.1979.2017.daily.nc"
+# forcingConfig = "forcing_erai.json"
+inpath = "../data/DE-2.1979.2017.daily.nc"
+forcingConfig = "forcing_DE-2.json"
 # inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
 obspath = inpath
@@ -31,6 +36,7 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
+    "modelRun.flags.debugit" => false,
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
@@ -48,7 +54,7 @@ forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
-linit= createLandInit(info.tem);
+linit= createLandInit(info.pools, info.tem);
 
 #Sindbad.eval(:(error_catcher = []))    
 loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
@@ -142,3 +148,14 @@ develop_f = () -> begin
 
 
 end
+Sindbad.eval(:(error_catcher = []))    
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
+
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+
+forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one = Sindbad.error_catcher[1];
+a
