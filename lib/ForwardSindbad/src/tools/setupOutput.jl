@@ -4,9 +4,9 @@ export createLandInit, setupOutput, setupOptiOutput
     createLandInit(info)
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function createLandInit(info_tem::NamedTuple)
-    initPools = getInitPools(info_tem)
-    initStates = getInitStates(info_tem)
+function createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
+    initPools = getInitPools(info_pools, info_tem.helpers)
+    initStates = getInitStates(info_pools, info_tem.helpers)
     out = (; fluxes=(;), pools=initPools, states=initStates)::NamedTuple
     sortedModels = sort([_sm for _sm in info_tem.models.selected_models.model])
     for model in sortedModels
@@ -17,10 +17,10 @@ function createLandInit(info_tem::NamedTuple)
     return out
 end
 
-function getPoolSize(info::NamedTuple, poolName::Symbol)
+function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     poolsize = nothing
-    for elem in keys(info.tem.pools)
-        zixelem = getfield(info.tem.pools, elem)[:zix]
+    for elem in keys(info_pools)
+        zixelem = getfield(info_pools, elem)[:zix]
         if poolName in keys(zixelem)
             return length(getfield(zixelem, poolName))
         end
@@ -53,7 +53,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
                 if isa(dimSizeK, Int64)
                     dimSize = dimSizeK
                 elseif isa(dimSizeK, String)
-                    dimSize = getPoolSize(info, Symbol(dimSizeK))
+                    dimSize = getPoolSize(info.pools, Symbol(dimSizeK))
                 end
             else
                 error("The output depth dimension for $(vname) is specified as $(vdim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value.")
@@ -149,7 +149,7 @@ end
 
 function setupOutput(info::NamedTuple)
     @info "setupOutput: creating initial out/land..."
-    land_init = createLandInit(info.tem)
+    land_init = createLandInit(info.pools, info.tem)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn

@@ -4,6 +4,7 @@ abstract type snowMelt <: LandEcosystem end
 
 include("snowMelt_Tair.jl")
 include("snowMelt_TairRn.jl")
+include("snowMelt_Tair_buffer.jl")
 
 @doc """
 Calculate snowmelt and update s.w.wsnow

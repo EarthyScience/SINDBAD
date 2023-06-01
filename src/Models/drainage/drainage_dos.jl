@@ -11,8 +11,8 @@ function precompute(o::drainage_dos, forcing, land, helpers)
 	@unpack_land begin
 		ΔsoilW ∈ land.states
 	end
-	drain_fraction = similar(ΔsoilW)
-	drainage = similar(ΔsoilW)
+	drain_fraction = zero(ΔsoilW)
+	drainage = zero(ΔsoilW)
 
 	## pack land variables
 	@pack_land begin
@@ -35,26 +35,25 @@ function compute(o::drainage_dos, forcing, land, helpers)
 	end
 	# drain_fraction .= clamp.(((soilW) ./ p_wSat) .^ (dos_exp .* p_β), 𝟘, 𝟙)
 	# drainage .=  drain_fraction .* (soilW +  ΔsoilW)
-
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
-		drain_fraction = clamp(((soilW[sl]) / p_wSat[sl]) ^ (dos_exp * p_β[sl]), 𝟘, 𝟙)
+		drain_fraction = clamp(((soilW[sl]+  ΔsoilW[sl]) / p_wSat[sl]) ^ (dos_exp * p_β[sl]), 𝟘, 𝟙)
 		drainage_tmp =  drain_fraction * (soilW[sl] +  ΔsoilW[sl])
 		max_drain = p_wSat[sl] - p_wFC[sl]
 		lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		drain = min(drainage_tmp, holdCap, lossCap)
-		drainage[sl] = drain > tolerance ? drain : 𝟘
-		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
-		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
+		tmp = drain > tolerance ? drain : 𝟘
+		drainage = ups(drainage, tmp, sl) 
+		ΔsoilW = cusp(ΔsoilW, -drainage[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl)
+		ΔsoilW = cusp(ΔsoilW, drainage[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl+1)
 	end
-	drainage[end] = 𝟘
-
+	drainage = ups(drainage, 𝟘, lastindex(drainage))
 	## pack land variables
-	# @pack_land begin
-	# 	drainage => land.drainage
-	# 	ΔsoilW => land.states
-	# end
+	@pack_land begin
+		drainage => land.drainage
+		ΔsoilW => land.states
+	end
 	return land
 end
 
