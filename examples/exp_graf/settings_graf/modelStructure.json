@@ -117,7 +117,7 @@
             "approach": "simple"
         },
         "wCycle": {
-            "approach": "combined"
+            "approach": "components"
         },
         "WUE": {
             "approach": "expVPDDayCo2"
@@ -136,7 +136,7 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "arraytype": "view",
+            "arraytype": "staticarray",
             "addStateVars": {"Δ": 0.0}
 		},
 		"carbon":
@@ -159,7 +159,7 @@
                 }
             },
 			"combine": "cEco",
-            "arraytype": "view",
+            "arraytype": "staticarray",
             "addStateVars": {"Δ": 0.0
             }
         }
