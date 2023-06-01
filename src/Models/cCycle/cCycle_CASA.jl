@@ -35,7 +35,7 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 	## compute losses
 	cEcoOut = min.(cEco, cEco * p_k_act)
 	## gains to vegetation
-	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix, :cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
 	cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
 	cEcoInflux[zix] .= cNPP
 	## flows & losses
@@ -180,7 +180,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	# p.aRespiration.YG = 1.0
 	# end
 	## ORDER OF CALCULATIONS [1 to the end of pools]
-	zixVec = getzix(cEco, helpers.pools.carbon.zix, :cEco)
+	zixVec = getzix(cEco, helpers.pools.carbon.zix.cEco)
 	# BUT, we sort from left to right [veg to litter to soil] & prioritize
 	# without loops
 	kmoves = 0
