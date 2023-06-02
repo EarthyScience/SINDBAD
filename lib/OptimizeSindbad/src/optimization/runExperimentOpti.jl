@@ -15,7 +15,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
         @info "runExperiment: do spatial optimization..."
         forc_array = getKeyedArrayFromYaxArray(forcing);
         obs_array = getKeyedArrayFromYaxArray(observations);
-        optim_params = optimizeModelArray(forc_array, output.data, output_vars, obs_array, info.tem, info.optim)
+        optim_params = optimizeModelArray(forc_array, output, output_vars, obs_array, info.tem, info.optim)
         run_output =  optim_params.optim
     end    
     return run_output
@@ -35,7 +35,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    runEcosystem!(output.data, info.tem.models.forward, forc_array, info.tem);
+    runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc_array, info.tem);
     #todo make the loss functions work with disk arrays
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
