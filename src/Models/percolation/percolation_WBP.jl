@@ -38,7 +38,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	if toAllocate > 𝟘
 		for sl in eachindex(land.pools.soilW)
 			allocated = min(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
-			ΔsoilW[sl] = ΔsoilW[sl] + allocated
+			ΔsoilW = cusp(ΔsoilW, allocated, helpers.pools.water.zeros.soilW .* 𝟘, sl)
 			toAllocate = toAllocate - allocated
 		end
 	end
@@ -53,6 +53,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	@pack_land begin
 		percolation => land.percolation
 		WBP => land.states
+		ΔsoilW => land.states
 	end
 	return land
 end

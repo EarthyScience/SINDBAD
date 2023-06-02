@@ -33,6 +33,7 @@
 		"yax_max_cache": 2e9
 	},
 	"output": {
+		"arraytype": "array",		
 		"all": false,
 		"path": "sandbox/output/",
 		"format": ".zarr",

@@ -10,11 +10,18 @@ function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Sym
     ŷ =  getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
+    if size(ŷ, 2) == 1
+        if ndims(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndims(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        end
+    end
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match")
         # ŷ = permutedims(ŷ, (2, 3, 1))
-        ŷ = y .* rand()
+        # ŷ = y .* rand()
     end
     return (y, yσ, ŷ)
 end
@@ -25,12 +32,19 @@ getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 function getDataArray(outsmodel::landWrapper, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
+    if size(ŷ, 2) == 1
+        if ndim(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndim(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        end
+    end
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
-        # @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = y .* rand()
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ")
+        # ŷ = y .* rand()
         # ŷ = permutedims(ŷ, (2, 3, 1))
     end
     return (y, yσ, ŷ)
@@ -88,7 +102,7 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
         else
             push!(lossVec, metr)
         end
-        @info "$(obsV) => $(lossMetric): $(metr)"
+        println("$(obsV) => $(lossMetric): $(metr)")
     end
     return lossVec
 end
@@ -96,7 +110,7 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple, additionaldims, space_locs, land_init_space, dtypes, dtypes_list)
+function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
     if eltype(pVector) <: ForwardDiff.Dual
@@ -106,20 +120,20 @@ function getLossArray(pVector::AbstractArray, forcing::NamedTuple, output::Vecto
     end
     
     newApproaches = updateParameters(tblParams, tem.models.forward)
-    runEcosystem!(output, newApproaches, forcing, tem, additionaldims, space_locs, land_init_space, dtypes, dtypes_list);
-    model_data = (; Pair.(output_variables, output)...)
+    runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    # runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space);
+    model_data = (; Pair.(output_variables, output.data)...)
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
-
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variables, observations::NamedTuple,tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
+function optimizeModelArray(forcing::NamedTuple, output, output_variables, observations::NamedTuple,tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
@@ -131,11 +145,11 @@ function optimizeModelArray(forcing::NamedTuple, output::Vector, output_variable
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    additionaldims, space_locs, land_init_space, f_one = prepRunEcosystem(output, tem.models.forward, forcing, tem)
-
+    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem);
+    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one))
     # make the cost function handle
-    cost_function = x -> getLossArray(x, forcing, output, output_variables,
-        observations, tblParams, tem, optim, additionaldims, space_locs, land_init_space, dtypes, dtypes_list)
+    cost_function = x -> getLossArray(x, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+
 
     # run the optimizer
     optim_para = optimizer(cost_function, default_values, lower_bounds, upper_bounds, optim.algorithm.options, Val(optim.algorithm.method))
