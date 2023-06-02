@@ -18,7 +18,7 @@ using YAXArrayBase: getdata
 using Zarr
 using Cthulhu
 using LoopVectorization
-
+# using DifferentialEquations
 using InteractiveUtils
 using ThreadPools 
 

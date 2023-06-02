@@ -1,6 +1,6 @@
 export runEcosystem!, prepRunEcosystem
 export ecoLoc!
-
+export getLocData
 
 @generated function getLocData!(outcubes, ::Val{forc_vars}, ::Val{out_keys}, forcing, loc_space_inds, loc_output_array, loc_forcing_array) where {forc_vars, out_keys}
     output = quote
