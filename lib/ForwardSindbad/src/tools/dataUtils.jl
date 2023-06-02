@@ -96,6 +96,13 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
+function get_force_at_time_t(forcing, ts)
+    f = map(forcing) do v
+        length(v)>3 ? v[ts] : v
+    end
+    f
+end
+
 
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
