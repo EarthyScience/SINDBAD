@@ -1,0 +1,11 @@
+{
+	"name": "WROASTED",
+	"domain": "FLUXNET",
+	"configFiles": {
+		"forcing"		: "forcing.json",
+		"modelStructure": "modelStructureW.json",
+		"modelRun"		: "modelRunW.json",
+		"spinup"		: "spinup.json",
+		"opti"			: "optiW.json"
+	}
+}
