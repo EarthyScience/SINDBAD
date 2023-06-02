@@ -28,12 +28,13 @@
 	"rules":
 	{
 		"verbosity": 5,
-		"data_type": "Float64",
+		"data_type": "Float32",
 		"data_backend": "yaxarray",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},
 	"output": {
+		"arraytype": "array",		
 		"all": true,
 		"path": null,
 		"format": ".zarr",
