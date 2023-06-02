@@ -29,7 +29,9 @@ forc = getKeyedArrayFromYaxArray(forcing);
 # linit= createLandInit(info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+
+loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1]);
 
 # selTimeStep = 1
 # spinup_forcing = forcing[[selTimeStep]];
@@ -131,5 +133,5 @@ function doSpinup(spinup_models, spinup_forcing, land_init, tem_helpers, _, land
      li
 end
 
-out_sp = doSpinup(spinup_models, spinup_forcing.yearOne, deepcopy(land_init), info.tem.helpers, info.tem.spinup, land_type, f_one, Val(:nlsolve))
+out_sp = doSpinup(spinup_models, spinup_forcing.yearOne, deepcopy(land_init), info.tem.helpers, info.tem.spinup, land_type, f_one, Val(:nlsolve));
 
