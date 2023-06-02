@@ -109,19 +109,36 @@ function getOutDims(info, vname_full, outpath, outformat, land_init)
 end
 
 function getOutDims(info, vname_full, land_init, ::Val{:array})
-    # vname = Symbol(split(string(vname_full), '.')[end])
-    # inax =  info.modelRun.mapping.runEcosystem
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     ax_vals = values(info.tem.helpers.run.loop)
     if isnothing(depth_size)
-        # ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))}(undef, values(info.tem.helpers.run.loop)...);
-        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], 1, ax_vals[2:end]...);
-    else
-        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-        # Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, depth_size, values(info.tem.helpers.run.loop)...);
+        depth_size = 1
     end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     ar .= info.tem.helpers.numbers.sNT(NaN)
+end
+
+function getOutDims(info, vname_full, land_init, ::Val{:sizedarray})
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+    ar = nothing
+    ax_vals = values(info.tem.helpers.run.loop)
+    if isnothing(depth_size)
+        depth_size = 1
+    end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    mar = SizedArray{Tuple{size(ar)...}, eltype(ar)}(undef);
+end
+
+function getOutDims(info, vname_full, land_init, ::Val{:marray})
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+    ar = nothing
+    ax_vals = values(info.tem.helpers.run.loop)
+    if isnothing(depth_size)
+        depth_size = 1
+    end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    mar = MArray{Tuple{size(ar)...}, eltype(ar)}(undef);
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -169,7 +186,7 @@ function setupOutput(info::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     @info "setupOutput: creating array output"
     outarray = map(datavars) do vn
-        getOutDims(info, vn, land_init, Val(:array))
+        getOutDims(info, vn, land_init, Val(Symbol(info.modelRun.output.arraytype)))
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
