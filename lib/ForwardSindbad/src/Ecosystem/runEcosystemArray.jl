@@ -86,7 +86,7 @@ function fill_it!(ar, val, ts::Int64)
 end
 
 
-@generated function setOuputT!(outputs, land, ::Val{TEM}, ts) where TEM
+@generated function setOutputT!(outputs, land, ::Val{TEM}, ts) where TEM
     output = quote
     end
     var_index = 1
@@ -128,12 +128,12 @@ function timeLoopForward!(loc_output, forward_models, forcing, out, tem_variable
             @time out = runModels!(out, f, forward_models, tem_helpers)
             println("-------------")
             @show "out"
-            @time setOuputT!(loc_output, out, tem_variables, ts)
+            @time setOutputT!(loc_output, out, tem_variables, ts)
             println("-------------")
         else
             f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
             out = runModels!(out, f, forward_models, tem_helpers)#::otype
-            setOuputT!(loc_output, out, tem_variables, ts)
+            setOutputT!(loc_output, out, tem_variables, ts)
         end
     end
 end
