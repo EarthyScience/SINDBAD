@@ -10,22 +10,23 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": ["longitude", "latitude"],
-		"runEcosystem": ["time"],
-		"parallelization": "threads"
+		"yaxarray": [],
+		"runEcosystem": ["time", "longitude", "latitude"],
+		"parallelization": "qbmap"
 	},
 	"flags":
 	{
 		"saveInfo": 			true,
 		"debugit": 				false, 
-		"catchErrors": 			true,
+		"catchErrors": 			false,
+		"runSpinup":            false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,
 		"calcCost":				true
 	},
 	"rules":
-	{	
+	{
 		"verbosity": 5,
 		"data_type": "Float64",
 		"data_backend": "yaxarray",
@@ -35,7 +36,7 @@
 	"output": {
 		"arraytype": "array",		
 		"all": true,
-		"path": "exp_mapFN/output/",
+		"path": null,
 		"format": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",
@@ -43,17 +44,16 @@
 			"d_snow": "snowW"
 		},
 		"variables": {
-					"fluxes.evapotranspiration": null,
-					"fluxes.transpiration": null,
-					"fluxes.runoff": null,
-					"fluxes.runoffSurface": null,
-					"fluxes.gpp": null,
-					"fluxes.NEE": null,
-					"states.fAPAR": null,
-					"pools.snowW": null,
-					"pools.soilW": null,
-					"pools.cEco": null,
-					"waterBalance.waterBalance": null
+			"fluxes.evapotranspiration": null,
+			"fluxes.transpiration": null,
+			"fluxes.runoff": null,
+			"fluxes.runoffSurface": null,
+			"fluxes.gpp": null,
+			"fluxes.NEE": null,
+			"pools.snowW": "d_snow",
+			"pools.soilW": "d_soil",
+			"pools.cEco": "d_cEco",
+			"waterBalance.waterBalance": null
 		}
 	}
 }
