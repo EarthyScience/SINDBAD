@@ -4,9 +4,9 @@ export createLandInit, setupOutput, setupOptiOutput
     createLandInit(info)
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function createLandInit(info_tem::NamedTuple)
-    initPools = getInitPools(info_tem)
-    initStates = getInitStates(info_tem)
+function createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
+    initPools = getInitPools(info_pools, info_tem.helpers)
+    initStates = getInitStates(info_pools, info_tem.helpers)
     out = (; fluxes=(;), pools=initPools, states=initStates)::NamedTuple
     sortedModels = sort([_sm for _sm in info_tem.models.selected_models.model])
     for model in sortedModels
@@ -17,10 +17,10 @@ function createLandInit(info_tem::NamedTuple)
     return out
 end
 
-function getPoolSize(info::NamedTuple, poolName::Symbol)
+function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     poolsize = nothing
-    for elem in keys(info.tem.pools)
-        zixelem = getfield(info.tem.pools, elem)[:zix]
+    for elem in keys(info_pools)
+        zixelem = getfield(info_pools, elem)[:zix]
         if poolName in keys(zixelem)
             return length(getfield(zixelem, poolName))
         end
@@ -53,7 +53,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
                 if isa(dimSizeK, Int64)
                     dimSize = dimSizeK
                 elseif isa(dimSizeK, String)
-                    dimSize = getPoolSize(info, Symbol(dimSizeK))
+                    dimSize = getPoolSize(info.pools, Symbol(dimSizeK))
                 end
             else
                 error("The output depth dimension for $(vname) is specified as $(vdim) but this key does not exist in depth_dimensions. Either add it to depth_dimensions or add a numeric value.")
@@ -109,19 +109,36 @@ function getOutDims(info, vname_full, outpath, outformat, land_init)
 end
 
 function getOutDims(info, vname_full, land_init, ::Val{:array})
-    # vname = Symbol(split(string(vname_full), '.')[end])
-    # inax =  info.modelRun.mapping.runEcosystem
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     ax_vals = values(info.tem.helpers.run.loop)
     if isnothing(depth_size)
-        # ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))}(undef, values(info.tem.helpers.run.loop)...);
-        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], 1, ax_vals[2:end]...);
-    else
-        ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-        # Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, depth_size, values(info.tem.helpers.run.loop)...);
+        depth_size = 1
     end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     ar .= info.tem.helpers.numbers.sNT(NaN)
+end
+
+function getOutDims(info, vname_full, land_init, ::Val{:sizedarray})
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+    ar = nothing
+    ax_vals = values(info.tem.helpers.run.loop)
+    if isnothing(depth_size)
+        depth_size = 1
+    end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    mar = SizedArray{Tuple{size(ar)...}, eltype(ar)}(undef);
+end
+
+function getOutDims(info, vname_full, land_init, ::Val{:marray})
+    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+    ar = nothing
+    ax_vals = values(info.tem.helpers.run.loop)
+    if isnothing(depth_size)
+        depth_size = 1
+    end
+    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    mar = MArray{Tuple{size(ar)...}, eltype(ar)}(undef);
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -149,7 +166,7 @@ end
 
 function setupOutput(info::NamedTuple)
     @info "setupOutput: creating initial out/land..."
-    land_init = createLandInit(info.tem)
+    land_init = createLandInit(info.pools, info.tem)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
     datavars = map(Iterators.flatten(info.tem.variables)) do vn
@@ -169,7 +186,7 @@ function setupOutput(info::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     @info "setupOutput: creating array output"
     outarray = map(datavars) do vn
-        getOutDims(info, vn, land_init, Val(:array))
+        getOutDims(info, vn, land_init, Val(Symbol(info.modelRun.output.arraytype)))
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 

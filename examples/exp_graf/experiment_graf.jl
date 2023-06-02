@@ -46,16 +46,25 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output.data, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 for x=1:10
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
+    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 end
-@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output)
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);  
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_site);  
+
+ds = forcing.data[1];
+using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+
+
+plotdat = output.data;
+fig, ax, obj = heatmap(plotdat[end][:,1,:])
+Colorbar(fig[1,2], obj)
+save("af_gpp.png", fig)
