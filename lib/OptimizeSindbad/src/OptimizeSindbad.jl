@@ -42,6 +42,8 @@ using YAXArrayBase
 using YAXArrays: savecube
 using YAXArrayBase: getdata
 
+using Infiltrator  # to allow @infiltrate for debugging
+
 include("optimization/optimization.jl")
 
 end
