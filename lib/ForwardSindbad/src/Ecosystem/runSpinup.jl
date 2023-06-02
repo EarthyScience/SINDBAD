@@ -45,7 +45,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:spinup})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :spinup, only the models chosen as use4spinup in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:spinup})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, _, land_type, f_one, ::Val{:spinup})
     land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem_helpers, land_type, f_one)
     return land_spin
 end
@@ -54,7 +54,8 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :forward, all the models chosen in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, land_type, f_one, ::Val{:forward})
+# spinup_models, sel_forcing, land_spin, tem_helpers, tem_spinup, land_type, f_one, Val(spinupMode)
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, _,land_type, f_one, ::Val{:forward})
     land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem_helpers, land_type, f_one)
     return land_spin
 end
