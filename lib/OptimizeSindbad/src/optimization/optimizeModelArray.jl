@@ -119,12 +119,14 @@ function getLossArray(pVector::AbstractArray, forcing, output, output_variables,
         tblParams.optim .= pVector # update the parameters with pVector
     end
     
+    
     newApproaches = updateParameters(tblParams, tem.models.forward)
     runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     # runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space);
     model_data = (; Pair.(output_variables, output.data)...)
     # run_output = output.data;
     # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
+
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))

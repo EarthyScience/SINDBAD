@@ -78,7 +78,7 @@ addprocs(28)
     approaches = info.tem.models.forward;
     tem = info.tem;
 
-    # ecofunc = x ->  ecoLoc!(outcubes, approaches, forcing, tem, additionaldims, x)
+    # ecofunc = x ->  ecoLoc!(outcubes, approaches, forcing, tem,  x)
     experiment_json = "../exp_graf/settings_graf/experiment.json";
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
@@ -90,9 +90,9 @@ addprocs(28)
 
     additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
     spacesize = values(info.tem.helpers.run.loop[additionaldims])
-    space_locs = Iterators.product(Base.OneTo.(spacesize)...) |> collect
+    loc_space_maps = Iterators.product(Base.OneTo.(spacesize)...) |> collect
 
-    ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem, additionaldims, x)
+    ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem,  x)
 end
 forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 output = setupOutput(info);
@@ -101,5 +101,5 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 for x = 1:5
     println("pmap " * string(x))
-    @time _ = pmap(ecofunc, 1:length(space_locs));
+    @time _ = pmap(ecofunc, 1:length(loc_space_maps));
 end
