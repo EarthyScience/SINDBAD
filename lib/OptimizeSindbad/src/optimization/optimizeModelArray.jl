@@ -113,14 +113,12 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     # tblParams.optim .= pVector # update the parameters with pVector
     # @show pVector, typeof(pVector)
+    upVector = pVector
     if eltype(pVector) <: ForwardDiff.Dual
-        tblParams.optim .= [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
-    else
-        tblParams.optim .= pVector # update the parameters with pVector
+        upVector = [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
     end
     
-    
-    newApproaches = updateParameters(tblParams, tem.models.forward)
+    newApproaches = updateParameters(tblParams, tem.models.forward, upVector)
     runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     # runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space);
     model_data = (; Pair.(output_variables, output.data)...)
