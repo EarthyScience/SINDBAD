@@ -6,12 +6,21 @@ helper function to run the spinup models and return the delta in a given pool ov
 """
 function getDeltaPool(pool_dat::AbstractArray, spinup_info::NamedTuple, t::Any)
     land_spin = spinup_info.land_in;
+    tem_helpers = spinup_info.tem_helpers;
+    land_type = spinup_info.land_type;
+    sel_spinup_models = spinup_info.sel_spinup_models;
+    sel_spinup_forcing = spinup_info.sel_spinup_forcing;
+    f_one = spinup_info.f_one;
     land_spin = setTupleSubfield(land_spin, :pools, (spinup_info.pool, pool_dat))
-    land_spinsmodel = loopTimeSpinup(spinup_info.sel_spinup_models, spinup_info.sel_spinup_forcing, spinup_info.land_in, spinup_info.helpers)
+
+    land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, deepcopy(land_spin), tem_helpers, land_type, f_one)
+    # land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem_helpers, land_type, f_one)
+    # land_spinsmodel = loopTimeSpinup(spinup_info.sel_spinup_models, spinup_info.sel_spinup_forcing, spinup_info.land_in, spinup_info.helpers)
     # @time land_spinsmodel = runForward(spinup_info.sel_spinup_models, spinup_info.sel_spinup_forcing, spinup_info.land_in, spinup_info.helpers)
-    tmp = getfield(land_spinsmodel.pools |> columntable, spinup_info.pool)
+    tmp = getfield(land_spin.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
     # Δpool = tmp[end] - pool_dat
+    @show Δpool
     return Δpool
 end
 
@@ -19,13 +28,16 @@ end
 getSpinupInfo(sel_spinup_models, sel_spinup_forcing, spinup_pool_name, land_in, tem_helpers)
 helper function to create a NamedTuple with all the variables needed to run the spinup models in getDeltaPool. Used in solvers from DifferentialEquations.jl.
 """
-function getSpinupInfo(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, spinup_pool_name::Symbol, land_in::NamedTuple, tem_helpers::NamedTuple)
+function getSpinupInfo(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, spinup_pool_name::Symbol, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup, land_type, f_one)
     spinup_info = (;)
     spinup_info = setTupleField(spinup_info, (:pool, spinup_pool_name));
     spinup_info = setTupleField(spinup_info, (:land_in, land_in));
     spinup_info = setTupleField(spinup_info, (:sel_spinup_forcing, sel_spinup_forcing));
     spinup_info = setTupleField(spinup_info, (:sel_spinup_models, sel_spinup_models));
-    spinup_info = setTupleField(spinup_info, (:helpers, tem_helpers));
+    spinup_info = setTupleField(spinup_info, (:tem_helpers, tem_helpers));
+    spinup_info = setTupleField(spinup_info, (:tem_spinup, tem_spinup));
+    spinup_info = setTupleField(spinup_info, (:land_type, land_type));
+    spinup_info = setTupleField(spinup_info, (:f_one, f_one));
     return spinup_info
 end
 
@@ -33,7 +45,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:spinup})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :spinup, only the models chosen as use4spinup in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, land_type, f_one, ::Val{:spinup})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, _, land_type, f_one, ::Val{:spinup})
     land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem_helpers, land_type, f_one)
     return land_spin
 end
@@ -42,7 +54,8 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :forward, all the models chosen in modelStructure.json are run.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, land_type, f_one, ::Val{:forward})
+# spinup_models, sel_forcing, land_spin, tem_helpers, tem_spinup, land_type, f_one, Val(spinupMode)
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, _,land_type, f_one, ::Val{:forward})
     land_spin = loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem_helpers, land_type, f_one)
     return land_spin
 end
@@ -51,9 +64,9 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_Tsit5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem::NamedTuple, ::Val{:ODE_Tsit5})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:ODE_Tsit5})
     for sel_pool in tem_spinup.diffEq.pools
-        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers);
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
         tspan = (0.0, tem_spinup.diffEq.timeJump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info);
@@ -63,14 +76,14 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     return land_in
 end
 
-#=
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem::NamedTuple, ::Val{:SSP_DynamicSS_Tsit5})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:SSP_DynamicSS_Tsit5})
     for sel_pool in tem_spinup.diffEq.pools
-        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers);
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (0.0, tem_spinup.diffEq.timeJump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
         ssp_sol = solve(ssp_prob,DynamicSS(Tsit5()))
@@ -83,9 +96,10 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and SSRootfind method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem::NamedTuple, ::Val{:SSP_SSRootfind})
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:SSP_SSRootfind})
     for sel_pool in tem_spinup.diffEq.pools
-        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers);
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (0.0, tem_spinup.diffEq.timeJump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
         ssp_sol = solve(ssp_prob,SSRootfind())
@@ -93,8 +107,6 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
     end
     return land_in
 end
-
-=#
 
 """
 runModels(forcing, models, out)
@@ -184,7 +196,7 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
             #if !tem_helpers.run.runOpti
             #    @info "         Loop: $(nL)/$(nLoops)"
             #end
-            land_spin = doSpinup(spinup_models, sel_forcing, land_spin, tem_helpers, land_type, f_one, Val(spinupMode))
+            land_spin = doSpinup(spinup_models, sel_forcing, land_spin, tem_helpers, tem_spinup, land_type, f_one, Val(spinupMode))
             if history
                 push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
             end
