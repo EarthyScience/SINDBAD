@@ -79,6 +79,40 @@ function updateParameters(tblParams::Table, approaches::Tuple)
     return (updatedModels...,)
 end
 
+
+"""
+updateParameters(tblParams, approaches, pVector)
+does not depend on the mutated table of parameters
+"""
+function updateParameters(tblParams, approaches::Tuple, pVector)
+    function filtervar(var, modelName, tblParams, approachx, pVector)
+        pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+        if isempty(pindex)
+            return getproperty(approachx, var)
+        else
+            return pVector[pindex[1]]
+        end
+    end
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    for (idx, modelName) in enumerate(namesApproaches)
+        approachx = approaches[idx]
+        newapproachx = if modelName in tblParams.modelsApproach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var in vars
+                inOptim = filtervar(var, modelName, tblParams, approachx, pVector)
+                push!(newvals, var => inOptim)
+            end
+            typeof(approachx)(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
 """
     checkSelectedModels(fullModels, selModels)
 checks if the list of selected models in modelStructure.json are available in the full list of sindbad_models defined in models.jl.
