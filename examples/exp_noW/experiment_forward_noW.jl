@@ -17,14 +17,14 @@ info, forcing, output = prepExperimentForward(experiment_json);
 forc = getKeyedArrayFromYaxArray(forcing);
 # obs = getKeyedArrayFromYaxArray(observations);
 
-linit = createLandInit(info.tem);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
-@code_warntype runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+linit = createLandInit(info.pools, info.tem);
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 a=1
 
 for tt = 1:5
-    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem);
+    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 end
 @time outcubes = runExperimentForward(experiment_json);  
 
