@@ -19,7 +19,9 @@ end
 runModels(forcing, models, out)
 """
 function runModels!(out, forcing, models, tem_helpers)
+    # otype = typeof(out)
     return foldl_unrolled(models, init=out) do o,model 
+        # @show typeof(model)
         o = Models.compute(model, forcing, o, tem_helpers)
     end 
 end
