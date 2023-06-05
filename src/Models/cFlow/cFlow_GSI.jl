@@ -77,7 +77,7 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
 end
 
 
-function adjust_pk(p_k, kValue, flowValue, maxValue, zix)
+function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
     p_k_sum = zero(eltype(p_k))
     for ix in zix
         # @show ix, p_k[ix]
@@ -85,7 +85,7 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix)
         if tmp > maxValue
             tmp = maxValue
         end
-        p_k = ups(p_k, tmp, ix)
+        p_k = ups(p_k, tmp, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
         p_k_sum = p_k_sum + tmp
     end
     return p_k_sum
@@ -163,15 +163,15 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
 
-    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.carbon.zix.cVegLeaf)
+    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.carbon.zix.cVegLeaf, helpers)
     L2ReF = L2Re / p_k_sum
     k_LshedF = k_Lshed / p_k_sum
 
-    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.carbon.zix.cVegRoot)
+    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.carbon.zix.cVegRoot, helpers)
     R2ReF = R2Re / p_k_sum
     k_RshedF = k_Rshed / p_k_sum
 
-    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, helpers.pools.carbon.zix.cVegReserve)
+    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, helpers.pools.carbon.zix.cVegReserve, helpers)
     Re2LF = Re2L / p_k_sum
     Re2RF = Re2R / p_k_sum
 
