@@ -29,7 +29,7 @@ function compute(o::cTau_mult, forcing, land, helpers)
     for i in eachindex(p_k)
         tmp = p_k_base[i] * p_kfLAI[i] * p_kfSoil[i] * p_kfVeg[i] * fT * p_fsoilW[i]
         tmp = clamp(tmp, 𝟘, 𝟙)
-        p_k = ups(p_k, tmp, i)
+        p_k = ups(p_k, tmp, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, i)
     end
 
     ## pack land variables
