@@ -16,7 +16,8 @@ function getParameters(selectedModels)
     modelsApproach = [parentnameflatten(selectedModels)...]
     models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
-    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
+    modelsObj = [getfield(Models, m) for m in modelsApproach]
+    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
 end
 
 """
@@ -85,26 +86,40 @@ updateParameters(tblParams, approaches, pVector)
 does not depend on the mutated table of parameters
 """
 function updateParameters(tblParams, approaches::Tuple, pVector)
-    function filtervar(var, modelName, tblParams, approachx, pVector)
-        pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-        if isempty(pindex)
-            return getproperty(approachx, var)
-        else
-            return pVector[pindex[1]]
-        end
-    end
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
         approachx = approaches[idx]
+        model_obj = approachx
         newapproachx = if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var in vars
-                inOptim = filtervar(var, modelName, tblParams, approachx, pVector)
-                push!(newvals, var => inOptim)
+                pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    model_obj = typeof(approachx)
+                    model_obj = tblParams[pindex[1]].modelsObj
+                    pval = pVector[pindex[1]]
+                else
+                    if eltype(pval) <: ForwardDiff.Dual
+                        pval = pval
+                    else
+                        pval = Union{AbstractFloat, ForwardDiff.Dual{AbstractFloat}}(pval)
+                        # pval = ForwardDiff.Dual{AbstractFloat}(pval)
+                    end
+
+                end
+                push!(newvals, var => pval)
             end
-            typeof(approachx)(; newvals...)
+            # @show model_obj, newvals
+            # @show typeof(approachx), modelName
+            # model_obj = getfield(Sindbad.Models, modelName)
+
+            m = model_obj(; newvals...)
+            m
+            # typeof(approachx)(; newvals...)
+            # typeof(approachx)(; newvals...)
         else
             approachx
         end
@@ -358,16 +373,19 @@ function getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, laye
             if isa(poolInfo[1], Number)
                 lenpool = poolInfo[1]
                 # layerThickNess = repeat([nothing], lenpool)
-                layerThickNess = numType.(poolInfo[1])
+                layerThickNess = poolInfo[1]
+                # layerThickNess = numType.(poolInfo[1])
             else
                 lenpool = length(poolInfo[1])
-                layerThickNess = numType.(poolInfo[1])
+                layerThickNess = poolInfo[1]
+                # layerThickNess = numType.(poolInfo[1])
             end
 
             append!(layerThicknesses, layerThickNess)
             append!(nlayers, fill(1, lenpool))
             append!(layer, collect(1:lenpool))
-            append!(inits, fill(numType(poolInfo[2]), lenpool))
+            append!(inits, fill(poolInfo[2], lenpool))
+            # append!(inits, fill(numType(poolInfo[2]), lenpool))
 
             if prename == ""
                 append!(subPoolName, fill(mainPool, lenpool))
@@ -401,10 +419,13 @@ function generatePoolsInfo(info::NamedTuple)
         hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
         arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
-        nlayers = Int64[]
-        layerThicknesses = info.tem.helpers.numbers.numType[]
-        layer = Int64[]
-        inits = info.tem.helpers.numbers.numType[]
+        nlayers = []
+        layerThicknesses = []
+        # layerThicknesses = info.tem.helpers.numbers.numType[]
+        layer = []
+        inits = []
+
+        # inits = info.tem.helpers.numbers.numType[]
         subPoolName = Symbol[]
         mainPoolName = Symbol[]
         mainPools = Symbol.(keys(getfield(getfield(info.modelStructure.pools, element), :components)))
@@ -418,11 +439,12 @@ function generatePoolsInfo(info::NamedTuple)
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
+        hlpElem = setTupleField(hlpElem, (:ones, (;)))
 
         # main pools
         for mainPool in mainPoolName
             zix = Int[]
-            initValues = info.tem.helpers.numbers.numType[]
+            initValues = []
             components = Symbol[]
             for (ind, par) in enumerate(subPoolName)
                 if startswith(String(par), String(mainPool))
@@ -431,13 +453,17 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(initValues, inits[ind])
                 end
             end
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
     
             tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
-            hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zero(initValues)))
+            onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # onetyped = ones(length(initValues))
+            hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlpElem = setTupleSubfield(hlpElem, :ones, (mainPool, onetyped))
+            # hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zeros(initValues)))
         end
 
         # subpools
@@ -449,9 +475,11 @@ function generatePoolsInfo(info::NamedTuple)
         end
         for subPool in uniqueSubPools
             zix = Int[]
-            initValues = info.tem.helpers.numbers.numType[]
+            initValues = []
+            # initValues = info.tem.helpers.numbers.numType[]
             components = Symbol[]
-            ltck = info.tem.helpers.numbers.numType[]
+            ltck = []
+            # ltck = info.tem.helpers.numbers.numType[]
             for (ind, par) in enumerate(subPoolName)
                 if par == subPool
                     push!(zix, ind)
@@ -460,7 +488,7 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(ltck, layerThicknesses[ind])
                 end
             end
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
@@ -484,7 +512,7 @@ function generatePoolsInfo(info::NamedTuple)
             end
             # components = Set(Symbol.(subPoolName))
             initValues = inits
-            initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             zix = 1:1:length(mainPoolName) |> collect
             tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
@@ -528,7 +556,11 @@ end
 
 
 function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:staticarray})
-    SVector{length(inVals)}(numType(ix) for ix in inVals)
+    # DiffCache(SVector{length(inVals)}(ix for ix in inVals))
+    # SVector{length(inVals), Real}(ix for ix in inVals)
+    # SVector{length(inVals)}(ix for ix in inVals)
+    # SVector{length(inVals)}(ix for ix in inVals)
+    SVector{length(inVals)}(ix for ix in inVals)
 end
 
 
@@ -583,7 +615,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
             for avk in keys(addVars)
                 avv = getproperty(addVars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
-                vals = ones(tem_helpers.numbers.numType, size(getfield(initVals, tocr))) * tem_helpers.numbers.sNT(avv)
+                vals = ones(size(getfield(initVals, tocr))) * avv
                 newvals = createArrayofType(vals, Nothing[], tem_helpers.numbers.numType, nothing, true, Val(arrayType))
                 initStates = setTupleField(initStates, (Δtocr, newvals))
             end
@@ -618,8 +650,8 @@ end
 sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.data_type.
 """
 function setNumericHelpers(info::NamedTuple, ttype=info.modelRun.rules.data_type)
-    𝟘 = setNumberType(ttype)(0)
-    𝟙 = setNumberType(ttype)(1)
+    𝟘 = setNumberType(ttype)(0.0)
+    𝟙 = setNumberType(ttype)(1.0)
     tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> setNumberType(ttype)(a)
@@ -634,7 +666,10 @@ end
 A helper function to set the number type to the specified data type
 """
 function setNumberType(t="Float64")
+    # @show t
     ttype = getfield(Main, Symbol(t))
+    # @show "again", t
+    # ttype = Union{AbstractFloat, ForwardDiff.Dual{AbstractFloat}}
     return ttype
 end
 

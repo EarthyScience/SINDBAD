@@ -17,12 +17,12 @@
 	"flags":
 	{
 		"saveInfo": 			true,
-		"debugit": 				true, 
+		"debugit": 				false, 
 		"catchErrors": 			false,
 		"runSpinup": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				false,
+		"runOpti": 				true,
 		"calcCost":				true
 	},
 	"rules":

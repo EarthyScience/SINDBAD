@@ -4,13 +4,13 @@
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm": {
+	"algorithm_ev": {
 		"package": "Evolutionary",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
-	"algorithm_cmaes": {
+	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
