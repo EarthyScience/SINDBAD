@@ -118,7 +118,7 @@ function getOutDims(info, vname_full, land_init, ::Val{:array})
     ar = Array{Real, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     # ar = Array{Union{Sindbad.ForwardDiff.Dual, info.tem.helpers.numbers.numType, Float64}, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     # ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-    # ar .= info.tem.helpers.numbers.sNT(NaN)
+    ar .= info.tem.helpers.numbers.sNT(NaN)
 end
 
 function getOutDims(info, vname_full, land_init, ::Val{:sizedarray})
