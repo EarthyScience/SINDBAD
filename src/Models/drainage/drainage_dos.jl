@@ -44,11 +44,11 @@ function compute(o::drainage_dos, forcing, land, helpers)
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		drain = min(drainage_tmp, holdCap, lossCap)
 		tmp = drain > tolerance ? drain : 𝟘
-		drainage = ups(drainage, tmp, sl) 
-		ΔsoilW = cusp(ΔsoilW, -drainage[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl)
-		ΔsoilW = cusp(ΔsoilW, drainage[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl+1)
+		drainage = ups(drainage, tmp, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl) 
+		ΔsoilW = cusp(ΔsoilW, -drainage[sl], helpers.pools.water.zeros.soilW, 𝟘, sl)
+		ΔsoilW = cusp(ΔsoilW, drainage[sl], helpers.pools.water.zeros.soilW, 𝟘, sl+1)
 	end
-	drainage = ups(drainage, 𝟘, lastindex(drainage))
+	drainage = ups(drainage, 𝟘, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, lastindex(drainage))
 	## pack land variables
 	@pack_land begin
 		drainage => land.drainage

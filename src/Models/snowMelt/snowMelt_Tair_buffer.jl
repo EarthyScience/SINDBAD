@@ -38,7 +38,7 @@ function compute(o::snowMelt_Tair_buffer, forcing, land, helpers)
     snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
 
 	# divide snowmelt loss equally from all layers
-    ΔsnowW = cusp(ΔsnowW, -snowMelt / length(snowW))
+    ΔsnowW = ΔsnowW .- (snowMelt / length(snowW))
     #@show ΔsnowW, snowMelt
     #ΔsnowW = cusp(ΔsnowW, snowMelt)
 

@@ -76,13 +76,14 @@ function get_view(ar, val::AbstractArray, ts::Int64)
     view(ar, ts, 1:length(val))
 end
 
-function get_view(ar, val::AbstractFloat, ts::Int64)
+function get_view(ar, val::Real, ts::Int64)
     view(ar, ts)
 end
 
 function fill_it!(ar, val, ts::Int64)
     data_ts = get_view(ar, val, ts)
     data_ts .= val
+    # data_ts .= Sindbad.ForwardDiff.value(val)
 end
 
 
