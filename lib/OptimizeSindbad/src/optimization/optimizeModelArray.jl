@@ -112,7 +112,7 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 """
 function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     upVector = pVector
-    newApproaches = updateParameters(tblParams, tem.models.forward, upVector)
+    newApproaches = updateParameters(tblParams, tem.models.forward, upVector, tem.helpers.run.forward_diff)
     runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
@@ -128,7 +128,7 @@ function optimizeModelArray(forcing::NamedTuple, output, output_variables, obser
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters)
+    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters, tem.helpers)
 
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)

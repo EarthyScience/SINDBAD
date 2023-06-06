@@ -1,7 +1,5 @@
-# modification to develop getting priors
 using Revise
 using Sindbad
-#using DistributionFits
 using ForwardSindbad
 using OptimizeSindbad
 # noStackTrace()
