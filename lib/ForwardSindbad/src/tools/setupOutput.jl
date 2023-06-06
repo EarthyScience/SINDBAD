@@ -115,8 +115,8 @@ function getOutDims(info, vname_full, land_init, ::Val{:array})
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{Real, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-    # ar = Array{Union{Sindbad.ForwardDiff.Dual, info.tem.helpers.numbers.numType, Float64}, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    # ar = Array{Real, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff), length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     # ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     ar .= info.tem.helpers.numbers.sNT(NaN)
 end
@@ -128,7 +128,7 @@ function getOutDims(info, vname_full, land_init, ::Val{:sizedarray})
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff), length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     mar = SizedArray{Tuple{size(ar)...}, eltype(ar)}(undef);
 end
 
@@ -139,8 +139,16 @@ function getOutDims(info, vname_full, land_init, ::Val{:marray})
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{info.tem.helpers.numbers.numType, length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff), length(values(info.tem.helpers.run.loop))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     mar = MArray{Tuple{size(ar)...}, eltype(ar)}(undef);
+end
+
+function getOutArrayType(numType, forwardDiff)
+    if forwardDiff
+        return Union{Sindbad.ForwardDiff.Dual, numType}
+    else
+        return numType
+    end
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -188,7 +196,7 @@ function setupOutput(info::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     @info "setupOutput: creating array output"
     outarray = map(datavars) do vn
-        getOutDims(info, vn, land_init, Val(Symbol(info.modelRun.output.arraytype)))
+        getOutDims(info, vn, land_init, Val(Symbol(info.modelRun.output.output_array_type)))
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
