@@ -111,21 +111,10 @@ end
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
-    # tblParams.optim .= pVector # update the parameters with pVector
-    # @show pVector, typeof(pVector)
     upVector = pVector
-    # if eltype(pVector) <: ForwardDiff.Dual
-    #     upVector = [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
-    # end
-    # @show upVector
     newApproaches = updateParameters(tblParams, tem.models.forward, upVector)
-    # @show newApproaches == tem.models.forward
     runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
-    # runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space);
     model_data = (; Pair.(output_variables, output.data)...)
-    # run_output = output.data;
-    # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
-
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
@@ -134,7 +123,7 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModelArray(forcing::NamedTuple, output, output_variables, observations::NamedTuple,tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
+function optimizeModelArray(forcing::NamedTuple, output, output_variables, observations::NamedTuple, tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
