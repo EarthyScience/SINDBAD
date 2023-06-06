@@ -215,7 +215,6 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "arraytype": "view",
             "addStateVars": {"Δ": 0.0}
 		},
 		"carbon":
@@ -238,7 +237,6 @@
                 }
             },
 			"combine": "cEco",
-            "arraytype": "view",
             "addStateVars": {"Δ": 0.0
             }
         }

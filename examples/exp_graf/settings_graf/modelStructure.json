@@ -136,7 +136,6 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "arraytype": "staticarray",
             "addStateVars": {"Δ": 0.0}
 		},
 		"carbon":
@@ -159,7 +158,6 @@
                 }
             },
 			"combine": "cEco",
-            "arraytype": "staticarray",
             "addStateVars": {"Δ": 0.0
             }
         }

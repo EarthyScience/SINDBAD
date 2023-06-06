@@ -146,7 +146,6 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "arraytype": "staticarray",
             "addStateVars": {"Δ": 0.0}
 		}
 	}
