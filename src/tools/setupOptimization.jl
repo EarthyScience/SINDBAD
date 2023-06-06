@@ -58,7 +58,7 @@ end
 checks if the parameters listed in optimized_parameters of opti.json exists in the selected model structure of modelStructure.json
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
-    model_parameters = getParameters(info.tem.models.forward, info.opti.optimized_parameters).varsModels;
+    model_parameters = getParameters(info.tem.models.forward, info.opti.optimized_parameters, info.tem.helpers).varsModels;
     optim_parameters = info.opti.optimized_parameters
     for omp in eachindex(optim_parameters)
         if optim_parameters[omp] ∉ model_parameters
