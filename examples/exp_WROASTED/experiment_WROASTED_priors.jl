@@ -117,39 +117,6 @@ end
 
 
 
-"""
-updateParameters(tblParams, approaches)
-"""
-function updateParameters(tblParams::Table, approaches::Tuple, popt)
-    function filtervar(var, modelName, tblParams, approachx)
-        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-        if isempty(subtbl)
-            return getproperty(approachx, var)
-        else
-            return subtbl.optim[1]
-        end
-    end
-    updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
-    for (idx, modelName) in enumerate(namesApproaches)
-        approachx = approaches[idx]
-        newapproachx = if modelName in tblParams.modelsApproach
-            vars = propertynames(approachx)
-            newvals = Pair[]
-            for var in vars
-                inOptim = filtervar(var, modelName, tblParams, approachx)
-                #TODO Check whether this works correctly
-                push!(newvals, var => inOptim)
-            end
-            typeof(approachx)(; newvals...)
-        else
-            approachx
-        end
-        push!(updatedModels, newapproachx)
-    end
-    return (updatedModels...,)
-end
-
 outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
 pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
 

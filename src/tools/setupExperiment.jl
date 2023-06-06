@@ -6,7 +6,7 @@ using StaticArrays: SVector
 getParameters(selectedModels)
 retrieve all models parameters
 """
-function getParameters(selectedModels)
+function getParameters(selectedModels, tem_helpers)
     defaults = [flatten(selectedModels)...]
     constrains = metaflatten(selectedModels, Models.bounds)
     nbounds = length(constrains)
@@ -20,11 +20,63 @@ function getParameters(selectedModels)
     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
 end
 
+# """
+# getParameters(selectedModels)
+# retrieve all models parameters
+# """
+# function getParameters(selectedModels, tem_helpers)
+#     fd = false
+#     # fd = tem_helpers.run.forward_diff
+#     defs = [flatten(selectedModels)...]
+#     # defs = tem_helpers.numbers.sNT.([flatten(selectedModels)...])
+#     constrains = metaflatten(selectedModels, Models.bounds)
+#     nbounds = length(constrains)
+#     defaults = []
+#     lower = []
+#     upper = []
+#     for i in 1:nbounds
+#         def = defs[i]
+#         lv = constrains[i][1]
+#         uv = constrains[i][2]
+#         # if !isnothing(def)
+#         #     def = tem_helpers.numbers.sNT(def)
+#         #     if fd
+#         #         def = ForwardDiff.Dual{tem_helpers.numbers.numType}(def)
+#         #     end
+#         # end
+#         # if !isnothing(lv)
+#         #     lv = tem_helpers.numbers.sNT(lv)
+#         #     if fd
+#         #         lv = ForwardDiff.Dual{tem_helpers.numbers.numType}(lv)
+#         #     end
+#         # end
+#         # if !isnothing(uv)
+#         #     uv = tem_helpers.numbers.sNT(uv)
+#         #     if fd
+#         #         uv = ForwardDiff.Dual{tem_helpers.numbers.numType}(uv)
+#         #     end
+#         # end
+#         push!(defaults, def)
+#         push!(lower, lv)
+#         push!(upper, uv)
+#     end
+
+
+#     # lower = tem_helpers.numbers.sNT.([constrains[i][1] for i in 1:nbounds])
+#     # upper = tem_helpers.numbers.sNT.([constrains[i][2] for i in 1:nbounds])
+#     names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+#     modelsApproach = [parentnameflatten(selectedModels)...]
+#     models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
+#     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
+#     modelsObj = [getfield(Models, m) for m in modelsApproach]
+#     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
+# end
+
 """
 getParameters(selectedModels, listParams)
 retrieve all selected models parameters
 """
-function getParameters(selectedModels, listParams)
+function getParameters(selectedModels, listParams, tem_helpers)
     paramstbl = getParameters(selectedModels)
     return filter(row -> row.names in listParams, paramstbl)
 end
@@ -33,7 +85,7 @@ end
 getParameters(selectedModels, listParams, listModels)
 retrieve all selected models parameters by model
 """
-function getParameters(selectedModels, listParams, listModels)
+function getParameters(selectedModels, listParams, listModels, tem_helpers)
     paramstbl = getParameters(selectedModels)
     return filter(row -> row.names in listParams && row.models in listModels, paramstbl)
 end
@@ -42,8 +94,8 @@ end
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected models parameters from string input
 """
-function getParameters(selectedModels, listModelsParams::Vector{String})
-    paramstbl = getParameters(selectedModels)
+function getParameters(selectedModels, listModelsParams::Vector{String}, tem_helpers)
+    paramstbl = getParameters(selectedModels, tem_helpers)
     return filter(row -> row.varsModels in listModelsParams, paramstbl)
 end
 
@@ -85,7 +137,7 @@ end
 updateParameters(tblParams, approaches, pVector)
 does not depend on the mutated table of parameters
 """
-function updateParameters(tblParams, approaches::Tuple, pVector)
+function updateParameters(tblParams, approaches::Tuple, pVector, forwardDiff)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
@@ -99,7 +151,9 @@ function updateParameters(tblParams, approaches::Tuple, pVector)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
                     model_obj = typeof(approachx)
-                    model_obj = tblParams[pindex[1]].modelsObj
+                    if forwardDiff
+                        model_obj = tblParams[pindex[1]].modelsObj
+                    end
                     pval = pVector[pindex[1]]
                 end
                 push!(newvals, var => pval)
@@ -312,12 +366,12 @@ function getSpinupAndForwardModels(info::NamedTuple)
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
     if hasproperty(info, :params) 
         if !isempty(info.params)
-            original_params_forward = getParameters(sel_appr_forward);
+            original_params_forward = getParameters(sel_appr_forward, info.tem.helpers);
             input_params = info.params;
             updated_params = setInputParameters(original_params_forward, input_params);
             updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
 
-            original_params_spinup = getParameters(sel_appr_spinup);
+            original_params_spinup = getParameters(sel_appr_spinup, info.tem.helpers);
             updated_params = setInputParameters(original_params_spinup, input_params);
             updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
 
@@ -702,6 +756,7 @@ sets info.tem.variables as the union of variables to write and store from modelr
 function getLoopingInfo(info::NamedTuple)
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
     run_info = setTupleField(run_info, (:loop, (;)))
+    run_info = setTupleField(run_info, (:forward_diff, info.modelRun.rules.forward_diff))
     run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
     for dim in info.modelRun.mapping.runEcosystem
         run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
