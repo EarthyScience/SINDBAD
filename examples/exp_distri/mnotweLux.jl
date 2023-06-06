@@ -56,7 +56,7 @@ observations = (; observations..., data = (chunkedObs))
 
 tblParams = getParameters(info.tem.models.forward)
 tblParams.optim .= rand(Float32, length(tblParams.optim)) .* tblParams.optim # update the parameters with pVector
-newApproaches = updateParameters(tblParams, info.tem.models.forward);
+newApproaches = updateModelParameters(tblParams, info.tem.models.forward);
 
 using Lux, Random
 model = Lux.Chain(
@@ -76,7 +76,7 @@ ŷparam, st = Lux.apply(model, rand(Float32, 15), ps, st)
 
 #tblParams = getParameters(info.tem.models.forward)
 #tblParams.optim[1:2] .= ŷparam # update the parameters with pVector
-#newApproaches = updateParameters(tblParams, info.tem.models.forward);
+#newApproaches = updateModelParameters(tblParams, info.tem.models.forward);
 
 #outcubes = mapRunEcosystem(forcing, output, info.tem, newApproaches;
 #    max_cache=info.modelRun.rules.yax_max_cache);
@@ -92,7 +92,7 @@ function loss_function(model, ps, st, data)
     ŷparam, st = Lux.apply(model, rand(Float32, 15), ps, st)
     tblParams = getParameters(info.tem.models.forward)
     tblParams.optim[1:2] .= ŷparam # update the parameters with pVector
-    newApproaches = updateParameters(tblParams, info.tem.models.forward);
+    newApproaches = updateModelParameters(tblParams, info.tem.models.forward);
     outcubes = mapRunEcosystem(forcing, output, info.tem, newApproaches;
         max_cache=info.modelRun.rules.yax_max_cache)
     ŷ = outcubes[9]
