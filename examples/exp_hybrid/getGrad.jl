@@ -32,23 +32,29 @@ obs = getKeyedArrayFromYaxArray(observations);
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters, info.tem.helpers);
 
-
 # @time outcubes = runExperimentOpti(experiment_json);  
-function loss(x, op)
-    l = getLossArray(x, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
+    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
     @show l
     l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
-loss(tblParams.defaults .* rand_m, op)
-loss(tblParams.defaults, op)
 
-l(p) = loss(p,op)
-l(tblParams.defaults .* rand_m)
-l(tblParams.defaults)
-@time grad = ForwardDiff.gradient(l, tblParams.defaults)
-@time grad = ForwardDiff.gradient(l, tblParams.defaults .* rand_m)
+mods = info.tem.models.forward;
+loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+# loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+newmods = updateModelParametersType(tblParams, mods, dualDefs);
+
+
+l1(p) = loss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+l2(p) = loss(p, newmods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+l1(tblParams.defaults .* rand_m)
+l2(tblParams.defaults .* rand_m)
+@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a=2
 

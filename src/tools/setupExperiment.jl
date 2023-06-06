@@ -1,6 +1,6 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
-export getParameters, updateParameters
+export getParameters, updateModelParameters, updateModelParametersType
 using StaticArrays: SVector
 """
 getParameters(selectedModels)
@@ -102,7 +102,7 @@ end
 """
 updateParameters(tblParams, approaches)
 """
-function updateParameters(tblParams::Table, approaches::Tuple)
+function updateModelParameters(tblParams::Table, approaches::Tuple)
     function filtervar(var, modelName, tblParams, approachx)
         subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
         if isempty(subtbl)
@@ -133,11 +133,12 @@ function updateParameters(tblParams::Table, approaches::Tuple)
 end
 
 
+
 """
-updateParameters(tblParams, approaches, pVector)
-does not depend on the mutated table of parameters
+updateModelParametersType(tblParams, approaches, pVector)
+get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateParameters(tblParams, approaches::Tuple, pVector, forwardDiff)
+function updateModelParametersType(tblParams, approaches::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
@@ -150,22 +151,42 @@ function updateParameters(tblParams, approaches::Tuple, pVector, forwardDiff)
                 pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    model_obj = typeof(approachx)
-                    if forwardDiff
-                        model_obj = tblParams[pindex[1]].modelsObj
-                    end
+                    model_obj = tblParams[pindex[1]].modelsObj
                     pval = pVector[pindex[1]]
                 end
                 push!(newvals, var => pval)
             end
-            # @show model_obj, newvals
-            # @show typeof(approachx), modelName
-            # model_obj = getfield(Sindbad.Models, modelName)
+            model_obj(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
 
-            m = model_obj(; newvals...)
-            # m
-            # typeof(approachx)(; newvals...)
-            # typeof(approachx)(; newvals...)
+"""
+updateModelParameters(tblParams, approaches, pVector)
+does not depend on the mutated table of parameters
+"""
+function updateModelParameters(tblParams, approaches::Tuple, pVector)
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    for (idx, modelName) in enumerate(namesApproaches)
+        approachx = approaches[idx]
+        model_obj = approachx
+        newapproachx = if modelName in tblParams.modelsApproach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var in vars
+                pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    pval = pVector[pindex[1]]
+                end
+                push!(newvals, var => pval)
+            end
+            typeof(approachx)(; newvals...)
         else
             approachx
         end
@@ -369,11 +390,11 @@ function getSpinupAndForwardModels(info::NamedTuple)
             original_params_forward = getParameters(sel_appr_forward, info.tem.helpers);
             input_params = info.params;
             updated_params = setInputParameters(original_params_forward, input_params);
-            updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
+            updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward);
 
             original_params_spinup = getParameters(sel_appr_spinup, info.tem.helpers);
             updated_params = setInputParameters(original_params_spinup, input_params);
-            updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
+            updated_appr_spinup = updateModelParameters(updated_params, sel_appr_spinup);
 
             info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, is_spinup=is_spinup, spinup=updated_appr_spinup)))
         end

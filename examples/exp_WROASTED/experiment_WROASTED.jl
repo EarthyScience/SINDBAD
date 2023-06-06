@@ -9,10 +9,10 @@ eYear = "2017"
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-# inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-inpath = "../data/BE-Vie.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
+inpath = "../data/DE-2.1979.2017.daily.nc"
+forcingConfig = "forcing_DE-2.json"
+# inpath = "../data/BE-Vie.1979.2017.daily.nc"
+# forcingConfig = "forcing_erai.json"
 obspath = inpath
 optimize_it = true
 optimize_it = false
