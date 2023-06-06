@@ -101,14 +101,6 @@ function updateParameters(tblParams, approaches::Tuple, pVector)
                     model_obj = typeof(approachx)
                     model_obj = tblParams[pindex[1]].modelsObj
                     pval = pVector[pindex[1]]
-                else
-                    if eltype(pval) <: ForwardDiff.Dual
-                        pval = pval
-                    else
-                        pval = Union{AbstractFloat, ForwardDiff.Dual{AbstractFloat}}(pval)
-                        # pval = ForwardDiff.Dual{AbstractFloat}(pval)
-                    end
-
                 end
                 push!(newvals, var => pval)
             end
@@ -117,7 +109,7 @@ function updateParameters(tblParams, approaches::Tuple, pVector)
             # model_obj = getfield(Sindbad.Models, modelName)
 
             m = model_obj(; newvals...)
-            m
+            # m
             # typeof(approachx)(; newvals...)
             # typeof(approachx)(; newvals...)
         else
@@ -408,6 +400,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.modelStructure.pools)
     tmpStates = (;)
     hlpStates = (;)
+    arrayType = Symbol(info.modelRun.rules.model_array_type)
     for element in elements
         elSymbol = Symbol(element)
         tmpElem = (;)
@@ -415,7 +408,7 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
         hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
-        arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
+        # arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
         nlayers = Int64[]
         layerThicknesses = info.tem.helpers.numbers.numType[]
         layer = Int64[]
@@ -528,8 +521,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleField(tmpElem, (:addStateVars, addStateVars))
         end
         arraytype = :view
-        if hasproperty(getfield(info.modelStructure.pools, element), :arraytype)
-            arraytype = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
+        if hasproperty(info.modelRun.rules, :model_array_type)
+            arraytype = Symbol(info.modelRun.rules.model_array_type)
         end
         tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
         tmpElem = setTupleField(tmpElem, (:create, create))

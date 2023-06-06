@@ -111,7 +111,6 @@
 				"snowW": [1, 0.01]
             },
 			"combine": "TWS",
-            "arraytype": "view",
             "addStateVars": {"Δ": 0.0}
 		}
 	}

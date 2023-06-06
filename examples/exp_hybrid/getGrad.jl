@@ -34,126 +34,23 @@ tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_
 
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-using Statistics
-function gl1(x, op)
-    # @show "b4",mean(op.data[end])
+function loss(x, op)
     l = getLossArray(x, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
-    # @show "after",mean(op.data[end])
     @show l
-    # @show x, l
     l
 end
-
-function gl(x)
-    op = setupOutput(info);
-    # @show "b4",mean(op.data[end])
-    l = getLossArray(x, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
-    # @show "after",mean(op.data[end])
-    @show l
-    # @show x, l
-    l
-end
-gl(tblParams.defaults .* rand())
-gl(tblParams.defaults)
-
+rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
-l(p) = gl1(p,op)
-l(tblParams.defaults .* rand())
+loss(tblParams.defaults .* rand_m, op)
+loss(tblParams.defaults, op)
+
+l(p) = loss(p,op)
+l(tblParams.defaults .* rand_m)
 l(tblParams.defaults)
 @time grad = ForwardDiff.gradient(l, tblParams.defaults)
-@time grad = ForwardDiff.gradient(l, tblParams.defaults .* rand())
+@time grad = ForwardDiff.gradient(l, tblParams.defaults .* rand_m)
 
 a=2
-# loss_2(x, op) = getLossArray(x, forc, op, output.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
-
-# tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters)
-
-# loss_2(tblParams.optim, setupOutput(info);)
-
-
-
-
-
-forcing = (; Tair = forc.Tair, Rain = forc.Rain)
-
-#forcing = (;
-#    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
-#    Tair = KA([-2.0f0, 0.1f0, -1.0f0, 3.0f0, 10.0f0]; time=1:5),
-#    )
-#pprint(forcing)
-
-# Instantiate land components
-land = createLandInit(info.pools, info.tem)
-helpers = info.tem.helpers; 
-tem = info.tem;
-# helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-#     dates = (; nStepsDay=1),
-#     run = (; output_all=true, runSpinup=false),
-#     );
-# tem = (;x
-#     helpers,
-#     variables = (;),
-#     );
-
-function o_models(p1, p2)
-    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components())
-end
-
-#f = getForcingForTimeStep(forcing, 1)
-#f = getForcingForTimeStep(forcing, 1)
-f = ForwardSindbad.get_force_at_time_t(forcing, 1)
-
-omods = o_models(0.0f0, 0.0f0)
-land = runPrecompute(f, omods, land, helpers)
-
-function sloss(m, data)
-    x, y = data
-    opt_ps = m(x)
-    omods = o_models(opt_ps[1], opt_ps[2])
-
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-
-    #out_land = out_land |> landWrapper
-    #ŷ = #out_land[:rainSnow][:snow]
-    return Flux.mse(ŷ,y)
-end
-
-
-
-function floss(p, y)
-    omods = o_models(p[1], p[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-    sum((ŷ.-y).^2)
-end
-y = rand(100)
-
-floss((0.5,0.5), y)
-l(p) = floss(p,y)
-
-
-using ForwardDiff
-
-@time ForwardDiff.gradient(l, [1.0, 1000.0])
-a
-
-
-# test_gradient(model, data, sloss; opt=Optimisers.Adam())
-
-# https://github.com/mcabbott/AxisKeys.jl/issues/140
-
-# training machine
-
-# generate fake target parameters
-
-# function get_target(m, x)
-#     target_param = m(x)
-#     omods = o_models(target_param[1], target_param[2])
-#     out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-#     y = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-#     return (y, target_param)
-# end
 
 Random.seed!(122)
 d = [rand(Float32,4) for i in 1:50]
