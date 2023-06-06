@@ -157,7 +157,7 @@ develop_f = () -> begin
         #
         tblParams.optim .= popt  # TODO replace mutation
         
-        newApproaches = updateParameters(tblParams, tem.models.forward, popt)
+        newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
         # TODO run model with updated parameters
         runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
 

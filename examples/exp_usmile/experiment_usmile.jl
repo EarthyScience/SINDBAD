@@ -36,7 +36,7 @@ end
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters);
 tblParams.optim .= outparams; # update the parameters with pVector
 
-newApproaches = updateParameters(tblParams, info.tem.models.forward);
+newApproaches = updateModelParameters(tblParams, info.tem.models.forward);
 runEcosystem!(output.data, newApproaches, forc, info.tem);
 
 model_data_d = (; Pair.(output.variables, outcubes)...);
