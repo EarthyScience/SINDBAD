@@ -4,7 +4,7 @@ using ForwardSindbad
 using OptimizeSindbad
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "2010"
+sYear = "2000"
 eYear = "2017"
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
@@ -38,9 +38,11 @@ replace_info = Dict(
 );
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
-output = setupOutput(info, forcing.sizes);
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
+
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+
+output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);

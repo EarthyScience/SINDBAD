@@ -21,9 +21,9 @@ info = setupExperiment(info);
 # forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
 # land_init = createLandInit(info.tem);
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-output = setupOutput(info, forcing.sizes);
+output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 # linit= createLandInit(info.tem);

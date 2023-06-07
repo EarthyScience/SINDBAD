@@ -40,11 +40,11 @@ noStackTrace()
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 @everywhere obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-@everywhere forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+@everywhere info, forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-@everywhere output = setupOutput(info, forcing.sizes);
+@everywhere output = setupOutput(info);
 
 @everywhere forc = getKeyedArrayFromYaxArray(forcing);
 # @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
@@ -59,7 +59,7 @@ noStackTrace()
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-# output = setupOutput(info, forcing.sizes);
+# output = setupOutput(info);
 
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
