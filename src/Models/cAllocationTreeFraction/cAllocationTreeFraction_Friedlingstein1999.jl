@@ -17,10 +17,10 @@ function precompute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land
     return land
 end
 
-function setCAlloc(cAlloc, cAllocValue, landPool, zixPools)
+function setCAlloc(cAlloc, cAllocValue, landPool, zixPools, helpers)
     zix = getzix(landPool, zixPools)
     for ix in eachindex(zix)
-        cAlloc = ups(cAlloc, cAllocValue * cAlloc[zix[ix]], zix[ix])
+        cAlloc = ups(cAlloc, cAllocValue * cAlloc[zix[ix]], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zix[ix])
     end
     return cAlloc
 end
@@ -60,15 +60,15 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     # cVegRoot = cVegRootF + cVegRootC
     cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
 
-    setCAlloc(cAlloc, cVegWood, land.pools.cVegWood, helpers.pools.carbon.zix.cVegWood)
+    setCAlloc(cAlloc, cVegWood, land.pools.cVegWood, helpers.pools.carbon.zix.cVegWood, helpers)
     if hasproperty(cpNamesTFAlloc, :cVegRootC)
-        setCAlloc(cAlloc, cVegRootC, land.pools.cVegRootC, helpers.pools.carbon.zix.cVegRootC)
-        setCAlloc(cAlloc, cVegRootF, land.pools.cVegRootF, helpers.pools.carbon.zix.cVegRootF)
+        setCAlloc(cAlloc, cVegRootC, land.pools.cVegRootC, helpers.pools.carbon.zix.cVegRootC, helpers)
+        setCAlloc(cAlloc, cVegRootF, land.pools.cVegRootF, helpers.pools.carbon.zix.cVegRootF, helpers)
     else
-        setCAlloc(cAlloc, cVegRoot, land.pools.cVegRoot, helpers.pools.carbon.zix.cVegRoot)
+        setCAlloc(cAlloc, cVegRoot, land.pools.cVegRoot, helpers.pools.carbon.zix.cVegRoot, helpers)
     end
 
-    setCAlloc(cAlloc, cVegLeaf, land.pools.cVegLeaf, helpers.pools.carbon.zix.cVegLeaf)
+    setCAlloc(cAlloc, cVegLeaf, land.pools.cVegLeaf, helpers.pools.carbon.zix.cVegLeaf, helpers)
 
     return land
 end

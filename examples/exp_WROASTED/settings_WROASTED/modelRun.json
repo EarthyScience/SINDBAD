@@ -3,7 +3,7 @@
 	"time":
 	{
 		"step": 				"daily",
-		"sDate": 				"1979-01-01",
+		"sDate": 				"2000-01-01",
 		"eDate": 				"2017-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
@@ -28,13 +28,15 @@
 	"rules":
 	{
 		"verbosity": 5,
+		"model_array_type": "staticarray",
+		"forward_diff": false,
 		"data_type": "Float32",
 		"data_backend": "yaxarray",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},
 	"output": {
-		"arraytype": "array",		
+		"output_array_type": "array",		
 		"all": true,
 		"path": null,
 		"format": ".zarr",

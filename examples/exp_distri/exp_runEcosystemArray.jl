@@ -14,7 +14,7 @@ experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
-forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 
@@ -24,10 +24,10 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-# @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
-# @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+# @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 @time outcubes = runExperimentOpti(experiment_json);  
 

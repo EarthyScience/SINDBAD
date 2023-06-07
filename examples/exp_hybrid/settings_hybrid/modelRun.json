@@ -3,7 +3,7 @@
 	"time":
 	{
 		"step": 				"daily",
-		"sDate": 				"1979-01-01",
+		"sDate": 				"2005-01-01",
 		"eDate": 				"2017-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
@@ -17,24 +17,26 @@
 	"flags":
 	{
 		"saveInfo": 			true,
-		"debugit": 				true, 
+		"debugit": 				false, 
 		"catchErrors": 			false,
 		"runSpinup": 			false,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				false,
+		"runOpti": 				true,
 		"calcCost":				true
 	},
 	"rules":
 	{
 		"verbosity": 5,
+		"model_array_type": "staticarray",
+		"forward_diff": true,
 		"data_type": "Float32",
 		"data_backend": "zarr",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
 	},
 	"output": {
-		"arraytype": "array",		
+		"output_array_type": "array",		
 		"all": false,
 		"path": null,
 		"format": ".zarr",

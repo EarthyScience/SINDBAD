@@ -25,7 +25,7 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => false,
     "spinup.flags.saveSpinup" => false,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "opti.constraints.oneDataPath" => obspath
     );

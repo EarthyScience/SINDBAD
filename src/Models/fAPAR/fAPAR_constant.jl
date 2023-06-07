@@ -4,6 +4,18 @@ export fAPAR_constant
 	constantfAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
 end
 
+function precompute(o::fAPAR_constant, forcing, land, helpers)
+	## unpack parameters
+	@unpack_fAPAR_constant o
+
+	## calculate variables
+	fAPAR = constantfAPAR
+
+	## pack land variables
+	@pack_land fAPAR => land.states
+	return land
+end
+
 function compute(o::fAPAR_constant, forcing, land, helpers)
 	## unpack parameters
 	@unpack_fAPAR_constant o

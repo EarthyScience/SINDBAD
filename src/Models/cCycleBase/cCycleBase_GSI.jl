@@ -30,14 +30,18 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 		cEco ∈ land.pools
 	end
     ## instantiate variables
-    p_C2Nveg = ones(numType, length(cEco)) #sujan
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)] .= C2Nveg
-    cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
+    p_C2Nveg = zero(cEco) #sujan
+	vegZix = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
+	for vg in vegZix
+		p_C2Nveg = ups(p_C2Nveg, C2Nveg[vg], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, vg)
+	end
+    # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)] .= C2Nveg
+    cEcoEfflux = zero(land.pools.cEco) #sujan moved from get states
 	p_k_base = zero(cEco)
     p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
 	for i in eachindex(p_k_base)
 		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
-	    p_k_base = ups(p_k_base, tmp, i)
+		p_k_base = ups(p_k_base, tmp, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, i)
 	end
     ## pack land variables
     @pack_land begin
