@@ -13,7 +13,7 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 #observations = getObservation(info); # target observation!!
 forcing = getForcing(info, Val(:yaxarray));
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 @time outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward);

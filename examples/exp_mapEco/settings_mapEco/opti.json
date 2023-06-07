@@ -31,6 +31,10 @@
 		"options_file": null,
 		"isMultiObj": false
 	},
+    "default_parameter": {
+		"is_ml": false,
+		"distribution": ["normal", [0, 1]]
+	},
 	"optimized_parameters": [
 		"cCycleBase.annk_Root",
 		"cCycleBase.annk_Wood",
@@ -104,7 +108,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Gross Primary Productivity",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -147,7 +151,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Net Ecosystem Exchange",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -190,7 +194,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Ecosystem Respiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -233,7 +237,7 @@
 					"source2sindbadUnit": 0.4081632653,
 					"isCategorical": false,
 					"nameShort": "Evapotranspiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -276,7 +280,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "transpiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -319,7 +323,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Above-ground biomass",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -354,7 +358,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "kNDVI",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},

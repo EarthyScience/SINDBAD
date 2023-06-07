@@ -14,7 +14,7 @@ info = setupExperiment(info);
 forcing = getForcing(info, Val(:yaxarray));
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
 

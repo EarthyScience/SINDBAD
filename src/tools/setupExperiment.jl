@@ -416,12 +416,15 @@ function generateDatesInfo(info::NamedTuple)
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
     if info.modelRun.time.step == "daily"
+        time_step = Day(1)
         time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
     elseif info.modelRun.time.step == "hourly"
+        time_step = Month(1)
         time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate))
     else
         error("Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json")
     end
+    tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
@@ -776,18 +779,18 @@ sets info.tem.variables as the union of variables to write and store from modelr
 """
 function getLoopingInfo(info::NamedTuple)
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
-    run_info = setTupleField(run_info, (:loop, (;)))
+    # run_info = setTupleField(run_info, (:loop, (;)))
     run_info = setTupleField(run_info, (:forward_diff, info.modelRun.rules.forward_diff))
     run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
-    for dim in info.modelRun.mapping.runEcosystem
-        run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-        # todo: create the time dimesion using the dates vector
-        # if dim == "time"
-        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
-        # else
-        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-        # end
-    end
+    # for dim in info.modelRun.mapping.runEcosystem
+    #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    #     # todo: create the time dimesion using the dates vector
+    #     # if dim == "time"
+    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
+    #     # else
+    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    #     # end
+    # end
     return run_info
 end
 

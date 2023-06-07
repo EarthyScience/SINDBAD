@@ -19,7 +19,7 @@ ds = YAXArrays.open_dataset(zopen(dsPath));
 
 # Sindbad.eval(:(error_catcher = []));
 
-output = ForwardSindbad.setupOutput(info);
+output = ForwardSindbad.setupOutput(info, forcing.sizes);
 # outcubes = runEcosystem(info.tem.models.forward, forcing, output.land_init, info.tem, output.dims);
 
 

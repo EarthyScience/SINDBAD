@@ -20,14 +20,14 @@ forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@time loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters, info.tem.helpers);
@@ -39,7 +39,7 @@ function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, 
     l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
-op = setupOutput(info);
+op = setupOutput(info, forcing.sizes);
 
 mods = info.tem.models.forward;
 loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)

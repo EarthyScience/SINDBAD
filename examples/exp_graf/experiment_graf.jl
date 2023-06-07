@@ -39,19 +39,19 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 
 forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 for x=1:10
-    @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+    @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 end
-@profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 @time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
 

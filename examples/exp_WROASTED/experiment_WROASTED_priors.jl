@@ -40,7 +40,7 @@ replace_info = Dict(
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "modelRun.mapping.parallelization" => pl,
     "opti.constraints.oneDataPath" => obspath
@@ -51,14 +51,14 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
