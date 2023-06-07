@@ -14,6 +14,7 @@ using CSV: CSV
 using TypedTables: Table
 using Cthulhu
 using ForwardDiff
+using PreallocationTools
 using Flatten:
     flatten,
     metaflatten,

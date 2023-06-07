@@ -63,23 +63,6 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
 end
 
 """
-    tupleToTable(dTuple; colNames=nothing)
-covert Tuple to Table
-"""
-function tupleToTable(dTuple; colNames=nothing)
-    tpNames = propertynames(dTuple)
-    tpValues = values(dTuple)
-    dNames = [Symbol(tpNames[i]) for i in eachindex(tpNames)]
-    dValues = [[tpValues[i]] for i in eachindex(tpNames)]
-    if isnothing(colNames)
-        dTable = Table((; zip(dNames, dValues)...))
-    else
-        dTable = Table(@eval $(colNames)[1] = dNames, @eval $(colNames)[2] = dValues)
-    end
-    return dTable
-end
-
-"""
     dictToNamedTuple(d::DataStructures.OrderedDict)
 covert nested dictionary to NamedTuple
 """

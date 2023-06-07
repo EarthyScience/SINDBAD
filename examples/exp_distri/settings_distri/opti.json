@@ -4,13 +4,13 @@
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
-	"algorithm": {
+	"algorithm_ev": {
 		"package": "Evolutionary",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
 		"isMultiObj": false
 	},
-	"algorithm_cmaes": {
+	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
@@ -28,28 +28,38 @@
 		"options_file": null,
 		"isMultiObj": false
 	},
-	"optimized_parameters": [
-		"evaporation.α",
-		"evaporation.supLim",
-		"gppPotential.εmax",
-		"gppAirT.Topt",
-		"gppAirT.ToptA",
-		"gppAirT.ToptB",
-		"gppVPD.κ",
-		"gppVPD.Cκ",
-		"gppVPD.Cm",
-		"gppSoilW.q",
-		"gppSoilW.θstar",
-		"groundWRecharge.dos_exp",
-		"runoffBase.bc",
-		"rootMaximumDepth.fracRootD2SoilD",
-		"runoffSaturationExcess.β",
-		"snowMelt.melt_T",
-		"snowMelt.melt_Rn",
-		"treeFraction.constantTreeFrac",
-		"WUE.WUEatOnehPa",
-		"WUE.κ"
-			],
+    "default_parameter": {
+		"is_ml": false,
+		"distribution": ["normal", [0, 1]]
+	},
+	"optimized_parameters": {
+		"evaporation_⚆_α": {
+			"is_ml": true
+		},
+		"evaporation_⚆_supLim": null,
+		"gppPotential_⚆_εmax": null,
+		"gppAirT_⚆_Topt": null,
+		"gppAirT_⚆_ToptA": null,
+		"gppAirT_⚆_ToptB": null,
+		"gppVPD_⚆_κ":  {
+			"is_ml": true
+		},
+		"gppVPD_⚆_Cκ": null,
+		"gppVPD_⚆_Cm": null,
+		"gppSoilW_⚆_q": null,
+		"gppSoilW_⚆_θstar": null,
+		"groundWRecharge_⚆_dos_exp": null,
+		"runoffBase_⚆_bc":  {
+			"is_ml": true
+		},
+		"rootMaximumDepth_⚆_fracRootD2SoilD": null,
+		"runoffSaturationExcess_⚆_β": null,
+		"snowMelt_⚆_melt_T": null,
+		"snowMelt_⚆_melt_Rn": null,
+		"treeFraction_⚆_constantTreeFrac": null,
+		"WUE_⚆_WUEatOnehPa": null,
+		"WUE_⚆_κ": null
+	},
 	"constraints": {
 		"function_name": {
 			"import": "readObservation"
@@ -81,7 +91,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Gross Primary Productivity",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -115,7 +125,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Net Ecosystem Exchange",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -149,7 +159,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Ecosystem Respiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -183,7 +193,7 @@
 					"source2sindbadUnit": 0.4081632653,
 					"isCategorical": false,
 					"nameShort": "Evapotranspiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -217,7 +227,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "transpiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -251,7 +261,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Above-ground biomass",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},
@@ -285,7 +295,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "kNDVI",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
 				},

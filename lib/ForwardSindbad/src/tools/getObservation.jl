@@ -74,20 +74,42 @@ function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::St
         if dn in keys(nc)
             dv = nc[dn][:]
         else
-            dv=1:getfield(info.forcing.size, Symbol(dn))
+            # @show v, size(v)
+            dv=1:size(v, 2)
         end
-        RangeAxis(dn, dv)
+        rax = RangeAxis(dn, dv)
+        if dn == info.tem.forcing.dimensions.time
+            t=nc[info.tem.forcing.dimensions.time]
+            dt_str = Dates.DateTime(join(split(t.atts["units"], " ")[3:end], "T"))
+            rax=RangeAxis(dn, dt_str:Day(1):dt_str+Day(length(t)-1) |> collect)
+        end
+        rax
     end
     # yax = YAXArray(ax, v)
     yax = YAXArray(ax, YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path,variable_name, size(v)))
     return yax
 end
 
+function time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
+    if hasproperty(cyax,Symbol(forcing_info.dimensions.time))
+        cyax = cyax[time=(Date(info.tem.helpers.dates.sDate), Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
+    end
+    if hasproperty(cyax_unc,Symbol(forcing_info.dimensions.time))
+        cyax_unc = cyax_unc[time=(Date(info.tem.helpers.dates.sDate), Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
+    end
+    if hasproperty(yax_mask,Symbol(forcing_info.dimensions.time))
+        yax_mask = yax_mask[time=(Date(info.tem.helpers.dates.sDate), Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
+    end
+    return cyax, cyax_unc, yax_mask
+end
 
 """
 getObservation(info)
 """
 function getObservation(info::NamedTuple, ::Val{:zarr})
+    forcing_info = info.tem.forcing
+    permutes = forcing_info.permutes
+    subset = forcing_info.subset
     doOnePath = false
     dataPath = info.opti.constraints.oneDataPath
     nc = Any
@@ -108,14 +130,6 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         end
     end
     obscubes = []
-    tar_dims = nothing
-    if !isnothing(info.forcing.dimensions.permute)
-        tar_dims = Symbol[]
-        for pd in info.forcing.dimensions.permute
-            tdn = Symbol(getfield(info.forcing.dimensions, Symbol(pd)))
-            push!(tar_dims, tdn)
-        end
-    end
     @info "getObservation: getting observation variables..."
     map(varnames) do k
         v = Any
@@ -130,14 +144,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         ov = nc[src_var]
         v = YAXArrayBase.yaxconvert(DimArray, ov) 
         # site, lon, lat should be options to consider here
-        subset = v
-        if !isnothing(info.forcing.size.site)
-            subset = subset[site=1:info.forcing.size.site]
-        end
-        if !isnothing(info.forcing.size.time)
-            subset = subset[time=1:info.forcing.size.time]
-        end
-        # v = v[site=1:info.forcing.size.site, time = 1:info.forcing.size.time]
+        # v = v[site=1:forcing_info.size.site, time = 1:forcing_info.size.time]
 
         # get the quality flag data
         dataPath_qc = nothing
@@ -213,7 +220,12 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         end
         unc_tar_name = string(unc_var)
         mask_tar_name = string(src_var)
-        yax = getObsZarr(subset)
+        if !isnothing(subset)
+            v= subset_space_in_data(subset, v)
+        end
+
+        yax = getObsZarr(v)
+
         yax_unc = nothing
         if one_unc
             yax_unc = map(x -> one(x), yax)
@@ -233,14 +245,15 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
         cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
         cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
-        @info "getObservation: checking if permutation of data is needed..."
-        if !isnothing(tar_dims)
-            permutes = getPermutation(YAXArrayBase.dimnames(cyax), tar_dims)
+        if !isnothing(permutes)
             @info "permuting dimensions to $(tar_dims)..."
             cyax = permutedims(cyax, permutes)
             cyax_unc = permutedims(cyax_unc, permutes)
             yax_mask = permutedims(yax_mask, permutes)
         end
+
+        cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
+
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask)
@@ -248,7 +261,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
-    nts = getNumberOfTimeSteps(obscubes, info.forcing.dimensions.time)
+    nts = getNumberOfTimeSteps(obscubes, forcing_info.dimensions.time)
     @info "getObservation: getting variable names..."
     varnames_all = []
     for v in varnames
@@ -264,6 +277,8 @@ end
 getObservation(info)
 """
 function getObservation(info::NamedTuple, ::Val{:yaxarray})
+    forcing_info = info.tem.forcing
+    permutes = forcing_info.permutes
     doOnePath = false
     dataPath = info.opti.constraints.oneDataPath
     nc = Any
@@ -285,15 +300,6 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
-    tar_dims = nothing
-    if !isnothing(info.forcing.dimensions.permute)
-        tar_dims = Symbol[]
-        for pd in info.forcing.dimensions.permute
-            tdn = Symbol(getfield(info.forcing.dimensions, Symbol(pd)))
-            push!(tar_dims, tdn)
-        end
-    end
-    @show tar_dims
     map(varnames) do k
         v = Any
         vinfo = getproperty(info.opti.constraints.variables, k)
@@ -400,14 +406,15 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
         cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
         cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
-        @info "getObservation: checking if permutation of data is needed..."
-        if !isnothing(tar_dims)
-            permutes = getPermutation(YAXArrayBase.dimnames(cyax), tar_dims)
-            @info "permuting dimensions to $(tar_dims)..."
+        if !isnothing(permutes)
+            @info "         permuting dimensions ..."
             cyax = permutedims(cyax, permutes)
             cyax_unc = permutedims(cyax_unc, permutes)
             yax_mask = permutedims(yax_mask, permutes)
         end
+
+        cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
+
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask)
@@ -415,7 +422,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
-    nts = getNumberOfTimeSteps(obscubes, info.forcing.dimensions.time)
+    nts = forcing_info.sizes
     @info "getObservation: getting variable names..."
     varnames_all = []
     for v in varnames

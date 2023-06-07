@@ -1,4 +1,5 @@
 using Revise
+using ForwardDiff
 
 using Sindbad
 using ForwardSindbad
@@ -10,13 +11,13 @@ using Random
 noStackTrace()
 Random.seed!(7)
 
+
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -25,6 +26,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 @time loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters);
 
 
 forcing = (; Tair = forc.Tair, Rain = forc.Rain)
@@ -49,32 +51,18 @@ tem = info.tem;
 #     );
 
 function o_models(p1, p2)
-    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components())
+    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL_gans(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components_gans())
 end
 
 #f = getForcingForTimeStep(forcing, 1)
 #f = getForcingForTimeStep(forcing, 1)
-f = ForwardSindbad.get_force_at_time_t(forcing, 1)
+f = ForwardSindbad.get_force_at_time_t(forcing, 1);
 
-omods = o_models(0.0f0, 0.0f0)
-land = runPrecompute(f, omods, land, helpers)
-
-function sloss(m, data)
-    x, y = data
-    opt_ps = m(x)
-    omods = o_models(opt_ps[1], opt_ps[2])
-
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-
-    #out_land = out_land |> landWrapper
-    #ŷ = #out_land[:rainSnow][:snow]
-    return Flux.mse(ŷ,y)
-end
+omods = o_models(0.0f0, 0.0f0);
+land = runPrecompute(f, omods, land, helpers);
 
 
-
-function floss(p, y)
+function floss(p, y, forcing, land)
     omods = o_models(p[1], p[2])
     out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
@@ -82,14 +70,14 @@ function floss(p, y)
 end
 y = rand(100)
 
-floss((0.5,0.5), y)
-floss(p) = floss(p,y)
+floss((0.5,0.5), y, forcing, land)
+l(p) = floss(p,y, forcing, land)
 
 
 using ForwardDiff
 
-@time ForwardDiff.gradient(floss, [1.0, 1000.0])
-
+@time ForwardDiff.gradient(l, [1.0, 1000.0])
+a
 
 
 # test_gradient(model, data, sloss; opt=Optimisers.Adam())

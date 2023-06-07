@@ -21,7 +21,7 @@ info = setupExperiment(info);
 # forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
 # land_init = createLandInit(info.tem);
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
@@ -29,7 +29,7 @@ forc = getKeyedArrayFromYaxArray(forcing);
 # linit= createLandInit(info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1]);
 

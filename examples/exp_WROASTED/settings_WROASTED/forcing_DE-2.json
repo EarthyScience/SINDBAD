@@ -11,7 +11,7 @@
 		"time": "time"
 	},
 	"sel_mask": null,
-	"defaultForcing": {
+	"default_forcing": {
 		"variableUnit": null,
 		"bounds": [],
 		"sourceVariableName": null,
