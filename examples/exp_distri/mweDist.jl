@@ -27,7 +27,7 @@ chunkeddata = setchunks.(forcing.data, ((site=1,),))
 
 forcing = (; forcing..., data = (chunkeddata))
 
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 GC.gc()
 #GC.enable_logging(false)
 

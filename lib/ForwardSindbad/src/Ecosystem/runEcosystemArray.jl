@@ -165,11 +165,11 @@ end
 """
 prepRunEcosystem(approaches, forcing, land_init, tem)
 """
-function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple)
-    loopvars = keys(tem.helpers.run.loop) |> collect
+function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple, forcing::NamedTuple, forcing_sizes::NamedTuple, tem::NamedTuple)
+    loopvars = keys(forcing_sizes) |> collect
     additionaldims = setdiff(loopvars,[:time])::Vector{Symbol}
-    spacesize = values(tem.helpers.run.loop[additionaldims])::Tuple
-    loc_space_maps = vec(Iterators.product(Base.OneTo.(spacesize)...) |> collect)::Vector{NTuple{length(tem.helpers.run.loop)-1,Int}}
+    spacesize = values(forcing_sizes[additionaldims])::Tuple
+    loc_space_maps = vec(Iterators.product(Base.OneTo.(spacesize)...) |> collect)::Vector{NTuple{length(forcing_sizes)-1,Int}}
 
     loc_space_maps = map(loc_space_maps) do loc_names
         map(zip(loc_names,additionaldims)) do (loc_index,lv)
@@ -191,15 +191,15 @@ end
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple)
-    loc_space_maps, land_init_space, f_one = prepRunEcosystem(outcubes, land_init, approaches, forcing, tem)
+function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, forcing_sizes::NamedTuple, tem::NamedTuple)
+    loc_space_maps, land_init_space, f_one = prepRunEcosystem(outcubes, land_init, approaches, forcing, forcing_sizes, tem)
     parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, land_init_space, f_one, tem.helpers.run.parallelization)
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, loc_space_maps, land_init_space, f_one)
+function runEcosystem!(outcubes::AbstractArray, approaches::Tuple, forcing::NamedTuple, tem::NamedTuple, loc_space_maps, land_init_space, f_one)
     parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_maps, land_init_space, f_one, tem.helpers.run.parallelization)
 end
 

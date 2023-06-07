@@ -2,17 +2,17 @@ using Revise
 using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
-# noStackTrace()
+noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
+sYear = "2010"
 eYear = "2017"
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-inpath = "../data/DE-2.1979.2017.daily.nc"
-forcingConfig = "forcing_DE-2.json"
-# inpath = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
+# inpath = "../data/DE-2.1979.2017.daily.nc"
+# forcingConfig = "forcing_DE-2.json"
+inpath = "../data/BE-Vie.1979.2017.daily.nc"
+forcingConfig = "forcing_erai.json"
 obspath = inpath
 optimize_it = true
 optimize_it = false
@@ -31,7 +31,7 @@ replace_info = Dict(
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "modelRun.mapping.parallelization" => pl,
     "opti.constraints.oneDataPath" => obspath
@@ -40,18 +40,18 @@ replace_info = Dict(
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
