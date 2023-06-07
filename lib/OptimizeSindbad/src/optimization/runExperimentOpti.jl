@@ -7,7 +7,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:opti})
     @info "-------------------Optimization Mode---------------------------"
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-    additionaldims = setdiff(keys(info.tem.helpers.run.loop),[:time])
+    additionaldims = setdiff(keys(info.tem.forcing.sizes),[:time])
+
+
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
         run_output = mapOptimizeModel(forcing, output, info.tem, info.optim, observations,; spinup_forcing=nothing, max_cache=info.modelRun.rules.yax_max_cache)
@@ -35,7 +37,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc_array, info.tem);
+    runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc_array, forcing.sizes, info.tem);
     #todo make the loss functions work with disk arrays
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")

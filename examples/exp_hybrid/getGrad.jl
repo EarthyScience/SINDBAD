@@ -1,14 +1,17 @@
 using Revise
+using ForwardDiff
 
 using Sindbad
 using ForwardSindbad
 using ForwardSindbad: timeLoopForward
 using HybridSindbad
+using OptimizeSindbad
 using AxisKeys: KeyedArray as KA
 using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 using Random
 noStackTrace()
 Random.seed!(7)
+
 
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
@@ -26,87 +29,34 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
+# @time outcubes = runExperimentOpti(experiment_json);  
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 
-forcing = (; Tair = forc.Tair, Rain = forc.Rain)
-
-#forcing = (;
-#    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
-#    Tair = KA([-2.0f0, 0.1f0, -1.0f0, 3.0f0, 10.0f0]; time=1:5),
-#    )
-#pprint(forcing)
-
-# Instantiate land components
-land = createLandInit(info.pools, info.tem)
-helpers = info.tem.helpers; 
-tem = info.tem;
-# helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-#     dates = (; nStepsDay=1),
-#     run = (; output_all=true, runSpinup=false),
-#     );
-# tem = (;x
-#     helpers,
-#     variables = (;),
-#     );
-
-function o_models(p1, p2)
-    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components())
+# @time outcubes = runExperimentOpti(experiment_json);  
+function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
+    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
+    @show l
+    l
 end
+rand_m = rand(info.tem.helpers.numbers.numType);
+op = setupOutput(info);
 
-#f = getForcingForTimeStep(forcing, 1)
-#f = getForcingForTimeStep(forcing, 1)
-f = ForwardSindbad.get_force_at_time_t(forcing, 1)
-
-omods = o_models(0.0f0, 0.0f0)
-land = runPrecompute(f, omods, land, helpers)
-
-function sloss(m, data)
-    x, y = data
-    opt_ps = m(x)
-    omods = o_models(opt_ps[1], opt_ps[2])
-
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-
-    #out_land = out_land |> landWrapper
-    #ŷ = #out_land[:rainSnow][:snow]
-    return Flux.mse(ŷ,y)
-end
+mods = info.tem.models.forward;
+loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+# loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 
+l1(p) = loss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+l2(p) = loss(p, newmods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+l1(tblParams.defaults .* rand_m)
+l2(tblParams.defaults .* rand_m)
+@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@time grad = ForwardDiff.gradient(l2, dualDefs)
 
-function floss(p, y)
-    omods = o_models(p[1], p[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-    sum((ŷ.-y).^2)
-end
-y = rand(100)
-
-floss((0.5,0.5), y)
-floss(p) = floss(p,y)
-
-
-using ForwardDiff
-
-@time ForwardDiff.gradient(floss, [1.0, 1000.0])
-
-
-
-# test_gradient(model, data, sloss; opt=Optimisers.Adam())
-
-# https://github.com/mcabbott/AxisKeys.jl/issues/140
-
-# training machine
-
-# generate fake target parameters
-
-# function get_target(m, x)
-#     target_param = m(x)
-#     omods = o_models(target_param[1], target_param[2])
-#     out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-#     y = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-#     return (y, target_param)
-# end
+a=2
 
 Random.seed!(122)
 d = [rand(Float32,4) for i in 1:50]

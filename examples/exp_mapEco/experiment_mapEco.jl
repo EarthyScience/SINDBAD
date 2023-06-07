@@ -11,7 +11,7 @@ info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 
-forcing = getForcing(info, Val(:yaxarray));
+info, forcing = getForcing(info, Val(:yaxarray));
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
 output = setupOutput(info);
