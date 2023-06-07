@@ -10,8 +10,8 @@
 		"nStepsYear": 			365
 	},
 	"mapping": {
-		"yaxarray": ["longitude", "latitude"],
-		"runEcosystem": ["time"],
+		"yaxarray": [],
+		"runEcosystem": ["time", "longitude", "latitude"],
 		"parallelization": "threads"
 	},
 	"flags":
@@ -28,13 +28,15 @@
 	"rules":
 	{
 		"verbosity": 5,
+		"model_array_type": "staticarray",
+		"forward_diff": false,
 		"data_type": "Float64",
 		"data_backend": "yaxarray",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 5e9
 	},
 	"output": {
-		"arraytype": "array",		
+		"output_array_type": "array",		
 		"all": false,
 		"path": "africa",
 		"format": ".zarr",

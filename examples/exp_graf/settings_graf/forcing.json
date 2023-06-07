@@ -1,15 +1,11 @@
 {
-	"size": {
-		"id": 476,
-		"time": 3287
-	},
 	"dimensions": {
 		"permute": null,
-		"id": "id",
+		"space": ["id"],
 		"time": "time"
 	},
 	"sel_mask": null,
-	"defaultForcing": {
+	"default_forcing": {
 		"variableUnit": null,
 		"bounds": [],
 		"sourceVariableName": null,

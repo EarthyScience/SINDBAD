@@ -1,17 +1,11 @@
 {
-	"size": {
-		"latitude": 1,
-		"longitude": 1,
-		"time": 14245
-	},
 	"dimensions": {
 		"permute": null,
-		"latitude": "latitude",
-		"longitude": "longitude",
+		"space": ["latitude", "longitude"],
 		"time": "time"
 	},
 	"sel_mask": null,
-	"defaultForcing": {
+	"default_forcing": {
 		"variableUnit": null,
 		"bounds": [],
 		"sourceVariableName": null,

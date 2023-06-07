@@ -1,15 +1,14 @@
 {
-	"size": {
-		"site": 205,
-		"time": 14245
+	"subset":{ 
+		"site":[1, 15]
 	},
 	"dimensions": {
 		"permute": null,
-		"site": "site",
+		"space": ["site"],
 		"time": "time"
 	},
 	"sel_mask": null,
-	"defaultForcing": {
+	"default_forcing": {
 		"variableUnit": null,
 		"bounds": [],
 		"sourceVariableName": null,

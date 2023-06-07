@@ -30,6 +30,10 @@
 		"options_file": null,
 		"isMultiObj": false
 	},
+    "default_parameter": {
+		"is_ml": false,
+		"distribution": ["normal", [0, 1]]
+	},
 	"optimized_parameters": [
 		"drainage.dos_exp",
 		"evaporation.α",
@@ -86,7 +90,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Gross Primary Productivity",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
 				},
@@ -121,7 +125,7 @@
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
 					"nameShort": "Runoff",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
 				},
@@ -145,7 +149,7 @@
 					"source2sindbadUnit": 10.0,
 					"isCategorical": false,
 					"nameShort": "Terrestrial water storage",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
 				},
@@ -177,7 +181,7 @@
 					"source2sindbadUnit": 1,
 					"isCategorical": false,
 					"nameShort": "Evapotranspiration",
-					"spaceTimeType": "normal",
+					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc"
 				},

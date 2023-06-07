@@ -40,7 +40,7 @@ noStackTrace()
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 @everywhere obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-@everywhere forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+@everywhere info, forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
