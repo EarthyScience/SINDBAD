@@ -1,7 +1,9 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
-export getParameters, updateParameters
+export getParameters, updateModelParameters, updateModelParametersType
 using StaticArrays: SVector
+
+
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -16,40 +18,82 @@ function getParameters(selectedModels)
     modelsApproach = [parentnameflatten(selectedModels)...]
     models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
-    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels)
+    modelsObj = [getfield(Models, m) for m in modelsApproach]
+    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
 end
 
 """
-getParameters(selectedModels, listParams)
-retrieve all selected models parameters
+getParameters(selectedModels)
+retrieve all models parameters
 """
-function getParameters(selectedModels, listParams)
-    paramstbl = getParameters(selectedModels)
-    return filter(row -> row.names in listParams, paramstbl)
-end
-
-"""
-getParameters(selectedModels, listParams, listModels)
-retrieve all selected models parameters by model
-"""
-function getParameters(selectedModels, listParams, listModels)
-    paramstbl = getParameters(selectedModels)
-    return filter(row -> row.names in listParams && row.models in listModels, paramstbl)
+function getParameters(selectedModels, default_parameter)
+    defaults = [flatten(selectedModels)...]
+    constrains = metaflatten(selectedModels, Models.bounds)
+    nbounds = length(constrains)
+    lower = [constrains[i][1] for i in 1:nbounds]
+    upper = [constrains[i][2] for i in 1:nbounds]
+    names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    modelsApproach = [parentnameflatten(selectedModels)...]
+    models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
+    varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
+    modelsObj = [getfield(Models, m) for m in modelsApproach]
+    dp_dist = typeof(defaults[1]).(default_parameter[:distribution][2])
+    # dp_dist = Tuple(dp_dist)
+    dist = [default_parameter[:distribution][1]  for m in modelsApproach]
+    p_dist = [dp_dist  for m in modelsApproach]
+    is_ml = [default_parameter.is_ml  for m in modelsApproach]
+    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj, dist, p_dist, is_ml)
 end
 
 """
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected models parameters from string input
 """
-function getParameters(selectedModels, listModelsParams::Vector{String})
-    paramstbl = getParameters(selectedModels)
-    return filter(row -> row.varsModels in listModelsParams, paramstbl)
+function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
+    opt_parameter = [replace(_p, "_⚆_" =>  ".") for _p in opt_parameter]
+    paramstbl = getParameters(selectedModels, default_parameter)
+    return filter(row -> row.varsModels in opt_parameter, paramstbl)
+end
+
+
+"""
+getParameters(selectedModels, listModelsParams::Vector{String})
+retrieve all selected models parameters from string input
+"""
+function getParameters(selectedModels, default_parameter, opt_parameter::NamedTuple)
+    param_list = [replace(String(_p), "_⚆_" =>  ".") for _p in keys(opt_parameter)]
+    # @show opt_parameter, default_parameter
+    paramstbl = getParameters(selectedModels, default_parameter, param_list)
+    # @show opt_parameter, paramstbl, param_list, paramstbl.varsModels
+    pTable = filter(row -> row.varsModels in param_list, paramstbl)
+    new_dist = pTable.dist
+    new_p_dist = pTable.p_dist
+    new_is_ml = pTable.is_ml
+    pInd = 1
+    for pp in param_list
+        p_ = opt_parameter[pInd]
+        if !isnothing(p_)
+            if hasproperty(p_, :is_ml)
+                new_is_ml[pInd] = getfield(p_, :is_ml)
+            end
+            if hasproperty(p_, :distribution)
+                nd = getproperty(p_, :distribution)
+                new_dist[pInd] = nd[1]
+                new_p_dist[pInd] = nd[2]
+            end
+        end
+        pInd = pInd + 1
+    end
+    pTable.is_ml .= new_is_ml
+    pTable.dist .= new_dist
+    pTable.p_dist .= new_p_dist
+    return pTable
 end
 
 """
 updateParameters(tblParams, approaches)
 """
-function updateParameters(tblParams::Table, approaches::Tuple)
+function updateModelParameters(tblParams::Table, approaches::Tuple)
     function filtervar(var, modelName, tblParams, approachx)
         subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
         if isempty(subtbl)
@@ -80,29 +124,58 @@ function updateParameters(tblParams::Table, approaches::Tuple)
 end
 
 
+
 """
-updateParameters(tblParams, approaches, pVector)
-does not depend on the mutated table of parameters
+updateModelParametersType(tblParams, approaches, pVector)
+get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateParameters(tblParams, approaches::Tuple, pVector)
-    function filtervar(var, modelName, tblParams, approachx, pVector)
-        pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-        if isempty(pindex)
-            return getproperty(approachx, var)
-        else
-            return pVector[pindex[1]]
-        end
-    end
+function updateModelParametersType(tblParams, approaches::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) in enumerate(namesApproaches)
         approachx = approaches[idx]
+        model_obj = approachx
         newapproachx = if modelName in tblParams.modelsApproach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var in vars
-                inOptim = filtervar(var, modelName, tblParams, approachx, pVector)
-                push!(newvals, var => inOptim)
+                pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    model_obj = tblParams[pindex[1]].modelsObj
+                    pval = pVector[pindex[1]]
+                end
+                push!(newvals, var => pval)
+            end
+            model_obj(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
+"""
+updateModelParameters(tblParams, approaches, pVector)
+does not depend on the mutated table of parameters
+"""
+function updateModelParameters(tblParams, approaches::Tuple, pVector)
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    for (idx, modelName) in enumerate(namesApproaches)
+        approachx = approaches[idx]
+        model_obj = approachx
+        newapproachx = if modelName in tblParams.modelsApproach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var in vars
+                pindex = findall(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    pval = pVector[pindex[1]]
+                end
+                push!(newvals, var => pval)
             end
             typeof(approachx)(; newvals...)
         else
@@ -308,11 +381,11 @@ function getSpinupAndForwardModels(info::NamedTuple)
             original_params_forward = getParameters(sel_appr_forward);
             input_params = info.params;
             updated_params = setInputParameters(original_params_forward, input_params);
-            updated_appr_forward = updateParameters(updated_params, sel_appr_forward);
+            updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward);
 
             original_params_spinup = getParameters(sel_appr_spinup);
             updated_params = setInputParameters(original_params_spinup, input_params);
-            updated_appr_spinup = updateParameters(updated_params, sel_appr_spinup);
+            updated_appr_spinup = updateModelParameters(updated_params, sel_appr_spinup);
 
             info = (; info..., tem=(; info.tem..., models=(; info.tem.models..., forward=updated_appr_forward, is_spinup=is_spinup, spinup=updated_appr_spinup)))
         end
@@ -334,12 +407,15 @@ function generateDatesInfo(info::NamedTuple)
         tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
     end
     if info.modelRun.time.step == "daily"
-        time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+        time_step = Day(1)
+        time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate)) |> collect
     elseif info.modelRun.time.step == "hourly"
-        time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate))
+        time_step = Month(1)
+        time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate)) |> collect
     else
         error("Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json")
     end
+    tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
@@ -393,6 +469,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.modelStructure.pools)
     tmpStates = (;)
     hlpStates = (;)
+    arrayType = Symbol(info.modelRun.rules.model_array_type)
     for element in elements
         elSymbol = Symbol(element)
         tmpElem = (;)
@@ -400,7 +477,7 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
         hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
-        arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
+        # arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
         nlayers = Int64[]
         layerThicknesses = info.tem.helpers.numbers.numType[]
         layer = Int64[]
@@ -418,6 +495,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
+        hlpElem = setTupleField(hlpElem, (:ones, (;)))
 
         # main pools
         for mainPool in mainPoolName
@@ -437,7 +515,11 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
-            hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zero(initValues)))
+            onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # onetyped = ones(length(initValues))
+            hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlpElem = setTupleSubfield(hlpElem, :ones, (mainPool, onetyped))
+            # hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zeros(initValues)))
         end
 
         # subpools
@@ -467,6 +549,10 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, ltck))
             hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, ltck))
             hlpElem = setTupleSubfield(hlpElem, :zix, (subPool, zix))
+            onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # onetyped = ones(length(initValues))
+            hlpElem = setTupleSubfield(hlpElem, :zeros, (subPool, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlpElem = setTupleSubfield(hlpElem, :ones, (subPool, onetyped))
         end
 
         ## combined pools
@@ -490,6 +576,10 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (combinedPoolName, zix))
+            onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            # onetyped = ones(length(initValues))
+            hlpElem = setTupleSubfield(hlpElem, :zeros, (combinedPoolName, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlpElem = setTupleSubfield(hlpElem, :ones, (combinedPoolName, onetyped))
         else
             create = Symbol.(uniqueSubPools)
         end
@@ -500,8 +590,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleField(tmpElem, (:addStateVars, addStateVars))
         end
         arraytype = :view
-        if hasproperty(getfield(info.modelStructure.pools, element), :arraytype)
-            arraytype = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
+        if hasproperty(info.modelRun.rules, :model_array_type)
+            arraytype = Symbol(info.modelRun.rules.model_array_type)
         end
         tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
         tmpElem = setTupleField(tmpElem, (:create, create))
@@ -680,18 +770,18 @@ sets info.tem.variables as the union of variables to write and store from modelr
 """
 function getLoopingInfo(info::NamedTuple)
     run_info = (; info.modelRun.flags..., (output_all=info.modelRun.output.all))
-    run_info = setTupleField(run_info, (:loop, (;)))
+    # run_info = setTupleField(run_info, (:loop, (;)))
+    run_info = setTupleField(run_info, (:forward_diff, info.modelRun.rules.forward_diff))
     run_info = setTupleField(run_info, (:parallelization, Val(Symbol(info.modelRun.mapping.parallelization))))
-    for dim in info.modelRun.mapping.runEcosystem
-        @show dim, info.modelRun.mapping.runEcosystem
-        run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-        # todo: create the time dimesion using the dates vector
-        # if dim == "time"
-        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
-        # else
-        #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-        # end
-    end
+    # for dim in info.modelRun.mapping.runEcosystem
+    #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    #     # todo: create the time dimesion using the dates vector
+    #     # if dim == "time"
+    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
+    #     # else
+    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
+    #     # end
+    # end
     return run_info
 end
 

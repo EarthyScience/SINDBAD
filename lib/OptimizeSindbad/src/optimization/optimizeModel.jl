@@ -98,15 +98,7 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 """
 function getLoss(pVector::AbstractArray, forcing::NamedTuple, spinup_forcing::Any, initOut::NamedTuple,
     observations::NamedTuple, tblParams::Table, tem::NamedTuple, optim::NamedTuple)
-    # tblParams.optim .= pVector # update the parameters with pVector
-    # @show pVector, typeof(pVector)
-    if eltype(pVector) <: ForwardDiff.Dual
-        tblParams.optim .= [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
-    else
-        tblParams.optim .= pVector # update the parameters with pVector
-    end
-
-    newApproaches = updateParameters(tblParams, tem.models.forward)
+    newApproaches = updateModelParameters(tblParams, tem.models.forward)
     outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
     @info ".........................................."
     loss_vector = getLossVector(observations, outevolution, optim)

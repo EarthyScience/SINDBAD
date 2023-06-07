@@ -1,5 +1,5 @@
 export optimizeModelArray
-export getSimulationDataArray,  getLossArray
+export getSimulationDataArray,  getLossArray, getLossGradient
 export getDataArray
 export getLossVectorArray
 
@@ -107,24 +107,28 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
     return lossVec
 end
 
+
+"""
+getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
+"""
+function getLossGradient(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+    upVector = pVector
+    newApproaches = updateModelParametersType(tblParams, base_models, upVector)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    model_data = (; Pair.(output_variables, output.data)...)
+    loss_vector = getLossVectorArray(observations, model_data, optim)
+    @info "-------------------"
+    return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
+end
+
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
-    # tblParams.optim .= pVector # update the parameters with pVector
-    # @show pVector, typeof(pVector)
+function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     upVector = pVector
-    if eltype(pVector) <: ForwardDiff.Dual
-        upVector = [tem.helpers.numbers.sNT(ForwardDiff.value(v)) for v ∈ pVector] # update the parameters with pVector
-    end
-    
-    newApproaches = updateParameters(tblParams, tem.models.forward, upVector)
-    runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
-    # runEcosystem!(output, newApproaches, forcing, tem, loc_space_maps, land_init_space);
+    newApproaches = updateModelParameters(tblParams, base_models, upVector)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
-    # run_output = output.data;
-    # outevolution = runEcosystemArray(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
-
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
@@ -133,22 +137,22 @@ end
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModelArray(forcing::NamedTuple, output, output_variables, observations::NamedTuple,tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
+function optimizeModelArray(forcing::NamedTuple, output, output_variables, observations::NamedTuple, tem::NamedTuple, optim::NamedTuple; spinup_forcing=nothing)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters)
+    tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter, optim.optimized_parameters);
 
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem);
+    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
     # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one))
     # make the cost function handle
-    cost_function = x -> getLossArray(x, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+    cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
 
 
     # run the optimizer

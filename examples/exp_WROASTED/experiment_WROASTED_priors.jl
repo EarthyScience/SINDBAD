@@ -40,7 +40,7 @@ replace_info = Dict(
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "modelRun.mapping.parallelization" => pl,
     "opti.constraints.oneDataPath" => obspath
@@ -57,8 +57,8 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
@@ -117,39 +117,6 @@ end
 
 
 
-"""
-updateParameters(tblParams, approaches)
-"""
-function updateParameters(tblParams::Table, approaches::Tuple, popt)
-    function filtervar(var, modelName, tblParams, approachx)
-        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
-        if isempty(subtbl)
-            return getproperty(approachx, var)
-        else
-            return subtbl.optim[1]
-        end
-    end
-    updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
-    for (idx, modelName) in enumerate(namesApproaches)
-        approachx = approaches[idx]
-        newapproachx = if modelName in tblParams.modelsApproach
-            vars = propertynames(approachx)
-            newvals = Pair[]
-            for var in vars
-                inOptim = filtervar(var, modelName, tblParams, approachx)
-                #TODO Check whether this works correctly
-                push!(newvals, var => inOptim)
-            end
-            typeof(approachx)(; newvals...)
-        else
-            approachx
-        end
-        push!(updatedModels, newapproachx)
-    end
-    return (updatedModels...,)
-end
-
 outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
 pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
 
@@ -190,7 +157,7 @@ develop_f = () -> begin
         #
         tblParams.optim .= popt  # TODO replace mutation
         
-        newApproaches = updateParameters(tblParams, tem.models.forward, popt)
+        newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
         # TODO run model with updated parameters
         runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
 

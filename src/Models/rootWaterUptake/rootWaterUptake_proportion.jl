@@ -11,7 +11,7 @@ function precompute(o::rootWaterUptake_proportion, forcing, land, helpers)
         soilW ∈ land.pools
         numType ∈ helpers.numbers
     end
-    wRootUptake = zeros(helpers.numbers.numType, size(soilW))
+    wRootUptake = zero(soilW)
 
     ## pack land variables
     @pack_land begin
@@ -33,20 +33,21 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     # get the transpiration
     toUptake = transpiration
     PAWTotal = sum(PAW)
-    wRootUptake .= 𝟘
+    wRootUptake = wRootUptake .* 𝟘
     # extract from top to bottom
     if PAWTotal > 𝟘
         for sl in 1:length(land.pools.soilW)
             uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal))
-            wRootUptake[sl] = toUptake * uptakeProportion
-            ΔsoilW = cusp(ΔsoilW, -wRootUptake[sl], helpers.pools.water.zeros.soilW .* 𝟘, sl) 
+
+            wRootUptake = ups(wRootUptake, toUptake * uptakeProportion, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
+            ΔsoilW = cusp(ΔsoilW, -wRootUptake[sl], helpers.pools.water.zeros.soilW, 𝟘, sl) 
         end
     end
-    ## pack land variables
-    # @pack_land begin
-    #     wRootUptake => land.states
-    #     ΔsoilW => land.states
-    # end
+    # pack land variables
+    @pack_land begin
+        wRootUptake => land.states
+        ΔsoilW => land.states
+    end
     return land
 end
 

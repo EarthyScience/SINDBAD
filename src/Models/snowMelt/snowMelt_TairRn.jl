@@ -41,6 +41,7 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
+    # @show Tair, melt_T
     tmp_T = Tair * melt_T
     tmp_Rn = max(Rn * melt_Rn, 𝟘)
     potMelt = (tmp_T + tmp_Rn) * snowFraction

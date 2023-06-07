@@ -9,7 +9,7 @@ function precompute(o::gppDemand_mult, forcing, land, helpers)
 	## unpack land variables
 
 	# set 3d scalar matrix with current scalars
-	scall = ones(helpers.numbers.numType, 4)
+	scall = SVector(helpers.numbers.sNT.(zeros(4))...)
 	AllDemScGPP = helpers.numbers.𝟙
 	gppE = helpers.numbers.𝟘
 	@pack_land (scall,AllDemScGPP, gppE) => land.gppDemand
@@ -30,11 +30,12 @@ function compute(o::gppDemand_mult, forcing, land, helpers)
 		VPDScGPP ∈ land.gppVPD
 	end
 
+	# @show TempScGPP, VPDScGPP, scall
 	# set 3d scalar matrix with current scalars
-	scall[1] = TempScGPP
-	scall[2] = VPDScGPP
-	scall[3] = LightScGPP
-	scall[4] = CloudScGPP
+	scall = ups(scall, TempScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
+	scall = ups(scall, VPDScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 2)
+	scall = ups(scall, LightScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 3)
+	scall = ups(scall, CloudScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 4)
 
 	# compute the product of all the scalars
 	AllDemScGPP = prod(scall)

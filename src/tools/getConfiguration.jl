@@ -102,6 +102,7 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
         end
         @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
     end
+
     # rm second level
     for (k, v) in info
         if typeof(v) <: Dict

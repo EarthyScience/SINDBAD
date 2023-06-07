@@ -142,22 +142,48 @@ function cusp(sp::SVector, Δsp)
     sp = sp .+ Δsp
 end
 
-function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
+# function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
+#     sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
+#     sp = sp .+ sp_zero .* Δsp
+#     return sp
+
+# end
+
+# function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
+#     sp_zero = zeros(SVector{length(Δsp)})
+#     sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
+#     sp = sp .+ sp_zero .* Δsp
+#     return sp
+# end
+
+
+function cusp(sp::SVector, Δsp, sp_zero, 𝟘, split_level::Int)
+    sp_zero = sp_zero .* 𝟘
     sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
     sp = sp .+ sp_zero .* Δsp
     return sp
 end
 
+# v1 = zeros(SVector{length(ΔsnowW)})
+#     v1 = Base.setindex(v1,one(Float64),1)
+#     ΔsnowW = ΔsnowW .+ v1.*snow
 
-function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Vector{Int})
+
+
+function cusp(sp::SVector, Δsp, sp_zero, split_level::Vector{Int})
     for sp_sl in split_level
         sp = cusp(sp, Δsp, sp_zero, sp_sl)
     end
     return sp
 end
 
-function ups(sp::SVector, sp_elem, split_level::Int)
-    sp = Base.setindex(sp, sp_elem, split_level)
+function ups(sp::SVector, sp_elem, sp_zero, sp_one, 𝟘, 𝟙, split_level::Int)
+    sp_zero = sp_zero .* 𝟘
+    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
+    sp_one = sp_one .* 𝟘 .+ 𝟙
+    sp_one = Base.setindex(sp_one, zero(eltype(sp_one)), split_level)
+    sp = sp .* sp_one .+ sp_zero .* sp_elem
+    # sp = Base.setindex(sp, sp_elem, split_level)
     return sp
 end
 

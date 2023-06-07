@@ -64,7 +64,8 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		RA_G[ix] = max(RA_G[ix], 𝟘)
 
 		# total respiration per pool: R_a = R_m + R_g
-		cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
+		cEcoEfflux = ups(cEcoEfflux, RA_M[ix] + RA_G[ix], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		# cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
 	end
 
 	## pack land variables

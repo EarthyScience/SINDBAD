@@ -21,7 +21,7 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => false,
     "spinup.flags.saveSpinup" => true,
     "spinup.flags.loadSpinup" => true,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "opti.constraints.oneDataPath" => obspath
 );
@@ -36,7 +36,7 @@ run_output = runExperiment(experiment_jld2); #this one will only work if the rep
 
 # one can load info directly from file and run the experiment by skipping the get configuration by continuing with
 info=Sindbad.load("info.jld2")["info"];
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info)
 

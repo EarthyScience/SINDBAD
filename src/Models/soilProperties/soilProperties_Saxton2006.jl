@@ -16,17 +16,17 @@ function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 		(st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
 	end
 	## instantiate variables
-	sp_α = ones(numType, length(st_CLAY))
-	sp_β = ones(numType, length(st_CLAY))
-	sp_kFC = ones(numType, length(st_CLAY))
-	sp_θFC = ones(numType, length(st_CLAY))
-	sp_ψFC = ones(numType, length(st_CLAY))
-	sp_kWP = ones(numType, length(st_CLAY))
-	sp_θWP = ones(numType, length(st_CLAY))
-	sp_ψWP = ones(numType, length(st_CLAY))
-	sp_kSat = ones(numType, length(st_CLAY))
-	sp_θSat = ones(numType, length(st_CLAY))
-	sp_ψSat = ones(numType, length(st_CLAY))
+	sp_α = zero(st_CLAY)
+	sp_β = zero(st_CLAY)
+	sp_kFC = zero(st_CLAY)
+	sp_θFC = zero(st_CLAY)
+	sp_ψFC = zero(st_CLAY)
+	sp_kWP = zero(st_CLAY)
+	sp_θWP = zero(st_CLAY)
+	sp_ψWP = zero(st_CLAY)
+	sp_kSat = zero(st_CLAY)
+	sp_θSat = zero(st_CLAY)
+	sp_ψSat = zero(st_CLAY)
 
 	## calculate variables
 	# number of layers & creation of arrays
