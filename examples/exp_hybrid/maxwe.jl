@@ -17,14 +17,14 @@ forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@time loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 
 forcing = (; Tair = forc.Tair, Rain = forc.Rain)

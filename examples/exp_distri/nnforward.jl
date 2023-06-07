@@ -16,7 +16,7 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 ds = "/Users/lalonso/Documents/SindbadThreads/dev/Sindbad/examples/data/fluxnet_forcing.zarr/"
 #ds = "/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_forcing.zarr/"
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 forcing = getForcing(info, ds, Val{:zarr}());
 chunkeddata = setchunks.(forcing.data, ((site=1,),));

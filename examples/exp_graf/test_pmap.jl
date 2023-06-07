@@ -45,7 +45,7 @@ forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_ba
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 # @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
@@ -95,7 +95,7 @@ addprocs(28)
     ecofunc = x ->  ecoLoc!(output.data, approaches, forc, tem,  x)
 end
 forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 forc = getKeyedArrayFromYaxArray(forcing);
 
 

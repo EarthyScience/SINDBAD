@@ -25,7 +25,7 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => false,
     "spinup.flags.saveSpinup" => false,
-    "forcing.defaultForcing.dataPath" => inpath,
+    "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "opti.constraints.oneDataPath" => obspath
     );
@@ -39,7 +39,7 @@ if doitstepwise
     # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
     forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
-    output = setupOutput(info)
+    output = setupOutput(info, forcing.sizes)
 
     # forward run
     outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache)
