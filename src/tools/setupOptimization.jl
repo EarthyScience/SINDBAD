@@ -58,11 +58,20 @@ end
 checks if the parameters listed in optimized_parameters of opti.json exists in the selected model structure of modelStructure.json
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
-    model_parameters = getParameters(info.tem.models.forward, info.opti.optimized_parameters, info.tem.helpers).varsModels;
+    # @show info.opti.constraints, info.opti.optimized_parameters
+    tblParams = getParameters(info.tem.models.forward, info.opti.default_parameter, info.opti.optimized_parameters)
+    model_parameters = tblParams.varsModels;
     optim_parameters = info.opti.optimized_parameters
-    for omp in eachindex(optim_parameters)
-        if optim_parameters[omp] ∉ model_parameters
-            @warn "Model Inconsistency: the parameter $(optim_parameters[omp]) does not exist in the selected model structure."
+    op_names = nothing
+    if typeof(optim_parameters)<:Vector
+        op_names = optim_parameters
+    else
+        op_names = [replace(String(_p), "_⚆_" =>  ".") for _p in keys(optim_parameters)]
+    end
+
+    for omp in eachindex(op_names)
+        if op_names[omp] ∉ model_parameters
+            @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
             @show model_parameters
             error("Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of opti.json, or check model structure to provide correct parameter name")
         end
@@ -74,6 +83,7 @@ function setupOptimization(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
+    info = setTupleSubfield(info, :optim, (:default_parameter, info.opti.default_parameter))
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
     info = setTupleSubfield(info, :optim, (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))

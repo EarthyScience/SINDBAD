@@ -11,10 +11,10 @@ info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 
-forcing = getForcing(info, Val(:yaxarray));
+info, forcing = getForcing(info, Val(:yaxarray));
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
-output = setupOutput(info, forcing.sizes);
+output = setupOutput(info);
 
 outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache);
 

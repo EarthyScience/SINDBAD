@@ -16,11 +16,11 @@ Random.seed!(7)
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 
-forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info, forcing.sizes);
+output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
@@ -30,7 +30,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.optimized_parameters, info.tem.helpers);
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 
 # @time outcubes = runExperimentOpti(experiment_json);  
 function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
@@ -39,7 +39,7 @@ function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, 
     l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
-op = setupOutput(info, forcing.sizes);
+op = setupOutput(info);
 
 mods = info.tem.models.forward;
 loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)

@@ -55,13 +55,13 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     end
     println("----------------------------------------------")
     @info "prepExperimentForward: get forcing data..."
-    forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
     println("----------------------------------------------")
     
     @info "prepExperimentForward: setup output..."
     println("----------------------------------------------")
-    output = setupOutput(info, forcing.sizes);
+    output = setupOutput(info);
     return info, forcing, output
 
 end
