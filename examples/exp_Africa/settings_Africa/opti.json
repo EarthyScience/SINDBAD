@@ -33,7 +33,6 @@
 		"distribution": ["normal", [0, 1]]
 	},
 	"optimized_parameters": [
-		"fAPAR.constantfAPAR",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",

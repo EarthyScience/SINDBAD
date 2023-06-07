@@ -37,3 +37,12 @@ GC.gc()
 
 loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+
+ds = forcing.data[1];
+using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+
+
+plotdat = output.data;
+fig, ax, obj = heatmap(plotdat[1][1,1,:,:])
+Colorbar(fig[1,2], obj)
+save("afroca_gpp.png", fig)
