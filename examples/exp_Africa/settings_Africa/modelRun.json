@@ -3,8 +3,8 @@
 	"time":
 	{
 		"step": 				"daily",
-		"sDate": 				"2010-01-01",
-		"eDate": 				"2010-12-31",
+		"sDate": 				"2005-01-01",
+		"eDate": 				"2013-12-31",
 		"nYears": 				12,
 		"nStepsDay": 			1,
 		"nStepsYear": 			365
