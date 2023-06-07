@@ -152,7 +152,8 @@ function getVariableFields(datavars)
     return ovro
 end
 
-function setupOutput(info::NamedTuple, forcing_sizes)
+function setupOutput(info::NamedTuple)
+    forcing_sizes = info.tem.forcing.sizes
     @info "setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, info.tem)
     outformat = info.modelRun.output.format

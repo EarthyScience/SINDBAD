@@ -1,13 +1,7 @@
 {
-	"size": {
-		"latitude": 144,
-		"longitude": 136,
-		"time": 365
-	},
 	"dimensions": {
 		"permute": null,
-		"latitude": "latitude",
-		"longitude": "longitude",
+		"space": ["latitude", "longitude"],
 		"time": "time"
 	},
 	"sel_mask": null,
@@ -26,15 +20,6 @@
 		"dataPath": null
 		},	
 		"variables": {
-		"PET":
-		{
-			"variableUnit": "mm d-1",
-			"bounds": [0.0, 100.0], 
-			"sourceVariableName": "PET_PT",
-			"sourceVariableUnit": "mm d-1",
-			"nameShort": "PET",
-			"dataPath": "../data/3Ddata/Africa.era5.PET_PT.2010.nc"
-		},
 		"Rain":
 		{
 			"variableUnit": "mm d-1",

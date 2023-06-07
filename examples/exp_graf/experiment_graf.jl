@@ -38,8 +38,8 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-output = setupOutput(info, forcing.sizes);
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+output = setupOutput(info);
 
 
 forc = getKeyedArrayFromYaxArray(forcing);

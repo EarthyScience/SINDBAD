@@ -2,11 +2,13 @@ export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
 using StaticArrays: SVector
+
+
 """
 getParameters(selectedModels)
 retrieve all models parameters
 """
-function getParameters(selectedModels, tem_helpers)
+function getParameters(selectedModels)
     defaults = [flatten(selectedModels)...]
     constrains = metaflatten(selectedModels, Models.bounds)
     nbounds = length(constrains)
@@ -20,83 +22,72 @@ function getParameters(selectedModels, tem_helpers)
     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
 end
 
-# """
-# getParameters(selectedModels)
-# retrieve all models parameters
-# """
-# function getParameters(selectedModels, tem_helpers)
-#     fd = false
-#     # fd = tem_helpers.run.forward_diff
-#     defs = [flatten(selectedModels)...]
-#     # defs = tem_helpers.numbers.sNT.([flatten(selectedModels)...])
-#     constrains = metaflatten(selectedModels, Models.bounds)
-#     nbounds = length(constrains)
-#     defaults = []
-#     lower = []
-#     upper = []
-#     for i in 1:nbounds
-#         def = defs[i]
-#         lv = constrains[i][1]
-#         uv = constrains[i][2]
-#         # if !isnothing(def)
-#         #     def = tem_helpers.numbers.sNT(def)
-#         #     if fd
-#         #         def = ForwardDiff.Dual{tem_helpers.numbers.numType}(def)
-#         #     end
-#         # end
-#         # if !isnothing(lv)
-#         #     lv = tem_helpers.numbers.sNT(lv)
-#         #     if fd
-#         #         lv = ForwardDiff.Dual{tem_helpers.numbers.numType}(lv)
-#         #     end
-#         # end
-#         # if !isnothing(uv)
-#         #     uv = tem_helpers.numbers.sNT(uv)
-#         #     if fd
-#         #         uv = ForwardDiff.Dual{tem_helpers.numbers.numType}(uv)
-#         #     end
-#         # end
-#         push!(defaults, def)
-#         push!(lower, lv)
-#         push!(upper, uv)
-#     end
-
-
-#     # lower = tem_helpers.numbers.sNT.([constrains[i][1] for i in 1:nbounds])
-#     # upper = tem_helpers.numbers.sNT.([constrains[i][2] for i in 1:nbounds])
-#     names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-#     modelsApproach = [parentnameflatten(selectedModels)...]
-#     models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
-#     varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
-#     modelsObj = [getfield(Models, m) for m in modelsApproach]
-#     return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj)
-# end
-
 """
-getParameters(selectedModels, listParams)
-retrieve all selected models parameters
+getParameters(selectedModels)
+retrieve all models parameters
 """
-function getParameters(selectedModels, listParams, tem_helpers)
-    paramstbl = getParameters(selectedModels)
-    return filter(row -> row.names in listParams, paramstbl)
-end
-
-"""
-getParameters(selectedModels, listParams, listModels)
-retrieve all selected models parameters by model
-"""
-function getParameters(selectedModels, listParams, listModels, tem_helpers)
-    paramstbl = getParameters(selectedModels)
-    return filter(row -> row.names in listParams && row.models in listModels, paramstbl)
+function getParameters(selectedModels, default_parameter)
+    defaults = [flatten(selectedModels)...]
+    constrains = metaflatten(selectedModels, Models.bounds)
+    nbounds = length(constrains)
+    lower = [constrains[i][1] for i in 1:nbounds]
+    upper = [constrains[i][2] for i in 1:nbounds]
+    names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    modelsApproach = [parentnameflatten(selectedModels)...]
+    models = [Symbol(supertype(getproperty(Models, m))) for m in modelsApproach]
+    varsModels = [join((models[i], names[i]), ".") for i in 1:nbounds]
+    modelsObj = [getfield(Models, m) for m in modelsApproach]
+    dp_dist = typeof(defaults[1]).(default_parameter[:distribution][2])
+    # dp_dist = Tuple(dp_dist)
+    dist = [default_parameter[:distribution][1]  for m in modelsApproach]
+    p_dist = [dp_dist  for m in modelsApproach]
+    is_ml = [default_parameter.is_ml  for m in modelsApproach]
+    return Table(; names, defaults, optim=defaults, lower, upper, modelsApproach, models, varsModels, modelsObj, dist, p_dist, is_ml)
 end
 
 """
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected models parameters from string input
 """
-function getParameters(selectedModels, listModelsParams::Vector{String}, tem_helpers)
-    paramstbl = getParameters(selectedModels, tem_helpers)
-    return filter(row -> row.varsModels in listModelsParams, paramstbl)
+function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
+    opt_parameter = [replace(_p, "_⚆_" =>  ".") for _p in opt_parameter]
+    paramstbl = getParameters(selectedModels, default_parameter)
+    return filter(row -> row.varsModels in opt_parameter, paramstbl)
+end
+
+
+"""
+getParameters(selectedModels, listModelsParams::Vector{String})
+retrieve all selected models parameters from string input
+"""
+function getParameters(selectedModels, default_parameter, opt_parameter::NamedTuple)
+    param_list = [replace(String(_p), "_⚆_" =>  ".") for _p in keys(opt_parameter)]
+    # @show opt_parameter, default_parameter
+    paramstbl = getParameters(selectedModels, default_parameter, param_list)
+    # @show opt_parameter, paramstbl, param_list, paramstbl.varsModels
+    pTable = filter(row -> row.varsModels in param_list, paramstbl)
+    new_dist = pTable.dist
+    new_p_dist = pTable.p_dist
+    new_is_ml = pTable.is_ml
+    pInd = 1
+    for pp in param_list
+        p_ = opt_parameter[pInd]
+        if !isnothing(p_)
+            if hasproperty(p_, :is_ml)
+                new_is_ml[pInd] = getfield(p_, :is_ml)
+            end
+            if hasproperty(p_, :distribution)
+                nd = getproperty(p_, :distribution)
+                new_dist[pInd] = nd[1]
+                new_p_dist[pInd] = nd[2]
+            end
+        end
+        pInd = pInd + 1
+    end
+    pTable.is_ml .= new_is_ml
+    pTable.dist .= new_dist
+    pTable.p_dist .= new_p_dist
+    return pTable
 end
 
 """
@@ -387,12 +378,12 @@ function getSpinupAndForwardModels(info::NamedTuple)
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
     if hasproperty(info, :params) 
         if !isempty(info.params)
-            original_params_forward = getParameters(sel_appr_forward, info.tem.helpers);
+            original_params_forward = getParameters(sel_appr_forward);
             input_params = info.params;
             updated_params = setInputParameters(original_params_forward, input_params);
             updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward);
 
-            original_params_spinup = getParameters(sel_appr_spinup, info.tem.helpers);
+            original_params_spinup = getParameters(sel_appr_spinup);
             updated_params = setInputParameters(original_params_spinup, input_params);
             updated_appr_spinup = updateModelParameters(updated_params, sel_appr_spinup);
 
@@ -417,10 +408,10 @@ function generateDatesInfo(info::NamedTuple)
     end
     if info.modelRun.time.step == "daily"
         time_step = Day(1)
-        time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate))
+        time_range= (Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate)) |> collect
     elseif info.modelRun.time.step == "hourly"
         time_step = Month(1)
-        time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate))
+        time_range= (Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate)) |> collect
     else
         error("Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json")
     end

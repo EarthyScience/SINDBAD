@@ -13,11 +13,11 @@ Random.seed!(7)
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 
-forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info, forcing.sizes);
+output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
