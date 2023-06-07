@@ -39,7 +39,7 @@ if doitstepwise
     # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
     forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
-    output = setupOutput(info, forcing.sizes)
+    output = setupOutput(info)
 
     # forward run
     outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward; max_cache=info.modelRun.rules.yax_max_cache)
