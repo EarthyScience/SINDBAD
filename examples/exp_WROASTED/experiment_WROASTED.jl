@@ -60,3 +60,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
+new_models = updateModelParameters(tblParams, info.tem.models.forward, outcubes);
+@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, land_init_space, f_one)
