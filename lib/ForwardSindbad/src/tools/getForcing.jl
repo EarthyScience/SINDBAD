@@ -26,19 +26,19 @@ getForcing(info)
 """
 function getForcing(info::NamedTuple, ::Val{:table})
     doOnePath = false
-    if !isnothing(info.forcing.defaultForcing.dataPath)
+    if !isnothing(info.forcing.default_forcing.dataPath)
         doOnePath = true
-        if isabspath(info.forcing.defaultForcing.dataPath)
-            dataPath = info.forcing.defaultForcing.dataPath
+        if isabspath(info.forcing.default_forcing.dataPath)
+            dataPath = info.forcing.default_forcing.dataPath
         else
-            dataPath = joinpath(info.experiment_root, info.forcing.defaultForcing.dataPath)
+            dataPath = joinpath(info.experiment_root, info.forcing.default_forcing.dataPath)
         end
     end
     varnames = propertynames(info.forcing.variables)
     varlist = []
     dataAr = []
 
-    default_info = info.forcing.defaultForcing
+    default_info = info.forcing.default_forcing
     for v in varnames
         vinfo = getVariableInfo(default_info, getproperty(info.forcing.variables, v))
         if !doOnePath
@@ -83,7 +83,7 @@ end
 
 function getForcing(info::NamedTuple, ::Val{:yaxarray})
     doOnePath = false
-    dataPath = info.forcing.defaultForcing.dataPath
+    dataPath = info.forcing.default_forcing.dataPath
     nc = Any
     if !isnothing(dataPath)
         doOnePath = true
@@ -100,16 +100,17 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         end
     end
 
-    default_info = info.forcing.defaultForcing
+    default_info = info.forcing.default_forcing
     forcing_variables = keys(info.forcing.variables)
     tar_dims = nothing
     if !isnothing(info.forcing.dimensions.permute)
         tar_dims = Symbol[]
         for pd in info.forcing.dimensions.permute
-            tdn = Symbol(getfield(info.forcing.dimensions, Symbol(pd)))
+            tdn = Symbol(pd)
             push!(tar_dims, tdn)
         end
     end
+    f_sizes = nothing
     @info "getForcing: getting forcing variables..."
     incubes = map(forcing_variables) do k
         vinfo = getVariableInfo(default_info, info.forcing.variables[k])
@@ -127,37 +128,45 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
             if dn in keys(nc)
                 dv = nc[dn][:]
             else
-                dv=1:getfield(info.forcing.size, Symbol(dn))
+                # @show v, size(v)
+                dv=1:size(v, 2)
             end
-            RangeAxis(dn, dv)
+            rax = RangeAxis(dn, dv)
+            if dn == info.forcing.dimensions.time
+                t=nc[info.forcing.dimensions.time]
+                dt_str = Dates.DateTime(join(split(t.atts["units"], " ")[3:end], "T"))
+                rax=RangeAxis(dn, dt_str:Day(1):dt_str+Day(length(t)-1) |> collect)
+            end
+            rax
         end
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
         @info "     $(k): source_var: $(vinfo.sourceVariableName), source_file: $(dataPath)"
         yax = YAXArray(ax, YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(dataPath, vinfo.sourceVariableName, size(v)))
-        #todo: slice the time series using dates in helpers
-        # if hasproperty(yax,:time)
-        #     yax = yax[time=info.tem.helpers.dates.vector]
-        # end
-        @info "getForcing: checking if permutation of data is needed..."
         if !isnothing(tar_dims)
             permutes = getPermutation(YAXArrayBase.dimnames(yax), tar_dims)
-            @info "permuting dimensions to $(tar_dims)..."
+            @info "             permuting dimensions to $(tar_dims)..."
             yax = permutedims(yax, permutes)
         end
-        # yax = yax[time=info.tem.helpers.dates.vector]
-    # if hasproperty(yax,:time)
-    #         @info "getForcing: checking if permutation of data is needed..."
-    #         if !isnothing(info.forcing.dimensions.permute)
-    #             @info "permuting dimensions $(info.forcing.dimensions.permute)..."
-    #             yax = permutedims(yax, info.forcing.dimensions.permute)
-    #         end
-    #         # yax = yax[time=info.tem.helpers.dates.vector]
-    #     end
+        if hasproperty(yax,Symbol(info.forcing.dimensions.time))
+            yax = yax[time=(Date(info.tem.helpers.dates.sDate), Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
+        end
         numtype = Val{info.tem.helpers.numbers.numType}()
+        if vinfo.spaceTimeType == "spatiotemporal"
+            dnames=Symbol[]
+            dsizes=Int64[]
+            push!(dnames, Symbol(info.forcing.dimensions.time))
+            push!(dsizes, length(getproperty(yax, Symbol(info.forcing.dimensions.time))))
+            for space in info.forcing.dimensions.space
+                push!(dnames, Symbol(space))
+                push!(dsizes, length(getproperty(yax, Symbol(space))))
+            end
+            f_sizes = (; Pair.(dnames, dsizes)...)
+        end
         map(v -> cleanInputData(v, vinfo, numtype), yax)
     end
+
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getForcing: getting number of time steps..."
@@ -165,13 +174,13 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
     @info "getForcing: getting variable names..."
     forcing_variables = keys(info.forcing.variables)
     println("----------------------------------------------")
-    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
+    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables, sizes=f_sizes)
 end
 
 
 function getForcing(info::NamedTuple, ::Val{:zarr})
     doOnePath = false
-    dataPath = info.forcing.defaultForcing.dataPath
+    dataPath = info.forcing.default_forcing.dataPath
     nc = Any
     if !isnothing(dataPath)
         doOnePath = true
@@ -188,7 +197,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         end
     end
 
-    default_info = info.forcing.defaultForcing
+    default_info = info.forcing.default_forcing
     forcing_variables = keys(info.forcing.variables)
     tar_dims = nothing
     if !isnothing(info.forcing.dimensions.permute)
@@ -257,7 +266,7 @@ end
 
 function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
 
-    #dataPath = info.forcing.defaultForcing.dataPath
+    #dataPath = info.forcing.default_forcing.dataPath
     ds = YAXArrays.open_dataset(zopen(dpath))
     forcing_variables = propertynames(info.forcing.variables)
     incubes = map(forcing_variables) do k
