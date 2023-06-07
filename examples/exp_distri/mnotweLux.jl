@@ -19,7 +19,7 @@ forcing = (; forcing..., data = (chunkeddata))
 
 #T=Union{Float32,Missing}
 
-output = setupOutput(info);
+output = setupOutput(info, forcing.sizes);
 @profview outcubes = mapRunEcosystem(forcing, output, info.tem, info.tem.models.forward;
     max_cache=1e9);
 

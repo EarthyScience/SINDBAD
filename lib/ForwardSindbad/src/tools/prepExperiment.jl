@@ -61,7 +61,7 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     
     @info "prepExperimentForward: setup output..."
     println("----------------------------------------------")
-    output = setupOutput(info);
+    output = setupOutput(info, forcing.sizes);
     return info, forcing, output
 
 end
