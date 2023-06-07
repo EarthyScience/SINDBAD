@@ -14,11 +14,11 @@ experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
-forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 
-output = setupOutput(info, forcing.sizes);
+output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);

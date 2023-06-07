@@ -114,7 +114,7 @@ getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, 
 function getLossGradient(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     upVector = pVector
     newApproaches = updateModelParametersType(tblParams, base_models, upVector)
-    runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
@@ -127,7 +127,7 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
     upVector = pVector
     newApproaches = updateModelParameters(tblParams, base_models, upVector)
-    runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
@@ -142,14 +142,14 @@ function optimizeModelArray(forcing::NamedTuple, output, output_variables, obser
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters, tem.helpers)
+    tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter, optim.optimized_parameters);
 
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem);
+    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
     # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one))
     # make the cost function handle
     cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
