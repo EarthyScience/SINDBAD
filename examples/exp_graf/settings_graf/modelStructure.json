@@ -38,7 +38,7 @@
             "approach": "mult"
         },
         "gppDiffRadiation": {
-            "approach": "GSI"
+            "approach": "none"
         },
         "gppDirRadiation": {
             "approach": "none"

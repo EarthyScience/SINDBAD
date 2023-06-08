@@ -45,12 +45,17 @@
 			"d_snow": "snowW"
 		},
 		"variables": {
+			"gppDemand.gppE": null,
+			"gppAirT.TempScGPP": null,
+			"gppVPD.VPDScGPP": null,
+			"gppDemand.AllDemScGPP": null,
+			"gppPotential.gppPot": null,
+			"states.fAPAR": null,
 			"fluxes.evapotranspiration": null,
 			"fluxes.transpiration": null,
 			"fluxes.runoff": null,
 			"fluxes.runoffSurface": null,
 			"fluxes.gpp": null,
-			"pools.snowW": "d_snow",
 			"pools.soilW": "d_soil",
 			"waterBalance.waterBalance": null
 		}
