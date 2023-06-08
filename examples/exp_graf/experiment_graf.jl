@@ -64,7 +64,7 @@ for i in eachindex(output.variables)
         Colorbar(fig[1,2], obj)
         save("afr2d_$(vname).png", fig)
     else
-        for ll in size(pd, 2)
+        for ll in 1:size(pd, 2)
             fig, ax, obj = heatmap(pd[:,ll,:])
             Colorbar(fig[1,2], obj)
             save("afr2d_$(vname)_$(ll).png", fig)
