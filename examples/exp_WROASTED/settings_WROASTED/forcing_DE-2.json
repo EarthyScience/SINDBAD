@@ -1,13 +1,7 @@
 {
-	"size": {
-		"latitude": 2,
-		"longitude": 2,
-		"time": 14245
-	},
 	"dimensions": {
 		"permute": ["time", "longitude", "latitude"],
-		"latitude": "latitude",
-		"longitude": "longitude",
+		"space": ["longitude", "latitude"],
 		"time": "time"
 	},
 	"sel_mask": null,
