@@ -41,8 +41,9 @@ loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.l
 ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
-
+using Statistics
 plotdat = output.data;
-fig, ax, obj = heatmap(plotdat[1][1,1,:,:])
+# pd = mean(plotdat[1], dims=1)
+fig, ax, obj = heatmap(mean(plotdat[1], dims=1)[1, 1, :, :])
 Colorbar(fig[1,2], obj)
 save("afroca_gpp.png", fig)
