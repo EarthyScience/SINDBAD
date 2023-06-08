@@ -39,7 +39,7 @@
 		"options_file": null,
 		"isMultiObj": false
 	},
-	"default_parameter": {
+	"default_parameter": { 
 		"is_ml": false,
 		"distribution": ["normal", [0.0, 1.0]]
 	},
@@ -76,6 +76,7 @@
 		"gppVPD_⚆_Cm": null,
 		"gppSoilW_⚆_q": null,
 		"gppSoilW_⚆_θstar": null,
+		"gppDiffRadiation_⚆_μ": null,
 		"groundWRecharge_⚆_dos_exp": null,
 		"aRespiration_⚆_YG": null,
 		"aRespiration_⚆_RMN": null,
