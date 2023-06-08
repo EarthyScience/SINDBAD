@@ -46,9 +46,19 @@
 			"d_snow": "snowW"
 		},
 		"variables": {
-					"fluxes.gpp": null,
-					"gppDemand.gppE": null,
-					"states.fAPAR": null
+			"gppDemand.gppE": null,
+			"gppAirT.TempScGPP": null,
+			"gppVPD.VPDScGPP": null,
+			"gppDemand.AllDemScGPP": null,
+			"gppPotential.gppPot": null,
+			"states.fAPAR": null,
+			"fluxes.evapotranspiration": null,
+			"fluxes.transpiration": null,
+			"fluxes.runoff": null,
+			"fluxes.runoffSurface": null,
+			"fluxes.gpp": null,
+			"pools.soilW": "d_soil",
+			"waterBalance.waterBalance": null
 		}
 	}
 }
