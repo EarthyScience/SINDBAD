@@ -11,10 +11,10 @@ function precompute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		numType ∈ helpers.numbers
 	end
 	
-	p_km = ones(numType, length(land.pools.cEco))
-	p_km4su = copy(p_km)
-	RA_G = copy(p_km)
-	RA_M = copy(p_km)
+	p_km = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+	p_km4su = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+	RA_G = zero(land.pools.cEco)
+	RA_M = zero(land.pools.cEco)
 
 	## pack land variables
 	@pack_land begin
@@ -49,22 +49,26 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
 		# scalars of maintenance respiration for models A; B & C
 		# km is the maintenance respiration coefficient [d-1]
-		p_km[ix] = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
-		p_km4su[ix] = p_km[ix] * YG
+		p_km_ix = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
+		p_km4su_ix = p_km[ix] * YG
 
 		# maintenance respiration first: R_m = km * C
-		RA_M[ix] = p_km[ix] * cEco[ix]
+		RA_M_ix = p_km_ix * cEco[ix]
 	# no negative maintenance respiration
-		RA_M[ix] = max(RA_M[ix], 𝟘)
+		RA_M_ix = max(RA_M_ix, 𝟘)
 
 		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-		RA_G[ix] = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M[ix])
+		RA_G_ix = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M_ix)
 
 		# no negative growth respiration
-		RA_G[ix] = max(RA_G[ix], 𝟘)
+		RA_G_ix = max(RA_G_ix, 𝟘)
 
 		# total respiration per pool: R_a = R_m + R_g
-		cEcoEfflux = ups(cEcoEfflux, RA_M[ix] + RA_G[ix], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		cEcoEfflux = ups(cEcoEfflux, RA_M_ix + RA_G_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		p_km = ups(p_km, p_km_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		p_km4su = ups(p_km4su, p_km4su_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		RA_M = ups(RA_M, RA_M_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+		RA_G = ups(RA_G, RA_G_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
 		# cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
 	end
 
