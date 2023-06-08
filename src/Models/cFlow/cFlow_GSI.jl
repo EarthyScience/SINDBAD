@@ -91,6 +91,14 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
     return p_k_sum
 end
 
+function get_frac_flow(num, den)
+    if !iszero(den)
+        rat = num / den
+    else
+        rat = num
+    end    
+    return rat
+end
 
 function compute(o::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
@@ -133,11 +141,11 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
-    Re2L = 𝟘
+    Re2L_i = 𝟘
     if fW + fR !== 𝟘
-        Re2L = Re2LR * (fW / (fR + fW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
+        Re2L_i = Re2LR * (fW / (fR + fW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
-    Re2R = Re2LR * (𝟙 - Re2L) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
+    Re2R_i = Re2LR * (𝟙 - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
     
     # adjust the outflow rate from the flow pools
 
@@ -164,16 +172,16 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
     p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.carbon.zix.cVegLeaf, helpers)
-    L2ReF = L2Re / p_k_sum
-    k_LshedF = k_Lshed / p_k_sum
+    L2ReF = get_frac_flow(L2Re, p_k_sum)
+    k_LshedF = get_frac_flow(k_Lshed, p_k_sum)
 
     p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.carbon.zix.cVegRoot, helpers)
-    R2ReF = R2Re / p_k_sum
-    k_RshedF = k_Rshed / p_k_sum
+    R2ReF = get_frac_flow(R2Re, p_k_sum)
+    k_RshedF = get_frac_flow(k_Rshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, Re2L, Re2R, 𝟙, helpers.pools.carbon.zix.cVegReserve, helpers)
-    Re2LF = Re2L / p_k_sum
-    Re2RF = Re2R / p_k_sum
+    p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.carbon.zix.cVegReserve, helpers)
+    Re2LF = get_frac_flow(Re2L_i, p_k_sum)
+    Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 
     # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
     for ii in eachindex(ndxSrc)
@@ -206,7 +214,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     fWfTfR_prev = fWfTfR
     ## pack land variables
     @pack_land begin
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev) => land.cFlow
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev) => land.cFlow
         #p_k => land.states
     end
     return land
