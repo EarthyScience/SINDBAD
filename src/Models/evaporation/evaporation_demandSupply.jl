@@ -24,12 +24,12 @@ function compute(o::evaporation_demandSupply, forcing, land, helpers)
 	evaporation = min(PETsoil, evaporationSupply)
 
 	# update soil moisture changes
-	ΔsoilW[1] = ΔsoilW[1] - evaporation
+	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.water.zeros.soilW, 𝟘, 1)
 	## pack land variables
 	@pack_land begin
 		(PETsoil, evaporationSupply) => land.evaporation
 		evaporation => land.fluxes
-		# ΔsoilW => land.states
+		ΔsoilW => land.states
 	end
 	return land
 end

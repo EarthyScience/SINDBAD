@@ -29,7 +29,7 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => false,
+    "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
@@ -77,5 +77,5 @@ site = 1
 plotdat = output.data;
 fig, ax, obj = plot(plotdat[2][:,1,1,1])
 plot!(obs.gpp[:,1,1,1])
-Colorbar(fig[1,2], obj)
+# Colorbar(fig[1,2], obj)
 save("gpp.png", fig)
