@@ -13,8 +13,8 @@ function precompute(o::fAPAR_cVegLeaf, forcing, land, helpers)
 	end
 
 	## calculate variables
-	cVegLeaf = sum(cVegLeaf)
-	fAPAR = 𝟙 - exp(-(cVegLeaf * kEffExt))
+	csVegLeaf = sum(cVegLeaf)
+	fAPAR = 𝟙 - exp(-(csVegLeaf * kEffExt))
 
 	## pack land variables
 	@pack_land fAPAR => land.states

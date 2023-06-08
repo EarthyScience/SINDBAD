@@ -35,7 +35,7 @@ end
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
-        view(a;loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
@@ -157,6 +157,11 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers);
+    if tem.helpers.run.debugit
+        Sindbad.eval(:(error_catcher = []))    
+        push!(Sindbad.error_catcher, land_one)
+        pprint(land_one)
+    end
     return land_one, f_one  
 end
 
