@@ -19,7 +19,7 @@ function precompute(o::cCycle_GSI, forcing, land, helpers)
     cNPP = zero(land.pools.cEco)
 
 	cEco_prev = copy(land.pools.cEco)
-    zixVeg = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
+    zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     NEE = 𝟘
     NPP = 𝟘
@@ -54,8 +54,8 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## gains to vegetation
     for zv in zixVeg
-        cNPP = ups(cNPP, gpp * cAlloc[zv] - cEcoEfflux[zv], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
-        cEcoInflux = ups(cEcoInflux, cNPP[zv], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
+        cNPP = rep_elem(cNPP, gpp * cAlloc[zv] - cEcoEfflux[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
+        cEcoInflux = rep_elem(cEcoInflux, cNPP[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
     end
 
     # flows & losses
@@ -68,7 +68,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        cEcoFlow = ups(cEcoFlow, tmp_flow, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, take_r) 
+        cEcoFlow = rep_elem(cEcoFlow, tmp_flow, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, take_r) 
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]
@@ -91,17 +91,17 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     NEE = cRECO - gpp
     cEco_prev = cEco
     
-    cVeg = cVeg .* 𝟘 + cEco[helpers.pools.carbon.zix.cVeg]
-    cLit = cLit .* 𝟘 + cEco[helpers.pools.carbon.zix.cLit]
-    cSoil = cSoil .* 𝟘 + cEco[helpers.pools.carbon.zix.cSoil]
-    cVegRoot = cVegRoot .* 𝟘 + cEco[helpers.pools.carbon.zix.cVegRoot]
-    cVegWood = cVegWood .* 𝟘 + cEco[helpers.pools.carbon.zix.cVegWood]
-    cVegLeaf = cVegLeaf .* 𝟘 + cEco[helpers.pools.carbon.zix.cVegLeaf]
-    cVegReserve = cVegReserve .* 𝟘 + cEco[helpers.pools.carbon.zix.cVegReserve]
-    cLitFast = cLitFast .* 𝟘 + cEco[helpers.pools.carbon.zix.cLitFast]
-    cLitSlow = cLitSlow .* 𝟘 + cEco[helpers.pools.carbon.zix.cLitSlow]
-    cSoilSlow = cSoilSlow .* 𝟘 + cEco[helpers.pools.carbon.zix.cSoilSlow]
-    cSoilOld = cSoilOld .* 𝟘 + cEco[helpers.pools.carbon.zix.cSoilOld]
+    cVeg = cVeg .* 𝟘 + cEco[helpers.pools.zix.cVeg]
+    cLit = cLit .* 𝟘 + cEco[helpers.pools.zix.cLit]
+    cSoil = cSoil .* 𝟘 + cEco[helpers.pools.zix.cSoil]
+    cVegRoot = cVegRoot .* 𝟘 + cEco[helpers.pools.zix.cVegRoot]
+    cVegWood = cVegWood .* 𝟘 + cEco[helpers.pools.zix.cVegWood]
+    cVegLeaf = cVegLeaf .* 𝟘 + cEco[helpers.pools.zix.cVegLeaf]
+    cVegReserve = cVegReserve .* 𝟘 + cEco[helpers.pools.zix.cVegReserve]
+    cLitFast = cLitFast .* 𝟘 + cEco[helpers.pools.zix.cLitFast]
+    cLitSlow = cLitSlow .* 𝟘 + cEco[helpers.pools.zix.cLitSlow]
+    cSoilSlow = cSoilSlow .* 𝟘 + cEco[helpers.pools.zix.cSoilSlow]
+    cSoilOld = cSoilOld .* 𝟘 + cEco[helpers.pools.zix.cSoilOld]
     ## pack land variables
     @pack_land begin
         (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) => land.pools

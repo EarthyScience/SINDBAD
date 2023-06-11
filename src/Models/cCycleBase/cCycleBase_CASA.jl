@@ -55,7 +55,7 @@ function compute(o::cCycleBase_CASA, forcing, land, helpers)
 
 	## calculate variables
 	# carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)] .= C2Nveg
+    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
 
 	# turnover rates
     TSPY = helpers.dates.nStepsYear

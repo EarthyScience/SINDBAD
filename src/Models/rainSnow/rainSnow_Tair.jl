@@ -36,7 +36,7 @@ function compute(o::rainSnow_Tair, forcing, land, helpers)
     precip = rain + snow
 
 	# add snowfall to snowpack of the first layer
-    ΔsnowW = cusp(ΔsnowW, snow, helpers.pools.water.zeros.snowW, 𝟘, 1)
+    ΔsnowW = cusp(ΔsnowW, snow, helpers.pools.zeros.snowW, 𝟘, 1)
     ## pack land variables
     @pack_land begin
         (precip, rain, snow) => land.rainSnow

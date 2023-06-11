@@ -598,9 +598,17 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
+    hlp_new = (;)
+    for prop in propertynames(hlpStates.carbon)
+        cfield = getproperty(hlpStates.carbon, prop)
+        wfield = getproperty(hlpStates.water, prop)
+        cwfield = (; cfield..., wfield...)
+        hlp_new = setTupleField(hlp_new, (prop, cwfield))
+    end
     info = (; info..., pools=tmpStates)
     # info = (; info..., tem=(; info.tem..., pools=tmpStates))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
+    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
 
@@ -730,10 +738,10 @@ end
 
 
 """
-    getVariableGroups(varList)
+    getVariableGrorep_elem(varList)
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
 """
-function getVariableGroups(varList::AbstractArray)
+function getVariableGrorep_elem(varList::AbstractArray)
     var_dict = Dict()
     for var in varList
         var_l = String(var)
@@ -758,7 +766,7 @@ end
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info::NamedTuple)
-    writeStoreVars = getVariableGroups(propertynames(info.modelRun.output.variables) |> collect)
+    writeStoreVars = getVariableGrorep_elem(propertynames(info.modelRun.output.variables) |> collect)
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
@@ -869,7 +877,7 @@ function setupExperiment(info::NamedTuple)
         sel_vars = info.optim.variables.store
     elseif info.tem.helpers.run.calcCost
         if info.modelRun.flags.runForward
-            sel_vars = getVariableGroups(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model));
+            sel_vars = getVariableGrorep_elem(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model));
         else
             sel_vars = info.optim.variables.store
         end
