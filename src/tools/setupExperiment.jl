@@ -599,11 +599,20 @@ function generatePoolsInfo(info::NamedTuple)
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
     hlp_new = (;)
-    for prop in propertynames(hlpStates.carbon)
-        cfield = getproperty(hlpStates.carbon, prop)
-        wfield = getproperty(hlpStates.water, prop)
-        cwfield = (; cfield..., wfield...)
-        hlp_new = setTupleField(hlp_new, (prop, cwfield))
+    eleprops = propertynames(hlpStates)
+    if :carbon in eleprops && :water in eleprops
+        for prop in propertynames(hlpStates.carbon)
+            cfield = getproperty(hlpStates.carbon, prop)
+            wfield = getproperty(hlpStates.water, prop)
+            cwfield = (; cfield..., wfield...)
+            hlp_new = setTupleField(hlp_new, (prop, cwfield))
+        end
+    elseif :carbon in eleprops && :water ∉ eleprops
+        hlp_new = hlpStates.carbon
+    elseif :carbon ∉ eleprops && :water in eleprops
+        hlp_new = hlpStates.water
+    else
+        hlp_new = hlpStates
     end
     info = (; info..., pools=tmpStates)
     # info = (; info..., tem=(; info.tem..., pools=tmpStates))
@@ -738,10 +747,10 @@ end
 
 
 """
-    getVariableGrorep_elem(varList)
+    getVariableGroups(varList)
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
 """
-function getVariableGrorep_elem(varList::AbstractArray)
+function getVariableGroups(varList::AbstractArray)
     var_dict = Dict()
     for var in varList
         var_l = String(var)
@@ -766,7 +775,7 @@ end
 sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info::NamedTuple)
-    writeStoreVars = getVariableGrorep_elem(propertynames(info.modelRun.output.variables) |> collect)
+    writeStoreVars = getVariableGroups(propertynames(info.modelRun.output.variables) |> collect)
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
@@ -877,7 +886,7 @@ function setupExperiment(info::NamedTuple)
         sel_vars = info.optim.variables.store
     elseif info.tem.helpers.run.calcCost
         if info.modelRun.flags.runForward
-            sel_vars = getVariableGrorep_elem(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model));
+            sel_vars = getVariableGroups(union(String.(keys(info.modelRun.output.variables)), info.optim.variables.model));
         else
             sel_vars = info.optim.variables.store
         end
