@@ -24,8 +24,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     # Prepare the list of flows
     for trow in eachindex(flowVar)
         # @show trow, srcName, trgName
-        zixSrc = getzix(getfield(land.pools, asrc[trow]), getfield(helpers.pools.carbon.zix, asrc[trow]))
-        zixTrg = getzix(getfield(land.pools, atrg[trow]), getfield(helpers.pools.carbon.zix, atrg[trow]))
+        zixSrc = getzix(getfield(land.pools, asrc[trow]), getfield(helpers.pools.zix, asrc[trow]))
+        zixTrg = getzix(getfield(land.pools, atrg[trow]), getfield(helpers.pools.zix, atrg[trow]))
         push!(ndxSrc, zixSrc)
         push!(ndxTrg, zixTrg)
         for iSrc in zixSrc
@@ -85,7 +85,8 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
         if tmp > maxValue
             tmp = maxValue
         end
-        p_k = ups(p_k, tmp, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+        @rep_elem tmp => (p_k, cEco, ix)
+        # p_k = rep_elem(p_k, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
         p_k_sum = p_k_sum + tmp
     end
     return p_k_sum
@@ -171,15 +172,15 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
 
-    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.carbon.zix.cVegLeaf, helpers)
+    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
     L2ReF = get_frac_flow(L2Re, p_k_sum)
     k_LshedF = get_frac_flow(k_Lshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.carbon.zix.cVegRoot, helpers)
+    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.zix.cVegRoot, helpers)
     R2ReF = get_frac_flow(R2Re, p_k_sum)
     k_RshedF = get_frac_flow(k_Rshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.carbon.zix.cVegReserve, helpers)
+    p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
     Re2LF = get_frac_flow(Re2L_i, p_k_sum)
     Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 

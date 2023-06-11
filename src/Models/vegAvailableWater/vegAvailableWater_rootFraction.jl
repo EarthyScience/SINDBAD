@@ -29,7 +29,7 @@ function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 		PAW ∈ land.vegAvailableWater
 	end
 	for sl in eachindex(soilW)
-		PAW = ups(PAW, p_fracRoot2SoilD[sl] * (max(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘)), helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
+		PAW = rep_elem(PAW, p_fracRoot2SoilD[sl] * (max(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘)), helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
 	end
 
 

@@ -18,8 +18,8 @@ function getConstraintNames(optim::NamedTuple)
         vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
         optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
-    # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(modelVariables)
+    # optimVariables = getVariableGrorep_elem(modelVariables)
+    storeVariables = getVariableGrorep_elem(modelVariables)
     return obsVariables, optimVariables, storeVariables, modelVariables
 end
 

@@ -41,7 +41,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
-    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.carbon.zix.cVeg)
+    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)
     for ix in zix
 
 		# compute maintenance & growth respiration terms for each vegetation pool
@@ -64,14 +64,13 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		RA_G_ix = max(RA_G_ix, 𝟘)
 
 		# total respiration per pool: R_a = R_m + R_g
-		cEcoEfflux = ups(cEcoEfflux, RA_M_ix + RA_G_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, ix)
-		p_km = ups(p_km, p_km_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, ix)
-		p_km4su = ups(p_km4su, p_km4su_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, ix)
-		RA_M = ups(RA_M, RA_M_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, ix)
-		RA_G = ups(RA_G, RA_G_ix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, ix)
-		# cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
+		cEcoEfflux_ix = RA_M_ix + RA_G_ix
+		@rep_elem cEcoEfflux_ix => (cEcoEfflux, cEco, ix)
+		@rep_elem p_km_ix => (p_km, cEco, ix)
+		@rep_elem p_km4su_ix => (p_km4su, cEco, ix)
+		@rep_elem RA_M_ix => (RA_M, cEco, ix)
+		@rep_elem RA_G_ix => (RA_G, cEco, ix)
 	end
-
 	## pack land variables
 	@pack_land begin
 		(p_km, p_km4su) => land.aRespiration
