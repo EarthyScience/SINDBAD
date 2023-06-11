@@ -20,7 +20,7 @@ function precompute(o::soilWBase_smax2fRD4, forcing, land, helpers)
     ## precomputations/check
     n_soilW = length(soilW)
     # get the soil thickness & root distribution information from input
-    soilLayerThickness = helpers.pools.water.layerThickness.soilW
+    soilLayerThickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
     if length(length(soilLayerThickness)) != 2
         error("soilWBase_smax2Layer approach needs eactly 2 soil layers in modelStructure.json.")
@@ -86,7 +86,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - forcing.RDeff: effective rooting depth from Yang et al. 2016
  - forcing.RDmax: maximum rooting depth from Fan et al. 2017
  - forcing.SWCmax: maximum soil water capacity from Wang-Erlandsson et al. 2016
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
 
 *Outputs*
  - land.soilWBase.p_RD: the 4 scaled RD datas [pix, zix]

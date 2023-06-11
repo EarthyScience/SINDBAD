@@ -39,8 +39,8 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
         for sl in 1:length(land.pools.soilW)
             uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal))
 
-            wRootUptake = ups(wRootUptake, toUptake * uptakeProportion, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
-            ΔsoilW = cusp(ΔsoilW, -wRootUptake[sl], helpers.pools.water.zeros.soilW, 𝟘, sl) 
+            wRootUptake = rep_elem(wRootUptake, toUptake * uptakeProportion, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
+            ΔsoilW = cusp(ΔsoilW, -wRootUptake[sl], helpers.pools.zeros.soilW, 𝟘, sl) 
         end
     end
     # pack land variables

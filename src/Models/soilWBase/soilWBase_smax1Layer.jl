@@ -14,7 +14,7 @@ function precompute(o::soilWBase_smax1Layer, forcing, land, helpers)
     ## precomputations/check
     n_soilW = length(soilW)
     # get the soil thickness & root distribution information from input
-    soilLayerThickness = helpers.pools.water.layerThickness.soilW
+    soilLayerThickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
     if length(soilLayerThickness) != 1
         error(["soilWBase_smax1Layer needs eactly 1 soil layer in modelStructure.json."])
@@ -64,7 +64,7 @@ $(PARAMFIELDS)
 Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
 
 *Outputs*
  - land.soilWBase.p_nsoilLayers

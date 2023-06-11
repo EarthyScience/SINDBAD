@@ -21,7 +21,7 @@ function compute(o::evaporation_bareFraction, forcing, land, helpers)
 	evaporation = min(PETsoil, (soilW[1] + ΔsoilW[1]) * ks)
 
 	# update soil moisture changes
-	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.water.zeros.soilW, 𝟘, 1)
+	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.zeros.soilW, 𝟘, 1)
 
 	## pack land variables
 	@pack_land begin

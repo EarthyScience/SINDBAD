@@ -1,5 +1,7 @@
 export update_state_pools
-export cusp, ups
+export cusp, usp
+export rep_elem, @rep_elem
+export add_to_elem, @add_to_elem
 
 function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T}) where T<:Number
     sp[:] = sp .+ Δs
@@ -96,7 +98,7 @@ function cusp(sp::SubArray, Δsp, sp_zero, split_level::Vector{Int})
     return sp
 end
 
-function ups(sp::SubArray, sp_elem, split_level::Int)
+function cusp(sp::SubArray, sp_elem, split_level::Int)
     sp[split_level] = sp_elem
     return sp
 end
@@ -193,6 +195,55 @@ function ups(sp::SVector, sp_elem, split_level::Vector{Int})
     end
     return sp
 end
+
+macro rep_elem(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = outparams.args[3]
+    rhsa = rhs.args
+    tar = esc(rhsa[1])
+    hp_pool = QuoteNode(rhsa[2])
+    indx = rhsa[3]
+    outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(Expr(:., :(helpers.pools.ones), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(:(helpers.numbers.𝟙)), esc(indx)))]
+    # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
+    return Expr(:block, outCode...)
+end
+
+function rep_elem(sp::SVector, sp_elem, sp_zero, sp_one, 𝟘, 𝟙, ind::Int)
+    sp_zero = sp_zero .* 𝟘
+    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), ind)
+    sp_one = sp_one .* 𝟘 .+ 𝟙
+    sp_one = Base.setindex(sp_one, zero(eltype(sp_one)), ind)
+    sp = sp .* sp_one .+ sp_zero .* sp_elem
+    # sp = Base.setindex(sp, sp_elem, split_level)
+    return sp
+end
+
+macro add_to_elem(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = outparams.args[2]
+    rhs = outparams.args[3]
+    rhsa = rhs.args
+    tar = esc(rhsa[1])
+    hp_pool = QuoteNode(rhsa[2])
+    indx = rhsa[3]
+    # outCode = [Expr(:(=), tar, Expr(:call, :add_to_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), :(helpers.numbers.𝟘), indx))]
+    outCode = [Expr(:(=), tar, Expr(:call, :add_to_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(indx)))]
+    return Expr(:block, outCode...)
+end
+
+function add_to_elem(sp::SVector, Δsp, sp_zero, 𝟘, ind::Int)
+    sp_zero = sp_zero .* 𝟘
+    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), ind)
+    sp = sp .+ sp_zero .* Δsp
+    return sp
+end
+
+
 @doc """
 `cusp(sp, Δsp)`
 

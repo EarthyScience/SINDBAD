@@ -40,9 +40,9 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
 		lossCap = max(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]), 𝟘)
 		minFlow = min(tmpCapFlow, holdCap, lossCap)
 		tmp = minFlow > tolerance ? minFlow : 𝟘
-		capFlow = ups(capFlow, tmp, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl) 
-		ΔsoilW = cusp(ΔsoilW, capFlow[sl], helpers.pools.water.zeros.soilW,  𝟘, sl)
-		ΔsoilW = cusp(ΔsoilW, -capFlow[sl], helpers.pools.water.zeros.soilW, 𝟘, sl+1)
+		capFlow = rep_elem(capFlow, tmp, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl) 
+		ΔsoilW = cusp(ΔsoilW, capFlow[sl], helpers.pools.zeros.soilW,  𝟘, sl)
+		ΔsoilW = cusp(ΔsoilW, -capFlow[sl], helpers.pools.zeros.soilW, 𝟘, sl+1)
 		
 	end
 
