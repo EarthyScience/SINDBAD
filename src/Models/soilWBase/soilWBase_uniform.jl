@@ -16,8 +16,8 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     n_soilW = length(soilW)
     ## precomputations/check
     # get the soil thickness 
-    soilDepths = helpers.numbers.sNT.(helpers.pools.water.layerThickness.soilW)
-    # soilDepths = helpers.pools.water.layerThickness.soilW
+    soilDepths = helpers.numbers.sNT.(helpers.pools.layerThickness.soilW)
+    # soilDepths = helpers.pools.layerThickness.soilW
     soilLayerThickness = soilDepths
 
     if length(sp_kFC) != n_soilW
@@ -111,7 +111,7 @@ $(PARAMFIELDS)
 Distribution of soil hydraulic properties over depth using soilWBase_uniform
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
  - land.soilTexture.p_[SAND/SILT/CLAY/ORGM]: texture properties [nPix, nZix]
 

@@ -59,7 +59,7 @@ $(PARAMFIELDS)
 Distribution of water uptake fraction/efficiency by root per soil layer using rootFraction_k2fRD
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
  - k2_RDscale : RD scalar for k2
  - land.states.vegFraction : vegetation fraction
 

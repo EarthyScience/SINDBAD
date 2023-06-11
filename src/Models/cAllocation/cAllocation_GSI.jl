@@ -14,7 +14,7 @@ function precompute(o::cAllocation_GSI, forcing, land, helpers)
     nzixVegs=helpers.numbers.numType[]
     cpI = 1
     for cpName in cpNames
-        zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.carbon.zix, cpName))
+        zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
         nZix=sNT(length(zix))
         zixVegs[cpI] = zix
         push!(nzixVegs, nZix)
@@ -39,19 +39,25 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
     end
 
     # allocation to root; wood & leaf
-    cAllocVeg = ups(cAllocVeg, fW / ((fW + fT) * ttwo), helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, 1)
-    cAllocVeg = ups(cAllocVeg, fW / ((fW + fT) * ttwo), helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, 2)
-    cAllocVeg = ups(cAllocVeg, fT / (fW + fT), helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, 3)
+    cAllocVeg_1 = fW / ((fW + fT) * ttwo)
+    cAllocVeg_2 = fW / ((fW + fT) * ttwo)
+    cAllocVeg_3 = fT / ((fW + fT) * ttwo)
+    
+    @rep_elem cAllocVeg_1 => (cAllocVeg, cEco, 1)
+    @rep_elem cAllocVeg_2 => (cAllocVeg, cEco, 2)
+    @rep_elem cAllocVeg_3 => (cAllocVeg, cEco, 3)
 
     for ind in 1:3
         zix = zixVegs[ind]
         nZix=nzixVegs[ind]
-        # zix = getzix(getfield(land.pools, cpNames[ind]), helpers.pools.carbon.zix, cpNames[ind])
-        # nZix=length(zix)
         for ix = eachindex(zix)
-            cAlloc= ups(cAlloc, cAllocVeg[ind]  / nZix, helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, 𝟘, 𝟙, zix[ix])
+            cAllocVeg_ix = cAllocVeg[ind]  / nZix
+            zix_ix = zix[ix]
+            @rep_elem cAllocVeg_ix => (cAlloc, cEco, zix_ix)
         end
     end
+
+    @pack_land (cAlloc, cAllocVeg) => land.states
 
     return land
 end
