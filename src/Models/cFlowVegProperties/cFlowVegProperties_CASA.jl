@@ -28,8 +28,8 @@ function compute(o::cFlowVegProperties_CASA, forcing, land, helpers)
 	p_E = p_F
 	# ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, p_MTF;, :cVegLeaf, :cLitLeafS, 1, -, p_MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, p_MTF;, :cVegRootF, :cLitRootFS, 1, -, p_MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, p_SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, p_SCLIGNIN;, :cLitRootFS, :cSoilSlow, p_SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, p_SCLIGNIN;, :cLitWood, :cSoilSlow, WOODLIGFRAC;, :cLitWood, :cMicSurf, 1, -, WOODLIGFRAC;, :cLitRootC, :cSoilSlow, WOODLIGFRAC;, :cLitRootC, :cMicSoil, 1, -, WOODLIGFRAC;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
 	for ii in 1:size(aM, 1)
-		ndxSrc = helpers.pools.carbon.zix.(aM[ii, 1])
-		ndxTrg = helpers.pools.carbon.zix.(aM[ii, 2]); #sujan is this 2 | 1?
+		ndxSrc = helpers.pools.zix.(aM[ii, 1])
+		ndxTrg = helpers.pools.zix.(aM[ii, 2]); #sujan is this 2 | 1?
 		for iSrc in eachindex(ndxSrc)
 			for iTrg in eachindex(ndxTrg)
 				# p_fVeg[ndxTrg[iTrg], ndxSrc[iSrc]] = aM(ii, 3)

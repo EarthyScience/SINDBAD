@@ -28,6 +28,7 @@ replace_info = Dict(
     "modelRun.flags.runOpti" => optimize_it,
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
+    "modelRun.flags.catchErrors" => true,
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
@@ -47,7 +48,6 @@ output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
-# Sindbad.eval(:(error_catcher = []))    
 loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -59,4 +59,23 @@ obs = getKeyedArrayFromYaxArray(observations);
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
 
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);  
+@time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);  
+
+tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
+new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
+output = setupOutput(info);
+@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, land_init_space, f_one)
+
+
+
+# some plots
+ds = forcing.data[1];
+using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+site = 1
+
+
+plotdat = output.data;
+fig, ax, obj = plot(plotdat[2][:,1,1,1])
+plot!(obs.gpp[:,1,1,1])
+# Colorbar(fig[1,2], obj)
+save("gpp.png", fig)

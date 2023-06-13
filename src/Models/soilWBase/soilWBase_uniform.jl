@@ -16,8 +16,8 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     n_soilW = length(soilW)
     ## precomputations/check
     # get the soil thickness 
-    soilDepths = helpers.numbers.sNT.(helpers.pools.water.layerThickness.soilW)
-    # soilDepths = helpers.pools.water.layerThickness.soilW
+    soilDepths = helpers.numbers.sNT.(helpers.pools.layerThickness.soilW)
+    # soilDepths = helpers.pools.layerThickness.soilW
     soilLayerThickness = soilDepths
 
     if length(sp_kFC) != n_soilW
@@ -91,7 +91,7 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     s_wSat = sum(p_wSat)
     s_wAWC = sum(p_wAWC)
 
-    # soilW = min(soilW, p_wSat) # =. is necessary to maintain the subarray data type
+    soilW = soilW .* helpers.numbers.𝟘 + min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
         (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, soilLayerThickness, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
         # soilW => land.pools
@@ -111,7 +111,7 @@ $(PARAMFIELDS)
 Distribution of soil hydraulic properties over depth using soilWBase_uniform
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
  - land.soilTexture.p_[SAND/SILT/CLAY/ORGM]: texture properties [nPix, nZix]
 

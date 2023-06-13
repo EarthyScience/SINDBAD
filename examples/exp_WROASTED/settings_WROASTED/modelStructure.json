@@ -38,7 +38,7 @@
             "approach": "gpp"
         },
         "cCycle": {
-            "approach": "simple"
+            "approach": "GSI"
         },
         "cCycleBase": {
             "approach": "GSI"
@@ -101,7 +101,7 @@
             "approach": "mult"
         },
         "gppDiffRadiation": {
-            "approach": "GSI"
+            "approach": "Wang2015"
         },
         "gppDirRadiation": {
             "approach": "none"
@@ -189,7 +189,7 @@
             "use4spinup": false
         },
         "wCycle": {
-            "approach": "combined"
+            "approach": "components"
         },
         "WUE": {
             "approach": "expVPDDayCo2"

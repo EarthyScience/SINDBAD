@@ -51,7 +51,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 		# compute annk based on age
 		annk[AGE > 𝟘] = 𝟙 / AGE[AGE > 𝟘]
 		# feed it to the new annual turnover rates
-		zix = helpers.pools.carbon.zix.(cpN)
+		zix = helpers.pools.zix.(cpN)
 		p_annk[zix] = annk; #sujan
 		# p_annk[zix] = annk[zix]
 	end
@@ -75,8 +75,8 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
 	# DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
 	p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
 	# feed the output
-	p_kfVeg[helpers.pools.carbon.zix.cLitLeafS] = p_LIGEFF
-	p_kfVeg[helpers.pools.carbon.zix.cLitRootFS] = p_LIGEFF
+	p_kfVeg[helpers.pools.zix.cLitLeafS] = p_LIGEFF
+	p_kfVeg[helpers.pools.zix.cLitRootFS] = p_LIGEFF
 
 	## pack land variables
 	@pack_land begin

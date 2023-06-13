@@ -40,7 +40,7 @@ function compute(o::rootFraction_constant, forcing, land, helpers)
 		soilcumuD = cumulativeDepths[sl]
 		rootOver = maxRootDepth - soilcumuD
 		rootFrac = rootOver > 𝟘 ? constantRootFrac : 𝟘
-		p_fracRoot2SoilD = ups(p_fracRoot2SoilD, rootFrac, helpers.pools.water.zeros.soilW, helpers.pools.water.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
+		p_fracRoot2SoilD = rep_elem(p_fracRoot2SoilD, rootFrac, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
 	end
 
 	## pack land variables
