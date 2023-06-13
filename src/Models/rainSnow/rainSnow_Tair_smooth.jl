@@ -41,7 +41,7 @@ function compute(o::rainSnow_Tair_smooth, forcing, land, helpers)
 
 	# add snowfall to snowpack of the first layer
     #ΔsnowW[1] = ΔsnowW[1] + snow 
-    ΔsnowW = cusp(ΔsnowW, snow, helpers.pools.water.zeros.soilW, 𝟘, 1)
+    ΔsnowW = cusp(ΔsnowW, snow, helpers.pools.zeros.soilW, 𝟘, 1)
 
     ## pack land variables
     @pack_land begin

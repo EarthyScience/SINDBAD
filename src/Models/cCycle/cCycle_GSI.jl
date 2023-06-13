@@ -1,9 +1,9 @@
-export cCycle_simple
+export cCycle_GSI
 
-struct cCycle_simple <: cCycle
+struct cCycle_GSI <: cCycle
 end
 
-function precompute(o::cCycle_simple, forcing, land, helpers)
+function precompute(o::cCycle_GSI, forcing, land, helpers)
 
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
@@ -34,12 +34,12 @@ function precompute(o::cCycle_simple, forcing, land, helpers)
     return land
 end
 
-function compute(o::cCycle_simple, forcing, land, helpers)
+function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k, zixVeg, zerocEcoFlow, zerocEcoInflux) ∈ land.states
-        cEco ∈ land.pools
+        (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A, giver, taker) ∈ land.cFlow
@@ -91,23 +91,22 @@ function compute(o::cCycle_simple, forcing, land, helpers)
     NEE = cRECO - gpp
     cEco_prev = cEco
     
-    land = upd_c(land, cEco, helpers);
+    cVeg = cVeg .* 𝟘 + cEco[helpers.pools.zix.cVeg]
+    cLit = cLit .* 𝟘 + cEco[helpers.pools.zix.cLit]
+    cSoil = cSoil .* 𝟘 + cEco[helpers.pools.zix.cSoil]
+    cVegRoot = cVegRoot .* 𝟘 + cEco[helpers.pools.zix.cVegRoot]
+    cVegWood = cVegWood .* 𝟘 + cEco[helpers.pools.zix.cVegWood]
+    cVegLeaf = cVegLeaf .* 𝟘 + cEco[helpers.pools.zix.cVegLeaf]
+    cVegReserve = cVegReserve .* 𝟘 + cEco[helpers.pools.zix.cVegReserve]
+    cLitFast = cLitFast .* 𝟘 + cEco[helpers.pools.zix.cLitFast]
+    cLitSlow = cLitSlow .* 𝟘 + cEco[helpers.pools.zix.cLitSlow]
+    cSoilSlow = cSoilSlow .* 𝟘 + cEco[helpers.pools.zix.cSoilSlow]
+    cSoilOld = cSoilOld .* 𝟘 + cEco[helpers.pools.zix.cSoilOld]
     ## pack land variables
     @pack_land begin
-        cEco => land.pools
+        (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) => land.pools
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
         (ΔcEco, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
-    end
-    return land
-end
-
-function upd_c(land, cEco, tem_helpers)
-    foreach(propertynames(tem_helpers.pools.zix)) do cv
-        cp = getfield(land.pools, cv)
-        cz = getfield(tem_helpers.pools.zix, cv)
-        cp = cEco[cz]
-        land = Sindbad.setTupleSubfield(land, :pools, (cv, cp));
-        # @show cv, cp, cz
     end
     return land
 end
@@ -118,7 +117,7 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 ---
 
 # compute:
-Allocate carbon to vegetation components using cCycle_simple
+Allocate carbon to vegetation components using cCycle_GSI
 
 *Inputs*
  - helpers.dates.nStepsYear: number of time steps per year
@@ -139,7 +138,7 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.states.cEcoEfflux:
 
 # precompute:
-precompute/instantiate time-invariant variables for cCycle_simple
+precompute/instantiate time-invariant variables for cCycle_GSI
 
 
 ---
@@ -155,4 +154,4 @@ precompute/instantiate time-invariant variables for cCycle_simple
 *Created by:*
  - ncarvalhais
 """
-cCycle_simple
+cCycle_GSI

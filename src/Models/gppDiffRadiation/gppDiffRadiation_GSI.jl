@@ -40,7 +40,8 @@ function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## calculate variables
     f_prev = CloudScGPP_prev
     Rg = Rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
-    fR = f_smooth(f_prev, Rg, fR_τ, fR_slope, fR_base)
+    fR = (𝟙 - fR_τ) * f_prev + fR_τ * (𝟙 / (𝟙 + exp(-fR_slope * (Rg - fR_base))))
+    # fR = f_smooth(f_prev, Rg, fR_τ, fR_slope, fR_base)
     CloudScGPP = clamp(fR, 𝟘, 𝟙)
     CloudScGPP_prev = CloudScGPP
 

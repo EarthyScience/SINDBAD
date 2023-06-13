@@ -31,7 +31,7 @@ function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
 	CLAY = mean(p_CLAY)
 	SILT = mean(p_SILT)
 	# TEXTURE EFFECT ON k OF cMicSoil
-	zix = helpers.pools.carbon.zix.cMicSoil
+	zix = helpers.pools.zix.cMicSoil
 	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
 	# (ineficient, should be pix zix_mic)
 

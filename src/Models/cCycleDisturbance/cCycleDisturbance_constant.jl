@@ -17,7 +17,7 @@ function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 		𝟘 ∈ helpers.numbers
 	end
 	if isDisturbed > 𝟘
-		zixVegAll = vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.carbon.zix.cVeg)...)
+		zixVegAll = vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...)
 		for zixVeg in zixVegAll
 			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
 			cEco = cusp(cEco, -cLoss, zixVeg)
