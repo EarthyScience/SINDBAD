@@ -20,19 +20,9 @@ replace_info_spatial = Dict(
     "modelRun.mapping.yaxarray" => [],
     "modelRun.mapping.runEcosystem" => ["time", "id"],
     "modelRun.flags.runSpinup" => true,
+    "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true
     ); #one parameter set for whole domain
-
-
-replace_info_site = Dict(
-    "experiment.domain" => domain * "_site",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "modelRun.mapping.yaxarray" => ["id"],
-    "modelRun.mapping.runEcosystem" => ["time"],
-    "modelRun.flags.runSpinup" => true,
-    "spinup.flags.doSpinup" => true
-); #one parameter set per each site
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
@@ -47,6 +37,8 @@ forc = getKeyedArrayFromYaxArray(forcing);
 GC.gc()
 
 loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+
+
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 for x=1:10
     @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
@@ -58,13 +50,24 @@ end
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);  
-# @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_site);  
 
 ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
 
 plotdat = output.data;
-fig, ax, obj = heatmap(plotdat[end][:,1,:])
-Colorbar(fig[1,2], obj)
-save("af_gpp.png", fig)
+for i in eachindex(output.variables)
+    vname = output.variables[i]
+    pd = plotdat[i]
+    if size(pd, 2) == 1
+        fig, ax, obj = heatmap(pd[:,1,:])
+        Colorbar(fig[1,2], obj)
+        save("afr2d_$(vname).png", fig)
+    else
+        for ll in 1:size(pd, 2)
+            fig, ax, obj = heatmap(pd[:,ll,:])
+            Colorbar(fig[1,2], obj)
+            save("afr2d_$(vname)_$(ll).png", fig)
+        end
+    end
+end

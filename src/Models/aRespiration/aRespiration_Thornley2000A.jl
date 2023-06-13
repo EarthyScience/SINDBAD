@@ -8,13 +8,13 @@ end
 function precompute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
-		numType ∈ helpers.numbers
+        (numType, 𝟘, 𝟙) ∈ helpers.numbers
 	end
 	
-	p_km = ones(numType, length(land.pools.cEco))
-	p_km4su = copy(p_km)
-	RA_G = copy(p_km)
-	RA_M = copy(p_km)
+	p_km = zero(land.pools.cEco) .+ 𝟙
+	p_km4su = zero(land.pools.cEco) .+ 𝟙
+	RA_G = zero(land.pools.cEco)
+	RA_M = zero(land.pools.cEco)
 
 	## pack land variables
 	@pack_land begin
@@ -36,12 +36,12 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 		gpp ∈ land.fluxes
 		p_C2Nveg ∈ land.cCycleBase
 		fT ∈ land.aRespirationAirT
-		(𝟙, 𝟘, numType) ∈ helpers.numbers
+        (numType, 𝟘, 𝟙) ∈ helpers.numbers
 	end
 	# adjust nitrogen efficiency rate of maintenance respiration to the current
 	# model time step
 	RMN = RMN / helpers.dates.nStepsDay
-    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.carbon.zix.cVeg)
+    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)
     for ix in zix
 
 		# compute maintenance & growth respiration terms for each vegetation pool
@@ -49,25 +49,28 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
 		# scalars of maintenance respiration for models A; B & C
 		# km is the maintenance respiration coefficient [d-1]
-		p_km[ix] = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
-		p_km4su[ix] = p_km[ix] * YG
+		p_km_ix = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
+		p_km4su_ix = p_km[ix] * YG
 
 		# maintenance respiration first: R_m = km * C
-		RA_M[ix] = p_km[ix] * cEco[ix]
+		RA_M_ix = p_km_ix * cEco[ix]
 	# no negative maintenance respiration
-		RA_M[ix] = max(RA_M[ix], 𝟘)
+		RA_M_ix = max(RA_M_ix, 𝟘)
 
 		# growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-		RA_G[ix] = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M[ix])
+		RA_G_ix = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M_ix)
 
 		# no negative growth respiration
-		RA_G[ix] = max(RA_G[ix], 𝟘)
+		RA_G_ix = max(RA_G_ix, 𝟘)
 
 		# total respiration per pool: R_a = R_m + R_g
-		cEcoEfflux = ups(cEcoEfflux, RA_M[ix] + RA_G[ix], helpers.pools.carbon.zeros.cEco, helpers.pools.carbon.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
-		# cEcoEfflux[ix] = RA_M[ix] + RA_G[ix]
+		cEcoEfflux_ix = RA_M_ix + RA_G_ix
+		@rep_elem cEcoEfflux_ix => (cEcoEfflux, cEco, ix)
+		@rep_elem p_km_ix => (p_km, cEco, ix)
+		@rep_elem p_km4su_ix => (p_km4su, cEco, ix)
+		@rep_elem RA_M_ix => (RA_M, cEco, ix)
+		@rep_elem RA_G_ix => (RA_G, cEco, ix)
 	end
-
 	## pack land variables
 	@pack_land begin
 		(p_km, p_km4su) => land.aRespiration

@@ -60,7 +60,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
 	# FEED IT TO THE STRUCTURE
 	fsoilW = BGME
 	# set the same moisture stress to all carbon pools
-	p_fsoilW[helpers.pools.carbon.zix.cEco] = fsoilW
+	p_fsoilW[helpers.pools.zix.cEco] = fsoilW
 
 	## pack land variables
 	@pack_land fsoilW => land.cTauSoilW

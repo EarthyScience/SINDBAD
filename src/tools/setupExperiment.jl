@@ -598,9 +598,26 @@ function generatePoolsInfo(info::NamedTuple)
         tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
+    hlp_new = (;)
+    eleprops = propertynames(hlpStates)
+    if :carbon in eleprops && :water in eleprops
+        for prop in propertynames(hlpStates.carbon)
+            cfield = getproperty(hlpStates.carbon, prop)
+            wfield = getproperty(hlpStates.water, prop)
+            cwfield = (; cfield..., wfield...)
+            hlp_new = setTupleField(hlp_new, (prop, cwfield))
+        end
+    elseif :carbon in eleprops && :water ∉ eleprops
+        hlp_new = hlpStates.carbon
+    elseif :carbon ∉ eleprops && :water in eleprops
+        hlp_new = hlpStates.water
+    else
+        hlp_new = hlpStates
+    end
     info = (; info..., pools=tmpStates)
     # info = (; info..., tem=(; info.tem..., pools=tmpStates))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
+    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
 

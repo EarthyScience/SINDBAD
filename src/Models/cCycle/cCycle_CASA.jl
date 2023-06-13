@@ -31,11 +31,11 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 	end
 	# NUMBER OF TIME STEPS PER YEAR
 	## these all need to be zeros maybe is taken care automatically
-	cEcoEfflux[!helpers.pools.carbon.flags.cVeg] = 0.0
+	cEcoEfflux[!helpers.pools.flags.cVeg] = 0.0
 	## compute losses
 	cEcoOut = min.(cEco, cEco * p_k_act)
 	## gains to vegetation
-	zix = getzix(land.pools.cVeg, helpers.pools.carbon.zix.cVeg)
+	zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
 	cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
 	cEcoInflux[zix] .= cNPP
 	## flows & losses
@@ -50,8 +50,8 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 	## balance
 	cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
 	## compute RA & RH
-	cRH = sum(cEcoEfflux[!helpers.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
-	cRA = sum(cEcoEfflux[helpers.pools.carbon.flags.cVeg]); #sujan added 1 to sum along all pools
+	cRH = sum(cEcoEfflux[!helpers.pools.flags.cVeg]); #sujan added 1 to sum along all pools
+	cRA = sum(cEcoEfflux[helpers.pools.flags.cVeg]); #sujan added 1 to sum along all pools
 	cRECO = cRH + cRA
 	cNPP = sum(cNPP)
 	NEE = cRECO - gpp
@@ -180,7 +180,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	# p.aRespiration.YG = 1.0
 	# end
 	## ORDER OF CALCULATIONS [1 to the end of pools]
-	zixVec = getzix(cEco, helpers.pools.carbon.zix.cEco)
+	zixVec = getzix(cEco, helpers.pools.zix.cEco)
 	# BUT, we sort from left to right [veg to litter to soil] & prioritize
 	# without loops
 	kmoves = 0
@@ -204,7 +204,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		end
 	end
 	for zv in zixVecOrder
-		if any(zv == helpers.pools.carbon.zix.cVeg)
+		if any(zv == helpers.pools.zix.cVeg)
 			zixVecOrder_veg = [zixVecOrder_veg zv]
 		else
 			zixVecOrder_nonVeg = [zixVecOrder_nonVeg zv]
@@ -221,7 +221,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
 		cLossRate[zix, :] = clamp(p_cTau_k[zix], 𝟘, 𝟙); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
 		# so that pools are not NaN
-		if any(zix == helpers.pools.carbon.zix.cVeg)
+		if any(zix == helpers.pools.zix.cVeg)
 			# additional losses [RA] in veg pools
 			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
 			# gains in veg pools
@@ -230,7 +230,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 		end
 		if any(zix == p_taker)
 			# no additional gains from outside
-			if !any(zix == helpers.pools.carbon.zix.cVeg)
+			if !any(zix == helpers.pools.zix.cVeg)
 				cLoxxRate[zix, :] = 1.0
 			end
 			# gains from other carbon pools
