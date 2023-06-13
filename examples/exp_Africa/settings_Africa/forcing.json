@@ -1,7 +1,7 @@
 {
 	"dimensions": {
 		"permute": null,
-		"space": ["latitude", "longitude"],
+		"space": ["longitude", "latitude"],
 		"time": "time"
 	},
 	"sel_mask": null,
@@ -20,6 +20,19 @@
 		"dataPath": null
 		},	
 		"variables": {
+		"PET":
+			{
+				"variableUnit": "mm d-1",
+				"bounds": [0, 100],
+				"sourceVariableName": "PET_PT",
+				"sourceVariableUnit": "mm d-1",
+				"source2sindbadUnit": 1.0,
+				"isCategorical": false,
+				"nameShort": "PET",
+				"spaceTimeType": "spatiotemporal",
+				"sourceDataProductName": "ERA5",
+				"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.PET_PT.2005-2013.nc"
+			},
 		"Rain":
 		{
 			"variableUnit": "mm d-1",
@@ -27,7 +40,7 @@
 			"sourceVariableName": "tp",
 			"sourceVariableUnit": "mm d-1",
 			"nameShort": "Rain",
-			"dataPath": "../data/3Ddata/Africa.era5.tp.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.tp.2005-2013.nc"
 		},
 		"Rg":
 		{
@@ -37,7 +50,7 @@
 			"sourceVariableUnit": "MJ m-2",
 			"source2sindbadUnit": 11.5740740741,
 			"nameShort": "Global Radiation",
-			"dataPath": "../data/3Ddata/Africa.era5.ssrd.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.ssrd.2005-2013.nc"
 		},
 		"PAR":
 		{
@@ -47,7 +60,7 @@
 			"sourceVariableUnit": "MJ m-2",
 			"source2sindbadUnit": 5.78703703704,
 			"nameShort": "Photosynthetically active radiation (=Rg*.5)",
-			"dataPath": "../data/3Ddata/Africa.era5.ssrd.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.ssrd.2005-2013.nc"
 		},
 		"PsurfDay":
 		{
@@ -57,7 +70,7 @@
 			"sourceVariableUnit": "pa",
 			"source2sindbadUnit": 0.0001,
 			"nameShort": "surface pressure",
-			"dataPath": "../data/3Ddata/Africa.era5.sp.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.sp.2005-2013.nc"
 		},
 		"RgPot":
 		{
@@ -67,7 +80,7 @@
 			"sourceVariableUnit": "W m-2",
 			"source2sindbadUnit": 0.0864,
 			"nameShort": "Potential Global Radiation",
-			"dataPath": "../data/3Ddata/Africa.era5.snr.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.snr.2005-2013.nc"
 		},
 		"Rn":
 		{
@@ -77,7 +90,7 @@
 			"sourceVariableUnit": "W m-2",
 			"source2sindbadUnit": 0.0864,
 			"nameShort": "Net radiation",
-			"dataPath": "../data/3Ddata/Africa.era5.snr.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.snr.2005-2013.nc"
 		},
 		"Tair":
 		{
@@ -88,7 +101,7 @@
 			"source2sindbadUnit": -273.15,
 			"additiveUnitConversion": true,
 			"nameShort": "Tair",
-			"dataPath": "../data/3Ddata/Africa.era5.t2m.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.t2m.2005-2013.nc"
 		},
 		"TairDay":
 		{
@@ -99,7 +112,7 @@
 			"source2sindbadUnit": 273.15,
 			"additiveUnitConversion": true,
 			"nameShort": "TairDay",
-			"dataPath": "../data/3Ddata/Africa.era5.t2m_daytime_mean.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.t2m_daytime_mean.2005-2013.nc"
 		},
 		"VPD":
 		{
@@ -109,7 +122,7 @@
 			"sourceVariableUnit": "hPa",
 			"source2sindbadUnit": 0.1,
 			"nameShort": "Vapor pressure deficit Day",
-			"dataPath": "../data/3Ddata/Africa.era5.vpd.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.vpd.2005-2013.nc"
 		},
 		"VPDDay":
 		{
@@ -119,7 +132,56 @@
 			"sourceVariableUnit": "hPa",
 			"source2sindbadUnit": 0.1,
 			"nameShort": "Vapor pressure deficit Day",
-			"dataPath": "../data/3Ddata/Africa.era5.vpd_daytime_mean.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.vpd_daytime_mean.2005-2013.nc"
+		},
+		"CLAY": {
+			"variableUnit": "-",
+			"bounds": [0, 100],
+			"sourceVariableName": "CLYPPT",
+			"sourceVariableUnit": "%",
+			"source2sindbadUnit": 0.01,
+			"isCategorical": false,
+			"nameShort": "CLAY",
+			"spaceTimeType": "spatiovertical",
+			"sourceDataProductName": "soilgrids",
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.CLYPPT.mean.nc"
+		}
+		,
+		"SAND": {
+			"variableUnit": "-",
+			"bounds": [0, 100],
+			"sourceVariableName": "SNDPPT",
+			"sourceVariableUnit": "%",
+			"source2sindbadUnit": 0.01,
+			"isCategorical": false,
+			"nameShort": "SAND",
+			"spaceTimeType": "spatiovertical",
+			"sourceDataProductName": "soilgrids",
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.SNDPPT.mean.nc"
+		},
+		"SILT": {
+			"variableUnit": "-",
+			"bounds": [0, 100],
+			"sourceVariableName": "SLTPPT",
+			"sourceVariableUnit": "%",
+			"source2sindbadUnit": 0.01,
+			"isCategorical": false,
+			"nameShort": "CLAY",
+			"spaceTimeType": "spatiovertical",
+			"sourceDataProductName": "soilgrids",
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.SLTPPT.mean.nc"
+		},
+		"ORGM": {
+			"variableUnit": "-",
+			"bounds": [0, 100],
+			"sourceVariableName": "OCSTHA",
+			"sourceVariableUnit": "%",
+			"source2sindbadUnit": 0.0,
+			"isCategorical": false,
+			"nameShort": "CLAY",
+			"spaceTimeType": "spatiovertical",
+			"sourceDataProductName": "soilgrids",
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.OCSTHA.mean.nc"
 		},
 		"fAPAR":
 		{
@@ -128,16 +190,16 @@
 			"sourceVariableName": "FVC",
 			"sourceVariableUnit": "-",
 			"nameShort": "fAPAR from FVC",
-			"dataPath": "../data/3Ddata/Africa.seviri.FVC.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.seviri.FVC.2005-2013.nc"
 		},
-		"vegFrac": {
+		"vegFraction": {
 			"variableUnit": "-",
 			"bounds": [0.0, 1.0], 
 			"sourceVariableName": "FVC",
 			"sourceVariableUnit": "-",
 			"nameShort": "vegFrac",
 			"sourceDataProductName": "soilgrids",
-			"dataPath": "../data/3Ddata/Africa.seviri.FVC.2010.nc"
+			"dataPath": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.seviri.FVC.2005-2013.nc"
 		}
 	}
 	}

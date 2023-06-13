@@ -55,7 +55,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, helpers)
 	evaporation = min(ETsoil, soilWAvail)
 
 	# update soil moisture changes
-	ΔsoilW[1] = ΔsoilW[1] - evaporation
+	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.zeros.soilW, 𝟘, 1)
 
 	# storing the ET & PET of the current time step
 	sPET_prev = sPET
@@ -65,7 +65,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, helpers)
 	@pack_land begin
 		(sET, sPET_prev) => land.evaporation
 		evaporation => land.fluxes
-		# ΔsoilW => land.states
+		ΔsoilW => land.states
 	end
 	return land
 end

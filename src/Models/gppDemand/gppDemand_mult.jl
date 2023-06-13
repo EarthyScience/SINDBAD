@@ -32,10 +32,10 @@ function compute(o::gppDemand_mult, forcing, land, helpers)
 
 	# @show TempScGPP, VPDScGPP, scall
 	# set 3d scalar matrix with current scalars
-	scall = ups(scall, TempScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-	scall = ups(scall, VPDScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 2)
-	scall = ups(scall, LightScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 3)
-	scall = ups(scall, CloudScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 4)
+	scall = rep_elem(scall, TempScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
+	scall = rep_elem(scall, VPDScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 2)
+	scall = rep_elem(scall, LightScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 3)
+	scall = rep_elem(scall, CloudScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 4)
 
 	# compute the product of all the scalars
 	AllDemScGPP = prod(scall)

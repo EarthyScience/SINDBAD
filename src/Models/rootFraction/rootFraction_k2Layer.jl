@@ -55,7 +55,7 @@ $(PARAMFIELDS)
 Distribution of water uptake fraction/efficiency by root per soil layer using rootFraction_k2Layer
 
 *Inputs*
- - helpers.pools.water.: soil layers & depths
+ - helpers.pools.: soil layers & depths
 
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
