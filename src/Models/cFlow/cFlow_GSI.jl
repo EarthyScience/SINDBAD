@@ -88,7 +88,7 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
         @rep_elem tmp => (p_k, ix, :cEco)
         p_k_sum = p_k_sum + tmp
     end
-    return p_k_sum
+    return p_k, p_k_sum
 end
 
 function get_frac_flow(num, den)
@@ -171,15 +171,15 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
 
-    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
     L2ReF = get_frac_flow(L2Re, p_k_sum)
     k_LshedF = get_frac_flow(k_Lshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.zix.cVegRoot, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.zix.cVegRoot, helpers)
     R2ReF = get_frac_flow(R2Re, p_k_sum)
     k_RshedF = get_frac_flow(k_Rshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
     Re2LF = get_frac_flow(Re2L_i, p_k_sum)
     Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 
@@ -212,10 +212,11 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     L2ReF = L2ReF # should it be divided by 2?
 
     fWfTfR_prev = fWfTfR
+
     ## pack land variables
     @pack_land begin
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev) => land.cFlow
-        #p_k => land.states
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev, p_A) => land.cFlow
+        p_k => land.states
     end
     return land
 end
