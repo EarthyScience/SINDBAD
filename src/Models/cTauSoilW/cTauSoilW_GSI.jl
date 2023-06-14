@@ -48,7 +48,7 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     soilW_all = frac2perc * sum(soilW) / sum(p_wSat)
     soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
-    cSoilZix = getzix(land.pools.cLit, helpers.pools.zix.cLit) 
+    cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil) 
     for s_zix in cSoilZix
         @rep_elem soilW_all_sc => (p_fsoilW, s_zix, :cEco)
     end
