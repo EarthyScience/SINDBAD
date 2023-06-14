@@ -47,10 +47,15 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    cEcoFlow = zerocEcoFlow .* 𝟘
-    cEcoInflux = cEcoInflux
+    @rep_vec cEcoFlow => cEcoFlow .* 𝟘
+    @rep_vec cEcoInflux => cEcoInflux .* 𝟘
+    @rep_vec ΔcEco => ΔcEco .* 𝟘
+
     ## compute losses
-    cEcoOut = min.(cEco, cEco .* p_k)
+    for cl in eachindex(cEco)
+        cEcoOut_cl = min(cEco[cl], cEco[cl] * p_k[cl])
+        @rep_elem cEcoOut_cl => (cEcoOut, cl, :cEco)
+    end    
 
     ## gains to vegetation
     for zv in zixVeg
@@ -68,7 +73,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        cEcoFlow = @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco) 
+        @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco) 
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]
@@ -79,9 +84,13 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # cEcoFlow[taker] = take_flow + give_flow * c_flow
     # end
     ## balance
-    ΔcEco = cEcoFlow .+ cEcoInflux .- cEcoOut
-    cEco = cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
-    
+    for cl in eachindex(cEco)
+        ΔcEco_cl = cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
+        @rep_elem ΔcEco_cl => (ΔcEco, cl, :cEco)
+        cEco_cl = cEco[cl] + cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
+        @rep_elem cEco_cl => (cEco, cl, :cEco)
+    end
+
     ## compute RA & RH
     NPP = sum(cNPP)
     backNEP = sum(cEco) - sum(cEco_prev)

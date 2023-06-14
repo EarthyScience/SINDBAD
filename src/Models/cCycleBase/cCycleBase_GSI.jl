@@ -36,7 +36,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
         @rep_elem C2Nveg[vg] => (p_C2Nveg, vg, :cEco)
 	end
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
-    cEcoEfflux = zero(land.pools.cEco) #sujan moved from get states
+    cEcoEfflux = zero(cEco) #sujan moved from get states
 	p_k_base = zero(cEco)
     p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
 	for i in eachindex(p_k_base)
