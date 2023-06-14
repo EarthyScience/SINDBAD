@@ -82,120 +82,6 @@ update_state_pools
 #     return copy(b_sp)
 # end
 
-function cusp(sp::SubArray, Δsp)
-    sp .= sp .+ Δsp
-end
-
-function cusp(sp::SubArray, Δsp, sp_zero, split_level::Int)
-    sp[split_level] = sp[split_level] .+ Δsp
-    return sp
-end
-
-function cusp(sp::SubArray, Δsp, sp_zero, split_level::Vector{Int})
-    for sp_sl in split_level
-        sp[sp_sl] = sp[sp_sl] + Δsp
-    end
-    return sp
-end
-
-function cusp(sp::SubArray, sp_elem, split_level::Int)
-    sp[split_level] = sp_elem
-    return sp
-end
-
-function ups(sp::SubArray, sp_elem, split_level::Vector{Int})
-    for sp_sl in split_level
-        sp[sp_sl] = sp_elem
-    end
-    return sp
-end
-
-function cusp(sp::Array, Δsp)
-    sp .= sp .+ Δsp
-end
-
-function cusp(sp::Array, Δsp, sp_zero, split_level::Int)
-    sp[split_level] = sp[split_level] .+ Δsp
-    return sp
-end
-
-
-function cusp(sp::Array, Δsp, sp_zero, split_level::Vector{Int})
-    for sp_sl in split_level
-        cusp(sp, Δsp, sp_zero, sp_sl)
-    end
-    return sp
-end
-
-function ups(sp::Array, sp_elem, split_level::Int)
-    sp[split_level] = sp_elem
-    return sp
-end
-
-function ups(sp::Array, sp_elem, split_level::Vector{Int})
-    for sp_sl in split_level
-        sp=ups(sp, sp_elem, sp_sl)
-    end
-    return sp
-end
-
-
-function cusp(sp::SVector, Δsp)
-    sp = sp .+ Δsp
-end
-
-# function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
-#     sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
-#     sp = sp .+ sp_zero .* Δsp
-#     return sp
-
-# end
-
-# function cusp(sp::SVector, Δsp, sp_zero::SVector, split_level::Int)
-#     sp_zero = zeros(SVector{length(Δsp)})
-#     sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
-#     sp = sp .+ sp_zero .* Δsp
-#     return sp
-# end
-
-
-function cusp(sp::SVector, Δsp, sp_zero, 𝟘, split_level::Int)
-    sp_zero = sp_zero .* 𝟘
-    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
-    sp = sp .+ sp_zero .* Δsp
-    return sp
-end
-
-# v1 = zeros(SVector{length(ΔsnowW)})
-#     v1 = Base.setindex(v1,one(Float64),1)
-#     ΔsnowW = ΔsnowW .+ v1.*snow
-
-
-
-function cusp(sp::SVector, Δsp, sp_zero, split_level::Vector{Int})
-    for sp_sl in split_level
-        sp = cusp(sp, Δsp, sp_zero, sp_sl)
-    end
-    return sp
-end
-
-function ups(sp::SVector, sp_elem, sp_zero, sp_one, 𝟘, 𝟙, split_level::Int)
-    sp_zero = sp_zero .* 𝟘
-    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), split_level)
-    sp_one = sp_one .* 𝟘 .+ 𝟙
-    sp_one = Base.setindex(sp_one, zero(eltype(sp_one)), split_level)
-    sp = sp .* sp_one .+ sp_zero .* sp_elem
-    # sp = Base.setindex(sp, sp_elem, split_level)
-    return sp
-end
-
-function ups(sp::SVector, sp_elem, split_level::Vector{Int})
-    for sp_sl in split_level
-        sp = ups(sp, sp_elem, sp_sl)
-    end
-    return sp
-end
-
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(=>)
@@ -210,6 +96,11 @@ macro rep_elem(outparams::Expr)
     outCode = [Expr(:(=), tar, Expr(:call, rep_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(Expr(:., :(helpers.pools.ones), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(:(helpers.numbers.𝟙)), esc(indx)))]
     # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
     return Expr(:block, outCode...)
+end
+
+function rep_elem(v::AbstractVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
+    v[ind] = v_elem
+    return v
 end
 
 function rep_elem(v::SVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
@@ -231,6 +122,10 @@ macro rep_vec(outparams::Expr)
     rhs = esc(outparams.args[3])
     outCode = [Expr(:(=), lhs, Expr(:call, rep_vec, lhs, rhs, esc(:(helpers.numbers.𝟘))))]
     return Expr(:block, outCode...)
+end
+
+function rep_vec(v::AbstractVector, v_new, n_𝟘)
+    v .= v_new
 end
 
 function rep_vec(v::SVector, v_new, n_𝟘)
@@ -259,14 +154,26 @@ function add_to_elem(v::SVector, Δv, v_zero, n_𝟘, ind::Int)
     return v
 end
 
+function add_to_elem(v::AbstractVector, Δv, v_zero, n_𝟘, ind::Int)
+    v[ind] = v[ind] + Δv
+    return v
+end
+
 function add_to_each_elem(v::SVector, Δv::Real)
     v = v .+ Δv
+end
+
+function add_to_each_elem(v::AbstractVector, Δv::Real)
+    v .= v .+ Δv
 end
 
 function add_vec(v::SVector, Δv)
     v = v + Δv
 end
 
+function add_vec(v::AbstractVector, Δv)
+    v .= v .+ Δv
+end
 
 @doc """
 `cusp(sp, Δsp)`

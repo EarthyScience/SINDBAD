@@ -41,7 +41,7 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
     # allocation to root; wood & leaf
     cAllocVeg_1 = fW / ((fW + fT) * ttwo)
     cAllocVeg_2 = fW / ((fW + fT) * ttwo)
-    cAllocVeg_3 = fT / ((fW + fT) * ttwo)
+    cAllocVeg_3 = fT / ((fW + fT))
     
     @rep_elem cAllocVeg_1 => (cAllocVeg, 1, :cEco)
     @rep_elem cAllocVeg_2 => (cAllocVeg, 2, :cEco)
