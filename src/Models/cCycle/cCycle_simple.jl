@@ -54,8 +54,8 @@ function compute(o::cCycle_simple, forcing, land, helpers)
 
     ## gains to vegetation
     for zv in zixVeg
-        cNPP = rep_elem(cNPP, gpp * cAlloc[zv] - cEcoEfflux[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
-        cEcoInflux = rep_elem(cEcoInflux, cNPP[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
+        @rep_elem gpp * cAlloc[zv] - cEcoEfflux[zv] => (cNPP, zv, :cEco)
+        @rep_elem cNPP[zv] => (cEcoInflux, zv, :cEco)
     end
 
     # flows & losses
@@ -68,7 +68,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        cEcoFlow = rep_elem(cEcoFlow, tmp_flow, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, take_r) 
+        @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco)
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]

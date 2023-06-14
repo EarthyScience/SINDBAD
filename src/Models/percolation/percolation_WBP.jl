@@ -38,7 +38,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
 	if toAllocate > 𝟘
 		for sl in eachindex(land.pools.soilW)
 			allocated = min(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
-			ΔsoilW = cusp(ΔsoilW, allocated, helpers.pools.zeros.soilW, 𝟘, sl)
+			@add_to_elem allocated => (ΔsoilW, sl, :soilW)
 			toAllocate = toAllocate - allocated
 		end
 	end

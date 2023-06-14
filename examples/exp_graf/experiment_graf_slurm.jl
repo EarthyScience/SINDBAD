@@ -7,9 +7,6 @@ addprocs(16)
 
 @everywhere using Sindbad
 @everywhere using ForwardSindbad
-# using HybridSindbad
-@everywhere using ThreadPools
-@everywhere using Zarr
 # using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
 noStackTrace()

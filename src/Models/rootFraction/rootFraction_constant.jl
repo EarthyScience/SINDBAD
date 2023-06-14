@@ -36,11 +36,11 @@ function compute(o::rootFraction_constant, forcing, land, helpers)
 	## calculate variables
 	# cumSum!(soilLayerThickness, cumulativeDepths)
 	# maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
-	for sl in 1:length(land.pools.soilW)
+	for sl in eachindex(land.pools.soilW)
 		soilcumuD = cumulativeDepths[sl]
 		rootOver = maxRootDepth - soilcumuD
 		rootFrac = rootOver > 𝟘 ? constantRootFrac : 𝟘
-		p_fracRoot2SoilD = rep_elem(p_fracRoot2SoilD, rootFrac, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl)
+        @rep_elem rootFrac => (p_fracRoot2SoilD, sl, :soilW)
 	end
 
 	## pack land variables
