@@ -1,7 +1,7 @@
 export update_state_pools
-export cusp, usp
-export rep_elem, @rep_elem
-export add_to_elem, @add_to_elem
+export cusp, ups
+export rep_elem, @rep_elem, rep_vec, @rep_vec
+export add_to_elem, @add_to_elem, add_to_each_elem, add_vec
 
 function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T}) where T<:Number
     sp[:] = sp .+ Δs
@@ -204,43 +204,67 @@ macro rep_elem(outparams::Expr)
     rhs = outparams.args[3]
     rhsa = rhs.args
     tar = esc(rhsa[1])
-    hp_pool = QuoteNode(rhsa[2])
-    indx = rhsa[3]
-    outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(Expr(:., :(helpers.pools.ones), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(:(helpers.numbers.𝟙)), esc(indx)))]
+    # hp_pool = QuoteNode(rhsa[2])
+    indx = rhsa[2]
+    hp_pool = rhsa[3]
+    outCode = [Expr(:(=), tar, Expr(:call, rep_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(Expr(:., :(helpers.pools.ones), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(:(helpers.numbers.𝟙)), esc(indx)))]
     # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
     return Expr(:block, outCode...)
 end
 
-function rep_elem(sp::SVector, sp_elem, sp_zero, sp_one, 𝟘, 𝟙, ind::Int)
-    sp_zero = sp_zero .* 𝟘
-    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), ind)
-    sp_one = sp_one .* 𝟘 .+ 𝟙
-    sp_one = Base.setindex(sp_one, zero(eltype(sp_one)), ind)
-    sp = sp .* sp_one .+ sp_zero .* sp_elem
-    # sp = Base.setindex(sp, sp_elem, split_level)
-    return sp
+function rep_elem(v::SVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
+    v_zero = v_zero .* n_𝟘
+    v_zero = Base.setindex(v_zero, one(eltype(v_zero)), ind)
+    v_one = v_one .* n_𝟘 .+ n_𝟙
+    v_one = Base.setindex(v_one, zero(eltype(v_one)), ind)
+    v = v .* v_one .+ v_zero .* v_elem
+    # v = Base.setindex(v, v_elem, vlit_level)
+    return v
 end
+
+
+macro rep_vec(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = esc(outparams.args[3])
+    outCode = [Expr(:(=), lhs, Expr(:call, rep_vec, lhs, rhs, esc(:(helpers.numbers.𝟘))))]
+    return Expr(:block, outCode...)
+end
+
+function rep_vec(v::SVector, v_new, n_𝟘)
+    v = v .* n_𝟘 + v_new
+end
+
 
 macro add_to_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(=>)
     @assert length(outparams.args) == 3
-    lhs = outparams.args[2]
+    lhs = esc(outparams.args[2])
     rhs = outparams.args[3]
     rhsa = rhs.args
     tar = esc(rhsa[1])
-    hp_pool = QuoteNode(rhsa[2])
-    indx = rhsa[3]
-    # outCode = [Expr(:(=), tar, Expr(:call, :add_to_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), :(helpers.numbers.𝟘), indx))]
-    outCode = [Expr(:(=), tar, Expr(:call, :add_to_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(indx)))]
+    indx = rhsa[2]
+    hp_pool = rhsa[3]
+    outCode = [Expr(:(=), tar, Expr(:call, add_to_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(indx)))]
     return Expr(:block, outCode...)
 end
 
-function add_to_elem(sp::SVector, Δsp, sp_zero, 𝟘, ind::Int)
-    sp_zero = sp_zero .* 𝟘
-    sp_zero = Base.setindex(sp_zero, one(eltype(sp_zero)), ind)
-    sp = sp .+ sp_zero .* Δsp
-    return sp
+function add_to_elem(v::SVector, Δv, v_zero, n_𝟘, ind::Int)
+    v_zero = v_zero .* n_𝟘
+    v_zero = Base.setindex(v_zero, one(eltype(v_zero)), ind)
+    v = v .+ v_zero .* Δv
+    return v
+end
+
+function add_to_each_elem(v::SVector, Δv)
+    v = v .+ Δv
+end
+
+function add_vec(v::SVector, Δv)
+    v = v + Δv
 end
 
 

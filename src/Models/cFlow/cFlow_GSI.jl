@@ -85,8 +85,7 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
         if tmp > maxValue
             tmp = maxValue
         end
-        @rep_elem tmp => (p_k, cEco, ix)
-        # p_k = rep_elem(p_k, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+        @rep_elem tmp => (p_k, ix, :cEco)
         p_k_sum = p_k_sum + tmp
     end
     return p_k_sum

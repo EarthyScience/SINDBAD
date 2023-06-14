@@ -23,7 +23,7 @@ function compute(o::wCycle_combined, forcing, land, helpers)
 	end
 	#TWS_old = deepcopy(TWS)
 	## update variables
-	TWS = cusp(TWS, ΔTWS)
+	TWS = add_vec(TWS, ΔTWS)
 
     # reset soil moisture changes to zero
 	if minimum(TWS) < 𝟘

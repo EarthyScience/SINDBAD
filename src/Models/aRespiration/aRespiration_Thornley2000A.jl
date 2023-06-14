@@ -65,11 +65,11 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
 		# total respiration per pool: R_a = R_m + R_g
 		cEcoEfflux_ix = RA_M_ix + RA_G_ix
-		@rep_elem cEcoEfflux_ix => (cEcoEfflux, cEco, ix)
-		@rep_elem p_km_ix => (p_km, cEco, ix)
-		@rep_elem p_km4su_ix => (p_km4su, cEco, ix)
-		@rep_elem RA_M_ix => (RA_M, cEco, ix)
-		@rep_elem RA_G_ix => (RA_G, cEco, ix)
+		@rep_elem cEcoEfflux_ix => (cEcoEfflux, ix, :cEco)
+		@rep_elem p_km_ix => (p_km, ix, :cEco)
+		@rep_elem p_km4su_ix => (p_km4su, ix, :cEco)
+		@rep_elem RA_M_ix => (RA_M, ix, :cEco)
+		@rep_elem RA_G_ix => (RA_G, ix, :cEco)
 	end
 	## pack land variables
 	@pack_land begin
