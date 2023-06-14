@@ -20,7 +20,7 @@ function getDeltaPool(pool_dat::AbstractArray, spinup_info::NamedTuple, t::Any)
     tmp = getfield(land_spin.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
     # Δpool = tmp[end] - pool_dat
-    @show Δpool
+    # @show Δpool
     return Δpool
 end
 
@@ -67,10 +67,10 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:ODE_Tsit5})
     for sel_pool in tem_spinup.diffEq.pools
         p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
-        tspan = (0.0, tem_spinup.diffEq.timeJump)
+        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.diffEq.timeJump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info);
-        ode_sol = solve(ode_prob, Tsit5())#, reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol)
+        ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=ceil(tem_spinup.diffEq.timeJump))
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
     return land_in
@@ -186,7 +186,7 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
         if spinupMode == :forward
             spinup_models = forward_models
         else
-            spinup_models = info.tem.models.spinup #forward_models[tem_models.is_spinup.==1]
+            spinup_models = tem_models.spinup #forward_models[tem_models.is_spinup.==1]
         end
         #if !tem_helpers.run.runOpti
         #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"

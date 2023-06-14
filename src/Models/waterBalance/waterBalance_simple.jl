@@ -37,6 +37,7 @@ function compute(o::waterBalance_simple, forcing, land, helpers)
 			msg = "water balance error:, waterBalance: $(waterBalance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
 			push!(Sindbad.error_catcher, land)
 			push!(Sindbad.error_catcher, msg)
+			pprint(land)
 			error(msg)
 		end
 	end
