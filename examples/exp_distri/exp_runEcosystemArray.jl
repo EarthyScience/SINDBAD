@@ -3,7 +3,6 @@ using Revise
 using Sindbad
 using ForwardSindbad
 # using OptimizeSindbad
-# using HybridSindbad
 # using ThreadPools
 using AxisKeys
 # using Zarr

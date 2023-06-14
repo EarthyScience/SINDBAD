@@ -2,8 +2,6 @@ using Revise
 @time using Sindbad
 @time using ForwardSindbad
 # @time using OptimizeSindbad
-# @time using HybridSindbad
-using BenchmarkTools
 # noStackTrace()
 domain = "africa";
 optimize_it = true;

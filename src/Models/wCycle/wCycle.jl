@@ -3,7 +3,6 @@ export wCycle
 abstract type wCycle <: LandEcosystem end
 
 include("wCycle_components.jl")
-include("wCycle_components_gans.jl")
 include("wCycle_combined.jl")
 
 @doc """

@@ -20,7 +20,7 @@ end
 function setCAlloc(cAlloc, cAllocValue, landPool, zixPools, helpers)
     zix = getzix(landPool, zixPools)
     for ix in eachindex(zix)
-        cAlloc = rep_elem(cAlloc, cAllocValue * cAlloc[zix[ix]], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zix[ix])
+        @rep_elem cAllocValue * cAlloc[zix[ix]] => (cAlloc, zix[ix], :cEco)
     end
     return cAlloc
 end

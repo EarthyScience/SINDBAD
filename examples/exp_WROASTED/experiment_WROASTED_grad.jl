@@ -1,7 +1,7 @@
 using Revise
 using Sindbad
 using ForwardSindbad
-using OptimizeSindbad
+using ForwardDiff
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "2000"
@@ -14,8 +14,7 @@ eYear = "2017"
 inpath = "../data/BE-Vie.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 obspath = inpath
-optimize_it = true
-# optimize_it = false
+optimize_it = false
 outpath = nothing
 
 domain = "DE-Hai"
@@ -31,6 +30,7 @@ replace_info = Dict(
     "modelRun.flags.catchErrors" => true,
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
+    "modelRun.rules.debugit" => true,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -55,32 +55,24 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
-
-@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
-
-
-@time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);  
-
+# @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
-new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
-output = setupOutput(info);
-@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
-
-# some plots
-using Plots
-ds = forcing.data[1];
-opt_dat = output.data;
-def_dat = outcubes;
-out_vars = output.variables;
-for (vi, v) in enumerate(out_vars)
-    def_var = def_dat[vi][:,1,1,1]
-    opt_var = opt_dat[vi][:,1,1,1]
-    plot(def_var, label="def")
-    plot!(opt_var, label="opt")
-    if v in propertynames(obs)
-        obs_var = getfield(obs, v)[:,1,1,1]
-        plot!(obs_var, label="obs")
-    end
-    savefig("wroasted_$(v).png")
+# @time outcubes = runExperimentOpti(experiment_json);  
+function loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
+    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, land_init_space, f_one)
+    @show l
+    l
 end
+rand_m = rand(info.tem.helpers.numbers.numType);
+op = setupOutput(info);
+
+mods = info.tem.models.forward;
+loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+
+
+l1(p) = loss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, land_init_space, f_one)
+l1(tblParams.defaults)
+l1(tblParams.defaults .* rand_m)
+@time grad = ForwardDiff.gradient(l1, tblParams.defaults)

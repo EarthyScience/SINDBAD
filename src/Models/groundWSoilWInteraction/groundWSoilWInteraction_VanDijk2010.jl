@@ -46,8 +46,8 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
 	# adjust the delta storages
 	n_groundW = 𝟙 * length(groundW)
-	ΔgroundW = cusp(ΔgroundW, -gwCapFlow / n_groundW)
-	ΔsoilW = cusp(ΔsoilW, gwCapFlow, helpers.pools.zeros.soilW, 𝟘, lastindex(ΔsoilW))
+	ΔgroundW = add_to_each_elem(ΔgroundW, -gwCapFlow / n_groundW)
+	@add_to_elem gwCapFlow => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
 	## pack land variables
 	@pack_land begin
