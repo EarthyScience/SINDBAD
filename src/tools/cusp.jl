@@ -259,7 +259,7 @@ function add_to_elem(v::SVector, Δv, v_zero, n_𝟘, ind::Int)
     return v
 end
 
-function add_to_each_elem(v::SVector, Δv)
+function add_to_each_elem(v::SVector, Δv::Real)
     v = v .+ Δv
 end
 
