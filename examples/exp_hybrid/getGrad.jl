@@ -4,7 +4,6 @@ using ForwardDiff
 using Sindbad
 using ForwardSindbad
 using ForwardSindbad: timeLoopForward
-using HybridSindbad
 using OptimizeSindbad
 using AxisKeys: KeyedArray as KA
 using Lux, Zygote, Optimisers, ComponentArrays, NNlib

@@ -54,8 +54,8 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## gains to vegetation
     for zv in zixVeg
-        cNPP = rep_elem(cNPP, gpp * cAlloc[zv] - cEcoEfflux[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
-        cEcoInflux = rep_elem(cEcoInflux, cNPP[zv], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, zv)
+        @rep_elem gpp * cAlloc[zv] - cEcoEfflux[zv] => (cNPP, zv, :cEco)
+        @rep_elem cNPP[zv] => (cEcoInflux, zv, :cEco)
     end
 
     # flows & losses
@@ -68,7 +68,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        cEcoFlow = rep_elem(cEcoFlow, tmp_flow, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, take_r) 
+        cEcoFlow = @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco) 
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]
@@ -91,17 +91,17 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     NEE = cRECO - gpp
     cEco_prev = cEco
     
-    cVeg = cVeg .* 𝟘 + cEco[helpers.pools.zix.cVeg]
-    cLit = cLit .* 𝟘 + cEco[helpers.pools.zix.cLit]
-    cSoil = cSoil .* 𝟘 + cEco[helpers.pools.zix.cSoil]
-    cVegRoot = cVegRoot .* 𝟘 + cEco[helpers.pools.zix.cVegRoot]
-    cVegWood = cVegWood .* 𝟘 + cEco[helpers.pools.zix.cVegWood]
-    cVegLeaf = cVegLeaf .* 𝟘 + cEco[helpers.pools.zix.cVegLeaf]
-    cVegReserve = cVegReserve .* 𝟘 + cEco[helpers.pools.zix.cVegReserve]
-    cLitFast = cLitFast .* 𝟘 + cEco[helpers.pools.zix.cLitFast]
-    cLitSlow = cLitSlow .* 𝟘 + cEco[helpers.pools.zix.cLitSlow]
-    cSoilSlow = cSoilSlow .* 𝟘 + cEco[helpers.pools.zix.cSoilSlow]
-    cSoilOld = cSoilOld .* 𝟘 + cEco[helpers.pools.zix.cSoilOld]
+    @rep_vec cVeg => cEco[helpers.pools.zix.cVeg]
+    @rep_vec cVegRoot => cEco[helpers.pools.zix.cVegRoot]
+    @rep_vec cVegWood => cEco[helpers.pools.zix.cVegWood]
+    @rep_vec cVegLeaf => cEco[helpers.pools.zix.cVegLeaf]
+    @rep_vec cVegReserve => cEco[helpers.pools.zix.cVegReserve]
+    @rep_vec cLit => cEco[helpers.pools.zix.cLit]
+    @rep_vec cLitFast => cEco[helpers.pools.zix.cLitFast]
+    @rep_vec cLitSlow => cEco[helpers.pools.zix.cLitSlow]
+    @rep_vec cSoil => cEco[helpers.pools.zix.cSoil]
+    @rep_vec cSoilSlow => cEco[helpers.pools.zix.cSoilSlow]
+    @rep_vec cSoilOld => cEco[helpers.pools.zix.cSoilOld]
     ## pack land variables
     @pack_land begin
         (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) => land.pools
