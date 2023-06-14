@@ -5,20 +5,20 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 15
+			"nLoops": 5
 		},
 		{
-			"spinupMode": "forward",
-			"forcing": "full",
+			"spinupMode": "ODE_Tsit5",
+			"forcing": "recycleMSC",
 			"stopCriteria": null,
 			"nLoops": 1
 		}
 	],
 	"diffEq":{
 		"pools": ["cEco"],
-		"timeJump": 200.0,
+		"timeJump": 2000.0,
 		"reltol":1e-2, 
-		"abstol":1e-2
+		"abstol":1
 	},
 	"paths": 
 	{
