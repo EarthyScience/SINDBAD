@@ -5,19 +5,7 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 1
-		},
-		{
-			"spinupMode": "ODE_Tsit5",
-			"forcing": "yearOne",
-			"stopCriteria": null,
-			"nLoops": 1
-		},
-		{
-			"spinupMode": "SSP_DynamicSS_Tsit5",
-			"forcing": "yearOne",
-			"stopCriteria": null,
-			"nLoops": 1
+			"nLoops": 15
 		},
 		{
 			"spinupMode": "forward",
@@ -30,7 +18,7 @@
 		"pools": ["cEco"],
 		"timeJump": 200.0,
 		"reltol":1e-2, 
-		"abstol":10.0
+		"abstol":1e-2
 	},
 	"paths": 
 	{
