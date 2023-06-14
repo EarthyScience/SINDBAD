@@ -12,7 +12,8 @@ function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
-	p_fsoilW = ones(helpers.numbers.numType, length(land.pools.cEco))
+	p_fsoilW = 	zero(land.pools.cEco) .+ helpers.numbers.𝟙
+
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW
@@ -37,13 +38,20 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 	## for the litter pools; only use the top layer"s moisture
     soilW_top = frac2perc * soilW[1] / p_wSat[1]
     soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
-    p_fsoilW[getzix(land.pools.cLit, helpers.pools.zix.cLit)] .= soilW_top_sc
+    cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit) 
+    for l_zix in cLitZix
+        @rep_elem soilW_top_sc => (p_fsoilW, l_zix, :cEco)
+    end
 
 
     ## repeat for the soil pools; using all soil moisture layers
-    soilW_all = 100 * sum(soilW) / sum(p_wSat)
+    soilW_all = frac2perc * sum(soilW) / sum(p_wSat)
     soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
-    p_fsoilW[getzix(land.pools.cSoil, helpers.pools.zix.cSoil)] .= soilW_all_sc
+
+    cSoilZix = getzix(land.pools.cLit, helpers.pools.zix.cLit) 
+    for s_zix in cSoilZix
+        @rep_elem soilW_all_sc => (p_fsoilW, s_zix, :cEco)
+    end
 
 
     ## pack land variables

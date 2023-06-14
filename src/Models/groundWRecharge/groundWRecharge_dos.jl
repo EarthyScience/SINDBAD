@@ -36,8 +36,8 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
 	groundWRec = recharge_fraction * (soilW[end] + ΔsoilW[end])
 	nGroundW = length(groundW) * 𝟙
 
-	ΔgroundW = cusp(ΔgroundW, groundWRec / nGroundW)
-	ΔsoilW = cusp(ΔsoilW, -groundWRec, helpers.pools.zeros.soilW, 𝟘, lastindex(ΔsoilW))
+	ΔgroundW = add_to_each_elem(ΔgroundW, groundWRec / nGroundW)
+	@add_to_elem -groundWRec => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
 	## pack land variables
 	@pack_land begin

@@ -20,13 +20,13 @@ function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 		zixVegAll = vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...)
 		for zixVeg in zixVegAll
 			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
-			cEco = cusp(cEco, -cLoss, zixVeg)
+			@add_to_elem -cLoss => (cEco, zixVeg, :cEco)
 			ndxLoseToZix = taker[giver .== zixVeg]
 			# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
 			for tZ in eachindex(ndxLoseToZix)
 				tarZix = ndxLoseToZix[tZ]
 				if !any(zixVegAll == tarZix)
-					cEco = cusp(cEco, cLoss / length(ndxLoseToZix), tarZix)
+					@add_to_elem cLoss / length(ndxLoseToZix) => (cEco, tarZix, :cEco)
 				end
 			end
 		end

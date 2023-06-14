@@ -43,9 +43,9 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
     cAllocVeg_2 = fW / ((fW + fT) * ttwo)
     cAllocVeg_3 = fT / ((fW + fT) * ttwo)
     
-    @rep_elem cAllocVeg_1 => (cAllocVeg, cEco, 1)
-    @rep_elem cAllocVeg_2 => (cAllocVeg, cEco, 2)
-    @rep_elem cAllocVeg_3 => (cAllocVeg, cEco, 3)
+    @rep_elem cAllocVeg_1 => (cAllocVeg, 1, :cEco)
+    @rep_elem cAllocVeg_2 => (cAllocVeg, 2, :cEco)
+    @rep_elem cAllocVeg_3 => (cAllocVeg, 3, :cEco)
 
     for ind in 1:3
         zix = zixVegs[ind]
@@ -53,7 +53,7 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
         for ix = eachindex(zix)
             cAllocVeg_ix = cAllocVeg[ind]  / nZix
             zix_ix = zix[ix]
-            @rep_elem cAllocVeg_ix => (cAlloc, cEco, zix_ix)
+            @rep_elem cAllocVeg_ix => (cAlloc, zix_ix, :cEco)
         end
     end
 
