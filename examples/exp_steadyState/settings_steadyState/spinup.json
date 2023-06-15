@@ -18,7 +18,8 @@
 		"pools": ["cEco"],
 		"timeJump": 200.0,
 		"reltol":1e-2, 
-		"abstol":1e-2
+		"abstol":1e-2,
+		"maxiters": 100
 	},
 	"paths": 
 	{

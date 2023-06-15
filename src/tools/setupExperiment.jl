@@ -510,7 +510,9 @@ function generatePoolsInfo(info::NamedTuple)
                 end
             end
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
-    
+
+            zix = Tuple(zix)
+
             tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
@@ -542,6 +544,7 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(ltck, layerThicknesses[ind])
                 end
             end
+            zix = Tuple(zix)
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
@@ -572,6 +575,8 @@ function generatePoolsInfo(info::NamedTuple)
             initValues = inits
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             zix = 1:1:length(mainPoolName) |> collect
+            zix = Tuple(zix)
+
             tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))

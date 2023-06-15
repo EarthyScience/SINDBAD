@@ -17,7 +17,7 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
     asrc = [:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot]
     atrg = [:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast]
-    ndxSrc = [Int[] for x in atrg]
+    ndxSrc = []
     ndxTrg = copy(ndxSrc)
     p_A = copy(cFlowA)
 
@@ -26,8 +26,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
         # @show trow, srcName, trgName
         zixSrc = getzix(getfield(land.pools, asrc[trow]), getfield(helpers.pools.zix, asrc[trow]))
         zixTrg = getzix(getfield(land.pools, atrg[trow]), getfield(helpers.pools.zix, atrg[trow]))
-        push!(ndxSrc, zixSrc)
-        push!(ndxTrg, zixTrg)
+        push!(ndxSrc, zixSrc...)
+        push!(ndxTrg, zixTrg...)
         for iSrc in zixSrc
             for iTrg in zixTrg
                 p_A[iTrg, iSrc] = 𝟙
@@ -64,8 +64,10 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     k_RshedF = 𝟙
     slope_fWfTfR = 𝟙
 
-    ndxSrc = vcat(ndxSrc...)
-    ndxTrg = vcat(ndxTrg...)
+    # ndxSrc = vcat(ndxSrc...)
+    # ndxTrg = vcat(ndxTrg...)
+    ndxSrc = Tuple(vcat(ndxSrc...))
+    ndxTrg = Tuple(vcat(ndxTrg...))
 
     @pack_land begin
 		fluxOrder => land.cCycleBase
