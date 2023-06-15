@@ -70,11 +70,53 @@ function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land
         tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.diffEq.timeJump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info);
-        ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=ceil(tem_spinup.diffEq.timeJump))
+        maxIter = tem_spinup.diffEq.timeJump
+        maxIter = max(ceil(tem_spinup.diffEq.timeJump) / 100, 100)
+        ode_sol = solve(ode_prob, Tsit5(), maxiters=maxIter)
+        # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
     return land_in
 end
+
+"""
+doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_DP5})
+do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
+"""
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:ODE_DP5})
+    for sel_pool in tem_spinup.diffEq.pools
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.diffEq.timeJump))
+        init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
+        ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info);
+        maxIter = tem_spinup.diffEq.timeJump
+        maxIter = max(ceil(tem_spinup.diffEq.timeJump) / 100, 100)
+        ode_sol = solve(ode_prob, DP5(), maxiters=maxIter)
+        # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
+        land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
+    end
+    return land_in
+end
+
+"""
+doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_AutoTsit5_Rodas5})
+do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
+"""
+function doSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup::NamedTuple, land_type, f_one, ::Val{:ODE_AutoTsit5_Rodas5})
+    for sel_pool in tem_spinup.diffEq.pools
+        p_info = getSpinupInfo(sel_spinup_models, sel_spinup_forcing, Symbol(sel_pool), land_in, tem_helpers, tem_spinup, land_type, f_one);
+        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.diffEq.timeJump))
+        init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool));
+        ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info);
+        maxIter = tem_spinup.diffEq.timeJump
+        # maxIter = max(ceil(tem_spinup.diffEq.timeJump) / 100, 100)
+        ode_sol = solve(ode_prob, AutoVern7(Rodas5()), maxiters=maxIter)
+        # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
+        land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
+    end
+    return land_in
+end
+
 
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})

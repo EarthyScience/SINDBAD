@@ -8,7 +8,7 @@ using AxisKeys
 # using Zarr
 using BenchmarkTools
 
-# Sindbad.noStackTrace()
+Sindbad.noStackTrace()
 experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
@@ -25,13 +25,12 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-# @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
 @time outcubes = runExperimentOpti(experiment_json);  
 
 # @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 a=1
 
 

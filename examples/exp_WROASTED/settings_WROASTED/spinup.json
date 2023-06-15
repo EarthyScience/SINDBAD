@@ -5,11 +5,11 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 5
+			"nLoops": 2000
 		},
 		{
-			"spinupMode": "ODE_Tsit5",
-			"forcing": "recycleMSC",
+			"spinupMode": "forward",
+			"forcing": "full",
 			"stopCriteria": null,
 			"nLoops": 1
 		}
