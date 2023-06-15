@@ -11,9 +11,9 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 	
-	st_CLAY = CLAY
-	st_SAND = SAND
-	st_SILT = SILT
+	st_CLAY = CLAY  |> Array
+	st_SAND = SAND  |> Array
+	st_SILT = SILT |> Array
 	st_ORGM = 𝟘# * ORGM
 
 	## pack land variables

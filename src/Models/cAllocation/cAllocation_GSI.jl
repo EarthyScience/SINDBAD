@@ -10,17 +10,18 @@ function precompute(o::cAllocation_GSI, forcing, land, helpers)
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     cAllocVeg = zero(land.pools.cEco)
-    zixVegs = [Int[] for x in cpNames]
+    zixVegs = []
     nzixVegs=helpers.numbers.numType[]
     cpI = 1
     for cpName in cpNames
         zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
         nZix=sNT(length(zix))
-        zixVegs[cpI] = zix
+        push!(zixVegs, zix)
         push!(nzixVegs, nZix)
-        cpI = cpI + 1
     end
     ttwo = sNT(2.0)
+    zixVegs = Tuple(zixVegs)
+    nzixVegs = Tuple(nzixVegs)
     ## pack land variables
     @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
     return land

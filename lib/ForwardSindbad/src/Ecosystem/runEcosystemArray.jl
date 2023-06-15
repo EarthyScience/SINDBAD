@@ -37,7 +37,8 @@ function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
         view(a; loc_space_map...)
     end
-    ar_inds = last.(loc_space_map)
+    # ar_inds = last.(loc_space_map)
+    ar_inds = Tuple(last.(loc_space_map))
 
     loc_output = map(outcubes) do a
         getArrayView(a, ar_inds)
@@ -112,7 +113,6 @@ function runPrecompute!(out, forcing, models, tem_helpers)
 end
 
 function timeLoopForward!(loc_output, forward_models, forcing, out, tem_variables, tem_helpers, time_steps::Int64, f_one)
-    # ftype = get_dtype(dtypes, dtypes_list, :forcing_one_type)
     f_t = f_one
     if tem_helpers.run.debugit
         time_steps = 1
@@ -181,6 +181,7 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
             lv=>loc_index
         end
     end
+    loc_space_maps = Tuple(loc_space_maps)
     allNans = Bool[]
     for i in eachindex(loc_space_maps)
         loc_forcing, _ = getLocData(outcubes, forcing, loc_space_maps[i]) #312
