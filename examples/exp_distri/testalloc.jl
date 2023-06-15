@@ -138,13 +138,14 @@ Profile.clear_malloc_data() # clear allocations
 @pack_land b => out_nt.fluxes;
 
 
-
+b=12.0
 
 
 using NestedTuples
 using BenchmarkTools
 out_nt=(;)
 out_nt = (; out_nt..., fluxes=(;b=1.0), pools=(; a=rand(10)))
+Base.setindex(out_nt, Base.setindex(out_nt.fluxes, b, :b), :fluxes)
 f = leaf_setter(out_nt)
 @btime $f(2.3,rand(10))
 

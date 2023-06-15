@@ -55,7 +55,6 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
 
-
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
 
@@ -84,3 +83,65 @@ for (vi, v) in enumerate(out_vars)
     end
     savefig("wroasted_$(v).png")
 end
+
+
+lsm = loc_space_maps[1]
+@time lo=map(obs) do o
+    map(lsm) do ls
+        view(o; first(ls) => last(ls));
+    end
+end;
+
+@code_warntype getLocForc(forc, loc_space_maps[1]);
+@time loc_forcing = getLocForc(forc, loc_space_maps[1]);
+lsm=Tuple(loc_space_maps[1])
+@time loc_forcing = getLocForc(forc, lsm);
+
+@code_warntype getLocOut(output.data, loc_space_maps[1]);
+
+@time loc_output = getLocOut(output.data, loc_space_maps[1]);
+ar_inds = Tuple(last.(loc_space_maps[1]))
+@btime getLocOut!($output.data, $ar_inds, $loc_output);
+
+function getLocForc(forcing, loc_space_map)
+    loc_forcing = map(forcing) do a
+        a=view(a; loc_space_map...)
+    end
+    return loc_forcing
+end
+
+
+function getLocForc(forcing, loc_space_map)
+    loc_forcing = map(forcing) do a
+        a=view(a; loc_space_map...)
+    end
+    return loc_forcing
+
+end
+
+
+function getLocOut!(outcubes, ar_inds, loc_output)
+    for i in eachindex(loc_output)
+        loc_output[i] = getArrayView(outcubes[i], ar_inds)
+    end
+end
+
+function getLocOut(outcubes, loc_space_map)
+    ar_inds = Tuple(last.(loc_space_map))
+    loc_output = map(outcubes) do a
+        getArrayView(a, ar_inds)
+    end
+    return loc_output
+end
+a=obs.gpp;
+flsm(l) = Pair(first(l), last(l))
+typeof(flsm(lsm[1]))
+
+a[flsm(lsm[1])]
+foreach(lsm) do l
+    # @show l, first(l), last(l)
+    # f = first(l)
+    # n = last(l)
+    @show a[flsm(l)]
+end
+

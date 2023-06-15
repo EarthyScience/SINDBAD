@@ -31,7 +31,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	## calculate variables
 	# number of layers & creation of arrays
 	# calculate & set the soil hydraulic properties for each layer
-	for sl in 1:length(st_CLAY)
+	for sl in eachindex(sp_α)
 		# (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = soilParamsSaxton2006(land, helpers, sl)
 		CLAY = st_CLAY[sl]
 		SAND = st_SAND[sl]
