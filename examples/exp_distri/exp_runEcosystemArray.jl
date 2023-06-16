@@ -2,14 +2,9 @@ using Revise
 # using YAXArrays
 using Sindbad
 using ForwardSindbad
-# using OptimizeSindbad
-# using ThreadPools
-using AxisKeys
-# using Zarr
-using BenchmarkTools
 
 Sindbad.noStackTrace()
-experiment_json = "./settings_distri/experiment.json"
+experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
