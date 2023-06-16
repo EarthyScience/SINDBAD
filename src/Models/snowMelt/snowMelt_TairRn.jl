@@ -21,7 +21,6 @@ function precompute(o::snowMelt_TairRn, forcing, land, helpers)
         snowMelt => land.fluxes
         potMelt => land.snowMelt
         WBP => land.states
-        #ΔsnowW => land.states
     end
     return land
 end
