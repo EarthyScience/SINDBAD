@@ -31,17 +31,17 @@ function compute(o::cFlow_CASA, forcing, land, helpers)
 	p_taker = taker
 	p_giver = giver
 	# if there is flux order check that is consistent
-	if !isfield(land.cCycleBase, :fluxOrder)
-		fluxOrder = 1:length(taker)
+	if !isfield(land.cCycleBase, :flowOrder)
+		flowOrder = 1:length(taker)
 	else
-		if length(fluxOrder) != length(taker)
-			error(["ERR : cFlowAct_CASA : " "length(fluxOrder) != length(taker)"])
+		if length(flowOrder) != length(taker)
+			error(["ERR : cFlowAct_CASA : " "length(flowOrder) != length(taker)"])
 		end
 	end
 
 	## pack land variables
 	@pack_land begin
-		fluxOrder => land.cCycleBase
+		flowOrder => land.cCycleBase
 		(p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
 	end
 	return land

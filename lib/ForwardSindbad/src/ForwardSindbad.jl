@@ -1,7 +1,7 @@
 module ForwardSindbad
 using Reexport: @reexport
 using Sindbad
-
+using Accessors
 using AxisKeys: KeyedArray, AxisKeys
 using AxisKeys, FillArrays
 using DimensionalData
@@ -16,8 +16,6 @@ using YAXArrayBase
 using YAXArrays: savecube
 using YAXArrayBase: getdata
 using Zarr
-using Cthulhu
-using LoopVectorization
 using DifferentialEquations
 using InteractiveUtils
 using ThreadPools
