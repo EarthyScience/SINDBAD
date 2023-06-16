@@ -17,14 +17,14 @@ end
 
 
 
-function get_loc_out!(outcubes, ar_inds, loc_output)
+function getLocOutput!(outcubes, ar_inds, loc_output)
     for i in eachindex(outcubes)
         loc_output[i] = getArrayView(outcubes[i], ar_inds)
     end
 end
 
 
-@generated function get_loc_forcing!(forcing, ::Val{forc_vars}, ::Val{s_names}, loc_forcing, s_locs) where {forc_vars, s_names}
+@generated function getLocForcing!(forcing, ::Val{forc_vars}, ::Val{s_names}, loc_forcing, s_locs) where {forc_vars, s_names}
     output = quote
     end
     foreach(forc_vars) do forc
@@ -42,8 +42,8 @@ end
 
 
 function ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_models, tem_variables, loc_space_names, loc_space_ind, loc_forcing, loc_output, land_init, f_one)
-    get_loc_out!(outcubes, loc_space_ind, loc_output);
-    get_loc_forcing!(forcing, Val(keys(f_one)), Val(loc_space_names), loc_forcing, loc_space_ind);
+    getLocOutput!(outcubes, loc_space_ind, loc_output);
+    getLocForcing!(forcing, Val(keys(f_one)), Val(loc_space_names), loc_forcing, loc_space_ind);
     coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
 end
 
