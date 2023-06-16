@@ -14,10 +14,33 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
         (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
     end
     ## instantiate variables
+
+    # transfers
+    taker = [ind[1] for ind in findall(>(𝟘), cFlowA)]
+    giver = [ind[2] for ind in findall(>(𝟘), cFlowA)]
+    cEco_comps = helpers.pools.components.cEco
+    # aTrg_a = []
+    # for t_rg in taker
+    #     if cEco_comps[t_rg] ∉ aTrg_a
+    #         push!(aTrg_a, cEco_comps[t_rg])
+    #     end
+    # end
+    # aSrc_a = []
+    # for s_rc in giver
+    #     if cEco_comps[s_rc] ∉ aSrc_a
+    #         push!(aSrc_a, cEco_comps[s_rc])
+    #     end
+    # end
+
+    # aTrg_a = Tuple(aTrg_a)
+    # aSrc_b = Tuple(aSrc_a)
+
     flowVar = [:Re2L, :Re2R, :L2Re, :R2Re, :k_Lshed, :k_Rshed]
     aSrc = (:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot)
     aTrg = (:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast)
 
+    # @show aSrc, aSrc_b
+    # @show aTrg, aTrg_a
     p_A_ind = (
         Re2L = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1], 
         Re2R = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1], 
@@ -27,10 +50,6 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
         k_Rshed = findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1], 
     )
 
-
-    # transfers
-    taker = [ind[1] for ind in findall(>(𝟘), cFlowA)]
-    giver = [ind[2] for ind in findall(>(𝟘), cFlowA)]
 
     p_A = sNT.(zero(taker) .+ 𝟙)
 
