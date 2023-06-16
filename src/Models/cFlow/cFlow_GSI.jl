@@ -11,41 +11,50 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
         cFlowA ∈ land.cCycleBase
-        (𝟘, 𝟙, tolerance, numType) ∈ helpers.numbers
+        (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
     end
     ## instantiate variables
-    flowVar = [:Re2L, :Re2R, :L2ReF, :R2ReF, :k_LshedF, :k_RshedF]
-    asrc = [:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot]
-    atrg = [:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast]
-    ndxSrc = [Int[] for x in atrg]
-    ndxTrg = copy(ndxSrc)
-    p_A = copy(cFlowA)
-
-    # Prepare the list of flows
-    for trow in eachindex(flowVar)
-        # @show trow, srcName, trgName
-        zixSrc = getzix(getfield(land.pools, asrc[trow]), getfield(helpers.pools.zix, asrc[trow]))
-        zixTrg = getzix(getfield(land.pools, atrg[trow]), getfield(helpers.pools.zix, atrg[trow]))
-        push!(ndxSrc, zixSrc)
-        push!(ndxTrg, zixTrg)
-        for iSrc in zixSrc
-            for iTrg in zixTrg
-                p_A[iTrg, iSrc] = 𝟙
-            end
-        end
-    end
 
     # transfers
-    taker = [ind[1] for ind in findall(>(𝟘), p_A)]
-    giver = [ind[2] for ind in findall(>(𝟘), p_A)]
+    taker = [ind[1] for ind in findall(>(𝟘), cFlowA)]
+    giver = [ind[2] for ind in findall(>(𝟘), cFlowA)]
+    cEco_comps = helpers.pools.components.cEco
+    # aTrg_a = []
+    # for t_rg in taker
+    #     if cEco_comps[t_rg] ∉ aTrg_a
+    #         push!(aTrg_a, cEco_comps[t_rg])
+    #     end
+    # end
+    # aSrc_a = []
+    # for s_rc in giver
+    #     if cEco_comps[s_rc] ∉ aSrc_a
+    #         push!(aSrc_a, cEco_comps[s_rc])
+    #     end
+    # end
 
-    # if there is flux order check that is consistent
-    if !hasproperty(land.cCycleBase, :p_fluxOrder)
-        fluxOrder = collect(1:length(taker))
-    else
-        if length(fluxOrder) != length(taker)
-            error("cFlow_GSI: length(fluxOrder) [$(length(fluxOrder))] != length(taker) [$(length(taker))]")
-        end
+    # aTrg_a = Tuple(aTrg_a)
+    # aSrc_b = Tuple(aSrc_a)
+
+    flowVar = [:Re2L, :Re2R, :L2Re, :R2Re, :k_Lshed, :k_Rshed]
+    aSrc = (:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot)
+    aTrg = (:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast)
+
+    # @show aSrc, aSrc_b
+    # @show aTrg, aTrg_a
+    p_A_ind = (
+        Re2L = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1], 
+        Re2R = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1], 
+        L2Re = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1], 
+        R2Re = findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1], 
+        k_Lshed = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1], 
+        k_Rshed = findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1], 
+    )
+
+
+    p_A = sNT.(zero(taker) .+ 𝟙)
+
+    if typeof(land.pools.cEco)<:SVector{length(land.pools.cEco)}
+        p_A = SVector{length(p_A)}(p_A)
     end
 
     fWfTfR_prev = 𝟙
@@ -64,12 +73,9 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     k_RshedF = 𝟙
     slope_fWfTfR = 𝟙
 
-    ndxSrc = vcat(ndxSrc...)
-    ndxTrg = vcat(ndxTrg...)
-
     @pack_land begin
-		fluxOrder => land.cCycleBase
-		(p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
+		(p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
+		# (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
         (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR) => land.cFlow
 	end
 
@@ -85,11 +91,10 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
         if tmp > maxValue
             tmp = maxValue
         end
-        @rep_elem tmp => (p_k, cEco, ix)
-        # p_k = rep_elem(p_k, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, ix)
+        @rep_elem tmp => (p_k, ix, :cEco)
         p_k_sum = p_k_sum + tmp
     end
-    return p_k_sum
+    return p_k, p_k_sum
 end
 
 function get_frac_flow(num, den)
@@ -106,7 +111,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     ## unpack land variables
     @unpack_land begin
-        (fWfTfR_prev, p_A, ndxSrc, ndxTrg) ∈ land.cFlow
+        (fWfTfR_prev, p_A, p_A_ind, aSrc, aTrg) ∈ land.cFlow
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
         fR ∈ land.cAllocationRadiation
@@ -141,7 +146,6 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     k_Rshed = min(KShed, 𝟙-R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
-    # 30.09.2021 to avoid 0/0 calculation which leads to NaN values; 1E-15 should avoid that)
     Re2L_i = 𝟘
     if fW + fR !== 𝟘
         Re2L_i = Re2LR * (fW / (fR + fW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
@@ -172,37 +176,30 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
 
 
-    p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
     L2ReF = get_frac_flow(L2Re, p_k_sum)
     k_LshedF = get_frac_flow(k_Lshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.zix.cVegRoot, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, k_Rshed, R2Re, 𝟙, helpers.pools.zix.cVegRoot, helpers)
     R2ReF = get_frac_flow(R2Re, p_k_sum)
     k_RshedF = get_frac_flow(k_Rshed, p_k_sum)
 
-    p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
+    p_k, p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
     Re2LF = get_frac_flow(Re2L_i, p_k_sum)
     Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 
-    # while using the indexing of aM would be elegant; the speed is really slow; & hence the following block of code is implemented
-    for ii in eachindex(ndxSrc)
-        src = ndxSrc[ii]
-        trg = ndxTrg[ii]
-        # @show p_A[trg[1], src[1]]
-        if ii == 1
-            p_A[trg, src] = Re2LF
-        elseif ii == 2
-            p_A[trg, src] = Re2RF
-        elseif ii == 3
-            p_A[trg, src] = L2ReF
-        elseif ii == 4
-            p_A[trg, src] = R2ReF
-        elseif ii == 5
-            p_A[trg, src] = k_LshedF
-        elseif ii == 6
-            p_A[trg, src] = k_RshedF
-        end
-    end
+	p_A = rep_elem(p_A, Re2LF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.Re2L)
+	p_A = rep_elem(p_A, Re2RF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.Re2R)
+	p_A = rep_elem(p_A, L2ReF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.L2Re)
+	p_A = rep_elem(p_A, R2ReF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.R2Re)
+	p_A = rep_elem(p_A, k_LshedF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.k_Lshed)
+	p_A = rep_elem(p_A, k_RshedF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.k_Rshed)
+    # p_A[p_A_ind.Re2L] = p_A
+    # p_A[p_A_ind.Re2R] = Re2RF
+    # p_A[p_A_ind.L2Re] = L2ReF
+    # p_A[p_A_ind.R2Re] = R2ReF
+    # p_A[p_A_ind.k_Lshed] = k_LshedF
+    # p_A[p_A_ind.k_Rshed] = k_RshedF
 
     # store the varibles in diagnostic structure
     L2Re = LR2Re # should it be divided by 2?
@@ -213,10 +210,11 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     L2ReF = L2ReF # should it be divided by 2?
 
     fWfTfR_prev = fWfTfR
+
     ## pack land variables
     @pack_land begin
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev) => land.cFlow
-        #p_k => land.states
+        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev, p_A) => land.cFlow
+        p_k => land.states
     end
     return land
 end

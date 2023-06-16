@@ -5,8 +5,6 @@ abstract type rainSnow <: LandEcosystem end
 include("rainSnow_forcing.jl")
 include("rainSnow_Tair.jl")
 include("rainSnow_rain.jl")
-include("rainSnow_Tair_buffer.jl")
-include("rainSnow_Tair_smooth.jl")
 
 @doc """
 Set rain and snow to fe.rainsnow.

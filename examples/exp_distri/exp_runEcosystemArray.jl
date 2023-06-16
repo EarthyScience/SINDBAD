@@ -2,15 +2,9 @@ using Revise
 # using YAXArrays
 using Sindbad
 using ForwardSindbad
-# using OptimizeSindbad
-# using HybridSindbad
-# using ThreadPools
-using AxisKeys
-# using Zarr
-using BenchmarkTools
 
-# Sindbad.noStackTrace()
-experiment_json = "./settings_distri/experiment.json"
+Sindbad.noStackTrace()
+experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
@@ -24,15 +18,14 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-# @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 @time outcubes = runExperimentOpti(experiment_json);  
 
 # @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
 a=1
 
 

@@ -11,10 +11,22 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 	
-	st_CLAY = CLAY
-	st_SAND = SAND
-	st_SILT = SILT
+	st_CLAY = CLAY  |> Array
+	st_SAND = SAND  |> Array
+	st_SILT = SILT |> Array
 	st_ORGM = 𝟘# * ORGM
+
+	n_soilW = length(land.pools.soilW)
+    ## precomputations/check
+    # get the soil thickness 
+
+    if length(st_CLAY) != n_soilW
+        println("soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers.")
+        st_CLAY = fill(mean(st_CLAY), n_soilW)
+        st_ORGM = fill(mean(st_ORGM), n_soilW)
+        st_SAND = fill(mean(st_SAND), n_soilW)
+        st_SILT = fill(mean(st_SILT), n_soilW)
+    end
 
 	## pack land variables
 	@pack_land (st_CLAY, st_ORGM, st_SAND, st_SILT) => land.soilTexture
