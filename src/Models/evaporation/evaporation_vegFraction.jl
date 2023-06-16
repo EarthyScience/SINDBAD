@@ -26,7 +26,7 @@ function compute(o::evaporation_vegFraction, forcing, land, helpers)
 	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
 
 	# update soil moisture changes
-	ΔsoilW = cusp(ΔsoilW, -evaporation, helpers.pools.zeros.soilW, 𝟘, 1)
+	@add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
 
 	## pack land variables
 	@pack_land begin

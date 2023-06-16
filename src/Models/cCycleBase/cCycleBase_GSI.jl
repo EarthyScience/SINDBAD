@@ -9,10 +9,10 @@ export cCycleBase_GSI
 	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
 	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
 	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = Float64[-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
+	cFlowA::T9 = Float64[-1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
 	    0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
-	    0.0 0.0 -1.0 0.0 0.0 0 0.0 0.0
-	    0.0 0.0 0 -1.0 0.0 0.0 0.0 0.0
+	    0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
+	    1.0 0.0 1.0 -1.0 0.0 0.0 0.0 0.0
 	    1.0 0.0 1.0 0.0 -1.0 0.0 0.0 0.0
 	    0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
 	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
@@ -26,26 +26,30 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
-		𝟙 ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 		cEco ∈ land.pools
 	end
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
 	vegZix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
 	for vg in vegZix
-		p_C2Nveg = rep_elem(p_C2Nveg, C2Nveg[vg], helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, vg)
+        @rep_elem C2Nveg[vg] => (p_C2Nveg, vg, :cEco)
 	end
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
-    cEcoEfflux = zero(land.pools.cEco) #sujan moved from get states
+    cEcoEfflux = zero(cEco) #sujan moved from get states
 	p_k_base = zero(cEco)
     p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
 	for i in eachindex(p_k_base)
 		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
-		p_k_base = rep_elem(p_k_base, tmp, helpers.pools.zeros.cEco, helpers.pools.ones.cEco, helpers.numbers.𝟘, helpers.numbers.𝟙, i)
+        @rep_elem tmp => (p_k_base, i, :cEco)
 	end
+
+	# if there is flux order check that is consistent
+	flowOrder = collect(1:length(findall(>(𝟘), cFlowA)))
+	
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, cFlowA, p_k_base, p_annk) => land.cCycleBase
+		(p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
     return land

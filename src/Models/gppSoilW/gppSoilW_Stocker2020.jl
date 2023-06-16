@@ -8,9 +8,10 @@ end
 
 function precompute(o::gppSoilW_Stocker2020, forcing, land, helpers)
     SMScGPP = helpers.numbers.𝟙
+    ttwo = helpers.numbers.sNT(2.0)
 
     ## pack land variables
-    @pack_land SMScGPP => land.gppSoilW
+    @pack_land (ttwo, SMScGPP) => land.gppSoilW
     return land
 end
 
@@ -23,6 +24,7 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
         (s_wFC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
         (𝟙, 𝟘, squarer) ∈ helpers.numbers
+        ttwo ∈ land.gppSoilW
     end
 
     ## calculate variables
@@ -30,7 +32,7 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
     maxAWC = max(s_wFC - s_wWP, 𝟘)
     actAWC = max(SM - s_wWP, 𝟘)
     SM_nor = min(actAWC / maxAWC, 𝟙)
-    tfW = -q * squarer(SM_nor - θstar) + 𝟙
+    tfW = -q * (SM_nor - θstar) ^ ttwo + 𝟙
     fW = SM_nor <= θstar ? tfW : 𝟙
     SMScGPP = clamp(fW, 𝟘, 𝟙)
 
