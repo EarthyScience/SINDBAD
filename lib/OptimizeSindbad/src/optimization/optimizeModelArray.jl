@@ -150,7 +150,7 @@ function optimizeModelArray(forcing::NamedTuple, output, output_variables, obser
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
     loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
-    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one))
+    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one))
     # make the cost function handle
 
     # output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one

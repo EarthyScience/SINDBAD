@@ -133,7 +133,7 @@ develop_f = () -> begin
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
-    loc_space_maps, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output, tem.models.forward, forcing, tem);
+    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, loc_forcing, loc_output  = prepRunEcosystem(output, tem.models.forward, forcing, tem);
 
     priors_opt = shifloNormal.(lower_bounds,upper_bounds)
     x = default_values
@@ -142,7 +142,7 @@ develop_f = () -> begin
     #TODO get y and sigmay beforehand and construct MvNormal
 
     #priors_opt, dObs, is_finite_obs
-    #output, tem.models.forward, forcing, tem, loc_space_maps, land_init_space, f_one, loc_forcing, loc_output
+    #output, tem.models.forward, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, loc_forcing, loc_output
     #output_variables, optim
     m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T} = Float64) where {T}
         #assumptions/priors
@@ -159,7 +159,7 @@ develop_f = () -> begin
         
         newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
         # TODO run model with updated parameters
-        runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+        runEcosystem!(output.data, output.land_init, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
         # get predictions and observations
         model_output = (; Pair.(output_variables, output)...)
