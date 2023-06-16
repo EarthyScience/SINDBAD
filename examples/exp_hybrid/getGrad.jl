@@ -53,6 +53,7 @@ l2(p) = loss(p, newmods, forc, op, op.variables, obs, tblParams, info.tem, info.
 l1(tblParams.defaults .* rand_m)
 l2(tblParams.defaults .* rand_m)
 @time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@profview grad = ForwardDiff.gradient(l1, tblParams.defaults)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a=2
