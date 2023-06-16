@@ -4,7 +4,7 @@ using ForwardSindbad
 using OptimizeSindbad
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "2000"
+sYear = "1979"
 eYear = "2017"
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
@@ -29,7 +29,7 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => true,
+    "modelRun.flags.runSpinup" => false,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
@@ -48,12 +48,12 @@ output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
@@ -85,63 +85,18 @@ for (vi, v) in enumerate(out_vars)
 end
 
 
-lsm = loc_space_maps[1]
-@time lo=map(obs) do o
-    map(lsm) do ls
-        view(o; first(ls) => last(ls));
-    end
-end;
-
-@code_warntype getLocForc(forc, loc_space_maps[1]);
-@time loc_forcing = getLocForc(forc, loc_space_maps[1]);
-lsm=Tuple(loc_space_maps[1])
-@time loc_forcing = getLocForc(forc, lsm);
-
-@code_warntype getLocOut(output.data, loc_space_maps[1]);
-
-@time loc_output = getLocOut(output.data, loc_space_maps[1]);
-ar_inds = Tuple(last.(loc_space_maps[1]))
-@btime getLocOut!($output.data, $ar_inds, $loc_output);
-
-function getLocForc(forcing, loc_space_map)
-    loc_forcing = map(forcing) do a
-        a=view(a; loc_space_map...)
-    end
-    return loc_forcing
-end
-
-
-function getLocForc(forcing, loc_space_map)
-    loc_forcing = map(forcing) do a
-        a=view(a; loc_space_map...)
-    end
-    return loc_forcing
-
-end
-
-
-function getLocOut!(outcubes, ar_inds, loc_output)
-    for i in eachindex(loc_output)
-        loc_output[i] = getArrayView(outcubes[i], ar_inds)
+function tprint(d, df=1)
+    for k in keys(d)
+        if d[k] isa NamedTuple
+            printstyled("$(k) : NT\n"; color =:blue)
+            tprint(d[k], df)
+            df = length(string.(k))
+        else
+            tt = repeat("\t",df)
+            printstyled("$(tt) $(k): $(typeof(d[k]))\n"; color = :yellow)
+        end
+        df = 1
     end
 end
 
-function getLocOut(outcubes, loc_space_map)
-    ar_inds = Tuple(last.(loc_space_map))
-    loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
-    end
-    return loc_output
-end
-a=obs.gpp;
-flsm(l) = Pair(first(l), last(l))
-typeof(flsm(lsm[1]))
-
-a[flsm(lsm[1])]
-foreach(lsm) do l
-    # @show l, first(l), last(l)
-    # f = first(l)
-    # n = last(l)
-    @show a[flsm(l)]
-end
-
+tprint(land_init)

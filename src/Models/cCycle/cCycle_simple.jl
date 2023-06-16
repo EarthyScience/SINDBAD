@@ -43,7 +43,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A, giver, taker) ∈ land.cFlow
-        (fluxOrder) ∈ land.cCycleBase
+        (flowOrder) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
@@ -62,9 +62,9 @@ function compute(o::cCycle_simple, forcing, land, helpers)
     # @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
-    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing fluxOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix in eachindex(fluxOrder)
-        fO = fluxOrder[jix]
+    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing flowOrder. So; in biomascat; the fields do not exist & this block of code will not work.
+    for jix in eachindex(flowOrder)
+        fO = flowOrder[jix]
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]

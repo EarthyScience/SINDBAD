@@ -12,21 +12,21 @@ function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 	@unpack_soilProperties_Saxton2006 o
 
 	@unpack_land begin
-		numType ∈ helpers.numbers
+		(numType, sNT) ∈ helpers.numbers
 		(st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
 	end
 	## instantiate variables
-	sp_α = zero(st_CLAY)
-	sp_β = zero(st_CLAY)
-	sp_kFC = zero(st_CLAY)
-	sp_θFC = zero(st_CLAY)
-	sp_ψFC = zero(st_CLAY)
-	sp_kWP = zero(st_CLAY)
-	sp_θWP = zero(st_CLAY)
-	sp_ψWP = zero(st_CLAY)
-	sp_kSat = zero(st_CLAY)
-	sp_θSat = zero(st_CLAY)
-	sp_ψSat = zero(st_CLAY)
+	sp_α = zero(land.pools.soilW)
+	sp_β = zero(land.pools.soilW)
+	sp_kFC = zero(land.pools.soilW)
+	sp_θFC = zero(land.pools.soilW)
+	sp_ψFC = zero(land.pools.soilW)
+	sp_kWP = zero(land.pools.soilW)
+	sp_θWP = zero(land.pools.soilW)
+	sp_ψWP = zero(land.pools.soilW)
+	sp_kSat = zero(land.pools.soilW)
+	sp_θSat = zero(land.pools.soilW)
+	sp_ψSat = zero(land.pools.soilW)
 
 	## calculate variables
 	# number of layers & creation of arrays
@@ -122,17 +122,17 @@ function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
 		kWP = kSat * ((θWP / θSat) ^ (3 + (2 / λ)))
 		# @show CLAY, SAND, α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP
 
-		sp_α[sl] = α
-		sp_β[sl] = β
-		sp_kFC[sl] = kFC
-		sp_θFC[sl] = θFC
-		sp_ψFC[sl] = ψFC
-		sp_kWP[sl] = kWP
-		sp_θWP[sl] = θWP
-		sp_ψWP[sl] = ψWP
-		sp_kSat[sl] = kSat
-		sp_θSat[sl] = θSat
-		sp_ψSat[sl] = ψSat
+		@rep_elem sNT(α) => (sp_α, sl, :soilW)
+		@rep_elem sNT(β) => (sp_β, sl, :soilW)
+		@rep_elem sNT(kFC) => (sp_kFC, sl, :soilW)
+		@rep_elem sNT(θFC) => (sp_θFC, sl, :soilW)
+		@rep_elem sNT(ψFC) => (sp_ψFC, sl, :soilW)
+		@rep_elem sNT(kWP) => (sp_kWP, sl, :soilW)
+		@rep_elem sNT(θWP) => (sp_θWP, sl, :soilW)
+		@rep_elem sNT(ψWP) => (sp_ψWP, sl, :soilW)
+		@rep_elem sNT(kSat) => (sp_kSat, sl, :soilW)
+		@rep_elem sNT(θSat) => (sp_θSat, sl, :soilW)
+		@rep_elem sNT(ψSat) => (sp_ψSat, sl, :soilW)
 	end
 	# generate the function handle to calculate soil hydraulic property
 	unsatK = kSaxton2006::typeof(kSaxton2006)

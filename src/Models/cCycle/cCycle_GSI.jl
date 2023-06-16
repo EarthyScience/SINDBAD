@@ -18,7 +18,7 @@ function precompute(o::cCycle_GSI, forcing, land, helpers)
     zerocEcoInflux = zero(cEcoInflux)
     cNPP = zero(land.pools.cEco)
 
-	cEco_prev = zero(land.pools.cEco)
+	cEco_prev = deepcopy(land.pools.cEco)
     zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     NEE = 𝟘
@@ -43,7 +43,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A, giver, taker) ∈ land.cFlow
-        (fluxOrder) ∈ land.cCycleBase
+        (flowOrder) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
@@ -68,12 +68,12 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
-    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing fluxOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix in eachindex(fluxOrder)
-        fO = fluxOrder[jix]
+    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing flowOrder. So; in biomascat; the fields do not exist & this block of code will not work.
+    for jix in eachindex(flowOrder)
+        fO = flowOrder[jix]
         take_r = taker[fO]
         give_r = giver[fO]
-        tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
+        tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[fO]
         @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco) 
     end
     # for jix = 1:length(p_taker)
@@ -99,7 +99,10 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
     NEE = cRECO - gpp
-    @rep_vec cEco_prev => cEco 
+
+    # cEco_prev = cEco 
+    cEco_prev = cEco_prev .* 𝟘 .+ cEco
+    # @rep_vec cEco_prev => cEco 
     for (i_c, i_f) in enumerate(helpers.pools.zix.cVeg)
         @rep_elem cEco[i_f] => (cVeg, i_c, :cVeg)
     end  

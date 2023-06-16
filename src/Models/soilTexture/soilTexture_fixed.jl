@@ -15,6 +15,12 @@ function precompute(o::soilTexture_fixed, forcing, land, helpers)
 	st_SAND = SAND
 	st_SILT = SILT
 	st_ORGM = ORGM
+	println("soilTexture_fixed: distributing the fixed texture properties over the soil layers.")
+	n_soilW = length(land.pools.soilW)
+	st_CLAY = fill(mean(st_CLAY), n_soilW)
+	st_ORGM = fill(mean(st_ORGM), n_soilW)
+	st_SAND = fill(mean(st_SAND), n_soilW)
+	st_SILT = fill(mean(st_SILT), n_soilW)
 
 	## pack land variables
 	@pack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) => land.soilTexture

@@ -1,7 +1,6 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
-using StaticArrays: SVector
 
 
 """
@@ -111,7 +110,6 @@ function updateModelParameters(tblParams::Table, approaches::Tuple)
             newvals = Pair[]
             for var in vars
                 inOptim = filtervar(var, modelName, tblParams, approachx)
-                #TODO Check whether this works correctly
                 push!(newvals, var => inOptim)
             end
             typeof(approachx)(; newvals...)
@@ -494,6 +492,7 @@ function generatePoolsInfo(info::NamedTuple)
         end
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
+        hlpElem = setTupleField(hlpElem, (:components, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
         hlpElem = setTupleField(hlpElem, (:ones, (;)))
 
@@ -517,6 +516,7 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
+            hlpElem = setTupleSubfield(hlpElem, :components, (mainPool, components))
             onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, onetyped .* info.tem.helpers.numbers.𝟘))
