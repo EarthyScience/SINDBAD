@@ -5,7 +5,7 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 15
+			"nLoops": 100
 		},
 		{
 			"spinupMode": "forward",
@@ -16,9 +16,9 @@
 	],
 	"diffEq":{
 		"pools": ["cEco"],
-		"timeJump": 200.0,
+		"timeJump": 2000.0,
 		"reltol":1e-2, 
-		"abstol":1e-2
+		"abstol":1
 	},
 	"paths": 
 	{

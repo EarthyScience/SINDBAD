@@ -45,11 +45,11 @@ function compute(o::drainage_dos, forcing, land, helpers)
 		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
 		drain = min(drainage_tmp, holdCap, lossCap)
 		tmp = drain > tolerance ? drain : 𝟘
-		drainage = rep_elem(drainage, tmp, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, sl) 
-		ΔsoilW = cusp(ΔsoilW, -drainage[sl], helpers.pools.zeros.soilW, 𝟘, sl)
-		ΔsoilW = cusp(ΔsoilW, drainage[sl], helpers.pools.zeros.soilW, 𝟘, sl+1)
+		@rep_elem tmp => (drainage, sl, :soilW) 
+		@add_to_elem -drainage[sl] => (ΔsoilW, sl, :soilW)
+		@add_to_elem drainage[sl] => (ΔsoilW, sl + 1, :soilW)
 	end
-	drainage = rep_elem(drainage, 𝟘, helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, lastindex(drainage))
+	@rep_elem 𝟘 => (drainage, lastindex(drainage), :soilW)
 	## pack land variables
 	@pack_land begin
 		drainage => land.drainage
