@@ -10,16 +10,14 @@ function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
     @unpack_rootFraction_expCvegRoot o
     @unpack_land begin
         soilLayerThickness ∈ land.soilWBase
-        maxRootDepth ∈ land.states
     end
     ## instantiate variables
-    p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
-    rootOver = zeros(helpers.numbers.numType, length(land.pools.soilW))
+	p_fracRoot2SoilD = zero(land.pools.soilW) .+ helpers.numbers.𝟙
+    rootOver = zero(land.pools.soilW)
     cumulativeDepths = cumsum(soilLayerThickness)
-    rootOver .= maxRootDepth .- cumulativeDepths
     ## pack land variables
     @pack_land begin
-        (p_fracRoot2SoilD, cumulativeDepths, rootOver) => land.rootFraction
+        (p_fracRoot2SoilD, cumulativeDepths) => land.rootFraction
     end
     return land
 end
@@ -30,16 +28,22 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilLayerThickness ∈ land.soilWBase
-        (p_fracRoot2SoilD, cumulativeDepths, rootOver) ∈ land.rootFraction
+        (p_fracRoot2SoilD, cumulativeDepths) ∈ land.rootFraction
+        maxRootDepth ∈ land.states
         𝟘 ∈ helpers.numbers
         cVegRoot ∈ land.pools
     end
     ## calculate variables
     tmp_rootFrac = (fracRoot2SoilD_max - (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * sum(cVegRoot)))) # root fraction/efficiency as a function of total carbon in root pools
 
-    for k in eachindex(rootOver)
-        p_fracRoot2SoilD[k] =  rootOver[k] > 𝟘 ? tmp_rootFrac : 𝟘
+	for sl in eachindex(land.pools.soilW)
+		soilcumuD = cumulativeDepths[sl]
+		rootOver = maxRootDepth - soilcumuD
+		rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
+        @rep_elem rootFrac => (p_fracRoot2SoilD, sl, :soilW)
     end
+	## pack land variables
+	@pack_land p_fracRoot2SoilD => land.rootFraction
     return land
 end
 
