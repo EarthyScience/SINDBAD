@@ -1,7 +1,6 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
-using StaticArrays: SVector
 
 
 """
@@ -111,7 +110,6 @@ function updateModelParameters(tblParams::Table, approaches::Tuple)
             newvals = Pair[]
             for var in vars
                 inOptim = filtervar(var, modelName, tblParams, approachx)
-                #TODO Check whether this works correctly
                 push!(newvals, var => inOptim)
             end
             typeof(approachx)(; newvals...)
@@ -494,6 +492,7 @@ function generatePoolsInfo(info::NamedTuple)
         end
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
+        hlpElem = setTupleField(hlpElem, (:components, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
         hlpElem = setTupleField(hlpElem, (:ones, (;)))
 
@@ -510,11 +509,14 @@ function generatePoolsInfo(info::NamedTuple)
                 end
             end
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
-    
-            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, components))
+
+            zix = Tuple(zix)
+
+            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, Tuple(components)))
             tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
+            hlpElem = setTupleSubfield(hlpElem, :components, (mainPool, Tuple(components)))
             onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, onetyped .* info.tem.helpers.numbers.𝟘))
@@ -542,13 +544,15 @@ function generatePoolsInfo(info::NamedTuple)
                     push!(ltck, layerThicknesses[ind])
                 end
             end
+            zix = Tuple(zix)
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
-            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, components))
+            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, Tuple(components)))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
             tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, ltck))
             hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, ltck))
             hlpElem = setTupleSubfield(hlpElem, :zix, (subPool, zix))
+            hlpElem = setTupleSubfield(hlpElem, :components, (subPool, Tuple(components)))
             onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem, :zeros, (subPool, onetyped .* info.tem.helpers.numbers.𝟘))
@@ -572,11 +576,14 @@ function generatePoolsInfo(info::NamedTuple)
             initValues = inits
             initValues = createArrayofType(initValues, Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
             zix = 1:1:length(mainPoolName) |> collect
-            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, components))
+            zix = Tuple(zix)
+
+            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, Tuple(components)))
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (combinedPoolName, zix))
             onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))
+            hlpElem = setTupleSubfield(hlpElem, :components, (combinedPoolName, Tuple(components)))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem, :zeros, (combinedPoolName, onetyped .* info.tem.helpers.numbers.𝟘))
             hlpElem = setTupleSubfield(hlpElem, :ones, (combinedPoolName, onetyped))

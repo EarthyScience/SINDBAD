@@ -21,7 +21,6 @@ function precompute(o::snowMelt_TairRn, forcing, land, helpers)
         snowMelt => land.fluxes
         potMelt => land.snowMelt
         WBP => land.states
-        #ΔsnowW => land.states
     end
     return land
 end
@@ -51,7 +50,7 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     snowMelt = min(addS(snowW, ΔsnowW), potMelt)
 
 	# divide snowmelt loss equally from all layers
-    ΔsnowW = cusp(ΔsnowW, -snowMelt / length(snowW))
+    ΔsnowW = add_to_each_elem(ΔsnowW, -snowMelt / length(snowW))
 
     # a Water Balance Pool variable that tracks how much water is still "available"
     WBP = WBP + snowMelt

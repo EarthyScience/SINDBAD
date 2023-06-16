@@ -31,7 +31,7 @@ function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
 	# update groundwater changes
 	n_groundW = length(groundW) * 𝟙
 
-	ΔgroundW = cusp(ΔgroundW, -runoffBase / n_groundW)
+	ΔgroundW = add_to_each_elem(ΔgroundW, -runoffBase / n_groundW)
 
 	## pack land variables
 	@pack_land begin

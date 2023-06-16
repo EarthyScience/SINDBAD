@@ -9,7 +9,7 @@ function precompute(o::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
 
     ## calculate variables
-    fT = helpers.numbers.𝟘
+    fT = helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land begin
@@ -24,7 +24,7 @@ function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
-    fT = Q10_RM^((Tair - Tref_RM) / Q10_base)
+    fT = Q10_RM ^((Tair - Tref_RM) / Q10_base)
 
     ## pack land variables
     @pack_land begin

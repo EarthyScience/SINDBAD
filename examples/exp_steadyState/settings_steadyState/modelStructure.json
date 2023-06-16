@@ -1,8 +1,4 @@
 {
-    "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and models 2) user selected",
-    "2.c": "approaches 3) structure of water and carbon pools",
-    "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
-    "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
     "defaultModel":{
             "order": 0,
             "use4spinup": true
@@ -42,11 +38,7 @@
             "approach": "gpp"
         },
         "cCycle": {
-            "approach": "simple"
-        },
-        "cCycleConsistency": {
-            "approach": "simple",
-            "use4spinup": false
+            "approach": "GSI"
         },
         "cCycleBase": {
             "approach": "GSI"
@@ -109,7 +101,7 @@
             "approach": "mult"
         },
         "gppDiffRadiation": {
-            "approach": "GSI"
+            "approach": "Wang2015"
         },
         "gppDirRadiation": {
             "approach": "none"
@@ -197,7 +189,7 @@
             "use4spinup": false
         },
         "wCycle": {
-            "approach": "combined"
+            "approach": "components"
         },
         "WUE": {
             "approach": "expVPDDayCo2"
