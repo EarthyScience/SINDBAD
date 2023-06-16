@@ -16,7 +16,7 @@ noStackTrace()
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
 replace_info = Dict(
-    "spinup.diffEq.timeJump" => 1000,
+    "spinup.diffEq.timeJump" => 100,
     "spinup.diffEq.reltol" => 1e-2,
     "spinup.diffEq.abstol" => 1,
     "modelRun.rules.model_array_type" => "array",
@@ -37,9 +37,9 @@ forc = getKeyedArrayFromYaxArray(forcing);
 # linit= createLandInit(info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, land_init_space[1], info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1]);
 
@@ -132,7 +132,7 @@ plot!(getfield(out_sp_exp_ode.pools, sel_pool),linewidth=5, ls=:dash, label="Exp
 
 using NLsolve, ComponentArrays
 
-mutable struct Spinupper{M,F,T,I,L, O}
+struct Spinupper{M,F,T,I,L, O}
      models::M
      forcing::F
      tem_helpers::T
@@ -170,7 +170,6 @@ function (s::Spinupper)(pout, p)
      # pout = @set pout.TWS = update_init.pools.TWS
      # pout = @set pout.cEco = update_init.pools.cEco
      # pout .= log.(pout)# ./ s.pooldiff
-     nothing
 end
 
 function doSpinup(spinup_models, spinup_forcing, land_init, tem_helpers, _, land_type, f_one, ::Val{:nlsolve})

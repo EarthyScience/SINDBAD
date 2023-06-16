@@ -27,7 +27,7 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 		gpp ∈ land.fluxes
 		p_k_act ∈ land.cTau
 		(p_E, p_F, p_giver, p_taker) ∈ land.cFlow
-		(fluxOrder, p_annk) ∈ land.cCycleBase
+		(flowOrder, p_annk) ∈ land.cCycleBase
 	end
 	# NUMBER OF TIME STEPS PER YEAR
 	## these all need to be zeros maybe is taken care automatically
@@ -40,9 +40,9 @@ function compute(o::cCycle_CASA, forcing, land, helpers)
 	cEcoInflux[zix] .= cNPP
 	## flows & losses
 	# @nc; if flux order does not matter; remove.
-	for jix in eachindex(fluxOrder)
-		taker = p_taker[fluxOrder[jix]]
-		giver = p_giver[fluxOrder[jix]]
+	for jix in eachindex(flowOrder)
+		taker = p_taker[flowOrder[jix]]
+		giver = p_giver[flowOrder[jix]]
 		flow_tmp = cEcoOut[giver] * p_F(taker, giver)
 		cEcoFlow[taker] = cEcoFlow[taker] + flow_tmp * p_E(taker, giver)
 		cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0 - p_E(taker, giver))
@@ -288,7 +288,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 	out = runForward(selectedModels, forcing, out, modelnames, helpers)
 
 	## pack land variables
-	@pack_land (cEco, cEco_prev) => land.pools
+	@pack_land cEco => land.pools
 	return land
 end
 
