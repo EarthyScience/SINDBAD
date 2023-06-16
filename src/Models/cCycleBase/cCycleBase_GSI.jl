@@ -9,10 +9,10 @@ export cCycleBase_GSI
 	annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
 	annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
 	annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-	cFlowA::T9 = Float64[-1.0 0.0 0.0 0 0.0 0.0 0.0 0.0
+	cFlowA::T9 = Float64[-1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
 	    0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
-	    0.0 0.0 -1.0 0.0 0.0 0 0.0 0.0
-	    0.0 0.0 0 -1.0 0.0 0.0 0.0 0.0
+	    0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
+	    1.0 0.0 1.0 -1.0 0.0 0.0 0.0 0.0
 	    1.0 0.0 1.0 0.0 -1.0 0.0 0.0 0.0
 	    0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
 	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
@@ -26,7 +26,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
-		𝟙 ∈ helpers.numbers
+		(𝟘, 𝟙) ∈ helpers.numbers
 		cEco ∈ land.pools
 	end
     ## instantiate variables
@@ -43,9 +43,13 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
         @rep_elem tmp => (p_k_base, i, :cEco)
 	end
+
+	# if there is flux order check that is consistent
+	flowOrder = collect(1:length(findall(>(𝟘), cFlowA)))
+	
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, cFlowA, p_k_base, p_annk) => land.cCycleBase
+		(p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
     return land

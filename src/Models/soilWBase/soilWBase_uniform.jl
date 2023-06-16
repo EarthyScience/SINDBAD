@@ -14,73 +14,49 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
         numType ∈ helpers.numbers
     end
     n_soilW = length(soilW)
-    ## precomputations/check
-    # get the soil thickness 
+
+    # instatiate variables 
+    soilLayerThickness = zero(land.pools.soilW)
+    p_wFC = zero(land.pools.soilW)
+    p_wWP = zero(land.pools.soilW)
+    p_wSat = zero(land.pools.soilW)
+
     soilDepths = helpers.numbers.sNT.(helpers.pools.layerThickness.soilW)
     # soilDepths = helpers.pools.layerThickness.soilW
-    soilLayerThickness = soilDepths
 
-    if length(sp_kFC) != n_soilW
-        println("soilWBase_uniform: the number of soil layers forcing data does not match the layers in in modelStructure.json. Using mean of input over the soil layers.")
-        st_CLAY = fill(mean(st_CLAY), n_soilW)
-        st_ORGM = fill(mean(st_ORGM), n_soilW)
-        st_SAND = fill(mean(st_SAND), n_soilW)
-        st_SILT = fill(mean(st_SILT), n_soilW)
-        sp_kFC = fill(mean(sp_kFC), n_soilW)
-        sp_kSat = fill(mean(sp_kSat), n_soilW)
-        sp_kWP = fill(mean(sp_kWP), n_soilW)
-        sp_α = fill(mean(sp_α), n_soilW)
-        sp_β = fill(mean(sp_β), n_soilW)
-        sp_θFC = fill(mean(sp_θFC), n_soilW)
-        sp_θSat = fill(mean(sp_θSat), n_soilW)
-        sp_θWP = fill(mean(sp_θWP), n_soilW)
-        sp_ψFC = fill(mean(sp_ψFC), n_soilW)
-        sp_ψSat = fill(mean(sp_ψSat), n_soilW)
-        sp_ψWP = fill(mean(sp_ψWP), n_soilW)
+
+
+    p_CLAY = st_CLAY
+    p_SAND = st_SAND
+    p_SILT = st_SILT
+    p_ORGM = st_ORGM
+    p_kSat = sp_kSat
+    p_kFC = sp_kFC
+    p_kWP = sp_kWP
+    p_ψSat = sp_ψSat
+    p_ψFC = sp_ψFC
+    p_ψWP = sp_ψWP
+    p_θSat = sp_θSat
+    p_θFC = sp_θFC
+    p_θWP = sp_θWP
+    p_α = sp_α
+    p_β = sp_β
+
+
+
+    soilW = soilW .* helpers.numbers.𝟘 + min.(soilW, p_wSat)
+    for sl in eachindex(soilW)
+        sd_sl = soilDepths[sl]
+        @rep_elem sd_sl => (soilLayerThickness, sl, :soilW)
+        p_wFC_sl = p_θFC[sl] * sd_sl
+        @rep_elem p_wFC_sl => (p_wFC, sl, :soilW)
+        p_wWP_sl = p_θWP[sl] * sd_sl
+        @rep_elem p_wWP_sl => (p_wWP, sl, :soilW)
+        p_wSat_sl = p_θSat[sl] * sd_sl
+        @rep_elem p_wSat_sl => (p_wSat, sl, :soilW)
+        soilW_sl = min(soilW[sl], p_wSat[sl])
+        @rep_elem soilW_sl => (soilW, sl, :soilW)
     end
-    # @create_arrays (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :soilLayerThickness, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) = (helpers.numbers.aone, n_soilW)
-    # props = (:p_CLAY, :p_SAND, :p_SILT, :p_ORGM, :soilLayerThickness, :p_wFC, :p_wWP, :p_wSat, :p_kSat, :p_kFC, :p_kWP, :p_ψSat, :p_ψFC, :p_ψWP, :p_θSat, :p_θFC, :p_θWP, :p_α, :p_β) 
-
-    ## instantiate variables
-    # p_CLAY = zero(st_CLAY)
-    # p_SAND = zero(st_SAND)
-    # p_SILT = zero(st_SILT)
-    # p_ORGM = zero(st_ORGM)
-    # p_wFC = zero(st_CLAY)
-    # p_wWP = zero(st_CLAY)
-    # p_wSat = zero(st_CLAY)
-    # p_kSat = zero(st_CLAY)
-    # p_kFC = zero(st_CLAY)
-    # p_kWP = zero(st_CLAY)
-    # p_ψSat = zero(st_CLAY)
-    # p_ψFC = zero(st_CLAY)
-    # p_ψWP = zero(st_CLAY)
-    # p_θSat = zero(st_CLAY)
-    # p_θFC = zero(st_CLAY)
-    # p_θWP = zero(st_CLAY)
-    # p_α = zero(st_CLAY)
-    # p_β = zero(st_CLAY)
-
-    p_CLAY = helpers.numbers.𝟙 .* st_CLAY
-    p_SAND = helpers.numbers.𝟙 .* st_SAND
-    p_SILT = helpers.numbers.𝟙 .* st_SILT
-    p_ORGM = helpers.numbers.𝟙 .* st_ORGM
-    p_kSat = helpers.numbers.𝟙 .* sp_kSat
-    p_kFC = helpers.numbers.𝟙 .* sp_kFC
-    p_kWP = helpers.numbers.𝟙 .* sp_kWP
-    p_ψSat = helpers.numbers.𝟙 .* sp_ψSat
-    p_ψFC = helpers.numbers.𝟙 .* sp_ψFC
-    p_ψWP = helpers.numbers.𝟙 .* sp_ψWP
-    p_θSat = helpers.numbers.𝟙 .* sp_θSat
-    p_θFC = helpers.numbers.𝟙 .* sp_θFC
-    p_θWP = helpers.numbers.𝟙 .* sp_θWP
-    p_α = helpers.numbers.𝟙 .* sp_α
-    p_β = helpers.numbers.𝟙 .* sp_β
-
-    p_wFC = p_θFC .* soilDepths
-    p_wWP = p_θWP .* soilDepths
-    p_wSat = p_θSat .* soilDepths
-    soilLayerThickness = soilDepths
 
     # get the plant available water capacity
     p_wAWC = p_wFC - p_wWP
@@ -91,10 +67,9 @@ function precompute(o::soilWBase_uniform, forcing, land, helpers)
     s_wSat = sum(p_wSat)
     s_wAWC = sum(p_wAWC)
 
-    soilW = soilW .* helpers.numbers.𝟘 + min.(soilW, p_wSat) # =. is necessary to maintain the subarray data type
     @pack_land begin
         (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, soilLayerThickness, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
-        # soilW => land.pools
+        soilW => land.pools
     end
     return land
 end

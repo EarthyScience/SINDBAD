@@ -111,10 +111,10 @@ end
 """
 getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossGradient(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+function getLossGradient(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     upVector = pVector
     newApproaches = updateModelParametersType(tblParams, base_models, upVector)
-    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
@@ -124,10 +124,10 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     upVector = pVector
     newApproaches = updateModelParameters(tblParams, base_models, upVector)
-    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_maps, land_init_space, f_one)
+    runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
     @info "-------------------"
@@ -149,10 +149,12 @@ function optimizeModelArray(forcing::NamedTuple, output, output_variables, obser
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    loc_space_maps, land_init_space, f_one  = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
+    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
     # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one))
     # make the cost function handle
-    cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, land_init_space, f_one)
+
+    # output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
+    cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 
     # run the optimizer
