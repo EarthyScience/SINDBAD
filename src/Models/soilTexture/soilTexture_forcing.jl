@@ -21,7 +21,7 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
     # get the soil thickness 
 
     if length(st_CLAY) != n_soilW
-        println("soilTexture_forcing: the number of soil layers in forcing data does not match the layers in in modelStructure.json. Using mean of input over the soil layers.")
+        println("soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers.")
         st_CLAY = fill(mean(st_CLAY), n_soilW)
         st_ORGM = fill(mean(st_ORGM), n_soilW)
         st_SAND = fill(mean(st_SAND), n_soilW)
