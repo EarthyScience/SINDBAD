@@ -12,7 +12,7 @@ function precompute(o::aRespiration_Thornley2000B, forcing, land, helpers)
 		numType ∈ helpers.numbers
 	end
 	
-	p_km = ones(numType, length(land.pools.cEco))
+	p_km = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 	p_km4su = copy(p_km)
 	RA_G = copy(p_km)
 	RA_M = copy(p_km)

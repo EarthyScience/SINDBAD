@@ -5,14 +5,19 @@ end
 
 function precompute(o::gppDemand_mult, forcing, land, helpers)
 
+	@unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
 
-	## unpack land variables
+	scall = ones(numType, 4)
 
-	# set 3d scalar matrix with current scalars
-	scall = SVector(helpers.numbers.sNT.(zeros(4))...)
-	AllDemScGPP = helpers.numbers.𝟙
-	gppE = helpers.numbers.𝟘
-	@pack_land (scall,AllDemScGPP, gppE) => land.gppDemand
+	if hasproperty(land.pools, :soilW)
+		if typeof(land.pools.soilW)<:SVector{length(land.pools.soilW)}
+			scall = SVector{4}(scall)
+		end
+	end
+
+	AllDemScGPP = 𝟙
+	gppE = 𝟘
+	@pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
 
 	return land
 end
@@ -28,14 +33,15 @@ function compute(o::gppDemand_mult, forcing, land, helpers)
 		scall ∈ land.gppDemand
 		TempScGPP ∈ land.gppAirT
 		VPDScGPP ∈ land.gppVPD
+        (𝟘, 𝟙) ∈ helpers.numbers
 	end
 
 	# @show TempScGPP, VPDScGPP, scall
 	# set 3d scalar matrix with current scalars
-	scall = rep_elem(scall, TempScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-	scall = rep_elem(scall, VPDScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 2)
-	scall = rep_elem(scall, LightScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 3)
-	scall = rep_elem(scall, CloudScGPP, scall, scall, helpers.numbers.𝟘, helpers.numbers.𝟙, 4)
+	scall = rep_elem(scall, TempScGPP, scall, scall, 𝟘, 𝟙, 1)
+	scall = rep_elem(scall, VPDScGPP, scall, scall, 𝟘, 𝟙, 2)
+	scall = rep_elem(scall, LightScGPP, scall, scall, 𝟘, 𝟙, 3)
+	scall = rep_elem(scall, CloudScGPP, scall, scall, 𝟘, 𝟙, 4)
 
 	# compute the product of all the scalars
 	AllDemScGPP = prod(scall)

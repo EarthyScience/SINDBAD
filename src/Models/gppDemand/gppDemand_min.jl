@@ -4,13 +4,20 @@ struct gppDemand_min <: gppDemand
 end
 
 function precompute(o::gppDemand_min, forcing, land, helpers)
+	@unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
 
-	## unpack land variables
+	scall = ones(numType, 4)
 
-	# set 3d scalar matrix with current scalars
-	scall = ones(helpers.numbers.numType, 4)
+	if hasproperty(land.pools, :soilW)
+		if typeof(land.pools.soilW)<:SVector{length(land.pools.soilW)}
+			scall = SVector{4}(scall)
+		end
+	end
 
-	@pack_land scall => land.gppDemand
+	AllDemScGPP = 𝟙
+	gppE = 𝟘
+	@pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
+
 	return land
 end
 
@@ -24,14 +31,15 @@ function compute(o::gppDemand_min, forcing, land, helpers)
 		LightScGPP ∈ land.gppDirRadiation
 		scall ∈ land.gppDemand
 		TempScGPP ∈ land.gppAirT
-		VPDScGPP ∈ land.gppVPD
+        (𝟘, 𝟙) ∈ helpers.numbers
 	end
 
+	# @show TempScGPP, VPDScGPP, scall
 	# set 3d scalar matrix with current scalars
-	scall[1] = TempScGPP
-	scall[2] = VPDScGPP
-	scall[3] = LightScGPP
-	scall[4] = CloudScGPP
+	scall = rep_elem(scall, TempScGPP, scall, scall, 𝟘, 𝟙, 1)
+	scall = rep_elem(scall, VPDScGPP, scall, scall, 𝟘, 𝟙, 2)
+	scall = rep_elem(scall, LightScGPP, scall, scall, 𝟘, 𝟙, 3)
+	scall = rep_elem(scall, CloudScGPP, scall, scall, 𝟘, 𝟙, 4)
 	
 	# compute the minumum of all the scalars
 	AllDemScGPP = minimum(scall)

@@ -7,7 +7,7 @@ function precompute(o::totalTWS_sumComponents, forcing, land, helpers)
 	@unpack_land numType ∈ helpers.numbers
 	## calculate variables
 	if !hasproperty(land.pools, :soilW)
-		soilW = zeros(numType, length(land.pools.soilW))
+		soilW = zeros(numType, 1)
 	else
 		@unpack_land soilW ∈ land.pools
 	end

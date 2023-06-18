@@ -1,6 +1,7 @@
 module Sindbad
 using Reexport: @reexport
 
+using Crayons
 import DataStructures
 using InteractiveUtils
 using DocStringExtensions

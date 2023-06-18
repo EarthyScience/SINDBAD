@@ -16,7 +16,7 @@ function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_land (𝟘, numType) ∈ helpers.numbers
 
     ## instantiate variables
-    p_kfVeg = ones(numType, length(land.pools.cEco)) #sujan
+    p_kfVeg = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #sujan
     annk = 𝟘#sujan ones(size(AGE))
 
     ## pack land variables
