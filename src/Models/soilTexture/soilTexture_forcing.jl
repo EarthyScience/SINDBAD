@@ -11,9 +11,9 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 	
-	st_CLAY = CLAY  |> Array
-	st_SAND = SAND  |> Array
-	st_SILT = SILT |> Array
+	st_CLAY = CLAY  |> Tuple
+	st_SAND = SAND  |> Tuple
+	st_SILT = SILT |> Tuple
 	st_ORGM = 𝟘# * ORGM
 
 	n_soilW = length(land.pools.soilW)
@@ -27,6 +27,10 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
         st_SAND = fill(mean(st_SAND), n_soilW)
         st_SILT = fill(mean(st_SILT), n_soilW)
     end
+	st_CLAY = Tuple(st_CLAY)
+	st_ORGM = Tuple(st_ORGM)
+	st_SAND = Tuple(st_SAND)
+	st_SILT = Tuple(st_SILT)
 
 	## pack land variables
 	@pack_land (st_CLAY, st_ORGM, st_SAND, st_SILT) => land.soilTexture

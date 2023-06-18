@@ -50,13 +50,15 @@ linit= createLandInit(info.pools, info.tem);
 
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
-
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+
+tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
+
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);  
 
@@ -83,20 +85,3 @@ for (vi, v) in enumerate(out_vars)
     end
     savefig("wroasted_$(v).png")
 end
-
-
-function tprint(d, df=1)
-    for k in keys(d)
-        if d[k] isa NamedTuple
-            printstyled("$(k) : NT\n"; color =:blue)
-            tprint(d[k], df)
-            df = length(string.(k))
-        else
-            tt = repeat("\t",df)
-            printstyled("$(tt) $(k): $(typeof(d[k]))\n"; color = :yellow)
-        end
-        df = 1
-    end
-end
-
-tprint(land_init)
