@@ -7,6 +7,7 @@ export noStackTrace
 export dictToNamedTuple
 export getSindbadModels
 export addS
+export tcprint
 
 """
     noStackTrace()
@@ -239,10 +240,7 @@ function processPackLand(ex)
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
             tmp = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:kw, esc(s), esc(rn))))))))
-            # tmp = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
             # tmp = Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
-            # tmp0 = Expr(:kw, esc(s), esc(rn))
-            # tmp = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), tmp0))))))
             tmp
         end
     end
@@ -432,4 +430,96 @@ function addS(s)
 		sm = sm + s[si]
 	end
 	sm
+end
+
+
+function getTypes!(d, all_types)
+    for k in keys(d)
+        if d[k] isa NamedTuple
+            push!(all_types, typeof(d[k]))
+            getTypes!(d[k], all_types)
+        else
+            push!(all_types, typeof(d[k]))
+        end
+    end
+    return unique(all_types)
+end
+
+function collect_types(d; c_olor=true)
+    all_types = []
+    all_types = getTypes!(d, all_types)
+    c_types = Dict{DataType, Int}()
+    for t in all_types
+        if c_olor == true
+            c = rand(0:255)
+        else
+            c = 0
+        end
+        c_types[t] = c
+    end
+    return c_types
+end
+
+function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
+    colors_types = collect_types(d; c_olor=c_olor)
+    lc = nothing
+    tt="\t"
+    for k in keys(d)
+        lc = colors_types[typeof(d[k])]
+        if d[k] isa NamedTuple
+            tt=""
+            if t_ype == true
+                tp = " = (; "
+            else
+                tp=""
+            end
+            if df != 1
+                tt = repeat("\t",df)
+            end
+            print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
+            tcprint(d[k], df, c_olor=c_olor, t_ype=t_ype, istop=false)
+        else
+            tt = repeat("\t",df)
+            if t_ype == true
+                tp = "::$(typeof(d[k]))"
+                if tp == "::NT"
+                    tp = "::Tuple"
+                end
+
+            else
+                tt = repeat("\t",df)
+                tp=""
+            end
+            if typeof(d[k]) <: Float32
+                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k) = $(d[k])f0$(tp),\n")
+            elseif typeof(d[k]) <: SVector
+                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n")
+            elseif typeof(d[k]) <: Matrix
+                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
+                tt_row = repeat(tt[1], length(tt) + 1)
+                for _d in eachrow(d[k])
+                    d_str = nothing
+                    if eltype(_d) == Float32
+                        d_str = join(_d, "f0 ") * "f0" 
+                    else
+                        d_str = join(_d, " ")
+                    end
+                    print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt_row) $(d_str);\n")
+                end
+                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
+            else
+                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k) = $(d[k])$(tp),\n")
+            end
+            lc = colors_types[typeof(d[k])]
+        end
+        # if k == last(keys(d))
+        #     print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt))::NamedTuple,\n")
+        # end
+        df = 1
+    end
+    if t_ype == true
+        print(Crayon(foreground = lc), "$(tt))::NamedTuple,\n")
+    else
+        print(Crayon(foreground = lc), "$(tt)),\n")
+    end
 end

@@ -73,6 +73,8 @@ function precompute(o::cFlow_GSI, forcing, land, helpers)
     k_RshedF = 𝟙
     slope_fWfTfR = 𝟙
 
+    taker = Tuple(taker)
+    giver = Tuple(giver)
     @pack_land begin
 		(p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
 		# (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
@@ -188,12 +190,12 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     Re2LF = get_frac_flow(Re2L_i, p_k_sum)
     Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 
-	p_A = rep_elem(p_A, Re2LF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.Re2L)
-	p_A = rep_elem(p_A, Re2RF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.Re2R)
-	p_A = rep_elem(p_A, L2ReF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.L2Re)
-	p_A = rep_elem(p_A, R2ReF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.R2Re)
-	p_A = rep_elem(p_A, k_LshedF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.k_Lshed)
-	p_A = rep_elem(p_A, k_RshedF, p_A, p_A, helpers.numbers.𝟘, helpers.numbers.𝟙, p_A_ind.k_Rshed)
+	p_A = rep_elem(p_A, Re2LF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2L)
+	p_A = rep_elem(p_A, Re2RF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2R)
+	p_A = rep_elem(p_A, L2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.L2Re)
+	p_A = rep_elem(p_A, R2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.R2Re)
+	p_A = rep_elem(p_A, k_LshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Lshed)
+	p_A = rep_elem(p_A, k_RshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Rshed)
     # p_A[p_A_ind.Re2L] = p_A
     # p_A[p_A_ind.Re2R] = Re2RF
     # p_A[p_A_ind.L2Re] = L2ReF
