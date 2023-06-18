@@ -59,18 +59,15 @@ obs = getKeyedArrayFromYaxArray(observations);
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 
-function new_loss(x)
-    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
-    mods = info.tem.models.forward;
-    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    @show l
-end
-# @time outcubes = runExperimentOpti(experiment_json);
-
 
 function lloss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    @show l
+    pprint("params:")
+    @show " "
+    pprint(x)
+    @show " "
+    pprint("loss")
+    pprint(l)
     l
 end
 
@@ -84,8 +81,17 @@ loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_o
 
 
 lloss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-l1(tblParams.defaults)
-# l1(tblParams.defaults .* rand_m)
+lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+l1(p) = lloss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+newmods = updateModelParametersType(tblParams, mods, dualDefs);
+l2(p) = lloss(p, newmods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+
+l1(tblParams.defaults .* rand_m);
+l2(tblParams.defaults .* rand_m);
+
+
 @time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@time grad = ForwardDiff.gradient(l2, dualDefs)
 
