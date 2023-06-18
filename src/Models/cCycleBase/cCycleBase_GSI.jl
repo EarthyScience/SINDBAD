@@ -45,7 +45,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 	end
 
 	# if there is flux order check that is consistent
-	flowOrder = collect(1:length(findall(>(𝟘), cFlowA)))
+	flowOrder = Tuple(collect(1:length(findall(>(𝟘), cFlowA))))
 	
     ## pack land variables
     @pack_land begin
