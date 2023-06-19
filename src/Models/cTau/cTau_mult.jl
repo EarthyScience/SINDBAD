@@ -2,7 +2,7 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function precompute(o::cTau_mult, forcing, land, helpers)
+function instantiate(o::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
@@ -57,8 +57,8 @@ Combine effects of different factors on decomposition rates using cTau_mult
  - land.cTau.p_k: values for actual turnover rates
  - land.cTau.p_k
 
-# precompute:
-precompute/instantiate time-invariant variables for cTau_mult
+# instantiate:
+instantiate/instantiate time-invariant variables for cTau_mult
 
 
 ---

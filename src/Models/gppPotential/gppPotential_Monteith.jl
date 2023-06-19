@@ -4,7 +4,7 @@ export gppPotential_Monteith
 	εmax::T1 = 2.0 | (0.1, 5.0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
 end
 
-function precompute(o::gppPotential_Monteith, forcing, land, helpers)
+function instantiate(o::gppPotential_Monteith, forcing, land, helpers)
 	# set rueGPP to a constant
 	gppPot = helpers.numbers.𝟘
 

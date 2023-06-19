@@ -18,7 +18,7 @@ end
 
 function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models, init=out) do o,model 
-        o = Models.precompute(model, forcing, o, tem_helpers)
+        o = Models.instantiate(model, forcing, o, tem_helpers)
     end
 end
 

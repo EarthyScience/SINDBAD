@@ -4,11 +4,11 @@ export cTauSoilW_CASA
 	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
 
-function precompute(o::cTauSoilW_CASA, forcing, land, helpers)
+function instantiate(o::cTauSoilW_CASA, forcing, land, helpers)
 	@unpack_cTauSoilW_CASA o
 
 	## instantiate variables
-	p_fsoilW = ones(numType, length(land.pools.cEco))
+	p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
 	## pack land variables
 	@pack_land p_fsoilW => land.cTauSoilW
@@ -88,8 +88,8 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 *Outputs*
  - land.cTauSoilW.fsoilW: values for below ground moisture effect on decomposition processes
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilW_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauSoilW_CASA
 
 
 ---

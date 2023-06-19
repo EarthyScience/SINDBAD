@@ -3,7 +3,7 @@ export gpp_mult
 struct gpp_mult <: gpp
 end
 
-function precompute(o::gpp_mult, forcing, land, helpers)
+function instantiate(o::gpp_mult, forcing, land, helpers)
 	@unpack_land begin
 		𝟘 ∈ helpers.numbers
 	end

@@ -2,7 +2,7 @@ export cAllocation_none
 
 struct cAllocation_none <: cAllocation end
 
-function precompute(o::cAllocation_none, forcing, land, helpers)
+function instantiate(o::cAllocation_none, forcing, land, helpers)
 
     ## calculate variables
     cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
@@ -15,7 +15,7 @@ end
 @doc """
 sets the carbon allocation to zero (nothing to allocated)
 
-# precompute:
+# instantiate:
 
 *Inputs*
 - helpers.numbers.𝟙

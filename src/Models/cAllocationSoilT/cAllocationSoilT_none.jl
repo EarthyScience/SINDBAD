@@ -2,7 +2,7 @@ export cAllocationSoilT_none
 
 struct cAllocationSoilT_none <: cAllocationSoilT end
 
-function precompute(o::cAllocationSoilT_none, forcing, land, helpers)
+function instantiate(o::cAllocationSoilT_none, forcing, land, helpers)
 
     ## calculate variables
     fT = helpers.numbers.𝟙 #sujan fsoilW was changed to fTSoil
@@ -15,7 +15,7 @@ end
 @doc """
 sets the temperature effect on allocation to one (no effect)
 
-# precompute:
+# instantiate:
 
 *Inputs*
 - helpers.numbers.𝟙

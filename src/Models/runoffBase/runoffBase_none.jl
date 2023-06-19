@@ -3,7 +3,7 @@ export runoffBase_none
 struct runoffBase_none <: runoffBase
 end
 
-function precompute(o::runoffBase_none, forcing, land, helpers)
+function instantiate(o::runoffBase_none, forcing, land, helpers)
 
 	## calculate variables
 	runoffBase = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the base runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffBase_none
+# instantiate:
+instantiate/instantiate time-invariant variables for runoffBase_none
 
 
 ---

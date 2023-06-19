@@ -6,7 +6,7 @@ export cTauSoilT_Q10
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 
-function precompute(o::cTauSoilT_Q10, forcing, land, helpers)
+function instantiate(o::cTauSoilT_Q10, forcing, land, helpers)
 	## unpack parameters and forcing
 
 	## calculate variables

@@ -5,7 +5,7 @@ export cTauLAI_CASA
 	kRTLAI::T2 = 0.3 | (0.0, 1.0) | "constant fraction of root litter imputs" | ""
 end
 
-function precompute(o::cTauLAI_CASA, forcing, land, helpers)
+function instantiate(o::cTauLAI_CASA, forcing, land, helpers)
 	@unpack_cTauLAI_CASA o
 
 	## instantiate variables
@@ -115,8 +115,8 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
  - land.cTauLAI.p_kfLAI:
  - land.cTauLAI.p_kfLAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauLAI_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauLAI_CASA
 
 
 ---

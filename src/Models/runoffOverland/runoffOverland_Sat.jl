@@ -3,7 +3,7 @@ export runoffOverland_Sat
 struct runoffOverland_Sat <: runoffOverland
 end
 
-function precompute(o::runoffOverland_Sat, forcing, land, helpers)
+function instantiate(o::runoffOverland_Sat, forcing, land, helpers)
 
 	runoffOverland = helpers.numbers.𝟘
 
