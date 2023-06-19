@@ -402,7 +402,11 @@ function generateDatesInfo(info::NamedTuple)
     timeData = getfield(info.modelRun, :time)
     timeProps = propertynames(timeData)
     for timeProp in timeProps
-        tmpDates = setTupleField(tmpDates, (timeProp, getfield(timeData, timeProp)))
+        propVal =  getfield(timeData, timeProp)
+        if propVal isa Number
+            propVal = info.tem.helpers.numbers.sNT(propVal)
+        end
+        tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
     if info.modelRun.time.step == "daily"
         time_step = Day(1)
@@ -414,7 +418,7 @@ function generateDatesInfo(info::NamedTuple)
         error("Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json")
     end
     tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
-    tmpDates = setTupleField(tmpDates, (:vector, time_range)) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:vector, Tuple(time_range))) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
@@ -549,8 +553,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :components, (subPool, Tuple(components)))
             tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
-            tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, ltck))
-            hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, ltck))
+            tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Tuple(ltck)))
+            hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, Tuple(ltck)))
             hlpElem = setTupleSubfield(hlpElem, :zix, (subPool, zix))
             hlpElem = setTupleSubfield(hlpElem, :components, (subPool, Tuple(components)))
             onetyped = createArrayofType(ones(length(initValues)), Nothing[], info.tem.helpers.numbers.numType, nothing, true, Val(arrayType))

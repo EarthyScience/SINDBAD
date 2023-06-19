@@ -6,7 +6,7 @@ export cAllocation_Friedlingstein1999
 	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
 end
 
-function precompute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
+function instantiate(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
 	@unpack_cAllocation_Friedlingstein1999 o
 
 	## instantiate variables
@@ -69,8 +69,8 @@ Combine the different effects of carbon allocation using cAllocation_Friedlingst
  - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
  - land.states.cAlloc
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_Friedlingstein1999
+# instantiate:
+instantiate/instantiate time-invariant variables for cAllocation_Friedlingstein1999
 
 
 ---

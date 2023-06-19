@@ -5,7 +5,7 @@ export rootFraction_k2fvegFraction
 	k1_scale::T2 = 0.5 | (0.001, 10.0) | "scales vegFrac to fraction of 1st soil layer available for transpiration" | ""
 end
 
-function precompute(o::rootFraction_k2fvegFraction, forcing, land, helpers)
+function instantiate(o::rootFraction_k2fvegFraction, forcing, land, helpers)
 	@unpack_rootFraction_k2fvegFraction o
 
 	## precomputations/check
@@ -67,8 +67,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
 
-# precompute:
-precompute/instantiate time-invariant variables for rootFraction_k2fvegFraction
+# instantiate:
+instantiate/instantiate time-invariant variables for rootFraction_k2fvegFraction
 
 
 ---

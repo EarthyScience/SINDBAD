@@ -3,7 +3,7 @@ export cFlow_none
 struct cFlow_none <: cFlow
 end
 
-function precompute(o::cFlow_none, forcing, land, helpers)
+function instantiate(o::cFlow_none, forcing, land, helpers)
 
 	## calculate variables
 	tmp = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
@@ -21,8 +21,8 @@ end
 @doc """
 set transfer between pools to 0 [i.e. nothing is transfered] set giver & taker matrices to [] get the transfer matrix transfers
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlow_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cFlow_none
 
 
 ---

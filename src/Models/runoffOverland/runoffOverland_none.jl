@@ -3,7 +3,7 @@ export runoffOverland_none
 struct runoffOverland_none <: runoffOverland
 end
 
-function precompute(o::runoffOverland_none, forcing, land, helpers)
+function instantiate(o::runoffOverland_none, forcing, land, helpers)
 
 	## calculate variables
 	runoffOverland = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets overland runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffOverland_none
+# instantiate:
+instantiate/instantiate time-invariant variables for runoffOverland_none
 
 
 ---

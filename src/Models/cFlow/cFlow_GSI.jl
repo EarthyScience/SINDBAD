@@ -7,7 +7,7 @@ export cFlow_GSI
 	f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
 end
 
-function precompute(o::cFlow_GSI, forcing, land, helpers)
+function instantiate(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
         cFlowA ∈ land.cCycleBase
@@ -249,8 +249,8 @@ Actual transfers of c between pools (of diagonal components) using cFlow_GSI
  - land.cFlow.p_ndxTrg: taget pools
  - land.cFlow.p_A
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlow_GSI
+# instantiate:
+instantiate/instantiate time-invariant variables for cFlow_GSI
 
 
 ---

@@ -3,7 +3,7 @@ export cTauSoilProperties_none
 struct cTauSoilProperties_none <: cTauSoilProperties
 end
 
-function precompute(o::cTauSoilProperties_none, forcing, land, helpers)
+function instantiate(o::cTauSoilProperties_none, forcing, land, helpers)
 
 	## calculate variables
 	p_kfSoil = zero(land.pools.cEco) .+ helpers.numbers.𝟙
@@ -16,8 +16,8 @@ end
 @doc """
 Set soil texture effects to ones (ineficient, should be pix zix_mic)
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilProperties_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauSoilProperties_none
 
 
 ---

@@ -3,7 +3,7 @@ export cTauLAI_none
 struct cTauLAI_none <: cTauLAI
 end
 
-function precompute(o::cTauLAI_none, forcing, land, helpers)
+function instantiate(o::cTauLAI_none, forcing, land, helpers)
 
 	## calculate variables
 	p_kfLAI = zero(land.pools.cEco) .+ helpers.numbers.𝟙; #(ineficient, should be pix zix_veg)
@@ -16,8 +16,8 @@ end
 @doc """
 set values to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauLAI_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauLAI_none
 
 
 ---
