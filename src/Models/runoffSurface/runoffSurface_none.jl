@@ -3,7 +3,7 @@ export runoffSurface_none
 struct runoffSurface_none <: runoffSurface
 end
 
-function precompute(o::runoffSurface_none, forcing, land, helpers)
+function instantiate(o::runoffSurface_none, forcing, land, helpers)
 
 	## calculate variables
 	runoffSurface = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets surface runoff [runoffSurface] from the storage to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_none
+# instantiate:
+instantiate/instantiate time-invariant variables for runoffSurface_none
 
 
 ---

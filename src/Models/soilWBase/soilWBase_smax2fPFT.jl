@@ -16,7 +16,7 @@ export soilWBase_smax2fPFT
 	smaxPFT11::T13 = 0.05 | (0.0, 2.0) | "maximum soil water holding capacity of 2nd soil layer of PFT class 11, as % of defined soil depth" | "fraction"
 end
 
-function precompute(o::soilWBase_smax2fPFT, forcing, land, helpers)
+function instantiate(o::soilWBase_smax2fPFT, forcing, land, helpers)
     #@needscheck
     @unpack_soilWBase_smax2fPFT o
 
@@ -102,8 +102,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fPFT
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers
  - land.soilWBase.p_wWP: wilting point set to zero for all layers
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_smax2fPFT
+# instantiate:
+instantiate/instantiate time-invariant variables for soilWBase_smax2fPFT
 
 
 ---

@@ -9,7 +9,7 @@ export gppAirT_GSI
 	fT_h_base::T6 = 41.51 | (25.0, 65.0) | "base of sigmoid for heat stress" | "fraction"
 end
 
-function precompute(o::gppAirT_GSI, forcing, land, helpers)
+function instantiate(o::gppAirT_GSI, forcing, land, helpers)
 	## unpack parameters
 	@unpack_gppAirT_GSI o
 	@unpack_land 𝟙 ∈ helpers.numbers

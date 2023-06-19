@@ -4,7 +4,7 @@ struct drainage_wFC <: drainage
 end
 
 
-function precompute(o::drainage_wFC, forcing, land, helpers)
+function instantiate(o::drainage_wFC, forcing, land, helpers)
 	## instantiate drainage
 	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
 	## pack land variables

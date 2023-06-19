@@ -2,7 +2,7 @@ export cAllocationNutrients_none
 
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
-function precompute(o::cAllocationNutrients_none, forcing, land, helpers)
+function instantiate(o::cAllocationNutrients_none, forcing, land, helpers)
 
     ## calculate variables
     minWLNL = helpers.numbers.𝟙
@@ -15,7 +15,7 @@ end
 @doc """
 sets the pseudo-nutrient limitation to one (no effect)
 
-# precompute:
+# instantiate:
 
 *Inputs*
 - helpers.numbers.𝟙

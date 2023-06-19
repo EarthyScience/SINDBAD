@@ -4,7 +4,7 @@ export cFlowVegProperties_CASA
 	WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
 end
 
-function precompute(o::cFlowVegProperties_CASA, forcing, land, helpers)
+function instantiate(o::cFlowVegProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowVegProperties_CASA o
 
 	## instantiate variables
@@ -64,8 +64,8 @@ Effect of vegetation properties on the c transfers between pools using cFlowVegP
  - land.cFlowVegProperties.p_E
  - land.cFlowVegProperties.p_F
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowVegProperties_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cFlowVegProperties_CASA
 
 
 ---

@@ -3,7 +3,7 @@ export aRespirationAirT_none
 struct aRespirationAirT_none <: aRespirationAirT
 end
 
-function precompute(o::aRespirationAirT_none, forcing, land, helpers)
+function instantiate(o::aRespirationAirT_none, forcing, land, helpers)
 
 	## calculate variables
 	fT = helpers.numbers.𝟙
@@ -16,8 +16,8 @@ end
 @doc """
 sets the effect of temperature on RA to one [no effect]
 
-# precompute:
-precompute/instantiate time-invariant variables for aRespirationAirT_none
+# instantiate:
+instantiate/instantiate time-invariant variables for aRespirationAirT_none
 
 
 ---

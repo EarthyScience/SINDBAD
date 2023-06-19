@@ -4,7 +4,7 @@ export rootFraction_constant
 	constantRootFrac::T1 = 0.5 | (0.05, 1.0) | "root fraction" | ""
 end
 
-function precompute(o::rootFraction_constant, forcing, land, helpers)
+function instantiate(o::rootFraction_constant, forcing, land, helpers)
 	@unpack_rootFraction_constant o
 	@unpack_land soilLayerThickness ∈ land.soilWBase
 	@unpack_land soilW ∈ land.pools
@@ -65,8 +65,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 *Outputs*
  - land.rootFraction.p_fracRoot2SoilD
 
-# precompute:
-precompute/instantiate time-invariant variables for rootFraction_constant
+# instantiate:
+instantiate/instantiate time-invariant variables for rootFraction_constant
 
 
 ---

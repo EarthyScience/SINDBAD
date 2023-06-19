@@ -13,6 +13,9 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 inpath = "../data/BE-Vie.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
+# inpath = "../data/DE-Hai.1979.2017.daily.nc"
+# forcingConfig = "forcing_erai.json"
+
 obspath = inpath
 optimize_it = true
 # optimize_it = false
@@ -29,7 +32,7 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => false,
+    "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
@@ -50,13 +53,15 @@ linit= createLandInit(info.pools, info.tem);
 
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
-
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+
+tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);  
 
+
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);  
 
@@ -72,31 +77,19 @@ ds = forcing.data[1];
 opt_dat = output.data;
 def_dat = outcubes;
 out_vars = output.variables;
+tspan = 9000:12000
+obsMod = last.(values(info.optim.variables.optim))
+obsVar = info.optim.variables.obs;
 for (vi, v) in enumerate(out_vars)
-    def_var = def_dat[vi][:,1,1,1]
-    opt_var = opt_dat[vi][:,1,1,1]
-    plot(def_var, label="def")
+    def_var = def_dat[vi][tspan,1,1,1]
+    opt_var = opt_dat[vi][tspan,1,1,1]
+    plot(def_var, label="def", size=(900, 600))
     plot!(opt_var, label="opt")
-    if v in propertynames(obs)
-        obs_var = getfield(obs, v)[:,1,1,1]
+    if v in obsMod
+        obsv = obsVar[findall(obsMod .== v)[1]]
+        @show "plot obs", v
+        obs_var = getfield(obs, obsv)[tspan,1,1,1]
         plot!(obs_var, label="obs")
     end
     savefig("wroasted_$(v).png")
 end
-
-
-function tprint(d, df=1)
-    for k in keys(d)
-        if d[k] isa NamedTuple
-            printstyled("$(k) : NT\n"; color =:blue)
-            tprint(d[k], df)
-            df = length(string.(k))
-        else
-            tt = repeat("\t",df)
-            printstyled("$(tt) $(k): $(typeof(d[k]))\n"; color = :yellow)
-        end
-        df = 1
-    end
-end
-
-tprint(land_init)

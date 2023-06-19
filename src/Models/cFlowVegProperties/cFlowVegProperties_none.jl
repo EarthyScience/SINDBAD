@@ -3,7 +3,7 @@ export cFlowVegProperties_none
 struct cFlowVegProperties_none <: cFlowVegProperties
 end
 
-function precompute(o::cFlowVegProperties_none, forcing, land, helpers)
+function instantiate(o::cFlowVegProperties_none, forcing, land, helpers)
 
     ## calculate variables
     p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))
@@ -17,8 +17,8 @@ end
 @doc """
 set transfer between pools to 0 [i.e. nothing is transfered]
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowVegProperties_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cFlowVegProperties_none
 
 
 ---

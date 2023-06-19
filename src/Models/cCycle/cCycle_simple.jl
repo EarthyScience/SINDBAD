@@ -3,7 +3,7 @@ export cCycle_simple
 struct cCycle_simple <: cCycle
 end
 
-function precompute(o::cCycle_simple, forcing, land, helpers)
+function instantiate(o::cCycle_simple, forcing, land, helpers)
 
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
@@ -138,8 +138,8 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycle_simple
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycle_simple
 
 
 ---
