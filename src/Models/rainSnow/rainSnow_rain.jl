@@ -3,7 +3,7 @@ export rainSnow_rain
 struct rainSnow_rain <: rainSnow
 end
 
-function precompute(o::rainSnow_rain, forcing, land, helpers)
+function instantiate(o::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing Rain ∈ forcing
 

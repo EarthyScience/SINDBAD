@@ -4,7 +4,7 @@ export transpirationSupply_wAWC
 	tranFrac::T1 = 0.1 | (0.02, 0.98) | "fraction of total maximum available water that can be transpired" | ""
 end
 
-function precompute(o::transpirationSupply_wAWC, forcing, land, helpers)
+function instantiate(o::transpirationSupply_wAWC, forcing, land, helpers)
 	tranSup = helpers.numbers.𝟘
 
 	@pack_land tranSup => land.transpirationSupply

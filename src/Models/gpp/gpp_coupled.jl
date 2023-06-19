@@ -3,7 +3,7 @@ export gpp_coupled
 struct gpp_coupled <: gpp
 end
 
-function precompute(o::gpp_coupled, forcing, land, helpers)
+function instantiate(o::gpp_coupled, forcing, land, helpers)
 
 	gpp = helpers.numbers.𝟘
 	@pack_land gpp => land.fluxes

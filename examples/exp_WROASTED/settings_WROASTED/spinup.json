@@ -5,7 +5,7 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 100
+			"nLoops": 200
 		},
 		{
 			"spinupMode": "forward",

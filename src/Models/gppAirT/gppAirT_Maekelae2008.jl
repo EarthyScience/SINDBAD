@@ -7,7 +7,7 @@ export gppAirT_Maekelae2008
 end
 
 
-function precompute(o::gppAirT_Maekelae2008, forcing, land, helpers)
+function instantiate(o::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing TairDay ∈ forcing
 

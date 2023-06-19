@@ -5,7 +5,7 @@ export groundWSoilWInteraction_VanDijk2010
 	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
 
-function precompute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+function instantiate(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		𝟘 ∈ helpers.numbers

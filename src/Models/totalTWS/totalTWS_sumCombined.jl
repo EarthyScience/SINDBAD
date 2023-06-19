@@ -2,7 +2,7 @@ export totalTWS_sumCombined
 
 struct totalTWS_sumCombined <: totalTWS end
 
-function precompute(o::totalTWS_sumCombined, forcing, land, helpers)
+function instantiate(o::totalTWS_sumCombined, forcing, land, helpers)
     @unpack_land begin
         numType ∈ helpers.numbers
         TWS ∈ land.pools
@@ -45,8 +45,8 @@ calculates total water storage as a sum of combined water storage
 *Outputs*
  - land.pools.wTotal: total water storage
 
-# precompute:
-precompute/instantiate time-invariant variables for totalTWS_sumCombined
+# instantiate:
+instantiate/instantiate time-invariant variables for totalTWS_sumCombined
 
 
 ---

@@ -3,7 +3,7 @@ export gppDiffRadiation_none
 struct gppDiffRadiation_none <: gppDiffRadiation
 end
 
-function precompute(o::gppDiffRadiation_none, forcing, land, helpers)
+function instantiate(o::gppDiffRadiation_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
@@ -28,8 +28,8 @@ Effect of diffuse radiation using gppDiffRadiation_none
 *Outputs*
  - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
 
-# precompute:
-precompute/instantiate time-invariant variables for gppDiffRadiation_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppDiffRadiation_none
 
 
 ---

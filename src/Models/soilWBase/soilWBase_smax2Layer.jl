@@ -5,7 +5,7 @@ export soilWBase_smax2Layer
 	smax2::T2 = 0.3 | (0.01, 1.0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
 end
 
-function precompute(o::soilWBase_smax2Layer, forcing, land, helpers)
+function instantiate(o::soilWBase_smax2Layer, forcing, land, helpers)
     @unpack_soilWBase_smax2Layer o
 
     @unpack_land begin
@@ -76,8 +76,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2Layer
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers
  - land.soilWBase.p_wWP: wilting point set to zero for all layers
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_smax2Layer
+# instantiate:
+instantiate/instantiate time-invariant variables for soilWBase_smax2Layer
 
 
 ---

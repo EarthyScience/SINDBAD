@@ -4,7 +4,7 @@ export LAI_cVegLeaf
 	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
 end
 
-function precompute(o::LAI_cVegLeaf, forcing, land, helpers)
+function instantiate(o::LAI_cVegLeaf, forcing, land, helpers)
 	## unpack parameters
 	@unpack_LAI_cVegLeaf o
 

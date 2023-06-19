@@ -5,7 +5,7 @@ export snowMelt_TairRn
 	melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
 end
 
-function precompute(o::snowMelt_TairRn, forcing, land, helpers)
+function instantiate(o::snowMelt_TairRn, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
@@ -89,7 +89,7 @@ function update(o::snowMelt_TairRn, forcing, land, helpers)
 end
 
 @doc """
-precompute the potential snow melt based on temperature & net radiation on days with Tair > 0.0°C. precompute the potential snow melt based on temperature & net radiation on days with Tair > 0.0 °C
+instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0 °C
 
 # Parameters
 $(PARAMFIELDS)
@@ -118,8 +118,8 @@ update pools and states in snowMelt_TairRn
  - land.pools.snowW[1] : snowpack [mm]
  - land.states.WBP : water balance pool [mm]
 
-# precompute:
-precompute/instantiate time-invariant variables for snowMelt_TairRn
+# instantiate:
+instantiate/instantiate time-invariant variables for snowMelt_TairRn
 
 
 ---
