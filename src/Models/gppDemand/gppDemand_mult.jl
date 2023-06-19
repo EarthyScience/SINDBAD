@@ -3,7 +3,7 @@ export gppDemand_mult
 struct gppDemand_mult <: gppDemand
 end
 
-function precompute(o::gppDemand_mult, forcing, land, helpers)
+function instantiate(o::gppDemand_mult, forcing, land, helpers)
 
 	@unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
 
@@ -50,7 +50,7 @@ function compute(o::gppDemand_mult, forcing, land, helpers)
 	gppE = fAPAR * gppPot * AllDemScGPP
 
 	## pack land variables
-	@pack_land (AllDemScGPP, gppE) => land.gppDemand
+	@pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
 	return land
 end
 

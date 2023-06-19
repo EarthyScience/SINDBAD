@@ -78,7 +78,7 @@ macro rep_elem(outparams::Expr)
     return Expr(:block, outCode...)
 end
 
-function rep_elem(v::AbstractVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
+function rep_elem(v::AbstractVector, v_elem, _, _, _, _, ind::Int)
     v[ind] = v_elem
     return v
 end
@@ -136,7 +136,7 @@ function add_to_elem(v::SVector, Δv, v_zero, n_𝟘, ind::Int)
     return v
 end
 
-function add_to_elem(v::AbstractVector, Δv, v_zero, n_𝟘, ind::Int)
+function add_to_elem(v::AbstractVector, Δv, _, _, ind::Int)
     v[ind] = v[ind] + Δv
     return v
 end

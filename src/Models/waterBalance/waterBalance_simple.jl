@@ -3,7 +3,7 @@ export waterBalance_simple
 struct waterBalance_simple <: waterBalance
 end
 
-function precompute(o::waterBalance_simple, forcing, land, helpers)
+function instantiate(o::waterBalance_simple, forcing, land, helpers)
 
 	## unpack variables
 	@unpack_land begin

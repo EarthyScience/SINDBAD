@@ -19,7 +19,7 @@ export cCycleBase_simple
 	C2Nveg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_simple, forcing, land, helpers)
+function instantiate(o::cCycleBase_simple, forcing, land, helpers)
 	@unpack_cCycleBase_simple o
 
 	@unpack_land begin
@@ -77,8 +77,8 @@ Pool structure of the carbon cycle using cCycleBase_simple
 
 *Outputs*
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleBase_simple
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycleBase_simple
 
 
 ---

@@ -3,7 +3,7 @@ export cTauSoilT_none
 struct cTauSoilT_none <: cTauSoilT
 end
 
-function precompute(o::cTauSoilT_none, forcing, land, helpers)
+function instantiate(o::cTauSoilT_none, forcing, land, helpers)
 
 	## calculate variables
 	fT = helpers.numbers.𝟙
@@ -16,8 +16,8 @@ end
 @doc """
 set the outputs to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilT_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauSoilT_none
 
 
 ---

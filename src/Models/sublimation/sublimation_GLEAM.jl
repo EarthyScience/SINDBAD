@@ -81,7 +81,7 @@ function update(o::sublimation_GLEAM, forcing, land, helpers)
 end
 
 @doc """
-precomputes the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
+instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
 
 # Parameters
 $(PARAMFIELDS)

@@ -4,7 +4,7 @@ export soilWBase_smax1Layer
 	smax::T1 = 1.0 | (0.001, 10.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
 end
 
-function precompute(o::soilWBase_smax1Layer, forcing, land, helpers)
+function instantiate(o::soilWBase_smax1Layer, forcing, land, helpers)
     @unpack_soilWBase_smax1Layer o
 
     @unpack_land begin
@@ -73,8 +73,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax1Layer
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wWP: wilting point set to zero for all layers
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_smax1Layer
+# instantiate:
+instantiate/instantiate time-invariant variables for soilWBase_smax1Layer
 
 
 ---

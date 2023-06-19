@@ -3,7 +3,7 @@ export gppSoilW_none
 struct gppSoilW_none <: gppSoilW
 end
 
-function precompute(o::gppSoilW_none, forcing, land, helpers)
+function instantiate(o::gppSoilW_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
@@ -27,8 +27,8 @@ sets the soil moisture stress on gppPot to one (no stress)
 *Outputs*
  - land.gppSoilW.SMScGPP: soil moisture effect on GPP [] dimensionless, between 0-1
 
-# precompute:
-precompute/instantiate time-invariant variables for gppSoilW_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppSoilW_none
 
 
 ---

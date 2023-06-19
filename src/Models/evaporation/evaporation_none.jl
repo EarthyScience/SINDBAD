@@ -3,7 +3,7 @@ export evaporation_none
 struct evaporation_none <: evaporation
 end
 
-function precompute(o::evaporation_none, forcing, land, helpers)
+function instantiate(o::evaporation_none, forcing, land, helpers)
 
 	## calculate variables
 	evaporation = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the soil evaporation to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for evaporation_none
+# instantiate:
+instantiate/instantiate time-invariant variables for evaporation_none
 
 
 ---

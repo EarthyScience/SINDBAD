@@ -3,7 +3,7 @@ export sublimation_none
 struct sublimation_none <: sublimation
 end
 
-function precompute(o::sublimation_none, forcing, land, helpers)
+function instantiate(o::sublimation_none, forcing, land, helpers)
 
 	## calculate variables
 	sublimation = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the snow sublimation to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for sublimation_none
+# instantiate:
+instantiate/instantiate time-invariant variables for sublimation_none
 
 
 ---

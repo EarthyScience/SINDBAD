@@ -3,12 +3,12 @@ export aRespiration_none
 struct aRespiration_none <: aRespiration
 end
 
-function precompute(o::aRespiration_none, forcing, land, helpers)
+function instantiate(o::aRespiration_none, forcing, land, helpers)
 	@unpack_land cEcoEfflux ∈ land.states
 
 	## calculate variables
 	zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-	cEcoEfflux[zix] = helpers.numbers.𝟘
+	@rep_elem 𝟘 => (cEcoEfflux, zix, :cEco)
 
 	## pack land variables
 	@pack_land cEcoEfflux => land.states
@@ -18,8 +18,8 @@ end
 @doc """
 sets the outflow from all vegetation pools to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for aRespiration_none
+# instantiate:
+instantiate/instantiate time-invariant variables for aRespiration_none
 
 
 ---

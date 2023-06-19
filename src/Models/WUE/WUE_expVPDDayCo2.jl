@@ -8,7 +8,7 @@ export WUE_expVPDDayCo2
 end
 
 
-function precompute(o::WUE_expVPDDayCo2, forcing, land, helpers)
+function instantiate(o::WUE_expVPDDayCo2, forcing, land, helpers)
 	## unpack parameters and forcing
 	## pack land variables
 	AoE = helpers.numbers.𝟙

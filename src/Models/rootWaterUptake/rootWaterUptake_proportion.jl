@@ -4,7 +4,7 @@ struct rootWaterUptake_proportion <: rootWaterUptake
 end
 
 
-function precompute(o::rootWaterUptake_proportion, forcing, land, helpers)
+function instantiate(o::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

@@ -7,7 +7,7 @@ export gppVPD_PRELES
     Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 
-function precompute(o::gppVPD_PRELES, forcing, land, helpers)
+function instantiate(o::gppVPD_PRELES, forcing, land, helpers)
     VPDScGPP = helpers.numbers.𝟙
 
     ## pack land variables

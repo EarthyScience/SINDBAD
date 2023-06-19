@@ -3,18 +3,13 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand
 end
 
-function precompute(o::gppDemand_none, forcing, land, helpers)
-	@unpack_land begin
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-	end
-
+function instantiate(o::gppDemand_none, forcing, land, helpers)
 	## calculate variables
 	# set scalar to a constant one [no effect on potential GPP]
 	AllDemScGPP = helpers.numbers.𝟙
 
 	# compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
-	gppE = fAPAR * gppPot * AllDemScGPP
+	gppE = helpers.numbers.𝟘
 
 	## pack land variables
 	@pack_land (AllDemScGPP, gppE) => land.gppDemand
@@ -36,8 +31,8 @@ Combine effects as multiplicative or minimum using gppDemand_none
  - land.gppDemand.AllDemScGPP: effective scalar of demands
  - land.gppDemand.gppE: demand-driven GPP with no stress
 
-# precompute:
-precompute/instantiate time-invariant variables for gppDemand_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppDemand_none
 
 
 ---
