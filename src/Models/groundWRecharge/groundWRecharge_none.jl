@@ -3,7 +3,7 @@ export groundWRecharge_none
 struct groundWRecharge_none <: groundWRecharge
 end
 
-function precompute(o::groundWRecharge_none, forcing, land, helpers)
+function instantiate(o::groundWRecharge_none, forcing, land, helpers)
 
 	## calculate variables
 	groundWRec = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the GW recharge to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for groundWRecharge_none
+# instantiate:
+instantiate/instantiate time-invariant variables for groundWRecharge_none
 
 
 ---

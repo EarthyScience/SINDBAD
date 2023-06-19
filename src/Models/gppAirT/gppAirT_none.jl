@@ -3,7 +3,7 @@ export gppAirT_none
 struct gppAirT_none <: gppAirT
 end
 
-function precompute(o::gppAirT_none, forcing, land, helpers)
+function instantiate(o::gppAirT_none, forcing, land, helpers)
 
 	## calculate variables
 	# set scalar to a constant 𝟙 [no effect on potential GPP]
@@ -28,8 +28,8 @@ Effect of temperature using gppAirT_none
 *Outputs*
  - land.gppAirT.TempScGPP: effect of temperature on potential GPP
 
-# precompute:
-precompute/instantiate time-invariant variables for gppAirT_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppAirT_none
 
 
 ---

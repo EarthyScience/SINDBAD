@@ -3,7 +3,7 @@ export evapotranspiration_sum
 struct evapotranspiration_sum <: evapotranspiration
 end
 
-function precompute(o::evapotranspiration_sum, forcing, land, helpers)
+function instantiate(o::evapotranspiration_sum, forcing, land, helpers)
     @unpack_land 𝟘  ∈ helpers.numbers
 	
     ## set variables to zero
@@ -51,8 +51,8 @@ Calculate the evapotranspiration as a sum of components using evapotranspiration
 *Outputs*
  - land.fluxes.evapotranspiration
 
-# precompute:
-precompute/instantiate time-invariant variables for evapotranspiration_sum
+# instantiate:
+instantiate/instantiate time-invariant variables for evapotranspiration_sum
 
 
 ---

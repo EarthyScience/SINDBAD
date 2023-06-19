@@ -4,7 +4,7 @@ export cTauSoilProperties_CASA
 	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
 end
 
-function precompute(o::cTauSoilProperties_CASA, forcing, land, helpers)
+function instantiate(o::cTauSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cTauSoilProperties_CASA o
 
 	## instantiate variables
@@ -58,8 +58,8 @@ Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
 *Outputs*
  - land.cTauSoilProperties.p_kfSoil: Soil texture stressor values on the the turnover rates
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilProperties_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauSoilProperties_CASA
 
 
 ---

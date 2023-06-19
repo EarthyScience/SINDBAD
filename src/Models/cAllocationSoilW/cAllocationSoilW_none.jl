@@ -2,7 +2,7 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function precompute(o::cAllocationSoilW_none, forcing, land, helpers)
+function instantiate(o::cAllocationSoilW_none, forcing, land, helpers)
 
     ## calculate variables
     fW = helpers.numbers.𝟙
@@ -15,7 +15,7 @@ end
 @doc """
 sets the moisture effect on allocation to one (no effect)
 
-# precompute:
+# instantiate:
 
 *Inputs*
 - helpers.numbers.𝟙

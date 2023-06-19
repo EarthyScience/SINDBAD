@@ -7,7 +7,7 @@ export gppDiffRadiation_GSI
 end
 
 
-function precompute(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function instantiate(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing

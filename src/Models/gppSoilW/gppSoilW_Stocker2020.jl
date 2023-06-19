@@ -6,7 +6,7 @@ export gppSoilW_Stocker2020
 end
 
 
-function precompute(o::gppSoilW_Stocker2020, forcing, land, helpers)
+function instantiate(o::gppSoilW_Stocker2020, forcing, land, helpers)
     SMScGPP = helpers.numbers.𝟙
     ttwo = helpers.numbers.sNT(2.0)
 

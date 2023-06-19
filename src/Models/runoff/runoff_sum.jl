@@ -3,7 +3,7 @@ export runoff_sum
 struct runoff_sum <: runoff
 end
 
-function precompute(o::runoff_sum, forcing, land, helpers)
+function instantiate(o::runoff_sum, forcing, land, helpers)
 
 	## set variables to zero
 	runoffBase = helpers.numbers.𝟘
@@ -45,8 +45,8 @@ Calculate the total runoff as a sum of components using runoff_sum
 *Outputs*
  - land.fluxes.runoff
 
-# precompute:
-precompute/instantiate time-invariant variables for runoff_sum
+# instantiate:
+instantiate/instantiate time-invariant variables for runoff_sum
 
 
 ---

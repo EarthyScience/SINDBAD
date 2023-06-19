@@ -4,7 +4,7 @@ export groundWRecharge_dos
 	dos_exp::T1 = 1.5 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage to groundwater" | ""
 end
 
-function precompute(o::groundWRecharge_dos, forcing, land, helpers)
+function instantiate(o::groundWRecharge_dos, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land begin
 		𝟘 ∈ helpers.numbers

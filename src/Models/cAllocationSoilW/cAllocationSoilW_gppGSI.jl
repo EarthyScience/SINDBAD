@@ -5,7 +5,7 @@ export cAllocationSoilW_gppGSI
 end
 
 
-function precompute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function instantiate(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 

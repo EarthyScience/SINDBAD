@@ -8,7 +8,7 @@ export cTauSoilW_GSI
 	frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
 end
 
-function precompute(o::cTauSoilW_GSI, forcing, land, helpers)
+function instantiate(o::cTauSoilW_GSI, forcing, land, helpers)
 	@unpack_cTauSoilW_GSI o
 
 	## instantiate variables
@@ -93,8 +93,8 @@ Effect of soil moisture on decomposition rates using cTauSoilW_GSI
 *Outputs*
  - land.cTauSoilW.p_fsoilW: effect of moisture on cTau for different pools
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauSoilW_GSI
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauSoilW_GSI
 
 
 ---

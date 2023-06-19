@@ -3,7 +3,7 @@ export snowFraction_none
 struct snowFraction_none <: snowFraction
 end
 
-function precompute(o::snowFraction_none, forcing, land, helpers)
+function instantiate(o::snowFraction_none, forcing, land, helpers)
 
 	## calculate variables
 	snowFraction = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the snow fraction to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for snowFraction_none
+# instantiate:
+instantiate/instantiate time-invariant variables for snowFraction_none
 
 
 ---

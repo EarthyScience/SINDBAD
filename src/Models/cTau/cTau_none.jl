@@ -3,7 +3,7 @@ export cTau_none
 struct cTau_none <: cTau
 end
 
-function precompute(o::cTau_none, forcing, land, helpers)
+function instantiate(o::cTau_none, forcing, land, helpers)
 
 	## calculate variables
 	p_k = ones(helpers.numbers.numType, length(land.pools.cEco))
@@ -16,8 +16,8 @@ end
 @doc """
 set the actual τ to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTau_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cTau_none
 
 
 ---

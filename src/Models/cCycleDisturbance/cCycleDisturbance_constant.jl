@@ -4,20 +4,25 @@ export cCycleDisturbance_constant
 	carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 
+function instantiate(o::cCycleDisturbance_constant, forcing, land, helpers)
+	zixVegAll = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
+	@pack_land zixVegAll => land.cCycleDisturbance
+	return land
+end
+
 function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 	## unpack parameters and forcing
 	@unpack_cCycleDisturbance_constant o
 	@unpack_forcing isDisturbed ∈ forcing
 
-
 	## unpack land variables
 	@unpack_land begin
+		zixVegAll ∈ land.cCycleDisturbance
 		cEco ∈ land.pools
 		(giver, taker) ∈ land.cFlow
 		𝟘 ∈ helpers.numbers
 	end
 	if isDisturbed > 𝟘
-		zixVegAll = vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...)
 		for zixVeg in zixVegAll
 			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
 			@add_to_elem -cLoss => (cEco, zixVeg, :cEco)
@@ -32,6 +37,7 @@ function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 		end
 	end
 	## pack land variables
+	@pack_land cEco => land.pools
 	return land
 end
 

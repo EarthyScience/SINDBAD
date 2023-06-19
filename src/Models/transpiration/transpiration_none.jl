@@ -3,7 +3,7 @@ export transpiration_none
 struct transpiration_none <: transpiration
 end
 
-function precompute(o::transpiration_none, forcing, land, helpers)
+function instantiate(o::transpiration_none, forcing, land, helpers)
 
 	## calculate variables
 	transpiration = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the actual transpiration to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for transpiration_none
+# instantiate:
+instantiate/instantiate time-invariant variables for transpiration_none
 
 
 ---
