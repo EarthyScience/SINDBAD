@@ -27,9 +27,9 @@ function instantiate(o::soilWBase_smax2fRD4, forcing, land, helpers)
     end
 
     ## instantiate variables
-    p_wSat = zeros(numType, n_soilW)
-    p_wFC = zeros(numType, n_soilW)
-    p_wWP = zeros(numType, n_soilW)
+    p_wSat = zero(soilW)
+    p_wFC = zero(soilW)
+    p_wWP = zero(soilW)
 
     ## pack land variables
     @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP, n_soilW) => land.soilWBase
