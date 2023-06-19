@@ -5,7 +5,7 @@ export aRespirationAirT_Q10
     Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
-function precompute(o::aRespirationAirT_Q10, forcing, land, helpers)
+function instantiate(o::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
 
     ## calculate variables

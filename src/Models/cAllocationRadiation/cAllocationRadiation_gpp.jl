@@ -2,7 +2,7 @@ export cAllocationRadiation_gpp
 
 struct cAllocationRadiation_gpp <: cAllocationRadiation
 end
-function precompute(o::cAllocationRadiation_gpp, forcing, land, helpers)
+function instantiate(o::cAllocationRadiation_gpp, forcing, land, helpers)
 
 
 	## calculate variables

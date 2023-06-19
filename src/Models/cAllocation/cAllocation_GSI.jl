@@ -2,7 +2,7 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function precompute(o::cAllocation_GSI, forcing, land, helpers)
+function instantiate(o::cAllocation_GSI, forcing, land, helpers)
     @unpack_land sNT ∈ helpers.numbers
 
     ## instantiate variables
@@ -80,8 +80,8 @@ Combine the different effects of carbon allocation using cAllocation_GSI
  - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
  - land.states.cAlloc
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_GSI
+# instantiate:
+instantiate/instantiate time-invariant variables for cAllocation_GSI
 
 
 ---

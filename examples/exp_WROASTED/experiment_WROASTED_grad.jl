@@ -10,9 +10,11 @@ eYear = "2015"
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-# inpath = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-inpath = "../data/BE-Vie.1979.2017.daily.nc"
+inpath = "../data/DE-2.1979.2017.daily.nc"
+forcingConfig = "forcing_DE-2.json"
+# inpath = "../data/BE-Vie.1979.2017.daily.nc"
+# forcingConfig = "forcing_erai.json"
+inpath = "../data/DE-Hai.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 obspath = inpath
 optimize_it = false
@@ -29,9 +31,9 @@ replace_info = Dict(
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => false,
+    "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
-    "modelRun.rules.forward_diff" => true,
+    "modelRun.rules.forward_diff" => false,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -43,34 +45,48 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 
 info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
-
-output = setupOutput(info);
-
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
+output = setupOutput(info);
+
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
+a=1
+## do the dual and remake output
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+newmods = updateModelParametersType(tblParams, mods, dualDefs);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
+new_op_dat = [typeof(opd[1]).(opd) for opd in output.data];
+output = (; output..., data = new_op_dat);
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
+##
+# if info.tem.helpers.run.forward_diff
+#     dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+#     newmods = updateModelParametersType(tblParams, mods, dualDefs);
+#     loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
+#     new_op_dat = [typeof(opd[1]).(opd) for opd in output.data];
+#     output = (; output..., data = new_op_dat);
+#     loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
+# end
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
-
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data, newmods, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 
-function new_loss(x)
-    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
-    mods = info.tem.models.forward;
-    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    @show l
-end
-# @time outcubes = runExperimentOpti(experiment_json);
+observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+obs = getKeyedArrayFromYaxArray(observations);
 
 
 function lloss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    @show l
+    pprint("params:")
+    @show " "
+    pprint(x)
+    @show " "
+    pprint("loss")
+    pprint(l)
     l
 end
 
@@ -84,8 +100,17 @@ loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_o
 
 
 lloss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-l1(tblParams.defaults)
-# l1(tblParams.defaults .* rand_m)
+lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+l1(p) = lloss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+newmods = updateModelParametersType(tblParams, mods, dualDefs);
+l2(p) = lloss(p, newmods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+
+l1(tblParams.defaults .* rand_m);
+l2(tblParams.defaults .* rand_m);
+
+
 @time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@time grad = ForwardDiff.gradient(l2, dualDefs)
 

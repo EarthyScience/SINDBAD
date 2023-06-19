@@ -4,7 +4,7 @@ export gppDiffRadiation_Wang2015
 	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
 end
 
-function precompute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function instantiate(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Wang2015 o
     @unpack_forcing (Rg, RgPot) ∈ forcing

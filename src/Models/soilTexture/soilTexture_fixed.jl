@@ -7,20 +7,32 @@ export soilTexture_fixed
 	ORGM::T4 = 0.0 | (0.0, 1.0) | "Organic matter content" | ""
 end
 
-function precompute(o::soilTexture_fixed, forcing, land, helpers)
+function instantiate(o::soilTexture_fixed, forcing, land, helpers)
 	@unpack_soilTexture_fixed o
 
 	## set parameter variables
-	st_CLAY = CLAY
-	st_SAND = SAND
-	st_SILT = SILT
-	st_ORGM = ORGM
 	println("soilTexture_fixed: distributing the fixed texture properties over the soil layers.")
-	n_soilW = length(land.pools.soilW)
-	st_CLAY = fill(mean(st_CLAY), n_soilW)
-	st_ORGM = fill(mean(st_ORGM), n_soilW)
-	st_SAND = fill(mean(st_SAND), n_soilW)
-	st_SILT = fill(mean(st_SILT), n_soilW)
+	st_CLAY = zero(land.pools.soilW)
+	st_ORGM = zero(land.pools.soilW)
+	st_SAND = zero(land.pools.soilW)
+	st_SILT = zero(land.pools.soilW)
+
+	## pack land variables
+	@pack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) => land.soilTexture
+	return land
+end
+
+
+function precompute(o::soilTexture_fixed, forcing, land, helpers)
+	@unpack_soilTexture_fixed o
+	@unpack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) ∈ land.soilTexture
+
+	for sl in eachindex(st_CLAY)
+		@rep_elem CLAY => (st_CLAY, sl, :soilW)
+		@rep_elem SAND => (st_SAND, sl, :soilW)
+		@rep_elem SILT => (st_SILT, sl, :soilW)
+		@rep_elem ORGM => (st_ORGM, sl, :soilW)
+	end
 
 	## pack land variables
 	@pack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) => land.soilTexture
@@ -42,8 +54,8 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_fix
 
 *Outputs*
 
-# precompute:
-precompute/instantiate time-invariant variables for soilTexture_fixed
+# instantiate:
+instantiate/instantiate time-invariant variables for soilTexture_fixed
 
 
 ---

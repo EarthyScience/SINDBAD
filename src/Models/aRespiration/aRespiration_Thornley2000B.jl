@@ -6,13 +6,13 @@ export aRespiration_Thornley2000B
 end
 
 
-function precompute(o::aRespiration_Thornley2000B, forcing, land, helpers)
+function instantiate(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers
 	end
 	
-	p_km = ones(numType, length(land.pools.cEco))
+	p_km = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 	p_km4su = copy(p_km)
 	RA_G = copy(p_km)
 	RA_M = copy(p_km)

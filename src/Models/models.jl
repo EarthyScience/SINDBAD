@@ -17,9 +17,13 @@ export sindbad_models
 ## Define SINDBAD supertype
 abstract type LandEcosystem end
 
-## fallback functions for precompute, compute and update. 
+## fallback functions for instantiate, precompute, compute and update. 
 ## These functions here make the corresponding functions in the model (approaches) optional
 function precompute(o::LandEcosystem, forcing, land, helpers)
+	return land
+end
+
+function instantiate(o::LandEcosystem, forcing, land, helpers)
 	return land
 end
 

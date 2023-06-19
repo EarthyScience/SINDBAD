@@ -3,7 +3,7 @@ export wCycle_combined
 struct wCycle_combined <: wCycle
 end
 
-function precompute(o::wCycle_combined, forcing, land, helpers)
+function instantiate(o::wCycle_combined, forcing, land, helpers)
 	## unpack variables
 	@unpack_land begin
 		ΔTWS ∈ land.states

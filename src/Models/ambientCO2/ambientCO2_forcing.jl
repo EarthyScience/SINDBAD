@@ -3,7 +3,7 @@ export ambientCO2_forcing
 struct ambientCO2_forcing <: ambientCO2
 end
 
-function precompute(o::ambientCO2_forcing, forcing, land, helpers)
+function instantiate(o::ambientCO2_forcing, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing ambCO2 ∈ forcing
 	## pack land variables

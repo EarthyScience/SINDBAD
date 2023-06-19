@@ -4,7 +4,7 @@ export snowFraction_HTESSEL
 	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
 
-function precompute(o::snowFraction_HTESSEL, forcing, land, helpers)
+function instantiate(o::snowFraction_HTESSEL, forcing, land, helpers)
 	snowFraction = helpers.numbers.𝟙
 	## pack land variables
 	@pack_land snowFraction => land.states
