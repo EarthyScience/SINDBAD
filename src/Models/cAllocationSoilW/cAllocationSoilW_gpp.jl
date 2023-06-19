@@ -2,7 +2,7 @@ export cAllocationSoilW_gpp
 
 struct cAllocationSoilW_gpp <: cAllocationSoilW end
 
-function precompute(o::cAllocationSoilW_gpp, forcing, land, helpers)
+function instantiate(o::cAllocationSoilW_gpp, forcing, land, helpers)
 
     # computation for the moisture effect on decomposition/mineralization
     fW = helpers.numbers.𝟙

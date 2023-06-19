@@ -4,7 +4,7 @@ export cAllocationSoilT_gppGSI
 	τ_Tsoil::T1 = 0.2 | (0.001, 1.0) | "temporal change rate for the temperature-limiting function" | ""
 end
 
-function precompute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function instantiate(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cAllocationSoilT_gppGSI o
 
@@ -28,6 +28,7 @@ function compute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
         TempScGPP ∈ land.gppAirT
         fT_prev ∈ land.cAllocationSoilT
     end
+    
     # computation for the temperature effect on decomposition/mineralization
     fT = fT_prev + (TempScGPP - fT_prev) * τ_Tsoil
 	

@@ -4,7 +4,7 @@ export rainSnow_Tair
 	Tair_thres::T1 = 0.0 | (-5.0, 5.0) | "threshold for separating rain and snow" | "°C"
 end
 
-function precompute(o::rainSnow_Tair, forcing, land, helpers)
+function instantiate(o::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     precip = helpers.numbers.𝟘
     rain = precip

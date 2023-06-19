@@ -3,7 +3,7 @@ export gppDirRadiation_none
 struct gppDirRadiation_none <: gppDirRadiation
 end
 
-function precompute(o::gppDirRadiation_none, forcing, land, helpers)
+function instantiate(o::gppDirRadiation_none, forcing, land, helpers)
 
 	## calculate variables
 	LightScGPP = helpers.numbers.𝟙
@@ -27,8 +27,8 @@ Effect of direct radiation using gppDirRadiation_none
 *Outputs*
  - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
 
-# precompute:
-precompute/instantiate time-invariant variables for gppDirRadiation_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppDirRadiation_none
 
 
 ---

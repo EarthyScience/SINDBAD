@@ -4,7 +4,7 @@ export runoffSurface_Trautmann2018
 	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
 
-function precompute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
+function instantiate(o::runoffSurface_Trautmann2018, forcing, land, helpers)
 	@unpack_runoffSurface_Trautmann2018 o
 
 	## instantiate variables
@@ -99,8 +99,8 @@ Runoff from surface water storages using runoffSurface_Trautmann2018
 update pools and states in runoffSurface_Trautmann2018
 
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffSurface_Trautmann2018
+# instantiate:
+instantiate/instantiate time-invariant variables for runoffSurface_Trautmann2018
 
 
 ---

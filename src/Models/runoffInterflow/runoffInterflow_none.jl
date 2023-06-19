@@ -3,7 +3,7 @@ export runoffInterflow_none
 struct runoffInterflow_none <: runoffInterflow
 end
 
-function precompute(o::runoffInterflow_none, forcing, land, helpers)
+function instantiate(o::runoffInterflow_none, forcing, land, helpers)
 
 	## calculate variables
 	runoffInterflow = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets interflow runoff to zero
 
-# precompute:
-precompute/instantiate time-invariant variables for runoffInterflow_none
+# instantiate:
+instantiate/instantiate time-invariant variables for runoffInterflow_none
 
 
 ---

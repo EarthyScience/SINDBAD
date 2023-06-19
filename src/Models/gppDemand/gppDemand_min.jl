@@ -3,7 +3,7 @@ export gppDemand_min
 struct gppDemand_min <: gppDemand
 end
 
-function precompute(o::gppDemand_min, forcing, land, helpers)
+function instantiate(o::gppDemand_min, forcing, land, helpers)
 	@unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
 
 	scall = ones(numType, 4)

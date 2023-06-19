@@ -3,7 +3,7 @@ export gpp_none
 struct gpp_none <: gpp
 end
 
-function precompute(o::gpp_none, forcing, land, helpers)
+function instantiate(o::gpp_none, forcing, land, helpers)
 
 	## calculate variables
 	gpp = helpers.numbers.𝟘
@@ -27,8 +27,8 @@ Combine effects as multiplicative or minimum; if coupled, uses transup using gpp
 *Outputs*
  - land.fluxes.gpp: actual GPP [gC/m2/time]
 
-# precompute:
-precompute/instantiate time-invariant variables for gpp_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gpp_none
 
 
 ---

@@ -3,7 +3,7 @@ export cCycleConsistency_simple
 struct cCycleConsistency_simple <: cCycleConsistency
 end
 
-function precompute(o::cCycleConsistency_simple, forcing, land, helpers)
+function instantiate(o::cCycleConsistency_simple, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
@@ -126,8 +126,8 @@ Consistency checks on the c allocation and transfers between pools using cCycleC
 
 *Outputs*
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleConsistency_simple
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycleConsistency_simple
 
 
 ---

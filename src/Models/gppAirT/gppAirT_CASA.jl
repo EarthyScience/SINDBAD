@@ -7,7 +7,7 @@ export gppAirT_CASA
 	Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
 end
 
-function precompute(o::gppAirT_CASA, forcing, land, helpers)
+function instantiate(o::gppAirT_CASA, forcing, land, helpers)
     TempScGPP =  helpers.numbers.𝟙
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT

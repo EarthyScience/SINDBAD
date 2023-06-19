@@ -4,7 +4,7 @@ struct soilWBase_uniform <: soilWBase
 end
 
 
-function precompute(o::soilWBase_uniform, forcing, land, helpers)
+function instantiate(o::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
@@ -94,8 +94,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_uniform
  - all soil hydraulic properties in land.soilWBase.p_[parameterName] (nPix, nTix)
  - makeLookup: to switch on/off the creation of lookup table of  unsaturated hydraulic conductivity
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_uniform
+# instantiate:
+instantiate/instantiate time-invariant variables for soilWBase_uniform
 
 
 ---

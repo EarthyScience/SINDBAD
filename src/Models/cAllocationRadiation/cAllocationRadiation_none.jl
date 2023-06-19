@@ -2,7 +2,7 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function precompute(o::cAllocationRadiation_none, forcing, land, helpers)
+function instantiate(o::cAllocationRadiation_none, forcing, land, helpers)
 
     ## calculate variables
     fR = helpers.numbers.𝟙
@@ -15,7 +15,7 @@ end
 @doc """
 sets the radiation effect on allocation to one (no effect)
 
-# precompute:
+# instantiate:
 
 *Inputs*
 - helpers.numbers.𝟙

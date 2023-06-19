@@ -3,7 +3,7 @@ export totalTWS_sumComponents
 struct totalTWS_sumComponents <: totalTWS
 end
 
-function precompute(o::totalTWS_sumComponents, forcing, land, helpers)
+function instantiate(o::totalTWS_sumComponents, forcing, land, helpers)
 	@unpack_land numType ∈ helpers.numbers
 	## calculate variables
 	if !hasproperty(land.pools, :soilW)
@@ -75,8 +75,8 @@ Calculate the total water storage as a sum of components using totalTWS_sumCompo
  - land.pools.soilW_total: total soil moisture
  - land.pools.wTotal: total water storage
 
-# precompute:
-precompute/instantiate time-invariant variables for totalTWS_sumComponents
+# instantiate:
+instantiate/instantiate time-invariant variables for totalTWS_sumComponents
 
 
 ---
