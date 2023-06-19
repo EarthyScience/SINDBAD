@@ -2,7 +2,7 @@ export gppVPD_none
 
 struct gppVPD_none <: gppVPD end
 
-function precompute(o::gppVPD_none, forcing, land, helpers)
+function instantiate(o::gppVPD_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
@@ -26,8 +26,8 @@ sets the VPD stress on gppPot to one (no stress)
 *Outputs*
  - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
 
-# precompute:
-precompute/instantiate time-invariant variables for gppVPD_none
+# instantiate:
+instantiate/instantiate time-invariant variables for gppVPD_none
 
 
 ---

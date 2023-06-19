@@ -18,7 +18,7 @@ export PET_Lu2005
 	G_base::T15 = 4.2 | (nothing, nothing) | "base groundheat flux" | ""
 end
 
-function precompute(o::PET_Lu2005, forcing, land, helpers)
+function instantiate(o::PET_Lu2005, forcing, land, helpers)
 	## unpack forcing
 	@unpack_forcing Tair ∈ forcing
 	PET = helpers.numbers.𝟘

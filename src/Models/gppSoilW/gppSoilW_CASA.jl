@@ -5,7 +5,7 @@ export gppSoilW_CASA
 end
 
 
-function precompute(o::gppSoilW_CASA, forcing, land, helpers)
+function instantiate(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin

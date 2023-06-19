@@ -3,7 +3,7 @@ export drainage_kUnsat
 struct drainage_kUnsat <: drainage
 end
 
-function precompute(o::drainage_kUnsat, forcing, land, helpers)
+function instantiate(o::drainage_kUnsat, forcing, land, helpers)
 	## instantiate drainage
 	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
 	## pack land variables

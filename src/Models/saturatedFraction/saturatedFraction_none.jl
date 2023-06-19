@@ -3,7 +3,7 @@ export saturatedFraction_none
 struct saturatedFraction_none <: saturatedFraction
 end
 
-function precompute(o::saturatedFraction_none, forcing, land, helpers)
+function instantiate(o::saturatedFraction_none, forcing, land, helpers)
 
 	## calculate variables
 	satFrac = helpers.numbers.𝟘
@@ -16,8 +16,8 @@ end
 @doc """
 sets the land.states.soilWSatFrac [saturated soil fraction] to 𝟘  (pix, 1)
 
-# precompute:
-precompute/instantiate time-invariant variables for saturatedFraction_none
+# instantiate:
+instantiate/instantiate time-invariant variables for saturatedFraction_none
 
 
 ---

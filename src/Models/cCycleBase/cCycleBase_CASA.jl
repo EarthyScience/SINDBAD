@@ -23,7 +23,7 @@ export cCycleBase_CASA
 	C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 
-function precompute(o::cCycleBase_CASA, forcing, land, helpers)
+function instantiate(o::cCycleBase_CASA, forcing, land, helpers)
 	@unpack_cCycleBase_CASA o
 
 	@unpack_land begin
@@ -82,8 +82,8 @@ Pool structure of the carbon cycle using cCycleBase_CASA
 
 *Outputs*
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleBase_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycleBase_CASA
 
 
 ---

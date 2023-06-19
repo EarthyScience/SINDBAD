@@ -3,7 +3,7 @@ export rootWaterUptake_topBottom
 struct rootWaterUptake_topBottom <: rootWaterUptake
 end
 
-function precompute(o::rootWaterUptake_topBottom, forcing, land, helpers)
+function instantiate(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin

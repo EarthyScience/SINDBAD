@@ -10,7 +10,7 @@ export cTauVegProperties_CASA
 	LITC2N_per_PFT::T7 = Float64[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
 end
 
-function precompute(o::cTauVegProperties_CASA, forcing, land, helpers)
+function instantiate(o::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA o
 
     @unpack_land (𝟘, numType) ∈ helpers.numbers
@@ -108,8 +108,8 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.cTauVegProperties.p_SCLIGNIN:
  - land.cTauVegProperties.p_kfVeg:
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauVegProperties_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauVegProperties_CASA
 
 
 ---
