@@ -3,7 +3,7 @@ export cTauVegProperties_none
 struct cTauVegProperties_none <: cTauVegProperties
 end
 
-function precompute(o::cTauVegProperties_none, forcing, land, helpers)
+function instantiate(o::cTauVegProperties_none, forcing, land, helpers)
     @unpack_land (𝟘, 𝟙, numType) ∈ helpers.numbers
 
     ## calculate variables
@@ -22,8 +22,8 @@ end
 @doc """
 set the outputs to ones
 
-# precompute:
-precompute/instantiate time-invariant variables for cTauVegProperties_none
+# instantiate:
+instantiate/instantiate time-invariant variables for cTauVegProperties_none
 
 
 ---

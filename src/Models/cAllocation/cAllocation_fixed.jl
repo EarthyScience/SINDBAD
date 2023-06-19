@@ -6,7 +6,7 @@ export cAllocation_fixed
 	cVegLeaf::T3 = 0.4 | (0.0, 1.0) | "fraction of NPP to cLeaf" | "fraction"
 end
 
-function precompute(o::cAllocation_fixed, forcing, land, helpers)
+function instantiate(o::cAllocation_fixed, forcing, land, helpers)
 	@unpack_cAllocation_fixed o
 
 	## instantiate variables
@@ -54,8 +54,8 @@ Combine the different effects of carbon allocation using cAllocation_fixed
  - land.states.cAlloc: the fraction of NPP that is allocated to the different plant organs
  - land.states.cAlloc
 
-# precompute:
-precompute/instantiate time-invariant variables for cAllocation_fixed
+# instantiate:
+instantiate/instantiate time-invariant variables for cAllocation_fixed
 
 
 ---

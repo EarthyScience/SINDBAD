@@ -6,7 +6,7 @@ export aRespiration_Thornley2000B
 end
 
 
-function precompute(o::aRespiration_Thornley2000B, forcing, land, helpers)
+function instantiate(o::aRespiration_Thornley2000B, forcing, land, helpers)
 	@unpack_land begin
 		cEco ∈ land.pools
 		numType ∈ helpers.numbers

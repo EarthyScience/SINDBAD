@@ -3,7 +3,7 @@ export cCycle_GSI
 struct cCycle_GSI <: cCycle
 end
 
-function precompute(o::cCycle_GSI, forcing, land, helpers)
+function instantiate(o::cCycle_GSI, forcing, land, helpers)
 
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
@@ -181,8 +181,8 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycle_GSI
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycle_GSI
 
 
 ---

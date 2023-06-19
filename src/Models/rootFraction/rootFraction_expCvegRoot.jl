@@ -6,7 +6,7 @@ export rootFraction_expCvegRoot
     fracRoot2SoilD_min::T3 = 0.1 | (0.05, 0.3) | "minimum root water uptake threshold" | ""
 end
 
-function precompute(o::rootFraction_expCvegRoot, forcing, land, helpers)
+function instantiate(o::rootFraction_expCvegRoot, forcing, land, helpers)
     @unpack_rootFraction_expCvegRoot o
     @unpack_land begin
         soilLayerThickness ∈ land.soilWBase
@@ -69,8 +69,8 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
  - land.rootFraction.p_fracRoot2SoilD
 
-# precompute:
-precompute/instantiate time-invariant variables for rootFraction_expCvegRoot
+# instantiate:
+instantiate/instantiate time-invariant variables for rootFraction_expCvegRoot
 
 
 ---

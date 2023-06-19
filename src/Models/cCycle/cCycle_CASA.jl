@@ -3,7 +3,7 @@ export cCycle_CASA, spin_cCycle_CASA
 struct cCycle_CASA <: cCycle
 end
 
-function precompute(o::cCycle_CASA, forcing, land, helpers)
+function instantiate(o::cCycle_CASA, forcing, land, helpers)
 
 	## instantiate variables
 	cEcoEfflux = zeros(numType, length(land.pools.cEco)); #sujan moved from get states
@@ -90,8 +90,8 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.pools.cEco: values for the different carbon pools
  - land.states.cEcoEfflux:
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycle_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycle_CASA
 
 
 ---

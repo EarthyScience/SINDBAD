@@ -3,7 +3,7 @@ export vegAvailableWater_rootFraction
 struct vegAvailableWater_rootFraction <: vegAvailableWater
 end
 
-function precompute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+function instantiate(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin

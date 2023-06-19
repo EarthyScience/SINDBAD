@@ -4,7 +4,7 @@ export drainage_dos
 	dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
 
-function precompute(o::drainage_dos, forcing, land, helpers)
+function instantiate(o::drainage_dos, forcing, land, helpers)
 	## unpack parameters
 
 	## unpack land variables

@@ -9,7 +9,7 @@ export cFlowSoilProperties_CASA
 	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
 
-function precompute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
+function instantiate(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 	@unpack_cFlowSoilProperties_CASA o
 
 	## instantiate variables
@@ -85,8 +85,8 @@ Effect of soil properties on the c transfers between pools using cFlowSoilProper
  - land.cFlowSoilProperties.p_E
  - land.cFlowSoilProperties.p_F
 
-# precompute:
-precompute/instantiate time-invariant variables for cFlowSoilProperties_CASA
+# instantiate:
+instantiate/instantiate time-invariant variables for cFlowSoilProperties_CASA
 
 
 ---

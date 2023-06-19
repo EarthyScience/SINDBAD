@@ -3,7 +3,7 @@ export soilTexture_forcing
 struct soilTexture_forcing <: soilTexture
 end
 
-function precompute(o::soilTexture_forcing, forcing, land, helpers)
+function instantiate(o::soilTexture_forcing, forcing, land, helpers)
 	#@needscheck
 	## unpack forcing
 	@unpack_forcing (CLAY, ORGM, SAND, SILT) ∈ forcing
@@ -11,26 +11,26 @@ function precompute(o::soilTexture_forcing, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 	
-	st_CLAY = CLAY  |> Tuple
-	st_SAND = SAND  |> Tuple
-	st_SILT = SILT |> Tuple
-	st_ORGM = 𝟘# * ORGM
+	st_CLAY_f = CLAY  |> Tuple
+	st_SAND_f = SAND  |> Tuple
+	st_SILT_f = SILT |> Tuple
+	st_ORGM_f = 𝟘# * ORGM
 
-	n_soilW = length(land.pools.soilW)
     ## precomputations/check
-    # get the soil thickness 
+	st_CLAY = zero(land.pools.soilW)
+	st_ORGM = zero(land.pools.soilW)
+	st_SAND = zero(land.pools.soilW)
+	st_SILT = zero(land.pools.soilW)
 
-    if length(st_CLAY) != n_soilW
+    if length(st_CLAY_f) != length(st_CLAY)
         println("soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers.")
-        st_CLAY = fill(mean(st_CLAY), n_soilW)
-        st_ORGM = fill(mean(st_ORGM), n_soilW)
-        st_SAND = fill(mean(st_SAND), n_soilW)
-        st_SILT = fill(mean(st_SILT), n_soilW)
+		for sl in eachindex(st_CLAY)
+			@rep_elem mean(st_CLAY_f) => (st_CLAY, sl, :soilW)
+			@rep_elem mean(st_SAND_f) => (st_SAND, sl, :soilW)
+			@rep_elem mean(st_SILT_f) => (st_SILT, sl, :soilW)
+			@rep_elem mean(st_ORGM_f) => (st_ORGM, sl, :soilW)
+		end
     end
-	st_CLAY = Tuple(st_CLAY)
-	st_ORGM = Tuple(st_ORGM)
-	st_SAND = Tuple(st_SAND)
-	st_SILT = Tuple(st_SILT)
 
 	## pack land variables
 	@pack_land (st_CLAY, st_ORGM, st_SAND, st_SILT) => land.soilTexture
@@ -51,8 +51,8 @@ Soil texture (sand,silt,clay, and organic matter fraction) using soilTexture_for
 *Outputs*
  - land.soilTexture.st_SAND/SILT/CLAY/ORGM
 
-# precompute:
-precompute/instantiate time-invariant variables for soilTexture_forcing
+# instantiate:
+instantiate/instantiate time-invariant variables for soilTexture_forcing
 
 
 ---

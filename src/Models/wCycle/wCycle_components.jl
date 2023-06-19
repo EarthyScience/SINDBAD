@@ -6,7 +6,7 @@ end
 function compute(o::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
-        (groundW, snowW, soilW, surfaceW) ∈ land.pools
+        (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
         𝟘  ∈ helpers.numbers
     end
@@ -16,24 +16,26 @@ function compute(o::wCycle_components, forcing, land, helpers)
     snowW = add_vec(snowW, ΔsnowW)
     soilW = add_vec(soilW, ΔsoilW)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
-
+    TWS = add_vec(TWS, ΔTWS)
+    
     # @show ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS
-    # reset soil moisture changes to zero
+    # reset moisture changes to zero
     ΔgroundW = ΔgroundW .* 𝟘
     ΔsnowW = ΔsnowW .* 𝟘
     ΔsoilW = ΔsoilW .* 𝟘
     ΔsurfaceW = ΔsurfaceW .* 𝟘
+    ΔTWS = ΔTWS .* 𝟘
 
     ## pack land variables
     @pack_land begin
-    	(groundW, snowW, soilW, surfaceW) => land.pools
-    	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW)  => land.states
+    	(groundW, snowW, soilW, surfaceW, TWS) => land.pools
+    	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS)  => land.states
     end
     return land
 end
 
 @doc """
-computes the algebraic sum of storage and delta storage using each component separately
+update the water cycle pools per component
 
 
 ---

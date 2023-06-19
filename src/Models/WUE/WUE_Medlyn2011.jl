@@ -51,8 +51,8 @@ Estimate wue using WUE_Medlyn2011
 *Outputs*
  - land.WUE.AoE: water use efficiency A/E [gC/mmH2O] with ambient co2
  - land.WUE.ci: internal co2 with ambient co2
- - land.WUE.AoENoCO2: precomputed A/E [gC/mmH2O] without ambient co2
- - land.WUE.ciNoCO2: precomputed internal co2 scalar without ambient co2
+ - land.WUE.AoENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
+ - land.WUE.ciNoCO2: instantiated internal co2 scalar without ambient co2
 
 ---
 

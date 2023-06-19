@@ -9,7 +9,7 @@ export soilWBase_smax2fRD4
 	smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
 end
 
-function precompute(o::soilWBase_smax2fRD4, forcing, land, helpers)
+function instantiate(o::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 o
 
     @unpack_land begin
@@ -97,8 +97,8 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers
  - land.soilWBase.p_wWP: wilting point set to zero for all layers
 
-# precompute:
-precompute/instantiate time-invariant variables for soilWBase_smax2fRD4
+# instantiate:
+instantiate/instantiate time-invariant variables for soilWBase_smax2fRD4
 
 
 ---

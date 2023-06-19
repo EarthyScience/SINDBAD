@@ -22,7 +22,7 @@ export cCycleBase_GSI
 	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
-function precompute(o::cCycleBase_GSI, forcing, land, helpers)
+function instantiate(o::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI o
 	@unpack_land begin
 		numType ∈ helpers.numbers
@@ -38,7 +38,17 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
     cEcoEfflux = zero(cEco) #sujan moved from get states
 	p_k_base = zero(cEco)
-    p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
+	p_annk = zero(cEco)
+	@rep_elem annk_Root => (p_annk, 1, :cEco)
+	@rep_elem annk_Wood => (p_annk, 2, :cEco)
+	@rep_elem annk_Leaf => (p_annk, 3, :cEco)
+	@rep_elem annk_Reserve => (p_annk, 4, :cEco)
+	@rep_elem annk_LitSlow => (p_annk, 5, :cEco)
+	@rep_elem annk_LitFast => (p_annk, 6, :cEco)
+	@rep_elem annk_SoilSlow => (p_annk, 7, :cEco)
+	@rep_elem annk_SoilOld => (p_annk, 8, :cEco)
+
+    # p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
 	for i in eachindex(p_k_base)
 		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
         @rep_elem tmp => (p_k_base, i, :cEco)
@@ -51,6 +61,40 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     @pack_land begin
 		(p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder) => land.cCycleBase
 		cEcoEfflux => land.states
+	end
+    return land
+end
+
+function precompute(o::cCycleBase_GSI, forcing, land, helpers)
+    @unpack_cCycleBase_GSI o
+	@unpack_land begin
+		(p_C2Nveg, p_k_base, p_annk) ∈ land.cCycleBase
+		(𝟘, 𝟙) ∈ helpers.numbers
+	end
+
+    ## replace values
+	@rep_elem annk_Root => (p_annk, 1, :cEco)
+	@rep_elem annk_Wood => (p_annk, 2, :cEco)
+	@rep_elem annk_Leaf => (p_annk, 3, :cEco)
+	@rep_elem annk_Reserve => (p_annk, 4, :cEco)
+	@rep_elem annk_LitSlow => (p_annk, 5, :cEco)
+	@rep_elem annk_LitFast => (p_annk, 6, :cEco)
+	@rep_elem annk_SoilSlow => (p_annk, 7, :cEco)
+	@rep_elem annk_SoilOld => (p_annk, 8, :cEco)
+
+	vegZix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+	for vg in vegZix
+        @rep_elem C2Nveg[vg] => (p_C2Nveg, vg, :cEco)
+	end
+
+	for i in eachindex(p_k_base)
+		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+        @rep_elem tmp => (p_k_base, i, :cEco)
+	end
+
+    ## pack land variables
+    @pack_land begin
+		(p_C2Nveg, p_k_base) => land.cCycleBase
 	end
     return land
 end
@@ -72,8 +116,8 @@ Pool structure of the carbon cycle using cCycleBase_GSI
 *Outputs*
  - land.cCycleBase.p_annk _Pool: turnover rate of each ecosystem carbon pool
 
-# precompute:
-precompute/instantiate time-invariant variables for cCycleBase_GSI
+# instantiate:
+instantiate/instantiate time-invariant variables for cCycleBase_GSI
 
 
 ---

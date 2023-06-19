@@ -5,7 +5,7 @@ export runoffSaturationExcess_Bergstroem1992
 end
 
 
-function precompute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+function instantiate(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
 
 	runoffSatExc = helpers.numbers.𝟘
 
