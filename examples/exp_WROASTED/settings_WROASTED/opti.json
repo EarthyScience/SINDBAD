@@ -44,6 +44,26 @@
 		"distribution": ["normal", [0.0, 1.0]]
 	},
 	"optimized_parameters": {
+		"cCycleBase_⚆_annk_Root": null,
+		"cCycleBase_⚆_annk_Wood": null,
+		"cCycleBase_⚆_annk_LitSlow": null,
+		"cCycleBase_⚆_annk_LitFast": null,
+		"cCycleBase_⚆_annk_SoilSlow": null,
+		"cCycleBase_⚆_annk_SoilOld": null,
+		"cCycleBase_⚆_etaH": null,
+		"cFlow_⚆_f_τ": {
+			"is_ml": true,
+			"distribution": ["gaussian", [0, 1, 2]]
+		},
+		"cFlow_⚆_kShed": {
+			"is_ml": true
+		},
+		"cFlow_⚆_LR2ReSlp": {
+			"distribution": ["gaussian", [0, 1, 5]]
+		},
+		"cFlow_⚆_Re2LRSlp": null,
+		"cTauSoilT_⚆_Q10": null,
+		"cTauSoilW_⚆_Wopt": null,
 		"evaporation_⚆_α": null,
 		"evaporation_⚆_supLim": null,
 		"fAPAR_⚆_kEffExt": null,
@@ -58,6 +78,9 @@
 		"gppSoilW_⚆_θstar": null,
 		"gppDiffRadiation_⚆_μ": null,
 		"groundWRecharge_⚆_dos_exp": null,
+		"aRespiration_⚆_YG": null,
+		"aRespiration_⚆_RMN": null,
+		"aRespirationAirT_⚆_Q10_RM": null,
 		"runoffBase_⚆_bc": null,
 		"rootFraction_⚆_k_cVegRoot": null,
 		"rootMaximumDepth_⚆_fracRootD2SoilD": null,
@@ -66,7 +89,7 @@
 		"snowMelt_⚆_melt_Rn": null,
 		"treeFraction_⚆_constantTreeFrac": null,
 		"WUE_⚆_WUEatOnehPa": null,
-		"WUE.κ": null
+		"WUE_⚆_κ": null
 	},
 	"constraints": {
 		"function_name": {
