@@ -13,8 +13,8 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 inpath = "../data/BE-Vie.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
-inpath = "../data/DE-Hai.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
+# inpath = "../data/DE-Hai.1979.2017.daily.nc"
+# forcingConfig = "forcing_erai.json"
 
 obspath = inpath
 optimize_it = true
@@ -77,13 +77,18 @@ ds = forcing.data[1];
 opt_dat = output.data;
 def_dat = outcubes;
 out_vars = output.variables;
+tspan = 9000:12000
+obsMod = last.(values(info.optim.variables.optim))
+obsVar = info.optim.variables.obs;
 for (vi, v) in enumerate(out_vars)
-    def_var = def_dat[vi][:,1,1,1]
-    opt_var = opt_dat[vi][:,1,1,1]
-    plot(def_var, label="def")
+    def_var = def_dat[vi][tspan,1,1,1]
+    opt_var = opt_dat[vi][tspan,1,1,1]
+    plot(def_var, label="def", size=(900, 600))
     plot!(opt_var, label="opt")
-    if v in propertynames(obs)
-        obs_var = getfield(obs, v)[:,1,1,1]
+    if v in obsMod
+        obsv = obsVar[findall(obsMod .== v)[1]]
+        @show "plot obs", v
+        obs_var = getfield(obs, obsv)[tspan,1,1,1]
         plot!(obs_var, label="obs")
     end
     savefig("wroasted_$(v).png")
