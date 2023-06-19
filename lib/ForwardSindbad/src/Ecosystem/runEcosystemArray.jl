@@ -58,7 +58,6 @@ end
 function fill_it!(ar, val, ts::Int64)
     data_ts = get_view(ar, val, ts)
     data_ts .= val
-    # data_ts .= Sindbad.ForwardDiff.value(val)
 end
 
 
@@ -79,6 +78,12 @@ end
 end
 
 
+function runInstantiate!(out, forcing, models, tem_helpers)
+    return foldl_unrolled(models, init=out) do o, model
+        o = Models.instantiate(model, forcing, o, tem_helpers)
+    end
+end
+
 function runPrecompute!(out, forcing, models, tem_helpers)
     return foldl_unrolled(models, init=out) do o, model
         o = Models.precompute(model, forcing, o, tem_helpers)
@@ -90,7 +95,7 @@ function timeLoopForward!(loc_output, forward_models, forcing, out, tem_variable
     if tem_helpers.run.debugit
         time_steps = 1
     end
-    # out = runPrecompute!(out, f_one, forward_models, tem_helpers)
+    out = runPrecompute!(out, f_one, forward_models, tem_helpers)
     for ts = 1:time_steps
         if tem_helpers.run.debugit
             @show "forc"
@@ -128,9 +133,10 @@ end
 function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, tem, loc_space_map)
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map)
 
-    land_prec = runPrecompute!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
+    land_prec = runInstantiate!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers)
+    @time setOutputT!(loc_output, land_one, Val(tem.variables), 1)
     if tem.helpers.run.debugit
         Sindbad.eval(:(error_catcher = []))
         push!(Sindbad.error_catcher, land_one)
@@ -138,7 +144,6 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     end
     return land_one, f_one
 end
-
 
 
 """
