@@ -42,8 +42,8 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
-        (p_A, giver, taker) ∈ land.cFlow
-        (flowOrder) ∈ land.cCycleBase
+        (p_A) ∈ land.cFlow
+        (flowOrder, giver, taker) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
