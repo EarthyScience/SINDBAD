@@ -153,7 +153,7 @@ end
 """
 runModels(forcing, models, out)
 """
-function runSpinupModels!(out, forcing, models, tem_helpers, otype)
+function runSpinupModels!(out, forcing, models, tem_helpers, _)
     return foldl_unrolled(models, init=out) do o, model 
         o = Models.compute(model, forcing, o, tem_helpers)
         # @time o = Models.compute(model, forcing, o, tem_helpers)
@@ -225,11 +225,12 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
             sel_forcing = spinup_forcing[forc]
         end
 
-        if spinupMode == :forward
-            spinup_models = forward_models
-        else
-            spinup_models = tem_models.spinup #forward_models[tem_models.is_spinup.==1]
-        end
+        spinup_models = forward_models
+        # if spinupMode == :forward
+        #     spinup_models = forward_models
+        # else
+        #     spinup_models = forward_models[tem_models.is_spinup .== 1]
+        # end
         #if !tem_helpers.run.runOpti
         #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
         #end

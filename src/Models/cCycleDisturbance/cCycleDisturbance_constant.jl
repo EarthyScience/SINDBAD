@@ -5,8 +5,23 @@ export cCycleDisturbance_constant
 end
 
 function instantiate(o::cCycleDisturbance_constant, forcing, land, helpers)
+	@unpack_land begin
+		(giver, taker) ∈ land.cCycleBase
+	end
 	zixVegAll = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
-	@pack_land zixVegAll => land.cCycleDisturbance
+	ndxLoseToZixVec = []
+	for zixVeg in zixVegAll
+		ndxLoseToZix = taker[[(giver .== zixVeg)...]]
+		ndxNoVeg = []
+		for ndxl in ndxLoseToZix
+			if ndxl ∉ zixVegAll
+				push!(ndxNoVeg, ndxl)
+			end
+		end
+		push!(ndxLoseToZixVec, Tuple(ndxNoVeg))
+	end
+	ndxLoseToZixVec = Tuple(ndxLoseToZixVec)
+	@pack_land (zixVegAll, ndxLoseToZixVec) => land.cCycleDisturbance
 	return land
 end
 
@@ -17,24 +32,28 @@ function compute(o::cCycleDisturbance_constant, forcing, land, helpers)
 
 	## unpack land variables
 	@unpack_land begin
-		zixVegAll ∈ land.cCycleDisturbance
+		(zixVegAll, ndxLoseToZixVec) ∈ land.cCycleDisturbance
 		cEco ∈ land.pools
 		(giver, taker) ∈ land.cFlow
 		𝟘 ∈ helpers.numbers
 	end
 	if isDisturbed > 𝟘
+		# @show "before", cEco, sum(cEco)
 		for zixVeg in zixVegAll
-			cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
+			cLoss = 𝟘 # do not lose carbon if reserve pool
+			if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
+				cLoss = max(cEco[zixVeg]-carbon_remain, 𝟘) * isDisturbed
+			end
 			@add_to_elem -cLoss => (cEco, zixVeg, :cEco)
-			ndxLoseToZix = taker[giver .== zixVeg]
-			# ndxLoseToZix = taker[findall(x->x==zixVeg, giver)]
+			ndxLoseToZix = ndxLoseToZixVec[zixVeg]
 			for tZ in eachindex(ndxLoseToZix)
 				tarZix = ndxLoseToZix[tZ]
-				if !any(zixVegAll == tarZix)
-					@add_to_elem cLoss / length(ndxLoseToZix) => (cEco, tarZix, :cEco)
-				end
+				toGain = cLoss / length(ndxLoseToZix)
+				@add_to_elem toGain => (cEco, tarZix, :cEco)
 			end
 		end
+		# @show "after", cEco, sum(cEco)
+		
 	end
 	## pack land variables
 	@pack_land cEco => land.pools

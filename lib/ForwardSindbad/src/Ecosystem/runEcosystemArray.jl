@@ -47,7 +47,7 @@ function ecoLoc!(outcubes, approaches, forcing, tem_helpers, tem_spinup, tem_mod
 end
 
 
-function get_view(ar, val::AbstractArray, ts::Int64)
+function get_view(ar, val::AbstractVector, ts::Int64)
     view(ar, ts, 1:length(val))
 end
 
@@ -81,6 +81,7 @@ end
 function runInstantiate!(out, forcing, models, tem_helpers)
     return foldl_unrolled(models, init=out) do o, model
         o = Models.instantiate(model, forcing, o, tem_helpers)
+        o = Models.precompute(model, forcing, o, tem_helpers)
     end
 end
 
@@ -95,7 +96,6 @@ function timeLoopForward!(loc_output, forward_models, forcing, out, tem_variable
     if tem_helpers.run.debugit
         time_steps = 1
     end
-    out = runPrecompute!(out, f_one, forward_models, tem_helpers)
     for ts = 1:time_steps
         if tem_helpers.run.debugit
             @show "forc"
@@ -121,7 +121,8 @@ end
 
 
 function coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
-    land_spin_now = land_init
+    land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
+    land_spin_now = land_prec
 
     if tem_helpers.run.runSpinup
         land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem_helpers, tem_spinup, tem_models, typeof(land_init), f_one; spinup_forcing=nothing)
@@ -134,6 +135,7 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map)
 
     land_prec = runInstantiate!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
+    # land_prec = runPrecompute!(land_inst, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers)
     @time setOutputT!(loc_output, land_one, Val(tem.variables), 1)
