@@ -10,14 +10,12 @@ end
 function instantiate(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
-        cFlowA ∈ land.cCycleBase
+        (giver, taker, cFlowA) ∈ land.cCycleBase
         (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
     end
     ## instantiate variables
 
     # transfers
-    taker = [ind[1] for ind in findall(>(𝟘), cFlowA)]
-    giver = [ind[2] for ind in findall(>(𝟘), cFlowA)]
     cEco_comps = helpers.pools.components.cEco
     # aTrg_a = []
     # for t_rg in taker
@@ -51,7 +49,7 @@ function instantiate(o::cFlow_GSI, forcing, land, helpers)
     )
 
 
-    p_A = sNT.(zero(taker) .+ 𝟙)
+    p_A = sNT.(zero([taker...]) .+ 𝟙)
 
     if typeof(land.pools.cEco)<:SVector{length(land.pools.cEco)}
         p_A = SVector{length(p_A)}(p_A)
@@ -73,8 +71,6 @@ function instantiate(o::cFlow_GSI, forcing, land, helpers)
     k_RshedF = 𝟙
     slope_fWfTfR = 𝟙
 
-    taker = Tuple(taker)
-    giver = Tuple(giver)
     @pack_land begin
 		(p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
 		# (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow

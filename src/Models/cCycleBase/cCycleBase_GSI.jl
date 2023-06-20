@@ -31,35 +31,19 @@ function instantiate(o::cCycleBase_GSI, forcing, land, helpers)
 	end
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
-	vegZix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-	for vg in vegZix
-        @rep_elem C2Nveg[vg] => (p_C2Nveg, vg, :cEco)
-	end
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
     cEcoEfflux = zero(cEco) #sujan moved from get states
 	p_k_base = zero(cEco)
 	p_annk = zero(cEco)
-	@rep_elem annk_Root => (p_annk, 1, :cEco)
-	@rep_elem annk_Wood => (p_annk, 2, :cEco)
-	@rep_elem annk_Leaf => (p_annk, 3, :cEco)
-	@rep_elem annk_Reserve => (p_annk, 4, :cEco)
-	@rep_elem annk_LitSlow => (p_annk, 5, :cEco)
-	@rep_elem annk_LitFast => (p_annk, 6, :cEco)
-	@rep_elem annk_SoilSlow => (p_annk, 7, :cEco)
-	@rep_elem annk_SoilOld => (p_annk, 8, :cEco)
-
-    # p_annk = (annk_Root, annk_Wood, annk_Leaf, annk_Reserve, annk_LitSlow, annk_LitFast, annk_SoilSlow, annk_SoilOld)
-	for i in eachindex(p_k_base)
-		tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
-        @rep_elem tmp => (p_k_base, i, :cEco)
-	end
 
 	# if there is flux order check that is consistent
 	flowOrder = Tuple(collect(1:length(findall(>(𝟘), cFlowA))))
-	
+    taker = Tuple([ind[1] for ind in findall(>(𝟘), cFlowA)])
+    giver = Tuple([ind[2] for ind in findall(>(𝟘), cFlowA)])
+
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder) => land.cCycleBase
+		(p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder, taker, giver) => land.cCycleBase
 		cEcoEfflux => land.states
 	end
     return land

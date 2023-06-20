@@ -20,6 +20,7 @@ using DifferentialEquations
 using InteractiveUtils
 using ThreadPools
 using Dates
+using Statistics
 
 using Flatten:
     flatten,
