@@ -465,11 +465,12 @@ function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
     lc = nothing
     tt="\t"
     for k in keys(d)
-        lc = colors_types[typeof(d[k])]
+        # lc = colors_types[typeof(d[k])]
         if d[k] isa NamedTuple
             tt=""
             if t_ype == true
                 tp = " = (; "
+                # lc = colors_types[typeof(d[k])]
             else
                 tp=""
             end
