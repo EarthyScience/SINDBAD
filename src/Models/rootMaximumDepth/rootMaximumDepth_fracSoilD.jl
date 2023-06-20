@@ -9,12 +9,10 @@ function instantiate(o::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     @unpack_rootMaximumDepth_fracSoilD o
     @unpack_land soilLayerThickness ∈ land.soilWBase
     ## calculate variables
-    sumSoilDepth = helpers.numbers.sNT(sum(soilLayerThickness))
-    maxRootDepth = helpers.numbers.sNT(0.5 * sumSoilDepth)
+    sumSoilDepth = sum(soilLayerThickness)
     ## pack land variables
     @pack_land begin
         sumSoilDepth => land.rootMaximumDepth
-        maxRootDepth => land.states
     end
     return land
 end
