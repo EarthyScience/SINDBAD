@@ -33,7 +33,7 @@ replace_info = Dict(
     "modelRun.flags.catchErrors" => true,
     "modelRun.flags.runSpinup" => true,
     "modelRun.flags.debugit" => false,
-    "modelRun.rules.forward_diff" => false,
+    "modelRun.rules.forward_diff" => true,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
@@ -53,22 +53,18 @@ output = setupOutput(info);
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 a=1
+
 ## do the dual and remake output
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
+
+
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
 new_op_dat = [typeof(opd[1]).(opd) for opd in output.data];
 output = (; output..., data = new_op_dat);
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
-##
-# if info.tem.helpers.run.forward_diff
-#     dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
-#     newmods = updateModelParametersType(tblParams, mods, dualDefs);
-#     loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
-#     new_op_dat = [typeof(opd[1]).(opd) for opd in output.data];
-#     output = (; output..., data = new_op_dat);
-#     loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
-# end
+## get typed outputs
+loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], newmods, forc, forcing.sizes, info.tem);
+
 
 @time runEcosystem!(output.data, newmods, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 
@@ -92,8 +88,7 @@ end
 
 
 rand_m = rand(info.tem.helpers.numbers.numType);
-op = setupOutput(info);
-
+op = output;
 mods = info.tem.models.forward;
 
 loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);

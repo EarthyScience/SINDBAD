@@ -52,24 +52,6 @@ function instantiate(o::soilProperties_Saxton1986, forcing, land, helpers)
 
 	p_unsatK = kSaxton1986::typeof(kSaxton1986)
 
-	# calculate & set the soil hydraulic properties for each layer
-	for sl in eachindex(land.pools.soilW)
-		(α, β, kFC, θFC, ψFC) = calcPropsSaxton1986(o, land, helpers, sl, ψFC)
-		(_, _, kWP, θWP, ψWP) = calcPropsSaxton1986(o, land, helpers, sl, ψWP)
-		(_, _, kSat, θSat, ψSat) = calcPropsSaxton1986(o, land, helpers, sl, ψSat)
-		@rep_elem α => (p_α, sl, :soilW)
-		@rep_elem β => (p_β, sl, :soilW)
-		@rep_elem kFC => (p_kFC, sl, :soilW)
-		@rep_elem θFC => (p_θFC, sl, :soilW)
-		@rep_elem ψFC => (p_ψFC, sl, :soilW)
-		@rep_elem kWP => (p_kWP, sl, :soilW)
-		@rep_elem θWP => (p_θWP, sl, :soilW)
-		@rep_elem ψWP => (p_ψWP, sl, :soilW)
-		@rep_elem kSat => (p_kSat, sl, :soilW)
-		@rep_elem θSat => (p_θSat, sl, :soilW)
-		@rep_elem ψSat => (p_ψSat, sl, :soilW)
-	end
-
 	## pack land variables
 	@pack_land begin
 		(p_kFC, p_kSat, p_unsatK, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
