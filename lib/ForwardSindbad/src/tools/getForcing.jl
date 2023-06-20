@@ -221,7 +221,8 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         if vinfo.spaceTimeType == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
-        map(v -> cleanInputData(v, vinfo, numtype), yax)
+        vfill = mean(v[(.!isnan.(v))])
+        map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end
 
     @info "getForcing: getting forcing dimensions..."
@@ -302,7 +303,8 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             yax = permutedims(yax, permutes)
         end
         numtype = Val{info.tem.helpers.numbers.numType}()
-        map(v -> cleanInputData(v, vinfo, numtype), yax)
+        vfill = mean(v[(.!isnan.(v))])
+        map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
