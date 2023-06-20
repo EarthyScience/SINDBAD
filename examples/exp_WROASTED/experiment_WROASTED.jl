@@ -11,10 +11,10 @@ eYear = "2017"
 # forcingConfig = "forcing_erai.json"
 # inpath = "../data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
-inpath = "../data/BE-Vie.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
-# inpath = "../data/DE-Hai.1979.2017.daily.nc"
+# inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
+inpath = "../data/fn/CA-TP1.1979.2017.daily.nc"
+forcingConfig = "forcing_erai.json"
 
 obspath = inpath
 optimize_it = true
@@ -83,13 +83,14 @@ obsVar = info.optim.variables.obs;
 for (vi, v) in enumerate(out_vars)
     def_var = def_dat[vi][tspan,1,1,1]
     opt_var = opt_dat[vi][tspan,1,1,1]
-    plot(def_var, label="def", size=(900, 600))
+    plot(def_var, label="def", size=(900, 600), title=v)
     plot!(opt_var, label="opt")
     if v in obsMod
         obsv = obsVar[findall(obsMod .== v)[1]]
         @show "plot obs", v
         obs_var = getfield(obs, obsv)[tspan,1,1,1]
         plot!(obs_var, label="obs")
+        # title(obsv)
     end
     savefig("wroasted_$(v).png")
 end
