@@ -1,6 +1,6 @@
 {
 	"subset":{ 
-		"site":[1, 50]
+		"site":[1, 1]
 	},
 	"dimensions": {
 		"permute": null,

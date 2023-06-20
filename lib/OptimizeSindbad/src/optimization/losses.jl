@@ -18,7 +18,7 @@ end
 Relative normalized model absolute error
 
 ``
-mse = \\frac{mean(|y - ŷ|)}{1.0 + mean(y)}
+nmae1r = \\frac{mean(|y - ŷ|)}{1.0 + mean(y)}
 ``
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nmae1r}) 

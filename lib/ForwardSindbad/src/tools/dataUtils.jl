@@ -14,12 +14,22 @@ Add skipping filter for pixels with all nans in YAXArrays
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
-function cleanInputData(datapoint, vinfo, ::Val{T}) where {T}
+function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
+    datapoint = isnan(datapoint) ? T(dfill) : T(datapoint)
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
     bounds = vinfo.bounds
     datapoint = clamp(datapoint, bounds[1], bounds[2])
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
 end
+
+# function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
+#     datapoint = isnan(datapoint) ? T(dfill) : T(datapoint)
+#     datapoint = ismissing(datapoint) ? T(dfill) : T(datapoint)
+#     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
+#     bounds = vinfo.bounds
+#     datapoint = clamp(datapoint, bounds[1], bounds[2])
+#     return datapoint
+# end
 
 function getAbsDataPath(info, dataPath)
     if !isabspath(dataPath)

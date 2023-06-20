@@ -13,7 +13,6 @@ function instantiate(o::rootFraction_expCvegRoot, forcing, land, helpers)
     end
     ## instantiate variables
 	p_fracRoot2SoilD = zero(land.pools.soilW) .+ helpers.numbers.𝟙
-    rootOver = zero(land.pools.soilW)
     cumulativeDepths = cumsum(soilLayerThickness)
     ## pack land variables
     @pack_land begin
@@ -48,7 +47,7 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
 end
 
 @doc """
-Precomputation for maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
+maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
 
 # Parameters
 $(PARAMFIELDS)
