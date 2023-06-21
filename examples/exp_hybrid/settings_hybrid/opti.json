@@ -72,7 +72,7 @@
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "nseinv",
+			"costMetric": "mse",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -108,7 +108,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"nee": {

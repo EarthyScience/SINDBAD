@@ -26,6 +26,38 @@ function site_loss(output, forc, obs, site_location, tblParams, forward, upVecto
     return lloss(loc_obs.gpp, loc_obs.gpp_σ, loc_output[1][:, 1], Val(:mse))
 end
 
+function get_loc_loss(loc_obs, loc_output, newApproaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
+    ForwardSindbad.coreEcosystem!(loc_output, newApproaches, loc_forcing, tem_helpers, tem_spinup, tem_models, Val(tem_variables), loc_land_init, f_one)
+    model_data = (; Pair.(out_variables, loc_output)...)
+    loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
+    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    return l
+end
+
+function site_loss2(output, forc, obs, site_location, tblParams, forward, upVector, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
+    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location)
+    newApproaches = updateModelParametersType(tblParams, forward, upVector)
+    l = get_loc_loss(loc_obs, loc_output, newApproaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
+    return l
+end
+
+function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
+
+    loc_forcing = map(forcing) do a
+        view(a; loc_space_map...)
+    end
+    loc_obs = map(obs) do a
+        view(a; loc_space_map...)
+    end
+    ar_inds = last.(loc_space_map)
+
+    loc_output = map(outcubes) do a
+        getArrayView(a, ar_inds)
+    end
+    return loc_forcing, loc_output, loc_obs
+end
+
+
 function name_to_id(site_name, sites_forcing)
     site_id_forc = findall(x -> x==site_name, sites_forcing)[1]
     return [Symbol("site") => site_id_forc]
@@ -78,41 +110,21 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers = 0, seed= 1618) # 
     )
 end
 
-function do_epoch!(xfeatures, xbatches, tblParams, sites_f, n_bs_sites, land_init_space, single_loss, tem)
-    out_vars =  Val(tem.variables)
-    helpers = tem.helpers
-    spinup = tem.spinup
-    models = tem.models 
-    forward = tem.models.forward
-    n_params = sum(tblParams.is_ml)
-
-    for xbatch in xbatches
-        x_feat = xfeatures(site = xbatch)
-        # jacobian from the neural network
-        inst_params, pb = Zygote.pullback((x,p) -> re(p)(x), x_feat, flat)
-
-        f_grads = zeros(Float32, n_params, n_bs_sites)
-        grads_batch!(f_grads, inst_params, xbatch, tblParams, sites_f, land_init_space, single_loss)
-        _, ∇params = pb(f_grads)
-        Optimisers.update!(opt_state, flat, ∇params)
-    end
-end
 
 function grads_batch!(f_grads, up_params, xbatch, tblParams, sites_f, land_init_space,
-    output, forc, obs, forward, helpers, spinup, models, out_vars, f_one)
+    output, forc, obs, forward, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, f_one)
 
     Threads.@threads for site_index in eachindex(xbatch)
         site_name = xbatch[site_index]
         x_params = up_params(site = site_name)
         pVec = getParamsAct(x_params, tblParams)
         site_location = name_to_id(site_name, sites_f)
-        land_init_site = land_init_space[site_location[1][2]]
-        loss_thread = v -> site_loss(output, forc, obs, site_location, tblParams, forward, v, helpers, spinup, models, out_vars, land_init_site, f_one)
-
+        loc_land_init = land_init_space[site_location[1][2]]
+        #loss_thread = v -> site_loss2(output, forc, obs, site_location, tblParams, forward, v, helpers, spinup, models, out_vars, land_init_site, f_one)
+        loss_thread = v -> site_loss2(output, forc, obs, site_location, tblParams, forward, v, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
         f_grads[:, site_index] = ForwardDiff.gradient(loss_thread, pVec)
     end
 end
-
 
 function grads_batch_seq!(f_grads, up_params, xbatch, tblParams, sites_f, land_init_space,
     output, forc, obs, forward, helpers, spinup, models, out_vars, f_one)
@@ -140,7 +152,7 @@ function lloss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:
 end
 
 function get_site_losses(up_params, new_sites, tblParams, sites_f, land_init_space,
-        output, forc, obs, forward, helpers, spinup, models, out_vars, f_one)
+        output, forc, obs, forward, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, f_one)
 
     tot_loss = fill(NaN32, length(new_sites))
     Threads.@threads for s_id in eachindex(new_sites)
@@ -148,9 +160,8 @@ function get_site_losses(up_params, new_sites, tblParams, sites_f, land_init_spa
         x_params = up_params(site = site_name)
         pVec = getParamsAct(x_params, tblParams)
         site_location = name_to_id(site_name, sites_f)
-        land_init_site = land_init_space[site_location[1][2]]
-        loss_thread = v -> site_loss(output, forc, obs, site_location, tblParams, forward, v, helpers, spinup, models, out_vars, land_init_site, f_one)
-
+        loc_land_init = land_init_space[site_location[1][2]]
+        loss_thread = v -> site_loss2(output, forc, obs, site_location, tblParams, forward, v, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
         tot_loss[s_id] =  loss_thread(pVec) # maybe a bug? threads scope
     end
     return tot_loss
