@@ -24,7 +24,7 @@ function get_∇params(xfeatures, re, flat, xbatch, n_params, n_bs_sites, grads_
 end
 
 #x_args = (; shuffle=true, bs=16, sites)
-function nn_machine(nn_args, x_args, xfeatures; nepochs=10)
+function nn_machine(nn_args, x_args, xfeatures, grads_args; nepochs=10)
 
     flat, re, opt_state = init_ml_nn(nn_args...)
     mb_idxs = bs_iter(length(x_args.sites); batch_size = x_args.bs)
