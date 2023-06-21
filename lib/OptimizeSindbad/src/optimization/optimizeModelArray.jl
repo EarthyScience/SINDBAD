@@ -109,7 +109,7 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
         else
             push!(lossVec, metr)
         end
-        #println("$(obsV) => $(lossMetric): $(metr)")
+        println("$(obsV) => $(lossMetric): $(metr)")
     end
     return lossVec
 end
@@ -124,7 +124,7 @@ function getLossGradient(pVector::AbstractArray, base_models, forcing, output, o
     runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
-    @info "-------------------"
+    println("-------------------")
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
@@ -137,7 +137,7 @@ function getLossArray(pVector::AbstractArray, base_models, forcing, output, outp
     runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
     model_data = (; Pair.(output_variables, output.data)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
-    @info "-------------------"
+    println("-------------------")
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
