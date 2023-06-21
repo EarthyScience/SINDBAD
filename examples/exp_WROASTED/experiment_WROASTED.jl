@@ -13,7 +13,7 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-domain = "DE-Hai"
+domain = "CA-TP1"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -71,7 +71,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
 output = setupOutput(info);
-@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 
 # some plots
