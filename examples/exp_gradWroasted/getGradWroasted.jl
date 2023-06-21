@@ -49,34 +49,6 @@ mods = info.tem.models.forward;
 g_loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 g_loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 
-site_location = loc_space_names
-
-
-out_vars =  Val(info.tem.variables)
-helpers = info.tem.helpers # helpers
-spinup = info.tem.spinup # spinup
-models = info.tem.models # models
-forward = info.tem.models.forward # forward
-optim = info.optim
-land_init_site = land_init_space[1]
-
-site_loss_g(
-    output,
-    forc,
-    obs,
-    site_location,
-    tblParams,
-    forward,
-    tblParams.defaults .* rand_m,
-    helpers,
-    spinup,
-    models,
-    out_vars,
-    optim,
-    land_init_site,
-    f_one
-)
-
 # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);

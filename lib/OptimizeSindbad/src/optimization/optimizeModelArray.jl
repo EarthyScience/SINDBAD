@@ -141,47 +141,6 @@ function getLossArray(pVector::AbstractArray, base_models, forcing, output, outp
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end
 
-function getLocDataObs(outcubes, forcing, obs, loc_space_map)
-    loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
-    end
-    loc_obs = map(obs) do a
-        view(a; loc_space_map...)
-    end
-    ar_inds = last.(loc_space_map)
-
-    loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
-    end
-    return loc_forcing, loc_output, loc_obs
-end
-
-function site_loss_g(
-    output,
-    forc,
-    obs,
-    site_location,
-    tblParams,
-    forward,
-    upVector,
-    helpers,
-    spinup,
-    models,
-    out_vars,
-    optim,
-    land_init_site,
-    f_one
-)
-    @show site_location
-    loc_forcing, loc_output, loc_obs = getLocDataObs(output.data, forc, obs, site_location)
-    newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    coreEcosystem!(loc_output, newApproaches, loc_forcing, helpers, spinup, models, out_vars, land_init_site, f_one)
-    model_data = (; Pair.(out_vars, loc_output)...)
-    loss_vector = getLossVectorArray(loc_obs, model_data, optim)
-
-    return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
-end
-
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
