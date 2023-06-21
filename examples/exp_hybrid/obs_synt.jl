@@ -9,7 +9,7 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers = 2, seed=523)
 
