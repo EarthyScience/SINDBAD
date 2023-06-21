@@ -51,7 +51,7 @@ linit= createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 a=1
 
 ## do the dual and remake output

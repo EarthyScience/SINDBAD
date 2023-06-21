@@ -43,7 +43,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
@@ -69,6 +69,11 @@ function get_loc_loss(loc_obs, loc_output, newApproaches, loc_forcing, tem_helpe
     return l
 end
 # loc_space_maps = Pair.([(loc_space_names, loc_space_inds)...])
+site_location = loc_space_maps[1];
+    land_init_site = land_init_space[1];
+    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location);
+    get_loc_loss(loc_obs, loc_output, mods, loc_forcing, info.tem.helpers, info.tem.spinup, info.tem.models, info.tem.variables, info.optim, output.variables, land_init_site, f_one)
+
 for site in 1:info.tem.forcing.sizes.site
     site_location = loc_space_maps[site];
     land_init_site = land_init_space[site];
