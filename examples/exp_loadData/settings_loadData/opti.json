@@ -42,7 +42,7 @@
 		"cCycleBase.annk_LitFast",
 		"cCycleBase.annk_SoilSlow",
 		"cCycleBase.annk_SoilOld",
-		"cCycleBase.etaH",
+		"cCycleBase.ηH",
 		"cFlow.f_τ",
 		"cFlow.kShed",
 		"cFlow.LR2ReSlp",
