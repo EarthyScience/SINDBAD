@@ -5,7 +5,7 @@ annk_LitSlow,,39,,,,cCycleBase,cCycleBase.annk_LitSlow
 annk_LitFast,,100.2640282,,,,cCycleBase,cCycleBase.annk_LitFast
 annk_SoilSlow,,2,,,,cCycleBase,cCycleBase.annk_SoilSlow
 annk_SoilOld,,0.04187936117,,,,cCycleBase,cCycleBase.annk_SoilOld
-etaH,,0.01,,,,cCycleBase,cCycleBase.etaH
+ηH,,0.01,,,,cCycleBase,cCycleBase.ηH
 f_τ,,0.5513161752,,,,cFlow,cFlow.f_τ
 kShed,,0.3102434724,,,,cFlow,cFlow.kShed
 LR2ReSlp,,0.3505499978,,,,cFlow,cFlow.LR2ReSlp

@@ -15,7 +15,7 @@ struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
-    datapoint = isnan(datapoint) ? T(dfill) : T(datapoint)
+    datapoint = isnan(datapoint) ? dfill : datapoint
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
     bounds = vinfo.bounds
     datapoint = clamp(datapoint, bounds[1], bounds[2])
@@ -105,14 +105,6 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
         in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
-
-function get_force_at_time_t(forcing, ts)
-    f = map(forcing) do v
-        length(v)>3 ? v[ts] : v
-    end
-    f
-end
-
 
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)

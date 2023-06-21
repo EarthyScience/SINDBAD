@@ -52,7 +52,7 @@
             "approach": "GSI"
         },
         "cCycleDisturbance": {
-            "approach": "constant"
+            "approach": "WROASTED"
         },
         "cFlow": {
             "approach": "GSI"

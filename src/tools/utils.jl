@@ -519,6 +519,7 @@ function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
         df = 1
     end
     if t_ype == true
+        tt = tt * " "
         print(Crayon(foreground = lc), "$(tt))::NamedTuple,\n")
     else
         print(Crayon(foreground = lc), "$(tt)),\n")

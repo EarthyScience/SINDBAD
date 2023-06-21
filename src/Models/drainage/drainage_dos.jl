@@ -11,7 +11,6 @@ function instantiate(o::drainage_dos, forcing, land, helpers)
 	@unpack_land begin
 		ΔsoilW ∈ land.states
 	end
-	drain_fraction = zero(ΔsoilW)
 	drainage = zero(ΔsoilW)
 
 	## pack land variables
@@ -33,8 +32,7 @@ function compute(o::drainage_dos, forcing, land, helpers)
 		ΔsoilW ∈ land.states
 		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
 	end
-	# drain_fraction .= clamp.(((soilW) ./ p_wSat) .^ (dos_exp .* p_β), 𝟘, 𝟙)
-	# drainage .=  drain_fraction .* (soilW +  ΔsoilW)
+
 	## calculate drainage
 	for sl in 1:length(land.pools.soilW)-1
 		soilW_sl = min(max(soilW[sl] + ΔsoilW[sl], 𝟘), p_wSat[sl])
@@ -46,8 +44,8 @@ function compute(o::drainage_dos, forcing, land, helpers)
 		drain = min(drainage_tmp, holdCap, lossCap)
 		tmp = drain > tolerance ? drain : 𝟘
 		@rep_elem tmp => (drainage, sl, :soilW) 
-		@add_to_elem -drainage[sl] => (ΔsoilW, sl, :soilW)
-		@add_to_elem drainage[sl] => (ΔsoilW, sl + 1, :soilW)
+		@add_to_elem -tmp => (ΔsoilW, sl, :soilW)
+		@add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
 	end
 	@rep_elem 𝟘 => (drainage, lastindex(drainage), :soilW)
 	## pack land variables
