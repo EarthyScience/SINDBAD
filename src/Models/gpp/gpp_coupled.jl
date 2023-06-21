@@ -21,7 +21,7 @@ function compute(o::gpp_coupled, forcing, land, helpers)
 		𝟙 ∈ helpers.numbers
 	end
 	
-	gpp = min(𝟙 * tranSup * AoE, gppE * SMScGPP)
+	gpp = min(tranSup * AoE, gppE * SMScGPP)
 	# gpp = min(𝟙 * tranSup * AoE, gppE * soilWStress[2])
 	# gpp = min(𝟙 * tranSup * AoE, gppE * max(soilWStress, [], 2))
 
