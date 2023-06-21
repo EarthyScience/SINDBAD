@@ -20,7 +20,7 @@ function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Sym
             ŷ = @view ŷ[:, 1]
         end
     end
-    @show size(ŷ)
+    #@show size(ŷ)
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
         error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match")
@@ -109,7 +109,7 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
         else
             push!(lossVec, metr)
         end
-        println("$(obsV) => $(lossMetric): $(metr)")
+        #println("$(obsV) => $(lossMetric): $(metr)")
     end
     return lossVec
 end
