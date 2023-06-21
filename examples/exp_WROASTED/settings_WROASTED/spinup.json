@@ -12,6 +12,12 @@
 			"forcing": "full",
 			"stopCriteria": null,
 			"nLoops": 1
+		},
+		{
+			"spinupMode": "ηScale",
+			"forcing": "recycleMSC",
+			"stopCriteria": null,
+			"nLoops": 1
 		}
 	],
 	"diffEq":{
