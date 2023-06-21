@@ -51,7 +51,7 @@ output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 linit= createLandInit(info.pools, info.tem);
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
@@ -71,7 +71,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
 output = setupOutput(info);
-@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 
 # some plots
