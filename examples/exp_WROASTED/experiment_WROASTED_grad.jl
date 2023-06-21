@@ -50,7 +50,7 @@ linit= createLandInit(info.pools, info.tem);
 
 output = setupOutput(info);
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 a=1
 
@@ -59,14 +59,14 @@ dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.default
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, newmods, forc, forcing.sizes, info.tem);
 new_op_dat = [typeof(opd[1]).(opd) for opd in output.data];
 output = (; output..., data = new_op_dat);
 ## get typed outputs
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], newmods, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], newmods, forc, forcing.sizes, info.tem);
 
 
-@time runEcosystem!(output.data, newmods, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
+@time runEcosystem!(output.data, newmods, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one);
 
 # @time outcubes = runExperimentOpti(experiment_json);  
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
@@ -75,7 +75,7 @@ observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)
 obs = getKeyedArrayFromYaxArray(observations);
 
 
-function lloss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+function lloss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     pprint("params:")
     @show " "
@@ -91,11 +91,11 @@ rand_m = rand(info.tem.helpers.numbers.numType);
 op = output;
 mods = info.tem.models.forward;
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 
-lloss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+lloss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+lloss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 l1(p) = lloss(p, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
