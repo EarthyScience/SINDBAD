@@ -123,6 +123,7 @@ end
 function coreEcosystem!(loc_output, approaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, land_init, f_one)
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
+    # land_spin_now = land_init
 
     if tem_helpers.run.runSpinup
         land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem_helpers, tem_spinup, tem_models, typeof(land_init), f_one; spinup_forcing=nothing)
@@ -135,10 +136,9 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map)
 
     land_prec = runInstantiate!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
-    # land_prec = runPrecompute!(land_inst, getForcingForTimeStep(loc_forcing, 1), approaches, tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers)
-    @time setOutputT!(loc_output, land_one, Val(tem.variables), 1)
+    setOutputT!(loc_output, land_one, Val(tem.variables), 1)
     if tem.helpers.run.debugit
         Sindbad.eval(:(error_catcher = []))
         push!(Sindbad.error_catcher, land_one)

@@ -166,7 +166,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem)
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land_spin/land is overwritten with every iteration. Only the state at the end is returned.
 """
-function loopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_spin::NamedTuple, tem_helpers::NamedTuple, land_type, f_one)
+@noinline function loopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem_helpers, land_type, f_one)
     time_steps = getForcingTimeSize(sel_spinup_forcing, Val(keys(sel_spinup_forcing)))
     # f_one = getForcingForTimeStep(sel_spinup_forcing, Val(keys())1)
     for t in 1:time_steps
@@ -180,7 +180,7 @@ end
 
 
 
-# @noinline function realloopTimeSpinup(sel_spinup_models::Tuple, sel_spinup_forcing::NamedTuple, land_spin::NamedTuple, tem_helpers::NamedTuple,time_steps)
+# @noinline function realloopTimeSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem_helpers,time_steps)
 #     for t in 2:time_steps
 #         f = getForcingForTimeStep(sel_spinup_forcing, t)
 #         land_spin = runModels(f, sel_spinup_models, land_spin, tem_helpers)::land_type
@@ -192,7 +192,7 @@ end
 runSpinup(forward_models, forcing, land_spin, tem; spinup_forcing=nothing)
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using doSpinup functions for different spinup methods.
 """
-function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTuple, tem_helpers::NamedTuple, tem_spinup, tem_models, land_type::DataType, f_one; spinup_forcing=nothing)
+function runSpinup(forward_models, forcing, land_in, tem_helpers, tem_spinup, tem_models, land_type, f_one; spinup_forcing=nothing)
     #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or runEcosystem. Need to figure out...
     land_spin = land_in
     if tem_spinup.flags.loadSpinup
@@ -234,7 +234,7 @@ function runSpinup(forward_models::Tuple, forcing::NamedTuple, land_in::NamedTup
         #if !tem_helpers.run.runOpti
         #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
         #end
-        for nL in 1:nLoops
+        for _ in 1:nLoops
             # @showprogress "Computing nLoops..." for nL in 1:nLoops
             #if !tem_helpers.run.runOpti
             #    @info "         Loop: $(nL)/$(nLoops)"
