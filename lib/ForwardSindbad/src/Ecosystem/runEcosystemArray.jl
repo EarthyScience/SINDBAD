@@ -164,7 +164,7 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
         end
     end
     loc_space_maps = Tuple(loc_space_maps)
-    @show loc_space_maps
+    #@show loc_space_maps
     allNans = Bool[]
     for i in eachindex(loc_space_maps)
         loc_forcing, _ = getLocData(outcubes, forcing, loc_space_maps[i]) #312
