@@ -1,7 +1,7 @@
 export gppSoilW_CASA
 
 @bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
-    Bwe::T1 = 0.5 | (0, 1) | "base water stress" | ""
+    Bwe::T1 = 0.2 | (0, 1) | "base water stress" | ""
 end
 
 
@@ -36,7 +36,7 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    SMScGPP = (Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev # use the current We if the temperature and PET are favorable, else use the previous one.
+    SMScGPP = clamp((Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev, 𝟘, 𝟙) # use the current We if the temperature and PET are favorable, else use the previous one.
 
     SMScGPP_prev = SMScGPP
 
