@@ -26,40 +26,6 @@ function site_loss(output, forc, obs, site_location, tblParams, forward, upVecto
     return lloss(loc_obs.gpp, loc_obs.gpp_σ, loc_output[1][:, 1], Val(:mse))
 end
 
-
-
-
-
-# function site_loss_g(
-#     output,
-#     forc,
-#     obs,
-#     site_location,
-#     tblParams,
-#     forward,
-#     upVector,
-#     helpers,
-#     spinup,
-#     models,
-#     out_vars,
-#     optim,
-#     land_init_site,
-#     f_one
-# )
-#     @show site_location
-#     loc_forcing, loc_output, loc_obs = getLocDataObs(output.data, forc, obs, site_location)
-#     newApproaches = updateModelParametersType(tblParams, forward, upVector)
-#     coreEcosystem!(loc_output, newApproaches, loc_forcing, helpers, spinup, models, out_vars, land_init_site, f_one)
-#     model_data = (; Pair.(out_vars, loc_output)...)
-#     loss_vector = getLossVectorArray(loc_obs, model_data, optim)
-
-#     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
-# end
-
-
-
-
-
 function name_to_id(site_name, sites_forcing)
     site_id_forc = findall(x -> x==site_name, sites_forcing)[1]
     return [Symbol("site") => site_id_forc]
