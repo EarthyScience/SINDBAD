@@ -22,14 +22,14 @@
 		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
-		"runOpti": 				true,
+		"runOpti": 				false,
 		"calcCost":				true
 	},
 	"rules":
 	{
 		"verbosity": 5,
 		"model_array_type": "staticarray",
-		"forward_diff": true,
+		"forward_diff": false,
 		"data_type": "Float32",
 		"data_backend": "zarr",
 		"tolerance": 1.0e-3,
