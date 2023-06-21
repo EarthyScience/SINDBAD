@@ -110,7 +110,7 @@ update pools and states in cCycleDisturbance_cFlow
 *Versions*
  - 1.0 on 23.04.2021 [skoirala]
  - 1.0 on 23.04.2021 [skoirala]  
- - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.cCycleBase.etaA & land.cCycleBase.etaH]  
+ - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.cCycleBase.ηA & land.cCycleBase.ηH]  
 
 *Created by:*
  - skoirala

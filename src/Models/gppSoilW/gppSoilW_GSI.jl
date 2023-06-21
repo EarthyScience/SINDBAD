@@ -14,10 +14,9 @@ function instantiate(o::gppSoilW_GSI, forcing, land, helpers)
 	## unpack land variables
 	@unpack_land (𝟙, sNT) ∈ helpers.numbers
 	SMScGPP_prev = 𝟙
-	f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * fW_slope_mult * (f_n - base))))
 
 	## pack land variables
-	@pack_land (SMScGPP_prev, f_smooth) => land.gppSoilW
+	@pack_land (SMScGPP_prev) => land.gppSoilW
 	return land
 end
 
@@ -29,13 +28,13 @@ function compute(o::gppSoilW_GSI, forcing, land, helpers)
     @unpack_land begin
         (s_wAWC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
-        (SMScGPP_prev, f_smooth) ∈ land.gppSoilW
+        (SMScGPP_prev) ∈ land.gppSoilW
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-	actAWC = max(sum(soilW) - s_wWP, 𝟘)
+	actAWC = max(addS(soilW) - s_wWP, 𝟘)
     SM_nor = min(actAWC / s_wAWC, 𝟙)
-    fW = f_smooth(SMScGPP_prev, SM_nor, fW_τ, fW_slope, fW_base)
+    fW = (𝟙 - fW_τ) * SMScGPP_prev + fW_τ * (𝟙 / (𝟙 + exp(-fW_slope * (SM_nor - fW_base))))
     SMScGPP = clamp(fW, 𝟘, 𝟙)
     SMScGPP_prev = SMScGPP
 
