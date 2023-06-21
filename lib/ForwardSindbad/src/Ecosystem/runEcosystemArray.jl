@@ -1,6 +1,7 @@
 export runEcosystem!, prepRunEcosystem
 export ecoLoc!
 export getLocData
+export coreEcosystem!
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -163,6 +164,7 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
         end
     end
     loc_space_maps = Tuple(loc_space_maps)
+    #@show loc_space_maps
     allNans = Bool[]
     for i in eachindex(loc_space_maps)
         loc_forcing, _ = getLocData(outcubes, forcing, loc_space_maps[i]) #312
@@ -176,7 +178,7 @@ function prepRunEcosystem(outcubes::AbstractArray, land_init, approaches::Tuple,
     land_init_space = Tuple([deepcopy(land_one) for _ in 1:length(loc_space_maps)])
     loc_space_names = Tuple(first.(loc_space_maps[1]))
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map in loc_space_maps])
-    return loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
+    return loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
 end
 
 
@@ -184,7 +186,7 @@ end
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes::AbstractArray, land_init::NamedTuple, approaches::Tuple, forcing::NamedTuple, forcing_sizes::NamedTuple, tem::NamedTuple)
-    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(outcubes, land_init, approaches, forcing, forcing_sizes, tem)
+    _, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(outcubes, land_init, approaches, forcing, forcing_sizes, tem)
     parallelizeIt(outcubes, approaches, forcing, tem.helpers, tem.spinup, tem.models, Val(tem.variables), loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, tem.helpers.run.parallelization)
 end
 
