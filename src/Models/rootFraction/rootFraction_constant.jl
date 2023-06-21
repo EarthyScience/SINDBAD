@@ -1,7 +1,7 @@
 export rootFraction_constant
 
 @bounds @describe @units @with_kw struct rootFraction_constant{T1} <: rootFraction
-	constantRootFrac::T1 = 0.5 | (0.05, 1.0) | "root fraction" | ""
+	constantRootFrac::T1 = 0.05 | (0.01, 0.15) | "root fraction" | ""
 end
 
 function instantiate(o::rootFraction_constant, forcing, land, helpers)

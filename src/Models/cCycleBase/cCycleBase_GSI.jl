@@ -18,8 +18,8 @@ export cCycleBase_GSI
 	    0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
 	    0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
 	C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
-	etaH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
-	etaA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
+	ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
+	ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
 end
 
 function instantiate(o::cCycleBase_GSI, forcing, land, helpers)
@@ -78,7 +78,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-		(p_C2Nveg, p_k_base) => land.cCycleBase
+		(p_C2Nveg, p_k_base, ηA, ηH) => land.cCycleBase
 	end
     return land
 end
