@@ -12,7 +12,7 @@ noStackTrace()
 Random.seed!(7)
 
 
-experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
+experiment_json = "../exp_gradWroasted/settings_gradWroastedALt/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 
 info, forcing = getForcing(info, Val{:zarr}());
@@ -40,6 +40,15 @@ rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
+params = tblParams.defaults; 
+selParam = :fracRootD2SoilD
+selIndex = findall(tblParams.names .== selParam)[1]
+for pr in 0.0:50:1000.0 |> collect
+    pc = copy(params)
+    pc[selIndex] = pc[selIndex] * pr
+    l = g_loss(pc, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+    @show l
+end
 g_loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 g_loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
