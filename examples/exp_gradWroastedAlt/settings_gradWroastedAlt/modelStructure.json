@@ -107,7 +107,7 @@
             "approach": "none"
         },
         "gppSoilW": {
-            "approach": "Stocker2020"
+            "approach": "CASA"
         },
         "gppVPD": {
             "approach": "PRELES"

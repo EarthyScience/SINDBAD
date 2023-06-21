@@ -13,7 +13,8 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-inpath = "../data/fn/CA-TP1.1979.2017.daily.nc"
+domain = "CA-TP1"
+inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
 obspath = inpath
@@ -21,7 +22,6 @@ optimize_it = true
 # optimize_it = false
 outpath = nothing
 
-domain = "DE-Hai"
 pl = "threads"
 replace_info = Dict(
     "modelRun.time.sDate" => sYear * "-01-01",
@@ -54,6 +54,9 @@ linit= createLandInit(info.pools, info.tem);
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 @time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+land_spin = land_init_space[1];
+@time land_spin_now = runSpinup(info.tem.models.forward, loc_forcings[1], land_spin, info.tem.helpers, info.tem.spinup, info.tem.models, typeof(land_spin), f_one; spinup_forcing=nothing);
 
 tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 
@@ -68,7 +71,7 @@ obs = getKeyedArrayFromYaxArray(observations);
 tblParams = Sindbad.getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
 output = setupOutput(info);
-@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data, new_models, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 
 # some plots
@@ -92,5 +95,5 @@ for (vi, v) in enumerate(out_vars)
         plot!(obs_var, label="obs")
         # title(obsv)
     end
-    savefig("wroasted_$(v).png")
+    savefig("wroasted_$(domain)_$(v).png")
 end
