@@ -49,7 +49,8 @@ mods = info.tem.models.forward;
 g_loss(tblParams.defaults .* rand_m, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 g_loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
 
-site_location = loc_space_inds[1]
+site_location = loc_space_names
+
 
 out_vars =  Val(info.tem.variables)
 helpers = info.tem.helpers # helpers
