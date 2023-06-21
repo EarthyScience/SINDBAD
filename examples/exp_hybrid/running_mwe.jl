@@ -11,4 +11,4 @@ grads_args = (; tblParams, sites_f, land_init_space, output, forc, obs_synt, for
 
 x_args = (; shuffle=true, bs=16, sites=sites)
 
-nn_machine(nn_args, x_args,  xfeatures; nepochs=2)
+nn_machine(nn_args, x_args,  xfeatures; nepochs=10)

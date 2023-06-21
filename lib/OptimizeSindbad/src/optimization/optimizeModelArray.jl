@@ -1,6 +1,6 @@
 export optimizeModelArray
 export getSimulationDataArray,  getLossArray, getLossGradient
-export getDataArray
+export getDataArray, combineLossArray
 export getLossVectorArray
 export site_loss_g
 
@@ -16,8 +16,11 @@ function getDataArray(outsmodel::NamedTuple, observations::NamedTuple, obsV::Sym
             ŷ = @view ŷ[:, 1, :]
         elseif ndims(ŷ) == 4
             ŷ = @view ŷ[:, 1, :, :]
+        else
+            ŷ = @view ŷ[:, 1]
         end
     end
+    @show size(ŷ)
     # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
         error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match")
@@ -38,8 +41,11 @@ function getDataArray(outsmodel::landWrapper, observations::NamedTuple, obsV::Sy
             ŷ = @view ŷ[:, 1, :]
         elseif ndim(ŷ) == 4
             ŷ = @view ŷ[:, 1, :, :]
+        else
+            ŷ = @view ŷ[:, 1]
         end
     end
+    @show size(ŷ)
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
@@ -125,7 +131,7 @@ end
 """
 getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
-function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+function getLossArray(pVector::AbstractArray, base_models, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
     upVector = pVector
     newApproaches = updateModelParameters(tblParams, base_models, upVector)
     runEcosystem!(output.data, newApproaches, forcing, tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
@@ -166,6 +172,7 @@ function site_loss_g(
     land_init_site,
     f_one
 )
+    @show site_location
     loc_forcing, loc_output, loc_obs = getLocDataObs(output.data, forc, obs, site_location)
     newApproaches = updateModelParametersType(tblParams, forward, upVector)
     coreEcosystem!(loc_output, newApproaches, loc_forcing, helpers, spinup, models, out_vars, land_init_site, f_one)
@@ -190,12 +197,12 @@ function optimizeModelArray(forcing::NamedTuple, output, output_variables, obser
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
-    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one))
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, tem.models.forward, forcing, tem.forcing.sizes, tem);
+    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one))
     # make the cost function handle
 
-    # output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
-    cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+    # output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
+    cost_function = x -> getLossArray(x, tem.models.forward, forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 
     # run the optimizer

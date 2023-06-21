@@ -37,9 +37,9 @@ forc = getKeyedArrayFromYaxArray(forcing);
 # linit= createLandInit(info.tem);
 
 # Sindbad.eval(:(error_catcher = []))    
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
 
-loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, land_init_space[1], info.tem.models.forward, forc, forcing.sizes, info.tem);
 
 loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1]);
 
