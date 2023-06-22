@@ -1,9 +1,7 @@
 export cCycleDisturbance_WROASTED
 
 #! format: off
-@bounds @describe @units @with_kw struct cCycleDisturbance_WROASTED{T1} <: cCycleDisturbance
-    carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
-end
+struct cCycleDisturbance_WROASTED <: cCycleDisturbance end
 #! format: on
 
 function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
@@ -12,8 +10,20 @@ function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
     end
     zixVegAll = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
     ndxLoseToZixVec = []
-    for _ ∈ zixVegAll
-        push!(ndxLoseToZixVec, getzix(land.pools.cSoilSlow, helpers.pools.zix.cSoilSlow))
+    for zixVeg ∈ zixVegAll
+        # make reserve pool flow to slow litter pool/woody debris
+        if helpers.pools.components.cEco[zixVeg] == :cVegReserve
+            ndxLoseToZix = helpers.pools.zix.cLitSlow
+        else
+            ndxLoseToZix = taker[[(giver .== zixVeg)...]]
+        end
+        ndxNoVeg = []
+        for ndxl ∈ ndxLoseToZix
+            if ndxl ∉ zixVegAll
+                push!(ndxNoVeg, ndxl)
+            end
+        end
+        push!(ndxLoseToZixVec, Tuple(ndxNoVeg))
     end
     ndxLoseToZixVec = Tuple(ndxLoseToZixVec)
     @pack_land (zixVegAll, ndxLoseToZixVec) => land.cCycleDisturbance
@@ -21,19 +31,17 @@ function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
 end
 
 function compute(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
-    ## unpack parameters and forcing
-    @unpack_cCycleDisturbance_WROASTED o
+    ## unpack forcing
     @unpack_forcing isDisturbed ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
         (zixVegAll, ndxLoseToZixVec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (giver, taker) ∈ land.cFlow
+        (giver, taker, carbon_remain) ∈ land.cCycleBase
         𝟘 ∈ helpers.numbers
     end
     if isDisturbed > 𝟘
-        # @show "before", cEco, sum(cEco)
         for zixVeg ∈ zixVegAll
             cLoss = max(cEco[zixVeg] - carbon_remain, 𝟘) * isDisturbed
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
@@ -44,34 +52,15 @@ function compute(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
                 @add_to_elem toGain => (cEco, tarZix, :cEco)
             end
         end
-        # @show "after", cEco, sum(cEco)
 
     end
-    ## pack land variables
-    @pack_land cEco => land.pools
-    return land
-end
-
-function update(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
-    @unpack_cCycleDisturbance_WROASTED o
-
-    ## unpack variables
-    @unpack_land begin
-        cEco ∈ land.pools
-        cLoss ∈ land.fluxes
-    end
-
-    ## update variables
-    cEco[zixVeg] = cEco[zixVeg] - cLoss
-    cEco[tarZix] = cEco[tarZix] + cLoss
-
     ## pack land variables
     @pack_land cEco => land.pools
     return land
 end
 
 @doc """
-move all vegetation carbon in excess of carbon_remain to cSoilSlow in case of disturbance
+move all vegetation carbon pools except reserve to respective flow target when there is disturbance
 
 # Parameters
 $(PARAMFIELDS)
@@ -100,7 +89,9 @@ update pools and states in cCycleDisturbance_WROASTED
  - Carvalhais; N.; Reichstein; M.; Seixas; J.; Collatz; G. J.; Pereira; J. S.; Berbigier; P.  & Rambal, S. (2008). Implications of the carbon cycle steady state assumption for  biogeochemical modeling performance & inverse parameter retrieval. Global Biogeochemical Cycles, 22[2].
 
 *Versions*
- - 1.0 on 23.06.2023 [skoirala]
+ - 1.0 on 23.04.2021 [skoirala]
+ - 1.0 on 23.04.2021 [skoirala]  
+ - 1.1 on 29.11.2021 [skoirala]: moved the scaling parameters to  ccyclebase_gsi [land.cCycleBase.ηA & land.cCycleBase.ηH]  
 
 *Created by:*
  - skoirala

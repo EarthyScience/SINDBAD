@@ -204,7 +204,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
                 dt_str = Dates.DateTime(info.tem.helpers.dates.sDate)
                 rax = RangeAxis(dn,
                     collect(dt_str:(info.tem.helpers.dates.time_step):(dt_str+Day(length(t) -
-                            1))))
+                                                                                  1))))
             end
             return rax
         end
