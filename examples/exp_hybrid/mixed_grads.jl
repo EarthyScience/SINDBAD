@@ -16,7 +16,7 @@ info = setupExperiment(info);
 forcing = getForcing(info, Val{:zarr}());
 forc = getKeyedArrayFromYaxArray(forcing);
 
-forcing = (; Tair = forc.Tair, Rain = forc.Rain)
+forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 
 #forcing = (;
 #    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
@@ -26,18 +26,16 @@ forcing = (; Tair = forc.Tair, Rain = forc.Rain)
 
 # Instantiate land components
 land = (;
-    pools = (; snowW = [0.0f0]),
-    states = (; ΔsnowW = [0.1f0], WBP = 0.01f0, snowFraction = 0.1f0),
-    fluxes = (; snowMelt = 0.2f0),
-    rainSnow = (;),
-    snowMelt = (;),
-)
+    pools=(; snowW=[0.0f0]),
+    states=(; ΔsnowW=[0.1f0], WBP=0.01f0, snowFraction=0.1f0),
+    fluxes=(; snowMelt=0.2f0),
+    rainSnow=(;),
+    snowMelt=(;))
 helpers = (;
-    numbers = (; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-    dates = (; nStepsDay = 1),
-    run = (; output_all = true, runSpinup = false),
-);
-tem = (; helpers, variables = (;));
+    numbers=(; 𝟘=0.0f0),  # type that zero with \bbzero [TAB]
+    dates=(; nStepsDay=1),
+    run=(; output_all=true, runSpinup=false));
+tem = (; helpers, variables=(;));
 
 function o_models(p1, p2)
     return (rainSnow_Tair_smooth(p1), snowMelt_Tair(p2))
@@ -66,11 +64,11 @@ x = rand(Float32, 4)
 y = rand(Float32, length(forcing.Tair)) #[5f0, 0f0, 1f0, 0f0, 1f0]
 data = (x, y)
 
-model = nn_model(4, 5, 2; seed = 13)
+model = nn_model(4, 5, 2; seed=13)
 
 @show sloss(model, data) # initial loss
 
-test_gradient(model, data, sloss; opt = Optimisers.Adam())
+test_gradient(model, data, sloss; opt=Optimisers.Adam())
 
 # TODO: To be worked on
 # Do your our test_gradient function 
@@ -78,16 +76,16 @@ test_gradient(model, data, sloss; opt = Optimisers.Adam())
 """
 test_mixed_gradient(nn_mod, data, loss; opt=Optimisers.Adam())
 """
-function test_mixed_gradients(nn_mod, data, loss; opt = Optimisers.Adam())
+function test_mixed_gradients(nn_mod, data, loss; opt=Optimisers.Adam())
     println("initial loss: ", loss(nn_mod, data))
 
     opt_state = Optimisers.setup(opt, nn_mod)
     ∇model, _ = Zygote.gradient(nn_mod, data) do model, data
-        loss(model, data)
+        return loss(model, data)
     end
     opt_state, nn_mod = Optimisers.update(opt_state, nn_mod, ∇model)
 
-    println("Loss after update: ", loss(nn_mod, data))
+    return println("Loss after update: ", loss(nn_mod, data))
 end
 
 # https://github.com/mcabbott/AxisKeys.jl/issues/140

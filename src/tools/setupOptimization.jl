@@ -51,7 +51,7 @@ function getCostOptions(optInfo::NamedTuple)
         end
         push!(all_options, vValues)
     end
-    Table((; Pair.([:variable, defNames...], all_options)...))
+    return Table((; Pair.([:variable, defNames...], all_options)...))
 end
 
 """
@@ -61,11 +61,9 @@ checks if the parameters listed in optimized_parameters of opti.json exists in t
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
     # @show info.opti.constraints, info.opti.optimized_parameters
-    tblParams = getParameters(
-        info.tem.models.forward,
+    tblParams = getParameters(info.tem.models.forward,
         info.opti.default_parameter,
-        info.opti.optimized_parameters,
-    )
+        info.opti.optimized_parameters)
     model_parameters = tblParams.varsModels
     optim_parameters = info.opti.optimized_parameters
     op_names = nothing
@@ -80,7 +78,7 @@ function checkOptimizedParametersInModels(info::NamedTuple)
             @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
             @show model_parameters
             error(
-                "Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of opti.json, or check model structure to provide correct parameter name",
+                "Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of opti.json, or check model structure to provide correct parameter name"
             )
         end
     end
@@ -93,37 +91,26 @@ function setupOptimization(info::NamedTuple)
     # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optim, (:default_parameter, info.opti.default_parameter))
     info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
-    info = setTupleSubfield(
-        info,
+    info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
+    info = setTupleSubfield(info,
         :optim,
-        (:variables2constrain, info.opti.variables2constrain),
-    )
-    info = setTupleSubfield(
-        info,
-        :optim,
-        (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)),
-    )
+        (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
-    info = setTupleSubfield(
-        info,
-        :optim,
-        (:optimized_parameters, info.opti.optimized_parameters),
-    )
+    info = setTupleSubfield(info, :optim, (:optimized_parameters, info.opti.optimized_parameters))
 
     # set algorithm related options
     tmp_algorithm = (;)
     algo_method = info.opti.algorithm.package * "_" * info.opti.algorithm.method
     tmp_algorithm = setTupleField(tmp_algorithm, (:method, Symbol(algo_method)))
-    tmp_algorithm =
-        setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
     if !isnothing(info.opti.algorithm.options_file)
         options_path = info.opti.algorithm.options_file
         if !isabspath(options_path)
             options_path = joinpath(info.settings_root, options_path)
         end
-        options = parsefile(options_path; dicttype = DataStructures.OrderedDict)
+        options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
     else
         options = (;)

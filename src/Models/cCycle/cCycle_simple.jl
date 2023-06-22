@@ -26,16 +26,8 @@ function define(o::cCycle_simple, forcing, land, helpers)
     cRH = 𝟘
 
     @pack_land begin
-        (
-            cEcoFlow,
-            cEcoInflux,
-            cEcoOut,
-            cEco_prev,
-            cNPP,
-            zixVeg,
-            zerocEcoFlow,
-            zerocEcoInflux,
-        ) => land.states
+        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) =>
+            land.states
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
     end
     return land
@@ -45,8 +37,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (
-            cAlloc,
+        (cAlloc,
             cEcoEfflux,
             cEcoFlow,
             cEcoInflux,
@@ -56,8 +47,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
             p_k,
             zixVeg,
             zerocEcoFlow,
-            zerocEcoInflux,
-        ) ∈ land.states
+            zerocEcoInflux) ∈ land.states
         cEco ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
@@ -125,7 +115,7 @@ function upd_c(land, cEco, tem_helpers)
         cp = getfield(land.pools, cv)
         cz = getfield(tem_helpers.pools.zix, cv)
         cp = cEco[cz]
-        land = Sindbad.setTupleSubfield(land, :pools, (cv, cp))
+        return land = Sindbad.setTupleSubfield(land, :pools, (cv, cp))
         # @show cv, cp, cz
     end
     return land

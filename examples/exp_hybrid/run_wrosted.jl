@@ -7,7 +7,7 @@ include("obs_synt_wrosted.jl")
 
 include("nn_machine.jl")
 
-nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer = 2, nn_opt = Optimisers.Adam())
+nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer=2, nn_opt=Optimisers.Adam())
 
 tem_variables = info.tem.variables
 tem_optim = info.optim
@@ -34,9 +34,8 @@ grads_args = (;
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-);
+    f_one);
 
-x_args = (; shuffle = true, bs = 16, sites = sites)
+x_args = (; shuffle=true, bs=16, sites=sites)
 
-nn_machine(nn_args, x_args, xfeatures, grads_args; nepochs = 2)
+nn_machine(nn_args, x_args, xfeatures, grads_args; nepochs=2)

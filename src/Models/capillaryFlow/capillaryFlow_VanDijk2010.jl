@@ -35,7 +35,7 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
         (numType, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
-    for sl ∈ 1:length(land.pools.soilW)-1
+    for sl ∈ 1:(length(land.pools.soilW)-1)
         dos_soilW = clamp((soilW[sl] + ΔsoilW[sl]) ./ p_wSat[sl], 𝟘, 𝟙)
         tmpCapFlow = sqrt(p_kFC[sl+1] * p_kFC[sl]) * (𝟙 - dos_soilW)
         holdCap = max(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), 𝟘)

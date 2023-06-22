@@ -61,14 +61,12 @@ function fSoilW_cTau(𝟙, A, B, wExp, wOpt, wSoil)
     # first half of the response curve
     W2p1 = 𝟙 / (𝟙 + exp(A * (-wExp))) / (𝟙 + exp(A * (-wExp)))
     W2C1 = 𝟙 / W2p1
-    W21 =
-        W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
+    W21 = W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
 
     # second half of the response curve
     W2p2 = 𝟙 / (𝟙 + exp(B * (-wExp))) / (𝟙 + exp(B * (-wExp)))
     W2C2 = 𝟙 / W2p2
-    T22 =
-        W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
+    T22 = W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21

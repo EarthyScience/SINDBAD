@@ -18,12 +18,7 @@ export runoffSaturationExcess_Bergstroem1992VegFractionPFT
 end
 #! format: on
 
-function define(
-    o::runoffSaturationExcess_Bergstroem1992VegFractionPFT,
-    forcing,
-    land,
-    helpers,
-)
+function define(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o
@@ -41,12 +36,7 @@ function define(
     return land
 end
 
-function compute(
-    o::runoffSaturationExcess_Bergstroem1992VegFractionPFT,
-    forcing,
-    land,
-    helpers,
-)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o

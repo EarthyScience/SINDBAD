@@ -16,16 +16,13 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(
-    output.data,
+f_one = prepRunEcosystem(output.data,
     output.land_init,
     info.tem.models.forward,
     forc,
     forcing.sizes,
-    info.tem,
-);
-@time runEcosystem!(
-    output.data,
+    info.tem);
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
@@ -34,14 +31,11 @@ f_one = prepRunEcosystem(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 
-tblParams = getParameters(
-    info.tem.models.forward,
+tblParams = getParameters(info.tem.models.forward,
     info.optim.default_parameter,
-    info.optim.optimized_parameters,
-);
+    info.optim.optimized_parameters);
 
 out_vars = Val(info.tem.variables)
 helpers = info.tem.helpers # helpers
@@ -58,4 +52,4 @@ sites = xfeatures.site
 sites = [s for s ∈ sites]
 sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
 
-n_bs_feat = xfeatures.features |> length
+n_bs_feat = length(xfeatures.features)
