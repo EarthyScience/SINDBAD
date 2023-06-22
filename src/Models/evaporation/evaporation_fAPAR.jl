@@ -1,77 +1,79 @@
 export evaporation_fAPAR
 
-@bounds @describe @units @with_kw struct evaporation_fAPAR{T1, T2} <: evaporation
-	α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-	supLim::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+#! format: off
+@bounds @describe @units @with_kw struct evaporation_fAPAR{T1,T2} <: evaporation
+    α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
+    supLim::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
+#! format: on
 
-function instantiate(o::evaporation_fAPAR, forcing, land, helpers)
-	## unpack land variables
-	@unpack_land begin
-		𝟘 ∈ helpers.numbers
-	end
-	PETsoil = 𝟘
-	evaporation = 𝟘
-	## pack land variables
-	@pack_land begin
-		PETsoil => land.evaporation
-		evaporation => land.fluxes
-	end
-	return land
+function define(o::evaporation_fAPAR, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_land begin
+        𝟘 ∈ helpers.numbers
+    end
+    PETsoil = 𝟘
+    evaporation = 𝟘
+    ## pack land variables
+    @pack_land begin
+        PETsoil => land.evaporation
+        evaporation => land.fluxes
+    end
+    return land
 end
 
 function compute(o::evaporation_fAPAR, forcing, land, helpers)
-	## unpack parameters
-	@unpack_evaporation_fAPAR o
+    ## unpack parameters
+    @unpack_evaporation_fAPAR o
 
-	## unpack land variables
-	@unpack_land begin
-		fAPAR ∈ land.states
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		PET ∈ land.PET
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# multiply equilibrium PET with αSoil & [1.0 - fAPAR] to get potential soil evap
-	tmp = PET * α * (𝟙 - fAPAR)
-	PETsoil = max(tmp, 𝟘)
-	# scale the potential with the a fraction of available water & get the minimum of the current moisture
-	evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
+    ## unpack land variables
+    @unpack_land begin
+        fAPAR ∈ land.states
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        PET ∈ land.PET
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    # multiply equilibrium PET with αSoil & [1.0 - fAPAR] to get potential soil evap
+    tmp = PET * α * (𝟙 - fAPAR)
+    PETsoil = max(tmp, 𝟘)
+    # scale the potential with the a fraction of available water & get the minimum of the current moisture
+    evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
 
-	# update soil moisture changes
-	@add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    # update soil moisture changes
+    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
 
-	## pack land variables
-	@pack_land begin
-		PETsoil => land.evaporation
-		evaporation => land.fluxes
-		ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        PETsoil => land.evaporation
+        evaporation => land.fluxes
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::evaporation_fAPAR, forcing, land, helpers)
-	@unpack_evaporation_bareFraction o
+    @unpack_evaporation_bareFraction o
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture of the first layer
-	soilW[1] = soilW[1] + ΔsoilW[1]
+    ## update variables
+    # update soil moisture of the first layer
+    soilW[1] = soilW[1] + ΔsoilW[1]
 
-	# reset soil moisture changes to zero
-	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
+    # reset soil moisture changes to zero
+    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        soilW => land.pools
+        # ΔsoilW => land.states
+    end
+    return land
 end
 
 @doc """

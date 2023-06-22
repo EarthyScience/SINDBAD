@@ -7,10 +7,9 @@ using AxisKeys, FillArrays
 using DimensionalData
 using DiskArrayTools
 using JLD2: @save
-using NetCDF 
+using NetCDF
 using RecursiveArrayTools
-using TypedTables:
-    Table
+using TypedTables: Table
 using YAXArrays
 using YAXArrayBase
 using YAXArrays: savecube
@@ -22,13 +21,8 @@ using ThreadPools
 using Dates
 using Statistics
 
-using Flatten:
-    flatten,
-    metaflatten,
-    fieldnameflatten,
-    parentnameflatten
+using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
 using ProgressMeter
-
 
 include("tools/tools.jl")
 include("Ecosystem/Ecosystem.jl")

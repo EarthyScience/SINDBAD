@@ -1,56 +1,54 @@
 export groundWRecharge_kUnsat
 
-struct groundWRecharge_kUnsat <: groundWRecharge
-end
+struct groundWRecharge_kUnsat <: groundWRecharge end
 
 function compute(o::groundWRecharge_kUnsat, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		p_wSat ∈ land.soilWBase
-		unsatK ∈ land.soilProperties
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack land variables
+    @unpack_land begin
+        p_wSat ∈ land.soilWBase
+        unsatK ∈ land.soilProperties
+        (groundW, soilW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	# calculate recharge
-	k_unsat = unsatK(land, helpers, length(land.pools.soilW))
-	groundWRec = min(k_unsat, soilW[end] + ΔsoilW[end])
+    # calculate recharge
+    k_unsat = unsatK(land, helpers, length(land.pools.soilW))
+    groundWRec = min(k_unsat, soilW[end] + ΔsoilW[end])
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
-	ΔsoilW[end] = ΔsoilW[end] - groundWRec
+    ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
+    ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
-	## pack land variables
-	@pack_land begin
-		groundWRec => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        groundWRec => land.fluxes
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 function update(o::groundWRecharge_kUnsat, forcing, land, helpers)
 
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        (soilW, groundW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
+    ## update storage pools
+    soilW[end] = soilW[end] + ΔsoilW[end]
+    groundW .= groundW .+ ΔgroundW
 
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset ΔsoilW[end] and ΔgroundW to zero
+    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (groundW, soilW) => land.pools
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 @doc """

@@ -1,25 +1,27 @@
 export vegFraction_scaledLAI
 
+#! format: off
 @bounds @describe @units @with_kw struct vegFraction_scaledLAI{T1} <: vegFraction
-	LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
+    LAIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for LAI" | ""
 end
+#! format: on
 
 function compute(o::vegFraction_scaledLAI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_vegFraction_scaledLAI o
+    ## unpack parameters
+    @unpack_vegFraction_scaledLAI o
 
-	## unpack land variables
-	@unpack_land begin
-		LAI ∈ land.states
-		𝟙 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        LAI ∈ land.states
+        𝟙 ∈ helpers.numbers
+    end
 
-	## calculate variables
-	vegFraction = min(LAI * LAIscale, 𝟙)
+    ## calculate variables
+    vegFraction = min(LAI * LAIscale, 𝟙)
 
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

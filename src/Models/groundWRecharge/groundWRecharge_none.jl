@@ -1,16 +1,15 @@
 export groundWRecharge_none
 
-struct groundWRecharge_none <: groundWRecharge
-end
+struct groundWRecharge_none <: groundWRecharge end
 
-function instantiate(o::groundWRecharge_none, forcing, land, helpers)
+function define(o::groundWRecharge_none, forcing, land, helpers)
 
-	## calculate variables
-	groundWRec = helpers.numbers.𝟘
+    ## calculate variables
+    groundWRec = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land groundWRec => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land groundWRec => land.fluxes
+    return land
 end
 
 @doc """

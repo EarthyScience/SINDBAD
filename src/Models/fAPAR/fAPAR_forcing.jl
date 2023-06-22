@@ -1,15 +1,14 @@
 export fAPAR_forcing
 
-struct fAPAR_forcing <: fAPAR
-end
+struct fAPAR_forcing <: fAPAR end
 
 function compute(o::fAPAR_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing fAPAR ∈ forcing
+    ## unpack forcing
+    @unpack_forcing fAPAR ∈ forcing
 
-	## pack land variables
-	@pack_land fAPAR => land.states
-	return land
+    ## pack land variables
+    @pack_land fAPAR => land.states
+    return land
 end
 
 @doc """

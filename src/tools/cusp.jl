@@ -47,7 +47,6 @@ export add_to_elem, @add_to_elem, add_to_each_elem, add_vec
 #     return update_state_pools(sp, Δs, Val(split))
 # end
 
-
 # function cusp(sp, Δsp) # cusp
 #     b_sp = Buffer(sp)
 #     copyto!(b_sp, sp)
@@ -73,7 +72,23 @@ macro rep_elem(outparams::Expr)
     # hp_pool = QuoteNode(rhsa[2])
     indx = rhsa[2]
     hp_pool = rhsa[3]
-    outCode = [Expr(:(=), tar, Expr(:call, rep_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(Expr(:., :(helpers.pools.ones), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(:(helpers.numbers.𝟙)), esc(indx)))]
+    outCode = [
+        Expr(
+            :(=),
+            tar,
+            Expr(
+                :call,
+                rep_elem,
+                tar,
+                lhs,
+                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
+                esc(Expr(:., :(helpers.pools.ones), hp_pool)),
+                esc(:(helpers.numbers.𝟘)),
+                esc(:(helpers.numbers.𝟙)),
+                esc(indx),
+            ),
+        ),
+    ]
     # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
     return Expr(:block, outCode...)
 end
@@ -92,7 +107,6 @@ function rep_elem(v::SVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
     # v = Base.setindex(v, v_elem, vlit_level)
     return v
 end
-
 
 macro rep_vec(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
@@ -114,7 +128,6 @@ function rep_vec(v::SVector, v_new, n_𝟘)
     return v
 end
 
-
 macro add_to_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
     @assert outparams.args[1] == :(=>)
@@ -125,7 +138,21 @@ macro add_to_elem(outparams::Expr)
     tar = esc(rhsa[1])
     indx = rhsa[2]
     hp_pool = rhsa[3]
-    outCode = [Expr(:(=), tar, Expr(:call, add_to_elem, tar, lhs, esc(Expr(:., :(helpers.pools.zeros), hp_pool)), esc(:(helpers.numbers.𝟘)), esc(indx)))]
+    outCode = [
+        Expr(
+            :(=),
+            tar,
+            Expr(
+                :call,
+                add_to_elem,
+                tar,
+                lhs,
+                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
+                esc(:(helpers.numbers.𝟘)),
+                esc(indx),
+            ),
+        ),
+    ]
     return Expr(:block, outCode...)
 end
 
@@ -160,4 +187,3 @@ function add_vec(v::AbstractVector, Δv)
     v .= v .+ Δv
     return v
 end
-

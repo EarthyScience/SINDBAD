@@ -1,15 +1,16 @@
 export gppSoilW_CASA
 
+#! format: off
 @bounds @describe @units @with_kw struct gppSoilW_CASA{T1} <: gppSoilW
     Bwe::T1 = 0.2 | (0, 1) | "base water stress" | ""
 end
+#! format: on
 
-
-function instantiate(o::gppSoilW_CASA, forcing, land, helpers)
+function define(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
-        𝟘  ∈ helpers.numbers
+        𝟘 ∈ helpers.numbers
     end
     SMScGPP_prev = 𝟘
 
@@ -22,7 +23,6 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppSoilW_CASA o
     @unpack_forcing Tair ∈ forcing
-
 
     ## unpack land variables
     @unpack_land begin

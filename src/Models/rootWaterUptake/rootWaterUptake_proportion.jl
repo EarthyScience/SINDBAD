@@ -1,10 +1,8 @@
 export rootWaterUptake_proportion
 
-struct rootWaterUptake_proportion <: rootWaterUptake
-end
+struct rootWaterUptake_proportion <: rootWaterUptake end
 
-
-function instantiate(o::rootWaterUptake_proportion, forcing, land, helpers)
+function define(o::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -36,7 +34,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     wRootUptake = wRootUptake .* 𝟘
     # extract from top to bottom
     if PAWTotal > 𝟘
-        for sl in 1:length(land.pools.soilW)
+        for sl ∈ 1:length(land.pools.soilW)
             uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal))
             @rep_elem toUptake * uptakeProportion => (wRootUptake, sl, :soilW)
             @add_to_elem -wRootUptake[sl] => (ΔsoilW, sl, :soilW)
@@ -52,25 +50,25 @@ end
 
 function update(o::rootWaterUptake_proportion, forcing, land, helpers)
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture
-	soilW .= soilW .+ ΔsoilW
+    ## update variables
+    # update soil moisture
+    soilW .= soilW .+ ΔsoilW
 
-	# reset soil moisture changes to zero
-	ΔsoilW .= ΔsoilW .- ΔsoilW
+    # reset soil moisture changes to zero
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
-	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        soilW => land.pools
+        # ΔsoilW => land.states
+    end
+    return land
 end
 
 @doc """

@@ -1,16 +1,15 @@
 export evaporation_none
 
-struct evaporation_none <: evaporation
-end
+struct evaporation_none <: evaporation end
 
-function instantiate(o::evaporation_none, forcing, land, helpers)
+function define(o::evaporation_none, forcing, land, helpers)
 
-	## calculate variables
-	evaporation = helpers.numbers.𝟘
+    ## calculate variables
+    evaporation = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land evaporation => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land evaporation => land.fluxes
+    return land
 end
 
 @doc """

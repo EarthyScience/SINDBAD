@@ -1,16 +1,15 @@
 export cTauLAI_none
 
-struct cTauLAI_none <: cTauLAI
-end
+struct cTauLAI_none <: cTauLAI end
 
-function instantiate(o::cTauLAI_none, forcing, land, helpers)
+function define(o::cTauLAI_none, forcing, land, helpers)
 
-	## calculate variables
-	p_kfLAI = zero(land.pools.cEco) .+ helpers.numbers.𝟙; #(ineficient, should be pix zix_veg)
+    ## calculate variables
+    p_kfLAI = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #(ineficient, should be pix zix_veg)
 
-	## pack land variables
-	@pack_land p_kfLAI => land.cTauLAI
-	return land
+    ## pack land variables
+    @pack_land p_kfLAI => land.cTauLAI
+    return land
 end
 
 @doc """

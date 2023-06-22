@@ -1,19 +1,21 @@
 export LAI_constant
 
+#! format: off
 @bounds @describe @units @with_kw struct LAI_constant{T1} <: LAI
-	constantLAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2"
+    constantLAI::T1 = 3.0 | (1.0, 12.0) | "LAI" | "m2/m2"
 end
+#! format: on
 
 function compute(o::LAI_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_LAI_constant o
+    ## unpack parameters
+    @unpack_LAI_constant o
 
-	## calculate variables
-	LAI = constantLAI
+    ## calculate variables
+    LAI = constantLAI
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    ## pack land variables
+    @pack_land LAI => land.states
+    return land
 end
 
 @doc """
