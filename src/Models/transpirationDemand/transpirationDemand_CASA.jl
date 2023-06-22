@@ -1,25 +1,24 @@
 export transpirationDemand_CASA
 
-struct transpirationDemand_CASA <: transpirationDemand
-end
+struct transpirationDemand_CASA <: transpirationDemand end
 
 function compute(o::transpirationDemand_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		PAW ∈ land.vegAvailableWater
-		(p_wAWC, p_α, p_β) ∈ land.soilWBase
-		percolation ∈ land.percolation
-		PET ∈ land.PET
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	VMC = clamp(sum(PAW) / sum(p_wAWC), 𝟘, 𝟙)
-	RDR = (𝟙 + mean(p_α)) / (𝟙 + mean(p_α) * (VMC ^ mean(p_β)))
-	tranDem = percolation + (PET - percolation) * RDR
+    ## unpack land variables
+    @unpack_land begin
+        PAW ∈ land.vegAvailableWater
+        (p_wAWC, p_α, p_β) ∈ land.soilWBase
+        percolation ∈ land.percolation
+        PET ∈ land.PET
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    VMC = clamp(sum(PAW) / sum(p_wAWC), 𝟘, 𝟙)
+    RDR = (𝟙 + mean(p_α)) / (𝟙 + mean(p_α) * (VMC^mean(p_β)))
+    tranDem = percolation + (PET - percolation) * RDR
 
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
+    ## pack land variables
+    @pack_land tranDem => land.transpirationDemand
+    return land
 end
 
 @doc """

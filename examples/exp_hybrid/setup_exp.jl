@@ -10,12 +10,34 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time loc_space_maps,
+loc_space_names,
+loc_space_inds,
+loc_forcings,
+loc_outputs,
+land_init_space,
+f_one = prepRunEcosystem(output.data,
+    output.land_init,
+    info.tem.models.forward,
+    forc,
+    forcing.sizes,
+    info.tem);
+@time runEcosystem!(output.data,
+    info.tem.models.forward,
+    forc,
+    info.tem,
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
 
-tblParams = getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
+tblParams = getParameters(info.tem.models.forward,
+    info.optim.default_parameter,
+    info.optim.optimized_parameters);
 
-out_vars =  Val(info.tem.variables)
+out_vars = Val(info.tem.variables)
 helpers = info.tem.helpers # helpers
 spinup = info.tem.spinup # spinup
 models = info.tem.models # models
@@ -27,7 +49,7 @@ c = Cube("examples/data/fluxnet_cube/fluxnet_covariates.zarr")
 xfeatures = cube_to_KA(c)
 # RU-Ha1, IT-PT1, US-Me5
 sites = xfeatures.site
-sites = [s for s in sites]
+sites = [s for s ∈ sites]
 sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
 
-n_bs_feat = xfeatures.features |> length
+n_bs_feat = length(xfeatures.features)

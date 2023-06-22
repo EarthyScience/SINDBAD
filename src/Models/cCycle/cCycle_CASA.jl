@@ -1,67 +1,66 @@
 export cCycle_CASA, spin_cCycle_CASA
 
-struct cCycle_CASA <: cCycle
-end
+struct cCycle_CASA <: cCycle end
 
-function instantiate(o::cCycle_CASA, forcing, land, helpers)
+function define(o::cCycle_CASA, forcing, land, helpers)
 
-	## instantiate variables
-	cEcoEfflux = zeros(numType, length(land.pools.cEco)); #sujan moved from get states
-	cEcoInflux = zeros(numType, length(land.pools.cEco))
-	cEcoFlow = zeros(numType, length(land.pools.cEco))
+    ## instantiate variables
+    cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
+    cEcoInflux = zeros(numType, length(land.pools.cEco))
+    cEcoFlow = zeros(numType, length(land.pools.cEco))
 
-	## pack land variables
-	@pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
-	return land
+    ## pack land variables
+    @pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
+    return land
 end
 
 function compute(o::cCycle_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
+    ## unpack land variables
+    @unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
 
-	## unpack land variables
-	@unpack_land begin
-		(cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
-		cEco ∈ land.pools
-		gpp ∈ land.fluxes
-		p_k_act ∈ land.cTau
-		(p_E, p_F, p_giver, p_taker) ∈ land.cFlow
-		(flowOrder, p_annk) ∈ land.cCycleBase
-	end
-	# NUMBER OF TIME STEPS PER YEAR
-	## these all need to be zeros maybe is taken care automatically
-	cEcoEfflux[!helpers.pools.flags.cVeg] = 0.0
-	## compute losses
-	cEcoOut = min.(cEco, cEco * p_k_act)
-	## gains to vegetation
-	zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-	cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
-	cEcoInflux[zix] .= cNPP
-	## flows & losses
-	# @nc; if flux order does not matter; remove.
-	for jix in eachindex(flowOrder)
-		taker = p_taker[flowOrder[jix]]
-		giver = p_giver[flowOrder[jix]]
-		flow_tmp = cEcoOut[giver] * p_F(taker, giver)
-		cEcoFlow[taker] = cEcoFlow[taker] + flow_tmp * p_E(taker, giver)
-		cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0 - p_E(taker, giver))
-	end
-	## balance
-	cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
-	## compute RA & RH
-	cRH = sum(cEcoEfflux[!helpers.pools.flags.cVeg]); #sujan added 1 to sum along all pools
-	cRA = sum(cEcoEfflux[helpers.pools.flags.cVeg]); #sujan added 1 to sum along all pools
-	cRECO = cRH + cRA
-	cNPP = sum(cNPP)
-	NEE = cRECO - gpp
+    ## unpack land variables
+    @unpack_land begin
+        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
+        cEco ∈ land.pools
+        gpp ∈ land.fluxes
+        p_k_act ∈ land.cTau
+        (p_E, p_F, p_giver, p_taker) ∈ land.cFlow
+        (flowOrder, p_annk) ∈ land.cCycleBase
+    end
+    # NUMBER OF TIME STEPS PER YEAR
+    ## these all need to be zeros maybe is taken care automatically
+    cEcoEfflux[!helpers.pools.flags.cVeg] = 0.0
+    ## compute losses
+    cEcoOut = min.(cEco, cEco * p_k_act)
+    ## gains to vegetation
+    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
+    cEcoInflux[zix] .= cNPP
+    ## flows & losses
+    # @nc; if flux order does not matter; remove.
+    for jix ∈ eachindex(flowOrder)
+        taker = p_taker[flowOrder[jix]]
+        giver = p_giver[flowOrder[jix]]
+        flow_tmp = cEcoOut[giver] * p_F(taker, giver)
+        cEcoFlow[taker] = cEcoFlow[taker] + flow_tmp * p_E(taker, giver)
+        cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0 - p_E(taker, giver))
+    end
+    ## balance
+    cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
+    ## compute RA & RH
+    cRH = sum(cEcoEfflux[!helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    cRA = sum(cEcoEfflux[helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    cRECO = cRH + cRA
+    cNPP = sum(cNPP)
+    NEE = cRECO - gpp
 
-	## pack land variables
-	@pack_land begin
-		(NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
-		(cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
+        (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) => land.states
+    end
+    return land
 end
 
 @doc """
@@ -115,180 +114,187 @@ cCycle_CASA
 Solve the steady state of the cCycle for the CASA model based on recurrent. Returns the model C pools in equilibrium
 
 # Inputs:
- - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_giver: giver pool array
- - land.cFlow.p_taker: taker pool array
- - land.fluxes.gpp: values for gross primary productivity
- - land.history.p_cTau_k: Turn over times carbon pools
+
+  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
+  - land.cFlow.p_giver: giver pool array
+  - land.cFlow.p_taker: taker pool array
+  - land.fluxes.gpp: values for gross primary productivity
+  - land.history.p_cTau_k: Turn over times carbon pools
 
 # Outputs:
- - land.pools.cEco: states of the different carbon pools
+
+  - land.pools.cEco: states of the different carbon pools
 
 # Modifies:
 
 # Extended help
 
 # References:
- - Not published but similar to: Lardy, R., Bellocchi, G., & Soussana, J. F. (2011). A new method to determine soil organic carbon equilibrium.  Environmental modelling & software, 26[12], 1759-1763.
+
+  - Not published but similar to: Lardy, R., Bellocchi, G., & Soussana, J. F. (2011). A new method to determine soil organic carbon equilibrium.  Environmental modelling & software, 26[12], 1759-1763.
 
 # Versions:
- - 1.0 on 01.05.2018
- - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on  Bt & At when nPix == 1 [single point simulation]
+
+  - 1.0 on 01.05.2018
+  - 1.1 on 29.10.2019: fixed the wrong removal of a dimension by squeeze on  Bt & At when nPix == 1 [single point simulation]
 
 # Created by:
- - ncarval
- - skoirala
+
+  - ncarval
+  - skoirala
 
 # Notes:
- - for model structures that loop the carbon cycle between pools this is  merely a rough approximation [the solution does not really work]  
- - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
+
+  - for model structures that loop the carbon cycle between pools this is  merely a rough approximation [the solution does not really work]
+  - the input datasets [f, fe, fx, s, d] have to have a full year (or cycle  of years) that will be used as the recycling dataset for the  determination of C pools at equilibrium
 """
 function spin_cCycle_CASA(forcing, land, helpers, NI2E)
-	@unpack_forcing Tair ∈ forcing
+    @unpack_forcing Tair ∈ forcing
 
-	@unpack_land begin
-		cEco ∈ land.pools
-		(cAlloc, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
-		gpp ∈ land.fluxes
-		(p_giver, p_taker) ∈ land.cFlow
-		YG ∈ land.aRespiration
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    @unpack_land begin
+        cEco ∈ land.pools
+        (cAlloc, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
+        gpp ∈ land.fluxes
+        (p_giver, p_taker) ∈ land.cFlow
+        YG ∈ land.aRespiration
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
 
-	## calculate variables
-	# START fCt - final time series of pools
-	fCt = cEco
-	sCt = cEco
-	# updated states / diagnostics & fluxessT = s
-	dT = d
-	fxT = fx
-	# helpers
-	nPix = 1
-	nTix = info.tem.helpers.sizes.nTix
-	nZix = length(land.pools.cEco)
-	# matrices for the calculations
-	cLossRate = zeros(numType, nZix)
-	cGain = cLossRate
-	cLoxxRate = cLossRate
-	## some debugging
-	# if!isfield(land.history, "p_aRespiration_km4su")
-	# p_aRespiration_km4su = cLossRate
-	# end
-	# if!isfield(p, "raAct")
-	# p.aRespiration.YG = 1.0
-	# elseif!isfield(land.raAct, "YG")
-	# p.aRespiration.YG = 1.0
-	# end
-	## ORDER OF CALCULATIONS [1 to the end of pools]
-	zixVec = getzix(cEco, helpers.pools.zix.cEco)
-	# BUT, we sort from left to right [veg to litter to soil] & prioritize
-	# without loops
-	kmoves = 0
-	zixVecOrder = zixVec
-	zixVecOrder_veg = []
-	zixVecOrder_nonVeg = []
-	for zix in zixVec
-		move = false
-		ndxGainFrom = find(p_taker == zix)
-		ndxLoseToZix = p_taker[p_giver == zix]
-		for ii in eachindex(ndxGainFrom)
-			giver = p_giver[ndxGainFrom[ii]]
-			if any(giver == ndxLoseToZix)
-				move = true
-				kmoves = kmoves + 1
-			end
-		end
-		if move
-			zixVecOrder[zixVecOrder == zix] = []
-			zixVecOrder = [zixVecOrder zix]
-		end
-	end
-	for zv in zixVecOrder
-		if any(zv == helpers.pools.zix.cVeg)
-			zixVecOrder_veg = [zixVecOrder_veg zv]
-		else
-			zixVecOrder_nonVeg = [zixVecOrder_nonVeg zv]
-		end
-	end
-	zixVecOrder = [zixVecOrder_veg zixVecOrder_nonVeg]
-	# zixVecOrder = [2 1 3 4 5]
-	# if kmoves > 0
-	# zixVecOrder = [zixVecOrder zixVecOrder[end-kmoves+1:end]]
-	# end
-	## solve it for each pool individually
-	for zix in zixVecOrder
-		# general k loss
-		# cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
-		cLossRate[zix, :] = clamp(p_cTau_k[zix], 𝟘, 𝟙); #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
-		# so that pools are not NaN
-		if any(zix == helpers.pools.zix.cVeg)
-			# additional losses [RA] in veg pools
-			cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
-			# gains in veg pools
-			gppShp = reshape(gpp, nPix, 1, nTix); # could be fxT?
-			cGain[zix, :] = cAlloc[zix, :] * gppShp * YG
-		end
-		if any(zix == p_taker)
-			# no additional gains from outside
-			if !any(zix == helpers.pools.zix.cVeg)
-				cLoxxRate[zix, :] = 1.0
-			end
-			# gains from other carbon pools
-			ndxGainFrom = find(p_taker == zix)
-			for ii in eachindex(ndxGainFrom)
-				taker = p_taker[ndxGainFrom[ii]]; # @nc : taker always has to be the same as zix giver = p_giver[ndxGainFrom[ii]]
-				denom = (1.0 - cLossRate[giver, :])
-				adjustGain = p_cFlow_A[taker, giver, :]
-				adjustGain3D = reshape(adjustGain, nPix, 1, nTix)
-				cGain[taker, :] = cGain[taker, :] + (fCt[giver, :] / denom) * cLossRate[giver, :] * adjustGain3D
-			end
-		end
-		## GET THE POOLS GAINS [Gt] AND LOSSES [Lt]
-		# CALCULATE At = 1 - Lt
-		At = squeeze((1.0 - cLossRate[zix, :]) * cLoxxRate[zix, :])
-		#sujan 29.10.2019: the squeeze removes the first dimension while
-		#running for a single point when nPix == 1
-		if size(cLossRate, 1) == 1
-			# At = At"; # commented out for julia compilation. make sure it works.
-			# Bt = squeeze(cGain[zix, :])" * At; # commented out for julia compilation. make sure it works.
-		else
-			Bt = squeeze(cGain[zix, :]) * At
-		end
-		#sujan end squeeze fix
-		# CARBON AT THE END FOR THE FIRST SPINUP PHASE; NPP IN EQUILIBRIUM
-		Co = cEco[zix]
-		# THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP
-		# EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL; SLOW AND OLD. IN THIS
-		# CASE SIGNIFICANT APPROXIMATION IS CALCULATED [CHECK NOTEBOOKS].
-		piA1 = (prod(At, 2)) ^ (NI2E)
-		At2 = [At ones(size(At, 1), 1)]
-		sumB_piA = NaN(size(Tair))
-		for ii in 1:nTix
-			sumB_piA[ii] = Bt[ii] * prod(At2[ii + 1:nTix + 1], 2)
-		end
-		sumB_piA = sum(sumB_piA)
-		T2 = 0:1:NI2E - 1
-		piA2 = (prod(At, 2) * ones(1, length(T2))) ^ (ones(size(At, 1), 1) * T2)
-		piA2 = sum(piA2)
-		# FINAL CARBON AT POOL zix
-		Ct = Co * piA1 + sumB_piA * piA2
-		sCt[zix] = Ct
-		cEco[zix] = Ct
-		cEco_prev[zix] = Ct
-		# CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
-		# POOLS CALCULATIONS
-		out = runForward(selectedModels, forcing, out, modelnames, helpers)
-		# FEED fCt
-		# fCt[zix, :] = cEco[zix, :]
-		fCt = cEco
-	end
-	# make the fx consistent with the pools
-	cEco = sCt
-	cEco_prev = sCt
-	out = runForward(selectedModels, forcing, out, modelnames, helpers)
+    ## calculate variables
+    # START fCt - final time series of pools
+    fCt = cEco
+    sCt = cEco
+    # updated states / diagnostics & fluxessT = s
+    dT = d
+    fxT = fx
+    # helpers
+    nPix = 1
+    nTix = info.tem.helpers.sizes.nTix
+    nZix = length(land.pools.cEco)
+    # matrices for the calculations
+    cLossRate = zeros(numType, nZix)
+    cGain = cLossRate
+    cLoxxRate = cLossRate
+    ## some debugging
+    # if!isfield(land.history, "p_aRespiration_km4su")
+    # p_aRespiration_km4su = cLossRate
+    # end
+    # if!isfield(p, "raAct")
+    # p.aRespiration.YG = 1.0
+    # elseif!isfield(land.raAct, "YG")
+    # p.aRespiration.YG = 1.0
+    # end
+    ## ORDER OF CALCULATIONS [1 to the end of pools]
+    zixVec = getzix(cEco, helpers.pools.zix.cEco)
+    # BUT, we sort from left to right [veg to litter to soil] & prioritize
+    # without loops
+    kmoves = 0
+    zixVecOrder = zixVec
+    zixVecOrder_veg = []
+    zixVecOrder_nonVeg = []
+    for zix ∈ zixVec
+        move = false
+        ndxGainFrom = find(p_taker == zix)
+        ndxLoseToZix = p_taker[p_giver==zix]
+        for ii ∈ eachindex(ndxGainFrom)
+            giver = p_giver[ndxGainFrom[ii]]
+            if any(giver == ndxLoseToZix)
+                move = true
+                kmoves = kmoves + 1
+            end
+        end
+        if move
+            zixVecOrder[zixVecOrder==zix] = []
+            zixVecOrder = [zixVecOrder zix]
+        end
+    end
+    for zv ∈ zixVecOrder
+        if any(zv == helpers.pools.zix.cVeg)
+            zixVecOrder_veg = [zixVecOrder_veg zv]
+        else
+            zixVecOrder_nonVeg = [zixVecOrder_nonVeg zv]
+        end
+    end
+    zixVecOrder = [zixVecOrder_veg zixVecOrder_nonVeg]
+    # zixVecOrder = [2 1 3 4 5]
+    # if kmoves > 0
+    # zixVecOrder = [zixVecOrder zixVecOrder[end-kmoves+1:end]]
+    # end
+    ## solve it for each pool individually
+    for zix ∈ zixVecOrder
+        # general k loss
+        # cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
+        cLossRate[zix, :] = clamp(p_cTau_k[zix], 𝟘, 𝟙) #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
+        # so that pools are not NaN
+        if any(zix == helpers.pools.zix.cVeg)
+            # additional losses [RA] in veg pools
+            cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
+            # gains in veg pools
+            gppShp = reshape(gpp, nPix, 1, nTix) # could be fxT?
+            cGain[zix, :] = cAlloc[zix, :] * gppShp * YG
+        end
+        if any(zix == p_taker)
+            # no additional gains from outside
+            if !any(zix == helpers.pools.zix.cVeg)
+                cLoxxRate[zix, :] = 1.0
+            end
+            # gains from other carbon pools
+            ndxGainFrom = find(p_taker == zix)
+            for ii ∈ eachindex(ndxGainFrom)
+                taker = p_taker[ndxGainFrom[ii]] # @nc : taker always has to be the same as zix giver = p_giver[ndxGainFrom[ii]]
+                denom = (1.0 - cLossRate[giver, :])
+                adjustGain = p_cFlow_A[taker, giver, :]
+                adjustGain3D = reshape(adjustGain, nPix, 1, nTix)
+                cGain[taker, :] =
+                    cGain[taker, :] +
+                    (fCt[giver, :] / denom) * cLossRate[giver, :] * adjustGain3D
+            end
+        end
+        ## GET THE POOLS GAINS [Gt] AND LOSSES [Lt]
+        # CALCULATE At = 1 - Lt
+        At = squeeze((1.0 - cLossRate[zix, :]) * cLoxxRate[zix, :])
+        #sujan 29.10.2019: the squeeze removes the first dimension while
+        #running for a single point when nPix == 1
+        if size(cLossRate, 1) == 1
+            # At = At"; # commented out for julia compilation. make sure it works.
+            # Bt = squeeze(cGain[zix, :])" * At; # commented out for julia compilation. make sure it works.
+        else
+            Bt = squeeze(cGain[zix, :]) * At
+        end
+        #sujan end squeeze fix
+        # CARBON AT THE END FOR THE FIRST SPINUP PHASE; NPP IN EQUILIBRIUM
+        Co = cEco[zix]
+        # THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP
+        # EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL; SLOW AND OLD. IN THIS
+        # CASE SIGNIFICANT APPROXIMATION IS CALCULATED [CHECK NOTEBOOKS].
+        piA1 = (prod(At, 2))^(NI2E)
+        At2 = [At ones(size(At, 1), 1)]
+        sumB_piA = NaN(size(Tair))
+        for ii ∈ 1:nTix
+            sumB_piA[ii] = Bt[ii] * prod(At2[(ii+1):(nTix+1)], 2)
+        end
+        sumB_piA = sum(sumB_piA)
+        T2 = 0:1:(NI2E-1)
+        piA2 = (prod(At, 2) * ones(1, length(T2)))^(ones(size(At, 1), 1) * T2)
+        piA2 = sum(piA2)
+        # FINAL CARBON AT POOL zix
+        Ct = Co * piA1 + sumB_piA * piA2
+        sCt[zix] = Ct
+        cEco[zix] = Ct
+        cEco_prev[zix] = Ct
+        # CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
+        # POOLS CALCULATIONS
+        out = runForward(selectedModels, forcing, out, modelnames, helpers)
+        # FEED fCt
+        # fCt[zix, :] = cEco[zix, :]
+        fCt = cEco
+    end
+    # make the fx consistent with the pools
+    cEco = sCt
+    cEco_prev = sCt
+    out = runForward(selectedModels, forcing, out, modelnames, helpers)
 
-	## pack land variables
-	@pack_land cEco => land.pools
-	return land
+    ## pack land variables
+    @pack_land cEco => land.pools
+    return land
 end
-

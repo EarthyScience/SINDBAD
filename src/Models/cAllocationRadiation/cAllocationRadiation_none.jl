@@ -2,7 +2,7 @@ export cAllocationRadiation_none
 
 struct cAllocationRadiation_none <: cAllocationRadiation end
 
-function instantiate(o::cAllocationRadiation_none, forcing, land, helpers)
+function define(o::cAllocationRadiation_none, forcing, land, helpers)
 
     ## calculate variables
     fR = helpers.numbers.𝟙

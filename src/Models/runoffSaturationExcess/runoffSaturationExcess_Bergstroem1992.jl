@@ -1,50 +1,50 @@
 export runoffSaturationExcess_Bergstroem1992
 
+#! format: off
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992{T1} <: runoffSaturationExcess
-	β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | ""
+    β::T1 = 1.1 | (0.1, 5.0) | "berg exponential parameter" | ""
 end
+#! format: on
 
+function define(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+    runoffSatExc = helpers.numbers.𝟘
 
-function instantiate(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
-
-	runoffSatExc = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+    end
+    return land
 end
 
 function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffSaturationExcess_Bergstroem1992 o
+    ## unpack parameters
+    @unpack_runoffSaturationExcess_Bergstroem1992 o
 
-	## unpack land variables
-	@unpack_land begin
-		WBP ∈ land.states
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# @show WBP
-	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW)
-	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg) ^ β, 𝟘, 𝟙)
+    ## unpack land variables
+    @unpack_land begin
+        WBP ∈ land.states
+        p_wSat ∈ land.soilWBase
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    # @show WBP
+    tmp_smaxVeg = sum(p_wSat)
+    tmp_SoilTotal = sum(soilW)
+    # calculate land runoff from incoming water & current soil moisture
+    tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg)^β, 𝟘, 𝟙)
 
-	runoffSatExc = WBP * tmp_SatExFrac
+    runoffSatExc = WBP * tmp_SatExFrac
 
-	# update water balance pool
-	WBP = WBP - runoffSatExc
+    # update water balance pool
+    WBP = WBP - runoffSatExc
 
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

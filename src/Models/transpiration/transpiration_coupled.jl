@@ -1,21 +1,20 @@
 export transpiration_coupled
 
-struct transpiration_coupled <: transpiration
-end
+struct transpiration_coupled <: transpiration end
 
 function compute(o::transpiration_coupled, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		gpp ∈ land.fluxes
-		AoE ∈ land.WUE
-	end
-	# calculate actual transpiration coupled with GPP
-	transpiration = gpp / AoE
+    ## unpack land variables
+    @unpack_land begin
+        gpp ∈ land.fluxes
+        AoE ∈ land.WUE
+    end
+    # calculate actual transpiration coupled with GPP
+    transpiration = gpp / AoE
 
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land transpiration => land.fluxes
+    return land
 end
 
 @doc """

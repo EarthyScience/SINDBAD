@@ -1,70 +1,72 @@
 export cTauSoilW_CASA
 
+#! format: off
 @bounds @describe @units @with_kw struct cTauSoilW_CASA{T1} <: cTauSoilW
-	Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
+    Aws::T1 = 1.0 | (0.001, 1000.0) | "curve (expansion/contraction) controlling parameter" | ""
 end
+#! format: on
 
-function instantiate(o::cTauSoilW_CASA, forcing, land, helpers)
-	@unpack_cTauSoilW_CASA o
+function define(o::cTauSoilW_CASA, forcing, land, helpers)
+    @unpack_cTauSoilW_CASA o
 
-	## instantiate variables
-	p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    ## instantiate variables
+    p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land p_fsoilW => land.cTauSoilW
-	return land
+    ## pack land variables
+    @pack_land p_fsoilW => land.cTauSoilW
+    return land
 end
 
 function compute(o::cTauSoilW_CASA, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cTauSoilW_CASA o
+    ## unpack parameters
+    @unpack_cTauSoilW_CASA o
 
-	## unpack land variables
-	@unpack_land p_fsoilW ∈ land.cTauSoilW
+    ## unpack land variables
+    @unpack_land p_fsoilW ∈ land.cTauSoilW
 
-	## unpack land variables
-	@unpack_land begin
-		rain ∈ land.rainSnow
-		soilW_prev ∈ land.pools
-		fsoilW_prev ∈ land.cTauSoilW
-		PET ∈ land.PET
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
-	TSPY = helpers.dates.nStepsYear; #sujan
-	TSPM = TSPY / 12
-	# BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
-	BGRATIO = 𝟘
-	BGME = 𝟙
-	# PREVIOUS TIME STEP VALUES
-	pBGME = fsoilW_prev; #sujan
-	# FOR PET > 0
-	ndx = (PET > 0)
-	# COMPUTE BGRATIO
-	BGRATIO[ndx] = (soilW_prev[ndx, 1] / TSPM + rain[ndx, tix]) / PET[ndx, tix]
-	# ADJUST ACCORDING TO Aws
-	BGRATIO = BGRATIO * Aws
-	# COMPUTE BGME
-	ndx1 = ndx & (BGRATIO >= 0.0 & BGRATIO < 1)
-	BGME[ndx1] = 0.1 + (0.9 * BGRATIO[ndx1])
-	ndx2 = ndx & (BGRATIO >= 1 & BGRATIO <= 2)
-	BGME[ndx2] = 1.0
-	ndx3 = ndx & (BGRATIO > 2 & BGRATIO <= 30)
-	BGME[ndx3] = 1 + 1/28 - 0.5/28 * BGRATIO[ndx[ndx3]]
-	ndx4 = ndx & (BGRATIO > 30)
-	BGME[ndx4] = 0.5
-	# WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
-	ndxn = (PET <= 0.0)
-	BGME[ndxn] = pBGME[ndxn]
-	BGME = max(min(BGME, 𝟙), 𝟘)
-	# FEED IT TO THE STRUCTURE
-	fsoilW = BGME
-	# set the same moisture stress to all carbon pools
-	p_fsoilW[helpers.pools.zix.cEco] = fsoilW
+    ## unpack land variables
+    @unpack_land begin
+        rain ∈ land.rainSnow
+        soilW_prev ∈ land.pools
+        fsoilW_prev ∈ land.cTauSoilW
+        PET ∈ land.PET
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
+    TSPY = helpers.dates.nStepsYear #sujan
+    TSPM = TSPY / 12
+    # BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
+    BGRATIO = 𝟘
+    BGME = 𝟙
+    # PREVIOUS TIME STEP VALUES
+    pBGME = fsoilW_prev #sujan
+    # FOR PET > 0
+    ndx = (PET > 0)
+    # COMPUTE BGRATIO
+    BGRATIO[ndx] = (soilW_prev[ndx, 1] / TSPM + rain[ndx, tix]) / PET[ndx, tix]
+    # ADJUST ACCORDING TO Aws
+    BGRATIO = BGRATIO * Aws
+    # COMPUTE BGME
+    ndx1 = ndx & (BGRATIO >= 0.0 & BGRATIO < 1)
+    BGME[ndx1] = 0.1 + (0.9 * BGRATIO[ndx1])
+    ndx2 = ndx & (BGRATIO >= 1 & BGRATIO <= 2)
+    BGME[ndx2] = 1.0
+    ndx3 = ndx & (BGRATIO > 2 & BGRATIO <= 30)
+    BGME[ndx3] = 1 + 1 / 28 - 0.5 / 28 * BGRATIO[ndx[ndx3]]
+    ndx4 = ndx & (BGRATIO > 30)
+    BGME[ndx4] = 0.5
+    # WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
+    ndxn = (PET <= 0.0)
+    BGME[ndxn] = pBGME[ndxn]
+    BGME = max(min(BGME, 𝟙), 𝟘)
+    # FEED IT TO THE STRUCTURE
+    fsoilW = BGME
+    # set the same moisture stress to all carbon pools
+    p_fsoilW[helpers.pools.zix.cEco] = fsoilW
 
-	## pack land variables
-	@pack_land fsoilW => land.cTauSoilW
-	return land
+    ## pack land variables
+    @pack_land fsoilW => land.cTauSoilW
+    return land
 end
 
 @doc """

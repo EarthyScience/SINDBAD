@@ -2,7 +2,7 @@ export cAllocationSoilT_none
 
 struct cAllocationSoilT_none <: cAllocationSoilT end
 
-function instantiate(o::cAllocationSoilT_none, forcing, land, helpers)
+function define(o::cAllocationSoilT_none, forcing, land, helpers)
 
     ## calculate variables
     fT = helpers.numbers.𝟙 #sujan fsoilW was changed to fTSoil

@@ -1,25 +1,27 @@
 export vegFraction_scaledfAPAR
 
+#! format: off
 @bounds @describe @units @with_kw struct vegFraction_scaledfAPAR{T1} <: vegFraction
-	fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
+    fAPARscale::T1 = 10.0 | (0.0, 20.0) | "scalar for fAPAR" | ""
 end
+#! format: on
 
 function compute(o::vegFraction_scaledfAPAR, forcing, land, helpers)
-	## unpack parameters
-	@unpack_vegFraction_scaledfAPAR o
+    ## unpack parameters
+    @unpack_vegFraction_scaledfAPAR o
 
-	## unpack land variables
-	@unpack_land begin
-		fAPAR ∈ land.states
-		𝟙 ∈ helpers.numbers		
-	end
+    ## unpack land variables
+    @unpack_land begin
+        fAPAR ∈ land.states
+        𝟙 ∈ helpers.numbers
+    end
 
-	## calculate variables
-	vegFraction = min(fAPAR * fAPARscale, 𝟙)
+    ## calculate variables
+    vegFraction = min(fAPAR * fAPARscale, 𝟙)
 
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

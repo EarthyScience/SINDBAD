@@ -2,7 +2,7 @@ export gppVPD_none
 
 struct gppVPD_none <: gppVPD end
 
-function instantiate(o::gppVPD_none, forcing, land, helpers)
+function define(o::gppVPD_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
