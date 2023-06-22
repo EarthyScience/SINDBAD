@@ -1,67 +1,71 @@
 export cFlowSoilProperties_CASA
 
-@bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1, T2, T3, T4, T5, T6} <: cFlowSoilProperties
-	effA::T1 = 0.85 | nothing | "" | ""
-	effB::T2 = 0.68 | nothing | "" | ""
-	effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
-	effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
-	effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
-	effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
+#! format: off
+@bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1,T2,T3,T4,T5,T6} <: cFlowSoilProperties
+    effA::T1 = 0.85 | nothing | "" | ""
+    effB::T2 = 0.68 | nothing | "" | ""
+    effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
+    effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
+    effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
+    effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
 end
+#! format: on
 
-function instantiate(o::cFlowSoilProperties_CASA, forcing, land, helpers)
-	@unpack_cFlowSoilProperties_CASA o
+function define(o::cFlowSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowSoilProperties_CASA o
 
-	## instantiate variables
-	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
+    ## instantiate variables
+    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
+        1,
+        1,
+        length(land.pools.cEco))
 
-	## pack land variables
-	@pack_land p_E => land.cFlowSoilProperties
-	return land
+    ## pack land variables
+    @pack_land p_E => land.cFlowSoilProperties
+    return land
 end
 
 function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cFlowSoilProperties_CASA o
+    ## unpack parameters
+    @unpack_cFlowSoilProperties_CASA o
 
-	## unpack land variables
-	@unpack_land p_E ∈ land.cFlowSoilProperties
+    ## unpack land variables
+    @unpack_land p_E ∈ land.cFlowSoilProperties
 
-	## unpack land variables
-	@unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
+    ## unpack land variables
+    @unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
 
+    ## calculate variables
+    # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
+    # p_fSoil = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    # #sujan
+    p_F = p_E
+    CLAY = mean(p_CLAY)
+    SILT = mean(p_SILT)
+    # CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
+    # SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
+    aME = [:cMicSoil :cSoilSlow effA-(effB*(SILT+CLAY))
+        :cMicSoil :cSoilOld effA-(effB*(SILT+CLAY))]
+    aMF = [:cSoilSlow :cMicSoil 1-(effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY))
+        :cSoilSlow :cSoilOld effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY)
+        :cMicSoil :cSoilSlow 1-(effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY))
+        :cMicSoil :cSoilOld effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY)]
+    for vn ∈ ("E", "F")
+        eval(["aM = aM" vn " "])
+        for ii ∈ 1:size(aM, 1)
+            ndxSrc = helpers.pools.zix.(aM(ii, 1))
+            ndxTrg = helpers.pools.zix.(aM(ii, 2))
+            for iSrc ∈ eachindex(ndxSrc)
+                for iTrg ∈ eachindex(ndxTrg)
+                    # (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
+                end
+            end
+        end
+    end
 
-	## calculate variables
-	# p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-	# p_fSoil = zeros(helpers.numbers.numType, length(land.pools.cEco))
-	# #sujan
-	p_F = p_E
-	CLAY = mean(p_CLAY)
-	SILT = mean(p_SILT)
-	# CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
-	# SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
-	aME = [
-	:cMicSoil :cSoilSlow effA - (effB * (SILT + CLAY)); :cMicSoil :cSoilOld effA - (effB * (SILT + CLAY))
-	]
-	aMF = [
-	:cSoilSlow :cMicSoil 1 - (effCLAY_cSoilSlow_A + (effCLAY_cSoilSlow_B * CLAY)); :cSoilSlow :cSoilOld effCLAY_cSoilSlow_A + (effCLAY_cSoilSlow_B * CLAY); :cMicSoil :cSoilSlow 1 - (effCLAY_cMicSoil_A + (effCLAY_cMicSoil_B * CLAY));:cMicSoil :cSoilOld effCLAY_cMicSoil_A + (effCLAY_cMicSoil_B * CLAY)
-	]
-	for vn in ("E", "F")
-		eval(["aM = aM" vn " "])
-		for ii in 1:size(aM, 1)
-			ndxSrc = helpers.pools.zix.(aM(ii, 1))
-			ndxTrg = helpers.pools.zix.(aM(ii, 2))
-			for iSrc in eachindex(ndxSrc)
-				for iTrg in eachindex(ndxTrg)
-					# (["p_cFlowSoilProperties_" vn(1]])(:, ndxTrg[iTrg], ndxSrc[iSrc]) = aM[ii, 3); #line commented for julia conversion. make sure this works.
-				end
-			end
-		end
-	end
-
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowSoilProperties
-	return land
+    ## pack land variables
+    @pack_land (p_E, p_F) => land.cFlowSoilProperties
+    return land
 end
 
 @doc """

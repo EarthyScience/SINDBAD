@@ -1,60 +1,58 @@
 export totalTWS_sumComponents
 
-struct totalTWS_sumComponents <: totalTWS
-end
+struct totalTWS_sumComponents <: totalTWS end
 
-function instantiate(o::totalTWS_sumComponents, forcing, land, helpers)
-	@unpack_land numType ∈ helpers.numbers
-	## calculate variables
-	if !hasproperty(land.pools, :soilW)
-		soilW = zeros(numType, 1)
-	else
-		@unpack_land soilW ∈ land.pools
-	end
+function define(o::totalTWS_sumComponents, forcing, land, helpers)
+    @unpack_land numType ∈ helpers.numbers
+    ## calculate variables
+    if !hasproperty(land.pools, :soilW)
+        soilW = zeros(numType, 1)
+    else
+        @unpack_land soilW ∈ land.pools
+    end
 
-	if !hasproperty(land.pools, :groundW)
-		groundW = zeros(numType, 1)
-	else
-		@unpack_land groundW ∈ land.pools
-	end
-	
-	if !hasproperty(land.pools, :surfaceW)
-		surfaceW = zeros(numType, 1)
-	else
-		@unpack_land surfaceW ∈ land.pools
-	end
-	
-	if !hasproperty(land.pools, :snowW)
-		snowW = zeros(numType, 1)
-	else
-		@unpack_land snowW ∈ land.pools
-	end
-	
-	
-	## calculate variables
-	totalsoilW = sum(soilW)
-	totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
+    if !hasproperty(land.pools, :groundW)
+        groundW = zeros(numType, 1)
+    else
+        @unpack_land groundW ∈ land.pools
+    end
 
-	## pack land variables
-	@pack_land begin
-		(soilW, groundW, surfaceW, snowW) => land.pools
-		(totalW, totalsoilW) => land.totalTWS
-	end
-	return land
+    if !hasproperty(land.pools, :surfaceW)
+        surfaceW = zeros(numType, 1)
+    else
+        @unpack_land surfaceW ∈ land.pools
+    end
+
+    if !hasproperty(land.pools, :snowW)
+        snowW = zeros(numType, 1)
+    else
+        @unpack_land snowW ∈ land.pools
+    end
+
+    ## calculate variables
+    totalsoilW = sum(soilW)
+    totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
+
+    ## pack land variables
+    @pack_land begin
+        (soilW, groundW, surfaceW, snowW) => land.pools
+        (totalW, totalsoilW) => land.totalTWS
+    end
+    return land
 end
 
 function compute(o::totalTWS_sumComponents, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (groundW, snowW, soilW, surfaceW) ∈ land.pools
+    ## unpack land variables
+    @unpack_land (groundW, snowW, soilW, surfaceW) ∈ land.pools
 
-	## calculate variables
-	totalsoilW = sum(soilW)
-	totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
+    ## calculate variables
+    totalsoilW = sum(soilW)
+    totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
 
-	## pack land variables
-	@pack_land (totalW, totalsoilW) => land.totalTWS
-	return land
+    ## pack land variables
+    @pack_land (totalW, totalsoilW) => land.totalTWS
+    return land
 end
 
 @doc """

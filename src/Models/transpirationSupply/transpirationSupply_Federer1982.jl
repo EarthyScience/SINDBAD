@@ -1,23 +1,25 @@
 export transpirationSupply_Federer1982
 
+#! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_Federer1982{T1} <: transpirationSupply
-	maxRate::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
+    maxRate::T1 = 5.0 | (0.1, 20.0) | "Maximum rate of transpiration in mm/day" | "mm/day"
 end
+#! format: on
 
 function compute(o::transpirationSupply_Federer1982, forcing, land, helpers)
-	## unpack parameters
-	@unpack_transpirationSupply_Federer1982 o
+    ## unpack parameters
+    @unpack_transpirationSupply_Federer1982 o
 
-	## unpack land variables
-	@unpack_land begin
-		PAW ∈ land.states
-		p_wSat ∈ land.soilWBase
-	end
-	tranSup = maxRate * sum(PAW) / sum(p_wSat)
+    ## unpack land variables
+    @unpack_land begin
+        PAW ∈ land.states
+        p_wSat ∈ land.soilWBase
+    end
+    tranSup = maxRate * sum(PAW) / sum(p_wSat)
 
-	## pack land variables
-	@pack_land tranSup => land.transpirationSupply
-	return land
+    ## pack land variables
+    @pack_land tranSup => land.transpirationSupply
+    return land
 end
 
 @doc """

@@ -1,23 +1,24 @@
 export transpirationSupply_wAWCvegFraction
 
+#! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_wAWCvegFraction{T1} <: transpirationSupply
-	tranFrac::T1 = 1.0 | (0.02, 1.0) | "fraction of total maximum available water that can be transpired" | ""
+    tranFrac::T1 = 1.0 | (0.02, 1.0) | "fraction of total maximum available water that can be transpired" | ""
 end
+#! format: on
 
 function compute(o::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_transpirationSupply_wAWCvegFraction o
+    ## unpack parameters
+    @unpack_transpirationSupply_wAWCvegFraction o
 
-	## unpack land variables
-	@unpack_land (PAW, vegFraction) ∈ land.states
+    ## unpack land variables
+    @unpack_land (PAW, vegFraction) ∈ land.states
 
+    ## calculate variables
+    tranSup = sum(PAW) * tranFrac * vegFraction
 
-	## calculate variables
-	tranSup = sum(PAW) * tranFrac * vegFraction
-
-	## pack land variables
-	@pack_land tranSup => land.transpirationSupply
-	return land
+    ## pack land variables
+    @pack_land tranSup => land.transpirationSupply
+    return land
 end
 
 @doc """

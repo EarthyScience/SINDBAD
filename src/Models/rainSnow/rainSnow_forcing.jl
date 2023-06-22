@@ -1,8 +1,10 @@
 export rainSnow_forcing
 
+#! format: off
 @bounds @describe @units @with_kw struct rainSnow_forcing{T1} <: rainSnow
-	SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
+    SF_scale::T1 = 1.0 | (0.0, 3.0) | "scaling factor for snow fall" | ""
 end
+#! format: on
 
 function compute(o::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
@@ -23,7 +25,7 @@ function compute(o::rainSnow_forcing, forcing, land, helpers)
     # add snowfall to snowpack of the first layer
     ΔsnowW[1] = ΔsnowW[1] + snow
 
-	## pack land variables
+    ## pack land variables
     @pack_land begin
         (precip, rain, snow) => land.rainSnow
         ΔsnowW => land.states

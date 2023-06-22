@@ -2,7 +2,7 @@ export cTau_mult
 
 struct cTau_mult <: cTau end
 
-function instantiate(o::cTau_mult, forcing, land, helpers)
+function define(o::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
@@ -26,7 +26,7 @@ function compute(o::cTau_mult, forcing, land, helpers)
         p_k ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
     end
-    for i in eachindex(p_k)
+    for i ∈ eachindex(p_k)
         tmp = p_k_base[i] * p_kfLAI[i] * p_kfSoil[i] * p_kfVeg[i] * fT * p_fsoilW[i]
         tmp = clamp(tmp, 𝟘, 𝟙)
         @rep_elem tmp => (p_k, i, :cEco)

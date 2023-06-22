@@ -1,58 +1,59 @@
 export groundWRecharge_fraction
 
+#! format: off
 @bounds @describe @units @with_kw struct groundWRecharge_fraction{T1} <: groundWRecharge
-	rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | ""
+    rf::T1 = 0.1 | (0.02, 0.98) | "fraction of land runoff that percolates to groundwater" | ""
 end
+#! format: on
 
 function compute(o::groundWRecharge_fraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_groundWRecharge_fraction o
+    ## unpack parameters
+    @unpack_groundWRecharge_fraction o
 
-	## unpack land variables
-	@unpack_land begin
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (groundW, soilW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	## calculate variables
-	# calculate recharge
-	groundWRec = rf * (soilW[end] + ΔsoilW[end])
+    ## calculate variables
+    # calculate recharge
+    groundWRec = rf * (soilW[end] + ΔsoilW[end])
 
-	ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
-	ΔsoilW[end] = ΔsoilW[end] - groundWRec
+    ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
+    ΔsoilW[end] = ΔsoilW[end] - groundWRec
 
-	## pack land variables
-	@pack_land begin
-		groundWRec => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        groundWRec => land.fluxes
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 function update(o::groundWRecharge_fraction, forcing, land, helpers)
-	@unpack_groundWRecharge_fraction o
+    @unpack_groundWRecharge_fraction o
 
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        (soilW, groundW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
+    ## update storage pools
+    soilW[end] = soilW[end] + ΔsoilW[end]
+    groundW .= groundW .+ ΔgroundW
 
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset ΔsoilW[end] and ΔgroundW to zero
+    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (groundW, soilW) => land.pools
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 @doc """

@@ -1,11 +1,13 @@
 export soilWBase_smax2Layer
 
-@bounds @describe @units @with_kw struct soilWBase_smax2Layer{T1, T2} <: soilWBase
-	smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-	smax2::T2 = 0.3 | (0.01, 1.0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
+#! format: off
+@bounds @describe @units @with_kw struct soilWBase_smax2Layer{T1,T2} <: soilWBase
+    smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+    smax2::T2 = 0.3 | (0.01, 1.0) | "maximum plant available water in 2nd soil layer, as % of defined soil depth" | ""
 end
+#! format: on
 
-function instantiate(o::soilWBase_smax2Layer, forcing, land, helpers)
+function define(o::soilWBase_smax2Layer, forcing, land, helpers)
     @unpack_soilWBase_smax2Layer o
 
     @unpack_land begin
@@ -32,26 +34,26 @@ function instantiate(o::soilWBase_smax2Layer, forcing, land, helpers)
 end
 
 function compute(o::soilWBase_smax2Layer, forcing, land, helpers)
-	## unpack parameters
-	@unpack_soilWBase_smax2Layer o
+    ## unpack parameters
+    @unpack_soilWBase_smax2Layer o
 
-	## unpack land variables
-	@unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+    ## unpack land variables
+    @unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
 
-	## calculate variables
-	# set the properties for each soil layer
-	# 1st layer
-	p_wSat[1] = smax1 * soilLayerThickness[1]
-	p_wFC[1] = smax1 * soilLayerThickness[1]
-	# 2nd layer
-	p_wSat[2] = smax2 * soilLayerThickness[2]
-	p_wFC[2] = smax2 * soilLayerThickness[2]
-	# get the plant available water available (all the water is plant available)
-	p_wAWC = p_wSat
+    ## calculate variables
+    # set the properties for each soil layer
+    # 1st layer
+    p_wSat[1] = smax1 * soilLayerThickness[1]
+    p_wFC[1] = smax1 * soilLayerThickness[1]
+    # 2nd layer
+    p_wSat[2] = smax2 * soilLayerThickness[2]
+    p_wFC[2] = smax2 * soilLayerThickness[2]
+    # get the plant available water available (all the water is plant available)
+    p_wAWC = p_wSat
 
-	## pack land variables
-	@pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW, soilLayerThickness) => land.soilWBase
-	return land
+    ## pack land variables
+    @pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW, soilLayerThickness) => land.soilWBase
+    return land
 end
 
 @doc """

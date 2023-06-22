@@ -2,7 +2,7 @@ export cAllocationLAI_none
 
 struct cAllocationLAI_none <: cAllocationLAI end
 
-function instantiate(o::cAllocationLAI_none, forcing, land, helpers)
+function define(o::cAllocationLAI_none, forcing, land, helpers)
 
     ## calculate variables
     LL = helpers.numbers.𝟙

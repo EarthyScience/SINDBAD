@@ -1,17 +1,16 @@
 export evapotranspiration_sum
 
-struct evapotranspiration_sum <: evapotranspiration
-end
+struct evapotranspiration_sum <: evapotranspiration end
 
-function instantiate(o::evapotranspiration_sum, forcing, land, helpers)
-    @unpack_land 𝟘  ∈ helpers.numbers
-	
+function define(o::evapotranspiration_sum, forcing, land, helpers)
+    @unpack_land 𝟘 ∈ helpers.numbers
+
     ## set variables to zero
-    evaporation = 𝟘 
-    evapotranspiration = 𝟘 
-    interception = 𝟘 
-    sublimation = 𝟘 
-    transpiration = 𝟘 
+    evaporation = 𝟘
+    evapotranspiration = 𝟘
+    interception = 𝟘
+    sublimation = 𝟘
+    transpiration = 𝟘
 
     ## pack land variables
     @pack_land begin
@@ -22,16 +21,15 @@ end
 
 function compute(o::evapotranspiration_sum, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes
+    ## unpack land variables
+    @unpack_land (evaporation, interception, sublimation, transpiration) ∈ land.fluxes
 
+    ## calculate variables
+    evapotranspiration = interception + transpiration + evaporation + sublimation
 
-	## calculate variables
-	evapotranspiration = interception + transpiration + evaporation + sublimation
-
-	## pack land variables
-	@pack_land evapotranspiration => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land evapotranspiration => land.fluxes
+    return land
 end
 
 @doc """
