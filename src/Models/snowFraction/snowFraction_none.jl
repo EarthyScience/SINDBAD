@@ -1,16 +1,15 @@
 export snowFraction_none
 
-struct snowFraction_none <: snowFraction
-end
+struct snowFraction_none <: snowFraction end
 
-function instantiate(o::snowFraction_none, forcing, land, helpers)
+function define(o::snowFraction_none, forcing, land, helpers)
 
-	## calculate variables
-	snowFraction = helpers.numbers.𝟘
+    ## calculate variables
+    snowFraction = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land snowFraction => land.states
+    return land
 end
 
 @doc """

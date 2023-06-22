@@ -1,21 +1,25 @@
 export cFlow_none
 
-struct cFlow_none <: cFlow
-end
+struct cFlow_none <: cFlow end
 
-function instantiate(o::cFlow_none, forcing, land, helpers)
+function define(o::cFlow_none, forcing, land, helpers)
 
-	## calculate variables
-	tmp = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, 1, length(land.pools.cEco))
-	p_A = tmp
-	p_E = tmp
-	p_F = tmp
-	p_taker = []
-	p_giver = []
+    ## calculate variables
+    tmp = repeat(
+        zeros(helpers.numbers.numType, length(land.pools.cEco)),
+        1,
+        1,
+        length(land.pools.cEco),
+    )
+    p_A = tmp
+    p_E = tmp
+    p_F = tmp
+    p_taker = []
+    p_giver = []
 
-	## pack land variables
-	@pack_land (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
-	return land
+    ## pack land variables
+    @pack_land (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
+    return land
 end
 
 @doc """

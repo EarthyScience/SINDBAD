@@ -1,24 +1,25 @@
 export WUE_VPDDay
 
+#! format: off
 @bounds @describe @units @with_kw struct WUE_VPDDay{T1} <: WUE
-	WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
+    WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
 end
+#! format: on
 
 function compute(o::WUE_VPDDay, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_WUE_VPDDay o
-	@unpack_forcing VPDDay ∈ forcing
-	@unpack_land (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
+    ## unpack parameters and forcing
+    @unpack_WUE_VPDDay o
+    @unpack_forcing VPDDay ∈ forcing
+    @unpack_land (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
 
+    ## calculate variables
+    # "WUEat1hPa"
+    kpa_to_hpa = 10 * 𝟙
+    AoE = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
 
-	## calculate variables
-	# "WUEat1hPa"
-	kpa_to_hpa = 10 * 𝟙
-	AoE = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
-
-	## pack land variables
-	@pack_land AoE => land.WUE
-	return land
+    ## pack land variables
+    @pack_land AoE => land.WUE
+    return land
 end
 
 @doc """

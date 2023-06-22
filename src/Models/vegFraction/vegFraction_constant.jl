@@ -1,19 +1,21 @@
 export vegFraction_constant
 
+#! format: off
 @bounds @describe @units @with_kw struct vegFraction_constant{T1} <: vegFraction
-	constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
+    constantVegFrac::T1 = 0.5 | (0.3, 0.9) | "Vegetation fraction" | ""
 end
+#! format: on
 
 function compute(o::vegFraction_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_vegFraction_constant o
+    ## unpack parameters
+    @unpack_vegFraction_constant o
 
-	## calculate variables
-	vegFraction = constantVegFrac
+    ## calculate variables
+    vegFraction = constantVegFrac
 
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

@@ -1,13 +1,11 @@
 export PET_PriestleyTaylor1972
 
-struct PET_PriestleyTaylor1972 <: PET
-end
+struct PET_PriestleyTaylor1972 <: PET end
 
 function compute(o::PET_PriestleyTaylor1972, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
-    @unpack_land 𝟘  ∈ helpers.numbers
-
+    @unpack_land 𝟘 ∈ helpers.numbers
 
     ## calculate variables
     Δ = 6.11 * exp(17.26938818 * Tair / (237.3 + Tair))

@@ -1,67 +1,69 @@
 export runoffBase_Zhang2008
 
+#! format: off
 @bounds @describe @units @with_kw struct runoffBase_Zhang2008{T1} <: runoffBase
-	bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
+    bc::T1 = 0.001 | (0.00001, 0.02) | "base flow coefficient" | "day-1"
 end
+#! format: on
 
-function instantiate(o::runoffBase_Zhang2008, forcing, land, helpers)
-	runoffBase = helpers.numbers.𝟘
+function define(o::runoffBase_Zhang2008, forcing, land, helpers)
+    runoffBase = helpers.numbers.𝟘
 
-	@pack_land begin
-		runoffBase => land.fluxes
-	end
-	return land
+    @pack_land begin
+        runoffBase => land.fluxes
+    end
+    return land
 end
 
 function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffBase_Zhang2008 o
+    ## unpack parameters
+    @unpack_runoffBase_Zhang2008 o
 
-	## unpack land variables
-	@unpack_land begin
-		groundW ∈ land.pools
-		ΔgroundW ∈ land.states
-		𝟙 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        groundW ∈ land.pools
+        ΔgroundW ∈ land.states
+        𝟙 ∈ helpers.numbers
+    end
 
-	## calculate variables
-	# simply assume that a fraction of the GWstorage is baseflow
-	runoffBase = bc * addS(groundW, ΔgroundW)
+    ## calculate variables
+    # simply assume that a fraction of the GWstorage is baseflow
+    runoffBase = bc * addS(groundW, ΔgroundW)
 
-	# update groundwater changes
-	n_groundW = length(groundW) * 𝟙
+    # update groundwater changes
+    n_groundW = length(groundW) * 𝟙
 
-	ΔgroundW = add_to_each_elem(ΔgroundW, -runoffBase / n_groundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, -runoffBase / n_groundW)
 
-	## pack land variables
-	@pack_land begin
-		runoffBase => land.fluxes
-		ΔgroundW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffBase => land.fluxes
+        ΔgroundW => land.states
+    end
+    return land
 end
 
 function update(o::runoffBase_Zhang2008, forcing, land, helpers)
-	@unpack_runoffBase_Zhang2008 o
+    @unpack_runoffBase_Zhang2008 o
 
-	## unpack variables
-	@unpack_land begin
-		groundW ∈ land.pools
-		ΔgroundW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        groundW ∈ land.pools
+        ΔgroundW ∈ land.states
+    end
 
-	## update variables
-	groundW .= groundW .+ ΔgroundW
+    ## update variables
+    groundW .= groundW .+ ΔgroundW
 
-	# reset groundwater changes to zero
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset groundwater changes to zero
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-	# ## pack land variables
-	# @pack_land begin
-	# 	groundW => land.pools
-	# 	# ΔgroundW => land.states
-	# end
-	return land
+    # ## pack land variables
+    # @pack_land begin
+    # 	groundW => land.pools
+    # 	# ΔgroundW => land.states
+    # end
+    return land
 end
 
 @doc """

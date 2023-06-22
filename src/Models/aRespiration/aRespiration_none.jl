@@ -1,18 +1,17 @@
 export aRespiration_none
 
-struct aRespiration_none <: aRespiration
-end
+struct aRespiration_none <: aRespiration end
 
-function instantiate(o::aRespiration_none, forcing, land, helpers)
-	@unpack_land cEcoEfflux ∈ land.states
+function define(o::aRespiration_none, forcing, land, helpers)
+    @unpack_land cEcoEfflux ∈ land.states
 
-	## calculate variables
-	zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-	@rep_elem 𝟘 => (cEcoEfflux, zix, :cEco)
+    ## calculate variables
+    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    @rep_elem 𝟘 => (cEcoEfflux, zix, :cEco)
 
-	## pack land variables
-	@pack_land cEcoEfflux => land.states
-	return land
+    ## pack land variables
+    @pack_land cEcoEfflux => land.states
+    return land
 end
 
 @doc """

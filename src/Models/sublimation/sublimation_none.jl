@@ -1,16 +1,15 @@
 export sublimation_none
 
-struct sublimation_none <: sublimation
-end
+struct sublimation_none <: sublimation end
 
-function instantiate(o::sublimation_none, forcing, land, helpers)
+function define(o::sublimation_none, forcing, land, helpers)
 
-	## calculate variables
-	sublimation = helpers.numbers.𝟘
+    ## calculate variables
+    sublimation = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land sublimation => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land sublimation => land.fluxes
+    return land
 end
 
 @doc """

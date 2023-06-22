@@ -1,16 +1,17 @@
 export gppVPD_expco2
 
+#! format: off
 @bounds @describe @units @with_kw struct gppVPD_expco2{T1,T2,T3} <: gppVPD
     κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
     Cκ::T2 = 0.4 | (-50.0, 10.0) | "exponent of co2 modulation of vpd effect" | ""
     Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
 end
+#! format: on
 
 function compute(o::gppVPD_expco2, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_expco2 o
     @unpack_forcing VPDDay ∈ forcing
-
 
     ## unpack land variables
     @unpack_land begin

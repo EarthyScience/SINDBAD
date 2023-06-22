@@ -1,9 +1,8 @@
 export rainSnow_rain
 
-struct rainSnow_rain <: rainSnow
-end
+struct rainSnow_rain <: rainSnow end
 
-function instantiate(o::rainSnow_rain, forcing, land, helpers)
+function define(o::rainSnow_rain, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing Rain ∈ forcing
 
@@ -34,7 +33,6 @@ function compute(o::rainSnow_rain, forcing, land, helpers)
     end
     return land
 end
-
 
 @doc """
 set all precip to rain

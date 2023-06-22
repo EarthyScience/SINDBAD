@@ -1,15 +1,16 @@
 export gppVPD_Maekelae2008
 
+#! format: off
 @bounds @describe @units @with_kw struct gppVPD_Maekelae2008{T1} <: gppVPD
     k::T1 = 0.4 | (0.06, 0.7) | "empirical parameter assuming typically negative values" | "kPa-1"
 end
+#! format: on
 
 function compute(o::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_Maekelae2008 o
     @unpack_forcing VPDDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
-
 
     ## calculate variables
     VPDScGPP = exp(-k * VPDDay)

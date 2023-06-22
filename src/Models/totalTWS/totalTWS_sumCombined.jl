@@ -2,7 +2,7 @@ export totalTWS_sumCombined
 
 struct totalTWS_sumCombined <: totalTWS end
 
-function instantiate(o::totalTWS_sumCombined, forcing, land, helpers)
+function define(o::totalTWS_sumCombined, forcing, land, helpers)
     @unpack_land begin
         numType ∈ helpers.numbers
         TWS ∈ land.pools

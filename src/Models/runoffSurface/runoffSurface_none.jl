@@ -1,16 +1,15 @@
 export runoffSurface_none
 
-struct runoffSurface_none <: runoffSurface
-end
+struct runoffSurface_none <: runoffSurface end
 
-function instantiate(o::runoffSurface_none, forcing, land, helpers)
+function define(o::runoffSurface_none, forcing, land, helpers)
 
-	## calculate variables
-	runoffSurface = helpers.numbers.𝟘
+    ## calculate variables
+    runoffSurface = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land runoffSurface => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffSurface => land.fluxes
+    return land
 end
 
 @doc """

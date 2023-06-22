@@ -1,15 +1,14 @@
 export NIRv_forcing
 
-struct NIRv_forcing <: NIRv
-end
+struct NIRv_forcing <: NIRv end
 
 function compute(o::NIRv_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing NIRv ∈ forcing
+    ## unpack forcing
+    @unpack_forcing NIRv ∈ forcing
 
-	## pack land variables
-	@pack_land NIRv => land.states
-	return land
+    ## pack land variables
+    @pack_land NIRv => land.states
+    return land
 end
 
 @doc """

@@ -2,7 +2,7 @@ export cAllocation_GSI
 
 struct cAllocation_GSI <: cAllocation end
 
-function instantiate(o::cAllocation_GSI, forcing, land, helpers)
+function define(o::cAllocation_GSI, forcing, land, helpers)
     @unpack_land sNT ∈ helpers.numbers
 
     ## instantiate variables
@@ -11,11 +11,11 @@ function instantiate(o::cAllocation_GSI, forcing, land, helpers)
 
     cAllocVeg = zero(land.pools.cEco)
     zixVegs = []
-    nzixVegs=helpers.numbers.numType[]
+    nzixVegs = helpers.numbers.numType[]
     cpI = 1
-    for cpName in cpNames
+    for cpName ∈ cpNames
         zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
-        nZix=sNT(length(zix))
+        nZix = sNT(length(zix))
         push!(zixVegs, zix)
         push!(nzixVegs, nZix)
     end
@@ -26,8 +26,6 @@ function instantiate(o::cAllocation_GSI, forcing, land, helpers)
     @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
     return land
 end
-
-
 
 function compute(o::cAllocation_GSI, forcing, land, helpers)
 
@@ -43,16 +41,16 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
     cAllocVeg_1 = fW / ((fW + fT) * ttwo)
     cAllocVeg_2 = fW / ((fW + fT) * ttwo)
     cAllocVeg_3 = fT / ((fW + fT))
-    
+
     @rep_elem cAllocVeg_1 => (cAllocVeg, 1, :cEco)
     @rep_elem cAllocVeg_2 => (cAllocVeg, 2, :cEco)
     @rep_elem cAllocVeg_3 => (cAllocVeg, 3, :cEco)
 
-    for ind in 1:3
+    for ind ∈ 1:3
         zix = zixVegs[ind]
-        nZix=nzixVegs[ind]
-        for ix = eachindex(zix)
-            cAllocVeg_ix = cAllocVeg[ind]  / nZix
+        nZix = nzixVegs[ind]
+        for ix ∈ eachindex(zix)
+            cAllocVeg_ix = cAllocVeg[ind] / nZix
             zix_ix = zix[ix]
             @rep_elem cAllocVeg_ix => (cAlloc, zix_ix, :cEco)
         end

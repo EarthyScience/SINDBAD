@@ -1,82 +1,84 @@
 export drainage_dos
 
+#! format: off
 @bounds @describe @units @with_kw struct drainage_dos{T1} <: drainage
-	dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
+    dos_exp::T1 = 1.1 | (1.1, 3.0) | "exponent of non-linearity for dos influence on drainage in soil" | ""
 end
+#! format: on
 
-function instantiate(o::drainage_dos, forcing, land, helpers)
-	## unpack parameters
+function define(o::drainage_dos, forcing, land, helpers)
+    ## unpack parameters
 
-	## unpack land variables
-	@unpack_land begin
-		ΔsoilW ∈ land.states
-	end
-	drainage = zero(ΔsoilW)
+    ## unpack land variables
+    @unpack_land begin
+        ΔsoilW ∈ land.states
+    end
+    drainage = zero(ΔsoilW)
 
-	## pack land variables
-	@pack_land begin
-		drainage => land.drainage
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        drainage => land.drainage
+    end
+    return land
 end
 
 function compute(o::drainage_dos, forcing, land, helpers)
-	## unpack parameters
-	@unpack_drainage_dos o
+    ## unpack parameters
+    @unpack_drainage_dos o
 
-	## unpack land variables
-	@unpack_land begin
-		drainage ∈ land.drainage
-		(p_wSat, p_β, p_wFC) ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙, tolerance) ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        drainage ∈ land.drainage
+        (p_wSat, p_β, p_wFC) ∈ land.soilWBase
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
+    end
 
-	## calculate drainage
-	for sl in 1:length(land.pools.soilW)-1
-		soilW_sl = min(max(soilW[sl] + ΔsoilW[sl], 𝟘), p_wSat[sl])
-		drain_fraction = clamp(((soilW_sl) / p_wSat[sl]) ^ (dos_exp * p_β[sl]), 𝟘, 𝟙)
-		drainage_tmp =  drain_fraction * (soilW_sl)
-		max_drain = p_wSat[sl] - p_wFC[sl]
-		lossCap = min(soilW_sl, max_drain)
-		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-		drain = min(drainage_tmp, holdCap, lossCap)
-		tmp = drain > tolerance ? drain : 𝟘
-		@rep_elem tmp => (drainage, sl, :soilW) 
-		@add_to_elem -tmp => (ΔsoilW, sl, :soilW)
-		@add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
-	end
-	@rep_elem 𝟘 => (drainage, lastindex(drainage), :soilW)
-	## pack land variables
-	@pack_land begin
-		drainage => land.drainage
-		ΔsoilW => land.states
-	end
-	return land
+    ## calculate drainage
+    for sl ∈ 1:length(land.pools.soilW)-1
+        soilW_sl = min(max(soilW[sl] + ΔsoilW[sl], 𝟘), p_wSat[sl])
+        drain_fraction = clamp(((soilW_sl) / p_wSat[sl])^(dos_exp * p_β[sl]), 𝟘, 𝟙)
+        drainage_tmp = drain_fraction * (soilW_sl)
+        max_drain = p_wSat[sl] - p_wFC[sl]
+        lossCap = min(soilW_sl, max_drain)
+        holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        drain = min(drainage_tmp, holdCap, lossCap)
+        tmp = drain > tolerance ? drain : 𝟘
+        @rep_elem tmp => (drainage, sl, :soilW)
+        @add_to_elem -tmp => (ΔsoilW, sl, :soilW)
+        @add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
+    end
+    @rep_elem 𝟘 => (drainage, lastindex(drainage), :soilW)
+    ## pack land variables
+    @pack_land begin
+        drainage => land.drainage
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::drainage_dos, forcing, land, helpers)
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture
-	soilW .= soilW .+ ΔsoilW
+    ## update variables
+    # update soil moisture
+    soilW .= soilW .+ ΔsoilW
 
-	# reset soil moisture changes to zero
-	ΔsoilW .= ΔsoilW .- ΔsoilW
+    # reset soil moisture changes to zero
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
-	## pack land variables
-	# @pack_land begin
-	# 	soilW => land.pools
-	# 	ΔsoilW => land.states
-	# end
-	return land
+    ## pack land variables
+    # @pack_land begin
+    # 	soilW => land.pools
+    # 	ΔsoilW => land.states
+    # end
+    return land
 end
 
 @doc """

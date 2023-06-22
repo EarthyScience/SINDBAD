@@ -22,10 +22,33 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time loc_space_maps,
+loc_space_names,
+loc_space_inds,
+loc_forcings,
+loc_outputs,
+land_init_space,
+f_one = prepRunEcosystem(
+    output.data,
+    output.land_init,
+    info.tem.models.forward,
+    forc,
+    forcing.sizes,
+    info.tem,
+);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-
+@time runEcosystem!(
+    output.data,
+    info.tem.models.forward,
+    forc,
+    info.tem,
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one,
+)
 
 forcing = (; Tair = forc.Tair, Rain = forc.Rain)
 
@@ -37,7 +60,7 @@ forcing = (; Tair = forc.Tair, Rain = forc.Rain)
 
 # Instantiate land components
 land = createLandInit(info.pools, info.tem)
-helpers = info.tem.helpers; 
+helpers = info.tem.helpers;
 tem = info.tem;
 # helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
 #     dates = (; nStepsDay=1),
@@ -49,7 +72,12 @@ tem = info.tem;
 #     );
 
 function o_models(p1, p2)
-    return (rainSnow_Tair_buffer(p1), snowFraction_HTESSEL(1.0f0),  snowMelt_Tair_buffer(p2), wCycle_components())
+    return (
+        rainSnow_Tair_buffer(p1),
+        snowFraction_HTESSEL(1.0f0),
+        snowMelt_Tair_buffer(p2),
+        wCycle_components(),
+    )
 end
 
 #f = getForcingForTimeStep(forcing, 1)
@@ -64,33 +92,28 @@ function sloss(m, data)
     opt_ps = m(x)
     omods = o_models(opt_ps[1], opt_ps[2])
 
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 10)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
+    out_land = timeLoopForward(omods, forcing, land, (;), helpers, 10)
+    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o ∈ out_land]
 
     #out_land = out_land |> landWrapper
     #ŷ = #out_land[:rainSnow][:snow]
-    return Flux.mse(ŷ,y)
+    return Flux.mse(ŷ, y)
 end
-
-
 
 function floss(p, y)
     omods = o_models(p[1], p[2])
-    out_land = timeLoopForward(omods, forcing, land, (; ), helpers, 100)
-    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o in out_land]
-    sum((ŷ.-y).^2)
+    out_land = timeLoopForward(omods, forcing, land, (;), helpers, 100)
+    ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o ∈ out_land]
+    sum((ŷ .- y) .^ 2)
 end
 y = rand(100)
 
-floss((0.5,0.5), y)
-floss(p) = floss(p,y)
-
+floss((0.5, 0.5), y)
+floss(p) = floss(p, y)
 
 using ForwardDiff
 
 @time ForwardDiff.gradient(floss, [1.0, 1000.0])
-
-
 
 # test_gradient(model, data, sloss; opt=Optimisers.Adam())
 
@@ -109,11 +132,8 @@ using ForwardDiff
 # end
 
 Random.seed!(122)
-d = [rand(Float32,4) for i in 1:50]
-NNmodel = Lux.Chain(
-    Lux.Dense(4 => 5, relu),
-    Lux.Dense(5 => 2, relu),
-)
+d = [rand(Float32, 4) for i ∈ 1:50]
+NNmodel = Lux.Chain(Lux.Dense(4 => 5, relu), Lux.Dense(5 => 2, relu))
 rng = Random.default_rng()
 Random.seed!(rng, 0)
 # Initialize Model
@@ -136,7 +156,7 @@ function reshape_weight(arr, weights)
     """
     i = 1
     return_arr = similar(ps_NN)
-    for layer in keys(weights)
+    for layer ∈ keys(weights)
         weight = weights[layer][:weight]
         bias = weights[layer][:bias]
         new_weight = arr[i:i+length(weight)-1]
@@ -148,8 +168,7 @@ function reshape_weight(arr, weights)
     end
     return_arr
 end
-function full_gradient(x, y_real; NNmodel=NNmodel, loss=floss,
-    ps_NN=ps_NN, st=st)
+function full_gradient(x, y_real; NNmodel = NNmodel, loss = floss, ps_NN = ps_NN, st = st)
     """
     Function that outpus the full gradient of the loss w.r.t. the weights
     of the NNmodel.
@@ -163,13 +182,12 @@ function full_gradient(x, y_real; NNmodel=NNmodel, loss=floss,
     # Weights of the NN
     NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
     # Apply Chain rules to get ∂loss/∂NN_parameters
-    full_grad = sum(f_grad .* NN_grad, dims=1)
+    full_grad = sum(f_grad .* NN_grad, dims = 1)
     # Reshape output for the optimization
     return reshape_weight(full_grad, ps_NN)
 end
 
 y_real = y
-
 
 # Example
 dist_arr = []
@@ -177,15 +195,15 @@ predicted_vmax = []
 loss_arr = []
 # Optimization
 st_opt = Optimisers.setup(Optimisers.ADAM(0.01), ps_NN)
-for i = 1:300
+for i ∈ 1:300
     global st_opt, ps_NN
-    gs = full_gradient(x, y_real; ps_NN=ps_NN)
+    gs = full_gradient(x, y_real; ps_NN = ps_NN)
     st_opt, ps_NN = Optimisers.update(st_opt, ps_NN, gs)
     if i % 10 == 1 || i == 100
         dist = abs(NNmodel(x, ps_NN, st)[1][1] - 2.37e-1)
         println("Distance from real value: $dist")
         push!(dist_arr, dist)
-        push!(predicted_vmax,NNmodel(x, ps_NN, st)[1][1])
-        push!(loss_arr, floss(NNmodel(x, ps_NN, st)[1],y))
+        push!(predicted_vmax, NNmodel(x, ps_NN, st)[1][1])
+        push!(loss_arr, floss(NNmodel(x, ps_NN, st)[1], y))
     end
 end

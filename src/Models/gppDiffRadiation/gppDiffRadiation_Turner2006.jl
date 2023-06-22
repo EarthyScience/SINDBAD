@@ -1,10 +1,12 @@
 export gppDiffRadiation_Turner2006
 
+#! format: off
 @bounds @describe @units @with_kw struct gppDiffRadiation_Turner2006{T1} <: gppDiffRadiation
-	rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
+    rueRatio::T1 = 0.5 | (0.0001, 1.0) | "ratio of clear sky LUE to max LUE" | ""
 end
+#! format: on
 
-function instantiate(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function define(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Turner2006 o
     @unpack_forcing (Rg, RgPot) ∈ forcing
@@ -27,20 +29,19 @@ function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
-
     ## calculate variables
     CI = Rg / RgPot
-    
-	# update the minimum and maximum on the go
-	CI_min = min(CI, CI_min)
+
+    # update the minimum and maximum on the go
+    CI_min = min(CI, CI_min)
     CI_max = min(CI, CI_max)
 
     SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
-	cScGPP = (𝟙 - rueRatio) * SCI + rueRatio
-    CloudScGPP = RgPot > 𝟘  ? cScGPP : 𝟘
+    cScGPP = (𝟙 - rueRatio) * SCI + rueRatio
+    CloudScGPP = RgPot > 𝟘 ? cScGPP : 𝟘
 
-	## pack land variables
+    ## pack land variables
     @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
     return land
 end

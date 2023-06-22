@@ -1,29 +1,26 @@
 export runoffOverland_Sat
 
-struct runoffOverland_Sat <: runoffOverland
-end
+struct runoffOverland_Sat <: runoffOverland end
 
-function instantiate(o::runoffOverland_Sat, forcing, land, helpers)
+function define(o::runoffOverland_Sat, forcing, land, helpers)
+    runoffOverland = helpers.numbers.𝟘
 
-	runoffOverland = helpers.numbers.𝟘
-
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffOverland => land.fluxes
+    return land
 end
 
 function compute(o::runoffOverland_Sat, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land runoffSatExc ∈ land.fluxes
+    ## unpack land variables
+    @unpack_land runoffSatExc ∈ land.fluxes
 
+    ## calculate variables
+    runoffOverland = runoffSatExc
 
-	## calculate variables
-	runoffOverland = runoffSatExc
-
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffOverland => land.fluxes
+    return land
 end
 
 @doc """

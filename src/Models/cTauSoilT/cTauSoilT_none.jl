@@ -1,16 +1,15 @@
 export cTauSoilT_none
 
-struct cTauSoilT_none <: cTauSoilT
-end
+struct cTauSoilT_none <: cTauSoilT end
 
-function instantiate(o::cTauSoilT_none, forcing, land, helpers)
+function define(o::cTauSoilT_none, forcing, land, helpers)
 
-	## calculate variables
-	fT = helpers.numbers.𝟙
+    ## calculate variables
+    fT = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land fT => land.cTauSoilT
-	return land
+    ## pack land variables
+    @pack_land fT => land.cTauSoilT
+    return land
 end
 
 @doc """

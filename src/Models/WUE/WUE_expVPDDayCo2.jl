@@ -1,44 +1,43 @@
 export WUE_expVPDDayCo2
 
-@bounds @describe @units @with_kw struct WUE_expVPDDayCo2{T1, T2, T3, T4} <: WUE
-	WUEatOnehPa::T1 = 9.2 | (2.0, 20.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-	κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
-	Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
-	Cm::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
+#! format: off
+@bounds @describe @units @with_kw struct WUE_expVPDDayCo2{T1,T2,T3,T4} <: WUE
+    WUEatOnehPa::T1 = 9.2 | (2.0, 20.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
+    κ::T2 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
+    Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+    Cm::T4 = 500.0 | (10.0, 2000.0) | "" | "ppm"
 end
+#! format: on
 
-
-function instantiate(o::WUE_expVPDDayCo2, forcing, land, helpers)
-	## unpack parameters and forcing
-	## pack land variables
-	AoE = helpers.numbers.𝟙
-	AoENoCO2 = helpers.numbers.𝟙
-	@pack_land (AoE, AoENoCO2) => land.WUE
-	return land
+function define(o::WUE_expVPDDayCo2, forcing, land, helpers)
+    ## unpack parameters and forcing
+    ## pack land variables
+    AoE = helpers.numbers.𝟙
+    AoENoCO2 = helpers.numbers.𝟙
+    @pack_land (AoE, AoENoCO2) => land.WUE
+    return land
 end
 
 function compute(o::WUE_expVPDDayCo2, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_WUE_expVPDDayCo2 o
-	@unpack_forcing VPDDay ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_WUE_expVPDDayCo2 o
+    @unpack_forcing VPDDay ∈ forcing
 
+    ## unpack land variables
+    @unpack_land begin
+        ambCO2 ∈ land.states
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
 
-	## unpack land variables
-	@unpack_land begin
-		ambCO2 ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## calculate variables
+    # "WUEat1hPa"
+    AoENoCO2 = WUEatOnehPa * exp(κ * -VPDDay)
+    fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+    AoE = AoENoCO2 * fCO2_CO2
 
-
-	## calculate variables
-	# "WUEat1hPa"
-	AoENoCO2 = WUEatOnehPa * exp(κ * -VPDDay)
-	fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
-	AoE = AoENoCO2 * fCO2_CO2
-
-	## pack land variables
-	@pack_land (AoE, AoENoCO2) => land.WUE
-	return land
+    ## pack land variables
+    @pack_land (AoE, AoENoCO2) => land.WUE
+    return land
 end
 
 @doc """
