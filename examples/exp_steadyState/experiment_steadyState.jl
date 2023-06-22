@@ -14,8 +14,8 @@ noStackTrace()
 # using Plots
 
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
-
-replace_info = Dict("spinup.diffEq.timeJump" => 100,
+tj = 1000
+replace_info = Dict("spinup.diffEq.timeJump" => tj,
     "spinup.diffEq.reltol" => 1e-2,
     "spinup.diffEq.abstol" => 1,
     "modelRun.rules.model_array_type" => "array",
@@ -42,14 +42,6 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
         forcing.sizes,
         info.tem);
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-    prepRunEcosystem(output.data,
-        land_init_space[1],
-        info.tem.models.forward,
-        forc,
-        forcing.sizes,
-        info.tem);
-
 loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1]);
 
 # selTimeStep = 1
@@ -58,16 +50,17 @@ spinupforc = :recycleMSC
 sel_forcing = getSpinupForcing(loc_forcing, info.tem.helpers, Val(spinupforc));
 spinup_forcing = getSpinupForcing(loc_forcing, info.tem);
 
-land_init = land_init_space[1];
+land_init = deepcopy(land_init_space[1]);
 land_type = typeof(land_init);
 sel_pool = :cEco
 
-spinup_models = info.tem.models.forward[info.tem.models.is_spinup.==1];
+spinup_models = info.tem.models.forward[info.tem.models.is_spinup];
+plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(900, 600))
 
-plot(getfield(land_init.pools, sel_pool);
+plot!(getfield(land_init.pools, sel_pool);
     linewidth=5,
-    title="Steady State Solution",
-    xaxis="Pool#",
+    title="Steady State Solution - jump => $(tj)",
+    xaxis="Pool Turnover",
     yaxis="C",
     label="Init",
     yscale=:log10) # legend=false
@@ -146,29 +139,6 @@ plot!(getfield(out_sp_exp_ode.pools, sel_pool);
     label="Exp_ODE",
     yscale=:log10) # legend=false
 
-# outsp_full = ForwardSindbad.runSpinup(info.tem.models.forward, forcing, land_init, info.tem; spinup_forcing=spinup_forcing);
-# plot!(getfield(outsp_full.pools, sel_pool),linewidth=5, label=string(sp)) # legend=false
-
-# land_spin = deepcopy(land_init)
-# function get_target_tolerance(spinup_models, spinup_forcing, land_init, info, land_type, f_one)
-#      land_spin = deepcopy(land_init)
-#      @time for i in 1:10000
-#           @show land_spin.pools.cVeg
-#           land_spin = loopTimeSpinup(spinup_models, getfield(spinup_forcing, spinupforc), land_spin, info.tem.helpers, land_type, f_one)
-#      end
-#      land_spin_old = deepcopy(land_spin)
-#      land_spin_new = loopTimeSpinup(spinup_models, getfield(spinup_forcing, spinupforc), deepcopy(land_spin), info.tem.helpers, land_type, f_one)
-#      land_spin_old, land_spin_new
-# end
-
-# a1, a2 = get_target_tolerance(spinup_models, spinup_forcing, land_init, info, land_type, f_one)
-
-# reltol(a1,a2) = max(1e-10,abs((a1-a2)/a2))
-
-# extract_pool_component(x) = ComponentArray((TWS=x.pools.TWS, cEco=x.pools.cEco))
-
-# pooldiff = reltol.(extract_pool_component.((a1,a2))...)
-
 using NLsolve, ComponentArrays
 
 struct Spinupper{M,F,T,I,L,O}
@@ -182,11 +152,11 @@ end
 
 function (s::Spinupper)(pout, p)
     pout .= exp.(p)# .* s.pooldiff
-    s.land_init.pools.TWS .= pout.TWS
+    # s.land_init.pools.TWS .= pout.TWS
     s.land_init.pools.cEco .= pout.cEco
     update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
         s.f_one)
-    pout.TWS .= update_init.pools.TWS
+    # pout.TWS .= update_init.pools.TWS
     pout.cEco .= update_init.pools.cEco
     pout .= log.(pout)# ./ s.pooldiff
     return nothing
@@ -219,17 +189,20 @@ function doSpinup(spinup_models,
     f_one,
     ::Val{:nlsolve})
     s = Spinupper(spinup_models, spinup_forcing, tem_helpers, deepcopy(land_init), land_type, f_one)
-    mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
-        cEco=deepcopy(land_init.pools.cEco)))
+    mypools = ComponentArray((
+        cEco = deepcopy(land_init.pools.cEco)))
+    # mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
+    # cEco=deepcopy(land_init.pools.cEco)))
     mypools .= log.(mypools)
+    @show mypools
     r = fixedpoint(s, mypools; method=:trust_region)
 
     res = exp.(r.zero)
     li = deepcopy(s.land_init)
     cEco = res.cEco
-    TWS = res.TWS
+    # TWS = res.TWS
     @pack_land cEco => li.pools
-    @pack_land TWS => li.pools
+    # @pack_land TWS => li.pools
     return li
 end
 
@@ -241,12 +214,14 @@ out_sp_nl = doSpinup(spinup_models,
     land_type,
     f_one,
     Val(:nlsolve));
+
 xtl = land_init.cCycleBase.p_annk;
+xtname = info.tem.helpers.pools.components.cEco
 plot!(getfield(out_sp_nl.pools, sel_pool);
     linewidth=5,
     ls=:dot,
     label="NL_Solve",
-    xticks=(1:length(xtl), string.(xtl)),
+    xticks=(1:length(xtl), string.(xtname) .* "\n" .* string.(xtl)),
     rotation=45) # legend=false
 
 @show "Exp_NL"
@@ -267,3 +242,5 @@ plot!(getfield(out_sp_exp_nl.pools, sel_pool);
     ls=:dash,
     label="Exp_NL",
     yscale=:log10) # legend=false
+
+savefig("comp_methods_eachpool.png")
