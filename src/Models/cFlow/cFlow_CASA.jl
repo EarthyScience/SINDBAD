@@ -1,50 +1,49 @@
 export cFlow_CASA
 
-struct cFlow_CASA <: cFlow
-end
+struct cFlow_CASA <: cFlow end
 
 function compute(o::cFlow_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		(p_E, p_F) ∈ land.cFlowVegProperties
-		(p_E, p_F) ∈ land.cFlowSoilProperties
-		cFlowE ∈ land.cCycleBase
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	#@nc : this needs to go in the full.
-	# effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
-	tmp = repeat(reshape(cFlowE, [1 size(cFlowE)]), 1, 1)
-	p_E = tmp + p_E + p_E
-	# effects of soil & veg on the partitioning of c flows between carbon pools
-	p_F = p_F + p_F
-	# if there is fraction [F] & efficiency is 0, make efficiency 1
-	ndx = p_F > 𝟘  & p_E == zero
-	p_E[ndx] = 𝟙
-	# if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
-	ndx = p_E > 𝟘  & p_F == zero
-	p_F[ndx] = 𝟙
-	# build A
-	p_A = p_F * p_E
-	# transfers
-	(taker, giver) = find(squeeze(sum(p_A > 𝟘)) >= 𝟙)
-	p_taker = taker
-	p_giver = giver
-	# if there is flux order check that is consistent
-	if !isfield(land.cCycleBase, :flowOrder)
-		flowOrder = 1:length(taker)
-	else
-		if length(flowOrder) != length(taker)
-			error(["ERR : cFlowAct_CASA : " "length(flowOrder) != length(taker)"])
-		end
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (p_E, p_F) ∈ land.cFlowVegProperties
+        (p_E, p_F) ∈ land.cFlowSoilProperties
+        cFlowE ∈ land.cCycleBase
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    #@nc : this needs to go in the full.
+    # effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
+    tmp = repeat(reshape(cFlowE, [1 size(cFlowE)]), 1, 1)
+    p_E = tmp + p_E + p_E
+    # effects of soil & veg on the partitioning of c flows between carbon pools
+    p_F = p_F + p_F
+    # if there is fraction [F] & efficiency is 0, make efficiency 1
+    ndx = p_F > 𝟘 & p_E == zero
+    p_E[ndx] = 𝟙
+    # if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
+    ndx = p_E > 𝟘 & p_F == zero
+    p_F[ndx] = 𝟙
+    # build A
+    p_A = p_F * p_E
+    # transfers
+    (taker, giver) = find(squeeze(sum(p_A > 𝟘)) >= 𝟙)
+    p_taker = taker
+    p_giver = giver
+    # if there is flux order check that is consistent
+    if !isfield(land.cCycleBase, :flowOrder)
+        flowOrder = 1:length(taker)
+    else
+        if length(flowOrder) != length(taker)
+            error(["ERR : cFlowAct_CASA : " "length(flowOrder) != length(taker)"])
+        end
+    end
 
-	## pack land variables
-	@pack_land begin
-		flowOrder => land.cCycleBase
-		(p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        flowOrder => land.cCycleBase
+        (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
+    end
+    return land
 end
 
 @doc """

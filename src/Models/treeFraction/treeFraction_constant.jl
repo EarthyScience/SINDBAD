@@ -1,29 +1,31 @@
 export treeFraction_constant
 
+#! format: off
 @bounds @describe @units @with_kw struct treeFraction_constant{T1} <: treeFraction
-	constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
+    constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
 end
+#! format: on
 
-function instantiate(o::treeFraction_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_treeFraction_constant o
-	## calculate variables
-	treeFraction = constantTreeFrac
-	## pack land variables
-	@pack_land treeFraction => land.states
-	return land
+function define(o::treeFraction_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_treeFraction_constant o
+    ## calculate variables
+    treeFraction = constantTreeFrac
+    ## pack land variables
+    @pack_land treeFraction => land.states
+    return land
 end
 
 function compute(o::treeFraction_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_treeFraction_constant o
+    ## unpack parameters
+    @unpack_treeFraction_constant o
 
-	## calculate variables
-	treeFraction = constantTreeFrac
+    ## calculate variables
+    treeFraction = constantTreeFrac
 
-	## pack land variables
-	@pack_land treeFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land treeFraction => land.states
+    return land
 end
 
 @doc """

@@ -7,17 +7,14 @@ makedocs(;
     #modules=[Sindbad],
     #authors="lazarusA <lazarus.alon@gmail.com> and contributors",
     #repo="https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl/blob/{commit}{path}#{line}",
-    sitename="Sindbad.jl",
-    format=Documenter.HTML(prettyurls=true),
+    sitename = "Sindbad.jl",
+    format = Documenter.HTML(prettyurls = true),
     #format=Documenter.HTML(;
     #    prettyurls=get(ENV, "CI", "false") == "true",
     #    canonical="https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl",
     #    assets=String[]
     #),
-    pages=[
-        "Home" => "index.md",
-        "Basic usage" => "basics.md"
-    ]
+    pages = ["Home" => "index.md", "Basic usage" => "basics.md"],
 )
 #=
 deploydocs(;

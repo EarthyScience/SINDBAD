@@ -1,22 +1,21 @@
 export snowFraction_binary
 
-struct snowFraction_binary <: snowFraction
-end
+struct snowFraction_binary <: snowFraction end
 
 function compute(o::snowFraction_binary, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		snowW ∈ land.pools
-		(𝟘, 𝟙) ∈ helpers.numbers
+    ## unpack land variables
+    @unpack_land begin
+        snowW ∈ land.pools
+        (𝟘, 𝟙) ∈ helpers.numbers
         ΔsnowW ∈ land.states
-	end
-	# if there is snow; then snow fraction is 1; otherwise 0
-	snowFraction = 𝟙 * (sum(snowW + ΔsnowW) > 𝟘)
+    end
+    # if there is snow; then snow fraction is 1; otherwise 0
+    snowFraction = 𝟙 * (sum(snowW + ΔsnowW) > 𝟘)
 
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land snowFraction => land.states
+    return land
 end
 
 @doc """

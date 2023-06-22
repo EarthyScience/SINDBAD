@@ -1,57 +1,55 @@
 export gppDemand_mult
 
-struct gppDemand_mult <: gppDemand
-end
+struct gppDemand_mult <: gppDemand end
 
-function instantiate(o::gppDemand_mult, forcing, land, helpers)
+function define(o::gppDemand_mult, forcing, land, helpers)
+    @unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
 
-	@unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
+    scall = ones(numType, 4)
 
-	scall = ones(numType, 4)
+    if hasproperty(land.pools, :soilW)
+        if typeof(land.pools.soilW) <: SVector{length(land.pools.soilW)}
+            scall = SVector{4}(scall)
+        end
+    end
 
-	if hasproperty(land.pools, :soilW)
-		if typeof(land.pools.soilW)<:SVector{length(land.pools.soilW)}
-			scall = SVector{4}(scall)
-		end
-	end
+    AllDemScGPP = 𝟙
+    gppE = 𝟘
+    @pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
 
-	AllDemScGPP = 𝟙
-	gppE = 𝟘
-	@pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
-
-	return land
+    return land
 end
 
 function compute(o::gppDemand_mult, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		CloudScGPP ∈ land.gppDiffRadiation
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-		LightScGPP ∈ land.gppDirRadiation
-		scall ∈ land.gppDemand
-		TempScGPP ∈ land.gppAirT
-		VPDScGPP ∈ land.gppVPD
+    ## unpack land variables
+    @unpack_land begin
+        CloudScGPP ∈ land.gppDiffRadiation
+        fAPAR ∈ land.states
+        gppPot ∈ land.gppPotential
+        LightScGPP ∈ land.gppDirRadiation
+        scall ∈ land.gppDemand
+        TempScGPP ∈ land.gppAirT
+        VPDScGPP ∈ land.gppVPD
         (𝟘, 𝟙) ∈ helpers.numbers
-	end
+    end
 
-	# @show TempScGPP, VPDScGPP, scall
-	# set 3d scalar matrix with current scalars
-	scall = rep_elem(scall, TempScGPP, scall, scall, 𝟘, 𝟙, 1)
-	scall = rep_elem(scall, VPDScGPP, scall, scall, 𝟘, 𝟙, 2)
-	scall = rep_elem(scall, LightScGPP, scall, scall, 𝟘, 𝟙, 3)
-	scall = rep_elem(scall, CloudScGPP, scall, scall, 𝟘, 𝟙, 4)
+    # @show TempScGPP, VPDScGPP, scall
+    # set 3d scalar matrix with current scalars
+    scall = rep_elem(scall, TempScGPP, scall, scall, 𝟘, 𝟙, 1)
+    scall = rep_elem(scall, VPDScGPP, scall, scall, 𝟘, 𝟙, 2)
+    scall = rep_elem(scall, LightScGPP, scall, scall, 𝟘, 𝟙, 3)
+    scall = rep_elem(scall, CloudScGPP, scall, scall, 𝟘, 𝟙, 4)
 
-	# compute the product of all the scalars
-	AllDemScGPP = prod(scall)
-	
-	# compute demand GPP
-	gppE = fAPAR * gppPot * AllDemScGPP
+    # compute the product of all the scalars
+    AllDemScGPP = prod(scall)
 
-	## pack land variables
-	@pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
-	return land
+    # compute demand GPP
+    gppE = fAPAR * gppPot * AllDemScGPP
+
+    ## pack land variables
+    @pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
+    return land
 end
 
 @doc """

@@ -1,16 +1,15 @@
 export gppDirRadiation_none
 
-struct gppDirRadiation_none <: gppDirRadiation
-end
+struct gppDirRadiation_none <: gppDirRadiation end
 
-function instantiate(o::gppDirRadiation_none, forcing, land, helpers)
+function define(o::gppDirRadiation_none, forcing, land, helpers)
 
-	## calculate variables
-	LightScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    LightScGPP = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land LightScGPP => land.gppDirRadiation
-	return land
+    ## pack land variables
+    @pack_land LightScGPP => land.gppDirRadiation
+    return land
 end
 
 @doc """

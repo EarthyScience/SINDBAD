@@ -1,26 +1,27 @@
 export vegFraction_scaledNDVI
 
+#! format: off
 @bounds @describe @units @with_kw struct vegFraction_scaledNDVI{T1} <: vegFraction
-	NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
+    NDVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for NDVI" | ""
 end
+#! format: on
 
 function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_vegFraction_scaledNDVI o
+    ## unpack parameters
+    @unpack_vegFraction_scaledNDVI o
 
-	## unpack land variables
-	@unpack_land begin
-		NDVI ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        NDVI ∈ land.states
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
 
+    ## calculate variables
+    vegFraction = clamp(NDVI * NDVIscale, 𝟘, 𝟙)
 
-	## calculate variables
-	vegFraction = clamp(NDVI * NDVIscale, 𝟘, 𝟙)
-
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

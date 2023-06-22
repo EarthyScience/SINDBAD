@@ -1,20 +1,22 @@
 export rainIntensity_simple
 
+#! format: off
 @bounds @describe @units @with_kw struct rainIntensity_simple{T1} <: rainIntensity
-	rainIntFactor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
+    rainIntFactor::T1 = 0.04167 | (0.0, 1.0) | "factor to convert daily rainfall to rainfall intensity" | ""
 end
+#! format: on
 
 function compute(o::rainIntensity_simple, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_rainIntensity_simple o
-	@unpack_forcing Rain ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_rainIntensity_simple o
+    @unpack_forcing Rain ∈ forcing
 
-	## calculate variables
-	rainInt = Rain * rainIntFactor
+    ## calculate variables
+    rainInt = Rain * rainIntFactor
 
-	## pack land variables
-	@pack_land rainInt => land.rainIntensity
-	return land
+    ## pack land variables
+    @pack_land rainInt => land.rainIntensity
+    return land
 end
 
 @doc """

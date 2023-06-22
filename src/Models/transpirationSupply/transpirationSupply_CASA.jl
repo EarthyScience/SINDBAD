@@ -1,20 +1,18 @@
 export transpirationSupply_CASA
 
-struct transpirationSupply_CASA <: transpirationSupply
-end
+struct transpirationSupply_CASA <: transpirationSupply end
 
 function compute(o::transpirationSupply_CASA, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land PAW ∈ land.states
+    ## unpack land variables
+    @unpack_land PAW ∈ land.states
 
+    ## calculate variables
+    tranSup = sum(PAW)
 
-	## calculate variables
-	tranSup = sum(PAW)
-
-	## pack land variables
-	@pack_land tranSup => land.transpirationSupply
-	return land
+    ## pack land variables
+    @pack_land tranSup => land.transpirationSupply
+    return land
 end
 
 @doc """

@@ -1,41 +1,39 @@
 export vegAvailableWater_rootFraction
 
-struct vegAvailableWater_rootFraction <: vegAvailableWater
-end
+struct vegAvailableWater_rootFraction <: vegAvailableWater end
 
-function instantiate(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+function define(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		soilW ∈ land.pools
-	end
+    ## unpack land variables
+    @unpack_land begin
+        soilW ∈ land.pools
+    end
 
-	PAW = zero(soilW)
+    PAW = zero(soilW)
 
-	## pack land variables
-	@pack_land PAW => land.vegAvailableWater
-	return land
+    ## pack land variables
+    @pack_land PAW => land.vegAvailableWater
+    return land
 end
 
 function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		p_wWP ∈ land.soilWBase
-		p_fracRoot2SoilD ∈ land.rootFraction
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		𝟘 ∈ helpers.numbers
-		PAW ∈ land.vegAvailableWater
-	end
-	for sl in eachindex(soilW)
-		PAW_sl = p_fracRoot2SoilD[sl] * (max(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘))
-		@rep_elem PAW_sl => (PAW, sl, :soilW)
-	end
+    ## unpack land variables
+    @unpack_land begin
+        p_wWP ∈ land.soilWBase
+        p_fracRoot2SoilD ∈ land.rootFraction
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        𝟘 ∈ helpers.numbers
+        PAW ∈ land.vegAvailableWater
+    end
+    for sl ∈ eachindex(soilW)
+        PAW_sl = p_fracRoot2SoilD[sl] * (max(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘))
+        @rep_elem PAW_sl => (PAW, sl, :soilW)
+    end
 
-
-	@pack_land PAW => land.vegAvailableWater
-	return land
+    @pack_land PAW => land.vegAvailableWater
+    return land
 end
 
 @doc """

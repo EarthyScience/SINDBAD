@@ -1,43 +1,42 @@
 export gpp_mult
 
-struct gpp_mult <: gpp
-end
+struct gpp_mult <: gpp end
 
-function instantiate(o::gpp_mult, forcing, land, helpers)
-	@unpack_land begin
-		𝟘 ∈ helpers.numbers
-	end
+function define(o::gpp_mult, forcing, land, helpers)
+    @unpack_land begin
+        𝟘 ∈ helpers.numbers
+    end
 
-	AllScGPP = 𝟘
-	gpp = 𝟘
-	## pack land variables
-	@pack_land begin
-		AllScGPP => land.gpp
-		gpp => land.fluxes
-	end
-	return land
+    AllScGPP = 𝟘
+    gpp = 𝟘
+    ## pack land variables
+    @pack_land begin
+        AllScGPP => land.gpp
+        gpp => land.fluxes
+    end
+    return land
 end
 
 function compute(o::gpp_mult, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		AllDemScGPP ∈ land.gppDemand
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-		SMScGPP ∈ land.gppSoilW
-	end
+    ## unpack land variables
+    @unpack_land begin
+        AllDemScGPP ∈ land.gppDemand
+        fAPAR ∈ land.states
+        gppPot ∈ land.gppPotential
+        SMScGPP ∈ land.gppSoilW
+    end
 
-	AllScGPP = AllDemScGPP * SMScGPP; #sujan
-	
-	gpp = fAPAR * gppPot * AllScGPP
+    AllScGPP = AllDemScGPP * SMScGPP #sujan
 
-	## pack land variables
-	@pack_land begin
-		gpp => land.fluxes
-		AllScGPP => land.gpp
-	end
-	return land
+    gpp = fAPAR * gppPot * AllScGPP
+
+    ## pack land variables
+    @pack_land begin
+        gpp => land.fluxes
+        AllScGPP => land.gpp
+    end
+    return land
 end
 
 @doc """
