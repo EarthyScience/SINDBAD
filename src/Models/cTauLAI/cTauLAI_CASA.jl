@@ -54,7 +54,7 @@ function compute(o::cTauLAI_CASA, forcing, land, helpers)
     LAI13 = circshift(LAI13, 1)
     # LAI13[2:TSPY + 1] = LAI13[1:TSPY]; # very slow [sujan]
     LAI13[1] = LAI
-    LAI13_next = LAI13[2:TSPY+1]
+    LAI13_next = LAI13[2:(TSPY+1)]
     # LAI13_prev = LAI13[1:TSPY]
     # update s
     p_LAI13 = LAI13
@@ -85,8 +85,7 @@ function compute(o::cTauLAI_CASA, forcing, land, helpers)
     RTLAI = 0.0
     ndx = (LAIsum > 0.0)
     LAI131st = LAI13[1]
-    RTLAI[ndx] =
-        (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
+    RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
     # Feed the output fluxes to cCycle components
     zix_veg = p_cVegLeafZix
     p_kfLAI[zix_veg] = p_annk[zix_veg] * LTLAI / p_k[zix_veg] # leaf litter scalar

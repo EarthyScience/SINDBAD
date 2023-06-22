@@ -1,11 +1,9 @@
 export getObservation, cleanObsData
 
 function cleanObsData(datapoint, vinfo, ::Val{T}) where {T}
-    datapoint = applyUnitConversion(
-        datapoint,
+    datapoint = applyUnitConversion(datapoint,
         vinfo.data.source2sindbadUnit,
-        vinfo.data.additiveUnitConversion,
-    )
+        vinfo.data.additiveUnitConversion)
     #TODO: when bounds are activated the data is not instantiated and the yaxarray fails when printing observation.data. Fix the observation bounds and quality flag
     # bounds = vinfo.bounds
     # if !isempty(bounds)
@@ -60,7 +58,7 @@ function getSelObsMask(mask_path::String)
 end
 
 function getObsZarr(v)
-    YAXArrayBase.yaxconvert(YAXArray, v)
+    return YAXArrayBase.yaxconvert(YAXArray, v)
 end
 
 function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::String)
@@ -80,36 +78,31 @@ function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::St
         if dn == info.tem.forcing.dimensions.time
             t = nc[info.tem.forcing.dimensions.time]
             dt_str = Dates.DateTime(join(split(t.atts["units"], " ")[3:end], "T"))
-            rax = RangeAxis(dn, dt_str:Day(1):dt_str+Day(length(t) - 1) |> collect)
+            rax = RangeAxis(dn, collect(dt_str:Day(1):(dt_str+Day(length(t) - 1))))
         end
-        rax
+        return rax
     end
     # yax = YAXArray(ax, v)
-    yax = YAXArray(
-        ax,
-        YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path, variable_name, size(v)),
-    )
+    yax = YAXArray(ax,
+        YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path, variable_name,
+            size(v)))
     return yax
 end
 
 function time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
     if hasproperty(cyax, Symbol(forcing_info.dimensions.time))
-        cyax = cyax[time = (
-            Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step,
-        )]
+        cyax = cyax[time=(Date(info.tem.helpers.dates.sDate),
+            Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
     end
     if hasproperty(cyax_unc, Symbol(forcing_info.dimensions.time))
-        cyax_unc = cyax_unc[time = (
-            Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step,
-        )]
+        cyax_unc = cyax_unc[time=(Date(info.tem.helpers.dates.sDate),
+            Date(info.tem.helpers.dates.eDate) +
+            info.tem.helpers.dates.time_step)]
     end
     if hasproperty(yax_mask, Symbol(forcing_info.dimensions.time))
-        yax_mask = yax_mask[time = (
-            Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step,
-        )]
+        yax_mask = yax_mask[time=(Date(info.tem.helpers.dates.sDate),
+            Date(info.tem.helpers.dates.eDate) +
+            info.tem.helpers.dates.time_step)]
     end
     return cyax, cyax_unc, yax_mask
 end
@@ -263,12 +256,12 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
             yax_mask = permutedims(yax_mask, permutes)
         end
 
-        cyax, cyax_unc, yax_mask =
-            time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
+        cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info,
+            forcing_info)
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
-        push!(obscubes, yax_mask)
+        return push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
@@ -282,7 +275,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         push!(varnames_all, Symbol(string(v) * "_mask"))
     end
     println("----------------------------------------------")
-    return (; data = obscubes, dims = indims, n_timesteps = nts, variables = varnames_all)
+    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
 end
 
 """
@@ -425,12 +418,12 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             yax_mask = permutedims(yax_mask, permutes)
         end
 
-        cyax, cyax_unc, yax_mask =
-            time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
+        cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info,
+            forcing_info)
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
-        push!(obscubes, yax_mask)
+        return push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
@@ -444,7 +437,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         push!(varnames_all, Symbol(string(v) * "_mask"))
     end
     println("----------------------------------------------")
-    return (; data = obscubes, dims = indims, n_timesteps = nts, variables = varnames_all)
+    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
 end
 
 """
@@ -485,11 +478,9 @@ function getObservation(info::NamedTuple, ::Val{:table})
         tarVar = Symbol(v)
         push!(varlist, tarVar)
         data_tmp[ismissing.(data_tmp)] .= info.tem.helpers.numbers.sNT(NaN)
-        data_obs = applyUnitConversion(
-            data_tmp,
+        data_obs = applyUnitConversion(data_tmp,
             vinfo.data.source2sindbadUnit,
-            vinfo.data.additiveUnitConversion,
-        )
+            vinfo.data.additiveUnitConversion)
         data_obs = applyObservationBounds(data_obs, vinfo.data.bounds)
         push!(dataAr, info.tem.helpers.numbers.numType.(data_obs))
 
@@ -505,11 +496,9 @@ function getObservation(info::NamedTuple, ::Val{:table})
                 data_unc = getDataFromPath(dataPath, unc_var)
             end
             data_unc[ismissing.(data_unc)] .= info.tem.helpers.numbers.sNT(NaN)
-            data_unc = applyUnitConversion(
-                data_unc,
+            data_unc = applyUnitConversion(data_unc,
                 vinfo.unc.source2sindbadUnit,
-                vinfo.unc.additiveUnitConversion,
-            )
+                vinfo.unc.additiveUnitConversion)
             data_unc = applyObservationBounds(data_unc, vinfo.unc.bounds)
         else
             data_unc = ones(info.tem.helpers.numbers.numType, size(data_obs))
@@ -532,11 +521,11 @@ function getObservation(info::NamedTuple, ::Val{:zarr2})
         # flag to indicate if subsets are needed.
         dim = YAXArrayBase.yaxconvert(DimArray, dsk)
         # site, lon, lat should be options to consider here
-        subset = dim[site = 1:info.forcing.size.site, time = 1:info.forcing.size.time]
+        subset = dim[site=1:(info.forcing.size.site), time=1:(info.forcing.size.time)]
         # support for subsets by name and numbers is also supported. Option to be added later.
-        YAXArrayBase.yaxconvert(YAXArray, subset)
+        return YAXArrayBase.yaxconvert(YAXArray, subset)
     end
     nts = length(obscubes[1].time) # look for time instead of using the first yaxarray
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
-    return (; data = obscubes, dims = indims, n_timesteps = nts, variables = varnames)
+    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames)
 end

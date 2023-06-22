@@ -1,41 +1,30 @@
 export getSpinupForcing
 
-@generated function getForcingForTimePeriod(
-    forcing,
+@generated function getForcingForTimePeriod(forcing,
     ::Val{forc_vars},
     tstart::Int64,
     tend::Int64,
-    f_t,
-) where {forc_vars}
+    f_t) where {forc_vars}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        push!(
-            output.args,
-            quote
-                d = in(:time, AxisKeys.dimnames(v)) ? v[time = tstart:tend] : v
-            end,
-        )
-        push!(
-            output.args,
-            Expr(
-                :(=),
+        push!(output.args, quote
+            d = in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
+        end)
+        return push!(output.args,
+            Expr(:(=),
                 :f_t,
-                Expr(
-                    :macrocall,
+                Expr(:macrocall,
                     Symbol("@set"),
                     :(),
-                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d),
-                ),
-            ),
-        ) #= none:1 =#
+                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d)))) #= none:1 =#
     end
-    output
+    return output
 end
 
 function getForcingForTimePeriod(forcing, tstart::Int64, tend::Int64)
     map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time = tstart:tend] : v
+        return in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
     end
 end
 

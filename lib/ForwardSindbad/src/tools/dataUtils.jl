@@ -17,11 +17,8 @@ YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
     datapoint = isnan(datapoint) ? dfill : datapoint
-    datapoint = applyUnitConversion(
-        datapoint,
-        vinfo.source2sindbadUnit,
-        vinfo.additiveUnitConversion,
-    )
+    datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit,
+        vinfo.additiveUnitConversion)
     bounds = vinfo.bounds
     datapoint = clamp(datapoint, bounds[1], bounds[2])
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
@@ -48,12 +45,12 @@ function getDataDims(c, mappinginfo)
     axnames = YAXArrays.Axes.axname.(caxes(c))
     inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
-    InDims(inax...; artype = KeyedArray, filter = AllNaN())
+    return InDims(inax...; artype=KeyedArray, filter=AllNaN())
 end
 
 function getNumberOfTimeSteps(incubes, time_name)
     i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
-    length(getAxis(time_name, incubes[i1]).values)
+    return length(getAxis(time_name, incubes[i1]).values)
 end
 
 function getForcingTimeSize(forcing::NamedTuple)
@@ -72,67 +69,54 @@ end
     end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        push!(
-            output.args,
+        return push!(output.args,
             quote
-                forcingTimeSize =
-                    in(:time, AxisKeys.dimnames(v)) ? size(v, 1) : forcingTimeSize
-            end,
-        )
+                forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
+                                  forcingTimeSize
+            end)
     end
     push!(output.args, quote
         return forcingTimeSize
     end)
-    output
+    return output
 end
 
-@generated function getForcingForTimeStep(
-    forcing,
-    ::Val{forc_vars},
-    ts,
-    f_t,
-) where {forc_vars}
+@generated function getForcingForTimeStep(forcing, ::Val{forc_vars}, ts, f_t) where {forc_vars}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
         push!(output.args, quote
-            d = in(:time, AxisKeys.dimnames(v)) ? v[time = ts] : v
+            d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
         end)
-        push!(
-            output.args,
-            Expr(
-                :(=),
+        return push!(output.args,
+            Expr(:(=),
                 :f_t,
-                Expr(
-                    :macrocall,
+                Expr(:macrocall,
                     Symbol("@set"),
                     :(),
-                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d),
-                ),
-            ),
-        ) #= none:1 =#
+                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d)))) #= none:1 =#
     end
-    output
+    return output
 end
 
 function getForcingForTimeStep(forcing::NamedTuple, ts::Int64, forcing_t)
     for f ∈ keys(forcing)
         v = forcing[f]
-        forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time = ts] : v
+        forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
     return forcing_t
 end
 
 function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time = ts] : v
+        return in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
 
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
-function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables = true)
+function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables=true)
     if !filter_variables
         fout = out
     else
@@ -153,7 +137,7 @@ function getNamedDimsArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        return NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -165,7 +149,7 @@ function getDimArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        YAXArrayBase.yaxconvert(DimArray, Array(c.data))
+        return YAXArrayBase.yaxconvert(DimArray, Array(c.data))
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -177,7 +161,7 @@ function getKeyedArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end

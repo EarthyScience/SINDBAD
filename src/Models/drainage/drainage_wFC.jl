@@ -22,7 +22,7 @@ function compute(o::drainage_wFC, forcing, land, helpers)
     end
 
     ## calculate drainage
-    for sl ∈ 1:length(land.pools.soilW)-1
+    for sl ∈ 1:(length(land.pools.soilW)-1)
         holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         lossCap = soilW[sl] + ΔsoilW[sl]
         drainage[sl] = max(soilW[sl] + ΔsoilW[sl] - p_wFC[sl], 𝟘)

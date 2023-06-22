@@ -8,12 +8,7 @@ export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 end
 #! format: on
 
-function compute(
-    o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil,
-    forcing,
-    land,
-    helpers,
-)
+function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil o

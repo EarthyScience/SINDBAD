@@ -4,21 +4,20 @@ using Statistics
 
 function getLocDataObs(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
+        return getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
 
-function site_loss(
-    output,
+function site_loss(output,
     forc,
     obs,
     site_location,
@@ -30,13 +29,11 @@ function site_loss(
     models,
     out_vars,
     land_init_site,
-    f_one,
-)
+    f_one)
     #@show site_location, Threads.threadid()
     loc_forcing, loc_output, loc_obs = getLocDataObs(output.data, forc, obs, site_location)
     newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    ForwardSindbad.coreEcosystem!(
-        loc_output,
+    ForwardSindbad.coreEcosystem!(loc_output,
         newApproaches,
         loc_forcing,
         helpers,
@@ -44,13 +41,11 @@ function site_loss(
         models,
         out_vars,
         land_init_site,
-        f_one,
-    )
+        f_one)
     return lloss(loc_obs.gpp, loc_obs.gpp_σ, loc_output[1][:, 1], Val(:mse))
 end
 
-function get_loc_loss(
-    loc_obs,
+function get_loc_loss(loc_obs,
     loc_output,
     newApproaches,
     loc_forcing,
@@ -61,10 +56,8 @@ function get_loc_loss(
     tem_optim,
     out_variables,
     loc_land_init,
-    f_one,
-)
-    ForwardSindbad.coreEcosystem!(
-        loc_output,
+    f_one)
+    ForwardSindbad.coreEcosystem!(loc_output,
         newApproaches,
         loc_forcing,
         tem_helpers,
@@ -72,16 +65,14 @@ function get_loc_loss(
         tem_models,
         Val(tem_variables),
         loc_land_init,
-        f_one,
-    )
+        f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
     l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
     return l
 end
 
-function site_loss2(
-    output,
+function site_loss2(output,
     forc,
     obs,
     site_location,
@@ -95,12 +86,10 @@ function site_loss2(
     tem_optim,
     out_variables,
     loc_land_init,
-    f_one,
-)
+    f_one)
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location)
     newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    l = get_loc_loss(
-        loc_obs,
+    l = get_loc_loss(loc_obs,
         loc_output,
         newApproaches,
         loc_forcing,
@@ -111,22 +100,21 @@ function site_loss2(
         tem_optim,
         out_variables,
         loc_land_init,
-        f_one,
-    )
+        f_one)
     return l
 end
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
+        return getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -156,13 +144,13 @@ end
 using Base.Iterators: repeated, partition
 using Random
 
-function shuffle_sites(sites; seed = 123)
+function shuffle_sites(sites; seed=123)
     Random.seed!(seed)
     rand_names = randperm(length(sites))
     return sites[rand_names]
 end
 
-function bs_iter(n; batch_size = 32)
+function bs_iter(n; batch_size=32)
     return partition(1:n, batch_size)
 end
 
@@ -174,17 +162,14 @@ function getParamsAct(pNorm, tblParams)
 end
 
 # neural network design
-function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers = 0, seed = 1618) # ~ (1+√5)/2
+function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (1+√5)/2
     Random.seed!(seed)
-    return Flux.Chain(
-        Flux.Dense(n_bs_feat => n_neurons, Flux.relu),
-        [Flux.Dense(n_neurons, n_neurons, Flux.relu) for _ ∈ 0:extra_hlayers-1]...,
-        Flux.Dense(n_neurons => n_params, Flux.sigmoid),
-    )
+    return Flux.Chain(Flux.Dense(n_bs_feat => n_neurons, Flux.relu),
+        [Flux.Dense(n_neurons, n_neurons, Flux.relu) for _ ∈ 0:(extra_hlayers-1)]...,
+        Flux.Dense(n_neurons => n_params, Flux.sigmoid))
 end
 
-function grads_batch!(
-    f_grads,
+function grads_batch!(f_grads,
     up_params,
     xbatch,
     tblParams,
@@ -200,18 +185,16 @@ function grads_batch!(
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-)
+    f_one)
     Threads.@threads for site_index ∈ eachindex(xbatch)
         site_name = xbatch[site_index]
-        x_params = up_params(site = site_name)
+        x_params = up_params(; site=site_name)
         pVec = getParamsAct(x_params, tblParams)
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
         #loss_thread = v -> site_loss2(output, forc, obs, site_location, tblParams, forward, v, helpers, spinup, models, out_vars, land_init_site, f_one)
         loss_thread =
-            v -> site_loss2(
-                output,
+            v -> site_loss2(output,
                 forc,
                 obs,
                 site_location,
@@ -225,14 +208,12 @@ function grads_batch!(
                 tem_optim,
                 out_variables,
                 loc_land_init,
-                f_one,
-            )
+                f_one)
         f_grads[:, site_index] = ForwardDiff.gradient(loss_thread, pVec)
     end
 end
 
-function grads_batch_seq!(
-    f_grads,
+function grads_batch_seq!(f_grads,
     up_params,
     xbatch,
     tblParams,
@@ -246,17 +227,15 @@ function grads_batch_seq!(
     spinup,
     models,
     out_vars,
-    f_one,
-)
-    p = Progress(length(xbatch); desc = "Computing batch grads...", color = :yellow)
+    f_one)
+    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow)
     for (site_index, site_name) ∈ enumerate(xbatch)
-        x_params = up_params(site = site_name)
+        x_params = up_params(; site=site_name)
         pVec = getParamsAct(x_params, tblParams)
         site_location = name_to_id(site_name, sites_f)
         land_init_site = land_init_space[site_location[1][2]]
         loss_thread =
-            v -> site_loss(
-                output,
+            v -> site_loss(output,
                 forc,
                 obs,
                 site_location,
@@ -268,10 +247,9 @@ function grads_batch_seq!(
                 models,
                 out_vars,
                 land_init_site,
-                f_one,
-            )
+                f_one)
         f_grads[:, site_index] = ForwardDiff.gradient(loss_thread, pVec)
-        next!(p; showvalues = [(:site_name, site_name), (:site_location, site_location)])
+        next!(p; showvalues=[(:site_name, site_name), (:site_location, site_location)])
     end
 end
 
@@ -284,8 +262,7 @@ function lloss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:
     end
 end
 
-function get_site_losses(
-    up_params,
+function get_site_losses(up_params,
     new_sites,
     tblParams,
     sites_f,
@@ -300,18 +277,16 @@ function get_site_losses(
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-)
+    f_one)
     tot_loss = fill(NaN32, length(new_sites))
     Threads.@threads for s_id ∈ eachindex(new_sites)
         site_name = new_sites[s_id]
-        x_params = up_params(site = site_name)
+        x_params = up_params(; site=site_name)
         pVec = getParamsAct(x_params, tblParams)
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
         loss_thread =
-            v -> site_loss2(
-                output,
+            v -> site_loss2(output,
                 forc,
                 obs,
                 site_location,
@@ -325,8 +300,7 @@ function get_site_losses(
                 tem_optim,
                 out_variables,
                 loc_land_init,
-                f_one,
-            )
+                f_one)
         tot_loss[s_id] = loss_thread(pVec) # maybe a bug? threads scope
     end
     return tot_loss
