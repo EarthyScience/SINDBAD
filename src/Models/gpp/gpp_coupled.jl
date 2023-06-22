@@ -1,33 +1,31 @@
 export gpp_coupled
 
-struct gpp_coupled <: gpp
-end
+struct gpp_coupled <: gpp end
 
-function instantiate(o::gpp_coupled, forcing, land, helpers)
-
-	gpp = helpers.numbers.𝟘
-	@pack_land gpp => land.fluxes
-	return land
+function define(o::gpp_coupled, forcing, land, helpers)
+    gpp = helpers.numbers.𝟘
+    @pack_land gpp => land.fluxes
+    return land
 end
 
 function compute(o::gpp_coupled, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		tranSup ∈ land.transpirationSupply
-		SMScGPP ∈ land.gppSoilW
-		gppE ∈ land.gppDemand
-		AoE ∈ land.WUE
-		𝟙 ∈ helpers.numbers
-	end
-	
-	gpp = min(tranSup * AoE, gppE * SMScGPP)
-	# gpp = min(𝟙 * tranSup * AoE, gppE * soilWStress[2])
-	# gpp = min(𝟙 * tranSup * AoE, gppE * max(soilWStress, [], 2))
+    ## unpack land variables
+    @unpack_land begin
+        tranSup ∈ land.transpirationSupply
+        SMScGPP ∈ land.gppSoilW
+        gppE ∈ land.gppDemand
+        AoE ∈ land.WUE
+        𝟙 ∈ helpers.numbers
+    end
 
-	## pack land variables
-	@pack_land gpp => land.fluxes
-	return land
+    gpp = min(tranSup * AoE, gppE * SMScGPP)
+    # gpp = min(𝟙 * tranSup * AoE, gppE * soilWStress[2])
+    # gpp = min(𝟙 * tranSup * AoE, gppE * max(soilWStress, [], 2))
+
+    ## pack land variables
+    @pack_land gpp => land.fluxes
+    return land
 end
 
 @doc """

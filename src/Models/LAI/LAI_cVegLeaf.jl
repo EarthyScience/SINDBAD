@@ -1,37 +1,39 @@
 export LAI_cVegLeaf
 
+#! format: off
 @bounds @describe @units @with_kw struct LAI_cVegLeaf{T1} <: LAI
-	SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
+    SLA::T1 = 0.016 | (0.01, 0.024) | "specific leaf area" | "m^2.gC^-1"
 end
+#! format: on
 
-function instantiate(o::LAI_cVegLeaf, forcing, land, helpers)
-	## unpack parameters
-	@unpack_LAI_cVegLeaf o
+function define(o::LAI_cVegLeaf, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_LAI_cVegLeaf o
 
-	@unpack_land cVegLeaf ∈ land.pools
+    @unpack_land cVegLeaf ∈ land.pools
 
-	## calculate variables
-	cVegLeafTotal = sum(cVegLeaf)
-	LAI = cVegLeafTotal* SLA
+    ## calculate variables
+    cVegLeafTotal = sum(cVegLeaf)
+    LAI = cVegLeafTotal * SLA
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    ## pack land variables
+    @pack_land LAI => land.states
+    return land
 end
 
 function compute(o::LAI_cVegLeaf, forcing, land, helpers)
-	## unpack parameters
-	@unpack_LAI_cVegLeaf o
+    ## unpack parameters
+    @unpack_LAI_cVegLeaf o
 
-	@unpack_land cVegLeaf ∈ land.pools
+    @unpack_land cVegLeaf ∈ land.pools
 
-	## calculate variables
-	cVegLeafTotal = sum(cVegLeaf)
-	LAI = cVegLeafTotal* SLA
+    ## calculate variables
+    cVegLeafTotal = sum(cVegLeaf)
+    LAI = cVegLeafTotal * SLA
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    ## pack land variables
+    @pack_land LAI => land.states
+    return land
 end
 
 @doc """

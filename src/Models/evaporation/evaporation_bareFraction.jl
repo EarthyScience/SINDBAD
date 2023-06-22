@@ -1,59 +1,61 @@
 export evaporation_bareFraction
 
+#! format: off
 @bounds @describe @units @with_kw struct evaporation_bareFraction{T1} <: evaporation
-	ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
+    ks::T1 = 0.5 | (0.1, 0.95) | "resistance against soil evaporation" | ""
 end
+#! format: on
 
 function compute(o::evaporation_bareFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_evaporation_bareFraction o
+    ## unpack parameters
+    @unpack_evaporation_bareFraction o
 
-	## unpack land variables
-	@unpack_land begin
-		vegFraction ∈ land.states
-		ΔsoilW ∈ land.states
-		soilW ∈ land.pools
-		PET ∈ land.PET
-	end
-	# scale the potential ET with bare soil fraction
-	PETsoil = PET * (helpers.numbers.𝟙 - vegFraction)
-	# calculate actual ET as a fraction of PETsoil
-	evaporation = min(PETsoil, (soilW[1] + ΔsoilW[1]) * ks)
+    ## unpack land variables
+    @unpack_land begin
+        vegFraction ∈ land.states
+        ΔsoilW ∈ land.states
+        soilW ∈ land.pools
+        PET ∈ land.PET
+    end
+    # scale the potential ET with bare soil fraction
+    PETsoil = PET * (helpers.numbers.𝟙 - vegFraction)
+    # calculate actual ET as a fraction of PETsoil
+    evaporation = min(PETsoil, (soilW[1] + ΔsoilW[1]) * ks)
 
-	# update soil moisture changes
-	@add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    # update soil moisture changes
+    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
 
-	## pack land variables
-	@pack_land begin
-		PETsoil => land.evaporation
-		evaporation => land.fluxes
-		ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        PETsoil => land.evaporation
+        evaporation => land.fluxes
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::evaporation_bareFraction, forcing, land, helpers)
-	@unpack_evaporation_bareFraction o
+    @unpack_evaporation_bareFraction o
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture of the first layer
-	soilW[1] = soilW[1] + ΔsoilW[1]
+    ## update variables
+    # update soil moisture of the first layer
+    soilW[1] = soilW[1] + ΔsoilW[1]
 
-	# reset soil moisture changes to zero
-	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
+    # reset soil moisture changes to zero
+    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-	# ## pack land variables
-	# @pack_land begin
-	# 	soilW => land.pools
-	# 	ΔsoilW => land.states
-	# end
-	return land
+    # ## pack land variables
+    # @pack_land begin
+    # 	soilW => land.pools
+    # 	ΔsoilW => land.states
+    # end
+    return land
 end
 
 @doc """

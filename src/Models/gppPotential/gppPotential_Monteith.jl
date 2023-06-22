@@ -1,31 +1,32 @@
 export gppPotential_Monteith
 
+#! format: off
 @bounds @describe @units @with_kw struct gppPotential_Monteith{T1} <: gppPotential
-	εmax::T1 = 2.0 | (0.1, 5.0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
+    εmax::T1 = 2.0 | (0.1, 5.0) | "Maximum Radiation Use Efficiency" | "gC/MJ"
 end
+#! format: on
 
-function instantiate(o::gppPotential_Monteith, forcing, land, helpers)
-	# set rueGPP to a constant
-	gppPot = helpers.numbers.𝟘
+function define(o::gppPotential_Monteith, forcing, land, helpers)
+    # set rueGPP to a constant
+    gppPot = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land gppPot => land.gppPotential
-	return land
+    ## pack land variables
+    @pack_land gppPot => land.gppPotential
+    return land
 end
 
 function compute(o::gppPotential_Monteith, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_gppPotential_Monteith o
-	@unpack_forcing PAR ∈ forcing
+    ## unpack parameters and forcing
+    @unpack_gppPotential_Monteith o
+    @unpack_forcing PAR ∈ forcing
 
+    ## calculate variables
+    # set rueGPP to a constant
+    gppPot = εmax * PAR
 
-	## calculate variables
-	# set rueGPP to a constant
-	gppPot = εmax * PAR
-
-	## pack land variables
-	@pack_land gppPot => land.gppPotential
-	return land
+    ## pack land variables
+    @pack_land gppPot => land.gppPotential
+    return land
 end
 
 @doc """

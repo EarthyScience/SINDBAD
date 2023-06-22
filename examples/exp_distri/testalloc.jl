@@ -32,13 +32,33 @@ function processPackForcing(ex::Expr)
     lines = broadcast(lhs, rename) do s, rn
         depth_field = length(findall(".", string(esc(rhs)))) + 1
         if depth_field == 1
-            expr_l = Expr(:(=), esc(rhs), Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn)))))
+            expr_l = Expr(
+                :(=),
+                esc(rhs),
+                Expr(
+                    :tuple,
+                    Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))),
+                ),
+            )
             expr_l
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
             #expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
-            Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
+            Expr(
+                :(=),
+                esc(top),
+                Expr(
+                    :macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(
+                        :(=),
+                        Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)),
+                        esc(rn),
+                    ),
+                ),
+            ) #= none:1 =#
         end
     end
     Expr(:block, lines...)
@@ -61,21 +81,31 @@ b = 12.0
 
 macro fuck_it(forc)
     # @show forc, QuoteNode(forc)
-    Expr(Symbol("@set"), :(#= none:1 =#), Expr(:., :forcing_t, forc),Expr(:if, Expr(:call, :in, :time, Expr(:call, Expr(:., :AxisKeys, :(:dimnames)), :v)), Expr(:ref, :v, :($(Expr(:kw, :time, ts)))),:v))
+    Expr(
+        Symbol("@set"),
+        :(),
+        Expr(:., :forcing_t, forc),
+        Expr(
+            :if,
+            Expr(:call, :in, :time, Expr(:call, Expr(:., :AxisKeys, :(:dimnames)), :v)),
+            Expr(:ref, :v, :($(Expr(:kw, :time, ts)))),
+            :v,
+        ),
+    ) #= none:1 =#
 end
 ts = 5
 @fuck_it :tair
 function test_nt(out::NamedTuple, nt::Int64)
-    for t = 1:nt
-        b=rand()#+out.fluxes.b
+    for t ∈ 1:nt
+        b = rand()#+out.fluxes.b
         @pack_land b => out
         # pack_nt(out)
     end
     return out
 end
 
-out_nt=(;)
-out_nt = (; out_nt..., fluxes=(;b=rand()), pools=(; a=rand(100)))
+out_nt = (;)
+out_nt = (; out_nt..., fluxes = (; b = rand()), pools = (; a = rand(100)))
 @pack_land b => out_nt
 
 out_new = test_nt(out_nt, 100);
@@ -95,12 +125,11 @@ function pack_dict(out)
     out[:fluxes][:b] = rand()
 end
 =#
-out_nt=(;)
-out_nt = (; out_nt..., fluxes=(;), pools=(; a=rand(100)))
+out_nt = (;)
+out_nt = (; out_nt..., fluxes = (;), pools = (; a = rand(100)))
 
-
-@time for i = 1:100
-    test_nt(out_nt, 10);
+@time for i ∈ 1:100
+    test_nt(out_nt, 10)
 end
 @time test_nt(out_nt, 10);
 
@@ -112,24 +141,16 @@ end
 @btime a = out_nt[2][1];
 using Flatten
 using Accessors
-out_nt=(;)
-out_nt = (; out_nt..., fluxes=(;b=1.0), pools=(; a=rand(10)))
-out_nt = (; out_nt..., fluxes=(;), pools=(; a=rand(100)))
+out_nt = (;)
+out_nt = (; out_nt..., fluxes = (; b = 1.0), pools = (; a = rand(10)))
+out_nt = (; out_nt..., fluxes = (;), pools = (; a = rand(100)))
 
 function setacces(out_nt)
-    return @set out_nt[:fluxes][:b]= rand()
+    return @set out_nt[:fluxes][:b] = rand()
 end
 
 @time a = setacces(out_nt);
 @btime setacces($out_nt);
-
-
-
-
-
-
-
-
 
 @pack_land b => out_nt.fluxes;
 
@@ -137,26 +158,23 @@ using Profile
 Profile.clear_malloc_data() # clear allocations
 @pack_land b => out_nt.fluxes;
 
-
-b=12.0
-
+b = 12.0
 
 using NestedTuples
 using BenchmarkTools
-out_nt=(;)
-out_nt = (; out_nt..., fluxes=(;b=1.0), pools=(; a=rand(10)))
+out_nt = (;)
+out_nt = (; out_nt..., fluxes = (; b = 1.0), pools = (; a = rand(10)))
 Base.setindex(out_nt, Base.setindex(out_nt.fluxes, b, :b), :fluxes)
 f = leaf_setter(out_nt)
-@btime $f(2.3,rand(10))
+@btime $f(2.3, rand(10))
 
+@time out_nt = @set out_nt.fluxes.b = 2.0;
 
-@time out_nt = @set out_nt.fluxes.b= 2.0;
-
-@btime $out_nt = @set $out_nt.fluxes.b= 2.0;
+@btime $out_nt = @set $out_nt.fluxes.b = 2.0;
 
 @btime $out_nt = @set $out_nt[:fluxes][:b] = 3.0
 
-t = (a=1, b=2, fluxes = (;));
+t = (a = 1, b = 2, fluxes = (;));
 @btime @insert $t[:fluxes][:c] = rand()
 
 #getproperty(getproperty(out_nt, :fluxes), :b)

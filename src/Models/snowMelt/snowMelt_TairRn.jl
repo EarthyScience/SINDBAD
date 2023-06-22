@@ -1,15 +1,17 @@
 export snowMelt_TairRn
 
-@bounds @describe @units @with_kw struct snowMelt_TairRn{T1, T2} <: snowMelt
-	melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C"
-	melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
+#! format: off
+@bounds @describe @units @with_kw struct snowMelt_TairRn{T1,T2} <: snowMelt
+    melt_T::T1 = 3.0 | (0.01, 10.0) | "melt factor for temperature" | "mm/°C"
+    melt_Rn::T2 = 2.0 | (0.01, 3.0) | "melt factor for radiation" | "mm/MJ/m2"
 end
+#! format: on
 
-function instantiate(o::snowMelt_TairRn, forcing, land, helpers)
+function define(o::snowMelt_TairRn, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
-		𝟘 ∈ helpers.numbers
+        𝟘 ∈ helpers.numbers
     end
     # potential snow melt if T > 0.0 deg C
     potMelt = 𝟘
@@ -25,7 +27,6 @@ function instantiate(o::snowMelt_TairRn, forcing, land, helpers)
     return land
 end
 
-
 function compute(o::snowMelt_TairRn, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_TairRn o
@@ -36,7 +37,7 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
         (WBP, snowFraction) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
@@ -46,10 +47,10 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     potMelt = (tmp_T + tmp_Rn) * snowFraction
 
     # potential snow melt if T > 0.0 deg C
-    potMelt = Tair > 𝟘  ? potMelt : 𝟘
+    potMelt = Tair > 𝟘 ? potMelt : 𝟘
     snowMelt = min(addS(snowW, ΔsnowW), potMelt)
 
-	# divide snowmelt loss equally from all layers
+    # divide snowmelt loss equally from all layers
     ΔsnowW = add_to_each_elem(ΔsnowW, -snowMelt / length(snowW))
 
     # a Water Balance Pool variable that tracks how much water is still "available"

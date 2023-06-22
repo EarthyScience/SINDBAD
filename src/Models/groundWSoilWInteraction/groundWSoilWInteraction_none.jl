@@ -1,16 +1,15 @@
 export groundWSoilWInteraction_none
 
-struct groundWSoilWInteraction_none <: groundWSoilWInteraction
-end
+struct groundWSoilWInteraction_none <: groundWSoilWInteraction end
 
-function instantiate(o::groundWSoilWInteraction_none, forcing, land, helpers)
+function define(o::groundWSoilWInteraction_none, forcing, land, helpers)
 
-	## calculate variables
-	gwCapFlow = helpers.numbers.𝟘
+    ## calculate variables
+    gwCapFlow = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land gwCapFlow => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land gwCapFlow => land.fluxes
+    return land
 end
 
 @doc """

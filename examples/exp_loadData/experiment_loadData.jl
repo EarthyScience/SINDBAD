@@ -23,20 +23,18 @@ replace_info = Dict(
     "spinup.flags.loadSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
-    "opti.constraints.oneDataPath" => obspath
+    "opti.constraints.oneDataPath" => obspath,
 );
 
-run_output = runExperiment(experiment_json; replace_info=replace_info);
-
+run_output = runExperiment(experiment_json; replace_info = replace_info);
 
 # run with saved jld2 file
 experiment_jld2 = "exp_loadData/info.jld2"
-replace_info["outpath"]="jld2"
+replace_info["outpath"] = "jld2"
 run_output = runExperiment(experiment_jld2); #this one will only work if the replace fields are not passed because of isses with merging namedtuple and dict, and/or conversion of named tuple to dictionary
 
 # one can load info directly from file and run the experiment by skipping the get configuration by continuing with
-info=Sindbad.load("info.jld2")["info"];
+info = Sindbad.load("info.jld2")["info"];
 info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info)
-

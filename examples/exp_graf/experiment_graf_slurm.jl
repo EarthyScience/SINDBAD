@@ -3,7 +3,7 @@ using Distributed
 addprocs(SlurmManager())
 addprocs(16)
 @everywhere using Pkg
-@everywhere Pkg.activate(joinpath(@__DIR__,"../exp_distri/"))
+@everywhere Pkg.activate(joinpath(@__DIR__, "../exp_distri/"))
 
 @everywhere using Sindbad
 @everywhere using ForwardSindbad
@@ -20,9 +20,8 @@ noStackTrace()
     "modelRun.flags.calcCost" => true,
     "modelRun.mapping.yaxarray" => [],
     "modelRun.mapping.runEcosystem" => ["time", "id"],
-    "spinup.flags.doSpinup" => true
-    ); #one parameter set for whole domain
-
+    "spinup.flags.doSpinup" => true,
+); #one parameter set for whole domain
 
 @everywhere replace_info_site = Dict(
     "experiment.domain" => domain * "_site",
@@ -30,14 +29,16 @@ noStackTrace()
     "modelRun.flags.calcCost" => false,
     "modelRun.mapping.yaxarray" => ["id"],
     "modelRun.mapping.runEcosystem" => ["time"],
-    "spinup.flags.doSpinup" => true
+    "spinup.flags.doSpinup" => true,
 ); #one parameter set per each site
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
-@everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-@everywhere obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-@everywhere info, forcing = ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+@everywhere info = getExperimentInfo(experiment_json; replace_info = replace_info_spatial); # note that this will modify info
+@everywhere obs =
+    ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+@everywhere info, forcing =
+    ForwardSindbad.getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
@@ -57,7 +58,6 @@ noStackTrace()
 # forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 # output = setupOutput(info);
-
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
 

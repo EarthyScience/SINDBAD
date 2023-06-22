@@ -1,38 +1,40 @@
 export runoffSaturationExcess_Zhang2008
 
+#! format: off
 @bounds @describe @units @with_kw struct runoffSaturationExcess_Zhang2008{T1} <: runoffSaturationExcess
-	α::T1 = 0.5 | (0.01, 10.0) | "an empirical Budyko parameter" | ""
+    α::T1 = 0.5 | (0.01, 10.0) | "an empirical Budyko parameter" | ""
 end
+#! format: on
 
 function compute(o::runoffSaturationExcess_Zhang2008, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffSaturationExcess_Zhang2008 o
+    ## unpack parameters
+    @unpack_runoffSaturationExcess_Zhang2008 o
 
-	## unpack land variables
-	@unpack_land begin
-		WBP ∈ land.states
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-		PET ∈ land.PET
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
-	# a supply - demand limit concept cf Budyko
-	# calc demand limit [X0]
-	res_sat = max(sum(p_wSat) - sum(soilW + ΔsoilW), 𝟘)
-	X0 = PET + res_sat
+    ## unpack land variables
+    @unpack_land begin
+        WBP ∈ land.states
+        p_wSat ∈ land.soilWBase
+        soilW ∈ land.pools
+        PET ∈ land.PET
+        ΔsoilW ∈ land.states
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
+    # a supply - demand limit concept cf Budyko
+    # calc demand limit [X0]
+    res_sat = max(sum(p_wSat) - sum(soilW + ΔsoilW), 𝟘)
+    X0 = PET + res_sat
 
-	# set runoffSatExc
-	runoffSatExc = WBP - WBP * (𝟙 + X0 / WBP - (𝟙 + (X0 / WBP) ^ (𝟙 / α)) ^ α)
-	# adjust the remaining water
-	WBP = WBP - runoffSatExc
+    # set runoffSatExc
+    runoffSatExc = WBP - WBP * (𝟙 + X0 / WBP - (𝟙 + (X0 / WBP)^(𝟙 / α))^α)
+    # adjust the remaining water
+    WBP = WBP - runoffSatExc
 
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

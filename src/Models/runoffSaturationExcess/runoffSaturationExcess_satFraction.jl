@@ -1,26 +1,24 @@
 export runoffSaturationExcess_satFraction
 
-struct runoffSaturationExcess_satFraction <: runoffSaturationExcess
-end
+struct runoffSaturationExcess_satFraction <: runoffSaturationExcess end
 
 function compute(o::runoffSaturationExcess_satFraction, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (WBP, satFrac) ∈ land.states
+    ## unpack land variables
+    @unpack_land (WBP, satFrac) ∈ land.states
 
+    ## calculate variables
+    runoffSatExc = WBP * satFrac
 
-	## calculate variables
-	runoffSatExc = WBP * satFrac
+    # update the WBP
+    WBP = WBP - runoffSatExc
 
-	# update the WBP
-	WBP = WBP - runoffSatExc
-
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

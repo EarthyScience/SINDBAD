@@ -1,15 +1,14 @@
 export PET_forcing
 
-struct PET_forcing <: PET
-end
+struct PET_forcing <: PET end
 
 function compute(o::PET_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing PET ∈ forcing
+    ## unpack forcing
+    @unpack_forcing PET ∈ forcing
 
-	## pack land variables
-	@pack_land PET => land.PET
-	return land
+    ## pack land variables
+    @pack_land PET => land.PET
+    return land
 end
 
 @doc """
