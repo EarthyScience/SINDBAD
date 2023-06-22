@@ -1,26 +1,27 @@
 export vegFraction_scaledEVI
 
+#! format: off
 @bounds @describe @units @with_kw struct vegFraction_scaledEVI{T1} <: vegFraction
-	EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
+    EVIscale::T1 = 1.0 | (0.0, 5.0) | "scalar for EVI" | ""
 end
+#! format: on
 
 function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
-	## unpack parameters
-	@unpack_vegFraction_scaledEVI o
+    ## unpack parameters
+    @unpack_vegFraction_scaledEVI o
 
-	## unpack land variables
-	@unpack_land begin
-		EVI ∈ land.states
-		𝟙 ∈ helpers.numbers		
-	end
+    ## unpack land variables
+    @unpack_land begin
+        EVI ∈ land.states
+        𝟙 ∈ helpers.numbers
+    end
 
+    ## calculate variables
+    vegFraction = min(EVI * EVIscale, 𝟙)
 
-	## calculate variables
-	vegFraction = min(EVI * EVIscale, 𝟙)
-
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

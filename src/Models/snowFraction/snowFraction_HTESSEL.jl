@@ -1,36 +1,37 @@
 export snowFraction_HTESSEL
 
+#! format: off
 @bounds @describe @units @with_kw struct snowFraction_HTESSEL{T1} <: snowFraction
-	CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
+    CoverParam::T1 = 15.0 | (1.0, 100.0) | "Snow Cover Parameter" | "mm"
 end
+#! format: on
 
-function instantiate(o::snowFraction_HTESSEL, forcing, land, helpers)
-	snowFraction = helpers.numbers.𝟙
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+function define(o::snowFraction_HTESSEL, forcing, land, helpers)
+    snowFraction = helpers.numbers.𝟙
+    ## pack land variables
+    @pack_land snowFraction => land.states
+    return land
 end
 
 function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
-	## unpack parameters
-	@unpack_snowFraction_HTESSEL o
+    ## unpack parameters
+    @unpack_snowFraction_HTESSEL o
 
-	## unpack land variables
-	@unpack_land begin
-		snowW ∈ land.pools
+    ## unpack land variables
+    @unpack_land begin
+        snowW ∈ land.pools
         ΔsnowW ∈ land.states
-		𝟙 ∈ helpers.numbers
-	end
+        𝟙 ∈ helpers.numbers
+    end
 
-	## calculate variables
-	# suggested by Sujan [after HTESSEL GHM]
+    ## calculate variables
+    # suggested by Sujan [after HTESSEL GHM]
 
+    snowFraction = min(𝟙, sum(snowW) / CoverParam)
 
-	snowFraction = min(𝟙, sum(snowW) / CoverParam)
-
-	## pack land variables
-	@pack_land snowFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land snowFraction => land.states
+    return land
 end
 
 @doc """

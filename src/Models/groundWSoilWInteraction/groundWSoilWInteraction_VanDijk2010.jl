@@ -1,85 +1,86 @@
 export groundWSoilWInteraction_VanDijk2010
 
-
+#! format: off
 @bounds @describe @units @with_kw struct groundWSoilWInteraction_VanDijk2010{T1} <: groundWSoilWInteraction
-	max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
+    max_fraction::T1 = 0.5 | (0.001, 0.98) | "fraction of groundwater that can be lost to capillary flux" | ""
 end
+#! format: on
 
-function instantiate(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
-	## unpack land variables
-	@unpack_land begin
-		𝟘 ∈ helpers.numbers
-	end
+function define(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_land begin
+        𝟘 ∈ helpers.numbers
+    end
 
-	# calculate recharge
-	gwCapFlow = 𝟘
-	## pack land variables
-	@pack_land begin
-		gwCapFlow => land.fluxes
-	end
-	return land
+    # calculate recharge
+    gwCapFlow = 𝟘
+    ## pack land variables
+    @pack_land begin
+        gwCapFlow => land.fluxes
+    end
+    return land
 end
 
 function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
-	## unpack parameters
-	@unpack_groundWSoilWInteraction_VanDijk2010 o
+    ## unpack parameters
+    @unpack_groundWSoilWInteraction_VanDijk2010 o
 
-	## unpack land variables
-	@unpack_land begin
-		(p_kFC, p_kSat, p_wSat) ∈ land.soilWBase
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-		unsatK ∈ land.soilProperties
-		(𝟘, 𝟙) ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (p_kFC, p_kSat, p_wSat) ∈ land.soilWBase
+        (groundW, soilW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+        unsatK ∈ land.soilProperties
+        (𝟘, 𝟙) ∈ helpers.numbers
+    end
 
-	# calculate recharge
-	# degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
-	dosSoilend = max((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟙)
-	k_sat = p_kSat[end]; # assume GW is saturated
-	k_fc = p_kFC[end]; # assume GW is saturated
-	k_unsat = unsatK(land, helpers, length(land.pools.soilW))
+    # calculate recharge
+    # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
+    dosSoilend = max((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟙)
+    k_sat = p_kSat[end] # assume GW is saturated
+    k_fc = p_kFC[end] # assume GW is saturated
+    k_unsat = unsatK(land, helpers, length(land.pools.soilW))
 
-	# get the capillary flux
-	c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-	gwCapFlow = max(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)), soilW[end] + ΔsoilW[end]), 𝟘)
+    # get the capillary flux
+    c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
+    gwCapFlow = max(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)),
+            soilW[end] + ΔsoilW[end]), 𝟘)
 
-	# adjust the delta storages
-	n_groundW = 𝟙 * length(groundW)
-	ΔgroundW = add_to_each_elem(ΔgroundW, -gwCapFlow / n_groundW)
-	@add_to_elem gwCapFlow => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    # adjust the delta storages
+    n_groundW = 𝟙 * length(groundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, -gwCapFlow / n_groundW)
+    @add_to_elem gwCapFlow => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
-	## pack land variables
-	@pack_land begin
-		gwCapFlow => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        gwCapFlow => land.fluxes
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 function update(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        (soilW, groundW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
+    ## update storage pools
+    soilW[end] = soilW[end] + ΔsoilW[end]
+    groundW .= groundW .+ ΔgroundW
 
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset ΔsoilW[end] and ΔgroundW to zero
+    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (groundW, soilW) => land.pools
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 @doc """

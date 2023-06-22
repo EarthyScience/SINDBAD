@@ -1,8 +1,10 @@
 export snowMelt_Tair
 
+#! format: off
 @bounds @describe @units @with_kw struct snowMelt_Tair{T1} <: snowMelt
-	rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
+    rate::T1 = 1.0 | (0.1, 10.0) | "snow melt rate" | "mm/°C"
 end
+#! format: on
 
 function compute(o::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
@@ -14,7 +16,7 @@ function compute(o::snowMelt_Tair, forcing, land, helpers)
         (WBP, snowFraction) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-		𝟘 ∈ helpers.numbers
+        𝟘 ∈ helpers.numbers
     end
     # effect of temperature on snow melt = snowMeltRate * Tair
     pRate = (rate * helpers.dates.nStepsDay)
@@ -23,7 +25,7 @@ function compute(o::snowMelt_Tair, forcing, land, helpers)
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
     snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
 
-	# divide snowmelt loss equally from all layers
+    # divide snowmelt loss equally from all layers
     ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)
 
     # a Water Balance Pool variable that tracks how much water is still "available"

@@ -1,30 +1,32 @@
 export interception_vegFraction
 
+#! format: off
 @bounds @describe @units @with_kw struct interception_vegFraction{T1} <: interception
-	pInt::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
+    pInt::T1 = 1.0 | (0.01, 5.0) | "maximum interception storage" | "mm"
 end
+#! format: on
 
 function compute(o::interception_vegFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_interception_vegFraction o
+    ## unpack parameters
+    @unpack_interception_vegFraction o
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, vegFraction) ∈ land.states
-		rain ∈ land.rainSnow
-	end
-	# calculate interception loss
-	intCap = pInt * vegFraction
-	interception = min(intCap, rain)
-	# update the available water
-	WBP = WBP - interception
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, vegFraction) ∈ land.states
+        rain ∈ land.rainSnow
+    end
+    # calculate interception loss
+    intCap = pInt * vegFraction
+    interception = min(intCap, rain)
+    # update the available water
+    WBP = WBP - interception
 
-	## pack land variables
-	@pack_land begin
-		interception => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        interception => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

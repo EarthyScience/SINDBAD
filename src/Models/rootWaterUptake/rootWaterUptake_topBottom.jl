@@ -1,9 +1,8 @@
 export rootWaterUptake_topBottom
 
-struct rootWaterUptake_topBottom <: rootWaterUptake
-end
+struct rootWaterUptake_topBottom <: rootWaterUptake end
 
-function instantiate(o::rootWaterUptake_topBottom, forcing, land, helpers)
+function define(o::rootWaterUptake_topBottom, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -32,7 +31,7 @@ function compute(o::rootWaterUptake_topBottom, forcing, land, helpers)
     wRootUptake .= 𝟘
     # get the transpiration
     toUptake = transpiration
-    for sl in eachindex(land.pools.soilW)
+    for sl ∈ eachindex(land.pools.soilW)
         wRootUptake[sl] = min(toUptake, PAW[sl])
         toUptake = toUptake - wRootUptake[sl]
         ΔsoilW[sl] = ΔsoilW[sl] - wRootUptake[sl]

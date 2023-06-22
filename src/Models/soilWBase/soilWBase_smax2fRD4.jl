@@ -1,15 +1,17 @@
 export soilWBase_smax2fRD4
 
-@bounds @describe @units @with_kw struct soilWBase_smax2fRD4{T1, T2, T3, T4, T5, T6} <: soilWBase
-	smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
-	scaleFan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-	scaleYang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
-	scaleWang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction"
-	scaleTian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction"
-	smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
+#! format: off
+@bounds @describe @units @with_kw struct soilWBase_smax2fRD4{T1,T2,T3,T4,T5,T6} <: soilWBase
+    smax1::T1 = 1.0 | (0.001, 1.0) | "maximum soil water holding capacity of 1st soil layer, as % of defined soil depth" | ""
+    scaleFan::T2 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
+    scaleYang::T3 = 0.05 | (0.0, 5.0) | "scaling for rooting depth data to obtain smax2" | "fraction"
+    scaleWang::T4 = 0.05 | (0.0, 5.0) | "scaling for root zone storage capacity data to obtain smax2" | "fraction"
+    scaleTian::T5 = 0.05 | (0.0, 5.0) | "scaling for plant avaiable water capacity data to obtain smax2" | "fraction"
+    smaxTian::T6 = 50.0 | (0.0, 1000.0) | "value for plant avaiable water capacity data where this is NaN" | "mm"
 end
+#! format: on
 
-function instantiate(o::soilWBase_smax2fRD4, forcing, land, helpers)
+function define(o::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 o
 
     @unpack_land begin
@@ -37,37 +39,36 @@ function instantiate(o::soilWBase_smax2fRD4, forcing, land, helpers)
 end
 
 function compute(o::soilWBase_smax2fRD4, forcing, land, helpers)
-	## unpack parameters and forcing
-	@unpack_soilWBase_smax2fRD4 o
+    ## unpack parameters and forcing
+    @unpack_soilWBase_smax2fRD4 o
 
-	## unpack land variables
-	@unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
-	@unpack_forcing (AWC, RDeff, RDmax, SWCmax) ∈ forcing
+    ## unpack land variables
+    @unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+    @unpack_forcing (AWC, RDeff, RDmax, SWCmax) ∈ forcing
 
+    ## calculate variables
+    # get the rooting depth data & scale them
+    p_RD[1] = RDmax[1] * scaleFan
+    p_RD[2] = RDeff[1] * scaleYang
+    p_RD[3] = SWCmax[1] * scaleWang
+    # for the Tian data; fill the NaN gaps with smaxTian
+    AWC[isnan(AWC)] = smaxTian
+    p_RD[4] = AWC[1] * scaleTian
 
-	## calculate variables
-	# get the rooting depth data & scale them
-	p_RD[1] = RDmax[1] * scaleFan
-	p_RD[2] = RDeff[1] * scaleYang
-	p_RD[3] = SWCmax[1] * scaleWang
-	# for the Tian data; fill the NaN gaps with smaxTian
-	AWC[isnan(AWC)] = smaxTian
-	p_RD[4] = AWC[1] * scaleTian
-	
-	# set the properties for each soil layer
-	# 1st layer
-	p_wSat[1] = smax1 * soilLayerThickness[1]
-	p_wFC[1] = smax1 * soilLayerThickness[1]
-	# 2nd layer - fill in by linaer combination of the RD data
-	p_wSat[2] = sum(p_RD)
-	p_wFC[2] = sum(p_RD)
+    # set the properties for each soil layer
+    # 1st layer
+    p_wSat[1] = smax1 * soilLayerThickness[1]
+    p_wFC[1] = smax1 * soilLayerThickness[1]
+    # 2nd layer - fill in by linaer combination of the RD data
+    p_wSat[2] = sum(p_RD)
+    p_wFC[2] = sum(p_RD)
 
-	# get the plant available water available (all the water is plant available)
-	p_wAWC = p_wSat
+    # get the plant available water available (all the water is plant available)
+    p_wAWC = p_wSat
 
-	## pack land variables
-	@pack_land (AWC, p_RD, p_wAWC, p_wFC, p_wSat, p_wWP) => land.soilWBase
-	return land
+    ## pack land variables
+    @pack_land (AWC, p_RD, p_wAWC, p_wFC, p_wSat, p_wWP) => land.soilWBase
+    return land
 end
 
 @doc """

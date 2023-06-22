@@ -1,20 +1,18 @@
 export runoffOverland_InfIntSat
 
-struct runoffOverland_InfIntSat <: runoffOverland
-end
+struct runoffOverland_InfIntSat <: runoffOverland end
 
 function compute(o::runoffOverland_InfIntSat, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (runoffInfExc, runoffInterflow, runoffSatExc) ∈ land.fluxes
+    ## unpack land variables
+    @unpack_land (runoffInfExc, runoffInterflow, runoffSatExc) ∈ land.fluxes
 
+    ## calculate variables
+    runoffOverland = runoffInfExc + runoffInterflow + runoffSatExc
 
-	## calculate variables
-	runoffOverland = runoffInfExc + runoffInterflow + runoffSatExc
-
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffOverland => land.fluxes
+    return land
 end
 
 @doc """

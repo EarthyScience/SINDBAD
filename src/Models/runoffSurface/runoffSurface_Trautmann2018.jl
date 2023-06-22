@@ -1,80 +1,82 @@
 export runoffSurface_Trautmann2018
 
+#! format: off
 @bounds @describe @units @with_kw struct runoffSurface_Trautmann2018{T1} <: runoffSurface
-	qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
+    qt::T1 = 2.0 | (0.5, 100.0) | "delay parameter for land runoff" | "time"
 end
+#! format: on
 
-function instantiate(o::runoffSurface_Trautmann2018, forcing, land, helpers)
-	@unpack_runoffSurface_Trautmann2018 o
+function define(o::runoffSurface_Trautmann2018, forcing, land, helpers)
+    @unpack_runoffSurface_Trautmann2018 o
 
-	## instantiate variables
-	z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60)+1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
-	Rdelay = z / (sum(z) * ones(1, 61))
+    ## instantiate variables
+    z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
+    Rdelay = z / (sum(z) * ones(1, 61))
 
-	## pack land variables
-	@pack_land (z, Rdelay) => land.runoffSurface
-	return land
+    ## pack land variables
+    @pack_land (z, Rdelay) => land.runoffSurface
+    return land
 end
 
 function compute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
-	#@needscheck and redo
-	## unpack parameters
-	@unpack_runoffSurface_Trautmann2018 o
+    #@needscheck and redo
+    ## unpack parameters
+    @unpack_runoffSurface_Trautmann2018 o
 
-	## unpack land variables
-	@unpack_land (z, Rdelay) ∈ land.runoffSurface
+    ## unpack land variables
+    @unpack_land (z, Rdelay) ∈ land.runoffSurface
 
-	## unpack land variables
-	@unpack_land begin
-		(rain, snow) ∈ land.rainSnow
-		(snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
-		(evaporation, runoffOverland, sublimation) ∈ land.fluxes
-	end
-	# calculate delay function of previous days
-	# calculate Q from delay of previous days
-	if tix > 60
-		tmin = maximum(tix-60, 1)
-		runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
-		# calculate surfaceW[1] by water balance
-		delSnow = sum(snowW) - sum(snowW_prev)
-		input = rain+snow
-		loss = evaporation + sublimation + runoffSurface
-		delSoil = sum(soilW) - sum(soilW_prev)
-		dSurf = input- loss - delSnow - delSoil
-	else
-		runoffSurface = 0.0
-		dSurf = runoffOverland
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (rain, snow) ∈ land.rainSnow
+        (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
+        (evaporation, runoffOverland, sublimation) ∈ land.fluxes
+    end
+    # calculate delay function of previous days
+    # calculate Q from delay of previous days
+    if tix > 60
+        tmin = maximum(tix - 60, 1)
+        runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
+        # calculate surfaceW[1] by water balance
+        delSnow = sum(snowW) - sum(snowW_prev)
+        input = rain + snow
+        loss = evaporation + sublimation + runoffSurface
+        delSoil = sum(soilW) - sum(soilW_prev)
+        dSurf = input - loss - delSnow - delSoil
+    else
+        runoffSurface = 0.0
+        dSurf = runoffOverland
+    end
 
-	## pack land variables
-	@pack_land begin
-		runoffSurface => land.fluxes
-		(Rdelay, dSurf) => land.runoffSurface
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSurface => land.fluxes
+        (Rdelay, dSurf) => land.runoffSurface
+    end
+    return land
 end
 
 function update(o::runoffSurface_Trautmann2018, forcing, land, helpers)
-	@unpack_runoffSurface_Trautmann2018 o
+    @unpack_runoffSurface_Trautmann2018 o
 
-	## unpack variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        surfaceW ∈ land.pools
+        ΔsurfaceW ∈ land.states
+    end
 
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
+    ## update storage pools
+    surfaceW .= surfaceW .+ ΔsurfaceW
 
-	# reset ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
+    # reset ΔsurfaceW to zero
+    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
-	## pack land variables
-	@pack_land begin
-		surfaceW => land.pools
-		ΔsurfaceW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        surfaceW => land.pools
+        ΔsurfaceW => land.states
+    end
+    return land
 end
 
 @doc """

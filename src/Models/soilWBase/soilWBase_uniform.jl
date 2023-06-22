@@ -1,14 +1,13 @@
 export soilWBase_uniform
 
-struct soilWBase_uniform <: soilWBase
-end
+struct soilWBase_uniform <: soilWBase end
 
-
-function instantiate(o::soilWBase_uniform, forcing, land, helpers)
+function define(o::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
-        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈
+        land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
         numType ∈ helpers.numbers
@@ -23,8 +22,6 @@ function instantiate(o::soilWBase_uniform, forcing, land, helpers)
 
     soilDepths = helpers.numbers.sNT.(helpers.pools.layerThickness.soilW)
     # soilDepths = helpers.pools.layerThickness.soilW
-
-
 
     p_CLAY = st_CLAY
     p_SAND = st_SAND
@@ -42,10 +39,8 @@ function instantiate(o::soilWBase_uniform, forcing, land, helpers)
     p_α = sp_α
     p_β = sp_β
 
-
-
     soilW = soilW .* helpers.numbers.𝟘 + min.(soilW, p_wSat)
-    for sl in eachindex(soilW)
+    for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
         @rep_elem sd_sl => (soilLayerThickness, sl, :soilW)
         p_wFC_sl = p_θFC[sl] * sd_sl
@@ -68,7 +63,31 @@ function instantiate(o::soilWBase_uniform, forcing, land, helpers)
     s_wAWC = sum(p_wAWC)
 
     @pack_land begin
-        (p_CLAY, p_ORGM, p_SAND, p_SILT, p_kFC, p_kSat, p_kWP, soilLayerThickness, p_wAWC, p_wFC, p_wSat, p_wWP, s_wAWC, s_wFC, s_wSat, s_wWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, n_soilW) => land.soilWBase
+        (p_CLAY,
+            p_ORGM,
+            p_SAND,
+            p_SILT,
+            p_kFC,
+            p_kSat,
+            p_kWP,
+            soilLayerThickness,
+            p_wAWC,
+            p_wFC,
+            p_wSat,
+            p_wWP,
+            s_wAWC,
+            s_wFC,
+            s_wSat,
+            s_wWP,
+            p_α,
+            p_β,
+            p_θFC,
+            p_θSat,
+            p_θWP,
+            p_ψFC,
+            p_ψSat,
+            p_ψWP,
+            n_soilW) => land.soilWBase
         soilW => land.pools
     end
     return land

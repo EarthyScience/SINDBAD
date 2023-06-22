@@ -1,16 +1,15 @@
 export transpiration_none
 
-struct transpiration_none <: transpiration
-end
+struct transpiration_none <: transpiration end
 
-function instantiate(o::transpiration_none, forcing, land, helpers)
+function define(o::transpiration_none, forcing, land, helpers)
 
-	## calculate variables
-	transpiration = helpers.numbers.𝟘
+    ## calculate variables
+    transpiration = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land transpiration => land.fluxes
+    return land
 end
 
 @doc """

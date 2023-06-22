@@ -1,10 +1,11 @@
 export cAllocationNutrients_Friedlingstein1999
 
+#! format: off
 @bounds @describe @units @with_kw struct cAllocationNutrients_Friedlingstein1999{T1,T2} <: cAllocationNutrients
     minL::T1 = 0.1 | (0.0, 1.0) | "" | ""
     maxL::T2 = 1.0 | (0.0, 1.0) | "" | ""
 end
-
+#! format: on
 
 function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
@@ -22,7 +23,7 @@ function compute(o::cAllocationNutrients_Friedlingstein1999, forcing, land, help
 
     # estimate NL
     nl = clamp(fT * fW, minL, maxL)
-    NL = PET > 𝟘  ? nl : 𝟙 #@needscheck is the else value one or zero? In matlab version was set to ones.
+    NL = PET > 𝟘 ? nl : 𝟙 #@needscheck is the else value one or zero? In matlab version was set to ones.
 
     # water limitation calculation
     WL = clamp(sum(PAW) / s_wAWC, minL, maxL)

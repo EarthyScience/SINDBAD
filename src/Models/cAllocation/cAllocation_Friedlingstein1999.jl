@@ -1,20 +1,22 @@
 export cAllocation_Friedlingstein1999
 
-@bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1, T2, T3} <: cAllocation
-	so::T1 = 0.3 | (0.0, 1.0) | "" | ""
-	ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
-	RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
+#! format: off
+@bounds @describe @units @with_kw struct cAllocation_Friedlingstein1999{T1,T2,T3} <: cAllocation
+    so::T1 = 0.3 | (0.0, 1.0) | "" | ""
+    ro::T2 = 0.3 | (0.0, 1.0) | "" | ""
+    RelY::T3 = 2.0 | (1.0, Inf) | "" | ""
 end
+#! format: on
 
-function instantiate(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
-	@unpack_cAllocation_Friedlingstein1999 o
+function define(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
+    @unpack_cAllocation_Friedlingstein1999 o
 
-	## instantiate variables
-	cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco)); #sujan
+    ## instantiate variables
+    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco)) #sujan
 
-	## pack land variables
-	@pack_land cAlloc => land.states
-	return land
+    ## pack land variables
+    @pack_land cAlloc => land.states
+    return land
 end
 
 function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
@@ -39,7 +41,7 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
 
     # distribute the allocation according to pools
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
-    for cpName in cpNames
+    for cpName ∈ cpNames
         zix = getzix(getfield(pools.carbon, cpName), helpers.pools.zix, cpName)
         nZix = length(zix) * 𝟙
         cAlloc[zix] .= getfield(cf2, cpName) / nZix

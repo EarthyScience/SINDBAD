@@ -1,43 +1,45 @@
 export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992MixedVegFraction{T1, T2, T3} <: runoffSaturationExcess
-	βV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
-	βS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
-	β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+#! format: off
+@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992MixedVegFraction{T1,T2,T3} <: runoffSaturationExcess
+    βV::T1 = 5.0 | (0.1, 20.0) | "linear scaling parameter for berg for vegetated fraction" | ""
+    βS::T2 = 2.0 | (0.1, 20.0) | "linear scaling parameter for berg for non vegetated fraction" | ""
+    β_min::T3 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
 end
+#! format: on
 
 function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
+    ## unpack parameters
+    @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, vegFraction) ∈ land.states
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙, sNT) ∈ helpers.numbers
-	end
-	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW + ΔsoilW)
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, vegFraction) ∈ land.states
+        p_wSat ∈ land.soilWBase
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        (𝟘, 𝟙, sNT) ∈ helpers.numbers
+    end
+    tmp_smaxVeg = sum(p_wSat)
+    tmp_SoilTotal = sum(soilW + ΔsoilW)
 
-	# get the berg parameters according the vegetation fraction
-	β_veg = βV * vegFraction + βS * (𝟙 - vegFraction)
-	β_veg = max(β_min, berg); # do this?
+    # get the berg parameters according the vegetation fraction
+    β_veg = βV * vegFraction + βS * (𝟙 - vegFraction)
+    β_veg = max(β_min, berg) # do this?
 
-	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg) ^ β_veg, 𝟘, 𝟙)
-	runoffSatExc = WBP * tmp_SatExFrac
+    # calculate land runoff from incoming water & current soil moisture
+    tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg)^β_veg, 𝟘, 𝟙)
+    runoffSatExc = WBP * tmp_SatExFrac
 
-	# update water balance
-	WBP = WBP - runoffSatExc
+    # update water balance
+    WBP = WBP - runoffSatExc
 
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

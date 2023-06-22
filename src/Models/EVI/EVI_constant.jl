@@ -1,19 +1,21 @@
 export EVI_constant
 
+#! format: off
 @bounds @describe @units @with_kw struct EVI_constant{T1} <: EVI
-	constantEVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
+    constantEVI::T1 = 1.0 | (0.0, 1.0) | "EVI" | ""
 end
+#! format: on
 
 function compute(o::EVI_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_EVI_constant o
+    ## unpack parameters
+    @unpack_EVI_constant o
 
-	## calculate variables
-	EVI = constantEVI
+    ## calculate variables
+    EVI = constantEVI
 
-	## pack land variables
-	@pack_land EVI => land.states
-	return land
+    ## pack land variables
+    @pack_land EVI => land.states
+    return land
 end
 
 @doc """

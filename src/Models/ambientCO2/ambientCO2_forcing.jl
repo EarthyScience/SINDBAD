@@ -1,23 +1,22 @@
 export ambientCO2_forcing
 
-struct ambientCO2_forcing <: ambientCO2
-end
+struct ambientCO2_forcing <: ambientCO2 end
 
-function instantiate(o::ambientCO2_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing ambCO2 ∈ forcing
-	## pack land variables
-	@pack_land ambCO2 => land.states
-	return land
+function define(o::ambientCO2_forcing, forcing, land, helpers)
+    ## unpack forcing
+    @unpack_forcing ambCO2 ∈ forcing
+    ## pack land variables
+    @pack_land ambCO2 => land.states
+    return land
 end
 
 function compute(o::ambientCO2_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing ambCO2 ∈ forcing
+    ## unpack forcing
+    @unpack_forcing ambCO2 ∈ forcing
 
-	## pack land variables
-	@pack_land ambCO2 => land.states
-	return land
+    ## pack land variables
+    @pack_land ambCO2 => land.states
+    return land
 end
 
 @doc """

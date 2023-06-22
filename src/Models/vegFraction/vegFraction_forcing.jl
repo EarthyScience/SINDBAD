@@ -1,14 +1,13 @@
 export vegFraction_forcing
 
-struct vegFraction_forcing <: vegFraction
-end
+struct vegFraction_forcing <: vegFraction end
 
 function compute(o::vegFraction_forcing, forcing, land, helpers)
-	@unpack_forcing vegFraction ∈ forcing
+    @unpack_forcing vegFraction ∈ forcing
 
-	## pack land variables
-	@pack_land vegFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land vegFraction => land.states
+    return land
 end
 
 @doc """

@@ -12,19 +12,17 @@ using OptimizeSindbad
 noStackTrace()
 #Random.seed!(7)
 
-
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
-
     loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
+        return getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -41,26 +39,109 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+@time loc_space_maps,
+loc_space_names,
+loc_space_inds,
+loc_forcings,
+loc_outputs,
+land_init_space,
+f_one = prepRunEcosystem(output.data,
+    output.land_init,
+    info.tem.models.forward,
+    forc,
+    forcing.sizes,
+    info.tem);
 
-@time runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+@time runEcosystem!(output.data,
+    info.tem.models.forward,
+    forc,
+    info.tem,
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = getParameters(info.tem.models.forward, info.optim.default_parameter, info.optim.optimized_parameters);
+tblParams = getParameters(info.tem.models.forward,
+    info.optim.default_parameter,
+    info.optim.optimized_parameters);
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-function og_loss(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    l = getLossGradient(x, mods, forc, op, op_vars, obs, tblParams, info_tem, info_optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-    l
+function og_loss(x,
+    mods,
+    forc,
+    op,
+    op_vars,
+    obs,
+    tblParams,
+    info_tem,
+    info_optim,
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
+    l = getLossGradient(x,
+        mods,
+        forc,
+        op,
+        op_vars,
+        obs,
+        tblParams,
+        info_tem,
+        info_optim,
+        loc_space_names,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+    return l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-og_loss(tblParams.defaults, mods, forc, op, op.variables, obs, tblParams, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,land_init_space, f_one)
+og_loss(tblParams.defaults,
+    mods,
+    forc,
+    op,
+    op.variables,
+    obs,
+    tblParams,
+    info.tem,
+    info.optim,
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
 
-function get_loc_loss(loc_obs, loc_output, newApproaches, loc_forcing, tem_helpers, tem_spinup, tem_models, tem_variables, tem_optim, out_variables, loc_land_init, f_one)
-    coreEcosystem!(loc_output, newApproaches, loc_forcing, tem_helpers, tem_spinup, tem_models, Val(tem_variables), loc_land_init, f_one)
+function get_loc_loss(loc_obs,
+    loc_output,
+    newApproaches,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    tem_variables,
+    tem_optim,
+    out_variables,
+    loc_land_init,
+    f_one)
+    coreEcosystem!(loc_output,
+        newApproaches,
+        loc_forcing,
+        tem_helpers,
+        tem_spinup,
+        tem_models,
+        Val(tem_variables),
+        loc_land_init,
+        f_one)
     @show out_variables
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
@@ -70,13 +151,35 @@ function get_loc_loss(loc_obs, loc_output, newApproaches, loc_forcing, tem_helpe
 end
 # loc_space_maps = Pair.([(loc_space_names, loc_space_inds)...])
 site_location = loc_space_maps[1];
-    land_init_site = land_init_space[1];
-    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location);
-    get_loc_loss(loc_obs, loc_output, mods, loc_forcing, info.tem.helpers, info.tem.spinup, info.tem.models, info.tem.variables, info.optim, output.variables, land_init_site, f_one)
+land_init_site = land_init_space[1];
+loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location);
+get_loc_loss(loc_obs,
+    loc_output,
+    mods,
+    loc_forcing,
+    info.tem.helpers,
+    info.tem.spinup,
+    info.tem.models,
+    info.tem.variables,
+    info.optim,
+    output.variables,
+    land_init_site,
+    f_one)
 
-for site in 1:info.tem.forcing.sizes.site
-    site_location = loc_space_maps[site];
-    land_init_site = land_init_space[site];
-    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location);
-    get_loc_loss(loc_obs, loc_output, mods, loc_forcing, info.tem.helpers, info.tem.spinup, info.tem.models, info.tem.variables, info.optim, output.variables, land_init_site, f_one)
+for site ∈ 1:(info.tem.forcing.sizes.site)
+    site_location = loc_space_maps[site]
+    land_init_site = land_init_space[site]
+    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location)
+    get_loc_loss(loc_obs,
+        loc_output,
+        mods,
+        loc_forcing,
+        info.tem.helpers,
+        info.tem.spinup,
+        info.tem.models,
+        info.tem.variables,
+        info.optim,
+        output.variables,
+        land_init_site,
+        f_one)
 end

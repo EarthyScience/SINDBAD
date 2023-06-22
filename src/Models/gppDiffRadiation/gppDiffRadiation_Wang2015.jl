@@ -1,10 +1,12 @@
 export gppDiffRadiation_Wang2015
 
+#! format: off
 @bounds @describe @units @with_kw struct gppDiffRadiation_Wang2015{T1} <: gppDiffRadiation
-	μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
+    μ::T1 = 0.46 | (0.0001, 1.0) | "" | ""
 end
+#! format: on
 
-function instantiate(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function define(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_Wang2015 o
     @unpack_forcing (Rg, RgPot) ∈ forcing
@@ -29,8 +31,6 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
-
-
     ## calculate variables
     ## FROM SHANNING
 
@@ -51,9 +51,8 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     #     CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
     # end
 
-
     cScGPP = 𝟙 - μ * (𝟙 - CI_nor)
-    CloudScGPP = RgPot > 𝟘  ? cScGPP : 𝟘
+    CloudScGPP = RgPot > 𝟘 ? cScGPP : 𝟘
 
     ## pack land variables
     @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
