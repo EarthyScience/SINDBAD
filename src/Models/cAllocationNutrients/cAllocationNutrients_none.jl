@@ -2,7 +2,7 @@ export cAllocationNutrients_none
 
 struct cAllocationNutrients_none <: cAllocationNutrients end
 
-function instantiate(o::cAllocationNutrients_none, forcing, land, helpers)
+function define(o::cAllocationNutrients_none, forcing, land, helpers)
 
     ## calculate variables
     minWLNL = helpers.numbers.𝟙

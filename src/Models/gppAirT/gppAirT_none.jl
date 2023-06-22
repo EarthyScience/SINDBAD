@@ -1,17 +1,16 @@
 export gppAirT_none
 
-struct gppAirT_none <: gppAirT
-end
+struct gppAirT_none <: gppAirT end
 
-function instantiate(o::gppAirT_none, forcing, land, helpers)
+function define(o::gppAirT_none, forcing, land, helpers)
 
-	## calculate variables
-	# set scalar to a constant 𝟙 [no effect on potential GPP]
-	TempScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    # set scalar to a constant 𝟙 [no effect on potential GPP]
+    TempScGPP = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land TempScGPP => land.gppAirT
-	return land
+    ## pack land variables
+    @pack_land TempScGPP => land.gppAirT
+    return land
 end
 
 @doc """

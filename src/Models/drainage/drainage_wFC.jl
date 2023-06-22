@@ -1,68 +1,64 @@
 export drainage_wFC
 
-struct drainage_wFC <: drainage
-end
+struct drainage_wFC <: drainage end
 
-
-function instantiate(o::drainage_wFC, forcing, land, helpers)
-	## instantiate drainage
-	drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
-	## pack land variables
-	@pack_land drainage => land.drainage
-	return land
+function define(o::drainage_wFC, forcing, land, helpers)
+    ## instantiate drainage
+    drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
+    ## pack land variables
+    @pack_land drainage => land.drainage
+    return land
 end
 
 function compute(o::drainage_wFC, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		drainage ∈ land.drainage
-		(p_nsoilLayers, p_wFC) ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		𝟘 ∈ helpers.numbers
-	end
+    ## unpack land variables
+    @unpack_land begin
+        drainage ∈ land.drainage
+        (p_nsoilLayers, p_wFC) ∈ land.soilWBase
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        𝟘 ∈ helpers.numbers
+    end
 
-	## calculate drainage
-	for sl in 1:length(land.pools.soilW)-1
-		holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-		lossCap = soilW[sl] + ΔsoilW[sl]
-		drainage[sl] = max(soilW[sl] + ΔsoilW[sl] - p_wFC[sl], 𝟘)
-		drainage[sl] = min(drainage[sl], holdCap, lossCap)
-		ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
-		ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
-	end
+    ## calculate drainage
+    for sl ∈ 1:(length(land.pools.soilW)-1)
+        holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        lossCap = soilW[sl] + ΔsoilW[sl]
+        drainage[sl] = max(soilW[sl] + ΔsoilW[sl] - p_wFC[sl], 𝟘)
+        drainage[sl] = min(drainage[sl], holdCap, lossCap)
+        ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
+        ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
+    end
 
-
-	## pack land variables
-	# @pack_land begin
-	# 	drainage => land.drainage
-	# 	# ΔsoilW => land.states
-	# end
-	return land
+    ## pack land variables
+    # @pack_land begin
+    # 	drainage => land.drainage
+    # 	# ΔsoilW => land.states
+    # end
+    return land
 end
 
 function update(o::drainage_wFC, forcing, land, helpers)
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture
-	soilW .= soilW .+ ΔsoilW
+    ## update variables
+    # update soil moisture
+    soilW .= soilW .+ ΔsoilW
 
-	# reset soil moisture changes to zero
-	ΔsoilW .= ΔsoilW .- ΔsoilW
+    # reset soil moisture changes to zero
+    ΔsoilW .= ΔsoilW .- ΔsoilW
 
-
-	## pack land variables
-	@pack_land begin
-		# soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        # soilW => land.pools
+        # ΔsoilW => land.states
+    end
+    return land
 end
 
 @doc """

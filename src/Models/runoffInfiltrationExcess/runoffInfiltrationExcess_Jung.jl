@@ -1,32 +1,33 @@
 export runoffInfiltrationExcess_Jung
 
-struct runoffInfiltrationExcess_Jung <: runoffInfiltrationExcess
-end
+struct runoffInfiltrationExcess_Jung <: runoffInfiltrationExcess end
 
 function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, fAPAR) ∈ land.states
-		p_kSat ∈ land.soilWBase
-		rain ∈ land.rainSnow
-		rainInt ∈ land.rainIntensity
-		(𝟘, 𝟙, sNT) ∈ helpers.numbers
-	end
-	# assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, fAPAR) ∈ land.states
+        p_kSat ∈ land.soilWBase
+        rain ∈ land.rainSnow
+        rainInt ∈ land.rainIntensity
+        (𝟘, 𝟙, sNT) ∈ helpers.numbers
+    end
+    # assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
 
-	# get infiltration capacity of the first layer
-	pInfCapacity = p_kSat[1] / sNT(24); # in mm/hr
-	InfExcess = rain - (rain * fAPAR + (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
-	runoffInfExc = rain > 𝟘  ? InfExcess : 𝟘
-	WBP = WBP - runoffInfExc
+    # get infiltration capacity of the first layer
+    pInfCapacity = p_kSat[1] / sNT(24) # in mm/hr
+    InfExcess =
+        rain - (rain * fAPAR +
+                (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
+    runoffInfExc = rain > 𝟘 ? InfExcess : 𝟘
+    WBP = WBP - runoffInfExc
 
-	## pack land variables
-	@pack_land begin
-		runoffInfExc => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffInfExc => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

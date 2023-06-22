@@ -5,7 +5,7 @@ using Sindbad.Models: rainSnow_Tair
 
 rainSnow_Tair()
 
-m1 =  rainSnow()
+m1 = rainSnow()
 m2 = snowMelt()
 m3 = evaporation()
 m4 = transpiration()

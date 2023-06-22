@@ -1,30 +1,32 @@
 export interception_fAPAR
 
+#! format: off
 @bounds @describe @units @with_kw struct interception_fAPAR{T1} <: interception
-	isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
+    isp::T1 = 1.0 | (0.1, 5.0) | "fapar dependent storage" | ""
 end
+#! format: on
 
 function compute(o::interception_fAPAR, forcing, land, helpers)
-	## unpack parameters
-	@unpack_interception_fAPAR o
+    ## unpack parameters
+    @unpack_interception_fAPAR o
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, fAPAR) ∈ land.states
-		rain ∈ land.rainSnow
-	end
-	# calculate interception loss
-	intCap = isp * fAPAR
-	interception = min(intCap, rain)
-	# update the available water
-	WBP = WBP - interception
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, fAPAR) ∈ land.states
+        rain ∈ land.rainSnow
+    end
+    # calculate interception loss
+    intCap = isp * fAPAR
+    interception = min(intCap, rain)
+    # update the available water
+    WBP = WBP - interception
 
-	## pack land variables
-	@pack_land begin
-		interception => land.fluxes
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        interception => land.fluxes
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

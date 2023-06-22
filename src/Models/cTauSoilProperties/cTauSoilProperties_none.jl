@@ -1,16 +1,15 @@
 export cTauSoilProperties_none
 
-struct cTauSoilProperties_none <: cTauSoilProperties
-end
+struct cTauSoilProperties_none <: cTauSoilProperties end
 
-function instantiate(o::cTauSoilProperties_none, forcing, land, helpers)
+function define(o::cTauSoilProperties_none, forcing, land, helpers)
 
-	## calculate variables
-	p_kfSoil = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    ## calculate variables
+    p_kfSoil = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land p_kfSoil => land.cTauSoilProperties
-	return land
+    ## pack land variables
+    @pack_land p_kfSoil => land.cTauSoilProperties
+    return land
 end
 
 @doc """

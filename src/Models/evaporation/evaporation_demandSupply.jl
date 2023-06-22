@@ -1,61 +1,63 @@
 export evaporation_demandSupply
 
-@bounds @describe @units @with_kw struct evaporation_demandSupply{T1, T2} <: evaporation
-	α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-	supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+#! format: off
+@bounds @describe @units @with_kw struct evaporation_demandSupply{T1,T2} <: evaporation
+    α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
+    supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
+#! format: on
 
 function compute(o::evaporation_demandSupply, forcing, land, helpers)
-	## unpack parameters
-	@unpack_evaporation_demandSupply o
+    ## unpack parameters
+    @unpack_evaporation_demandSupply o
 
-	## unpack land variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		PET ∈ land.PET
-		𝟘 ∈ helpers.numbers
-	end
-	# calculate potential soil evaporation
-	PETsoil = max(𝟘, PET * α)
-	evaporationSupply = max(𝟘, supLim * (soilW[1] + ΔsoilW[1]))
+    ## unpack land variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        PET ∈ land.PET
+        𝟘 ∈ helpers.numbers
+    end
+    # calculate potential soil evaporation
+    PETsoil = max(𝟘, PET * α)
+    evaporationSupply = max(𝟘, supLim * (soilW[1] + ΔsoilW[1]))
 
-	# calculate the soil evaporation as a fraction of scaling parameter & PET
-	evaporation = min(PETsoil, evaporationSupply)
+    # calculate the soil evaporation as a fraction of scaling parameter & PET
+    evaporation = min(PETsoil, evaporationSupply)
 
-	# update soil moisture changes
-	@add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
-	## pack land variables
-	@pack_land begin
-		(PETsoil, evaporationSupply) => land.evaporation
-		evaporation => land.fluxes
-		ΔsoilW => land.states
-	end
-	return land
+    # update soil moisture changes
+    @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
+    ## pack land variables
+    @pack_land begin
+        (PETsoil, evaporationSupply) => land.evaporation
+        evaporation => land.fluxes
+        ΔsoilW => land.states
+    end
+    return land
 end
 
 function update(o::evaporation_demandSupply, forcing, land, helpers)
-	@unpack_evaporation_demandSupply o
+    @unpack_evaporation_demandSupply o
 
-	## unpack variables
-	@unpack_land begin
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+    end
 
-	## update variables
-	# update soil moisture of the first layer
-	soilW[1] = soilW[1] + ΔsoilW[1]
+    ## update variables
+    # update soil moisture of the first layer
+    soilW[1] = soilW[1] + ΔsoilW[1]
 
-	# reset soil moisture changes to zero
-	ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
+    # reset soil moisture changes to zero
+    ΔsoilW[1] = ΔsoilW[1] - ΔsoilW[1]
 
-	## pack land variables
-	@pack_land begin
-		soilW => land.pools
-		# ΔsoilW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        soilW => land.pools
+        # ΔsoilW => land.states
+    end
+    return land
 end
 
 @doc """

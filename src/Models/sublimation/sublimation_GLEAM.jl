@@ -1,14 +1,15 @@
 export sublimation_GLEAM
 
+#! format: off
 @bounds @describe @units @with_kw struct sublimation_GLEAM{T1} <: sublimation
-	α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
+    α::T1 = 0.95 | (0.0, 3.0) | "Priestley Taylor Coefficient for Sublimation" | "none"
 end
+#! format: on
 
 function compute(o::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_sublimation_GLEAM o
     @unpack_forcing (PsurfDay, Rn, TairDay) ∈ forcing
-
 
     ## unpack land variables
     @unpack_land begin
@@ -22,7 +23,9 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
 
     # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may 𝟙t to do this derivative yourself because my calculus is not as good as it used to; what I get is:
 
-    Δ = (5723.265 / T^2.0 + 3.53068 / (T - 0.00728332)) * exp(9.550426 - 5723.265 / T + 3.53068 * log(T) - 0.00728332 * T)
+    Δ =
+        (5723.265 / T^2.0 + 3.53068 / (T - 0.00728332)) *
+        exp(9.550426 - 5723.265 / T + 3.53068 * log(T) - 0.00728332 * T)
 
     # That you can convert from [Pa/K] to [kPa/K] by multiplying times 0.001.
     Δ = Δ * 0.001
@@ -49,7 +52,6 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
     sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * snowFraction) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
 
     ΔsnowW[1] = ΔsnowW[1] .- sublimation / length(snowW)
-
 
     ## pack land variables
     @pack_land begin

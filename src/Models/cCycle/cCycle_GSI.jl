@@ -1,10 +1,8 @@
 export cCycle_GSI
 
-struct cCycle_GSI <: cCycle
-end
+struct cCycle_GSI <: cCycle end
 
-function instantiate(o::cCycle_GSI, forcing, land, helpers)
-
+function define(o::cCycle_GSI, forcing, land, helpers)
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
@@ -18,7 +16,7 @@ function instantiate(o::cCycle_GSI, forcing, land, helpers)
     zerocEcoInflux = zero(cEcoInflux)
     cNPP = zero(land.pools.cEco)
 
-	cEco_prev = deepcopy(land.pools.cEco)
+    cEco_prev = deepcopy(land.pools.cEco)
     zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     NEE = 𝟘
@@ -27,8 +25,9 @@ function instantiate(o::cCycle_GSI, forcing, land, helpers)
     cRECO = 𝟘
     cRH = 𝟘
 
-    @pack_land begin 
-        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) => land.states
+    @pack_land begin
+        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) =>
+            land.states
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
     end
     return land
@@ -38,8 +37,29 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEco_prev, cEcoOut, cNPP, p_k, zixVeg, zerocEcoFlow, zerocEcoInflux) ∈ land.states
-        (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) ∈ land.pools
+        (cAlloc,
+            cEcoEfflux,
+            cEcoFlow,
+            cEcoInflux,
+            cEco_prev,
+            cEcoOut,
+            cNPP,
+            p_k,
+            zixVeg,
+            zerocEcoFlow,
+            zerocEcoInflux) ∈ land.states
+        (cVeg,
+            cLit,
+            cSoil,
+            cVegRoot,
+            cVegWood,
+            cVegLeaf,
+            cVegReserve,
+            cLitFast,
+            cLitSlow,
+            cSoilSlow,
+            cSoilOld,
+            cEco) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A) ∈ land.cFlow
@@ -52,13 +72,13 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     @rep_vec ΔcEco => ΔcEco .* 𝟘
 
     ## compute losses
-    for cl in eachindex(cEco)
+    for cl ∈ eachindex(cEco)
         cEcoOut_cl = min(cEco[cl], cEco[cl] * p_k[cl])
         @rep_elem cEcoOut_cl => (cEcoOut, cl, :cEco)
-    end    
+    end
 
     ## gains to vegetation
-    for zv in zixVeg
+    for zv ∈ zixVeg
         cNPP_zv = gpp * cAlloc[zv] - cEcoEfflux[zv]
         @rep_elem cNPP_zv => (cNPP, zv, :cEco)
         @rep_elem cNPP_zv => (cEcoInflux, zv, :cEco)
@@ -69,12 +89,12 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
     # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing flowOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix in eachindex(flowOrder)
+    for jix ∈ eachindex(flowOrder)
         fO = flowOrder[jix]
         take_r = taker[fO]
         give_r = giver[fO]
         tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[fO]
-        @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco) 
+        @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco)
     end
     # for jix = 1:length(p_taker)
     # taker = p_taker[jix]
@@ -85,7 +105,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # cEcoFlow[taker] = take_flow + give_flow * c_flow
     # end
     ## balance
-    for cl in eachindex(cEco)
+    for cl ∈ eachindex(cEco)
         ΔcEco_cl = cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
         @rep_elem ΔcEco_cl => (ΔcEco, cl, :cEco)
         cEco_cl = cEco[cl] + cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
@@ -103,43 +123,54 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # cEco_prev = cEco 
     cEco_prev = cEco_prev .* 𝟘 .+ cEco
     # @rep_vec cEco_prev => cEco 
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cVeg)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVeg)
         @rep_elem cEco[i_f] => (cVeg, i_c, :cVeg)
-    end  
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cVegRoot)
+    end
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegRoot)
         @rep_elem cEco[i_f] => (cVegRoot, i_c, :cVegRoot)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cVegWood)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegWood)
         @rep_elem cEco[i_f] => (cVegWood, i_c, :cVegWood)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cVegLeaf)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegLeaf)
         @rep_elem cEco[i_f] => (cVegLeaf, i_c, :cVegLeaf)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cVegReserve)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegReserve)
         @rep_elem cEco[i_f] => (cVegReserve, i_c, :cVegReserve)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cLit)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLit)
         @rep_elem cEco[i_f] => (cLit, i_c, :cLit)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cLitFast)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLitFast)
         @rep_elem cEco[i_f] => (cLitFast, i_c, :cLitFast)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cLitSlow)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLitSlow)
         @rep_elem cEco[i_f] => (cLitSlow, i_c, :cLitSlow)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cSoil)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoil)
         @rep_elem cEco[i_f] => (cSoil, i_c, :cSoil)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cSoilSlow)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoilSlow)
         @rep_elem cEco[i_f] => (cSoilSlow, i_c, :cSoilSlow)
     end
-    for (i_c, i_f) in enumerate(helpers.pools.zix.cSoilOld)
+    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoilOld)
         @rep_elem cEco[i_f] => (cSoilOld, i_c, :cSoilOld)
     end
 
     ## pack land variables
     @pack_land begin
-        (cVeg, cLit, cSoil, cVegRoot, cVegWood, cVegLeaf, cVegReserve, cLitFast, cLitSlow, cSoilSlow, cSoilOld, cEco) => land.pools
+        (cVeg,
+            cLit,
+            cSoil,
+            cVegRoot,
+            cVegWood,
+            cVegLeaf,
+            cVegReserve,
+            cLitFast,
+            cLitSlow,
+            cSoilSlow,
+            cSoilOld,
+            cEco) => land.pools
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
         (ΔcEco, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
     end
@@ -148,10 +179,10 @@ end
 
 function adj_component_pools(comp, full, pool_name, indx, helpers)
     i_c = 1
-    for i_f in indx
+    for i_f ∈ indx
         @rep_elem full[i_f] => (comp, i_c, pool_name)
         i_c = i_c + 1
-    end  
+    end
     return comp
 end
 

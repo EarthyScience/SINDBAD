@@ -1,16 +1,15 @@
 export saturatedFraction_none
 
-struct saturatedFraction_none <: saturatedFraction
-end
+struct saturatedFraction_none <: saturatedFraction end
 
-function instantiate(o::saturatedFraction_none, forcing, land, helpers)
+function define(o::saturatedFraction_none, forcing, land, helpers)
 
-	## calculate variables
-	satFrac = helpers.numbers.𝟘
+    ## calculate variables
+    satFrac = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land satFrac => land.states
-	return land
+    ## pack land variables
+    @pack_land satFrac => land.states
+    return land
 end
 
 @doc """

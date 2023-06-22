@@ -1,24 +1,25 @@
 export fAPAR_LAI
 
+#! format: off
 @bounds @describe @units @with_kw struct fAPAR_LAI{T1} <: fAPAR
-	kEffExt::T1 = 0.5 | (0.00001, 0.99) | "effective light extinction coefficient" | ""
+    kEffExt::T1 = 0.5 | (0.00001, 0.99) | "effective light extinction coefficient" | ""
 end
-
+#! format: on
 
 function compute(o::fAPAR_LAI, forcing, land, helpers)
-	@unpack_fAPAR_LAI o
+    @unpack_fAPAR_LAI o
 
-	## unpack land variables
-	@unpack_land begin
-		LAI ∈ land.states
-		𝟙 ∈ helpers.numbers
-	end
-	## calculate variables
-	fAPAR = 𝟙 - exp(-(LAI * kEffExt))
+    ## unpack land variables
+    @unpack_land begin
+        LAI ∈ land.states
+        𝟙 ∈ helpers.numbers
+    end
+    ## calculate variables
+    fAPAR = 𝟙 - exp(-(LAI * kEffExt))
 
-	## pack land variables
-	@pack_land fAPAR => land.states
-	return land
+    ## pack land variables
+    @pack_land fAPAR => land.states
+    return land
 end
 
 @doc """

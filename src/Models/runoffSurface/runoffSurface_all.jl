@@ -1,21 +1,19 @@
 export runoffSurface_all
 
-struct runoffSurface_all <: runoffSurface
-end
+struct runoffSurface_all <: runoffSurface end
 
 function compute(o::runoffSurface_all, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land runoffOverland ∈ land.fluxes
+    ## unpack land variables
+    @unpack_land runoffOverland ∈ land.fluxes
 
+    ## calculate variables
+    # all overland flow becomes surface runoff
+    runoffSurface = runoffOverland
 
-	## calculate variables
-	# all overland flow becomes surface runoff
-	runoffSurface = runoffOverland
-
-	## pack land variables
-	@pack_land runoffSurface => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffSurface => land.fluxes
+    return land
 end
 
 @doc """

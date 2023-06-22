@@ -2,7 +2,7 @@ export cAllocationSoilW_none
 
 struct cAllocationSoilW_none <: cAllocationSoilW end
 
-function instantiate(o::cAllocationSoilW_none, forcing, land, helpers)
+function define(o::cAllocationSoilW_none, forcing, land, helpers)
 
     ## calculate variables
     fW = helpers.numbers.𝟙

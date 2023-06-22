@@ -1,11 +1,12 @@
 export cAllocationSoilW_gppGSI
 
+#! format: off
 @bounds @describe @units @with_kw struct cAllocationSoilW_gppGSI{T1} <: cAllocationSoilW
     τ_soilW::T1 = 0.8 | (0.001, 1.0) | "temporal change rate for the water-limiting function" | ""
 end
+#! format: on
 
-
-function instantiate(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function define(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 
@@ -17,7 +18,6 @@ function instantiate(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     @pack_land fW_prev => land.cAllocationSoilW
     return land
 end
-
 
 function compute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack parameters
