@@ -2,6 +2,8 @@ export runEcosystem!, prepRunEcosystem
 export ecoLoc!
 export getLocData
 export coreEcosystem!
+export getLocOutput!
+export getLocForcing!
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
