@@ -115,7 +115,6 @@ model_list = (:rainSnow,
     :evapotranspiration,
     :runoff,
     :wCycle,
-    :totalTWS,
     :waterBalance)
 
 ## create a table to view all sindbad models and their orders.

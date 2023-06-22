@@ -42,7 +42,7 @@
 		"cCycleBase_⚆_annk_LitFast": null,
 		"cCycleBase_⚆_annk_SoilSlow": null,
 		"cCycleBase_⚆_annk_SoilOld": null,
-		"cCycleBase_⚆_etaH": null,
+		"cCycleBase_⚆_ηH": null,
 		"cFlow_⚆_f_τ": {
 			"is_ml": true,
 			"distribution": ["gaussian", [0, 1, 2]]
