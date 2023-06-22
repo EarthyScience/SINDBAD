@@ -54,18 +54,18 @@ function getSpinupInfo(sel_spinup_models,
 end
 
 """
-doSpinup(_, _, land_in, helpers, _, _, _, ::Val{:ηScale})
+doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleAH})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land_in, helpers, _, _, _, ::Val{:ηScale})
-    @unpack_land cEco ∈ land_in.pools
+function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleAH})
+    @unpack_land cEco ∈ land.pools
     ηH = helpers.numbers.𝟙
-    if :ηH ∈ propertynames(land_in.cCycleBase)
-        ηH = land_in.cCycleBase.ηH
+    if :ηH ∈ propertynames(land.cCycleBase)
+        ηH = land.cCycleBase.ηH
     end
     ηA = helpers.numbers.𝟙
-    if :ηA ∈ propertynames(land_in.cCycleBase)
-        ηA = land_in.cCycleBase.ηA
+    if :ηA ∈ propertynames(land.cCycleBase)
+        ηA = land.cCycleBase.ηA
     end
     for cSoilZix ∈ helpers.pools.zix.cSoil
         cSoilNew = cEco[cSoilZix] * ηH
@@ -79,9 +79,44 @@ function doSpinup(_, _, land_in, helpers, _, _, _, ::Val{:ηScale})
         cVegNew = cEco[cVegZix] * ηA
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
-    @pack_land cEco => land_in.pools
-    return land_in
+    @pack_land cEco => land.pools
+    return land
 end
+
+
+"""
+doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleA0H})
+scale the carbon pools using the scalars from cCycleBase
+"""
+function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleA0H})
+    @unpack_land cEco ∈ land.pools
+    ηH = helpers.numbers.𝟙
+    carbon_remain = helpers.numbers.𝟙
+    if :ηH ∈ propertynames(land.cCycleBase)
+        ηH = land.cCycleBase.ηH
+        carbon_remain = land.cCycleBase.carbon_remain
+    end
+
+    for cSoilZix ∈ helpers.pools.zix.cSoil
+        cSoilNew = cEco[cSoilZix] * ηH
+        @rep_elem cSoilNew => (cEco, cSoilZix, :cEco)
+    end
+
+    for cLitZix ∈ helpers.pools.zix.cLit
+        cLitNew = cEco[cLitZix] * ηH
+        @rep_elem cLitNew => (cEco, cLitZix, :cEco)
+    end
+
+    for cVegZix ∈ helpers.pools.zix.cVeg
+        cLoss = max(cEco[cVegZix] - carbon_remain, helpers.numbers.𝟘)
+        cVegNew = cEco[cVegZix] - cLoss
+        @rep_elem cVegNew => (cEco, cVegZix, :cEco)
+    end
+
+    @pack_land cEco => land.pools
+    return land
+end
+
 
 """
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:spinup})
@@ -108,7 +143,6 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :forward, all the models chosen in modelStructure.json are run.
 """
-# spinup_models, sel_forcing, land_spin, tem_helpers, tem_spinup, land_type, f_one, Val(spinupMode)
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
@@ -291,8 +325,6 @@ runModels(forcing, models, out)
 function runSpinupModels!(out, forcing, models, tem_helpers, _)
     return foldl_unrolled(models; init=out) do o, model
         return o = Models.compute(model, forcing, o, tem_helpers)
-        # @time o = Models.compute(model, forcing, o, tem_helpers)
-        # o
     end
 end
 
@@ -300,7 +332,7 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem)
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land_spin/land is overwritten with every iteration. Only the state at the end is returned.
 """
-@noinline function loopTimeSpinup(sel_spinup_models,
+function loopTimeSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_spin,
     tem_helpers,
@@ -360,19 +392,17 @@ function runSpinup(forward_models,
         end
 
         spinup_models = forward_models
-        # if spinupMode == :forward
-        #     spinup_models = forward_models
-        # else
-        #     spinup_models = forward_models[tem_models.is_spinup .== 1]
+        if spinupMode == :spinup
+            spinup_models = forward_models[tem_models.is_spinup]
+        end
+        # if !tem_helpers.run.runOpti
+        #     @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
         # end
-        #if !tem_helpers.run.runOpti
-        #    @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
-        #end
-        for _ ∈ 1:nLoops
+        for nL ∈ 1:nLoops
             # @showprogress "Computing nLoops..." for nL in 1:nLoops
-            #if !tem_helpers.run.runOpti
-            #    @info "         Loop: $(nL)/$(nLoops)"
-            #end
+            # if !tem_helpers.run.runOpti
+            #     println("         Loop: $(nL)/$(nLoops)")
+            # end
             land_spin = doSpinup(spinup_models,
                 sel_forcing,
                 land_spin,

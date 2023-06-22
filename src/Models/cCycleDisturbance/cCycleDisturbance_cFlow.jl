@@ -1,9 +1,7 @@
 export cCycleDisturbance_cFlow
 
 #! format: off
-@bounds @describe @units @with_kw struct cCycleDisturbance_cFlow{T1} <: cCycleDisturbance
-    carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
-end
+struct cCycleDisturbance_cFlow <: cCycleDisturbance end
 #! format: on
 
 function define(o::cCycleDisturbance_cFlow, forcing, land, helpers)
@@ -28,15 +26,14 @@ function define(o::cCycleDisturbance_cFlow, forcing, land, helpers)
 end
 
 function compute(o::cCycleDisturbance_cFlow, forcing, land, helpers)
-    ## unpack parameters and forcing
-    @unpack_cCycleDisturbance_cFlow o
+    ## unpack forcing
     @unpack_forcing isDisturbed ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
         (zixVegAll, ndxLoseToZixVec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (giver, taker) ∈ land.cFlow
+        (giver, taker, carbon_remain) ∈ land.cCycleBase
         𝟘 ∈ helpers.numbers
     end
     if isDisturbed > 𝟘
@@ -57,24 +54,6 @@ function compute(o::cCycleDisturbance_cFlow, forcing, land, helpers)
         # @show "after", cEco, sum(cEco)
 
     end
-    ## pack land variables
-    @pack_land cEco => land.pools
-    return land
-end
-
-function update(o::cCycleDisturbance_cFlow, forcing, land, helpers)
-    @unpack_cCycleDisturbance_cFlow o
-
-    ## unpack variables
-    @unpack_land begin
-        cEco ∈ land.pools
-        cLoss ∈ land.fluxes
-    end
-
-    ## update variables
-    cEco[zixVeg] = cEco[zixVeg] - cLoss
-    cEco[tarZix] = cEco[tarZix] + cLoss
-
     ## pack land variables
     @pack_land cEco => land.pools
     return land

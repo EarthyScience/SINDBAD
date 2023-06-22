@@ -71,7 +71,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
     slope_fWfTfR = 𝟙
 
     @pack_land begin
-        (p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
+        (p_A, p_A_ind, fWfTfR_prev, aSrc, aTrg) => land.cFlow
         # (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
         (L2Re,
             L2ReF,

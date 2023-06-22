@@ -23,6 +23,7 @@ export cCycleBase_GSI
     C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
+    carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 #! format: on
 
@@ -47,7 +48,7 @@ function define(o::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder, taker, giver) => land.cCycleBase
+        (p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder, taker, giver, carbon_remain) => land.cCycleBase
         cEcoEfflux => land.states
     end
     return land
