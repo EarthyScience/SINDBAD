@@ -46,7 +46,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
             error(msg)
         end
     end
-    if !isapprox(sum(cAlloc), 𝟙; atol = tolerance)
+    if !isapprox(sum(cAlloc), 𝟙; atol=tolerance)
         if helpers.run.catchErrors
             msg = "cAllocation does not sum to 1. Cannot continue"
             push!(Sindbad.error_catcher, land)
@@ -83,7 +83,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
     # below the diagonal
     p_A_tmp .= p_A .* flagL
     # the sum of A per column below the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
-    if any((sum(p_A_tmp, dims = 1) .- 𝟙) .> helpers.numbers.tolerance)
+    if any((sum(p_A_tmp; dims=1) .- 𝟙) .> helpers.numbers.tolerance)
         if helpers.run.catchErrors
             msg = "sum of cols greater than one in lower cFlow matrix. Cannot continue"
             push!(Sindbad.error_catcher, land)
@@ -96,14 +96,14 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
     p_A_tmp .= p_A .* flagU
 
     # the sum of A per column above the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
-    if any((sum(p_A_tmp, dims = 1) .- 𝟙) .> helpers.numbers.tolerance)
+    if any((sum(p_A_tmp; dims=1) .- 𝟙) .> helpers.numbers.tolerance)
         if helpers.run.catchErrors
             msg = "sum of cols greater than one in upper cFlow matrix. Cannot continue"
             push!(Sindbad.error_catcher, land)
             push!(Sindbad.error_catcher, msg)
             push!(Sindbad.error_catcher, p_A_U)
-            push!(Sindbad.error_catcher, any(sum(p_A_U, dims = 1) .> 𝟙))
-            push!(Sindbad.error_catcher, sum(p_A_U, dims = 1))
+            push!(Sindbad.error_catcher, any(sum(p_A_U; dims=1) .> 𝟙))
+            push!(Sindbad.error_catcher, sum(p_A_U; dims=1))
             error(msg)
         end
     end

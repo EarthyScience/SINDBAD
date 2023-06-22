@@ -49,7 +49,8 @@ function createNestedDict(dict::AbstractDict)
                 if !haskey(key_dict, subkey_name)
                     key_dict[subkey_name] = Dict()
                     key_dict[subkey_name][key_list[key_index+1]] =
-                        key_dict[key_list[key_index+1]*string(key_index + 1)]
+                        key_dict[key_list[key_index+1]*string(key_index +
+                                                              1)]
                 else
                     tmp = Dict()
                     tmp[subkey_name] = key_dict[key_list[key_index+1]*string(key_index + 1)]
@@ -68,8 +69,8 @@ end
 
 get the basic configuration from experiment json
 """
-function getExperimentConfiguration(experiment_json::String; replace_info = nothing)
-    parseFile = parsefile(experiment_json; dicttype = DataStructures.OrderedDict)
+function getExperimentConfiguration(experiment_json::String; replace_info=nothing)
+    parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
     info["experiment"] = DataStructures.OrderedDict()
     for (k, v) ∈ parseFile
@@ -95,7 +96,7 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
         config_path = joinpath(base_path, v)
         info_exp["experiment"]["configFiles"][k] = config_path
         if endswith(v, ".json")
-            tmp = parsefile(config_path; dicttype = DataStructures.OrderedDict)
+            tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
         elseif endswith(v, ".csv")
             prm = CSV.File(config_path)
@@ -138,7 +139,7 @@ removeComments(input) = input
 
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 """
-function convertToAbsolutePath(; inputDict = inputDict)
+function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
     newDict = filter(x -> !occursin("path", first(x)), inputDict)
     return newDict
@@ -153,21 +154,21 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     outpath = infoTuple[:modelRun][:output][:path]
     if isnothing(outpath)
         out_path_new = "output_"
-        out_path_new =
-            joinpath(join(split(infoTuple.settings_root, "/")[1:end-1], "/"), out_path_new)
+        out_path_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+            out_path_new)
     elseif !isabspath(outpath)
         if !occursin("/", outpath)
             out_path_new = "output_" * outpath
         else
             out_path_new = "output_" * replace(outpath, "/" => "_")
         end
-        out_path_new =
-            joinpath(join(split(infoTuple.settings_root, "/")[1:end-1], "/"), out_path_new)
+        out_path_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+            out_path_new)
     else
-        sindbad_root = join(split(infoTuple.experiment_root, "/")[1:end-1], "/")
+        sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-1)], "/")
         if occursin(sindbad_root, outpath)
             error(
-                "You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad.",
+                "You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
             )
         else
             out_path_new = outpath
@@ -176,8 +177,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
             end
         end
     end
-    out_path_new =
-        out_path_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
+    out_path_new = out_path_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
 
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
@@ -192,11 +192,8 @@ function setupOutputDirectory(infoTuple::NamedTuple)
         if s_o == "root"
             infoTuple = setTupleSubfield(infoTuple, :output, (Symbol(s_o), out_path_new))
         else
-            infoTuple = setTupleSubfield(
-                infoTuple,
-                :output,
-                (Symbol(s_o), joinpath(out_path_new, s_o)),
-            )
+            infoTuple = setTupleSubfield(infoTuple, :output,
+                (Symbol(s_o), joinpath(out_path_new, s_o)))
             mkpath(getfield(getfield(infoTuple, :output), Symbol(s_o)))
         end
     end
@@ -208,15 +205,14 @@ end
 
 get the experiment info from either json or load the named tuple
 """
-function getConfiguration(sindbad_experiment::String; replace_info = nothing)
+function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     local_root = dirname(Base.active_project())
     if !isabspath(sindbad_experiment)
         sindbad_experiment = joinpath(local_root, sindbad_experiment)
     end
     exp_base_path = dirname(sindbad_experiment)
     if endswith(sindbad_experiment, ".json")
-        info_exp =
-            getExperimentConfiguration(sindbad_experiment; replace_info = replace_info)
+        info_exp = getExperimentConfiguration(sindbad_experiment; replace_info=replace_info)
         info = readConfiguration(info_exp, exp_base_path)
     elseif endswith(sindbad_experiment, ".jld2")
         #todo running from the jld2 file here still does not work because the loaded info is a named tuple and replacing the fields will not work due to issues with merge and creating a dictionary from nested namedtuple
@@ -224,7 +220,7 @@ function getConfiguration(sindbad_experiment::String; replace_info = nothing)
         info = load(sindbad_experiment)["info"]
     else
         error(
-            "sindbad can only be run with either a json or a jld2 data file. Provide a correct experiment file",
+            "sindbad can only be run with either a json or a jld2 data file. Provide a correct experiment file"
         )
     end
     if !isnothing(replace_info)
@@ -237,19 +233,17 @@ function getConfiguration(sindbad_experiment::String; replace_info = nothing)
     if !endswith(sindbad_experiment, ".jld2")
         infoTuple = dictToNamedTuple(info)
     end
-    infoTuple = (; infoTuple..., experiment_root = local_root)
-    infoTuple = (; infoTuple..., settings_root = exp_base_path)
+    infoTuple = (; infoTuple..., experiment_root=local_root)
+    infoTuple = (; infoTuple..., settings_root=exp_base_path)
     infoTuple = setupOutputDirectory(infoTuple)
     @info "Setup output directories in: $(infoTuple.output.root)"
     @info "Saving a copy of json settings to: $(infoTuple.output.settings)"
-    cp(
-        sindbad_experiment,
-        joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]),
-        force = true,
-    )
+    cp(sindbad_experiment,
+        joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
+        force=true)
     for k ∈ keys(infoTuple.experiment.configFiles)
         v = getfield(infoTuple.experiment.configFiles, k)
-        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]), force = true)
+        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
     end
     println("----------------------------------------------")
     return infoTuple

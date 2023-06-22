@@ -5,12 +5,10 @@ struct cFlow_none <: cFlow end
 function define(o::cFlow_none, forcing, land, helpers)
 
     ## calculate variables
-    tmp = repeat(
-        zeros(helpers.numbers.numType, length(land.pools.cEco)),
+    tmp = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
         1,
         1,
-        length(land.pools.cEco),
-    )
+        length(land.pools.cEco))
     p_A = tmp
     p_E = tmp
     p_F = tmp

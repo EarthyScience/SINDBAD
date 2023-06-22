@@ -37,7 +37,7 @@ function Base.getproperty(g::GroupView, f::Symbol)
     allarrays = getfield(g, :s)
     groupname = getfield(g, :groupname)
     T = typeof(first(allarrays)[groupname][f])
-    ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, f)
+    return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, f)
 end
 Base.size(a::ArrayView) = size(a.s)
 Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
@@ -45,7 +45,8 @@ Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
 Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
 Base.keys(o::landWrapper) = propertynames(o)
 Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
-Base.propertynames(o::GroupView) =
-    propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
+function Base.propertynames(o::GroupView)
+    return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
+end
 Base.keys(o::GroupView) = propertynames(o)
 Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)

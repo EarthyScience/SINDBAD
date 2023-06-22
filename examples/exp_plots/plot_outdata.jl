@@ -29,17 +29,14 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(
-    output.data,
+f_one = prepRunEcosystem(output.data,
     output.land_init,
     info.tem.models.forward,
     forc,
     forcing.sizes,
-    info.tem,
-);
+    info.tem);
 
-@time runEcosystem!(
-    output.data,
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
@@ -48,8 +45,7 @@ f_one = prepRunEcosystem(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 
 using GLMakie
 using Colors
@@ -63,39 +59,24 @@ gpp = @lift(output.data[$var_name]);
 s = Observable(9)
 gpp_site = @lift($gpp[:, 1, $s])
 
-fig = Figure(resolution = (1200, 600))
-menu = Menu(
-    fig,
-    options = output.variables,
-    cell_color_hover = RGB(0.7, 0.3, 0.25),
-    cell_color_active = RGB(0.2, 0.3, 0.5),
-)
+fig = Figure(; resolution=(1200, 600))
+menu = Menu(fig;
+    options=output.variables,
+    cell_color_hover=RGB(0.7, 0.3, 0.25),
+    cell_color_active=RGB(0.2, 0.3, 0.5))
 ax = Axis(fig[1, 1])
 lines!(ax, gpp_site)
 
-fig[1, 1, TopRight()] = vgrid!(
-    Label(
-        fig,
-        "Variables",
-        width = nothing,
-        font = :bold,
-        fontsize = 18,
-        color = :orangered,
-    ),
+fig[1, 1, TopRight()] = vgrid!(Label(fig, "Variables"; width=nothing, font=:bold, fontsize=18,
+        color=:orangered),
     menu;
-    tellheight = false,
-    width = 150,
-    valign = :top,
-)
-sl = Slider(
-    fig[0, 1],
-    range = 1:10,
-    startvalue = 9,
-    color_active_dimmed = RGB(0.81, 0.81, 0.2),
-)
+    tellheight=false,
+    width=150,
+    valign=:top)
+sl = Slider(fig[0, 1]; range=1:10, startvalue=9, color_active_dimmed=RGB(0.81, 0.81, 0.2))
 connect!(s, sl.value)
 on(menu.selection) do s
     var_name[] = names_pair[s]
-    autolimits!(ax)
+    return autolimits!(ax)
 end
 fig

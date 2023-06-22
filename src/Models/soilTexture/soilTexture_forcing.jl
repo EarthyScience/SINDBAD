@@ -10,10 +10,10 @@ function define(o::soilTexture_forcing, forcing, land, helpers)
     ## unpack land variables
     @unpack_land (𝟘, 𝟙, sNT) ∈ helpers.numbers
 
-    st_CLAY_f = CLAY |> Tuple
-    st_SAND_f = SAND |> Tuple
-    st_SILT_f = SILT |> Tuple
-    st_ORGM_f = ORGM |> Tuple
+    st_CLAY_f = Tuple(CLAY)
+    st_SAND_f = Tuple(SAND)
+    st_SILT_f = Tuple(SILT)
+    st_ORGM_f = Tuple(ORGM)
 
     ## precomputations/check
     st_CLAY = zero(land.pools.soilW)
@@ -23,7 +23,7 @@ function define(o::soilTexture_forcing, forcing, land, helpers)
 
     if length(st_CLAY_f) != length(st_CLAY)
         println(
-            "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers.",
+            "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers."
         )
         for sl ∈ eachindex(st_CLAY)
             @rep_elem sNT(mean(st_CLAY_f)) => (st_CLAY, sl, :soilW)

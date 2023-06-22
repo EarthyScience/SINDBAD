@@ -14,8 +14,7 @@ function define(o::cTauVegProperties_none, forcing, land, helpers)
     p_LIGEFF = 𝟘
 
     ## pack land variables
-    @pack_land (p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) =>
-        land.cTauVegProperties
+    @pack_land (p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) => land.cTauVegProperties
     return land
 end
 

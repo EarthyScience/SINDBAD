@@ -271,10 +271,10 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         At2 = [At ones(size(At, 1), 1)]
         sumB_piA = NaN(size(Tair))
         for ii ∈ 1:nTix
-            sumB_piA[ii] = Bt[ii] * prod(At2[ii+1:nTix+1], 2)
+            sumB_piA[ii] = Bt[ii] * prod(At2[(ii+1):(nTix+1)], 2)
         end
         sumB_piA = sum(sumB_piA)
-        T2 = 0:1:NI2E-1
+        T2 = 0:1:(NI2E-1)
         piA2 = (prod(At, 2) * ones(1, length(T2)))^(ones(size(At, 1), 1) * T2)
         piA2 = sum(piA2)
         # FINAL CARBON AT POOL zix

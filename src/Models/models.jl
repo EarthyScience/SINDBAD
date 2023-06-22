@@ -38,8 +38,7 @@ end
 ## List all models of SINDBAD in the order they are called. 
 ## Note that a new model is only executed if it is added to this list. 
 ## When adding a new model, create a new copy of this jl file to work with.
-model_list = (
-    :rainSnow,
+model_list = (:rainSnow,
     :rainIntensity,
     :PET,
     :ambientCO2,
@@ -117,11 +116,10 @@ model_list = (
     :runoff,
     :wCycle,
     :totalTWS,
-    :waterBalance,
-)
+    :waterBalance)
 
 ## create a table to view all sindbad models and their orders.
-sindbad_models = Table((; model = [model_list...]))
+sindbad_models = Table((; model=[model_list...]))
 
 # ## create a table to view all sindbad models and their orders.
 # apprs = []

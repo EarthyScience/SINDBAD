@@ -17,23 +17,15 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-loc_space_maps,
-loc_space_names,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-f_one = prepRunEcosystem(
-    output.data,
-    output.land_init,
-    info.tem.models.forward,
-    forc,
-    forcing.sizes,
-    info.tem,
-);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
+    prepRunEcosystem(output.data,
+        output.land_init,
+        info.tem.models.forward,
+        forc,
+        forcing.sizes,
+        info.tem);
 
-@time runEcosystem!(
-    output.data,
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
@@ -42,8 +34,7 @@ f_one = prepRunEcosystem(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 
 @time outcubes = runExperimentOpti(experiment_json);
@@ -62,18 +53,17 @@ Colorbar(fig[1, 2], obj)
 save("gpp.png", fig)
 
 for site ∈ 1:16
-    df = DataFrame(
-        time = ds.time,
-        gpp = output.data[end-1][:, 1, site],
-        nee = output.data[end][:, 1, site],
-        soilw1 = output.data[2][:, 1, site],
-    )
+    df = DataFrame(;
+        time=ds.time,
+        gpp=output.data[end-1][:, 1, site],
+        nee=output.data[end][:, 1, site],
+        soilw1=output.data[2][:, 1, site])
 
     for var ∈ (:gpp, :nee, :soilw1)
-        d = data(df) * mapping(:time, var) * visual(Lines, linewidth = 0.5)
+        d = data(df) * mapping(:time, var) * visual(Lines; linewidth=0.5)
 
-        fig = with_theme(theme_ggplot2(), resolution = (1200, 400)) do
-            draw(d)
+        fig = with_theme(theme_ggplot2(); resolution=(1200, 400)) do
+            return draw(d)
         end
         save("testfig_$(var)_$(site).png", fig)
     end
