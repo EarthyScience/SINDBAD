@@ -1,20 +1,22 @@
 export gppDiffRadiation_GSI
 
+#! format: off
 @bounds @describe @units @with_kw struct gppDiffRadiation_GSI{T1,T2,T3} <: gppDiffRadiation
     fR_τ::T1 = 0.2 | (0.01, 1.0) | "contribution factor for current stressor" | "fraction"
     fR_slope::T2 = 58.0 | (1.0, 100.0) | "slope of sigmoid" | "fraction"
     fR_base::T3 = 59.78 | (1.0, 120.0) | "base of sigmoid" | "fraction"
 end
+#! format: on
 
-
-function instantiate(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function define(o::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing
     @unpack_land (𝟙, 𝟘) ∈ helpers.numbers
 
-
-    f_smooth = (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
+    f_smooth =
+        (f_p, f_n, τ, slope, base) ->
+            (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
     CloudScGPP_prev = 𝟘
     CloudScGPP = 𝟙
     MJ_to_W = helpers.numbers.sNT(11.57407)
@@ -29,13 +31,11 @@ function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
     @unpack_gppDiffRadiation_GSI o
     @unpack_forcing Rg ∈ forcing
 
-
     ## unpack land variables
     @unpack_land begin
         (CloudScGPP_prev, f_smooth, MJ_to_W) ∈ land.gppDiffRadiation
         (𝟘, 𝟙) ∈ helpers.numbers
     end
-
 
     ## calculate variables
     f_prev = CloudScGPP_prev

@@ -1,16 +1,15 @@
 export aRespirationAirT_none
 
-struct aRespirationAirT_none <: aRespirationAirT
-end
+struct aRespirationAirT_none <: aRespirationAirT end
 
-function instantiate(o::aRespirationAirT_none, forcing, land, helpers)
+function define(o::aRespirationAirT_none, forcing, land, helpers)
 
-	## calculate variables
-	fT = helpers.numbers.𝟙
+    ## calculate variables
+    fT = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land fT => land.aRespirationAirT
-	return land
+    ## pack land variables
+    @pack_land fT => land.aRespirationAirT
+    return land
 end
 
 @doc """

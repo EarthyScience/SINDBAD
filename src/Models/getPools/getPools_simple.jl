@@ -1,28 +1,26 @@
 export getPools_simple
 
-struct getPools_simple <: getPools
-end
-function instantiate(o::getPools_simple, forcing, land, helpers)
-	## unpack land variables
-	@unpack_land rain ∈ land.rainSnow
-	WBP = rain
-	## pack land variables
-	@pack_land WBP => land.states
-	return land
+struct getPools_simple <: getPools end
+function define(o::getPools_simple, forcing, land, helpers)
+    ## unpack land variables
+    @unpack_land rain ∈ land.rainSnow
+    WBP = rain
+    ## pack land variables
+    @pack_land WBP => land.states
+    return land
 end
 
 function compute(o::getPools_simple, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land rain ∈ land.rainSnow
+    ## unpack land variables
+    @unpack_land rain ∈ land.rainSnow
 
+    ## calculate variables
+    WBP = rain
 
-	## calculate variables
-	WBP = rain
-
-	## pack land variables
-	@pack_land WBP => land.states
-	return land
+    ## pack land variables
+    @pack_land WBP => land.states
+    return land
 end
 
 @doc """

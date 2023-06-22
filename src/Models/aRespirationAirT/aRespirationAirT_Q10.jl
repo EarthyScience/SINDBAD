@@ -1,11 +1,13 @@
 export aRespirationAirT_Q10
 
+#! format: off
 @bounds @describe @units @with_kw struct aRespirationAirT_Q10{T1,T2,T3} <: aRespirationAirT
     Q10_RM::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
     Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
-function instantiate(o::aRespirationAirT_Q10, forcing, land, helpers)
+#! format: on
+function define(o::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
 
     ## calculate variables
@@ -24,7 +26,7 @@ function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
-    fT = Q10_RM ^((Tair - Tref_RM) / Q10_base)
+    fT = Q10_RM^((Tair - Tref_RM) / Q10_base)
 
     ## pack land variables
     @pack_land begin

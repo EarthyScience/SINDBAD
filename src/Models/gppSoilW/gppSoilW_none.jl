@@ -1,17 +1,16 @@
 export gppSoilW_none
 
-struct gppSoilW_none <: gppSoilW
-end
+struct gppSoilW_none <: gppSoilW end
 
-function instantiate(o::gppSoilW_none, forcing, land, helpers)
+function define(o::gppSoilW_none, forcing, land, helpers)
 
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	SMScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    SMScGPP = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land SMScGPP => land.gppSoilW
-	return land
+    ## pack land variables
+    @pack_land SMScGPP => land.gppSoilW
+    return land
 end
 
 @doc """

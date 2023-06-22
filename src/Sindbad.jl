@@ -2,7 +2,7 @@ module Sindbad
 using Reexport: @reexport
 
 using Crayons
-import DataStructures
+using DataStructures: DataStructures
 using InteractiveUtils
 using DocStringExtensions
 using Parameters
@@ -13,11 +13,7 @@ using JLD2
 using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table
-using Flatten:
-    flatten,
-    metaflatten,
-    fieldnameflatten,
-    parentnameflatten
+using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
 
 @reexport using PrettyPrinting: pprint
 

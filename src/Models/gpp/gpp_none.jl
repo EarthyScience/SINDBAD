@@ -1,16 +1,15 @@
 export gpp_none
 
-struct gpp_none <: gpp
-end
+struct gpp_none <: gpp end
 
-function instantiate(o::gpp_none, forcing, land, helpers)
+function define(o::gpp_none, forcing, land, helpers)
 
-	## calculate variables
-	gpp = helpers.numbers.𝟘
+    ## calculate variables
+    gpp = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land gpp => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land gpp => land.fluxes
+    return land
 end
 
 @doc """

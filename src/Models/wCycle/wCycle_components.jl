@@ -1,14 +1,13 @@
 export wCycle_components
 
-struct wCycle_components <: wCycle
-end
+struct wCycle_components <: wCycle end
 
 function compute(o::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
-        𝟘  ∈ helpers.numbers
+        𝟘 ∈ helpers.numbers
     end
 
     ## update variables
@@ -17,7 +16,7 @@ function compute(o::wCycle_components, forcing, land, helpers)
     soilW = add_vec(soilW, ΔsoilW)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
     TWS = add_vec(TWS, ΔTWS)
-    
+
     # @show ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS
     # reset moisture changes to zero
     ΔgroundW = ΔgroundW .* 𝟘
@@ -28,8 +27,8 @@ function compute(o::wCycle_components, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-    	(groundW, snowW, soilW, surfaceW, TWS) => land.pools
-    	(ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS)  => land.states
+        (groundW, snowW, soilW, surfaceW, TWS) => land.pools
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) => land.states
     end
     return land
 end

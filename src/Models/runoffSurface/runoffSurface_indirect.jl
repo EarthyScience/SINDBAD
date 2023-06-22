@@ -1,58 +1,60 @@
 export runoffSurface_indirect
 
+#! format: off
 @bounds @describe @units @with_kw struct runoffSurface_indirect{T1} <: runoffSurface
-	dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
+    dc::T1 = 0.01 | (0.0, 1.0) | "delayed surface runoff coefficient" | ""
 end
+#! format: on
 
 function compute(o::runoffSurface_indirect, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffSurface_indirect o
+    ## unpack parameters
+    @unpack_runoffSurface_indirect o
 
-	## unpack land variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		runoffOverland ∈ land.fluxes
-	end
+    ## unpack land variables
+    @unpack_land begin
+        surfaceW ∈ land.pools
+        runoffOverland ∈ land.fluxes
+    end
 
-	# fraction of overland runoff that recharges the surface water & the fraction that flows out directly
-	surfaceWRec = runoffOverland
+    # fraction of overland runoff that recharges the surface water & the fraction that flows out directly
+    surfaceWRec = runoffOverland
 
-	# fraction of surface storage that flows out as surface runoff
-	runoffSurface = dc * sum(surfaceW)
+    # fraction of surface storage that flows out as surface runoff
+    runoffSurface = dc * sum(surfaceW)
 
-	# update the delta storage
-	ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
-	ΔsurfaceW .= ΔsurfaceW .- runoffSurface / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
+    # update the delta storage
+    ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
+    ΔsurfaceW .= ΔsurfaceW .- runoffSurface / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
-	## pack land variables
-	@pack_land begin
-		(runoffSurface, surfaceWRec) => land.fluxes
-		ΔsurfaceW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (runoffSurface, surfaceWRec) => land.fluxes
+        ΔsurfaceW => land.states
+    end
+    return land
 end
 
 function update(o::runoffSurface_indirect, forcing, land, helpers)
-	@unpack_runoffSurface_indirect o
+    @unpack_runoffSurface_indirect o
 
-	## unpack variables
-	@unpack_land begin
-		surfaceW ∈ land.pools
-		ΔsurfaceW ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        surfaceW ∈ land.pools
+        ΔsurfaceW ∈ land.states
+    end
 
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
+    ## update storage pools
+    surfaceW .= surfaceW .+ ΔsurfaceW
 
-	# reset ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
+    # reset ΔsurfaceW to zero
+    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
 
-	## pack land variables
-	@pack_land begin
-		surfaceW => land.pools
-		ΔsurfaceW => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        surfaceW => land.pools
+        ΔsurfaceW => land.states
+    end
+    return land
 end
 
 @doc """

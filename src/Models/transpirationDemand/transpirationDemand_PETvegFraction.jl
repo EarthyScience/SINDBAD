@@ -1,23 +1,25 @@
 export transpirationDemand_PETvegFraction
 
+#! format: off
 @bounds @describe @units @with_kw struct transpirationDemand_PETvegFraction{T1} <: transpirationDemand
-	α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
+    α::T1 = 1.0 | (0.2, 3.0) | "vegetation specific α coefficient of Priestley Taylor PET" | ""
 end
+#! format: on
 
 function compute(o::transpirationDemand_PETvegFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_transpirationDemand_PETvegFraction o
+    ## unpack parameters
+    @unpack_transpirationDemand_PETvegFraction o
 
-	## unpack land variables
-	@unpack_land begin
-		vegFraction ∈ land.states
-		PET ∈ land.PET
-	end
-	tranDem = PET * α * vegFraction
+    ## unpack land variables
+    @unpack_land begin
+        vegFraction ∈ land.states
+        PET ∈ land.PET
+    end
+    tranDem = PET * α * vegFraction
 
-	## pack land variables
-	@pack_land tranDem => land.transpirationDemand
-	return land
+    ## pack land variables
+    @pack_land tranDem => land.transpirationDemand
+    return land
 end
 
 @doc """

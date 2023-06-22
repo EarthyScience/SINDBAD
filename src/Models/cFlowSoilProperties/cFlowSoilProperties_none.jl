@@ -1,17 +1,20 @@
 export cFlowSoilProperties_none
 
-struct cFlowSoilProperties_none <: cFlowSoilProperties
-end
+struct cFlowSoilProperties_none <: cFlowSoilProperties end
 
-function instantiate(o::cFlowSoilProperties_none, forcing, land, helpers)
+function define(o::cFlowSoilProperties_none, forcing, land, helpers)
 
-	## calculate variables
-	p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1, length(land.pools.cEco))
-	p_F = copy(p_E)
+    ## calculate variables
+    p_E = repeat(
+        zeros(helpers.numbers.numType, length(land.pools.cEco)),
+        1,
+        length(land.pools.cEco),
+    )
+    p_F = copy(p_E)
 
-	## pack land variables
-	@pack_land (p_E, p_F) => land.cFlowSoilProperties
-	return land
+    ## pack land variables
+    @pack_land (p_E, p_F) => land.cFlowSoilProperties
+    return land
 end
 
 @doc """

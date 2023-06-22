@@ -1,21 +1,20 @@
 export transpiration_demandSupply
 
-struct transpiration_demandSupply <: transpiration
-end
+struct transpiration_demandSupply <: transpiration end
 
 function compute(o::transpiration_demandSupply, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		tranSup ∈ land.transpirationSupply
-		tranDem ∈ land.transpirationDemand
-	end
-	
-	transpiration = min(tranDem, tranSup)
+    ## unpack land variables
+    @unpack_land begin
+        tranSup ∈ land.transpirationSupply
+        tranDem ∈ land.transpirationDemand
+    end
 
-	## pack land variables
-	@pack_land transpiration => land.fluxes
-	return land
+    transpiration = min(tranDem, tranSup)
+
+    ## pack land variables
+    @pack_land transpiration => land.fluxes
+    return land
 end
 
 @doc """

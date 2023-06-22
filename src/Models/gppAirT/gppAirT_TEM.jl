@@ -1,10 +1,12 @@
 export gppAirT_TEM
 
-@bounds @describe @units @with_kw struct gppAirT_TEM{T1, T2, T3} <: gppAirT
-	Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C"
-	Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
-	Topt::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
+#! format: off
+@bounds @describe @units @with_kw struct gppAirT_TEM{T1,T2,T3} <: gppAirT
+    Tmin::T1 = 5.0 | (-10.0, 15.0) | "minimum temperature at which GPP ceases" | "°C"
+    Tmax::T2 = 20.0 | (10.0, 45.0) | "maximum temperature at which GPP ceases" | "°C"
+    Topt::T3 = 15.0 | (5.0, 30.0) | "optimal temperature for GPP" | "°C"
 end
+#! format: on
 
 function compute(o::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
@@ -16,7 +18,7 @@ function compute(o::gppAirT_TEM, forcing, land, helpers)
     pTmin = TairDay - Tmin
     pTmax = TairDay - Tmax
     pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - Topt)^2)
-    TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? 𝟘  : pTScGPP
+    TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? 𝟘 : pTScGPP
     TempScGPP = clamp(TScGPP, 𝟘, 𝟙)
 
     ## pack land variables

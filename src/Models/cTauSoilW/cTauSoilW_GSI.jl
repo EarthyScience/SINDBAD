@@ -1,25 +1,25 @@
 export cTauSoilW_GSI
 
-@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1, T2, T3, T4, T5} <: cTauSoilW
-	Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
-	WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
-	WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
-	Wexp::T4 = 10.0 | (nothing, nothing) | "reference for exponent of sensitivity" | "per percent"
-	frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
+#! format: off
+@bounds @describe @units @with_kw struct cTauSoilW_GSI{T1,T2,T3,T4,T5} <: cTauSoilW
+    Wopt::T1 = 90.0 | (60.0, 95.0) | "Optimal moisture for decomposition" | "percent degree of saturation"
+    WoptA::T2 = 0.2 | (0.1, 0.3) | "slope of increase" | "per percent"
+    WoptB::T3 = 0.3 | (0.15, 0.5) | "slope of decrease" | "per percent"
+    Wexp::T4 = 10.0 | (nothing, nothing) | "reference for exponent of sensitivity" | "per percent"
+    frac2perc::T5 = 100.0 | (nothing, nothing) | "unit converter for fraction to percent" | ""
 end
+#! format: on
 
-function instantiate(o::cTauSoilW_GSI, forcing, land, helpers)
-	@unpack_cTauSoilW_GSI o
+function define(o::cTauSoilW_GSI, forcing, land, helpers)
+    @unpack_cTauSoilW_GSI o
 
-	## instantiate variables
-	p_fsoilW = 	zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    ## instantiate variables
+    p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
-
-	## pack land variables
-	@pack_land p_fsoilW => land.cTauSoilW
-	return land
+    ## pack land variables
+    @pack_land p_fsoilW => land.cTauSoilW
+    return land
 end
-
 
 function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
@@ -35,24 +35,22 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
         𝟙 ∈ helpers.numbers
     end
 
-	## for the litter pools; only use the top layer"s moisture
+    ## for the litter pools; only use the top layer"s moisture
     soilW_top = frac2perc * soilW[1] / p_wSat[1]
     soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
-    cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit) 
-    for l_zix in cLitZix
+    cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
+    for l_zix ∈ cLitZix
         @rep_elem soilW_top_sc => (p_fsoilW, l_zix, :cEco)
     end
-
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = frac2perc * sum(soilW) / sum(p_wSat)
     soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
-    cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil) 
-    for s_zix in cSoilZix
+    cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
+    for s_zix ∈ cSoilZix
         @rep_elem soilW_all_sc => (p_fsoilW, s_zix, :cEco)
     end
-
 
     ## pack land variables
     @pack_land (p_fsoilW) => land.cTauSoilW
@@ -60,21 +58,22 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 end
 
 function fSoilW_cTau(𝟙, A, B, wExp, wOpt, wSoil)
-	# first half of the response curve
-	W2p1 = 𝟙 / (𝟙 + exp(A * (-wExp))) / (𝟙 + exp(A * (-wExp)))
+    # first half of the response curve
+    W2p1 = 𝟙 / (𝟙 + exp(A * (-wExp))) / (𝟙 + exp(A * (-wExp)))
     W2C1 = 𝟙 / W2p1
-    W21 = W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
+    W21 =
+        W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
 
     # second half of the response curve
     W2p2 = 𝟙 / (𝟙 + exp(B * (-wExp))) / (𝟙 + exp(B * (-wExp)))
     W2C2 = 𝟙 / W2p2
-    T22 = W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
+    T22 =
+        W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21
-	return soilW_sc
+    return soilW_sc
 end
-
 
 @doc """
 calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter

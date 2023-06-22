@@ -1,21 +1,41 @@
 export getSpinupForcing
 
-@generated function getForcingForTimePeriod(forcing, ::Val{forc_vars}, tstart::Int64, tend::Int64, f_t) where forc_vars
-    output = quote
-    end
+@generated function getForcingForTimePeriod(
+    forcing,
+    ::Val{forc_vars},
+    tstart::Int64,
+    tend::Int64,
+    f_t,
+) where {forc_vars}
+    output = quote end
     foreach(forc_vars) do forc
-        push!(output.args,Expr(:(=),:v,Expr(:.,:forcing,QuoteNode(forc))))
-        push!(output.args,quote
-                d = in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
-            end)
-        push!(output.args, Expr(:(=), :f_t, Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d))))
+        push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
+        push!(
+            output.args,
+            quote
+                d = in(:time, AxisKeys.dimnames(v)) ? v[time = tstart:tend] : v
+            end,
+        )
+        push!(
+            output.args,
+            Expr(
+                :(=),
+                :f_t,
+                Expr(
+                    :macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d),
+                ),
+            ),
+        ) #= none:1 =#
     end
     output
 end
 
 function getForcingForTimePeriod(forcing, tstart::Int64, tend::Int64)
     map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time = tstart:tend] : v
     end
 end
 
@@ -76,21 +96,19 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 """
 function getSpinupForcing(forcing, tem_helpers, f_one)
     forcing_methods = Symbol[]
-    for seq in tem.spinup.sequence
+    for seq ∈ tem.spinup.sequence
         forc = Symbol(seq["forcing"])
         if forc ∉ forcing_methods
             push!(forcing_methods, forc)
         end
     end
     spinup_forcing = (;)
-    for forc in forcing_methods
+    for forc ∈ forcing_methods
         spinup_forc = getSpinupForcing(forcing, tem, f_one, Val(forc))
         spinup_forcing = setTupleField(spinup_forcing, (forc, spinup_forc))
     end
     return spinup_forcing
 end
-
-
 
 #TODO: get all the getSpinupForcing methods to work correctly specially the ones with mean and recycleMSC
 """
@@ -149,14 +167,14 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 """
 function getSpinupForcing(forcing, tem)
     forcing_methods = []
-    for seq in tem.spinup.sequence
-        forc = Symbol(getfield(seq,:forcing))
+    for seq ∈ tem.spinup.sequence
+        forc = Symbol(getfield(seq, :forcing))
         if forc ∉ forcing_methods
             push!(forcing_methods, forc)
         end
     end
     spinup_forcing = (;)
-    for forc in forcing_methods
+    for forc ∈ forcing_methods
         spinup_forc = getSpinupForcing(forcing, tem.helpers, Val(forc))
         spinup_forcing = setTupleField(spinup_forcing, (forc, spinup_forc))
     end

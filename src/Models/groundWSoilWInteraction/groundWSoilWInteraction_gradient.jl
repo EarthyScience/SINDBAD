@@ -1,67 +1,68 @@
 export groundWSoilWInteraction_gradient
 
-@bounds @describe @units @with_kw struct groundWSoilWInteraction_gradient{T1, T2} <: groundWSoilWInteraction
-	smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
-	maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
+#! format: off
+@bounds @describe @units @with_kw struct groundWSoilWInteraction_gradient{T1,T2} <: groundWSoilWInteraction
+    smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
+    maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
+#! format: on
 
 function compute(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
-	## unpack parameters
-	@unpack_groundWSoilWInteraction_gradient o
-	## unpack land variables
-	@unpack_land begin
-		p_wSat ∈ land.soilWBase
-		(groundW, soilW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-		𝟘 ∈ helpers.numbers
-	end
-	# maximum groundwater storage
-	p_gwmax = p_wSat[end] * smax_scale
+    ## unpack parameters
+    @unpack_groundWSoilWInteraction_gradient o
+    ## unpack land variables
+    @unpack_land begin
+        p_wSat ∈ land.soilWBase
+        (groundW, soilW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+        𝟘 ∈ helpers.numbers
+    end
+    # maximum groundwater storage
+    p_gwmax = p_wSat[end] * smax_scale
 
-	# gradient between groundW[1] & soilW
-	tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - soilW[end] / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
+    # gradient between groundW[1] & soilW
+    tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - soilW[end] / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
-	# scale gradient with pot flux rate to get pot flux
-	potFlux = tmp_gradient * maxFlux; # need to make sure that the flux does not overflow | underflow storages
+    # scale gradient with pot flux rate to get pot flux
+    potFlux = tmp_gradient * maxFlux # need to make sure that the flux does not overflow | underflow storages
 
-	# adjust the pot flux to what is there
-	tmp = min(potFlux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
-	gwCapFlow = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW));
+    # adjust the pot flux to what is there
+    tmp = min(potFlux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
+    gwCapFlow = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
-	# adjust the delta storages
-	ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
-	ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
+    # adjust the delta storages
+    ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
+    ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
 
-	## pack land variables
-	@pack_land begin
-		gwCapFlow => land.fluxes
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        gwCapFlow => land.fluxes
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 function update(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
-	## unpack variables
-	@unpack_land begin
-		(soilW, groundW) ∈ land.pools
-		(ΔsoilW, ΔgroundW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        (soilW, groundW) ∈ land.pools
+        (ΔsoilW, ΔgroundW) ∈ land.states
+    end
 
-	## update storage pools
-	soilW[end] = soilW[end] + ΔsoilW[end]
-	groundW .= groundW .+ ΔgroundW
+    ## update storage pools
+    soilW[end] = soilW[end] + ΔsoilW[end]
+    groundW .= groundW .+ ΔgroundW
 
-	# reset ΔsoilW[end] and ΔgroundW to zero
-	ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset ΔsoilW[end] and ΔgroundW to zero
+    ΔsoilW[end] = ΔsoilW[end] - ΔsoilW[end]
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-
-	## pack land variables
-	@pack_land begin
-		(groundW, soilW) => land.pools
-		(ΔsoilW, ΔgroundW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (groundW, soilW) => land.pools
+        (ΔsoilW, ΔgroundW) => land.states
+    end
+    return land
 end
 
 @doc """
