@@ -9,6 +9,7 @@ tjs = (1_000, 2_000, 5_000)#, 50_000, 100_000, 200_000)
 expSol = zeros(8, length(tjs))
 odeSol = zeros(8, length(tjs))
 cInit = nothing
+times = zeros(2, length(tjs))
 for (i, tj) ∈ enumerate(tjs)
     experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
@@ -41,19 +42,6 @@ for (i, tj) ∈ enumerate(tjs)
         forcing.sizes,
         info.tem)
 
-    loc_space_maps,
-    loc_space_names,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one = prepRunEcosystem(output.data,
-        land_init_space[1],
-        info.tem.models.forward,
-        forc,
-        forcing.sizes,
-        info.tem)
-
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
     spinupforc = :recycleMSC
@@ -64,9 +52,9 @@ for (i, tj) ∈ enumerate(tjs)
     land_type = typeof(land_init)
     sel_pool = :cEco
 
-    spinup_models = info.tem.models.forward[info.tem.models.is_spinup.==1]
+    spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
     cInit = deepcopy(getfield(land_init.pools, sel_pool))
-    sp = :ODE_DP5
+    sp = :ODE_Tsit5
     @show "ODE_Init", tj
     @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
@@ -99,7 +87,9 @@ end
 a = 100 .* (odeSol .- expSol) ./ expSol
 
 # all pools
-plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, xscale=:log10)
+plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, xscale=:log10, size=(900, 600))
+xlabel!("Explicit")
+ylabel!("ODE")
 markers = (:d, :hex, :circle, :x, :cross, :ltriangle, :rtriangle, :star5, :star4);
 for c ∈ eachindex(tjs)
     plot!(expSol[:, c], odeSol[:, c]; lw=0, marker=markers[c], label=tjs[c])
