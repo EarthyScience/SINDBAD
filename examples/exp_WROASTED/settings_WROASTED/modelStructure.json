@@ -44,7 +44,8 @@
             "approach": "GSI"
         },
         "cCycleDisturbance": {
-            "approach": "WROASTED"
+            "approach": "WROASTED",
+            "use4spinup": false
         },
         "cFlow": {
             "approach": "GSI"
@@ -177,9 +178,6 @@
         },
         "treeFraction": {
             "approach": "constant"
-        },
-        "totalTWS": {
-            "approach": "sumComponents"
         },
         "vegAvailableWater": {
             "approach": "rootFraction"
