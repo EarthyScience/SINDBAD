@@ -5,7 +5,7 @@ using Plots
 noStackTrace()
 
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
-tj = 10000
+tj = 100
 replace_info = Dict("spinup.diffEq.timeJump" => tj,
     "spinup.diffEq.reltol" => 1e-2,
     "spinup.diffEq.abstol" => 1,
@@ -35,7 +35,7 @@ spinup_forcing = getSpinupForcing(loc_forcing, info.tem);
 
 land_init = deepcopy(land_init_space[1]);
 land_type = typeof(land_init);
-sel_pool = :cEco
+sel_pool = :TWS
 
 spinup_models = info.tem.models.forward[info.tem.models.is_spinup];
 plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(900, 600))
@@ -113,7 +113,7 @@ plot!(getfield(out_sp_exp_ode.pools, sel_pool);
     label="Exp_ODE",
     yscale=:log10) # legend=false
 
-using NLsolve, ComponentArrays
+using NLboxsolve, ComponentArrays
 
 struct Spinupper{M,F,T,I,L,O}
     models::M
@@ -127,11 +127,11 @@ end
 function (s::Spinupper)(pout, p)
     pout .= exp.(p)# .* s.pooldiff
     # s.land_init.pools.TWS .= pout.TWS
-    s.land_init.pools.cEco .= pout.cEco
+    s.land_init.pools.TWS .= pout.TWS
     update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
         s.f_one)
     # pout.TWS .= update_init.pools.TWS
-    pout.cEco .= update_init.pools.cEco
+    pout.TWS .= update_init.pools.TWS
     pout .= log.(pout)# ./ s.pooldiff
     return nothing
     # pout .= exp.(p)# .* s.pooldiff
@@ -141,16 +141,16 @@ function (s::Spinupper)(pout, p)
     # @rep_vec tmp => pout.TWS
     # s = @set s.land_init.pools.TWS = tmp
 
-    # tmp = s.land_init.pools.cEco
-    # s = @set s.land_init.pools.cEco = tmp
+    # tmp = s.land_init.pools.TWS
+    # s = @set s.land_init.pools.TWS = tmp
 
-    # @rep_vec tmp => pout.cEco
-    # s = @set s.land_init.pools.cEco = tmp
+    # @rep_vec tmp => pout.TWS
+    # s = @set s.land_init.pools.TWS = tmp
 
     # update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.f_one)
 
     # pout = @set pout.TWS = update_init.pools.TWS
-    # pout = @set pout.cEco = update_init.pools.cEco
+    # pout = @set pout.TWS = update_init.pools.TWS
     # pout .= log.(pout)# ./ s.pooldiff
 end
 
@@ -164,17 +164,18 @@ function doSpinup(spinup_models,
     ::Val{:nlsolve})
     s = Spinupper(spinup_models, spinup_forcing, tem_helpers, deepcopy(land_init), land_type, f_one)
     mypools = ComponentArray((
-        cEco = deepcopy(land_init.pools.cEco)))
+        TWS = deepcopy(land_init.pools.TWS)))
     # mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
-    # cEco=deepcopy(land_init.pools.cEco)))
+    # TWS=deepcopy(land_init.pools.TWS)))
     mypools .= log.(mypools)
-    r = fixedpoint(s, mypools; method=:trust_region)
-
+    r = nlboxsolve(s, land_init.pools.TWS, zero(mypools.TWS), ones(length(mypools.TWS)) .* 1000)
+    # r = fixedpoint(s, mypools; method=:trust_region)
+    @show r
     res = exp.(r.zero)
     li = deepcopy(s.land_init)
-    cEco = res.cEco
+    TWS = res.TWS
     # TWS = res.TWS
-    @pack_land cEco => li.pools
+    @pack_land TWS => li.pools
     # @pack_land TWS => li.pools
     return li
 end
@@ -189,13 +190,13 @@ end
     f_one,
     Val(:nlsolve));
 
-xtl = land_init.cCycleBase.p_annk;
-xtname = info.tem.helpers.pools.components.cEco
+# xtl = land_init.cCycleBase.p_annk;
+xtname = info.tem.helpers.pools.components.TWS
 plot!(getfield(out_sp_nl.pools, sel_pool);
     linewidth=5,
     ls=:dot,
     label="NL_Solve",
-    xticks=(1:length(xtl), string.(xtname) .* "\n" .* string.(xtl)),
+    xticks=(1:length(xtl), string.(xtname)),
     rotation=45) # legend=false
 
 @show "Exp_NL"
@@ -217,4 +218,4 @@ plot!(getfield(out_sp_exp_nl.pools, sel_pool);
     label="Exp_NL",
     yscale=:log10) # legend=false
 
-savefig("comp_methods_eachpool_tj-$(tj).png")
+savefig("comp_methods_eachpool_TWS-tj-$(tj).png")
