@@ -57,6 +57,7 @@ function get_loc_loss(loc_obs,
     out_variables,
     loc_land_init,
     f_one)
+    #@show tem_helpers.pools
     ForwardSindbad.coreEcosystem!(loc_output,
         newApproaches,
         loc_forcing,
@@ -102,6 +103,13 @@ function site_loss2(output,
         loc_land_init,
         f_one)
     return l
+end
+
+function getLocObs(outcubes, obs, loc_space_map)
+    loc_obs = map(obs) do a
+        return view(a; loc_space_map...)
+    end
+    return loc_obs
 end
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
