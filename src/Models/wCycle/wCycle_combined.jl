@@ -20,6 +20,7 @@ function compute(o::wCycle_combined, forcing, land, helpers)
         (ΔTWS, zeroΔTWS) ∈ land.states
         (𝟘, tolerance) ∈ helpers.numbers
     end
+    totalW_prev = sum(TWS)
     #TWS_old = deepcopy(TWS)
     ## update variables
     TWS = add_vec(TWS, ΔTWS)
@@ -35,10 +36,13 @@ function compute(o::wCycle_combined, forcing, land, helpers)
         end
     end
     ΔTWS = zeroΔTWS
+
+    totalW = sum(TWS)
+
     # pack land variables
     @pack_land begin
         (TWS) => land.pools
-        (ΔTWS) => land.states
+        (ΔTWS, totalW, totalW_prev) => land.states
     end
     return land
 end

@@ -335,7 +335,7 @@ function setInputParameters(original_table::Table, updated_table::Table)
                     row.models == Symbol(updated_table[i].models),
             original_table)
         if isempty(subtbl)
-            error("model: $(updated_table[i].names) and model $(updated_table[i].models) not found")
+            error("model: parameter $(updated_table[i].names) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
         else
             posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
             posvar = findall(x -> x == Symbol(updated_table[i].names), upoTable.names)
@@ -400,19 +400,14 @@ function getSpinupAndForwardModels(info::NamedTuple)
             use4spinup = defaultModel.use4spinup
         end
         if use4spinup == true
-            sel_appr_spinup = (sel_appr_spinup..., sel_approach_func)
             push!(is_spinup, 1)
         else
             push!(is_spinup, 0)
         end
     end
-    # for t = 1:150-length(sel_appr_forward)
-    #     sel_appr_forward = (sel_appr_forward..., getfield(Sindbad.Models, :dummy_sindbad))
-    #     push!(is_spinup, 0)
-    # end
-    # for t = 1:150-length(sel_appr_spinup)
-    #     sel_appr_spinup = (sel_appr_spinup..., getfield(Sindbad.Models, :dummy_sindbad))
-    # end
+    # change is_spinup to a vector of indices
+    is_spinup = findall(is_spinup .== 1)
+
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
     if hasproperty(info, :params)
         if !isempty(info.params)
@@ -421,10 +416,6 @@ function getSpinupAndForwardModels(info::NamedTuple)
             updated_params = setInputParameters(original_params_forward, input_params)
             updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward)
 
-            original_params_spinup = getParameters(sel_appr_spinup)
-            updated_params = setInputParameters(original_params_spinup, input_params)
-            updated_appr_spinup = updateModelParameters(updated_params, sel_appr_spinup)
-
             info = (;
                 info...,
                 tem=(;
@@ -432,8 +423,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
                     models=(;
                         info.tem.models...,
                         forward=updated_appr_forward,
-                        is_spinup=is_spinup,
-                        spinup=updated_appr_spinup)))
+                        is_spinup=is_spinup)))
         end
     else
         info = (;
@@ -443,8 +433,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
                 models=(;
                     info.tem.models...,
                     forward=sel_appr_forward,
-                    is_spinup=is_spinup,
-                    spinup=sel_appr_spinup)))
+                    is_spinup=is_spinup)))
     end
     return info
 end
@@ -866,7 +855,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         Δcomponent = Symbol(string(avk) * string(component))
                         indx = getfield(zixT, component)
                         Δcompdat = createArrayofType(ones(length(indx)) *
-                                          tem_helpers.numbers.sNT(avv),
+                                                     tem_helpers.numbers.sNT(avv),
                             ΔpoolArray,
                             tem_helpers.numbers.numType,
                             indx,

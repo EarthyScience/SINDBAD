@@ -178,9 +178,6 @@
         "treeFraction": {
             "approach": "constant"
         },
-        "totalTWS": {
-            "approach": "sumComponents"
-        },
         "vegAvailableWater": {
             "approach": "rootFraction"
         },
