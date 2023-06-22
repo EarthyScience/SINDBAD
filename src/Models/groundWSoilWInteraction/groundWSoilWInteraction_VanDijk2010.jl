@@ -43,14 +43,8 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
     # get the capillary flux
     c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-    gwCapFlow = max(
-        min(
-            c_flux,
-            max_fraction * (sum(groundW) + sum(ΔgroundW)),
-            soilW[end] + ΔsoilW[end],
-        ),
-        𝟘,
-    )
+    gwCapFlow = max(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)),
+            soilW[end] + ΔsoilW[end]), 𝟘)
 
     # adjust the delta storages
     n_groundW = 𝟙 * length(groundW)

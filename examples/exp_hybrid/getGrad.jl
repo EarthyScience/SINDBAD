@@ -29,17 +29,14 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(
-    output.data,
+f_one = prepRunEcosystem(output.data,
     output.land_init,
     info.tem.models.forward,
     forc,
     forcing.sizes,
-    info.tem,
-);
+    info.tem);
 
-@time runEcosystem!(
-    output.data,
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
@@ -48,19 +45,15 @@ f_one = prepRunEcosystem(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = Sindbad.getParameters(
-    info.tem.models.forward,
+tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
-    info.optim.optimized_parameters,
-);
+    info.optim.optimized_parameters);
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-function g_loss(
-    x,
+function g_loss(x,
     mods,
     forc,
     op,
@@ -74,10 +67,8 @@ function g_loss(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
-    l = getLossGradient(
-        x,
+    f_one)
+    l = getLossGradient(x,
         mods,
         forc,
         op,
@@ -91,22 +82,20 @@ function g_loss(
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one,
-    )
+        f_one)
     pprint("params:")
     @show " "
     pprint(x)
     @show " "
     pprint("g_loss")
     pprint(l)
-    l
+    return l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(
-    tblParams.defaults .* rand_m,
+g_loss(tblParams.defaults .* rand_m,
     mods,
     forc,
     op,
@@ -120,10 +109,8 @@ g_loss(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
-g_loss(
-    tblParams.defaults,
+    f_one)
+g_loss(tblParams.defaults,
     mods,
     forc,
     op,
@@ -137,46 +124,45 @@ g_loss(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
-l1(p) = g_loss(
-    p,
-    mods,
-    forc,
-    op,
-    op.variables,
-    obs,
-    tblParams,
-    info.tem,
-    info.optim,
-    loc_space_names,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one,
-)
-l2(p) = g_loss(
-    p,
-    newmods,
-    forc,
-    op,
-    op.variables,
-    obs,
-    tblParams,
-    info.tem,
-    info.optim,
-    loc_space_names,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one,
-)
+function l1(p)
+    return g_loss(p,
+        mods,
+        forc,
+        op,
+        op.variables,
+        obs,
+        tblParams,
+        info.tem,
+        info.optim,
+        loc_space_names,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+end
+function l2(p)
+    return g_loss(p,
+        newmods,
+        forc,
+        op,
+        op.variables,
+        obs,
+        tblParams,
+        info.tem,
+        info.optim,
+        loc_space_names,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+end
 l1(tblParams.defaults .* rand_m)
 l2(tblParams.defaults .* rand_m)
 @time grad = ForwardDiff.gradient(l1, tblParams.defaults)
@@ -194,7 +180,7 @@ Random.seed!(rng, 0)
 ps_NN, st = Lux.setup(rng, NNmodel)
 # Parameters must be a ComponentArray or an Array,
 # Zygote Jacobian won't loop through NamedTuple
-ps_NN = ps_NN |> ComponentArray
+ps_NN = ComponentArray(ps_NN)
 
 # i.e. Input x  now should be 
 
@@ -213,16 +199,16 @@ function reshape_weight(arr, weights)
     for layer ∈ keys(weights)
         weight = weights[layer][:weight]
         bias = weights[layer][:bias]
-        new_weight = arr[i:i+length(weight)-1]
+        new_weight = arr[i:(i+length(weight)-1)]
         i += length(weight)
-        new_bias = arr[i:i+length(bias)-1]
+        new_bias = arr[i:(i+length(bias)-1)]
         i += length(bias)
         return_arr[layer][:weight] = reshape(new_weight, size(weight))
         return_arr[layer][:bias] = reshape(new_bias, size(bias))
     end
-    return_arr
+    return return_arr
 end
-function full_gradient(x, y_real; NNmodel = NNmodel, g_loss = floss, ps_NN = ps_NN, st = st)
+function full_gradient(x, y_real; NNmodel=NNmodel, g_loss=floss, ps_NN=ps_NN, st=st)
     """
     Function that outpus the full gradient of the g_loss w.r.t. the weights
     of the NNmodel.
@@ -236,7 +222,7 @@ function full_gradient(x, y_real; NNmodel = NNmodel, g_loss = floss, ps_NN = ps_
     # Weights of the NN
     NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
     # Apply Chain rules to get ∂loss/∂NN_parameters
-    full_grad = sum(f_grad .* NN_grad, dims = 1)
+    full_grad = sum(f_grad .* NN_grad; dims=1)
     # Reshape output for the optimization
     return reshape_weight(full_grad, ps_NN)
 end
@@ -251,7 +237,7 @@ loss_arr = []
 st_opt = Optimisers.setup(Optimisers.ADAM(0.01), ps_NN)
 for i ∈ 1:300
     global st_opt, ps_NN
-    gs = full_gradient(x, y_real; ps_NN = ps_NN)
+    gs = full_gradient(x, y_real; ps_NN=ps_NN)
     st_opt, ps_NN = Optimisers.update(st_opt, ps_NN, gs)
     if i % 10 == 1 || i == 100
         dist = abs(NNmodel(x, ps_NN, st)[1][1] - 2.37e-1)

@@ -8,12 +8,7 @@ export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 end
 #! format: on
 
-function compute(
-    o::runoffSaturationExcess_Bergstroem1992MixedVegFraction,
-    forcing,
-    land,
-    helpers,
-)
+function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
     ## unpack parameters
     @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
 

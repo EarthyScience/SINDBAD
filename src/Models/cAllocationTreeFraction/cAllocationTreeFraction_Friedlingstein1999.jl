@@ -60,45 +60,18 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     # cVegRoot = cVegRootF + cVegRootC
     cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - treeFraction)
 
-    cAlloc = setCAlloc(
-        cAlloc,
-        cVegWood,
-        land.pools.cVegWood,
-        helpers.pools.zix.cVegWood,
-        helpers,
-    )
+    cAlloc = setCAlloc(cAlloc, cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
     if hasproperty(cpNamesTFAlloc, :cVegRootC)
-        cAlloc = setCAlloc(
-            cAlloc,
-            cVegRootC,
-            land.pools.cVegRootC,
-            helpers.pools.zix.cVegRootC,
-            helpers,
-        )
-        cAlloc = setCAlloc(
-            cAlloc,
-            cVegRootF,
-            land.pools.cVegRootF,
-            helpers.pools.zix.cVegRootF,
-            helpers,
-        )
+        cAlloc = setCAlloc(cAlloc, cVegRootC, land.pools.cVegRootC, helpers.pools.zix.cVegRootC,
+            helpers)
+        cAlloc = setCAlloc(cAlloc, cVegRootF, land.pools.cVegRootF, helpers.pools.zix.cVegRootF,
+            helpers)
     else
-        cAlloc = setCAlloc(
-            cAlloc,
-            cVegRoot,
-            land.pools.cVegRoot,
-            helpers.pools.zix.cVegRoot,
-            helpers,
-        )
+        cAlloc = setCAlloc(cAlloc, cVegRoot, land.pools.cVegRoot, helpers.pools.zix.cVegRoot,
+            helpers)
     end
 
-    cAlloc = setCAlloc(
-        cAlloc,
-        cVegLeaf,
-        land.pools.cVegLeaf,
-        helpers.pools.zix.cVegLeaf,
-        helpers,
-    )
+    cAlloc = setCAlloc(cAlloc, cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
 
     @pack_land cAlloc => land.states
 

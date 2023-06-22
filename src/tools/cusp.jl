@@ -73,11 +73,9 @@ macro rep_elem(outparams::Expr)
     indx = rhsa[2]
     hp_pool = rhsa[3]
     outCode = [
-        Expr(
-            :(=),
+        Expr(:(=),
             tar,
-            Expr(
-                :call,
+            Expr(:call,
                 rep_elem,
                 tar,
                 lhs,
@@ -85,9 +83,7 @@ macro rep_elem(outparams::Expr)
                 esc(Expr(:., :(helpers.pools.ones), hp_pool)),
                 esc(:(helpers.numbers.𝟘)),
                 esc(:(helpers.numbers.𝟙)),
-                esc(indx),
-            ),
-        ),
+                esc(indx)))
     ]
     # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
     return Expr(:block, outCode...)
@@ -139,19 +135,15 @@ macro add_to_elem(outparams::Expr)
     indx = rhsa[2]
     hp_pool = rhsa[3]
     outCode = [
-        Expr(
-            :(=),
+        Expr(:(=),
             tar,
-            Expr(
-                :call,
+            Expr(:call,
                 add_to_elem,
                 tar,
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
                 esc(:(helpers.numbers.𝟘)),
-                esc(indx),
-            ),
-        ),
+                esc(indx)))
     ]
     return Expr(:block, outCode...)
 end

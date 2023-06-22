@@ -13,9 +13,7 @@ function define(o::soilTexture_fixed, forcing, land, helpers)
     @unpack_soilTexture_fixed o
 
     ## set parameter variables
-    println(
-        "soilTexture_fixed: distributing the fixed texture properties over the soil layers.",
-    )
+    println("soilTexture_fixed: distributing the fixed texture properties over the soil layers.")
     st_CLAY = zero(land.pools.soilW)
     st_ORGM = zero(land.pools.soilW)
     st_SAND = zero(land.pools.soilW)

@@ -37,7 +37,7 @@ function compute(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
     cVegRoot = ro * (RelY + 𝟙) * LL / (LL + RelY * minWLNL)
     cVegWood = so * (RelY + 𝟙) * minWLNL / (RelY * LL + minWLNL)
     cVegLeaf = 𝟙 - cVegRoot - cVegWood
-    cf2 = (; cVegLeaf = cVegLeaf, cVegWood = cVegWood, cVegRoot = cVegRoot)
+    cf2 = (; cVegLeaf=cVegLeaf, cVegWood=cVegWood, cVegRoot=cVegRoot)
 
     # distribute the allocation according to pools
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)

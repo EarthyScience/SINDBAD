@@ -19,8 +19,8 @@ function define(o::gppAirT_GSI, forcing, land, helpers)
     cScGPP_prev = 𝟙
     hScGPP_prev = 𝟙
     f_smooth =
-        (f_p, f_n, τ, slope, base) ->
-            (𝟙 - τ) * f_p + τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
+        (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p +
+                                      τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
 
     ## pack land variables
     @pack_land (cScGPP_prev, hScGPP_prev, f_smooth) => land.gppAirT

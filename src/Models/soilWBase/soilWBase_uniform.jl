@@ -6,19 +6,8 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
-        (
-            sp_kFC,
-            sp_kSat,
-            sp_kWP,
-            sp_α,
-            sp_β,
-            sp_θFC,
-            sp_θSat,
-            sp_θWP,
-            sp_ψFC,
-            sp_ψSat,
-            sp_ψWP,
-        ) ∈ land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈
+        land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
         numType ∈ helpers.numbers
@@ -74,8 +63,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
     s_wAWC = sum(p_wAWC)
 
     @pack_land begin
-        (
-            p_CLAY,
+        (p_CLAY,
             p_ORGM,
             p_SAND,
             p_SILT,
@@ -99,8 +87,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
             p_ψFC,
             p_ψSat,
             p_ψWP,
-            n_soilW,
-        ) => land.soilWBase
+            n_soilW) => land.soilWBase
         soilW => land.pools
     end
     return land

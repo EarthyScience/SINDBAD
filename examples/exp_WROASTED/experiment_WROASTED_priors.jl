@@ -28,8 +28,7 @@ outpath = nothing
 # t
 domain = "DE-Hai"
 pl = "threads"
-replace_info = Dict(
-    "modelRun.time.sDate" => sYear * "-01-01",
+replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "experiment.configFiles.forcing" => forcingConfig,
     "experiment.domain" => domain,
     "modelRun.time.eDate" => eYear * "-12-31",
@@ -43,10 +42,9 @@ replace_info = Dict(
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
     "modelRun.mapping.parallelization" => pl,
-    "opti.constraints.oneDataPath" => obspath,
-);
+    "opti.constraints.oneDataPath" => obspath);
 
-info = getExperimentInfo(experiment_json; replace_info = replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
 forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
@@ -56,22 +54,14 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit = createLandInit(info.pools, info.tem);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps,
-loc_space_names,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-f_one = prepRunEcosystem(
-    output.data,
-    output.land_init,
-    info.tem.models.forward,
-    forc,
-    forcing.sizes,
-    info.tem,
-);
-@time runEcosystem!(
-    output.data,
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
+    prepRunEcosystem(output.data,
+        output.land_init,
+        info.tem.models.forward,
+        forc,
+        forcing.sizes,
+        info.tem);
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
@@ -80,13 +70,12 @@ f_one = prepRunEcosystem(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
+    f_one)
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time outcubes = runExperimentOpti(experiment_json; replace_info = replace_info);
+@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
@@ -99,17 +88,17 @@ extract a matrix with columns:
   - observations
   - observation uncertainties (stdev)
 """
-function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN = true)
+function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     cost_options = optim.costOptions
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
         y = getproperty(obs, obsV)
         yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
-        [vec(y) vec(yσ)]
+        return [vec(y) vec(yσ)]
     end
     resM = vcat(res...)
-    resM, isfinite.(resM[:, 1])
+    return resM, isfinite.(resM[:, 1])
     #TODO do with fewer allocations
 end
 
@@ -122,12 +111,10 @@ extract a matrix with columns:
   - observation uncertainties (stdev)
   - model prediction
 """
-function getPredAndObsVector(
-    observations::NamedTuple,
+function getPredAndObsVector(observations::NamedTuple,
     model_output,
     optim::NamedTuple;
-    removeNaN = true,
-)
+    removeNaN=true)
     cost_options = optim.costOptions
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
@@ -135,14 +122,14 @@ function getPredAndObsVector(
         mod_variable = getfield(optimVars, obsV)
         #TODO care for equal size
         (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-        [vec(y) vec(yσ) vec(ŷ)]
+        return [vec(y) vec(yσ) vec(ŷ)]
     end
     resM = vcat(res...)
-    resM, isfinite.(resM[:, 1])
+    return resM, isfinite.(resM[:, 1])
     #TODO do with fewer allocations
 end
 
-outcubes = runExperimentOpti(experiment_json; replace_info = replace_info);
+outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
 pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
 
 develop_f =
@@ -177,7 +164,7 @@ develop_f =
         #priors_opt, dObs, is_finite_obs
         #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, loc_forcing, loc_output
         #output_variables, optim
-        m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T} = Float64) where {T}
+        m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
             #assumptions/priors
             local popt = Vector{T}(undef, length(priors_opt))
             #popt_unscaled = Vector{T}(undef, length(popt_dist))
@@ -186,15 +173,13 @@ develop_f =
             for (i, r) ∈ enumerate(priors_opt)
                 popt[i] ~ r
             end
-            local is_priorcontext =
-                DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
+            local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
             tblParams.optim .= popt  # TODO replace mutation
 
             newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
             # TODO run model with updated parameters
-            runEcosystem!(
-                output.data,
+            runEcosystem!(output.data,
                 output.land_init,
                 newApproaches,
                 forcing,
@@ -205,20 +190,15 @@ develop_f =
                 loc_forcings,
                 loc_outputs,
                 land_init_space,
-                f_one,
-            )
+                f_one)
 
             # get predictions and observations
             model_output = (; Pair.(output_variables, output)...)
-            pred_obs, is_finite_obs =
-                getPredAndObsVector(observations, model_output, optim)
+            pred_obs, is_finite_obs = getPredAndObsVector(observations, model_output, optim)
 
-            dObs = MvNormal(
-                pred_obs[is_finite_obs, 1],
-                PDiagMat(pred_obs[is_finite_obs, 2]),
-            )
+            dObs = MvNormal(pred_obs[is_finite_obs, 1], PDiagMat(pred_obs[is_finite_obs, 2]))
             # pdf(dObs, pred_obs[is_finite_obs,3])
-            pred_obs[is_finite_obs, 3] ~ dObs
+            return pred_obs[is_finite_obs, 3] ~ dObs
         end
 
         n_burnin = 0

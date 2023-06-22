@@ -15,12 +15,10 @@ function define(o::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_cFlowSoilProperties_CASA o
 
     ## instantiate variables
-    p_E = repeat(
-        zeros(helpers.numbers.numType, length(land.pools.cEco)),
+    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
         1,
         1,
-        length(land.pools.cEco),
-    )
+        length(land.pools.cEco))
 
     ## pack land variables
     @pack_land p_E => land.cFlowSoilProperties
@@ -46,16 +44,12 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
     SILT = mean(p_SILT)
     # CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
     # SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
-    aME = [
-        :cMicSoil :cSoilSlow effA-(effB*(SILT+CLAY))
-        :cMicSoil :cSoilOld effA-(effB*(SILT+CLAY))
-    ]
-    aMF = [
-        :cSoilSlow :cMicSoil 1-(effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY))
+    aME = [:cMicSoil :cSoilSlow effA-(effB*(SILT+CLAY))
+        :cMicSoil :cSoilOld effA-(effB*(SILT+CLAY))]
+    aMF = [:cSoilSlow :cMicSoil 1-(effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY))
         :cSoilSlow :cSoilOld effCLAY_cSoilSlow_A+(effCLAY_cSoilSlow_B*CLAY)
         :cMicSoil :cSoilSlow 1-(effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY))
-        :cMicSoil :cSoilOld effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY)
-    ]
+        :cMicSoil :cSoilOld effCLAY_cMicSoil_A+(effCLAY_cMicSoil_B*CLAY)]
     for vn ∈ ("E", "F")
         eval(["aM = aM" vn " "])
         for ii ∈ 1:size(aM, 1)

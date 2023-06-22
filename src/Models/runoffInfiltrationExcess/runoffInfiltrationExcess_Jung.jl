@@ -17,10 +17,8 @@ function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     # get infiltration capacity of the first layer
     pInfCapacity = p_kSat[1] / sNT(24) # in mm/hr
     InfExcess =
-        rain - (
-            rain * fAPAR +
-            (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt)
-        )
+        rain - (rain * fAPAR +
+                (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
     runoffInfExc = rain > 𝟘 ? InfExcess : 𝟘
     WBP = WBP - runoffInfExc
 

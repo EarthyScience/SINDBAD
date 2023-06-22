@@ -32,36 +32,27 @@ function processPackForcing(ex::Expr)
     lines = broadcast(lhs, rename) do s, rn
         depth_field = length(findall(".", string(esc(rhs)))) + 1
         if depth_field == 1
-            expr_l = Expr(
-                :(=),
+            expr_l = Expr(:(=),
                 esc(rhs),
-                Expr(
-                    :tuple,
-                    Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))),
-                ),
-            )
+                Expr(:tuple,
+                    Expr(:parameters, Expr(:(...), esc(rhs)),
+                        Expr(:(=), esc(s), esc(rn)))))
             expr_l
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
             #expr_l = Expr(:(=), esc(top), Expr(:tuple, Expr(:(...), esc(top)), Expr(:(=), esc(field), (Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn))))))))
-            Expr(
-                :(=),
+            Expr(:(=),
                 esc(top),
-                Expr(
-                    :macrocall,
+                Expr(:macrocall,
                     Symbol("@set"),
                     :(),
-                    Expr(
-                        :(=),
+                    Expr(:(=),
                         Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)),
-                        esc(rn),
-                    ),
-                ),
-            ) #= none:1 =#
+                        esc(rn)))) #= none:1 =#
         end
     end
-    Expr(:block, lines...)
+    return Expr(:block, lines...)
 end
 
 macro pack_land(outparams::Expr)
@@ -81,17 +72,13 @@ b = 12.0
 
 macro fuck_it(forc)
     # @show forc, QuoteNode(forc)
-    Expr(
-        Symbol("@set"),
+    return Expr(Symbol("@set"),
         :(),
         Expr(:., :forcing_t, forc),
-        Expr(
-            :if,
+        Expr(:if,
             Expr(:call, :in, :time, Expr(:call, Expr(:., :AxisKeys, :(:dimnames)), :v)),
             Expr(:ref, :v, :($(Expr(:kw, :time, ts)))),
-            :v,
-        ),
-    ) #= none:1 =#
+            :v)) #= none:1 =#
 end
 ts = 5
 @fuck_it :tair
@@ -105,7 +92,7 @@ function test_nt(out::NamedTuple, nt::Int64)
 end
 
 out_nt = (;)
-out_nt = (; out_nt..., fluxes = (; b = rand()), pools = (; a = rand(100)))
+out_nt = (; out_nt..., fluxes=(; b=rand()), pools=(; a=rand(100)))
 @pack_land b => out_nt
 
 out_new = test_nt(out_nt, 100);
@@ -126,7 +113,7 @@ function pack_dict(out)
 end
 =#
 out_nt = (;)
-out_nt = (; out_nt..., fluxes = (;), pools = (; a = rand(100)))
+out_nt = (; out_nt..., fluxes=(;), pools=(; a=rand(100)))
 
 @time for i ∈ 1:100
     test_nt(out_nt, 10)
@@ -142,8 +129,8 @@ end
 using Flatten
 using Accessors
 out_nt = (;)
-out_nt = (; out_nt..., fluxes = (; b = 1.0), pools = (; a = rand(10)))
-out_nt = (; out_nt..., fluxes = (;), pools = (; a = rand(100)))
+out_nt = (; out_nt..., fluxes=(; b=1.0), pools=(; a=rand(10)))
+out_nt = (; out_nt..., fluxes=(;), pools=(; a=rand(100)))
 
 function setacces(out_nt)
     return @set out_nt[:fluxes][:b] = rand()
@@ -163,7 +150,7 @@ b = 12.0
 using NestedTuples
 using BenchmarkTools
 out_nt = (;)
-out_nt = (; out_nt..., fluxes = (; b = 1.0), pools = (; a = rand(10)))
+out_nt = (; out_nt..., fluxes=(; b=1.0), pools=(; a=rand(10)))
 Base.setindex(out_nt, Base.setindex(out_nt.fluxes, b, :b), :fluxes)
 f = leaf_setter(out_nt)
 @btime $f(2.3, rand(10))
@@ -174,7 +161,7 @@ f = leaf_setter(out_nt)
 
 @btime $out_nt = @set $out_nt[:fluxes][:b] = 3.0
 
-t = (a = 1, b = 2, fluxes = (;));
+t = (a=1, b=2, fluxes=(;));
 @btime @insert $t[:fluxes][:c] = rand()
 
 #getproperty(getproperty(out_nt, :fluxes), :b)

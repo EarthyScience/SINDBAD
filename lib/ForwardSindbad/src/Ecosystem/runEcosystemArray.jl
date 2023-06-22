@@ -5,13 +5,13 @@ export coreEcosystem!
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
-        view(a; loc_space_map...)
+        return view(a; loc_space_map...)
     end
     # ar_inds = last.(loc_space_map)
     ar_inds = Tuple(last.(loc_space_map))
 
     loc_output = map(outcubes) do a
-        getArrayView(a, ar_inds)
+        return getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output
 end
@@ -22,53 +22,38 @@ function getLocOutput!(outcubes, ar_inds, loc_output)
     end
 end
 
-@generated function getLocForcing!(
-    forcing,
+@generated function getLocForcing!(forcing,
     ::Val{forc_vars},
     ::Val{s_names},
     loc_forcing,
-    s_locs,
-) where {forc_vars,s_names}
+    s_locs) where {forc_vars,s_names}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :d, Expr(:., :forcing, QuoteNode(forc))))
         s_ind = 1
         foreach(s_names) do s_name
-            expr = Expr(
-                :(=),
+            expr = Expr(:(=),
                 :d,
-                Expr(
-                    :call,
+                Expr(:call,
                     :view,
-                    Expr(
-                        :parameters,
-                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind)),
-                    ),
-                    :d,
-                ),
-            )
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
             push!(output.args, expr)
-            s_ind += 1
+            return s_ind += 1
         end
-        push!(
-            output.args,
-            Expr(
-                :(=),
+        return push!(output.args,
+            Expr(:(=),
                 :loc_forcing,
-                Expr(
-                    :macrocall,
+                Expr(:macrocall,
                     Symbol("@set"),
                     :(),
-                    Expr(:(=), Expr(:., :loc_forcing, QuoteNode(forc)), :d),
-                ),
-            ),
-        ) #= none:1 =#
+                    Expr(:(=), Expr(:., :loc_forcing, QuoteNode(forc)), :d)))) #= none:1 =#
     end
-    output
+    return output
 end
 
-function ecoLoc!(
-    outcubes,
+function ecoLoc!(outcubes,
     approaches,
     forcing,
     tem_helpers,
@@ -80,18 +65,10 @@ function ecoLoc!(
     loc_forcing,
     loc_output,
     land_init,
-    f_one,
-)
+    f_one)
     getLocOutput!(outcubes, loc_space_ind, loc_output)
-    getLocForcing!(
-        forcing,
-        Val(keys(f_one)),
-        Val(loc_space_names),
-        loc_forcing,
-        loc_space_ind,
-    )
-    coreEcosystem!(
-        loc_output,
+    getLocForcing!(forcing, Val(keys(f_one)), Val(loc_space_names), loc_forcing, loc_space_ind)
+    return coreEcosystem!(loc_output,
         approaches,
         loc_forcing,
         tem_helpers,
@@ -99,21 +76,20 @@ function ecoLoc!(
         tem_models,
         tem_variables,
         land_init,
-        f_one,
-    )
+        f_one)
 end
 
 function get_view(ar, val::AbstractVector, ts::Int64)
-    view(ar, ts, 1:length(val))
+    return view(ar, ts, 1:length(val))
 end
 
 function get_view(ar, val::Real, ts::Int64)
-    view(ar, ts)
+    return view(ar, ts)
 end
 
 function fill_it!(ar, val, ts::Int64)
     data_ts = get_view(ar, val, ts)
-    data_ts .= val
+    return data_ts .= val
 end
 
 @generated function setOutputT!(outputs, land, ::Val{TEM}, ts) where {TEM}
@@ -121,47 +97,39 @@ end
     var_index = 1
     foreach(keys(TEM)) do group
         foreach(TEM[group]) do k
-            push!(
-                output.args,
-                Expr(
-                    :(=),
-                    :data_l,
-                    Expr(:., Expr(:., :land, QuoteNode(group)), QuoteNode(k)),
-                ),
-            )
+            push!(output.args,
+                Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(group)), QuoteNode(k))))
             push!(output.args, quote
                 data_o = outputs[$var_index]
                 fill_it!(data_o, data_l, ts)
             end)
-            var_index += 1
+            return var_index += 1
         end
     end
-    output
+    return output
 end
 
 function runDefine!(out, forcing, models, tem_helpers)
-    return foldl_unrolled(models, init = out) do o, model
+    return foldl_unrolled(models; init=out) do o, model
         o = Models.define(model, forcing, o, tem_helpers)
-        o = Models.precompute(model, forcing, o, tem_helpers)
+        return o = Models.precompute(model, forcing, o, tem_helpers)
     end
 end
 
 function runPrecompute!(out, forcing, models, tem_helpers)
-    return foldl_unrolled(models, init = out) do o, model
-        o = Models.precompute(model, forcing, o, tem_helpers)
+    return foldl_unrolled(models; init=out) do o, model
+        return o = Models.precompute(model, forcing, o, tem_helpers)
     end
 end
 
-function timeLoopForward!(
-    loc_output,
+function timeLoopForward!(loc_output,
     forward_models,
     forcing,
     out,
     tem_variables,
     tem_helpers,
     time_steps::Int64,
-    f_one,
-)
+    f_one)
     f_t = f_one
     if tem_helpers.run.debugit
         time_steps = 1
@@ -188,8 +156,7 @@ function timeLoopForward!(
     end
 end
 
-function coreEcosystem!(
-    loc_output,
+function coreEcosystem!(loc_output,
     approaches,
     loc_forcing,
     tem_helpers,
@@ -197,15 +164,13 @@ function coreEcosystem!(
     tem_models,
     tem_variables,
     land_init,
-    f_one,
-)
+    f_one)
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
     # land_spin_now = land_init
 
     if tem_helpers.run.runSpinup
-        land_spin_now = runSpinup(
-            approaches,
+        land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
             tem_helpers,
@@ -213,38 +178,24 @@ function coreEcosystem!(
             tem_models,
             typeof(land_init),
             f_one;
-            spinup_forcing = nothing,
-        )
+            spinup_forcing=nothing)
     end
     time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
-    timeLoopForward!(
-        loc_output,
+    return timeLoopForward!(loc_output,
         approaches,
         loc_forcing,
         land_spin_now,
         tem_variables,
         tem_helpers,
         time_steps,
-        f_one,
-    )
+        f_one)
 end
 
-function doOneLocation(
-    outcubes::AbstractArray,
-    land_init,
-    approaches,
-    forcing,
-    tem,
-    loc_space_map,
-)
+function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, tem, loc_space_map)
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_map)
 
-    land_prec = runDefine!(
-        land_init,
-        getForcingForTimeStep(loc_forcing, 1),
-        approaches,
-        tem.helpers,
-    )
+    land_prec = runDefine!(land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
+        tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers)
     setOutputT!(loc_output, land_one, Val(tem.variables), 1)
@@ -259,24 +210,24 @@ end
 """
 prepRunEcosystem(approaches, forcing, land_init, tem)
 """
-function prepRunEcosystem(
-    outcubes::AbstractArray,
+function prepRunEcosystem(outcubes::AbstractArray,
     land_init,
     approaches::Tuple,
     forcing::NamedTuple,
     forcing_sizes::NamedTuple,
-    tem::NamedTuple,
-)
-    loopvars = keys(forcing_sizes) |> collect
+    tem::NamedTuple)
+    loopvars = collect(keys(forcing_sizes))
     additionaldims = setdiff(loopvars, [:time])::Vector{Symbol}
     spacesize = values(forcing_sizes[additionaldims])::Tuple
     loc_space_maps = vec(
-        Iterators.product(Base.OneTo.(spacesize)...) |> collect,
-    )::Vector{NTuple{length(forcing_sizes) - 1,Int}}
+        collect(Iterators.product(Base.OneTo.(spacesize)...))
+    )::Vector{NTuple{length(forcing_sizes) -
+                     1,
+        Int}}
 
     loc_space_maps = map(loc_space_maps) do loc_names
         map(zip(loc_names, additionaldims)) do (loc_index, lv)
-            lv => loc_index
+            return lv => loc_index
         end
     end
     loc_space_maps = Tuple(loc_space_maps)
@@ -288,8 +239,8 @@ function prepRunEcosystem(
     end
     loc_forcing, loc_output = getLocData(outcubes, forcing, loc_space_maps[1]) #312
     loc_space_maps = loc_space_maps[allNans.==false]
-    land_one, f_one =
-        doOneLocation(outcubes, land_init, approaches, forcing, tem, loc_space_maps[1])
+    land_one, f_one = doOneLocation(outcubes, land_init, approaches, forcing, tem,
+        loc_space_maps[1])
     loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
     loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
     land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
@@ -307,18 +258,20 @@ end
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(
-    outcubes::AbstractArray,
+function runEcosystem!(outcubes::AbstractArray,
     land_init::NamedTuple,
     approaches::Tuple,
     forcing::NamedTuple,
     forcing_sizes::NamedTuple,
-    tem::NamedTuple,
-)
+    tem::NamedTuple)
     _, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-        prepRunEcosystem(outcubes, land_init, approaches, forcing, forcing_sizes, tem)
-    parallelizeIt(
-        outcubes,
+        prepRunEcosystem(outcubes,
+            land_init,
+            approaches,
+            forcing,
+            forcing_sizes,
+            tem)
+    return parallelizeIt(outcubes,
         approaches,
         forcing,
         tem.helpers,
@@ -331,15 +284,13 @@ function runEcosystem!(
         loc_outputs,
         land_init_space,
         f_one,
-        tem.helpers.run.parallelization,
-    )
+        tem.helpers.run.parallelization)
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function runEcosystem!(
-    outcubes::AbstractArray,
+function runEcosystem!(outcubes::AbstractArray,
     approaches::Tuple,
     forcing::NamedTuple,
     tem::NamedTuple,
@@ -348,10 +299,8 @@ function runEcosystem!(
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
-)
-    parallelizeIt(
-        outcubes,
+    f_one)
+    return parallelizeIt(outcubes,
         approaches,
         forcing,
         tem.helpers,
@@ -364,12 +313,10 @@ function runEcosystem!(
         loc_outputs,
         land_init_space,
         f_one,
-        tem.helpers.run.parallelization,
-    )
+        tem.helpers.run.parallelization)
 end
 
-function parallelizeIt(
-    outcubes,
+function parallelizeIt(outcubes,
     approaches,
     forcing,
     tem_helpers,
@@ -382,11 +329,9 @@ function parallelizeIt(
     loc_outputs,
     land_init_space,
     f_one,
-    ::Val{:threads},
-)
+    ::Val{:threads})
     Threads.@threads for i ∈ eachindex(loc_space_inds)
-        ecoLoc!(
-            outcubes,
+        ecoLoc!(outcubes,
             approaches,
             forcing,
             tem_helpers,
@@ -398,16 +343,14 @@ function parallelizeIt(
             loc_forcings[Threads.threadid()],
             loc_outputs[Threads.threadid()],
             land_init_space[i],
-            f_one,
-        )
+            f_one)
     end
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
-function parallelizeIt(
-    outcubes,
+function parallelizeIt(outcubes,
     approaches,
     forcing,
     tem_helpers,
@@ -420,12 +363,10 @@ function parallelizeIt(
     loc_outputs,
     land_init_space,
     f_one,
-    ::Val{:qbmap},
-)
+    ::Val{:qbmap})
     spI = 1
     qbmap(loc_space_inds) do loc_space_ind
-        ecoLoc!(
-            outcubes,
+        ecoLoc!(outcubes,
             approaches,
             forcing,
             tem_helpers,
@@ -437,8 +378,7 @@ function parallelizeIt(
             loc_forcings[Threads.threadid()],
             loc_outputs[Threads.threadid()],
             land_init_space[spI],
-            f_one,
-        )
-        spI += 1
+            f_one)
+        return spI += 1
     end
 end
