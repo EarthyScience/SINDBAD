@@ -10,12 +10,10 @@ function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA o
 
     ## instantiate variables
-    p_F = repeat(
-        zeros(helpers.numbers.numType, length(land.pools.cEco)),
+    p_F = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
         1,
         1,
-        length(land.pools.cEco),
-    )
+        length(land.pools.cEco))
 
     ## pack land variables
     @pack_land p_F => land.cFlowVegProperties

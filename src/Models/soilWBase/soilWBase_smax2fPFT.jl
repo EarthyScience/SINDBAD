@@ -75,16 +75,14 @@ function compute(o::soilWBase_smax2fPFT, forcing, land, helpers)
     p_wAWC = p_wSat
 
     ## pack land variables
-    @pack_land (
-        p_nsoilLayers,
+    @pack_land (p_nsoilLayers,
         p_smaxPFT,
         soilLayerThickness,
         p_wAWC,
         p_wFC,
         p_wSat,
         p_wWP,
-        n_soilW,
-    ) => land.soilWBase
+        n_soilW) => land.soilWBase
     return land
 end
 

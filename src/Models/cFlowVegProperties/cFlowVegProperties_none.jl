@@ -5,11 +5,8 @@ struct cFlowVegProperties_none <: cFlowVegProperties end
 function define(o::cFlowVegProperties_none, forcing, land, helpers)
 
     ## calculate variables
-    p_E = repeat(
-        zeros(helpers.numbers.numType, length(land.pools.cEco)),
-        1,
-        length(land.pools.cEco),
-    )
+    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1,
+        length(land.pools.cEco))
     p_F = copy(p_E)
 
     ## pack land variables

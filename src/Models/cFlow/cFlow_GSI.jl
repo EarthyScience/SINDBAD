@@ -41,14 +41,12 @@ function define(o::cFlow_GSI, forcing, land, helpers)
 
     # @show aSrc, aSrc_b
     # @show aTrg, aTrg_a
-    p_A_ind = (
-        Re2L = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
-        Re2R = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1],
-        L2Re = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1],
-        R2Re = findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1],
-        k_Lshed = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
-        k_Rshed = findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1],
-    )
+    p_A_ind = (Re2L=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
+        Re2R=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1],
+        L2Re=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1],
+        R2Re=findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1],
+        k_Lshed=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
+        k_Rshed=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
     p_A = sNT.(zero([taker...]) .+ 𝟙)
 
@@ -75,8 +73,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
     @pack_land begin
         (p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
         # (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
-        (
-            L2Re,
+        (L2Re,
             L2ReF,
             R2Re,
             R2ReF,
@@ -87,8 +84,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
             k_LshedF,
             k_Rshed,
             k_RshedF,
-            slope_fWfTfR,
-        ) => land.cFlow
+            slope_fWfTfR) => land.cFlow
     end
 
     return land
@@ -221,8 +217,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (
-            L2Re,
+        (L2Re,
             L2ReF,
             R2Re,
             R2ReF,
@@ -237,8 +232,7 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
             k_RshedF,
             slope_fWfTfR,
             fWfTfR_prev,
-            p_A,
-        ) => land.cFlow
+            p_A) => land.cFlow
         p_k => land.states
     end
     return land

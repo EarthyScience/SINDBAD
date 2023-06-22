@@ -17,7 +17,7 @@ Modifies Base.show to reduce the size of error stacktrace of sindbad
 function noStackTrace()
     eval(:(Base.show(io::IO, nt::Type{<:NamedTuple}) = print(io, "NT")))
     eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
-    eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
+    return eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
 end
 
 """
@@ -31,8 +31,7 @@ function getSindbadModels()
     for _md ∈ sindbad_models.model
         push!(approaches, join(subtypes(getfield(Sindbad.Models, _md)), ", "))
     end
-    model_approaches =
-        Table((; model = [sindbad_models.model...], approaches = [approaches...]))
+    model_approaches = Table((; model=[sindbad_models.model...], approaches=[approaches...]))
     return model_approaches
 end
 
@@ -54,7 +53,7 @@ function nonUnique(x::AbstractArray{T}) where {T}
             end
         end
     end
-    duplicatedvector
+    return duplicatedvector
 end
 
 """
@@ -62,7 +61,7 @@ end
 
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 """
-function applyUnitConversion(data_in, conversion, isadditive = false)
+function applyUnitConversion(data_in, conversion, isadditive=false)
     if isadditive
         data_out = data_in + conversion
     else
@@ -89,10 +88,7 @@ function dictToNamedTuple(d::AbstractDict)
 end
 
 function setTupleSubfield(out, fieldname, vals)
-    return (;
-        out...,
-        fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)),
-    )
+    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
 end
 
 setTupleField(out, vals) = (; out..., first(vals) => last(vals))
@@ -118,8 +114,7 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
                 catch
                     bnds = [nothing, nothing]
                 end
-                println(
-                    buf,
+                println(buf,
                     "  - `",
                     field,
                     " = ",
@@ -129,8 +124,7 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
                     ", (",
                     units(object, field),
                     ")",
-                    "` => " * describe(object, field),
-                )
+                    "` => " * describe(object, field))
             end
             if haskey(docs, field) && isa(docs[field], AbstractString)
                 println(buf)
@@ -170,9 +164,9 @@ function processUnpackLand(ex)
         rename = rename.args
     end
     lines = broadcast(lhs, rename) do s, rn
-        Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
+        return Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
     end
-    Expr(:block, lines...)
+    return Expr(:block, lines...)
 end
 
 macro unpack_land(inparams)
@@ -220,18 +214,14 @@ function processPackSetIndex(ex::Expr)
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            Expr(
-                :(=),
+            Expr(:(=),
                 esc(top),
-                :($(bse)(
-                    $(esc(top)),
+                :($(bse)($(esc(top)),
                     $(bse)($(esc(rhs)), $(esc(rn)), $(QuoteNode(s))),
-                    $(QuoteNode(field)),
-                )),
-            )
+                    $(QuoteNode(field)))))
         end
     end
-    Expr(:block, lines...)
+    return Expr(:block, lines...)
 end
 
 function processPackLand(ex)
@@ -262,44 +252,30 @@ function processPackLand(ex)
     lines = broadcast(lhs, rename) do s, rn
         depth_field = length(findall(".", string(esc(rhs)))) + 1
         if depth_field == 1
-            expr_l = Expr(
-                :(=),
+            expr_l = Expr(:(=),
                 esc(rhs),
-                Expr(
-                    :tuple,
-                    Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:kw, esc(s), esc(rn))),
-                ),
-            )
+                Expr(:tuple,
+                    Expr(:parameters, Expr(:(...), esc(rhs)),
+                        Expr(:kw, esc(s), esc(rn)))))
             # expr_l = Expr(:(=), esc(rhs), Expr(:tuple, Expr(:parameters, Expr(:(...), esc(rhs)), Expr(:(=), esc(s), esc(rn)))))
             expr_l
         elseif depth_field == 2
             top = Symbol(split(string(rhs), '.')[1])
             field = Symbol(split(string(rhs), '.')[2])
-            tmp = Expr(
-                :(=),
+            tmp = Expr(:(=),
                 esc(top),
-                Expr(
-                    :tuple,
+                Expr(:tuple,
                     Expr(:(...), esc(top)),
-                    Expr(
-                        :(=),
+                    Expr(:(=),
                         esc(field),
-                        (Expr(
-                            :tuple,
-                            Expr(
-                                :parameters,
-                                Expr(:(...), esc(rhs)),
-                                Expr(:kw, esc(s), esc(rn)),
-                            ),
-                        )),
-                    ),
-                ),
-            )
+                        (Expr(:tuple,
+                            Expr(:parameters, Expr(:(...), esc(rhs)),
+                                Expr(:kw, esc(s), esc(rn))))))))
             # tmp = Expr(:(=), esc(top), Expr(:macrocall, Symbol("@set"), :(#= none:1 =#), Expr(:(=), Expr(:ref, Expr(:ref, esc(top), QuoteNode(field)), QuoteNode(s)), esc(rn))))
             tmp
         end
     end
-    Expr(:block, lines...)
+    return Expr(:block, lines...)
 end
 
 macro pack_land(outparams)
@@ -337,14 +313,14 @@ function processUnpackForcing(ex)
         rename = rename.args
     end
     lines = broadcast(lhs, rename) do s, rn
-        Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
+        return Expr(:(=), esc(rn), Expr(:(.), esc(rhs), QuoteNode(s)))
     end
-    Expr(:block, lines...)
+    return Expr(:block, lines...)
 end
 
 macro unpack_forcing(inparams)
     @assert inparams.head == :call || inparams.head == :(=)
-    outputs = processUnpackForcing(inparams)
+    return outputs = processUnpackForcing(inparams)
 end
 
 """
@@ -352,7 +328,7 @@ getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
 function getzix(dat::SubArray)
-    first(parentindices(dat))
+    return first(parentindices(dat))
 end
 
 """
@@ -360,7 +336,7 @@ getzix(dat::SubArray)
 returns the indices of a view for a subArray
 """
 function getzix(dat::SubArray, zixhelpersPool)
-    first(parentindices(dat))
+    return first(parentindices(dat))
 end
 
 """
@@ -368,7 +344,7 @@ getzix(dat::Array)
 returns the indices of a view for a subArray
 """
 function getzix(dat::Array, zixhelpersPool)
-    zixhelpersPool
+    return zixhelpersPool
 end
 
 """
@@ -376,7 +352,7 @@ getzix(dat::SVector)
 returns the indices of a view for a subArray
 """
 function getzix(dat::SVector, zixhelpersPool)
-    zixhelpersPool
+    return zixhelpersPool
 end
 
 """
@@ -472,7 +448,7 @@ function addS(s, sΔ)
     for si ∈ eachindex(s)
         sm = sm + s[si] + sΔ[si]
     end
-    sm
+    return sm
 end
 
 """
@@ -484,7 +460,7 @@ function addS(s)
     for si ∈ eachindex(s)
         sm = sm + s[si]
     end
-    sm
+    return sm
 end
 
 function getTypes!(d, all_types)
@@ -499,7 +475,7 @@ function getTypes!(d, all_types)
     return unique(all_types)
 end
 
-function collect_types(d; c_olor = true)
+function collect_types(d; c_olor=true)
     all_types = []
     all_types = getTypes!(d, all_types)
     c_types = Dict{DataType,Int}()
@@ -514,8 +490,8 @@ function collect_types(d; c_olor = true)
     return c_types
 end
 
-function tcprint(d, df = 1; c_olor = true, t_ype = true, istop = true)
-    colors_types = collect_types(d; c_olor = c_olor)
+function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
+    colors_types = collect_types(d; c_olor=c_olor)
     lc = nothing
     tt = "\t"
     for k ∈ keys(d)
@@ -531,8 +507,8 @@ function tcprint(d, df = 1; c_olor = true, t_ype = true, istop = true)
             if df != 1
                 tt = repeat("\t", df)
             end
-            print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
-            tcprint(d[k], df, c_olor = c_olor, t_ype = t_ype, istop = false)
+            print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
+            tcprint(d[k], df; c_olor=c_olor, t_ype=t_ype, istop=false)
         else
             tt = repeat("\t", df)
             if t_ype == true
@@ -546,17 +522,13 @@ function tcprint(d, df = 1; c_olor = true, t_ype = true, istop = true)
                 tp = ""
             end
             if typeof(d[k]) <: Float32
-                print(
-                    Crayon(foreground = colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])f0$(tp),\n",
-                )
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                    "$(tt) $(k) = $(d[k])f0$(tp),\n")
             elseif typeof(d[k]) <: SVector
-                print(
-                    Crayon(foreground = colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n",
-                )
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                    "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n")
             elseif typeof(d[k]) <: Matrix
-                print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
+                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
                 tt_row = repeat(tt[1], length(tt) + 1)
                 for _d ∈ eachrow(d[k])
                     d_str = nothing
@@ -565,20 +537,13 @@ function tcprint(d, df = 1; c_olor = true, t_ype = true, istop = true)
                     else
                         d_str = join(_d, " ")
                     end
-                    print(
-                        Crayon(foreground = colors_types[typeof(d[k])]),
-                        "$(tt_row) $(d_str);\n",
-                    )
+                    print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                        "$(tt_row) $(d_str);\n")
                 end
-                print(
-                    Crayon(foreground = colors_types[typeof(d[k])]),
-                    "$(tt_row) ]$(tp),\n",
-                )
+                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
             else
-                print(
-                    Crayon(foreground = colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])$(tp),\n",
-                )
+                print(Crayon(; foreground=colors_types[typeof(d[k])]),
+                    "$(tt) $(k) = $(d[k])$(tp),\n")
             end
             lc = colors_types[typeof(d[k])]
         end
@@ -589,8 +554,8 @@ function tcprint(d, df = 1; c_olor = true, t_ype = true, istop = true)
     end
     if t_ype == true
         tt = tt * " "
-        print(Crayon(foreground = lc), "$(tt))::NamedTuple,\n")
+        print(Crayon(; foreground=lc), "$(tt))::NamedTuple,\n")
     else
-        print(Crayon(foreground = lc), "$(tt)),\n")
+        print(Crayon(; foreground=lc), "$(tt)),\n")
     end
 end

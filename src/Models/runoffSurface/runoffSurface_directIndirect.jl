@@ -35,8 +35,7 @@ function compute(o::runoffSurface_directIndirect, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) =>
-            land.fluxes
+        (runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) => land.fluxes
         ΔsurfaceW => land.states
     end
     return land

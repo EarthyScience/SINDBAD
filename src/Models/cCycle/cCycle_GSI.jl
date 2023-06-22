@@ -26,16 +26,8 @@ function define(o::cCycle_GSI, forcing, land, helpers)
     cRH = 𝟘
 
     @pack_land begin
-        (
-            cEcoFlow,
-            cEcoInflux,
-            cEcoOut,
-            cEco_prev,
-            cNPP,
-            zixVeg,
-            zerocEcoFlow,
-            zerocEcoInflux,
-        ) => land.states
+        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) =>
+            land.states
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
     end
     return land
@@ -45,8 +37,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (
-            cAlloc,
+        (cAlloc,
             cEcoEfflux,
             cEcoFlow,
             cEcoInflux,
@@ -56,10 +47,8 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
             p_k,
             zixVeg,
             zerocEcoFlow,
-            zerocEcoInflux,
-        ) ∈ land.states
-        (
-            cVeg,
+            zerocEcoInflux) ∈ land.states
+        (cVeg,
             cLit,
             cSoil,
             cVegRoot,
@@ -70,8 +59,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
             cLitSlow,
             cSoilSlow,
             cSoilOld,
-            cEco,
-        ) ∈ land.pools
+            cEco) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (p_A) ∈ land.cFlow
@@ -171,8 +159,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (
-            cVeg,
+        (cVeg,
             cLit,
             cSoil,
             cVegRoot,
@@ -183,8 +170,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
             cLitSlow,
             cSoilSlow,
             cSoilOld,
-            cEco,
-        ) => land.pools
+            cEco) => land.pools
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
         (ΔcEco, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
     end

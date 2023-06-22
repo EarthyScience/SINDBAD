@@ -14,8 +14,7 @@ function define(o::evapotranspiration_sum, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (evaporation, evapotranspiration, interception, sublimation, transpiration) =>
-            land.fluxes
+        (evaporation, evapotranspiration, interception, sublimation, transpiration) => land.fluxes
     end
     return land
 end

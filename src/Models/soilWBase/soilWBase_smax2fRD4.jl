@@ -25,9 +25,7 @@ function define(o::soilWBase_smax2fRD4, forcing, land, helpers)
     soilLayerThickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
     if length(length(soilLayerThickness)) != 2
-        error(
-            "soilWBase_smax2Layer approach needs eactly 2 soil layers in modelStructure.json.",
-        )
+        error("soilWBase_smax2Layer approach needs eactly 2 soil layers in modelStructure.json.")
     end
 
     ## instantiate variables

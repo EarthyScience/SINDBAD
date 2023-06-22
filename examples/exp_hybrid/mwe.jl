@@ -16,7 +16,7 @@ info = setupExperiment(info);
 info, forcing = getForcing(info, Val{:zarr}());
 forc = getKeyedArrayFromYaxArray(forcing);
 
-forcing = (; Tair = forc.Tair, Rain = forc.Rain)
+forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 
 #forcing = (;
 #    Rain =KA([5.0f0, 10.0f0, 7.0f0, 10.0f0, 2.0f0];  time=1:5),
@@ -38,12 +38,10 @@ tem = info.tem;
 #     );
 
 function o_models(p1, p2)
-    return (
-        rainSnow_Tair_buffer(p1),
+    return (rainSnow_Tair_buffer(p1),
         snowFraction_HTESSEL(1.0f0),
         snowMelt_Tair_buffer(p2),
-        wCycle_components(),
-    )
+        wCycle_components())
 end
 
 #f = getForcingForTimeStep(forcing, 1)
@@ -70,7 +68,7 @@ function floss(p, y)
     omods = o_models(p[1], p[2])
     out_land = timeLoopForward(omods, forcing, land, (;), helpers, 10000)
     ŷ = [getproperty(getproperty(o, :rainSnow), :snow) for o ∈ out_land]
-    sum((ŷ .- y) .^ 2)
+    return sum((ŷ .- y) .^ 2)
 end
 y = rand(10000)
 
@@ -106,7 +104,7 @@ Random.seed!(rng, 0)
 ps_NN, st = Lux.setup(rng, NNmodel)
 # Parameters must be a ComponentArray or an Array,
 # Zygote Jacobian won't loop through NamedTuple
-ps_NN = ps_NN |> ComponentArray
+ps_NN = ComponentArray(ps_NN)
 
 # i.e. Input x  now should be 
 
@@ -125,16 +123,16 @@ function reshape_weight(arr, weights)
     for layer ∈ keys(weights)
         weight = weights[layer][:weight]
         bias = weights[layer][:bias]
-        new_weight = arr[i:i+length(weight)-1]
+        new_weight = arr[i:(i+length(weight)-1)]
         i += length(weight)
-        new_bias = arr[i:i+length(bias)-1]
+        new_bias = arr[i:(i+length(bias)-1)]
         i += length(bias)
         return_arr[layer][:weight] = reshape(new_weight, size(weight))
         return_arr[layer][:bias] = reshape(new_bias, size(bias))
     end
-    return_arr
+    return return_arr
 end
-function full_gradient(x, y_real; NNmodel = NNmodel, loss = floss, ps_NN = ps_NN, st = st)
+function full_gradient(x, y_real; NNmodel=NNmodel, loss=floss, ps_NN=ps_NN, st=st)
     """
     Function that outpus the full gradient of the loss w.r.t. the weights
     of the NNmodel.
@@ -148,7 +146,7 @@ function full_gradient(x, y_real; NNmodel = NNmodel, loss = floss, ps_NN = ps_NN
     # Weights of the NN
     NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
     # Apply Chain rules to get ∂loss/∂NN_parameters
-    full_grad = sum(f_grad .* NN_grad, dims = 1)
+    full_grad = sum(f_grad .* NN_grad; dims=1)
     # Reshape output for the optimization
     return reshape_weight(full_grad, ps_NN)
 end
@@ -163,7 +161,7 @@ loss_arr = []
 st_opt = Optimisers.setup(Optimisers.ADAM(0.01), ps_NN)
 for i ∈ 1:300
     global st_opt, ps_NN
-    gs = full_gradient(x, y_real; ps_NN = ps_NN)
+    gs = full_gradient(x, y_real; ps_NN=ps_NN)
     st_opt, ps_NN = Optimisers.update(st_opt, ps_NN, gs)
     if i % 10 == 1 || i == 100
         dist = abs(NNmodel(x, ps_NN, st)[1][1] - 2.37e-1)

@@ -12,8 +12,7 @@ optimize_it = false
 outpath = nothing
 domain = "DE-Hai"
 
-replace_info = Dict(
-    "modelRun.time.sDate" => sYear * "-01-01",
+replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "experiment.configFiles.forcing" => forcingConfig,
     "experiment.domain" => domain,
     "modelRun.time.eDate" => eYear * "-12-31",
@@ -23,10 +22,9 @@ replace_info = Dict(
     "spinup.flags.loadSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
-    "opti.constraints.oneDataPath" => obspath,
-);
+    "opti.constraints.oneDataPath" => obspath);
 
-run_output = runExperiment(experiment_json; replace_info = replace_info);
+run_output = runExperiment(experiment_json; replace_info=replace_info);
 
 # run with saved jld2 file
 experiment_jld2 = "exp_loadData/info.jld2"
