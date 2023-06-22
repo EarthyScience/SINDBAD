@@ -103,9 +103,6 @@
         "transpirationSupply": {
             "approach": "wAWC"
         },
-        "totalTWS": {
-            "approach": "sumComponents"
-        },
         "vegFraction": {
             "approach": "forcing",
             "order": 12
