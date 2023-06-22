@@ -1,15 +1,14 @@
 export EVI_forcing
 
-struct EVI_forcing <: EVI
-end
+struct EVI_forcing <: EVI end
 
 function compute(o::EVI_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing EVI ∈ forcing
+    ## unpack forcing
+    @unpack_forcing EVI ∈ forcing
 
-	## pack land variables
-	@pack_land EVI => land.states
-	return land
+    ## pack land variables
+    @pack_land EVI => land.states
+    return land
 end
 
 @doc """

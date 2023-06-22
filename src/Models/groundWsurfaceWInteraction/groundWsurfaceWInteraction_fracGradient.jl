@@ -1,58 +1,58 @@
 export groundWsurfaceWInteraction_fracGradient
 
+#! format: off
 @bounds @describe @units @with_kw struct groundWsurfaceWInteraction_fracGradient{T1} <: groundWsurfaceWInteraction
-	kGW2Surf::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
+    kGW2Surf::T1 = 0.001 | (0.0001, 0.01) | "maximum transfer rate between GW and surface water" | "/d"
 end
+#! format: on
 
 function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
-	## unpack parameters
-	@unpack_groundWsurfaceWInteraction_fracGradient o
+    ## unpack parameters
+    @unpack_groundWsurfaceWInteraction_fracGradient o
 
-	## unpack land variables
-	@unpack_land begin
-		(groundW, surfaceW) ∈ land.pools
-		(ΔsurfaceW, ΔgroundW) ∈ land.states
-	end
+    ## unpack land variables
+    @unpack_land begin
+        (groundW, surfaceW) ∈ land.pools
+        (ΔsurfaceW, ΔgroundW) ∈ land.states
+    end
 
-	## calculate variables
-	tmp = kGW2Surf * (sum(groundW + ΔgroundW) - sum(surfaceW + ΔsurfaceW))
+    ## calculate variables
+    tmp = kGW2Surf * (sum(groundW + ΔgroundW) - sum(surfaceW + ΔsurfaceW))
 
+    # update the delta storages
+    ΔgroundW .= ΔgroundW .- GW2Surf / length(groundW)
+    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / length(surfaceW)
 
-	# update the delta storages
-	ΔgroundW .= ΔgroundW .- GW2Surf / length(groundW)
-	ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / length(surfaceW)
+    ## pack land variables
+    @pack_land begin
+        GW2Surf => land.fluxes
+        (ΔsurfaceW, ΔgroundW) => land.states
+    end
 
-	## pack land variables
-	@pack_land begin
-		GW2Surf => land.fluxes
-		(ΔsurfaceW, ΔgroundW) => land.states
-	end
-
-	return land
+    return land
 end
 
 function update(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
-	## unpack variables
-	@unpack_land begin
-		(groundW, surfaceW) ∈ land.pools
-		(ΔgroundW, ΔsurfaceW) ∈ land.states
-	end
+    ## unpack variables
+    @unpack_land begin
+        (groundW, surfaceW) ∈ land.pools
+        (ΔgroundW, ΔsurfaceW) ∈ land.states
+    end
 
-	## update storage pools
-	surfaceW .= surfaceW .+ ΔsurfaceW
-	groundW .= groundW .+ ΔgroundW
+    ## update storage pools
+    surfaceW .= surfaceW .+ ΔsurfaceW
+    groundW .= groundW .+ ΔgroundW
 
-	# reset ΔgroundW and ΔsurfaceW to zero
-	ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
-	ΔgroundW .= ΔgroundW .- ΔgroundW
+    # reset ΔgroundW and ΔsurfaceW to zero
+    ΔsurfaceW .= ΔsurfaceW .- ΔsurfaceW
+    ΔgroundW .= ΔgroundW .- ΔgroundW
 
-
-	## pack land variables
-	@pack_land begin
-		(groundW, surfaceW) => land.pools
-		(ΔgroundW, ΔsurfaceW) => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (groundW, surfaceW) => land.pools
+        (ΔgroundW, ΔsurfaceW) => land.states
+    end
+    return land
 end
 
 @doc """

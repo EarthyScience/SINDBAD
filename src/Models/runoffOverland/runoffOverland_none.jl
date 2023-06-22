@@ -1,16 +1,15 @@
 export runoffOverland_none
 
-struct runoffOverland_none <: runoffOverland
-end
+struct runoffOverland_none <: runoffOverland end
 
-function instantiate(o::runoffOverland_none, forcing, land, helpers)
+function define(o::runoffOverland_none, forcing, land, helpers)
 
-	## calculate variables
-	runoffOverland = helpers.numbers.𝟘
+    ## calculate variables
+    runoffOverland = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land runoffOverland => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffOverland => land.fluxes
+    return land
 end
 
 @doc """

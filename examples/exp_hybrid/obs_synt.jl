@@ -9,37 +9,98 @@ forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one = prepRunEcosystem(output.data, output.land_init, info.tem.models.forward, forc, forcing.sizes, info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
+    prepRunEcosystem(output.data,
+        output.land_init,
+        info.tem.models.forward,
+        forc,
+        forcing.sizes,
+        info.tem);
 
-ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers = 2, seed=523)
+ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 
-sites_parameters =  ml_baseline(xfeatures)
+sites_parameters = ml_baseline(xfeatures)
 params_bounded = getParamsAct.(sites_parameters, tblParams)
 
-function pixel_run!(output, forc, obs, site_location, tblParams, forward, upVector, helpers, spinup, models, out_vars, land_init_site, f_one)
+function pixel_run!(output,
+    forc,
+    obs,
+    site_location,
+    tblParams,
+    forward,
+    upVector,
+    helpers,
+    spinup,
+    models,
+    out_vars,
+    land_init_site,
+    f_one)
     loc_forcing, loc_output, loc_obs = getLocDataObs(output.data, forc, obs, site_location)
     newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    ForwardSindbad.coreEcosystem!(loc_output, newApproaches, loc_forcing, helpers, spinup, models, out_vars, land_init_site, f_one)
+    return ForwardSindbad.coreEcosystem!(loc_output,
+        newApproaches,
+        loc_forcing,
+        helpers,
+        spinup,
+        models,
+        out_vars,
+        land_init_site,
+        f_one)
 end
 
-function space_run!(up_params, tblParams, land_init_space, cov_sites,
-    output, forc, obs, forward, helpers, spinup, models, out_vars, f_one)
+function space_run!(up_params,
+    tblParams,
+    land_init_space,
+    cov_sites,
+    output,
+    forc,
+    obs,
+    forward,
+    helpers,
+    spinup,
+    models,
+    out_vars,
+    f_one)
     #Threads.@threads for site_index in eachindex(xbatch)
-    Threads.@threads for site_index in eachindex(cov_sites)
+    Threads.@threads for site_index ∈ eachindex(cov_sites)
         site_name = cov_sites[site_index]
-        x_params = up_params(site = site_name)
+        x_params = up_params(; site=site_name)
         site_location = name_to_id(site_name, sites_f)
-#        x_params = up_params[:, site_index]
+        #        x_params = up_params[:, site_index]
         #site_location = loc_space_maps[site_index]
         land_init_site = land_init_space[site_location[1][2]]
-        pixel_run!(output, forc, obs, site_location, tblParams, forward, x_params, helpers, spinup, models, out_vars, land_init_site, f_one)
+        pixel_run!(output,
+            forc,
+            obs,
+            site_location,
+            tblParams,
+            forward,
+            x_params,
+            helpers,
+            spinup,
+            models,
+            out_vars,
+            land_init_site,
+            f_one)
     end
 end
 cov_sites = xfeatures.site
 
-space_run!(params_bounded, tblParams, land_init_space, cov_sites, output, forc, obs, forward, helpers, spinup, models, out_vars, f_one)
+space_run!(params_bounded,
+    tblParams,
+    land_init_space,
+    cov_sites,
+    output,
+    forc,
+    obs,
+    forward,
+    helpers,
+    spinup,
+    models,
+    out_vars,
+    f_one)
 
 gppOut = output.data[1]
 gpp_synt = reshape(gppOut, (4748, 205));
-gppKA = KeyedArray(gpp_synt .|> Float32; time = obs.gpp.time, site = obs.gpp.site)
-obs_synt = (; gpp = gppKA, gpp_σ = obs.gpp_σ, gpp_mask = obs.gpp_mask)
+gppKA = KeyedArray(Float32.(gpp_synt); time=obs.gpp.time, site=obs.gpp.site)
+obs_synt = (; gpp=gppKA, gpp_σ=obs.gpp_σ, gpp_mask=obs.gpp_mask)

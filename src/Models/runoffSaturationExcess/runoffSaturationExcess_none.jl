@@ -1,16 +1,15 @@
 export runoffSaturationExcess_none
 
-struct runoffSaturationExcess_none <: runoffSaturationExcess
-end
+struct runoffSaturationExcess_none <: runoffSaturationExcess end
 
-function instantiate(o::runoffSaturationExcess_none, forcing, land, helpers)
+function define(o::runoffSaturationExcess_none, forcing, land, helpers)
 
-	## calculate variables
-	runoffSatExc = helpers.numbers.𝟘
+    ## calculate variables
+    runoffSatExc = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land runoffSatExc => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffSatExc => land.fluxes
+    return land
 end
 
 @doc """

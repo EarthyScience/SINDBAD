@@ -1,39 +1,41 @@
 export runoffSaturationExcess_Bergstroem1992VegFraction
 
-@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1, T2} <: runoffSaturationExcess
-	β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
-	β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
+#! format: off
+@bounds @describe @units @with_kw struct runoffSaturationExcess_Bergstroem1992VegFraction{T1,T2} <: runoffSaturationExcess
+    β::T1 = 3.0 | (0.1, 10.0) | "linear scaling parameter to get the berg parameter from vegFrac" | ""
+    β_min::T2 = 0.1 | (0.08, 0.120) | "minimum effective β" | ""
 end
+#! format: on
 
 function compute(o::runoffSaturationExcess_Bergstroem1992VegFraction, forcing, land, helpers)
-	## unpack parameters
-	@unpack_runoffSaturationExcess_Bergstroem1992VegFraction o
+    ## unpack parameters
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFraction o
 
-	## unpack land variables
-	@unpack_land begin
-		(WBP, vegFraction) ∈ land.states
-		p_wSat ∈ land.soilWBase
-		soilW ∈ land.pools
-		ΔsoilW ∈ land.states
-		(𝟘, 𝟙, sNT) ∈ helpers.numbers
-	end
-	tmp_smaxVeg = sum(p_wSat)
-	tmp_SoilTotal = sum(soilW + ΔsoilW)
-	# get the berg parameters according the vegetation fraction
-	β_veg = max(β_min, β * vegFraction); # do this?
-	# calculate land runoff from incoming water & current soil moisture
-	tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg) ^ β_veg, 𝟘, 𝟙)
-	runoffSatExc = WBP * tmp_SatExFrac
-	# update water balance pool
-	WBP = WBP - runoffSatExc
+    ## unpack land variables
+    @unpack_land begin
+        (WBP, vegFraction) ∈ land.states
+        p_wSat ∈ land.soilWBase
+        soilW ∈ land.pools
+        ΔsoilW ∈ land.states
+        (𝟘, 𝟙, sNT) ∈ helpers.numbers
+    end
+    tmp_smaxVeg = sum(p_wSat)
+    tmp_SoilTotal = sum(soilW + ΔsoilW)
+    # get the berg parameters according the vegetation fraction
+    β_veg = max(β_min, β * vegFraction) # do this?
+    # calculate land runoff from incoming water & current soil moisture
+    tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg)^β_veg, 𝟘, 𝟙)
+    runoffSatExc = WBP * tmp_SatExFrac
+    # update water balance pool
+    WBP = WBP - runoffSatExc
 
-	## pack land variables
-	@pack_land begin
-		runoffSatExc => land.fluxes
-		β_veg => land.runoffSaturationExcess
-		WBP => land.states
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        runoffSatExc => land.fluxes
+        β_veg => land.runoffSaturationExcess
+        WBP => land.states
+    end
+    return land
 end
 
 @doc """

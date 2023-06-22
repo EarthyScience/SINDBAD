@@ -1,16 +1,17 @@
 export gppAirT_MOD17
 
-@bounds @describe @units @with_kw struct gppAirT_MOD17{T1, T2} <: gppAirT
-	Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C"
-	Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
+#! format: off
+@bounds @describe @units @with_kw struct gppAirT_MOD17{T1,T2} <: gppAirT
+    Tmax::T1 = 20.0 | (10.0, 35.0) | "temperature for max GPP" | "°C"
+    Tmin::T2 = 5.0 | (0.0, 15.0) | "temperature for min GPP" | "°C"
 end
+#! format: on
 
 function compute(o::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_MOD17 o
     @unpack_forcing TairDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
-
 
     ## calculate variables
     tsc = TairDay / ((𝟙 - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation

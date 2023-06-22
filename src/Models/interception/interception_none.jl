@@ -1,16 +1,15 @@
 export interception_none
 
-struct interception_none <: interception
-end
+struct interception_none <: interception end
 
-function instantiate(o::interception_none, forcing, land, helpers)
+function define(o::interception_none, forcing, land, helpers)
 
-	## calculate variables
-	interception = helpers.numbers.𝟘
+    ## calculate variables
+    interception = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land interception => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land interception => land.fluxes
+    return land
 end
 
 @doc """

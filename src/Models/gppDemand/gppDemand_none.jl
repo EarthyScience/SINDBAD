@@ -1,19 +1,18 @@
 export gppDemand_none
 
-struct gppDemand_none <: gppDemand
-end
+struct gppDemand_none <: gppDemand end
 
-function instantiate(o::gppDemand_none, forcing, land, helpers)
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	AllDemScGPP = helpers.numbers.𝟙
+function define(o::gppDemand_none, forcing, land, helpers)
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    AllDemScGPP = helpers.numbers.𝟙
 
-	# compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
-	gppE = helpers.numbers.𝟘
+    # compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
+    gppE = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land (AllDemScGPP, gppE) => land.gppDemand
-	return land
+    ## pack land variables
+    @pack_land (AllDemScGPP, gppE) => land.gppDemand
+    return land
 end
 
 @doc """

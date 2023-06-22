@@ -1,17 +1,16 @@
 export gppDiffRadiation_none
 
-struct gppDiffRadiation_none <: gppDiffRadiation
-end
+struct gppDiffRadiation_none <: gppDiffRadiation end
 
-function instantiate(o::gppDiffRadiation_none, forcing, land, helpers)
+function define(o::gppDiffRadiation_none, forcing, land, helpers)
 
-	## calculate variables
-	# set scalar to a constant one [no effect on potential GPP]
-	CloudScGPP = helpers.numbers.𝟙
+    ## calculate variables
+    # set scalar to a constant one [no effect on potential GPP]
+    CloudScGPP = helpers.numbers.𝟙
 
-	## pack land variables
-	@pack_land CloudScGPP => land.gppDiffRadiation
-	return land
+    ## pack land variables
+    @pack_land CloudScGPP => land.gppDiffRadiation
+    return land
 end
 
 @doc """

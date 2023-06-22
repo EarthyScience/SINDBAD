@@ -1,16 +1,15 @@
 export runoffInterflow_none
 
-struct runoffInterflow_none <: runoffInterflow
-end
+struct runoffInterflow_none <: runoffInterflow end
 
-function instantiate(o::runoffInterflow_none, forcing, land, helpers)
+function define(o::runoffInterflow_none, forcing, land, helpers)
 
-	## calculate variables
-	runoffInterflow = helpers.numbers.𝟘
+    ## calculate variables
+    runoffInterflow = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land runoffInterflow => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoffInterflow => land.fluxes
+    return land
 end
 
 @doc """

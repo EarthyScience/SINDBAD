@@ -1,15 +1,14 @@
 export treeFraction_forcing
 
-struct treeFraction_forcing <: treeFraction
-end
+struct treeFraction_forcing <: treeFraction end
 
 function compute(o::treeFraction_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing treeFraction ∈ forcing
+    ## unpack forcing
+    @unpack_forcing treeFraction ∈ forcing
 
-	## pack land variables
-	@pack_land treeFraction => land.states
-	return land
+    ## pack land variables
+    @pack_land treeFraction => land.states
+    return land
 end
 
 @doc """

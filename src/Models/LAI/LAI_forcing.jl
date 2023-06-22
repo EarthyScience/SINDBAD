@@ -1,15 +1,14 @@
 export LAI_forcing
 
-struct LAI_forcing <: LAI
-end
+struct LAI_forcing <: LAI end
 
 function compute(o::LAI_forcing, forcing, land, helpers)
-	## unpack forcing
-	@unpack_forcing LAI ∈ forcing
+    ## unpack forcing
+    @unpack_forcing LAI ∈ forcing
 
-	## pack land variables
-	@pack_land LAI => land.states
-	return land
+    ## pack land variables
+    @pack_land LAI => land.states
+    return land
 end
 
 @doc """

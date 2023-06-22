@@ -1,13 +1,15 @@
 export cFlow_GSI
 
-@bounds @describe @units @with_kw struct cFlow_GSI{T1, T2, T3, T4} <: cFlow
-	LR2ReSlp::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction"
-	Re2LRSlp::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction"
-	kShed::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction"
-	f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
+#! format: off
+@bounds @describe @units @with_kw struct cFlow_GSI{T1,T2,T3,T4} <: cFlow
+    LR2ReSlp::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction"
+    Re2LRSlp::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction"
+    kShed::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction"
+    f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
 end
+#! format: on
 
-function instantiate(o::cFlow_GSI, forcing, land, helpers)
+function define(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
         (giver, taker, cFlowA) ∈ land.cCycleBase
@@ -39,19 +41,16 @@ function instantiate(o::cFlow_GSI, forcing, land, helpers)
 
     # @show aSrc, aSrc_b
     # @show aTrg, aTrg_a
-    p_A_ind = (
-        Re2L = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1], 
-        Re2R = findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1], 
-        L2Re = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1], 
-        R2Re = findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1], 
-        k_Lshed = findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1], 
-        k_Rshed = findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1], 
-    )
-
+    p_A_ind = (Re2L=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
+        Re2R=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1],
+        L2Re=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1],
+        R2Re=findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1],
+        k_Lshed=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
+        k_Rshed=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
     p_A = sNT.(zero([taker...]) .+ 𝟙)
 
-    if typeof(land.pools.cEco)<:SVector{length(land.pools.cEco)}
+    if typeof(land.pools.cEco) <: SVector{length(land.pools.cEco)}
         p_A = SVector{length(p_A)}(p_A)
     end
 
@@ -72,18 +71,28 @@ function instantiate(o::cFlow_GSI, forcing, land, helpers)
     slope_fWfTfR = 𝟙
 
     @pack_land begin
-		(p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
-		# (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR) => land.cFlow
-	end
+        (p_A, p_A_ind, fWfTfR_prev, taker, giver, aSrc, aTrg) => land.cFlow
+        # (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
+        (L2Re,
+            L2ReF,
+            R2Re,
+            R2ReF,
+            Re2L,
+            Re2R,
+            fWfTfR,
+            k_Lshed,
+            k_LshedF,
+            k_Rshed,
+            k_RshedF,
+            slope_fWfTfR) => land.cFlow
+    end
 
     return land
 end
 
-
 function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
     p_k_sum = zero(eltype(p_k))
-    for ix in zix
+    for ix ∈ zix
         # @show ix, p_k[ix]
         tmp = p_k[ix] + kValue + flowValue
         if tmp > maxValue
@@ -100,7 +109,7 @@ function get_frac_flow(num, den)
         rat = num / den
     else
         rat = num
-    end    
+    end
     return rat
 end
 
@@ -140,8 +149,8 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     L2Re = LR2Re # should it be divided by 2?
     R2Re = LR2Re
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the fWfTfR suddenly drops from 1 to near zero.
-    k_Lshed = min(KShed, 𝟙-L2Re)
-    k_Rshed = min(KShed, 𝟙-R2Re)
+    k_Lshed = min(KShed, 𝟙 - L2Re)
+    k_Rshed = min(KShed, 𝟙 - R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
     Re2L_i = 𝟘
@@ -149,9 +158,8 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
         Re2L_i = Re2LR * (fW / (fR + fW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
     Re2R_i = Re2LR * (𝟙 - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
-    
-    # adjust the outflow rate from the flow pools
 
+    # adjust the outflow rate from the flow pools
 
     # # get the indices of leaf & root
     # cVegLeafzix = getzix(land.pools.cVegLeaf)
@@ -165,14 +173,12 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     # p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_Rshed .+ R2Re), 𝟙)
     # R2ReF = R2Re ./ (p_k[cVegRootzix])
     # k_RshedF = k_Rshed / (p_k[cVegRootzix])
-    
+
     # p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ Re2L .+ Re2R), 𝟙)
     # Re2LF = Re2L ./ p_k[cVegReservezix]
     # Re2RF = Re2R ./ p_k[cVegReservezix]
 
     # @show Re2LF, Re2RF
-
-
 
     p_k, p_k_sum = adjust_pk(p_k, k_Lshed, L2Re, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
     L2ReF = get_frac_flow(L2Re, p_k_sum)
@@ -186,12 +192,12 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     Re2LF = get_frac_flow(Re2L_i, p_k_sum)
     Re2RF = get_frac_flow(Re2R_i, p_k_sum)
 
-	p_A = rep_elem(p_A, Re2LF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2L)
-	p_A = rep_elem(p_A, Re2RF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2R)
-	p_A = rep_elem(p_A, L2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.L2Re)
-	p_A = rep_elem(p_A, R2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.R2Re)
-	p_A = rep_elem(p_A, k_LshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Lshed)
-	p_A = rep_elem(p_A, k_RshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Rshed)
+    p_A = rep_elem(p_A, Re2LF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2L)
+    p_A = rep_elem(p_A, Re2RF, p_A, p_A, 𝟘, 𝟙, p_A_ind.Re2R)
+    p_A = rep_elem(p_A, L2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.L2Re)
+    p_A = rep_elem(p_A, R2ReF, p_A, p_A, 𝟘, 𝟙, p_A_ind.R2Re)
+    p_A = rep_elem(p_A, k_LshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Lshed)
+    p_A = rep_elem(p_A, k_RshedF, p_A, p_A, 𝟘, 𝟙, p_A_ind.k_Rshed)
     # p_A[p_A_ind.Re2L] = p_A
     # p_A[p_A_ind.Re2R] = Re2RF
     # p_A[p_A_ind.L2Re] = L2ReF
@@ -211,7 +217,22 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (L2Re, L2ReF, R2Re, R2ReF, Re2L_i, Re2R_i, Re2L, Re2R, fWfTfR, k_Lshed, k_LshedF, k_Rshed, k_RshedF, slope_fWfTfR, fWfTfR_prev, p_A) => land.cFlow
+        (L2Re,
+            L2ReF,
+            R2Re,
+            R2ReF,
+            Re2L_i,
+            Re2R_i,
+            Re2L,
+            Re2R,
+            fWfTfR,
+            k_Lshed,
+            k_LshedF,
+            k_Rshed,
+            k_RshedF,
+            slope_fWfTfR,
+            fWfTfR_prev,
+            p_A) => land.cFlow
         p_k => land.states
     end
     return land

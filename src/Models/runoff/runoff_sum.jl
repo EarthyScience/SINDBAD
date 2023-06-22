@@ -1,33 +1,32 @@
 export runoff_sum
 
-struct runoff_sum <: runoff
-end
+struct runoff_sum <: runoff end
 
-function instantiate(o::runoff_sum, forcing, land, helpers)
+function define(o::runoff_sum, forcing, land, helpers)
 
-	## set variables to zero
-	runoffBase = helpers.numbers.𝟘
-	runoff = helpers.numbers.𝟘
-	runoffSurface = helpers.numbers.𝟘
+    ## set variables to zero
+    runoffBase = helpers.numbers.𝟘
+    runoff = helpers.numbers.𝟘
+    runoffSurface = helpers.numbers.𝟘
 
-	## pack land variables
-	@pack_land begin
-		(runoff, runoffBase, runoffSurface) => land.fluxes
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        (runoff, runoffBase, runoffSurface) => land.fluxes
+    end
+    return land
 end
 
 function compute(o::runoff_sum, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land (runoffBase, runoffSurface) ∈ land.fluxes
+    ## unpack land variables
+    @unpack_land (runoffBase, runoffSurface) ∈ land.fluxes
 
-	## calculate variables
-	runoff = runoffSurface + runoffBase
+    ## calculate variables
+    runoff = runoffSurface + runoffBase
 
-	## pack land variables
-	@pack_land runoff => land.fluxes
-	return land
+    ## pack land variables
+    @pack_land runoff => land.fluxes
+    return land
 end
 
 @doc """

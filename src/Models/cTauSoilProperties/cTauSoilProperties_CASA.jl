@@ -1,43 +1,44 @@
 export cTauSoilProperties_CASA
 
+#! format: off
 @bounds @describe @units @with_kw struct cTauSoilProperties_CASA{T1} <: cTauSoilProperties
-	TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
+    TEXTEFFA::T1 = 0.75 | (0.0, 1.0) | "effect of soil texture on turnove times" | ""
 end
+#! format: on
 
-function instantiate(o::cTauSoilProperties_CASA, forcing, land, helpers)
-	@unpack_cTauSoilProperties_CASA o
+function define(o::cTauSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cTauSoilProperties_CASA o
 
-	## instantiate variables
-	p_kfSoil = ones(helpers.numbers.numType, length(land.pools.cEco))
+    ## instantiate variables
+    p_kfSoil = ones(helpers.numbers.numType, length(land.pools.cEco))
 
-	## pack land variables
-	@pack_land p_kfSoil => land.cTauSoilProperties
-	return land
+    ## pack land variables
+    @pack_land p_kfSoil => land.cTauSoilProperties
+    return land
 end
 
 function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
-	## unpack parameters
-	@unpack_cTauSoilProperties_CASA o
+    ## unpack parameters
+    @unpack_cTauSoilProperties_CASA o
 
-	## unpack land variables
-	@unpack_land p_kfSoil ∈ land.cTauSoilProperties
+    ## unpack land variables
+    @unpack_land p_kfSoil ∈ land.cTauSoilProperties
 
-	## unpack land variables
-	@unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
+    ## unpack land variables
+    @unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
 
+    ## calculate variables
+    #sujan: moving clay & silt from land.soilTexture to p_soilWBase.
+    CLAY = mean(p_CLAY)
+    SILT = mean(p_SILT)
+    # TEXTURE EFFECT ON k OF cMicSoil
+    zix = helpers.pools.zix.cMicSoil
+    p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
+    # (ineficient, should be pix zix_mic)
 
-	## calculate variables
-	#sujan: moving clay & silt from land.soilTexture to p_soilWBase.
-	CLAY = mean(p_CLAY)
-	SILT = mean(p_SILT)
-	# TEXTURE EFFECT ON k OF cMicSoil
-	zix = helpers.pools.zix.cMicSoil
-	p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
-	# (ineficient, should be pix zix_mic)
-
-	## pack land variables
-	@pack_land p_kfSoil => land.cTauSoilProperties
-	return land
+    ## pack land variables
+    @pack_land p_kfSoil => land.cTauSoilProperties
+    return land
 end
 
 @doc """

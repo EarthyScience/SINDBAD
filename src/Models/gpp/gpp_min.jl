@@ -1,28 +1,27 @@
 export gpp_min
 
-struct gpp_min <: gpp
-end
+struct gpp_min <: gpp end
 
 function compute(o::gpp_min, forcing, land, helpers)
 
-	## unpack land variables
-	@unpack_land begin
-		AllDemScGPP ∈ land.gppDemand
-		fAPAR ∈ land.states
-		gppPot ∈ land.gppPotential
-		SMScGPP ∈ land.gppSoilW
-	end
+    ## unpack land variables
+    @unpack_land begin
+        AllDemScGPP ∈ land.gppDemand
+        fAPAR ∈ land.states
+        gppPot ∈ land.gppPotential
+        SMScGPP ∈ land.gppSoilW
+    end
 
-	AllScGPP = min(AllDemScGPP, SMScGPP)
-	# & multiply
-	gpp = fAPAR * gppPot * AllScGPP
+    AllScGPP = min(AllDemScGPP, SMScGPP)
+    # & multiply
+    gpp = fAPAR * gppPot * AllScGPP
 
-	## pack land variables
-	@pack_land begin
-		gpp => land.fluxes
-		AllScGPP => land.gpp
-	end
-	return land
+    ## pack land variables
+    @pack_land begin
+        gpp => land.fluxes
+        AllScGPP => land.gpp
+    end
+    return land
 end
 
 @doc """

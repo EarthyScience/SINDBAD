@@ -1,19 +1,21 @@
 export NDVI_constant
 
+#! format: off
 @bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-	constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
+    constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
 end
+#! format: on
 
 function compute(o::NDVI_constant, forcing, land, helpers)
-	## unpack parameters
-	@unpack_NDVI_constant o
+    ## unpack parameters
+    @unpack_NDVI_constant o
 
-	## calculate variables
-	NDVI = constantNDVI
+    ## calculate variables
+    NDVI = constantNDVI
 
-	## pack land variables
-	@pack_land NDVI => land.states
-	return land
+    ## pack land variables
+    @pack_land NDVI => land.states
+    return land
 end
 
 @doc """
