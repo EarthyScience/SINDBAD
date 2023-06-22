@@ -53,7 +53,7 @@ function getDataArray(outsmodel::landWrapper,
             ŷ = @view ŷ[:, 1]
         end
     end
-    @show size(ŷ)
+    #@show size(ŷ)
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
@@ -118,11 +118,11 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
         (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
         if isnan(metr)
-            push!(lossVec, 1.0E19)
+            push!(lossVec, 1.0f19) # with f is Float32, with E is Float64
         else
             push!(lossVec, metr)
         end
-        println("$(obsV) => $(lossMetric): $(metr)")
+        #println("$(obsV) => $(lossMetric): $(metr)")
     end
     return lossVec
 end

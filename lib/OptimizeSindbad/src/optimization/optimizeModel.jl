@@ -16,7 +16,7 @@ function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, 
         @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
         ŷ = permutedims(ŷ, (2, 3, 1))
     end
-    @show size(y[:]), size(yσ[:]), size(ŷ)
+    #@show size(y[:]), size(yσ[:]), size(ŷ)
     return (y[:], yσ[:], ŷ)
 end
 
@@ -94,7 +94,7 @@ function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple
         else
             push!(lossVec, metr)
         end
-        @info "$(obsV) => $(lossMetric): $(metr)"
+        #@info "$(obsV) => $(lossMetric): $(metr)"
     end
     return lossVec
 end
