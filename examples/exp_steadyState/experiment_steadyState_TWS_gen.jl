@@ -16,35 +16,46 @@ struct Spinupper{M,F,T,I,L,O}
     f_one::O
 end
 
-
+function set_elem_components(land_pools,
+    land_init,
+    ::Val{s_comps},
+    ::Val{zix},
+    p) where {s_comps,zix}
+    output = quote end
+    foreach(s_comps) do s_comp
+        push!(output.args, Expr(:(=), :tmp, Expr(:., :land_pools, QuoteNode(s_comp))))
+        push!(output.args, Expr(:(=), :p_zix, Expr(:., :(helpers.pools.zix), QuoteNode(s_comp))))
+        zix_pool = getfield(zix, s_comp)
+        c_ix = 1
+        foreach(zix_pool) do ix
+            push!(output.args, Expr(:(=), :p_tmp, Expr(:call, :max, Expr(:ref, :p, ix), :(helpers.numbers.𝟘))))
+            push!(output.args, Expr(:macrocall, Symbol("@rep_elem"), :(), Expr(:call, :(=>), :p_tmp, Expr(:tuple, :tmp, c_ix, QuoteNode(s_comp)))))
+            #= none:1 =#
+            c_ix += 1
+        end
+        return push!(output.args,
+            Expr(:(=),
+                :land_init,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :(land_init.pools), QuoteNode(s_comp)), :tmp)))) #= none:1 =#
+    end
+    return output
+end
+helpers = info.tem.helpers;
+set_elem_components(land_init.pools, land_init, Val(info.tem.helpers.pools.components.TWS), Val(info.tem.helpers.pools.zix), rand(10))
 function (s::Spinupper)(pout, p)
-    et = eltype(p)
-    n_layer = length(s.land_init.pools.TWS)
-    z_soilW = [s.tem_helpers.pools.zix.soilW...]
-    n_layer_soilW = length(z_soilW)
-    z_groundW = [s.tem_helpers.pools.zix.groundW...]
-    n_layer_groundW = length(z_groundW)
-    z_surfaceW = [s.tem_helpers.pools.zix.surfaceW...]
-    n_layer_surfaceW = length(z_surfaceW)
-    z_snowW = [s.tem_helpers.pools.zix.snowW...]
-    n_layer_snowW = length(z_snowW)
-
+    helpers = s.tem_helpers
     land_init = s.land_init
     if land_init.pools.TWS isa SVector
-        psv = SVector{n_layer,et}(ntuple(i -> p[i], n_layer))
-        land_init = @set land_init.pools.TWS = max.(psv, s.tem_helpers.numbers.𝟘)
-
-        psv = SVector{n_layer_soilW,et}(ntuple(i -> p[z_soilW][i], n_layer_soilW))
-        land_init = @set land_init.pools.soilW = max.(psv, s.tem_helpers.numbers.𝟘)
-
-        psv = SVector{n_layer_surfaceW,et}(ntuple(i -> p[z_surfaceW][i], n_layer_surfaceW))
-        land_init = @set land_init.pools.surfaceW = max.(psv, s.tem_helpers.numbers.𝟘)
-
-        psv = SVector{n_layer_groundW,et}(ntuple(i -> p[z_groundW][i], n_layer_groundW))
-        land_init = @set land_init.pools.groundW = max.(psv, s.tem_helpers.numbers.𝟘)
-
-        psv = SVector{n_layer_snowW,et}(ntuple(i -> p[z_snowW][i], n_layer_snowW))
-        land_init = @set land_init.pools.snowW = max.(psv, s.tem_helpers.numbers.𝟘)
+        TWS = land_init.pools.TWS
+        for i in eachindex(TWS)
+            tmp = max(p[i], helpers.numbers.𝟘)
+            @rep_elem tmp => (TWS, i, :TWS)
+        end
+        land_init = @set land_init.pools.TWS = TWS
+        set_elem_components(land_init.pools, land_init, Val(helpers.pools.components.TWS), Val(helpers.pools.zix), p)
     else
         land_init.pools.TWS .= max.(p, s.tem_helpers.numbers.𝟘)
     end
