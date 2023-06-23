@@ -8,11 +8,11 @@ function define(o::wCycle_components, forcing, land, helpers)
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
     end
 
-    TWS = zero(TWS)
+    # TWS = zero(TWS)
 
-    @pack_land begin
-        TWS => land.pools
-    end
+    # @pack_land begin
+    #     TWS => land.pools
+    # end
     return land
 end
 
@@ -34,6 +34,7 @@ function compute(o::wCycle_components, forcing, land, helpers)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
     p_zix = 1
     for zix in helpers.pools.zix.soilW
+        # @show typeof(TWS)
         @rep_elem soilW[p_zix] => (TWS, zix, :TWS)
         p_zix += 1
     end
