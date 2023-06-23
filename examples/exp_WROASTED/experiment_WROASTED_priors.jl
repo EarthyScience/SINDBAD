@@ -17,8 +17,8 @@ forcingConfig = "forcing_erai.json"
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 inpath = "../data/BE-Vie.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
-inpath = "../data/DE-2.1979.2017.daily.nc"
-forcingConfig = "forcing_DE-2.json"
+# inpath = "../data/DE-2.1979.2017.daily.nc"
+# forcingConfig = "forcing_DE-2.json"
 # inpath = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
 obspath = inpath
@@ -46,7 +46,7 @@ replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
@@ -77,8 +77,6 @@ obs = getKeyedArrayFromYaxArray(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
 
 """
 getObsAndUnc(observations::NamedTuple, optim::NamedTuple; removeNaN=true)
@@ -140,12 +138,14 @@ develop_f =
         # using StatsPlots
         # plot(d)
 
-        tblParams = Sindbad.getParameters(tem.models.forward, optim.optimized_parameters)
+        tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
+            optim.optimized_parameters)
         # get the defaults and bounds
         default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
         lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
-        loc_space_maps,
+
+        _,
         loc_space_names,
         loc_space_inds,
         loc_forcings,
@@ -175,7 +175,7 @@ develop_f =
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            tblParams.optim .= popt  # TODO replace mutation
+            # tblParams.optim .= popt  # TODO replace mutation
 
             newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
             # TODO run model with updated parameters
@@ -184,7 +184,6 @@ develop_f =
                 newApproaches,
                 forcing,
                 tem,
-                loc_space_maps,
                 loc_space_names,
                 loc_space_inds,
                 loc_forcings,
