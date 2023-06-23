@@ -25,7 +25,6 @@ function getDeltaPool(pool_dat::AbstractArray, spinup_info, t::Any)
     tmp = getfield(land_spin.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
     # Δpool = tmp[end] - pool_dat
-    # @show Δpool
     return Δpool
 end
 
@@ -184,7 +183,7 @@ function doSpinup(sel_spinup_models,
         tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.diffEq.timeJump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
-        maxIter = tem_spinup.diffEq.timeJump
+        # maxIter = tem_spinup.diffEq.timeJump
         maxIter = max(ceil(tem_spinup.diffEq.timeJump) / 100, 100)
         ode_sol = solve(ode_prob, Tsit5(); maxiters=maxIter)
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
