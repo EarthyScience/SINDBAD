@@ -14,7 +14,7 @@
 			"nLoops": 1
 		},
 		{
-			"spinupMode": "ηScale",
+			"spinupMode": "ηScaleAH",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
 			"nLoops": 1
