@@ -60,10 +60,22 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
         forcing.sizes,
         info.tem);
 
+@code_warntype runEcosystem!(output.data,
+    info.tem.models.forward,
+    forc,
+    info.tem,
+    Val(info.tem.variables),
+    loc_space_names,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     info.tem,
+    Val(info.tem.variables),
     loc_space_names,
     loc_space_inds,
     loc_forcings,
