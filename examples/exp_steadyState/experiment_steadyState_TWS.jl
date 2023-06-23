@@ -38,27 +38,26 @@ land_type = typeof(land_init);
 sel_pool = :TWS
 
 spinup_models = info.tem.models.forward[info.tem.models.is_spinup];
-plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(900, 600))
+plt = plot(; legend=:outerbottom, legendcolumns=3, size=(900, 600))
 
-plot!(getfield(land_init.pools, sel_pool);
-    linewidth=5,
-    title="Steady State Solution - jump => $(tj)",
-    xaxis="Pool Turnover",
-    yaxis="C",
-    label="Init",
-    yscale=:log10)
+# plot!(getfield(land_init.pools, sel_pool);
+#     linewidth=5,
+#     title="Steady State Solution - jump => $(tj)",
+#     xaxis="Pool",
+#     yaxis="TWS",
+#     label="Init")
 
-sp = :ODE_Tsit5
-@show "ODE_Init"
-@time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
-    getfield(spinup_forcing, spinupforc),
-    deepcopy(land_init),
-    info.tem.helpers,
-    info.tem.spinup,
-    land_type,
-    f_one,
-    Val(sp));
-out_sp_ode_init = deepcopy(out_sp_ode);
+# sp = :ODE_Tsit5
+# @show "ODE_Init"
+# @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
+#     getfield(spinup_forcing, spinupforc),
+#     deepcopy(land_init),
+#     info.tem.helpers,
+#     info.tem.spinup,
+#     land_type,
+#     f_one,
+#     Val(sp));
+# out_sp_ode_init = deepcopy(out_sp_ode);
 
 @show "Exp_Init"
 sp = :spinup
@@ -75,45 +74,43 @@ out_sp_exp = land_init;
 end
 out_sp_exp_init = deepcopy(out_sp_exp);
 
-sp = :ODE_Tsit5
-@show "ODE_Exp"
-@time out_sp_ode_exp = ForwardSindbad.doSpinup(spinup_models,
-    getfield(spinup_forcing, spinupforc),
-    deepcopy(out_sp_exp),
-    info.tem.helpers,
-    info.tem.spinup,
-    land_type,
-    f_one,
-    Val(sp));
+# sp = :ODE_Tsit5
+# @show "ODE_Exp"
+# @time out_sp_ode_exp = ForwardSindbad.doSpinup(spinup_models,
+#     getfield(spinup_forcing, spinupforc),
+#     deepcopy(out_sp_exp),
+#     info.tem.helpers,
+#     info.tem.spinup,
+#     land_type,
+#     f_one,
+#     Val(sp));
 
-@show "Exp_ODE"
-sp = :spinup
-out_sp_exp_ode = out_sp_ode;
-@time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
-    out_sp_exp_ode = ForwardSindbad.doSpinup(spinup_models,
-        getfield(spinup_forcing, spinupforc),
-        deepcopy(out_sp_exp_ode),
-        info.tem.helpers,
-        info.tem.spinup,
-        land_type,
-        f_one,
-        Val(sp))
-end
+# @show "Exp_ODE"
+# sp = :spinup
+# out_sp_exp_ode = out_sp_ode;
+# @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+#     out_sp_exp_ode = ForwardSindbad.doSpinup(spinup_models,
+#         getfield(spinup_forcing, spinupforc),
+#         deepcopy(out_sp_exp_ode),
+#         info.tem.helpers,
+#         info.tem.spinup,
+#         land_type,
+#         f_one,
+#         Val(sp))
+# end
 
-plot!(getfield(out_sp_ode_init.pools, sel_pool); linewidth=5, label="ODE_Init", yscale=:log10) # legend=false
-plot!(getfield(out_sp_ode_exp.pools, sel_pool); linewidth=5, label="ODE_Exp", yscale=:log10) # legend=false
+# plot!(getfield(out_sp_ode_init.pools, sel_pool); linewidth=5, label="ODE_Init") # legend=false
+# plot!(getfield(out_sp_ode_exp.pools, sel_pool); linewidth=5, label="ODE_Exp") # legend=false
 plot!(getfield(out_sp_exp_init.pools, sel_pool);
     linewidth=5,
     ls=:dash,
-    label="Exp_Init",
-    yscale=:log10) # legend=false
-plot!(getfield(out_sp_exp_ode.pools, sel_pool);
-    linewidth=5,
-    ls=:dash,
-    label="Exp_ODE",
-    yscale=:log10) # legend=false
+    label="Exp_Init") # legend=false
+# plot!(getfield(out_sp_exp_ode.pools, sel_pool);
+#     linewidth=5,
+#     ls=:dash,
+#     label="Exp_ODE") # legend=false
 
-using NLboxsolve, ComponentArrays
+using NLsolve, ComponentArrays
 
 struct Spinupper{M,F,T,I,L,O}
     models::M
@@ -125,14 +122,13 @@ struct Spinupper{M,F,T,I,L,O}
 end
 
 function (s::Spinupper)(pout, p)
-    pout .= exp.(p)# .* s.pooldiff
+    pout .= p# .* s.pooldiff
     # s.land_init.pools.TWS .= pout.TWS
-    s.land_init.pools.TWS .= pout.TWS
+    s.land_init.pools.TWS .= max.(pout.TWS, s.tem_helpers.numbers.𝟘)
     update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
         s.f_one)
     # pout.TWS .= update_init.pools.TWS
     pout.TWS .= update_init.pools.TWS
-    pout .= log.(pout)# ./ s.pooldiff
     return nothing
     # pout .= exp.(p)# .* s.pooldiff
     # tmp = s.land_init.pools.TWS;
@@ -167,13 +163,12 @@ function doSpinup(spinup_models,
         TWS = deepcopy(land_init.pools.TWS)))
     # mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
     # TWS=deepcopy(land_init.pools.TWS)))
-    mypools .= log.(mypools)
-    r = nlboxsolve(s, land_init.pools.TWS, zero(mypools.TWS), ones(length(mypools.TWS)) .* 1000)
-    # r = fixedpoint(s, mypools; method=:trust_region)
-    @show r
-    res = exp.(r.zero)
+    r = fixedpoint(s, mypools; method=:trust_region)
+    # @show r
+    res = r.zero
     li = deepcopy(s.land_init)
-    TWS = res.TWS
+    TWS = max.(res.TWS, tem_helpers.numbers.𝟘)
+    @show TWS
     # TWS = res.TWS
     @pack_land TWS => li.pools
     # @pack_land TWS => li.pools
@@ -191,12 +186,13 @@ end
     Val(:nlsolve));
 
 # xtl = land_init.cCycleBase.p_annk;
+xtl = info.tem.helpers.pools.components.TWS
 xtname = info.tem.helpers.pools.components.TWS
 plot!(getfield(out_sp_nl.pools, sel_pool);
     linewidth=5,
     ls=:dot,
     label="NL_Solve",
-    xticks=(1:length(xtl), string.(xtname)),
+    xticks=(1:length(xtl) |> collect, string.(xtname)),
     rotation=45) # legend=false
 
 @show "Exp_NL"
@@ -215,7 +211,6 @@ end
 plot!(getfield(out_sp_exp_nl.pools, sel_pool);
     linewidth=5,
     ls=:dash,
-    label="Exp_NL",
-    yscale=:log10) # legend=false
+    label="Exp_NL") # legend=false
 
 savefig("comp_methods_eachpool_TWS-tj-$(tj).png")
