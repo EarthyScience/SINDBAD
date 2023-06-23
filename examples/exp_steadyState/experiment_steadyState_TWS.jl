@@ -38,14 +38,14 @@ land_type = typeof(land_init);
 sel_pool = :TWS
 
 spinup_models = info.tem.models.forward[info.tem.models.is_spinup];
-plt = plot(; legend=:outerbottom, legendcolumns=3, size=(900, 600))
+plt = plot(; legend=:outerbottom, size=(900, 600))
 
-# plot!(getfield(land_init.pools, sel_pool);
-#     linewidth=5,
-#     title="Steady State Solution - jump => $(tj)",
-#     xaxis="Pool",
-#     yaxis="TWS",
-#     label="Init")
+plot!(getfield(land_init.pools, sel_pool);
+    linewidth=5,
+    title="Steady State Solution - jump => $(tj)",
+    xaxis="Pool",
+    yaxis="TWS",
+    label="Init")
 
 # sp = :ODE_Tsit5
 # @show "ODE_Init"
@@ -186,13 +186,19 @@ end
     Val(:nlsolve));
 
 # xtl = land_init.cCycleBase.p_annk;
-xtl = info.tem.helpers.pools.components.TWS
-xtname = info.tem.helpers.pools.components.TWS
+xtname = []
+for comp ∈ info.tem.helpers.pools.components.TWS
+    zix = getfield(info.tem.helpers.pools.zix, comp)
+    for iz in eachindex(zix)
+        push!(xtname, string(comp) * "_$(iz)")
+    end
+end
+
 plot!(getfield(out_sp_nl.pools, sel_pool);
     linewidth=5,
     ls=:dot,
     label="NL_Solve",
-    xticks=(1:length(xtl) |> collect, string.(xtname)),
+    xticks=(1:length(xtname) |> collect, string.(xtname)),
     rotation=45) # legend=false
 
 @show "Exp_NL"
