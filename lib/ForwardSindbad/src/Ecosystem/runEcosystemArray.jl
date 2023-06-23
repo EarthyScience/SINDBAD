@@ -4,6 +4,7 @@ export getLocData
 export coreEcosystem!
 export getLocOutput!
 export getLocForcing!
+export getLocObs!
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -51,6 +52,37 @@ end
                     Symbol("@set"),
                     :(),
                     Expr(:(=), Expr(:., :loc_forcing, QuoteNode(forc)), :d)))) #= none:1 =#
+    end
+    return output
+end
+
+@generated function getLocObs!(obs,
+    ::Val{obs_vars},
+    ::Val{s_names},
+    loc_obs,
+    s_locs) where {obs_vars,s_names}
+    output = quote end
+    foreach(obs_vars) do obsv
+        push!(output.args, Expr(:(=), :d, Expr(:., :obs, QuoteNode(obsv))))
+        s_ind = 1
+        foreach(s_names) do s_name
+            expr = Expr(:(=),
+                :d,
+                Expr(:call,
+                    :view,
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
+            push!(output.args, expr)
+            return s_ind += 1
+        end
+        return push!(output.args,
+            Expr(:(=),
+                :loc_obs,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
     end
     return output
 end

@@ -1,0 +1,320 @@
+{
+	"variables2constrain": [
+		"gpp"
+	],
+	"multiConstraintMethod": "sum",
+	"useUncertainty": false,
+	"algorithm_ev": {
+		"package": "Evolutionary",
+		"method": "CMAES",
+		"options_file": "optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithm": {
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithmcc": {
+		"package": "CMAEvolutionStrategy",
+		"method": "CMAES",
+		"options_file": "optim_cmaes.json",
+		"isMultiObj": false
+	},
+	"algorithm-gcmaes": {
+		"package": "Optimization",
+		"method": "GCMAES_FD",
+		"options_file": null,
+		"isMultiObj": false
+	},
+    "default_parameter": {
+		"is_ml": true,
+		"distribution": ["normal", [0, 1]]
+	},
+	"optimized_parameters": {
+		"evaporation_⚆_α": {
+			"is_ml": true
+		},
+		"evaporation_⚆_supLim": null,
+		"gppPotential_⚆_εmax": null,
+		"gppAirT_⚆_Topt": null,
+		"gppAirT_⚆_ToptA": null,
+		"gppAirT_⚆_ToptB": null,
+		"gppVPD_⚆_κ":  {
+			"is_ml": true
+		},
+		"gppVPD_⚆_Cκ": null,
+		"gppVPD_⚆_Cm": null,
+		"gppSoilW_⚆_q": null,
+		"gppSoilW_⚆_θstar": null,
+		"groundWRecharge_⚆_dos_exp": null,
+		"runoffBase_⚆_bc":  {
+			"is_ml": true
+		},
+		"rootMaximumDepth_⚆_fracRootD2SoilD": null,
+		"runoffSaturationExcess_⚆_β": null,
+		"snowMelt_⚆_melt_T": null,
+		"snowMelt_⚆_melt_Rn": null,
+		"treeFraction_⚆_constantTreeFrac": null,
+		"WUE_⚆_WUEatOnehPa": null,
+		"WUE_⚆_κ": null
+	},
+	"constraints": {
+		"function_name": {
+			"import": "readObservation"
+		},
+		"oneDataPath": "../data/fluxnet_cube/fluxnet_observations.zarr",
+		"defaultCostOptions": {
+			"aggrOrder": "timespace",
+			"spatialAggr": "cat",
+			"spatialCostAggr": "spatial",
+			"temporalAggr": "day",
+			"temporalAggrObs": false,
+			"temporalAggrFunc": "nanmean",
+			"costMetric": "mse",
+			"costWeight": 1.0,
+			"areaWeight": false
+		},
+		"variables": {
+			"gpp": {
+				"modelFullVar": "fluxes.gpp",
+				"data": {
+					"variableUnit": "gC m-2 day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "gpp",
+					"sourceVariableUnit": "gC m-2 day-1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "Gross Primary Productivity",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"sourceVariableName": "nee_σ"
+				},
+				"costOptions": {
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"costMetric": "mse"
+				}
+			},
+			"nee": {
+				"modelFullVar": "fluxes.NEE",
+				"data": {
+					"variableUnit": "gC m-2 day-1",
+					"bounds": [
+						-100.0,
+						100.0
+					],
+					"sourceVariableName": "nee",
+					"sourceVariableUnit": "gC m-2 day-1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "Net Ecosystem Exchange",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						400.0
+					],
+					"sourceVariableName": "nee_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0
+				},
+				"costOptions": {
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"costMetric": "nseinv"
+				}
+			},
+			"reco": {
+				"modelFullVar": "fluxes.cRECO",
+				"data": {
+					"variableUnit": "gC m-2 day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "reco",
+					"sourceVariableUnit": "gC m-2 day-1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "Ecosystem Respiration",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "nee_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0
+				},
+				"costOptions": {
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"costMetric": "nseinv"
+				}
+			},
+			"evapotranspiration": {
+				"modelFullVar": "fluxes.evapotranspiration",
+				"data": {
+					"variableUnit": "mm day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "evapotranspiration",
+					"sourceVariableUnit": "MJ m-2 d-1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 0.4081632653,
+					"isCategorical": false,
+					"nameShort": "Evapotranspiration",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "le_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 0.4081632653
+				},
+				"costOptions": {
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"costMetric": "nseinv"
+				}
+			},
+			"transpiration": {
+				"modelFullVar": "fluxes.transpiration",
+				"data": {
+					"variableUnit": "mm day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "transpiration",
+					"sourceVariableUnit": "mm day-1",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "transpiration",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"sourceVariableName": "le_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 0.4081632653
+				},
+				"costOptions": {
+					"temporalAggr": "day",
+					"temporalAggrObs": false,
+					"costMetric": "nseinv"
+				}
+			},
+			"agb": {
+				"modelFullVar": "pools.cVegWood",
+				"data": {
+					"variableUnit": "gC m-2",
+					"bounds": [
+						0.0,
+						100000.0
+					],
+					"sourceVariableName": "agb",
+					"sourceVariableUnit": "gC m-2",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "Above-ground biomass",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						400.0
+					],
+					"sourceVariableName": "nee_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0
+				},
+				"costOptions": {
+					"temporalAggr": "mean",
+					"temporalAggrObs": true,
+					"costMetric": "nmae1r"
+				}
+			},
+			"ndvi": {
+				"modelFullVar": "states.fAPAR",
+				"data": {
+					"variableUnit": "adimensional",
+					"bounds": [
+						0.0,
+						1.0
+					],
+					"sourceVariableName": "ndvi",
+					"sourceVariableUnit": "adimensional",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0,
+					"isCategorical": false,
+					"nameShort": "kNDVI",
+					"spaceTimeType": "spatiotemporal",
+					"sourceDataProductName": "FLUXNET",
+					"dataPath": null
+				},
+				"unc": {
+					"dataPath": null,
+					"bounds": [
+						0.0,
+						1.0
+					],
+					"sourceVariableName": "nee_σ",
+					"additiveUnitConversion": false,
+					"source2sindbadUnit": 1.0
+				},
+				"costOptions": {
+					"temporalAggr": "dayAnomaly",
+					"temporalAggrObs": true,
+					"costMetric": "nseinv"
+				}
+			}
+		}
+	}
+}
