@@ -51,5 +51,4 @@ xfeatures = cube_to_KA(c)
 sites = xfeatures.site
 sites = [s for s ∈ sites]
 sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
-
 n_bs_feat = length(xfeatures.features)
