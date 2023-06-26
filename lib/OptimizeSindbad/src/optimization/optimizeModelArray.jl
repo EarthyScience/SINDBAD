@@ -3,7 +3,7 @@ export getSimulationDataArray, getLossArray, getLossGradient
 export getDataArray, combineLossArray
 export getLossVectorArray
 export site_loss_g
-
+export get_y, get_ŷn
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
@@ -34,6 +34,27 @@ function getDataArray(outsmodel::NamedTuple,
     end
     return (y, yσ, ŷ)
 end
+
+function get_y(observations, v)
+    return getproperty(observations, v)
+end
+
+function get_ŷ(outsmodel, v)
+    return getproperty(outsmodel, v)
+end
+
+function get_ŷn(ŷ::AbstractArray{T,2}) where T
+    return @view ŷ[:, 1]
+end
+
+function get_ŷn(ŷ::AbstractArray{T,3}) where T
+    return @view ŷ[:, 1, :]
+end
+
+function get_ŷn(ŷ::AbstractArray{T,4}) where T
+    return @view ŷ[:, 1, :, :]
+end
+
 
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
@@ -66,6 +87,7 @@ function getDataArray(outsmodel::landWrapper,
     end
     return (y, yσ, ŷ)
 end
+
 
 """
     combineLoss(lossVector, ::Val{:sum})
@@ -103,26 +125,46 @@ function combineLossArray(lossVector::AbstractArray, percentile_value::T) where 
     return percentile(lossVector, percentile_value)
 end
 
+function inner_loss(y, yσ, ŷ, s_metric)
+    return loss(y, yσ, ŷ, s_metric)
+end
+
+function get_trues(y, yσ, ŷ)
+    return (.!isnan.(y .* yσ .* ŷ))
+end
+
 """
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
 function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
-    lossVec = []
-    cost_options = optim.costOptions
-    optimVars = optim.variables.optim
-    for var_row ∈ cost_options
-        obsV = var_row.variable
-        lossMetric = var_row.costMetric
-        mod_variable = getfield(optimVars, obsV)
-        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-        metr = loss(y, yσ, ŷ, Val(lossMetric))
+    #cost_options = optim.costOptions
+    cost_options = [Pair(:gpp, Val(:mse))]
+    #optimVars = optim.variables.optim
+ #   lossVec = Vector{Real}(undef, length(optimVars))
+    #var_index = 1
+    lossVec = map(cost_options) do p
+#    for p ∈ cost_options
+        obsV = first(p)
+        s_metric = last(p) #var_row.costMetric
+        #@code_warntype getfield(optimVars, obsV)
+        #mod_variable = getfield(optimVars, obsV) #::NTuple{2,Symbol}
+        #@show mod_variable
+        #var_σ =  Symbol(string(obsV) * "_σ")
+        #@code_warntype get_y(observations, mod_variable[2])
+        y = get_y(observations, obsV)
+        ŷ = model_output[1] #get_ŷ(model_output, mod_variable[2])
+        ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
+        yσ = get_y(observations, :gpp_σ)
+        idxs = get_trues(y, yσ, ŷ)
+        #@code_warntype loss(y, yσ, ŷ, s_metric)
+        metr = loss_o(y, ŷ, s_metric, idxs)
         if isnan(metr)
-            push!(lossVec, 1.0f19) # with f is Float32, with E is Float64
-        else
-            push!(lossVec, metr)
+           metr = oftype(metr, 1e19) # buggy?
         end
-        #println("$(obsV) => $(lossMetric): $(metr)")
+        metr
+  #      lossVec[var_index] = metr 
+  #      var_index += 1
     end
     return lossVec
 end
@@ -195,7 +237,7 @@ function getLossArray(pVector::AbstractArray,
         land_init_space,
         f_one)
     model_data = (; Pair.(output_variables, output.data)...)
-    loss_vector = getLossVectorArray(observations, model_data, optim)
+    loss_vector = getLossVectorArray(observations, model_data, optim, tem.helpers)
     println("-------------------")
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
 end

@@ -1,8 +1,6 @@
 using Sindbad, ForwardSindbad, OptimizeSindbad
 function setup_simple()
-    #experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
-
-    experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
+    experiment_json = "../exp_hybrid_wrosted/settings_wrosted/experiment.json"
     info = getExperimentInfo(experiment_json);
     info, forcing = getForcing(info, Val{:zarr}());
     land_init = createLandInit(info.pools, info.tem);
