@@ -12,8 +12,9 @@ using ForwardDiff
 using JLD2
 using JSON: parsefile
 using CSV: CSV
-using TypedTables: Table
+using TypedTables: Table, @Select
 using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
+using Transducers: Map
 
 @reexport using PrettyPrinting: pprint
 
