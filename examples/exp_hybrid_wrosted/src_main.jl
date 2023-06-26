@@ -5,58 +5,6 @@ using ForwardDiff
 using Random
 using ProgressMeter
 using Accessors
-using ConstructionBase
-using Statistics
-
-function new_ar(ar)
-    map(ar) do a
-        if typeof(a) <: ForwardDiff.Dual
-            return a.value
-        else
-            return a
-        end
-    end
-end
-
-"""
-updateModelParametersType(tblParams, approaches, pVector)
-get the new instances of the model with same parameter types as mentioned in pVector
-"""
-function nnpdateModelParametersType(tblParams, approaches::Tuple, pVector, i=1::Int)
-    #namesApproaches = nameof.(typeof.(approaches))
-     # a better way to do this?
-    foreach(approaches) do approachx
-        modelName = nameof(typeof(approachx))
-        model_obj = approachx
-        newapproachx = if modelName in tblParams.modelsApproach
-            vars = getproperties(approachx)
-            newvals = Pair[]
-            for (k,var) ∈ pairs(vars)
-                pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
-                    tblParams)
-                #pval = getproperty(approachx, var)
-                if !isempty(pindex)
-                    model_obj = tblParams[pindex[1]].modelsObj
-                    var = pVector[pindex[1]]
-                end
-                push!(newvals, k => var)
-            end
-            constructorof(typeof(approachx))(;newvals...)
-        else
-            approachx
-        end
-        @set approaches[i] = newapproachx
-        i = i + 1
-    end
-    return approaches
-end
-function get_trues(ŷ, yσ, y)
-    return (.!isnan.(y .* yσ .* ŷ)) # ::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
-end
-
-function loss_oo(ŷ::AbstractArray, y::AbstractArray, ::Val{:mse}, idxs)
-    return mean(abs2.(y[idxs] .- ŷ[idxs]))
-end
 
 function get_loc_loss(loc_obs,
     loc_output,
@@ -76,40 +24,13 @@ function get_loc_loss(loc_obs,
         tem_helpers,
         tem_spinup,
         tem_models,
-        Val{(fluxes = (:gpp,),)}(),
-        #Val(tem_variables),
+        Val(tem_variables),
         loc_land_init,
         f_one)
-    #model_data = (; Pair.(out_variables, loc_output)...)
-    #model_data = loc_output
-    cost_options = [Pair(:gpp, Val(:mse))]
-    #@code_warntype getLossVectorArray(loc_obs, model_data, tem_optim)
-    #loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
-    #@show loss_vector
-    #l = combineLossArray(loss_vector, Val{:sum}())
-    lossVec = map(cost_options) do p
-                obsV = first(p)
-                s_metric = last(p) 
-                y = get_y(loc_obs, obsV)
-                ŷ = loc_output[1]
-                ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
-                yσ = get_y(loc_obs, :gpp_σ)
-                #@code_warntype get_trues(y, yσ, y)
-                #ŷ_ka = KeyedArray(new_ar_t(ŷ); time = y.time)
-                idxs = get_trues(ŷ, yσ, y)
-                #@show typeof(ŷ)
-                #@code_warntype loss_oo(ŷ, y, s_metric, idxs)
-                metr = loss_oo(ŷ, y, s_metric, idxs)
-                #@show typeof(metr)
-                #metr = sum(metr)
-                if isnan(metr)
-                   metr = oftype(metr, 1e19) # buggy?
-                end
-                metr
-            end
-    #@show typeof(lossVec)
-    #@code_warntype sum(lossVec)
-    return sum(lossVec)
+    model_data = (; Pair.(out_variables, loc_output)...)
+    loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
+    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    return l
 end
 
 function loc_loss(upVector,
@@ -135,10 +56,8 @@ function loc_loss(upVector,
     getLocOutput!(output.data, loc_space_ind, loc_output)
     getLocForcing!(forc, Val(keys(f_one)), v_loc_space_names, loc_forcing, loc_space_ind)
     getLocObs!(obs, Val(keys(obs)), v_loc_space_names, loc_obs, loc_space_ind)
-
-    #@code_warntype updateModelParametersType(tblParams, forward, upVector)
     newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    #@show typeof(newApproaches)
+
     return get_loc_loss(loc_obs,
         loc_output,
         newApproaches,
@@ -151,7 +70,6 @@ function loc_loss(upVector,
         out_variables,
         loc_land_init,
         f_one)
-
 end
 
 include("setup_simple.jl")
@@ -174,8 +92,6 @@ out_variables,
 output,
 forc,
 obs = setup_simple();
-
-#forward = [m for m in forward]
 
 
 site_location = loc_space_maps[1];
@@ -202,8 +118,6 @@ loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1]
 loc_forcing = loc_forcings[1]
 
-#tem_optim_new = (; tem_optim..., costOptions=(; tem_optim.costOptions..., variable = [:gpp], costMetric = [Val(:mse)]))
-
 args = (;
     output,
     forc,
@@ -226,21 +140,12 @@ args_txyz = (;
     val_loc_space_names=Val(loc_space_names),
 );
 
-
 loc_loss(
     tblParams.defaults,
     loc_space_ind, 
     loc_land_init,
     args_txyz...,
     args...)
-
-@code_warntype loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
-    loc_land_init,
-    args_txyz...,
-    args...)
-
 
 @time loc_loss(
     tblParams.defaults,
@@ -249,48 +154,17 @@ loc_loss(
     args_txyz...,
     args...)
 
-all_approaches = nameof.(typeof.(tem_models.forward)) # a better way to do this?
-
-tblParams2 = Sindbad.@Select(names, modelsApproach)(tblParams)
-
-@code_warntype updateModelParametersType(tblParams, forward, tblParams.defaults)
-
-@time updateModelParametersType(tblParams, forward, tblParams.defaults*rand());
-
-
-
-#=
-reconstruct_model(::rainSnow_Tair, args...;kwargs...) = rainSnow_Tair(args...;kwargs...)
-o = rainSnow_Tair()
-reconstruct_model(o, 1f0)
-xtpl = [1.0, [1f0]]
-@code_warntype ntuple(i->xtpl[i], 2)
-@code_warntype Tuple([1, [1f0]])
-typeof(Tuple([1, [1f0]]))
-=#
-forward = tem_models.forward
-@time newforward = nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
-
-@code_warntype nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
-
 # test gradient
 function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
     return ForwardDiff.gradient(gf, v)
 end
- 
-@code_warntype fdiff_grads(loc_loss, tblParams.defaults,
-    loc_space_ind,
-    loc_land_init,
-    args_txyz,
-    args)
 
 @time fdiff_grads(loc_loss, tblParams.defaults,
     loc_space_ind,
     loc_land_init,
     args_txyz,
-    args)
-
+    args);
 
 function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
@@ -299,7 +173,7 @@ function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     ForwardDiff.gradient!(out, gf, v, cfg_n)
     return out
 end
-GC.gc()
+
 @time fdiff_grads!(loc_loss, tblParams.defaults,
     20,
     loc_space_ind,
@@ -495,123 +369,3 @@ nn_machine(nn_args, x_args, xfeatures,
     args_txyz,
     args; 
     nepochs=3)
-
-function mysum(mv::KeyedArray{T}) where T
-    s=0
-    for i in eachindex(mv)
-        s+=mv[i]
-    end
-    return s
-end
-
-using Dates, ForwardDiff, AxisKeys
-r = rand(Float32, 4)
-r[1] = NaN32    
-ka = KeyedArray(r; i =Date(today()):Date(today()+Day(3)) )
-ar = Union{Float32, ForwardDiff.Dual}[1f0,2f0, ForwardDiff.Dual(NaN32), 2f0]
-idx_f(ar,ka) = (.!isnan.(ar .* ka))
-idxs = idx_f(ar,ka)
-
-@code_warntype idx_f(ar,ka)
-
-function ka_ar_unstable(ka, ar,idxs)
-    return abs2.(ka[idxs] .- ar[idxs])
-end
-
-@code_warntype ka_ar_unstable(ka, ar, idxs)
-
-
-o_ka = ka_ar_unstable(ka, ar, idxs)
-
-@code_warntype sum(o_ka)
-
-
-function all_pack(ar, ka)
-    idxs = idx_f(ar,ka) # this needs to be called here because, 'ar' and 'ka' 
-                        #are comming from an outer loop.
-    vals = ka_ar_unstable(ka, ar,idxs)
-    return sum(vals)
-end
-
-@code_warntype all_pack(ar, ka)
-
-function ka_ar_unstable(ka, ar)
-    idxs = (.!isnan.(ar .* ka))
-    return abs2.(ka[idxs] .- ar[idxs])
-end
-
-@code_warntype ka_ar_unstable(ar, ka)
-
-
-
-
-
-
-
-
-
-
-@code_warntype idx_f(ar,ka)
-
-function ka_ar_unstable(ka, ar)
-    idxs = (.!isnan.(ar .* ka))
-    return sum(abs2.(ka[idxs] .- ar[idxs]))
-end
-
-@code_warntype ka_ar_unstable(ka, ar)
-
-
-
-ka_ar_unstable(ka, ar, idxs) |> typeof
-
-
-idxs = (.!isnan.(ar .* ka))
-o_val = ka[idxs] .- ar[idxs]
-
-typeof(o_val) <: AbstractVector
-
-
-ŷ_ka = KeyedArray(ŷ .|> Float32; t = 1:length(ŷ))
-
-ar =  Union{Float32, ForwardDiff.Dual}[1f0,2f0, ForwardDiff.Dual(NaN32), 2f0]
-
-function new_ar(ar)
-    map(ar) do a
-        if typeof(a) <: ForwardDiff.Dual
-            return a.value
-        else
-            return a
-        end
-    end
-end
-@code_warntype new_ar(ar)
-new_ar(ar)
-
-
-
-
-using Dates, ForwardDiff, AxisKeys
-ar = Union{Float32, ForwardDiff.Dual}[1f0,2f0, ForwardDiff.Dual(NaN32), 2f0]
-
-function get_dval(a::ForwardDiff.Dual{Nothing, Float32, 0})
-    return a.value
-end
-
-@code_warntype get_dval(ar[3])
-
-function get_dval(a::T) where T<:Float32
-    return a
-end
-
-@code_warntype get_dval(ar[1])
-@code_warntype get_dval(ar[3])
-
-function new_ar_t(ar)
-    map(ar) do a
-        get_dval(a)
-    end
-end
-
-@code_warntype new_ar_t(ar)
-
-new_ar_t(ar)

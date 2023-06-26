@@ -1,7 +1,7 @@
 export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
-
+using ConstructionBase
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -144,32 +144,31 @@ end
 updateModelParametersType(tblParams, approaches, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateModelParametersType(tblParams, approaches::Tuple, pVector)
+function updateModelParametersType(tblParams, approaches, pVector)
     updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
-    for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = approaches[idx]
-        model_obj = approachx
+    foreach(approaches) do approachx
+        modelName = nameof(typeof(approachx))
+        #model_obj = approachx
         newapproachx = if modelName in tblParams.modelsApproach
-            vars = propertynames(approachx)
+            vars = getproperties(approachx)
             newvals = Pair[]
-            for var ∈ vars
-                pindex = findall(row -> row.names == var && row.modelsApproach == modelName,
+            for (k,var) ∈ pairs(vars)
+                pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
                     tblParams)
-                pval = getproperty(approachx, var)
+                #pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    model_obj = tblParams[pindex[1]].modelsObj
-                    pval = pVector[pindex[1]]
+                    #model_obj = tblParams[pindex[1]].modelsObj
+                    var = pVector[pindex[1]]
                 end
-                push!(newvals, var => pval)
+                push!(newvals, k => var)
             end
-            model_obj(; newvals...)
+            constructorof(typeof(approachx))(;newvals...)
         else
             approachx
         end
         push!(updatedModels, newapproachx)
     end
-    return (updatedModels...,)
+    return updatedModels
 end
 
 """
