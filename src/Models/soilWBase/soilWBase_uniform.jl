@@ -39,7 +39,6 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
     p_α = sp_α
     p_β = sp_β
 
-    soilW = soilW .* helpers.numbers.𝟘 + min.(soilW, p_wSat)
     for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
         @rep_elem sd_sl => (soilLayerThickness, sl, :soilW)
