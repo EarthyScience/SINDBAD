@@ -26,7 +26,6 @@ function compute(o::wCycle_components, forcing, land, helpers)
 
     totalW_prev = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
 
-    @show soilW, ΔsoilW, typeof(soilW), typeof(ΔsoilW)
     ## update variables
     groundW = add_vec(groundW, ΔgroundW)
     snowW = add_vec(snowW, ΔsnowW)
@@ -59,10 +58,10 @@ function compute(o::wCycle_components, forcing, land, helpers)
 
 
     # reset moisture changes to zero
-    ΔgroundW = ΔgroundW .* 𝟘
-    ΔsnowW = ΔsnowW .* 𝟘
-    ΔsoilW = ΔsoilW .* 𝟘
-    ΔsurfaceW = ΔsurfaceW .* 𝟘
+    @rep_vec ΔgroundW => ΔgroundW .* 𝟘
+    @rep_vec ΔsnowW => ΔsnowW .* 𝟘
+    @rep_vec ΔsoilW => ΔsoilW .* 𝟘
+    @rep_vec ΔsurfaceW => ΔsurfaceW .* 𝟘
 
     totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
 

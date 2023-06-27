@@ -42,6 +42,7 @@
 		"format": ".zarr",
 		"depth_dimensions":{
 			"d_soil": "soilW",
+			"d_tws": "TWS",
 			"d_cEco": 8,
 			"d_snow": "snowW"
 		},
@@ -52,6 +53,7 @@
 			"fluxes.runoffSurface": null,
 			"fluxes.gpp": null,
 			"fluxes.NEE": null,
+			"pools.TWS": "d_tws",
 			"pools.soilW": "d_soil",
 			"pools.cEco": "d_cEco",
 			"waterBalance.waterBalance": null
