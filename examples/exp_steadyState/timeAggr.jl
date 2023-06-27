@@ -1,4 +1,5 @@
 using StatsBase: rle
+using Statistics
 using Dates
 
 struct Aggregator{I,F}
@@ -29,15 +30,15 @@ end
 
 
 time = Date(2001):Day(1):Date(2010, 12, 31)
-data = rand(length(time))
+data = rand(length(time), 20, 20);
 
 monthlyview = create_aggregator(month.(time))
 annualview = create_aggregator(year.(time))
 
 data_monthly = view(data, monthlyview)
 
-data_monthly[1] == mean(data[1:31])
-data_monthly[2] == mean(data[32:31+28])
+data_monthly[1] == mean(data[1:31, :, :])
+data_monthly[2] == mean(data[32:31+28, :, :])
 
 data_annual = view(data, annualview)
 

@@ -26,7 +26,7 @@ function compute(o::wCycle_components, forcing, land, helpers)
 
     totalW_prev = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
 
-
+    @show soilW, ΔsoilW, typeof(soilW), typeof(ΔsoilW)
     ## update variables
     groundW = add_vec(groundW, ΔgroundW)
     snowW = add_vec(snowW, ΔsnowW)
