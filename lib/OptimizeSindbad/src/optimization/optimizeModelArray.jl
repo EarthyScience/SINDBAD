@@ -138,9 +138,34 @@ getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple,
 returns a vector of losses for variables in info.optim.variables2constrain
 """
 function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
-    #cost_options = optim.costOptions
-    cost_options = [Pair(:gpp, Val(:mse))]
-    #optimVars = optim.variables.optim
+    lossVec = []
+    cost_options = optim.costOptions
+    optimVars = optim.variables.optim
+    for var_row ∈ cost_options
+        obsV = var_row.variable
+        lossMetric = var_row.costMetric
+        mod_variable = getfield(optimVars, obsV)
+        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
+        metr = loss(y, yσ, ŷ, Val(lossMetric))
+        if isnan(metr)
+            push!(lossVec, oftype(metr, 1e19)) # with f is Float32, with E is Float64
+        else
+            push!(lossVec, metr)
+        end
+    end
+    return lossVec
+end
+
+
+#=
+"""
+getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
+returns a vector of losses for variables in info.optim.variables2constrain
+"""
+function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
+    cost_options = optim.costOptions
+    #cost_options = [Pair(:gpp, Val(:mse))]
+    optimVars = optim.variables.optim
  #   lossVec = Vector{Real}(undef, length(optimVars))
     #var_index = 1
     lossVec = map(cost_options) do p
@@ -168,6 +193,8 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
     end
     return lossVec
 end
+
+=#
 
 """
 getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
