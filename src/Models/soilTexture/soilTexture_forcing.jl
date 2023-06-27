@@ -26,10 +26,10 @@ function define(o::soilTexture_forcing, forcing, land, helpers)
             "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers."
         )
         for sl ∈ eachindex(st_CLAY)
-            @rep_elem sNT(mean(st_CLAY_f)) => (st_CLAY, sl, :soilW)
-            @rep_elem sNT(mean(st_SAND_f)) => (st_SAND, sl, :soilW)
-            @rep_elem sNT(mean(st_SILT_f)) => (st_SILT, sl, :soilW)
-            @rep_elem sNT(mean(st_ORGM_f)) => (st_ORGM, sl, :soilW)
+            @rep_elem mean(st_CLAY_f) => (st_CLAY, sl, :soilW)
+            @rep_elem mean(st_SAND_f) => (st_SAND, sl, :soilW)
+            @rep_elem mean(st_SILT_f) => (st_SILT, sl, :soilW)
+            @rep_elem mean(st_ORGM_f) => (st_ORGM, sl, :soilW)
         end
     end
 
