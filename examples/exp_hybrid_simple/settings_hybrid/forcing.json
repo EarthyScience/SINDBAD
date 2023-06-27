@@ -1,6 +1,6 @@
 {
 	"subset":{ 
-		"site":[1, 205]
+		"site":[1, 1]
 	},
 	"dimensions": {
 		"permute": null,
@@ -145,7 +145,8 @@
 	"ORGM": {
 		"variableUnit": "-",
 		"bounds": [0.0, 100.0],
-		"sourceVariableName": "ORGM",
+		"source2sindbadUnit": 0.0,
+		"sourceVariableName": "SILT",
 		"sourceVariableUnit": "%",
 		"nameShort": "CLAY",
 		"spaceTimeType": "spatiovertical",
