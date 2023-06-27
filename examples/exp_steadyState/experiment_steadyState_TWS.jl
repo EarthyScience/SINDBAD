@@ -62,7 +62,7 @@ function doSpinup(spinup_models,
     land_type,
     f_one,
     ::Val{:nlsolve})
-    s = tem_helpers.spinupper
+    s = Spinupper(spinup_models, spinup_forcing, tem_helpers, land_init, land_type, f_one)
     r = fixedpoint(s, Vector(land_init.pools.TWS); method=:trust_region)
     TWS = r.zero
     @pack_land TWS => land_init.pools
@@ -74,7 +74,7 @@ experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 out_sp_exp = nothing
 arraymethod = "staticarray"
 for arraymethod ∈ ("staticarray", "array") #, "staticarray")
-    replace_info = Dict("spinup.diffEq.timeJump" => tj,
+    replace_info = Dict("spinup.diffEq.timeJump" => 1,
         "spinup.diffEq.reltol" => 1e-2,
         "spinup.diffEq.abstol" => 1,
         "modelRun.rules.model_array_type" => arraymethod,
@@ -114,14 +114,12 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
     spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
-    land_init_for_s = deepcopy(land_init_space[1])
+    land_init_for_s = land_init
     @show "NL_solve"
-    s = Spinupper(spinup_models, getfield(spinup_forcing, spinupforc), info.tem.helpers, land_init, land_type, f_one)
-    helpers = (; info.tem.helpers..., spinupper=s)
     @time out_sp_nl = doSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
-        land_init_for_s,
-        helpers,
+        deepcopy(land_init_for_s),
+        info.tem.helpers,
         info.tem.spinup,
         land_type,
         f_one,
@@ -140,8 +138,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
         @show "Exp_Init"
         sp = :spinup
-        out_sp_exp = deepcopy(land_init_space[1])
-        @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+        out_sp_exp = deepcopy(land_init_for_s)
+        @time for nl ∈ 1:tj
             out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
                 getfield(spinup_forcing, spinupforc),
                 out_sp_exp,
@@ -155,16 +153,16 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         plot!(getfield(out_sp_exp.pools, sel_pool);
             linewidth=5,
             label="Exp_Init",
-            title="Steady State Solution - jump => $(tj)") # legend=false
+            title="Steady State Solution - jump => $(tj)")
 
 
         @show "Exp_NL"
         sp = :spinup
-        out_sp_exp_nl = out_sp_nl
-        @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+        out_sp_exp_nl = deepcopy(out_sp_nl)
+        @time for nl ∈ 1:tj
             out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
                 getfield(spinup_forcing, spinupforc),
-                deepcopy(out_sp_exp_nl),
+                out_sp_exp_nl,
                 info.tem.helpers,
                 info.tem.spinup,
                 land_type,
@@ -174,13 +172,13 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         plot!(getfield(out_sp_exp_nl.pools, sel_pool);
             linewidth=5,
             ls=:dash,
-            label="Exp_NL") # legend=false
+            label="Exp_NL")
         plot!(getfield(out_sp_nl.pools, sel_pool);
             linewidth=5,
             ls=:dot,
             label="NL_Solve",
             xticks=(1:length(xtname) |> collect, string.(xtname)),
-            rotation=45) # legend=false
+            rotation=45)
 
         savefig("comp_methods_eachpool_$(string(sel_pool))_$(arraymethod)_tj-$(tj).png")
     end

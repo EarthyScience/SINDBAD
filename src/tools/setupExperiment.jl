@@ -578,6 +578,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
         hlpElem = setTupleField(hlpElem, (:zix, (;)))
         hlpElem = setTupleField(hlpElem, (:components, (;)))
+        hlpElem = setTupleField(hlpElem, (:all_components, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
         hlpElem = setTupleField(hlpElem, (:ones, (;)))
 
@@ -701,6 +702,8 @@ function generatePoolsInfo(info::NamedTuple)
                 nothing,
                 true,
                 Val(arrayType))
+            all_components = Tuple([_k for _k in keys(tmpElem.zix) if _k !== combinedPoolName])
+            hlpElem = setTupleSubfield(hlpElem, :all_components, (combinedPoolName, all_components))
             hlpElem = setTupleSubfield(hlpElem, :components, (combinedPoolName, Tuple(components)))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem,
@@ -752,7 +755,7 @@ function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:view
     if ismain
         numType.(inVals)
     else
-        @view poolArray[indx]
+        @view poolArray[[indx...]]
     end
 end
 
