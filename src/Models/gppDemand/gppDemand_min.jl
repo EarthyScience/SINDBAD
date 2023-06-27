@@ -8,7 +8,7 @@ function define(o::gppDemand_min, forcing, land, helpers)
     scall = ones(numType, 4)
 
     if hasproperty(land.pools, :soilW)
-        if typeof(land.pools.soilW) <: SVector{length(land.pools.soilW)}
+        if land.pools.soilW isa SVector
             scall = SVector{4}(scall)
         end
     end
