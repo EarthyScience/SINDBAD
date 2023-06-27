@@ -242,7 +242,7 @@ end
     args_txyz,
     args)
 
-@time fdiff_grads(loc_loss, tblParams.defaults,
+fdiff_grads(loc_loss, tblParams.defaults,
     loc_space_ind,
     loc_land_init,
     args_txyz,
