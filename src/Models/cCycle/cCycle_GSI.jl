@@ -123,38 +123,47 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     # cEco_prev = cEco 
     cEco_prev = cEco_prev .* 𝟘 .+ cEco
     # @rep_vec cEco_prev => cEco 
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVeg)
-        @rep_elem cEco[i_f] => (cVeg, i_c, :cVeg)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegRoot)
-        @rep_elem cEco[i_f] => (cVegRoot, i_c, :cVegRoot)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegWood)
-        @rep_elem cEco[i_f] => (cVegWood, i_c, :cVegWood)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegLeaf)
-        @rep_elem cEco[i_f] => (cVegLeaf, i_c, :cVegLeaf)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cVegReserve)
-        @rep_elem cEco[i_f] => (cVegReserve, i_c, :cVegReserve)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLit)
-        @rep_elem cEco[i_f] => (cLit, i_c, :cLit)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLitFast)
-        @rep_elem cEco[i_f] => (cLitFast, i_c, :cLitFast)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cLitSlow)
-        @rep_elem cEco[i_f] => (cLitSlow, i_c, :cLitSlow)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoil)
-        @rep_elem cEco[i_f] => (cSoil, i_c, :cSoil)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoilSlow)
-        @rep_elem cEco[i_f] => (cSoilSlow, i_c, :cSoilSlow)
-    end
-    for (i_c, i_f) ∈ enumerate(helpers.pools.zix.cSoilOld)
-        @rep_elem cEco[i_f] => (cSoilOld, i_c, :cSoilOld)
+    if cEco isa SVector
+        zix = helpers.pools.zix
+        for (lc, l) in enumerate(zix.cVeg)
+            @rep_elem cEco[l] => (cVeg, lc, :cVeg)
+        end
+
+        for (lc, l) in enumerate(zix.cVegRoot)
+            @rep_elem cEco[l] => (cVegRoot, lc, :cVegRoot)
+        end
+
+        for (lc, l) in enumerate(zix.cVegWood)
+            @rep_elem cEco[l] => (cVegWood, lc, :cVegWood)
+        end
+
+        for (lc, l) in enumerate(zix.cVegLeaf)
+            @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
+        end
+
+        for (lc, l) in enumerate(zix.cLit)
+            @rep_elem cEco[l] => (cLit, lc, :cLit)
+        end
+
+        for (lc, l) in enumerate(zix.cLitFast)
+            @rep_elem cEco[l] => (cLitFast, lc, :cLitFast)
+        end
+
+        for (lc, l) in enumerate(zix.cLitSlow)
+            @rep_elem cEco[l] => (cLitSlow, lc, :cLitSlow)
+        end
+
+        for (lc, l) in enumerate(zix.cSoil)
+            @rep_elem cEco[l] => (cSoil, lc, :cSoil)
+        end
+
+        for (lc, l) in enumerate(zix.cSoilSlow)
+            @rep_elem cEco[l] => (cSoilSlow, lc, :cSoilSlow)
+        end
+
+        for (lc, l) in enumerate(zix.cSoilOld)
+            @rep_elem cEco[l] => (cSoilOld, lc, :cSoilOld)
+        end
     end
 
     ## pack land variables

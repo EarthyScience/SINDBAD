@@ -23,6 +23,7 @@ optimize_it = true
 outpath = nothing
 
 pl = "threads"
+arraymethod = "view"
 replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "experiment.configFiles.forcing" => forcingConfig,
     "experiment.domain" => domain,
@@ -32,7 +33,8 @@ replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
     "modelRun.flags.runSpinup" => true,
-    "modelRun.flags.debugit" => false,
+    "modelRun.flags.debugit" => true,
+    "modelRun.rules.model_array_type" => arraymethod,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
     "modelRun.output.path" => outpath,
