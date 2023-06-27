@@ -23,7 +23,7 @@ optimize_it = true
 outpath = nothing
 
 pl = "threads"
-arraymethod = "view"
+arraymethod = "staticarray"
 replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "experiment.configFiles.forcing" => forcingConfig,
     "experiment.domain" => domain,
