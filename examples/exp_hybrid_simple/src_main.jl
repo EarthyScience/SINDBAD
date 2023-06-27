@@ -18,38 +18,7 @@ function new_ar(ar)
     end
 end
 
-"""
-updateModelParametersType(tblParams, approaches, pVector)
-get the new instances of the model with same parameter types as mentioned in pVector
-"""
-function nnpdateModelParametersType(tblParams, approaches::Tuple, pVector, i=1::Int)
-    #namesApproaches = nameof.(typeof.(approaches))
-     # a better way to do this?
-    foreach(approaches) do approachx
-        modelName = nameof(typeof(approachx))
-        model_obj = approachx
-        newapproachx = if modelName in tblParams.modelsApproach
-            vars = getproperties(approachx)
-            newvals = Pair[]
-            for (k,var) ∈ pairs(vars)
-                pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
-                    tblParams)
-                #pval = getproperty(approachx, var)
-                if !isempty(pindex)
-                    model_obj = tblParams[pindex[1]].modelsObj
-                    var = pVector[pindex[1]]
-                end
-                push!(newvals, k => var)
-            end
-            constructorof(typeof(approachx))(;newvals...)
-        else
-            approachx
-        end
-        @set approaches[i] = newapproachx
-        i = i + 1
-    end
-    return approaches
-end
+
 function get_trues(ŷ, yσ, y)
     return (.!isnan.(y .* yσ .* ŷ)) # ::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
 end
@@ -76,17 +45,17 @@ function get_loc_loss(loc_obs,
         tem_helpers,
         tem_spinup,
         tem_models,
-        Val{(fluxes = (:gpp,),)}(),
-        #Val(tem_variables),
+        Val(tem_variables),
+        tem_variables,
         loc_land_init,
         f_one)
-    #model_data = (; Pair.(out_variables, loc_output)...)
+    model_data = (; Pair.(out_variables, loc_output)...)
+    lossVec = getLossVectorArray(loc_obs, model_data, tem_optim)
+    return combineLossArray(lossVec, Val(tem_optim.multiConstraintMethod)) #sum(lossVec) Val{:sum}()
+end
     #model_data = loc_output
-    cost_options = [Pair(:gpp, Val(:mse))]
-    #@code_warntype getLossVectorArray(loc_obs, model_data, tem_optim)
-    #loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
-    #@show loss_vector
-    #l = combineLossArray(loss_vector, Val{:sum}())
+#    cost_options = [Pair(:gpp, Val(:mse))]
+#=
     lossVec = map(cost_options) do p
                 obsV = first(p)
                 s_metric = last(p) 
@@ -94,23 +63,15 @@ function get_loc_loss(loc_obs,
                 ŷ = loc_output[1]
                 ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
                 yσ = get_y(loc_obs, :gpp_σ)
-                #@code_warntype get_trues(y, yσ, y)
-                #ŷ_ka = KeyedArray(new_ar_t(ŷ); time = y.time)
                 idxs = get_trues(ŷ, yσ, y)
-                #@show typeof(ŷ)
-                #@code_warntype loss_oo(ŷ, y, s_metric, idxs)
                 metr = loss_oo(ŷ, y, s_metric, idxs)
-                #@show typeof(metr)
-                #metr = sum(metr)
                 if isnan(metr)
                    metr = oftype(metr, 1e19) # buggy?
                 end
                 metr
             end
-    #@show typeof(lossVec)
-    #@code_warntype sum(lossVec)
-    return sum(lossVec)
-end
+
+=#
 
 function loc_loss(upVector,
     loc_space_ind,
@@ -135,10 +96,7 @@ function loc_loss(upVector,
     getLocOutput!(output.data, loc_space_ind, loc_output)
     getLocForcing!(forc, Val(keys(f_one)), v_loc_space_names, loc_forcing, loc_space_ind)
     getLocObs!(obs, Val(keys(obs)), v_loc_space_names, loc_obs, loc_space_ind)
-
-    #@code_warntype updateModelParametersType(tblParams, forward, upVector)
-    newApproaches = updateModelParametersType(tblParams, forward, upVector)
-    #@show typeof(newApproaches)
+    newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
     return get_loc_loss(loc_obs,
         loc_output,
         newApproaches,
@@ -175,7 +133,7 @@ output,
 forc,
 obs = setup_simple();
 
-#forward = [m for m in forward]
+#cost_options = tem_optim.costOptions
 
 
 site_location = loc_space_maps[1];
@@ -223,7 +181,7 @@ args_txyz = (;
     loc_output,
     loc_forcing,
     loc_obs,
-    val_loc_space_names=Val(loc_space_names),
+    v_loc_space_names=Val(loc_space_names),
 );
 
 
