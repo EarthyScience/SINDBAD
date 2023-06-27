@@ -149,11 +149,11 @@ function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:marray})
 end
 
 function getOutArrayType(numType, forwardDiff)
-    if forwardDiff
-        return Union{Sindbad.ForwardDiff.Dual,numType}
-    else
+    # if forwardDiff
+    #     return Sindbad.DiffCache
+    # else
         return numType
-    end
+    # end
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -214,6 +214,9 @@ function setupOutput(info::NamedTuple)
             land_init,
             forcing_sizes,
             Val(Symbol(info.modelRun.output.output_array_type)))
+    end
+    if info.modelRun.rules.forward_diff
+        outarray = Sindbad.DiffCache.(outarray)
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 

@@ -14,7 +14,7 @@ using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table, @Select
 using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
-using Transducers: Map
+using PreallocationTools: DiffCache, get_tmp
 
 @reexport using PrettyPrinting: pprint
 

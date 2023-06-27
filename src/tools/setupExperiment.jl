@@ -606,7 +606,7 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
             hlpElem = setTupleSubfield(hlpElem, :components, (mainPool, Tuple(components)))
-            onetyped = createArrayofType(ones(length(initValues)),
+            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.numType,
                 nothing,
@@ -654,7 +654,7 @@ function generatePoolsInfo(info::NamedTuple)
             hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, Tuple(ltck)))
             hlpElem = setTupleSubfield(hlpElem, :zix, (subPool, zix))
             hlpElem = setTupleSubfield(hlpElem, :components, (subPool, Tuple(components)))
-            onetyped = createArrayofType(ones(length(initValues)),
+            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.numType,
                 nothing,
@@ -694,7 +694,7 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
             tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
             hlpElem = setTupleSubfield(hlpElem, :zix, (combinedPoolName, zix))
-            onetyped = createArrayofType(ones(length(initValues)),
+            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.numType,
                 nothing,
@@ -760,7 +760,8 @@ function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:arra
 end
 
 function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:staticarray})
-    return SVector{length(inVals)}(numType(ix) for ix ∈ inVals)
+    return SVector{length(inVals)}(ix for ix ∈ inVals)
+    # return SVector{length(inVals)}(numType(ix) for ix ∈ inVals)
 end
 
 """
@@ -853,7 +854,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     if component != combinedPoolName
                         Δcomponent = Symbol(string(avk) * string(component))
                         indx = getfield(zixT, component)
-                        Δcompdat = createArrayofType(ones(length(indx)) *
+                        Δcompdat = createArrayofType((zero(getfield(initVals, component)) .+ tem_helpers.numbers.𝟙) .*
                                                      tem_helpers.numbers.sNT(avv),
                             ΔpoolArray,
                             tem_helpers.numbers.numType,
@@ -881,6 +882,10 @@ function setNumericHelpers(info::NamedTuple, ttype=info.modelRun.rules.data_type
     tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> setNumberType(ttype)(a)
+    # if info.modelRun.rules.forward_diff
+    #     sNT = (a) -> ForwardDiff.Dual(setNumberType(ttype)(a))
+    #     # sNT = (a) -> ForwardDiff.Dual{setNumberType(ttype)}(setNumberType(ttype)(a))
+    # end
     squarer = (n) -> n .* n
     cuber = (n) -> n .* n .* n
     info = (;
@@ -904,7 +909,16 @@ end
 A helper function to set the number type to the specified data type
 """
 function setNumberType(t="Float64")
-    ttype = getfield(Main, Symbol(t))
+    mains = (:Float32, :Float64)
+    forwardiffs = (:Dual, )
+    t = Symbol(t)
+    if t in mains
+        ttype = getfield(Main, t)
+    elseif t in forwardiffs
+        ttype = getfield(ForwardDiff, t)
+    else
+        error("Number type $(t) is not supported in SINDBAD. Change the setting in model run.")
+    end 
     return ttype
 end
 

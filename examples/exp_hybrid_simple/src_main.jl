@@ -46,7 +46,7 @@ function get_loc_loss(loc_obs,
         tem_spinup,
         tem_models,
         Val(tem_variables),
-        tem_variables,
+        #tem_variables,
         loc_land_init,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
@@ -229,7 +229,6 @@ typeof(Tuple([1, [1f0]]))
 forward = tem_models.forward
 @time newforward = nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
 
-@code_warntype nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
 
 # test gradient
 function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
