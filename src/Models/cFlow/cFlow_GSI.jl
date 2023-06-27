@@ -50,7 +50,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
 
     p_A = sNT.(zero([taker...]) .+ 𝟙)
 
-    if typeof(land.pools.cEco) <: SVector{length(land.pools.cEco)}
+    if land.pools.cEco isa SVector
         p_A = SVector{length(p_A)}(p_A)
     end
 

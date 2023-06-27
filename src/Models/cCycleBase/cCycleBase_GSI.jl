@@ -83,7 +83,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, p_k_base, ηA, ηH) => land.cCycleBase
+        (p_C2Nveg, p_annk, p_k_base, ηA, ηH) => land.cCycleBase
     end
     return land
 end
