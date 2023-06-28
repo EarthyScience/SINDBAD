@@ -10,6 +10,10 @@ function setup_simple()
     forc = getKeyedArrayFromYaxArray(forcing);
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
     obs = getKeyedArrayFromYaxArray(observations);
+    
+    tblParams = getParameters(info.tem.models.forward,
+        info.optim.default_parameter,
+        info.optim.optimized_parameters)
 
     loc_space_maps,
     loc_space_names,
@@ -17,16 +21,12 @@ function setup_simple()
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one = prepRunEcosystem(output.data,
+    f_one = prepRunEcosystem(Sindbad.get_tmp.(output.data, tblParams.defaults),
         output.land_init,
         info.tem.models.forward,
         forc,
         forcing.sizes,
         info.tem);
-
-    tblParams = getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
 
     tem_helpers = info.tem.helpers
     tem_spinup = info.tem.spinup
