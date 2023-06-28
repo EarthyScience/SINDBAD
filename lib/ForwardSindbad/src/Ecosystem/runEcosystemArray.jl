@@ -20,9 +20,9 @@ function getLocData(outcubes, forcing, loc_space_map)
 end
 
 function getLocOutput!(outcubes, ar_inds, loc_output)
-    outcubes_tmp = Sindbad.get_tmp(outcubes,1)
+    #outcubes_tmp = Sindbad.get_tmp(outcubes,1)
     for i ∈ eachindex(outcubes)
-        loc_output[i] = getArrayView(outcubes_tmp[i], ar_inds)
+        loc_output[i] = getArrayView(outcubes[i], ar_inds)
     end
 end
 
@@ -124,7 +124,7 @@ end
 
 function fill_it!(ar, val, ts::Int64)
     data_ts = get_view(ar, val, ts)
-    return data_ts .= Sindbad.ForwardDiff.value.(val)
+    return data_ts .= val # Sindbad.ForwardDiff.value.(val)
 end
 
 @generated function setOutputT!(outputs, land, ::Val{TEM}, ts) where {TEM}
