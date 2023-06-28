@@ -163,11 +163,12 @@ function getArrayView(a::AbstractArray{<:Real,4}, inds::Tuple{Int64,Int64})
     # @show 4, 2, inds, length(inds), typeof(inds)
     return view(a, :, :, first(inds), last(inds))
 end
-
+#=
 function getArrayView(a::Sindbad.DiffCache{Array{T, N}}, inds::M) where {T,N,M}
     a = Sindbad.get_tmp(a, 1)
     return getArrayView(a, inds)
 end
+=#
 
 #=
 function getArrayView(a::Sindbad.DiffCache{Array{T, 2}}, inds::Tuple{Int64}) where {T}

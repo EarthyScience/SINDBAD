@@ -92,8 +92,10 @@ function loc_loss(upVector,
     tem_optim,
     out_variables,
     f_one)
+    
+    o_data = Sindbad.get_tmp.(output.data, upVector)
 
-    getLocOutput!(output.data, loc_space_ind, loc_output)
+    getLocOutput!(o_data, loc_space_ind, loc_output)
     getLocForcing!(forc, Val(keys(f_one)), v_loc_space_names, loc_forcing, loc_space_ind)
     getLocObs!(obs, Val(keys(obs)), v_loc_space_names, loc_obs, loc_space_ind)
     newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
@@ -153,7 +155,7 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     return loc_forcing, loc_output, loc_obs
 end
 
-loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location);
+loc_forcing, loc_output, loc_obs = getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.defaults), forc, obs, site_location);
 
 loc_space_ind = loc_space_inds[1]
 loc_land_init = land_init_space[1];
@@ -227,7 +229,7 @@ xtpl = [1.0, [1f0]]
 typeof(Tuple([1, [1f0]]))
 =#
 forward = tem_models.forward
-@time newforward = nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
+#@time newforward = nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
 
 
 # test gradient
@@ -242,7 +244,7 @@ end
     args_txyz,
     args)
 
-fdiff_grads(loc_loss, tblParams.defaults,
+@time fdiff_grads(loc_loss, tblParams.defaults*rand(),
     loc_space_ind,
     loc_land_init,
     args_txyz,
