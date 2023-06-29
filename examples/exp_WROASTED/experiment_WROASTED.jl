@@ -13,7 +13,7 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-domain = "AU-DaP"
+domain = "DE-Hai"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -33,7 +33,7 @@ replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
     "modelRun.flags.runSpinup" => true,
-    "modelRun.flags.debugit" => true,
+    "modelRun.flags.debugit" => false,
     "modelRun.rules.model_array_type" => arraymethod,
     "spinup.flags.doSpinup" => true,
     "forcing.default_forcing.dataPath" => inpath,
@@ -42,6 +42,7 @@ replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "opti.constraints.oneDataPath" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+
 tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
@@ -54,31 +55,15 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 linit = createLandInit(info.pools, info.tem);
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-    prepRunEcosystem(output.data,
-        output.land_init,
-        info.tem.models.forward,
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    prepRunEcosystem(output,
         forc,
-        forcing.sizes,
         info.tem);
 
-@code_warntype runEcosystem!(output.data,
-    info.tem.models.forward,
-    forc,
-    info.tem,
-    Val(info.tem.variables),
-    loc_space_names,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    Val(info.tem.variables),
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -89,9 +74,9 @@ land_spin = land_init_space[1];
 @time land_spin_now = runSpinup(info.tem.models.forward,
     loc_forcings[1],
     land_spin,
-    info.tem.helpers,
-    info.tem.spinup,
-    info.tem.models,
+    tem_vals.helpers,
+    tem_vals.spinup,
+    tem_vals.models,
     typeof(land_spin),
     f_one;
     spinup_forcing=nothing);
@@ -101,7 +86,8 @@ tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
+# obs = getKeyedArrayFromYaxArray(observations);
+obs = getObsKeyedArrayFromYaxArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
@@ -113,8 +99,7 @@ output = setupOutput(info);
 @time runEcosystem!(output.data,
     new_models,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -136,9 +121,8 @@ for (vi, v) ∈ enumerate(out_vars)
     plot(def_var; label="def", size=(900, 600), title=v)
     plot!(opt_var; label="opt")
     if v in obsMod
-        obsv = obsVar[findall(obsMod .== v)[1]]
         @show "plot obs", v
-        obs_var = getfield(obs, obsv)[tspan, 1, 1, 1]
+        obs_var = obs[vi][tspan, 1, 1, 1]
         plot!(obs_var; label="obs")
         # title(obsv)
     end

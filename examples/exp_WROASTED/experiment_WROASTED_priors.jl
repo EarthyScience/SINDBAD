@@ -54,18 +54,12 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit = createLandInit(info.pools, info.tem);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-    prepRunEcosystem(output.data,
-        output.land_init,
-        info.tem.models.forward,
-        forc,
-        forcing.sizes,
-        info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -145,16 +139,11 @@ develop_f =
         lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-        _,
-        loc_space_names,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one,
-        loc_forcing,
-        loc_output = prepRunEcosystem(output, tem.models.forward, forcing, tem)
-
+        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+            prepRunEcosystem(output.data,
+                output.land_init,
+                tem.models.forward,
+                forc, tem)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs, optim)
@@ -162,7 +151,7 @@ develop_f =
         #TODO get y and sigmay beforehand and construct MvNormal
 
         #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, loc_forcing, loc_output
+        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one, loc_forcing, loc_output
         #output_variables, optim
         m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
             #assumptions/priors
@@ -183,8 +172,7 @@ develop_f =
                 output.land_init,
                 newApproaches,
                 forcing,
-                tem,
-                loc_space_names,
+                tem_vals,
                 loc_space_inds,
                 loc_forcings,
                 loc_outputs,

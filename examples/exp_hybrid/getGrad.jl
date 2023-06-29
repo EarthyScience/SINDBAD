@@ -29,12 +29,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(output.data,
-    output.land_init,
-    info.tem.models.forward,
-    forc,
-    forcing.sizes,
-    info.tem);
+f_one = prepRunEcosystem(output, forc, info.tem);
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,
@@ -125,7 +120,7 @@ g_loss(tblParams.defaults,
     loc_outputs,
     land_init_space,
     f_one)
-# g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+# g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
