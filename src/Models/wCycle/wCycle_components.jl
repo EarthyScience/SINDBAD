@@ -22,54 +22,77 @@ function compute(o::wCycle_components, forcing, land, helpers)
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
         𝟘 ∈ helpers.numbers
-    end
+        zix ∈ helpers.pools
 
-    totalW_prev = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
+    end
+    totalW_prev = addS(soilW) + addS(groundW) + addS(surfaceW) + addS(snowW)
 
     ## update variables
     groundW = add_vec(groundW, ΔgroundW)
     snowW = add_vec(snowW, ΔsnowW)
     soilW = add_vec(soilW, ΔsoilW)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
-    p_zix = 1
-    for zix in helpers.pools.zix.soilW
-        # @show typeof(TWS)
-        @rep_elem soilW[p_zix] => (TWS, zix, :TWS)
-        p_zix += 1
+
+    # for (lc, l) in enumerate(zix.soilW)
+    #     @rep_elem max(TWS[l], 𝟘) => (soilW, lc, :soilW)
+    # end
+
+    # for (lc, l) in enumerate(zix.groundW)
+    #     @rep_elem max(TWS[l], 𝟘) => (groundW, lc, :groundW)
+    # end
+
+    # for (lc, l) in enumerate(zix.surfaceW)
+    #     @rep_elem max(TWS[l], 𝟘) => (surfaceW, lc, :surfaceW)
+    # end
+
+    # @rep_elem soilW[1] => (TWS, 1, :TWS)
+    # @rep_elem surfaceW[1] => (TWS, 7, :TWS)
+
+    # set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+
+
+    for (lc, l) in enumerate(zix.soilW)
+        @rep_elem soilW[lc] => (TWS, l, :TWS)
     end
 
-    p_zix = 1
-    for zix in helpers.pools.zix.snowW
-        @rep_elem snowW[p_zix] => (TWS, zix, :TWS)
-        p_zix += 1
+    for (lc, l) in enumerate(zix.snowW)
+        @rep_elem snowW[lc] => (TWS, l, :TWS)
     end
 
-    p_zix = 1
-    for zix in helpers.pools.zix.surfaceW
-        @rep_elem surfaceW[p_zix] => (TWS, zix, :TWS)
-        p_zix += 1
+    for (lc, l) in enumerate(zix.surfaceW)
+        @rep_elem surfaceW[lc] => (TWS, l, :TWS)
     end
 
-    p_zix = 1
-    for zix in helpers.pools.zix.groundW
-        @rep_elem groundW[p_zix] => (TWS, zix, :TWS)
-        p_zix += 1
+    for (lc, l) in enumerate(zix.groundW)
+        @rep_elem groundW[lc] => (TWS, l, :TWS)
     end
 
 
     # reset moisture changes to zero
-    @rep_vec ΔgroundW => ΔgroundW .* 𝟘
-    @rep_vec ΔsnowW => ΔsnowW .* 𝟘
-    @rep_vec ΔsoilW => ΔsoilW .* 𝟘
-    @rep_vec ΔsurfaceW => ΔsurfaceW .* 𝟘
+    for l in eachindex(ΔsnowW)
+        @rep_elem 𝟘 => (ΔsnowW, l, :snowW)
+    end
+    for l in eachindex(ΔsoilW)
+        @rep_elem 𝟘 => (ΔsoilW, l, :soilW)
+    end
+    for l in eachindex(ΔgroundW)
+        @rep_elem 𝟘 => (ΔgroundW, l, :groundW)
+    end
+    for l in eachindex(ΔsurfaceW)
+        @rep_elem 𝟘 => (ΔsurfaceW, l, :surfaceW)
+    end
 
-    totalW = sum(soilW) + sum(groundW) + sum(surfaceW) + sum(snowW)
+    # @rep_vec ΔgroundW => ΔgroundW .* 𝟘
+    # @rep_vec ΔsnowW => ΔsnowW .* 𝟘
+    # @rep_vec ΔsoilW => ΔsoilW .* 𝟘
+    # @rep_vec ΔsurfaceW => ΔsurfaceW .* 𝟘
+
+    totalW = addS(soilW) + addS(groundW) + addS(surfaceW) + addS(snowW)
 
     ## pack land variables
     @pack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) => land.pools
-        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW) => land.states
-        (totalW, totalW_prev) => land.states
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, totalW, totalW_prev) => land.states
     end
     return land
 end

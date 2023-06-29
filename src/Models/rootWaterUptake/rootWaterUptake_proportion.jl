@@ -31,11 +31,10 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     # get the transpiration
     toUptake = transpiration
     PAWTotal = sum(PAW)
-    wRootUptake = wRootUptake .* 𝟘
     # extract from top to bottom
     if PAWTotal > 𝟘
         for sl ∈ 1:length(land.pools.soilW)
-            uptakeProportion = max(𝟘, PAW[sl] / (PAWTotal))
+            uptakeProportion = max(𝟘, PAW[sl] / PAWTotal)
             @rep_elem toUptake * uptakeProportion => (wRootUptake, sl, :soilW)
             @add_to_elem -wRootUptake[sl] => (ΔsoilW, sl, :soilW)
         end
