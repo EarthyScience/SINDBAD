@@ -175,7 +175,7 @@ function getVariableFields(datavars)
         push!(vf, Symbol(split(string(_vf), '.')[1]))
         push!(vsf, Symbol(split(string(_vf), '.')[2]))
     end
-    ovro = (; fields=vf, subfields=vsf)
+    ovro = (; fields=Tuple(vf), subfields=Tuple(vsf))
     return ovro
 end
 
@@ -185,18 +185,29 @@ function setupOutput(info::NamedTuple)
     land_init = createLandInit(info.pools, info.tem)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
-    datavars = map(Iterators.flatten(info.tem.variables)) do vn
-        if hasproperty(info, :optim)
-            getOrderedOutputList(
-                collect(
-                    Symbol.(
-                        union(String.(keys(info.modelRun.output.variables)),
-                            info.optim.variables.model)
-                    )
-                ),
-                vn)
-        else
-            getOrderedOutputList(collect(keys(info.modelRun.output.variables)), vn)
+    # datavars = map(Iterators.flatten(info.tem.variables)) do vn
+    #     if hasproperty(info, :optim)
+    #         getOrderedOutputList(
+    #             collect(
+    #                 Symbol.(
+    #                     union(String.(keys(info.modelRun.output.variables)),
+    #                         info.optim.variables.model)
+    #                 )
+    #             ),
+    #             vn)
+    #     else
+    #         getOrderedOutputList(collect(keys(info.modelRun.output.variables)), vn)
+    #     end
+    # end
+
+    datavars = if hasproperty(info, :optim)
+        map(info.optim.variables.obs) do vo
+            vn = getfield(info.optim.variables.optim, vo)
+            Symbol(string(vn[1]) * "." * string(vn[2]))
+        end
+    else
+        map(Iterators.flatten(info.tem.variables)) do vn
+            ForwardSindbad.getOrderedOutputList(collect(keys(info.modelRun.output.variables)), vn)
         end
     end
 
@@ -217,6 +228,20 @@ function setupOutput(info::NamedTuple)
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
+
+    vnames = if hasproperty(info, :optim)
+        map(info.optim.variables.obs) do vo
+            vn = getfield(info.optim.variables.optim, vo)
+            vn[2]
+        end
+    else
+        collect(Iterators.flatten(info.tem.variables))
+    end
+    output_tuple = setTupleField(output_tuple, (:variables, vnames))
+
+    ovro = getVariableFields(datavars)
+    output_tuple = setTupleField(output_tuple, (:ordered_variables, ovro))
+
     # if info.tem.helpers.run.runOpti || info.tem.helpers.run.calcCost
     #         @info "setupOutput: creating array output for optimization/cost..."
     #         outarray = map(datavars) do vn
@@ -224,10 +249,6 @@ function setupOutput(info::NamedTuple)
     #         end
     #         output_tuple = setTupleField(output_tuple, (:data, outarray))
     #     end
-    ovro = getVariableFields(datavars)
-    output_tuple = setTupleField(output_tuple, (:ordered_variables, ovro))
-    vnames = collect(Iterators.flatten(info.tem.variables))
-    output_tuple = setTupleField(output_tuple, (:variables, vnames))
     # output_tuple = (; land_init=land_init, dims=outdims, variables = vnames)
     if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
         @info "setupOutput: getting parameter output for optimization..."
