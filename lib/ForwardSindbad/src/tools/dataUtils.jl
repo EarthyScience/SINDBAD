@@ -6,6 +6,7 @@ export filterVariables
 export getKeyedArrayFromYaxArray
 export getNamedDimsArrayFromYaxArray
 export getDimArrayFromYaxArray
+export getObsKeyedArrayFromYaxArray
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -164,4 +165,17 @@ function getKeyedArrayFromYaxArray(input)
         return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
+end
+
+
+"""
+getObsKeyedArrayFromYaxArray(input::NamedTuple)
+"""
+function getObsKeyedArrayFromYaxArray(input)
+    ks = input.variables
+    keyedData = map(input.data) do c
+        namesCube = YAXArrayBase.dimnames(c)
+        return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+    end
+    return keyedData
 end
