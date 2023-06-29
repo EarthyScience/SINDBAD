@@ -456,11 +456,13 @@ function generateDatesInfo(info::NamedTuple)
     end
     if info.modelRun.time.step == "daily"
         time_step = Day(1)
-        time_range = collect((Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate)))
+        # time_range = collect((Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate)))
+        time_range = Date(info.modelRun.time.sDate):Day(1):Date(info.modelRun.time.eDate)
     elseif info.modelRun.time.step == "hourly"
         time_step = Month(1)
         time_range =
-            collect((Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate)))
+            Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate)
+        # collect((Date(info.modelRun.time.sDate):Hour(1):Date(info.modelRun.time.eDate)))
     else
         error(
             "Sindbad only supports hourly and daily simulation. Change time.step in modelRun.json"
@@ -542,7 +544,12 @@ function generatePoolsInfo(info::NamedTuple)
     tmpStates = (;)
     hlpStates = (;)
     arrayType = Symbol(info.modelRun.rules.model_array_type)
+
     for element ∈ elements
+        valsTuple = (;)
+        valsTuple = setTupleField(valsTuple, (:zix, (;)))
+        valsTuple = setTupleField(valsTuple, (:self, (;)))
+        valsTuple = setTupleField(valsTuple, (:all_components, (;)))
         elSymbol = Symbol(element)
         tmpElem = (;)
         hlpElem = (;)
@@ -581,6 +588,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlpElem = setTupleField(hlpElem, (:all_components, (;)))
         hlpElem = setTupleField(hlpElem, (:zeros, (;)))
         hlpElem = setTupleField(hlpElem, (:ones, (;)))
+        hlpElem = setTupleField(hlpElem, (:vals, (;)))
 
         # main pools
         for mainPool ∈ mainPoolName
@@ -704,6 +712,10 @@ function generatePoolsInfo(info::NamedTuple)
                 Val(arrayType))
             all_components = Tuple([_k for _k in keys(tmpElem.zix) if _k !== combinedPoolName])
             hlpElem = setTupleSubfield(hlpElem, :all_components, (combinedPoolName, all_components))
+            valsTuple = setTupleSubfield(valsTuple, :zix, (combinedPoolName, Val(hlpElem.zix)))
+            valsTuple = setTupleSubfield(valsTuple, :self, (combinedPoolName, Val(combinedPoolName)))
+            valsTuple = setTupleSubfield(valsTuple, :all_components, (combinedPoolName, Val(all_components)))
+            hlpElem = setTupleField(hlpElem, (:vals, valsTuple))
             hlpElem = setTupleSubfield(hlpElem, :components, (combinedPoolName, Tuple(components)))
             # onetyped = ones(length(initValues))
             hlpElem = setTupleSubfield(hlpElem,
@@ -729,12 +741,23 @@ function generatePoolsInfo(info::NamedTuple)
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
     hlp_new = (;)
+    # tcprint(hlpStates)
     eleprops = propertynames(hlpStates)
     if :carbon in eleprops && :water in eleprops
         for prop ∈ propertynames(hlpStates.carbon)
             cfield = getproperty(hlpStates.carbon, prop)
             wfield = getproperty(hlpStates.water, prop)
             cwfield = (; cfield..., wfield...)
+            if prop == :vals
+                cwfield = (;)
+                for subprop in propertynames(cfield)
+                    csub = getproperty(cfield, subprop)
+                    wsub = getproperty(wfield, subprop)
+                    cwfield = setTupleField(cwfield, (subprop, (; csub..., wsub...)))
+                end
+            end
+            # @show prop, cfield, wfield
+            # tcprint(cwfield)
             hlp_new = setTupleField(hlp_new, (prop, cwfield))
         end
     elseif :carbon in eleprops && :water ∉ eleprops
@@ -744,6 +767,7 @@ function generatePoolsInfo(info::NamedTuple)
     else
         hlp_new = hlpStates
     end
+    # hlt_new = setTupleField(hlp_new, (:vals, hlpStates.vals))
     info = (; info..., pools=tmpStates)
     # info = (; info..., tem=(; info.tem..., pools=tmpStates))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
@@ -1063,7 +1087,18 @@ function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
     infospin = info.spinup
-    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([infospin.sequence...])))
+
+    # change spinup sequence dispatch variables to Val
+    seqq = infospin.sequence
+    for seq in seqq
+        for kk in keys(seq)
+            if seq[kk] isa String
+                seq[kk] = Val(Symbol(seq[kk]))
+            end
+        end
+    end
+
+    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
     if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
         @info "SetupExperiment: setting Optimization info..."

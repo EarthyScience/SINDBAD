@@ -17,7 +17,6 @@ function define(o::cCycle_GSI, forcing, land, helpers)
     cNPP = zero(land.pools.cEco)
 
     cEco_prev = deepcopy(land.pools.cEco)
-    zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     NEE = 𝟘
     NPP = 𝟘
@@ -26,7 +25,7 @@ function define(o::cCycle_GSI, forcing, land, helpers)
     cRH = 𝟘
 
     @pack_land begin
-        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) =>
+        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zerocEcoFlow, zerocEcoInflux) =>
             land.states
         (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
     end
@@ -45,7 +44,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
             cEcoOut,
             cNPP,
             p_k,
-            zixVeg,
+            p_A,
             zerocEcoFlow,
             zerocEcoInflux) ∈ land.states
         (cVeg,
@@ -62,14 +61,13 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
             cEco) ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
-        (p_A) ∈ land.cFlow
         (flowOrder, giver, taker) ∈ land.cCycleBase
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    @rep_vec cEcoFlow => cEcoFlow .* 𝟘
-    @rep_vec cEcoInflux => cEcoInflux .* 𝟘
-    @rep_vec ΔcEco => ΔcEco .* 𝟘
+    @rep_vec cEcoFlow => helpers.pools.zeros.cEco
+    @rep_vec cEcoInflux => helpers.pools.zeros.cEco
+    # @rep_vec ΔcEco => ΔcEco .* 𝟘
 
     ## compute losses
     for cl ∈ eachindex(cEco)
@@ -78,7 +76,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     end
 
     ## gains to vegetation
-    for zv ∈ zixVeg
+    for zv ∈ getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
         cNPP_zv = gpp * cAlloc[zv] - cEcoEfflux[zv]
         @rep_elem cNPP_zv => (cNPP, zv, :cEco)
         @rep_elem cNPP_zv => (cEcoInflux, zv, :cEco)
@@ -107,7 +105,7 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     ## balance
     for cl ∈ eachindex(cEco)
         ΔcEco_cl = cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
-        @rep_elem ΔcEco_cl => (ΔcEco, cl, :cEco)
+        @add_to_elem ΔcEco_cl => (ΔcEco, cl, :cEco)
         cEco_cl = cEco[cl] + cEcoFlow[cl] + cEcoInflux[cl] - cEcoOut[cl]
         @rep_elem cEco_cl => (cEco, cl, :cEco)
     end
@@ -121,8 +119,11 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     NEE = cRECO - gpp
 
     # cEco_prev = cEco 
-    cEco_prev = cEco_prev .* 𝟘 .+ cEco
-    # @rep_vec cEco_prev => cEco 
+    # cEco_prev = cEco_prev .* 𝟘 .+ cEco
+    @rep_vec cEco_prev => cEco
+
+    # set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+
     zix = helpers.pools.zix
     for (lc, l) in enumerate(zix.cVeg)
         @rep_elem cEco[l] => (cVeg, lc, :cVeg)
