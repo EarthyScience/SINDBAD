@@ -1,6 +1,12 @@
-export set_elem_components, set_pool_components
-function set_pool_components(
-    # @generated function set_pool_components(
+export set_component_from_main_pool, set_main_from_component_pool
+
+"""
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+- sets the component pools value using the values for the main pool
+- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+"""
+@generated function set_component_from_main_pool(
+    # function set_component_from_main_pool(
     land,
     helpers,
     ::Val{s_main},
@@ -40,31 +46,49 @@ function set_pool_components(
     return output
 end
 
-function set_elem_components(
-    land_init,
+
+"""
+    set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+- sets the main pool from the values of the component pools
+- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+"""
+
+@generated function set_main_from_component_pool(
+    # function set_main_from_component_pool(
+    land,
     helpers,
+    ::Val{s_main},
     ::Val{s_comps},
-    ::Val{zix},
-    p) where {s_comps,zix}
+    ::Val{zix}) where {s_main,s_comps,zix}
     output = quote end
+    push!(output.args, Expr(:(=), s_main, Expr(:., :(land.pools), QuoteNode(s_main))))
     foreach(s_comps) do s_comp
-        push!(output.args, Expr(:(=), :tmp, Expr(:., :(land_init.pools), QuoteNode(s_comp))))
-        push!(output.args, Expr(:(=), :p_zix, Expr(:., :(helpers.pools.zix), QuoteNode(s_comp))))
+        push!(output.args, Expr(:(=), s_comp, Expr(:., :(land.pools), QuoteNode(s_comp))))
         zix_pool = getfield(zix, s_comp)
         c_ix = 1
         foreach(zix_pool) do ix
-            push!(output.args, Expr(:(=), :p_tmp, Expr(:call, :max, Expr(:ref, :p, ix), :(helpers.numbers.𝟘))))
-            push!(output.args, Expr(:macrocall, Symbol("@rep_elem"), :(), Expr(:call, :(=>), :p_tmp, Expr(:tuple, :tmp, c_ix, QuoteNode(s_comp)))))
-            #= none:1 =#
+            push!(output.args, Expr(:(=),
+                s_main,
+                Expr(:call,
+                    rep_elem,
+                    s_main,
+                    Expr(:ref, s_comp, c_ix),
+                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
+                    Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
+                    :(helpers.numbers.𝟘),
+                    :(helpers.numbers.𝟙),
+                    ix)))
             c_ix += 1
         end
-        push!(output.args,
-            Expr(:(=),
-                :land_init,
-                Expr(:macrocall,
-                    Symbol("@set"),
-                    :(), #= none:1 =#
-                    Expr(:(=), Expr(:., :(land_init.pools), QuoteNode(s_comp)), :tmp)))) #= none:1 =#
     end
+    push!(output.args, Expr(:(=),
+        :land,
+        Expr(:tuple,
+            Expr(:(...), :land),
+            Expr(:(=),
+                :pools,
+                (Expr(:tuple,
+                    Expr(:parameters, Expr(:(...), :(land.pools)),
+                        Expr(:kw, s_main, s_main))))))))
     return output
 end
