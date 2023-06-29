@@ -10,6 +10,7 @@ expSol = zeros(8, length(tjs))
 odeSol = zeros(8, length(tjs))
 cInit = nothing
 times = zeros(2, length(tjs))
+cpnames = nothing
 for (i, tj) ∈ enumerate(tjs)
     experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
@@ -35,32 +36,28 @@ for (i, tj) ∈ enumerate(tjs)
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one = prepRunEcosystem(output.data,
-        output.land_init,
-        info.tem.models.forward,
-        forc,
-        forcing.sizes,
-        info.tem)
+    tem_vals,
+    f_one = prepRunEcosystem(output, forc, info.tem)
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
     spinupforc = :recycleMSC
-    sel_forcing = getSpinupForcing(loc_forcing, info.tem.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, info.tem)
+    sel_forcing = getSpinupForcing(loc_forcing, tem_vals.helpers, Val(spinupforc))
+    spinup_forcing = getSpinupForcing(loc_forcing, tem_vals)
 
     land_init = land_init_space[1]
     land_type = typeof(land_init)
     sel_pool = :cEco
 
-    spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
+    spinup_models = tem_vals.models.forward[tem_vals.models.is_spinup]
     cInit = deepcopy(getfield(land_init.pools, sel_pool))
     sp = :ODE_Tsit5
     @show "ODE_Init", tj
     @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
-        info.tem.helpers,
-        info.tem.spinup,
+        tem_vals.helpers,
+        tem_vals.spinup,
         land_type,
         f_one,
         Val(sp))
@@ -69,12 +66,12 @@ for (i, tj) ∈ enumerate(tjs)
     @show "Exp_Init", tj
     sp = :spinup
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+    @time for nl ∈ 1:Int(tem_vals.spinup.diffEq.timeJump)
         out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
-            info.tem.helpers,
-            info.tem.spinup,
+            tem_vals.helpers,
+            tem_vals.spinup,
             land_type,
             f_one,
             Val(sp))
@@ -82,6 +79,8 @@ for (i, tj) ∈ enumerate(tjs)
     out_sp_exp_init = deepcopy(out_sp_exp)
     expSol[:, i] = getfield(out_sp_ode_init.pools, sel_pool)
     odeSol[:, i] = getfield(out_sp_exp_init.pools, sel_pool)
+    cpnames = info.pools.carbon.components.cEco
+
 end
 
 a = 100 .* (odeSol .- expSol) ./ expSol
@@ -103,7 +102,6 @@ savefig("scatter_allpool.png")
 
 # one subplot per pool
 pltall = [];
-cpnames = info.pools.carbon.components.cEco;
 for (i, cp) ∈ enumerate(cpnames)
     p = plot(expSol[i, :], odeSol[i, :]; lw=0, marker=:o, size=(600, 900))
     title!("$(i): $(string(cp))")
