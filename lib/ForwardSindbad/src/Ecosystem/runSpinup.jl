@@ -53,10 +53,10 @@ function getSpinupInfo(sel_spinup_models,
 end
 
 """
-doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleAH})
+doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleAH})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleAH})
+function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleAH})
     @unpack_land cEco ∈ land.pools
     ηH = helpers.numbers.𝟙
     if :ηH ∈ propertynames(land.cCycleBase)
@@ -79,15 +79,15 @@ function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleAH})
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
     @pack_land cEco => land.pools
-    return land
+    return land::land_type
 end
 
 
 """
-doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleA0H})
+doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleA0H})
+function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     @unpack_land cEco ∈ land.pools
     ηH = helpers.numbers.𝟙
     carbon_remain = helpers.numbers.𝟙
@@ -113,7 +113,7 @@ function doSpinup(_, _, land, helpers, _, _, _, ::Val{:ηScaleA0H})
     end
 
     @pack_land cEco => land.pools
-    return land
+    return land::land_type
 end
 
 
@@ -135,7 +135,7 @@ function doSpinup(sel_spinup_models,
         tem_helpers,
         land_type,
         f_one)
-    return land_spin
+    return land_spin::land_type
 end
 
 """
@@ -156,7 +156,7 @@ function doSpinup(sel_spinup_models,
         tem_helpers,
         land_type,
         f_one)
-    return land_spin
+    return land_spin::land_type
 end
 
 """
@@ -189,7 +189,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in
+    return land_in::land_type
 end
 
 """
@@ -222,7 +222,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in
+    return land_in::land_type
 end
 
 """
@@ -255,7 +255,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in
+    return land_in::land_type
 end
 
 """
@@ -285,7 +285,7 @@ function doSpinup(sel_spinup_models,
         ssp_sol = solve(ssp_prob, DynamicSS(Tsit5()))
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ssp_sol.u))
     end
-    return land_in
+    return land_in::land_type
 end
 
 """
@@ -315,7 +315,180 @@ function doSpinup(sel_spinup_models,
         ssp_sol = solve(ssp_prob, SSRootfind())
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ssp_sol.u))
     end
-    return land_in
+    return land_in::land_type
+end
+
+
+struct Spinup_TWS{M,F,T,I,L,O}
+    models::M
+    forcing::F
+    tem_helpers::T
+    land::I
+    land_type::L
+    f_one::O
+end
+
+
+
+struct Spinup_cEco_TWS{M,F,T,I,L,O,TWS}
+    models::M
+    forcing::F
+    tem_helpers::T
+    land::I
+    land_type::L
+    f_one::O
+    TWS::TWS
+end
+
+
+struct Spinup_cEco{M,F,T,I,L,O}
+    models::M
+    forcing::F
+    tem_helpers::T
+    land::I
+    land_type::L
+    f_one::O
+end
+
+
+
+function (TWS_spin::Spinup_TWS)(pout, p)
+    land = TWS_spin.land
+    helpers = TWS_spin.tem_helpers
+    zix = helpers.pools.zix
+    @unpack_land 𝟘 ∈ helpers.numbers
+
+    TWS = land.pools.TWS
+    for (lc, l) in enumerate(zix.TWS)
+        @rep_elem max(p[l], 𝟘) => (TWS, lc, :TWS)
+    end
+    @pack_land TWS => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    update_init = loopTimeSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
+    pout .= update_init.pools.TWS
+    return nothing
+end
+
+
+function (cEco_spin::Spinup_cEco)(pout, p)
+    land = cEco_spin.land
+    helpers = cEco_spin.tem_helpers
+    zix = helpers.pools.zix
+    @unpack_land 𝟘 ∈ helpers.numbers
+
+    pout .= exp.(p)
+
+    cEco = land.pools.cEco
+    for (lc, l) in enumerate(zix.cEco)
+        @rep_elem pout[l] => (cEco, lc, :cEco)
+    end
+    @pack_land cEco => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+
+    update_init = loopTimeSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
+
+    pout .= log.(update_init.pools.cEco)
+    return nothing
+end
+
+
+function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
+    land = cEco_TWS_spin.land
+    helpers = cEco_TWS_spin.tem_helpers
+    zix = helpers.pools.zix
+    @unpack_land 𝟘 ∈ helpers.numbers
+
+    pout .= exp.(p)
+
+    @unpack_land 𝟘 ∈ helpers.numbers
+    cEco = land.pools.cEco
+    for (lc, l) in enumerate(zix.cEco)
+        @rep_elem pout[l] => (cEco, lc, :cEco)
+    end
+    @pack_land cEco => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+
+    TWS = land.pools.TWS
+    TWS_prev = cEco_TWS_spin.TWS
+    for (lc, l) in enumerate(zix.TWS)
+        @rep_elem TWS_prev[l] => (TWS, lc, :TWS)
+    end
+
+    @pack_land TWS => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+
+    update_init = loopTimeSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.f_one)
+
+    pout .= log.(update_init.pools.cEco)
+    cEco_TWS_spin.TWS .= update_init.pools.TWS
+    return nothing
+end
+
+
+function doSpinup(spinup_models,
+    spinup_forcing,
+    land,
+    tem_helpers,
+    _,
+    land_type,
+    f_one,
+    ::Val{:nlsove_fixedpoint_trustregion_TWS})
+    TWS_spin = Spinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, land_type, f_one)
+    r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
+    TWS = r.zero
+    TWS = oftype(land.pools.TWS, TWS)
+    @pack_land TWS => land.pools
+    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
+    return land::land_type
+end
+
+
+function doSpinup(spinup_models,
+    spinup_forcing,
+    land,
+    tem_helpers,
+    _,
+    land_type,
+    f_one,
+    ::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
+    cEco_TWS_spin = Spinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, f_one, Vector(deepcopy(land.pools.TWS)))
+    p_init = log.(Vector(deepcopy(land.pools.cEco)))
+    # r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
+    # cEco = exp.(r.zero)
+    cEco = land.pools.cEco
+    try
+        r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
+        cEco = exp.(r.zero)
+    catch
+        cEco = land.pools.cEco
+    end
+    cEco = oftype(land.pools.cEco, cEco)
+    @pack_land cEco => land.pools
+    TWS_prev = cEco_TWS_spin.TWS
+    TWS = oftype(land.pools.TWS, TWS_prev)
+    @pack_land TWS => land.pools
+    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
+    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
+    return land::land_type
+end
+
+
+function doSpinup(spinup_models,
+    spinup_forcing,
+    land,
+    tem_helpers,
+    _,
+    land_type,
+    f_one,
+    ::Val{:nlsove_fixedpoint_trustregion_cEco})
+    cEco_spin = Spinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, f_one)
+    p_init = log.(Vector(deepcopy(land.pools.cEco)))
+    r = fixedpoint(cEco_spin, p_init; method=:trust_region)
+    cEco = exp.(r.zero)
+    cEco = oftype(land.pools.cEco, cEco)
+    @pack_land cEco => land.pools
+    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
+    return land::land_type
 end
 
 """
@@ -337,9 +510,9 @@ function loopTimeSpinup(sel_spinup_models,
     tem_helpers,
     land_type,
     f_one)
-    time_steps = getForcingTimeSize(sel_spinup_forcing, Val(keys(sel_spinup_forcing)))
+    time_steps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
     for t ∈ 1:time_steps
-        f = getForcingForTimeStep(sel_spinup_forcing, Val(keys(sel_spinup_forcing)), t, f_one)
+        f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
         land_spin = runSpinupModels!(land_spin, f, sel_spinup_models, tem_helpers, land_type)
     end
     return land_spin#::land_type
@@ -378,14 +551,13 @@ function runSpinup(forward_models,
     spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
     # @info "runSpinup:: running spinup sequences..."
     for spin_seq ∈ tem_spinup.sequence
-        forc = Symbol(spin_seq.forcing)
+        forc = spin_seq.forcing
         nLoops = spin_seq.nLoops
-        spinupMode = Symbol(spin_seq.spinupMode)
+        spinupMode = spin_seq.spinupMode
 
         sel_forcing = forcing
         if isnothing(spinup_forcing)
-            sel_forcing = getSpinupForcing(forcing, tem_helpers, Val(forc))
-            # sel_forcing = getSpinupForcing(forcing, tem_helpers, f_one, Val(forc))
+            sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
         else
             sel_forcing = spinup_forcing[forc]
         end
@@ -394,6 +566,7 @@ function runSpinup(forward_models,
         if spinupMode == :spinup
             spinup_models = forward_models[tem_models.is_spinup]
         end
+        # println("     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)")
         # if !tem_helpers.run.runOpti
         #     @info "     sequence: $(seqN), spinupMode: $(spinupMode), forcing: $(forc)"
         # end
@@ -409,7 +582,7 @@ function runSpinup(forward_models,
                 tem_spinup,
                 land_type,
                 f_one,
-                Val(spinupMode))
+                spinupMode)
             if history
                 push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
             end

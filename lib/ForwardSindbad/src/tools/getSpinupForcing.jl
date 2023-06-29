@@ -85,15 +85,15 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 """
 function getSpinupForcing(forcing, tem_helpers, f_one)
     forcing_methods = Symbol[]
-    for seq ∈ tem.spinup.sequence
-        forc = Symbol(seq["forcing"])
+    for seq ∈ tem_helpers.spinup.sequence
+        forc = seq["forcing"]
         if forc ∉ forcing_methods
             push!(forcing_methods, forc)
         end
     end
     spinup_forcing = (;)
     for forc ∈ forcing_methods
-        spinup_forc = getSpinupForcing(forcing, tem, f_one, Val(forc))
+        spinup_forc = getSpinupForcing(forcing, tem, f_one, forc)
         spinup_forcing = setTupleField(spinup_forcing, (forc, spinup_forc))
     end
     return spinup_forcing
@@ -157,15 +157,15 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 function getSpinupForcing(forcing, tem)
     forcing_methods = []
     for seq ∈ tem.spinup.sequence
-        forc = Symbol(getfield(seq, :forcing))
+        forc = getfield(seq, :forcing)
         if forc ∉ forcing_methods
             push!(forcing_methods, forc)
         end
     end
     spinup_forcing = (;)
     for forc ∈ forcing_methods
-        spinup_forc = getSpinupForcing(forcing, tem.helpers, Val(forc))
-        spinup_forcing = setTupleField(spinup_forcing, (forc, spinup_forc))
+        spinup_forc = getSpinupForcing(forcing, tem.helpers, forc)
+        spinup_forcing = setTupleField(spinup_forcing, (typeof(forc).parameters[1], spinup_forc))
     end
     return spinup_forcing
 end
