@@ -15,7 +15,7 @@ function define(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, he
     else
         cpNamesTFAlloc = (:cVegRoot, :cVegWood, :cVegLeaf)
     end
-    @pack_land cpNamesTFAlloc => land.states
+    @pack_land cpNamesTFAlloc => land.cAllocationTreeFraction
     return land
 end
 
@@ -33,7 +33,8 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, treeFraction, cpNamesTFAlloc) ∈ land.states
+        (cAlloc, treeFraction) ∈ land.states
+        cpNamesTFAlloc ∈ land.cAllocationTreeFraction
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 

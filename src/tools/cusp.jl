@@ -171,12 +171,12 @@ function add_to_each_elem(v::AbstractVector, Δv::Real)
     return v
 end
 
-function add_vec(v::SVector, Δv)
+function add_vec(v::SVector, Δv::SVector)
     v = v + Δv
     return v
 end
 
-function add_vec(v::AbstractVector, Δv)
+function add_vec(v::AbstractVector, Δv::AbstractVector)
     v .= v .+ Δv
     return v
 end
