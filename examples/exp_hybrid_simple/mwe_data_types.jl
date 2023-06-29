@@ -19,7 +19,7 @@ ar2 = [1f0,2f0, ForwardDiff.Dual(NaN32), 2f0]
 typeof(ar2)
 
 using PreallocationTools: DiffCache, get_tmp
-
+using ForwardDiff
 A = [1 2; 3 4]
 function get_view(ar, indx)
     return @view ar[:,indx]
@@ -32,19 +32,21 @@ A
 
 in_put = DiffCache(A)
 
-function fxy(in_put, x)
+function fxy(in_put, x, y)
     in_put = get_tmp(in_put, x)
-    ŷ =  x*x + x
+    ŷ =  x[1]*x[2] + x[1] + x[2]
     b = get_view(in_put,1)
-    #in_put[:,1] .= ŷ
     fill!(b, ŷ)
-    return in_put
+    return sum(abs.(in_put .- y))
 end
 
-fxy(in_put, 1)
+#fxy(in_put, [1,2])
 
-ForwardDiff.derivative(x->fxy(in_put, x), 1)
+A = [1 2; 3 4]
 
-function gxy(ŷ, y)
-    return mean(abs2.(y .- ŷ))
+let 
+    y = rand()*A
+    in_put = DiffCache(A)
+    g(x) = fxy(in_put, x, y)
+    ForwardDiff.gradient(g, [1.0,2.0])
 end
