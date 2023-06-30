@@ -8,6 +8,7 @@ export dictToNamedTuple
 export getSindbadModels
 export addS
 export tcprint
+export set_component_from_main_pool, set_main_from_component_pool
 
 """
     noStackTrace()
@@ -463,6 +464,10 @@ function addS(s)
     return sm
 end
 
+"""
+getTypes!(d, all_types)
+utility function to collect all types from nested namedtuples
+"""
 function getTypes!(d, all_types)
     for k ∈ keys(d)
         if d[k] isa NamedTuple
@@ -475,7 +480,11 @@ function getTypes!(d, all_types)
     return unique(all_types)
 end
 
-function collect_types(d; c_olor=true)
+"""
+    collect_color_4_types(d; c_olor=true)
+utility function to collect colors for all types from nested namedtuples
+"""
+function collect_color_4_types(d; c_olor=true)
     all_types = []
     all_types = getTypes!(d, all_types)
     c_types = Dict{DataType,Int}()
@@ -490,8 +499,14 @@ function collect_types(d; c_olor=true)
     return c_types
 end
 
+"""
+    tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
+- a helper function to navigate the input named tuple and annotate types.
+- a random set of colors is chosen per type of the data/field
+- a mixed colored output within a feild usually warrants caution on type mismatches
+"""
 function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
-    colors_types = collect_types(d; c_olor=c_olor)
+    colors_types = collect_color_4_types(d; c_olor=c_olor)
     lc = nothing
     tt = "\t"
     for k ∈ keys(d)
@@ -558,4 +573,98 @@ function tcprint(d, df=1; c_olor=true, t_ype=true, istop=true)
     else
         print(Crayon(; foreground=lc), "$(tt)),\n")
     end
+end
+
+
+
+"""
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+- sets the component pools value using the values for the main pool
+- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+"""
+@generated function set_component_from_main_pool(
+    # function set_component_from_main_pool(
+    land,
+    helpers,
+    ::Val{s_main},
+    ::Val{s_comps},
+    ::Val{zix}) where {s_main,s_comps,zix}
+    output = quote end
+    push!(output.args, Expr(:(=), s_main, Expr(:., :(land.pools), QuoteNode(s_main))))
+    foreach(s_comps) do s_comp
+        push!(output.args, Expr(:(=), s_comp, Expr(:., :(land.pools), QuoteNode(s_comp))))
+        zix_pool = getfield(zix, s_comp)
+        c_ix = 1
+        foreach(zix_pool) do ix
+            push!(output.args, Expr(:(=),
+                s_comp,
+                Expr(:call,
+                    rep_elem,
+                    s_comp,
+                    Expr(:ref, s_main, ix),
+                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
+                    Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
+                    :(helpers.numbers.𝟘),
+                    :(helpers.numbers.𝟙),
+                    c_ix)))
+
+            c_ix += 1
+        end
+        push!(output.args, Expr(:(=),
+            :land,
+            Expr(:tuple,
+                Expr(:(...), :land),
+                Expr(:(=),
+                    :pools,
+                    (Expr(:tuple,
+                        Expr(:parameters, Expr(:(...), :(land.pools)),
+                            Expr(:kw, s_comp, s_comp))))))))
+    end
+    return output
+end
+
+
+"""
+    set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+- sets the main pool from the values of the component pools
+- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+"""
+@generated function set_main_from_component_pool(
+    # function set_main_from_component_pool(
+    land,
+    helpers,
+    ::Val{s_main},
+    ::Val{s_comps},
+    ::Val{zix}) where {s_main,s_comps,zix}
+    output = quote end
+    push!(output.args, Expr(:(=), s_main, Expr(:., :(land.pools), QuoteNode(s_main))))
+    foreach(s_comps) do s_comp
+        push!(output.args, Expr(:(=), s_comp, Expr(:., :(land.pools), QuoteNode(s_comp))))
+        zix_pool = getfield(zix, s_comp)
+        c_ix = 1
+        foreach(zix_pool) do ix
+            push!(output.args, Expr(:(=),
+                s_main,
+                Expr(:call,
+                    rep_elem,
+                    s_main,
+                    Expr(:ref, s_comp, c_ix),
+                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
+                    Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
+                    :(helpers.numbers.𝟘),
+                    :(helpers.numbers.𝟙),
+                    ix)))
+            c_ix += 1
+        end
+    end
+    push!(output.args, Expr(:(=),
+        :land,
+        Expr(:tuple,
+            Expr(:(...), :land),
+            Expr(:(=),
+                :pools,
+                (Expr(:tuple,
+                    Expr(:parameters, Expr(:(...), :(land.pools)),
+                        Expr(:kw, s_main, s_main))))))))
+    return output
 end
