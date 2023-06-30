@@ -35,10 +35,8 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
         cVegRoot ∈ land.pools
     end
     ## calculate variables
-    tmp_rootFrac = (
-        fracRoot2SoilD_max -
-        (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * sum(cVegRoot)))
-    ) # root fraction/efficiency as a function of total carbon in root pools
+    tmp_rootFrac = fracRoot2SoilD_max -
+                   (fracRoot2SoilD_max - fracRoot2SoilD_min) * (exp(-k_cVegRoot * addS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
 
     for sl ∈ eachindex(land.pools.soilW)
         soilcumuD = cumulativeDepths[sl]

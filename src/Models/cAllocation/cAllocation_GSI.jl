@@ -10,7 +10,7 @@ function define(o::cAllocation_GSI, forcing, land, helpers)
     cpNames = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     cAllocVeg = zero(land.pools.cEco)
-    zixVegs = []
+    zixVegs = Tuple{Int}[]
     nzixVegs = helpers.numbers.numType[]
     cpI = 1
     for cpName ∈ cpNames

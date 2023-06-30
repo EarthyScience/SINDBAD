@@ -29,7 +29,7 @@ end
 getCostOptions(optInfo)
 info.opti
 """
-function getCostOptions(optInfo::NamedTuple, number_helpers)
+function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
     defNames = Symbol.(keys(optInfo.constraints.defaultCostOptions))
     vals = values(optInfo.constraints.defaultCostOptions)
     defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
@@ -58,11 +58,16 @@ function getCostOptions(optInfo::NamedTuple, number_helpers)
         end
         push!(all_options, vValues)
     end
+    mod_vars = varibInfo.model
+    mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
+    mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
     obs_ind = [i + 2 * (i - 1) for i in mod_ind]
     push!(all_options, obs_ind)
     push!(all_options, mod_ind)
-    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind], all_options)...))
+    push!(all_options, mod_field)
+    push!(all_options, mod_subfield)
+    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield], all_options)...))
 end
 
 """
@@ -96,12 +101,10 @@ function checkOptimizedParametersInModels(info::NamedTuple)
 end
 
 function setupOptimization(info::NamedTuple)
-    costOpt = getCostOptions(info.opti, info.tem.helpers.numbers)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
     info = setTupleSubfield(info, :optim, (:default_parameter, info.opti.default_parameter))
-    info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
     info = setTupleSubfield(info,
         :optim,
@@ -138,6 +141,8 @@ function setupOptimization(info::NamedTuple)
     varibInfo = setTupleField(varibInfo, (:store, storeVars))
     varibInfo = setTupleField(varibInfo, (:model, modelVars))
     info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
+    costOpt = getCostOptions(info.opti, varibInfo, info.tem.helpers.numbers)
+    info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
 
     return info
 end

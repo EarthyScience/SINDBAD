@@ -8,6 +8,7 @@ output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
+obsv = getObsKeyedArrayFromYaxArray(observations);
 
 tblParams = getParameters(info.tem.models.forward,
     info.optim.default_parameter,
@@ -19,20 +20,39 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(output.data,
-    output.land_init,
-    info.tem.models.forward,
+tem_vals,
+f_one = prepRunEcosystem(output,
     forc,
-    forcing.sizes,
     info.tem);
 
-tem_helpers = info.tem.helpers;
-tem_spinup = info.tem.spinup;
-tem_models = info.tem.models;
-tem_variables = info.tem.variables;
+
+# @profview runEcosystem!(output.data,
+#     info.tem.models.forward,
+#     forc,
+#     tem_vals,
+#     loc_space_inds,
+#     loc_forcings,
+#     loc_outputs,
+#     land_init_space,
+#     f_one)
+
+@time runEcosystem!(output.data,
+    info.tem.models.forward,
+    forc,
+    tem_vals,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
+
+tem_helpers = tem_vals.helpers;
+tem_spinup = tem_vals.spinup;
+tem_models = tem_vals.models;
+tem_variables = tem_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = info.tem.models.forward;
+forward = tem_vals.models.forward;
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -51,7 +71,7 @@ end
 
 site_location = loc_space_maps[1];
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(output.data, 
+    getLocDataObsN(output.data,
         forc, obs, site_location);
 
 loc_space_ind = loc_space_inds[1];
@@ -60,25 +80,33 @@ loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
 res_out = ForwardSindbad.coreEcosystem(
-        forward,
-        loc_forcing,
-        tem_helpers,
-        tem_spinup,
-        tem_models,
-        Val(tem_variables),
-        loc_land_init,
-        f_one);
+    forward,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    Val(tem_variables),
+    loc_land_init,
+    f_one);
 
 @time ForwardSindbad.coreEcosystem(
-            forward,
-            loc_forcing,
-            tem_helpers,
-            tem_spinup,
-            tem_models,
-            Val(tem_variables),
-            loc_land_init,
-            f_one);
-
+    forward,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    Val(tem_variables),
+    loc_land_init,
+    f_one);
+# @profview ForwardSindbad.coreEcosystem(
+#     forward,
+#     loc_forcing,
+#     tem_helpers,
+#     tem_spinup,
+#     tem_models,
+#     Val(tem_variables),
+#     loc_land_init,
+#     f_one);
 function get_loc_loss(
     newApproaches,
     loc_obs,
@@ -117,12 +145,12 @@ get_loc_loss(
     loc_land_init,
     f_one)
 
-function loc_loss(upVector, forward, kwargs...)    
+function loc_loss(upVector, forward, kwargs...)
     newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
     return get_loc_loss(newApproaches, kwargs...)
 end
 
-kwargs =(;
+kwargs = (;
     loc_obs,
     loc_forcing,
     tem_helpers,
