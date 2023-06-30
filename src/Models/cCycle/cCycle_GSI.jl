@@ -6,8 +6,6 @@ function define(o::cCycle_GSI, forcing, land, helpers)
     @unpack_land begin
         (𝟘, 𝟙, numType) ∈ helpers.numbers
     end
-    n_cEco = length(land.pools.cEco)
-    n_cVeg = length(land.pools.cVeg)
     ## instantiate variables
     cEcoFlow = zero(land.pools.cEco)
     cEcoOut = zero(land.pools.cEco)
@@ -111,8 +109,8 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
     end
 
     ## compute RA & RH
-    NPP = sum(cNPP)
-    backNEP = sum(cEco) - sum(cEco_prev)
+    NPP = addS(cNPP)
+    backNEP = addS(cEco) - addS(cEco_prev)
     cRA = gpp - NPP
     cRECO = gpp - backNEP
     cRH = cRECO - cRA
