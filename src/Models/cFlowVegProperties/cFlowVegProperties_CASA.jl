@@ -8,12 +8,10 @@ end
 
 function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
     @unpack_cFlowVegProperties_CASA o
+    taker ∈ land.cCycleBase
 
     ## instantiate variables
-    p_F = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
-        1,
-        1,
-        length(land.pools.cEco))
+    p_F = helpers.numbers.sNT.(zero([taker...]))
 
     ## pack land variables
     @pack_land p_F => land.cFlowVegProperties

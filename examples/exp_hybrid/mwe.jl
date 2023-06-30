@@ -1,15 +1,14 @@
-using Revise
-
 using Sindbad
 using ForwardSindbad
 using ForwardSindbad: timeLoopForward
-using HybridSindbad
+#using HybridSindbad
 using AxisKeys: KeyedArray as KA
-using Lux, Zygote, Optimisers, ComponentArrays, NNlib
+#using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 using Random
 Random.seed!(13)
 
-experiment_json = "./settings_distri/experiment.json"
+experiment_json = "../settings_distri/experiment.json"
+experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
