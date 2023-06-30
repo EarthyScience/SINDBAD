@@ -12,6 +12,9 @@ function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
 
     ## instantiate variables
     p_F = helpers.numbers.sNT.(zero([taker...]))
+    if land.pools.cEco isa SVector
+        p_F = SVector{length(p_F)}(p_F)
+    end
 
     ## pack land variables
     @pack_land p_F => land.cFlowVegProperties
