@@ -8,18 +8,6 @@ export cTauSoilT_Q10
 end
 #! format: on
 
-function define(o::cTauSoilT_Q10, forcing, land, helpers)
-    ## unpack parameters and forcing
-
-    ## calculate variables
-    # CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-    fT = helpers.numbers.𝟙
-
-    ## pack land variables
-    @pack_land fT => land.cTauSoilT
-    return land
-end
-
 function compute(o::cTauSoilT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_cTauSoilT_Q10 o
