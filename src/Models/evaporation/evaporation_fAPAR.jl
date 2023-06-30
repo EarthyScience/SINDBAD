@@ -7,21 +7,6 @@ export evaporation_fAPAR
 end
 #! format: on
 
-function define(o::evaporation_fAPAR, forcing, land, helpers)
-    ## unpack land variables
-    @unpack_land begin
-        𝟘 ∈ helpers.numbers
-    end
-    PETsoil = 𝟘
-    evaporation = 𝟘
-    ## pack land variables
-    @pack_land begin
-        PETsoil => land.evaporation
-        evaporation => land.fluxes
-    end
-    return land
-end
-
 function compute(o::evaporation_fAPAR, forcing, land, helpers)
     ## unpack parameters
     @unpack_evaporation_fAPAR o

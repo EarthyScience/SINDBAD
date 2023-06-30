@@ -1,0 +1,59 @@
+{
+
+	"time":
+	{
+		"step": 				"daily",
+		"sDate": 				"2005-01-01",
+		"eDate": 				"2017-01-03",
+		"nYears": 				12,
+		"nStepsDay": 			1,
+		"nStepsYear": 			365.0
+	},
+	"mapping": {
+		"yaxarray": [],
+		"runEcosystem": ["time", "site"],
+		"parallelization": "threads"
+	},
+	"flags":
+	{
+		"saveInfo": 			true,
+		"debugit": 				false, 
+		"catchErrors": 			false,
+		"runSpinup": 			false,
+		"runForward": 			true,
+		"runUpdateModels": 		false,
+		"runOpti": 				true,
+		"calcCost":				true
+	},
+	"rules":
+	{
+		"verbosity": 5,
+		"model_array_type": "staticarray",
+		"forward_diff": false,
+		"data_type": "Float32",
+		"data_backend": "zarr",
+		"tolerance": 1.0e-3,
+		"yax_max_cache": 2e9
+	},
+	"output": {
+		"output_array_type": "array",		
+		"all": false,
+		"path": null,
+		"format": ".zarr",
+		"depth_dimensions":{
+			"d_soil": "soilW",
+			"d_cEco": 8,
+			"d_snow": "snowW"
+		},
+		"variables": {
+			"fluxes.evapotranspiration": null,
+			"fluxes.transpiration": null,
+			"fluxes.runoff": null,
+			"fluxes.runoffSurface": null,
+			"fluxes.gpp": null,
+			"pools.snowW": "d_snow",
+			"pools.soilW": "d_soil",
+			"waterBalance.waterBalance": null
+		}
+	}
+}

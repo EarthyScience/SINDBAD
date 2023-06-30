@@ -18,7 +18,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
     ## instantiate variables
 
     # transfers
-    cEco_comps = helpers.pools.components.cEco
+    # cEco_comps = helpers.pools.components.cEco
     # aTrg_a = []
     # for t_rg in taker
     #     if cEco_comps[t_rg] ∉ aTrg_a
@@ -55,7 +55,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
     end
 
     # fWfTfR_prev = 𝟙
-    fWfTfR_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
+    fWfTfR_prev = addS(land.pools.soilW) / land.soilWBase.s_wSat
     ## pack land variables
     # dummy init
     # L2Re = 𝟙

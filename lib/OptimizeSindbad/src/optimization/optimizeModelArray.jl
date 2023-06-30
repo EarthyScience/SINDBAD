@@ -3,9 +3,31 @@ export getSimulationDataArray, getLossArray, getLossGradient
 export getDataArray, combineLossArray
 export getLossVectorArray
 export site_loss_g
+export get_y, get_ŷn
+
+function get_y(observations, v)
+    return getproperty(observations, v)
+end
+
+function get_ŷ(outsmodel, v)
+    return getproperty(outsmodel, v)
+end
+
+function get_ŷn(ŷ::AbstractArray{T,2}) where {T}
+    return @view ŷ[:, 1]
+end
+
+function get_ŷn(ŷ::AbstractArray{T,3}) where {T}
+    return @view ŷ[:, 1, :]
+end
+
+function get_ŷn(ŷ::AbstractArray{T,4}) where {T}
+    return @view ŷ[:, 1, :, :]
+end
+
 
 """
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
+getDataArray(outsmodel, observations, modelVariables, obsVariables)
 """
 function getDataArray(model_output::AbstractArray,
     observations::AbstractArray, mod_ind::Int, obs_ind_start::Int)
@@ -31,7 +53,42 @@ function getDataArray(model_output::AbstractArray,
 end
 
 """
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
+getDataArray(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getDataArray(outsmodel::landWrapper,
+    observations::NamedTuple,
+    obs_ind::Int,
+    mod_field::Symbol,
+    mod_subfield::Symbol)
+    ŷField = getproperty(outsmodel, mod_field)
+    ŷ = getproperty(ŷField, mod_subfield)
+    if size(ŷ, 2) == 1
+        if ndims(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndims(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        else
+            ŷ = @view ŷ[:, 1]
+        end
+    end
+    #@show size(ŷ)
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+
+    # todo: get rid of the permutedims hack ...
+    if size(ŷ) != size(y)
+        error(
+            "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
+        )
+        # ŷ = y .* rand()
+        # ŷ = permutedims(ŷ, (2, 3, 1))
+    end
+    return (y, yσ, ŷ)
+end
+
+
+"""
+getDataArray(outsmodel, observations, modelVariables, obsVariables)
 """
 function getDataArray(outsmodel::landWrapper,
     observations::NamedTuple,
@@ -40,15 +97,15 @@ function getDataArray(outsmodel::landWrapper,
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
     if size(ŷ, 2) == 1
-        if ndim(ŷ) == 3
+        if ndims(ŷ) == 3
             ŷ = @view ŷ[:, 1, :]
-        elseif ndim(ŷ) == 4
+        elseif ndims(ŷ) == 4
             ŷ = @view ŷ[:, 1, :, :]
         else
             ŷ = @view ŷ[:, 1]
         end
     end
-    @show size(ŷ)
+    #@show size(ŷ)
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
     # todo: get rid of the permutedims hack ...
@@ -61,6 +118,7 @@ function getDataArray(outsmodel::landWrapper,
     end
     return (y, yσ, ŷ)
 end
+
 
 """
     combineLoss(lossVector, ::Val{:sum})
@@ -98,11 +156,38 @@ function combineLossArray(lossVector::AbstractArray, percentile_value::T) where 
     return percentile(lossVector, percentile_value)
 end
 
+function inner_loss(y, yσ, ŷ, s_metric)
+    return loss(y, yσ, ŷ, s_metric)
+end
+
 """
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
-function getLossVectorArray(observations, model_output, optim::NamedTuple)
+function getLossVectorArray(observations, model_output::landWrapper, optim::NamedTuple)
+    lossVec = map(optim.costOptions) do var_row
+        lossMetric = var_row.costMetric
+        obs_ind = var_row.obs_ind
+        mod_field = var_row.mod_field
+        mod_subfield = var_row.mod_subfield
+        (y, yσ, ŷ) = getDataArray(model_output, observations, obs_ind, mod_field, mod_subfield)
+        # (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
+
+        metr = loss(y, yσ, ŷ, lossMetric)
+        if isnan(metr)
+            metr = oftype(metr, 10)
+        end
+        # println("$(var_row.variable) => $(lossMetric): $(metr)")
+        metr
+    end
+    return lossVec
+end
+
+"""
+getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
+returns a vector of losses for variables in info.optim.variables2constrain
+"""
+function getLossVectorArray(observations, model_output::AbstractArray, optim::NamedTuple)
     lossVec = map(optim.costOptions) do var_row
         lossMetric = var_row.costMetric
         obs_ind_start = var_row.obs_ind
@@ -119,6 +204,46 @@ function getLossVectorArray(observations, model_output, optim::NamedTuple)
     end
     return lossVec
 end
+
+
+#=
+"""
+getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
+returns a vector of losses for variables in info.optim.variables2constrain
+"""
+function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
+    cost_options = optim.costOptions
+    #cost_options = [Pair(:gpp, Val(:mse))]
+    optimVars = optim.variables.optim
+ #   lossVec = Vector{Real}(undef, length(optimVars))
+    #var_index = 1
+    lossVec = map(cost_options) do p
+#    for p ∈ cost_options
+        obsV = first(p)
+        s_metric = last(p) #var_row.costMetric
+        #@code_warntype getfield(optimVars, obsV)
+        #mod_variable = getfield(optimVars, obsV) #::NTuple{2,Symbol}
+        #@show mod_variable
+        #var_σ =  Symbol(string(obsV) * "_σ")
+        #@code_warntype get_y(observations, mod_variable[2])
+        y = get_y(observations, obsV)
+        ŷ = model_output[1] #get_ŷ(model_output, mod_variable[2])
+        ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
+        yσ = get_y(observations, :gpp_σ)
+        idxs = get_trues(y, yσ, ŷ)
+        #@code_warntype loss(y, yσ, ŷ, s_metric)
+        metr = loss_o(y, ŷ, s_metric, idxs)
+        if isnan(metr)
+           metr = oftype(metr, 1e19) # buggy?
+        end
+        metr
+  #      lossVec[var_index] = metr 
+  #      var_index += 1
+    end
+    return lossVec
+end
+
+=#
 
 """
 getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
@@ -137,14 +262,18 @@ function getLossGradient(pVector::AbstractArray,
     land_init_space,
     f_one)
     upVector = pVector
-    newApproaches = updateModelParametersType(tblParams, base_models, upVector)
-    runEcosystem!(output.data,
+    #newApproaches = base_models
+    newApproaches = Tuple(updateModelParametersType(tblParams, base_models, upVector))
+    out_d = output.data
+    lopo = Tuple([lo for lo in loc_outputs])
+
+    runEcosystem!(out_d,
         newApproaches,
         forcing,
         tem,
         loc_space_inds,
         loc_forcings,
-        loc_outputs,
+        lopo,
         land_init_space,
         f_one)
     loss_vector = getLossVectorArray(observations, output.data, optim)

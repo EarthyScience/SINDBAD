@@ -10,10 +10,9 @@ function define(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, he
     ## unpack parameters
     ## calculate variables
     # check if there are fine & coarse root pools
+    cpNamesTFAlloc = (:cVegRoot, :cVegWood, :cVegLeaf)::Tuple
     if hasproperty(land.pools, :cVegWoodC) && hasproperty(land.pools, :cVegWoodF)
-        cpNamesTFAlloc = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
-    else
-        cpNamesTFAlloc = (:cVegRoot, :cVegWood, :cVegLeaf)
+        cpNamesTFAlloc = (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)::Tuple
     end
     @pack_land cpNamesTFAlloc => land.cAllocationTreeFraction
     return land
@@ -39,15 +38,15 @@ function compute(o::cAllocationTreeFraction_Friedlingstein1999, forcing, land, h
     end
 
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
-    r0 = zero(eltype(cAlloc))
+    r0 = 𝟘
     for ix ∈ getzix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
         r0 = r0 + cAlloc[ix]
     end
-    s0 = zero(eltype(cAlloc))
+    s0 = 𝟘
     for ix ∈ getzix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
         s0 = s0 + cAlloc[ix]
     end
-    l0 = zero(eltype(cAlloc))
+    l0 = 𝟘
     for ix ∈ getzix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
         l0 = l0 + cAlloc[ix]
     end     # this is to below ground root fine+coarse
