@@ -43,7 +43,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
     RMN = RMN / helpers.dates.nStepsDay
-    zix = getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)
+    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ zix
 
         # compute maintenance & growth respiration terms for each vegetation pool
