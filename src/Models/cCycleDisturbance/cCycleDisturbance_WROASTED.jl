@@ -9,7 +9,7 @@ function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
         (giver, taker) ∈ land.cCycleBase
     end
     zixVegAll = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
-    ndxLoseToZixVec = []
+    ndxLoseToZixVec = Tuple{Int}[]
     for zixVeg ∈ zixVegAll
         # make reserve pool flow to slow litter pool/woody debris
         if helpers.pools.components.cEco[zixVeg] == :cVegReserve
@@ -17,7 +17,7 @@ function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
         else
             ndxLoseToZix = taker[[(giver .== zixVeg)...]]
         end
-        ndxNoVeg = []
+        ndxNoVeg = Int[]
         for ndxl ∈ ndxLoseToZix
             if ndxl ∉ zixVegAll
                 push!(ndxNoVeg, ndxl)
