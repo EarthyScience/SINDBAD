@@ -19,7 +19,7 @@
 		"saveInfo": 			true,
 		"debugit": 				false, 
 		"catchErrors": 			false,
-		"runSpinup": 			false,
+		"runSpinup": 			true,
 		"runForward": 			true,
 		"runUpdateModels": 		false,
 		"runOpti": 				true,

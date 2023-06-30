@@ -79,7 +79,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleAH})
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
     @pack_land cEco => land.pools
-    return land::land_type
+    return land
 end
 
 
@@ -113,7 +113,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     end
 
     @pack_land cEco => land.pools
-    return land::land_type
+    return land
 end
 
 
@@ -135,7 +135,7 @@ function doSpinup(sel_spinup_models,
         tem_helpers,
         land_type,
         f_one)
-    return land_spin::land_type
+    return land_spin
 end
 
 """
@@ -156,7 +156,7 @@ function doSpinup(sel_spinup_models,
         tem_helpers,
         land_type,
         f_one)
-    return land_spin::land_type
+    return land_spin
 end
 
 """
@@ -189,7 +189,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in::land_type
+    return land_in
 end
 
 """
@@ -222,7 +222,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in::land_type
+    return land_in
 end
 
 """
@@ -255,7 +255,7 @@ function doSpinup(sel_spinup_models,
         # ode_sol = solve(ode_prob, Tsit5(), reltol=tem_spinup.diffEq.reltol, abstol=tem_spinup.diffEq.abstol, maxiters=maxIter)
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ode_sol.u[end]))
     end
-    return land_in::land_type
+    return land_in
 end
 
 """
@@ -285,7 +285,7 @@ function doSpinup(sel_spinup_models,
         ssp_sol = solve(ssp_prob, DynamicSS(Tsit5()))
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ssp_sol.u))
     end
-    return land_in::land_type
+    return land_in
 end
 
 """
@@ -315,7 +315,7 @@ function doSpinup(sel_spinup_models,
         ssp_sol = solve(ssp_prob, SSRootfind())
         land_in = setTupleSubfield(land_in, :pools, (p_info.pool, ssp_sol.u))
     end
-    return land_in::land_type
+    return land_in
 end
 
 
@@ -439,7 +439,7 @@ function doSpinup(spinup_models,
     TWS = oftype(land.pools.TWS, TWS)
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
-    return land::land_type
+    return land
 end
 
 
@@ -469,7 +469,7 @@ function doSpinup(spinup_models,
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
     set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
-    return land::land_type
+    return land
 end
 
 
@@ -488,7 +488,7 @@ function doSpinup(spinup_models,
     cEco = oftype(land.pools.cEco, cEco)
     @pack_land cEco => land.pools
     set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
-    return land::land_type
+    return land
 end
 
 """
@@ -515,7 +515,7 @@ function loopTimeSpinup(sel_spinup_models,
         f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
         land_spin = runSpinupModels!(land_spin, f, sel_spinup_models, tem_helpers, land_type)
     end
-    return land_spin#::land_type
+    return land_spin#
 end
 
 """
