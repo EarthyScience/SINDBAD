@@ -24,7 +24,7 @@ function compute(o::cCycleConsistency_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cAlloc ∈ land.states
-        p_A ∈ land.cFlow
+        p_A ∈ land.states
         (flagL, flagU, flagUL, p_A_tmp) ∈ land.cCycleConsistency
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
