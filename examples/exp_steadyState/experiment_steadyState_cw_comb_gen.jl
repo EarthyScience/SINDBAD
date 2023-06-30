@@ -176,10 +176,11 @@ end
 function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod)
     plot_elem = string(plot_elem)
     if plot_var == :cEco
-        plt = plot(; legend=:outerbottom, size=(900, 600), yscale=:log10)
+        plt = plot(; legend=:outerbottom, size=(1800, 1200), yscale=:log10)
         ylims!(0.01, 1e7)
     else
-        plt = plot(; legend=:outerbottom, size=(900, 600))
+        plt = plot(; legend=:outerbottom, size=(1800, 1200))
+        ylims!(10, 2000)
     end
     plot!(getfield(land.pools, plot_var);
         linewidth=5,
@@ -188,8 +189,8 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
 
     plot!(getfield(out_sp_exp.pools, plot_var);
         linewidth=5,
-        label="Exp_Init",
-        title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
+        label="Exp_Init",)
+        # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
     plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,
