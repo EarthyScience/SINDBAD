@@ -496,7 +496,7 @@ runModels(forcing, models, out)
 """
 function runSpinupModels!(out, forcing, models, tem_helpers, _)
     return foldl_unrolled(models; init=out) do o, model
-        return o = Models.compute(model, forcing, o, tem_helpers)
+        o = Models.compute(model, forcing, o, tem_helpers)
     end
 end
 
@@ -515,7 +515,7 @@ function loopTimeSpinup(sel_spinup_models,
         f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
         land_spin = runSpinupModels!(land_spin, f, sel_spinup_models, tem_helpers, land_type)
     end
-    return land_spin#
+    return land_spin
 end
 
 """
