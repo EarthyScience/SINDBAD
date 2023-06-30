@@ -23,7 +23,10 @@ function define(o::cAllocation_GSI, forcing, land, helpers)
     zixVegs = Tuple(zixVegs)
     nzixVegs = Tuple(nzixVegs)
     ## pack land variables
-    @pack_land (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) => land.states
+    @pack_land begin
+        (cpNames, zixVegs, nzixVegs, ttwo) => land.cAllocation
+        (cAlloc, cAllocVeg) => land.states
+    end
     return land
 end
 
@@ -31,10 +34,11 @@ function compute(o::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cpNames, cAllocVeg, zixVegs, nzixVegs, ttwo) ∈ land.states
+        (cpNames, zixVegs, nzixVegs, ttwo) ∈ land.cAllocation
+        (cAlloc, cAllocVeg) ∈ land.states
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
-        (sNT, 𝟘, 𝟙) ∈ helpers.numbers
+        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     # allocation to root; wood & leaf

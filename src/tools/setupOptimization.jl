@@ -29,29 +29,40 @@ end
 getCostOptions(optInfo)
 info.opti
 """
-function getCostOptions(optInfo::NamedTuple)
+function getCostOptions(optInfo::NamedTuple, number_helpers)
     defNames = Symbol.(keys(optInfo.constraints.defaultCostOptions))
     vals = values(optInfo.constraints.defaultCostOptions)
-    defValues = [typeof(v) == String ? Symbol(v) : v for v ∈ vals]
+    defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
 
     varlist = Symbol.(optInfo.variables2constrain)
     all_options = []
     push!(all_options, varlist)
     for (pn, prop) ∈ enumerate(defNames)
         defProp = defValues[pn]
-        vValues = typeof(defProp)[]
+        if (defProp isa Number) && !(defProp isa Bool)
+            defProp = number_helpers.sNT(defProp)
+        end
+        vValues = []
+        # vValues = typeof(defProp)[]
         for v ∈ varlist
             optvar = getfield(getfield(optInfo.constraints.variables, v), :costOptions)
             if hasproperty(optvar, prop)
                 tmpValue = getfield(optvar, prop)
-                push!(vValues, typeof(tmpValue) == String ? Symbol(tmpValue) : tmpValue)
+                if (tmpValue isa Number) && !(tmpValue isa Bool)
+                    tmpValue = number_helpers.sNT(tmpValue)
+                end
+                push!(vValues, tmpValue isa String ? Val(Symbol(tmpValue)) : tmpValue)
             else
                 push!(vValues, defProp)
             end
         end
         push!(all_options, vValues)
     end
-    return Table((; Pair.([:variable, defNames...], all_options)...))
+    mod_ind = collect(1:length(varlist))
+    obs_ind = [i + 2 * (i - 1) for i in mod_ind]
+    push!(all_options, obs_ind)
+    push!(all_options, mod_ind)
+    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind], all_options)...))
 end
 
 """
@@ -85,7 +96,7 @@ function checkOptimizedParametersInModels(info::NamedTuple)
 end
 
 function setupOptimization(info::NamedTuple)
-    costOpt = getCostOptions(info.opti)
+    costOpt = getCostOptions(info.opti, info.tem.helpers.numbers)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
@@ -94,7 +105,7 @@ function setupOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
     info = setTupleSubfield(info,
         :optim,
-        (:multiConstraintMethod, Symbol(info.opti.multiConstraintMethod)))
+        (:multiConstraintMethod, Val(Symbol(info.opti.multiConstraintMethod))))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
@@ -103,7 +114,7 @@ function setupOptimization(info::NamedTuple)
     # set algorithm related options
     tmp_algorithm = (;)
     algo_method = info.opti.algorithm.package * "_" * info.opti.algorithm.method
-    tmp_algorithm = setTupleField(tmp_algorithm, (:method, Symbol(algo_method)))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(algo_method))))
     tmp_algorithm = setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
     if !isnothing(info.opti.algorithm.options_file)
         options_path = info.opti.algorithm.options_file
