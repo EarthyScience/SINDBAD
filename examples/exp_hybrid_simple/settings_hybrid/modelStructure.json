@@ -1,8 +1,4 @@
 {
-    "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and models 2) user selected",
-    "2.c": "approaches 3) structure of water and carbon pools",
-    "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
-    "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
     "defaultModel":{
             "order": 0,
             "use4spinup": true
@@ -11,8 +7,72 @@
         "ambientCO2": {
             "approach": "forcing"
         },
+        "aRespiration": {
+            "approach": "Thornley2000A"
+        },
+        "aRespirationAirT": {
+            "approach": "Q10"
+        },
         "capillaryFlow": {
             "approach": "VanDijk2010"
+        },
+        "cAllocation": {
+            "approach": "GSI"
+        },
+        "cAllocationLAI": {
+            "approach": "none"
+        },
+        "cAllocationNutrients": {
+            "approach": "none"
+        },
+        "cAllocationRadiation": {
+            "approach": "gpp"
+        },
+        "cAllocationTreeFraction": {
+            "approach": "Friedlingstein1999"
+        },
+        "cAllocationSoilT": {
+            "approach": "gpp"
+        },
+        "cAllocationSoilW": {
+            "approach": "gpp"
+        },
+        "cCycle": {
+            "approach": "GSI"
+        },
+        "cCycleBase": {
+            "approach": "GSI"
+        },
+        "cCycleDisturbance": {
+            "approach": "WROASTED",
+            "use4spinup": false
+        },
+        "cFlow": {
+            "approach": "GSI"
+        },
+        "cFlowSoilProperties": {
+            "approach": "none"
+        },
+        "cFlowVegProperties": {
+            "approach": "none"
+        },
+        "cTau": {
+            "approach": "mult"
+        },
+        "cTauLAI": {
+            "approach": "none"
+        },
+        "cTauSoilProperties": {
+            "approach": "none"
+        },
+        "cTauSoilT": {
+            "approach": "Q10"
+        },
+        "cTauSoilW": {
+            "approach": "GSI"
+        },
+        "cTauVegProperties": {
+            "approach": "none"
         },
         "drainage": {
             "approach": "dos"
@@ -24,7 +84,7 @@
             "approach": "sum"
         },
         "fAPAR": {
-            "approach": "constant"
+            "approach": "cVegLeaf"
         },
         "getPools": {
             "approach": "simple"
@@ -42,7 +102,7 @@
             "approach": "mult"
         },
         "gppDiffRadiation": {
-            "approach": "GSI"
+            "approach": "Wang2015"
         },
         "gppDirRadiation": {
             "approach": "none"
@@ -59,6 +119,9 @@
         "groundWSoilWInteraction":{
             "approach": "VanDijk2010"
         },
+        "LAI": {
+            "approach": "cVegLeaf"
+        },
         "percolation": {
             "approach": "WBP"
         },
@@ -69,7 +132,7 @@
             "approach": "Tair"
         },
         "rootFraction": {
-            "approach": "constant"
+            "approach": "expCvegRoot"
         },
         "rootMaximumDepth": {
             "approach": "fracSoilD"
@@ -144,6 +207,29 @@
             },
 			"combine": "TWS",
             "addStateVars": {"Δ": 0.0}
-		}
+		},
+		"carbon":
+		{
+			"components" :
+                {
+                "cVeg": {
+                    "Root": [1, 25.0],
+                    "Wood": [1, 25.0],
+                    "Leaf": [1, 25.0],
+                    "Reserve": [1, 10.0]
+                },
+                "cLit": {
+                    "Fast": [1, 100.0],
+                    "Slow": [1, 250.0]
+                },
+                "cSoil": {
+                    "Slow": [1, 500.0],
+                    "Old": [1, 1000.0]
+                }
+            },
+			"combine": "cEco",
+            "addStateVars": {"Δ": 0.0
+            }
+        }
 	}
 }
