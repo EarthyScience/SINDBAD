@@ -141,6 +141,10 @@ function compute(o::cCycle_GSI, forcing, land, helpers)
         @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
     end
 
+    for (lc, l) in enumerate(zix.cVegReserve)
+        @rep_elem cEco[l] => (cVegReserve, lc, :cVegReserve)
+    end
+
     for (lc, l) in enumerate(zix.cLit)
         @rep_elem cEco[l] => (cLit, lc, :cLit)
     end
