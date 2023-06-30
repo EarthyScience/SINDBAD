@@ -29,13 +29,14 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
+tem_vals,
 f_one = prepRunEcosystem(output, forc, info.tem);
+
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -57,7 +58,6 @@ function g_loss(x,
     tblParams,
     info_tem,
     info_optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -72,34 +72,26 @@ function g_loss(x,
         tblParams,
         info_tem,
         info_optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
         f_one)
-    pprint("params:")
-    @show " "
-    pprint(x)
-    @show " "
-    pprint("g_loss")
-    pprint(l)
     return l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(tblParams.defaults .* rand_m,
+g_loss(tblParams.defaults,
     mods,
     forc,
     op,
     op.variables,
     obs,
     tblParams,
-    info.tem,
+    tem_vals,
     info.optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -112,15 +104,15 @@ g_loss(tblParams.defaults,
     op.variables,
     obs,
     tblParams,
-    info.tem,
+    tem_vals,
     info.optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-# g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
+
+    # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
@@ -132,9 +124,8 @@ function l1(p)
         op.variables,
         obs,
         tblParams,
-        info.tem,
+        tem_vals,
         info.optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -149,9 +140,8 @@ function l2(p)
         op.variables,
         obs,
         tblParams,
-        info.tem,
+        tem_vals,
         info.optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
