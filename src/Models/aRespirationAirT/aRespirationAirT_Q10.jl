@@ -7,18 +7,6 @@ export aRespirationAirT_Q10
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 #! format: on
-function define(o::aRespirationAirT_Q10, forcing, land, helpers)
-    ## unpack parameters and forcing
-
-    ## calculate variables
-    fT = helpers.numbers.𝟙
-
-    ## pack land variables
-    @pack_land begin
-        fT => land.aRespirationAirT
-    end
-    return land
-end
 
 function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
