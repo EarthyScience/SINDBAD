@@ -2,15 +2,6 @@ export cAllocationSoilW_gpp
 
 struct cAllocationSoilW_gpp <: cAllocationSoilW end
 
-function define(o::cAllocationSoilW_gpp, forcing, land, helpers)
-
-    # computation for the moisture effect on decomposition/mineralization
-    fW = helpers.numbers.𝟙
-    ## pack land variables
-    @pack_land fW => land.cAllocationSoilW
-    return land
-end
-
 function compute(o::cAllocationSoilW_gpp, forcing, land, helpers)
 
     ## unpack land variables

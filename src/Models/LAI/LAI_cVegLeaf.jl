@@ -6,21 +6,6 @@ export LAI_cVegLeaf
 end
 #! format: on
 
-function define(o::LAI_cVegLeaf, forcing, land, helpers)
-    ## unpack parameters
-    @unpack_LAI_cVegLeaf o
-
-    @unpack_land cVegLeaf ∈ land.pools
-
-    ## calculate variables
-    cVegLeafTotal = sum(cVegLeaf)
-    LAI = cVegLeafTotal * SLA
-
-    ## pack land variables
-    @pack_land LAI => land.states
-    return land
-end
-
 function compute(o::LAI_cVegLeaf, forcing, land, helpers)
     ## unpack parameters
     @unpack_LAI_cVegLeaf o
@@ -28,7 +13,7 @@ function compute(o::LAI_cVegLeaf, forcing, land, helpers)
     @unpack_land cVegLeaf ∈ land.pools
 
     ## calculate variables
-    cVegLeafTotal = sum(cVegLeaf)
+    cVegLeafTotal = addS(cVegLeaf)
     LAI = cVegLeafTotal * SLA
 
     ## pack land variables
