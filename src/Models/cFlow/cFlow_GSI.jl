@@ -50,41 +50,31 @@ function define(o::cFlow_GSI, forcing, land, helpers)
 
     p_A = sNT.(zero([taker...]) .+ 𝟙)
 
-    if typeof(land.pools.cEco) <: SVector{length(land.pools.cEco)}
+    if land.pools.cEco isa SVector
         p_A = SVector{length(p_A)}(p_A)
     end
 
-    fWfTfR_prev = 𝟙
+    # fWfTfR_prev = 𝟙
+    fWfTfR_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
     ## pack land variables
     # dummy init
-    L2Re = 𝟙
-    L2ReF = 𝟙
-    R2Re = 𝟙
-    R2ReF = 𝟙
-    Re2L = 𝟙
-    Re2R = 𝟙
-    fWfTfR = 𝟙
-    k_Lshed = 𝟙
-    k_LshedF = 𝟙
-    k_Rshed = 𝟙
-    k_RshedF = 𝟙
-    slope_fWfTfR = 𝟙
+    # L2Re = 𝟙
+    # L2ReF = 𝟙
+    # R2Re = 𝟙
+    # R2ReF = 𝟙
+    # Re2L = 𝟙
+    # Re2R = 𝟙
+    # fWfTfR = 𝟙
+    # k_Lshed = 𝟙
+    # k_LshedF = 𝟙
+    # k_Rshed = 𝟙
+    # k_RshedF = 𝟙
+    # slope_fWfTfR = 𝟙
 
     @pack_land begin
-        (p_A, p_A_ind, fWfTfR_prev, aSrc, aTrg) => land.cFlow
+        (p_A_ind, fWfTfR_prev, aSrc, aTrg) => land.cFlow
         # (p_A, fWfTfR_prev, ndxSrc, ndxTrg, taker, giver) => land.cFlow
-        (L2Re,
-            L2ReF,
-            R2Re,
-            R2ReF,
-            Re2L,
-            Re2R,
-            fWfTfR,
-            k_Lshed,
-            k_LshedF,
-            k_Rshed,
-            k_RshedF,
-            slope_fWfTfR) => land.cFlow
+        p_A => land.states
     end
 
     return land
@@ -118,12 +108,12 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     ## unpack land variables
     @unpack_land begin
-        (fWfTfR_prev, p_A, p_A_ind, aSrc, aTrg) ∈ land.cFlow
+        (fWfTfR_prev, p_A_ind, aSrc, aTrg) ∈ land.cFlow
         fW ∈ land.cAllocationSoilW
         fT ∈ land.cAllocationSoilT
         fR ∈ land.cAllocationRadiation
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
-        p_k ∈ land.states
+        (p_A, p_k) ∈ land.states
     end
 
     # Compute sigmoid functions
@@ -231,9 +221,8 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
             k_Rshed,
             k_RshedF,
             slope_fWfTfR,
-            fWfTfR_prev,
-            p_A) => land.cFlow
-        p_k => land.states
+            fWfTfR_prev) => land.cFlow
+        (p_A, p_k) => land.states
     end
     return land
 end

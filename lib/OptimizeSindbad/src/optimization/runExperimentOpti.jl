@@ -23,9 +23,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     else
         @info "runExperiment: do spatial optimization..."
         forc_array = getKeyedArrayFromYaxArray(forcing)
-        obs_array = getKeyedArrayFromYaxArray(observations)
-        optim_params = optimizeModelArray(forc_array, output, output_vars, obs_array, info.tem,
-            info.optim)
+        obs_array = getObsKeyedArrayFromYaxArray(observations)
+        optim_params = optimizeModelArray(forc_array, output, obs_array, info.tem, info.optim)
         run_output = optim_params.optim
     end
     return run_output
@@ -39,22 +38,16 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:cost})
     observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
     forc_array = getKeyedArrayFromYaxArray(forcing)
-    obs_array = getKeyedArrayFromYaxArray(observations)
+    obs_array = getObsKeyedArrayFromYaxArray(observations)
 
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    runEcosystem!(output.data,
-        output.land_init,
-        info.tem.models.forward,
-        forc_array,
-        forcing.sizes,
-        info.tem)
+    runEcosystem!(output, forc_array, info.tem)
     #todo make the loss functions work with disk arrays
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
-    model_data = (; Pair.(output_vars, output.data)...)
-    run_output = getLossVectorArray(obs_array, model_data, info.optim)
+    run_output = getLossVectorArray(obs_array, output.data, info.optim)
     return run_output
 end
 
