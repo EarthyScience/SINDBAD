@@ -1,7 +1,7 @@
 export cCycleBase_GSI
 
 #! format: off
-@bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12} <: cCycleBase
+@bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
     annk_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
     annk_Wood::T2 = 0.03 | (0.001, 10.0) | "turnover rate of wood carbon pool" | "yr-1"
     annk_Leaf::T3 = 1.0 | (0.05, 10.0) | "turnover rate of leaf carbon pool" | "yr-1"
@@ -23,7 +23,7 @@ export cCycleBase_GSI
     C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
-    carbon_remain::T1 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
+    carbon_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 #! format: on
 
@@ -83,7 +83,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, p_k_base, ηA, ηH) => land.cCycleBase
+        (p_C2Nveg, p_annk, p_k_base, ηA, ηH) => land.cCycleBase
     end
     return land
 end
