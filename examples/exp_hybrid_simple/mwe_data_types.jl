@@ -21,22 +21,27 @@ typeof(ar2)
 using PreallocationTools: DiffCache, get_tmp
 using ForwardDiff
 A = [1 2; 3 4]
-function get_view(ar, indx)
+
+function get_view(ar::AbstractVector, indx)
     return @view ar[:,indx]
 end
 
-b = get_view(A, 1)
+b = get_view_b(A, 1)
 
 fill!(b, 0)
 A
 
 in_put = DiffCache(A)
 
+function inner_core!(in_put, x)
+    ŷ =  x[1]*x[2] + x[1] + x[2]
+    b = get_view_b(in_put, 1)
+    fill!(b, ŷ)
+end
+
 function fxy(in_put, x, y)
     in_put = get_tmp(in_put, x)
-    ŷ =  x[1]*x[2] + x[1] + x[2]
-    b = get_view(in_put,1)
-    fill!(b, ŷ)
+    inner_core!(in_put, x)
     return sum(abs.(in_put .- y))
 end
 

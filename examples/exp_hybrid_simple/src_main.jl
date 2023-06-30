@@ -8,25 +8,6 @@ using Accessors
 using ConstructionBase
 using Statistics
 
-function new_ar(ar)
-    map(ar) do a
-        if typeof(a) <: ForwardDiff.Dual
-            return a.value
-        else
-            return a
-        end
-    end
-end
-
-
-function get_trues(ŷ, yσ, y)
-    return (.!isnan.(y .* yσ .* ŷ)) # ::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
-end
-
-function loss_oo(ŷ::AbstractArray, y::AbstractArray, ::Val{:mse}, idxs)
-    return mean(abs2.(y[idxs] .- ŷ[idxs]))
-end
-
 function get_loc_loss(loc_obs,
     loc_output,
     newApproaches,
@@ -51,27 +32,11 @@ function get_loc_loss(loc_obs,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     lossVec = getLossVectorArray(loc_obs, model_data, tem_optim)
-    return combineLossArray(lossVec, Val(tem_optim.multiConstraintMethod)) #sum(lossVec) Val{:sum}()
+    t_loss = combineLossArray(lossVec, Val(tem_optim.multiConstraintMethod)) #sum(lossVec) Val{:sum}()
+    #@show t_loss
+    return t_loss
 end
-    #model_data = loc_output
-#    cost_options = [Pair(:gpp, Val(:mse))]
-#=
-    lossVec = map(cost_options) do p
-                obsV = first(p)
-                s_metric = last(p) 
-                y = get_y(loc_obs, obsV)
-                ŷ = loc_output[1]
-                ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
-                yσ = get_y(loc_obs, :gpp_σ)
-                idxs = get_trues(ŷ, yσ, y)
-                metr = loss_oo(ŷ, y, s_metric, idxs)
-                if isnan(metr)
-                   metr = oftype(metr, 1e19) # buggy?
-                end
-                metr
-            end
 
-=#
 
 function loc_loss(upVector,
     loc_space_ind,
@@ -80,7 +45,7 @@ function loc_loss(upVector,
     loc_forcing,
     loc_obs,
     v_loc_space_names,
-    output,
+    #output,
     forc,
     obs,
     tblParams,
@@ -93,9 +58,8 @@ function loc_loss(upVector,
     out_variables,
     f_one)
     
-    o_data = Sindbad.get_tmp.(output.data, upVector)
+    loc_output = Sindbad.get_tmp.(loc_output, upVector)
 
-    getLocOutput!(o_data, loc_space_ind, loc_output)
     getLocForcing!(forc, Val(keys(f_one)), v_loc_space_names, loc_forcing, loc_space_ind)
     getLocObs!(obs, Val(keys(obs)), v_loc_space_names, loc_obs, loc_space_ind)
     newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
@@ -137,7 +101,6 @@ obs = setup_simple();
 
 #cost_options = tem_optim.costOptions
 
-
 site_location = loc_space_maps[1];
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
@@ -155,17 +118,23 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     return loc_forcing, loc_output, loc_obs
 end
 
-loc_forcing, loc_output, loc_obs = getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.defaults), forc, obs, site_location);
+loc_forcing, loc_output, loc_obs =
+    getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.defaults), 
+        forc, obs, site_location);
 
 loc_space_ind = loc_space_inds[1]
 loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1]
 loc_forcing = loc_forcings[1]
 
+getLocOutput!(output.data, loc_space_ind, loc_output)
+
+loc_output = Sindbad.DiffCache.(loc_output, Val(14_000))
+
 #tem_optim_new = (; tem_optim..., costOptions=(; tem_optim.costOptions..., variable = [:gpp], costMetric = [Val(:mse)]))
 
 args = (;
-    output,
+    #output,
     forc,
     obs,
     tblParams,
@@ -178,6 +147,11 @@ args = (;
     out_variables,
     f_one,
     );
+
+#new_locos = loc_output .|> Array
+#loc_output = Sindbad.DiffCache.(loc_output);
+#new_locos = loc_output .|> Array
+
 
 args_txyz = (;
     loc_output,
@@ -194,6 +168,7 @@ loc_loss(
     args_txyz...,
     args...)
 
+
 @code_warntype loc_loss(
     tblParams.defaults,
     loc_space_ind, 
@@ -208,34 +183,16 @@ loc_loss(
     loc_land_init,
     args_txyz...,
     args...)
+=#
 
-all_approaches = nameof.(typeof.(tem_models.forward)) # a better way to do this?
 
 tblParams2 = Sindbad.@Select(names, modelsApproach)(tblParams)
 
-@code_warntype updateModelParametersType(tblParams, forward, tblParams.defaults)
-
-@time updateModelParametersType(tblParams, forward, tblParams.defaults*rand());
-
-
-
-#=
-reconstruct_model(::rainSnow_Tair, args...;kwargs...) = rainSnow_Tair(args...;kwargs...)
-o = rainSnow_Tair()
-reconstruct_model(o, 1f0)
-xtpl = [1.0, [1f0]]
-@code_warntype ntuple(i->xtpl[i], 2)
-@code_warntype Tuple([1, [1f0]])
-typeof(Tuple([1, [1f0]]))
-=#
-forward = tem_models.forward
-#@time newforward = nnpdateModelParametersType(tblParams, forward, tblParams.defaults);
-
-
 # test gradient
 function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
+    #cfg = ForwardDiff.GradientConfig(f, v, ForwardDiff.Chunk{12}())
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
-    return ForwardDiff.gradient(gf, v)
+    return ForwardDiff.gradient(gf, v) #, cfg, Val{false}())
 end
  
 @code_warntype fdiff_grads(loc_loss, tblParams.defaults,
@@ -244,12 +201,13 @@ end
     args_txyz,
     args)
 
-@time fdiff_grads(loc_loss, tblParams.defaults*rand(),
+fdiff_grads(loc_loss, tblParams.defaults,
     loc_space_ind,
     loc_land_init,
     args_txyz,
     args)
 
+# https://juliadiff.org/ForwardDiff.jl/dev/user/advanced/#Fixing-NaN/Inf-Issues
 
 function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
@@ -265,6 +223,8 @@ GC.gc()
     loc_land_init,
     args_txyz, 
     args);
+
+
 
 function name_to_ind(site_name, sites_forcing)
     site_id_forc = findall(x -> x == site_name, sites_forcing)[1]
@@ -455,6 +415,7 @@ nn_machine(nn_args, x_args, xfeatures,
     args; 
     nepochs=3)
 
+#=
 function mysum(mv::KeyedArray{T}) where T
     s=0
     for i in eachindex(mv)
@@ -500,16 +461,6 @@ function ka_ar_unstable(ka, ar)
 end
 
 @code_warntype ka_ar_unstable(ar, ka)
-
-
-
-
-
-
-
-
-
-
 @code_warntype idx_f(ar,ka)
 
 function ka_ar_unstable(ka, ar)
@@ -547,6 +498,13 @@ end
 new_ar(ar)
 
 
+function get_trues(ŷ, yσ, y)
+    return (.!isnan.(y .* yσ .* ŷ)) # ::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
+end
+
+function loss_oo(ŷ::AbstractArray, y::AbstractArray, ::Val{:mse}, idxs)
+    return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end
 
 
 using Dates, ForwardDiff, AxisKeys
@@ -574,3 +532,4 @@ end
 @code_warntype new_ar_t(ar)
 
 new_ar_t(ar)
+=#

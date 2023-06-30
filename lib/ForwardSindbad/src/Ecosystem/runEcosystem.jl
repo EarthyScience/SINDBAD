@@ -57,27 +57,23 @@ end
     # landWrapper(res)
 end
 
-function timeLoopForward(forward_models::Tuple,
-    forcing::NamedTuple,
-    out::NamedTuple,
-    tem_variables::NamedTuple,
-    tem_helpers::NamedTuple,
-    time_steps)
-    #f = getForcingForTimeStep(forcing, 1)
-    f = get_force_at_time_t(forcing, 1)
-    #@show f
-    out2 = runModels(f, forward_models, out, tem_helpers)
-    res = theRealtimeLoopForward(forward_models,
+function timeLoopForward(
+        forward_models,
         forcing,
-        out2,
+        out,
         tem_variables,
         tem_helpers,
-        time_steps,
-        typeof(out2),
-        typeof(f))
-    # push!(debugcatcherr,res)
+        time_steps::Int64,
+        f_one
+        )
+    res = map(1:time_steps) do ts
+    #for ts ∈ 1:time_steps
+        f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
+        out = runModels!(out, f, forward_models, tem_helpers)
+        #filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
+    end
+    res = landWrapper(res)
     return res
-    # landWrapper(res)
 end
 
 """
@@ -89,31 +85,43 @@ function removeEmptyFields(tpl::NamedTuple)
     return NamedTuple{nkeys}(nvals)
 end
 
-function coreEcosystem(approaches, loc_forcing, land_init, tem)
+function coreEcosystem(approaches,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    tem_variables,
+    land_init,
+    f_one)
     #@info "runEcosystem:: running ecosystem"
-    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
-        tem.helpers)
-    #@show first(newforcing)
+#    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
+#        tem.helpers)
+
+    land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
-    if tem.helpers.run.runSpinup
+    if tem_helpers.run.runSpinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
-            tem.helpers,
-            tem.spinup,
-            tem.models,
-            typeof(land_init);
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            typeof(land_init),
+            f_one,
             spinup_forcing=nothing)
-        # land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
     end
-    time_steps = getForcingTimeSize(loc_forcing)
+#    time_steps = getForcingTimeSize(loc_forcing)
+    time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
     #res = Array{NamedTuple}(undef, time_steps)
-    return timeLoopForward(approaches,
+    return timeLoopForward(
+        approaches,
         loc_forcing,
         land_spin_now,
-        tem.variables,
-        tem.helpers,
-        time_steps)
+        tem_variables,
+        tem_helpers,
+        time_steps,
+        f_one
+        )
 end
 
 function ecoLoc(approaches::Tuple,
