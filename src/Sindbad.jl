@@ -1,6 +1,5 @@
 module Sindbad
 using Reexport: @reexport
-
 using Crayons
 using DataStructures: DataStructures
 using InteractiveUtils
