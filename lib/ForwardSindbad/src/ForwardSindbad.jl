@@ -4,10 +4,12 @@ using Sindbad
 using Accessors
 using AxisKeys: KeyedArray, AxisKeys
 using AxisKeys, FillArrays
+using ComponentArrays
 using DimensionalData
 using DiskArrayTools
 using JLD2: @save
 using NetCDF
+using NLsolve
 using RecursiveArrayTools
 using TypedTables: Table
 using YAXArrays

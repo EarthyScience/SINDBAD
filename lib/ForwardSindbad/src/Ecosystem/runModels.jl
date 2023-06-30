@@ -26,6 +26,6 @@ runModels(forcing, models, out)
 """
 function runModels!(out, forcing, models, tem_helpers)
     return foldl_unrolled(models; init=out) do o, model
-        return o = Models.compute(model, forcing, o, tem_helpers)
+        o = Models.compute(model, forcing, o, tem_helpers)
     end
 end

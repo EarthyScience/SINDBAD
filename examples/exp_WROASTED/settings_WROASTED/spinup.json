@@ -5,11 +5,11 @@
 			"spinupMode": "forward",
 			"forcing": "recycleMSC",
 			"stopCriteria": null,
-			"nLoops": 200
+			"nLoops": 10
 		},
 		{
-			"spinupMode": "forward",
-			"forcing": "full",
+			"spinupMode": "nlsove_fixedpoint_trustregion_cEco_TWS",
+			"forcing": "recycleMSC",
 			"stopCriteria": null,
 			"nLoops": 1
 		},
