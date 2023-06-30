@@ -98,17 +98,34 @@ res_out = ForwardSindbad.coreEcosystem(
     Val(tem_variables),
     loc_land_init,
     f_one);
-# @profview ForwardSindbad.coreEcosystem(
-#     forward,
-#     loc_forcing,
-#     tem_helpers,
-#     tem_spinup,
-#     tem_models,
-#     Val(tem_variables),
-#     loc_land_init,
-#     f_one);
+
+
+# res_vec = Vector{typeof(land_init_space[1])}(undef, length(info.tem.helpers.dates.vector));
+# res_vec = Vector{typeof(land_init_space[1])}(undef, length(info.tem.helpers.dates.vector));
+res_vec = Tuple([land_init_space[1] for _ in info.tem.helpers.dates.vector]);
+@time big_land = ForwardSindbad.coreEcosystem(
+    forward,
+    res_vec,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    Val(tem_variables),
+    loc_land_init,
+    f_one);
+
+@time big_land = ForwardSindbad.coreEcosystem(
+    forward,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    Val(tem_variables),
+    loc_land_init,
+    f_one);
 function get_loc_loss(
     newApproaches,
+    res_vec,
     loc_obs,
     loc_forcing,
     tem_helpers,
@@ -120,6 +137,7 @@ function get_loc_loss(
     f_one)
     big_land = ForwardSindbad.coreEcosystem(
         newApproaches,
+        res_vec,
         loc_forcing,
         tem_helpers,
         tem_spinup,
@@ -135,6 +153,7 @@ end
 
 get_loc_loss(
     forward,
+    res_vec,
     loc_obs,
     loc_forcing,
     tem_helpers,
@@ -151,6 +170,7 @@ function loc_loss(upVector, forward, kwargs...)
 end
 
 kwargs = (;
+    res_vec,
     loc_obs,
     loc_forcing,
     tem_helpers,

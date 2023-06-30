@@ -57,17 +57,40 @@ end
     # landWrapper(res)
 end
 
+
 function timeLoopForward(
-        forward_models,
-        forcing,
-        out,
-        tem_variables,
-        tem_helpers,
-        time_steps::Int64,
-        f_one
-        )
+    res_vec,
+    forward_models,
+    forcing,
+    out,
+    tem_variables,
+    tem_helpers,
+    time_steps::Int64,
+    f_one
+)
+    for ts = 1:time_steps
+        #for ts ∈ 1:time_steps
+        f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
+        # @set res_vec[ts] = runModels!(out, f, forward_models, tem_helpers)
+        res_vec[ts] = runModels!(out, f, forward_models, tem_helpers)
+        #filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
+    end
+    res = landWrapper(res_vec)
+    return res
+end
+
+
+function timeLoopForward(
+    forward_models,
+    forcing,
+    out,
+    tem_variables,
+    tem_helpers,
+    time_steps::Int64,
+    f_one
+)
     res = map(1:time_steps) do ts
-    #for ts ∈ 1:time_steps
+        #for ts ∈ 1:time_steps
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
         out = runModels!(out, f, forward_models, tem_helpers)
         #filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
@@ -85,7 +108,9 @@ function removeEmptyFields(tpl::NamedTuple)
     return NamedTuple{nkeys}(nvals)
 end
 
+
 function coreEcosystem(approaches,
+    res_vec,
     loc_forcing,
     tem_helpers,
     tem_spinup,
@@ -94,8 +119,8 @@ function coreEcosystem(approaches,
     land_init,
     f_one)
     #@info "runEcosystem:: running ecosystem"
-#    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
-#        tem.helpers)
+    #    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
+    #        tem.helpers)
 
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
@@ -110,7 +135,48 @@ function coreEcosystem(approaches,
             f_one,
             spinup_forcing=nothing)
     end
-#    time_steps = getForcingTimeSize(loc_forcing)
+    #    time_steps = getForcingTimeSize(loc_forcing)
+    time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
+    #res = Array{NamedTuple}(undef, time_steps)
+    return timeLoopForward(
+        res_vec,
+        approaches,
+        loc_forcing,
+        land_spin_now,
+        tem_variables,
+        tem_helpers,
+        time_steps,
+        f_one
+    )
+end
+
+
+function coreEcosystem(approaches,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    tem_variables,
+    land_init,
+    f_one)
+    #@info "runEcosystem:: running ecosystem"
+    #    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
+    #        tem.helpers)
+
+    land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
+    land_spin_now = land_prec
+    if tem_helpers.run.runSpinup
+        land_spin_now = runSpinup(approaches,
+            loc_forcing,
+            land_spin_now,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            typeof(land_init),
+            f_one,
+            spinup_forcing=nothing)
+    end
+    #    time_steps = getForcingTimeSize(loc_forcing)
     time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
     #res = Array{NamedTuple}(undef, time_steps)
     return timeLoopForward(
@@ -121,7 +187,7 @@ function coreEcosystem(approaches,
         tem_helpers,
         time_steps,
         f_one
-        )
+    )
 end
 
 function ecoLoc(approaches::Tuple,
