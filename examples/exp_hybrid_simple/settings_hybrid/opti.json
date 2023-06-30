@@ -1,6 +1,6 @@
 {
 	"variables2constrain": [
-		"gpp"
+		"gpp", "evapotranspiration"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
