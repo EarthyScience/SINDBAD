@@ -3,11 +3,11 @@ export cFlowSoilProperties_none
 struct cFlowSoilProperties_none <: cFlowSoilProperties end
 
 function define(o::cFlowSoilProperties_none, forcing, land, helpers)
+    @unpack_land taker ∈ land.cCycleBase
 
     ## calculate variables
-    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)), 1,
-        length(land.pools.cEco))
-    p_F = copy(p_E)
+    p_E = helpers.numbers.sNT.(zero([taker...]))
+    p_F = helpers.numbers.sNT.(zero([taker...]))
 
     ## pack land variables
     @pack_land (p_E, p_F) => land.cFlowSoilProperties
