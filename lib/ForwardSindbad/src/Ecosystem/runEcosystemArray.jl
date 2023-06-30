@@ -91,9 +91,9 @@ end
 
 @generated function setOutputT!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
     output = quote end
-    for i in eachindex(output_vars.fields)
-        field = output_vars.fields[i]
-        subfield = output_vars.subfields[i]
+    for (i, ov) in enumerate(output_vars)
+        field = first(ov)
+        subfield = last(ov)
         push!(output.args,
             Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(field)), QuoteNode(subfield))))
         push!(output.args, quote
