@@ -21,7 +21,7 @@ land_init = createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
+obs = getObsKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
 loc_space_names,
