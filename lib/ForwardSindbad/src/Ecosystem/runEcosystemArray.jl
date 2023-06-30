@@ -20,7 +20,6 @@ function getLocData(outcubes, forcing, loc_space_map)
 end
 
 function getLocOutput!(outcubes, ar_inds, loc_output)
-    #outcubes_tmp = Sindbad.get_tmp(outcubes,1)
     for i ∈ eachindex(outcubes)
         loc_output[i] = getArrayView(outcubes[i], ar_inds)
     end
@@ -127,6 +126,14 @@ function fill_it!(ar, val, ts::Int64)
     return data_ts .= val # Sindbad.ForwardDiff.value.(val)
 end
 
+function fill_it_two!(ar, val, ts::Int64)
+    if length(val)>1 && typeof(val) <:AbstractVector
+        ar[ts, :] = val
+    elseif length(val)==1
+        ar[ts] = val
+    end
+end
+
 @generated function setOutputT!(outputs, land, ::Val{TEM}, ts) where {TEM}
     output = quote end
     var_index = 1
@@ -136,7 +143,6 @@ end
                 Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(group)), QuoteNode(k))))
             push!(output.args, quote
                 data_o = outputs[$var_index]
-            # data_o = Sindbad.get_tmp(outputs[$var_index], 1)
                 fill_it!(data_o, data_l, ts)
             end)
             return var_index += 1
@@ -296,7 +302,7 @@ runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes::AbstractArray,
     land_init::NamedTuple,
-    approaches::Tuple,
+    approaches,
     forcing::NamedTuple,
     forcing_sizes::NamedTuple,
     tem::NamedTuple)
@@ -307,7 +313,7 @@ function runEcosystem!(outcubes::AbstractArray,
             forcing,
             forcing_sizes,
             tem)
-    return parallelizeIt(outcubes,
+    parallelizeIt(outcubes,
         approaches,
         forcing,
         tem.helpers,
@@ -321,13 +327,14 @@ function runEcosystem!(outcubes::AbstractArray,
         land_init_space,
         f_one,
         tem.helpers.run.parallelization)
+    return nothing
 end
 
 """
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes::AbstractArray,
-    approaches::Tuple,
+    approaches,
     forcing::NamedTuple,
     tem::NamedTuple,
     loc_space_names,
@@ -336,7 +343,7 @@ function runEcosystem!(outcubes::AbstractArray,
     loc_outputs,
     land_init_space,
     f_one)
-    return parallelizeIt(outcubes,
+    parallelizeIt(outcubes,
         approaches,
         forcing,
         tem.helpers,
@@ -350,6 +357,7 @@ function runEcosystem!(outcubes::AbstractArray,
         land_init_space,
         f_one,
         tem.helpers.run.parallelization)
+    return nothing
 end
 
 function parallelizeIt(outcubes,
@@ -415,6 +423,6 @@ function parallelizeIt(outcubes,
             loc_outputs[Threads.threadid()],
             land_init_space[spI],
             f_one)
-        return spI += 1
+        spI += 1
     end
 end

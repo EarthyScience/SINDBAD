@@ -1,6 +1,5 @@
 module Sindbad
 using Reexport: @reexport
-
 using Crayons
 using DataStructures: DataStructures
 using InteractiveUtils
@@ -14,7 +13,6 @@ using JSON: parsefile
 using CSV: CSV
 using TypedTables: Table, @Select
 using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
-using PreallocationTools: DiffCache, get_tmp
 
 @reexport using PrettyPrinting: pprint
 

@@ -66,9 +66,9 @@ function getDataArray(outsmodel::landWrapper,
     ŷField = getproperty(outsmodel, modelVarInfo[1])
     ŷ = getproperty(ŷField, modelVarInfo[2])
     if size(ŷ, 2) == 1
-        if ndim(ŷ) == 3
+        if ndims(ŷ) == 3
             ŷ = @view ŷ[:, 1, :]
-        elseif ndim(ŷ) == 4
+        elseif ndims(ŷ) == 4
             ŷ = @view ŷ[:, 1, :, :]
         else
             ŷ = @view ŷ[:, 1]
@@ -137,7 +137,7 @@ end
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
-function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
+function getLossVectorArray(observations::NamedTuple, model_output::LandWrapper, optim::NamedTuple)
     lossVec = []
     cost_options = optim.costOptions
     optimVars = optim.variables.optim
@@ -148,7 +148,7 @@ function getLossVectorArray(observations::NamedTuple, model_output, optim::Named
         (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
         if isnan(metr)
-            push!(lossVec, oftype(metr, 1e19)) # with f is Float32, with E is Float64
+            push!(lossVec, oftype(metr, 10)) # with f is Float32, with E is Float64
         else
             push!(lossVec, metr)
         end
@@ -215,18 +215,23 @@ function getLossGradient(pVector::AbstractArray,
     land_init_space,
     f_one)
     upVector = pVector
-    newApproaches = updateModelParametersType(tblParams, base_models, upVector)
-    runEcosystem!(output.data,
+    #newApproaches = base_models
+     newApproaches = Tuple(updateModelParametersType(tblParams, base_models, upVector))
+    out_d = output.data
+    lopo = Tuple([lo for lo in loc_outputs])
+
+    runEcosystem!(out_d,
         newApproaches,
         forcing,
         tem,
         loc_space_names,
         loc_space_inds,
         loc_forcings,
-        loc_outputs,
+        lopo,
         land_init_space,
         f_one)
-    model_data = (; Pair.(output_variables, output.data)...)
+    
+    model_data = (; Pair.(output_variables, out_d)...)
     loss_vector = getLossVectorArray(observations, model_data, optim)
     println("-------------------")
     return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
