@@ -2,6 +2,9 @@ export runEcosystem!, prepRunEcosystem
 export ecoLoc!
 export getLocData
 export coreEcosystem!
+export getLocOutput!
+export getLocForcing!
+export getLocObs!
 
 function getLocData(outcubes, forcing, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -54,6 +57,37 @@ end
     return output
 end
 
+@generated function getLocObs!(obs,
+    ::Val{obs_vars},
+    ::Val{s_names},
+    loc_obs,
+    s_locs) where {obs_vars,s_names}
+    output = quote end
+    foreach(obs_vars) do obsv
+        push!(output.args, Expr(:(=), :d, Expr(:., :obs, QuoteNode(obsv))))
+        s_ind = 1
+        foreach(s_names) do s_name
+            expr = Expr(:(=),
+                :d,
+                Expr(:call,
+                    :view,
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
+            push!(output.args, expr)
+            return s_ind += 1
+        end
+        return push!(output.args,
+            Expr(:(=),
+                :loc_obs,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
+    end
+    return output
+end
+
 function ecoLoc!(outcubes,
     approaches,
     forcing,
@@ -88,7 +122,15 @@ end
 
 function fill_it!(ar, val, ts::Int64)
     data_ts = get_view(ar, val, ts)
-    return data_ts .= val
+    return data_ts .= val # Sindbad.ForwardDiff.value.(val)
+end
+
+function fill_it_two!(ar, val, ts::Int64)
+    if length(val)>1 && typeof(val) <:AbstractVector
+        ar[ts, :] = val
+    elseif length(val)==1
+        ar[ts] = val
+    end
 end
 
 @generated function setOutputT!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
@@ -289,7 +331,7 @@ end
 runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem!(outcubes::AbstractArray,
-    approaches::Tuple,
+    approaches,
     forcing::NamedTuple,
     tem_vals::NamedTuple,
     loc_space_inds,

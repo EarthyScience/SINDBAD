@@ -20,7 +20,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
     p_wWP = zero(land.pools.soilW)
     p_wSat = zero(land.pools.soilW)
 
-    soilDepths = helpers.numbers.sNT.(helpers.pools.layerThickness.soilW)
+    soilDepths = helpers.pools.layerThickness.soilW
     # soilDepths = helpers.pools.layerThickness.soilW
 
     p_CLAY = st_CLAY
