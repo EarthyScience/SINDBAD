@@ -18,22 +18,22 @@ info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info);
+op = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-obs = getKeyedArrayFromYaxArray(observations);
+obs = getObsKeyedArrayFromYaxArray(observations);
 
-@time loc_space_maps,
-loc_space_names,
+@time _,
+_,
 loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
 tem_vals,
-f_one = prepRunEcosystem(output, forc, info.tem);
+f_one = prepRunEcosystem(op, forc, info.tem);
 
 
-@time runEcosystem!(output.data,
+@time runEcosystem!(op.data,
     info.tem.models.forward,
     forc,
     tem_vals,
@@ -53,7 +53,6 @@ function g_loss(x,
     mods,
     forc,
     op,
-    op_vars,
     obs,
     tblParams,
     info_tem,
@@ -67,7 +66,6 @@ function g_loss(x,
         mods,
         forc,
         op,
-        op_vars,
         obs,
         tblParams,
         info_tem,
@@ -80,39 +78,43 @@ function g_loss(x,
     return l
 end
 rand_m = rand(info.tem.helpers.numbers.numType);
-op = setupOutput(info);
+# op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(tblParams.defaults,
-    mods,
-    forc,
-    op,
-    op.variables,
-    obs,
-    tblParams,
-    tem_vals,
-    info.optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
-g_loss(tblParams.defaults,
-    mods,
-    forc,
-    op,
-    op.variables,
-    obs,
-    tblParams,
-    tem_vals,
-    info.optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
+for _ in 1:10
+    lo_ss = g_loss(tblParams.defaults,
+        mods,
+        forc,
+        op,
+        obs,
+        tblParams,
+        tem_vals,
+        info.optim,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+    @show lo_ss
+end
 
-    # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
+for _ in 1:10
+    lo_ss = g_loss(tblParams.defaults,
+        mods,
+        forc,
+        op,
+        obs,
+        tblParams,
+        tem_vals,
+        info.optim,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+    @show lo_ss
+end
+
 dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
@@ -121,7 +123,6 @@ function l1(p)
         mods,
         forc,
         op,
-        op.variables,
         obs,
         tblParams,
         tem_vals,
@@ -137,7 +138,6 @@ function l2(p)
         newmods,
         forc,
         op,
-        op.variables,
         obs,
         tblParams,
         tem_vals,
