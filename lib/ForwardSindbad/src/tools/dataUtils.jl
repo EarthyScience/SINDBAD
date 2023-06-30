@@ -70,14 +70,14 @@ end
     end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        return push!(output.args,
+        push!(output.args,
             quote
                 forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
                                   forcingTimeSize
             end)
     end
     push!(output.args, quote
-        return forcingTimeSize
+        forcingTimeSize
     end)
     return output
 end
@@ -89,7 +89,7 @@ end
         push!(output.args, quote
             d = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
         end)
-        return push!(output.args,
+        push!(output.args,
             Expr(:(=),
                 :f_t,
                 Expr(:macrocall,
@@ -110,7 +110,7 @@ end
 
 function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     map(forcing) do v
-        return in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v
     end
 end
 
@@ -138,7 +138,7 @@ function getNamedDimsArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        return NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -149,8 +149,7 @@ getDimArrayFromYaxArray(input::NamedTuple)
 function getDimArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        return YAXArrayBase.yaxconvert(DimArray, Array(c.data))
+        YAXArrayBase.yaxconvert(DimArray, Array(c.data))
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -162,7 +161,7 @@ function getKeyedArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -175,7 +174,7 @@ function getObsKeyedArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
         namesCube = YAXArrayBase.dimnames(c)
-        return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return keyedData
 end
