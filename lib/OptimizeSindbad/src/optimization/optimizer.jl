@@ -36,8 +36,9 @@ function optimizer(cost_function,
         default_values,
         LBFGS(),
         Optim.Options(; show_trace=algo_options.show_trace,
-            iterations=algo_options.iterations);
-        autodiff=Symbol(algo_options.autodiff))
+            iterations=algo_options.iterations))
+    # ;
+    # autodiff=Symbol(algo_options.autodiff))
     optim_para = if results.ls_success
         results.minimizer
     else

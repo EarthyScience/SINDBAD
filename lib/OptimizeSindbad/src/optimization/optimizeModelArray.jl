@@ -7,13 +7,12 @@ export get_y, get_ŷn
 """
 getSimulationData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getDataArray(outsmodel::NamedTuple,
-    observations::NamedTuple,
-    obsV::Symbol,
-    modelVarInfo::Tuple)
-    ŷ = getproperty(outsmodel, modelVarInfo[2])
-    y = getproperty(observations, obsV)
-    yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
+function getDataArray(model_output::AbstractArray,
+    observations::AbstractArray, mod_ind::Int, obs_ind_start::Int)
+    ŷ = model_output[mod_ind]
+    y = observations[obs_ind_start]
+    yσ = observations[obs_ind_start+1]
+    # ymask = observations[obs_ind_start + 2]
     if size(ŷ, 2) == 1
         if ndims(ŷ) == 3
             ŷ = @view ŷ[:, 1, :]
@@ -23,14 +22,10 @@ function getDataArray(outsmodel::NamedTuple,
             ŷ = @view ŷ[:, 1]
         end
     end
-    #@show size(ŷ)
-    # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
         error(
             "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
         )
-        # ŷ = permutedims(ŷ, (2, 3, 1))
-        # ŷ = y .* rand()
     end
     return (y, yσ, ŷ)
 end
@@ -137,21 +132,20 @@ end
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
 returns a vector of losses for variables in info.optim.variables2constrain
 """
-function getLossVectorArray(observations::NamedTuple, model_output::LandWrapper, optim::NamedTuple)
-    lossVec = []
-    cost_options = optim.costOptions
-    optimVars = optim.variables.optim
-    for var_row ∈ cost_options
-        obsV = var_row.variable
+function getLossVectorArray(observations, model_output, optim::NamedTuple)
+    lossVec = map(optim.costOptions) do var_row
         lossMetric = var_row.costMetric
-        mod_variable = getfield(optimVars, obsV)
-        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-        metr = loss(y, yσ, ŷ, Val(lossMetric))
+        obs_ind_start = var_row.obs_ind
+        mod_ind = var_row.mod_ind
+
+        (y, yσ, ŷ) = getDataArray(model_output, observations, mod_ind, obs_ind_start)
+
+        metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
-            push!(lossVec, oftype(metr, 10)) # with f is Float32, with E is Float64
-        else
-            push!(lossVec, metr)
+            metr = eltype(y)(10)
         end
+        # println("$(var_row.variable) => $(lossMetric): $(metr)")
+        metr
     end
     return lossVec
 end
@@ -203,12 +197,10 @@ function getLossGradient(pVector::AbstractArray,
     base_models,
     forcing,
     output,
-    output_variables,
     observations,
     tblParams,
     tem,
     optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -224,17 +216,14 @@ function getLossGradient(pVector::AbstractArray,
         newApproaches,
         forcing,
         tem,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         lopo,
         land_init_space,
         f_one)
-    
-    model_data = (; Pair.(output_variables, out_d)...)
-    loss_vector = getLossVectorArray(observations, model_data, optim)
-    println("-------------------")
-    return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
+    loss_vector = getLossVectorArray(observations, output.data, optim)
+    # println("-------------------")
+    return combineLossArray(loss_vector, optim.multiConstraintMethod)
 end
 
 """
@@ -244,34 +233,31 @@ function getLossArray(pVector::AbstractArray,
     base_models,
     forcing,
     output,
-    output_variables,
     observations,
     tblParams,
     tem,
     optim,
-    loc_space_maps,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
     upVector = pVector
+    # @time begin
     newApproaches = updateModelParameters(tblParams, base_models, upVector)
     runEcosystem!(output.data,
         newApproaches,
         forcing,
         tem,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
         f_one)
-    model_data = (; Pair.(output_variables, output.data)...)
-    loss_vector = getLossVectorArray(observations, model_data, optim, tem.helpers)
-    println("-------------------")
-    return combineLossArray(loss_vector, Val(optim.multiConstraintMethod))
+    loss_vector = getLossVectorArray(observations, output.data, optim)
+    # end
+    # println("-------------------")
+    return combineLossArray(loss_vector, optim.multiConstraintMethod)
 end
 
 """
@@ -279,8 +265,7 @@ optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVa
 """
 function optimizeModelArray(forcing::NamedTuple,
     output,
-    output_variables,
-    observations::NamedTuple,
+    observations,
     tem::NamedTuple,
     optim::NamedTuple;
     spinup_forcing=nothing)
@@ -297,34 +282,27 @@ function optimizeModelArray(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-    loc_space_maps,
-    loc_space_names,
+    _,
+    _,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one = prepRunEcosystem(output.data,
-        output.land_init,
-        tem.models.forward,
-        forcing,
-        tem.forcing.sizes,
-        tem)
-    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one))
+    tem_vals,
+    f_one = prepRunEcosystem(output, forcing, tem)
+    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one))
     # make the cost function handle
 
-    # output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one
+    # output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one
     cost_function =
         x -> getLossArray(x,
             tem.models.forward,
             forcing,
             output,
-            output_variables,
             observations,
             tblParams,
-            tem,
+            tem_vals,
             optim,
-            loc_space_maps,
-            loc_space_names,
             loc_space_inds,
             loc_forcings,
             loc_outputs,
@@ -337,7 +315,7 @@ function optimizeModelArray(forcing::NamedTuple,
         lower_bounds,
         upper_bounds,
         optim.algorithm.options,
-        Val(optim.algorithm.method))
+        optim.algorithm.method)
 
     # update the parameter table with the optimized values
     tblParams.optim .= optim_para

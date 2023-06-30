@@ -2,6 +2,7 @@
 # export cusp, ups
 export rep_elem, @rep_elem, rep_vec, @rep_vec
 export add_to_elem, @add_to_elem, add_to_each_elem, add_vec
+export set_components
 
 # function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T}) where T<:Number
 #     sp[:] = sp .+ Δs
@@ -170,12 +171,52 @@ function add_to_each_elem(v::AbstractVector, Δv::Real)
     return v
 end
 
-function add_vec(v::SVector, Δv)
+function add_vec(v::SVector, Δv::SVector)
     v = v + Δv
     return v
 end
 
-function add_vec(v::AbstractVector, Δv)
+function add_vec(v::AbstractVector, Δv::AbstractVector)
     v .= v .+ Δv
     return v
+end
+
+@generated function set_components(
+    land,
+    helpers,
+    ::Val{s_main},
+    ::Val{s_comps},
+    ::Val{zix}) where {s_main,s_comps,zix}
+    output = quote end
+    push!(output.args, Expr(:(=), s_main, Expr(:., :(land.pools), QuoteNode(s_main))))
+    foreach(s_comps) do s_comp
+        push!(output.args, Expr(:(=), s_comp, Expr(:., :(land.pools), QuoteNode(s_comp))))
+        zix_pool = getfield(zix, s_comp)
+        c_ix = 1
+        foreach(zix_pool) do ix
+            push!(output.args, Expr(:(=),
+                s_comp,
+                Expr(:call,
+                    rep_elem,
+                    s_comp,
+                    Expr(:ref, s_main, ix),
+                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
+                    Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
+                    :(helpers.numbers.𝟘),
+                    :(helpers.numbers.𝟙),
+                    c_ix)))
+
+            c_ix += 1
+        end
+        push!(output.args, Expr(:(=),
+            :land,
+            Expr(:tuple,
+                Expr(:(...), :land),
+                Expr(:(=),
+                    :pools,
+                    (Expr(:tuple,
+                        Expr(:parameters, Expr(:(...), :(land.pools)),
+                            Expr(:kw, s_comp, s_comp))))))))
+    end
+    return output
 end
