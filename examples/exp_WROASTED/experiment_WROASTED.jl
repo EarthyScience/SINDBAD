@@ -114,18 +114,16 @@ def_dat = outcubes;
 out_vars = output.variables;
 tspan = 9000:12000
 obsMod = last.(values(info.optim.variables.optim))
-obsVar = info.optim.variables.obs;
-for (vi, v) ∈ enumerate(out_vars)
-    def_var = def_dat[vi][tspan, 1, 1, 1]
-    opt_var = opt_dat[vi][tspan, 1, 1, 1]
+costOpt = info.optim.costOptions;
+foreach(costOpt) do var_row
+    v = var_row.variable
+    def_var = def_dat[var_row.mod_ind][tspan, 1, 1, 1]
+    opt_var = opt_dat[var_row.mod_ind][tspan, 1, 1, 1]
     plot(def_var; label="def", size=(900, 600), title=v)
     plot!(opt_var; label="opt")
-    if v in obsMod
-        @show "plot obs", v
-        obs_var = obs[vi][tspan, 1, 1, 1]
-        plot!(obs_var; label="obs")
-        # title(obsv)
-    end
+    @show "plot obs", v
+    obs_var = obs[var_row.obs_ind][tspan, 1, 1, 1]
+    plot!(obs_var; label="obs")
     savefig("wroasted_$(domain)_$(v).png")
 end
 
