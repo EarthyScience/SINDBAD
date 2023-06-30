@@ -8,7 +8,7 @@ runModels(forcing, models, out)
 """
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models; init=out) do o, model
-        return o = Models.compute(model, forcing, o, tem_helpers)
+        o = Models.compute(model, forcing, o, tem_helpers)
         # if tem_helpers.run.runUpdateModels
         #     o = Models.update(model, forcing, o, tem_helpers)
         # end
@@ -17,7 +17,7 @@ end
 
 function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models; init=out) do o, model
-        return o = Models.define(model, forcing, o, tem_helpers)
+        o = Models.define(model, forcing, o, tem_helpers)
     end
 end
 

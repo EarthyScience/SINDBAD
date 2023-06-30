@@ -12,7 +12,8 @@ function define(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
 
     ## calculate variables
     # assume the initial fR as one
-    fW_prev = 𝟙
+    # fW_prev = 𝟙
+    fW_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
 
     ## pack land variables
     @pack_land fW_prev => land.cAllocationSoilW
