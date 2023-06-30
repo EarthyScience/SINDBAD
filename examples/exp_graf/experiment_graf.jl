@@ -31,19 +31,13 @@ forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-    prepRunEcosystem(output.data,
-        output.land_init,
-        info.tem.models.forward,
-        forc,
-        forcing.sizes,
-        info.tem);
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    prepRunEcosystem(output, forc, info.tem);
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -53,8 +47,7 @@ for x ∈ 1:10
     @time runEcosystem!(output.data,
         info.tem.models.forward,
         forc,
-        info.tem,
-        loc_space_names,
+        tem_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -64,14 +57,13 @@ end
 @profview runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, tem_vals);
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

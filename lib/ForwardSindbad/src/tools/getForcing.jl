@@ -362,7 +362,7 @@ function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
             subset = subset[time=1:(info.forcing.size.time)]
         end
         # support for subsets by name and numbers is also supported. Option to be added later.
-        return YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
+        YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
     end
     nts = length(incubes[1].time) # look for time instead of using the first yaxarray
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
