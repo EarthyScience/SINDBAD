@@ -65,6 +65,12 @@ function add_c_to_land(pout, land, zix, helpers, 𝟘)
     end
     @pack_land cVegWood => land.pools
 
+    cVegReserve = land.pools.cVegReserve
+    for (lc, l) in enumerate(zix.cVegReserve)
+        @rep_elem pout[l] => (cVegReserve, lc, :cVegReserve)
+    end
+    @pack_land cVegReserve => land.pools
+
     cVegLeaf = land.pools.cVegLeaf
     for (lc, l) in enumerate(zix.cVegLeaf)
         @rep_elem pout[l] => (cVegLeaf, lc, :cVegLeaf)
