@@ -21,62 +21,25 @@ function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_
     end
 end
 
-@noinline function theRealtimeLoopForward(forward_models::Tuple,
-    forcing::NamedTuple,
-    out::NamedTuple,
-    tem_variables::NamedTuple,
-    tem_helpers::NamedTuple,
-    time_steps,
-    otype,
-    oforc)
-    # time_steps = 1
-    # time_steps = 7200
-    #f_t = getForcingForTimeStep(forcing, 1)::oforc
-    #f_t = get_force_at_time_t(forcing, 1)::oforc
-    res = map(1:time_steps) do ts
-        #f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_t)#::oforc
-        f = get_force_at_time_t(forcing, ts)
-        #if ts==7864
-        #    println("------------------------------------------")
-        #    println("$(typeof(f) <: oforc)")
-        #    println("what??")
-        #    println("------------------------------------------")
-        #@show pprint(out)
-        #end
-        #outold = out
-        out = runModels(f, forward_models, out, tem_helpers)#::otype
-        #@show typeof.(outold)
-        #@show [typeof(onew) for onew in out]
-        #@show [typeof(onew) <: typeof(outold[i]) for (i,onew) in enumerate(out)]
-        #@show out[46], outold[46]
-        return deepcopy(out)
-        # deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
-    end
-    # push!(debugcatcherr,res)
-    return res
-    # landWrapper(res)
-end
-
 
 function timeLoopForward(
     res_vec,
     forward_models,
     forcing,
     out,
-    tem_variables,
     tem_helpers,
     time_steps::Int64,
     f_one
 )
+    # @show "I am", time_steps
+
     for ts = 1:time_steps
-        #for ts ∈ 1:time_steps
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        # @set res_vec[ts] = runModels!(out, f, forward_models, tem_helpers)
-        res_vec[ts] = runModels!(out, f, forward_models, tem_helpers)
-        #filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
+        out = runModels!(out, f, forward_models, tem_helpers)
+        res_vec[ts] = out
     end
-    res = landWrapper(res_vec)
-    return res
+    # res = landWrapper(res_vec)
+    return res_vec
 end
 
 
@@ -84,18 +47,15 @@ function timeLoopForward(
     forward_models,
     forcing,
     out,
-    tem_variables,
     tem_helpers,
     time_steps::Int64,
     f_one
 )
     res = map(1:time_steps) do ts
-        #for ts ∈ 1:time_steps
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
         out = runModels!(out, f, forward_models, tem_helpers)
-        #filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all)
     end
-    res = landWrapper(res)
+    # res = landWrapper(res)
     return res
 end
 
@@ -115,17 +75,14 @@ function coreEcosystem(approaches,
     tem_helpers,
     tem_spinup,
     tem_models,
-    tem_variables,
     land_init,
     f_one)
-    #@info "runEcosystem:: running ecosystem"
-    #    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
-    #        tem.helpers)
 
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
     if tem_helpers.run.runSpinup
-        land_spin_now = runSpinup(approaches,
+        land_spin_now = runSpinup(
+            approaches,
             loc_forcing,
             land_spin_now,
             tem_helpers,
@@ -135,20 +92,18 @@ function coreEcosystem(approaches,
             f_one,
             spinup_forcing=nothing)
     end
-    #    time_steps = getForcingTimeSize(loc_forcing)
-    time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
-    #res = Array{NamedTuple}(undef, time_steps)
-    return timeLoopForward(
+    time_steps = tem_helpers.dates.size
+    out = timeLoopForward(
         res_vec,
         approaches,
         loc_forcing,
         land_spin_now,
-        tem_variables,
         tem_helpers,
         time_steps,
-        f_one
-    )
+        f_one)
+    return out
 end
+
 
 
 function coreEcosystem(approaches,
@@ -156,15 +111,12 @@ function coreEcosystem(approaches,
     tem_helpers,
     tem_spinup,
     tem_models,
-    tem_variables,
     land_init,
     f_one)
-    #@info "runEcosystem:: running ecosystem"
-    #    land_prec = runPrecompute(getForcingForTimeStep(loc_forcing, 1), approaches, land_init,
-    #        tem.helpers)
-
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
+    # land_spin_now = land_init
+
     if tem_helpers.run.runSpinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
@@ -173,46 +125,114 @@ function coreEcosystem(approaches,
             tem_spinup,
             tem_models,
             typeof(land_init),
-            f_one,
+            f_one;
             spinup_forcing=nothing)
     end
-    #    time_steps = getForcingTimeSize(loc_forcing)
-    time_steps = getForcingTimeSize(loc_forcing, Val(keys(loc_forcing)))
-    #res = Array{NamedTuple}(undef, time_steps)
-    return timeLoopForward(
-        approaches,
+    time_steps = tem_helpers.dates.size
+    @time out = timeLoopForward(approaches,
         loc_forcing,
         land_spin_now,
-        tem_variables,
         tem_helpers,
         time_steps,
-        f_one
-    )
+        f_one)
+    return out
 end
 
-function ecoLoc(approaches::Tuple,
-    forcing::NamedTuple,
-    land_init::NamedTuple,
-    tem::NamedTuple,
-    loc_names)
-    loc_forcing = map(forcing) do a
-        inds = map(zip(loc_names, additionaldims)) do (loc_index, lv)
-            return lv => loc_index
-        end
-        return view(a; inds...)
-    end
-    return coreEcosystem(approaches, loc_forcing, land_init, tem)
+function ecoLoc(approaches,
+    res_vec,
+    forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    loc_space_ind,
+    loc_forcing,
+    land_init,
+    f_one)
+    getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
+    out = coreEcosystem(approaches,
+        res_vec,
+        loc_forcing,
+        tem_helpers,
+        tem_spinup,
+        tem_models,
+        land_init,
+        f_one)
+    return out
 end
 
 function fany(x,
-    approaches::Tuple,
-    forcing::NamedTuple,
-    land_init::NamedTuple,
-    tem::NamedTuple,
-    additionaldims)
+    approaches,
+    forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    loc_space_ind,
+    loc_forcing,
+    land_init,
+    f_one)
     #@show "fany", Threads.threadid()
-    eout = ecoLoc(approaches::Tuple, forcing::NamedTuple, land_init::NamedTuple, tem::NamedTuple, x)
+    eout = ecoLoc(approaches,
+        res_vec,
+        forcing,
+        tem_helpers,
+        tem_spinup,
+        tem_models,
+        loc_space_ind,
+        loc_forcing,
+        land_init,
+        f_one)
     return eout
+end
+
+
+"""
+runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
+"""
+function runEcosystem(approaches,
+    forcing,
+    tem_vals,
+    loc_space_inds,
+    loc_forcings,
+    land_init_space,
+    res_vec_space,
+    f_one)
+    #@info "runEcosystem:: running Ecosystem"
+    tem_helpers = tem_vals.helpers
+    tem_spinup = tem_vals.spinup
+    tem_models = tem_vals.models
+    land_all = if !isempty(loc_space_inds)
+        res_out = parallelizeIt(tem_vals.models.forward,
+            res_vec_space,
+            forcing,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            loc_space_inds,
+            loc_forcings,
+            land_init_space,
+            f_one,
+            tem_vals.helpers.run.parallelization)
+        #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
+        # landWrapper(res_vec_space)
+        nts = length(first(res_out))
+        fullarrayoftuples =
+            map(Iterators.product(1:nts, CartesianIndices(res_out))) do (its, iouter)
+                return res_out[iouter][its]
+            end
+        # res_vec_space = nothing
+        landWrapper(fullarrayoftuples)
+    else
+        res_out = coreEcosystem(approaches,
+            res_vec_space,
+            loc_forcing,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            land_init,
+            f_one)
+        landWrapper(res_vec_space)
+    end
+    return land_all
 end
 
 """
@@ -221,18 +241,25 @@ runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 function runEcosystem(approaches::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
-    tem::NamedTuple;
+    tem::NamedTuple,
+    loc_space_inds;
     spinup_forcing=nothing)
     #@info "runEcosystem:: running Ecosystem"
-    additionaldims = setdiff(keys(tem.helpers.run.loop), [:time])
-    land_all = if !isempty(additionaldims)
-        spacesize = values(tem.helpers.run.loop[additionaldims])
-        res = qbmap(Iterators.product(Base.OneTo.(spacesize)...)) do loc_names
-            #ccall(:malloc, Cvoid, (Cint,), 0)
-            #GC.safepoint()
-            #@show Threads.threadid()
-            return ecoLoc(approaches, forcing, deepcopy(land_init), tem, loc_names)
-        end
+
+    land_all = if !isempty(loc_space_inds)
+        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_vals, f_one =
+            prepRunEcosystem(output, forcing, tem)
+        res = parallelizeIt(tem_vals.models.forward,
+            res_vec,
+            forcing,
+            tem_vals.helpers,
+            tem_vals.spinup,
+            tem_vals.models,
+            loc_space_inds,
+            loc_forcings,
+            land_init_space,
+            f_one,
+            tem_vals.helpers.run.parallelization)
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
         fullarrayoftuples =
@@ -242,12 +269,77 @@ function runEcosystem(approaches::Tuple,
         res = nothing
         landWrapper(fullarrayoftuples)
     else
-        res = coreEcosystem(approaches, forcing, deepcopy(land_init), tem)
+        res = coreEcosystem(approaches,
+            res_vec,
+            loc_forcing,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            land_init,
+            f_one)
         landWrapper(res)
     end
     return land_all
 end
 
+
+function parallelizeIt(approaches,
+    res_vec_space,
+    forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    loc_space_inds,
+    loc_forcings,
+    land_init_space,
+    f_one,
+    ::Val{:threads})
+    i = 1
+    ltype = typeof(land_init_space[1])
+    out_eco = qbmap(loc_space_inds) do loc_space_ind
+        ecoLoc(approaches,
+            res_vec_space[i],
+            forcing,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            loc_space_ind,
+            loc_forcings[Threads.threadid()],
+            land_init_space[i],
+            f_one)
+        i = i + 1
+    end
+    return out_eco
+end
+
+function parallelizeIt(approaches,
+    res_vec_space,
+    forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    loc_space_inds,
+    loc_forcings,
+    land_init_space,
+    f_one,
+    ::Val{:qbmap})
+    i = 1
+    out_eco = land_init_space[1]
+    qbmap(loc_space_inds) do loc_space_ind
+        out_eco = ecoLoc(approaches,
+            res_vec_space[i],
+            forcing,
+            tem_helpers,
+            tem_spinup,
+            tem_models,
+            loc_space_ind,
+            loc_forcings[Threads.threadid()],
+            land_init_space[i],
+            f_one)
+        i = i + 1
+    end
+    return out_eco
+end
 function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
     nin = length(forcing_variables)
     nout = sum(length, tem.variables)
