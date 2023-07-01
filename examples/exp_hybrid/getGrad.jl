@@ -148,9 +148,35 @@ function l2(p)
         land_init_space,
         f_one)
 end
+
+
+op = setupOutput(info);
+op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.numType},tem_vals.helpers.numbers.numType,10}}(undef, size(od)) for od in op.data];
+op = (; op..., data=op_dat);
+
+@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+
+lo_ss = test_gr(tblParams.defaults,
+    mods,
+    forc,
+    op,
+    obs,
+    tblParams,
+    tem_vals,
+    info.optim,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
+
 l1(tblParams.defaults .* rand_m)
 l2(tblParams.defaults .* rand_m)
-@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+
+
+
+
+
 @profview grad = ForwardDiff.gradient(l1, tblParams.defaults)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 

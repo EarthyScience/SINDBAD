@@ -26,27 +26,6 @@ f_one = prepRunEcosystem(output,
     info.tem);
 
 
-# @profview runEcosystem!(output.data,
-#     info.tem.models.forward,
-#     forc,
-#     tem_vals,
-#     loc_space_inds,
-#     loc_forcings,
-#     loc_outputs,
-#     land_init_space,
-#     f_one)
-
-@time runEcosystem!(output.data,
-    info.tem.models.forward,
-    forc,
-    tem_vals,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
-
-
 tem_helpers = tem_vals.helpers;
 tem_spinup = tem_vals.spinup;
 tem_models = tem_vals.models;
@@ -55,20 +34,6 @@ tem_optim = info.optim;
 out_variables = output.variables;
 forward = tem_vals.models.forward;
 
-
-getLossGradient(tblParams.defaults,
-    forward,
-    forc,
-    output,
-    obs,
-    tblParams,
-    tem_vals,
-    tem_optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
 
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
@@ -109,30 +74,10 @@ loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
-res_out = ForwardSindbad.coreEcosystem(
-    forward,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
-
-@time ForwardSindbad.coreEcosystem(
-    forward,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
-
-
-# res_vec = Vector{typeof(land_init_space[1])}(undef, length(info.tem.helpers.dates.vector));
-res_vec = Vector{typeof(land_init_space[1])}(undef, length(info.tem.helpers.dates.vector));
-# res_vec = Vector{Any}(undef, length(info.tem.helpers.dates.vector));
-# res_vec = SVector{typeof(land_init_space[1])}[land_init_space[1] for _ in info.tem.helpers.dates.vector];
-# res_vec = [land_init_space[1] for _ in info.tem.helpers.dates.vector];
+# res_vec = Vector{typeof(loc_land_init)}(undef, length(info.tem.helpers.dates.vector));
+res_vec = Vector{typeof(loc_land_init)}(undef, length(info.tem.helpers.dates.vector));
+# res_vec = SVector{typeof(loc_land_init)}[loc_land_init for _ in info.tem.helpers.dates.vector];
+# res_vec = [loc_land_init for _ in info.tem.helpers.dates.vector];
 @time big_land = ForwardSindbad.coreEcosystem(
     forward,
     res_vec,
@@ -143,16 +88,8 @@ res_vec = Vector{typeof(land_init_space[1])}(undef, length(info.tem.helpers.date
     loc_land_init,
     f_one);
 
-@time big_land = ForwardSindbad.coreEcosystem(
-    forward,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
 
-function get_loc_loss2(
+function get_loc_loss(
     newApproaches,
     res_vec,
     new_land,
@@ -175,101 +112,72 @@ function get_loc_loss2(
         f_one)
     # model_data = (; gpp = gpp)
     lossVec = getLossVectorArray(loc_obs, big_land, tem_optim)
-    t_loss = combineLossArray(lossVec, Val{:sum}())
+    t_loss = combineLossArray(lossVec, tem_optim.multiConstraintMethod)
     return t_loss
 end
 
-function get_loc_loss(
-    newApproaches,
-    res_vec,
-    loc_obs,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    tem_optim,
-    loc_land_init,
-    f_one)
-    big_land = ForwardSindbad.coreEcosystem(
-        newApproaches,
-        res_vec,
-        loc_forcing,
-        tem_helpers,
-        tem_spinup,
-        tem_models,
-        loc_land_init,
-        f_one)
-    # model_data = (; gpp = gpp)
-    lossVec = getLossVectorArray(loc_obs, big_land, tem_optim)
-    t_loss = combineLossArray(lossVec, Val{:sum}())
-    return t_loss
-end
 
 get_loc_loss(
     forward,
     res_vec,
+    loc_land_init,
     loc_obs,
     loc_forcing,
     tem_helpers,
     tem_spinup,
     tem_models,
     tem_optim,
-    loc_land_init,
     f_one)
 
-get_loc_loss2(
-    res_vec,
-    forward,
-    loc_obs,
+function loc_loss(upVector, forward, res_vec, loc_obs,
     loc_forcing,
     tem_helpers,
     tem_spinup,
     tem_models,
     tem_optim,
-    loc_land_init,
-    f_one)
-
-function loc_loss2(upVector, forward, kwargs...)
+    loc_land_init_a,
+    f_one,
+    upVectType
+)
     newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
-    new_land = reDoOneLocation(loc_land_init, newApproaches, tem_helpers, loc_forcing, f_one)
-    res_vec = Vector{typeof(new_land)}(undef, tem_helpers.dates.size)
-    return get_loc_loss2(newApproaches, res_vec, new_land, kwargs...)
+    if typeof(upVector) !== upVectType[1]
+        @show "goingin", upVectType[1]
+        upVectType[1] = typeof(upVector)
+        @show "goingout", upVectType[1]
+        new_land = reDoOneLocation(loc_land_init_a[1], newApproaches, tem_helpers, loc_forcing, f_one)
+        loc_land_init_a[1] = new_land
+        res_vec .= Vector{typeof(new_land)}(undef, tem_helpers.dates.size)
+    end
+    return get_loc_loss(newApproaches, res_vec, loc_land_init_a[1], loc_obs,
+        loc_forcing,
+        tem_helpers,
+        tem_spinup,
+        tem_models,
+        tem_optim,
+        f_one)
 end
 
-function loc_loss(upVector, forward, kwargs...)
-    newApproaches = Tuple(updateModelParametersType(tblParams, forward, upVector))
-    return get_loc_loss(newApproaches, kwargs...)
-end
 
-kwargs2 = (;
-    loc_obs,
+upVectType = [typeof(tblParams.defaults)];
+loc_land_init_a = [loc_land_init];
+res_vec = Vector{Any}(undef, length(info.tem.helpers.dates.vector));
+loc_loss(ForwardDiff.Dual.(tblParams.defaults), forward, res_vec, loc_obs,
     loc_forcing,
     tem_helpers,
     tem_spinup,
     tem_models,
     tem_optim,
-    loc_land_init,
-    f_one
-);
-kwargs = (;
-    res_vec,
-    loc_obs,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    tem_optim,
-    loc_land_init,
-    f_one
-);
-
-loc_loss(tblParams.defaults, forward, kwargs...)
-loc_loss2(tblParams.defaults, forward, kwargs2...)
+    loc_land_init_a,
+    f_one, upVectType)
 
 using ForwardDiff
 
-fg2(x) = loc_loss2(x, forward, kwargs2...)
-@time grad = ForwardDiff.gradient(fg2, tblParams.defaults)
-
-fg(x) = loc_loss(x, forward, kwargs...)
+fg(x) = loc_loss(x, forward, res_vec, loc_obs,
+    loc_forcing,
+    tem_helpers,
+    tem_spinup,
+    tem_models,
+    tem_optim,
+    loc_land_init_a,
+    f_one, upVectType)
 @time grad = ForwardDiff.gradient(fg, tblParams.defaults)
