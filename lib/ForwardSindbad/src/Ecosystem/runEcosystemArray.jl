@@ -126,9 +126,9 @@ function fill_it!(ar, val, ts::Int64)
 end
 
 function fill_it_two!(ar, val, ts::Int64)
-    if length(val)>1 && typeof(val) <:AbstractVector
+    if length(val) > 1 && typeof(val) <: AbstractVector
         ar[ts, :] = val
-    elseif length(val)==1
+    elseif length(val) == 1
         ar[ts] = val
     end
 end

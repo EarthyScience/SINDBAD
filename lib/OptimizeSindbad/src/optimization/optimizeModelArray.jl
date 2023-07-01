@@ -30,7 +30,7 @@ end
 getDataArray(outsmodel, observations, modelVariables, obsVariables)
 """
 function getDataArray(model_output::AbstractArray,
-    observations::AbstractArray, mod_ind::Int, obs_ind_start::Int)
+    observations, mod_ind::Int, obs_ind_start::Int)
     ŷ = model_output[mod_ind]
     y = observations[obs_ind_start]
     yσ = observations[obs_ind_start+1]
