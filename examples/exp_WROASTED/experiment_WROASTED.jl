@@ -32,7 +32,7 @@ replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
     "modelRun.flags.calcCost" => true,
     "spinup.flags.saveSpinup" => false,
     "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => true,
+    "modelRun.flags.runSpinup" => false,
     "modelRun.flags.debugit" => false,
     "modelRun.rules.model_array_type" => arraymethod,
     "spinup.flags.doSpinup" => true,
@@ -70,6 +70,18 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     loc_outputs,
     land_init_space,
     f_one)
+
+res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
+
+@time big_land = runEcosystem(info.tem.models.forward,
+    forc,
+    tem_vals,
+    loc_space_inds,
+    loc_forcings,
+    land_init_space,
+    res_vec_space,
+    f_one);
+
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
 land_spin = land_init_space[1];
 @time land_spin_now = runSpinup(info.tem.models.forward,
