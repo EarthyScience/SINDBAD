@@ -74,8 +74,8 @@ loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
-# res_vec = Vector{typeof(loc_land_init)}(undef, length(info.tem.helpers.dates.vector));
-res_vec = Vector{typeof(loc_land_init)}(undef, length(info.tem.helpers.dates.vector));
+# res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
+res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
 # res_vec = SVector{typeof(loc_land_init)}[loc_land_init for _ in info.tem.helpers.dates.vector];
 # res_vec = [loc_land_init for _ in info.tem.helpers.dates.vector];
 @time big_land = ForwardSindbad.coreEcosystem(
@@ -160,7 +160,7 @@ end
 
 upVectType = [typeof(tblParams.defaults)];
 loc_land_init_a = [loc_land_init];
-res_vec = Vector{Any}(undef, length(info.tem.helpers.dates.vector));
+res_vec = Vector{Any}(undef, info.tem.helpers.dates.size);
 loc_loss(ForwardDiff.Dual.(tblParams.defaults), forward, res_vec, loc_obs,
     loc_forcing,
     tem_helpers,

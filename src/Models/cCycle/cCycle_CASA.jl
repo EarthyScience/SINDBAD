@@ -223,8 +223,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     ## solve it for each pool individually
     for zix ∈ zixVecOrder
         # general k loss
-        # cLossRate[zix, :] = max(min(p_cTau_k[zix, :], 𝟙), 𝟘)
-        cLossRate[zix, :] = clamp(p_cTau_k[zix], 𝟘, 𝟙) #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
+        cLossRate[zix, :] = clamp_01(p_cTau_k[zix]) #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
         # so that pools are not NaN
         if any(zix == helpers.pools.zix.cVeg)
             # additional losses [RA] in veg pools

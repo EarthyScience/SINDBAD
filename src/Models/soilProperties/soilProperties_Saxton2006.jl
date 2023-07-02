@@ -203,7 +203,7 @@ function kSaxton2006(land, helpers, sl)
     ## calculate variables
     wSat = p_wSat[sl]
     θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat
-    θ_dos = clamp(θ_dos, 𝟘, 𝟙)
+    θ_dos = clamp_01(θ_dos)
     β = p_β[sl]
     kSat = p_kSat[sl]
     λ = 𝟙 / β

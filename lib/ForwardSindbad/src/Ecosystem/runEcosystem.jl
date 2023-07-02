@@ -31,8 +31,6 @@ function timeLoopForward(
     time_steps::Int64,
     f_one
 )
-    # @show "I am", time_steps
-
     for ts = 1:time_steps
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
         out = runModels!(out, f, forward_models, tem_helpers)
@@ -129,7 +127,7 @@ function coreEcosystem(approaches,
             spinup_forcing=nothing)
     end
     time_steps = tem_helpers.dates.size
-    @time out = timeLoopForward(approaches,
+    out = timeLoopForward(approaches,
         loc_forcing,
         land_spin_now,
         tem_helpers,

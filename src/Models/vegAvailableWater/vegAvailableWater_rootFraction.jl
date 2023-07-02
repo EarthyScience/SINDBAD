@@ -28,7 +28,7 @@ function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
         PAW ∈ land.vegAvailableWater
     end
     for sl ∈ eachindex(soilW)
-        PAW_sl = p_fracRoot2SoilD[sl] * (max(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘))
+        PAW_sl = p_fracRoot2SoilD[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - p_wWP[sl]))
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 

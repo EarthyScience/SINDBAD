@@ -45,7 +45,7 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
     #PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
     tmp = α * Rn * (Δ / (Δ + γ)) / λ
 
-    PTtermSub = max(tmp, 𝟘)
+    PTtermSub = max_0(tmp)
     # PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation

@@ -17,7 +17,7 @@ function compute(o::vegFraction_scaledLAI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = min(LAI * LAIscale, 𝟙)
+    vegFraction = min_1(LAI * LAIscale)
 
     ## pack land variables
     @pack_land vegFraction => land.states
