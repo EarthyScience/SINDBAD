@@ -58,7 +58,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
     # WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
     ndxn = (PET <= 0.0)
     BGME[ndxn] = pBGME[ndxn]
-    BGME = max(min(BGME, 𝟙), 𝟘)
+    BGME = max_0(min_1(BGME))
     # FEED IT TO THE STRUCTURE
     fsoilW = BGME
     # set the same moisture stress to all carbon pools

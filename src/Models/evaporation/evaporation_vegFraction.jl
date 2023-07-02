@@ -22,7 +22,7 @@ function compute(o::evaporation_vegFraction, forcing, land, helpers)
 
     # multiply equilibrium PET with αSoil & [1.0 - vegFraction] to get potential soil evap
     tmp = PET * α * (𝟙 - vegFraction)
-    PETsoil = max(tmp, 𝟘)
+    PETsoil = max_0(tmp)
 
     # scale the potential with the a fraction of available water & get the minimum of the current moisture
     evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))

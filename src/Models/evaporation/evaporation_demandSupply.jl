@@ -19,8 +19,8 @@ function compute(o::evaporation_demandSupply, forcing, land, helpers)
         𝟘 ∈ helpers.numbers
     end
     # calculate potential soil evaporation
-    PETsoil = max(𝟘, PET * α)
-    evaporationSupply = max(𝟘, supLim * (soilW[1] + ΔsoilW[1]))
+    PETsoil = max_0(PET * α)
+    evaporationSupply = max_0(supLim * (soilW[1] + ΔsoilW[1]))
 
     # calculate the soil evaporation as a fraction of scaling parameter & PET
     evaporation = min(PETsoil, evaporationSupply)

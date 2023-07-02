@@ -33,21 +33,6 @@ function compute(o::wCycle_components, forcing, land, helpers)
     soilW = add_vec(soilW, ΔsoilW)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
 
-    # for (lc, l) in enumerate(zix.soilW)
-    #     @rep_elem max(TWS[l], 𝟘) => (soilW, lc, :soilW)
-    # end
-
-    # for (lc, l) in enumerate(zix.groundW)
-    #     @rep_elem max(TWS[l], 𝟘) => (groundW, lc, :groundW)
-    # end
-
-    # for (lc, l) in enumerate(zix.surfaceW)
-    #     @rep_elem max(TWS[l], 𝟘) => (surfaceW, lc, :surfaceW)
-    # end
-
-    # @rep_elem soilW[1] => (TWS, 1, :TWS)
-    # @rep_elem surfaceW[1] => (TWS, 7, :TWS)
-
     # set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
 

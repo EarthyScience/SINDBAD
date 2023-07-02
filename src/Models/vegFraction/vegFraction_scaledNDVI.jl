@@ -17,7 +17,7 @@ function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = clamp(NDVI * NDVIscale, 𝟘, 𝟙)
+    vegFraction = clamp_01(NDVI * NDVIscale)
 
     ## pack land variables
     @pack_land vegFraction => land.states

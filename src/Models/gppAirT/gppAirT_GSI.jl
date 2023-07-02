@@ -41,11 +41,11 @@ function compute(o::gppAirT_GSI, forcing, land, helpers)
     ## calculate variables
     f_c_prev = cScGPP_prev
     fT_c = f_smooth(f_c_prev, Tair, fT_c_τ, fT_c_slope, fT_c_base)
-    cScGPP = clamp(fT_c, 𝟘, 𝟙)
+    cScGPP = clamp_01(fT_c)
 
     f_h_prev = hScGPP_prev
     fT_h = f_smooth(f_h_prev, Tair, fT_h_τ, -fT_h_slope, fT_h_base)
-    hScGPP = clamp(fT_h, 𝟘, 𝟙)
+    hScGPP = clamp_01(fT_h)
 
     TempScGPP = min(cScGPP, hScGPP)
 

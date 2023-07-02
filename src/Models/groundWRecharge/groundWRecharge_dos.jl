@@ -33,8 +33,8 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
         (𝟘, 𝟙) ∈ helpers.numbers
     end
     # calculate recharge
-    dosSoilEnd = clamp((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟘, 𝟙)
-    recharge_fraction = clamp((dosSoilEnd)^(dos_exp * p_β[end]), 𝟘, 𝟙)
+    dosSoilEnd = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
+    recharge_fraction = clamp_01((dosSoilEnd)^(dos_exp * p_β[end]))
     groundWRec = recharge_fraction * (soilW[end] + ΔsoilW[end])
     nGroundW = length(groundW) * 𝟙
 

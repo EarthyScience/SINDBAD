@@ -19,13 +19,13 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-    maxAWC = max(s_wSat - s_wWP, 𝟘)
+    maxAWC = max_0(s_wSat - s_wWP)
     Smax = sSmax * maxAWC
     Smin = sSmin * Smax
 
     SM = max(sum(soilW), Smin)
     smsc = ((SM - Smin) / (Smax - Smin))^q
-    SMScGPP = clamp(smsc, 𝟘, 𝟙)
+    SMScGPP = clamp_01(smsc)
 
     ## pack land variables
     @pack_land SMScGPP => land.gppSoilW

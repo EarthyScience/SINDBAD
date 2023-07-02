@@ -36,7 +36,7 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    SMScGPP = clamp((Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev, 𝟘, 𝟙) # use the current We if the temperature and PET are favorable, else use the previous one.
+    SMScGPP = clamp_01((Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
 
     SMScGPP_prev = SMScGPP
 

@@ -13,7 +13,7 @@ function compute(o::gppAirT_Wang2014, forcing, land, helpers)
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
     ## calculate variables
-    TempScGPP = clamp(TairDay / Tmax, 𝟘, 𝟙)
+    TempScGPP = clamp_01(TairDay / Tmax)
 
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT

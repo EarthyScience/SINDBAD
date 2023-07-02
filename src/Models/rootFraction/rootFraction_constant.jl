@@ -41,7 +41,7 @@ function compute(o::rootFraction_constant, forcing, land, helpers)
     for sl ∈ eachindex(land.pools.soilW)
         soilcumuD = cumulativeDepths[sl]
         rootOver = maxRootDepth - soilcumuD
-        rootFrac = rootOver > 𝟘 ? constantRootFrac : 𝟘
+        rootFrac = rootOver > 𝟘 ? constantRootFrac : zero(constantRootFrac)
         @rep_elem rootFrac => (p_fracRoot2SoilD, sl, :soilW)
     end
 

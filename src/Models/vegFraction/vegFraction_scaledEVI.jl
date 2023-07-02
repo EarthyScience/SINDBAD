@@ -17,7 +17,7 @@ function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = min(EVI * EVIscale, 𝟙)
+    vegFraction = min_1(EVI * EVIscale)
 
     ## pack land variables
     @pack_land vegFraction => land.states

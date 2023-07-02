@@ -51,19 +51,19 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
         # scalars of maintenance respiration for models A; B & C
         # km is the maintenance respiration coefficient [d-1]
-        p_km_ix = min(𝟙 / p_C2Nveg[ix] * RMN * fT, 𝟙)
+        p_km_ix = min_1(𝟙 / p_C2Nveg[ix] * RMN * fT)
         p_km4su_ix = p_km[ix] * YG
 
         # maintenance respiration first: R_m = km * C
         RA_M_ix = p_km_ix * cEco[ix]
         # no negative maintenance respiration
-        RA_M_ix = max(RA_M_ix, 𝟘)
+        RA_M_ix = max_0(RA_M_ix)
 
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
         RA_G_ix = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M_ix)
 
         # no negative growth respiration
-        RA_G_ix = max(RA_G_ix, 𝟘)
+        RA_G_ix = max_0(RA_G_ix)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
