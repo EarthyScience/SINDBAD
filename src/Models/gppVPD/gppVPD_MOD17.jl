@@ -15,7 +15,7 @@ function compute(o::gppVPD_MOD17, forcing, land, helpers)
 
     ## calculate variables
     vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
-    VPDScGPP = clamp(vsc, 𝟘, 𝟙)
+    VPDScGPP = clamp_01(vsc)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

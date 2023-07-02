@@ -9,6 +9,8 @@ export getSindbadModels
 export addS
 export tcprint
 export set_component_from_main_pool, set_main_from_component_pool
+export clamp_01
+export min_0, max_0, min_1, max_1
 
 """
     noStackTrace()
@@ -667,4 +669,48 @@ end
                     Expr(:parameters, Expr(:(...), :(land.pools)),
                         Expr(:kw, s_main, s_main))))))))
     return output
+end
+
+"""
+clamp_01(num)
+returns max(min(num, 1), 0)
+"""
+function clamp_01(num)
+    return clamp(num, zero(num), one(num))
+end
+
+
+"""
+min_0(num)
+returns min(num, 0)
+"""
+function min_0(num)
+    return min(num, zero(num))
+end
+
+
+"""
+min_1(num)
+returns min(num, 1)
+"""
+function min_1(num)
+    return min(num, one(num))
+end
+
+
+"""
+max_0(num)
+returns max(num, 0)
+"""
+function max_0(num)
+    return max(num, zero(num))
+end
+
+
+"""
+max_1(num)
+returns max(num, 1)
+"""
+function max_1(num)
+    return max(num, one(num))
 end

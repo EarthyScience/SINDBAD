@@ -56,7 +56,7 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg^β_veg), 𝟙)
+    tmp_SatExFrac = min_1((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
     runoffSatExc = WBP * tmp_SatExFrac
     # update water balance pool
     WBP = WBP - runoffSatExc

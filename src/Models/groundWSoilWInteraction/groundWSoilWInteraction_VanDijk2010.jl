@@ -36,15 +36,15 @@ function compute(o::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
 
     # calculate recharge
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
-    dosSoilend = max((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟙)
+    dosSoilend = max_1((soilW[end] + ΔsoilW[end]) / p_wSat[end])
     k_sat = p_kSat[end] # assume GW is saturated
     k_fc = p_kFC[end] # assume GW is saturated
     k_unsat = unsatK(land, helpers, length(land.pools.soilW))
 
     # get the capillary flux
     c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-    gwCapFlow = max(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)),
-            soilW[end] + ΔsoilW[end]), 𝟘)
+    gwCapFlow = max_0(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)),
+        soilW[end] + ΔsoilW[end]))
 
     # adjust the delta storages
     n_groundW = 𝟙 * length(groundW)

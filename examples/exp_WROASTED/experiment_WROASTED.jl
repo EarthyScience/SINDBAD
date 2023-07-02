@@ -49,6 +49,8 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
 
 info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 
+# mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
+# tcprint(mtup)
 
 forc = getKeyedArrayFromYaxArray(forcing);
 output = setupOutput(info);

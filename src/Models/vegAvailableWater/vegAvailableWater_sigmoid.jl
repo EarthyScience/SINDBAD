@@ -42,9 +42,9 @@ function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
     for sl ∈ eachindex(soilW)
         θ_dos = (soilW[sl] + ΔsoilW[sl]) / p_wSat[sl]
         θ_fc_dos = p_wFC[sl] / p_wSat[sl]
-        tmpSoilWStress = clamp(𝟙 / (𝟙 + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))), 𝟘, 𝟙)
+        tmpSoilWStress = clamp_01(𝟙 / (𝟙 + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
-        maxWater = clamp(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘, 𝟙)
+        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - p_wWP[sl])
         PAW_sl = p_fracRoot2SoilD[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end

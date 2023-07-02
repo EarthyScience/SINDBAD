@@ -32,7 +32,7 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # -> set all the positive values (from groundwater to soil) to zero
-    gwCapFlow = min(tmp, 𝟘)
+    gwCapFlow = min_0(tmp)
 
     # adjust the delta storages
     ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)

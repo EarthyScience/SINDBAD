@@ -31,7 +31,7 @@ function compute(o::gppVPD_PRELES, forcing, land, helpers)
     ## calculate variables
     fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambCO2)^-Cκ)
     fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
-    VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, 𝟘, 𝟙)
+    VPDScGPP = clamp_01(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

@@ -41,7 +41,7 @@ function compute(o::cCycleDisturbance_cFlow, forcing, land, helpers)
         for zixVeg ∈ zixVegAll
             cLoss = 𝟘 # do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
-                cLoss = max(cEco[zixVeg] - carbon_remain, 𝟘) * isDisturbed
+                cLoss = max_0(cEco[zixVeg] - carbon_remain) * isDisturbed
             end
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
             ndxLoseToZix = ndxLoseToZixVec[zixVeg]
