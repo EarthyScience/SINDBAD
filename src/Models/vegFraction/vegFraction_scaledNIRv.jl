@@ -17,7 +17,7 @@ function compute(o::vegFraction_scaledNIRv, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = clamp(NIRv * NIRvscale, 𝟘, 𝟙)
+    vegFraction = clamp_01(NIRv * NIRvscale)
 
     ## pack land variables
     @pack_land vegFraction => land.states

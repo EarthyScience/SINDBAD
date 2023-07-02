@@ -30,10 +30,10 @@ function compute(o::rainSnow_Tair, forcing, land, helpers)
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = 𝟘
+        rain = zero(Rain)
     else
         rain = Rain
-        snow = 𝟘
+        snow = zero(Rain)
     end
     precip = rain + snow
 

@@ -34,7 +34,7 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     # extract from top to bottom
     if PAWTotal > 𝟘
         for sl ∈ 1:length(land.pools.soilW)
-            uptakeProportion = max(𝟘, PAW[sl] / PAWTotal)
+            uptakeProportion = max_0(PAW[sl] / PAWTotal)
             @rep_elem toUptake * uptakeProportion => (wRootUptake, sl, :soilW)
             @add_to_elem -wRootUptake[sl] => (ΔsoilW, sl, :soilW)
         end

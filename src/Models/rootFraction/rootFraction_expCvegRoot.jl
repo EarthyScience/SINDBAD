@@ -41,7 +41,7 @@ function compute(o::rootFraction_expCvegRoot, forcing, land, helpers)
     for sl ∈ eachindex(land.pools.soilW)
         soilcumuD = cumulativeDepths[sl]
         rootOver = maxRootDepth - soilcumuD
-        rootFrac = rootOver > 𝟘 ? tmp_rootFrac : 𝟘
+        rootFrac = rootOver > 𝟘 ? tmp_rootFrac : zero(tmp_rootFrac)
         @rep_elem rootFrac => (p_fracRoot2SoilD, sl, :soilW)
     end
     ## pack land variables

@@ -12,7 +12,7 @@ function compute(o::transpirationDemand_CASA, forcing, land, helpers)
         PET ∈ land.PET
         (𝟘, 𝟙) ∈ helpers.numbers
     end
-    VMC = clamp(sum(PAW) / sum(p_wAWC), 𝟘, 𝟙)
+    VMC = clamp_01(sum(PAW) / sum(p_wAWC))
     RDR = (𝟙 + mean(p_α)) / (𝟙 + mean(p_α) * (VMC^mean(p_β)))
     tranDem = percolation + (PET - percolation) * RDR
 

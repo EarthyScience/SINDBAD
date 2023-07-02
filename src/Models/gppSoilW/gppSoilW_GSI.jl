@@ -34,10 +34,10 @@ function compute(o::gppSoilW_GSI, forcing, land, helpers)
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-    actAWC = max(addS(soilW) - s_wWP, 𝟘)
-    SM_nor = min(actAWC / s_wAWC, 𝟙)
+    actAWC = max_0(addS(soilW) - s_wWP)
+    SM_nor = min_1(actAWC / s_wAWC)
     fW = (𝟙 - fW_τ) * SMScGPP_prev + fW_τ * (𝟙 / (𝟙 + exp(-fW_slope * (SM_nor - fW_base))))
-    SMScGPP = clamp(fW, 𝟘, 𝟙)
+    SMScGPP = clamp_01(fW)
     SMScGPP_prev = SMScGPP
 
     ## pack land variables

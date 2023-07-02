@@ -152,7 +152,7 @@ function updateModelParametersType(tblParams, approaches, pVector)
         newapproachx = if modelName in tblParams.modelsApproach
             vars = getproperties(approachx)
             newvals = Pair[]
-            for (k,var) ∈ pairs(vars)
+            for (k, var) ∈ pairs(vars)
                 pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
                     tblParams)
                 #pval = getproperty(approachx, var)
@@ -162,7 +162,7 @@ function updateModelParametersType(tblParams, approaches, pVector)
                 end
                 push!(newvals, k => var)
             end
-            constructorof(typeof(approachx))(;newvals...)
+            constructorof(typeof(approachx))(; newvals...)
         else
             approachx
         end
@@ -937,7 +937,7 @@ A helper function to set the number type to the specified data type
 """
 function setNumberType(t="Float64")
     mains = (:Float32, :Float64)
-    forwardiffs = (:Dual, )
+    forwardiffs = (:Dual,)
     t = Symbol(t)
     if t in mains
         ttype = getfield(Main, t)
@@ -945,7 +945,7 @@ function setNumberType(t="Float64")
         ttype = getfield(ForwardDiff, t)
     else
         error("Number type $(t) is not supported in SINDBAD. Change the setting in model run.")
-    end 
+    end
     return ttype
 end
 
@@ -1000,7 +1000,7 @@ function getLoopingInfo(info::NamedTuple)
     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
     #     # todo: create the time dimesion using the dates vector
     #     # if dim == "time"
-    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), length(info.tem.helpers.dates.vector)))
+    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.tem.helpers.dates.size))
     #     # else
     #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
     #     # end

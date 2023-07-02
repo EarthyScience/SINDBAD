@@ -28,7 +28,7 @@ function compute(o::cTau_mult, forcing, land, helpers)
     end
     for i ∈ eachindex(p_k)
         tmp = p_k_base[i] * p_kfLAI[i] * p_kfSoil[i] * p_kfVeg[i] * fT * p_fsoilW[i]
-        tmp = clamp(tmp, 𝟘, 𝟙)
+        tmp = clamp_01(tmp)
         @rep_elem tmp => (p_k, i, :cEco)
     end
 

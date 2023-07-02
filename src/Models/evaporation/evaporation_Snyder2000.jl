@@ -38,7 +38,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, helpers)
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
     PET = PET * α * (𝟙 - fAPAR)
-    PET = max(PET, 𝟘)
+    PET = max_0(PET)
 
     sET = 𝟘
     # get the soil moisture available PET scaled by α & a proxy of vegetation cover
