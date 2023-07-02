@@ -34,7 +34,7 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## calculate variables
     ## FROM SHANNING
 
-    CI = 1 - Rg / RgPot #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI = 𝟙 - Rg / RgPot #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
@@ -52,7 +52,7 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     # end
 
     cScGPP = 𝟙 - μ * (𝟙 - CI_nor)
-    CloudScGPP = RgPot > 𝟘 ? cScGPP : 𝟘
+    CloudScGPP = RgPot > 𝟘 ? cScGPP : zero(cScGPP)
 
     ## pack land variables
     @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation

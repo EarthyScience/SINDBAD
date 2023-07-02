@@ -33,8 +33,8 @@ function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
     X = X_prev + (𝟙 / TimConst) * (TairDay - X_prev)
 
     # calculate the stress & saturation
-    S = max(X - X0, 𝟘)
-    TempScGPP = clamp(S / Smax, 𝟘, 𝟙)
+    S = max_0(X - X0)
+    TempScGPP = clamp_01(S / Smax)
 
     # replace the previous X
     X_prev = X

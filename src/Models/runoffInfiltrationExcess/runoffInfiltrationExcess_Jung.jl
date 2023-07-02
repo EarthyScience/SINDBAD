@@ -19,7 +19,7 @@ function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     InfExcess =
         rain - (rain * fAPAR +
                 (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
-    runoffInfExc = rain > 𝟘 ? InfExcess : 𝟘
+    runoffInfExc = rain > 𝟘 ? InfExcess : zero(InfExcess)
     WBP = WBP - runoffInfExc
 
     ## pack land variables

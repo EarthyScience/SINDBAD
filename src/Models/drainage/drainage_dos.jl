@@ -37,14 +37,14 @@ function compute(o::drainage_dos, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        soilW_sl = min(max(soilW[sl] + ΔsoilW[sl], 𝟘), p_wSat[sl])
-        drain_fraction = clamp(((soilW_sl) / p_wSat[sl])^(dos_exp * p_β[sl]), 𝟘, 𝟙)
+        soilW_sl = min(max_0(soilW[sl] + ΔsoilW[sl]), p_wSat[sl])
+        drain_fraction = clamp_01(((soilW_sl) / p_wSat[sl])^(dos_exp * p_β[sl]))
         drainage_tmp = drain_fraction * (soilW_sl)
         max_drain = p_wSat[sl] - p_wFC[sl]
         lossCap = min(soilW_sl, max_drain)
         holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         drain = min(drainage_tmp, holdCap, lossCap)
-        tmp = drain > tolerance ? drain : 𝟘
+        tmp = drain > tolerance ? drain : zero(drain)
         @rep_elem tmp => (drainage, sl, :soilW)
         @add_to_elem -tmp => (ΔsoilW, sl, :soilW)
         @add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)

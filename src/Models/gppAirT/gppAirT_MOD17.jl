@@ -15,7 +15,7 @@ function compute(o::gppAirT_MOD17, forcing, land, helpers)
 
     ## calculate variables
     tsc = TairDay / ((𝟙 - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
-    TempScGPP = clamp(tsc, 𝟘, 𝟙)
+    TempScGPP = clamp_01(tsc)
 
     ## pack land variables
     @pack_land TempScGPP => land.gppAirT

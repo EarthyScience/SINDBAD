@@ -43,11 +43,11 @@ function compute(o::snowMelt_TairRn, forcing, land, helpers)
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
     # @show Tair, melt_T
     tmp_T = Tair * melt_T
-    tmp_Rn = max(Rn * melt_Rn, 𝟘)
+    tmp_Rn = max_0(Rn * melt_Rn)
     potMelt = (tmp_T + tmp_Rn) * snowFraction
 
     # potential snow melt if T > 0.0 deg C
-    potMelt = Tair > 𝟘 ? potMelt : 𝟘
+    potMelt = Tair > 𝟘 ? potMelt : zero(potMelt)
     snowMelt = min(addS(snowW, ΔsnowW), potMelt)
 
     # divide snowmelt loss equally from all layers

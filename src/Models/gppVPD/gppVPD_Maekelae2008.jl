@@ -14,7 +14,7 @@ function compute(o::gppVPD_Maekelae2008, forcing, land, helpers)
 
     ## calculate variables
     VPDScGPP = exp(-k * VPDDay)
-    VPDScGPP = min(VPDScGPP, 𝟙)
+    VPDScGPP = min_1(VPDScGPP)
 
     ## pack land variables
     @pack_land VPDScGPP => land.gppVPD

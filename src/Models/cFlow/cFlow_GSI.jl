@@ -128,26 +128,23 @@ function compute(o::cFlow_GSI, forcing, land, helpers)
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
-    LR2Re = min(max(-slope_fWfTfR, 𝟘) * LR2ReSlp, 𝟙) # * (cVeg_growth < 𝟘)
-    # LR2Re = clamp(-slope_fWfTfR * LR2ReSlp, 𝟘, 𝟙) # * (cVeg_growth < 𝟘)
-    Re2LR = min(max(slope_fWfTfR, 𝟘) * Re2LRSlp, 𝟙) # * (cVeg_growth > 0.0)
-    # Re2LR = clamp(slope_fWfTfR * Re2LRSlp, 𝟘, 𝟙) # * (cVeg_growth > 0.0)
-    KShed = min(max(-slope_fWfTfR, 𝟘) * kShed, 𝟙)
-    # KShed = clamp(-slope_fWfTfR * kShed, 𝟘, 𝟙)
+    LR2Re = min(max(-slope_fWfTfR, zero(slope_fWfTfR)) * LR2ReSlp, one(slope_fWfTfR)) # * (cVeg_growth < 𝟘)
+    Re2LR = min(max(slope_fWfTfR, zero(slope_fWfTfR)) * Re2LRSlp, one(slope_fWfTfR)) # * (cVeg_growth > 0.0)
+    KShed = min(max(-slope_fWfTfR, zero(slope_fWfTfR)) * kShed, one(slope_fWfTfR))
 
     # set the Leaf & Root to Reserve flow rate as the same
     L2Re = LR2Re # should it be divided by 2?
     R2Re = LR2Re
     #todo this is needed to make sure that the flow out of Leaf or root does not exceed one. was not needed in matlab version, but reaches this point often in julia, when the fWfTfR suddenly drops from 1 to near zero.
-    k_Lshed = min(KShed, 𝟙 - L2Re)
-    k_Rshed = min(KShed, 𝟙 - R2Re)
+    k_Lshed = min(KShed, one(KShed) - L2Re)
+    k_Rshed = min(KShed, one(KShed) - R2Re)
 
     # Estimate flows from reserve to leaf & root (sujan modified on
-    Re2L_i = 𝟘
+    Re2L_i = zero(Re2LR)
     if fW + fR !== 𝟘
         Re2L_i = Re2LR * (fW / (fR + fW)) # if water stressor is high, , larger fraction of reserve goes to the leaves for light acquisition
     end
-    Re2R_i = Re2LR * (𝟙 - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
+    Re2R_i = Re2LR * (one(Re2L_i) - Re2L_i) # if light stressor is high (=sufficient light), larger fraction of reserve goes to the root for water uptake
 
     # adjust the outflow rate from the flow pools
 
