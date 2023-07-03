@@ -13,7 +13,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI o
     @unpack_land begin
         (giver, taker, cFlowA) ∈ land.cCycleBase
-        (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
+        (𝟘, 𝟙, tolerance, num_type, sNT) ∈ helpers.numbers
     end
     ## instantiate variables
 
@@ -48,7 +48,7 @@ function define(o::cFlow_GSI, forcing, land, helpers)
         k_Lshed=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_Rshed=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    p_A = sNT.(zero([taker...]) .+ 𝟙)
+    p_A = sNT.(zero([taker...]))# .+ 𝟙)
 
     if land.pools.cEco isa SVector
         p_A = SVector{length(p_A)}(p_A)

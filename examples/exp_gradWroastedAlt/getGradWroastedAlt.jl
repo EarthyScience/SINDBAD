@@ -17,7 +17,7 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -75,7 +75,7 @@ function g_loss(x,
         f_one)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.numType);
+rand_m = rand(info.tem.helpers.numbers.num_type);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
@@ -133,7 +133,7 @@ g_loss(tblParams.defaults,
     land_init_space,
     f_one)
 # g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)

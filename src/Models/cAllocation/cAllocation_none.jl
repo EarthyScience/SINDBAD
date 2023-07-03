@@ -5,7 +5,7 @@ struct cAllocation_none <: cAllocation end
 function define(o::cAllocation_none, forcing, land, helpers)
 
     ## calculate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    cAlloc = zeros(helpers.numbers.num_type, length(land.pools.cEco))
 
     ## pack land variables
     @pack_land cAlloc => land.states

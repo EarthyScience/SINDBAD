@@ -52,7 +52,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     forc = getKeyedArrayFromYaxArray(forcing)
 
-    linit = createLandInit(info.pools, info.tem)
+    linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)

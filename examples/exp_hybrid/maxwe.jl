@@ -16,7 +16,7 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -50,7 +50,7 @@ forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 #pprint(forcing)
 
 # Instantiate land components
-land = createLandInit(info.pools, info.tem)
+land = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 helpers = info.tem.helpers;
 tem = info.tem;
 # helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]

@@ -1,15 +1,15 @@
 export createLandInit, setupOutput, setupOptiOutput
 
 """
-    createLandInit(info)
+createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
 
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
-function createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
-    initPools = getInitPools(info_pools, info_tem.helpers)
-    initStates = getInitStates(info_pools, info_tem.helpers)
+function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
+    initPools = getInitPools(info_pools, tem_helpers)
+    initStates = getInitStates(info_pools, tem_helpers)
     out = (; fluxes=(;), pools=initPools, states=initStates)::NamedTuple
-    sortedModels = sort([_sm for _sm ∈ info_tem.models.selected_models.model])
+    sortedModels = sort([_sm for _sm ∈ tem_models.selected_models.model])
     for model ∈ sortedModels
         out = setTupleField(out, (model, (;)))
     end
@@ -80,7 +80,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
     return dimSize, dimName
 end
 
-function getOutDims(info, vname_full, outpath, outformat, land_init, forcing_sizes)
+function getOutDims(info, tem_helpers, vname_full, outpath, outformat, land_init, forcing_sizes)
     vname = Symbol(split(string(vname_full), '.')[end])
     inax = info.modelRun.mapping.runEcosystem
 
@@ -101,7 +101,7 @@ function getOutDims(info, vname_full, outpath, outformat, land_init, forcing_siz
     end
 end
 
-function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:array})
+function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:array})
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     ax_vals = values(forcing_sizes)
@@ -109,23 +109,23 @@ function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:array})
         depth_size = 1
     end
     # ar = Array{Real, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
         ax_vals[2:end]...)
-    # ar = Array{info.tem.helpers.numbers.numType, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
+    # ar = Array{tem_helpers.numbers.num_type, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     return ar .= info.tem.helpers.numbers.sNT(NaN)
 end
 
-function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:sizedarray})
+function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:sizedarray})
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     ax_vals = values(forcing_sizes)
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
@@ -133,14 +133,14 @@ function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:sizedarra
     return mar = SizedArray{Tuple{size(ar)...},eltype(ar)}(undef)
 end
 
-function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:marray})
+function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:marray})
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     ar = nothing
     ax_vals = values(forcing_sizes)
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{getOutArrayType(info.tem.helpers.numbers.numType, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
@@ -148,8 +148,8 @@ function getOutDims(info, vname_full, land_init, forcing_sizes, ::Val{:marray})
     return mar = MArray{Tuple{size(ar)...},eltype(ar)}(undef)
 end
 
-function getOutArrayType(numType, forwardDiff)
-        return numType
+function getOutArrayType(num_type, forwardDiff)
+    return num_type
 end
 
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
@@ -175,10 +175,10 @@ function getVariableFields(datavars)
     return ovro
 end
 
-function setupOutput(info::NamedTuple)
+function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     forcing_sizes = info.tem.forcing.sizes
     @info "setupOutput: creating initial out/land..."
-    land_init = createLandInit(info.pools, info.tem)
+    land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
     outformat = info.modelRun.output.format
     @info "setupOutput: getting data variables..."
 
@@ -197,12 +197,13 @@ function setupOutput(info::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "setupOutput: getting output dimension for yaxarray..."
     outdims = map(datavars) do vn
-        return getOutDims(info, vn, info.output.data, outformat, land_init, forcing_sizes)
+        return getOutDims(info, tem_helpers, vn, info.output.data, outformat, land_init, forcing_sizes)
     end
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     @info "setupOutput: creating array output"
     outarray = map(datavars) do vn
-        return getOutDims(info,
+        getOutDims(info,
+            tem_helpers,
             vn,
             land_init,
             forcing_sizes,
@@ -225,12 +226,20 @@ function setupOutput(info::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:ordered_variables, ovro))
 
 
-    if info.modelRun.flags.runOpti || info.tem.helpers.run.calcCost
+    if info.modelRun.flags.runOpti || tem_helpers.run.calcCost
         @info "setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
     println("----------------------------------------------")
     return output_tuple
+end
+
+function setupOutput(info::NamedTuple)
+    return setupBaseOutput(info, info.tem.helpers)
+end
+
+function setupOutput(info::NamedTuple, tem_helpers::NamedTuple)
+    return setupBaseOutput(info, tem_helpers)
 end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)

@@ -41,12 +41,7 @@ function compute(o::percolation_WBP, forcing, land, helpers)
             toAllocate = toAllocate - allocated
         end
     end
-
-    if abs(toAllocate) > tolerance
-        WBP = toAllocate
-    else
-        WBP = 𝟘
-    end
+    WBP = abs(toAllocate) > tolerance ? toAllocate : zero(toAllocate)
 
     ## pack land variables
     @pack_land begin

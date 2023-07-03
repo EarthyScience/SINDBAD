@@ -30,7 +30,7 @@
 		"verbosity": 5,
 		"model_array_type": "staticarray",
 		"forward_diff": true,
-		"data_type": "Float32",
+		"data_type": "ForwardDiff.Dual{Float32}",
 		"data_backend": "zarr",
 		"tolerance": 1.0e-3,
 		"yax_max_cache": 2e9
