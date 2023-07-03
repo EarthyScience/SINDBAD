@@ -38,7 +38,7 @@
 		"isMultiObj": false
 	},
 	"default_parameter": { 
-		"is_ml": false,
+		"is_ml": true,
 		"distribution": ["normal", [0.0, 1.0]]
 	},
 	"optimized_parameters": {
@@ -173,7 +173,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"reco": {
@@ -207,7 +207,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"evapotranspiration": {
@@ -241,7 +241,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"transpiration": {
@@ -275,7 +275,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "mse"
 				}
 			},
 			"agb": {
