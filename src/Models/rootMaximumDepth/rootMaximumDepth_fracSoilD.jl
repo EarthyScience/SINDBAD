@@ -25,7 +25,6 @@ function compute(o::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     @unpack_land sumSoilDepth ∈ land.rootMaximumDepth
     ## calculate variables
     # get the soil thickness & root distribution information from input
-    # @show sumSoilDepth, fracRootD2SoilD
     maxRootDepth = sumSoilDepth * fracRootD2SoilD
     # disp(["the maxRootD scalar: " fracRootD2SoilD])
 

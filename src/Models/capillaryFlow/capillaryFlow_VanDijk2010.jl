@@ -11,7 +11,7 @@ function define(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
     capFlow = zero(land.pools.soilW)
 
@@ -32,7 +32,7 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
         capFlow ∈ land.capillaryFlow
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (numType, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
+        (num_type, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
     for sl ∈ 1:(length(land.pools.soilW)-1)

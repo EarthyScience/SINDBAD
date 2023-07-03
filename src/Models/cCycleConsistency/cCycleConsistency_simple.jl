@@ -7,9 +7,9 @@ function define(o::cCycleConsistency_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
-    tmp = ones(numType, length(cEco), length(cEco))
+    tmp = ones(num_type, length(cEco), length(cEco))
     flagU = flagUpper(tmp)
     flagL = flagLower(tmp)
     flagUL = flagU + flagL

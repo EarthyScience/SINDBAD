@@ -11,7 +11,7 @@ function define(o::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA o
 
     ## instantiate variables
-    p_kfLAI = ones(helpers.numbers.numType, length(land.pools.cEco)) #(inefficient, should be pix zix_veg)
+    p_kfLAI = ones(helpers.numbers.num_type, length(land.pools.cEco)) #(inefficient, should be pix zix_veg)
 
     ## pack land variables
     @pack_land p_kfLAI => land.cTauLAI
