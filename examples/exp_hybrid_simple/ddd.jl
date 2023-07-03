@@ -68,7 +68,7 @@ function test_gr(pv,
         f_one)
 
 
-    op_dat = [Vector{ForwardDiff.Dual{ForwardDiff.Tag{typeof(helper_objective),tem_vals.helpers.numbers.numType},tem_vals.helpers.numbers.numType,10}}(undef, length(od)) for od in op.data]
+    op_dat = [Vector{ForwardDiff.Dual{ForwardDiff.Tag{typeof(helper_objective),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,10}}(undef, length(od)) for od in op.data]
     op = (; op..., data=op_dat)
     ForwardDiff.gradient(helper_objective, pv)
 end

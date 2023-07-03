@@ -5,9 +5,9 @@ struct cCycle_CASA <: cCycle end
 function define(o::cCycle_CASA, forcing, land, helpers)
 
     ## instantiate variables
-    cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
-    cEcoInflux = zeros(numType, length(land.pools.cEco))
-    cEcoFlow = zeros(numType, length(land.pools.cEco))
+    cEcoEfflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
+    cEcoInflux = zeros(num_type, length(land.pools.cEco))
+    cEcoFlow = zeros(num_type, length(land.pools.cEco))
 
     ## pack land variables
     @pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
@@ -172,7 +172,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     nTix = info.tem.helpers.sizes.nTix
     nZix = length(land.pools.cEco)
     # matrices for the calculations
-    cLossRate = zeros(numType, nZix)
+    cLossRate = zeros(num_type, nZix)
     cGain = cLossRate
     cLoxxRate = cLossRate
     ## some debugging

@@ -11,7 +11,7 @@ function define(o::soilWBase_smax1Layer, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
     ## precomputations/check
     n_soilW = length(soilW)
@@ -23,9 +23,9 @@ function define(o::soilWBase_smax1Layer, forcing, land, helpers)
     end
 
     ## instantiate variables
-    p_wSat = ones(numType, n_soilW)
-    p_wFC = ones(numType, n_soilW)
-    p_wWP = zeros(numType, n_soilW)
+    p_wSat = ones(num_type, n_soilW)
+    p_wFC = ones(num_type, n_soilW)
+    p_wWP = zeros(num_type, n_soilW)
 
     ## pack land variables
     @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) => land.soilWBase

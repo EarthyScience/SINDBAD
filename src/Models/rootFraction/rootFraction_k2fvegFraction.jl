@@ -17,7 +17,7 @@ function define(o::rootFraction_k2fvegFraction, forcing, land, helpers)
         error("rootFraction_k2fvegFraction approach works for 2 soil layers only.")
     end
     # create the arrays to fill in the soil properties 
-    p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
+    p_fracRoot2SoilD = ones(helpers.numbers.num_type, length(land.pools.soilW))
 
     ## pack land variables
     @pack_land (p_fracRoot2SoilD) => land.rootFraction

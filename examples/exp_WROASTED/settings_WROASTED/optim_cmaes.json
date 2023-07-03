@@ -1,4 +1,4 @@
 {
     "multi_threading": false, 
-    "maxfevals": 10000
+    "maxfevals": 1000
 }

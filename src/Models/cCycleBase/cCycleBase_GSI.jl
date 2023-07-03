@@ -30,7 +30,7 @@ end
 function define(o::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI o
     @unpack_land begin
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
         (𝟘, 𝟙) ∈ helpers.numbers
         cEco ∈ land.pools
     end

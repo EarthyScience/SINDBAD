@@ -54,7 +54,7 @@ function getForcing(info::NamedTuple, ::Val{:table})
         tarVar = Symbol(v)
         ds_dat = ds[:, :, :]
         data_to_push =
-            cleanInputData.(ds_dat, Ref(vinfo), Val{info.tem.helpers.numbers.numType}())[1,
+            cleanInputData.(ds_dat, Ref(vinfo), info.tem.helpers.numbers.sNT)[1,
                 1,
                 :]
         if vinfo.spaceTimeType == "spatiotemporal"
@@ -230,7 +230,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
             yax = subset_space_in_data(info.forcing.subset, yax)
         end
 
-        numtype = Val{info.tem.helpers.numbers.numType}()
+        numtype = info.tem.helpers.numbers.sNT
         if vinfo.spaceTimeType == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
@@ -321,8 +321,8 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             @info "permuting dimensions to $(tar_dims)..."
             yax = permutedims(yax, permutes)
         end
-        numtype = Val{info.tem.helpers.numbers.numType}()
-        vfill = info.tem.helpers.numbers.𝟘
+        numtype = info.tem.helpers.numbers.sNT
+        vfill = 0
         # vfill = mean(v[(.!isnan.(v))])
         return map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end

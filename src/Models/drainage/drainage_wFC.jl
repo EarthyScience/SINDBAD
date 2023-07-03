@@ -4,7 +4,7 @@ struct drainage_wFC <: drainage end
 
 function define(o::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
-    drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
+    drainage = zeros(helpers.numbers.num_type, length(land.pools.soilW))
     ## pack land variables
     @pack_land drainage => land.drainage
     return land

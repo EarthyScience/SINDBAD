@@ -12,7 +12,7 @@ function define(o::cAllocation_Friedlingstein1999, forcing, land, helpers)
     @unpack_cAllocation_Friedlingstein1999 o
 
     ## instantiate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco)) #sujan
+    cAlloc = zeros(helpers.numbers.num_type, length(land.pools.cEco)) #sujan
 
     ## pack land variables
     @pack_land cAlloc => land.states

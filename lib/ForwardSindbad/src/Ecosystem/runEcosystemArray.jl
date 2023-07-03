@@ -245,14 +245,37 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     return land_one, f_one
 end
 
+
 """
 prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
 """
 function prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
-
-    outcubes = output.data
     approaches = tem.models.forward
-    land_init = output.land_init
+    tem_helpers = tem.helpers
+    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+end
+
+
+"""
+prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+"""
+function prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+end
+
+"""
+prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple)
+"""
+function prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple)
+    tem_helpers = tem.helpers
+    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+end
+
+"""
+helpPrepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
+"""
+function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+
 
     # generate vals for dispatch of forcing and output
     forcing_sizes = tem.forcing.sizes
@@ -276,8 +299,7 @@ function prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
 
-    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(output.ordered_variables), loc_space_names=Val(loc_space_names), debugit=Val(:debugit))
-    tem_helpers = tem.helpers
+    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(ordered_variables), loc_space_names=Val(loc_space_names), debugit=Val(:debugit))
     tem_helpers = setTupleField(tem_helpers, (:vals, vals))
     new_tem = setTupleField(tem, (:helpers, tem_helpers))
 

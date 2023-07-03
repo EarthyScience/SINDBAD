@@ -43,11 +43,10 @@ function (TWS_spin::Spinup_TWS)(pout, p)
     land = TWS_spin.land
     helpers = TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max(p[l], 𝟘) => (TWS, lc, :TWS)
+        @rep_elem max(p[l], zero(p[l])) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
@@ -62,7 +61,6 @@ function (cEco_spin::Spinup_cEco)(pout, p)
     land = cEco_spin.land
     helpers = cEco_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
@@ -84,11 +82,9 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
     helpers = cEco_TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
-    @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco
     for (lc, l) in enumerate(zix.cEco)
         @rep_elem pout[l] => (cEco, lc, :cEco)
@@ -189,8 +185,8 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
 
     plot!(getfield(out_sp_exp.pools, plot_var);
         linewidth=5,
-        label="Exp_Init",)
-        # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
+        label="Exp_Init")
+    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
     plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,

@@ -10,7 +10,7 @@ function define(o::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA o
 
     ## instantiate variables
-    p_kfSoil = ones(helpers.numbers.numType, length(land.pools.cEco))
+    p_kfSoil = ones(helpers.numbers.num_type, length(land.pools.cEco))
 
     ## pack land variables
     @pack_land p_kfSoil => land.cTauSoilProperties

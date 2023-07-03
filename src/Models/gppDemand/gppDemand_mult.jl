@@ -3,9 +3,9 @@ export gppDemand_mult
 struct gppDemand_mult <: gppDemand end
 
 function define(o::gppDemand_mult, forcing, land, helpers)
-    @unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
+    @unpack_land (𝟘, 𝟙, tolerance, num_type, sNT) ∈ helpers.numbers
 
-    scall = ones(numType, 4)
+    scall = ones(num_type, 4)
 
     if hasproperty(land.pools, :soilW)
         if land.pools.soilW isa SVector
