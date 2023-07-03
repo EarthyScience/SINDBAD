@@ -2,6 +2,7 @@ export setupExperiment, getInitPools, setNumberType
 export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
 using ConstructionBase
+export prepNumericHelpers
 """
 getParameters(selectedModels)
 retrieve all models parameters
@@ -140,36 +141,70 @@ function updateModelParameters(tblParams::Table, approaches::Tuple)
     return (updatedModels...,)
 end
 
+
 """
 updateModelParametersType(tblParams, approaches, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateModelParametersType(tblParams, approaches, pVector)
+function updateModelParametersType(tblParams, approaches::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
-    foreach(approaches) do approachx
-        modelName = nameof(typeof(approachx))
-        #model_obj = approachx
+    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    for (idx, modelName) ∈ enumerate(namesApproaches)
+        approachx = approaches[idx]
+        model_obj = approachx
         newapproachx = if modelName in tblParams.modelsApproach
-            vars = getproperties(approachx)
+            vars = propertynames(approachx)
             newvals = Pair[]
-            for (k, var) ∈ pairs(vars)
-                pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
+            for var ∈ vars
+                pindex = findall(row -> row.names == var && row.modelsApproach == modelName,
                     tblParams)
-                #pval = getproperty(approachx, var)
+                pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    #model_obj = tblParams[pindex[1]].modelsObj
-                    var = pVector[pindex[1]]
+                    model_obj = tblParams[pindex[1]].modelsObj
+                    pval = pVector[pindex[1]]
                 end
-                push!(newvals, k => var)
+                push!(newvals, var => pval)
             end
-            constructorof(typeof(approachx))(; newvals...)
+            model_obj(; newvals...)
         else
             approachx
         end
         push!(updatedModels, newapproachx)
     end
-    return updatedModels
+    return (updatedModels...,)
 end
+
+
+# """
+# updateModelParametersType(tblParams, approaches, pVector)
+# get the new instances of the model with same parameter types as mentioned in pVector
+# """
+# function updateModelParametersType(tblParams, approaches, pVector)
+#     updatedModels = Models.LandEcosystem[]
+#     foreach(approaches) do approachx
+#         modelName = nameof(typeof(approachx))
+#         #model_obj = approachx
+#         newapproachx = if modelName in tblParams.modelsApproach
+#             vars = getproperties(approachx)
+#             newvals = Pair[]
+#             for (k, var) ∈ pairs(vars)
+#                 pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
+#                     tblParams)
+#                 #pval = getproperty(approachx, var)
+#                 if !isempty(pindex)
+#                     #model_obj = tblParams[pindex[1]].modelsObj
+#                     var = pVector[pindex[1]]
+#                 end
+#                 push!(newvals, k => var)
+#             end
+#             constructorof(typeof(approachx))(; newvals...)
+#         else
+#             approachx
+#         end
+#         push!(updatedModels, newapproachx)
+#     end
+#     return updatedModels
+# end
 
 """
 updateModelParameters(tblParams, approaches, pVector)
@@ -475,7 +510,7 @@ function generateDatesInfo(info::NamedTuple)
 end
 
 """
-    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", numType=Float64)
+    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", num_type=Float64)
 
 A helper function to get the information of each pools from info.modelStructure.pools and puts them into arrays of information needed to instantiate pool variables.
 """
@@ -488,7 +523,7 @@ function getPoolInformation(mainPools,
     subPoolName,
     mainPoolName;
     prename="",
-    numType=Float64)
+    num_type=Float64)
     for mainPool ∈ mainPools
         prefix = prename
         poolInfo = getproperty(poolData, mainPool)
@@ -496,16 +531,16 @@ function getPoolInformation(mainPools,
             if isa(poolInfo[1], Number)
                 lenpool = poolInfo[1]
                 # layerThickNess = repeat([nothing], lenpool)
-                layerThickNess = numType.(poolInfo[1])
+                layerThickNess = num_type.(poolInfo[1])
             else
                 lenpool = length(poolInfo[1])
-                layerThickNess = numType.(poolInfo[1])
+                layerThickNess = num_type.(poolInfo[1])
             end
 
             append!(layerThicknesses, layerThickNess)
             append!(nlayers, fill(1, lenpool))
             append!(layer, collect(1:lenpool))
-            append!(inits, fill(numType(poolInfo[2]), lenpool))
+            append!(inits, fill(num_type(poolInfo[2]), lenpool))
 
             if prename == ""
                 append!(subPoolName, fill(mainPool, lenpool))
@@ -527,7 +562,7 @@ function getPoolInformation(mainPools,
                     subPoolName,
                     mainPoolName;
                     prename=prefix,
-                    numType=numType)
+                    num_type=num_type)
         end
     end
     return layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName
@@ -557,9 +592,9 @@ function generatePoolsInfo(info::NamedTuple)
         poolData = getfield(getfield(info.modelStructure.pools, element), :components)
         # arrayType = Symbol(getfield(getfield(info.modelStructure.pools, element), :arraytype))
         nlayers = Int64[]
-        layerThicknesses = info.tem.helpers.numbers.numType[]
+        layerThicknesses = info.tem.helpers.numbers.num_type[]
         layer = Int64[]
-        inits = info.tem.helpers.numbers.numType[]
+        inits = info.tem.helpers.numbers.num_type[]
         subPoolName = Symbol[]
         mainPoolName = Symbol[]
         mainPools =
@@ -574,7 +609,7 @@ function generatePoolsInfo(info::NamedTuple)
                 inits,
                 subPoolName,
                 mainPoolName;
-                numType=info.tem.helpers.numbers.numType)
+                num_type=info.tem.helpers.numbers.sNT)
 
         # set empty tuple fields
         tpl_fields = (:components, :zix, :initValues, :layerThickness)
@@ -592,7 +627,7 @@ function generatePoolsInfo(info::NamedTuple)
         # main pools
         for mainPool ∈ mainPoolName
             zix = Int[]
-            initValues = info.tem.helpers.numbers.numType[]
+            initValues = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
             for (ind, par) ∈ enumerate(subPoolName)
                 if startswith(String(par), String(mainPool))
@@ -603,7 +638,7 @@ function generatePoolsInfo(info::NamedTuple)
             end
             initValues = createArrayofType(initValues,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -617,7 +652,7 @@ function generatePoolsInfo(info::NamedTuple)
             hlpElem = setTupleSubfield(hlpElem, :components, (mainPool, Tuple(components)))
             onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -638,9 +673,9 @@ function generatePoolsInfo(info::NamedTuple)
         end
         for subPool ∈ uniqueSubPools
             zix = Int[]
-            initValues = info.tem.helpers.numbers.numType[]
+            initValues = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
-            ltck = info.tem.helpers.numbers.numType[]
+            ltck = info.tem.helpers.numbers.num_type[]
             for (ind, par) ∈ enumerate(subPoolName)
                 if par == subPool
                     push!(zix, ind)
@@ -652,7 +687,7 @@ function generatePoolsInfo(info::NamedTuple)
             zix = Tuple(zix)
             initValues = createArrayofType(initValues,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -665,7 +700,7 @@ function generatePoolsInfo(info::NamedTuple)
             hlpElem = setTupleSubfield(hlpElem, :components, (subPool, Tuple(components)))
             onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -692,7 +727,7 @@ function generatePoolsInfo(info::NamedTuple)
             initValues = inits
             initValues = createArrayofType(initValues,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -705,7 +740,7 @@ function generatePoolsInfo(info::NamedTuple)
             hlpElem = setTupleSubfield(hlpElem, :zix, (combinedPoolName, zix))
             onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
-                info.tem.helpers.numbers.numType,
+                info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
                 Val(arrayType))
@@ -774,25 +809,25 @@ function generatePoolsInfo(info::NamedTuple)
     return info
 end
 
-function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:view})
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:view})
     if ismain
-        numType.(inVals)
+        num_type.(inVals)
     else
         @view poolArray[[indx...]]
     end
 end
 
-function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:array})
-    return numType.(inVals)
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:array})
+    return num_type.(inVals)
 end
 
-function createArrayofType(inVals, poolArray, numType, indx, ismain, ::Val{:staticarray})
-    return SVector{length(inVals)}(ix for ix ∈ inVals)
-    # return SVector{length(inVals)}(numType(ix) for ix ∈ inVals)
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:staticarray})
+    return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
+    # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
 end
 
 """
-    getInitPools(info)
+    getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array.
 """
@@ -809,7 +844,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 (tocr,
                     createArrayofType(inVals,
                         Nothing[],
-                        tem_helpers.numbers.numType,
+                        tem_helpers.numbers.sNT,
                         nothing,
                         true,
                         Val(arrayType))))
@@ -826,7 +861,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     inVals = deepcopy(getfield(initVals, component))
                     compdat = createArrayofType(inVals,
                         poolArray,
-                        tem_helpers.numbers.numType,
+                        tem_helpers.numbers.sNT,
                         indx,
                         false,
                         Val(arrayType))
@@ -857,11 +892,11 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                 avv = getproperty(addVars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
                 vals =
-                    ones(tem_helpers.numbers.numType, size(getfield(initVals, tocr))) *
-                    tem_helpers.numbers.sNT(avv)
+                    zero(getfield(initVals, tocr)) .+ tem_helpers.numbers.𝟙 *
+                                                      tem_helpers.numbers.sNT(avv)
                 newvals = createArrayofType(vals,
                     Nothing[],
-                    tem_helpers.numbers.numType,
+                    tem_helpers.numbers.sNT,
                     nothing,
                     true,
                     Val(arrayType))
@@ -884,7 +919,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         Δcompdat = createArrayofType((zero(getfield(initVals, component)) .+ tem_helpers.numbers.𝟙) .*
                                                      tem_helpers.numbers.sNT(avv),
                             ΔpoolArray,
-                            tem_helpers.numbers.numType,
+                            tem_helpers.numbers.sNT,
                             indx,
                             false,
                             Val(arrayType))
@@ -898,55 +933,73 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     return initStates
 end
 
+
+"""
+    prepNumericHelpers(info, ttype=info.modelRun.rules.data_type)
+
+prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.
+"""
+function prepNumericHelpers(info::NamedTuple, ttype)
+    num_type = getNumberType(ttype)
+    𝟘 = num_type(0.0)
+    𝟙 = num_type(1.0)
+
+    tolerance = num_type(info.modelRun.rules.tolerance)
+    info = (; info..., tem=(;))
+    sNT = (a) -> num_type(a)
+    if occursin("ForwardDiff.Dual", info.modelRun.rules.data_type)
+        tag_type = ForwardDiff.tagtype(𝟘)
+        @show tag_type, num_type
+        try
+            sNT = (a) -> num_type(tag_type(a))
+            𝟘 = sNT(0.0)
+            𝟙 = sNT(1.0)
+            tolerance = sNT(info.modelRun.rules.tolerance)
+        catch
+            sNT = (a) -> num_type(a)
+            𝟘 = sNT(0.0)
+            𝟙 = sNT(1.0)
+            tolerance = sNT(info.modelRun.rules.tolerance)
+        end
+    end
+    num_helpers = (;
+        𝟘=𝟘,
+        𝟙=𝟙,
+        tolerance=tolerance,
+        num_type=num_type,
+        sNT=sNT
+    )
+    return num_helpers
+end
+
 """
     setNumericHelpers(info, ttype=info.modelRun.rules.data_type)
 
-sets the info.tem.helpers.numbers with the model helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.data_type.
+prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.modelRun.
 """
 function setNumericHelpers(info::NamedTuple, ttype=info.modelRun.rules.data_type)
-    𝟘 = setNumberType(ttype)(0)
-    𝟙 = setNumberType(ttype)(1)
-    tolerance = setNumberType(ttype)(info.modelRun.rules.tolerance)
-    info = (; info..., tem=(;))
-    sNT = (a) -> setNumberType(ttype)(a)
-    # if info.modelRun.rules.forward_diff
-    #     sNT = (a) -> ForwardDiff.Dual(setNumberType(ttype)(a))
-    #     # sNT = (a) -> ForwardDiff.Dual{setNumberType(ttype)}(setNumberType(ttype)(a))
-    # end
-    squarer = (n) -> n .* n
-    cuber = (n) -> n .* n .* n
+    num_helpers = prepNumericHelpers(info, ttype)
     info = (;
         info...,
-        tem=(;
-            helpers=(;
-                numbers=(;
-                    𝟘=𝟘,
-                    𝟙=𝟙,
-                    tolerance=tolerance,
-                    numType=setNumberType(ttype),
-                    sNT=sNT,
-                    squarer=squarer,
-                    cuber=cuber))))
+        tem=(; helpers=(; numbers=num_helpers)))
     return info
 end
 
 """
-    setNumberType(t="Float64")
-
-A helper function to set the number type to the specified data type
+    getNumberType(t::String)
+A helper function to get the number type from the specified string
 """
-function setNumberType(t="Float64")
-    mains = (:Float32, :Float64)
-    forwardiffs = (:Dual,)
-    t = Symbol(t)
-    if t in mains
-        ttype = getfield(Main, t)
-    elseif t in forwardiffs
-        ttype = getfield(ForwardDiff, t)
-    else
-        error("Number type $(t) is not supported in SINDBAD. Change the setting in model run.")
-    end
+function getNumberType(t::String)
+    ttype = eval(Meta.parse(t))
     return ttype
+end
+
+"""
+    getNumberType(t::DataType)
+A helper function to get the number type from the specified string
+"""
+function getNumberType(t::DataType)
+    return t
 end
 
 """

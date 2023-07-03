@@ -63,7 +63,7 @@ function define(o::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 o
 
     @unpack_land begin
-        (𝟘, 𝟙, numType, sNT) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
     ## instantiate variables
@@ -248,7 +248,7 @@ function calcPropsSaxton2006(o::soilProperties_Saxton2006, land, helpers, sl)
 
     @unpack_soilProperties_Saxton2006 o
     @unpack_land begin
-        (𝟘, 𝟙, numType, sNT) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
 

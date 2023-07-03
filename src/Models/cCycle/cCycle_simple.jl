@@ -4,7 +4,7 @@ struct cCycle_simple <: cCycle end
 
 function define(o::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
-        (𝟘, 𝟙, numType) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     n_cEco = length(land.pools.cEco)
     n_cVeg = length(land.pools.cVeg)
@@ -53,7 +53,7 @@ function compute(o::cCycle_simple, forcing, land, helpers)
         gpp ∈ land.fluxes
         (p_A, giver, taker) ∈ land.cFlow
         (flowOrder) ∈ land.cCycleBase
-        (𝟘, 𝟙, numType) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
     cEcoFlow = zerocEcoFlow .* 𝟘

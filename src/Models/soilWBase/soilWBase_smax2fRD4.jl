@@ -16,7 +16,7 @@ function define(o::soilWBase_smax2fRD4, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
 
     ## precomputations/check

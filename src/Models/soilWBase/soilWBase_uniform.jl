@@ -10,7 +10,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
         land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
     n_soilW = length(soilW)
 

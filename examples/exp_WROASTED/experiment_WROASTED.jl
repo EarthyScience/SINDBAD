@@ -55,7 +55,7 @@ info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
 forc = getKeyedArrayFromYaxArray(forcing);
 output = setupOutput(info);
 
-linit = createLandInit(info.pools, info.tem);
+linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =

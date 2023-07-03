@@ -7,7 +7,7 @@ function define(o::rootWaterUptake_proportion, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
     wRootUptake = zero(soilW)
 

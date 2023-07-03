@@ -11,7 +11,7 @@ function define(o::cAllocation_GSI, forcing, land, helpers)
 
     cAllocVeg = zero(land.pools.cEco)
     zixVegs = Tuple{Int}[]
-    nzixVegs = helpers.numbers.numType[]
+    nzixVegs = helpers.numbers.num_type[]
     cpI = 1
     for cpName ∈ cpNames
         zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))

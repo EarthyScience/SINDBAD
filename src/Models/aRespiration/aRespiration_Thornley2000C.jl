@@ -10,7 +10,7 @@ end
 function define(o::aRespiration_Thornley2000C, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
 
     p_km = zero(land.pools.cEco) .+ helpers.numbers.𝟙
@@ -39,7 +39,7 @@ function compute(o::aRespiration_Thornley2000C, forcing, land, helpers)
         gpp ∈ land.fluxes
         p_C2Nveg ∈ land.cCycleBase
         fT ∈ land.aRespirationAirT
-        (𝟙, 𝟘, numType) ∈ helpers.numbers
+        (𝟙, 𝟘, num_type) ∈ helpers.numbers
     end
 
     # adjust nitrogen efficiency rate of maintenance respiration

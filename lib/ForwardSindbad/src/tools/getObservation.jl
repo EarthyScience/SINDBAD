@@ -243,7 +243,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
             yax_mask = getObsZarr(v_mask)
         end
 
-        numtype = Val{info.tem.helpers.numbers.numType}()
+        numtype = Val{info.tem.helpers.numbers.num_type}()
 
         # clean the data by applying bounds
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
@@ -405,7 +405,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             yax_mask = getObsYax(v_mask, nc_mask, info, mask_tar_name, dataPath_mask)
         end
 
-        numtype = Val{info.tem.helpers.numbers.numType}()
+        numtype = Val{info.tem.helpers.numbers.num_type}()
 
         # clean the data by applying bounds
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
@@ -482,7 +482,7 @@ function getObservation(info::NamedTuple, ::Val{:table})
             vinfo.data.source2sindbadUnit,
             vinfo.data.additiveUnitConversion)
         data_obs = applyObservationBounds(data_obs, vinfo.data.bounds)
-        push!(dataAr, info.tem.helpers.numbers.numType.(data_obs))
+        push!(dataAr, info.tem.helpers.numbers.num_type.(data_obs))
 
         # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
         uncTarVar = Symbol(v * "_σ")
@@ -501,12 +501,12 @@ function getObservation(info::NamedTuple, ::Val{:table})
                 vinfo.unc.additiveUnitConversion)
             data_unc = applyObservationBounds(data_unc, vinfo.unc.bounds)
         else
-            data_unc = ones(info.tem.helpers.numbers.numType, size(data_obs))
+            data_unc = ones(info.tem.helpers.numbers.num_type, size(data_obs))
             @info "Using ones as uncertainty in optimization for $(v) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
         end
         idxs = isnan.(data_obs)
         data_unc[idxs] .= info.tem.helpers.numbers.sNT(NaN)
-        push!(dataAr, info.tem.helpers.numbers.numType.(data_unc))
+        push!(dataAr, info.tem.helpers.numbers.num_type.(data_unc))
     end
     observation = Table((; Pair.(varlist, dataAr)...))
     return observation

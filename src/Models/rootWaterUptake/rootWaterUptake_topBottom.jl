@@ -7,9 +7,9 @@ function define(o::rootWaterUptake_topBottom, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
-    wRootUptake = zeros(helpers.numbers.numType, size(soilW))
+    wRootUptake = zeros(helpers.numbers.num_type, size(soilW))
 
     ## pack land variables
     @pack_land begin

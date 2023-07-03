@@ -3,7 +3,7 @@ export cTauVegProperties_none
 struct cTauVegProperties_none <: cTauVegProperties end
 
 function define(o::cTauVegProperties_none, forcing, land, helpers)
-    @unpack_land (𝟘, 𝟙, numType) ∈ helpers.numbers
+    @unpack_land (𝟘, 𝟙, num_type) ∈ helpers.numbers
 
     ## calculate variables
     p_kfVeg = zero(land.pools.cEco) .+ helpers.numbers.𝟙
