@@ -12,7 +12,7 @@ function define(o::cAllocation_fixed, forcing, land, helpers)
     @unpack_cAllocation_fixed o
 
     ## instantiate variables
-    cAlloc = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    cAlloc = zeros(helpers.numbers.num_type, length(land.pools.cEco))
 
     ## pack land variables
     @pack_land cAlloc => land.cAllocation

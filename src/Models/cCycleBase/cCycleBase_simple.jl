@@ -27,12 +27,12 @@ function define(o::cCycleBase_simple, forcing, land, helpers)
     @unpack_cCycleBase_simple o
 
     @unpack_land begin
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
         cEco ∈ land.pools
     end
     ## instantiate variables
-    p_C2Nveg = ones(numType, length(cEco)) #sujan
-    cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
+    p_C2Nveg = ones(num_type, length(cEco)) #sujan
+    cEcoEfflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
 
     ## pack land variables
     @pack_land begin

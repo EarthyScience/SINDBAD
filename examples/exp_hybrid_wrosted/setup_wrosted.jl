@@ -1,13 +1,13 @@
 using Sindbad, ForwardSindbad, OptimizeSindbad
 function setup_simple()
     experiment_json = "../exp_hybrid_wrosted/settings_wrosted/experiment.json"
-    info = getExperimentInfo(experiment_json);
-    info, forcing = getForcing(info, Val{:zarr}());
-    land_init = createLandInit(info.pools, info.tem);
-    output = setupOutput(info);
-    forc = getKeyedArrayFromYaxArray(forcing);
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-    obs = getKeyedArrayFromYaxArray(observations);
+    info = getExperimentInfo(experiment_json)
+    info, forcing = getForcing(info, Val{:zarr}())
+    land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
+    output = setupOutput(info)
+    forc = getKeyedArrayFromYaxArray(forcing)
+    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    obs = getKeyedArrayFromYaxArray(observations)
 
     loc_space_maps,
     loc_space_names,
@@ -20,7 +20,7 @@ function setup_simple()
         info.tem.models.forward,
         forc,
         forcing.sizes,
-        info.tem);
+        info.tem)
 
     tblParams = getParameters(info.tem.models.forward,
         info.optim.default_parameter,

@@ -9,9 +9,6 @@ runModels(forcing, models, out)
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models; init=out) do o, model
         o = Models.compute(model, forcing, o, tem_helpers)
-        # if tem_helpers.run.runUpdateModels
-        #     o = Models.update(model, forcing, o, tem_helpers)
-        # end
     end
 end
 
@@ -36,8 +33,7 @@ function timeLoopForward(
         out = runModels!(out, f, forward_models, tem_helpers)
         res_vec[ts] = out
     end
-    # res = landWrapper(res_vec)
-    return res_vec
+    return nothing
 end
 
 
@@ -49,12 +45,11 @@ function timeLoopForward(
     time_steps::Int64,
     f_one
 )
-    res = map(1:time_steps) do ts
+    out_stacked = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
         out = runModels!(out, f, forward_models, tem_helpers)
     end
-    # res = landWrapper(res)
-    return res
+    return out_stacked
 end
 
 """
@@ -91,7 +86,7 @@ function coreEcosystem(approaches,
             spinup_forcing=nothing)
     end
     time_steps = tem_helpers.dates.size
-    out = timeLoopForward(
+    timeLoopForward(
         res_vec,
         approaches,
         loc_forcing,
@@ -99,7 +94,7 @@ function coreEcosystem(approaches,
         tem_helpers,
         time_steps,
         f_one)
-    return out
+    return nothing
 end
 
 
@@ -127,13 +122,13 @@ function coreEcosystem(approaches,
             spinup_forcing=nothing)
     end
     time_steps = tem_helpers.dates.size
-    out = timeLoopForward(approaches,
+    out_stacked = timeLoopForward(approaches,
         loc_forcing,
         land_spin_now,
         tem_helpers,
         time_steps,
         f_one)
-    return out
+    return out_stacked
 end
 
 function ecoLoc(approaches,
@@ -147,7 +142,7 @@ function ecoLoc(approaches,
     land_init,
     f_one)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
-    out = coreEcosystem(approaches,
+    coreEcosystem(approaches,
         res_vec,
         loc_forcing,
         tem_helpers,
@@ -155,7 +150,7 @@ function ecoLoc(approaches,
         tem_models,
         land_init,
         f_one)
-    return out
+    return nothing
 end
 
 function fany(x,
@@ -220,7 +215,7 @@ function runEcosystem(approaches,
         # res_vec_space = nothing
         landWrapper(fullarrayoftuples)
     else
-        res_out = coreEcosystem(approaches,
+        coreEcosystem(approaches,
             res_vec_space,
             loc_forcing,
             tem_helpers,
@@ -228,9 +223,9 @@ function runEcosystem(approaches,
             tem_models,
             land_init,
             f_one)
-        landWrapper(res_vec_space)
+        res_vec_space
     end
-    return land_all
+    return landWrapper(land_all)
 end
 
 """
@@ -265,7 +260,7 @@ function runEcosystem(approaches::Tuple,
                 return res[iouter][its]
             end
         res = nothing
-        landWrapper(fullarrayoftuples)
+        fullarrayoftuples
     else
         res = coreEcosystem(approaches,
             res_vec,
@@ -275,9 +270,9 @@ function runEcosystem(approaches::Tuple,
             tem_models,
             land_init,
             f_one)
-        landWrapper(res)
+        res
     end
-    return land_all
+    return landWrapper(land_all)
 end
 
 

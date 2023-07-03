@@ -5,7 +5,7 @@ using ForwardDiff
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
 info, forcing = getForcing(info, Val{:zarr}());
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -88,6 +88,13 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     return loc_forcing, loc_output, loc_obs
 end
 
+
+function reDoOneLocation1(loc_land_init, approaches, tem_helpers, loc_forcing, f_one)
+    land = ForwardSindbad.runDefine!(loc_land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
+        tem_helpers)
+    land = runModels!(land, f_one, approaches, tem_helpers)
+    return land
+end
 
 function reDoOneLocation(loc_land_init, approaches, tem_helpers, loc_forcing, f_one)
     land_prec = ForwardSindbad.runDefine!(loc_land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
@@ -234,19 +241,20 @@ CHUNK_SIZE = 8
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 
-gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.numType},tem_vals.helpers.numbers.numType,CHUNK_SIZE}.(tblParams.defaults);
+gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.defaults);
 mods = Tuple(updateModelParametersType(tblParams, forward, gradDefs));
+dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_one);
 
-@time big_land = ForwardSindbad.coreEcosystem(
-    mods,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
+# @time big_land = ForwardSindbad.coreEcosystem(
+#     mods,
+#     loc_forcing,
+#     tem_helpers,
+#     tem_spinup,
+#     tem_models,
+#     loc_land_init,
+#     f_one);
 
-res_vec = Vector{typeof(big_land[end])}(undef, info.tem.helpers.dates.size);
+res_vec = Vector{typeof(dual_land)}(undef, info.tem.helpers.dates.size);
 
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)

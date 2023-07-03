@@ -17,7 +17,7 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -77,7 +77,7 @@ function g_loss(x,
         f_one)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.numType);
+rand_m = rand(info.tem.helpers.numbers.num_type);
 # op = setupOutput(info);
 
 mods = info.tem.models.forward;
@@ -115,7 +115,7 @@ for _ in 1:10
     @show lo_ss
 end
 
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -151,7 +151,7 @@ end
 
 
 op = setupOutput(info);
-op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.numType},tem_vals.helpers.numbers.numType,10}}(undef, size(od)) for od in op.data];
+op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 op = (; op..., data=op_dat);
 
 @time grad = ForwardDiff.gradient(l1, tblParams.defaults)
