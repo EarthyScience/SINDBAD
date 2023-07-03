@@ -6,7 +6,7 @@ using ForwardSindbad
 using ForwardSindbad: timeLoopForward
 using OptimizeSindbad
 using AxisKeys: KeyedArray as KA
-using Lux, Zygote, Optimisers, ComponentArrays, NNlib
+#using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 using Random
 noStackTrace()
 Random.seed!(7)

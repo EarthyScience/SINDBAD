@@ -14,7 +14,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:m
 end
 
 function loss_o(y::AbstractArray, ŷ::AbstractArray, ::Val{:mse}, idxs)
-    return abs2.(y[idxs] .- ŷ[idxs])::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
+    return abs2.(y[idxs] .- ŷ[idxs])::KeyedArray{Bool,1,NamedDimsArray{(:time,),Bool,1,BitVector},Base.RefValue{Vector{DateTime}}}
 end
 
 function get_trues(y, yσ, ŷ)
