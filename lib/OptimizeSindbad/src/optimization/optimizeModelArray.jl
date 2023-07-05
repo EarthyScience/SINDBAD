@@ -171,6 +171,12 @@ function getLossVectorArray(observations, model_output::landWrapper, optim::Name
         mod_field = var_row.mod_field
         mod_subfield = var_row.mod_subfield
         (y, yσ, ŷ) = getDataArray(model_output, observations, obs_ind, mod_field, mod_subfield)
+        #shat = addS(ŷ)
+        #if isnan(shat) || shat == 0
+        #@show shat
+        #    return
+        #            error("please stop...")
+        # end
         # (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
 
         metr = loss(y, yσ, ŷ, lossMetric)
