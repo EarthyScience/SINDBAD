@@ -17,6 +17,7 @@ function get_loc_loss(
         loc_land_init,
         f_one)
     lossVec = getLossVectorArray(loc_obs, landWrapper(big_land), tem_optim)
+    #@show lossVec
     t_loss = combineLossArray(lossVec, Val{:sum}())
     return t_loss
 end
