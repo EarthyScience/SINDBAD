@@ -89,6 +89,10 @@ function synth_obs()
     ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
 
     sites_parameters = ml_baseline(xfeatures)
+    #@show sites_parameters
+    sites_parameters .= 0.0
+    #@show sites_parameters
+
     params_bounded = getParamsAct.(sites_parameters, tblParams)
 
     function pixel_run!(output,
@@ -232,6 +236,7 @@ function synth_obs()
     #   color=resample_cmap(:glasbey_hv_n256, t_plot))
 
 
+
     obs_synt = (;
         gpp=gppKA,
         gpp_σ=obs.gpp_σ,
@@ -270,3 +275,6 @@ function synth_obs()
         f_one
     )
 end
+
+
+syn = synth_obs();

@@ -9,6 +9,11 @@ include("old_loss.jl");
 include("old_nn_machine.jl");
 
 syn = synth_obs();
+allvals = [sum(syn.obs_synt.gpp[site=i]) for i in 1:205];
+to_keep = .!isnan.(allvals);
+sites_obs = syn.obs_synt.gpp.site[to_keep];
+new_batch = intersect(sites_obs, syn.xfeatures.site);
+
 
 kwargs_fixed = (;
     tem_helpers=syn.tem_helpers,
@@ -39,7 +44,7 @@ fdiff_grads(loc_loss,
 # now for a batch with 16 sites
 n_bs = 16
 f_grads = zeros(Float32, syn.n_params, n_bs);
-xbatch = syn.cov_sites[1:n_bs];
+xbatch = new_batch[1:n_bs] #syn.cov_sites[1:n_bs];
 f_grads = zeros(Float32, syn.n_params, n_bs);
 x_feat = syn.xfeatures(; site=xbatch)
 
@@ -66,7 +71,7 @@ grads_batch!(f_grads, inst_params_new, xbatch,
 x_args = (;
     shuffle=true,
     bs=16,
-    sites=syn.sites
+    sites=new_batch #syn.sites
 );
 
 nn_args = (;
@@ -76,15 +81,23 @@ nn_args = (;
     extra_layer=2,
     nn_opt=Optimisers.Adam()
 );
+
+experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json";
+info = getExperimentInfo(experiment_json);
+info, forcing = getForcing(info, Val{:zarr}());
+land_init = createLandInit(info.pools, info.tem);
+output = setupOutput(info);
+forc = getKeyedArrayFromYaxArray(forcing);
+
 # this one does all the training
 train_losses = nn_machine(nn_args, x_args,
     syn.xfeatures,
-    syn.out_data,
+    info,
     syn.forc,
     syn.obs_synt,
     syn.sites_f,
     syn.forward,
     syn.tblParams,
-    syn.land_init_space,
+    info.tem,
     loc_loss,
     kwargs_fixed; nepochs=3);
