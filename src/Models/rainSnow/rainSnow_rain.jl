@@ -23,8 +23,8 @@ function compute(o::rainSnow_rain, forcing, land, helpers)
     @unpack_forcing Rain ∈ forcing
 
     ## calculate variables
-    snow = helpers.numbers.𝟘
     rain = Rain
+    snow = zero(rain)
     precip = rain
 
     ## pack land variables

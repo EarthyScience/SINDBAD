@@ -182,12 +182,12 @@ end
 runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches,
+    res_vec_space,
     forcing,
     tem_vals,
     loc_space_inds,
     loc_forcings,
     land_init_space,
-    res_vec_space,
     f_one)
     #@info "runEcosystem:: running Ecosystem"
     tem_helpers = tem_vals.helpers
@@ -210,7 +210,7 @@ function runEcosystem(approaches,
         nts = length(first(res_out))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res_out))) do (its, iouter)
-                return res_out[iouter][its]
+                res_out[iouter][its]
             end
         # res_vec_space = nothing
         landWrapper(fullarrayoftuples)
@@ -237,7 +237,6 @@ function runEcosystem(approaches::Tuple,
     tem::NamedTuple,
     loc_space_inds;
     spinup_forcing=nothing)
-    #@info "runEcosystem:: running Ecosystem"
 
     land_all = if !isempty(loc_space_inds)
         _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_vals, f_one =
