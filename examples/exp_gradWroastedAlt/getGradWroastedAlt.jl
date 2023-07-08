@@ -17,20 +17,19 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
+land_init = createLandInit(info.pools, tem_vals.helpers, tem_vals.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-@time _, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one =
-    prepRunEcosystem(output, forc, info.tem);
+@time _, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    prepRunEcosystem(output, forc, tem_vals);
 
 @time runEcosystem!(output.data,
-    info.tem.models.forward,
+    tem_vals.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -38,7 +37,7 @@ obs = getKeyedArrayFromYaxArray(observations);
     f_one)
 
 # @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = Sindbad.getParameters(info.tem.models.forward,
+tblParams = Sindbad.getParameters(tem_vals.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
@@ -47,12 +46,10 @@ function g_loss(x,
     mods,
     forc,
     op,
-    op_vars,
     obs,
     tblParams,
     info_tem,
     info_optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -62,12 +59,10 @@ function g_loss(x,
         mods,
         forc,
         op,
-        op_vars,
         obs,
         tblParams,
         info_tem,
         info_optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -75,10 +70,10 @@ function g_loss(x,
         f_one)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.num_type);
+rand_m = rand(tem_vals.helpers.numbers.num_type);
 op = setupOutput(info);
 
-mods = info.tem.models.forward;
+mods = tem_vals.models.forward;
 params = tblParams.defaults;
 selParam = :fracRootD2SoilD
 selIndex = findall(tblParams.names .== selParam)[1]
@@ -89,12 +84,10 @@ for pr ∈ collect(0.0:50:1000.0)
         mods,
         forc,
         op,
-        op.variables,
         obs,
         tblParams,
-        info.tem,
+        tem_vals,
         info.optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -106,12 +99,10 @@ g_loss(tblParams.defaults .* rand_m,
     mods,
     forc,
     op,
-    op.variables,
     obs,
     tblParams,
-    info.tem,
+    tem_vals,
     info.optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -121,19 +112,17 @@ g_loss(tblParams.defaults,
     mods,
     forc,
     op,
-    op.variables,
     obs,
     tblParams,
-    info.tem,
+    tem_vals,
     info.optim,
-    loc_space_names,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-# g_loss(tblParams.defaults, info.tem.models.forward, forc, op, op.variables, info.tem, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.defaults);
+# g_loss(tblParams.defaults, tem_vals.models.forward, forc, op, op.variables, tem_vals, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
+dualDefs = ForwardDiff.Dual{tem_vals.helpers.numbers.num_type}.(tblParams.defaults);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -141,12 +130,10 @@ function l1(p)
         mods,
         forc,
         op,
-        op.variables,
         obs,
         tblParams,
-        info.tem,
+        tem_vals,
         info.optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -158,12 +145,10 @@ function l2(p)
         newmods,
         forc,
         op,
-        op.variables,
         obs,
         tblParams,
-        info.tem,
+        tem_vals,
         info.optim,
-        loc_space_names,
         loc_space_inds,
         loc_forcings,
         loc_outputs,

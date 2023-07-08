@@ -165,7 +165,7 @@ function getSpinupForcing(forcing, tem)
     spinup_forcing = (;)
     for forc ∈ forcing_methods
         spinup_forc = getSpinupForcing(forcing, tem.helpers, forc)
-        spinup_forcing = setTupleField(spinup_forcing, (typeof(forc).parameters[1], spinup_forc))
+        spinup_forcing = setTupleField(spinup_forcing, (val_to_symbol(forc), spinup_forc))
     end
     return spinup_forcing
 end

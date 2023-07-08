@@ -76,7 +76,6 @@ loc_forcing = loc_forcings[1];
 
 # res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
 res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
-# res_vec = SVector{typeof(loc_land_init)}[loc_land_init for _ in info.tem.helpers.dates.vector];
 # res_vec = [loc_land_init for _ in info.tem.helpers.dates.vector];
 @time big_land = ForwardSindbad.coreEcosystem(
     forward,
