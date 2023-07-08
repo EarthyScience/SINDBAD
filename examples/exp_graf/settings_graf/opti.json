@@ -64,6 +64,7 @@
 		"one_sel_mask": null,
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
+			"minDataPoints": 1,
 			"spatialAggr": "cat",
 			"spatialCostAggr": "spatial",
 			"temporalAggr": "day",

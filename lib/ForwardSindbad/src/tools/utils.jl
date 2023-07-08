@@ -1,4 +1,4 @@
-export nanmax, nanmin
+export nanmax, nanmin, nanmean
 export landWrapper
 
 """
@@ -14,6 +14,14 @@ nanmax(dat) = maximum(filter(!isnan, dat))
 Calculate the minimum of an array while skipping nan
 """
 nanmin(dat) = minimum(filter(!isnan, dat))
+
+
+"""
+    nanmean(dat) = mean(dat[.!isnan.(dat)])
+
+Calculate the mean of an array while skipping nan
+"""
+nanmean(dat) = mean(filter(!isnan, dat))
 
 """
     landWrapper{S}

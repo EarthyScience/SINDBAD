@@ -48,6 +48,7 @@
 		"oneDataPath": "../data/BE-Vie.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
+			"minDataPoints": 1,
 			"spatialAggr": "cat",
 			"spatialCostAggr": "spatial",
 			"temporalAggr": "day",

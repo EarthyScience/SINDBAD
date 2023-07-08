@@ -181,7 +181,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
 
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
-    sub_output = ["data", "settings", "root"]
+    sub_output = ["data", "settings", "root", "figure"]
     if infoTuple.modelRun.flags.runOpti || infoTuple.modelRun.flags.calcCost
         push!(sub_output, "optim")
     end

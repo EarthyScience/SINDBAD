@@ -5,7 +5,7 @@
 		"transpiration",
 		"evapotranspiration",
 		"agb",
-		"reco"
+		"ndvi"
 	],
 	"multiConstraintMethod": "sum",
 	"useUncertainty": false,
@@ -100,12 +100,13 @@
 		"oneDataPath": "../data/BE-Vie.1979.2017.daily.nc",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
+			"minDataPoints": 1,
 			"spatialAggr": "cat",
 			"spatialCostAggr": "spatial",
 			"temporalAggr": "day",
 			"temporalAggrObs": false,
 			"temporalAggrFunc": "nanmean",
-			"costMetric": "nseinv",
+			"costMetric": "nnseinv",
 			"costWeight": 1.0,
 			"areaWeight": false
 		},
@@ -149,7 +150,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			},
 			"nee": {
@@ -191,7 +192,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			},
 			"reco": {
@@ -233,7 +234,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			},
 			"evapotranspiration": {
@@ -275,7 +276,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			},
 			"transpiration": {
@@ -317,7 +318,7 @@
 				"costOptions": {
 					"temporalAggr": "day",
 					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			},
 			"agb": {
@@ -349,7 +350,7 @@
 					"source2sindbadUnit": 1.0
 				},
 				"costOptions": {
-					"temporalAggr": "mean",
+					"temporalAggr": "day",
 					"temporalAggrObs": true,
 					"costMetric": "nmae1r"
 				}
@@ -367,7 +368,7 @@
 					"additiveUnitConversion": false,
 					"source2sindbadUnit": 1.0,
 					"isCategorical": false,
-					"nameShort": "kNDVI",
+					"nameShort": "mergedNDVI_MCD43A",
 					"spaceTimeType": "spatiotemporal",
 					"sourceDataProductName": "FLUXNET",
 					"dataPath": null
@@ -385,7 +386,7 @@
 				"costOptions": {
 					"temporalAggr": "dayAnomaly",
 					"temporalAggrObs": true,
-					"costMetric": "nseinv"
+					"costMetric": "nnseinv"
 				}
 			}
 		}

@@ -11,6 +11,7 @@ export tcprint
 export set_component_from_main_pool, set_main_from_component_pool
 export clamp_01
 export min_0, max_0, min_1, max_1
+export val_2_symbol
 
 """
     noStackTrace()
@@ -713,4 +714,12 @@ returns max(num, 1)
 """
 function max_1(num)
     return max(num, one(num))
+end
+
+"""
+val_2_symbol(val)
+returns the symbol from which val was created for a type dispatch based on name
+"""
+function val_2_symbol(val)
+    return typeof(val).parameters[1]
 end

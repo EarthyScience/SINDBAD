@@ -27,7 +27,7 @@ n_bs_feat = length(xfeatures.features)
 
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,
-land_init_space, f_one =
+land_init_space, tem_vals, f_one =
     prepRunEcosystem(output.data,
         output.land_init,
         info.tem.models.forward,
