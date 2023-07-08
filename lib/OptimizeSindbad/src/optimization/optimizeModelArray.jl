@@ -25,6 +25,53 @@ function get_ŷn(ŷ::AbstractArray{T,4}) where {T}
     return @view ŷ[:, 1, :, :]
 end
 
+function spatial_aggregation(y, yσ, ŷ, _, ::Val{:cat})
+    return y, yσ, ŷ
+end
+
+
+function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:timespace})
+    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporalAggr)
+    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatialAggr)
+    return y, yσ, ŷ
+end
+
+
+function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:spacetime})
+    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatialAggr)
+    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporalAggr)
+    return y, yσ, ŷ
+end
+
+"""
+getDataArray(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getDataArray(model_output::AbstractArray,
+    observations, cost_option)
+    obs_ind_start = cost_option.obs_ind
+    mod_ind = cost_option.mod_ind
+
+    ŷ = model_output[mod_ind]
+    y = observations[obs_ind_start]
+    yσ = observations[obs_ind_start+1]
+    # ymask = observations[obs_ind_start + 2]
+    if size(ŷ, 2) == 1
+        if ndims(ŷ) == 3
+            ŷ = @view ŷ[:, 1, :]
+        elseif ndims(ŷ) == 4
+            ŷ = @view ŷ[:, 1, :, :]
+        else
+            ŷ = @view ŷ[:, 1]
+        end
+    end
+    y, yσ, ŷ = aggregate_data(y, yσ, ŷ, cost_option, cost_option.aggrOrder)
+    # if size(ŷ) != size(y)
+    #     error(
+    #         "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
+    #     )
+    # end
+    return (y, yσ, ŷ)
+end
 
 """
 getDataArray(outsmodel, observations, modelVariables, obsVariables)
@@ -44,6 +91,7 @@ function getDataArray(model_output::AbstractArray,
             ŷ = @view ŷ[:, 1]
         end
     end
+
     if size(ŷ) != size(y)
         error(
             "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
@@ -71,7 +119,6 @@ function getDataArray(outsmodel::landWrapper,
             ŷ = @view ŷ[:, 1]
         end
     end
-    #@show size(ŷ)
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
 
@@ -161,11 +208,11 @@ function inner_loss(y, yσ, ŷ, s_metric)
 end
 
 """
-getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables2constrain
+getLossVectorArray(observations, model_output::landWrapper, cost_options)
+returns a vector of losses for variables in info.cost_options.variables2constrain
 """
-function getLossVectorArray(observations, model_output::landWrapper, optim::NamedTuple)
-    lossVec = map(optim.costOptions) do var_row
+function getLossVectorArray(observations, model_output::landWrapper, cost_options)
+    lossVec = map(cost_options) do var_row
         lossMetric = var_row.costMetric
         obs_ind = var_row.obs_ind
         mod_field = var_row.mod_field
@@ -177,44 +224,42 @@ function getLossVectorArray(observations, model_output::landWrapper, optim::Name
         if isnan(metr)
             metr = oftype(metr, 10)
         end
-        # println("$(var_row.variable) => $(lossMetric): $(metr)")
+        # println("$(var_row.variable) => $(val_2_symbol(lossMetric)): $(metr)")
         metr
     end
+    # println("-------------------")
     return lossVec
 end
 
 """
-getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables2constrain
+getLossVectorArray(observations, model_output::AbstractArray, cost_options)
+returns a vector of losses for variables in info.cost_options.variables2constrain
 """
-function getLossVectorArray(observations, model_output::AbstractArray, optim::NamedTuple)
-    lossVec = map(optim.costOptions) do var_row
+function getLossVectorArray(observations, model_output::AbstractArray, cost_options)
+    lossVec = map(cost_options) do var_row
         lossMetric = var_row.costMetric
-        obs_ind_start = var_row.obs_ind
-        mod_ind = var_row.mod_ind
-
-        (y, yσ, ŷ) = getDataArray(model_output, observations, mod_ind, obs_ind_start)
-
+        (y, yσ, ŷ) = getDataArray(model_output, observations, var_row)
         metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
             metr = eltype(y)(10)
         end
-        # println("$(var_row.variable) => $(lossMetric): $(metr)")
+        # println("$(var_row.variable) => $(val_2_symbol(lossMetric)): $(metr)")
         metr
     end
+    # println("-------------------")
     return lossVec
 end
 
 
 #=
 """
-getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables2constrain
+getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, cost_options::NamedTuple)
+returns a vector of losses for variables in info.cost_options.variables2constrain
 """
-function getLossVectorArray(observations::NamedTuple, model_output, optim::NamedTuple)
-    cost_options = optim.costOptions
+function getLossVectorArray(observations::NamedTuple, model_output, cost_options::NamedTuple)
+    cost_options = cost_options.costOptions
     #cost_options = [Pair(:gpp, Val(:mse))]
-    optimVars = optim.variables.optim
+    optimVars = cost_options.variables.cost_options
  #   lossVec = Vector{Real}(undef, length(optimVars))
     #var_index = 1
     lossVec = map(cost_options) do p
@@ -246,6 +291,27 @@ end
 =#
 
 """
+filter_constraint_minimum_datapoints(obs, cost_options)
+remove all the variables that have less than minimum datapoints from being used in the optimization 
+"""
+function filter_constraint_minimum_datapoints(obs, cost_options)
+    cost_options_filtered = cost_options
+    foreach(cost_options) do var_row
+        obs_ind_start = var_row.obs_ind
+        min_points = var_row.minDataPoints
+        var_name = var_row.variable
+        y = obs[obs_ind_start]
+        idxs = (.!isnan.(y))
+        total_points = sum(idxs)
+        if total_points < min_points
+            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
+            @warn "$(var_row.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
+        end
+    end
+    return cost_options_filtered
+end
+
+"""
 getLossGradient(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
 """
 function getLossGradient(pVector::AbstractArray,
@@ -255,7 +321,7 @@ function getLossGradient(pVector::AbstractArray,
     observations,
     tblParams,
     tem,
-    optim,
+    cost_options,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -276,9 +342,8 @@ function getLossGradient(pVector::AbstractArray,
         lopo,
         land_init_space,
         f_one)
-    loss_vector = getLossVectorArray(observations, output.data, optim)
-    # println("-------------------")
-    return combineLossArray(loss_vector, optim.multiConstraintMethod)
+    loss_vector = getLossVectorArray(observations, output.data, cost_options)
+    return combineLossArray(loss_vector, cost_options.multiConstraintMethod)
 end
 
 """
@@ -291,7 +356,8 @@ function getLossArray(pVector::AbstractArray,
     observations,
     tblParams,
     tem,
-    optim,
+    cost_options,
+    multiconstraint_method,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -309,10 +375,10 @@ function getLossArray(pVector::AbstractArray,
         loc_outputs,
         land_init_space,
         f_one)
-    loss_vector = getLossVectorArray(observations, output.data, optim)
+    loss_vector = getLossVectorArray(observations, output.data, cost_options)
     # end
     # println("-------------------")
-    return combineLossArray(loss_vector, optim.multiConstraintMethod)
+    return combineLossArray(loss_vector, multiconstraint_method)
 end
 
 """
@@ -332,6 +398,8 @@ function optimizeModelArray(forcing::NamedTuple,
         optim.default_parameter,
         optim.optimized_parameters)
 
+    cost_options = filter_constraint_minimum_datapoints(observations, optim.costOptions)
+
     # get the defaults and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
@@ -345,10 +413,6 @@ function optimizeModelArray(forcing::NamedTuple,
     land_init_space,
     tem_vals,
     f_one = prepRunEcosystem(output, forcing, tem)
-    # push!(Sindbad.error_catcher, (forcing, output, output_variables, observations, tblParams, tem, optim, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one))
-    # make the cost function handle
-
-    # output.data, info.tem.models.forward, forc, info.tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one
     cost_function =
         x -> getLossArray(x,
             tem.models.forward,
@@ -357,7 +421,8 @@ function optimizeModelArray(forcing::NamedTuple,
             observations,
             tblParams,
             tem_vals,
-            optim,
+            cost_options,
+            optim.multiConstraintMethod,
             loc_space_inds,
             loc_forcings,
             loc_outputs,

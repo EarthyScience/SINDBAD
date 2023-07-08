@@ -87,61 +87,24 @@ for domain ∈ sites
     end
 
     replace_info["spinup.sequence"] = sequence
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
-
-
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
-
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
-
-    output = setupOutput(info)
-
-    forc = getKeyedArrayFromYaxArray(forcing)
-
-    linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
-
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
-        prepRunEcosystem(output, forc, info.tem)
-
-    # land_spin = land_init_space[1];
-
-    # @time land_spin_now = runSpinup(info.tem.models.forward,
-    #     loc_forcings[1],
-    #     land_spin,
-    #     info.tem.helpers,
-    #     info.tem.spinup,
-    #     info.tem.models,
-    #     typeof(land_spin),
-    #     f_one;
-    #     spinup_forcing=nothing);
-
-
-    @time runEcosystem!(output.data,
-        info.tem.models.forward,
-        forc,
-        tem_vals,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
-
-
-
     @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
-
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
-    obs = getKeyedArrayFromYaxArray(observations)
-
     @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
+
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
     tblParams = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
     new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+
+    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    forc = getKeyedArrayFromYaxArray(forcing)
+
     output = setupOutput(info)
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+        prepRunEcosystem(output,
+            forc,
+            info.tem)
     @time runEcosystem!(output.data,
         new_models,
         forc,
@@ -158,20 +121,20 @@ for domain ∈ sites
     def_dat = outcubes
     out_vars = output.variables
     tspan = 9000:12000
-    obsMod = last.(values(info.optim.variables.optim))
-    obsVar = info.optim.variables.obs
-    for (vi, v) ∈ enumerate(out_vars)
-        def_var = def_dat[vi][tspan, 1, 1, 1]
-        opt_var = opt_dat[vi][tspan, 1, 1, 1]
-        plot(def_var; label="def", size=(900, 600), title=v)
-        plot!(opt_var; label="opt")
-        if v in obsMod
-            obsv = obsVar[findall(obsMod .== v)[1]]
-            @show "plot obs", v
-            obs_var = getfield(obs, obsv)[tspan, 1, 1, 1]
-            plot!(obs_var; label="obs")
-            # title(obsv)
-        end
-        savefig("wroasted_$(domain)_$(v).png")
+    costOpt = info.optim.costOptions
+    foreach(costOpt) do var_row
+        v = var_row.variable
+        @show "plot obs", v
+        lossMetric = var_row.costMetric
+        (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+        metr_def = loss(obs_var, obs_σ, def_var, lossMetric)
+        (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
+        metr_opt = loss(obs_var, obs_σ, opt_var, lossMetric)
+        # @show def_var
+        plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(900, 600), title="$(v) -> $(val_2_symbol(lossMetric))")
+        plot!(opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
+        plot!(obs_var[tspan, 1, 1, 1]; label="obs")
+        savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
     end
+
 end
