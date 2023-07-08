@@ -16,7 +16,7 @@ Add skipping filter for pixels with all nans in YAXArrays
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
-function cleanInputData(datapoint, dfill, vinfo, T)
+function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where T
     datapoint = isnan(datapoint) ? dfill : datapoint
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit,
         vinfo.additiveUnitConversion)
