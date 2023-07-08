@@ -1,5 +1,17 @@
 export getObservation, cleanObsData
 
+
+function cleanObsData(datapoint, vinfo, ::Val{T}) where {T}
+    datapoint = applyUnitConversion(datapoint,
+        vinfo.data.source2sindbadUnit,
+        vinfo.data.additiveUnitConversion)
+        bounds = vinfo.bounds
+        if !isnothing(bounds)
+            datapoint = clamp(datapoint, first(bounds), last(bounds))
+        end
+    return ismissing(datapoint) ? T(NaN) : T(datapoint)
+end
+
 function doApplyUnitConversion(datapoint, vinfo, ::Val{T}) where {T}
     datapoint = applyUnitConversion(datapoint,
         vinfo.data.source2sindbadUnit,
