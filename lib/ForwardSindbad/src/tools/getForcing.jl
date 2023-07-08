@@ -230,11 +230,11 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
             yax = subset_space_in_data(info.forcing.subset, yax)
         end
 
-        numtype = info.tem.helpers.numbers.sNT
+        numtype = Val(info.tem.helpers.numbers.num_type)
         if vinfo.spaceTimeType == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
-        vfill = info.tem.helpers.numbers.𝟘
+        vfill = 0
         # vfill = mean(v[(.!isnan.(v))])
         return map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end
@@ -322,6 +322,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             yax = permutedims(yax, permutes)
         end
         numtype = info.tem.helpers.numbers.sNT
+        numtype = Val(info.tem.helpers.numbers.num_type)
         vfill = 0
         # vfill = mean(v[(.!isnan.(v))])
         return map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
@@ -342,29 +343,4 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         variables=forcing_variables,
         sizes=f_sizes)
     return info, forcing
-end
-
-function getForcing(info::NamedTuple, dpath, ::Val{:zarr})
-
-    #dataPath = info.forcing.default_forcing.dataPath
-    ds = YAXArrays.open_dataset(zopen(dpath))
-    forcing_variables = propertynames(info.forcing.variables)
-    incubes = map(forcing_variables) do k
-        dsk = ds[k]
-        # flag to indicate if subsets are needed.
-        dim = YAXArrayBase.yaxconvert(DimArray, dsk)
-        # site, lon, lat should be options to consider here
-        subset = dim
-        if !isnothing(info.forcing.size.site)
-            subset = subset[site=1:(info.forcing.size.site)]
-        end
-        if !isnothing(info.forcing.size.time)
-            subset = subset[time=1:(info.forcing.size.time)]
-        end
-        # support for subsets by name and numbers is also supported. Option to be added later.
-        YAXArrayBase.yaxconvert(YAXArray, Float64.(subset))
-    end
-    nts = length(incubes[1].time) # look for time instead of using the first yaxarray
-    indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
-    return (; data=incubes, dims=indims, n_timesteps=nts, variables=forcing_variables)
 end
