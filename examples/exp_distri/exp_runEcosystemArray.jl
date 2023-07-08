@@ -23,14 +23,13 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
 
 @time outcubes = runExperimentOpti(experiment_json);
 

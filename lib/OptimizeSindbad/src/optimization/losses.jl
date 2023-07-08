@@ -14,7 +14,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:m
 end
 
 function loss_o(y::AbstractArray, ŷ::AbstractArray, ::Val{:mse}, idxs)
-    return abs2.(y[idxs] .- ŷ[idxs])::KeyedArray{Bool, 1, NamedDimsArray{(:time,), Bool, 1, BitVector}, Base.RefValue{Vector{DateTime}}}
+    return abs2.(y[idxs] .- ŷ[idxs])::KeyedArray{Bool,1,NamedDimsArray{(:time,),Bool,1,BitVector},Base.RefValue{Vector{DateTime}}}
 end
 
 function get_trues(y, yσ, ŷ)
@@ -26,6 +26,18 @@ function loss_free(y, yσ, ŷ, ::Val{:mse})
     #@code_warntype (.!isnan.(y .* yσ .* ŷ))
     idxs = (.!isnan.(y .* yσ .* ŷ))
     return mean(abs2.(y[idxs] .- ŷ[idxs]))
+end
+
+"""
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nmae1r})
+
+Relative normalized model absolute error
+
+``nmae1r = \\frac{(|y - ŷ|)}{1.0 + y}``
+"""
+function loss(y, yσ, ŷ, ::Val{:nmae1r})
+    nmae1r = abs(y - ŷ) / (1.0 + y)
+    return nmae1r
 end
 
 """
