@@ -21,7 +21,9 @@ function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where T
     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit,
         vinfo.additiveUnitConversion)
     bounds = vinfo.bounds
-    datapoint = clamp(datapoint, bounds[1], bounds[2])
+    if !isnothing(bounds)
+        datapoint = clamp(datapoint, first(bounds), last(bounds))
+    end
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
 end
 
