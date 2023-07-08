@@ -1,24 +1,28 @@
 export getObservation, cleanObsData
 
-function cleanObsData(datapoint, vinfo, ::Val{T}) where {T}
+function doApplyUnitConversion(datapoint, vinfo, ::Val{T}) where {T}
     datapoint = applyUnitConversion(datapoint,
         vinfo.data.source2sindbadUnit,
         vinfo.data.additiveUnitConversion)
-    #TODO: when bounds are activated the data is not instantiated and the yaxarray fails when printing observation.data. Fix the observation bounds and quality flag
-    # bounds = vinfo.bounds
-    # if !isempty(bounds)
-    #     datapoint = applyObservationBounds(datapoint, bounds)
-    # end
-    # datapoint = applyQualityFlag(datapoint, bounds[1], bounds[2])
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
 end
 
-function applyObservationBounds(data, bounds)
-    if data < bounds[1] || data > bounds[2]
-        return NaN
-    else
-        return data
+function doApplyObservationBounds(datapoint, vinfo, ::Val{T}) where {T}
+    datapoint = applyObservationBounds(datapoint, vinfo.bounds)
+    return ismissing(datapoint) ? T(NaN) : T(datapoint)
+end
+
+function applyObservationBounds(datapoint, bounds)
+    if !isempty(bounds)
+        lb = first(bounds)
+        ub = last(bounds)
+        if datapoint < lb 
+            datapoint = missing 
+        elseif datapoint > ub
+            datapoint = missing 
+        end
     end
+    return datapoint
 end
 
 function applyQualityFlag(data, qdata, qbounds)
@@ -247,8 +251,9 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
 
         # clean the data by applying bounds
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
-        cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
-        cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
+        cyax = map(da -> doApplyUnitConversion(da, vinfo, numtype), yax)
+        cyax = map(da -> doApplyObservationBounds(da, vinfo, numtype), cyax)
+        cyax_unc = map(da -> doApplyUnitConversion(da, vinfo, numtype), yax_unc)
         if !isnothing(permutes)
             @info "permuting dimensions to $(tar_dims)..."
             cyax = permutedims(cyax, permutes)
@@ -409,8 +414,9 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
 
         # clean the data by applying bounds
         #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
-        cyax = map(da -> cleanObsData(da, vinfo, numtype), yax)
-        cyax_unc = map(da -> cleanObsData(da, vinfo, numtype), yax_unc)
+        cyax = map(da -> doApplyUnitConversion(da, vinfo, numtype), yax)
+        # cyax = map(da -> doApplyObservationBounds(da, vinfo, numtype), yax)
+        cyax_unc = map(da -> doApplyUnitConversion(da, vinfo, numtype), yax_unc)
         if !isnothing(permutes)
             @info "         permuting dimensions ..."
             cyax = permutedims(cyax, permutes)
@@ -512,20 +518,3 @@ function getObservation(info::NamedTuple, ::Val{:table})
     return observation
 end
 
-function getObservation(info::NamedTuple, ::Val{:zarr2})
-    dataPath = getAbsDataPath(info, info.opti.constraints.oneDataPath)
-    ds = YAXArrays.open_dataset(zopen(dataPath))
-    varnames = Symbol.(info.opti.variables2constrain)
-    obscubes = map(varnames) do k
-        dsk = ds[k]
-        # flag to indicate if subsets are needed.
-        dim = YAXArrayBase.yaxconvert(DimArray, dsk)
-        # site, lon, lat should be options to consider here
-        subset = dim[site=1:(info.forcing.size.site), time=1:(info.forcing.size.time)]
-        # support for subsets by name and numbers is also supported. Option to be added later.
-        return YAXArrayBase.yaxconvert(YAXArray, subset)
-    end
-    nts = length(obscubes[1].time) # look for time instead of using the first yaxarray
-    indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
-    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames)
-end
