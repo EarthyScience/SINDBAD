@@ -73,31 +73,6 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
-
-@time runEcosystem(info.tem.models.forward,
-    res_vec_space,
-    forc,
-    tem_vals,
-    loc_space_inds,
-    loc_forcings,
-    land_init_space,
-    f_one);
-
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
-land_spin = land_init_space[1];
-@time land_spin_now = runSpinup(info.tem.models.forward,
-    loc_forcings[1],
-    land_spin,
-    tem_vals.helpers,
-    tem_vals.spinup,
-    tem_vals.models,
-    typeof(land_spin),
-    f_one;
-    spinup_forcing=nothing);
-
-tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
-
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
@@ -128,18 +103,20 @@ opt_dat = output.data;
 def_dat = outcubes;
 out_vars = output.variables;
 tspan = 9000:12000
-obsMod = last.(values(info.optim.variables.optim))
 costOpt = info.optim.costOptions;
 foreach(costOpt) do var_row
     v = var_row.variable
-    def_var = def_dat[var_row.mod_ind][tspan, 1, 1, 1]
-    opt_var = opt_dat[var_row.mod_ind][tspan, 1, 1, 1]
-    plot(def_var; label="def", size=(900, 600), title=v)
-    plot!(opt_var; label="opt")
     @show "plot obs", v
-    obs_var = obs[var_row.obs_ind][tspan, 1, 1, 1]
-    plot!(obs_var; label="obs")
-    savefig("wroasted_$(domain)_$(v).png")
+    lossMetric = var_row.costMetric
+    (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+    metr_def = loss(obs_var, obs_σ, def_var, lossMetric)
+    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
+    metr_opt = loss(obs_var, obs_σ, opt_var, lossMetric)
+    # @show def_var
+    plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(900, 600), title="$(v) -> $(val_2_symbol(lossMetric))")
+    plot!(opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
+    plot!(obs_var[tspan, 1, 1, 1]; label="obs")
+    savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 
 # using JuliaFormatter

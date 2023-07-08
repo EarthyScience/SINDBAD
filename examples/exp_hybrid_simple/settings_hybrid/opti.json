@@ -98,6 +98,7 @@
 		"oneDataPath": "../data/fluxnet_cube/fluxnet_observations.zarr",
 		"defaultCostOptions": {
 			"aggrOrder": "timespace",
+			"minDataPoints": 1,
 			"spatialAggr": "cat",
 			"spatialCostAggr": "spatial",
 			"temporalAggr": "day",
