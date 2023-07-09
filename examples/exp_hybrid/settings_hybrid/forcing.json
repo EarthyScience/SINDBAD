@@ -23,7 +23,7 @@
 		"data_path": "../data/fluxnet_cube/fluxnet_forcing.zarr"
 	},
 	"variables": {
-	"ambCO2":
+	"ambient_CO2":
     {
 		"variable_unit": "ppm",
 		"bounds": [200.0, 500.0],
@@ -71,14 +71,14 @@
 		"source_variable_unit": "MJ m-2 d-1",
 		"name_short": "Net radiation"
 	},
-	"isDisturbed":
+	"dist_intensity":
     {
 		"variable_unit": null,
 		"bounds": [-0.001, 1.1],
 		"source_variable_name": "isDisturbed",
 		"source_variable_unit": null,
 		"is_categorical": true,
-		"name_short": "isDisturbed flag for disturbance",
+		"name_short": "intensity of disturbance",
 		"source_product_name": "Besnard2018"
 	},
 	"Tair":

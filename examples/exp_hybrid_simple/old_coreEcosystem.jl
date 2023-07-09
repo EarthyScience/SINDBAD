@@ -22,7 +22,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
@@ -31,7 +31,7 @@ f_one = prepRunEcosystem(output,
 # @profview runEcosystem!(output.data,
 #     info.tem.models.forward,
 #     forc,
-#     tem_vals,
+#     tem_with_vals,
 #     loc_space_inds,
 #     loc_forcings,
 #     loc_outputs,
@@ -41,7 +41,7 @@ f_one = prepRunEcosystem(output,
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -49,13 +49,13 @@ f_one = prepRunEcosystem(output,
     f_one)
 
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 
 getLossGradient(tblParams.default,
@@ -64,7 +64,7 @@ getLossGradient(tblParams.default,
     output,
     obs,
     tblParams,
-    tem_vals,
+    tem_with_vals,
     tem_optim,
     loc_space_inds,
     loc_forcings,
@@ -241,7 +241,7 @@ CHUNK_SIZE = 8
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 
-gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.default);
+gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.default);
 mods = Tuple(updateModelParametersType(tblParams, forward, gradDefs));
 dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_one);
 

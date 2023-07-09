@@ -20,7 +20,7 @@ f_one = prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,

@@ -20,19 +20,19 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
 
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 
 

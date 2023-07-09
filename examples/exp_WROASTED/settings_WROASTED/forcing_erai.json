@@ -69,7 +69,7 @@
 		"source_variable_unit": "MJ m-2 d-1",
 		"name_short": "Net radiation"
 	},
-	"isDisturbed":
+	"dist_intensity":
     {
 		"variable_unit": null,
 		"bounds": [-0.001, 1.1],
