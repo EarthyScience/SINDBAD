@@ -415,17 +415,17 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
     forc = getKeyedArrayFromYaxArray(forcing)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
     spinupforc = :recycleMSC
-    sel_forcing = getSpinupForcing(loc_forcing, tem_vals.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, tem_vals)
+    sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))
+    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_vals)
     theforcing = getfield(spinup_forcing, spinupforc)
 
-    spinup_models = tem_vals.models.forward[tem_vals.models.is_spinup]
+    spinup_models = tem_with_vals.models.forward[tem_with_vals.models.is_spinup]
     for sel_pool in (:cEcoTWS,)
         # for sel_pool in (:cEco,)
         # for sel_pool in (:TWS,)
@@ -447,8 +447,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             land_init_for_s = ForwardSindbad.doSpinup(spinup_models,
                 theforcing,
                 land_init_for_s,
-                tem_vals.helpers,
-                tem_vals.spinup,
+                tem_with_vals.helpers,
+                tem_with_vals.spinup,
                 land_type,
                 f_one,
                 Val(:spinup))
@@ -461,8 +461,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         @time out_sp_nl = doSpinup(spinup_models,
             theforcing,
             deepcopy(land_init_for_s),
-            tem_vals.helpers,
-            tem_vals.spinup,
+            tem_with_vals.helpers,
+            tem_with_vals.spinup,
             land_type,
             f_one,
             Val(sp_method))
@@ -479,8 +479,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
                     theforcing,
                     out_sp_exp,
-                    tem_vals.helpers,
-                    tem_vals.spinup,
+                    tem_with_vals.helpers,
+                    tem_with_vals.spinup,
                     land_type,
                     f_one,
                     Val(sp))
@@ -494,8 +494,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
                     theforcing,
                     out_sp_exp_nl,
-                    tem_vals.helpers,
-                    tem_vals.spinup,
+                    tem_with_vals.helpers,
+                    tem_with_vals.spinup,
                     land_type,
                     f_one,
                     Val(sp))

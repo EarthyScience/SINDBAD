@@ -46,7 +46,6 @@ function getSelObsMask(mask_path::String)
 end
 
 function getObsZarr(v)
-    @show v.name
     return YAXArrayBase.yaxconvert(YAXArray, v)
 end
 
@@ -259,7 +258,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
 
 
         # clean the data by applying bounds
-        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo, vinfo_data.bounds, bounds_qc, numtype), yax, yax_qc)
+        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo_data, vinfo_data.bounds, bounds_qc, numtype), yax, yax_qc)
         # cyax = map(da -> cleanObsData(da, vinfo, vinfo_data.bounds, numtype), yax)
 
         cyax_unc = yax_unc
