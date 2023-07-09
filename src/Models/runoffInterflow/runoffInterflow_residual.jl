@@ -6,22 +6,22 @@ export runoffInterflow_residual
 end
 #! format: on
 
-function compute(o::runoffInterflow_residual, forcing, land, helpers)
+function compute(p_struct::runoffInterflow_residual, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffInterflow_residual o
+    @unpack_runoffInterflow_residual p_struct
 
     ## unpack land variables
     @unpack_land WBP ∈ land.states
 
     ## calculate variables
     # simply assume that a fraction of the still available water runs off
-    runoffInterflow = rc * WBP
+    interflow_runoff = rc * WBP
     # update the WBP
-    WBP = WBP - runoffInterflow
+    WBP = WBP - interflow_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffInterflow => land.fluxes
+        interflow_runoff => land.fluxes
         WBP => land.states
     end
     return land
@@ -41,7 +41,7 @@ Interflow using runoffInterflow_residual
 *Inputs*
 
 *Outputs*
- - land.fluxes.runoffInterflow: interflow [mm/time]
+ - land.fluxes.interflow_runoff: interflow [mm/time]
  - land.states.WBP: water balance pool [mm]
 
 ---

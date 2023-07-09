@@ -2,13 +2,13 @@ export cAllocation_none
 
 struct cAllocation_none <: cAllocation end
 
-function define(o::cAllocation_none, forcing, land, helpers)
+function define(p_struct::cAllocation_none, forcing, land, helpers)
 
     ## calculate variables
-    cAlloc = zeros(helpers.numbers.num_type, length(land.pools.cEco))
+    c_allocation = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land cAlloc => land.states
+    @pack_land c_allocation => land.states
     return land
 end
 
@@ -21,7 +21,7 @@ sets the carbon allocation to zero (nothing to allocated)
 - helpers.numbers.𝟙
 
 *Outputs*
-- land.cAllocation.cAlloc: carbon allocation
+- land.cAllocation.c_allocation: carbon allocation
 
 ---
 

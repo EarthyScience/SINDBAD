@@ -2,7 +2,7 @@ export cFlow_none
 
 struct cFlow_none <: cFlow end
 
-function define(o::cFlow_none, forcing, land, helpers)
+function define(p_struct::cFlow_none, forcing, land, helpers)
 
     ## calculate variables
     tmp = repeat(zeros(helpers.numbers.num_type, length(land.pools.cEco)),
@@ -21,7 +21,7 @@ function define(o::cFlow_none, forcing, land, helpers)
 end
 
 @doc """
-set transfer between pools to 0 [i.e. nothing is transfered] set giver & taker matrices to [] get the transfer matrix transfers
+set transfer between pools to 0 [i.e. nothing is transfered] set c_giver & c_taker matrices to [] get the transfer matrix transfers
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cFlow_none

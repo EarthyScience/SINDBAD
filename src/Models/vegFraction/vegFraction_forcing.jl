@@ -2,16 +2,16 @@ export vegFraction_forcing
 
 struct vegFraction_forcing <: vegFraction end
 
-function compute(o::vegFraction_forcing, forcing, land, helpers)
-    @unpack_forcing vegFraction ∈ forcing
+function compute(p_struct::vegFraction_forcing, forcing, land, helpers)
+    @unpack_forcing frac_vegetation ∈ forcing
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of land.states.vegFraction from the forcing in every time step
+sets the value of land.states.frac_vegetation from the forcing in every time step
 
 ---
 
@@ -19,10 +19,10 @@ sets the value of land.states.vegFraction from the forcing in every time step
 Fractional coverage of vegetation using vegFraction_forcing
 
 *Inputs*
- - forcing.vegFraction read from the forcing data set
+ - forcing.frac_vegetation read from the forcing data set
 
 *Outputs*
- - land.states.vegFraction: the value of vegFraction for current time step
+ - land.states.frac_vegetation: the value of frac_vegetation for current time step
 
 ---
 

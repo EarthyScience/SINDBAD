@@ -28,7 +28,7 @@ function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     end
     if isnothing(poolsize)
         error(
-            "The output depth_dimensions $(poolName) does not exist in the selected model structure. Either add the pool to modelStructure.json or adjust depth_dimensions or output variables in modelRun.json."
+            "The output depth_dimensions $(poolName) does not exist in the selected model structure. Either add the pool to model_structure.json or adjust depth_dimensions or output variables in model_run.json."
         )
     end
 end
@@ -36,7 +36,7 @@ end
 function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
     field_name = first(split(string(vname), '.'))
     vname_s = split(string(vname), '.')[end]
-    tmp_vars = info.modelRun.output.variables
+    tmp_vars = info.model_run.output.variables
     dimName = ""
     dimSize = nothing
     if vname in keys(tmp_vars)
@@ -51,8 +51,8 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
         elseif isa(vdim, Int64)
             dimSize = vdim
         elseif isa(vdim, String)
-            if Symbol(vdim) in keys(info.modelRun.output.depth_dimensions)
-                dimSizeK = getfield(info.modelRun.output.depth_dimensions, Symbol(vdim))
+            if Symbol(vdim) in keys(info.model_run.output.depth_dimensions)
+                dimSizeK = getfield(info.model_run.output.depth_dimensions, Symbol(vdim))
                 if isa(dimSizeK, Int64)
                     dimSize = dimSizeK
                 elseif isa(dimSizeK, String)
@@ -82,7 +82,7 @@ end
 
 function getOutDims(info, tem_helpers, vname_full, outpath, outformat, land_init, forcing_sizes)
     vname = Symbol(split(string(vname_full), '.')[end])
-    inax = info.modelRun.mapping.runEcosystem
+    inax = info.model_run.mapping.run_ecosystem
 
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     if isnothing(depth_size)
@@ -109,7 +109,7 @@ function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::V
         depth_size = 1
     end
     # ar = Array{Real, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
@@ -125,7 +125,7 @@ function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::V
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
@@ -140,7 +140,7 @@ function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::V
     if isnothing(depth_size)
         depth_size = 1
     end
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.modelRun.rules.forward_diff),
+    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
@@ -179,7 +179,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     forcing_sizes = info.tem.forcing.sizes
     @info "setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
-    outformat = info.modelRun.output.format
+    outformat = info.model_run.output.format
     @info "setupOutput: getting data variables..."
 
     datavars = if hasproperty(info, :optim)
@@ -189,7 +189,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
         end
     else
         map(Iterators.flatten(info.tem.variables)) do vn
-            ForwardSindbad.getOrderedOutputList(collect(keys(info.modelRun.output.variables)), vn)
+            ForwardSindbad.getOrderedOutputList(collect(keys(info.model_run.output.variables)), vn)
         end
     end
 
@@ -207,7 +207,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
             vn,
             land_init,
             forcing_sizes,
-            Val(Symbol(info.modelRun.output.output_array_type)))
+            Val(Symbol(info.model_run.output.output_array_type)))
     end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
@@ -226,7 +226,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:ordered_variables, ovro))
 
 
-    if info.modelRun.flags.runOpti || tem_helpers.run.calcCost
+    if info.model_run.flags.run_optimization || tem_helpers.run.run_forward_and_cost
         @info "setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
@@ -247,7 +247,7 @@ function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     paramaxis = CategoricalAxis("parameter", params)
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "optimized_parameters$(info.modelRun.output.format)"),
+            "optimized_parameters$(info.model_run.output.format)"),
         backend=:zarr,
         overwrite=true)
     # od = OutDims(paramaxis)

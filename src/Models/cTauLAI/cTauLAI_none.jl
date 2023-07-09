@@ -2,13 +2,13 @@ export cTauLAI_none
 
 struct cTauLAI_none <: cTauLAI end
 
-function define(o::cTauLAI_none, forcing, land, helpers)
+function define(p_struct::cTauLAI_none, forcing, land, helpers)
 
     ## calculate variables
-    p_kfLAI = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    p_k_f_LAI = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land p_kfLAI => land.cTauLAI
+    @pack_land p_k_f_LAI => land.cTauLAI
     return land
 end
 

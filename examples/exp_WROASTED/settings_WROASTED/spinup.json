@@ -2,40 +2,40 @@
 	"sequence": 
 	[
 		{
-			"spinupMode": "forward",
+			"spinup_mode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 200
+			"stop_function": null,
+			"n_repeat": 200
 		},
 		{
-			"spinupMode": "nlsove_fixedpoint_trustregion_cEco_TWS",
+			"spinup_mode": "nlsove_fixedpoint_trustregion_cEco_TWS",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 1
+			"stop_function": null,
+			"n_repeat": 1
 		},
 		{
-			"spinupMode": "ηScaleAH",
+			"spinup_mode": "ηScaleAH",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 1
+			"stop_function": null,
+			"n_repeat": 1
 		}
 	],
-	"diffEq":{
+	"differential_eqn":{
 		"pools": ["cEco"],
-		"timeJump": 2000.0,
-		"reltol":1e-2, 
-		"abstol":1
+		"time_jump": 2000.0,
+		"relative_tolerance":1e-2, 
+		"absolute_tolerance":1
 	},
 	"paths": 
 	{
-		"restartFileIn": null,
-		"restartFileOut": null	
+		"restart_file_in": null,
+		"restart_file_out": null	
 	},
 	"flags":
 	{
-		"doSpinup": true,
-		"loadSpinup": false,
-		"saveSpinup": false,
-		"storeSpinupHistory": false
+		"do_spinup": true,
+		"load_spinup": false,
+		"save_spinup": false,
+		"store_spinup_history": false
 	}
 }

@@ -32,7 +32,7 @@ function get_loc_loss(loc_obs,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     lossVec = getLossVectorArray(loc_obs, model_data, tem_optim)
-    t_loss = combineLossArray(lossVec, Val(tem_optim.multiConstraintMethod)) #sum(lossVec) Val{:sum}()
+    t_loss = combineLossArray(lossVec, Val(tem_optim.multi_constraint_method)) #sum(lossVec) Val{:sum}()
     #@show t_loss
     return t_loss
 end
@@ -99,7 +99,7 @@ output,
 forc,
 obs = setup_simple();
 
-#cost_options = tem_optim.costOptions
+#cost_options = tem_optim.cost_options
 
 site_location = loc_space_maps[1];
 
@@ -131,7 +131,7 @@ getLocOutput!(output.data, loc_space_ind, loc_output)
 
 loc_output = Sindbad.DiffCache.(loc_output, Val(14_000))
 
-#tem_optim_new = (; tem_optim..., costOptions=(; tem_optim.costOptions..., variable = [:gpp], costMetric = [Val(:mse)]))
+#tem_optim_new = (; tem_optim..., cost_options=(; tem_optim.cost_options..., variable = [:gpp], cost_metric = [Val(:mse)]))
 
 args = (;
     #output,

@@ -9,7 +9,7 @@ export WUE_expVPDDayCo2
 end
 #! format: on
 
-function define(o::WUE_expVPDDayCo2, forcing, land, helpers)
+function define(p_struct::WUE_expVPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
     ## pack land variables
     AoE = helpers.numbers.𝟙
@@ -18,21 +18,21 @@ function define(o::WUE_expVPDDayCo2, forcing, land, helpers)
     return land
 end
 
-function compute(o::WUE_expVPDDayCo2, forcing, land, helpers)
+function compute(p_struct::WUE_expVPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_expVPDDayCo2 o
+    @unpack_WUE_expVPDDayCo2 p_struct
     @unpack_forcing VPDDay ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        ambCO2 ∈ land.states
+        ambient_CO2 ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
     # "WUEat1hPa"
     AoENoCO2 = WUEatOnehPa * exp(κ * -VPDDay)
-    fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     AoE = AoENoCO2 * fCO2_CO2
 
     ## pack land variables

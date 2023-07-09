@@ -6,16 +6,16 @@ export transpirationDemand_PETvegFraction
 end
 #! format: on
 
-function compute(o::transpirationDemand_PETvegFraction, forcing, land, helpers)
+function compute(p_struct::transpirationDemand_PETvegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationDemand_PETvegFraction o
+    @unpack_transpirationDemand_PETvegFraction p_struct
 
     ## unpack land variables
     @unpack_land begin
-        vegFraction ∈ land.states
+        frac_vegetation ∈ land.states
         PET ∈ land.PET
     end
-    tranDem = PET * α * vegFraction
+    tranDem = PET * α * frac_vegetation
 
     ## pack land variables
     @pack_land tranDem => land.transpirationDemand
@@ -35,7 +35,7 @@ Demand-driven transpiration using transpirationDemand_PETvegFraction
 
 *Inputs*
  - land.PET.PET : potential evapotranspiration out of PET module
- - land.states.vegFraction: vegetation fraction
+ - land.states.frac_vegetation: vegetation fraction
  - α: α parameter for potential transpiration
 
 *Outputs*

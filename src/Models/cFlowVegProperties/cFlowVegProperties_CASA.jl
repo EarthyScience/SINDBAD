@@ -6,12 +6,12 @@ export cFlowVegProperties_CASA
 end
 #! format: on
 
-function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowVegProperties_CASA o
-    taker ∈ land.cCycleBase
+function define(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowVegProperties_CASA p_struct
+    c_taker ∈ land.cCycleBase
 
     ## instantiate variables
-    p_F = helpers.numbers.sNT.(zero([taker...]))
+    p_F = helpers.numbers.sNT.(zero([c_taker...]))
     if land.pools.cEco isa SVector
         p_F = SVector{length(p_F)}(p_F)
     end
@@ -21,9 +21,9 @@ function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(o::cFlowVegProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowVegProperties_CASA o
+    @unpack_cFlowVegProperties_CASA p_struct
 
     ## unpack land variables
     @unpack_land p_F ∈ land.cFlowVegProperties

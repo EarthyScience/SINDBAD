@@ -7,43 +7,43 @@ export rootFraction_k2fRD
 end
 #! format: on
 
-function define(o::rootFraction_k2fRD, forcing, land, helpers)
-    @unpack_rootFraction_k2fRD o
+function define(p_struct::rootFraction_k2fRD, forcing, land, helpers)
+    @unpack_rootFraction_k2fRD p_struct
 
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
     if length(land.pools.soilW) != 2
         error("rootFraction_k2Layer: approach works for 2 soil layers only.")
     end
     # create the arrays to fill in the soil properties 
-    p_fracRoot2SoilD = ones(helpers.numbers.num_type, length(land.pools.soilW))
+    p_frac_root_to_soil_depth = ones(helpers.numbers.num_type, length(land.pools.soilW))
 
     ## pack land variables
-    @pack_land (p_fracRoot2SoilD) => land.rootFraction
+    @pack_land (p_frac_root_to_soil_depth) => land.rootFraction
     return land
 end
 
-function compute(o::rootFraction_k2fRD, forcing, land, helpers)
+function compute(p_struct::rootFraction_k2fRD, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootFraction_k2fRD o
+    @unpack_rootFraction_k2fRD p_struct
 
     ## unpack land variables
-    @unpack_land (p_fracRoot2SoilD) ∈ land.rootFraction
+    @unpack_land (p_frac_root_to_soil_depth) ∈ land.rootFraction
 
     ## unpack land variables
-    @unpack_land vegFraction ∈ land.states
+    @unpack_land frac_vegetation ∈ land.states
 
     ## calculate variables
     # check if the number of soil layers & number of elements in soil
-    k1RootFrac = vegFraction * k1_scale # the fraction of water that a root can uptake from the 1st soil layer
-    k2RootFrac = vegFraction * k2_scale # the fraction of water that a root can uptake from the 1st soil layer
+    k1RootFrac = frac_vegetation * k1_scale # the fraction of water that a root can uptake from the 1st soil layer
+    k2RootFrac = frac_vegetation * k2_scale # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
-    p_fracRoot2SoilD[1] = p_fracRoot2SoilD[1] * k1RootFrac
+    p_frac_root_to_soil_depth[1] = p_frac_root_to_soil_depth[1] * k1RootFrac
     # 2nd Layer
-    p_fracRoot2SoilD[2] = p_fracRoot2SoilD[2] * k2RootFrac
+    p_frac_root_to_soil_depth[2] = p_frac_root_to_soil_depth[2] * k2RootFrac
 
     ## pack land variables
-    @pack_land p_fracRoot2SoilD => land.rootFraction
+    @pack_land p_frac_root_to_soil_depth => land.rootFraction
     return land
 end
 
@@ -61,10 +61,10 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
 *Inputs*
  - helpers.pools.: soil layers & depths
  - k2_RDscale : RD scalar for k2
- - land.states.vegFraction : vegetation fraction
+ - land.states.frac_vegetation : vegetation fraction
 
 *Outputs*
- - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
+ - land.rootFraction.p_frac_root_to_soil_depth as nPix;nZix for soilW
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootFraction_k2fRD

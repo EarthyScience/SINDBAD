@@ -2,110 +2,110 @@ export cCycle_simple
 
 struct cCycle_simple <: cCycle end
 
-function define(o::cCycle_simple, forcing, land, helpers)
+function define(p_struct::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
         (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     n_cEco = length(land.pools.cEco)
     n_cVeg = length(land.pools.cVeg)
     ## instantiate variables
-    cEcoFlow = zero(land.pools.cEco)
-    cEcoOut = zero(land.pools.cEco)
-    cEcoInflux = zero(land.pools.cEco)
-    zerocEcoFlow = zero(cEcoFlow)
-    zerocEcoInflux = zero(cEcoInflux)
-    cNPP = zero(land.pools.cEco)
+    c_eco_flow = zero(land.pools.cEco)
+    c_eco_out = zero(land.pools.cEco)
+    c_eco_influx = zero(land.pools.cEco)
+    zero_c_eco_flow = zero(c_eco_flow)
+    zero_c_eco_influx = zero(c_eco_influx)
+    c_eco_npp = zero(land.pools.cEco)
 
     cEco_prev = copy(land.pools.cEco)
     zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
-    NEE = 𝟘
-    NPP = 𝟘
-    cRA = 𝟘
-    cRECO = 𝟘
-    cRH = 𝟘
+    nee = 𝟘
+    npp = 𝟘
+    auto_respiration = 𝟘
+    eco_respiration = 𝟘
+    hetero_respiration = 𝟘
 
     @pack_land begin
-        (cEcoFlow, cEcoInflux, cEcoOut, cEco_prev, cNPP, zixVeg, zerocEcoFlow, zerocEcoInflux) =>
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) =>
             land.states
-        (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
+        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
     end
     return land
 end
 
-function compute(o::cCycle_simple, forcing, land, helpers)
+function compute(p_struct::cCycle_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc,
-            cEcoEfflux,
-            cEcoFlow,
-            cEcoInflux,
+        (c_allocation,
+            c_efflux,
+            c_eco_flow,
+            c_eco_influx,
             cEco_prev,
-            cEcoOut,
-            cNPP,
+            c_eco_out,
+            c_eco_npp,
             p_k,
             zixVeg,
-            zerocEcoFlow,
-            zerocEcoInflux) ∈ land.states
+            zero_c_eco_flow,
+            zero_c_eco_influx) ∈ land.states
         cEco ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
-        (p_A, giver, taker) ∈ land.cFlow
-        (flowOrder) ∈ land.cCycleBase
+        (p_A, c_giver, c_taker) ∈ land.cFlow
+        (c_flow_order) ∈ land.cCycleBase
         (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
-    cEcoFlow = zerocEcoFlow .* 𝟘
-    cEcoInflux = cEcoInflux
+    c_eco_flow = zero_c_eco_flow .* 𝟘
+    c_eco_influx = c_eco_influx
     ## compute losses
-    cEcoOut = min.(cEco, cEco .* p_k)
+    c_eco_out = min.(cEco, cEco .* p_k)
 
     ## gains to vegetation
     for zv ∈ zixVeg
-        @rep_elem gpp * cAlloc[zv] - cEcoEfflux[zv] => (cNPP, zv, :cEco)
-        @rep_elem cNPP[zv] => (cEcoInflux, zv, :cEco)
+        @rep_elem gpp * c_allocation[zv] - c_efflux[zv] => (c_eco_npp, zv, :cEco)
+        @rep_elem c_eco_npp[zv] => (c_eco_influx, zv, :cEco)
     end
 
     # flows & losses
     # @nc; if flux order does not matter; remove# sujanq: this was deleted by simon in the version of 2020-11. Need to
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
-    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing flowOrder. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix ∈ eachindex(flowOrder)
-        fO = flowOrder[jix]
-        take_r = taker[fO]
-        give_r = giver[fO]
-        tmp_flow = cEcoFlow[take_r] + cEcoOut[give_r] * p_A[take_r, give_r]
-        @rep_elem tmp_flow => (cEcoFlow, take_r, :cEco)
+    # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing c_flow_order. So; in biomascat; the fields do not exist & this block of code will not work.
+    for jix ∈ eachindex(c_flow_order)
+        fO = c_flow_order[jix]
+        take_r = c_taker[fO]
+        give_r = c_giver[fO]
+        tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * p_A[take_r, give_r]
+        @rep_elem tmp_flow => (c_eco_flow, take_r, :cEco)
     end
     # for jix = 1:length(p_taker)
-    # taker = p_taker[jix]
-    # giver = p_giver[jix]
-    # c_flow = p_A(taker, giver)
-    # take_flow = cEcoFlow[taker]
-    # give_flow = cEcoOut[giver]
-    # cEcoFlow[taker] = take_flow + give_flow * c_flow
+    # c_taker = p_taker[jix]
+    # c_giver = p_giver[jix]
+    # c_flow = p_A(c_taker, c_giver)
+    # take_flow = c_eco_flow[c_taker]
+    # give_flow = c_eco_out[c_giver]
+    # c_eco_flow[c_taker] = take_flow + give_flow * c_flow
     # end
     ## balance
-    ΔcEco = cEcoFlow .+ cEcoInflux .- cEcoOut
-    cEco = cEco .+ cEcoFlow .+ cEcoInflux .- cEcoOut
+    ΔcEco = c_eco_flow .+ c_eco_influx .- c_eco_out
+    cEco = cEco .+ c_eco_flow .+ c_eco_influx .- c_eco_out
 
     ## compute RA & RH
-    NPP = sum(cNPP)
+    npp = sum(c_eco_npp)
     backNEP = sum(cEco) - sum(cEco_prev)
-    cRA = gpp - NPP
-    cRECO = gpp - backNEP
-    cRH = cRECO - cRA
-    NEE = cRECO - gpp
+    auto_respiration = gpp - npp
+    eco_respiration = gpp - backNEP
+    hetero_respiration = eco_respiration - auto_respiration
+    nee = eco_respiration - gpp
     cEco_prev = cEco
 
     land = upd_c(land, cEco, helpers)
     ## pack land variables
     @pack_land begin
         cEco => land.pools
-        (NEE, NPP, cRA, cRECO, cRH) => land.fluxes
-        (ΔcEco, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP, cEco_prev) => land.states
+        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
+        (ΔcEco, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
     end
     return land
 end
@@ -130,22 +130,22 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 Allocate carbon to vegetation components using cCycle_simple
 
 *Inputs*
- - helpers.dates.nStepsYear: number of time steps per year
+ - helpers.dates.timesteps_in_year: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_giver: giver pool array
- - land.cFlow.p_taker: taker pool array
+ - land.cFlow.p_giver: c_giver pool array
+ - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
- - land.states.cAlloc: carbon allocation matrix
+ - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
  - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
- - land.fluxes.cNPP: values for net primary productivity
- - land.fluxes.cRA: values for autotrophic respiration
- - land.fluxes.cRECO: values for ecosystem respiration
- - land.fluxes.cRH: values for heterotrophic respiration
+ - land.fluxes.c_eco_npp: values for net primary productivity
+ - land.fluxes.auto_respiration: values for autotrophic respiration
+ - land.fluxes.eco_respiration: values for ecosystem respiration
+ - land.fluxes.hetero_respiration: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
- - land.states.cEcoEfflux:
+ - land.states.c_efflux:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycle_simple

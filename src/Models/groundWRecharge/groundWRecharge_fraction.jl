@@ -6,9 +6,9 @@ export groundWRecharge_fraction
 end
 #! format: on
 
-function compute(o::groundWRecharge_fraction, forcing, land, helpers)
+function compute(p_struct::groundWRecharge_fraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWRecharge_fraction o
+    @unpack_groundWRecharge_fraction p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -18,21 +18,21 @@ function compute(o::groundWRecharge_fraction, forcing, land, helpers)
 
     ## calculate variables
     # calculate recharge
-    groundWRec = rf * (soilW[end] + ΔsoilW[end])
+    gw_recharge = rf * (soilW[end] + ΔsoilW[end])
 
-    ΔgroundW .= ΔgroundW .+ groundWRec / length(groundW)
-    ΔsoilW[end] = ΔsoilW[end] - groundWRec
+    ΔgroundW .= ΔgroundW .+ gw_recharge / length(groundW)
+    ΔsoilW[end] = ΔsoilW[end] - gw_recharge
 
     ## pack land variables
     @pack_land begin
-        groundWRec => land.fluxes
+        gw_recharge => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land
 end
 
-function update(o::groundWRecharge_fraction, forcing, land, helpers)
-    @unpack_groundWRecharge_fraction o
+function update(p_struct::groundWRecharge_fraction, forcing, land, helpers)
+    @unpack_groundWRecharge_fraction p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -71,7 +71,7 @@ Recharge the groundwater using groundWRecharge_fraction
  - land.pools.soilW
 
 *Outputs*
- - land.fluxes.groundWRec
+ - land.fluxes.gw_recharge
 
 # update
 

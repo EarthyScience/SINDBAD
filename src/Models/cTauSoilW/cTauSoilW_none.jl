@@ -2,13 +2,13 @@ export cTauSoilW_none
 
 struct cTauSoilW_none <: cTauSoilW end
 
-function define(o::cTauSoilW_none, forcing, land, helpers)
+function define(p_struct::cTauSoilW_none, forcing, land, helpers)
 
     ## calculate variables
-    p_fsoilW = ones(helpers.numbers.num_type, length(land.pools.cEco))
+    p_k_f_soilW = ones(helpers.numbers.num_type, length(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_fsoilW => land.cTauSoilW
+    @pack_land p_k_f_soilW => land.cTauSoilW
     return land
 end
 

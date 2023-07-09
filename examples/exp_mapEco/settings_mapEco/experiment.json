@@ -1,10 +1,10 @@
 {
 	"name": "mapFN",
 	"domain": "FLUXNET",
-	"configFiles": {
+	"configuration_files": {
 		"forcing"		: "forcing.json",
-		"modelStructure": "modelStructure.json",
-		"modelRun"		: "modelRun.json",
+		"model_structure": "modelStructure.json",
+		"model_run"		: "modelRun.json",
 		"spinup"		: "spinup.json",
 		"opti"			: "opti.json"
 	}

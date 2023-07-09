@@ -6,9 +6,9 @@ export NIRv_constant
 end
 #! format: on
 
-function compute(o::NIRv_constant, forcing, land, helpers)
+function compute(p_struct::NIRv_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_NIRv_constant o
+    @unpack_NIRv_constant p_struct
 
     ## calculate variables
     NIRv = constantNIRv

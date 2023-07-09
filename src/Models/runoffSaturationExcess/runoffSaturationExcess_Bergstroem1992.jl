@@ -6,19 +6,19 @@ export runoffSaturationExcess_Bergstroem1992
 end
 #! format: on
 
-function define(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
-    runoffSatExc = helpers.numbers.𝟘
+function define(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+    sat_excess_runoff = helpers.numbers.𝟘
 
     ## pack land variables
     @pack_land begin
-        runoffSatExc => land.fluxes
+        sat_excess_runoff => land.fluxes
     end
     return land
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
+function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSaturationExcess_Bergstroem1992 o
+    @unpack_runoffSaturationExcess_Bergstroem1992 p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -34,14 +34,14 @@ function compute(o::runoffSaturationExcess_Bergstroem1992, forcing, land, helper
     # calculate land runoff from incoming water & current soil moisture
     tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β)
 
-    runoffSatExc = WBP * tmp_SatExFrac
+    sat_excess_runoff = WBP * tmp_SatExFrac
 
     # update water balance pool
-    WBP = WBP - runoffSatExc
+    WBP = WBP - sat_excess_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffSatExc => land.fluxes
+        sat_excess_runoff => land.fluxes
         WBP => land.states
     end
     return land
@@ -64,7 +64,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992
  - smax2 : maximum water capacity of second soil layer [mm]
 
 *Outputs*
- - land.fluxes.runoffSatExc : runoff from land [mm/time]
+ - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
  - land.runoffSaturationExcess.p_berg : scaled berg parameter
  - land.states.WBP : water balance pool [mm]
 
