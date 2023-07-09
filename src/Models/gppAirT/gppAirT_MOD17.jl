@@ -7,23 +7,23 @@ export gppAirT_MOD17
 end
 #! format: on
 
-function compute(o::gppAirT_MOD17, forcing, land, helpers)
+function compute(p_struct::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_MOD17 o
+    @unpack_gppAirT_MOD17 p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
     ## calculate variables
     tsc = TairDay / ((𝟙 - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
-    TempScGPP = clamp_01(tsc)
+    gpp_f_airT = clamp_01(tsc)
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress on gppPot based on GPP - MOD17 model
+temperature stress on gpp_potential based on GPP - MOD17 model
 
 # Parameters
 $(PARAMFIELDS)
@@ -37,7 +37,7 @@ Effect of temperature using gppAirT_MOD17
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 

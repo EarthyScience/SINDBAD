@@ -73,7 +73,7 @@ function coreEcosystem(approaches,
 
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
-    if tem_helpers.run.runSpinup
+    if tem_helpers.run.run_spinup
         land_spin_now = runSpinup(
             approaches,
             loc_forcing,
@@ -110,7 +110,7 @@ function coreEcosystem(approaches,
     land_spin_now = land_prec
     # land_spin_now = land_init
 
-    if tem_helpers.run.runSpinup
+    if tem_helpers.run.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,

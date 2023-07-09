@@ -1,10 +1,10 @@
 export getObservation, cleanObsData
 
 
-function cleanObsData(datapoint, datapoint_qc, vinfo, bounds, bounds_qc, ::Val{T}) where {T}
+function cleanObsData(datapoint, datapoint_qc, vinfo_data, bounds, bounds_qc, ::Val{T}) where {T}
     datapoint = applyUnitConversion(datapoint,
-        vinfo.data.source2sindbadUnit,
-        vinfo.data.additiveUnitConversion)
+        vinfo_data.source_to_sindbad_unit,
+        vinfo_data.additive_unit_conversion)
     if !isnothing(bounds)
         if datapoint < first(bounds) || datapoint > last(bounds)
             datapoint = T(NaN)
@@ -18,19 +18,19 @@ function cleanObsData(datapoint, datapoint_qc, vinfo, bounds, bounds_qc, ::Val{T
     return ismissing(datapoint) ? T(NaN) : T(datapoint)
 end
 
-function getDataFromPath(dataPath::String, srcVar::String)
-    ds = NetCDF.ncread(dataPath, srcVar)
+function getDataFromPath(data_path::String, srcVar::String)
+    ds = NetCDF.ncread(data_path, srcVar)
     data_tmp = ds[1, 1, :] # TODO multidimensional input
     return data_tmp
 end
 
-function getNCFromPath(dataPath::String, ::Val{:yaxarray})
-    nc_data = NetCDF.open(dataPath)
+function getNCFromPath(data_path::String, ::Val{:yaxarray})
+    nc_data = NetCDF.open(data_path)
     return nc_data
 end
 
-function getDataFromPath(dataPath::String, srcVar::String, ::Val{:yaxarray})
-    nc_data = NetCDF.open(dataPath)
+function getDataFromPath(data_path::String, srcVar::String, ::Val{:yaxarray})
+    nc_data = NetCDF.open(data_path)
     return nc_data[srcVar]
 end
 
@@ -80,17 +80,17 @@ end
 
 function time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
     if hasproperty(cyax, Symbol(forcing_info.dimensions.time))
-        cyax = cyax[time=(Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) + info.tem.helpers.dates.time_step)]
+        cyax = cyax[time=(Date(info.tem.helpers.dates.start_date),
+            Date(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step)]
     end
     if hasproperty(cyax_unc, Symbol(forcing_info.dimensions.time))
-        cyax_unc = cyax_unc[time=(Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) +
+        cyax_unc = cyax_unc[time=(Date(info.tem.helpers.dates.start_date),
+            Date(info.tem.helpers.dates.end_date) +
             info.tem.helpers.dates.time_step)]
     end
     if hasproperty(yax_mask, Symbol(forcing_info.dimensions.time))
-        yax_mask = yax_mask[time=(Date(info.tem.helpers.dates.sDate),
-            Date(info.tem.helpers.dates.eDate) +
+        yax_mask = yax_mask[time=(Date(info.tem.helpers.dates.start_date),
+            Date(info.tem.helpers.dates.end_date) +
             info.tem.helpers.dates.time_step)]
     end
     return cyax, cyax_unc, yax_mask
@@ -104,16 +104,16 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     permutes = forcing_info.permutes
     subset = forcing_info.subset
     doOnePath = false
-    dataPath = info.opti.constraints.oneDataPath
+    data_path = info.opti.constraints.default_constraint_data.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
-    if !isnothing(dataPath)
+    if !isnothing(data_path)
         doOnePath = true
-        dataPath = getAbsDataPath(info, dataPath)
-        nc = YAXArrays.open_dataset(zopen(dataPath))
+        data_path = getAbsDataPath(info, data_path)
+        nc = YAXArrays.open_dataset(zopen(data_path))
     end
-    varnames = Symbol.(info.opti.variables2constrain)
+    varnames = Symbol.(info.opti.variables_to_constrain)
     nc_mask = nothing
     mask_path = nothing
     if :one_sel_mask ∈ keys(info.opti.constraints)
@@ -124,16 +124,24 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
+    default_info = info.opti.constraints.default_constraint_data
+    numtype = Val{info.tem.helpers.numbers.num_type}()
+    set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k
         v = nothing
         vinfo = getproperty(info.opti.constraints.variables, k)
-        src_var = vinfo.data.sourceVariableName
+        vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
+        vinfo_unc = nothing
+        vinfo_qc = nothing
+        vinfo_sel_mask = nothing
+
+        src_var = vinfo_data.source_variable_name
 
         if !doOnePath
-            dataPath = getAbsDataPath(info, v.dataPath)
-            nc = YAXArrays.open_dataset(zopen(dataPath))
+            data_path = getAbsDataPath(info, vinfo_data.data_path)
+            nc = YAXArrays.open_dataset(zopen(data_path))
         end
-        @info "     $(k): Data: source_var: $(src_var), source_file: $(dataPath)"
+        @info "     $(k): Data: source_var: $(src_var), source_file: $(data_path)"
         ov = nc[src_var]
         v = YAXArrayBase.yaxconvert(DimArray, ov)
         # site, lon, lat should be options to consider here
@@ -147,45 +155,47 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         one_qc = false
         bounds_qc = nothing
         if hasproperty(vinfo, :qflag)
-            qc_var = vinfo.qflag.sourceVariableName
-            dataPath_qc = dataPath
-            if !isnothing(vinfo.qflag.dataPath)
-                dataPath_qc = getAbsDataPath(info, vinfo.qflag.dataPath)
+            vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
+            qc_var = vinfo_qc.source_variable_name
+            dataPath_qc = data_path
+            if !isnothing(vinfo_qc.data_path)
+                dataPath_qc = getAbsDataPath(info, vinfo_qc.data_path)
                 nc_qc = getNCFromPath(dataPath_qc, Val(:yaxarray))
             else
                 nc_qc = nc
             end
             v_qc = nc_qc[qc_var]
-            bounds_qc = vinfo.qflag.bounds
+            bounds_qc = vinfo_qc.bounds
             @info "          QFlag: source_var: $(qc_var), source_file: $(dataPath_qc)"
         else
             @info "          QFlag: No qflag provided. All data points assumed to be the highest quality of 1."
             one_qc = true
         end
 
-        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.use_uncertainty to false
         dataPath_unc = nothing
         v_unc = nothing
         nc_unc = nc
         unc_var = nothing
         one_unc = false
         bounds_unc = nothing
-        if hasproperty(vinfo, :unc) && info.opti.useUncertainty
-            unc_var = vinfo.unc.sourceVariableName
-            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
-            dataPath_unc = dataPath
-            if !isnothing(vinfo.unc.dataPath)
-                dataPath_unc = getAbsDataPath(info, vinfo.unc.dataPath)
+        if hasproperty(vinfo, :unc) && info.opti.use_uncertainty
+            vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
+            unc_var = vinfo_unc.source_variable_name
+            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            dataPath_unc = data_path
+            if !isnothing(vinfo_unc.data_path)
+                dataPath_unc = getAbsDataPath(info, vinfo_unc.data_path)
                 nc_unc = YAXArrays.open_dataset(zopen(dataPath_unc))
             else
                 nc_unc = nc
             end
             v_unc = nc_unc[unc_var]
-            bounds_unc = vinfo.unc.bounds
+            bounds_unc = vinfo_unc.bounds
             @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
-            dataPath_unc = dataPath
-            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            dataPath_unc = data_path
+            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
             one_unc = true
         end
 
@@ -193,16 +203,17 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         has_mask = false
         dataPath_mask = mask_path
         if hasproperty(vinfo, :sel_mask)
-            dataPath_mask = vinfo.sel_mask
+            vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            dataPath_mask = vinfo_sel_mask.data_path
             if !isnothing(dataPath_mask)
                 nc_mask = YAXArrays.open_dataset(zopen(dataPath_mask))
                 has_mask = true
             else
-                dataPath_mask = dataPath
+                dataPath_mask = data_path
                 nc_mask = nc
             end
         else
-            dataPath_mask = dataPath
+            dataPath_mask = data_path
             nc_mask = nc
         end
 
@@ -227,36 +238,34 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
 
         yax_qc = nothing
         if one_qc
-            yax_qc = map(x -> one(x), yax)
+            yax_qc = map(x -> one(set_numtype(x)), yax)
         else
             yax_qc = getObsZarr(v_qc)
         end
 
         yax_unc = nothing
         if one_unc
-            yax_unc = map(x -> one(x), yax)
+            yax_unc = map(x -> one(set_numtype(x)), yax)
         else
             yax_unc = getObsZarr(v_unc)
         end
 
         yax_mask = nothing
         if no_mask
-            yax_mask = map(x -> one(x), yax)
+            yax_mask = map(x -> Bool(one(x)), yax)
         else
-            yax_mask = getObsZarr(v_mask)
+            yax_mask = Bool.(getObsZarr(v_mask))
         end
 
-        numtype = Val{info.tem.helpers.numbers.num_type}()
 
         # clean the data by applying bounds
-        #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
-        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo, vinfo.data.bounds, bounds_qc, numtype), yax, yax_qc)
-        # cyax = map(da -> cleanObsData(da, vinfo, vinfo.data.bounds, numtype), yax)
+        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo, vinfo_data.bounds, bounds_qc, numtype), yax, yax_qc)
+        # cyax = map(da -> cleanObsData(da, vinfo, vinfo_data.bounds, numtype), yax)
 
         cyax_unc = yax_unc
         if !one_unc
-            cyax_unc = map((da, dq) -> cleanObsData(da, dq, vinfo, bounds_unc, bounds_qc, numtype), yax_unc, yax_qc)
-            # cyax_unc = map(da -> cleanObsData(da, vinfo, vinfo.unc.bounds, numtype), yax_unc)
+            cyax_unc = map((da, dq) -> cleanObsData(da, dq, vinfo_unc, bounds_unc, bounds_qc, numtype), yax_unc, yax_qc)
+            # cyax_unc = map(da -> cleanObsData(da, vinfo, vinfo_unc.bounds, numtype), yax_unc)
         end
         if !isnothing(permutes)
             @info "permuting dimensions to $(tar_dims)..."
@@ -273,7 +282,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         return push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
+    indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
     nts = getNumberOfTimeSteps(obscubes, forcing_info.dimensions.time)
     @info "getObservation: getting variable name..."
@@ -294,16 +303,16 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     forcing_info = info.tem.forcing
     permutes = forcing_info.permutes
     doOnePath = false
-    dataPath = info.opti.constraints.oneDataPath
+    data_path = info.opti.constraints.default_constraint_data.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
-    if !isnothing(dataPath)
+    if !isnothing(data_path)
         doOnePath = true
-        dataPath = getAbsDataPath(info, dataPath)
-        nc = NetCDF.open(dataPath)
+        data_path = getAbsDataPath(info, data_path)
+        nc = NetCDF.open(data_path)
     end
-    varnames = Symbol.(info.opti.variables2constrain)
+    varnames = Symbol.(info.opti.variables_to_constrain)
     nc_mask = nothing
     mask_path = nothing
     if :one_sel_mask ∈ keys(info.opti.constraints)
@@ -314,16 +323,24 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
+    default_info = info.opti.constraints.default_constraint_data
+    numtype = Val{info.tem.helpers.numbers.num_type}()
+    set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k
         v = nothing
         vinfo = getproperty(info.opti.constraints.variables, k)
-        src_var = vinfo.data.sourceVariableName
+        vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
+        vinfo_unc = nothing
+        vinfo_qc = nothing
+        vinfo_sel_mask = nothing
+
+        src_var = vinfo_data.source_variable_name
 
         if !doOnePath
-            dataPath = getAbsDataPath(info, vinfo.data.dataPath)
-            nc = getNCFromPath(dataPath, Val(:yaxarray))
+            data_path = getAbsDataPath(info, vinfo_data.data_path)
+            nc = getNCFromPath(data_path, Val(:yaxarray))
         end
-        @info "     $(k): Data: source_var: $(src_var), source_file: $(dataPath)"
+        @info "     $(k): Data: source_var: $(src_var), source_file: $(data_path)"
         v = nc[src_var]
 
         # get the quality flag data
@@ -334,45 +351,47 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         one_qc = false
         bounds_qc = nothing
         if hasproperty(vinfo, :qflag)
-            qc_var = vinfo.qflag.sourceVariableName
-            dataPath_qc = dataPath
-            if !isnothing(vinfo.qflag.dataPath)
-                dataPath_qc = getAbsDataPath(info, vinfo.qflag.dataPath)
+            vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
+            qc_var = vinfo_qc.source_variable_name
+            dataPath_qc = data_path
+            if !isnothing(vinfo_qc.data_path)
+                dataPath_qc = getAbsDataPath(info, vinfo_qc.data_path)
                 nc_qc = getNCFromPath(dataPath_qc, Val(:yaxarray))
             else
                 nc_qc = nc
             end
             v_qc = nc_qc[qc_var]
-            bounds_qc = vinfo.qflag.bounds
+            bounds_qc = vinfo_qc.bounds
             @info "          QFlag: source_var: $(qc_var), source_file: $(dataPath_qc)"
         else
             @info "          QFlag: No qflag provided. All data points assumed to be the highest quality of 1."
             one_qc = true
         end
 
-        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.useUncertainty to false
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.use_uncertainty to false
         dataPath_unc = nothing
         v_unc = nothing
         nc_unc = nc
         unc_var = nothing
         one_unc = false
         bounds_unc = nothing
-        if hasproperty(vinfo, :unc) && info.opti.useUncertainty
-            unc_var = vinfo.unc.sourceVariableName
-            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
-            dataPath_unc = dataPath
-            if !isnothing(vinfo.unc.dataPath)
-                dataPath_unc = getAbsDataPath(info, vinfo.unc.dataPath)
+        if hasproperty(vinfo, :unc) && info.opti.use_uncertainty
+            vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
+            unc_var = vinfo_unc.source_variable_name
+            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            dataPath_unc = data_path
+            if !isnothing(vinfo_unc.data_path)
+                dataPath_unc = getAbsDataPath(info, vinfo_unc.data_path)
                 nc_unc = getNCFromPath(dataPath_unc, Val(:yaxarray))
             else
                 nc_unc = nc
             end
             v_unc = nc_unc[unc_var]
-            bounds_unc = vinfo.unc.bounds
+            bounds_unc = vinfo_unc.bounds
             @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
-            dataPath_unc = dataPath
-            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.useUncertainty is set as $(info.opti.useUncertainty)"
+            dataPath_unc = data_path
+            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
             one_unc = true
         end
 
@@ -380,16 +399,17 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         has_mask = false
         dataPath_mask = mask_path
         if hasproperty(vinfo, :sel_mask)
-            dataPath_mask = vinfo.sel_mask
+            vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            dataPath_mask = vinfo_sel_mask.data_path
             if !isnothing(dataPath_mask)
                 nc_mask = getNCForMask(dataPath_mask)
                 has_mask = true
             else
-                dataPath_mask = dataPath
+                dataPath_mask = data_path
                 nc_mask = nc
             end
         else
-            dataPath_mask = dataPath
+            dataPath_mask = data_path
             nc_mask = nc
         end
 
@@ -407,39 +427,37 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         qc_tar_name = string(qc_var)
         mask_tar_name = string(src_var)
 
-        yax = getObsYax(v, nc, info, src_var, dataPath)
+        yax = getObsYax(v, nc, info, src_var, data_path)
 
         yax_qc = nothing
         if one_qc
-            yax_qc = map(x -> one(x), yax)
+            yax_qc = map(x -> one(set_numtype(x)), yax)
         else
             yax_qc = getObsYax(v_qc, nc_qc, info, qc_tar_name, dataPath_qc)
         end
 
         yax_unc = nothing
         if one_unc
-            yax_unc = map(x -> one(x), yax)
+            yax_unc = map(x -> one(set_numtype(x)), yax)
         else
             yax_unc = getObsYax(v_unc, nc_unc, info, unc_tar_name, dataPath_unc)
         end
 
         yax_mask = nothing
         if no_mask
-            yax_mask = map(x -> one(x), yax)
+            yax_mask = map(x -> Bool(one(x)), yax)
         else
-            yax_mask = getObsYax(v_mask, nc_mask, info, mask_tar_name, dataPath_mask)
+            yax_mask = Bool.(getObsYax(v_mask, nc_mask, info, mask_tar_name, dataPath_mask))
         end
 
-        numtype = Val{info.tem.helpers.numbers.num_type}()
 
         # clean the data by applying bounds
-        #todo: pass qc data to cleanObsData and apply consistently over variable and uncertainty data
-        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo, vinfo.data.bounds, bounds_qc, numtype), yax, yax_qc)
-        # cyax = map(da -> cleanObsData(da, vinfo, vinfo.data.bounds, numtype), yax)
+        cyax = map((da, dq) -> cleanObsData(da, dq, vinfo_data, vinfo_data.bounds, bounds_qc, numtype), yax, yax_qc)
+        # cyax = map(da -> cleanObsData(da, vinfo, vinfo_data.bounds, numtype), yax)
 
         cyax_unc = yax_unc
         if !one_unc
-            cyax_unc = map((da, dq) -> cleanObsData(da, dq, vinfo, bounds_unc, bounds_qc, numtype), yax_unc, yax_qc)
+            cyax_unc = map((da, dq) -> cleanObsData(da, dq, vinfo_unc, bounds_unc, bounds_qc, numtype), yax_unc, yax_qc)
             # cyax_unc = map(da -> cleanObsData(da, vinfo, bounds_unc, numtype), yax_unc)
         end
         if !isnothing(permutes)
@@ -457,7 +475,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         return push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
+    indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
     nts = forcing_info.sizes
     @info "getObservation: getting variable name..."

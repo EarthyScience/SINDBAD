@@ -3,13 +3,13 @@ export evaporation_demandSupply
 #! format: off
 @bounds @describe @units @with_kw struct evaporation_demandSupply{T1,T2} <: evaporation
     α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-    supLim::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+    k_evaporation::T2 = 0.2 | (0.05, 0.98) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 #! format: on
 
-function compute(o::evaporation_demandSupply, forcing, land, helpers)
+function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_demandSupply o
+    @unpack_evaporation_demandSupply p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -19,25 +19,25 @@ function compute(o::evaporation_demandSupply, forcing, land, helpers)
         𝟘 ∈ helpers.numbers
     end
     # calculate potential soil evaporation
-    PETsoil = max_0(PET * α)
-    evaporationSupply = max_0(supLim * (soilW[1] + ΔsoilW[1]))
+    PET_evaporation = max_0(PET * α)
+    evaporationSupply = max_0(k_evaporation * (soilW[1] + ΔsoilW[1]))
 
     # calculate the soil evaporation as a fraction of scaling parameter & PET
-    evaporation = min(PETsoil, evaporationSupply)
+    evaporation = min(PET_evaporation, evaporationSupply)
 
     # update soil moisture changes
     @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
     ## pack land variables
     @pack_land begin
-        (PETsoil, evaporationSupply) => land.evaporation
+        (PET_evaporation, evaporationSupply) => land.evaporation
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
     return land
 end
 
-function update(o::evaporation_demandSupply, forcing, land, helpers)
-    @unpack_evaporation_demandSupply o
+function update(p_struct::evaporation_demandSupply, forcing, land, helpers)
+    @unpack_evaporation_demandSupply p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -73,7 +73,7 @@ Soil evaporation using evaporation_demandSupply
 
 *Inputs*
  - land.PET.PET: extra forcing from prec
- - land.evaporation.PETsoil: extra forcing from prec
+ - land.evaporation.PET_evaporation: extra forcing from prec
  - α:
 
 *Outputs*

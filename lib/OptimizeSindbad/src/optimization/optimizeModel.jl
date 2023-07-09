@@ -77,15 +77,15 @@ end
 
 """
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables2constrain
+returns a vector of losses for variables in info.optim.variables_to_constrain
 """
 function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple)
     lossVec = []
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     for var_row ∈ cost_options
         obsV = var_row.variable
-        lossMetric = var_row.costMetric
+        lossMetric = var_row.cost_metric
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
@@ -116,7 +116,7 @@ function getLoss(pVector::AbstractArray,
     loss_vector = getLossVector(observations, outevolution, optim)
     @info "-------------------"
 
-    return combineLoss(loss_vector, Val(optim.multiConstraintMethod))
+    return combineLoss(loss_vector, Val(optim.multi_constraint_method))
 end
 
 """

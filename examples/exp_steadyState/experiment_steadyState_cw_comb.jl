@@ -356,8 +356,8 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
 
     plot!(getfield(out_sp_exp.pools, plot_var);
         linewidth=5,
-        label="Exp_Init",)
-        # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
+        label="Exp_Init")
+    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
     plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,
@@ -402,15 +402,15 @@ nLoop_pre_spin = 10
 # for arraymethod ∈ ("staticarray",)
 # for arraymethod ∈ ("array",) #, "staticarray")
 for arraymethod ∈ ("staticarray", "array") #, "staticarray")
-    replace_info = Dict("spinup.diffEq.timeJump" => 1,
-        "spinup.diffEq.reltol" => 1e-2,
-        "spinup.diffEq.abstol" => 1,
-        "modelRun.rules.model_array_type" => arraymethod,
-        "modelRun.flags.debugit" => false)
+    replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
+        "spinup.differential_eqn.relative_tolerance" => 1e-2,
+        "spinup.differential_eqn.absolute_tolerance" => 1,
+        "model_run.rules.model_array_type" => arraymethod,
+        "model_run.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     output = setupOutput(info)
 
     forc = getKeyedArrayFromYaxArray(forcing)

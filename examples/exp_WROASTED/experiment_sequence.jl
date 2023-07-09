@@ -28,21 +28,21 @@ for domain ∈ sites
 
 
     pl = "threads"
-    replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
-        "experiment.configFiles.forcing" => forcingConfig,
+    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+        "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "modelRun.time.eDate" => eYear * "-12-31",
-        "modelRun.flags.runOpti" => optimize_it,
-        "modelRun.flags.calcCost" => true,
-        "spinup.flags.saveSpinup" => false,
-        "modelRun.flags.catchErrors" => true,
-        "modelRun.flags.runSpinup" => true,
-        "modelRun.flags.debugit" => false,
-        "spinup.flags.doSpinup" => true,
-        "forcing.default_forcing.dataPath" => inpath,
-        "modelRun.output.path" => outpath,
-        "modelRun.mapping.parallelization" => pl,
-        "opti.constraints.oneDataPath" => obspath)
+        "model_run.time.end_date" => eYear * "-12-31",
+        "model_run.flags.run_optimization" => optimize_it,
+        "model_run.flags.run_forward_and_cost" => true,
+        "spinup.flags.save_spinup" => false,
+        "model_run.flags.catch_model_errors" => true,
+        "model_run.flags.run_spinup" => true,
+        "model_run.flags.debug_model" => false,
+        "spinup.flags.do_spinup" => true,
+        "forcing.default_forcing.data_path" => inpath,
+        "model_run.output.path" => outpath,
+        "model_run.mapping.parallelization" => pl,
+        "opti.constraints.default_constraint_data.data_path" => obspath)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
@@ -50,37 +50,37 @@ for domain ∈ sites
     ## get the spinup sequence
     nrepeat = 200
 
-    dataPath = getAbsDataPath(info, inpath)
-    nc = ForwardSindbad.NetCDF.open(dataPath)
+    data_path = getAbsDataPath(info, inpath)
+    nc = ForwardSindbad.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
     nrepeat_d = nothing
     if y_dist !== "undisturbed"
         y_disturb = year(Date(y_dist))
-        y_start = year(Date(info.tem.helpers.dates.sDate))
+        y_start = year(Date(info.tem.helpers.dates.start_date))
         nrepeat_d = y_start - y_disturb
     end
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
-            Dict("spinupMode" => "spinup", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => nrepeat),
-            Dict("spinupMode" => "ηScaleAH", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
-            Dict("spinupMode" => "spinup", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => nrepeat),
-            Dict("spinupMode" => "ηScaleAH", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
-            Dict("spinupMode" => "spinup", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => nrepeat),
-            Dict("spinupMode" => "ηScaleA0H", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
-            Dict("spinupMode" => "spinup", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => nrepeat),
-            Dict("spinupMode" => "ηScaleA0H", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => 1),
-            Dict("spinupMode" => "spinup", "forcing" => "recycleMSC", "stopCriteria" => nothing, "nLoops" => nrepeat_d),
+            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
@@ -97,12 +97,12 @@ for domain ∈ sites
         info.optim.optimized_parameters)
     new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     forc = getKeyedArrayFromYaxArray(forcing)
 
     output = setupOutput(info)
 
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     obs = getObsKeyedArrayFromYaxArray(observations)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
@@ -124,24 +124,28 @@ for domain ∈ sites
     opt_dat = output.data
     def_dat = outcubes
     out_vars = output.variables
-    tspan = 9000:12000
-    costOpt = info.optim.costOptions
+    costOpt = info.optim.cost_options
     foreach(costOpt) do var_row
         v = var_row.variable
         @show "plot obs", v
-        lossMetric = var_row.costMetric
+        lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
         if loss_name == :nnseinv
             lossMetric = Val(:nse)
         end
         (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
-        metr_def = loss(obs_var, obs_σ, def_var, lossMetric)
+        obs_var_TMP = obs_var[:, 1, 1, 1]
+        non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
+        tspan = first(non_nan_index):last(non_nan_index)
+        xdata = [info.tem.helpers.dates.vector[tspan]...]
+        obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
+        metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
-        metr_opt = loss(obs_var, obs_σ, opt_var, lossMetric)
-        # @show def_var
-        plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
-        plot!(opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
-        plot!(obs_var[tspan, 1, 1, 1]; label="obs")
+        obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+        metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
+        plot(xdata, def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
+        plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
+        plot!(xdata, obs_var[tspan]; label="obs")
         savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
     end
 

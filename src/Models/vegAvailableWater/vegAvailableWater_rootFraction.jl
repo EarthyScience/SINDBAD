@@ -2,7 +2,7 @@ export vegAvailableWater_rootFraction
 
 struct vegAvailableWater_rootFraction <: vegAvailableWater end
 
-function define(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+function define(p_struct::vegAvailableWater_rootFraction, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -16,19 +16,19 @@ function define(o::vegAvailableWater_rootFraction, forcing, land, helpers)
     return land
 end
 
-function compute(o::vegAvailableWater_rootFraction, forcing, land, helpers)
+function compute(p_struct::vegAvailableWater_rootFraction, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         p_wWP ∈ land.soilWBase
-        p_fracRoot2SoilD ∈ land.rootFraction
+        p_frac_root_to_soil_depth ∈ land.rootFraction
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         𝟘 ∈ helpers.numbers
         PAW ∈ land.vegAvailableWater
     end
     for sl ∈ eachindex(soilW)
-        PAW_sl = p_fracRoot2SoilD[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - p_wWP[sl]))
+        PAW_sl = p_frac_root_to_soil_depth[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - p_wWP[sl]))
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
@@ -46,11 +46,11 @@ Plant available water using vegAvailableWater_rootFraction
 
 *Inputs*
  - land.pools.soilW
- - land.rootFraction.constantRootFrac
+ - land.rootFraction.constant_frac_root_to_soil_depth
  - land.states.maxRootD
 
 *Outputs*
- - land.rootFraction.p_fracRoot2SoilD
+ - land.rootFraction.p_frac_root_to_soil_depth
  - land.states.PAW
 
 ---

@@ -7,18 +7,18 @@ export gppSoilW_Stocker2020
 end
 #! format: on
 
-function define(o::gppSoilW_Stocker2020, forcing, land, helpers)
-    SMScGPP = helpers.numbers.𝟙
+function define(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
+    gpp_f_soilW = helpers.numbers.𝟙
     ttwo = helpers.numbers.sNT(2.0)
 
     ## pack land variables
-    @pack_land (ttwo, SMScGPP) => land.gppSoilW
+    @pack_land (ttwo, gpp_f_soilW) => land.gppSoilW
     return land
 end
 
-function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
+function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Stocker2020 o
+    @unpack_gppSoilW_Stocker2020 p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -34,16 +34,16 @@ function compute(o::gppSoilW_Stocker2020, forcing, land, helpers)
     actAWC = max_0(SM - s_wWP)
     SM_nor = min_1(actAWC / maxAWC)
     tfW = -q * (SM_nor - θstar)^ttwo + 𝟙
-    fW = SM_nor <= θstar ? tfW : one(tfW)
-    SMScGPP = clamp_01(fW)
+    c_allocation_f_soilW = SM_nor <= θstar ? tfW : one(tfW)
+    gpp_f_soilW = clamp_01(c_allocation_f_soilW)
 
     ## pack land variables
-    @pack_land SMScGPP => land.gppSoilW
+    @pack_land gpp_f_soilW => land.gppSoilW
     return land
 end
 
 @doc """
-soil moisture stress on gppPot based on Stocker2020
+soil moisture stress on gpp_potential based on Stocker2020
 
 # Parameters
 $(PARAMFIELDS)
@@ -59,7 +59,7 @@ Gpp as a function of soilW; should be set to none if coupled with transpiration 
  - land.soilWBase.s_wFC: sum of field capacity
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+ - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

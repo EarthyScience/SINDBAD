@@ -6,9 +6,9 @@ export WUE_constant
 end
 #! format: on
 
-function compute(o::WUE_constant, forcing, land, helpers)
+function compute(p_struct::WUE_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_WUE_constant o
+    @unpack_WUE_constant p_struct
 
     ## calculate variables
     AoE = constantWUE

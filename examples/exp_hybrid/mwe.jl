@@ -28,7 +28,7 @@ land = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 helpers = info.tem.helpers;
 tem = info.tem;
 # helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-#     dates = (; nStepsDay=1),
+#     dates = (; timesteps_in_day=1),
 #     run = (; output_all=true, runSpinup=false),
 #     );
 # tem = (;

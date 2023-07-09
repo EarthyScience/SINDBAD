@@ -10,10 +10,10 @@ function do_the_mean(dat, ::Val{:nanmean})
 end
 
 function temporal_aggregation(y, yσ, ŷ, cost_option, ::Val{:mean})
-    ŷ = do_the_mean(ŷ, cost_option.temporalAggrFunc)
-    if cost_option.temporalAggrObs
-        y = do_the_mean(y, cost_option.temporalAggrFunc)
-        yσ = do_the_mean(yσ, cost_option.temporalAggrFunc)
+    ŷ = do_the_mean(ŷ, cost_option.temporal_aggr_func)
+    if cost_option.temporal_aggr_obs
+        y = do_the_mean(y, cost_option.temporal_aggr_func)
+        yσ = do_the_mean(yσ, cost_option.temporal_aggr_func)
     end
     return y, yσ, ŷ
 end
@@ -23,10 +23,10 @@ function temporal_aggregation(y, yσ, ŷ, _, ::Val{:day})
 end
 
 function temporal_aggregation(y, yσ, ŷ, cost_option, ::Val{:dayAnomaly})
-    μ_ŷ = do_the_mean(ŷ, cost_option.temporalAggrFunc)
+    μ_ŷ = do_the_mean(ŷ, cost_option.temporal_aggr_func)
     ŷ .= ŷ .- μ_ŷ
-    if cost_option.temporalAggrObs
-        μ_y = do_the_mean(y, cost_option.temporalAggrFunc)
+    if cost_option.temporal_aggr_obs
+        μ_y = do_the_mean(y, cost_option.temporal_aggr_func)
         y .= y .- μ_y
     end
     return y, yσ, ŷ

@@ -2,7 +2,7 @@ export evaporation_none
 
 struct evaporation_none <: evaporation end
 
-function define(o::evaporation_none, forcing, land, helpers)
+function define(p_struct::evaporation_none, forcing, land, helpers)
 
     ## calculate variables
     evaporation = helpers.numbers.𝟘

@@ -1,5 +1,5 @@
 {
-    "defaultModel":{
+    "default_model":{
             "order": 0,
             "use4spinup": true
     },
@@ -133,7 +133,7 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "addStateVars": {"Δ": 0.0}
+            "additional_state_variables": {"Δ": 0.0}
 		},
 		"carbon":
 		{
@@ -155,7 +155,7 @@
                 }
             },
 			"combine": "cEco",
-            "addStateVars": {"Δ": 0.0
+            "additional_state_variables": {"Δ": 0.0
             }
         }
 	}

@@ -169,16 +169,16 @@ function timeLoopForward!(loc_output,
     time_steps::Int64,
     f_one)
     f_t = f_one
-    if tem_helpers.run.debugit
+    if tem_helpers.run.debug_model
         time_steps = 1
     end
     for ts ∈ 1:time_steps
-        if tem_helpers.run.debugit
+        if tem_helpers.run.debug_model
             @show "forc"
             @time f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_t)
             println("-------------")
             @show "each model"
-            @time out = runModels!(out, f, forward_models, tem_helpers, tem_helpers.vals.debugit)
+            @time out = runModels!(out, f, forward_models, tem_helpers, tem_helpers.vals.debug_model)
             println("-------------")
             @show "all models"
             @time out = runModels!(out, f, forward_models, tem_helpers)
@@ -207,7 +207,7 @@ function coreEcosystem!(loc_output,
     land_spin_now = land_prec
     # land_spin_now = land_init
 
-    if tem_helpers.run.runSpinup
+    if tem_helpers.run.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
@@ -237,7 +237,7 @@ function doOneLocation(outcubes::AbstractArray, land_init, approaches, forcing, 
     f_one = getForcingForTimeStep(loc_forcing, 1)
     land_one = runModels!(land_prec, f_one, approaches, tem.helpers)
     setOutputT!(loc_output, land_one, tem.helpers.vals.output_vars, 1)
-    if tem.helpers.run.debugit
+    if tem.helpers.run.debug_model
         Sindbad.eval(:(error_catcher = []))
         push!(Sindbad.error_catcher, land_one)
         tcprint(land_one)
@@ -299,7 +299,7 @@ function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
 
-    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(ordered_variables), loc_space_names=Val(loc_space_names), debugit=Val(:debugit))
+    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(ordered_variables), loc_space_names=Val(loc_space_names), debug_model=Val(:debug_model))
     tem_helpers = setTupleField(tem_helpers, (:vals, vals))
     new_tem = setTupleField(tem, (:helpers, tem_helpers))
 
@@ -315,6 +315,7 @@ function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init
         loc_space_maps[1])
     loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
     loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
+    land_one = removeEmptyFields(land_one)
     land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
     return loc_space_maps,
     loc_space_names,
