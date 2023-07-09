@@ -3,63 +3,88 @@ export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
 using ConstructionBase
 export prepNumericHelpers
-"""
-getParameters(selectedModels)
-retrieve all models parameters
-"""
-function getParameters(selectedModels)
-    defaults = [flatten(selectedModels)...]
-    constrains = metaflatten(selectedModels, Models.bounds)
-    nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    modelsApproach = [parentnameflatten(selectedModels)...]
-    models = [Symbol(supertype(getproperty(Models, m))) for m ∈ modelsApproach]
-    varsModels = [join((models[i], names[i]), ".") for i ∈ 1:nbounds]
-    modelsObj = [getfield(Models, m) for m ∈ modelsApproach]
-    return Table(;
-        names,
-        defaults,
-        optim=defaults,
-        lower,
-        upper,
-        modelsApproach,
-        models,
-        varsModels,
-        modelsObj)
-end
+export replace_comman_separator_in_params
 
 """
 getParameters(selectedModels)
-retrieve all models parameters
+retrieve all model parameters
 """
-function getParameters(selectedModels, default_parameter)
-    defaults = [flatten(selectedModels)...]
+function getParameters(selectedModels)
+    default = [flatten(selectedModels)...]
     constrains = metaflatten(selectedModels, Models.bounds)
     nbounds = length(constrains)
     lower = [constrains[i][1] for i ∈ 1:nbounds]
     upper = [constrains[i][2] for i ∈ 1:nbounds]
-    names = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    modelsApproach = [parentnameflatten(selectedModels)...]
-    models = [Symbol(supertype(getproperty(Models, m))) for m ∈ modelsApproach]
-    varsModels = [join((models[i], names[i]), ".") for i ∈ 1:nbounds]
-    modelsObj = [getfield(Models, m) for m ∈ modelsApproach]
-    dp_dist = typeof(defaults[1]).(default_parameter[:distribution][2])
-    # dp_dist = Tuple(dp_dist)
-    dist = [default_parameter[:distribution][1] for m ∈ modelsApproach]
-    p_dist = [dp_dist for m ∈ modelsApproach]
-    is_ml = [default_parameter.is_ml for m ∈ modelsApproach]
+    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selectedModels)...]
+    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
+    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
+    approach_func = [getfield(Models, m) for m ∈ model_approach]
     return Table(;
-        names,
-        defaults,
-        optim=defaults,
+        name,
+        default,
+        optim=default,
         lower,
         upper,
-        modelsApproach,
-        models,
-        varsModels,
-        modelsObj,
+        model,
+        model_approach,
+        approach_func,
+        name_full)
+end
+
+function split_param(_p::Symbol, _splitter)
+    p_string = String(_p)
+    return split_param(p_string, _splitter)
+end
+
+function split_param(p_string::String, _splitter)
+    if occursin(",", p_string)
+        return split(p_string, _splitter)
+    else
+        return (p_string, "")
+    end
+end
+
+function replace_comman_separator_in_params(p_names_list)
+    o_p_names_list = []
+    foreach(p_names_list) do p
+        p_split = split_param(p, ",")
+        p_model = strip(first(p_split))
+        p_param = strip(last(p_split))
+        push!(o_p_names_list, "$(p_model).$(p_param)")
+    end
+    return o_p_names_list
+end
+"""
+getParameters(selectedModels)
+retrieve all model parameters
+"""
+function getParameters(selectedModels, default_parameter)
+    default = [flatten(selectedModels)...]
+    constrains = metaflatten(selectedModels, Models.bounds)
+    nbounds = length(constrains)
+    lower = [constrains[i][1] for i ∈ 1:nbounds]
+    upper = [constrains[i][2] for i ∈ 1:nbounds]
+    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selectedModels)...]
+    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
+    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
+    approach_func = [getfield(Models, m) for m ∈ model_approach]
+    dp_dist = typeof(default[1]).(default_parameter[:distribution][2])
+    # dp_dist = Tuple(dp_dist)
+    dist = [default_parameter[:distribution][1] for m ∈ model_approach]
+    p_dist = [dp_dist for m ∈ model_approach]
+    is_ml = [default_parameter.is_ml for m ∈ model_approach]
+    return Table(;
+        name,
+        default,
+        optim=default,
+        lower,
+        upper,
+        model,
+        model_approach,
+        approach_func,
+        name_full,
         dist,
         p_dist,
         is_ml)
@@ -67,24 +92,22 @@ end
 
 """
 getParameters(selectedModels, listModelsParams::Vector{String})
-retrieve all selected models parameters from string input
+retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
-    opt_parameter = [replace(_p, "_⚆_" => ".") for _p ∈ opt_parameter]
+    opt_parameter = opt_parameter
     paramstbl = getParameters(selectedModels, default_parameter)
-    return filter(row -> row.varsModels in opt_parameter, paramstbl)
+    return filter(row -> row.name_full in opt_parameter, paramstbl)
 end
 
 """
 getParameters(selectedModels, listModelsParams::Vector{String})
-retrieve all selected models parameters from string input
+retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::NamedTuple)
-    param_list = [replace(String(_p), "_⚆_" => ".") for _p ∈ keys(opt_parameter)]
-    # @show opt_parameter, default_parameter
+    param_list = replace_comman_separator_in_params(keys(opt_parameter))
     paramstbl = getParameters(selectedModels, default_parameter, param_list)
-    # @show opt_parameter, paramstbl, param_list, paramstbl.varsModels
-    pTable = filter(row -> row.varsModels in param_list, paramstbl)
+    pTable = filter(row -> row.name_full in param_list, paramstbl)
     new_dist = pTable.dist
     new_p_dist = pTable.p_dist
     new_is_ml = pTable.is_ml
@@ -114,7 +137,7 @@ updateParameters(tblParams, approaches)
 """
 function updateModelParameters(tblParams::Table, approaches::Tuple)
     function filtervar(var, modelName, tblParams, approachx)
-        subtbl = filter(row -> row.names == var && row.modelsApproach == modelName, tblParams)
+        subtbl = filter(row -> row.name == var && row.model_approach == modelName, tblParams)
         if isempty(subtbl)
             return getproperty(approachx, var)
         else
@@ -125,7 +148,7 @@ function updateModelParameters(tblParams::Table, approaches::Tuple)
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
-        newapproachx = if modelName in tblParams.modelsApproach
+        newapproachx = if modelName in tblParams.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
@@ -152,15 +175,15 @@ function updateModelParametersType(tblParams, approaches::Tuple, pVector)
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
         model_obj = approachx
-        newapproachx = if modelName in tblParams.modelsApproach
+        newapproachx = if modelName in tblParams.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
-                pindex = findall(row -> row.names == var && row.modelsApproach == modelName,
+                pindex = findall(row -> row.name == var && row.model_approach == modelName,
                     tblParams)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    model_obj = tblParams[pindex[1]].modelsObj
+                    model_obj = tblParams[pindex[1]].approach_func
                     pval = pVector[pindex[1]]
                 end
                 push!(newvals, var => pval)
@@ -184,15 +207,15 @@ end
 #     foreach(approaches) do approachx
 #         modelName = nameof(typeof(approachx))
 #         #model_obj = approachx
-#         newapproachx = if modelName in tblParams.modelsApproach
+#         newapproachx = if modelName in tblParams.model_approach
 #             vars = getproperties(approachx)
 #             newvals = Pair[]
 #             for (k, var) ∈ pairs(vars)
-#                 pindex = findall(row -> row.names == k && row.modelsApproach == modelName,
+#                 pindex = findall(row -> row.name == k && row.model_approach == modelName,
 #                     tblParams)
 #                 #pval = getproperty(approachx, var)
 #                 if !isempty(pindex)
-#                     #model_obj = tblParams[pindex[1]].modelsObj
+#                     #model_obj = tblParams[pindex[1]].approach_func
 #                     var = pVector[pindex[1]]
 #                 end
 #                 push!(newvals, k => var)
@@ -216,11 +239,11 @@ function updateModelParameters(tblParams, approaches::Tuple, pVector)
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
         model_obj = approachx
-        newapproachx = if modelName in tblParams.modelsApproach
+        newapproachx = if modelName in tblParams.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
-                pindex = findall(row -> row.names == var && row.modelsApproach == modelName,
+                pindex = findall(row -> row.name == var && row.model_approach == modelName,
                     tblParams)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
@@ -365,14 +388,14 @@ function setInputParameters(original_table::Table, updated_table::Table)
     for i ∈ eachindex(updated_table)
         subtbl = filter(
             row ->
-                row.names == Symbol(updated_table[i].names) &&
+                row.name == Symbol(updated_table[i].name) &&
                     row.models == Symbol(updated_table[i].models),
             original_table)
         if isempty(subtbl)
-            error("model: parameter $(updated_table[i].names) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
+            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
         else
             posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
-            posvar = findall(x -> x == Symbol(updated_table[i].names), upoTable.names)
+            posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
             pindx = intersect(posmodel, posvar)
             pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
             upoTable.optim[pindx] = updated_table.optim[i]
@@ -503,7 +526,7 @@ function generateDatesInfo(info::NamedTuple)
         )
     end
     tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
-    # tmpDates = setTupleField(tmpDates, (:vector, Tuple(time_range))) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:vector, Tuple(time_range))) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info

@@ -74,9 +74,9 @@ rand_m = rand(tem_vals.helpers.numbers.num_type);
 op = setupOutput(info);
 
 mods = tem_vals.models.forward;
-params = tblParams.defaults;
+params = tblParams.default;
 selParam = :fracRootD2SoilD
-selIndex = findall(tblParams.names .== selParam)[1]
+selIndex = findall(tblParams.name .== selParam)[1]
 for pr ∈ collect(0.0:50:1000.0)
     pc = copy(params)
     pc[selIndex] = pc[selIndex] * pr
@@ -95,7 +95,7 @@ for pr ∈ collect(0.0:50:1000.0)
         f_one)
     @show l
 end
-g_loss(tblParams.defaults .* rand_m,
+g_loss(tblParams.default .* rand_m,
     mods,
     forc,
     op,
@@ -108,7 +108,7 @@ g_loss(tblParams.defaults .* rand_m,
     loc_outputs,
     land_init_space,
     f_one)
-g_loss(tblParams.defaults,
+g_loss(tblParams.default,
     mods,
     forc,
     op,
@@ -121,8 +121,8 @@ g_loss(tblParams.defaults,
     loc_outputs,
     land_init_space,
     f_one)
-# g_loss(tblParams.defaults, tem_vals.models.forward, forc, op, op.variables, tem_vals, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
-dualDefs = ForwardDiff.Dual{tem_vals.helpers.numbers.num_type}.(tblParams.defaults);
+# g_loss(tblParams.default, tem_vals.models.forward, forc, op, op.variables, tem_vals, info.optim, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
+dualDefs = ForwardDiff.Dual{tem_vals.helpers.numbers.num_type}.(tblParams.default);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -155,8 +155,8 @@ function l2(p)
         land_init_space,
         f_one)
 end
-l1(tblParams.defaults .* rand_m)
-l2(tblParams.defaults .* rand_m)
-@time grad = ForwardDiff.gradient(l1, tblParams.defaults .* rand_m)
-@profview grad = ForwardDiff.gradient(l1, tblParams.defaults)
+l1(tblParams.default .* rand_m)
+l2(tblParams.default .* rand_m)
+@time grad = ForwardDiff.gradient(l1, tblParams.default .* rand_m)
+@profview grad = ForwardDiff.gradient(l1, tblParams.default)
 @time grad = ForwardDiff.gradient(l2, dualDefs)

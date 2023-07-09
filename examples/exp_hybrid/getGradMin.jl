@@ -82,7 +82,7 @@ rand_m = rand(info.tem.helpers.numbers.num_type);
 
 mods = info.tem.models.forward;
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
@@ -98,7 +98,7 @@ for _ in 1:10
     @show lo_ss
 end
 
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.defaults);
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.default);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -118,7 +118,7 @@ function l1(p)
 end
 
 # CHUNK_SIZE = 20
-p_vec = tblParams.defaults;
+p_vec = tblParams.default;
 CHUNK_SIZE = 10#length(p_vec)
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 

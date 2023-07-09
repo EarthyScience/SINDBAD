@@ -157,10 +157,10 @@ function loc_loss(upVector, forward, res_vec, loc_obs,
 end
 
 
-upVectType = [typeof(tblParams.defaults)];
+upVectType = [typeof(tblParams.default)];
 loc_land_init_a = [loc_land_init];
 res_vec = Vector{Any}(undef, info.tem.helpers.dates.size);
-loc_loss(ForwardDiff.Dual.(tblParams.defaults), forward, res_vec, loc_obs,
+loc_loss(ForwardDiff.Dual.(tblParams.default), forward, res_vec, loc_obs,
     loc_forcing,
     tem_helpers,
     tem_spinup,
@@ -179,4 +179,4 @@ fg(x) = loc_loss(x, forward, res_vec, loc_obs,
     tem_optim,
     loc_land_init_a,
     f_one, upVectType)
-@time grad = ForwardDiff.gradient(fg, tblParams.defaults)
+@time grad = ForwardDiff.gradient(fg, tblParams.default)
