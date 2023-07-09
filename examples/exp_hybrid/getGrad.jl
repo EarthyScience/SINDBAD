@@ -82,7 +82,7 @@ rand_m = rand(info.tem.helpers.numbers.num_type);
 
 mods = info.tem.models.forward;
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
@@ -99,7 +99,7 @@ for _ in 1:10
 end
 
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
@@ -115,7 +115,7 @@ for _ in 1:10
     @show lo_ss
 end
 
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.defaults);
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.default);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -154,9 +154,9 @@ op = setupOutput(info);
 op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 op = (; op..., data=op_dat);
 
-@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@time grad = ForwardDiff.gradient(l1, tblParams.default)
 
-lo_ss = test_gr(tblParams.defaults,
+lo_ss = test_gr(tblParams.default,
     mods,
     forc,
     op,
@@ -170,14 +170,14 @@ lo_ss = test_gr(tblParams.defaults,
     land_init_space,
     f_one)
 
-l1(tblParams.defaults .* rand_m)
-l2(tblParams.defaults .* rand_m)
+l1(tblParams.default .* rand_m)
+l2(tblParams.default .* rand_m)
 
 
 
 
 
-@profview grad = ForwardDiff.gradient(l1, tblParams.defaults)
+@profview grad = ForwardDiff.gradient(l1, tblParams.default)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a = 2

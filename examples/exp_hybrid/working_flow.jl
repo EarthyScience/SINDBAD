@@ -99,7 +99,7 @@ rand_m = rand(info.tem.helpers.numbers.num_type);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-og_loss(tblParams.defaults,
+og_loss(tblParams.default,
     mods,
     forc,
     op,

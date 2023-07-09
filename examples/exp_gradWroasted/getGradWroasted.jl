@@ -80,7 +80,7 @@ end
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(tblParams.defaults,
+g_loss(tblParams.default,
     mods,
     forc,
     op,
@@ -109,10 +109,10 @@ function l1(p)
         land_init_space,
         f_one)
 end
-l1(tblParams.defaults)
+l1(tblParams.default)
 
 
-p_vec = tblParams.defaults;
+p_vec = tblParams.default;
 CHUNK_SIZE = length(p_vec)
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 

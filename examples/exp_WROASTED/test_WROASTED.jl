@@ -102,7 +102,7 @@ ds = forcing.data[1];
 opt_dat = output.data;
 def_dat = outcubes;
 out_vars = output.variables;
-tspan = 9000:12000
+# tspan = 9000:12000
 costOpt = info.optim.costOptions;
 foreach(costOpt) do var_row
     v = var_row.variable
@@ -113,13 +113,16 @@ foreach(costOpt) do var_row
         lossMetric = Val(:nse)
     end
     (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+    obs_var_TMP = obs_var[:, 1, 1, 1]
+    non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
+    tspan = first(non_nan_index):last(non_nan_index)
+    xdata = [info.tem.helpers.dates.vector[tspan]...]
     metr_def = loss(obs_var, obs_σ, def_var, lossMetric)
     (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
     metr_opt = loss(obs_var, obs_σ, opt_var, lossMetric)
-    # @show def_var
-    plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
-    plot!(opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
-    plot!(obs_var[tspan, 1, 1, 1]; label="obs")
+    plot(xdata, def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
+    plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
+    plot!(xdata, obs_var[tspan]; label="obs")
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 

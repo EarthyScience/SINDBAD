@@ -276,7 +276,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
     nts = getNumberOfTimeSteps(obscubes, forcing_info.dimensions.time)
-    @info "getObservation: getting variable names..."
+    @info "getObservation: getting variable name..."
     varnames_all = []
     for v ∈ varnames
         push!(varnames_all, v)
@@ -460,7 +460,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     indims = getDataDims.(obscubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
     nts = forcing_info.sizes
-    @info "getObservation: getting variable names..."
+    @info "getObservation: getting variable name..."
     varnames_all = []
     for v ∈ varnames
         push!(varnames_all, v)
