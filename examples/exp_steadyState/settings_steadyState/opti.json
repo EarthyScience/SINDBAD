@@ -95,7 +95,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"default_constraint_data": {
+		"default_constraint": {
 			"variable_unit": null,
 			"bounds": null,
 			"source_variable_name": null,
@@ -108,7 +108,7 @@
 			"source_product_name": "",
 			"data_path": "../data/BE-Vie.1979.2017.daily.nc"
 		},
-		"default_cost_options": {
+		"default_cost": {
 			"aggr_order": "timespace",
 			"min_data_points": 1,
 			"spatial_aggr": "cat",
@@ -150,8 +150,6 @@
 					"source_variable_name": "GPP_QC_NT_merged"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nseinv"
 				}
 			},
@@ -173,7 +171,7 @@
 						0.0,
 						400.0
 					],
-					"source_variable_name": "NEE_RANDUNC",
+					"source_variable_name": "NEE_RANDUNC"
 					},
 				"qflag": {
 					"data_path": null,
@@ -184,8 +182,6 @@
 					"source_variable_name": "NEE_QC_merged"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nseinv"
 				}
 			},
@@ -207,7 +203,7 @@
 						0.0,
 						100.0
 					],
-					"source_variable_name": "NEE_RANDUNC",
+					"source_variable_name": "NEE_RANDUNC"
 					},
 				"qflag": {
 					"data_path": null,
@@ -218,8 +214,6 @@
 					"source_variable_name": "RECO_QC_NT_merged"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nseinv"
 				}
 			},
@@ -255,8 +249,6 @@
 					"source_variable_name": "LE_QC_merged"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nseinv"
 				}
 			},
@@ -290,8 +282,6 @@
 					"source_variable_name": "LE_QC_merged"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nseinv"
 				}
 			},
@@ -313,7 +303,7 @@
 						0.0,
 						400.0
 					],
-					"source_variable_name": "NEE_RANDUNC",
+					"source_variable_name": "NEE_RANDUNC"
 					},
 				"cost_options": {
 					"temporal_aggr": "mean",
@@ -339,7 +329,7 @@
 						0.0,
 						1.0
 					],
-					"source_variable_name": "NEE_RANDUNC",
+					"source_variable_name": "NEE_RANDUNC"
 					},
 				"cost_options": {
 					"temporal_aggr": "dayAnomaly",
