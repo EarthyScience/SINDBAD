@@ -136,7 +136,11 @@ for domain ∈ sites
         (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
-        tspan = first(non_nan_index):last(non_nan_index)
+        if length(non_nan_index) < 2
+            tspan = 1:length(obs_var_TMP)
+        else
+            tspan = first(non_nan_index):last(non_nan_index)
+        end
         xdata = [info.tem.helpers.dates.vector[tspan]...]
         obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
