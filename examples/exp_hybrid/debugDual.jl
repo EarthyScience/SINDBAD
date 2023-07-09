@@ -137,7 +137,7 @@ rand_m = info.tem.helpers.numbers.sNT(rand());
 # op = setupOutput(info);
 
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
@@ -170,7 +170,7 @@ function l1(p)
 end
 
 # CHUNK_SIZE = 20
-p_vec = tblParams.defaults;
+p_vec = tblParams.default;
 CHUNK_SIZE = 10#length(p_vec)
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
@@ -180,8 +180,8 @@ new_dtype = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),Float32},Float32,10}
 updated_tem_helpers = (; info.tem.helpers..., numbers=prepNumericHelpers(info, new_dtype));
 op = setupOutput(info, updated_tem_helpers);
 
-# dualDefs = tblParams.defaults;
-new_params = new_dtype.(tblParams.defaults);
+# dualDefs = tblParams.default;
+new_params = new_dtype.(tblParams.default);
 updated_mods = updateModelParametersType(tblParams, mods, new_params);
 
 # op = setupOutput(info);

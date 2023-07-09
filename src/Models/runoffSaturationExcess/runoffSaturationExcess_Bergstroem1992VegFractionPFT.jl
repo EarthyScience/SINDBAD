@@ -103,7 +103,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992VegFractionPFT
  - 1.0 on 10.09.2021 [ttraut]: based on runoffSaturation_BergstroemLinVegFr  
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
  - 1.1 on 27.11.2019 [skoirala]: changed to handle any number of soil layers
- - 1.2 on 10.02.2020 [ttraut]: modyfying variable names to match the new SINDBAD version
+ - 1.2 on 10.02.2020 [ttraut]: modyfying variable name to match the new SINDBAD version
 
 *Created by:*
  - ttraut

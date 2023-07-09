@@ -58,7 +58,7 @@ out_variables = output.variables;
 forward = tem_vals.models.forward;
 
 
-getLossGradient(tblParams.defaults,
+getLossGradient(tblParams.default,
     forward,
     forc,
     output,
@@ -217,7 +217,7 @@ kwargs = (;
     f_one
 );
 
-loc_loss(tblParams.defaults, forward, kwargs...)
+loc_loss(tblParams.default, forward, kwargs...)
 
 
 function l1(p)
@@ -234,14 +234,14 @@ function l1(p)
         f_one)
 end
 
-p_vec = tblParams.defaults;
+p_vec = tblParams.default;
 l1(p_vec)
 # CHUNK_SIZE = length(p_vec)
 CHUNK_SIZE = 8
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 
-gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.defaults);
+gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.default);
 mods = Tuple(updateModelParametersType(tblParams, forward, gradDefs));
 dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_one);
 

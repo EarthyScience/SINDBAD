@@ -21,7 +21,7 @@ function setup_simple()
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one = prepRunEcosystem(Sindbad.get_tmp.(output.data, tblParams.defaults),
+    f_one = prepRunEcosystem(Sindbad.get_tmp.(output.data, tblParams.default),
         output.land_init,
         info.tem.models.forward,
         forc,

@@ -119,7 +119,7 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
 end
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.defaults),
+    getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.default),
         forc, obs, site_location);
 
 loc_space_ind = loc_space_inds[1]
@@ -162,7 +162,7 @@ args_txyz = (;
 
 
 loc_loss(
-    tblParams.defaults,
+    tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz...,
@@ -170,7 +170,7 @@ loc_loss(
 
 
 @code_warntype loc_loss(
-    tblParams.defaults,
+    tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz...,
@@ -178,14 +178,14 @@ loc_loss(
 
 
 @time loc_loss(
-    tblParams.defaults,
+    tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
 
 
-tblParams2 = Sindbad.@Select(names, modelsApproach)(tblParams)
+tblParams2 = Sindbad.@Select(name, model_approach)(tblParams)
 
 # test gradient
 function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
@@ -194,13 +194,13 @@ function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
     return ForwardDiff.gradient(gf, v) #, cfg, Val{false}())
 end
 
-@code_warntype fdiff_grads(loc_loss, tblParams.defaults,
+@code_warntype fdiff_grads(loc_loss, tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz,
     args)
 
-fdiff_grads(loc_loss, tblParams.defaults,
+fdiff_grads(loc_loss, tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz,
@@ -216,7 +216,7 @@ function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     return out
 end
 GC.gc()
-@time fdiff_grads!(loc_loss, tblParams.defaults,
+@time fdiff_grads!(loc_loss, tblParams.default,
     20,
     loc_space_ind,
     loc_land_init,

@@ -243,7 +243,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
     indims = getDataDims.(incubes, Ref(info.modelRun.mapping.yaxarray))
     @info "getForcing: getting number of time steps..."
     nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
-    @info "getForcing: getting variable names..."
+    @info "getForcing: getting variable name..."
     forcing_variables = keys(info.forcing.variables)
     info = collect_forcing_info(info, f_sizes, permutes)
     println("----------------------------------------------")
@@ -332,7 +332,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
     @info "getForcing: getting number of time steps..."
     nts = length(incubes[1].time) # look for time instead of using the first yaxarray
     # nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
-    @info "getForcing: getting variable names..."
+    @info "getForcing: getting variable name..."
     forcing_variables = keys(info.forcing.variables)
     info = collect_forcing_info(info, f_sizes, permutes)
     println("----------------------------------------------")
