@@ -14,7 +14,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
             output,
             info.tem,
             info.tem.models.forward;
-            max_cache=info.modelRun.rules.yax_max_cache)
+            max_cache=info.model_run.rules.yax_max_cache)
     else
         forc = getKeyedArrayFromYaxArray(forcing)
         runEcosystem!(output, forc, info.tem)

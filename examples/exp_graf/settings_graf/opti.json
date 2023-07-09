@@ -1,34 +1,34 @@
 {
-	"variables2constrain": [
+	"variables_to_constrain": [
 		"gpp",
 		"runoff",
 		"evapotranspiration"
 	],
-	"multiConstraintMethod": "sum",
-	"useUncertainty": false,
+	"multi_constraint_method": "sum",
+	"use_uncertainty": false,
 	"algorithm_LBFGS": {
 		"package": "Optim",
 		"method": "LBFGS",
 		"options_file": null,
-		"isMultiObj": false
+		"is_multiple_objective": false
 	},
 	"algorithm": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
-		"isMultiObj": false
+		"is_multiple_objective": false
 	},
 	"algorithm_d": {
 		"package": "CMAEvolutionStrategy",
 		"method": "CMAES",
 		"options_file": "optim_cmaes.json",
-		"isMultiObj": false
+		"is_multiple_objective": false
 	},
 	"algorithm-gcmaes": {
 		"package": "Optimization",
 		"method": "GCMAES_FD",
 		"options_file": null,
-		"isMultiObj": false
+		"is_multiple_objective": false
 	},
     "default_parameter": {
 		"is_ml": false,
@@ -37,8 +37,8 @@
 	"optimized_parameters": [
 		"drainage.dos_exp",
 		"evaporation.α",
-		"evaporation.supLim",
-		"fAPAR.vegFracTofAPAR",
+		"evaporation.k_evaporation",
+		"fAPAR.frac_vegetation_to_fAPAR",
 		"gppPotential.εmax",
 		"gppAirT.Topt",
 		"gppAirT.ToptA",
@@ -50,9 +50,9 @@
 		"gppSoilW.θstar",
 		"groundWRecharge.dos_exp",
 		"runoffBase.bc",
-		"rootMaximumDepth.fracRootD2SoilD",
+		"rootMaximumDepth.constant_frac_max_root_depth",
 		"runoffSaturationExcess.β",
-		"transpirationSupply.tranFrac",
+		"transpirationSupply.k_transpiration",
 		"WUE.WUEatOnehPa",
 		"WUE.κ"
 			],	
@@ -60,146 +60,132 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"oneDataPath": null,
 		"one_sel_mask": null,
-		"defaultCostOptions": {
-			"aggrOrder": "timespace",
-			"minDataPoints": 1,
-			"spatialAggr": "cat",
-			"spatialCostAggr": "spatial",
-			"temporalAggr": "day",
-			"temporalAggrObs": false,
-			"temporalAggrFunc": "nanmean",
-			"costMetric": "nseinv",
-			"costWeight": 1.0,
-			"areaWeight": false,
-			"dataPath": null
+		"default_constraint_data": {
+			"variable_unit": null,
+			"bounds": null,
+			"source_variable_name": null,
+			"source_variable_unit": null,
+			"additive_unit_conversion": false,
+			"source_to_sindbad_unit": 1.0,
+			"is_categorical": false,
+			"name_short": null,
+			"space_time_type": "spatiotemporal",
+			"source_product_name": "Global",
+			"data_path": null
+		},
+		"default_cost_options": {
+			"aggr_order": "timespace",
+			"min_data_points": 1,
+			"spatial_aggr": "cat",
+			"spatial_cost_aggr": "spatial",
+			"temporal_aggr": "day",
+			"temporal_aggr_obs": false,
+			"temporal_aggr_func": "nanmean",
+			"cost_metric": "nseinv",
+			"cost_weight": 1.0,
+			"area_weight": false,
+			"data_path": null
 		},
 		"variables": {
 			"gpp": {
 				"sel_mask": null,
-				"modelFullVar": "fluxes.gpp",
+				"model_full_var": "fluxes.gpp",
 				"data": {
-					"variableUnit": "gC m-2 day-1",
+					"variable_unit": "gC m-2 day-1",
 					"bounds": [
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "GPP",
-					"sourceVariableUnit": "gC m-2 day-1",
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1.0,
-					"isCategorical": false,
-					"nameShort": "Gross Primary Productivity",
-					"spaceTimeType": "spatiotemporal",
-					"sourceDataProductName": "FLUXNET",
-					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
+					"source_variable_name": "GPP",
+					"source_variable_unit": "gC m-2 day-1",
+					"name_short": "Gross Primary Productivity",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
 				},
 				"unc": {
-					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
 					"bounds": [
 						0.0,
 						100.0
 					],
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1.0,
-					"sourceVariableName": "GPP_mad"
+					"source_variable_name": "GPP_mad"
 				},
-				"costOptions": {
-					"temporalAggr": "day",
-					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+				"cost_options": {
+					"cost_metric": "nseinv"
 				}
 			},
 			"runoff": {
 				"sel_mask": null,
-				"modelFullVar": "fluxes.runoff",
+				"model_full_var": "fluxes.runoff",
 				"data": {
-					"variableUnit": "mm day-1",
+					"variable_unit": "mm day-1",
 					"bounds": [
 						-100.0,
 						100.0
 					],
-					"sourceVariableName": "Runoff",
-					"sourceVariableUnit": "mm day-1",
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1.0,
-					"isCategorical": false,
-					"nameShort": "Runoff",
-					"spaceTimeType": "spatiotemporal",
-					"sourceDataProductName": "FLUXNET",
-					"dataPath": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
+					"source_variable_name": "Runoff",
+					"source_variable_unit": "mm day-1",
+					"name_short": "Runoff",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
 				},
-				"costOptions": {
-					"temporalAggr": "day",
-					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+				"cost_options": {
+					"cost_metric": "nseinv"
 				}
 			},
 			"tws": {
 				"sel_mask": null,
-				"modelFullVar": "pools.TWS",
+				"model_full_var": "pools.TWS",
 				"data": {
-					"variableUnit": "mm",
+					"variable_unit": "mm",
 					"bounds": [
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "lwe_thickness",
-					"sourceVariableUnit": "cm",
-					"source2sindbadUnit": 10.0,
-					"isCategorical": false,
-					"nameShort": "Terrestrial water storage",
-					"spaceTimeType": "spatiotemporal",
-					"sourceDataProductName": "FLUXNET",
-					"dataPath": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
+					"source_variable_name": "lwe_thickness",
+					"source_variable_unit": "cm",
+					"source_to_sindbad_unit": 10.0,
+					"name_short": "Terrestrial water storage",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
 				},
 				"unc": {
-					"dataPath": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+					"data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
 					"bounds": [-500, 500],
-					"sourceVariableName": "uncertainty",
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1.0
-				},
-				"costOptions": {
-					"temporalAggr": "day",
-					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+					"source_variable_name": "uncertainty"
+					},
+				"cost_options": {
+					"cost_metric": "nseinv"
 				}
 			},
 			"evapotranspiration": {
 				"sel_mask": null,
-				"modelFullVar": "fluxes.evapotranspiration",
+				"model_full_var": "fluxes.evapotranspiration",
 				"data": {
-					"variableUnit": "mm day-1",
+					"variable_unit": "mm day-1",
 					"bounds": [
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "LE",
-					"sourceVariableUnit": "mm d-1",
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1,
-					"isCategorical": false,
-					"nameShort": "Evapotranspiration",
-					"spaceTimeType": "spatiotemporal",
-					"sourceDataProductName": "FLUXNET",
-					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc"
+					"source_variable_name": "LE",
+					"source_variable_unit": "mm d-1",
+					"source_to_sindbad_unit": 1,
+					"name_short": "Evapotranspiration",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc"
 				},
 				"unc": {
-					"dataPath": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc",
 					"bounds": [
 						0.0,
 						100.0
 					],
-					"sourceVariableName": "LE_mad",
-					"additiveUnitConversion": false,
-					"source2sindbadUnit": 1
+					"source_variable_name": "LE_mad",
+					"source_to_sindbad_unit": 1
 				},
-				"costOptions": {
-					"temporalAggr": "day",
-					"temporalAggrObs": false,
-					"costMetric": "nseinv"
+				"cost_options": {
+					"cost_metric": "nseinv"
 				}
 			}
 		}

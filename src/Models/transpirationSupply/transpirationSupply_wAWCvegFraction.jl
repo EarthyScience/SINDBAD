@@ -2,22 +2,22 @@ export transpirationSupply_wAWCvegFraction
 
 #! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_wAWCvegFraction{T1} <: transpirationSupply
-    tranFrac::T1 = 1.0 | (0.02, 1.0) | "fraction of total maximum available water that can be transpired" | ""
+    k_transpiration::T1 = 1.0 | (0.02, 1.0) | "fraction of total maximum available water that can be transpired" | ""
 end
 #! format: on
 
-function compute(o::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
+function compute(p_struct::transpirationSupply_wAWCvegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationSupply_wAWCvegFraction o
+    @unpack_transpirationSupply_wAWCvegFraction p_struct
 
     ## unpack land variables
-    @unpack_land (PAW, vegFraction) ∈ land.states
+    @unpack_land (PAW, frac_vegetation) ∈ land.states
 
     ## calculate variables
-    tranSup = sum(PAW) * tranFrac * vegFraction
+    transpiration_supply = sum(PAW) * k_transpiration * frac_vegetation
 
     ## pack land variables
-    @pack_land tranSup => land.transpirationSupply
+    @pack_land transpiration_supply => land.transpirationSupply
     return land
 end
 
@@ -36,10 +36,10 @@ Supply-limited transpiration using transpirationSupply_wAWCvegFraction
  - land.pools.soilW : total soil moisture
  - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
- - land.states.vegFraction: vegetation fraction
+ - land.states.frac_vegetation: vegetation fraction
 
 *Outputs*
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.transpirationSupply.transpiration_supply: supply limited transpiration
 
 ---
 

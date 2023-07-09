@@ -1,28 +1,27 @@
 {
 	"time":
 	{
-		"step": 				"daily",
-		"sDate": 				"2006-01-01",
-		"eDate": 				"2015-12-31",
-		"nYears": 				12,
-		"nStepsDay": 			1,
-		"nStepsYear": 			365
+		"model_time_step": 			"daily",
+		"start_date": 				"2006-01-01",
+		"end_date": 				"2015-12-31",
+		"timesteps_in_day": 		1,
+		"timesteps_in_year": 		365
 	},
 	"mapping": {
 		"yaxarray": ["id"],
-		"runEcosystem": ["time"],
+		"run_ecosystem": ["time"],
 		"parallelization": "threads"
 	},
 	"flags":
 	{
-		"saveInfo": 			true,
-		"debugit": 				false, 
-		"catchErrors": 			false,
-		"runSpinup": 			true,
-		"runForward": 			true,
-		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				true
+		"save_info": 			true,
+		"debug_model": 			false, 
+		"catch_model_errors": 	false,
+		"run_spinup": 			true,
+		"run_forward": 			true,
+		"run_update_mdels": 	false,
+		"run_optimization": 	true,
+		"run_forward_and_cost":	true
 	},
 	"rules":
 	{
@@ -45,19 +44,19 @@
 			"d_snow": "snowW"
 		},
 		"variables": {
-			"gppDemand.gppE": null,
-			"gppAirT.TempScGPP": null,
-			"gppVPD.VPDScGPP": null,
-			"gppDemand.AllDemScGPP": null,
-			"gppPotential.gppPot": null,
+			"gppDemand.gpp_demand": null,
+			"gppAirT.gpp_f_airT": null,
+			"gppVPD.gpp_f_vpd": null,
+			"gppDemand.gpp_f_climate": null,
+			"gppPotential.gpp_potential": null,
 			"states.fAPAR": null,
 			"fluxes.evapotranspiration": null,
 			"fluxes.transpiration": null,
 			"fluxes.runoff": null,
-			"fluxes.runoffSurface": null,
+			"fluxes.surface_runoff": null,
 			"fluxes.gpp": null,
 			"pools.soilW": "d_soil",
-			"waterBalance.waterBalance": null
+			"waterBalance.water_balance": null
 		}
 	}
 }

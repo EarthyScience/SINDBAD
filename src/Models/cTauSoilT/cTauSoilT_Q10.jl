@@ -8,17 +8,17 @@ export cTauSoilT_Q10
 end
 #! format: on
 
-function compute(o::cTauSoilT_Q10, forcing, land, helpers)
+function compute(p_struct::cTauSoilT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_cTauSoilT_Q10 o
+    @unpack_cTauSoilT_Q10 p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
     # CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
-    fT = Q10^((Tair - Tref) / Q10_base)
+    p_k_f_soilT = Q10^((Tair - Tref) / Q10_base)
 
     ## pack land variables
-    @pack_land fT => land.cTauSoilT
+    @pack_land p_k_f_soilT => land.cTauSoilT
     return land
 end
 
@@ -37,7 +37,7 @@ Effect of soil temperature on decomposition rates using cTauSoilT_Q10
  - forcing.Tair: values for air temperature
 
 *Outputs*
- - land.cTauSoilT.fT: air temperature stressor on turnover rates [k]
+ - land.cTauSoilT.p_k_f_soilT: air temperature stressor on turnover rates [k]
 
 ---
 

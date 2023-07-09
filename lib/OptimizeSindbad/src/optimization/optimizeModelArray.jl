@@ -2,26 +2,18 @@ export optimizeModelArray
 export getSimulationDataArray, getLossArray, getLossGradient
 export getDataArray, combineLossArray
 export getLossVectorArray
-export site_loss_g
-export get_y, get_ŷn
+export get_ŷ_view
+export filter_common_nan
 
-function get_y(observations, v)
-    return getproperty(observations, v)
-end
-
-function get_ŷ(outsmodel, v)
-    return getproperty(outsmodel, v)
-end
-
-function get_ŷn(ŷ::AbstractArray{T,2}) where {T}
+function get_ŷ_view(ŷ::AbstractArray{T,2}) where {T}
     return @view ŷ[:, 1]
 end
 
-function get_ŷn(ŷ::AbstractArray{T,3}) where {T}
+function get_ŷ_view(ŷ::AbstractArray{T,3}) where {T}
     return @view ŷ[:, 1, :]
 end
 
-function get_ŷn(ŷ::AbstractArray{T,4}) where {T}
+function get_ŷ_view(ŷ::AbstractArray{T,4}) where {T}
     return @view ŷ[:, 1, :, :]
 end
 
@@ -31,15 +23,15 @@ end
 
 
 function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:timespace})
-    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporalAggr)
-    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatialAggr)
+    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
+    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     return y, yσ, ŷ
 end
 
 
 function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:spacetime})
-    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatialAggr)
-    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporalAggr)
+    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
+    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
     return y, yσ, ŷ
 end
 
@@ -53,128 +45,44 @@ function filter_common_nan(y, yσ, ŷ)
 end
 
 """
+getModelData(model_output::landWrapper, cost_option)
+"""
+function getModelData(model_output::landWrapper, cost_option)
+    mod_field = cost_option.mod_field
+    mod_subfield = cost_option.mod_subfield
+    ŷField = getproperty(model_output, mod_field)
+    ŷ = getproperty(ŷField, mod_subfield)
+    return ŷ
+end
+
+"""
+getModelData(model_output::AbstractArray, cost_option)
+"""
+function getModelData(model_output::AbstractArray, cost_option)
+    return model_output[cost_option.mod_ind]
+end
+
+"""
 getDataArray(outsmodel, observations, modelVariables, obsVariables)
 """
-function getDataArray(model_output::AbstractArray,
+function getDataArray(model_output,
     observations, cost_option)
-    obs_ind_start = cost_option.obs_ind
-    mod_ind = cost_option.mod_ind
-
-    ŷ = model_output[mod_ind]
-    y = observations[obs_ind_start]
-    yσ = observations[obs_ind_start+1]
-    # ymask = observations[obs_ind_start + 2]
+    obs_ind = cost_option.obs_ind
+    ŷ = getModelData(model_output, cost_option)
     if size(ŷ, 2) == 1
-        if ndims(ŷ) == 3
-            ŷ = @view ŷ[:, 1, :]
-        elseif ndims(ŷ) == 4
-            ŷ = @view ŷ[:, 1, :, :]
-        else
-            ŷ = @view ŷ[:, 1]
-        end
+        ŷ = get_ŷ_view(ŷ)
     end
-    y, yσ, ŷ = aggregate_data(y, yσ, ŷ, cost_option, cost_option.aggrOrder)
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    # ymask = observations[obs_ind + 2]
+    y, yσ, ŷ = aggregate_data(y, yσ, ŷ, cost_option, cost_option.aggr_order)
     # if size(ŷ) != size(y)
     #     error(
     #         "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
     #     )
     # end
-    return filter_common_nan(y, yσ, ŷ)
+    return (y, yσ, ŷ)
 end
-
-"""
-getDataArray(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getDataArray(model_output::AbstractArray,
-    observations, mod_ind::Int, obs_ind_start::Int)
-    ŷ = model_output[mod_ind]
-    y = observations[obs_ind_start]
-    yσ = observations[obs_ind_start+1]
-    # ymask = observations[obs_ind_start + 2]
-    if size(ŷ, 2) == 1
-        if ndims(ŷ) == 3
-            ŷ = @view ŷ[:, 1, :]
-        elseif ndims(ŷ) == 4
-            ŷ = @view ŷ[:, 1, :, :]
-        else
-            ŷ = @view ŷ[:, 1]
-        end
-    end
-
-    if size(ŷ) != size(y)
-        error(
-            "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
-        )
-    end
-    return filter_common_nan(y, yσ, ŷ)
-end
-
-"""
-getDataArray(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getDataArray(outsmodel::landWrapper,
-    observations::NamedTuple,
-    obs_ind::Int,
-    mod_field::Symbol,
-    mod_subfield::Symbol)
-    ŷField = getproperty(outsmodel, mod_field)
-    ŷ = getproperty(ŷField, mod_subfield)
-    if size(ŷ, 2) == 1
-        if ndims(ŷ) == 3
-            ŷ = @view ŷ[:, 1, :]
-        elseif ndims(ŷ) == 4
-            ŷ = @view ŷ[:, 1, :, :]
-        else
-            ŷ = @view ŷ[:, 1]
-        end
-    end
-    y = observations[obs_ind]
-    yσ = observations[obs_ind+1]
-
-    # todo: get rid of the permutedims hack ...
-    if size(ŷ) != size(y)
-        error(
-            "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        )
-        # ŷ = y .* rand()
-        # ŷ = permutedims(ŷ, (2, 3, 1))
-    end
-    return filter_common_nan(y, yσ, ŷ)
-end
-
-
-"""
-getDataArray(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getDataArray(outsmodel::landWrapper,
-    observations::NamedTuple,
-    obsV::Symbol,
-    modelVarInfo::Tuple)
-    ŷField = getproperty(outsmodel, modelVarInfo[1])
-    ŷ = getproperty(ŷField, modelVarInfo[2])
-    if size(ŷ, 2) == 1
-        if ndims(ŷ) == 3
-            ŷ = @view ŷ[:, 1, :]
-        elseif ndims(ŷ) == 4
-            ŷ = @view ŷ[:, 1, :, :]
-        else
-            ŷ = @view ŷ[:, 1]
-        end
-    end
-    #@show size(ŷ)
-    y = getproperty(observations, obsV)
-    yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    # todo: get rid of the permutedims hack ...
-    if size(ŷ) != size(y)
-        error(
-            "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        )
-        # ŷ = y .* rand()
-        # ŷ = permutedims(ŷ, (2, 3, 1))
-    end
-    return filter_common_nan(y, yσ, ŷ)
-end
-
 
 """
     combineLoss(lossVector, ::Val{:sum})
@@ -212,92 +120,27 @@ function combineLossArray(lossVector::AbstractArray, percentile_value::T) where 
     return percentile(lossVector, percentile_value)
 end
 
-function inner_loss(y, yσ, ŷ, s_metric)
-    return loss(y, yσ, ŷ, s_metric)
-end
-
-"""
-getLossVectorArray(observations, model_output::landWrapper, cost_options)
-returns a vector of losses for variables in info.cost_options.variables2constrain
-"""
-function getLossVectorArray(observations, model_output::landWrapper, cost_options)
-    lossVec = map(cost_options) do var_row
-        lossMetric = var_row.costMetric
-        obs_ind = var_row.obs_ind
-        mod_field = var_row.mod_field
-        mod_subfield = var_row.mod_subfield
-        (y, yσ, ŷ) = getDataArray(model_output, observations, obs_ind, mod_field, mod_subfield)
-        # (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-
-        metr = loss(y, yσ, ŷ, lossMetric)
-        if isnan(metr)
-            metr = oftype(metr, 10)
-        end
-        # println("$(var_row.variable) => $(valToSymbol(lossMetric)): $(metr)")
-        metr
-    end
-    # println("-------------------")
-    return lossVec
-end
 
 """
 getLossVectorArray(observations, model_output::AbstractArray, cost_options)
-returns a vector of losses for variables in info.cost_options.variables2constrain
+returns a vector of losses for variables in info.cost_options.variables_to_constrain
 """
-function getLossVectorArray(observations, model_output::AbstractArray, cost_options)
-    lossVec = map(cost_options) do var_row
-        lossMetric = var_row.costMetric
-        (y, yσ, ŷ) = getDataArray(model_output, observations, var_row)
+function getLossVectorArray(observations, model_output, cost_options)
+    lossVec = map(cost_options) do cost_option
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
+        (y, yσ, ŷ) = filter_common_nan(y, yσ, ŷ)
         metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
-            metr = eltype(y)(10)
+            metr = eltype(y)(1e19)
         end
-        # println("$(var_row.variable) => $(valToSymbol(lossMetric)): $(metr)")
+        # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
         metr
     end
     # println("-------------------")
     return lossVec
 end
 
-
-#=
-"""
-getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, cost_options::NamedTuple)
-returns a vector of losses for variables in info.cost_options.variables2constrain
-"""
-function getLossVectorArray(observations::NamedTuple, model_output, cost_options::NamedTuple)
-    cost_options = cost_options.costOptions
-    #cost_options = [Pair(:gpp, Val(:mse))]
-    optimVars = cost_options.variables.cost_options
- #   lossVec = Vector{Real}(undef, length(optimVars))
-    #var_index = 1
-    lossVec = map(cost_options) do p
-#    for p ∈ cost_options
-        obsV = first(p)
-        s_metric = last(p) #var_row.costMetric
-        #@code_warntype getfield(optimVars, obsV)
-        #mod_variable = getfield(optimVars, obsV) #::NTuple{2,Symbol}
-        #@show mod_variable
-        #var_σ =  Symbol(string(obsV) * "_σ")
-        #@code_warntype get_y(observations, mod_variable[2])
-        y = get_y(observations, obsV)
-        ŷ = model_output[1] #get_ŷ(model_output, mod_variable[2])
-        ŷ = size(ŷ,2)==1 ? get_ŷn(ŷ) : ŷ
-        yσ = get_y(observations, :gpp_σ)
-        idxs = get_trues(y, yσ, ŷ)
-        #@code_warntype loss(y, yσ, ŷ, s_metric)
-        metr = loss_o(y, ŷ, s_metric, idxs)
-        if isnan(metr)
-           metr = oftype(metr, 1e19) # buggy?
-        end
-        metr
-  #      lossVec[var_index] = metr 
-  #      var_index += 1
-    end
-    return lossVec
-end
-
-=#
 
 """
 filter_constraint_minimum_datapoints(obs, cost_options)
@@ -305,16 +148,16 @@ remove all the variables that have less than minimum datapoints from being used 
 """
 function filter_constraint_minimum_datapoints(obs, cost_options)
     cost_options_filtered = cost_options
-    foreach(cost_options) do var_row
-        obs_ind_start = var_row.obs_ind
-        min_points = var_row.minDataPoints
-        var_name = var_row.variable
+    foreach(cost_options) do cost_option
+        obs_ind_start = cost_option.obs_ind
+        min_points = cost_option.min_data_points
+        var_name = cost_option.variable
         y = obs[obs_ind_start]
         idxs = (.!isnan.(y))
         total_points = sum(idxs)
         if total_points < min_points
             cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
-            @warn "$(var_row.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
+            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
         end
     end
     return cost_options_filtered
@@ -352,7 +195,7 @@ function getLossGradient(pVector::AbstractArray,
         land_init_space,
         f_one)
     loss_vector = getLossVectorArray(observations, output.data, cost_options)
-    return combineLossArray(loss_vector, cost_options.multiConstraintMethod)
+    return combineLossArray(loss_vector, cost_options.multi_constraint_method)
 end
 
 """
@@ -407,7 +250,7 @@ function optimizeModelArray(forcing::NamedTuple,
         optim.default_parameter,
         optim.optimized_parameters)
 
-    cost_options = filter_constraint_minimum_datapoints(observations, optim.costOptions)
+    cost_options = filter_constraint_minimum_datapoints(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.default)
@@ -431,7 +274,7 @@ function optimizeModelArray(forcing::NamedTuple,
             tblParams,
             tem_vals,
             cost_options,
-            optim.multiConstraintMethod,
+            optim.multi_constraint_method,
             loc_space_inds,
             loc_forcings,
             loc_outputs,

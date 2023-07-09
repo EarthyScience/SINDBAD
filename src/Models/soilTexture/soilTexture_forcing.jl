@@ -2,7 +2,7 @@ export soilTexture_forcing
 
 struct soilTexture_forcing <: soilTexture end
 
-function define(o::soilTexture_forcing, forcing, land, helpers)
+function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     #@needscheck
     ## unpack forcing
     @unpack_forcing (CLAY, ORGM, SAND, SILT) ∈ forcing
@@ -23,7 +23,7 @@ function define(o::soilTexture_forcing, forcing, land, helpers)
 
     if length(st_CLAY_f) != length(st_CLAY)
         # println(
-        # "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in modelStructure.json. Using mean of input over the soil layers."
+        # "soilTexture_forcing: the number of soil layers in forcing data does not match the layers in model_structure.json. Using mean of input over the soil layers."
         # )
         for sl ∈ eachindex(st_CLAY)
             @rep_elem mean(st_CLAY_f) => (st_CLAY, sl, :soilW)

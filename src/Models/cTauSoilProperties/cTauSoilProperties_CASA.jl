@@ -6,23 +6,23 @@ export cTauSoilProperties_CASA
 end
 #! format: on
 
-function define(o::cTauSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cTauSoilProperties_CASA o
+function define(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cTauSoilProperties_CASA p_struct
 
     ## instantiate variables
-    p_kfSoil = ones(helpers.numbers.num_type, length(land.pools.cEco))
+    p_k_f_soil_props = ones(helpers.numbers.num_type, length(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_kfSoil => land.cTauSoilProperties
+    @pack_land p_k_f_soil_props => land.cTauSoilProperties
     return land
 end
 
-function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilProperties_CASA o
+    @unpack_cTauSoilProperties_CASA p_struct
 
     ## unpack land variables
-    @unpack_land p_kfSoil ∈ land.cTauSoilProperties
+    @unpack_land p_k_f_soil_props ∈ land.cTauSoilProperties
 
     ## unpack land variables
     @unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
@@ -33,11 +33,11 @@ function compute(o::cTauSoilProperties_CASA, forcing, land, helpers)
     SILT = mean(p_SILT)
     # TEXTURE EFFECT ON k OF cMicSoil
     zix = helpers.pools.zix.cMicSoil
-    p_kfSoil[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
+    p_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
     # (ineficient, should be pix zix_mic)
 
     ## pack land variables
-    @pack_land p_kfSoil => land.cTauSoilProperties
+    @pack_land p_k_f_soil_props => land.cTauSoilProperties
     return land
 end
 
@@ -57,7 +57,7 @@ Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
  - land.soilWBase.p_SILT: values for silt soil texture
 
 *Outputs*
- - land.cTauSoilProperties.p_kfSoil: Soil texture stressor values on the the turnover rates
+ - land.cTauSoilProperties.p_k_f_soil_props: Soil texture stressor values on the the turnover rates
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilProperties_CASA

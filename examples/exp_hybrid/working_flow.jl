@@ -36,7 +36,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
@@ -140,7 +140,7 @@ function get_loc_loss(loc_obs,
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
     @info "-------------------"
-    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    l = combineLossArray(loss_vector, Val(tem_optim.multi_constraint_method))
     return l
 end
 # loc_space_maps = Pair.([(loc_space_names, loc_space_inds)...])

@@ -2,18 +2,18 @@ export cFlowVegProperties_none
 
 struct cFlowVegProperties_none <: cFlowVegProperties end
 
-function define(o::cFlowVegProperties_none, forcing, land, helpers)
+function define(p_struct::cFlowVegProperties_none, forcing, land, helpers)
 
-    @unpack_land taker ∈ land.cCycleBase
+    @unpack_land c_taker ∈ land.cCycleBase
 
     ## calculate variables
-    p_E = helpers.numbers.sNT.(zero([taker...]))
+    p_E = helpers.numbers.sNT.(zero([c_taker...]))
 
     if land.pools.cEco isa SVector
         p_E = SVector{length(p_E)}(p_E)
     end
 
-    p_F = helpers.numbers.sNT.(zero([taker...]))
+    p_F = helpers.numbers.sNT.(zero([c_taker...]))
     if land.pools.cEco isa SVector
         p_F = SVector{length(p_F)}(p_F)
     end

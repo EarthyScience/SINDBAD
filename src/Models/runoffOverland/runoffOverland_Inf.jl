@@ -2,16 +2,16 @@ export runoffOverland_Inf
 
 struct runoffOverland_Inf <: runoffOverland end
 
-function compute(o::runoffOverland_Inf, forcing, land, helpers)
+function compute(p_struct::runoffOverland_Inf, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land runoffInfExc ∈ land.fluxes
+    @unpack_land inf_excess_runoff ∈ land.fluxes
 
     ## calculate variables
-    runoffOverland = runoffInfExc
+    overland_runoff = inf_excess_runoff
 
     ## pack land variables
-    @pack_land runoffOverland => land.fluxes
+    @pack_land overland_runoff => land.fluxes
     return land
 end
 
@@ -22,10 +22,10 @@ assumes overland flow to be infiltration excess runoff
 # compute:
 
 *Inputs*
- - land.fluxes.runoffInfExc: infiltration excess runoff
+ - land.fluxes.inf_excess_runoff: infiltration excess runoff
 
 *Outputs*
- - land.fluxes.runoffOverland : runoff over land [mm/time]
+ - land.fluxes.overland_runoff : runoff over land [mm/time]
 
 ---
 

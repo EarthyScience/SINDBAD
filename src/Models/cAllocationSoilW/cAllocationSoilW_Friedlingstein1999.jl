@@ -7,19 +7,19 @@ export cAllocationSoilW_Friedlingstein1999
 end
 #! format: on
 
-function compute(o::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
+function compute(p_struct::cAllocationSoilW_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_Friedlingstein1999 o
+    @unpack_cAllocationSoilW_Friedlingstein1999 p_struct
 
     ## unpack land variables
-    @unpack_land fW_cTau = fW ∈ land.cTauSoilW
+    @unpack_land fW_cTau = c_allocation_f_soilW ∈ land.cTauSoilW
 
     ## calculate variables
     # computation for the moisture effect on decomposition/mineralization
-    fW = clamp(fW_cTau, minL_fW, maxL_fW)
+    c_allocation_f_soilW = clamp(fW_cTau, minL_fW, maxL_fW)
 
     ## pack land variables
-    @pack_land fW => land.cAllocationSoilW
+    @pack_land c_allocation_f_soilW => land.cAllocationSoilW
     return land
 end
 
@@ -34,10 +34,10 @@ $(PARAMFIELDS)
 # compute:
 
 *Inputs*
- - land.cTauSoilW.fW: moisture effect on soil decomposition rate
+ - land.cTauSoilW.c_allocation_f_soilW: moisture effect on soil decomposition rate
 
 *Outputs*
- - land.cAllocationSoilW.fW: moisture stressor on C allocation
+ - land.cAllocationSoilW.c_allocation_f_soilW: moisture stressor on C allocation
 
 ---
 

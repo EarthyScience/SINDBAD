@@ -2,7 +2,7 @@ export saturatedFraction_none
 
 struct saturatedFraction_none <: saturatedFraction end
 
-function define(o::saturatedFraction_none, forcing, land, helpers)
+function define(p_struct::saturatedFraction_none, forcing, land, helpers)
 
     ## calculate variables
     satFrac = helpers.numbers.𝟘

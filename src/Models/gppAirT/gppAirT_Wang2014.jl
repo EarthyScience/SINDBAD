@@ -6,22 +6,22 @@ export gppAirT_Wang2014
 end
 #! format: on
 
-function compute(o::gppAirT_Wang2014, forcing, land, helpers)
+function compute(p_struct::gppAirT_Wang2014, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Wang2014 o
+    @unpack_gppAirT_Wang2014 p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
     ## calculate variables
-    TempScGPP = clamp_01(TairDay / Tmax)
+    gpp_f_airT = clamp_01(TairDay / Tmax)
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress on gppPot based on Wang2014
+temperature stress on gpp_potential based on Wang2014
 
 # Parameters
 $(PARAMFIELDS)
@@ -35,7 +35,7 @@ Effect of temperature using gppAirT_Wang2014
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 

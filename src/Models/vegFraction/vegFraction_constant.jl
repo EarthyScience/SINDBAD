@@ -6,20 +6,20 @@ export vegFraction_constant
 end
 #! format: on
 
-function compute(o::vegFraction_constant, forcing, land, helpers)
+function compute(p_struct::vegFraction_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_constant o
+    @unpack_vegFraction_constant p_struct
 
     ## calculate variables
-    vegFraction = constantVegFrac
+    frac_vegetation = constantVegFrac
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of vegFraction as a constant
+sets the value of frac_vegetation as a constant
 
 # Parameters
 $(PARAMFIELDS)
@@ -33,7 +33,7 @@ Fractional coverage of vegetation using vegFraction_constant
  - constantvegFraction
 
 *Outputs*
- - land.states.vegFraction: an extra forcing with a constant vegFraction
+ - land.states.frac_vegetation: an extra forcing with a constant frac_vegetation
 
 ---
 
