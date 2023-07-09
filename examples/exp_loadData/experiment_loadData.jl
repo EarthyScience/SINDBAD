@@ -22,7 +22,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "spinup.flags.load_spinup" => true,
     "forcing.default_forcing.data_path" => inpath,
     "model_run.output.path" => outpath,
-    "opti.constraints.default_constraint_data.data_path" => obspath);
+    "opti.constraints.default_constraint.data_path" => obspath);
 
 run_output = runExperiment(experiment_json; replace_info=replace_info);
 

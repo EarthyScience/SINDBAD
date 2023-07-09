@@ -2,7 +2,7 @@ using Revise
 @time using Sindbad
 @time using ForwardSindbad
 # @time using OptimizeSindbad
-# noStackTrace()
+noStackTrace()
 domain = "africa";
 optimize_it = true;
 optimize_it = false;
