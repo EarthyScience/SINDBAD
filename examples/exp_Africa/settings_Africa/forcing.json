@@ -26,8 +26,6 @@
 				"bounds": [0, 100],
 				"source_variable_name": "PET_PT",
 				"source_variable_unit": "mm d-1",
-				"source_to_sindbad_unit": 1.0,
-				"is_categorical": false,
 				"name_short": "PET",
 				"space_time_type": "spatiotemporal",
 				"source_product_name": "ERA5",
@@ -140,8 +138,7 @@
 			"source_variable_name": "CLYPPT",
 			"source_variable_unit": "%",
 			"source_to_sindbad_unit": 0.01,
-			"is_categorical": false,
-			"name_short": "CLAY",
+				"name_short": "CLAY",
 			"space_time_type": "spatiovertical",
 			"source_product_name": "soilgrids",
 			"data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.CLYPPT.mean.nc"
@@ -153,7 +150,6 @@
 			"source_variable_name": "SNDPPT",
 			"source_variable_unit": "%",
 			"source_to_sindbad_unit": 0.01,
-			"is_categorical": false,
 			"name_short": "SAND",
 			"space_time_type": "spatiovertical",
 			"source_product_name": "soilgrids",
@@ -165,7 +161,6 @@
 			"source_variable_name": "SLTPPT",
 			"source_variable_unit": "%",
 			"source_to_sindbad_unit": 0.01,
-			"is_categorical": false,
 			"name_short": "CLAY",
 			"space_time_type": "spatiovertical",
 			"source_product_name": "soilgrids",
@@ -177,7 +172,6 @@
 			"source_variable_name": "OCSTHA",
 			"source_variable_unit": "%",
 			"source_to_sindbad_unit": 0.0,
-			"is_categorical": false,
 			"name_short": "CLAY",
 			"space_time_type": "spatiovertical",
 			"source_product_name": "soilgrids",
@@ -192,7 +186,7 @@
 			"name_short": "fAPAR from FVC",
 			"data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.seviri.FVC.2005-2013.nc"
 		},
-		"vegFraction": {
+		"frac_vegetation": {
 			"variable_unit": "-",
 			"bounds": [0.0, 1.0], 
 			"source_variable_name": "FVC",

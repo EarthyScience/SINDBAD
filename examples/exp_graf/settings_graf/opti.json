@@ -61,7 +61,7 @@
 			"import": "readObservation"
 		},
 		"one_sel_mask": null,
-		"default_constraint_data": {
+		"default_constraint": {
 			"variable_unit": null,
 			"bounds": null,
 			"source_variable_name": null,
@@ -74,7 +74,7 @@
 			"source_product_name": "Global",
 			"data_path": null
 		},
-		"default_cost_options": {
+		"default_cost": {
 			"aggr_order": "timespace",
 			"min_data_points": 1,
 			"spatial_aggr": "cat",

@@ -30,8 +30,8 @@ getCostOptions(optInfo)
 info.opti
 """
 function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
-    defNames = Symbol.(keys(optInfo.constraints.default_cost_options))
-    vals = values(optInfo.constraints.default_cost_options)
+    defNames = Symbol.(keys(optInfo.constraints.default_cost))
+    vals = values(optInfo.constraints.default_cost)
     defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
 
     varlist = Symbol.(optInfo.variables_to_constrain)

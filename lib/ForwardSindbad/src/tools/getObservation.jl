@@ -104,7 +104,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     permutes = forcing_info.permutes
     subset = forcing_info.subset
     doOnePath = false
-    data_path = info.opti.constraints.default_constraint_data.data_path
+    data_path = info.opti.constraints.default_constraint.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
@@ -124,7 +124,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
-    default_info = info.opti.constraints.default_constraint_data
+    default_info = info.opti.constraints.default_constraint
     numtype = Val{info.tem.helpers.numbers.num_type}()
     set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k
@@ -303,7 +303,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     forcing_info = info.tem.forcing
     permutes = forcing_info.permutes
     doOnePath = false
-    data_path = info.opti.constraints.default_constraint_data.data_path
+    data_path = info.opti.constraints.default_constraint.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
@@ -323,7 +323,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
-    default_info = info.opti.constraints.default_constraint_data
+    default_info = info.opti.constraints.default_constraint
     numtype = Val{info.tem.helpers.numbers.num_type}()
     set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k

@@ -87,7 +87,7 @@
 		"function_name": {
 			"import": "readObservation"
 		},
-		"default_constraint_data": {
+		"default_constraint": {
 			"variable_unit": null,
 			"bounds": null,
 			"source_variable_name": null,
@@ -100,7 +100,7 @@
 			"source_product_name": "",
 			"data_path": "../data/fluxnet_cube/fluxnet_observations.zarr"
 		},
-		"default_cost_options": {
+		"default_cost": {
 			"aggr_order": "timespace",
 			"min_data_points": 1,
 			"spatial_aggr": "cat",
@@ -134,8 +134,6 @@
 					"source_variable_name": "nee_σ"
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nnseinv"
 				}
 			},
@@ -157,11 +155,9 @@
 						0.0,
 						400.0
 					],
-					"source_variable_name": "nee_σ",
+					"source_variable_name": "nee_σ"
 					},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nnseinv"
 				}
 			},
@@ -183,11 +179,9 @@
 						0.0,
 						100.0
 					],
-					"source_variable_name": "nee_σ",
+					"source_variable_name": "nee_σ"
 					},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nnseinv"
 				}
 			},
@@ -215,8 +209,6 @@
 					"source_to_sindbad_unit": 0.4081632653
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nnseinv"
 				}
 			},
@@ -242,8 +234,6 @@
 					"source_to_sindbad_unit": 0.4081632653
 				},
 				"cost_options": {
-					"temporal_aggr": "day",
-					"temporal_aggr_obs": false,
 					"cost_metric": "nnseinv"
 				}
 			},
@@ -265,7 +255,7 @@
 						0.0,
 						400.0
 					],
-					"source_variable_name": "nee_σ",
+					"source_variable_name": "nee_σ"
 					},
 				"cost_options": {
 					"temporal_aggr": "mean",
@@ -291,7 +281,7 @@
 						0.0,
 						1.0
 					],
-					"source_variable_name": "nee_σ",
+					"source_variable_name": "nee_σ"
 					},
 				"cost_options": {
 					"temporal_aggr": "dayAnomaly",
