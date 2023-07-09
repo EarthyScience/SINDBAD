@@ -134,7 +134,7 @@ foreach(costOpt) do var_row
     v = var_row.variable
     def_var = def_dat[var_row.mod_ind][tspan, 1, 1, 1]
     opt_var = opt_dat[var_row.mod_ind][tspan, 1, 1, 1]
-    plot(def_var; label="def", size=(900, 600), title=v)
+    plot(def_var; label="def", size=(1200, 900), title=v)
     plot!(opt_var; label="opt")
     @show "plot obs", v
     obs_var = obs[var_row.obs_ind][tspan, 1, 1, 1]

@@ -224,7 +224,7 @@ function getLossVectorArray(observations, model_output::landWrapper, cost_option
         if isnan(metr)
             metr = oftype(metr, 10)
         end
-        # println("$(var_row.variable) => $(val_2_symbol(lossMetric)): $(metr)")
+        # println("$(var_row.variable) => $(valToSymbol(lossMetric)): $(metr)")
         metr
     end
     # println("-------------------")
@@ -243,7 +243,7 @@ function getLossVectorArray(observations, model_output::AbstractArray, cost_opti
         if isnan(metr)
             metr = eltype(y)(10)
         end
-        # println("$(var_row.variable) => $(val_2_symbol(lossMetric)): $(metr)")
+        # println("$(var_row.variable) => $(valToSymbol(lossMetric)): $(metr)")
         metr
     end
     # println("-------------------")

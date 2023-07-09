@@ -15,7 +15,7 @@ using Plots
 # forcingConfig = "forcing_DE-2.json"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-sites = ("DE-Hai", "CA-TP1", "AU-DaP")
+sites = ("DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 for domain ∈ sites
     # domain = "DE-Hai"
     inpath = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -101,6 +101,10 @@ for domain ∈ sites
     forc = getKeyedArrayFromYaxArray(forcing)
 
     output = setupOutput(info)
+
+    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    obs = getObsKeyedArrayFromYaxArray(observations)
+
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
         prepRunEcosystem(output,
             forc,
@@ -126,12 +130,16 @@ for domain ∈ sites
         v = var_row.variable
         @show "plot obs", v
         lossMetric = var_row.costMetric
+        loss_name = valToSymbol(lossMetric)
+        if loss_name == :nnseinv
+            lossMetric = Val(:nse)
+        end
         (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
         metr_def = loss(obs_var, obs_σ, def_var, lossMetric)
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
         metr_opt = loss(obs_var, obs_σ, opt_var, lossMetric)
         # @show def_var
-        plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(900, 600), title="$(v) -> $(val_2_symbol(lossMetric))")
+        plot(def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
         plot!(opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
         plot!(obs_var[tspan, 1, 1, 1]; label="obs")
         savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))

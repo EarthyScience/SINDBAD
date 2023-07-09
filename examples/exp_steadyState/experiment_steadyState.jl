@@ -34,7 +34,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sel_pool = :cEco
 
     spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
-    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(900, 600))
+    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(1200, 900))
 
     plot!(getfield(land_init.pools, sel_pool);
         linewidth=5,
