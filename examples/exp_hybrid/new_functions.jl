@@ -69,7 +69,7 @@ function get_loc_loss(loc_obs,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
-    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    l = combineLossArray(loss_vector, Val(tem_optim.multi_constraint_method))
     return l
 end
 

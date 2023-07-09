@@ -9,44 +9,44 @@ export gppSoilW_GSI
 end
 #! format: on
 
-function define(o::gppSoilW_GSI, forcing, land, helpers)
+function define(p_struct::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_GSI o
+    @unpack_gppSoilW_GSI p_struct
 
     ## unpack land variables
     @unpack_land (𝟙, sNT) ∈ helpers.numbers
-    SMScGPP_prev = 𝟙
+    gpp_f_soilW_prev = 𝟙
 
     ## pack land variables
-    @pack_land (SMScGPP_prev) => land.gppSoilW
+    @pack_land (gpp_f_soilW_prev) => land.gppSoilW
     return land
 end
 
-function compute(o::gppSoilW_GSI, forcing, land, helpers)
+function compute(p_struct::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_GSI o
+    @unpack_gppSoilW_GSI p_struct
 
     ## unpack land variables
     @unpack_land begin
         (s_wAWC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
-        (SMScGPP_prev) ∈ land.gppSoilW
+        (gpp_f_soilW_prev) ∈ land.gppSoilW
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     actAWC = max_0(addS(soilW) - s_wWP)
     SM_nor = min_1(actAWC / s_wAWC)
-    fW = (𝟙 - fW_τ) * SMScGPP_prev + fW_τ * (𝟙 / (𝟙 + exp(-fW_slope * (SM_nor - fW_base))))
-    SMScGPP = clamp_01(fW)
-    SMScGPP_prev = SMScGPP
+    c_allocation_f_soilW = (𝟙 - fW_τ) * gpp_f_soilW_prev + fW_τ * (𝟙 / (𝟙 + exp(-fW_slope * (SM_nor - fW_base))))
+    gpp_f_soilW = clamp_01(c_allocation_f_soilW)
+    gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables
-    @pack_land (SMScGPP, SMScGPP_prev) => land.gppSoilW
+    @pack_land (gpp_f_soilW, gpp_f_soilW_prev) => land.gppSoilW
     return land
 end
 
 @doc """
-soil moisture stress on gppPot based on GSI implementation of LPJ
+soil moisture stress on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
 $(PARAMFIELDS)
@@ -61,7 +61,7 @@ $(PARAMFIELDS)
  - land.soilWBase.p_wWP: wilting point
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+ - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

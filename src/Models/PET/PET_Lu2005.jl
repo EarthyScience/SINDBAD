@@ -20,7 +20,7 @@ export PET_Lu2005
 end
 #! format: on
 
-function define(o::PET_Lu2005, forcing, land, helpers)
+function define(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing Tair ∈ forcing
     PET = helpers.numbers.𝟘
@@ -32,9 +32,9 @@ function define(o::PET_Lu2005, forcing, land, helpers)
     return land
 end
 
-function compute(o::PET_Lu2005, forcing, land, helpers)
+function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack parameters
-    @unpack_PET_Lu2005 o
+    @unpack_PET_Lu2005 p_struct
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
 

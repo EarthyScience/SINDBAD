@@ -12,17 +12,17 @@ optimize_it = false
 outpath = nothing
 domain = "DE-Hai"
 
-replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
-    "experiment.configFiles.forcing" => forcingConfig,
+replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "modelRun.time.eDate" => eYear * "-12-31",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => false,
-    "spinup.flags.saveSpinup" => true,
-    "spinup.flags.loadSpinup" => true,
-    "forcing.default_forcing.dataPath" => inpath,
-    "modelRun.output.path" => outpath,
-    "opti.constraints.oneDataPath" => obspath);
+    "model_run.time.end_date" => eYear * "-12-31",
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => false,
+    "spinup.flags.save_spinup" => true,
+    "spinup.flags.load_spinup" => true,
+    "forcing.default_forcing.data_path" => inpath,
+    "model_run.output.path" => outpath,
+    "opti.constraints.default_constraint_data.data_path" => obspath);
 
 run_output = runExperiment(experiment_json; replace_info=replace_info);
 
@@ -33,6 +33,6 @@ run_output = runExperiment(experiment_jld2); #this one will only work if the rep
 
 # one can load info directly from file and run the experiment by skipping the get configuration by continuing with
 info = Sindbad.load("info.jld2")["info"];
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info)

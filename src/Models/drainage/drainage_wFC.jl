@@ -2,7 +2,7 @@ export drainage_wFC
 
 struct drainage_wFC <: drainage end
 
-function define(o::drainage_wFC, forcing, land, helpers)
+function define(p_struct::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
     drainage = zeros(helpers.numbers.num_type, length(land.pools.soilW))
     ## pack land variables
@@ -10,7 +10,7 @@ function define(o::drainage_wFC, forcing, land, helpers)
     return land
 end
 
-function compute(o::drainage_wFC, forcing, land, helpers)
+function compute(p_struct::drainage_wFC, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -39,7 +39,7 @@ function compute(o::drainage_wFC, forcing, land, helpers)
     return land
 end
 
-function update(o::drainage_wFC, forcing, land, helpers)
+function update(p_struct::drainage_wFC, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         soilW ∈ land.pools
@@ -75,7 +75,7 @@ Recharge the soil using drainage_wFC
  - land.states.WBP amount of water that can potentially drain
 
 *Outputs*
- - drainage from the last layer is saved as groundwater recharge [groundWRec]
+ - drainage from the last layer is saved as groundwater recharge [gw_recharge]
  - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
 
 # update

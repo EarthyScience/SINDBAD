@@ -2,28 +2,27 @@
 
 	"time":
 	{
-		"step": 				"daily",
-		"sDate": 				"1979-01-01",
-		"eDate": 				"2017-12-31",
-		"nYears": 				12,
-		"nStepsDay": 			1,
-		"nStepsYear": 			365
+		"model_time_step": 			"daily",
+		"start_date": 				"1979-01-01",
+		"end_date": 				"2017-12-31",
+		"timesteps_in_day": 		1,
+		"timesteps_in_year": 		365
 	},
 	"mapping": {
 		"yaxarray": [],
-		"runEcosystem": ["time", "longitude", "latitude"],
+		"run_ecosystem": ["time", "longitude", "latitude"],
 		"parallelization": "qbmap"
 	},
 	"flags":
 	{
-		"saveInfo": 			true,
-		"debugit": 				false, 
-		"catchErrors": 			false,
-		"runSpinup":            false,
-		"runForward": 			true,
-		"runUpdateModels": 		false,
-		"runOpti": 				true,
-		"calcCost":				true
+		"save_info": 			true,
+		"debug_model": 			false, 
+		"catch_model_errors": 	false,
+		"run_spinup":            false,
+		"run_forward": 			true,
+		"run_update_mdels": 	false,
+		"run_optimization": 	true,
+		"run_forward_and_cost":	true
 	},
 	"rules":
 	{
@@ -50,13 +49,13 @@
 			"fluxes.evapotranspiration": null,
 			"fluxes.transpiration": null,
 			"fluxes.runoff": null,
-			"fluxes.runoffSurface": null,
+			"fluxes.surface_runoff": null,
 			"fluxes.gpp": null,
-			"fluxes.NEE": null,
+			"fluxes.nee": null,
 			"pools.TWS": "d_tws",
 			"pools.soilW": "d_soil",
 			"pools.cEco": "d_cEco",
-			"waterBalance.waterBalance": null
+			"waterBalance.water_balance": null
 		}
 	}
 }

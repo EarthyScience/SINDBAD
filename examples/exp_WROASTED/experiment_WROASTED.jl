@@ -24,22 +24,22 @@ outpath = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
-replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
-    "experiment.configFiles.forcing" => forcingConfig,
+replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "modelRun.time.eDate" => eYear * "-12-31",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.catchErrors" => true,
-    "modelRun.flags.runSpinup" => false,
-    "modelRun.flags.debugit" => false,
-    "modelRun.rules.model_array_type" => arraymethod,
-    "spinup.flags.doSpinup" => true,
-    "forcing.default_forcing.dataPath" => inpath,
-    "modelRun.output.path" => outpath,
-    "modelRun.mapping.parallelization" => pl,
-    "opti.constraints.oneDataPath" => obspath);
+    "model_run.time.end_date" => eYear * "-12-31",
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => true,
+    "spinup.flags.save_spinup" => false,
+    "model_run.flags.catch_model_errors" => true,
+    "model_run.flags.run_spinup" => false,
+    "model_run.flags.debug_model" => false,
+    "model_run.rules.model_array_type" => arraymethod,
+    "spinup.flags.do_spinup" => true,
+    "forcing.default_forcing.data_path" => inpath,
+    "model_run.output.path" => outpath,
+    "model_run.mapping.parallelization" => pl,
+    "opti.constraints.default_constraint_data.data_path" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
@@ -47,7 +47,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
@@ -100,7 +100,7 @@ tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 # obs = getKeyedArrayFromYaxArray(observations);
 obs = getObsKeyedArrayFromYaxArray(observations);
 
@@ -129,7 +129,7 @@ def_dat = outcubes;
 out_vars = output.variables;
 tspan = 9000:12000
 obsMod = last.(values(info.optim.variables.optim))
-costOpt = info.optim.costOptions;
+costOpt = info.optim.cost_options;
 foreach(costOpt) do var_row
     v = var_row.variable
     def_var = def_dat[var_row.mod_ind][tspan, 1, 1, 1]

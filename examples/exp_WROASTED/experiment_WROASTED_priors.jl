@@ -28,25 +28,25 @@ outpath = nothing
 # t
 domain = "DE-Hai"
 pl = "threads"
-replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
-    "experiment.configFiles.forcing" => forcingConfig,
+replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "modelRun.time.eDate" => eYear * "-12-31",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.debugit" => false,
-    "modelRun.flags.runSpinup" => true,
-    "modelRun.flags.debugit" => false,
-    "spinup.flags.doSpinup" => true,
-    "forcing.default_forcing.dataPath" => inpath,
-    "modelRun.output.path" => outpath,
-    "modelRun.mapping.parallelization" => pl,
-    "opti.constraints.oneDataPath" => obspath);
+    "model_run.time.end_date" => eYear * "-12-31",
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => true,
+    "spinup.flags.save_spinup" => false,
+    "model_run.flags.debug_model" => false,
+    "model_run.flags.run_spinup" => true,
+    "model_run.flags.debug_model" => false,
+    "spinup.flags.do_spinup" => true,
+    "forcing.default_forcing.data_path" => inpath,
+    "model_run.output.path" => outpath,
+    "model_run.mapping.parallelization" => pl,
+    "opti.constraints.default_constraint_data.data_path" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
@@ -66,7 +66,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
@@ -81,7 +81,7 @@ extract a matrix with columns:
   - observation uncertainties (stdev)
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
@@ -107,7 +107,7 @@ function getPredAndObsVector(observations::NamedTuple,
     model_output,
     optim::NamedTuple;
     removeNaN=true)
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable

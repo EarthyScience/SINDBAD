@@ -2,7 +2,7 @@ export soilWBase_uniform
 
 struct soilWBase_uniform <: soilWBase end
 
-function define(o::soilWBase_uniform, forcing, land, helpers)
+function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     #@needscheck
     ## unpack land variables
     @unpack_land begin
@@ -15,7 +15,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
     n_soilW = length(soilW)
 
     # instatiate variables 
-    soilLayerThickness = zero(land.pools.soilW)
+    soil_layer_thickness = zero(land.pools.soilW)
     p_wFC = zero(land.pools.soilW)
     p_wWP = zero(land.pools.soilW)
     p_wSat = zero(land.pools.soilW)
@@ -41,7 +41,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
 
     for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
-        @rep_elem sd_sl => (soilLayerThickness, sl, :soilW)
+        @rep_elem sd_sl => (soil_layer_thickness, sl, :soilW)
         p_wFC_sl = p_θFC[sl] * sd_sl
         @rep_elem p_wFC_sl => (p_wFC, sl, :soilW)
         p_wWP_sl = p_θWP[sl] * sd_sl
@@ -69,7 +69,7 @@ function define(o::soilWBase_uniform, forcing, land, helpers)
             p_kFC,
             p_kSat,
             p_kWP,
-            soilLayerThickness,
+            soil_layer_thickness,
             p_wAWC,
             p_wFC,
             p_wSat,

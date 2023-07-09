@@ -86,15 +86,15 @@ function getExperimentConfiguration(experiment_json::String; replace_info=nothin
 end
 
 """
-    readConfiguration(configFiles)
+    readConfiguration(configuration_files)
 
 read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
-    for (k, v) ∈ info_exp["experiment"]["configFiles"]
+    for (k, v) ∈ info_exp["experiment"]["configuration_files"]
         config_path = joinpath(base_path, v)
-        info_exp["experiment"]["configFiles"][k] = config_path
+        info_exp["experiment"]["configuration_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
@@ -151,7 +151,7 @@ end
 sets up and creates output directory for the model simulation
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
-    outpath = infoTuple[:modelRun][:output][:path]
+    outpath = infoTuple[:model_run][:output][:path]
     if isnothing(outpath)
         out_path_new = "output_"
         out_path_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
@@ -168,7 +168,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
         sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-1)], "/")
         if occursin(sindbad_root, outpath)
             error(
-                "You cannot specify output.path: $(outpath) in modelRun.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
+                "You cannot specify output.path: $(outpath) in model_run.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
             )
         else
             out_path_new = outpath
@@ -182,10 +182,10 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
     sub_output = ["data", "settings", "root", "figure"]
-    if infoTuple.modelRun.flags.runOpti || infoTuple.modelRun.flags.calcCost
+    if infoTuple.model_run.flags.run_optimization || infoTuple.model_run.flags.run_forward_and_cost
         push!(sub_output, "optim")
     end
-    if infoTuple.spinup.flags.saveSpinup
+    if infoTuple.spinup.flags.save_spinup
         push!(sub_output, "spinup")
     end
     for s_o ∈ sub_output
@@ -241,8 +241,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     cp(sindbad_experiment,
         joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
         force=true)
-    for k ∈ keys(infoTuple.experiment.configFiles)
-        v = getfield(infoTuple.experiment.configFiles, k)
+    for k ∈ keys(infoTuple.experiment.configuration_files)
+        v = getfield(infoTuple.experiment.configuration_files, k)
         cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
     end
     println("----------------------------------------------")

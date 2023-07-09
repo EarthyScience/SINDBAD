@@ -3,7 +3,7 @@
     "2.c": "approaches 3) structure of water and carbon pools",
     "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
     "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
-    "defaultModel":{
+    "default_model":{
             "order": 0,
             "use4spinup": true
     },
@@ -143,7 +143,7 @@
 				"surfaceW": [1, 0.01]
             },
 			"combine": "TWS",
-            "addStateVars": {"Δ": 0.0}
+            "additional_state_variables": {"Δ": 0.0}
 		}
 	}
 }

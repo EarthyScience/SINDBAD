@@ -10,6 +10,6 @@ Disturb the carbon cycle pools
 
 # Approaches:
  - cFlow: move all vegetation carbon pools except reserve to respective flow target when there is disturbance
- - WROASTED: move all vegetation carbon in excess of carbon_remain to cSoilSlow in case of disturbance
+ - WROASTED: move all vegetation carbon in excess of c_remain to cSoilSlow in case of disturbance
  """
 cCycleDisturbance

@@ -6,9 +6,9 @@ export gppDiffRadiation_Wang2015
 end
 #! format: on
 
-function define(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function define(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Wang2015 o
+    @unpack_gppDiffRadiation_Wang2015 p_struct
     @unpack_forcing (Rg, RgPot) ∈ forcing
 
     ## calculate variables
@@ -20,9 +20,9 @@ function define(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
+function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Wang2015 o
+    @unpack_gppDiffRadiation_Wang2015 p_struct
 
     @unpack_forcing (Rg, RgPot) ∈ forcing
 
@@ -52,15 +52,15 @@ function compute(o::gppDiffRadiation_Wang2015, forcing, land, helpers)
     # end
 
     cScGPP = 𝟙 - μ * (𝟙 - CI_nor)
-    CloudScGPP = RgPot > 𝟘 ? cScGPP : zero(cScGPP)
+    gpp_f_cloud = RgPot > 𝟘 ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
     return land
 end
 
 @doc """
-cloudiness scalar [radiation diffusion] on gppPot based on Wang2015
+cloudiness scalar [radiation diffusion] on gpp_potential based on Wang2015
 
 # Parameters
 $(PARAMFIELDS)
@@ -75,7 +75,7 @@ $(PARAMFIELDS)
  - rueRatio : ratio of clear sky LUE to max LUE  in turner et al., appendix A, e_[g_cs] / e_[g_max], should be between 0 & 1
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
+ - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 

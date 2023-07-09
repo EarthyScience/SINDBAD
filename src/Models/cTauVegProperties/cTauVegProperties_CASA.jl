@@ -12,28 +12,28 @@ export cTauVegProperties_CASA
 end
 #! format: on
 
-function define(o::cTauVegProperties_CASA, forcing, land, helpers)
-    @unpack_cTauVegProperties_CASA o
+function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
+    @unpack_cTauVegProperties_CASA p_struct
 
     @unpack_land (𝟘, num_type) ∈ helpers.numbers
 
     ## instantiate variables
-    p_kfVeg = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #sujan
+    p_k_f_veg_props = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #sujan
     annk = 𝟘#sujan ones(size(AGE))
 
     ## pack land variables
-    @pack_land (p_kfVeg, annk) => land.cTauVegProperties
+    @pack_land (p_k_f_veg_props, annk) => land.cTauVegProperties
     return land
 end
 
-function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauVegProperties_CASA o
+    @unpack_cTauVegProperties_CASA p_struct
 
     ## unpack land variables
     @unpack_land begin
         PFT ∈ land.vegProperties
-        (p_kfVeg, annk) ∈ land.cTauVegProperties
+        (p_k_f_veg_props, annk) ∈ land.cTauVegProperties
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
@@ -77,13 +77,13 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
     # DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
     p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
     # feed the output
-    p_kfVeg[helpers.pools.zix.cLitLeafS] = p_LIGEFF
-    p_kfVeg[helpers.pools.zix.cLitRootFS] = p_LIGEFF
+    p_k_f_veg_props[helpers.pools.zix.cLitLeafS] = p_LIGEFF
+    p_k_f_veg_props[helpers.pools.zix.cLitRootFS] = p_LIGEFF
 
     ## pack land variables
     @pack_land begin
         p_annk => land.cCycleBase
-        (p_C2LIGNIN, p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) =>
+        (p_C2LIGNIN, p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_k_f_veg_props) =>
             land.cTauVegProperties
     end
     return land
@@ -109,7 +109,7 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.cTauVegProperties.p_LITC2N:
  - land.cTauVegProperties.p_MTF:
  - land.cTauVegProperties.p_SCLIGNIN:
- - land.cTauVegProperties.p_kfVeg:
+ - land.cTauVegProperties.p_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

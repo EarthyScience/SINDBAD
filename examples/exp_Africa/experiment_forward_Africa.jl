@@ -12,18 +12,18 @@ optimize_it = false;
 # info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "modelRun.mapping.yaxarray" => [],
-    "modelRun.mapping.runEcosystem" => ["time", "latitude", "longitude"],
-    "modelRun.flags.runSpinup" => true,
-    "spinup.flags.doSpinup" => true); #one parameter set for whole domain
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => true,
+    "model_run.mapping.yaxarray" => [],
+    "model_run.mapping.run_ecosystem" => ["time", "latitude", "longitude"],
+    "model_run.flags.run_spinup" => true,
+    "spinup.flags.do_spinup" => true); #one parameter set for whole domain
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-# obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+# obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);

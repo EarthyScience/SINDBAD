@@ -2,19 +2,19 @@ export gppAirT_none
 
 struct gppAirT_none <: gppAirT end
 
-function define(o::gppAirT_none, forcing, land, helpers)
+function define(p_struct::gppAirT_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant 𝟙 [no effect on potential GPP]
-    TempScGPP = helpers.numbers.𝟙
+    gpp_f_airT = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
 @doc """
-sets the temperature stress on gppPot to one (no stress)
+sets the temperature stress on gpp_potential to one (no stress)
 
 ---
 
@@ -25,7 +25,7 @@ Effect of temperature using gppAirT_none
  - helpers
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppAirT_none

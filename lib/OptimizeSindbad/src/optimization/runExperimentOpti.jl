@@ -7,7 +7,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:opti})
     @info "-------------------Optimization Mode---------------------------"
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     additionaldims = setdiff(keys(info.tem.forcing.sizes), [:time])
 
     if isempty(additionaldims)
@@ -19,7 +19,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
             observations,
             ;
             spinup_forcing=nothing,
-            max_cache=info.modelRun.rules.yax_max_cache)
+            max_cache=info.model_run.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
         forc_array = getKeyedArrayFromYaxArray(forcing)
@@ -37,7 +37,7 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:cost})
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     forc_array = getKeyedArrayFromYaxArray(forcing)
     obs_array = getObsKeyedArrayFromYaxArray(observations)
 
@@ -59,10 +59,10 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    if info.tem.helpers.run.runOpti
+    if info.tem.helpers.run.run_optimization
         run_output = runExperiment(info, forcing, output, output.variables, Val(:opti))
     end
-    if info.tem.helpers.run.calcCost && !info.tem.helpers.run.runOpti
+    if info.tem.helpers.run.run_forward_and_cost && !info.tem.helpers.run.run_optimization
         run_output = runExperiment(info, forcing, output, output.variables, Val(:cost))
     end
     return run_output
