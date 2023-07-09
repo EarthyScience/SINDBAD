@@ -44,8 +44,8 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
 end
 
 function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.defaults, tblParams.lower)
-    ub = oftype(tblParams.defaults, tblParams.upper)
+    lb = oftype(tblParams.default, tblParams.lower)
+    ub = oftype(tblParams.default, tblParams.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end

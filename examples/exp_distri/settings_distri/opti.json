@@ -33,32 +33,32 @@
 		"distribution": ["normal", [0, 1]]
 	},
 	"optimized_parameters": {
-		"evaporation_⚆_α": {
+		"evaporation,α": {
 			"is_ml": true
 		},
-		"evaporation_⚆_supLim": null,
-		"gppPotential_⚆_εmax": null,
-		"gppAirT_⚆_Topt": null,
-		"gppAirT_⚆_ToptA": null,
-		"gppAirT_⚆_ToptB": null,
-		"gppVPD_⚆_κ":  {
+		"evaporation,supLim": null,
+		"gppPotential,εmax": null,
+		"gppAirT,Topt": null,
+		"gppAirT,ToptA": null,
+		"gppAirT,ToptB": null,
+		"gppVPD,κ":  {
 			"is_ml": true
 		},
-		"gppVPD_⚆_Cκ": null,
-		"gppVPD_⚆_Cm": null,
-		"gppSoilW_⚆_q": null,
-		"gppSoilW_⚆_θstar": null,
-		"groundWRecharge_⚆_dos_exp": null,
-		"runoffBase_⚆_bc":  {
+		"gppVPD,Cκ": null,
+		"gppVPD,Cm": null,
+		"gppSoilW,q": null,
+		"gppSoilW,θstar": null,
+		"groundWRecharge,dos_exp": null,
+		"runoffBase,bc":  {
 			"is_ml": true
 		},
-		"rootMaximumDepth_⚆_fracRootD2SoilD": null,
-		"runoffSaturationExcess_⚆_β": null,
-		"snowMelt_⚆_melt_T": null,
-		"snowMelt_⚆_melt_Rn": null,
-		"treeFraction_⚆_constantTreeFrac": null,
-		"WUE_⚆_WUEatOnehPa": null,
-		"WUE_⚆_κ": null
+		"rootMaximumDepth,fracRootD2SoilD": null,
+		"runoffSaturationExcess,β": null,
+		"snowMelt,melt_T": null,
+		"snowMelt,melt_Rn": null,
+		"treeFraction,constantTreeFrac": null,
+		"WUE,WUEatOnehPa": null,
+		"WUE,κ": null
 	},
 	"constraints": {
 		"function_name": {
