@@ -20,14 +20,14 @@ pl = "threads"
 data_type = "Float32"
 # data_type = "Float32"
 arraymethod = "staticarray"
-replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
+replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "experiment.domain" => domain,
-    "modelRun.time.eDate" => eYear * "-12-31",
-    "modelRun.flags.runSpinup" => false,
-    "modelRun.flags.debugit" => false,
-    "modelRun.rules.model_array_type" => arraymethod,
-    "modelRun.rules.data_type" => data_type,
-    "modelRun.mapping.parallelization" => pl,
+    "model_run.time.end_date" => eYear * "-12-31",
+    "model_run.flags.run_spinup" => false,
+    "model_run.flags.debug_model" => false,
+    "model_run.rules.model_array_type" => arraymethod,
+    "model_run.rules.data_type" => data_type,
+    "model_run.mapping.parallelization" => pl,
 );
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
@@ -38,7 +38,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getObsKeyedArrayFromYaxArray(observations);
 
 @time _,

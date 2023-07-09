@@ -2,35 +2,35 @@
 	"sequence": 
 	[
 		{
-			"spinupMode": "forward",
+			"spinup_mode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 15
+			"stop_function": null,
+			"n_repeat": 15
 		},
 		{
-			"spinupMode": "forward",
+			"spinup_mode": "forward",
 			"forcing": "full",
-			"stopCriteria": null,
-			"nLoops": 1
+			"stop_function": null,
+			"n_repeat": 1
 		}
 	],
-	"diffEq":{
+	"differential_eqn":{
 		"pools": ["cEco"],
-		"timeJump": 200.0,
-		"reltol":1e-2, 
-		"abstol":1e-2,
+		"time_jump": 200.0,
+		"relative_tolerance":1e-2, 
+		"absolute_tolerance":1e-2,
 		"maxiters": 100
 	},
 	"paths": 
 	{
-		"restartFileIn": null,
-		"restartFileOut": null	
+		"restart_file_in": null,
+		"restart_file_out": null	
 	},
 	"flags":
 	{
-		"doSpinup": true,
-		"loadSpinup": false,
-		"saveSpinup": false,
-		"storeSpinupHistory": false
+		"do_spinup": true,
+		"load_spinup": false,
+		"save_spinup": false,
+		"store_spinup_history": false
 	}
 }

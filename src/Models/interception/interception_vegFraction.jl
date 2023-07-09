@@ -6,17 +6,17 @@ export interception_vegFraction
 end
 #! format: on
 
-function compute(o::interception_vegFraction, forcing, land, helpers)
+function compute(p_struct::interception_vegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_interception_vegFraction o
+    @unpack_interception_vegFraction p_struct
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, vegFraction) ∈ land.states
+        (WBP, frac_vegetation) ∈ land.states
         rain ∈ land.rainSnow
     end
     # calculate interception loss
-    intCap = pInt * vegFraction
+    intCap = pInt * frac_vegetation
     interception = min(intCap, rain)
     # update the available water
     WBP = WBP - interception
@@ -41,7 +41,7 @@ $(PARAMFIELDS)
 Interception evaporation using interception_vegFraction
 
 *Inputs*
- - land.states.vegFraction
+ - land.states.frac_vegetation
 
 *Outputs*
  -
@@ -55,7 +55,7 @@ Interception evaporation using interception_vegFraction
 
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code
- - 1.1 on 27.11.2019 [skoiralal]: moved contents from prec, handling of vegFraction from s.cd  
+ - 1.1 on 27.11.2019 [skoiralal]: moved contents from prec, handling of frac_vegetation from s.cd  
 
 *Created by:*
  - ttraut

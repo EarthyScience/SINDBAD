@@ -16,10 +16,10 @@ Add skipping filter for pixels with all nans in YAXArrays
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
-function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where T
+function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
     datapoint = isnan(datapoint) ? dfill : datapoint
-    datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit,
-        vinfo.additiveUnitConversion)
+    datapoint = applyUnitConversion(datapoint, vinfo.source_to_sindbad_unit,
+        vinfo.additive_unit_conversion)
     bounds = vinfo.bounds
     if !isnothing(bounds)
         datapoint = clamp(datapoint, first(bounds), last(bounds))
@@ -30,17 +30,17 @@ end
 # function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
 #     datapoint = isnan(datapoint) ? T(dfill) : T(datapoint)
 #     datapoint = ismissing(datapoint) ? T(dfill) : T(datapoint)
-#     datapoint = applyUnitConversion(datapoint, vinfo.source2sindbadUnit, vinfo.additiveUnitConversion)
+#     datapoint = applyUnitConversion(datapoint, vinfo.source_to_sindbad_unit, vinfo.additive_unit_conversion)
 #     bounds = vinfo.bounds
 #     datapoint = clamp(datapoint, bounds[1], bounds[2])
 #     return datapoint
 # end
 
-function getAbsDataPath(info, dataPath)
-    if !isabspath(dataPath)
-        dataPath = joinpath(info.experiment_root, dataPath)
+function getAbsDataPath(info, data_path)
+    if !isabspath(data_path)
+        data_path = joinpath(info.experiment_root, data_path)
     end
-    return dataPath
+    return data_path
 end
 
 function getDataDims(c, mappinginfo)

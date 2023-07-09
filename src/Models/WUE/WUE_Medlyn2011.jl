@@ -8,7 +8,7 @@ export WUE_Medlyn2011
 end
 #! format: on
 
-function define(o::WUE_Medlyn2011, forcing, land, helpers)
+function define(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     @unpack_land begin
         (sNT, 𝟙) ∈ helpers.numbers
     end
@@ -20,14 +20,14 @@ function define(o::WUE_Medlyn2011, forcing, land, helpers)
     return land
 end
 
-function compute(o::WUE_Medlyn2011, forcing, land, helpers)
+function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_Medlyn2011 o
+    @unpack_WUE_Medlyn2011 p_struct
     @unpack_forcing (PsurfDay, VPDDay) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        ambCO2 ∈ land.states
+        ambient_CO2 ∈ land.states
         (𝟘, 𝟙, tolerance) ∈ helpers.numbers
         umol_to_gC ∈ land.WUE
     end
@@ -38,8 +38,8 @@ function compute(o::WUE_Medlyn2011, forcing, land, helpers)
     # umol_to_gC = 12 * 100/(18 * 1000)
     ciNoCO2 = g1 / (g1 + sqrt(VPDDay)) # RHS eqn 13 in corrigendum
     AoENoCO2 = umol_to_gC * PsurfDay / (DwDc * (VPDDay + g1 * sqrt(VPDDay))) # eqn 14 #? gC/mol of H2o?
-    AoE = AoENoCO2 * ζ * ambCO2
-    ci = ciNoCO2 * ambCO2
+    AoE = AoENoCO2 * ζ * ambient_CO2
+    ci = ciNoCO2 * ambient_CO2
 
     ## pack land variables
     @pack_land (AoE, AoENoCO2, ci, ciNoCO2) => land.WUE

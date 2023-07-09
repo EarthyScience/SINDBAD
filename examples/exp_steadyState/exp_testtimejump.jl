@@ -10,20 +10,20 @@ expSol = zeros(8, length(tjs))
 odeSol = zeros(8, length(tjs))
 cInit = nothing
 times = zeros(2, length(tjs))
-cpnames = nothing
+cVeg_names = nothing
 for (i, tj) ∈ enumerate(tjs)
     experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 
-    replace_info = Dict("spinup.diffEq.timeJump" => tj,
-        "spinup.diffEq.reltol" => 1e-2,
-        "spinup.diffEq.abstol" => 1,
-        "modelRun.rules.model_array_type" => "staticarray",
-        "modelRun.flags.debugit" => false)
+    replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
+        "spinup.differential_eqn.relative_tolerance" => 1e-2,
+        "spinup.differential_eqn.absolute_tolerance" => 1,
+        "model_run.rules.model_array_type" => "staticarray",
+        "model_run.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
 
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
 
     output = setupOutput(info)
 
@@ -66,7 +66,7 @@ for (i, tj) ∈ enumerate(tjs)
     @show "Exp_Init", tj
     sp = :spinup
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(tem_vals.spinup.diffEq.timeJump)
+    @time for nl ∈ 1:Int(tem_vals.spinup.differential_eqn.time_jump)
         out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
@@ -79,7 +79,7 @@ for (i, tj) ∈ enumerate(tjs)
     out_sp_exp_init = deepcopy(out_sp_exp)
     expSol[:, i] = getfield(out_sp_ode_init.pools, sel_pool)
     odeSol[:, i] = getfield(out_sp_exp_init.pools, sel_pool)
-    cpnames = info.pools.carbon.components.cEco
+    cVeg_names = info.pools.carbon.components.cEco
 
 end
 
@@ -102,7 +102,7 @@ savefig("scatter_allpool.png")
 
 # one subplot per pool
 pltall = [];
-for (i, cp) ∈ enumerate(cpnames)
+for (i, cp) ∈ enumerate(cVeg_names)
     p = plot(expSol[i, :], odeSol[i, :]; lw=0, marker=:o, size=(600, 900))
     title!("$(i): $(string(cp))")
     x_lims = min.(minimum(expSol[i, :]), minimum(odeSol[i, :])),

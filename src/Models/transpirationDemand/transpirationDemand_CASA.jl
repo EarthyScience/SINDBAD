@@ -2,7 +2,7 @@ export transpirationDemand_CASA
 
 struct transpirationDemand_CASA <: transpirationDemand end
 
-function compute(o::transpirationDemand_CASA, forcing, land, helpers)
+function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -45,7 +45,7 @@ Demand-driven transpiration using transpirationDemand_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
 *Created by:*
  - ncarval

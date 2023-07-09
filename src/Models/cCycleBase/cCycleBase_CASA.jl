@@ -3,7 +3,7 @@ export cCycleBase_CASA
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_CASA{T1,T2,T3,T4,T5,T6,T7} <: cCycleBase
     annk::T1 = Float64[1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045] | (Float64[0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045], Float64[3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045]) | "turnover rate of ecosystem carbon pools" | "yr-1"
-    cFlowE::T2 = Float64[
+    c_flow_E::T2 = Float64[
                      -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
                      0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
                      0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -27,8 +27,8 @@ export cCycleBase_CASA
 end
 #! format: on
 
-function define(o::cCycleBase_CASA, forcing, land, helpers)
-    @unpack_cCycleBase_CASA o
+function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
+    @unpack_cCycleBase_CASA p_struct
 
     @unpack_land begin
         num_type ∈ helpers.numbers
@@ -37,19 +37,19 @@ function define(o::cCycleBase_CASA, forcing, land, helpers)
 
     ## instantiate variables
     p_C2Nveg = ones(num_type, length(cEco)) #sujan
-    cEcoEfflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
+    c_efflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, cFlowA, cFlowE) => land.cCycleBase
-        cEcoEfflux => land.states
+        (p_C2Nveg, c_flow_A, c_flow_E) => land.cCycleBase
+        c_efflux => land.states
     end
     return land
 end
 
-function compute(o::cCycleBase_CASA, forcing, land, helpers)
+function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cCycleBase_CASA o
+    @unpack_cCycleBase_CASA p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -62,12 +62,12 @@ function compute(o::cCycleBase_CASA, forcing, land, helpers)
     p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
 
     # turnover rates
-    TSPY = helpers.dates.nStepsYear
+    TSPY = helpers.dates.timesteps_in_year
     p_k_base = 𝟙 .- (exp.(-𝟙 .* annk) .^ (𝟙 / TSPY))
 
     ## pack land variables
     @pack_land (p_k_base) => land.cCycleBase
-    # @pack_land (p_C2Nveg, p_k_base, cFlowE) => land.cCycleBase
+    # @pack_land (p_C2Nveg, p_k_base, c_flow_E) => land.cCycleBase
     return land
 end
 

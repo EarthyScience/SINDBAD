@@ -19,7 +19,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
@@ -53,7 +53,7 @@ land = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 helpers = info.tem.helpers;
 tem = info.tem;
 # helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-#     dates = (; nStepsDay=1),
+#     dates = (; timesteps_in_day=1),
 #     run = (; output_all=true, runSpinup=false),
 #     );
 # tem = (;x

@@ -7,7 +7,7 @@ export aRespiration_Thornley2000A
 end
 #! format: on
 
-function define(o::aRespiration_Thornley2000A, forcing, land, helpers)
+function define(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
         (num_type, 𝟘, 𝟙) ∈ helpers.numbers
@@ -15,34 +15,34 @@ function define(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
     p_km = zero(land.pools.cEco) .+ 𝟙
     p_km4su = zero(land.pools.cEco) .+ 𝟙
-    RA_G = zero(land.pools.cEco)
-    RA_M = zero(land.pools.cEco)
+    auto_respiration_growth = zero(land.pools.cEco)
+    auto_respiration_maintain = zero(land.pools.cEco)
 
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su) => land.aRespiration
-        (RA_G, RA_M) => land.states
+        (auto_respiration_growth, auto_respiration_maintain) => land.states
     end
     return land
 end
 
-function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
+function compute(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
     ## unpack parameters
-    @unpack_aRespiration_Thornley2000A o
+    @unpack_aRespiration_Thornley2000A p_struct
 
     ## unpack land variables
     @unpack_land begin
         (p_km, p_km4su) ∈ land.aRespiration
-        (cAlloc, cEcoEfflux, RA_G, RA_M) ∈ land.states
+        (c_allocation, c_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_C2Nveg ∈ land.cCycleBase
-        fT ∈ land.aRespirationAirT
+        auto_respiration_f_airT ∈ land.aRespirationAirT
         (num_type, 𝟘, 𝟙) ∈ helpers.numbers
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
-    RMN = RMN / helpers.dates.nStepsDay
+    RMN = RMN / helpers.dates.timesteps_in_day
     zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ zix
 
@@ -51,7 +51,7 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
 
         # scalars of maintenance respiration for models A; B & C
         # km is the maintenance respiration coefficient [d-1]
-        p_km_ix = min_1(𝟙 / p_C2Nveg[ix] * RMN * fT)
+        p_km_ix = min_1(𝟙 / p_C2Nveg[ix] * RMN * auto_respiration_f_airT)
         p_km4su_ix = p_km[ix] * YG
 
         # maintenance respiration first: R_m = km * C
@@ -60,23 +60,23 @@ function compute(o::aRespiration_Thornley2000A, forcing, land, helpers)
         RA_M_ix = max_0(RA_M_ix)
 
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
-        RA_G_ix = (𝟙 - YG) * (gpp * cAlloc[ix] - RA_M_ix)
+        RA_G_ix = (𝟙 - YG) * (gpp * c_allocation[ix] - RA_M_ix)
 
         # no negative growth respiration
         RA_G_ix = max_0(RA_G_ix)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
-        @rep_elem cEcoEfflux_ix => (cEcoEfflux, ix, :cEco)
+        @rep_elem cEcoEfflux_ix => (c_efflux, ix, :cEco)
         @rep_elem p_km_ix => (p_km, ix, :cEco)
         @rep_elem p_km4su_ix => (p_km4su, ix, :cEco)
-        @rep_elem RA_M_ix => (RA_M, ix, :cEco)
-        @rep_elem RA_G_ix => (RA_G, ix, :cEco)
+        @rep_elem RA_M_ix => (auto_respiration_maintain, ix, :cEco)
+        @rep_elem RA_G_ix => (auto_respiration_growth, ix, :cEco)
     end
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su) => land.aRespiration
-        (RA_G, RA_M, cEcoEfflux) => land.states
+        (auto_respiration_growth, auto_respiration_maintain, c_efflux) => land.states
     end
     return land
 end
@@ -94,16 +94,16 @@ Determine growth and maintenance respiration using aRespiration_Thornley2000A
 
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
- - land.aRespirationAirT.fT: temperature effect on autrotrophic respiration [δT-1]
+ - land.aRespirationAirT.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
  - land.cCycleBase.C2Nveg: carbon to nitrogen ratio [gC.gN-1]
- - land.states.cAlloc: carbon allocation []
+ - land.states.c_allocation: carbon allocation []
  - land.pools.cEco: ecosystem carbon pools [gC.m2]
  - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
 
 *Outputs*
- - land.states.cEcoEfflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
- - land.states.RA_G: growth respiration from each plant pools [gC.m-2.δT-1]
- - land.states.RA_M: maintenance respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.c_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.auto_respiration_growth: growth respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.auto_respiration_maintain: maintenance respiration from each plant pools [gC.m-2.δT-1]
 
 ---
 

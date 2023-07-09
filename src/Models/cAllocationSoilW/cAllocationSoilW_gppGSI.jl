@@ -6,12 +6,12 @@ export cAllocationSoilW_gppGSI
 end
 #! format: on
 
-function define(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
-    # assume the initial fR as one
+    # assume the initial c_allocation_f_cloud as one
     # fW_prev = 𝟙
     fW_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
 
@@ -20,23 +20,23 @@ function define(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cAllocationSoilW_gppGSI, forcing, land, helpers)
+function compute(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilW_gppGSI o
+    @unpack_cAllocationSoilW_gppGSI p_struct
 
     ## unpack land variables
     @unpack_land begin
-        SMScGPP ∈ land.gppSoilW
+        gpp_f_soilW ∈ land.gppSoilW
         fW_prev ∈ land.cAllocationSoilW
     end
     # computation for the moisture effect on decomposition/mineralization
-    fW = fW_prev + (SMScGPP - fW_prev) * τ_soilW
+    c_allocation_f_soilW = fW_prev + (gpp_f_soilW - fW_prev) * τ_soilW
 
     # set the prev
-    fW_prev = fW
+    fW_prev = c_allocation_f_soilW
 
     ## pack land variables
-    @pack_land (fW, fW_prev) => land.cAllocationSoilW
+    @pack_land (c_allocation_f_soilW, fW_prev) => land.cAllocationSoilW
     return land
 end
 
@@ -52,10 +52,10 @@ $(PARAMFIELDS)
 
 *Inputs*
  - land.cAllocationSoilW.fW_prev: moisture stressor from previous time step
- - land.gppSoilW.SMScGPP: moisture stressors on GPP
+ - land.gppSoilW.gpp_f_soilW: moisture stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilW.fW: moisture effect on allocation
+ - land.cAllocationSoilW.c_allocation_f_soilW: moisture effect on allocation
 
 ---
 

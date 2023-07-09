@@ -6,9 +6,9 @@ export rainSnow_forcing
 end
 #! format: on
 
-function compute(o::rainSnow_forcing, forcing, land, helpers)
+function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainSnow_forcing o
+    @unpack_rainSnow_forcing p_struct
     @unpack_forcing (Rain, Snow) ∈ forcing
 
     ## unpack land variables
@@ -33,7 +33,7 @@ function compute(o::rainSnow_forcing, forcing, land, helpers)
     return land
 end
 
-function update(o::rainSnow_forcing, forcing, land, helpers)
+function update(p_struct::rainSnow_forcing, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools

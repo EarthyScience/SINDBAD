@@ -2,41 +2,41 @@
 	"sequence": 
 	[
 		{
-			"spinupMode": "forward",
+			"spinup_mode": "forward",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 15
+			"stop_function": null,
+			"n_repeat": 15
 		},
 		{
-			"spinupMode": "forward",
+			"spinup_mode": "forward",
 			"forcing": "full",
-			"stopCriteria": null,
-			"nLoops": 1
+			"stop_function": null,
+			"n_repeat": 1
 		},
 		{
-			"spinupMode": "ηScaleAH",
+			"spinup_mode": "ηScaleAH",
 			"forcing": "recycleMSC",
-			"stopCriteria": null,
-			"nLoops": 1
+			"stop_function": null,
+			"n_repeat": 1
 		}
 
 	],
-	"diffEq":{
+	"differential_eqn":{
 		"pools": ["cEco"],
-		"timeJump": 200.0,
-		"reltol":1e-2, 
-		"abstol":1e-2
+		"time_jump": 200.0,
+		"relative_tolerance":1e-2, 
+		"absolute_tolerance":1e-2
 	},
 	"paths": 
 	{
-		"restartFileIn": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
-		"restartFileOut": "out.restart.jld2"
+		"restart_file_in": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
+		"restart_file_out": "out.restart.jld2"
 	},
 	"flags":
 	{
-		"doSpinup": true,
-		"loadSpinup": true,
-		"saveSpinup": true,
-		"storeSpinupHistory": false
+		"do_spinup": true,
+		"load_spinup": true,
+		"save_spinup": true,
+		"store_spinup_history": false
 	}
 }

@@ -2,7 +2,7 @@ export interception_none
 
 struct interception_none <: interception end
 
-function define(o::interception_none, forcing, land, helpers)
+function define(p_struct::interception_none, forcing, land, helpers)
 
     ## calculate variables
     interception = helpers.numbers.𝟘

@@ -2,27 +2,27 @@ export runoff_sum
 
 struct runoff_sum <: runoff end
 
-function define(o::runoff_sum, forcing, land, helpers)
+function define(p_struct::runoff_sum, forcing, land, helpers)
 
     ## set variables to zero
-    runoffBase = helpers.numbers.𝟘
+    base_runoff = helpers.numbers.𝟘
     runoff = helpers.numbers.𝟘
-    runoffSurface = helpers.numbers.𝟘
+    surface_runoff = helpers.numbers.𝟘
 
     ## pack land variables
     @pack_land begin
-        (runoff, runoffBase, runoffSurface) => land.fluxes
+        (runoff, base_runoff, surface_runoff) => land.fluxes
     end
     return land
 end
 
-function compute(o::runoff_sum, forcing, land, helpers)
+function compute(p_struct::runoff_sum, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (runoffBase, runoffSurface) ∈ land.fluxes
+    @unpack_land (base_runoff, surface_runoff) ∈ land.fluxes
 
     ## calculate variables
-    runoff = runoffSurface + runoffBase
+    runoff = surface_runoff + base_runoff
 
     ## pack land variables
     @pack_land runoff => land.fluxes
@@ -38,8 +38,8 @@ calculates runoff as a sum of all potential components
 Calculate the total runoff as a sum of components using runoff_sum
 
 *Inputs*
- - land.fluxes.runoffBase
- - land.fluxes.runoffSurface
+ - land.fluxes.base_runoff
+ - land.fluxes.surface_runoff
 
 *Outputs*
  - land.fluxes.runoff

@@ -7,42 +7,42 @@ export runoffSurface_directIndirect
 end
 #! format: on
 
-function compute(o::runoffSurface_directIndirect, forcing, land, helpers)
+function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSurface_directIndirect o
+    @unpack_runoffSurface_directIndirect p_struct
 
     ## unpack land variables
     @unpack_land begin
         surfaceW ∈ land.pools
         ΔsurfaceW ∈ land.states
-        runoffOverland ∈ land.fluxes
+        overland_runoff ∈ land.fluxes
         (𝟘, 𝟙) ∈ helpers.numbers
     end
     # fraction of overland runoff that recharges the surface water & the
     #fraction that flows out directly
-    runoffSurfaceDirect = (𝟙 - rf) * runoffOverland
+    runoffSurfaceDirect = (𝟙 - rf) * overland_runoff
 
     # fraction of surface storage that flows out irrespective of input
-    surfaceWRec = rf * runoffOverland
+    suw_recharge = rf * overland_runoff
     runoffSurfaceIndirect = dc * sum(surfaceW + ΔsurfaceW)
 
     # get the total surface runoff
-    runoffSurface = runoffSurfaceDirect + runoffSurfaceIndirect
+    surface_runoff = runoffSurfaceDirect + runoffSurfaceIndirect
 
     # update the delta storage
-    ΔsurfaceW[1] = ΔsurfaceW[1] + surfaceWRec # assumes all the recharge supplies the first surface water layer
+    ΔsurfaceW[1] = ΔsurfaceW[1] + suw_recharge # assumes all the recharge supplies the first surface water layer
     ΔsurfaceW .= ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
 
     ## pack land variables
     @pack_land begin
-        (runoffSurface, runoffSurfaceDirect, runoffSurfaceIndirect, surfaceWRec) => land.fluxes
+        (surface_runoff, runoffSurfaceDirect, runoffSurfaceIndirect, suw_recharge) => land.fluxes
         ΔsurfaceW => land.states
     end
     return land
 end
 
-function update(o::runoffSurface_directIndirect, forcing, land, helpers)
-    @unpack_runoffSurface_directIndirect o
+function update(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
+    @unpack_runoffSurface_directIndirect p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -76,7 +76,7 @@ $(PARAMFIELDS)
 Runoff from surface water storages using runoffSurface_directIndirect
 
 *Inputs*
- - land.fluxes.runoffOverland
+ - land.fluxes.overland_runoff
 
 *Outputs*
 

@@ -20,7 +20,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, tem_vals.helpers, tem_vals.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time _, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
@@ -75,7 +75,7 @@ op = setupOutput(info);
 
 mods = tem_vals.models.forward;
 params = tblParams.default;
-selParam = :fracRootD2SoilD
+selParam = :constant_frac_max_root_depth
 selIndex = findall(tblParams.name .== selParam)[1]
 for pr ∈ collect(0.0:50:1000.0)
     pc = copy(params)

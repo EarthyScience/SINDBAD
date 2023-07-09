@@ -6,9 +6,9 @@ export EVI_constant
 end
 #! format: on
 
-function compute(o::EVI_constant, forcing, land, helpers)
+function compute(p_struct::EVI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_EVI_constant o
+    @unpack_EVI_constant p_struct
 
     ## calculate variables
     EVI = constantEVI

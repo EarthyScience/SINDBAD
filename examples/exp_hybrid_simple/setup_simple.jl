@@ -8,7 +8,7 @@ function setup_simple()
     land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     output = setupOutput(info)
     forc = getKeyedArrayFromYaxArray(forcing)
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     obs = getKeyedArrayFromYaxArray(observations)
 
     tblParams = getParameters(info.tem.models.forward,

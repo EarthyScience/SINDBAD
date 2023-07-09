@@ -2,7 +2,7 @@ export sublimation_none
 
 struct sublimation_none <: sublimation end
 
-function define(o::sublimation_none, forcing, land, helpers)
+function define(p_struct::sublimation_none, forcing, land, helpers)
 
     ## calculate variables
     sublimation = helpers.numbers.𝟘
