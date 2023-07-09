@@ -50,7 +50,6 @@
 		"cCycleBase_⚆_annk_LitFast": null,
 		"cCycleBase_⚆_annk_SoilSlow": null,
 		"cCycleBase_⚆_annk_SoilOld": null,
-		"cCycleBase_⚆_ηA": null,
 		"cCycleBase_⚆_ηH": null,
 		"cCycleBase_⚆_carbon_remain": null,
 		"cFlow_⚆_f_τ": {
@@ -66,6 +65,7 @@
 		"cFlow_⚆_Re2LRSlp": null,
 		"cTauSoilT_⚆_Q10": null,
 		"cTauSoilW_⚆_Wopt": null,
+		"drainage_⚆_dos_exp": null,
 		"evaporation_⚆_α": null,
 		"evaporation_⚆_supLim": null,
 		"fAPAR_⚆_kEffExt": null,

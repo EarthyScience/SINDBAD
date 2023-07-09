@@ -176,10 +176,10 @@ end
 function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod)
     plot_elem = string(plot_elem)
     if plot_var == :cEco
-        plt = plot(; legend=:outerbottom, size=(900, 600), yscale=:log10)
+        plt = plot(; legend=:outerbottom, size=(1200, 900), yscale=:log10)
         ylims!(0.01, 1e7)
     else
-        plt = plot(; legend=:outerbottom, size=(900, 600))
+        plt = plot(; legend=:outerbottom, size=(1200, 900))
     end
     plot!(getfield(land.pools, plot_var);
         linewidth=5,
