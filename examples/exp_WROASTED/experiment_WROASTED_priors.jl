@@ -134,8 +134,8 @@ develop_f =
 
         tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
             optim.optimized_parameters)
-        # get the defaults and bounds
-        default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+        # get the default and bounds
+        default_values = tem.helpers.numbers.sNT.(tblParams.default)
         lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 

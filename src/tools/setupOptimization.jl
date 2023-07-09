@@ -80,13 +80,13 @@ function checkOptimizedParametersInModels(info::NamedTuple)
     tblParams = getParameters(info.tem.models.forward,
         info.opti.default_parameter,
         info.opti.optimized_parameters)
-    model_parameters = tblParams.varsModels
+    model_parameters = tblParams.name_full
     optim_parameters = info.opti.optimized_parameters
     op_names = nothing
     if typeof(optim_parameters) <: Vector
         op_names = optim_parameters
     else
-        op_names = [replace(String(_p), "_⚆_" => ".") for _p ∈ keys(optim_parameters)]
+        op_names = replace_comman_separator_in_params(keys(optim_parameters))
     end
 
     for omp ∈ eachindex(op_names)

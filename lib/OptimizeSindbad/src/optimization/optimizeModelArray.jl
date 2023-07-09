@@ -44,6 +44,15 @@ function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:spacetime})
 end
 
 """
+filter_common_nan(y, yσ, ŷ)
+return model and obs data filtering for the common nan
+"""
+function filter_common_nan(y, yσ, ŷ)
+    idxs = (.!isnan.(y .* yσ .* ŷ))
+    return y[idxs], yσ[idxs], ŷ[idxs]
+end
+
+"""
 getDataArray(outsmodel, observations, modelVariables, obsVariables)
 """
 function getDataArray(model_output::AbstractArray,
@@ -70,7 +79,7 @@ function getDataArray(model_output::AbstractArray,
     #         "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
     #     )
     # end
-    return (y, yσ, ŷ)
+    return filter_common_nan(y, yσ, ŷ)
 end
 
 """
@@ -97,7 +106,7 @@ function getDataArray(model_output::AbstractArray,
             "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
         )
     end
-    return (y, yσ, ŷ)
+    return filter_common_nan(y, yσ, ŷ)
 end
 
 """
@@ -130,7 +139,7 @@ function getDataArray(outsmodel::landWrapper,
         # ŷ = y .* rand()
         # ŷ = permutedims(ŷ, (2, 3, 1))
     end
-    return (y, yσ, ŷ)
+    return filter_common_nan(y, yσ, ŷ)
 end
 
 
@@ -163,7 +172,7 @@ function getDataArray(outsmodel::landWrapper,
         # ŷ = y .* rand()
         # ŷ = permutedims(ŷ, (2, 3, 1))
     end
-    return (y, yσ, ŷ)
+    return filter_common_nan(y, yσ, ŷ)
 end
 
 
@@ -400,8 +409,8 @@ function optimizeModelArray(forcing::NamedTuple,
 
     cost_options = filter_constraint_minimum_datapoints(observations, optim.costOptions)
 
-    # get the defaults and bounds
-    default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+    # get the default and bounds
+    default_values = tem.helpers.numbers.sNT.(tblParams.default)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 

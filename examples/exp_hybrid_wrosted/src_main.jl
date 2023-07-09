@@ -130,26 +130,26 @@ args = (;
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-    );
+    f_one
+);
 
 args_txyz = (;
     loc_output,
     loc_forcing,
     loc_obs,
-    val_loc_space_names=Val(loc_space_names),
+    val_loc_space_names=Val(loc_space_names)
 );
 
 loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
+    tblParams.default,
+    loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
 
 @time loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
+    tblParams.default,
+    loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
@@ -160,7 +160,7 @@ function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
     return ForwardDiff.gradient(gf, v)
 end
 
-@time fdiff_grads(loc_loss, tblParams.defaults,
+@time fdiff_grads(loc_loss, tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz,
@@ -168,22 +168,22 @@ end
 
 function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
-    cfg_n = ForwardDiff.GradientConfig(gf, v, ForwardDiff.Chunk{n}());
+    cfg_n = ForwardDiff.GradientConfig(gf, v, ForwardDiff.Chunk{n}())
     out = similar(v)
     ForwardDiff.gradient!(out, gf, v, cfg_n)
     return out
 end
 
-@time fdiff_grads!(loc_loss, tblParams.defaults,
+@time fdiff_grads!(loc_loss, tblParams.default,
     20,
     loc_space_ind,
     loc_land_init,
-    args_txyz, 
+    args_txyz,
     args);
 
 function name_to_ind(site_name, sites_forcing)
     site_id_forc = findall(x -> x == site_name, sites_forcing)[1]
-    return (site_id_forc, )
+    return (site_id_forc,)
 end
 
 function grads_bss!(
@@ -198,19 +198,19 @@ function grads_bss!(
     args_txyz,
     args)
 
-    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled =is_logging)
+    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled=is_logging)
     for (site_index, site_name) ∈ enumerate(xbatch)
         x_params = up_params(; site=site_name)
         v = getParamsAct(x_params, args.tblParams)
         loc_space_ind = name_to_ind(site_name, sites_f)
         loc_land_init = land_init_space[loc_space_ind[1]]
-        f_grads[:, site_index] = 
+        f_grads[:, site_index] =
             fdiff_grads!(loc_loss, v,
                 n_chunk,
                 loc_space_ind,
                 loc_land_init,
-                args_txyz, 
-                args);
+                args_txyz,
+                args)
         next!(p; showvalues=[(:site_name, site_name), (:loc_space_ind, loc_space_ind)])
     end
 end
@@ -262,7 +262,7 @@ function get_∇params(xfeatures, re, flat, xbatch,
     return ∇params
 end
 
-nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer=1, nn_opt = Optimisers.Adam(),)
+nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer=1, nn_opt=Optimisers.Adam())
 
 function init_ml_nn(n_bs_feat, n_neurons, n_params, extra_hlayers, nn_opt=Optimisers.Adam())
     ml_model = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=extra_hlayers)
@@ -310,7 +310,7 @@ function nn_machine(nn_args, x_args, xfeatures,
     land_init_space,
     loc_loss,
     args_txyz,
-    args; 
+    args;
     nepochs=10)
 
     flat, re, opt_state = init_ml_nn(nn_args...)
@@ -367,5 +367,5 @@ nn_machine(nn_args, x_args, xfeatures,
     land_init_space,
     loc_loss,
     args_txyz,
-    args; 
+    args;
     nepochs=3)
