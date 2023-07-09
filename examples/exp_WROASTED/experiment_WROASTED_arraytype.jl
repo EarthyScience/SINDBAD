@@ -54,12 +54,12 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)
     @time runEcosystem!(output.data,
         info.tem.models.forward,
         forc,
-        tem_vals,
+        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,

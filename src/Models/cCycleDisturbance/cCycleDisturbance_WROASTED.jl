@@ -32,7 +32,7 @@ end
 
 function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing isDisturbed ∈ forcing
+    @unpack_forcing dist_intensity ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -41,9 +41,9 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
         𝟘 ∈ helpers.numbers
     end
-    if isDisturbed > 𝟘
+    if dist_intensity > 𝟘
         for zixVeg ∈ zix_veg_all
-            cLoss = max(cEco[zixVeg] - c_remain, 𝟘) * isDisturbed
+            cLoss = max(cEco[zixVeg] - c_remain, 𝟘) * dist_intensity
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
             c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
             for tZ ∈ eachindex(c_lose_to_zix)

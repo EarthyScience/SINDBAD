@@ -105,14 +105,14 @@ for domain ∈ sites
     observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     obs = getObsKeyedArrayFromYaxArray(observations)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output,
             forc,
             info.tem)
     @time runEcosystem!(output.data,
         new_models,
         forc,
-        tem_vals,
+        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,

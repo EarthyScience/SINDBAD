@@ -333,20 +333,20 @@ runEcosystem(approaches, forcing, land_init, tem)
 function runEcosystem!(output,
     forcing::NamedTuple,
     tem::NamedTuple)
-    _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forcing, tem)
     parallelizeIt!(output.data,
-        tem_vals.models.forward,
+        tem_with_vals.models.forward,
         forcing,
-        tem_vals.helpers,
-        tem_vals.spinup,
-        tem_vals.models,
+        tem_with_vals.helpers,
+        tem_with_vals.spinup,
+        tem_with_vals.models,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
         f_one,
-        tem_vals.helpers.run.parallelization)
+        tem_with_vals.helpers.run.parallelization)
     return nothing
 end
 
@@ -356,7 +356,7 @@ runEcosystem(approaches, forcing, land_init, tem)
 function runEcosystem!(outcubes::AbstractArray,
     approaches,
     forcing::NamedTuple,
-    tem_vals::NamedTuple,
+    tem_with_vals::NamedTuple,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -365,15 +365,15 @@ function runEcosystem!(outcubes::AbstractArray,
     parallelizeIt!(outcubes,
         approaches,
         forcing,
-        tem_vals.helpers,
-        tem_vals.spinup,
-        tem_vals.models,
+        tem_with_vals.helpers,
+        tem_with_vals.spinup,
+        tem_with_vals.models,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
         f_one,
-        tem_vals.helpers.run.parallelization)
+        tem_with_vals.helpers.run.parallelization)
     return nothing
 end
 

@@ -27,7 +27,7 @@ end
 
 function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing isDisturbed ∈ forcing
+    @unpack_forcing dist_intensity ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -36,12 +36,12 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
         𝟘 ∈ helpers.numbers
     end
-    if isDisturbed > 𝟘
+    if dist_intensity > 𝟘
         # @show "before", cEco, sum(cEco)
         for zixVeg ∈ zix_veg_all
             cLoss = 𝟘 # do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
-                cLoss = max_0(cEco[zixVeg] - c_remain) * isDisturbed
+                cLoss = max_0(cEco[zixVeg] - c_remain) * dist_intensity
             end
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
             c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
