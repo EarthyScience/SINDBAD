@@ -173,7 +173,7 @@ function getLossGradient(pVector::AbstractArray,
     observations,
     tblParams,
     tem,
-    cost_options,
+    optim,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -194,8 +194,8 @@ function getLossGradient(pVector::AbstractArray,
         lopo,
         land_init_space,
         f_one)
-    loss_vector = getLossVectorArray(observations, output.data, cost_options)
-    return combineLossArray(loss_vector, cost_options.multi_constraint_method)
+    loss_vector = getLossVectorArray(observations, output.data, optim.cost_options)
+    return combineLossArray(loss_vector, optim.multi_constraint_method)
 end
 
 """
