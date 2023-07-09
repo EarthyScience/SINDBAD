@@ -58,7 +58,7 @@ output = setupOutput(info);
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output,
         forc,
         info.tem);
@@ -66,32 +66,32 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
 
-res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
+res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_with_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
 
 @time runEcosystem(info.tem.models.forward,
     res_vec_space,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     land_init_space,
     f_one);
 
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one)
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
 land_spin = land_init_space[1];
 @time land_spin_now = runSpinup(info.tem.models.forward,
     loc_forcings[1],
     land_spin,
-    tem_vals.helpers,
-    tem_vals.spinup,
-    tem_vals.models,
+    tem_with_vals.helpers,
+    tem_with_vals.spinup,
+    tem_with_vals.models,
     typeof(land_spin),
     f_one;
     spinup_forcing=nothing);
@@ -114,7 +114,7 @@ output = setupOutput(info);
 @time runEcosystem!(output.data,
     new_models,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,

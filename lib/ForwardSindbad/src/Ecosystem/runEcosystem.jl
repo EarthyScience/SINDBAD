@@ -184,17 +184,17 @@ runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 function runEcosystem(approaches,
     res_vec_space,
     forcing,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     land_init_space,
     f_one)
     #@info "runEcosystem:: running Ecosystem"
-    tem_helpers = tem_vals.helpers
-    tem_spinup = tem_vals.spinup
-    tem_models = tem_vals.models
+    tem_helpers = tem_with_vals.helpers
+    tem_spinup = tem_with_vals.spinup
+    tem_models = tem_with_vals.models
     land_all = if !isempty(loc_space_inds)
-        res_out = parallelizeIt(tem_vals.models.forward,
+        res_out = parallelizeIt(tem_with_vals.models.forward,
             res_vec_space,
             forcing,
             tem_helpers,
@@ -204,7 +204,7 @@ function runEcosystem(approaches,
             loc_forcings,
             land_init_space,
             f_one,
-            tem_vals.helpers.run.parallelization)
+            tem_with_vals.helpers.run.parallelization)
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         # landWrapper(res_vec_space)
         nts = length(first(res_out))
@@ -239,19 +239,19 @@ function runEcosystem(approaches::Tuple,
     spinup_forcing=nothing)
 
     land_all = if !isempty(loc_space_inds)
-        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_vals, f_one =
+        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output, forcing, tem)
-        res = parallelizeIt(tem_vals.models.forward,
+        res = parallelizeIt(tem_with_vals.models.forward,
             res_vec,
             forcing,
-            tem_vals.helpers,
-            tem_vals.spinup,
-            tem_vals.models,
+            tem_with_vals.helpers,
+            tem_with_vals.spinup,
+            tem_with_vals.models,
             loc_space_inds,
             loc_forcings,
             land_init_space,
             f_one,
-            tem_vals.helpers.run.parallelization)
+            tem_with_vals.helpers.run.parallelization)
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
         fullarrayoftuples =
