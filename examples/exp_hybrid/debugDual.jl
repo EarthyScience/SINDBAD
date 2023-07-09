@@ -47,26 +47,26 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(op, forc, info.tem);
 
 
 @time runEcosystem!(op.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
 
-# res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
+# res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_with_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
 
 
 # @time big_land = runEcosystem(info.tem.models.forward,
 #     forc,
-#     tem_vals,
+#     tem_with_vals,
 #     loc_space_inds,
 #     loc_forcings,
 #     land_init_space,
@@ -78,7 +78,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.optimized_parameters);
 
 # newDtype = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}
-# ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,CHUNK_SIZE}
+# ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}
 # op_dat = [Array{newDtype}(undef, size(od)) for od in op.data];
 # op = (; op..., data=op_dat);
 
@@ -89,13 +89,13 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(op, forc, info.tem);
 
 @time runEcosystem!(op.data,
     mods,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -143,7 +143,7 @@ for _ in 1:10
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -160,7 +160,7 @@ function l1(p)
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -185,7 +185,7 @@ new_params = new_dtype.(tblParams.default);
 updated_mods = updateModelParametersType(tblParams, mods, new_params);
 
 # op = setupOutput(info);
-# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.num_type},tem_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 # op = (; op..., data=op_dat);
 
 @time _,
@@ -194,14 +194,14 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(op, updated_mods, forc, info.tem, updated_tem_helpers);
 
 
 @time runEcosystem!(op.data,
     updated_mods,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,

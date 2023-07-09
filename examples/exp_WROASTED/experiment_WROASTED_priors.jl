@@ -54,12 +54,12 @@ forc = getKeyedArrayFromYaxArray(forcing);
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -139,7 +139,7 @@ develop_f =
         lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output.data,
                 output.land_init,
                 tem.models.forward,
@@ -151,7 +151,7 @@ develop_f =
         #TODO get y and sigmay beforehand and construct MvNormal
 
         #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one, loc_forcing, loc_output
+        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
         #output_variables, optim
         m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
             #assumptions/priors
@@ -172,7 +172,7 @@ develop_f =
                 output.land_init,
                 newApproaches,
                 forcing,
-                tem_vals,
+                tem_with_vals,
                 loc_space_inds,
                 loc_forcings,
                 loc_outputs,
