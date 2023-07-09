@@ -36,7 +36,7 @@ Relative normalized model absolute error
 ``nmae1r = \\frac{(|y - ŷ|)}{1.0 + y}``
 """
 function loss(y, yσ, ŷ, ::Val{:nmae1r})
-    nmae1r = abs(y - ŷ) / (1.0 + y)
+    nmae1r = abs(y - ŷ) / (typeof(ŷ)(1.0) + y)
     return nmae1r
 end
 
@@ -49,7 +49,10 @@ Relative normalized model absolute error
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nmae1r})
     idxs = (.!isnan.(y .* yσ .* ŷ))
-    nmae1r = mean(abs.(y[idxs] - ŷ[idxs])) / (1.0 + mean(y[idxs]))
+    μ_y = mean(y[idxs])
+    μ_ŷ = mean(ŷ[idxs])
+    nmae1r = abs(μ_ŷ - μ_y) / (eltype(ŷ)(1.0) + μ_y)
+    # nmae1r = mean(abs.(y[idxs] - ŷ[idxs])) / (1.0 + mean(y[idxs]))
     return nmae1r
 end
 

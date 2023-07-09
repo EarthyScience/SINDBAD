@@ -86,7 +86,7 @@ end
 a = 100 .* (odeSol .- expSol) ./ expSol
 
 # all pools
-plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, xscale=:log10, size=(900, 600))
+plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, xscale=:log10, size=(1200, 900))
 xlabel!("Explicit")
 ylabel!("ODE")
 markers = (:d, :hex, :circle, :x, :cross, :ltriangle, :rtriangle, :star5, :star4);
