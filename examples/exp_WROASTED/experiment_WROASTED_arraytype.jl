@@ -22,7 +22,7 @@ obspath = inpath
 optimize_it = true
 # optimize_it = false
 outpath = nothing
-plt = plot(; legend=:outerbottom, size=(900, 600))
+plt = plot(; legend=:outerbottom, size=(1200, 900))
 lt = (:solid, :dash, :dot)
 pl = "threads"
 arraymethod = "view"
@@ -72,7 +72,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
         linewidth=5,
         ls=lt[i],
         label=arraymethod)
-    # plot(def_var; label="def", size=(900, 600), title=v)
+    # plot(def_var; label="def", size=(1200, 900), title=v)
     #     plot!(opt_var; label="opt")
     #     if v in obsMod
     #         obsv = obsVar[findall(obsMod .== v)[1]]
