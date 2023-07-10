@@ -48,7 +48,7 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         k_shedding_leaf=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    p_A = sNT.(zero([c_taker...]))# .+ 𝟙)
+    p_A = sNT.(zero([c_taker...]))
 
     if land.pools.cEco isa SVector
         p_A = SVector{length(p_A)}(p_A)
