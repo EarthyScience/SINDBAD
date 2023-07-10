@@ -18,12 +18,12 @@ export cCycleBase_CASA
                      0.0 0.0 0.0 0.0 0.0 0.0 0.45 0.45 0.0 0.4 0.0 -1.0 0.45 0.45
                      0.0 0.0 0.0 0.0 0.0 0.6 0.0 0.55 0.6 0.6 0.4 0.0 -1.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.45 -1.0
-                 ] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
+                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
     cVegRootF_AGE_per_PFT::T3 = Float64[1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0]) | "mean age of fine roots" | "yr"
     cVegRootC_AGE_per_PFT::T4 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of coarse roots" | "yr"
     cVegWood_AGE_per_PFT::T5 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of wood" | "yr"
     cVegLeaf_AGE_per_PFT::T6 = Float64[1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0]) | "mean age of leafs" | "yr"
-    C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+    C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
@@ -37,12 +37,10 @@ function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     ## instantiate variables
     p_C2Nveg = ones(num_type, length(cEco)) #sujan
-    c_efflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
 
     ## pack land variables
     @pack_land begin
         (p_C2Nveg, c_flow_A, c_flow_E) => land.cCycleBase
-        c_efflux => land.states
     end
     return land
 end
