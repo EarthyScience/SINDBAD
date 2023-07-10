@@ -533,19 +533,19 @@ function runSpinup(forward_models,
     spinup_forcing=nothing)
     #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or runEcosystem. Need to figure out...
     land_spin = land_in
-    if tem_spinup.flags.load_spinup
+    if tem_helpers.run.spinup.load_spinup
         @info "runSpinup:: loading spinup data from $(tem_spinup.paths.restart_file_in)..."
         restart_data = load(tem_spinup.paths.restart_file_in)
         land_spin = restart_data["land_spin"]
     end
 
     #check if the spinup still needs to be done after loading spinup
-    if !tem_spinup.flags.do_spinup
+    if !tem_helpers.run.spinup.do_spinup
         return land_spin
     end
 
     seqN = 1
-    history = tem_spinup.flags.store_spinup_history
+    history = tem_helpers.run.spinup.store_spinup_history
     land_spin = land_in
     # land_spin = deepcopy(land_in)
     spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
@@ -592,7 +592,7 @@ function runSpinup(forward_models,
     if history
         @pack_land spinuplog => land_spin.states
     end
-    if tem_spinup.flags.save_spinup
+    if tem_helpers.run.spinup.save_spinup
         spin_file = tem_spinup.paths.restart_file_out
         @info "runSpinup:: saving spinup data to $(spin_file)..."
         @save spin_file land_spin

@@ -13,8 +13,6 @@ function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_mod
     for model ∈ sortedModels
         out = setTupleField(out, (model, (;)))
     end
-    # out = setTupleField(out, (:pools, (; seed=0.1)))
-    # out = setTupleField(out, (:states, (; seed=0.1)))
     return out
 end
 
@@ -97,7 +95,6 @@ function getOutDims(info, tem_helpers, vname_full, outpath, outformat, land_init
             path=joinpath(outpath, "$(vname)$(outformat)"),
             backend=:zarr,
             overwrite=true)
-        # OutDims(RangeAxis(depth_name, 1:depth_size),inax..., path=joinpath(outpath, "$(vname)$(outformat)"), backend=:zarr, overwrite=true)
     end
 end
 
@@ -108,13 +105,11 @@ function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::V
     if isnothing(depth_size)
         depth_size = 1
     end
-    # ar = Array{Real, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
         length(values(forcing_sizes)) + 1}(undef,
         ax_vals[1],
         depth_size,
         ax_vals[2:end]...)
-    # ar = Array{tem_helpers.numbers.num_type, length(values(forcing_sizes))+1}(undef, ax_vals[1], depth_size, ax_vals[2:end]...);
     return ar .= info.tem.helpers.numbers.sNT(NaN)
 end
 
@@ -160,6 +155,7 @@ function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
         end
     end
 end
+
 """
 function getVariableFields(datavars)
 get a namedTuple with field and subfields vectors for extracting data from land

@@ -55,7 +55,7 @@ function compute(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
 end
 
 @doc """
-defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the ModelStructure.json based on the TWS model for the Northern Hemisphere
+defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere
 
 # Parameters
 $(PARAMFIELDS)
