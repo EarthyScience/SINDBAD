@@ -1,7 +1,7 @@
 export aRespiration_Thornley2000C
 
 #! format: off
-@bounds @describe @units @with_kw struct aRespiration_Thornley2000C{T1,T2} <: aRespiration
+@bounds @describe @units @with_kw struct aRespiration_Thornley2000C{T1,T2,T3} <: aRespiration
     RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day"
     YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
     MTF::T3 = 0.85 | (nothing, nothing) | "" | ""

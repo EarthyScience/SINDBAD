@@ -33,7 +33,7 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     PAWTotal = sum(PAW)
     # extract from top to bottom
     if PAWTotal > 𝟘
-        for sl ∈ 1:length(land.pools.soilW)
+        for sl ∈ eachindex(land.pools.soilW)
             uptakeProportion = max_0(PAW[sl] / PAWTotal)
             @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)
             @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)

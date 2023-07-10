@@ -4,7 +4,7 @@ struct drainage_kUnsat <: drainage end
 
 function define(p_struct::drainage_kUnsat, forcing, land, helpers)
     ## instantiate drainage
-    drainage = zeros(helpers.numbers.num_type, length(land.pools.soilW))
+    drainage = zero(land.pools.soilW)
     ## pack land variables
     @pack_land drainage => land.drainage
     return land

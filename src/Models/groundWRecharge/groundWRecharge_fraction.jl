@@ -14,13 +14,14 @@ function compute(p_struct::groundWRecharge_fraction, forcing, land, helpers)
     @unpack_land begin
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
+        n_groundW ∈ land.wCycleBase
     end
 
     ## calculate variables
     # calculate recharge
     gw_recharge = rf * (soilW[end] + ΔsoilW[end])
 
-    ΔgroundW .= ΔgroundW .+ gw_recharge / length(groundW)
+    ΔgroundW .= ΔgroundW .+ gw_recharge / n_groundW
     ΔsoilW[end] = ΔsoilW[end] - gw_recharge
 
     ## pack land variables
