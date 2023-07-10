@@ -14,11 +14,11 @@ function define(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
         (num_type, 𝟘, 𝟙) ∈ helpers.numbers
     end
     c_efflux = zero(land.pools.cEco)
-    p_km = zero(land.pools.cEco) .+ 𝟙
-    p_km4su = zero(land.pools.cEco) .+ 𝟙
+    p_km = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    p_km4su = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
     auto_respiration_growth = zero(land.pools.cEco)
     auto_respiration_maintain = zero(land.pools.cEco)
-    Fd = zero(land.pools.cEco) .+ 𝟙
+    Fd = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
     @pack_land begin

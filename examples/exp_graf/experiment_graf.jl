@@ -68,7 +68,8 @@ end
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+using CairoMakie:heatmap
+using AlgebraOfGraphics, DataFrames, Dates
 
 plotdat = output.data;
 for i ∈ eachindex(output.variables)
