@@ -68,7 +68,7 @@ function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::St
             dt_str = Dates.DateTime(join(split(t.atts["units"], " ")[3:end], "T"))
             rax = RangeAxis(dn, collect(dt_str:Day(1):(dt_str+Day(length(t) - 1))))
         end
-        return rax
+        rax
     end
     # yax = YAXArray(ax, v)
     yax = YAXArray(ax,
@@ -278,7 +278,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
-        return push!(obscubes, yax_mask)
+        push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
@@ -471,7 +471,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
-        return push!(obscubes, yax_mask)
+        push!(obscubes, yax_mask)
     end
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))

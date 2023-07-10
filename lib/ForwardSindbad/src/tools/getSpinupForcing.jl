@@ -24,7 +24,7 @@ end
 
 function getForcingForTimePeriod(forcing, tstart::Int64, tend::Int64)
     map(forcing) do v
-        return in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
     end
 end
 
