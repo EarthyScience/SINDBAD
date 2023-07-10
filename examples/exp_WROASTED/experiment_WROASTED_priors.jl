@@ -87,7 +87,7 @@ function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
         obsV = var_row.variable
         y = getproperty(obs, obsV)
         yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
-        return [vec(y) vec(yσ)]
+        [vec(y) vec(yσ)]
     end
     resM = vcat(res...)
     return resM, isfinite.(resM[:, 1])
@@ -114,7 +114,7 @@ function getPredAndObsVector(observations::NamedTuple,
         mod_variable = getfield(optimVars, obsV)
         #TODO care for equal size
         (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-        return [vec(y) vec(yσ) vec(ŷ)]
+        [vec(y) vec(yσ) vec(ŷ)]
     end
     resM = vcat(res...)
     return resM, isfinite.(resM[:, 1])
