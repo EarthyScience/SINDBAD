@@ -6,7 +6,7 @@
   },
   "sel_mask": null,
   "default_forcing": {
-    "variable_unit": null,
+    "sindbad_unit": null,
     "bounds": [],
     "source_variable": null,
     "source_unit": null,
@@ -21,28 +21,28 @@
   },
   "variables": {
     "ambient_CO2": {
-      "variable_unit": "ppm",
+      "sindbad_unit": "ppm",
       "bounds": [200.0, 500.0],
       "source_variable": "atmCO2_SCRIPPS_global",
       "source_unit": "ppm",
       "name_short": "ambient_CO2"
     },
     "Rain": {
-      "variable_unit": "mm d-1",
+      "sindbad_unit": "mm d-1",
       "bounds": [0.0, 300.0],
       "source_variable": "P_ERAIv2_gfld",
       "source_unit": "mm d-1",
       "name_short": "Rain"
     },
     "Rg": {
-      "variable_unit": "MJ m-2 d-1",
+      "sindbad_unit": "MJ m-2 d-1",
       "bounds": [0.0, 100.0],
       "source_variable": "SW_IN_ERAIv2_gfld",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Global Radiation"
     },
     "PAR": {
-      "variable_unit": "MJ m-2 d-1",
+      "sindbad_unit": "MJ m-2 d-1",
       "bounds": [0.0, 50.0],
       "source_variable": "SW_IN_ERAIv2_gfld",
       "source_unit": "MJ m-2 d-1",
@@ -50,21 +50,21 @@
       "name_short": "Photosynthetically active radiation (=Rg*.5)"
     },
     "RgPot": {
-      "variable_unit": "MJ m-2 d-1",
+      "sindbad_unit": "MJ m-2 d-1",
       "bounds": [0.0, 100.0],
       "source_variable": "SW_IN_POT_ONEFlux",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Potential Global Radiation"
     },
     "Rn": {
-      "variable_unit": "MJ m-2 d-1",
+      "sindbad_unit": "MJ m-2 d-1",
       "bounds": [0.0, 100.0],
       "source_variable": "NETRAD_ERAIv2_gfld",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Net radiation"
     },
     "dist_intensity": {
-      "variable_unit": null,
+      "sindbad_unit": null,
       "bounds": [-0.001, 1.1],
       "source_variable": "dist_frac_sb2018",
       "source_unit": null,
@@ -73,21 +73,21 @@
       "source_product": "Besnard2018"
     },
     "Tair": {
-      "variable_unit": "°C",
+      "sindbad_unit": "°C",
       "bounds": [-80.0, 60.0],
       "source_variable": "TA_ERAIv2_gfld",
       "source_unit": "°C",
       "name_short": "Tair"
     },
     "TairDay": {
-      "variable_unit": "°C",
+      "sindbad_unit": "°C",
       "bounds": [-80.0, 60.0],
       "source_variable": "TA_DayTime_ERAIv2_gfld",
       "source_unit": "°C",
       "name_short": "TairDay"
     },
     "VPD": {
-      "variable_unit": "kPa",
+      "sindbad_unit": "kPa",
       "bounds": [0.01, 100.0],
       "source_variable": "VPD_ERAIv2_gfld",
       "source_unit": "Pa",
@@ -95,7 +95,7 @@
       "name_short": "Vapor pressure deficit"
     },
     "VPDDay": {
-      "variable_unit": "kPa",
+      "sindbad_unit": "kPa",
       "bounds": [0.01, 100.0],
       "source_variable": "VPD_DayTime_ERAIv2_gfld",
       "source_unit": "Pa",
@@ -103,7 +103,7 @@
       "name_short": "Vapor pressure deficit Day"
     },
     "CLAY": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 100.0],
       "source_variable": "CLYPPT_SoilGrids",
       "source_unit": "%",
@@ -113,7 +113,7 @@
       "source_product": "soilgrids"
     },
     "SAND": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 100.0],
       "source_variable": "SNDPPT_SoilGrids",
       "source_unit": "%",
@@ -123,7 +123,7 @@
       "source_product": "soilgrids"
     },
     "SILT": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 100.0],
       "source_variable": "SLTPPT_SoilGrids",
       "source_unit": "%",
@@ -133,7 +133,7 @@
       "source_product": "soilgrids"
     },
     "ORGM": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 100.0],
       "source_variable": "OCSTHA_SoilGrids",
       "source_unit": "%",

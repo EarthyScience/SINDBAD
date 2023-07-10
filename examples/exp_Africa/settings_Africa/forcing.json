@@ -6,7 +6,7 @@
   },
   "sel_mask": null,
   "default_forcing": {
-    "variable_unit": null,
+    "sindbad_unit": null,
     "bounds": [],
     "source_variable": null,
     "source_unit": null,
@@ -21,7 +21,7 @@
   },
   "variables": {
     "PET": {
-      "variable_unit": "mm d-1",
+      "sindbad_unit": "mm d-1",
       "bounds": [0, 100],
       "source_variable": "PET_PT",
       "source_unit": "mm d-1",
@@ -31,7 +31,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.PET_PT.2005-2013.nc"
     },
     "Rain": {
-      "variable_unit": "mm d-1",
+      "sindbad_unit": "mm d-1",
       "bounds": [0.0, 1000.0],
       "source_variable": "tp",
       "source_unit": "mm d-1",
@@ -39,7 +39,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.tp.2005-2013.nc"
     },
     "Rg": {
-      "variable_unit": "W m-2",
+      "sindbad_unit": "W m-2",
       "bounds": [0.0, 600.0],
       "source_variable": "ssrd",
       "source_unit": "MJ m-2",
@@ -48,7 +48,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.ssrd.2005-2013.nc"
     },
     "PAR": {
-      "variable_unit": "W m-2",
+      "sindbad_unit": "W m-2",
       "bounds": [0.0, 600.0],
       "source_variable": "ssrd",
       "source_unit": "MJ m-2",
@@ -57,7 +57,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.ssrd.2005-2013.nc"
     },
     "PsurfDay": {
-      "variable_unit": "kPa",
+      "sindbad_unit": "kPa",
       "bounds": [0.0, 600.0],
       "source_variable": "sp",
       "source_unit": "pa",
@@ -66,7 +66,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.sp.2005-2013.nc"
     },
     "RgPot": {
-      "variable_unit": "MJ m-2",
+      "sindbad_unit": "MJ m-2",
       "bounds": [0.0, 600.0],
       "source_variable": "snr",
       "source_unit": "W m-2",
@@ -75,7 +75,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.snr.2005-2013.nc"
     },
     "Rn": {
-      "variable_unit": "MJ m-2",
+      "sindbad_unit": "MJ m-2",
       "bounds": [-50.0, 500.0],
       "source_variable": "snr",
       "source_unit": "W m-2",
@@ -84,7 +84,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.snr.2005-2013.nc"
     },
     "Tair": {
-      "variable_unit": "°C",
+      "sindbad_unit": "°C",
       "bounds": [-80.0, 60.0],
       "source_variable": "t2m",
       "source_unit": "K",
@@ -94,7 +94,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.t2m.2005-2013.nc"
     },
     "TairDay": {
-      "variable_unit": "°C",
+      "sindbad_unit": "°C",
       "bounds": [-80.0, 60.0],
       "source_variable": "t2m_daytime_mean",
       "source_unit": "K",
@@ -104,7 +104,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.t2m_daytime_mean.2005-2013.nc"
     },
     "VPD": {
-      "variable_unit": "kPa",
+      "sindbad_unit": "kPa",
       "bounds": [-1.0, 10.0],
       "source_variable": "vpd",
       "source_unit": "hPa",
@@ -113,7 +113,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.vpd.2005-2013.nc"
     },
     "VPDDay": {
-      "variable_unit": "kPa",
+      "sindbad_unit": "kPa",
       "bounds": [0.0, 100.0],
       "source_variable": "vpd_daytime_mean",
       "source_unit": "hPa",
@@ -122,7 +122,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.era5.vpd_daytime_mean.2005-2013.nc"
     },
     "CLAY": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0, 100],
       "source_variable": "CLYPPT",
       "source_unit": "%",
@@ -133,7 +133,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.CLYPPT.mean.nc"
     },
     "SAND": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0, 100],
       "source_variable": "SNDPPT",
       "source_unit": "%",
@@ -144,7 +144,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.SNDPPT.mean.nc"
     },
     "SILT": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0, 100],
       "source_variable": "SLTPPT",
       "source_unit": "%",
@@ -155,7 +155,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.SLTPPT.mean.nc"
     },
     "ORGM": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0, 100],
       "source_variable": "OCSTHA",
       "source_unit": "%",
@@ -166,7 +166,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.soilgrids.OCSTHA.mean.nc"
     },
     "fAPAR": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 1.0],
       "source_variable": "FVC",
       "source_unit": "-",
@@ -174,7 +174,7 @@
       "data_path": "/Net/Groups/BGI/work_3/sindbad/project/GrAf/sindbad/sandbox/sb_GRAf/africa_extract_crujra/_data/input/gapfilled_combined/Africa.gapfld.seviri.FVC.2005-2013.nc"
     },
     "frac_vegetation": {
-      "variable_unit": "-",
+      "sindbad_unit": "-",
       "bounds": [0.0, 1.0],
       "source_variable": "FVC",
       "source_unit": "-",

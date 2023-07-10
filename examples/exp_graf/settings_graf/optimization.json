@@ -36,7 +36,7 @@
     },
     "one_sel_mask": null,
     "default_constraint": {
-      "variable_unit": null,
+      "sindbad_unit": null,
       "bounds": null,
       "source_variable": null,
       "source_unit": null,
@@ -66,7 +66,7 @@
         "sel_mask": null,
         "model_full_var": "fluxes.gpp",
         "data": {
-          "variable_unit": "gC m-2 day-1",
+          "sindbad_unit": "gC m-2 day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "GPP",
           "source_unit": "gC m-2 day-1",
@@ -87,7 +87,7 @@
         "sel_mask": null,
         "model_full_var": "fluxes.runoff",
         "data": {
-          "variable_unit": "mm day-1",
+          "sindbad_unit": "mm day-1",
           "bounds": [-100.0, 100.0],
           "source_variable": "Runoff",
           "source_unit": "mm day-1",
@@ -103,7 +103,7 @@
         "sel_mask": null,
         "model_full_var": "pools.TWS",
         "data": {
-          "variable_unit": "mm",
+          "sindbad_unit": "mm",
           "bounds": [0.0, 100.0],
           "source_variable": "lwe_thickness",
           "source_unit": "cm",
@@ -125,7 +125,7 @@
         "sel_mask": null,
         "model_full_var": "fluxes.evapotranspiration",
         "data": {
-          "variable_unit": "mm day-1",
+          "sindbad_unit": "mm day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "LE",
           "source_unit": "mm d-1",
