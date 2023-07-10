@@ -45,7 +45,6 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
     runEcosystem!(output, forc_array, info.tem)
-    #todo make the loss functions work with disk arrays
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
     run_output = getLossVectorArray(obs_array, output.data, info.optim)
