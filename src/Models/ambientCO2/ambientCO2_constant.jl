@@ -2,7 +2,7 @@ export ambientCO2_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct ambientCO2_constant{T1} <: ambientCO2
-    constantambCO2::T1 = 400.0 | (200.0, 5000.0) | "atmospheric CO2 concentration" | "ppm"
+    constant_ambient_CO2::T1 = 400.0 | (200.0, 5000.0) | "atmospheric CO2 concentration" | "ppm"
 end
 #! format: on
 
@@ -11,7 +11,7 @@ function compute(p_struct::ambientCO2_constant, forcing, land, helpers)
     @unpack_ambientCO2_constant p_struct
 
     ## calculate variables
-    ambient_CO2 = constantambCO2
+    ambient_CO2 = constant_ambient_CO2
 
     ## pack land variables
     @pack_land ambient_CO2 => land.states

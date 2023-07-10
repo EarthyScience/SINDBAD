@@ -2,7 +2,7 @@ export NDVI_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct NDVI_constant{T1} <: NDVI
-    constantNDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
+    constant_NDVI::T1 = 1.0 | (0.0, 1.0) | "NDVI" | ""
 end
 #! format: on
 
@@ -11,7 +11,7 @@ function compute(p_struct::NDVI_constant, forcing, land, helpers)
     @unpack_NDVI_constant p_struct
 
     ## calculate variables
-    NDVI = constantNDVI
+    NDVI = constant_NDVI
 
     ## pack land variables
     @pack_land NDVI => land.states
