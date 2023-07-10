@@ -41,7 +41,7 @@
       "import": "readObservation"
     },
     "default_constraint": {
-      "variable_unit": null,
+      "sindbad_unit": null,
       "bounds": null,
       "source_variable": null,
       "source_unit": null,
@@ -69,7 +69,7 @@
       "gpp": {
         "model_full_var": "fluxes.gpp",
         "data": {
-          "variable_unit": "gC m-2 day-1",
+          "sindbad_unit": "gC m-2 day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "gpp",
           "source_unit": "gC m-2 day-1",
@@ -87,7 +87,7 @@
       "nee": {
         "model_full_var": "fluxes.nee",
         "data": {
-          "variable_unit": "gC m-2 day-1",
+          "sindbad_unit": "gC m-2 day-1",
           "bounds": [-100.0, 100.0],
           "source_variable": "NEE",
           "source_unit": "gC m-2 day-1",
@@ -105,7 +105,7 @@
       "reco": {
         "model_full_var": "fluxes.eco_respiration",
         "data": {
-          "variable_unit": "gC m-2 day-1",
+          "sindbad_unit": "gC m-2 day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "reco",
           "source_unit": "gC m-2 day-1",
@@ -123,7 +123,7 @@
       "evapotranspiration": {
         "model_full_var": "fluxes.evapotranspiration",
         "data": {
-          "variable_unit": "mm day-1",
+          "sindbad_unit": "mm day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "evapotranspiration",
           "source_unit": "MJ m-2 d-1",
@@ -144,7 +144,7 @@
       "transpiration": {
         "model_full_var": "fluxes.transpiration",
         "data": {
-          "variable_unit": "mm day-1",
+          "sindbad_unit": "mm day-1",
           "bounds": [0.0, 100.0],
           "source_variable": "transpiration",
           "source_unit": "mm day-1",
@@ -163,7 +163,7 @@
       "agb": {
         "model_full_var": "pools.cVegWood",
         "data": {
-          "variable_unit": "gC m-2",
+          "sindbad_unit": "gC m-2",
           "bounds": [0.0, 100000.0],
           "source_variable": "agb",
           "source_unit": "gC m-2",
@@ -183,7 +183,7 @@
       "ndvi": {
         "model_full_var": "states.fAPAR",
         "data": {
-          "variable_unit": "adimensional",
+          "sindbad_unit": "adimensional",
           "bounds": [0.0, 1.0],
           "source_variable": "ndvi",
           "source_unit": "adimensional",
