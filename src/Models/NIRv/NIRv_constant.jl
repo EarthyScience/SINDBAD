@@ -2,7 +2,7 @@ export NIRv_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct NIRv_constant{T1} <: NIRv
-    constantNIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
+    constant_NIRv::T1 = 1.0 | (0.0, 1.0) | "NIRv" | ""
 end
 #! format: on
 
@@ -11,7 +11,7 @@ function compute(p_struct::NIRv_constant, forcing, land, helpers)
     @unpack_NIRv_constant p_struct
 
     ## calculate variables
-    NIRv = constantNIRv
+    NIRv = constant_NIRv
 
     ## pack land variables
     @pack_land NIRv => land.states

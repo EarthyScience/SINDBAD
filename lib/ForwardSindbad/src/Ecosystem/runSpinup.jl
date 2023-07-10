@@ -107,7 +107,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     end
 
     for cVegZix ∈ helpers.pools.zix.cVeg
-        cLoss = max(cEco[cVegZix] - c_remain, helpers.numbers.𝟘)
+        cLoss = max_0(cEco[cVegZix] - c_remain)
         cVegNew = cEco[cVegZix] - cLoss
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
@@ -360,7 +360,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max(p[l], 𝟘) => (TWS, lc, :TWS)
+        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)

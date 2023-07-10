@@ -42,14 +42,6 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
 
     CI_nor = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were based on the year's data. see below.
 
-    # yearsVec = helpers.dates.year
-    # yearsVec = yearsVec[1:size(CI, 2)]
-    # for i in unique(yearsVec)
-    #     ndx = yearsVec == i
-    #     CImin = min(CI[ndx], 2) #CImin is the minimum CI value of present year
-    #     CImax = max(CI[ndx], 2)
-    #     CI_nor[ndx] = (CI[ndx] - CImin) / (CImax - CImin)
-    # end
 
     cScGPP = 𝟙 - μ * (𝟙 - CI_nor)
     gpp_f_cloud = RgPot > 𝟘 ? cScGPP : zero(cScGPP)
