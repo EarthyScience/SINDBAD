@@ -36,7 +36,7 @@
     },
     "Rg": {
       "sindbad_unit": "MJ m-2 d-1",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SW_IN_ERAIv2_gfld",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Global Radiation"
@@ -51,14 +51,14 @@
     },
     "RgPot": {
       "sindbad_unit": "MJ m-2 d-1",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SW_IN_POT_ONEFlux",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Potential Global Radiation"
     },
     "Rn": {
       "sindbad_unit": "MJ m-2 d-1",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "NETRAD_ERAIv2_gfld",
       "source_unit": "MJ m-2 d-1",
       "name_short": "Net radiation"
@@ -74,21 +74,21 @@
     },
     "Tair": {
       "sindbad_unit": "°C",
-      "bounds": [-80, 60],
+      "bounds": [-80.0, 60.0],
       "source_variable": "TA_ERAIv2_gfld",
       "source_unit": "°C",
       "name_short": "Tair"
     },
     "TairDay": {
       "sindbad_unit": "°C",
-      "bounds": [-80, 60],
+      "bounds": [-80.0, 60.0],
       "source_variable": "TA_DayTime_ERAIv2_gfld",
       "source_unit": "°C",
       "name_short": "TairDay"
     },
     "VPD": {
       "sindbad_unit": "kPa",
-      "bounds": [0.01, 100],
+      "bounds": [0.01, 100.0],
       "source_variable": "VPD_ERAIv2_gfld",
       "source_unit": "Pa",
       "source_to_sindbad_unit": 0.001,
@@ -96,7 +96,7 @@
     },
     "VPDDay": {
       "sindbad_unit": "kPa",
-      "bounds": [0.01, 100],
+      "bounds": [0.01, 100.0],
       "source_variable": "VPD_DayTime_ERAIv2_gfld",
       "source_unit": "Pa",
       "source_to_sindbad_unit": 0.001,
@@ -104,7 +104,7 @@
     },
     "CLAY": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "CLYPPT_SoilGrids",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -114,7 +114,7 @@
     },
     "SAND": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SNDPPT_SoilGrids",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -124,7 +124,7 @@
     },
     "SILT": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SLTPPT_SoilGrids",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -134,10 +134,10 @@
     },
     "ORGM": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "OCSTHA_SoilGrids",
       "source_unit": "%",
-      "source_to_sindbad_unit": 0,
+      "source_to_sindbad_unit": 0.0,
       "name_short": "CLAY",
       "space_time_type": "spatiovertical",
       "source_product": "soilgrids"

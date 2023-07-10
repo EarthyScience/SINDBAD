@@ -22,7 +22,7 @@
   "variables": {
     "PET": {
       "sindbad_unit": "mm d-1",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "PET_PT",
       "source_unit": "mm d-1",
       "name_short": "PET",
@@ -123,7 +123,7 @@
     },
     "CLAY": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "CLYPPT",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -134,7 +134,7 @@
     },
     "SAND": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SNDPPT",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -145,7 +145,7 @@
     },
     "SILT": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "SLTPPT",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.01,
@@ -156,7 +156,7 @@
     },
     "ORGM": {
       "sindbad_unit": "-",
-      "bounds": [0, 100],
+      "bounds": [0.0, 100.0],
       "source_variable": "OCSTHA",
       "source_unit": "%",
       "source_to_sindbad_unit": 0.0,
