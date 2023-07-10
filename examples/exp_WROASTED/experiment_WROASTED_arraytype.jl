@@ -42,7 +42,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
         "forcing.default_forcing.data_path" => inpath,
         "model_run.output.path" => outpath,
         "model_run.mapping.parallelization" => pl,
-        "opti.constraints.default_constraint.data_path" => obspath)
+        "optimization.constraints.default_constraint.data_path" => obspath)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
