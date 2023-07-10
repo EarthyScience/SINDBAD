@@ -1072,15 +1072,6 @@ function getLoopingInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:forward_diff, info.model_run.rules.forward_diff))
     run_info = setTupleField(run_info,
         (:parallelization, Val(Symbol(info.model_run.mapping.parallelization))))
-    # for dim in info.model_run.mapping.run_ecosystem
-    #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-    #     # todo: create the time dimesion using the dates vector
-    #     # if dim == "time"
-    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.tem.helpers.dates.size))
-    #     # else
-    #     #     run_info = setTupleSubfield(run_info, :loop, (Symbol(dim), info.forcing.size[Symbol(dim)]))
-    #     # end
-    # end
     return run_info
 end
 
