@@ -18,8 +18,8 @@ export cCycleBase_simple
                      0.0 0.0 0.0 0.0 0.0 0.0 0.45 0.17 0.0 0.24 0.0 -1.0 0.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.43 0.0 0.43 0.28 0.28 0.4 0.43 -1.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.005 0.0026 -1.0
-                 ] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-    C2Nveg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
+    C2Nveg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
@@ -32,12 +32,10 @@ function define(p_struct::cCycleBase_simple, forcing, land, helpers)
     end
     ## instantiate variables
     p_C2Nveg = ones(num_type, length(cEco)) #sujan
-    c_efflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
 
     ## pack land variables
     @pack_land begin
         (p_C2Nveg, c_flow_A) => land.cCycleBase
-        c_efflux => land.states
     end
     return land
 end
