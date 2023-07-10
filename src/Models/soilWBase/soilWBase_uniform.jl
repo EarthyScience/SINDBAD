@@ -11,8 +11,8 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
         num_type ∈ helpers.numbers
+        n_soilW ∈ land.wCycleBase
     end
-    n_soilW = length(soilW)
 
     # instatiate variables 
     soil_layer_thickness = zero(land.pools.soilW)
@@ -85,8 +85,7 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
             p_θWP,
             p_ψFC,
             p_ψSat,
-            p_ψWP,
-            n_soilW) => land.soilWBase
+            p_ψWP) => land.soilWBase
         soilW => land.pools
     end
     return land

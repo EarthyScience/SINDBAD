@@ -16,6 +16,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
         p_wSat ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
+        n_groundW ∈ land.wCycleBase
         𝟘 ∈ helpers.numbers
     end
     # maximum groundwater storage
@@ -35,7 +36,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
     gw_capillary_flux = min_0(tmp)
 
     # adjust the delta storages
-    ΔgroundW .= ΔgroundW .- gw_capillary_flux / length(groundW)
+    ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW
     ΔsoilW[end] = ΔsoilW[end] + gw_capillary_flux
 
     ## pack land variables
