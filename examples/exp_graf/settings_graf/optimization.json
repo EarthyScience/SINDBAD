@@ -1,0 +1,171 @@
+{
+	"variables_to_constrain": [
+		"gpp",
+		"runoff",
+		"evapotranspiration"
+	],
+	"multi_constraint_method": "sum",
+	"use_uncertainty": false,
+	"algorithm": "CMAEvolutionStrategy_CMAES",
+	"multi_objective_algorithm": false,
+    "default_parameter": {
+		"is_ml": false,
+		"distribution": ["normal", [0, 1]]
+	},
+	"optimized_parameters": [
+		"drainage.dos_exp",
+		"evaporation.α",
+		"evaporation.k_evaporation",
+		"fAPAR.frac_vegetation_to_fAPAR",
+		"gppPotential.εmax",
+		"gppAirT.Topt",
+		"gppAirT.ToptA",
+		"gppAirT.ToptB",
+		"gppVPD.κ",
+		"gppVPD.Cκ",
+		"gppVPD.Cm",
+		"gppSoilW.q",
+		"gppSoilW.θstar",
+		"groundWRecharge.dos_exp",
+		"runoffBase.bc",
+		"rootMaximumDepth.constant_frac_max_root_depth",
+		"runoffSaturationExcess.β",
+		"transpirationSupply.k_transpiration",
+		"WUE.WUEatOnehPa",
+		"WUE.κ"
+			],	
+	"constraints": {
+		"function_name": {
+			"import": "readObservation"
+		},
+		"one_sel_mask": null,
+		"default_constraint": {
+			"variable_unit": null,
+			"bounds": null,
+			"source_variable": null,
+			"source_unit": null,
+			"additive_unit_conversion": false,
+			"source_to_sindbad_unit": 1.0,
+			"is_categorical": false,
+			"name_short": null,
+			"space_time_type": "spatiotemporal",
+			"source_product": "Global",
+			"data_path": null
+		},
+		"default_cost": {
+			"aggr_order": "timespace",
+			"min_data_points": 1,
+			"spatial_aggr": "cat",
+			"spatial_cost_aggr": "spatial",
+			"temporal_aggr": "day",
+			"temporal_aggr_obs": false,
+			"temporal_aggr_func": "nanmean",
+			"cost_metric": "nseinv",
+			"cost_weight": 1.0,
+			"area_weight": false,
+			"data_path": null
+		},
+		"variables": {
+			"gpp": {
+				"sel_mask": null,
+				"model_full_var": "fluxes.gpp",
+				"data": {
+					"variable_unit": "gC m-2 day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"source_variable": "GPP",
+					"source_unit": "gC m-2 day-1",
+					"name_short": "Gross Primary Productivity",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
+				},
+				"unc": {
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"source_variable": "GPP_mad"
+				},
+				"cost_options": {
+					"cost_metric": "nseinv"
+				}
+			},
+			"runoff": {
+				"sel_mask": null,
+				"model_full_var": "fluxes.runoff",
+				"data": {
+					"variable_unit": "mm day-1",
+					"bounds": [
+						-100.0,
+						100.0
+					],
+					"source_variable": "Runoff",
+					"source_unit": "mm day-1",
+					"name_short": "Runoff",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
+				},
+				"cost_options": {
+					"cost_metric": "nseinv"
+				}
+			},
+			"tws": {
+				"sel_mask": null,
+				"model_full_var": "pools.TWS",
+				"data": {
+					"variable_unit": "mm",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"source_variable": "lwe_thickness",
+					"source_unit": "cm",
+					"source_to_sindbad_unit": 10.0,
+					"name_short": "Terrestrial water storage",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
+				},
+				"unc": {
+					"data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+					"bounds": [-500, 500],
+					"source_variable": "uncertainty"
+					},
+				"cost_options": {
+					"cost_metric": "nseinv"
+				}
+			},
+			"evapotranspiration": {
+				"sel_mask": null,
+				"model_full_var": "fluxes.evapotranspiration",
+				"data": {
+					"variable_unit": "mm day-1",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"source_variable": "LE",
+					"source_unit": "mm d-1",
+					"source_to_sindbad_unit": 1,
+					"name_short": "Evapotranspiration",
+					"space_time_type": "spatiotemporal",
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc"
+				},
+				"unc": {
+					"data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc",
+					"bounds": [
+						0.0,
+						100.0
+					],
+					"source_variable": "LE_mad",
+					"source_to_sindbad_unit": 1
+				},
+				"cost_options": {
+					"cost_metric": "nseinv"
+				}
+			}
+		}
+	}
+}

@@ -467,9 +467,9 @@ function getSpinupAndForwardModels(info::NamedTuple)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
     if hasproperty(info, :params)
-        if !isempty(info.params)
+        if !isempty(info.parameters)
             original_params_forward = getParameters(sel_appr_forward)
-            input_params = info.params
+            input_params = info.parameters
             updated_params = setInputParameters(original_params_forward, input_params)
             updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward)
 
@@ -1087,16 +1087,16 @@ end
 """
     getRestartFilePath(info)
 
-Checks if the restartFile in spinup.json is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
+Checks if the restartFile in model_run.spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
-    restart_file_in = info.spinup.paths.restart_file_in
-    restart_file_out = info.spinup.paths.restart_file_out
+    restart_file_in = info.model_run.spinup.paths.restart_file_in
+    restart_file_out = info.model_run.spinup.paths.restart_file_out
     restart_file = nothing
-    if info.spinup.flags.save_spinup
+    if info.model_run.flags.spinup.save_spinup
         if isnothing(restart_file_out)
             error(
-                "info.spinup.paths.restartFile is null, but info.spinup.flags.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
+                "info.model_run.spinup.paths.restartFile is null, but info.model_run.flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
             )
         else
             # ensure that the output file for spinup is jld2 format
@@ -1111,20 +1111,20 @@ function getRestartFilePath(info::NamedTuple)
             info = (;
                 info...,
                 spinup=(;
-                    info.spinup...,
-                    paths=(; info.spinup.paths..., restart_file_out=restart_file)))
+                    info.model_run.spinup...,
+                    paths=(; info.model_run.spinup.paths..., restart_file_out=restart_file)))
         end
     end
 
-    if info.spinup.flags.load_spinup
+    if info.model_run.flags.spinup.load_spinup
         if isnothing(restart_file_in)
             error(
-                "info.spinup.paths.restartFile is null, but info.spinup.flags.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
+                "info.model_run.spinup.paths.restartFile is null, but info.model_run.flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
             )
         else
             if restart_file_in[(end-4):end] != ".jld2"
                 error(
-                    "info.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.spinup.flags.load_spinup to false."
+                    "info.model_run.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.model_run.flags.spinup.load_spinup to false."
                 )
             end
             if isabspath(restart_file_in)
@@ -1136,8 +1136,8 @@ function getRestartFilePath(info::NamedTuple)
         info = (;
             info...,
             spinup=(;
-                info.spinup...,
-                paths=(; info.spinup.paths..., restart_file_in=restart_file)))
+                info.model_run.spinup...,
+                paths=(; info.model_run.spinup.paths..., restart_file_in=restart_file)))
     end
     return info
 end
@@ -1175,7 +1175,7 @@ function setupExperiment(info::NamedTuple)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
-    infospin = info.spinup
+    infospin = info.model_run.spinup
 
     # change spinup sequence dispatch variables to Val
     seqq = infospin.sequence

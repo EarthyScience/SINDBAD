@@ -57,7 +57,7 @@ function compute(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
 end
 
 @doc """
-defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the ModelStructure.json based on the older version of the Pre-Tokyo Model
+defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model
 
 # Parameters
 $(PARAMFIELDS)
