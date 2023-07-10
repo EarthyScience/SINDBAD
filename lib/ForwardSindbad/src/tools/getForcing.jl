@@ -31,50 +31,6 @@ function getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
     return combined_info
 end
 
-"""
-getForcing(info)
-"""
-function getForcing(info::NamedTuple, ::Val{:table})
-    doOnePath = false
-    if !isnothing(info.forcing.default_forcing.data_path)
-        doOnePath = true
-        if isabspath(info.forcing.default_forcing.data_path)
-            data_path = info.forcing.default_forcing.data_path
-        else
-            data_path = joinpath(info.experiment_root, info.forcing.default_forcing.data_path)
-        end
-    end
-    varnames = propertynames(info.forcing.variables)
-    varlist = []
-    dataAr = []
-
-    default_info = info.forcing.default_forcing
-    for v ∈ varnames
-        vinfo = getCombinedVariableInfo(default_info, getproperty(info.forcing.variables, v))
-        if !doOnePath
-            data_path = vinfo.data_path
-            #ds = Dataset(data_path)
-        end
-        srcVar = vinfo.source_variable
-        ds = NetCDF.ncread(data_path, srcVar)
-
-        tarVar = Symbol(v)
-        ds_dat = ds[:, :, :]
-        data_to_push =
-            cleanInputData.(ds_dat, Ref(vinfo), info.tem.helpers.numbers.sNT)[1,
-                1,
-                :]
-        if vinfo.space_time_type == "spatiotemporal"
-            push!(varlist, tarVar)
-            push!(dataAr, data_to_push)
-        else
-            push!(varlist, tarVar)
-            push!(dataAr, fill(data_to_push, info.forcing.size.time))
-        end
-    end
-    forcing = Table((; zip(varlist, dataAr)...))
-    return forcing
-end
 
 function get_forcing_sel_mask(mask_path::String)
     mask = NetCDF.open(mask_path)
