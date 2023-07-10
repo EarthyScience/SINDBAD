@@ -32,14 +32,14 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => true,
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.run_spinup" => false,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,
     "forcing.default_forcing.data_path" => inpath,
     "model_run.output.path" => outpath,
     "model_run.mapping.parallelization" => pl,
-    "opti.constraints.default_constraint.data_path" => obspath);
+    "optimization.constraints.default_constraint.data_path" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
