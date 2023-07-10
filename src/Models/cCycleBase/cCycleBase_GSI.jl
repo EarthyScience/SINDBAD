@@ -19,8 +19,8 @@ export cCycleBase_GSI
                      0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
                      0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
                      0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0
-                 ] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-    C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
+    C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
     c_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
@@ -37,7 +37,6 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
-    c_efflux = zero(cEco) #sujan moved from get states
     p_k_base = zero(cEco)
     p_annk = zero(cEco)
 
@@ -49,7 +48,6 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain) => land.cCycleBase
-        c_efflux => land.states
     end
     return land
 end
