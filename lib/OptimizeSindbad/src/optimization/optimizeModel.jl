@@ -11,7 +11,6 @@ function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, 
     ŷ = getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
         @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
         ŷ = permutedims(ŷ, (2, 3, 1))
@@ -31,10 +30,8 @@ function getData(outsmodel::landWrapper,
     ŷ = getproperty(ŷField, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = permutedims(ŷ, (2, 3, 1))
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ")
     end
     return (y, yσ, ŷ)
 end
