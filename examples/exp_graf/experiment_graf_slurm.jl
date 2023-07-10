@@ -19,14 +19,14 @@ noStackTrace()
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "spinup.flags.do_spinup" => true); #one parameter set for whole domain
+    "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
 @everywhere replace_info_site = Dict("experiment.domain" => domain * "_site",
     "model_run.flags.run_optimization" => optimize_it,
     "model_run.flags.run_forward_and_cost" => false,
     "model_run.mapping.yaxarray" => ["id"],
     "model_run.mapping.run_ecosystem" => ["time"],
-    "spinup.flags.do_spinup" => true); #one parameter set per each site
+    "model_run.flags.spinup.do_spinup" => true); #one parameter set per each site
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
