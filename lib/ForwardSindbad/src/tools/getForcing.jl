@@ -55,7 +55,7 @@ function getForcing(info::NamedTuple, ::Val{:table})
             data_path = vinfo.data_path
             #ds = Dataset(data_path)
         end
-        srcVar = vinfo.source_variable_name
+        srcVar = vinfo.source_variable
         ds = NetCDF.ncread(data_path, srcVar)
 
         tarVar = Symbol(v)
@@ -193,7 +193,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
             data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
             nc = NetCDF.open(data_path)
         end
-        v = nc[vinfo.source_variable_name]
+        v = nc[vinfo.source_variable]
         atts = v.atts
         if any(in(keys(atts)), ["missing_value", "scale_factor", "add_offset"])
             v = CFDiskArray(v, atts)
@@ -218,10 +218,10 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
-        @info "     $(k): source_var: $(vinfo.source_variable_name), source_file: $(data_path)"
+        @info "     $(k): source_var: $(vinfo.source_variable), source_file: $(data_path)"
         yax = YAXArray(ax,
             YAXArrayBase.NetCDFVariable{eltype(v),ndims(v)}(data_path,
-                vinfo.source_variable_name,
+                vinfo.source_variable,
                 size(v)))
         if !isnothing(tar_dims)
             permutes = getPermutation(YAXArrayBase.dimnames(yax), tar_dims)
@@ -301,7 +301,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
             nc = YAXArrays.open_dataset(zopen(data_path))
         end
-        dv = nc[vinfo.source_variable_name]
+        dv = nc[vinfo.source_variable]
         v = YAXArrayBase.yaxconvert(DimArray, dv)
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
@@ -311,7 +311,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             v = subset_space_in_data(info.forcing.subset, v)
         end
 
-        @info "     $(k): source_var: $(vinfo.source_variable_name), source_file: $(data_path)"
+        @info "     $(k): source_var: $(vinfo.source_variable), source_file: $(data_path)"
         yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(v))
         if hasproperty(yax, Symbol(info.forcing.dimensions.time))
             yax = yax[time=(Date(info.tem.helpers.dates.start_date),

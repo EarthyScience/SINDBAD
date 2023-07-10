@@ -103,7 +103,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     permutes = forcing_info.permutes
     subset = forcing_info.subset
     doOnePath = false
-    data_path = info.opti.constraints.default_constraint.data_path
+    data_path = info.optimization.constraints.default_constraint.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
@@ -112,29 +112,29 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         data_path = getAbsDataPath(info, data_path)
         nc = YAXArrays.open_dataset(zopen(data_path))
     end
-    varnames = Symbol.(info.opti.variables_to_constrain)
+    varnames = Symbol.(info.optimization.variables_to_constrain)
     nc_mask = nothing
     mask_path = nothing
-    if :one_sel_mask ∈ keys(info.opti.constraints)
-        if !isnothing(info.opti.constraints.one_sel_mask)
-            mask_path = getAbsDataPath(info, info.opti.constraints.one_sel_mask)
+    if :one_sel_mask ∈ keys(info.optimization.constraints)
+        if !isnothing(info.optimization.constraints.one_sel_mask)
+            mask_path = getAbsDataPath(info, info.optimization.constraints.one_sel_mask)
             nc_mask = getNCForMask(mask_path)
         end
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
-    default_info = info.opti.constraints.default_constraint
+    default_info = info.optimization.constraints.default_constraint
     numtype = Val{info.tem.helpers.numbers.num_type}()
     set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k
         v = nothing
-        vinfo = getproperty(info.opti.constraints.variables, k)
+        vinfo = getproperty(info.optimization.constraints.variables, k)
         vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
         vinfo_unc = nothing
         vinfo_qc = nothing
         vinfo_sel_mask = nothing
 
-        src_var = vinfo_data.source_variable_name
+        src_var = vinfo_data.source_variable
 
         if !doOnePath
             data_path = getAbsDataPath(info, vinfo_data.data_path)
@@ -155,7 +155,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         bounds_qc = nothing
         if hasproperty(vinfo, :qflag)
             vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
-            qc_var = vinfo_qc.source_variable_name
+            qc_var = vinfo_qc.source_variable
             dataPath_qc = data_path
             if !isnothing(vinfo_qc.data_path)
                 dataPath_qc = getAbsDataPath(info, vinfo_qc.data_path)
@@ -171,17 +171,17 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
             one_qc = true
         end
 
-        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.use_uncertainty to false
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.use_uncertainty to false
         dataPath_unc = nothing
         v_unc = nothing
         nc_unc = nc
         unc_var = nothing
         one_unc = false
         bounds_unc = nothing
-        if hasproperty(vinfo, :unc) && info.opti.use_uncertainty
+        if hasproperty(vinfo, :unc) && info.optimization.use_uncertainty
             vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
-            unc_var = vinfo_unc.source_variable_name
-            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            unc_var = vinfo_unc.source_variable
+            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
             dataPath_unc = data_path
             if !isnothing(vinfo_unc.data_path)
                 dataPath_unc = getAbsDataPath(info, vinfo_unc.data_path)
@@ -194,7 +194,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
             @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
             dataPath_unc = data_path
-            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
             one_unc = true
         end
 
@@ -302,7 +302,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
     forcing_info = info.tem.forcing
     permutes = forcing_info.permutes
     doOnePath = false
-    data_path = info.opti.constraints.default_constraint.data_path
+    data_path = info.optimization.constraints.default_constraint.data_path
     nc = nothing
     nc_qc = nothing
     nc_unc = nothing
@@ -311,29 +311,29 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         data_path = getAbsDataPath(info, data_path)
         nc = NetCDF.open(data_path)
     end
-    varnames = Symbol.(info.opti.variables_to_constrain)
+    varnames = Symbol.(info.optimization.variables_to_constrain)
     nc_mask = nothing
     mask_path = nothing
-    if :one_sel_mask ∈ keys(info.opti.constraints)
-        if !isnothing(info.opti.constraints.one_sel_mask)
-            mask_path = getAbsDataPath(info, info.opti.constraints.one_sel_mask)
+    if :one_sel_mask ∈ keys(info.optimization.constraints)
+        if !isnothing(info.optimization.constraints.one_sel_mask)
+            mask_path = getAbsDataPath(info, info.optimization.constraints.one_sel_mask)
             nc_mask = getNCForMask(mask_path)
         end
     end
     obscubes = []
     @info "getObservation: getting observation variables..."
-    default_info = info.opti.constraints.default_constraint
+    default_info = info.optimization.constraints.default_constraint
     numtype = Val{info.tem.helpers.numbers.num_type}()
     set_numtype = info.tem.helpers.numbers.sNT
     map(varnames) do k
         v = nothing
-        vinfo = getproperty(info.opti.constraints.variables, k)
+        vinfo = getproperty(info.optimization.constraints.variables, k)
         vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
         vinfo_unc = nothing
         vinfo_qc = nothing
         vinfo_sel_mask = nothing
 
-        src_var = vinfo_data.source_variable_name
+        src_var = vinfo_data.source_variable
 
         if !doOnePath
             data_path = getAbsDataPath(info, vinfo_data.data_path)
@@ -351,7 +351,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         bounds_qc = nothing
         if hasproperty(vinfo, :qflag)
             vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
-            qc_var = vinfo_qc.source_variable_name
+            qc_var = vinfo_qc.source_variable
             dataPath_qc = data_path
             if !isnothing(vinfo_qc.data_path)
                 dataPath_qc = getAbsDataPath(info, vinfo_qc.data_path)
@@ -367,17 +367,17 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             one_qc = true
         end
 
-        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.opti.use_uncertainty to false
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.use_uncertainty to false
         dataPath_unc = nothing
         v_unc = nothing
         nc_unc = nc
         unc_var = nothing
         one_unc = false
         bounds_unc = nothing
-        if hasproperty(vinfo, :unc) && info.opti.use_uncertainty
+        if hasproperty(vinfo, :unc) && info.optimization.use_uncertainty
             vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
-            unc_var = vinfo_unc.source_variable_name
-            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            unc_var = vinfo_unc.source_variable
+            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
             dataPath_unc = data_path
             if !isnothing(vinfo_unc.data_path)
                 dataPath_unc = getAbsDataPath(info, vinfo_unc.data_path)
@@ -390,7 +390,7 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
             @info "          Unc: source_var: $(unc_var), source_file: $(dataPath_unc)"
         else
             dataPath_unc = data_path
-            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.opti.use_uncertainty is set as $(info.opti.use_uncertainty)"
+            @info "          Unc: using ones as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
             one_unc = true
         end
 
