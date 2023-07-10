@@ -12,7 +12,7 @@ function define(p_struct::cAllocation_fixed, forcing, land, helpers)
     @unpack_cAllocation_fixed p_struct
 
     ## instantiate variables
-    c_allocation = zeros(helpers.numbers.num_type, length(land.pools.cEco))
+    c_allocation = zero(land.pools.cEco)
 
     ## pack land variables
     @pack_land c_allocation => land.cAllocation

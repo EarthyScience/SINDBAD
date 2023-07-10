@@ -63,7 +63,6 @@ end
     loc_outputs,
     land_init_space,
     f_one)
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, tem_with_vals);
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

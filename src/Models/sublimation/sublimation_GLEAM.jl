@@ -17,6 +17,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
     # convert temperature to Kelvin
     T = TairDay + 273.15
@@ -51,7 +52,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
     sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * frac_snow) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
 
-    ΔsnowW[1] = ΔsnowW[1] .- sublimation / length(snowW)
+    ΔsnowW[1] = ΔsnowW[1] .- sublimation / n_snowW
 
     ## pack land variables
     @pack_land begin

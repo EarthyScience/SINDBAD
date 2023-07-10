@@ -12,7 +12,7 @@ function define(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers
     @unpack_cAllocation_Friedlingstein1999 p_struct
 
     ## instantiate variables
-    c_allocation = zeros(helpers.numbers.num_type, length(land.pools.cEco)) #sujan
+    c_allocation = zero(land.pools.cEco) #sujan
 
     ## pack land variables
     @pack_land c_allocation => land.states
