@@ -17,6 +17,7 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         𝟘 ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
     # effect of temperature on snow melt = snowMeltRate * Tair
     pRate = (rate * helpers.dates.timesteps_in_day)
@@ -26,7 +27,7 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     snow_melt = min(sum(snowW + ΔsnowW), Tterm * frac_snow)
 
     # divide snowmelt loss equally from all layers
-    ΔsnowW .= ΔsnowW .- snow_melt / length(snowW)
+    ΔsnowW .= ΔsnowW .- snow_melt / n_snowW
 
     # a Water Balance Pool variable that tracks how much water is still "available"
     WBP = WBP + snow_melt

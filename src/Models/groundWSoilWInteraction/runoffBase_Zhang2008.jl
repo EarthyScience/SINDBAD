@@ -24,7 +24,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
         groundW ∈ land.pools
         ΔgroundW ∈ land.states
         𝟙 ∈ helpers.numbers
-        n_groundW ∈ land.wCycleBase
+        zero(land.pools.soilW) ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -33,7 +33,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
 
     # update groundwater changes
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / n_groundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / zero(land.pools.soilW))
 
     ## pack land variables
     @pack_land begin

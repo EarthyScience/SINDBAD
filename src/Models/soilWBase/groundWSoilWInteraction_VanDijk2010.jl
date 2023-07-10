@@ -32,7 +32,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
         (ΔsoilW, ΔgroundW) ∈ land.states
         unsatK ∈ land.soilProperties
         (𝟘, 𝟙) ∈ helpers.numbers
-        n_groundW ∈ land.wCycleBase
+        zero(land.pools.soilW) ∈ land.wCycleBase
     end
 
     # calculate recharge
@@ -48,7 +48,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
         soilW[end] + ΔsoilW[end]))
 
     # adjust the delta storages
-    ΔgroundW = add_to_each_elem(ΔgroundW, -gw_capillary_flux / n_groundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, -gw_capillary_flux / zero(land.pools.soilW))
     @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     ## pack land variables

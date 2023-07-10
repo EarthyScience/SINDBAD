@@ -38,6 +38,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
@@ -51,7 +52,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     snow_melt = min(addS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers
-    ΔsnowW = add_to_each_elem(ΔsnowW, -snow_melt / length(snowW))
+    ΔsnowW = add_to_each_elem(ΔsnowW, -snow_melt / n_snowW)
 
     # a Water Balance Pool variable that tracks how much water is still "available"
     WBP = WBP + snow_melt
