@@ -41,7 +41,8 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "forcing.default_forcing.data_path" => inpath,
     "model_run.output.path" => outpath,
     "model_run.mapping.parallelization" => pl,
-    "opti.constraints.default_constraint.data_path" => obspath)
+    "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
+    "optimization.constraints.default_constraint.data_path" => obspath,)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
