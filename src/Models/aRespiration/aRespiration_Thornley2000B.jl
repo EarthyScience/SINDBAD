@@ -10,18 +10,18 @@ end
 function define(p_struct::aRespiration_Thornley2000B, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
-        num_type ∈ helpers.numbers
+        (num_type, 𝟘, 𝟙) ∈ helpers.numbers
     end
-
-    p_km = zero(land.pools.cEco) .+ helpers.numbers.𝟙
-    p_km4su = copy(p_km)
-    auto_respiration_growth = copy(p_km)
-    auto_respiration_maintain = copy(p_km)
+    c_efflux = zero(land.pools.cEco)
+    p_km = zero(land.pools.cEco) .+ 𝟙
+    p_km4su = zero(land.pools.cEco) .+ 𝟙
+    auto_respiration_growth = zero(land.pools.cEco)
+    auto_respiration_maintain = zero(land.pools.cEco)
 
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su) => land.aRespiration
-        (auto_respiration_growth, auto_respiration_maintain) => land.states
+        (auto_respiration_growth, auto_respiration_maintain, c_efflux) => land.states
     end
     return land
 end
@@ -38,34 +38,39 @@ function compute(p_struct::aRespiration_Thornley2000B, forcing, land, helpers)
         gpp ∈ land.fluxes
         p_C2Nveg ∈ land.cCycleBase
         auto_respiration_f_airT ∈ land.aRespirationAirT
-        (𝟙, 𝟘, num_type) ∈ helpers.numbers
     end
-
-    # adjust nitrogen efficiency rate of maintenance respiration
+    # adjust nitrogen efficiency rate of maintenance respiration to the current
+    # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
-
-    # compute maintenance & growth respiration terms for each vegetation pool
-    # according to MODEL B - growth respiration is given priority
     zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    for ix ∈ zix
 
-    # scalars of maintenance respiration for models A; B & C
-    # km is the maintenance respiration coefficient [d-1]
-    p_km[zix] .= 𝟙 ./ p_C2Nveg[zix] .* RMN .* auto_respiration_f_airT
-    p_km4su[zix] .= p_km[zix]
+        # compute maintenance & growth respiration terms for each vegetation pool
+        # according to MODEL B - growth respiration is given priority
 
-    # growth respiration: R_g = (1.0 - YG) * GPP * allocationToPool
-    auto_respiration_growth[zix] .= (𝟙 - YG) .* gpp .* c_allocation[zix]
+        # scalars of maintenance respiration for models A; B & C
+        # km is the maintenance respiration coefficient [d-1]
+        p_km_ix = min_1(one(eltype(p_C2Nveg)) / p_C2Nveg[ix] * RMN * auto_respiration_f_airT)
+        p_km4su_ix = p_km[ix] * YG
 
-    # maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
-    auto_respiration_maintain[zix] .= p_km[zix] .* (cEco[zix] .+ YG .* gpp .* c_allocation[zix])
+        # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
+        RA_G_ix = (one(YG) - YG) * (gpp * c_allocation[ix])
 
-    # no negative growth or maintenance respiration
-    auto_respiration_growth .= max.(auto_respiration_growth, 𝟘)
-    auto_respiration_maintain .= max.(auto_respiration_maintain, 𝟘)
+        # maintenance respiration: R_m = km * (C + YG * GPP * allocationToPool)
+        RA_M_ix = p_km_ix * (cEco[ix] + YG * gpp * c_allocation[ix])
 
-    # total respiration per pool: R_a = R_m + R_g
-    c_efflux[zix] .= auto_respiration_maintain[zix] .+ auto_respiration_growth[zix]
+        # no negative growth or maintenance respiration
+        RA_G_ix = max_0(RA_G_ix)
+        RA_M_ix = max_0(RA_M_ix)
 
+        # total respiration per pool: R_a = R_m + R_g
+        cEcoEfflux_ix = RA_M_ix + RA_G_ix
+        @rep_elem cEcoEfflux_ix => (c_efflux, ix, :cEco)
+        @rep_elem p_km_ix => (p_km, ix, :cEco)
+        @rep_elem p_km4su_ix => (p_km4su, ix, :cEco)
+        @rep_elem RA_M_ix => (auto_respiration_maintain, ix, :cEco)
+        @rep_elem RA_G_ix => (auto_respiration_growth, ix, :cEco)
+    end
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su) => land.aRespiration
@@ -75,7 +80,7 @@ function compute(p_struct::aRespiration_Thornley2000B, forcing, land, helpers)
 end
 
 @doc """
-Precomputations to estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell (2000): MODEL B - growth respiration is given priority (check Fig.1 of the paper). Computes the km [maintenance [respiration] coefficient]
+Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL B - growth respiration is given priority [check Fig.1 of the paper].
 
 # Parameters
 $(PARAMFIELDS)
@@ -83,7 +88,7 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Determine growth and maintenance respiration using aRespiration_Thornley2000B (model B)
+Determine growth and maintenance respiration using aRespiration_Thornley2000A
 
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
@@ -113,6 +118,6 @@ Determine growth and maintenance respiration using aRespiration_Thornley2000B (m
  - ncarval
 
 *Notes*
- -  
+ - Questions - practical - leave raAct per pool; | make a field land.fluxes.ra  that has all the autotrophic respiration components together?  
 """
 aRespiration_Thornley2000B

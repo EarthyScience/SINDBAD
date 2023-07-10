@@ -57,7 +57,7 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
     n1930::TN = 1930.0 | (nothing, nothing) | "Saxton Parameters" | ""
 
 end
-# b::T =  | nothing | "Saxton Parameters" | ""
+# b::T =  | (nothing, nothing) | "Saxton Parameters" | ""
 
 function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
