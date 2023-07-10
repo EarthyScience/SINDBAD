@@ -46,7 +46,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max(p[l], zero(p[l])) => (TWS, lc, :TWS)
+        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
