@@ -185,6 +185,9 @@
             "approach": "simple",
             "use4spinup": false
         },
+        "wCycleBase": {
+            "approach": "simple"
+        },
         "wCycle": {
             "approach": "components"
         },

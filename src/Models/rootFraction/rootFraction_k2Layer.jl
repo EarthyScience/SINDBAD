@@ -12,12 +12,12 @@ function define(p_struct::rootFraction_k2Layer, forcing, land, helpers)
 
     ## precomputations/check
 
-    # check if the number of soil layers is equal to 2 
+    # check if the number of soil layers is equal to 2
     if length(land.pools.soilW) != 2
         error("rootFraction_k2Layer approach works for 2 soil layers only.")
     end
-    # create the arrays to fill in the soil properties 
-    p_frac_root_to_soil_depth = ones(helpers.numbers.num_type, length(land.pools.soilW))
+    # create the arrays to fill in the soil properties
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land (p_frac_root_to_soil_depth) => land.rootFraction

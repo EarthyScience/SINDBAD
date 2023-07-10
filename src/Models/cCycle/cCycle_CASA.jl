@@ -5,9 +5,9 @@ struct cCycle_CASA <: cCycle end
 function define(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## instantiate variables
-    c_efflux = zeros(num_type, length(land.pools.cEco)) #sujan moved from get states
-    c_eco_influx = zeros(num_type, length(land.pools.cEco))
-    c_eco_flow = zeros(num_type, length(land.pools.cEco))
+    c_efflux = zero(land.pools.cEco) #sujan moved from get states
+    c_eco_influx = zero(land.pools.cEco)
+    c_eco_flow = zero(land.pools.cEco)
 
     ## pack land variables
     @pack_land (c_efflux, c_eco_influx, c_eco_flow) => land.cCycle

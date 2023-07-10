@@ -17,6 +17,7 @@ function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
         ΔsurfaceW ∈ land.states
         overland_runoff ∈ land.fluxes
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_surfaceW ∈ land.wCycleBase
     end
     # fraction of overland runoff that recharges the surface water & the
     #fraction that flows out directly
@@ -31,7 +32,7 @@ function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
 
     # update the delta storage
     ΔsurfaceW[1] = ΔsurfaceW[1] + suw_recharge # assumes all the recharge supplies the first surface water layer
-    ΔsurfaceW .= ΔsurfaceW .- runoffSurfaceIndirect / length(surfaceW) # assumes all layers contribute equally to indirect component of surface runoff
+    ΔsurfaceW .= ΔsurfaceW .- runoffSurfaceIndirect / n_surfaceW # assumes all layers contribute equally to indirect component of surface runoff
 
     ## pack land variables
     @pack_land begin

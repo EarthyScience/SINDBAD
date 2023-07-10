@@ -31,14 +31,14 @@ function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_groundW ∈ land.wCycleBase
     end
     # calculate recharge
     dosSoilEnd = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
     recharge_fraction = clamp_01((dosSoilEnd)^(dos_exp * p_β[end]))
     gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
-    nGroundW = length(groundW) * 𝟙
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, gw_recharge / nGroundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, gw_recharge / n_groundW)
     @add_to_elem -gw_recharge => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     ## pack land variables

@@ -15,7 +15,7 @@ function define(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_cFlowSoilProperties_CASA p_struct
 
     ## instantiate variables
-    p_E = repeat(zeros(helpers.numbers.num_type, length(land.pools.cEco)),
+    p_E = repeat(zero(land.pools.cEco),
         1,
         1,
         length(land.pools.cEco))
@@ -37,7 +37,7 @@ function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
 
     ## calculate variables
     # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-    # p_fSoil = zeros(helpers.numbers.num_type, length(land.pools.cEco))
+    # p_fSoil = zero(land.pools.cEco)
     # #sujan
     p_F = p_E
     CLAY = mean(p_CLAY)

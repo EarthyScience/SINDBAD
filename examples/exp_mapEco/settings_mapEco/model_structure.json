@@ -192,6 +192,9 @@
         "waterBalance": {
             "approach": "simple"
         },
+        "wCycleBase": {
+            "approach": "simple"
+        },
         "wCycle": {
             "approach": "combined"
         },
