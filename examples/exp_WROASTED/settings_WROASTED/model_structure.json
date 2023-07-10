@@ -1,7 +1,7 @@
 {
-    "default_model":{
-            "order": 0,
-            "use4spinup": true
+    "default_model": {
+        "order": 0,
+        "use4spinup": true
     },
     "models": {
         "ambientCO2": {
@@ -116,7 +116,7 @@
         "groundWRecharge": {
             "approach": "dos"
         },
-        "groundWSoilWInteraction":{
+        "groundWSoilWInteraction": {
             "approach": "VanDijk2010"
         },
         "LAI": {
@@ -195,44 +195,82 @@
         "WUE": {
             "approach": "expVPDDayCo2"
         }
-
     },
-	"pools":
-	{
-		"water":
-		{
-			"components" :
-                {
-                "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
-                "groundW": [1, 1000.0],
-				"snowW": [1, 0.01],
-				"surfaceW": [1, 0.01]
+    "pools": {
+        "water": {
+            "components": {
+                "soilW": [
+                    [
+                        50.0,
+                        200.0,
+                        750.0,
+                        1000.0
+                    ],
+                    100.0
+                ],
+                "groundW": [
+                    1,
+                    1000.0
+                ],
+                "snowW": [
+                    1,
+                    0.01
+                ],
+                "surfaceW": [
+                    1,
+                    0.01
+                ]
             },
-			"combine": "TWS",
-            "additional_state_variables": {"Δ": 0.0}
-		},
-		"carbon":
-		{
-			"components" :
-                {
+            "combine": "TWS",
+            "additional_state_variables": {
+                "Δ": 0.0
+            }
+        },
+        "carbon": {
+            "components": {
                 "cVeg": {
-                    "Root": [1, 25.0],
-                    "Wood": [1, 25.0],
-                    "Leaf": [1, 25.0],
-                    "Reserve": [1, 10.0]
+                    "Root": [
+                        1,
+                        25.0
+                    ],
+                    "Wood": [
+                        1,
+                        25.0
+                    ],
+                    "Leaf": [
+                        1,
+                        25.0
+                    ],
+                    "Reserve": [
+                        1,
+                        10.0
+                    ]
                 },
                 "cLit": {
-                    "Fast": [1, 100.0],
-                    "Slow": [1, 250.0]
+                    "Fast": [
+                        1,
+                        100.0
+                    ],
+                    "Slow": [
+                        1,
+                        250.0
+                    ]
                 },
                 "cSoil": {
-                    "Slow": [1, 500.0],
-                    "Old": [1, 1000.0]
+                    "Slow": [
+                        1,
+                        500.0
+                    ],
+                    "Old": [
+                        1,
+                        1000.0
+                    ]
                 }
             },
-			"combine": "cEco",
-            "additional_state_variables": {"Δ": 0.0
+            "combine": "cEco",
+            "additional_state_variables": {
+                "Δ": 0.0
             }
         }
-	}
+    }
 }

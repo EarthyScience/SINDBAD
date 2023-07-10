@@ -38,7 +38,7 @@ function split_param(_p::Symbol, _splitter)
 end
 
 function split_param(p_string::String, _splitter)
-    if occursin(",", p_string)
+    if occursin(_splitter, p_string)
         return split(p_string, _splitter)
     else
         return (p_string, "")
