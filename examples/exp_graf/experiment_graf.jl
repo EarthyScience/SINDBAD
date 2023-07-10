@@ -18,7 +18,7 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "model_run.mapping.run_ecosystem" => ["time", "id"],
     "model_run.flags.run_spinup" => true,
     "model_run.flags.debug_model" => false,
-    "spinup.flags.do_spinup" => true); #one parameter set for whole domain
+    "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 

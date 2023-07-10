@@ -185,7 +185,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     if infoTuple.model_run.flags.run_optimization || infoTuple.model_run.flags.run_forward_and_cost
         push!(sub_output, "optim")
     end
-    if infoTuple.spinup.flags.save_spinup
+    if infoTuple.model_run.flags.spinup.save_spinup
         push!(sub_output, "spinup")
     end
     for s_o ∈ sub_output
