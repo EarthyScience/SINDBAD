@@ -10,22 +10,22 @@ function define(p_struct::cAllocation_GSI, forcing, land, helpers)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     c_allocation_to_veg = zero(land.pools.cEco)
-    zix_vegs = Tuple{Int}[]
-    nzix_vegs = helpers.numbers.num_type[]
+    cVeg_zix = Tuple{Int}[]
+    cVeg_nzix = helpers.numbers.num_type[]
     cpI = 1
     for cpName ∈ cVeg_names
         zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
         nZix = sNT(length(zix))
-        push!(zix_vegs, zix)
-        push!(nzix_vegs, nZix)
+        push!(cVeg_zix, zix)
+        push!(cVeg_nzix, nZix)
     end
     ttwo = sNT(2.0)
-    zix_vegs = Tuple(zix_vegs)
-    nzix_vegs = Tuple(nzix_vegs)
+    cVeg_zix = Tuple(cVeg_zix)
+    cVeg_nzix = Tuple(cVeg_nzix)
     ## pack land variables
     @pack_land begin
-        (cVeg_names, zix_vegs, nzix_vegs, ttwo) => land.cAllocation
-        (c_allocation, c_allocation_to_veg) => land.states
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, ttwo) => land.cAllocation
+        c_allocation => land.states
     end
     return land
 end
@@ -34,33 +34,33 @@ function compute(p_struct::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (cVeg_names, zix_vegs, nzix_vegs, ttwo) ∈ land.cAllocation
-        (c_allocation, c_allocation_to_veg) ∈ land.states
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, ttwo) ∈ land.cAllocation
+        c_allocation ∈ land.states
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     # allocation to root; wood & leaf
-    c_allocation_to_veg_1 = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
-    c_allocation_to_veg_2 = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
-    c_allocation_to_veg_3 = c_allocation_f_soilT / ((c_allocation_f_soilW + c_allocation_f_soilT))
+    a_cVegRoot = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
+    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
+    a_cVegLeaf = c_allocation_f_soilT / ((c_allocation_f_soilW + c_allocation_f_soilT))
 
-    @rep_elem c_allocation_to_veg_1 => (c_allocation_to_veg, 1, :cEco)
-    @rep_elem c_allocation_to_veg_2 => (c_allocation_to_veg, 2, :cEco)
-    @rep_elem c_allocation_to_veg_3 => (c_allocation_to_veg, 3, :cEco)
+    @rep_elem a_cVegRoot => (c_allocation_to_veg, 1, :cEco)
+    @rep_elem a_cVegWood => (c_allocation_to_veg, 2, :cEco)
+    @rep_elem a_cVegLeaf => (c_allocation_to_veg, 3, :cEco)
 
-    for ind ∈ 1:3
-        zix = zix_vegs[ind]
-        nZix = nzix_vegs[ind]
-        for ix ∈ eachindex(zix)
-            c_allocation_to_veg_ix = c_allocation_to_veg[ind] / nZix
-            zix_ix = zix[ix]
-            @rep_elem c_allocation_to_veg_ix => (c_allocation, zix_ix, :cEco)
+    # distribute the allocation according to pools
+    for cl in eachindex(cVeg_names)
+        zix = cVeg_zix[cl]
+        nZix = cVeg_nzix[cl]
+        for ix ∈ zix
+            c_allocation_to_veg_ix = c_allocation_to_veg[cl] / nZix
+            @rep_elem c_allocation_to_veg_ix => (c_allocation, ix, :cEco)
         end
     end
 
-    @pack_land (c_allocation, c_allocation_to_veg) => land.states
+    @pack_land c_allocation => land.states
 
     return land
 end
