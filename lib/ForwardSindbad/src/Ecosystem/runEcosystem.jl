@@ -256,7 +256,7 @@ function runEcosystem(approaches::Tuple,
         nts = length(first(res))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res))) do (its, iouter)
-                return res[iouter][its]
+                res[iouter][its]
             end
         res = nothing
         fullarrayoftuples

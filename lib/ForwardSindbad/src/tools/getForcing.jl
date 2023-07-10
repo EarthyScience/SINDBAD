@@ -213,7 +213,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
                     collect(dt_str:(info.tem.helpers.dates.time_step):(dt_str+Day(length(t) -
                                                                                   1))))
             end
-            return rax
+            rax
         end
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
@@ -243,7 +243,7 @@ function getForcing(info::NamedTuple, ::Val{:yaxarray})
         end
         vfill = 0
         # vfill = mean(v[(.!isnan.(v))])
-        return map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
+        map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end
 
     @info "getForcing: getting forcing dimensions..."
@@ -332,7 +332,7 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         numtype = Val(info.tem.helpers.numbers.num_type)
         vfill = 0
         # vfill = mean(v[(.!isnan.(v))])
-        return map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
+        map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
     end
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))

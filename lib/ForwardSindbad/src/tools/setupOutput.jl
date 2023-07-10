@@ -193,7 +193,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "setupOutput: getting output dimension for yaxarray..."
     outdims = map(datavars) do vn
-        return getOutDims(info, tem_helpers, vn, info.output.data, outformat, land_init, forcing_sizes)
+        getOutDims(info, tem_helpers, vn, info.output.data, outformat, land_init, forcing_sizes)
     end
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     @info "setupOutput: creating array output"

@@ -36,7 +36,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
 
     # calculate recharge
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
-    dosSoilend = max_1((soilW[end] + ΔsoilW[end]) / p_wSat[end])
+    dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
     k_sat = p_kSat[end] # assume GW is saturated
     k_fc = p_kFC[end] # assume GW is saturated
     k_unsat = unsatK(land, helpers, length(land.pools.soilW))
