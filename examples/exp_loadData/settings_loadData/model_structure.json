@@ -212,7 +212,7 @@
         "surfaceW": [1, 0.01]
       },
       "combine": "TWS",
-      "additional_state_variables": { "Δ": 0.0 }
+      "state_variables": { "Δ": 0.0 }
     },
     "carbon": {
       "components": {
@@ -232,7 +232,7 @@
         }
       },
       "combine": "cEco",
-      "additional_state_variables": { "Δ": 0.0 }
+      "state_variables": { "Δ": 0.0 }
     }
   }
 }

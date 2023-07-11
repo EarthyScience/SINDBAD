@@ -205,7 +205,7 @@
         "surfaceW": [1, 0.01]
       },
       "combine": "TWS",
-      "additional_state_variables": {
+      "state_variables": {
         "Δ": 0.0
       }
     },
@@ -227,7 +227,7 @@
         }
       },
       "combine": "cEco",
-      "additional_state_variables": {
+      "state_variables": {
         "Δ": 0.0
       }
     }

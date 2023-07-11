@@ -784,9 +784,9 @@ function generatePoolsInfo(info::NamedTuple)
         end
 
         # check if additional variables exist
-        if hasproperty(getfield(info.model_structure.pools, element), :additional_state_variables)
-            additional_state_variables = getfield(getfield(info.model_structure.pools, element), :additional_state_variables)
-            tmpElem = setTupleField(tmpElem, (:additional_state_variables, additional_state_variables))
+        if hasproperty(getfield(info.model_structure.pools, element), :state_variables)
+            state_variables = getfield(getfield(info.model_structure.pools, element), :state_variables)
+            tmpElem = setTupleField(tmpElem, (:state_variables, state_variables))
         end
         arraytype = :view
         if hasproperty(info.model_run.rules, :model_array_type)
@@ -900,14 +900,14 @@ end
 """
     getInitStates(info)
 
-returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from additional_state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
+returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
 function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     initStates = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)
         toCreate = getfield(props, :create)
-        addVars = getfield(props, :additional_state_variables)
+        addVars = getfield(props, :state_variables)
         initVals = getfield(props, :initValues)
         arrayType = getfield(props, :arraytype)
         for tocr ∈ toCreate
