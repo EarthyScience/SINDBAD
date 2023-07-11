@@ -14,7 +14,7 @@ eYear = "2017"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
-domain = "DE-Tha"
+domain = "FI-Sod"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -33,7 +33,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.run_forward_and_cost" => false,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => true,
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.run_spinup" => false,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,
@@ -45,6 +45,45 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
+nrepeat = 200
+
+data_path = getAbsDataPath(info, inpath)
+nc = ForwardSindbad.NetCDF.open(data_path)
+y_dist = nc.gatts["last_disturbance_on"]
+
+nrepeat_d = nothing
+if y_dist !== "undisturbed"
+    y_disturb = year(Date(y_dist))
+    y_start = year(Date(info.tem.helpers.dates.start_date))
+    nrepeat_d = y_start - y_disturb
+end
+sequence = nothing
+if isnothing(nrepeat_d)
+    sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+    ]
+elseif nrepeat_d < 0
+    sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+    ]
+elseif nrepeat_d == 0
+    sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+    ]
+elseif nrepeat_d > 0
+    sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+    ]
+else
+    error("cannot determine the repeat for disturbance")
+end
+replace_info["model_run.spinup.sequence"] = sequence
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
 info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 

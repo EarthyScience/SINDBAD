@@ -55,6 +55,7 @@
       "fluxes.transpiration": null,
       "fluxes.runoff": null,
       "fluxes.surface_runoff": null,
+      "fluxes.snow_melt": null,
       "fluxes.gpp": null,
       "fluxes.auto_respiration": null,
       "fluxes.hetero_respiration": null,
@@ -65,6 +66,7 @@
       "states.p_k": "d_cEco",
       "states.c_allocation": "d_cEco",
       "states.c_efflux": "d_cEco",
+      "states.frac_snow": null,
       "states.p_A": 10,
       "waterBalance.water_balance": null
     }
