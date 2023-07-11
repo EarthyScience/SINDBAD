@@ -14,18 +14,12 @@ function define(p_struct::cCycle_GSI, forcing, land, helpers)
     zero_c_eco_influx = zero(c_eco_influx)
     c_eco_npp = zero(land.pools.cEco)
 
-    cEco_prev = deepcopy(land.pools.cEco)
+    cEco_prev = land.pools.cEco
     ## pack land variables
-    nee = 𝟘
-    npp = 𝟘
-    auto_respiration = 𝟘
-    eco_respiration = 𝟘
-    hetero_respiration = 𝟘
 
     @pack_land begin
         (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) =>
             land.states
-        (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
     end
     return land
 end

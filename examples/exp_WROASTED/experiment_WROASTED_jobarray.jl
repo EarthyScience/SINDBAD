@@ -85,7 +85,7 @@ else
     error("cannot determine the repeat for disturbance")
 end
 
-replace_info["spinup.sequence"] = sequence
+replace_info["model_run.spinup.sequence"] = sequence
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
 

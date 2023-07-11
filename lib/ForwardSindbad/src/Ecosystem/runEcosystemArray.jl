@@ -133,19 +133,29 @@ function fill_it_two!(ar, val, ts::Int64)
     end
 end
 
-@generated function setOutputT!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
-    output = quote end
-    for (i, ov) in enumerate(output_vars)
-        field = first(ov)
-        subfield = last(ov)
-        push!(output.args,
-            Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(field)), QuoteNode(subfield))))
-        push!(output.args, quote
-            data_o = outputs[$i]
+function setOutputT!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
+    if @generated
+        output = quote end
+        for (i, ov) in enumerate(output_vars)
+            field = first(ov)
+            subfield = last(ov)
+            push!(output.args,
+                Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(field)), QuoteNode(subfield))))
+            push!(output.args, quote
+                data_o = outputs[$i]
+                fill_it!(data_o, data_l, ts)
+            end)
+        end
+        return output
+    else
+        for (i, ov) in enumerate(output_vars)
+            field = first(ov)
+            subfield = last(ov)
+            data_l = getfield(getfield(land, field), subfield)
+            data_o = outputs[i]
             fill_it!(data_o, data_l, ts)
-        end)
+        end
     end
-    return output
 end
 
 function runDefine!(out, forcing, models, tem_helpers)
@@ -170,23 +180,21 @@ function timeLoopForward!(loc_output,
     f_one)
     f_t = f_one
     if tem_helpers.run.debug_model
-        time_steps = 1
-    end
-    for ts ∈ 1:time_steps
-        if tem_helpers.run.debug_model
-            @show "forc"
-            @time f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_t)
-            println("-------------")
-            @show "each model"
-            @time out = runModels!(out, f, forward_models, tem_helpers, tem_helpers.vals.debug_model)
-            println("-------------")
-            @show "all models"
-            @time out = runModels!(out, f, forward_models, tem_helpers)
-            println("-------------")
-            @show "out"
-            @time setOutputT!(loc_output, out, tem_helpers.vals.output_vars, ts)
-            println("-------------")
-        else
+        ts = 1
+        @show "forc"
+        @time f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_t)
+        println("-------------")
+        @show "each model"
+        @time out = runModels!(out, f, forward_models, tem_helpers, tem_helpers.vals.debug_model)
+        println("-------------")
+        @show "all models"
+        @time out = runModels!(out, f, forward_models, tem_helpers)
+        println("-------------")
+        @show "out"
+        @time setOutputT!(loc_output, out, tem_helpers.vals.output_vars, ts)
+        println("-------------")
+    else
+        for ts ∈ 1:time_steps
             f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_one)
             out = runModels!(out, f, forward_models, tem_helpers)#::otype
             setOutputT!(loc_output, out, tem_helpers.vals.output_vars, ts)

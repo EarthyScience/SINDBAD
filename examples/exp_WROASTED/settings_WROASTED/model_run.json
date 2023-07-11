@@ -40,7 +40,7 @@
     "output_array_type": "array",
     "all": true,
     "path": null,
-    "format": ".zarr",
+    "format": "zarr",
     "depth_dimensions": {
       "d_soil": "soilW",
       "d_tws": "TWS",
@@ -48,15 +48,24 @@
       "d_snow": "snowW"
     },
     "variables": {
+      "aRespirationAirT.auto_respiration_f_airT": null,
+      "cTauSoilT.p_k_f_soilT": null,
+      "cTauSoilW.p_k_f_soilW": "d_cEco",
       "fluxes.evapotranspiration": null,
       "fluxes.transpiration": null,
       "fluxes.runoff": null,
       "fluxes.surface_runoff": null,
       "fluxes.gpp": null,
+      "fluxes.auto_respiration": null,
+      "fluxes.hetero_respiration": null,
       "fluxes.nee": null,
       "pools.TWS": "d_tws",
       "pools.soilW": "d_soil",
       "pools.cEco": "d_cEco",
+      "states.p_k": "d_cEco",
+      "states.c_allocation": "d_cEco",
+      "states.c_efflux": "d_cEco",
+      "states.p_A": 10,
       "waterBalance.water_balance": null
     }
   },
@@ -67,18 +76,6 @@
         "forcing": "recycleMSC",
         "stop_function": null,
         "n_repeat": 200
-      },
-      {
-        "spinup_mode": "nlsove_fixedpoint_trustregion_cEco_TWS",
-        "forcing": "recycleMSC",
-        "stop_function": null,
-        "n_repeat": 1
-      },
-      {
-        "spinup_mode": "ηScaleAH",
-        "forcing": "recycleMSC",
-        "stop_function": null,
-        "n_repeat": 1
       }
     ],
     "differential_eqn": {
