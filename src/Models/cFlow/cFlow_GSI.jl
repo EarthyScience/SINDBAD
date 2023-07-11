@@ -94,15 +94,6 @@ function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
     return p_k, p_k_sum
 end
 
-function get_frac_flow(num, den)
-    if !iszero(den)
-        rat = num / den
-    else
-        rat = num
-    end
-    return rat
-end
-
 function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cFlow_GSI p_struct
@@ -168,16 +159,16 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     # @show reserve_to_leaf_frac, reserve_to_root_frac
 
     p_k, p_k_sum = adjust_pk(p_k, k_shedding_leaf, leaf_to_reserve, 𝟙, helpers.pools.zix.cVegLeaf, helpers)
-    leaf_to_reserve_frac = get_frac_flow(leaf_to_reserve, p_k_sum)
-    k_shedding_leaf_frac = get_frac_flow(k_shedding_leaf, p_k_sum)
+    leaf_to_reserve_frac = getFrac(leaf_to_reserve, p_k_sum)
+    k_shedding_leaf_frac = getFrac(k_shedding_leaf, p_k_sum)
 
     p_k, p_k_sum = adjust_pk(p_k, k_shedding_root, root_to_reserve, 𝟙, helpers.pools.zix.cVegRoot, helpers)
-    root_to_reserve_frac = get_frac_flow(root_to_reserve, p_k_sum)
-    k_shedding_root_frac = get_frac_flow(k_shedding_root, p_k_sum)
+    root_to_reserve_frac = getFrac(root_to_reserve, p_k_sum)
+    k_shedding_root_frac = getFrac(k_shedding_root, p_k_sum)
 
     p_k, p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, 𝟙, helpers.pools.zix.cVegReserve, helpers)
-    reserve_to_leaf_frac = get_frac_flow(Re2L_i, p_k_sum)
-    reserve_to_root_frac = get_frac_flow(Re2R_i, p_k_sum)
+    reserve_to_leaf_frac = getFrac(Re2L_i, p_k_sum)
+    reserve_to_root_frac = getFrac(Re2R_i, p_k_sum)
 
     p_A = rep_elem(p_A, reserve_to_leaf_frac, p_A, p_A, 𝟘, 𝟙, p_A_ind.reserve_to_leaf)
     p_A = rep_elem(p_A, reserve_to_root_frac, p_A, p_A, 𝟘, 𝟙, p_A_ind.reserve_to_root)
