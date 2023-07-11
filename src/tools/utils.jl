@@ -727,13 +727,13 @@ end
 
 """
 getFrac(num, den)
-return either a ratio or zero depending on whether denomitor is a zero
+return either a ratio or numerator depending on whether denomitor is a zero
 """
 function getFrac(num, den)
     if !iszero(den)
         rat = num / den
     else
-        rat = zero(num)
+        rat = num
     end
     return rat
 end
