@@ -52,10 +52,10 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
                 @add_to_elem toGain => (cEco, tarZix, :cEco)
             end
         end
-
+        @pack_land cEco => land.pools
+        land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
     end
     ## pack land variables
-    @pack_land cEco => land.pools
     return land
 end
 
