@@ -42,7 +42,7 @@ function compute(p_struct::gppDemand_mult, forcing, land, helpers)
     gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_cloud, gpp_climate_stressors, gpp_climate_stressors, 𝟘, 𝟙, 4)
 
     # compute the product of all the scalars
-    gpp_f_climate = prod(gpp_climate_stressors)
+    gpp_f_climate = gpp_f_light * gpp_f_cloud * gpp_f_airT * gpp_f_vpd
 
     # compute demand GPP
     gpp_demand = fAPAR * gpp_potential * gpp_f_climate

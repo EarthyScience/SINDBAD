@@ -12,6 +12,7 @@ export set_component_from_main_pool, set_main_from_component_pool
 export clamp_01
 export min_0, max_0, min_1, max_1
 export valToSymbol
+export getFrac
 
 """
     noStackTrace()
@@ -722,4 +723,17 @@ returns the symbol from which val was created for a type dispatch based on name
 """
 function valToSymbol(val)
     return typeof(val).parameters[1]
+end
+
+"""
+getFrac(num, den)
+return either a ratio or zero depending on whether denomitor is a zero
+"""
+function getFrac(num, den)
+    if !iszero(den)
+        rat = num / den
+    else
+        rat = zero(num)
+    end
+    return rat
 end
