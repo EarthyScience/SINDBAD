@@ -37,7 +37,6 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         𝟘 ∈ helpers.numbers
     end
     if dist_intensity > 𝟘
-        # @show "before", cEco, sum(cEco)
         for zixVeg ∈ zix_veg_all
             cLoss = 𝟘 # do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
@@ -51,11 +50,10 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
                 @add_to_elem toGain => (cEco, tarZix, :cEco)
             end
         end
-        # @show "after", cEco, sum(cEco)
-
+        ## pack land variables
+        @pack_land cEco => land.pools
+        land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
     end
-    ## pack land variables
-    @pack_land cEco => land.pools
     return land
 end
 

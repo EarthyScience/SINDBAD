@@ -1,4 +1,4 @@
-export cCycleBase_GSI
+export cCycleBase_GSI, adjust_and_pack_pool_components
 
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
@@ -45,9 +45,11 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(𝟘), c_flow_A)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(𝟘), c_flow_A)])
 
+    c_model = Val(:GSI)
+
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain) => land.cCycleBase
+        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
     end
     return land
 end
@@ -86,6 +88,78 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
+function adjust_and_pack_pool_components(land, helpers, ::Val{:GSI})
+    @unpack_land (cVeg,
+        cLit,
+        cSoil,
+        cVegRoot,
+        cVegWood,
+        cVegLeaf,
+        cVegReserve,
+        cLitFast,
+        cLitSlow,
+        cSoilSlow,
+        cSoilOld,
+        cEco) ∈ land.pools
+
+    zix = helpers.pools.zix
+    for (lc, l) in enumerate(zix.cVeg)
+        @rep_elem cEco[l] => (cVeg, lc, :cVeg)
+    end
+
+    for (lc, l) in enumerate(zix.cVegRoot)
+        @rep_elem cEco[l] => (cVegRoot, lc, :cVegRoot)
+    end
+
+    for (lc, l) in enumerate(zix.cVegWood)
+        @rep_elem cEco[l] => (cVegWood, lc, :cVegWood)
+    end
+
+    for (lc, l) in enumerate(zix.cVegLeaf)
+        @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
+    end
+
+    for (lc, l) in enumerate(zix.cVegReserve)
+        @rep_elem cEco[l] => (cVegReserve, lc, :cVegReserve)
+    end
+
+    for (lc, l) in enumerate(zix.cLit)
+        @rep_elem cEco[l] => (cLit, lc, :cLit)
+    end
+
+    for (lc, l) in enumerate(zix.cLitFast)
+        @rep_elem cEco[l] => (cLitFast, lc, :cLitFast)
+    end
+
+    for (lc, l) in enumerate(zix.cLitSlow)
+        @rep_elem cEco[l] => (cLitSlow, lc, :cLitSlow)
+    end
+
+    for (lc, l) in enumerate(zix.cSoil)
+        @rep_elem cEco[l] => (cSoil, lc, :cSoil)
+    end
+
+    for (lc, l) in enumerate(zix.cSoilSlow)
+        @rep_elem cEco[l] => (cSoilSlow, lc, :cSoilSlow)
+    end
+
+    for (lc, l) in enumerate(zix.cSoilOld)
+        @rep_elem cEco[l] => (cSoilOld, lc, :cSoilOld)
+    end
+    @pack_land (cVeg,
+        cLit,
+        cSoil,
+        cVegRoot,
+        cVegWood,
+        cVegLeaf,
+        cVegReserve,
+        cLitFast,
+        cLitSlow,
+        cSoilSlow,
+        cSoilOld,
+        cEco) => land.pools
+    return land
+end
 @doc """
 Compute carbon to nitrogen ratio & annual turnover rates
 
