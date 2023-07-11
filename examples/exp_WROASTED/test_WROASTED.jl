@@ -14,7 +14,7 @@ eYear = "2017"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
-domain = "FI-Lom"
+domain = "DE-Tha"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -59,10 +59,24 @@ output = setupOutput(info);
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 
+
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output,
         forc,
         info.tem);
+
+
+# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
+land_spin = land_init_space[1];
+@time land_spin_now = runSpinup(info.tem.models.forward,
+    loc_forcings[1],
+    land_spin,
+    tem_with_vals.helpers,
+    tem_with_vals.spinup,
+    tem_with_vals.models,
+    typeof(land_spin),
+    f_one;
+    spinup_forcing=nothing);
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,

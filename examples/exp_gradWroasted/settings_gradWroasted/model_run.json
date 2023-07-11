@@ -40,7 +40,7 @@
     "output_array_type": "array",
     "all": false,
     "path": null,
-    "format": ".zarr",
+    "format": "zarr",
     "depth_dimensions": {
       "d_ground": "groundW",
       "d_soil": "soilW",
