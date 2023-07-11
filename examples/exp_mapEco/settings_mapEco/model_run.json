@@ -40,7 +40,7 @@
     "output_array_type": "array",
     "all": true,
     "path": "exp_mapFN/output/",
-    "format": ".zarr",
+    "format": "zarr",
     "depth_dimensions": {
       "d_soil": "soilW",
       "d_cEco": 8,

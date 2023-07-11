@@ -79,6 +79,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleAH})
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
     @pack_land cEco => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
     return land
 end
 
@@ -113,6 +114,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     end
 
     @pack_land cEco => land.pools
+    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
     return land
 end
 
