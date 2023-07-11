@@ -39,18 +39,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
             p_A,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
-        (cVeg,
-            cLit,
-            cSoil,
-            cVegRoot,
-            cVegWood,
-            cVegLeaf,
-            cVegReserve,
-            cLitFast,
-            cLitSlow,
-            cSoilSlow,
-            cSoilOld,
-            cEco) ∈ land.pools
+        cEco ∈ land.pools
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (c_flow_order, c_giver, c_taker) ∈ land.cCycleBase
@@ -113,81 +102,17 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     # cEco_prev = cEco 
     # cEco_prev = cEco_prev .* 𝟘 .+ cEco
     @rep_vec cEco_prev => cEco
+    @pack_land cEco => land.pools
 
+    land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
     # set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
-
-    zix = helpers.pools.zix
-    for (lc, l) in enumerate(zix.cVeg)
-        @rep_elem cEco[l] => (cVeg, lc, :cVeg)
-    end
-
-    for (lc, l) in enumerate(zix.cVegRoot)
-        @rep_elem cEco[l] => (cVegRoot, lc, :cVegRoot)
-    end
-
-    for (lc, l) in enumerate(zix.cVegWood)
-        @rep_elem cEco[l] => (cVegWood, lc, :cVegWood)
-    end
-
-    for (lc, l) in enumerate(zix.cVegLeaf)
-        @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
-    end
-
-    for (lc, l) in enumerate(zix.cVegReserve)
-        @rep_elem cEco[l] => (cVegReserve, lc, :cVegReserve)
-    end
-
-    for (lc, l) in enumerate(zix.cLit)
-        @rep_elem cEco[l] => (cLit, lc, :cLit)
-    end
-
-    for (lc, l) in enumerate(zix.cLitFast)
-        @rep_elem cEco[l] => (cLitFast, lc, :cLitFast)
-    end
-
-    for (lc, l) in enumerate(zix.cLitSlow)
-        @rep_elem cEco[l] => (cLitSlow, lc, :cLitSlow)
-    end
-
-    for (lc, l) in enumerate(zix.cSoil)
-        @rep_elem cEco[l] => (cSoil, lc, :cSoil)
-    end
-
-    for (lc, l) in enumerate(zix.cSoilSlow)
-        @rep_elem cEco[l] => (cSoilSlow, lc, :cSoilSlow)
-    end
-
-    for (lc, l) in enumerate(zix.cSoilOld)
-        @rep_elem cEco[l] => (cSoilOld, lc, :cSoilOld)
-    end
 
     ## pack land variables
     @pack_land begin
-        (cVeg,
-            cLit,
-            cSoil,
-            cVegRoot,
-            cVegWood,
-            cVegLeaf,
-            cVegReserve,
-            cLitFast,
-            cLitSlow,
-            cSoilSlow,
-            cSoilOld,
-            cEco) => land.pools
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
         (ΔcEco, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
     end
     return land
-end
-
-function adj_component_pools(comp, full, pool_name, indx, helpers)
-    i_c = 1
-    for i_f ∈ indx
-        @rep_elem full[i_f] => (comp, i_c, pool_name)
-        i_c = i_c + 1
-    end
-    return comp
 end
 
 @doc """
