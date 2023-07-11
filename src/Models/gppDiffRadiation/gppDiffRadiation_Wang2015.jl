@@ -34,7 +34,7 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## calculate variables
     ## FROM SHANNING
 
-    CI = 𝟙 - Rg / RgPot #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI = clamp_01(𝟙 - getFrac(Rg, RgPot)) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
