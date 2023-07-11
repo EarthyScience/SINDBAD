@@ -32,7 +32,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
         (ΔsoilW, ΔgroundW) ∈ land.states
         unsatK ∈ land.soilProperties
         (𝟘, 𝟙) ∈ helpers.numbers
-        zero(land.pools.soilW) ∈ land.wCycleBase
+        n_groundW ∈ land.wCycleBase
     end
 
     # calculate recharge
@@ -40,15 +40,15 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
     dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
     k_sat = p_kSat[end] # assume GW is saturated
     k_fc = p_kFC[end] # assume GW is saturated
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW))
+    k_unsat = unsatK(land, helpers, lastindex(soilW))
 
     # get the capillary flux
-    c_flux = sqrt(k_unsat * k_sat) * (𝟙 - dosSoilend)
-    gw_capillary_flux = max_0(min(c_flux, max_fraction * (sum(groundW) + sum(ΔgroundW)),
-        soilW[end] + ΔsoilW[end]))
+    c_flux = sqrt(k_unsat * k_sat) * (one(dosSoilend) - dosSoilend)
+    gw_capillary_flux = max_0(min(c_flux, max_fraction * addS(groundW, ΔgroundW)),
+        soilW[end] + ΔsoilW[end])
 
     # adjust the delta storages
-    ΔgroundW = add_to_each_elem(ΔgroundW, -gw_capillary_flux / zero(land.pools.soilW))
+    ΔgroundW = add_to_each_elem(ΔgroundW, -gw_capillary_flux / n_groundW)
     @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     ## pack land variables
