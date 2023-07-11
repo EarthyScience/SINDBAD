@@ -102,7 +102,7 @@
       "approach": "mult"
     },
     "gppDiffRadiation": {
-      "approach": "none"
+      "approach": "Wang2015"
     },
     "gppDirRadiation": {
       "approach": "none"
