@@ -45,7 +45,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(𝟘), c_flow_A)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(𝟘), c_flow_A)])
 
-    c_model = Val(:GSI)
+    c_model = Val(:cCycleBase_GSI)
 
     ## pack land variables
     @pack_land begin
@@ -88,7 +88,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function adjust_and_pack_pool_components(land, helpers, ::Val{:GSI})
+function adjust_and_pack_pool_components(land, helpers, ::Val{:cCycleBase_GSI})
     @unpack_land (cVeg,
         cLit,
         cSoil,
