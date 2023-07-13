@@ -439,7 +439,7 @@ function doSpinup(spinup_models,
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
     @pack_land TWS => land.pools
-    land = Sindbad.adjust_and_pack_pool_components(land, helpers, land.wCycleBase.w_model)
+    land = Sindbad.adjust_and_pack_pool_components(land, tem_helpers, land.wCycleBase.w_model)
     return land
 end
 
@@ -468,8 +468,8 @@ function doSpinup(spinup_models,
     TWS_prev = cEco_TWS_spin.TWS
     TWS = oftype(land.pools.TWS, TWS_prev)
     @pack_land TWS => land.pools
-    land = Sindbad.adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
-    land = Sindbad.adjust_and_pack_pool_components(land, helpers, land.wCycleBase.w_model)
+    land = Sindbad.adjust_and_pack_pool_components(land, tem_helpers, land.cCycleBase.c_model)
+    land = Sindbad.adjust_and_pack_pool_components(land, tem_helpers, land.wCycleBase.w_model)
     return land
 end
 
@@ -488,7 +488,7 @@ function doSpinup(spinup_models,
     cEco = exp.(r.zero)
     cEco = oftype(land.pools.cEco, cEco)
     @pack_land cEco => land.pools
-    land = Sindbad.adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
+    land = Sindbad.adjust_and_pack_pool_components(land, tem_helpers, land.cCycleBase.c_model)
     return land
 end
 
