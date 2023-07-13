@@ -4,14 +4,14 @@ using ForwardSindbad
 using Plots
 using Accessors
 noStackTrace()
-
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod)
     plot_elem = string(plot_elem)
     if plot_var == :cEco
-        plt = plot(; legend=:outerbottom, size=(1800, 1200), yscale=:log10)
+        plt = plot(; legend=:outerbottom, size=(1800, 1200), yscale=:log10, left_margin=1Plots.cm)
         ylims!(0.01, 1e7)
     else
-        plt = plot(; legend=:outerbottom, size=(1800, 1200))
+        plt = plot(; legend=:outerbottom, size=(1800, 1200), left_margin=1Plots.cm)
         ylims!(10, 2000)
     end
     plot!(getfield(land.pools, plot_var);
@@ -34,7 +34,7 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
         xticks=(1:length(xtname) |> collect, string.(xtname)),
         rotation=45)
 
-    savefig("$(string(plot_var))_sin_explicit_$(plot_elem)_$(arraymethod)_tj-$(tj).png")
+    savefig(joinpath(info.output.figure, "$(string(plot_var))_sin_explicit_$(plot_elem)_$(arraymethod)_tj-$(tj).png"))
     return nothing
 
 end
