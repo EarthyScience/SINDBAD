@@ -125,6 +125,7 @@ for domain ∈ sites
     def_dat = outcubes
     out_vars = output.variables
     costOpt = info.optim.cost_options
+    default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     foreach(costOpt) do var_row
         v = var_row.variable
         @show "plot obs", v
@@ -147,10 +148,9 @@ for domain ∈ sites
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
         obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-        plot(xdata, def_var[tspan, 1, 1, 1]; label="def ($(round(metr_def, digits=2)))", size=(1200, 900), title="$(v) -> $(valToSymbol(lossMetric))")
-        plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))")
-        plot!(xdata, obs_var[tspan]; label="obs")
+        plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
+        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+        plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
         savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
     end
-
 end
