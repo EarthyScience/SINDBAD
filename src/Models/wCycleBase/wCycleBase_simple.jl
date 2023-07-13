@@ -1,4 +1,4 @@
-export wCycleBase_simple
+export wCycleBase_simple, adjust_and_pack_pool_components
 
 struct wCycleBase_simple <: wCycleBase end
 
@@ -13,7 +13,7 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
     end
     if hasproperty(land.pools, :snowW)
         n_snowW = helpers.numbers.sNT(length(land.pools.snowW))
-        @pack_land n_snowW=> land.wCycleBase
+        @pack_land n_snowW => land.wCycleBase
     end
     if hasproperty(land.pools, :soilW)
         n_soilW = helpers.numbers.sNT(length(land.pools.soilW))
@@ -23,9 +23,50 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
         n_surfaceW = helpers.numbers.sNT(length(land.pools.surfaceW))
         @pack_land n_surfaceW => land.wCycleBase
     end
+    w_model = Val(:wCycleBase_simple)
+    @pack_land w_model => land.wCycleBase
+
     return land
 end
 
+
+function adjust_and_pack_pool_components(land, helpers, ::Val{:wCycleBase_simple})
+    @unpack_land TWS ∈ land.pools
+    zix = helpers.pools.zix
+    if hasproperty(land.pools, :groundW)
+        @unpack_land groundW ∈ land.pools
+        for (lw, l) in enumerate(zix.groundW)
+            @rep_elem TWS[l] => (groundW, lw, :groundW)
+        end
+        @pack_land groundW => land.pools
+    end
+
+    if hasproperty(land.pools, :snowW)
+        @unpack_land snowW ∈ land.pools
+        for (lw, l) in enumerate(zix.snowW)
+            @rep_elem TWS[l] => (snowW, lw, :snowW)
+        end
+        @pack_land snowW => land.pools
+    end
+
+    if hasproperty(land.pools, :soilW)
+        @unpack_land soilW ∈ land.pools
+        for (lw, l) in enumerate(zix.soilW)
+            @rep_elem TWS[l] => (soilW, lw, :soilW)
+        end
+        @pack_land soilW => land.pools
+    end
+
+    if hasproperty(land.pools, :surfaceW)
+        @unpack_land surfaceW ∈ land.pools
+        for (lw, l) in enumerate(zix.surfaceW)
+            @rep_elem TWS[l] => (surfaceW, lw, :surfaceW)
+        end
+        @pack_land surfaceW => land.pools
+    end
+
+    return land
+end
 @doc """
 counts the number of layers in each water storage pools
 
