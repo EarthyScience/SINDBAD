@@ -17,7 +17,7 @@ using YAXArrayBase
 using YAXArrays: savecube
 using YAXArrayBase: getdata
 using Zarr
-using DifferentialEquations
+# using DifferentialEquations
 using InteractiveUtils
 using ThreadPools
 using Dates
