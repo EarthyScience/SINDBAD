@@ -125,7 +125,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 #     f_one;
 #     spinup_forcing=nothing);
 
-
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = output.variables;
 for (o, v) in enumerate(out_vars)
     def_var = output.data[o][:, :, 1, 1]
