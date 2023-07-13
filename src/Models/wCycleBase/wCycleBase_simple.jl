@@ -67,6 +67,43 @@ function adjust_and_pack_pool_components(land, helpers, ::Val{:wCycleBase_simple
 
     return land
 end
+
+function adjust_and_pack_main_pool(land, helpers, ::Val{:wCycleBase_simple})
+    @unpack_land TWS ∈ land.pools
+    zix = helpers.pools.zix
+
+    if hasproperty(land.pools, :groundW)
+        @unpack_land groundW ∈ land.pools
+        for (lw, l) in enumerate(zix.groundW)
+            @rep_elem groundW[lw] => (TWS, l, :TWS)
+        end
+    end
+
+    if hasproperty(land.pools, :snowW)
+        @unpack_land snowW ∈ land.pools
+        for (lw, l) in enumerate(zix.snowW)
+            @rep_elem snowW[lw] => (TWS, l, :TWS)
+        end
+    end
+
+    if hasproperty(land.pools, :soilW)
+        @unpack_land soilW ∈ land.pools
+        for (lw, l) in enumerate(zix.soilW)
+            @rep_elem soilW[lw] => (TWS, l, :TWS)
+        end
+    end
+
+    if hasproperty(land.pools, :surfaceW)
+        @unpack_land surfaceW ∈ land.pools
+        for (lw, l) in enumerate(zix.surfaceW)
+            @rep_elem surfaceW[lw] => (TWS, l, :TWS)
+        end
+    end
+
+    @pack_land TWS => land.pools
+
+    return land
+end
 @doc """
 counts the number of layers in each water storage pools
 
