@@ -18,40 +18,40 @@ export soilWBase_smax2fPFT
 end
 #! format: on
 
-function define(o::soilWBase_smax2fPFT, forcing, land, helpers)
+function define(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
     #@needscheck
-    @unpack_soilWBase_smax2fPFT o
+    @unpack_soilWBase_smax2fPFT p_struct
 
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
+        n_soilW ∈ land.wCycleBase
     end
 
     ## precomputations/check
-    n_soilW = length(soilW)
     # get the soil thickness & root distribution information from input
-    soilLayerThickness = helpers.pools.layerThickness.soilW
+    soil_layer_thickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-    if length(soilLayerThickness) != 2
-        error("soilWBase_smax2Layer needs eactly 2 soil layers in modelStructure.json.")
+    if n_soilW != 2
+        error("soilWBase_smax2Layer needs eactly 2 soil layers in model_structure.json.")
     end
 
     ## instantiate variables
-    p_wSat = ones(numType, n_soilW)
-    p_wFC = ones(numType, n_soilW)
-    p_wWP = zeros(numType, n_soilW)
+    p_wSat = ones(num_type, n_soilW)
+    p_wFC = ones(num_type, n_soilW)
+    p_wWP = zero(land.pools.soilW)
 
     ## pack land variables
-    @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
+    @pack_land (soil_layer_thickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
     return land
 end
 
-function compute(o::soilWBase_smax2fPFT, forcing, land, helpers)
+function compute(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_soilWBase_smax2fPFT o
+    @unpack_soilWBase_smax2fPFT p_struct
 
     ## unpack land variables
-    @unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
     @unpack_forcing PFT ∈ forcing
 
     ## calculate variables
@@ -61,7 +61,7 @@ function compute(o::soilWBase_smax2fPFT, forcing, land, helpers)
     for nC ∈ eachindex(tmp_classes)
         nPFT = tmp_classes[nC]
         p_tmp = eval(char(["smaxPFT" num2str(nPFT)]))
-        p_smaxPFT[PFT==nPFT, 1] = soilLayerThickness[2] * p_tmp #
+        p_smaxPFT[PFT==nPFT, 1] = soil_layer_thickness[2] * p_tmp #
     end
     # set the properties for each soil layer
     # 1st layer
@@ -77,7 +77,7 @@ function compute(o::soilWBase_smax2fPFT, forcing, land, helpers)
     ## pack land variables
     @pack_land (p_nsoilLayers,
         p_smaxPFT,
-        soilLayerThickness,
+        soil_layer_thickness,
         p_wAWC,
         p_wFC,
         p_wSat,
@@ -104,7 +104,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fPFT
 *Outputs*
  - land.soilWBase.p_nsoilLayers
  - land.soilWBase.p_smaxPFT: the combined parameters [pix, 1]
- - land.soilWBase.soilLayerThickness
+ - land.soilWBase.soil_layer_thickness
  - land.soilWBase.p_wAWC: = land.soilWBase.p_wSat
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers

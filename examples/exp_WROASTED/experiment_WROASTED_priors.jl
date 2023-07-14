@@ -28,45 +28,45 @@ outpath = nothing
 # t
 domain = "DE-Hai"
 pl = "threads"
-replace_info = Dict("modelRun.time.sDate" => sYear * "-01-01",
-    "experiment.configFiles.forcing" => forcingConfig,
+replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "modelRun.time.eDate" => eYear * "-12-31",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "spinup.flags.saveSpinup" => false,
-    "modelRun.flags.debugit" => false,
-    "modelRun.flags.runSpinup" => true,
-    "modelRun.flags.debugit" => false,
-    "spinup.flags.doSpinup" => true,
-    "forcing.default_forcing.dataPath" => inpath,
-    "modelRun.output.path" => outpath,
-    "modelRun.mapping.parallelization" => pl,
-    "opti.constraints.oneDataPath" => obspath);
+    "model_run.time.end_date" => eYear * "-12-31",
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => true,
+    "model_run.flags.spinup.save_spinup" => false,
+    "model_run.flags.debug_model" => false,
+    "model_run.flags.run_spinup" => true,
+    "model_run.flags.debug_model" => false,
+    "model_run.flags.spinup.do_spinup" => true,
+    "forcing.default_forcing.data_path" => inpath,
+    "model_run.output.path" => outpath,
+    "model_run.mapping.parallelization" => pl,
+    "optimization.constraints.default_constraint.data_path" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
-linit = createLandInit(info.pools, info.tem);
+linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
 
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
@@ -81,13 +81,13 @@ extract a matrix with columns:
   - observation uncertainties (stdev)
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
         y = getproperty(obs, obsV)
         yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
-        return [vec(y) vec(yσ)]
+        [vec(y) vec(yσ)]
     end
     resM = vcat(res...)
     return resM, isfinite.(resM[:, 1])
@@ -107,14 +107,14 @@ function getPredAndObsVector(observations::NamedTuple,
     model_output,
     optim::NamedTuple;
     removeNaN=true)
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
         mod_variable = getfield(optimVars, obsV)
         #TODO care for equal size
         (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
-        return [vec(y) vec(yσ) vec(ŷ)]
+        [vec(y) vec(yσ) vec(ŷ)]
     end
     resM = vcat(res...)
     return resM, isfinite.(resM[:, 1])
@@ -134,12 +134,12 @@ develop_f =
 
         tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
             optim.optimized_parameters)
-        # get the defaults and bounds
-        default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+        # get the default and bounds
+        default_values = tem.helpers.numbers.sNT.(tblParams.default)
         lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 
-        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output.data,
                 output.land_init,
                 tem.models.forward,
@@ -151,7 +151,7 @@ develop_f =
         #TODO get y and sigmay beforehand and construct MvNormal
 
         #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one, loc_forcing, loc_output
+        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
         #output_variables, optim
         m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
             #assumptions/priors
@@ -172,7 +172,7 @@ develop_f =
                 output.land_init,
                 newApproaches,
                 forcing,
-                tem_vals,
+                tem_with_vals,
                 loc_space_inds,
                 loc_forcings,
                 loc_outputs,

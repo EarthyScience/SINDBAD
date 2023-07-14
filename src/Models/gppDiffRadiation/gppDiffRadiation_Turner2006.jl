@@ -6,9 +6,9 @@ export gppDiffRadiation_Turner2006
 end
 #! format: on
 
-function define(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function define(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 o
+    @unpack_gppDiffRadiation_Turner2006 p_struct
     @unpack_forcing (Rg, RgPot) ∈ forcing
 
     ## calculate variables
@@ -20,9 +20,9 @@ function define(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
+function compute(p_struct::gppDiffRadiation_Turner2006, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_Turner2006 o
+    @unpack_gppDiffRadiation_Turner2006 p_struct
     @unpack_forcing (Rg, RgPot) ∈ forcing
     @unpack_land begin
         (CI_min, CI_max) ∈ land.gppDiffRadiation
@@ -39,15 +39,15 @@ function compute(o::gppDiffRadiation_Turner2006, forcing, land, helpers)
     SCI = (CI - CI_min) / (CI_max - CI_min + tolerance) # @needscheck: originally, CI_min and max were calculated in the instantiate using the full time series of Rg and RgPot. Now, this is not possible, and thus min and max need to be updated on the go, and once the simulation is complete in the first cycle of forcing, it will work...
 
     cScGPP = (𝟙 - rueRatio) * SCI + rueRatio
-    CloudScGPP = RgPot > 𝟘 ? cScGPP : 𝟘
+    gpp_f_cloud = RgPot > 𝟘 ? cScGPP : zero(cScGPP)
 
     ## pack land variables
-    @pack_land (CloudScGPP, CI_min, CI_max) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, CI_min, CI_max) => land.gppDiffRadiation
     return land
 end
 
 @doc """
-cloudiness scalar [radiation diffusion] on gppPot based on Turner2006
+cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006
 
 # Parameters
 $(PARAMFIELDS)
@@ -61,7 +61,7 @@ $(PARAMFIELDS)
  - forcing.RgPot: Potential radiation [MJ/m2/time]
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: effect of cloudiness on potential GPP
+ - land.gppDiffRadiation.gpp_f_cloud: effect of cloudiness on potential GPP
 
 ---
 

@@ -6,24 +6,24 @@ export groundWRecharge_dos
 end
 #! format: on
 
-function define(o::groundWRecharge_dos, forcing, land, helpers)
+function define(p_struct::groundWRecharge_dos, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         𝟘 ∈ helpers.numbers
     end
 
-    groundWRec = 𝟘
+    gw_recharge = 𝟘
 
     ## pack land variables
     @pack_land begin
-        groundWRec => land.fluxes
+        gw_recharge => land.fluxes
     end
     return land
 end
 
-function compute(o::groundWRecharge_dos, forcing, land, helpers)
+function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWRecharge_dos o
+    @unpack_groundWRecharge_dos p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -31,25 +31,25 @@ function compute(o::groundWRecharge_dos, forcing, land, helpers)
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_groundW ∈ land.wCycleBase
     end
     # calculate recharge
-    dosSoilEnd = clamp((soilW[end] + ΔsoilW[end]) / p_wSat[end], 𝟘, 𝟙)
-    recharge_fraction = clamp((dosSoilEnd)^(dos_exp * p_β[end]), 𝟘, 𝟙)
-    groundWRec = recharge_fraction * (soilW[end] + ΔsoilW[end])
-    nGroundW = length(groundW) * 𝟙
+    dosSoilEnd = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
+    recharge_fraction = clamp_01((dosSoilEnd)^(dos_exp * p_β[end]))
+    gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, groundWRec / nGroundW)
-    @add_to_elem -groundWRec => (ΔsoilW, lastindex(ΔsoilW), :soilW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, gw_recharge / n_groundW)
+    @add_to_elem -gw_recharge => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
     ## pack land variables
     @pack_land begin
-        groundWRec => land.fluxes
+        gw_recharge => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land
 end
 
-function update(o::groundWRecharge_dos, forcing, land, helpers)
+function update(p_struct::groundWRecharge_dos, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin
@@ -89,7 +89,7 @@ Recharge the groundwater using groundWRecharge_dos
  - rf
 
 *Outputs*
- - land.fluxes.groundWRec
+ - land.fluxes.gw_recharge
 
 # update
 

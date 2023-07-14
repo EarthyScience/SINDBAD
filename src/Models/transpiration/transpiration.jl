@@ -10,7 +10,7 @@ include("transpiration_none.jl")
 If coupled, computed from gpp and aoe from wue
 
 # Approaches:
- - coupled: calculate the actual transpiration as function of gppAct & WUE
+ - coupled: calculate the actual transpiration as function of gpp & WUE
  - demandSupply: calculate the actual transpiration as the minimum of the supply & demand
  - none: sets the actual transpiration to zero
 """

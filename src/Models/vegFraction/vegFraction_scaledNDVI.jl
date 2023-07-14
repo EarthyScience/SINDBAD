@@ -6,9 +6,9 @@ export vegFraction_scaledNDVI
 end
 #! format: on
 
-function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
+function compute(p_struct::vegFraction_scaledNDVI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledNDVI o
+    @unpack_vegFraction_scaledNDVI p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -17,15 +17,15 @@ function compute(o::vegFraction_scaledNDVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = clamp(NDVI * NDVIscale, 𝟘, 𝟙)
+    frac_vegetation = clamp_01(NDVI * NDVIscale)
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the NDVI value
+sets the value of frac_vegetation by scaling the NDVI value
 
 # Parameters
 $(PARAMFIELDS)
@@ -39,7 +39,7 @@ Fractional coverage of vegetation using vegFraction_scaledNDVI
  - land.states.NDVI : current NDVI value
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 

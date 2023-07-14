@@ -10,23 +10,23 @@ export cTauSoilW_GSI
 end
 #! format: on
 
-function define(o::cTauSoilW_GSI, forcing, land, helpers)
-    @unpack_cTauSoilW_GSI o
+function define(p_struct::cTauSoilW_GSI, forcing, land, helpers)
+    @unpack_cTauSoilW_GSI p_struct
 
     ## instantiate variables
-    p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    p_k_f_soilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land p_fsoilW => land.cTauSoilW
+    @pack_land p_k_f_soilW => land.cTauSoilW
     return land
 end
 
-function compute(o::cTauSoilW_GSI, forcing, land, helpers)
+function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilW_GSI o
+    @unpack_cTauSoilW_GSI p_struct
 
     ## unpack land variables
-    @unpack_land p_fsoilW ∈ land.cTauSoilW
+    @unpack_land p_k_f_soilW ∈ land.cTauSoilW
 
     ## unpack land variables
     @unpack_land begin
@@ -40,7 +40,7 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
     soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc => (p_fsoilW, l_zix, :cEco)
+        @rep_elem soilW_top_sc => (p_k_f_soilW, l_zix, :cEco)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
@@ -49,11 +49,11 @@ function compute(o::cTauSoilW_GSI, forcing, land, helpers)
 
     cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc => (p_fsoilW, s_zix, :cEco)
+        @rep_elem soilW_all_sc => (p_k_f_soilW, s_zix, :cEco)
     end
 
     ## pack land variables
-    @pack_land (p_fsoilW) => land.cTauSoilW
+    @pack_land (p_k_f_soilW) => land.cTauSoilW
     return land
 end
 
@@ -88,7 +88,7 @@ Effect of soil moisture on decomposition rates using cTauSoilW_GSI
  - land.pools.soilW: soil temperature
 
 *Outputs*
- - land.cTauSoilW.p_fsoilW: effect of moisture on cTau for different pools
+ - land.cTauSoilW.p_k_f_soilW: effect of moisture on cTau for different pools
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilW_GSI

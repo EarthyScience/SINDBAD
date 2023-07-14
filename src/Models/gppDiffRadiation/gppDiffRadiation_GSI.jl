@@ -8,46 +8,46 @@ export gppDiffRadiation_GSI
 end
 #! format: on
 
-function define(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function define(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI o
+    @unpack_gppDiffRadiation_GSI p_struct
     @unpack_forcing Rg ∈ forcing
     @unpack_land (𝟙, 𝟘) ∈ helpers.numbers
 
-    CloudScGPP_prev = 𝟘
-    CloudScGPP = 𝟙
+    gpp_f_cloud_prev = 𝟘
+    gpp_f_cloud = 𝟙
     MJ_to_W = helpers.numbers.sNT(11.57407)
 
     ## pack land variables
-    @pack_land (CloudScGPP, CloudScGPP_prev, MJ_to_W) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, gpp_f_cloud_prev, MJ_to_W) => land.gppDiffRadiation
     return land
 end
 
-function compute(o::gppDiffRadiation_GSI, forcing, land, helpers)
+function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppDiffRadiation_GSI o
+    @unpack_gppDiffRadiation_GSI p_struct
     @unpack_forcing Rg ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (CloudScGPP_prev, MJ_to_W) ∈ land.gppDiffRadiation
+        (gpp_f_cloud_prev, MJ_to_W) ∈ land.gppDiffRadiation
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
-    f_prev = CloudScGPP_prev
+    f_prev = gpp_f_cloud_prev
     Rg = Rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
     fR = (𝟙 - fR_τ) * f_prev + fR_τ * (𝟙 / (𝟙 + exp(-fR_slope * (Rg - fR_base))))
-    CloudScGPP = clamp(fR, 𝟘, 𝟙)
-    CloudScGPP_prev = CloudScGPP
+    gpp_f_cloud = clamp_01(fR)
+    gpp_f_cloud_prev = gpp_f_cloud
 
     ## pack land variables
-    @pack_land (CloudScGPP, CloudScGPP_prev) => land.gppDiffRadiation
+    @pack_land (gpp_f_cloud, gpp_f_cloud_prev) => land.gppDiffRadiation
     return land
 end
 
 @doc """
-cloudiness scalar [radiation diffusion] on gppPot based on GSI implementation of LPJ
+cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
 $(PARAMFIELDS)
@@ -61,7 +61,7 @@ $(PARAMFIELDS)
  - fR_τ: contribution of current time step
 
 *Outputs*
- - land.gppDiffRadiation.CloudScGPP: light effect on GPP between 0-1
+ - land.gppDiffRadiation.gpp_f_cloud: light effect on GPP between 0-1
 
 ---
 

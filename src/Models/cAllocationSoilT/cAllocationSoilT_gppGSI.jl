@@ -6,9 +6,9 @@ export cAllocationSoilT_gppGSI
 end
 #! format: on
 
-function define(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI o
+    @unpack_cAllocationSoilT_gppGSI p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -21,24 +21,24 @@ function define(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cAllocationSoilT_gppGSI, forcing, land, helpers)
+function compute(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationSoilT_gppGSI o
+    @unpack_cAllocationSoilT_gppGSI p_struct
 
     ## unpack land variables
     @unpack_land begin
-        TempScGPP ∈ land.gppAirT
+        gpp_f_airT ∈ land.gppAirT
         fT_prev ∈ land.cAllocationSoilT
     end
 
     # computation for the temperature effect on decomposition/mineralization
-    fT = fT_prev + (TempScGPP - fT_prev) * τ_Tsoil
+    c_allocation_f_soilT = fT_prev + (gpp_f_airT - fT_prev) * τ_Tsoil
 
     # set the prev
-    fT_prev = fT
+    fT_prev = c_allocation_f_soilT
 
     ## pack land variables
-    @pack_land (fT, fT_prev) => land.cAllocationSoilT
+    @pack_land (c_allocation_f_soilT, fT_prev) => land.cAllocationSoilT
     return land
 end
 
@@ -54,10 +54,10 @@ $(PARAMFIELDS)
 
 *Inputs*
  - land.cAllocationSoilT.fT_prev: temperature stressor from previous time step
- - land.gppAirT.TempScGPP: temperature stressors on GPP
+ - land.gppAirT.gpp_f_airT: temperature stressors on GPP
 
 *Outputs*
- - land.cAllocationSoilT.fT: temperature effect on decomposition/mineralization (0-1)
+ - land.cAllocationSoilT.c_allocation_f_soilT: temperature effect on decomposition/mineralization (0-1)
 
 ---
 

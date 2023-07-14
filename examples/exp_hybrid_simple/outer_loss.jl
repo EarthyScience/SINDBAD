@@ -2,13 +2,13 @@
 
 function test_unpack_app(forward)
     map(forward) do mod
-        return mod        
+        return mod
     end
 end
 
 function test_unpack_app(forward)
     foldl(forward) do mod
-        return mod        
+        return mod
     end
 end
 
@@ -25,13 +25,13 @@ end
 @code_warntype t_map(forward)
 output_f = t_map(forward)
 
-@code_warntype updateModelParametersType(tblParams2, output_f, tblParams.defaults)
+@code_warntype updateModelParametersType(tblParams2, output_f, tblParams.default)
 
-@time updateModelParametersType(tblParams2, output_f, tblParams.defaults);
+@time updateModelParametersType(tblParams2, output_f, tblParams.default);
 
-@code_warntype updateModelParametersTypeMap(tblParams2, output_f, tblParams.defaults)
+@code_warntype updateModelParametersTypeMap(tblParams2, output_f, tblParams.default)
 
-@time new_models = updateModelParametersTypeMap(tblParams2, output_f, tblParams.defaults)
+@time new_models = updateModelParametersTypeMap(tblParams2, output_f, tblParams.default)
 @time collect(new_models);
 
 #@code_warntype collect(out_models)
@@ -51,7 +51,7 @@ function updateModelParametersTypeMap(tblParams, approaches, pVector)
 end
 
 function inner_update(k, var, modelName, tblParams, new_ps)
-    indx = findall(row -> row.names == k && row.modelsApproach == modelName, tblParams)
+    indx = findall(row -> row.name == k && row.model_approach == modelName, tblParams)
     var = !isempty(indx) ? new_ps[indx[1]] : var
     return k => var
 end
@@ -73,11 +73,11 @@ end
 
 function new_model(approachx, tblParams, pVector)
     modelName = nameof(typeof(approachx))
-    if modelName ∈ tblParams.modelsApproach
+    if modelName ∈ tblParams.model_approach
         _pairs = pairs(getproperties(approachx)) |> collect
-        newvals = inner_vals(_pairs,  modelName, tblParams, pVector)::Vector{Pair{Symbol, Float32}}
+        newvals = inner_vals(_pairs, modelName, tblParams, pVector)::Vector{Pair{Symbol,Float32}}
         #@code_warntype constructorof(typeof(approachx))(;newvals...)
-        return constructorof(typeof(approachx))(;newvals...)
+        return constructorof(typeof(approachx))(; newvals...)
     else
         return approachx
     end

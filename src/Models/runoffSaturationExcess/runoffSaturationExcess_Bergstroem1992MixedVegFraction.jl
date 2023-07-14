@@ -8,13 +8,13 @@ export runoffSaturationExcess_Bergstroem1992MixedVegFraction
 end
 #! format: on
 
-function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
+function compute(p_struct::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction o
+    @unpack_runoffSaturationExcess_Bergstroem1992MixedVegFraction p_struct
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, vegFraction) ∈ land.states
+        (WBP, frac_vegetation) ∈ land.states
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
@@ -24,19 +24,19 @@ function compute(o::runoffSaturationExcess_Bergstroem1992MixedVegFraction, forci
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # get the berg parameters according the vegetation fraction
-    β_veg = βV * vegFraction + βS * (𝟙 - vegFraction)
+    β_veg = βV * frac_vegetation + βS * (𝟙 - frac_vegetation)
     β_veg = max(β_min, berg) # do this?
 
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = clamp((tmp_SoilTotal / tmp_smaxVeg)^β_veg, 𝟘, 𝟙)
-    runoffSatExc = WBP * tmp_SatExFrac
+    tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
+    sat_excess_runoff = WBP * tmp_SatExFrac
 
     # update water balance
-    WBP = WBP - runoffSatExc
+    WBP = WBP - sat_excess_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffSatExc => land.fluxes
+        sat_excess_runoff => land.fluxes
         WBP => land.states
     end
     return land
@@ -57,7 +57,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992MixedVegFraction
  - berg : shape parameter of runoff-infiltration curve []
 
 *Outputs*
- - land.fluxes.runoffSatExc : runoff from land [mm/time]
+ - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
  - land.states.WBP : water balance pool [mm]
 
 ---

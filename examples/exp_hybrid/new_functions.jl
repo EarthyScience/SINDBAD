@@ -4,15 +4,15 @@ using Statistics
 
 function getLocDataObs(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -69,7 +69,7 @@ function get_loc_loss(loc_obs,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
-    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    l = combineLossArray(loss_vector, Val(tem_optim.multi_constraint_method))
     return l
 end
 
@@ -107,22 +107,22 @@ end
 
 function getLocObs(outcubes, obs, loc_space_map)
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     return loc_obs
 end
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -163,8 +163,8 @@ function bs_iter(n; batch_size=32)
 end
 
 function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.defaults, tblParams.lower)
-    ub = oftype(tblParams.defaults, tblParams.upper)
+    lb = oftype(tblParams.default, tblParams.lower)
+    ub = oftype(tblParams.default, tblParams.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end

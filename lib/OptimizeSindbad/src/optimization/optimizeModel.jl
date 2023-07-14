@@ -11,7 +11,6 @@ function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, 
     ŷ = getproperty(outsmodel, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    # todo: get rid of the permutedims hack ... should come from input/observation data, which should have dimensions in time, lat, lon or depth, time, lat, lon
     if size(ŷ) != size(y)
         @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
         ŷ = permutedims(ŷ, (2, 3, 1))
@@ -31,10 +30,8 @@ function getData(outsmodel::landWrapper,
     ŷ = getproperty(ŷField, modelVarInfo[2])
     y = getproperty(observations, obsV)
     yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    # todo: get rid of the permutedims hack ...
     if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = permutedims(ŷ, (2, 3, 1))
+        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ")
     end
     return (y, yσ, ŷ)
 end
@@ -77,15 +74,15 @@ end
 
 """
 getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables2constrain
+returns a vector of losses for variables in info.optim.variables_to_constrain
 """
 function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple)
     lossVec = []
-    cost_options = optim.costOptions
+    cost_options = optim.cost_options
     optimVars = optim.variables.optim
     for var_row ∈ cost_options
         obsV = var_row.variable
-        lossMetric = var_row.costMetric
+        lossMetric = var_row.cost_metric
         mod_variable = getfield(optimVars, obsV)
         (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         metr = loss(y, yσ, ŷ, Val(lossMetric))
@@ -116,7 +113,7 @@ function getLoss(pVector::AbstractArray,
     loss_vector = getLossVector(observations, outevolution, optim)
     @info "-------------------"
 
-    return combineLoss(loss_vector, Val(optim.multiConstraintMethod))
+    return combineLoss(loss_vector, Val(optim.multi_constraint_method))
 end
 
 """
@@ -134,8 +131,8 @@ function optimizeModel(forcing::NamedTuple,
     # get the subset of parameters table that consists of only optimized parameters
     tblParams = getParameters(tem.models.forward, optim.optimized_parameters)
 
-    # get the defaults and bounds
-    default_values = tem.helpers.numbers.sNT.(tblParams.defaults)
+    # get the default and bounds
+    default_values = tem.helpers.numbers.sNT.(tblParams.default)
     lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
 

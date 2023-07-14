@@ -3,14 +3,14 @@ function setup_simple()
     #experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
 
     experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
-    info = getExperimentInfo(experiment_json);
-    info, forcing = getForcing(info, Val{:zarr}());
-    land_init = createLandInit(info.pools, info.tem);
-    output = setupOutput(info);
-    forc = getKeyedArrayFromYaxArray(forcing);
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-    obs = getKeyedArrayFromYaxArray(observations);
-    
+    info = getExperimentInfo(experiment_json)
+    info, forcing = getForcing(info, Val{:zarr}())
+    land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
+    output = setupOutput(info)
+    forc = getKeyedArrayFromYaxArray(forcing)
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
+    obs = getKeyedArrayFromYaxArray(observations)
+
     tblParams = getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
@@ -21,12 +21,12 @@ function setup_simple()
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one = prepRunEcosystem(Sindbad.get_tmp.(output.data, tblParams.defaults),
+    f_one = prepRunEcosystem(Sindbad.get_tmp.(output.data, tblParams.default),
         output.land_init,
         info.tem.models.forward,
         forc,
         forcing.sizes,
-        info.tem);
+        info.tem)
 
     tem_helpers = info.tem.helpers
     tem_spinup = info.tem.spinup

@@ -2,25 +2,25 @@ export ambientCO2_forcing
 
 struct ambientCO2_forcing <: ambientCO2 end
 
-function define(o::ambientCO2_forcing, forcing, land, helpers)
+function define(p_struct::ambientCO2_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing ambCO2 ∈ forcing
+    @unpack_forcing ambient_CO2 ∈ forcing
     ## pack land variables
-    @pack_land ambCO2 => land.states
+    @pack_land ambient_CO2 => land.states
     return land
 end
 
-function compute(o::ambientCO2_forcing, forcing, land, helpers)
+function compute(p_struct::ambientCO2_forcing, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing ambCO2 ∈ forcing
+    @unpack_forcing ambient_CO2 ∈ forcing
 
     ## pack land variables
-    @pack_land ambCO2 => land.states
+    @pack_land ambient_CO2 => land.states
     return land
 end
 
 @doc """
-sets the value of land.states.ambCO2 from the forcing in every time step
+sets the value of land.states.ambient_CO2 from the forcing in every time step
 
 ---
 
@@ -28,11 +28,11 @@ sets the value of land.states.ambCO2 from the forcing in every time step
 Set/get ambient co2 concentration using ambientCO2_forcing
 
 *Inputs*
- - forcing.ambCO2 read from the forcing data set
+ - forcing.ambient_CO2 read from the forcing data set
 
 *Outputs*
- - land.states.ambCO2: the value of LAI for current time step
- - land.states.ambCO2
+ - land.states.ambient_CO2: the value of LAI for current time step
+ - land.states.ambient_CO2
 
 ---
 
