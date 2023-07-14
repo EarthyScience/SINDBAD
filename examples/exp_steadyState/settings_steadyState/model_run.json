@@ -17,8 +17,8 @@
     "catch_model_errors": false,
     "run_forward": true,
     "run_update_models": false,
-    "run_optimization": true,
-    "run_forward_and_cost": true,
+    "run_optimization": false,
+    "run_forward_and_cost": false,
     "spinup": {
       "do_spinup": true,
       "load_spinup": false,
