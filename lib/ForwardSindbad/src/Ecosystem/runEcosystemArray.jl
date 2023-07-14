@@ -178,11 +178,9 @@ function timeLoopForward!(loc_output,
     tem_helpers,
     time_steps::Int64,
     f_one)
-    f_t = f_one
     if tem_helpers.run.debug_model
-        ts = 1
         @show "forc"
-        @time f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_t)
+        @time f = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, 1, f_one)
         println("-------------")
         @show "each model"
         @time out = runModels!(out, f, forward_models, tem_helpers, tem_helpers.vals.debug_model)
@@ -191,7 +189,7 @@ function timeLoopForward!(loc_output,
         @time out = runModels!(out, f, forward_models, tem_helpers)
         println("-------------")
         @show "out"
-        @time setOutputT!(loc_output, out, tem_helpers.vals.output_vars, ts)
+        @time setOutputT!(loc_output, out, tem_helpers.vals.output_vars, 1)
         println("-------------")
     else
         for ts ∈ 1:time_steps
@@ -215,7 +213,7 @@ function coreEcosystem!(loc_output,
     land_spin_now = land_prec
     # land_spin_now = land_init
 
-    if tem_helpers.run.run_spinup
+    if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
