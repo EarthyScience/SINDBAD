@@ -30,7 +30,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
         (p_kFC, p_kSat, p_wSat) ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
-        unsatK ∈ land.soilProperties
+        unsat_k_model ∈ land.soilProperties
         (𝟘, 𝟙) ∈ helpers.numbers
         n_groundW ∈ land.wCycleBase
     end
@@ -40,7 +40,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
     dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
     k_sat = p_kSat[end] # assume GW is saturated
     k_fc = p_kFC[end] # assume GW is saturated
-    k_unsat = unsatK(land, helpers, lastindex(soilW))
+    k_unsat = unsatK(land, helpers, lastindex(soilW), unsat_k_model)
 
     # get the capillary flux
     c_flux = sqrt(k_unsat * k_sat) * (one(dosSoilend) - dosSoilend)
@@ -93,7 +93,7 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  - land.fluxes.gw_capillary_flux: capillary flux

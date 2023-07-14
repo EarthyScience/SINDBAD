@@ -101,7 +101,7 @@
       "approach": "mult"
     },
     "gppDiffRadiation": {
-      "approach": "Wang2015"
+      "approach": "none"
     },
     "gppDirRadiation": {
       "approach": "none"
@@ -224,7 +224,7 @@
         }
       },
       "combine": "cEco",
-      "state_variables": { "Δ": 0.0 }
+      "state_variables": {}
     }
   }
 }
