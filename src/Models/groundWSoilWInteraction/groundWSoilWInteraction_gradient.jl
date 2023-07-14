@@ -3,13 +3,13 @@ export groundWSoilWInteraction_gradient
 #! format: off
 @bounds @describe @units @with_kw struct groundWSoilWInteraction_gradient{T1,T2} <: groundWSoilWInteraction
     smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
-    maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
+    max_flux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 #! format: on
 
-function compute(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
+function compute(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_gradient o
+    @unpack_groundWSoilWInteraction_gradient p_struct
     ## unpack land variables
     @unpack_land begin
         p_wSat ∈ land.soilWBase
@@ -24,25 +24,25 @@ function compute(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
     tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - soilW[end] / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
     # scale gradient with pot flux rate to get pot flux
-    potFlux = tmp_gradient * maxFlux # need to make sure that the flux does not overflow | underflow storages
+    pot_flux = tmp_gradient * max_flux # need to make sure that the flux does not overflow | underflow storages
 
     # adjust the pot flux to what is there
-    tmp = min(potFlux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
-    gwCapFlow = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
+    tmp = min(pot_flux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
+    gw_capillary_flux = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # adjust the delta storages
-    ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
-    ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
+    ΔgroundW .= ΔgroundW .- gw_capillary_flux / length(groundW)
+    ΔsoilW[end] = ΔsoilW[end] + gw_capillary_flux
 
     ## pack land variables
     @pack_land begin
-        gwCapFlow => land.fluxes
+        gw_capillary_flux => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land
 end
 
-function update(o::groundWSoilWInteraction_gradient, forcing, land, helpers)
+function update(p_struct::groundWSoilWInteraction_gradient, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (soilW, groundW) ∈ land.pools

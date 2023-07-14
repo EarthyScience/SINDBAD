@@ -7,67 +7,68 @@ export snowMelt_TairRn
 end
 #! format: on
 
-function define(o::snowMelt_TairRn, forcing, land, helpers)
+function define(p_struct::snowMelt_TairRn, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
         𝟘 ∈ helpers.numbers
     end
     # potential snow melt if T > 0.0 deg C
-    potMelt = 𝟘
-    snowMelt = 𝟘
+    potential_snow_melt = 𝟘
+    snow_melt = 𝟘
     # a Water Balance Pool variable that tracks how much water is still "available"
-    WBP = WBP + snowMelt
+    WBP = WBP + snow_melt
     ## pack land variables
     @pack_land begin
-        snowMelt => land.fluxes
-        potMelt => land.snowMelt
+        snow_melt => land.fluxes
+        potential_snow_melt => land.snowMelt
         WBP => land.states
     end
     return land
 end
 
-function compute(o::snowMelt_TairRn, forcing, land, helpers)
+function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_snowMelt_TairRn o
+    @unpack_snowMelt_TairRn p_struct
     @unpack_forcing (Rn, Tair) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, snowFraction) ∈ land.states
+        (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
 
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
     # @show Tair, melt_T
     tmp_T = Tair * melt_T
-    tmp_Rn = max(Rn * melt_Rn, 𝟘)
-    potMelt = (tmp_T + tmp_Rn) * snowFraction
+    tmp_Rn = max_0(Rn * melt_Rn)
+    potential_snow_melt = (tmp_T + tmp_Rn) * frac_snow
 
     # potential snow melt if T > 0.0 deg C
-    potMelt = Tair > 𝟘 ? potMelt : 𝟘
-    snowMelt = min(addS(snowW, ΔsnowW), potMelt)
+    potential_snow_melt = Tair > 𝟘 ? potential_snow_melt : zero(potential_snow_melt)
+    snow_melt = min(addS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers
-    ΔsnowW = add_to_each_elem(ΔsnowW, -snowMelt / length(snowW))
+    ΔsnowW = add_to_each_elem(ΔsnowW, -snow_melt / n_snowW)
 
     # a Water Balance Pool variable that tracks how much water is still "available"
-    WBP = WBP + snowMelt
+    WBP = WBP + snow_melt
 
     ## pack land variables
     @pack_land begin
-        snowMelt => land.fluxes
-        potMelt => land.snowMelt
+        snow_melt => land.fluxes
+        potential_snow_melt => land.snowMelt
         WBP => land.states
         ΔsnowW => land.states
     end
     return land
 end
 
-function update(o::snowMelt_TairRn, forcing, land, helpers)
-    @unpack_snowMelt_TairRn o
+function update(p_struct::snowMelt_TairRn, forcing, land, helpers)
+    @unpack_snowMelt_TairRn p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -83,7 +84,7 @@ function update(o::snowMelt_TairRn, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        # snowW => land.pools
+        snowW => land.pools
         ΔsnowW => land.states
     end
     return land
@@ -104,12 +105,12 @@ Calculate snowmelt and update s.w.wsnow using snowMelt_TairRn
  - forcing.Rn: net radiation [MJ/m2/day]
  - forcing.Tair: temperature [C]
  - info structure
- - land.snowMelt.potMelt : potential snow melt based on temperature & net radiation [mm/time]
- - land.states.snowFraction : snow cover fraction []
+ - land.snowMelt.potential_snow_melt : potential snow melt based on temperature & net radiation [mm/time]
+ - land.states.frac_snow : snow cover fraction []
 
 *Outputs*
  - land.fluxes.snowMelt : snow melt [mm/time]
- - land.snowMelt.potMelt: potential snow melt [mm/time]
+ - land.snowMelt.potential_snow_melt: potential snow melt [mm/time]
 
 # update
 

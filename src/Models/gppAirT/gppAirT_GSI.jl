@@ -11,54 +11,54 @@ export gppAirT_GSI
 end
 #! format: on
 
-function define(o::gppAirT_GSI, forcing, land, helpers)
+function define(p_struct::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppAirT_GSI o
+    @unpack_gppAirT_GSI p_struct
     @unpack_land 𝟙 ∈ helpers.numbers
 
-    cScGPP_prev = 𝟙
-    hScGPP_prev = 𝟙
+    gpp_f_airT_c = 𝟙
+    gpp_f_airT_h = 𝟙
     f_smooth =
         (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p +
                                       τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
 
     ## pack land variables
-    @pack_land (cScGPP_prev, hScGPP_prev, f_smooth) => land.gppAirT
+    @pack_land (gpp_f_airT_c, gpp_f_airT_h, f_smooth) => land.gppAirT
     return land
 end
 
-function compute(o::gppAirT_GSI, forcing, land, helpers)
+function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_GSI o
+    @unpack_gppAirT_GSI p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (cScGPP_prev, hScGPP_prev, f_smooth) ∈ land.gppAirT
+        (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ∈ land.gppAirT
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
-    f_c_prev = cScGPP_prev
+    f_c_prev = gpp_f_airT_c
     fT_c = f_smooth(f_c_prev, Tair, fT_c_τ, fT_c_slope, fT_c_base)
-    cScGPP = clamp(fT_c, 𝟘, 𝟙)
+    cScGPP = clamp_01(fT_c)
 
-    f_h_prev = hScGPP_prev
+    f_h_prev = gpp_f_airT_h
     fT_h = f_smooth(f_h_prev, Tair, fT_h_τ, -fT_h_slope, fT_h_base)
-    hScGPP = clamp(fT_h, 𝟘, 𝟙)
+    hScGPP = clamp_01(fT_h)
 
-    TempScGPP = min(cScGPP, hScGPP)
+    gpp_f_airT = min(cScGPP, hScGPP)
 
-    cScGPP_prev = cScGPP
-    hScGPP_prev = hScGPP
+    gpp_f_airT_c = cScGPP
+    gpp_f_airT_h = hScGPP
 
     ## pack land variables
-    @pack_land (TempScGPP, cScGPP, hScGPP, cScGPP_prev, hScGPP_prev) => land.gppAirT
+    @pack_land (gpp_f_airT, cScGPP, hScGPP, gpp_f_airT_c, gpp_f_airT_h) => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress on gppPot based on GSI implementation of LPJ
+temperature stress on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
 $(PARAMFIELDS)
@@ -73,7 +73,7 @@ Effect of temperature using gppAirT_GSI
  - fT_c_τ: contribution of current time step
 
 *Outputs*
- - land.gppAirT.TempScGPP: light effect on GPP between 0-1
+ - land.gppAirT.gpp_f_airT: light effect on GPP between 0-1
 
 ---
 

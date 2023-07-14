@@ -20,7 +20,7 @@ export PET_Lu2005
 end
 #! format: on
 
-function define(o::PET_Lu2005, forcing, land, helpers)
+function define(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
     @unpack_forcing Tair ∈ forcing
     PET = helpers.numbers.𝟘
@@ -32,9 +32,9 @@ function define(o::PET_Lu2005, forcing, land, helpers)
     return land
 end
 
-function compute(o::PET_Lu2005, forcing, land, helpers)
+function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack parameters
-    @unpack_PET_Lu2005 o
+    @unpack_PET_Lu2005 p_struct
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
 
@@ -66,7 +66,7 @@ function compute(o::PET_Lu2005, forcing, land, helpers)
     G = G_base * (ΔTair) / Δt
     G = 𝟘 #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
     PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
-    PET = max(PET, 𝟘)
+    PET = max_0(PET)
 
     Tair_prev = Tair
 

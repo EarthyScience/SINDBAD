@@ -7,41 +7,41 @@ export rootFraction_k2Layer
 end
 #! format: on
 
-function define(o::rootFraction_k2Layer, forcing, land, helpers)
-    @unpack_rootFraction_k2Layer o
+function define(p_struct::rootFraction_k2Layer, forcing, land, helpers)
+    @unpack_rootFraction_k2Layer p_struct
 
     ## precomputations/check
 
-    # check if the number of soil layers is equal to 2 
+    # check if the number of soil layers is equal to 2
     if length(land.pools.soilW) != 2
         error("rootFraction_k2Layer approach works for 2 soil layers only.")
     end
-    # create the arrays to fill in the soil properties 
-    p_fracRoot2SoilD = ones(helpers.numbers.numType, length(land.pools.soilW))
+    # create the arrays to fill in the soil properties
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land (p_fracRoot2SoilD) => land.rootFraction
+    @pack_land (p_frac_root_to_soil_depth) => land.rootFraction
     return land
 end
 
-function compute(o::rootFraction_k2Layer, forcing, land, helpers)
+function compute(p_struct::rootFraction_k2Layer, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootFraction_k2Layer o
+    @unpack_rootFraction_k2Layer p_struct
 
     ## unpack land variables
-    @unpack_land (p_fracRoot2SoilD) ∈ land.rootFraction
+    @unpack_land (p_frac_root_to_soil_depth) ∈ land.rootFraction
 
     ## calculate variables
     k1RootFrac = k1 # the fraction of water that a root can uptake from the 1st soil layer
     k2RootFrac = k2 # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
-    p_fracRoot2SoilD[1] = p_fracRoot2SoilD[1] * k1RootFrac
+    p_frac_root_to_soil_depth[1] = p_frac_root_to_soil_depth[1] * k1RootFrac
     # 2nd Layer
-    p_fracRoot2SoilD[2] = p_fracRoot2SoilD[2] * k2RootFrac
+    p_frac_root_to_soil_depth[2] = p_frac_root_to_soil_depth[2] * k2RootFrac
 
     ## pack land variables
-    @pack_land p_fracRoot2SoilD => land.rootFraction
+    @pack_land p_frac_root_to_soil_depth => land.rootFraction
     return land
 end
 
@@ -60,7 +60,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
+ - land.rootFraction.p_frac_root_to_soil_depth as nPix;nZix for soilW
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootFraction_k2Layer

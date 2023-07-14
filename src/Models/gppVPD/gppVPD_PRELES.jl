@@ -9,37 +9,37 @@ export gppVPD_PRELES
 end
 #! format: on
 
-function define(o::gppVPD_PRELES, forcing, land, helpers)
-    VPDScGPP = helpers.numbers.𝟙
+function define(p_struct::gppVPD_PRELES, forcing, land, helpers)
+    gpp_f_vpd = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land VPDScGPP => land.gppVPD
+    @pack_land gpp_f_vpd => land.gppVPD
     return land
 end
 
-function compute(o::gppVPD_PRELES, forcing, land, helpers)
+function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_PRELES o
+    @unpack_gppVPD_PRELES p_struct
     @unpack_forcing VPDDay ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        ambCO2 ∈ land.states
+        ambient_CO2 ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
-    fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambCO2)^-Cκ)
-    fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
-    VPDScGPP = clamp(fVPD_VPD * fCO2_CO2, 𝟘, 𝟙)
+    fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambient_CO2)^-Cκ)
+    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
+    gpp_f_vpd = clamp_01(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables
-    @pack_land VPDScGPP => land.gppVPD
+    @pack_land gpp_f_vpd => land.gppVPD
     return land
 end
 
 @doc """
-VPD stress on gppPot based on Maekelae2008 and with co2 effect based on PRELES model
+VPD stress on gpp_potential based on Maekelae2008 and with co2 effect based on PRELES model
 
 # Parameters
 $(PARAMFIELDS)
@@ -56,7 +56,7 @@ Vpd effect using gppVPD_PRELES
  - κ: parameter of the exponential decay function of GPP with  VPD [kPa-1] dimensionless [0.06 0.7]; median !0.4, same as k from  Maekaelae 2008
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
+ - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 

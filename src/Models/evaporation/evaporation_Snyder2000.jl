@@ -6,9 +6,9 @@ export evaporation_Snyder2000
     β::T2 = 3.0 | (1.0, 5.0) | "soil moisture resistance factor for soil evapotranspiration" | "mm^0.5"
 end
 #! format: on
-function define(o::evaporation_Snyder2000, forcing, land, helpers)
+function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 o
+    @unpack_evaporation_Snyder2000 p_struct
 
     ## unpack land variables
     @unpack_land 𝟘 ∈ helpers.numbers
@@ -22,10 +22,10 @@ function define(o::evaporation_Snyder2000, forcing, land, helpers)
     return land
 end
 
-function compute(o::evaporation_Snyder2000, forcing, land, helpers)
+function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     #@needscheck
     ## unpack parameters
-    @unpack_evaporation_Snyder2000 o
+    @unpack_evaporation_Snyder2000 p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -38,7 +38,7 @@ function compute(o::evaporation_Snyder2000, forcing, land, helpers)
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
     PET = PET * α * (𝟙 - fAPAR)
-    PET = max(PET, 𝟘)
+    PET = max_0(PET)
 
     sET = 𝟘
     # get the soil moisture available PET scaled by α & a proxy of vegetation cover
@@ -71,8 +71,8 @@ function compute(o::evaporation_Snyder2000, forcing, land, helpers)
     return land
 end
 
-function update(o::evaporation_Snyder2000, forcing, land, helpers)
-    @unpack_evaporation_bareFraction o
+function update(p_struct::evaporation_Snyder2000, forcing, land, helpers)
+    @unpack_evaporation_bareFraction p_struct
 
     ## unpack variables
     @unpack_land begin

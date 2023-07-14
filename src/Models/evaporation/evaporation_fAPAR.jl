@@ -3,13 +3,13 @@ export evaporation_fAPAR
 #! format: off
 @bounds @describe @units @with_kw struct evaporation_fAPAR{T1,T2} <: evaporation
     α::T1 = 1.0 | (0.1, 3.0) | "α coefficient of Priestley-Taylor formula for soil" | ""
-    supLim::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
+    k_evaporation::T2 = 0.2 | (0.05, 0.95) | "fraction of soil water that can be used for soil evaporation" | "1/time"
 end
 #! format: on
 
-function compute(o::evaporation_fAPAR, forcing, land, helpers)
+function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_fAPAR o
+    @unpack_evaporation_fAPAR p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -21,24 +21,24 @@ function compute(o::evaporation_fAPAR, forcing, land, helpers)
     end
     # multiply equilibrium PET with αSoil & [1.0 - fAPAR] to get potential soil evap
     tmp = PET * α * (𝟙 - fAPAR)
-    PETsoil = max(tmp, 𝟘)
+    PET_evaporation = max_0(tmp)
     # scale the potential with the a fraction of available water & get the minimum of the current moisture
-    evaporation = min(PETsoil, supLim * (soilW[1] + ΔsoilW[1]))
+    evaporation = min(PET_evaporation, k_evaporation * (soilW[1] + ΔsoilW[1]))
 
     # update soil moisture changes
     @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
 
     ## pack land variables
     @pack_land begin
-        PETsoil => land.evaporation
+        PET_evaporation => land.evaporation
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
     return land
 end
 
-function update(o::evaporation_fAPAR, forcing, land, helpers)
-    @unpack_evaporation_bareFraction o
+function update(p_struct::evaporation_fAPAR, forcing, land, helpers)
+    @unpack_evaporation_bareFraction p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -94,7 +94,7 @@ update pools and states in evaporation_fAPAR
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.vegFraction  
+ - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
 *Created by:*
  - mjung
