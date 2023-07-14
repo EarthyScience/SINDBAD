@@ -54,8 +54,8 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         p_A = SVector{length(p_A)}(p_A)
     end
 
-    # fWfTfR_prev = 𝟙
-    fWfTfR_prev = addS(land.pools.soilW) / land.soilWBase.s_wSat
+    # eco_stressor_prev = 𝟙
+    eco_stressor_prev = addS(land.pools.soilW) / land.soilWBase.s_wSat
     ## pack land variables
     # dummy init
     # leaf_to_reserve = 𝟙
@@ -72,8 +72,8 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
     # slope_eco_stressor = 𝟙
 
     @pack_land begin
-        (p_A_ind, fWfTfR_prev, aSrc, aTrg) => land.cFlow
-        # (p_A, fWfTfR_prev, ndxSrc, ndxTrg, c_taker, c_giver) => land.cFlow
+        (p_A_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
+        # (p_A, eco_stressor_prev, ndxSrc, ndxTrg, c_taker, c_giver) => land.cFlow
         p_A => land.states
     end
 
@@ -99,7 +99,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI p_struct
     ## unpack land variables
     @unpack_land begin
-        (fWfTfR_prev, p_A_ind, aSrc, aTrg) ∈ land.cFlow
+        (eco_stressor_prev, p_A_ind, aSrc, aTrg) ∈ land.cFlow
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
         c_allocation_f_cloud ∈ land.cAllocationRadiation
@@ -110,12 +110,12 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     # Compute sigmoid functions
     # LPJ-GSI formulation: In GSI; the stressors are smoothened per control variable. That means; gppfsoilW; fTair; and fRdiff should all have a GSI approach for 1:1 conversion. For now; the function below smoothens the combined stressors; & then calculates the slope for allocation
     # current time step before smoothing
-    f_tmp = c_allocation_f_soilW * c_allocation_f_soilT * c_allocation_f_cloud
+    eco_stressor_now = c_allocation_f_soilW * c_allocation_f_soilT * c_allocation_f_cloud
 
     # get the smoothened stressor based on contribution of previous steps using ARMA-like formulation
-    eco_stressor = (𝟙 - f_τ) * fWfTfR_prev + f_τ * f_tmp
+    eco_stressor = (𝟙 - f_τ) * eco_stressor_prev + f_τ * eco_stressor_now
 
-    slope_eco_stressor = eco_stressor - fWfTfR_prev
+    slope_eco_stressor = eco_stressor - eco_stressor_prev
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
@@ -191,7 +191,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     reserve_to_root = reserve_to_root_frac
     leaf_to_reserve_frac = leaf_to_reserve_frac # should it be divided by 2?
 
-    fWfTfR_prev = eco_stressor
+    eco_stressor_prev = eco_stressor
 
     ## pack land variables
     @pack_land begin
@@ -207,7 +207,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
             k_shedding_root,
             k_shedding_root_frac,
             slope_eco_stressor,
-            fWfTfR_prev) => land.cFlow
+            eco_stressor_prev) => land.cFlow
         (p_A, p_k) => land.states
     end
     return land
