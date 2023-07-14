@@ -6,27 +6,27 @@ export gppSoilW_CASA
 end
 #! format: on
 
-function define(o::gppSoilW_CASA, forcing, land, helpers)
+function define(p_struct::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
         𝟘 ∈ helpers.numbers
     end
-    SMScGPP_prev = 𝟘
+    gpp_f_soilW_prev = 𝟘
 
     ## pack land variables
-    @pack_land SMScGPP_prev => land.gppSoilW
+    @pack_land gpp_f_soilW_prev => land.gppSoilW
     return land
 end
 
-function compute(o::gppSoilW_CASA, forcing, land, helpers)
+function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppSoilW_CASA o
+    @unpack_gppSoilW_CASA p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        SMScGPP_prev ∈ land.gppSoilW
+        gpp_f_soilW_prev ∈ land.gppSoilW
         PAW ∈ land.vegAvailableWater
         PET ∈ land.PET
         (𝟘, 𝟙) ∈ helpers.numbers
@@ -36,17 +36,17 @@ function compute(o::gppSoilW_CASA, forcing, land, helpers)
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    SMScGPP = clamp_01((Tair > 𝟘) & (PET > 𝟘) ? We : SMScGPP_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
+    gpp_f_soilW = clamp_01((Tair > 𝟘) & (PET > 𝟘) ? We : gpp_f_soilW_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
 
-    SMScGPP_prev = SMScGPP
+    gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables
-    @pack_land (OmBweOPET, SMScGPP, SMScGPP_prev) => land.gppSoilW
+    @pack_land (OmBweOPET, gpp_f_soilW, gpp_f_soilW_prev) => land.gppSoilW
     return land
 end
 
 @doc """
-soil moisture stress on gppPot based on base stress and relative ratio of PET and PAW (CASA)
+soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA)
 
 # Parameters
 $(PARAMFIELDS)
@@ -60,7 +60,7 @@ $(PARAMFIELDS)
  - land.PET.PET: potential ET
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+ - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

@@ -2,7 +2,7 @@ export runoffInfiltrationExcess_Jung
 
 struct runoffInfiltrationExcess_Jung <: runoffInfiltrationExcess end
 
-function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
+function compute(p_struct::runoffInfiltrationExcess_Jung, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -19,12 +19,12 @@ function compute(o::runoffInfiltrationExcess_Jung, forcing, land, helpers)
     InfExcess =
         rain - (rain * fAPAR +
                 (𝟙 - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
-    runoffInfExc = rain > 𝟘 ? InfExcess : zero(InfExcess)
-    WBP = WBP - runoffInfExc
+    inf_excess_runoff = rain > 𝟘 ? InfExcess : zero(InfExcess)
+    WBP = WBP - inf_excess_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffInfExc => land.fluxes
+        inf_excess_runoff => land.fluxes
         WBP => land.states
     end
     return land

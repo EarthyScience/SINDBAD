@@ -2,13 +2,13 @@ export snowFraction_none
 
 struct snowFraction_none <: snowFraction end
 
-function define(o::snowFraction_none, forcing, land, helpers)
+function define(p_struct::snowFraction_none, forcing, land, helpers)
 
     ## calculate variables
-    snowFraction = helpers.numbers.𝟘
+    frac_snow = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land snowFraction => land.states
+    @pack_land frac_snow => land.states
     return land
 end
 

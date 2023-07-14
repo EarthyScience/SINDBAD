@@ -16,10 +16,10 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
@@ -33,8 +33,7 @@ f_one = prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -50,11 +49,11 @@ forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 #pprint(forcing)
 
 # Instantiate land components
-land = createLandInit(info.pools, info.tem)
+land = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 helpers = info.tem.helpers;
 tem = info.tem;
 # helpers = (; numbers =(; 𝟘 = 0.0f0),  # type that zero with \bbzero [TAB]
-#     dates = (; nStepsDay=1),
+#     dates = (; timesteps_in_day=1),
 #     run = (; output_all=true, runSpinup=false),
 #     );
 # tem = (;x

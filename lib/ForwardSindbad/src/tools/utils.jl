@@ -1,4 +1,4 @@
-export nanmax, nanmin
+export nanmax, nanmin, nanmean
 export landWrapper
 
 """
@@ -14,6 +14,14 @@ nanmax(dat) = maximum(filter(!isnan, dat))
 Calculate the minimum of an array while skipping nan
 """
 nanmin(dat) = minimum(filter(!isnan, dat))
+
+
+"""
+    nanmean(dat) = mean(dat[.!isnan.(dat)])
+
+Calculate the mean of an array while skipping nan
+"""
+nanmean(dat) = mean(filter(!isnan, dat))
 
 """
     landWrapper{S}
@@ -42,11 +50,11 @@ end
 Base.size(a::ArrayView) = size(a.s)
 Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
 Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
-Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
-Base.keys(o::landWrapper) = propertynames(o)
-Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
-function Base.propertynames(o::GroupView)
+Base.propertynames(p_struct::landWrapper) = propertynames(first(getfield(o, :s)))
+Base.keys(p_struct::landWrapper) = propertynames(o)
+Base.getindex(p_struct::landWrapper, s::Symbol) = getproperty(o, s)
+function Base.propertynames(p_struct::GroupView)
     return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
 end
-Base.keys(o::GroupView) = propertynames(o)
-Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
+Base.keys(p_struct::GroupView) = propertynames(o)
+Base.getindex(p_struct::GroupView, i::Symbol) = getproperty(o, i)

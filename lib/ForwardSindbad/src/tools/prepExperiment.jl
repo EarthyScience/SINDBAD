@@ -42,18 +42,18 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "prepExperimentForward: getting experiment info..."
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
-    if info.tem.helpers.run.saveInfo
+    if info.tem.helpers.run.save_info
         @info "prepExperimentForward: saving info..."
         @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
     end
 
-    if info.tem.helpers.run.catchErrors
+    if info.tem.helpers.run.catch_model_errors
         @info "prepExperimentForward: setting error catcher..."
         Sindbad.eval(:(error_catcher = []))
     end
     println("----------------------------------------------")
     @info "prepExperimentForward: get forcing data..."
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
     println("----------------------------------------------")
 
@@ -74,6 +74,6 @@ function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 
     @info "runExperiment: get observations..."
     println("----------------------------------------------")
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     return info, forcing, output, observations
 end

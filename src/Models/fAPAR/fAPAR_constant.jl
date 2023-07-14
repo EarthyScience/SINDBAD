@@ -2,28 +2,28 @@ export fAPAR_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct fAPAR_constant{T1} <: fAPAR
-    constantfAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
+    constant_fAPAR::T1 = 0.2 | (0.0, 1.0) | "a constant fAPAR" | ""
 end
 #! format: on
 
-function define(o::fAPAR_constant, forcing, land, helpers)
+function define(p_struct::fAPAR_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_fAPAR_constant o
+    @unpack_fAPAR_constant p_struct
 
     ## calculate variables
-    fAPAR = constantfAPAR
+    fAPAR = constant_fAPAR
 
     ## pack land variables
     @pack_land fAPAR => land.states
     return land
 end
 
-function compute(o::fAPAR_constant, forcing, land, helpers)
+function compute(p_struct::fAPAR_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_fAPAR_constant o
+    @unpack_fAPAR_constant p_struct
 
     ## calculate variables
-    fAPAR = constantfAPAR
+    fAPAR = constant_fAPAR
 
     ## pack land variables
     @pack_land fAPAR => land.states

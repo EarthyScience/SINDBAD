@@ -2,19 +2,19 @@ export gppVPD_none
 
 struct gppVPD_none <: gppVPD end
 
-function define(o::gppVPD_none, forcing, land, helpers)
+function define(p_struct::gppVPD_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    VPDScGPP = helpers.numbers.𝟙
+    gpp_f_vpd = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land VPDScGPP => land.gppVPD
+    @pack_land gpp_f_vpd => land.gppVPD
     return land
 end
 
 @doc """
-sets the VPD stress on gppPot to one (no stress)
+sets the VPD stress on gpp_potential to one (no stress)
 
 ---
 
@@ -24,7 +24,7 @@ sets the VPD stress on gppPot to one (no stress)
  - helpers
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
+ - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppVPD_none

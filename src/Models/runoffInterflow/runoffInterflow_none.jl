@@ -2,13 +2,13 @@ export runoffInterflow_none
 
 struct runoffInterflow_none <: runoffInterflow end
 
-function define(o::runoffInterflow_none, forcing, land, helpers)
+function define(p_struct::runoffInterflow_none, forcing, land, helpers)
 
     ## calculate variables
-    runoffInterflow = helpers.numbers.𝟘
+    interflow_runoff = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land runoffInterflow => land.fluxes
+    @pack_land interflow_runoff => land.fluxes
     return land
 end
 

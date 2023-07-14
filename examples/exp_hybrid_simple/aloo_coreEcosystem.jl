@@ -1,12 +1,12 @@
 using Sindbad, ForwardSindbad, OptimizeSindbad
 
-experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
+experiment_json = "../exp_hybrid_simple/settings_hybrid_simple/experiment.json"
 info = getExperimentInfo(experiment_json);
 info, forcing = getForcing(info, Val{:zarr}());
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 
@@ -20,33 +20,33 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
 
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -76,7 +76,6 @@ loc_forcing = loc_forcings[1];
 
 # res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
 res_vec = Vector{typeof(loc_land_init)}(undef, info.tem.helpers.dates.size);
-# res_vec = SVector{typeof(loc_land_init)}[loc_land_init for _ in info.tem.helpers.dates.vector];
 # res_vec = [loc_land_init for _ in info.tem.helpers.dates.vector];
 @time big_land = ForwardSindbad.coreEcosystem(
     forward,
@@ -112,7 +111,7 @@ function get_loc_loss(
         f_one)
     # model_data = (; gpp = gpp)
     lossVec = getLossVectorArray(loc_obs, big_land, tem_optim)
-    t_loss = combineLossArray(lossVec, tem_optim.multiConstraintMethod)
+    t_loss = combineLossArray(lossVec, tem_optim.multi_constraint_method)
     return t_loss
 end
 
@@ -158,10 +157,10 @@ function loc_loss(upVector, forward, res_vec, loc_obs,
 end
 
 
-upVectType = [typeof(tblParams.defaults)];
+upVectType = [typeof(tblParams.default)];
 loc_land_init_a = [loc_land_init];
 res_vec = Vector{Any}(undef, info.tem.helpers.dates.size);
-loc_loss(ForwardDiff.Dual.(tblParams.defaults), forward, res_vec, loc_obs,
+loc_loss(ForwardDiff.Dual.(tblParams.default), forward, res_vec, loc_obs,
     loc_forcing,
     tem_helpers,
     tem_spinup,
@@ -180,4 +179,4 @@ fg(x) = loc_loss(x, forward, res_vec, loc_obs,
     tem_optim,
     loc_land_init_a,
     f_one, upVectType)
-@time grad = ForwardDiff.gradient(fg, tblParams.defaults)
+@time grad = ForwardDiff.gradient(fg, tblParams.default)

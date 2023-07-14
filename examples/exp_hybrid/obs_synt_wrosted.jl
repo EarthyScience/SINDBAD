@@ -3,13 +3,13 @@ experiment_json = "../exp_hybrid/settings_gradWroasted/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 info, forcing = getForcing(info, Val{:zarr}());
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
