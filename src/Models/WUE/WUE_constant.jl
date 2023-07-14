@@ -2,16 +2,16 @@ export WUE_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct WUE_constant{T1} <: WUE
-    constantWUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
+    constant_WUE::T1 = 4.1 | (1.0, 10.0) | "mean FluxNet WUE" | "gC/mmH2O"
 end
 #! format: on
 
-function compute(o::WUE_constant, forcing, land, helpers)
+function compute(p_struct::WUE_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_WUE_constant o
+    @unpack_WUE_constant p_struct
 
     ## calculate variables
-    AoE = constantWUE
+    AoE = constant_WUE
 
     ## pack land variables
     @pack_land AoE => land.WUE

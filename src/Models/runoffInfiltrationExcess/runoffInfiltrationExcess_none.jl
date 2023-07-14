@@ -2,13 +2,13 @@ export runoffInfiltrationExcess_none
 
 struct runoffInfiltrationExcess_none <: runoffInfiltrationExcess end
 
-function define(o::runoffInfiltrationExcess_none, forcing, land, helpers)
+function define(p_struct::runoffInfiltrationExcess_none, forcing, land, helpers)
 
     ## calculate variables
-    runoffInfExc = helpers.numbers.𝟘
+    inf_excess_runoff = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land runoffInfExc => land.fluxes
+    @pack_land inf_excess_runoff => land.fluxes
     return land
 end
 

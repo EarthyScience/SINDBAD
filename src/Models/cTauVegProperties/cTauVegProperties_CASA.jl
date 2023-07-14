@@ -2,38 +2,38 @@ export cTauVegProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cTauVegProperties_CASA{T1,T2,T3,T4,T5,T6,T7} <: cTauVegProperties
-    LIGNIN_per_PFT::T1 = Float64[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | nothing | "fraction of litter that is lignin" | ""
-    NONSOL2SOLLIGNIN::T2 = 2.22 | nothing | "" | ""
-    MTFA::T3 = 0.85 | nothing | "" | ""
-    MTFB::T4 = 0.018 | nothing | "" | ""
-    C2LIGNIN::T5 = 0.65 | nothing | "" | ""
-    LIGEFFA::T6 = 3.0 | nothing | "" | ""
-    LITC2N_per_PFT::T7 = Float64[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | nothing | "carbon-to-nitrogen ratio in litter" | ""
+    LIGNIN_per_PFT::T1 = Float64[0.2, 0.2, 0.22, 0.25, 0.2, 0.15, 0.1, 0.0, 0.2, 0.15, 0.15, 0.1] | (nothing, nothing) | "fraction of litter that is lignin" | ""
+    NONSOL2SOLLIGNIN::T2 = 2.22 | (nothing, nothing) | "" | ""
+    MTFA::T3 = 0.85 | (nothing, nothing) | "" | ""
+    MTFB::T4 = 0.018 | (nothing, nothing) | "" | ""
+    C2LIGNIN::T5 = 0.65 | (nothing, nothing) | "" | ""
+    LIGEFFA::T6 = 3.0 | (nothing, nothing) | "" | ""
+    LITC2N_per_PFT::T7 = Float64[40.0, 50.0, 65.0, 80.0, 50.0, 50.0, 50.0, 0.0, 65.0, 50.0, 50.0, 40.0] | (nothing, nothing) | "carbon-to-nitrogen ratio in litter" | ""
 end
 #! format: on
 
-function define(o::cTauVegProperties_CASA, forcing, land, helpers)
-    @unpack_cTauVegProperties_CASA o
+function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
+    @unpack_cTauVegProperties_CASA p_struct
 
-    @unpack_land (𝟘, numType) ∈ helpers.numbers
+    @unpack_land (𝟘, num_type) ∈ helpers.numbers
 
     ## instantiate variables
-    p_kfVeg = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #sujan
+    p_k_f_veg_props = zero(land.pools.cEco) .+ helpers.numbers.𝟙 #sujan
     annk = 𝟘#sujan ones(size(AGE))
 
     ## pack land variables
-    @pack_land (p_kfVeg, annk) => land.cTauVegProperties
+    @pack_land (p_k_f_veg_props, annk) => land.cTauVegProperties
     return land
 end
 
-function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauVegProperties_CASA o
+    @unpack_cTauVegProperties_CASA p_struct
 
     ## unpack land variables
     @unpack_land begin
         PFT ∈ land.vegProperties
-        (p_kfVeg, annk) ∈ land.cTauVegProperties
+        (p_k_f_veg_props, annk) ∈ land.cTauVegProperties
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
@@ -43,7 +43,7 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
     p_C2LIGNIN = C2LIGNIN #sujan
     ## adjust the annk that are pft dependent directly on the p matrix
     pftVec = unique(PFT)
-    # AGE = zeros(numType, length(land.pools.cEco)); #sujan
+    # AGE = zero(land.pools.cEco); #sujan
     for cpN ∈ (:cVegRootF, :cVegRootC, :cVegWood, :cVegLeaf)
         # get average age from parameters
         AGE = 𝟘 #sujan
@@ -77,13 +77,13 @@ function compute(o::cTauVegProperties_CASA, forcing, land, helpers)
     # DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
     p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
     # feed the output
-    p_kfVeg[helpers.pools.zix.cLitLeafS] = p_LIGEFF
-    p_kfVeg[helpers.pools.zix.cLitRootFS] = p_LIGEFF
+    p_k_f_veg_props[helpers.pools.zix.cLitLeafS] = p_LIGEFF
+    p_k_f_veg_props[helpers.pools.zix.cLitRootFS] = p_LIGEFF
 
     ## pack land variables
     @pack_land begin
         p_annk => land.cCycleBase
-        (p_C2LIGNIN, p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_kfVeg) =>
+        (p_C2LIGNIN, p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_k_f_veg_props) =>
             land.cTauVegProperties
     end
     return land
@@ -109,7 +109,7 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.cTauVegProperties.p_LITC2N:
  - land.cTauVegProperties.p_MTF:
  - land.cTauVegProperties.p_SCLIGNIN:
- - land.cTauVegProperties.p_kfVeg:
+ - land.cTauVegProperties.p_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

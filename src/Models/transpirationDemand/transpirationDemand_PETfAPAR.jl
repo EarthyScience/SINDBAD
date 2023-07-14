@@ -6,19 +6,19 @@ export transpirationDemand_PETfAPAR
 end
 #! format: on
 
-function compute(o::transpirationDemand_PETfAPAR, forcing, land, helpers)
+function compute(p_struct::transpirationDemand_PETfAPAR, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationDemand_PETfAPAR o
+    @unpack_transpirationDemand_PETfAPAR p_struct
 
     ## unpack land variables
     @unpack_land begin
         fAPAR ∈ land.states
         PET ∈ land.PET
     end
-    tranDem = PET * α * fAPAR
+    transpiration_demand = PET * α * fAPAR
 
     ## pack land variables
-    @pack_land tranDem => land.transpirationDemand
+    @pack_land transpiration_demand => land.transpirationDemand
     return land
 end
 
@@ -39,7 +39,7 @@ Demand-driven transpiration using transpirationDemand_PETfAPAR
  - α: α parameter for potential transpiration
 
 *Outputs*
- - land.transpirationDemand.tranDem: demand driven transpiration
+ - land.transpirationDemand.transpiration_demand: demand driven transpiration
 
 ---
 

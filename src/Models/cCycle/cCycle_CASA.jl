@@ -2,63 +2,63 @@ export cCycle_CASA, spin_cCycle_CASA
 
 struct cCycle_CASA <: cCycle end
 
-function define(o::cCycle_CASA, forcing, land, helpers)
+function define(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## instantiate variables
-    cEcoEfflux = zeros(numType, length(land.pools.cEco)) #sujan moved from get states
-    cEcoInflux = zeros(numType, length(land.pools.cEco))
-    cEcoFlow = zeros(numType, length(land.pools.cEco))
+    c_efflux = zero(land.pools.cEco) #sujan moved from get states
+    c_eco_influx = zero(land.pools.cEco)
+    c_eco_flow = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land (cEcoEfflux, cEcoInflux, cEcoFlow) => land.cCycle
+    @pack_land (c_efflux, c_eco_influx, c_eco_flow) => land.cCycle
     return land
 end
 
-function compute(o::cCycle_CASA, forcing, land, helpers)
+function compute(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (cEcoEfflux, cEcoInflux, cEcoFlow) ∈ land.cCycle
+    @unpack_land (c_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
 
     ## unpack land variables
     @unpack_land begin
-        (cAlloc, cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) ∈ land.states
+        (c_allocation, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_k_act ∈ land.cTau
         (p_E, p_F, p_giver, p_taker) ∈ land.cFlow
-        (flowOrder, p_annk) ∈ land.cCycleBase
+        (c_flow_order, p_annk) ∈ land.cCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR
     ## these all need to be zeros maybe is taken care automatically
-    cEcoEfflux[!helpers.pools.flags.cVeg] = 0.0
+    c_efflux[!helpers.pools.flags.cVeg] = 0.0
     ## compute losses
-    cEcoOut = min.(cEco, cEco * p_k_act)
+    c_eco_out = min.(cEco, cEco * p_k_act)
     ## gains to vegetation
     zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-    cNPP = gpp .* cAlloc[zix] .- cEcoEfflux[zix]
-    cEcoInflux[zix] .= cNPP
+    c_eco_npp = gpp .* c_allocation[zix] .- c_efflux[zix]
+    c_eco_influx[zix] .= c_eco_npp
     ## flows & losses
     # @nc; if flux order does not matter; remove.
-    for jix ∈ eachindex(flowOrder)
-        taker = p_taker[flowOrder[jix]]
-        giver = p_giver[flowOrder[jix]]
-        flow_tmp = cEcoOut[giver] * p_F(taker, giver)
-        cEcoFlow[taker] = cEcoFlow[taker] + flow_tmp * p_E(taker, giver)
-        cEcoEfflux[giver] = cEcoEfflux[giver] + flow_tmp * (1.0 - p_E(taker, giver))
+    for jix ∈ eachindex(c_flow_order)
+        c_taker = p_taker[c_flow_order[jix]]
+        c_giver = p_giver[c_flow_order[jix]]
+        flow_tmp = c_eco_out[c_giver] * p_F(c_taker, c_giver)
+        c_eco_flow[c_taker] = c_eco_flow[c_taker] + flow_tmp * p_E(c_taker, c_giver)
+        c_efflux[c_giver] = c_efflux[c_giver] + flow_tmp * (1.0 - p_E(c_taker, c_giver))
     end
     ## balance
-    cEco = cEco + cEcoFlow + cEcoInflux - cEcoOut
+    cEco = cEco + c_eco_flow + c_eco_influx - c_eco_out
     ## compute RA & RH
-    cRH = sum(cEcoEfflux[!helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
-    cRA = sum(cEcoEfflux[helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
-    cRECO = cRH + cRA
-    cNPP = sum(cNPP)
-    NEE = cRECO - gpp
+    hetero_respiration = sum(c_efflux[!helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    auto_respiration = sum(c_efflux[helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    eco_respiration = hetero_respiration + auto_respiration
+    c_eco_npp = sum(c_eco_npp)
+    nee = eco_respiration - gpp
 
     ## pack land variables
     @pack_land begin
-        (NEE, cNPP, cRA, cRECO, cRH) => land.fluxes
-        (cEcoEfflux, cEcoFlow, cEcoInflux, cEcoOut, cNPP) => land.states
+        (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
+        (c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) => land.states
     end
     return land
 end
@@ -72,22 +72,22 @@ Calculate decay rates for the ecosystem C pools at appropriate time steps. Perfo
 Allocate carbon to vegetation components using cCycle_CASA
 
 *Inputs*
- - helpers.dates.nStepsYear: number of time steps per year
+ - helpers.dates.timesteps_in_year: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_giver: giver pool array
- - land.cFlow.p_taker: taker pool array
+ - land.cFlow.p_giver: c_giver pool array
+ - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
- - land.states.cAlloc: carbon allocation matrix
+ - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
  - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
- - land.fluxes.cNPP: values for net primary productivity
- - land.fluxes.cRA: values for autotrophic respiration
- - land.fluxes.cRECO: values for ecosystem respiration
- - land.fluxes.cRH: values for heterotrophic respiration
+ - land.fluxes.c_eco_npp: values for net primary productivity
+ - land.fluxes.auto_respiration: values for autotrophic respiration
+ - land.fluxes.eco_respiration: values for ecosystem respiration
+ - land.fluxes.hetero_respiration: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
- - land.states.cEcoEfflux:
+ - land.states.c_efflux:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycle_CASA
@@ -116,8 +116,8 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
 # Inputs:
 
   - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
-  - land.cFlow.p_giver: giver pool array
-  - land.cFlow.p_taker: taker pool array
+  - land.cFlow.p_giver: c_giver pool array
+  - land.cFlow.p_taker: c_taker pool array
   - land.fluxes.gpp: values for gross primary productivity
   - land.history.p_cTau_k: Turn over times carbon pools
 
@@ -153,7 +153,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 
     @unpack_land begin
         cEco ∈ land.pools
-        (cAlloc, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
+        (c_allocation, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
         gpp ∈ land.fluxes
         (p_giver, p_taker) ∈ land.cFlow
         YG ∈ land.aRespiration
@@ -172,7 +172,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     nTix = info.tem.helpers.sizes.nTix
     nZix = length(land.pools.cEco)
     # matrices for the calculations
-    cLossRate = zeros(numType, nZix)
+    cLossRate = zeros(num_type, nZix)
     cGain = cLossRate
     cLoxxRate = cLossRate
     ## some debugging
@@ -195,10 +195,10 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     for zix ∈ zixVec
         move = false
         ndxGainFrom = find(p_taker == zix)
-        ndxLoseToZix = p_taker[p_giver==zix]
+        c_lose_to_zix = p_taker[p_giver==zix]
         for ii ∈ eachindex(ndxGainFrom)
-            giver = p_giver[ndxGainFrom[ii]]
-            if any(giver == ndxLoseToZix)
+            c_giver = p_giver[ndxGainFrom[ii]]
+            if any(c_giver == c_lose_to_zix)
                 move = true
                 kmoves = kmoves + 1
             end
@@ -230,7 +230,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
             cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
             # gains in veg pools
             gppShp = reshape(gpp, nPix, 1, nTix) # could be fxT?
-            cGain[zix, :] = cAlloc[zix, :] * gppShp * YG
+            cGain[zix, :] = c_allocation[zix, :] * gppShp * YG
         end
         if any(zix == p_taker)
             # no additional gains from outside
@@ -240,13 +240,13 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
             # gains from other carbon pools
             ndxGainFrom = find(p_taker == zix)
             for ii ∈ eachindex(ndxGainFrom)
-                taker = p_taker[ndxGainFrom[ii]] # @nc : taker always has to be the same as zix giver = p_giver[ndxGainFrom[ii]]
-                denom = (1.0 - cLossRate[giver, :])
-                adjustGain = p_cFlow_A[taker, giver, :]
+                c_taker = p_taker[ndxGainFrom[ii]] # @nc : c_taker always has to be the same as zix c_giver = p_giver[ndxGainFrom[ii]]
+                denom = (1.0 - cLossRate[c_giver, :])
+                adjustGain = p_cFlow_A[c_taker, c_giver, :]
                 adjustGain3D = reshape(adjustGain, nPix, 1, nTix)
-                cGain[taker, :] =
-                    cGain[taker, :] +
-                    (fCt[giver, :] / denom) * cLossRate[giver, :] * adjustGain3D
+                cGain[c_taker, :] =
+                    cGain[c_taker, :] +
+                    (fCt[c_giver, :] / denom) * cLossRate[c_giver, :] * adjustGain3D
             end
         end
         ## GET THE POOLS GAINS [Gt] AND LOSSES [Lt]
@@ -261,7 +261,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
             Bt = squeeze(cGain[zix, :]) * At
         end
         #sujan end squeeze fix
-        # CARBON AT THE END FOR THE FIRST SPINUP PHASE; NPP IN EQUILIBRIUM
+        # CARBON AT THE END FOR THE FIRST SPINUP PHASE; npp IN EQUILIBRIUM
         Co = cEco[zix]
         # THE NEXT LINES REPRESENT THE ANALYTICAL SOLUTION FOR THE SPIN UP
         # EXCEPT FOR THE LAST 3 POOLS: SOIL MICROBIAL; SLOW AND OLD. IN THIS

@@ -7,57 +7,57 @@ export soilWBase_smax2Layer
 end
 #! format: on
 
-function define(o::soilWBase_smax2Layer, forcing, land, helpers)
-    @unpack_soilWBase_smax2Layer o
+function define(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
+    @unpack_soilWBase_smax2Layer p_struct
 
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
+        n_soilW ∈ land.wCycleBase
     end
     ## precomputations/check
-    n_soilW = length(soilW)
     # get the soil thickness & root distribution information from input
-    soilLayerThickness = helpers.pools.layerThickness.soilW
+    soil_layer_thickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
-    if length(soilLayerThickness) != 2
-        error("soilWBase_smax2Layer needs eactly 2 soil layers in modelStructure.json.")
+    if n_soilW != 2
+        error("soilWBase_smax2Layer needs eactly 2 soil layers in model_structure.json.")
     end
 
     ## instantiate variables
-    p_wSat = zeros(numType, n_soilW)
-    p_wFC = zeros(numType, n_soilW)
-    p_wWP = zeros(numType, n_soilW)
+    p_wSat = zero(land.pools.soilW)
+    p_wFC = zero(land.pools.soilW)
+    p_wWP = zero(land.pools.soilW)
 
     ## pack land variables
-    @pack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
+    @pack_land (soil_layer_thickness, p_wSat, p_wFC, p_wWP) => land.soilWBase
     return land
 end
 
-function compute(o::soilWBase_smax2Layer, forcing, land, helpers)
+function compute(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
     ## unpack parameters
-    @unpack_soilWBase_smax2Layer o
+    @unpack_soilWBase_smax2Layer p_struct
 
     ## unpack land variables
-    @unpack_land (soilLayerThickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, p_wSat, p_wFC, p_wWP) ∈ land.soilWBase
 
     ## calculate variables
     # set the properties for each soil layer
     # 1st layer
-    p_wSat[1] = smax1 * soilLayerThickness[1]
-    p_wFC[1] = smax1 * soilLayerThickness[1]
+    p_wSat[1] = smax1 * soil_layer_thickness[1]
+    p_wFC[1] = smax1 * soil_layer_thickness[1]
     # 2nd layer
-    p_wSat[2] = smax2 * soilLayerThickness[2]
-    p_wFC[2] = smax2 * soilLayerThickness[2]
+    p_wSat[2] = smax2 * soil_layer_thickness[2]
+    p_wFC[2] = smax2 * soil_layer_thickness[2]
     # get the plant available water available (all the water is plant available)
     p_wAWC = p_wSat
 
     ## pack land variables
-    @pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW, soilLayerThickness) => land.soilWBase
+    @pack_land (p_wAWC, p_wFC, p_wSat, p_wWP, n_soilW, soil_layer_thickness) => land.soilWBase
     return land
 end
 
 @doc """
-defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the ModelStructure.json based on the older version of the Pre-Tokyo Model
+defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model
 
 # Parameters
 $(PARAMFIELDS)
@@ -72,7 +72,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2Layer
 
 *Outputs*
  - land.soilWBase.p_nsoilLayers
- - land.soilWBase.soilLayerThickness
+ - land.soilWBase.soil_layer_thickness
  - land.soilWBase.p_wAWC: = land.soilWBase.p_wSat
  - land.soilWBase.p_wFC : = land.soilWBase.p_wSat
  - land.soilWBase.p_wSat: wSat = smax for 2 soil layers

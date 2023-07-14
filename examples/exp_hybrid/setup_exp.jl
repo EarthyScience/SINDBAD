@@ -4,10 +4,10 @@ experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 info, forcing = getForcing(info, Val{:zarr}());
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
@@ -20,8 +20,7 @@ f_one = prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,

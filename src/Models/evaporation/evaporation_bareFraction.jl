@@ -6,36 +6,36 @@ export evaporation_bareFraction
 end
 #! format: on
 
-function compute(o::evaporation_bareFraction, forcing, land, helpers)
+function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
     ## unpack parameters
-    @unpack_evaporation_bareFraction o
+    @unpack_evaporation_bareFraction p_struct
 
     ## unpack land variables
     @unpack_land begin
-        vegFraction ∈ land.states
+        frac_vegetation ∈ land.states
         ΔsoilW ∈ land.states
         soilW ∈ land.pools
         PET ∈ land.PET
     end
     # scale the potential ET with bare soil fraction
-    PETsoil = PET * (helpers.numbers.𝟙 - vegFraction)
-    # calculate actual ET as a fraction of PETsoil
-    evaporation = min(PETsoil, (soilW[1] + ΔsoilW[1]) * ks)
+    PET_evaporation = PET * (helpers.numbers.𝟙 - frac_vegetation)
+    # calculate actual ET as a fraction of PET_evaporation
+    evaporation = min(PET_evaporation, (soilW[1] + ΔsoilW[1]) * ks)
 
     # update soil moisture changes
     @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
 
     ## pack land variables
     @pack_land begin
-        PETsoil => land.evaporation
+        PET_evaporation => land.evaporation
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
     return land
 end
 
-function update(o::evaporation_bareFraction, forcing, land, helpers)
-    @unpack_evaporation_bareFraction o
+function update(p_struct::evaporation_bareFraction, forcing, land, helpers)
+    @unpack_evaporation_bareFraction p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -59,7 +59,7 @@ function update(o::evaporation_bareFraction, forcing, land, helpers)
 end
 
 @doc """
-calculates the bare soil evaporation from 1-vegFraction of the grid & PETsoil
+calculates the bare soil evaporation from 1-frac_vegetation of the grid & PET_evaporation
 
 # Parameters
 $(PARAMFIELDS)
@@ -71,7 +71,7 @@ Soil evaporation using evaporation_bareFraction
 
 *Inputs*
  - land.PET.PET: forcing data set
- - land.states.vegFraction [output of vegFraction module]
+ - land.states.frac_vegetation [output of frac_vegetation module]
 
 *Outputs*
  - land.evaporation.PETSoil
@@ -90,7 +90,7 @@ update pools and states in evaporation_bareFraction
 *References*
 
 *Versions*
- - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.vegFraction  
+ - 1.0 on 11.11.2019 [skoirala]: clean up the code & moved from prec to dyna to handle land.states.frac_vegetation  
 
 *Created by:*
  - mjung

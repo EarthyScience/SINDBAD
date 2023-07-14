@@ -3,19 +3,20 @@ export groundWSoilWInteraction_gradientNeg
 #! format: off
 @bounds @describe @units @with_kw struct groundWSoilWInteraction_gradientNeg{T1,T2} <: groundWSoilWInteraction
     smax_scale::T1 = 0.5 | (0.0, 50.0) | "scale param to yield storage capacity of wGW" | ""
-    maxFlux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
+    max_flux::T2 = 10.0 | (0.0, 20.0) | "maximum flux between wGW and wSoil" | "[mm d]"
 end
 #! format: on
 
-function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWSoilWInteraction_gradientNeg o
+    @unpack_groundWSoilWInteraction_gradientNeg p_struct
 
     ## unpack land variables
     @unpack_land begin
         p_wSat ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
+        n_groundW ∈ land.wCycleBase
         𝟘 ∈ helpers.numbers
     end
     # maximum groundwater storage
@@ -25,28 +26,28 @@ function compute(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
     tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - (soilW[end] + ΔsoilW[end]) / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
     # scale gradient with pot flux rate to get pot flux
-    potFlux = tmp_gradient * maxFlux # need to make sure that the flux does not overflow | underflow storages
+    pot_flux = tmp_gradient * max_flux # need to make sure that the flux does not overflow | underflow storages
 
     # adjust the pot flux to what is there
-    tmp = min(potFlux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
+    tmp = min(pot_flux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
     tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # -> set all the positive values (from groundwater to soil) to zero
-    gwCapFlow = min_0(tmp)
+    gw_capillary_flux = min_0(tmp)
 
     # adjust the delta storages
-    ΔgroundW .= ΔgroundW .- gwCapFlow / length(groundW)
-    ΔsoilW[end] = ΔsoilW[end] + gwCapFlow
+    ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW
+    ΔsoilW[end] = ΔsoilW[end] + gw_capillary_flux
 
     ## pack land variables
     @pack_land begin
-        gwCapFlow => land.fluxes
+        gw_capillary_flux => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land
 end
 
-function update(o::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
+function update(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin
@@ -87,7 +88,7 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
  - land.soilWBase.p_wSat : maximum storage capacity of soil [mm]
 
 *Outputs*
- - land.fluxes.gwCapFlow : flux between groundW & soilW
+ - land.fluxes.gw_capillary_flux : flux between groundW & soilW
 
 # update
 update pools and states in groundWSoilWInteraction_gradientNeg=

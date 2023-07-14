@@ -2,7 +2,7 @@ export gpp_none
 
 struct gpp_none <: gpp end
 
-function define(o::gpp_none, forcing, land, helpers)
+function define(p_struct::gpp_none, forcing, land, helpers)
 
     ## calculate variables
     gpp = helpers.numbers.𝟘

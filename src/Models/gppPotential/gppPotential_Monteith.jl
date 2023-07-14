@@ -6,26 +6,26 @@ export gppPotential_Monteith
 end
 #! format: on
 
-function define(o::gppPotential_Monteith, forcing, land, helpers)
+function define(p_struct::gppPotential_Monteith, forcing, land, helpers)
     # set rueGPP to a constant
-    gppPot = helpers.numbers.𝟘
+    gpp_potential = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land gppPot => land.gppPotential
+    @pack_land gpp_potential => land.gppPotential
     return land
 end
 
-function compute(o::gppPotential_Monteith, forcing, land, helpers)
+function compute(p_struct::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppPotential_Monteith o
+    @unpack_gppPotential_Monteith p_struct
     @unpack_forcing PAR ∈ forcing
 
     ## calculate variables
     # set rueGPP to a constant
-    gppPot = εmax * PAR
+    gpp_potential = εmax * PAR
 
     ## pack land variables
-    @pack_land gppPot => land.gppPotential
+    @pack_land gpp_potential => land.gppPotential
     return land
 end
 

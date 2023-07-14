@@ -6,34 +6,35 @@ export snowMelt_Tair
 end
 #! format: on
 
-function compute(o::snowMelt_Tair, forcing, land, helpers)
+function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_snowMelt_Tair o
+    @unpack_snowMelt_Tair p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, snowFraction) ∈ land.states
+        (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         𝟘 ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
     # effect of temperature on snow melt = snowMeltRate * Tair
-    pRate = (rate * helpers.dates.nStepsDay)
+    pRate = (rate * helpers.dates.timesteps_in_day)
     Tterm = max_0(pRate * Tair)
 
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
-    snowMelt = min(sum(snowW + ΔsnowW), Tterm * snowFraction)
+    snow_melt = min(sum(snowW + ΔsnowW), Tterm * frac_snow)
 
     # divide snowmelt loss equally from all layers
-    ΔsnowW .= ΔsnowW .- snowMelt / length(snowW)
+    ΔsnowW .= ΔsnowW .- snow_melt / n_snowW
 
     # a Water Balance Pool variable that tracks how much water is still "available"
-    WBP = WBP + snowMelt
+    WBP = WBP + snow_melt
 
     ## pack land variables
     @pack_land begin
-        snowMelt => land.fluxes
+        snow_melt => land.fluxes
         Tterm => land.snowMelt
         WBP => land.states
         ΔsnowW => land.states
@@ -41,8 +42,8 @@ function compute(o::snowMelt_Tair, forcing, land, helpers)
     return land
 end
 
-function update(o::snowMelt_Tair, forcing, land, helpers)
-    @unpack_snowMelt_Tair o
+function update(p_struct::snowMelt_Tair, forcing, land, helpers)
+    @unpack_snowMelt_Tair p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -77,9 +78,9 @@ Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 
 *Inputs*
  - forcing.Tair: temperature [C]
- - helpers.dates.nStepsDay: model time steps per day
+ - helpers.dates.timesteps_in_day: model time steps per day
  - land.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
- - land.states.snowFraction: snow cover fraction [-]
+ - land.states.frac_snow: snow cover fraction [-]
 
 *Outputs*
  - land.fluxes.snowMelt: snow melt [mm/time]

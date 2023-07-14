@@ -3,14 +3,14 @@ using Sindbad, ForwardSindbad, OptimizeSindbad
 function setup_wrosted()
     # settings 
     experiment_json = "../exp_hybrid/settings_gradWroasted/experiment.json"
-    info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
-    info, forcing = getForcing(info, Val{:zarr}());
+    info = getExperimentInfo(experiment_json)#; replace_info=replace_info); # note that this will modify info
+    info, forcing = getForcing(info, Val{:zarr}())
     # Sindbad.eval(:(error_catcher = []));
-    land_init = createLandInit(info.pools, info.tem);
-    output = setupOutput(info);
-    forc = getKeyedArrayFromYaxArray(forcing);
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-    obs = getKeyedArrayFromYaxArray(observations);
+    land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
+    output = setupOutput(info)
+    forc = getKeyedArrayFromYaxArray(forcing)
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
+    obs = getKeyedArrayFromYaxArray(observations)
 
     loc_space_maps,
     loc_space_names,
@@ -23,7 +23,7 @@ function setup_wrosted()
         info.tem.models.forward,
         forc,
         forcing.sizes,
-        info.tem);
+        info.tem)
 
     tblParams = getParameters(info.tem.models.forward,
         info.optim.default_parameter,
@@ -38,22 +38,22 @@ function setup_wrosted()
     forward = info.tem.models.forward # forward
 
     return (; loc_space_maps,
-    loc_space_names,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one,
-    tblParams,
-    forward,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    tem_variables,
-    tem_optim,
-    out_variables,
-    output,
-    forc,
-    obs
+        loc_space_names,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one,
+        tblParams,
+        forward,
+        tem_helpers,
+        tem_spinup,
+        tem_models,
+        tem_variables,
+        tem_optim,
+        out_variables,
+        output,
+        forc,
+        obs
     )
 end

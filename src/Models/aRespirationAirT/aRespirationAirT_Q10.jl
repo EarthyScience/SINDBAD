@@ -8,17 +8,17 @@ export aRespirationAirT_Q10
 end
 #! format: on
 
-function compute(o::aRespirationAirT_Q10, forcing, land, helpers)
+function compute(p_struct::aRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_aRespirationAirT_Q10 o
+    @unpack_aRespirationAirT_Q10 p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
-    fT = Q10_RM^((Tair - Tref_RM) / Q10_base)
+    auto_respiration_f_airT = Q10_RM^((Tair - Tref_RM) / Q10_base)
 
     ## pack land variables
     @pack_land begin
-        fT => land.aRespirationAirT
+        auto_respiration_f_airT => land.aRespirationAirT
     end
     return land
 end
@@ -38,7 +38,7 @@ Temperature effect on autotrophic maintenance respiration using aRespirationAirT
  - forcing.Tair: air temperature [°C]
 
 *Outputs*
- - land.aRespirationAirT.fT: autotrophic respiration rate [gC.m-2.δT-1]
+ - land.aRespirationAirT.auto_respiration_f_airT: autotrophic respiration rate [gC.m-2.δT-1]
 
 ---
 

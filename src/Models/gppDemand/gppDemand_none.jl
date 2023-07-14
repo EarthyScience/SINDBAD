@@ -2,16 +2,16 @@ export gppDemand_none
 
 struct gppDemand_none <: gppDemand end
 
-function define(o::gppDemand_none, forcing, land, helpers)
+function define(p_struct::gppDemand_none, forcing, land, helpers)
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    AllDemScGPP = helpers.numbers.𝟙
+    gpp_f_climate = helpers.numbers.𝟙
 
-    # compute demand GPP with no stress. AllDemScGPP is set to ones in the prec; & hence the demand have no stress in GPP.
-    gppE = helpers.numbers.𝟘
+    # compute demand GPP with no stress. gpp_f_climate is set to ones in the prec; & hence the demand have no stress in GPP.
+    gpp_demand = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land (AllDemScGPP, gppE) => land.gppDemand
+    @pack_land (gpp_f_climate, gpp_demand) => land.gppDemand
     return land
 end
 
@@ -27,8 +27,8 @@ Combine effects as multiplicative or minimum using gppDemand_none
  - helpers
 
 *Outputs*
- - land.gppDemand.AllDemScGPP: effective scalar of demands
- - land.gppDemand.gppE: demand-driven GPP with no stress
+ - land.gppDemand.gpp_f_climate: effective scalar of demands
+ - land.gppDemand.gpp_demand: demand-driven GPP with no stress
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppDemand_none

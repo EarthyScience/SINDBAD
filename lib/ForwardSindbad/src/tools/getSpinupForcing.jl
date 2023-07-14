@@ -24,7 +24,7 @@ end
 
 function getForcingForTimePeriod(forcing, tstart::Int64, tend::Int64)
     map(forcing) do v
-        return in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=tstart:tend] : v
     end
 end
 
@@ -165,7 +165,7 @@ function getSpinupForcing(forcing, tem)
     spinup_forcing = (;)
     for forc ∈ forcing_methods
         spinup_forc = getSpinupForcing(forcing, tem.helpers, forc)
-        spinup_forcing = setTupleField(spinup_forcing, (typeof(forc).parameters[1], spinup_forc))
+        spinup_forcing = setTupleField(spinup_forcing, (valToSymbol(forc), spinup_forc))
     end
     return spinup_forcing
 end

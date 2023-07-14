@@ -6,45 +6,45 @@ export runoffBase_Zhang2008
 end
 #! format: on
 
-function define(o::runoffBase_Zhang2008, forcing, land, helpers)
-    runoffBase = helpers.numbers.𝟘
+function define(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
+    base_runoff = helpers.numbers.𝟘
 
     @pack_land begin
-        runoffBase => land.fluxes
+        base_runoff => land.fluxes
     end
     return land
 end
 
-function compute(o::runoffBase_Zhang2008, forcing, land, helpers)
+function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
     ## unpack parameters
-    @unpack_runoffBase_Zhang2008 o
+    @unpack_runoffBase_Zhang2008 p_struct
 
     ## unpack land variables
     @unpack_land begin
         groundW ∈ land.pools
         ΔgroundW ∈ land.states
         𝟙 ∈ helpers.numbers
+        n_groundW ∈ land.wCycleBase
     end
 
     ## calculate variables
     # simply assume that a fraction of the GWstorage is baseflow
-    runoffBase = bc * addS(groundW, ΔgroundW)
+    base_runoff = bc * addS(groundW, ΔgroundW)
 
     # update groundwater changes
-    n_groundW = length(groundW) * 𝟙
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, -runoffBase / n_groundW)
+    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / n_groundW)
 
     ## pack land variables
     @pack_land begin
-        runoffBase => land.fluxes
+        base_runoff => land.fluxes
         ΔgroundW => land.states
     end
     return land
 end
 
-function update(o::runoffBase_Zhang2008, forcing, land, helpers)
-    @unpack_runoffBase_Zhang2008 o
+function update(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
+    @unpack_runoffBase_Zhang2008 p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -80,7 +80,7 @@ Baseflow using runoffBase_Zhang2008
 *Inputs*
 
 *Outputs*
- - land.fluxes.runoffBase: base flow [mm/time]
+ - land.fluxes.base_runoff: base flow [mm/time]
 
 # update
 
