@@ -32,7 +32,7 @@ loc_forcing_test, _, loc_obs_test =
 
 # this does one gradient calculation for one site.        
 fdiff_grads(loc_loss,
-    syn.tblParams.defaults,
+    syn.tblParams.default,
     syn.forward,
     syn.tblParams,
     loc_obs_test,
@@ -85,7 +85,7 @@ nn_args = (;
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json";
 info = getExperimentInfo(experiment_json);
 info, forcing = getForcing(info, Val{:zarr}());
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem, info.tem.models.forward);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 
