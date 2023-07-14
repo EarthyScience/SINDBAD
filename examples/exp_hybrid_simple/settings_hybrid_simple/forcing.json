@@ -1,6 +1,6 @@
 {
   "subset": {
-    "site": [1, 1]
+    "site": [1, 205]
   },
   "dimensions": {
     "permute": null,
@@ -100,7 +100,6 @@
       "bounds": [0.01, 100.0],
       "source_variable": "VPDDay",
       "source_unit": "Pa",
-      "source_to_sindbad_unit": 0.001,
       "name_short": "Vapor pressure deficit Day"
     },
     "CLAY": {

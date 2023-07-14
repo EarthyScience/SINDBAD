@@ -100,7 +100,7 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forwar
         loc_forcings,
         loc_outputs,
         land_init_space,
-        tem_vals,
+        tem_with_vals,
         f_one = prepRunEcosystem(output,
             forc,
             info_tem)

@@ -29,8 +29,8 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
 end
 
 function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.defaults, tblParams.lower)
-    ub = oftype(tblParams.defaults, tblParams.upper)
+    lb = oftype(tblParams.default, tblParams.lower)
+    ub = oftype(tblParams.default, tblParams.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end
@@ -43,13 +43,13 @@ end
 # simulate synth obs
 function synth_obs()
 
-    experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
+    experiment_json = "../exp_hybrid_simple/settings_hybrid_simple/experiment.json"
     info = getExperimentInfo(experiment_json)
     info, forcing = getForcing(info, Val{:zarr}())
-    land_init = createLandInit(info.pools, info.tem)
+    land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     output = setupOutput(info)
     forc = getKeyedArrayFromYaxArray(forcing)
-    observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
     obs = getKeyedArrayFromYaxArray(observations)
     obsv = getObsKeyedArrayFromYaxArray(observations)
     tblParams = getParameters(info.tem.models.forward,
@@ -69,7 +69,7 @@ function synth_obs()
     # RU-Ha1, IT-PT1, US-Me5
     sites = xfeatures.site
     sites = [s for s ∈ sites]
-    sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
+    # sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
     n_bs_feat = length(xfeatures.features)
     n_neurons = 32
     n_params = sum(tblParams.is_ml)
@@ -80,7 +80,7 @@ function synth_obs()
     loc_forcings,
     loc_outputs,
     land_init_space,
-    tem_vals,
+    tem_with_vals,
     f_one = prepRunEcosystem(output,
         forc,
         info.tem)
@@ -90,7 +90,7 @@ function synth_obs()
 
     sites_parameters = ml_baseline(xfeatures)
     #@show sites_parameters
-    sites_parameters .= 0.0
+    #sites_parameters .= 0.0
     #@show sites_parameters
 
     params_bounded = getParamsAct.(sites_parameters, tblParams)
@@ -108,8 +108,9 @@ function synth_obs()
         land_init_site,
         f_one)
 
-        loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location)
-        up_apps = Tuple(updateModelParametersType(tblParams, forward, upVector))
+        loc_forcing, loc_output, _ = getLocDataObsN(output.data, forc, obs, site_location)
+        up_apps = updateModelParametersType(tblParams, forward, upVector)
+        # up_apps = Tuple(updateModelParametersType(tblParams, forward, upVector))
         return coreEcosystem!(loc_output,
             up_apps,
             loc_forcing,
@@ -120,13 +121,13 @@ function synth_obs()
             f_one)
     end
 
-    tem_helpers = tem_vals.helpers
-    tem_spinup = tem_vals.spinup
-    tem_models = tem_vals.models
-    tem_variables = tem_vals.variables
+    tem_helpers = tem_with_vals.helpers
+    tem_spinup = tem_with_vals.spinup
+    tem_models = tem_with_vals.models
+    tem_variables = tem_with_vals.variables
     tem_optim = info.optim
     out_variables = output.variables
-    forward = tem_vals.models.forward
+    forward = tem_with_vals.models.forward
 
     site_location = loc_space_maps[1]
     loc_forcing, loc_output, loc_obs =
@@ -144,7 +145,7 @@ function synth_obs()
         site_location,
         tblParams,
         forward,
-        tblParams.defaults,
+        tblParams.default,
         tem_helpers,
         tem_spinup,
         tem_models,
@@ -271,7 +272,7 @@ function synth_obs()
         tem_models,
         tem_optim,
         tem_spinup,
-        tem_vals,
+        tem_with_vals,
         f_one
     )
 end

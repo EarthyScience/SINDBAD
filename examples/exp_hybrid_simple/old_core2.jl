@@ -8,7 +8,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 
@@ -22,18 +22,18 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 
 
@@ -126,9 +126,9 @@ kwargs_fixed = (;
     f_one
 );
 
-fdiff_grads(loc_loss, tblParams.defaults, forward, loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
+fdiff_grads(loc_loss, tblParams.default, forward, loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
 
-@time fdiff_grads(loc_loss, tblParams.defaults, forward, loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
+@time fdiff_grads(loc_loss, tblParams.default, forward, loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
 
 #=
 function get_loc_loss(
@@ -182,7 +182,7 @@ kwargs = (;
     f_one
 );
 
-@time loc_loss(tblParams.defaults, forward, kwargs...)
+@time loc_loss(tblParams.default, forward, kwargs...)
 
 s_loc(x) = loc_loss(x, forward, kwargs...)
 
