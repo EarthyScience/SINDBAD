@@ -1,4 +1,4 @@
-export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
+export soilProperties_Saxton2006, unsatK, soilParamsSaxton2006
 
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton2006{T1,T2,T3,T4,T5,TN} <: soilProperties
@@ -80,10 +80,10 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     sp_ψSat = zero(land.pools.soilW)
 
     # generate the function handle to calculate soil hydraulic property
-    unsatK = kSaxton2006::typeof(kSaxton2006)
+    unsat_k_model = Val(:kSaxton2006)
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, n2, n3) => land.soilProperties
+    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, n2, n3, unsat_k_model) => land.soilProperties
     return land
 end
 
@@ -92,7 +92,7 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
     end
     ## calculate variables
     # calculate & set the soil hydraulic properties for each layer
@@ -112,7 +112,7 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
+    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
     return land
 end
 
@@ -170,8 +170,6 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Outputs:
  - K: the hydraulic conductivity at unsaturated land.pools.soilW [in mm/day]
- - is calculated using original equation if helpers.flags.useLookupK == 0.0
- - uses instantiated lookup table if helpers.flags.useLookupK == 1
 
 # Modifies:
 
@@ -191,7 +189,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
-function kSaxton2006(land, helpers, sl)
+function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     @unpack_land begin
         (n2, n3) ∈ land.soilProperties
         (p_β, p_kSat, p_wSat) ∈ land.soilWBase

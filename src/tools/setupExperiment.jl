@@ -95,7 +95,7 @@ getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
-    opt_parameter = opt_parameter
+    opt_parameter = replace_comman_separator_in_params(opt_parameter)
     paramstbl = getParameters(selectedModels, default_parameter)
     return filter(row -> row.name_full in opt_parameter, paramstbl)
 end
