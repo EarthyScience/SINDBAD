@@ -151,24 +151,10 @@ end
 
 
 op = setupOutput(info);
-op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
-op = (; op..., data=op_dat);
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
+# op = (; op..., data=op_dat);
 
-@time grad = ForwardDiff.gradient(l1, tblParams.default)
-
-lo_ss = test_gr(tblParams.default,
-    mods,
-    forc,
-    op,
-    obs,
-    tblParams,
-    tem_with_vals,
-    info.optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
+# @time grad = ForwardDiff.gradient(l1, tblParams.default)
 
 l1(tblParams.default .* rand_m)
 l2(tblParams.default .* rand_m)

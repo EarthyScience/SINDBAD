@@ -95,7 +95,7 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
         tem.helpers)
     #@show first(newforcing)
     land_spin_now = land_prec
-    if tem.helpers.run.run_spinup
+    if tem.helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
