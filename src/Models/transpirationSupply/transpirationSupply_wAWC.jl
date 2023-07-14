@@ -2,29 +2,29 @@ export transpirationSupply_wAWC
 
 #! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_wAWC{T1} <: transpirationSupply
-    tranFrac::T1 = 0.1 | (0.02, 0.98) | "fraction of total maximum available water that can be transpired" | ""
+    k_transpiration::T1 = 0.1 | (0.002, 0.2) | "fraction of total maximum available water that can be transpired" | ""
 end
 #! format: on
 
-function define(o::transpirationSupply_wAWC, forcing, land, helpers)
-    tranSup = helpers.numbers.𝟘
+function define(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
+    transpiration_supply = helpers.numbers.𝟘
 
-    @pack_land tranSup => land.transpirationSupply
+    @pack_land transpiration_supply => land.transpirationSupply
     return land
 end
 
-function compute(o::transpirationSupply_wAWC, forcing, land, helpers)
+function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
     ## unpack parameters
-    @unpack_transpirationSupply_wAWC o
+    @unpack_transpirationSupply_wAWC p_struct
 
     ## unpack land variables
     @unpack_land PAW ∈ land.vegAvailableWater
 
     ## calculate variables
-    tranSup = sum(PAW) * tranFrac
+    transpiration_supply = sum(PAW) * k_transpiration
 
     ## pack land variables
-    @pack_land tranSup => land.transpirationSupply
+    @pack_land transpiration_supply => land.transpirationSupply
     return land
 end
 
@@ -45,7 +45,7 @@ Supply-limited transpiration using transpirationSupply_wAWC
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.transpirationSupply.transpiration_supply: supply limited transpiration
 
 ---
 

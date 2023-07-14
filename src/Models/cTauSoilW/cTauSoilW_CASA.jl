@@ -6,23 +6,23 @@ export cTauSoilW_CASA
 end
 #! format: on
 
-function define(o::cTauSoilW_CASA, forcing, land, helpers)
-    @unpack_cTauSoilW_CASA o
+function define(p_struct::cTauSoilW_CASA, forcing, land, helpers)
+    @unpack_cTauSoilW_CASA p_struct
 
     ## instantiate variables
-    p_fsoilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    p_k_f_soilW = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land p_fsoilW => land.cTauSoilW
+    @pack_land p_k_f_soilW => land.cTauSoilW
     return land
 end
 
-function compute(o::cTauSoilW_CASA, forcing, land, helpers)
+function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cTauSoilW_CASA o
+    @unpack_cTauSoilW_CASA p_struct
 
     ## unpack land variables
-    @unpack_land p_fsoilW ∈ land.cTauSoilW
+    @unpack_land p_k_f_soilW ∈ land.cTauSoilW
 
     ## unpack land variables
     @unpack_land begin
@@ -33,7 +33,7 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
         (𝟘, 𝟙) ∈ helpers.numbers
     end
     # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
-    TSPY = helpers.dates.nStepsYear #sujan
+    TSPY = helpers.dates.timesteps_in_year #sujan
     TSPM = TSPY / 12
     # BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
     BGRATIO = 𝟘
@@ -58,11 +58,11 @@ function compute(o::cTauSoilW_CASA, forcing, land, helpers)
     # WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
     ndxn = (PET <= 0.0)
     BGME[ndxn] = pBGME[ndxn]
-    BGME = max(min(BGME, 𝟙), 𝟘)
+    BGME = max_0(min_1(BGME))
     # FEED IT TO THE STRUCTURE
     fsoilW = BGME
     # set the same moisture stress to all carbon pools
-    p_fsoilW[helpers.pools.zix.cEco] = fsoilW
+    p_k_f_soilW[helpers.pools.zix.cEco] = fsoilW
 
     ## pack land variables
     @pack_land fsoilW => land.cTauSoilW
@@ -81,7 +81,7 @@ $(PARAMFIELDS)
 Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
 *Inputs*
- - helpers.dates.nStepsYear: number of time steps per year
+ - helpers.dates.timesteps_in_year: number of time steps per year
  - land.PET.PET: potential evapotranspiration [mm]
  - land.cTauSoilW.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
  - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]

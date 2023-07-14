@@ -2,7 +2,7 @@ export wCycle_components
 
 struct wCycle_components <: wCycle end
 
-function define(o::wCycle_components, forcing, land, helpers)
+function define(p_struct::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
@@ -16,7 +16,7 @@ function define(o::wCycle_components, forcing, land, helpers)
     return land
 end
 
-function compute(o::wCycle_components, forcing, land, helpers)
+function compute(p_struct::wCycle_components, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
@@ -33,53 +33,25 @@ function compute(o::wCycle_components, forcing, land, helpers)
     soilW = add_vec(soilW, ΔsoilW)
     surfaceW = add_vec(surfaceW, ΔsurfaceW)
 
-    # for (lc, l) in enumerate(zix.soilW)
-    #     @rep_elem max(TWS[l], 𝟘) => (soilW, lc, :soilW)
-    # end
-
-    # for (lc, l) in enumerate(zix.groundW)
-    #     @rep_elem max(TWS[l], 𝟘) => (groundW, lc, :groundW)
-    # end
-
-    # for (lc, l) in enumerate(zix.surfaceW)
-    #     @rep_elem max(TWS[l], 𝟘) => (surfaceW, lc, :surfaceW)
-    # end
-
-    # @rep_elem soilW[1] => (TWS, 1, :TWS)
-    # @rep_elem surfaceW[1] => (TWS, 7, :TWS)
-
     # set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
+    # always pack land tws before calling the adjust method
+    @pack_land (groundW, snowW, soilW, surfaceW, TWS) => land.pools
 
-    for (lc, l) in enumerate(zix.soilW)
-        @rep_elem soilW[lc] => (TWS, l, :TWS)
-    end
-
-    for (lc, l) in enumerate(zix.snowW)
-        @rep_elem snowW[lc] => (TWS, l, :TWS)
-    end
-
-    for (lc, l) in enumerate(zix.surfaceW)
-        @rep_elem surfaceW[lc] => (TWS, l, :TWS)
-    end
-
-    for (lc, l) in enumerate(zix.groundW)
-        @rep_elem groundW[lc] => (TWS, l, :TWS)
-    end
-
+    land = adjust_and_pack_main_pool(land, helpers, land.wCycleBase.w_model)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)
-        @rep_elem 𝟘 => (ΔsnowW, l, :snowW)
+        @rep_elem zero(eltype(ΔsnowW)) => (ΔsnowW, l, :snowW)
     end
     for l in eachindex(ΔsoilW)
-        @rep_elem 𝟘 => (ΔsoilW, l, :soilW)
+        @rep_elem zero(eltype(ΔsoilW)) => (ΔsoilW, l, :soilW)
     end
     for l in eachindex(ΔgroundW)
-        @rep_elem 𝟘 => (ΔgroundW, l, :groundW)
+        @rep_elem zero(eltype(ΔgroundW)) => (ΔgroundW, l, :groundW)
     end
     for l in eachindex(ΔsurfaceW)
-        @rep_elem 𝟘 => (ΔsurfaceW, l, :surfaceW)
+        @rep_elem zero(eltype(ΔsurfaceW)) => (ΔsurfaceW, l, :surfaceW)
     end
 
     # @rep_vec ΔgroundW => ΔgroundW .* 𝟘
@@ -91,7 +63,6 @@ function compute(o::wCycle_components, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (groundW, snowW, soilW, surfaceW, TWS) => land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, totalW, totalW_prev) => land.states
     end
     return land

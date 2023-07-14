@@ -1,4 +1,4 @@
-export cCycleBase_GSI
+export cCycleBase_GSI, adjust_and_pack_pool_components
 
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
@@ -10,7 +10,7 @@ export cCycleBase_GSI
     annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
     annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
     annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-    cFlowA::T9 = Float64[
+    c_flow_A::T9 = Float64[
                      -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
                      0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
                      0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
@@ -19,43 +19,43 @@ export cCycleBase_GSI
                      0.0 1.0 0.0 0.0 0 -1.0 0.0 0.0
                      0.0 0.0 0 0.0 1.0 1.0 -1.0 0.0
                      0.0 0.0 0 0.0 0.0 0.0 1.0 -1.0
-                 ] | nothing | "Transfer matrix for carbon at ecosystem level" | ""
-    C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | nothing | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+                 ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
+    C2Nveg::T10 = Float64[25.0, 260.0, 260.0, 10.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
     ηH::T11 = 1.0 | (0.01, 100.0) | "scaling factor for heterotrophic pools after spinup" | ""
     ηA::T12 = 1.0 | (0.01, 100.0) | "scaling factor for vegetation pools after spinup" | ""
-    carbon_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
+    c_remain::T13 = 10.0 | (0.1, 100.0) | "remaining carbon after disturbance" | ""
 end
 #! format: on
 
-function define(o::cCycleBase_GSI, forcing, land, helpers)
-    @unpack_cCycleBase_GSI o
+function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
+    @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
         (𝟘, 𝟙) ∈ helpers.numbers
         cEco ∈ land.pools
     end
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
     # p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
-    cEcoEfflux = zero(cEco) #sujan moved from get states
     p_k_base = zero(cEco)
     p_annk = zero(cEco)
 
     # if there is flux order check that is consistent
-    flowOrder = Tuple(collect(1:length(findall(>(𝟘), cFlowA))))
-    taker = Tuple([ind[1] for ind ∈ findall(>(𝟘), cFlowA)])
-    giver = Tuple([ind[2] for ind ∈ findall(>(𝟘), cFlowA)])
+    c_flow_order = Tuple(collect(1:length(findall(>(𝟘), c_flow_A))))
+    c_taker = Tuple([ind[1] for ind ∈ findall(>(𝟘), c_flow_A)])
+    c_giver = Tuple([ind[2] for ind ∈ findall(>(𝟘), c_flow_A)])
+
+    c_model = Val(:cCycleBase_GSI)
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, cFlowA, p_k_base, p_annk, flowOrder, taker, giver, carbon_remain) => land.cCycleBase
-        cEcoEfflux => land.states
+        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
     end
     return land
 end
 
-function precompute(o::cCycleBase_GSI, forcing, land, helpers)
-    @unpack_cCycleBase_GSI o
+function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
+    @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
         (p_C2Nveg, p_k_base, p_annk) ∈ land.cCycleBase
         (𝟘, 𝟙) ∈ helpers.numbers
@@ -77,7 +77,7 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     end
 
     for i ∈ eachindex(p_k_base)
-        tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.nStepsYear))
+        tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.timesteps_in_year))
         @rep_elem tmp => (p_k_base, i, :cEco)
     end
 
@@ -88,6 +88,78 @@ function precompute(o::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
+function adjust_and_pack_pool_components(land, helpers, ::Val{:cCycleBase_GSI})
+    @unpack_land (cVeg,
+        cLit,
+        cSoil,
+        cVegRoot,
+        cVegWood,
+        cVegLeaf,
+        cVegReserve,
+        cLitFast,
+        cLitSlow,
+        cSoilSlow,
+        cSoilOld,
+        cEco) ∈ land.pools
+
+    zix = helpers.pools.zix
+    for (lc, l) in enumerate(zix.cVeg)
+        @rep_elem cEco[l] => (cVeg, lc, :cVeg)
+    end
+
+    for (lc, l) in enumerate(zix.cVegRoot)
+        @rep_elem cEco[l] => (cVegRoot, lc, :cVegRoot)
+    end
+
+    for (lc, l) in enumerate(zix.cVegWood)
+        @rep_elem cEco[l] => (cVegWood, lc, :cVegWood)
+    end
+
+    for (lc, l) in enumerate(zix.cVegLeaf)
+        @rep_elem cEco[l] => (cVegLeaf, lc, :cVegLeaf)
+    end
+
+    for (lc, l) in enumerate(zix.cVegReserve)
+        @rep_elem cEco[l] => (cVegReserve, lc, :cVegReserve)
+    end
+
+    for (lc, l) in enumerate(zix.cLit)
+        @rep_elem cEco[l] => (cLit, lc, :cLit)
+    end
+
+    for (lc, l) in enumerate(zix.cLitFast)
+        @rep_elem cEco[l] => (cLitFast, lc, :cLitFast)
+    end
+
+    for (lc, l) in enumerate(zix.cLitSlow)
+        @rep_elem cEco[l] => (cLitSlow, lc, :cLitSlow)
+    end
+
+    for (lc, l) in enumerate(zix.cSoil)
+        @rep_elem cEco[l] => (cSoil, lc, :cSoil)
+    end
+
+    for (lc, l) in enumerate(zix.cSoilSlow)
+        @rep_elem cEco[l] => (cSoilSlow, lc, :cSoilSlow)
+    end
+
+    for (lc, l) in enumerate(zix.cSoilOld)
+        @rep_elem cEco[l] => (cSoilOld, lc, :cSoilOld)
+    end
+    @pack_land (cVeg,
+        cLit,
+        cSoil,
+        cVegRoot,
+        cVegWood,
+        cVegLeaf,
+        cVegReserve,
+        cLitFast,
+        cLitSlow,
+        cSoilSlow,
+        cSoilOld,
+        cEco) => land.pools
+    return land
+end
 @doc """
 Compute carbon to nitrogen ratio & annual turnover rates
 

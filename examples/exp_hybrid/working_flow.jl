@@ -14,15 +14,15 @@ noStackTrace()
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
@@ -33,10 +33,10 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time loc_space_maps,
@@ -50,8 +50,7 @@ f_one = prepRunEcosystem(output, forc, info.tem);
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    info.tem,
-    loc_space_names,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -96,11 +95,11 @@ function og_loss(x,
         f_one)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.numType);
+rand_m = rand(info.tem.helpers.numbers.num_type);
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-og_loss(tblParams.defaults,
+og_loss(tblParams.default,
     mods,
     forc,
     op,
@@ -141,7 +140,7 @@ function get_loc_loss(loc_obs,
     model_data = (; Pair.(out_variables, loc_output)...)
     loss_vector = getLossVectorArray(loc_obs, model_data, tem_optim)
     @info "-------------------"
-    l = combineLossArray(loss_vector, Val(tem_optim.multiConstraintMethod))
+    l = combineLossArray(loss_vector, Val(tem_optim.multi_constraint_method))
     return l
 end
 # loc_space_maps = Pair.([(loc_space_names, loc_space_inds)...])

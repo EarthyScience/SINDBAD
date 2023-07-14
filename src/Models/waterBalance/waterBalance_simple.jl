@@ -2,8 +2,21 @@ export waterBalance_simple
 
 struct waterBalance_simple <: waterBalance end
 
+function is_water_balance_valid(water_balance, tolerance, helpers)
+    if helpers.run.catch_model_errors && !helpers.run.run_optimization
+        if isnan(water_balance)
+            pprint("water balance is nan")
+            return false
+        end
+        if abs(water_balance) > tolerance
+            pprint("water balance is larger than tolerance")
+            return false
+        end
+    end
+    return true
+end
 
-function compute(o::waterBalance_simple, forcing, land, helpers)
+function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     @unpack_land begin
         precip ∈ land.rainSnow
         (totalW_prev, totalW) ∈ land.states
@@ -13,26 +26,22 @@ function compute(o::waterBalance_simple, forcing, land, helpers)
 
     ## calculate variables
     dS = totalW - totalW_prev
-    waterBalance = precip - runoff - evapotranspiration - dS
-    if abs(waterBalance) > tolerance
-        if helpers.run.catchErrors && !helpers.run.runOpti
-            msg = "water balance error:, waterBalance: $(waterBalance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
-            tcprint(land)
-            tcprint(forcing)
-            pprint(msg)
-            if hasproperty(Sindbad, :error_catcher)
-                push!(Sindbad.error_catcher, land)
-                push!(Sindbad.error_catcher, msg)
-            end
-            pprint(land)
-            error(msg)
+    water_balance = precip - runoff - evapotranspiration - dS
+    if !is_water_balance_valid(water_balance, tolerance, helpers)
+        msg = "water balance error: water_balance: $(water_balance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
+        tcprint(land)
+        tcprint(forcing)
+        pprint(msg)
+        if hasproperty(Sindbad, :error_catcher)
+            push!(Sindbad.error_catcher, land)
+            push!(Sindbad.error_catcher, msg)
         end
+        pprint(land)
+        error(msg)
     end
 
     ## pack land variables
-    @pack_land begin
-        (waterBalance) => land.waterBalance
-    end
+    @pack_land water_balance => land.waterBalance
     return land
 end
 
@@ -49,7 +58,7 @@ Calculate the water balance using waterBalance_simple
  - TWS and TWS_prev
 
 *Outputs*
- - land.waterBalance.waterBalance
+ - land.waterBalance.water_balance
 
 ---
 

@@ -9,8 +9,8 @@ export soilTexture_fixed
 end
 #! format: on
 
-function define(o::soilTexture_fixed, forcing, land, helpers)
-    @unpack_soilTexture_fixed o
+function define(p_struct::soilTexture_fixed, forcing, land, helpers)
+    @unpack_soilTexture_fixed p_struct
 
     ## set parameter variables
     println("soilTexture_fixed: distributing the fixed texture properties over the soil layers.")
@@ -24,8 +24,8 @@ function define(o::soilTexture_fixed, forcing, land, helpers)
     return land
 end
 
-function precompute(o::soilTexture_fixed, forcing, land, helpers)
-    @unpack_soilTexture_fixed o
+function precompute(p_struct::soilTexture_fixed, forcing, land, helpers)
+    @unpack_soilTexture_fixed p_struct
     @unpack_land (st_CLAY, st_SAND, st_SILT, st_ORGM) ∈ land.soilTexture
 
     for sl ∈ eachindex(st_CLAY)

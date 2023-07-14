@@ -2,17 +2,17 @@ export cAllocationRadiation_gpp
 
 struct cAllocationRadiation_gpp <: cAllocationRadiation end
 
-function compute(o::cAllocationRadiation_gpp, forcing, land, helpers)
+function compute(p_struct::cAllocationRadiation_gpp, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land CloudScGPP ∈ land.gppDiffRadiation
+    @unpack_land gpp_f_cloud ∈ land.gppDiffRadiation
 
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
-    fR = CloudScGPP
+    c_allocation_f_cloud = gpp_f_cloud
 
     ## pack land variables
-    @pack_land fR => land.cAllocationRadiation
+    @pack_land c_allocation_f_cloud => land.cAllocationRadiation
     return land
 end
 
@@ -24,10 +24,10 @@ radiation effect on decomposition/mineralization = the same for GPP
 # compute:
 
 *Inputs*
- - land.gppDiffRadiation.CloudScGPP: radiation effect for GPP
+ - land.gppDiffRadiation.gpp_f_cloud: radiation effect for GPP
 
 *Outputs*
- - land.cAllocationRadiation.fR: radiation effect on decomposition/mineralization
+ - land.cAllocationRadiation.c_allocation_f_cloud: radiation effect on decomposition/mineralization
 
 ---
 
