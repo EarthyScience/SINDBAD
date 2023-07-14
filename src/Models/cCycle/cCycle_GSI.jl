@@ -12,13 +12,14 @@ function define(p_struct::cCycle_GSI, forcing, land, helpers)
     c_eco_influx = zero(land.pools.cEco)
     zero_c_eco_flow = zero(c_eco_flow)
     zero_c_eco_influx = zero(c_eco_influx)
+    ΔcEco = zero(land.pools.cEco)
     c_eco_npp = zero(land.pools.cEco)
 
     cEco_prev = land.pools.cEco
     ## pack land variables
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) =>
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx, ΔcEco) =>
             land.states
     end
     return land

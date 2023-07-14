@@ -94,7 +94,7 @@ Recharge the soil using drainage_dos
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  - drainage from the last layer is saved as groundwater recharge [gw_recharge]
