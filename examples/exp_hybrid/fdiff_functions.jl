@@ -20,7 +20,7 @@ function fdiff_grads(f, v, site_location, loc_land_init, args)
 end
 
 function loc_loss(upVector,
-    site_location, 
+    site_location,
     loc_land_init,
     output,
     forc,
@@ -85,6 +85,6 @@ args = (;
     out_variables,
     f_one);
 
-@time fdiff_grads(loc_loss, tblParams.defaults, site_location, loc_land_init, args)
+@time fdiff_grads(loc_loss, tblParams.default, site_location, loc_land_init, args)
 
-@code_warntype fdiff_grads(loc_loss, tblParams.defaults, site_location, loc_land_init, args)
+@code_warntype fdiff_grads(loc_loss, tblParams.default, site_location, loc_land_init, args)

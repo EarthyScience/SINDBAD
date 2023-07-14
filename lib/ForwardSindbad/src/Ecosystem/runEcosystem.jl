@@ -9,9 +9,6 @@ runModels(forcing, models, out)
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models; init=out) do o, model
         o = Models.compute(model, forcing, o, tem_helpers)
-        # if tem_helpers.run.runUpdateModels
-        #     o = Models.update(model, forcing, o, tem_helpers)
-        # end
     end
 end
 
@@ -36,8 +33,7 @@ function timeLoopForward(
         out = runModels!(out, f, forward_models, tem_helpers)
         res_vec[ts] = out
     end
-    # res = landWrapper(res_vec)
-    return res_vec
+    return nothing
 end
 
 
@@ -49,12 +45,11 @@ function timeLoopForward(
     time_steps::Int64,
     f_one
 )
-    res = map(1:time_steps) do ts
+    out_stacked = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
         out = runModels!(out, f, forward_models, tem_helpers)
     end
-    # res = landWrapper(res)
-    return res
+    return out_stacked
 end
 
 """
@@ -78,7 +73,7 @@ function coreEcosystem(approaches,
 
     land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
-    if tem_helpers.run.runSpinup
+    if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(
             approaches,
             loc_forcing,
@@ -91,7 +86,7 @@ function coreEcosystem(approaches,
             spinup_forcing=nothing)
     end
     time_steps = tem_helpers.dates.size
-    out = timeLoopForward(
+    timeLoopForward(
         res_vec,
         approaches,
         loc_forcing,
@@ -99,7 +94,7 @@ function coreEcosystem(approaches,
         tem_helpers,
         time_steps,
         f_one)
-    return out
+    return nothing
 end
 
 
@@ -115,7 +110,7 @@ function coreEcosystem(approaches,
     land_spin_now = land_prec
     # land_spin_now = land_init
 
-    if tem_helpers.run.runSpinup
+    if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
@@ -127,13 +122,13 @@ function coreEcosystem(approaches,
             spinup_forcing=nothing)
     end
     time_steps = tem_helpers.dates.size
-    out = timeLoopForward(approaches,
+    out_stacked = timeLoopForward(approaches,
         loc_forcing,
         land_spin_now,
         tem_helpers,
         time_steps,
         f_one)
-    return out
+    return out_stacked
 end
 
 function ecoLoc(approaches,
@@ -147,7 +142,7 @@ function ecoLoc(approaches,
     land_init,
     f_one)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
-    out = coreEcosystem(approaches,
+    coreEcosystem(approaches,
         res_vec,
         loc_forcing,
         tem_helpers,
@@ -155,7 +150,7 @@ function ecoLoc(approaches,
         tem_models,
         land_init,
         f_one)
-    return out
+    return nothing
 end
 
 function fany(x,
@@ -187,19 +182,19 @@ end
 runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
 """
 function runEcosystem(approaches,
+    res_vec_space,
     forcing,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     land_init_space,
-    res_vec_space,
     f_one)
     #@info "runEcosystem:: running Ecosystem"
-    tem_helpers = tem_vals.helpers
-    tem_spinup = tem_vals.spinup
-    tem_models = tem_vals.models
+    tem_helpers = tem_with_vals.helpers
+    tem_spinup = tem_with_vals.spinup
+    tem_models = tem_with_vals.models
     land_all = if !isempty(loc_space_inds)
-        res_out = parallelizeIt(tem_vals.models.forward,
+        res_out = parallelizeIt(tem_with_vals.models.forward,
             res_vec_space,
             forcing,
             tem_helpers,
@@ -209,18 +204,18 @@ function runEcosystem(approaches,
             loc_forcings,
             land_init_space,
             f_one,
-            tem_vals.helpers.run.parallelization)
+            tem_with_vals.helpers.run.parallelization)
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         # landWrapper(res_vec_space)
         nts = length(first(res_out))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res_out))) do (its, iouter)
-                return res_out[iouter][its]
+                res_out[iouter][its]
             end
         # res_vec_space = nothing
         landWrapper(fullarrayoftuples)
     else
-        res_out = coreEcosystem(approaches,
+        coreEcosystem(approaches,
             res_vec_space,
             loc_forcing,
             tem_helpers,
@@ -228,9 +223,9 @@ function runEcosystem(approaches,
             tem_models,
             land_init,
             f_one)
-        landWrapper(res_vec_space)
+        res_vec_space
     end
-    return land_all
+    return landWrapper(land_all)
 end
 
 """
@@ -242,30 +237,29 @@ function runEcosystem(approaches::Tuple,
     tem::NamedTuple,
     loc_space_inds;
     spinup_forcing=nothing)
-    #@info "runEcosystem:: running Ecosystem"
 
     land_all = if !isempty(loc_space_inds)
-        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_vals, f_one =
+        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output, forcing, tem)
-        res = parallelizeIt(tem_vals.models.forward,
+        res = parallelizeIt(tem_with_vals.models.forward,
             res_vec,
             forcing,
-            tem_vals.helpers,
-            tem_vals.spinup,
-            tem_vals.models,
+            tem_with_vals.helpers,
+            tem_with_vals.spinup,
+            tem_with_vals.models,
             loc_space_inds,
             loc_forcings,
             land_init_space,
             f_one,
-            tem_vals.helpers.run.parallelization)
+            tem_with_vals.helpers.run.parallelization)
         #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res))) do (its, iouter)
-                return res[iouter][its]
+                res[iouter][its]
             end
         res = nothing
-        landWrapper(fullarrayoftuples)
+        fullarrayoftuples
     else
         res = coreEcosystem(approaches,
             res_vec,
@@ -275,9 +269,9 @@ function runEcosystem(approaches::Tuple,
             tem_models,
             land_init,
             f_one)
-        landWrapper(res)
+        res
     end
-    return land_all
+    return landWrapper(land_all)
 end
 
 

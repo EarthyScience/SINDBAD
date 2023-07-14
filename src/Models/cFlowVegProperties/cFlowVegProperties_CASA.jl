@@ -2,16 +2,16 @@ export cFlowVegProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cFlowVegProperties_CASA{T1} <: cFlowVegProperties
-    WOODLIGFRAC::T1 = 0.4 | nothing | "fraction of wood that is lignin" | ""
+    WOODLIGFRAC::T1 = 0.4 | (nothing, nothing) | "fraction of wood that is lignin" | ""
 end
 #! format: on
 
-function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowVegProperties_CASA o
-    taker ∈ land.cCycleBase
+function define(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowVegProperties_CASA p_struct
+    c_taker ∈ land.cCycleBase
 
     ## instantiate variables
-    p_F = helpers.numbers.sNT.(zero([taker...]))
+    p_F = helpers.numbers.sNT.(zero([c_taker...]))
     if land.pools.cEco isa SVector
         p_F = SVector{length(p_F)}(p_F)
     end
@@ -21,16 +21,16 @@ function define(o::cFlowVegProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(o::cFlowVegProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowVegProperties_CASA o
+    @unpack_cFlowVegProperties_CASA p_struct
 
     ## unpack land variables
     @unpack_land p_F ∈ land.cFlowVegProperties
 
     ## calculate variables
     # p_fVeg = zeros(nPix, length(info.tem.model.c.nZix)); #sujan
-    #p_fVeg = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    #p_fVeg = zero(land.pools.cEco)
     p_E = p_F
     # ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, p_MTF;, :cVegLeaf, :cLitLeafS, 1, -, p_MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, p_MTF;, :cVegRootF, :cLitRootFS, 1, -, p_MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, p_SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, p_SCLIGNIN;, :cLitRootFS, :cSoilSlow, p_SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, p_SCLIGNIN;, :cLitWood, :cSoilSlow, WOODLIGFRAC;, :cLitWood, :cMicSurf, 1, -, WOODLIGFRAC;, :cLitRootC, :cSoilSlow, WOODLIGFRAC;, :cLitRootC, :cMicSoil, 1, -, WOODLIGFRAC;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
     for ii ∈ 1:size(aM, 1)

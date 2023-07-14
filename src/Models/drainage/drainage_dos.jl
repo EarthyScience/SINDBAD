@@ -6,7 +6,7 @@ export drainage_dos
 end
 #! format: on
 
-function define(o::drainage_dos, forcing, land, helpers)
+function define(p_struct::drainage_dos, forcing, land, helpers)
     ## unpack parameters
 
     ## unpack land variables
@@ -22,9 +22,9 @@ function define(o::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function compute(o::drainage_dos, forcing, land, helpers)
+function compute(p_struct::drainage_dos, forcing, land, helpers)
     ## unpack parameters
-    @unpack_drainage_dos o
+    @unpack_drainage_dos p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -58,7 +58,7 @@ function compute(o::drainage_dos, forcing, land, helpers)
     return land
 end
 
-function update(o::drainage_dos, forcing, land, helpers)
+function update(p_struct::drainage_dos, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin
@@ -97,7 +97,7 @@ Recharge the soil using drainage_dos
  - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
 
 *Outputs*
- - drainage from the last layer is saved as groundwater recharge [groundWRec]
+ - drainage from the last layer is saved as groundwater recharge [gw_recharge]
  - land.states.soilWFlow: drainage flux between soil layers (same as nZix, from percolation  into layer 1 & the drainage to the last layer)
 
 # update

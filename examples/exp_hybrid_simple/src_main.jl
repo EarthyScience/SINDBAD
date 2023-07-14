@@ -32,7 +32,7 @@ function get_loc_loss(loc_obs,
         f_one)
     model_data = (; Pair.(out_variables, loc_output)...)
     lossVec = getLossVectorArray(loc_obs, model_data, tem_optim)
-    t_loss = combineLossArray(lossVec, Val(tem_optim.multiConstraintMethod)) #sum(lossVec) Val{:sum}()
+    t_loss = combineLossArray(lossVec, Val(tem_optim.multi_constraint_method)) #sum(lossVec) Val{:sum}()
     #@show t_loss
     return t_loss
 end
@@ -57,7 +57,7 @@ function loc_loss(upVector,
     tem_optim,
     out_variables,
     f_one)
-    
+
     loc_output = Sindbad.get_tmp.(loc_output, upVector)
 
     getLocForcing!(forc, Val(keys(f_one)), v_loc_space_names, loc_forcing, loc_space_ind)
@@ -99,27 +99,27 @@ output,
 forc,
 obs = setup_simple();
 
-#cost_options = tem_optim.costOptions
+#cost_options = tem_optim.cost_options
 
 site_location = loc_space_maps[1];
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.defaults), 
+    getLocDataObsN(Sindbad.get_tmp.(output.data, tblParams.default),
         forc, obs, site_location);
 
 loc_space_ind = loc_space_inds[1]
@@ -131,7 +131,7 @@ getLocOutput!(output.data, loc_space_ind, loc_output)
 
 loc_output = Sindbad.DiffCache.(loc_output, Val(14_000))
 
-#tem_optim_new = (; tem_optim..., costOptions=(; tem_optim.costOptions..., variable = [:gpp], costMetric = [Val(:mse)]))
+#tem_optim_new = (; tem_optim..., cost_options=(; tem_optim.cost_options..., variable = [:gpp], cost_metric = [Val(:mse)]))
 
 args = (;
     #output,
@@ -145,8 +145,8 @@ args = (;
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-    );
+    f_one
+);
 
 #new_locos = loc_output .|> Array
 #loc_output = Sindbad.DiffCache.(loc_output);
@@ -157,36 +157,35 @@ args_txyz = (;
     loc_output,
     loc_forcing,
     loc_obs,
-    v_loc_space_names=Val(loc_space_names),
+    v_loc_space_names=Val(loc_space_names)
 );
 
 
 loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
+    tblParams.default,
+    loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
 
 
 @code_warntype loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
+    tblParams.default,
+    loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
 
 
 @time loc_loss(
-    tblParams.defaults,
-    loc_space_ind, 
+    tblParams.default,
+    loc_space_ind,
     loc_land_init,
     args_txyz...,
     args...)
-=#
 
 
-tblParams2 = Sindbad.@Select(names, modelsApproach)(tblParams)
+tblParams2 = Sindbad.@Select(name, model_approach)(tblParams)
 
 # test gradient
 function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
@@ -194,14 +193,14 @@ function fdiff_grads(f, v, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
     return ForwardDiff.gradient(gf, v) #, cfg, Val{false}())
 end
- 
-@code_warntype fdiff_grads(loc_loss, tblParams.defaults,
+
+@code_warntype fdiff_grads(loc_loss, tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz,
     args)
 
-fdiff_grads(loc_loss, tblParams.defaults,
+fdiff_grads(loc_loss, tblParams.default,
     loc_space_ind,
     loc_land_init,
     args_txyz,
@@ -211,24 +210,24 @@ fdiff_grads(loc_loss, tblParams.defaults,
 
 function fdiff_grads!(f, v, n, loc_space_ind, loc_land_init, args_txyz, args)
     gf(v) = f(v, loc_space_ind, loc_land_init, args_txyz..., args...)
-    cfg_n = ForwardDiff.GradientConfig(gf, v, ForwardDiff.Chunk{n}());
+    cfg_n = ForwardDiff.GradientConfig(gf, v, ForwardDiff.Chunk{n}())
     out = similar(v)
     ForwardDiff.gradient!(out, gf, v, cfg_n)
     return out
 end
 GC.gc()
-@time fdiff_grads!(loc_loss, tblParams.defaults,
+@time fdiff_grads!(loc_loss, tblParams.default,
     20,
     loc_space_ind,
     loc_land_init,
-    args_txyz, 
+    args_txyz,
     args);
 
 
 
 function name_to_ind(site_name, sites_forcing)
     site_id_forc = findall(x -> x == site_name, sites_forcing)[1]
-    return (site_id_forc, )
+    return (site_id_forc,)
 end
 
 function grads_bss!(
@@ -243,19 +242,19 @@ function grads_bss!(
     args_txyz,
     args)
 
-    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled =is_logging)
+    p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled=is_logging)
     for (site_index, site_name) ∈ enumerate(xbatch)
         x_params = up_params(; site=site_name)
         v = getParamsAct(x_params, args.tblParams)
         loc_space_ind = name_to_ind(site_name, sites_f)
         loc_land_init = land_init_space[loc_space_ind[1]]
-        f_grads[:, site_index] = 
+        f_grads[:, site_index] =
             fdiff_grads!(loc_loss, v,
                 n_chunk,
                 loc_space_ind,
                 loc_land_init,
-                args_txyz, 
-                args);
+                args_txyz,
+                args)
         next!(p; showvalues=[(:site_name, site_name), (:loc_space_ind, loc_space_ind)])
     end
 end
@@ -307,7 +306,7 @@ function get_∇params(xfeatures, re, flat, xbatch,
     return ∇params
 end
 
-nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer=1, nn_opt = Optimisers.Adam(),)
+nn_args = (; n_bs_feat, n_neurons, n_params, extra_layer=1, nn_opt=Optimisers.Adam())
 
 function init_ml_nn(n_bs_feat, n_neurons, n_params, extra_hlayers, nn_opt=Optimisers.Adam())
     ml_model = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=extra_hlayers)
@@ -355,7 +354,7 @@ function nn_machine(nn_args, x_args, xfeatures,
     land_init_space,
     loc_loss,
     args_txyz,
-    args; 
+    args;
     nepochs=10)
 
     flat, re, opt_state = init_ml_nn(nn_args...)
@@ -412,7 +411,7 @@ nn_machine(nn_args, x_args, xfeatures,
     land_init_space,
     loc_loss,
     args_txyz,
-    args; 
+    args;
     nepochs=3)
 
 #=

@@ -9,16 +9,16 @@ export gppAirT_CASA
 end
 #! format: on
 
-function define(o::gppAirT_CASA, forcing, land, helpers)
-    TempScGPP = helpers.numbers.𝟙
+function define(p_struct::gppAirT_CASA, forcing, land, helpers)
+    gpp_f_airT = helpers.numbers.𝟙
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
-function compute(o::gppAirT_CASA, forcing, land, helpers)
+function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_CASA o
+    @unpack_gppAirT_CASA p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
         𝟙 ∈ helpers.numbers
@@ -43,15 +43,15 @@ function compute(o::gppAirT_CASA, forcing, land, helpers)
         (𝟙 + exp(ToptB * (-Topt - Texp + TairDay)))
 
     # get the scalar
-    TempScGPP = TairDay >= Topt ? T2 : T1
+    gpp_f_airT = TairDay >= Topt ? T2 : T1
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress for gppPot based on CASA & Potter
+temperature stress for gpp_potential based on CASA & Potter
 
 # Parameters
 $(PARAMFIELDS)
@@ -65,7 +65,7 @@ Effect of temperature using gppAirT_CASA
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
+ - land.gppDirRadiation.gpp_f_light: effect of light saturation on potential GPP
 
 ---
 

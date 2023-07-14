@@ -52,14 +52,14 @@ args = (;
     out_variables,
     f_one,
     f_type
-    );
+);
 
-@time loc_loss(tblParams.defaults, site_location, loc_land_init, args...)
-@code_warntype loc_loss(tblParams.defaults, site_location, loc_land_init, args...)
-@time fdiff_grads(loc_loss, tblParams.defaults, site_location, loc_land_init, args)
+@time loc_loss(tblParams.default, site_location, loc_land_init, args...)
+@code_warntype loc_loss(tblParams.default, site_location, loc_land_init, args...)
+@time fdiff_grads(loc_loss, tblParams.default, site_location, loc_land_init, args)
 @code_warntype getLocDataObsN(output.data, forc, obs, site_location);
-@time fdiff_grads(loc_loss, tblParams.defaults, site_location, loc_land_init, args)
-@code_warntype fdiff_grads(loc_loss, tblParams.defaults, site_location, loc_land_init, args)
+@time fdiff_grads(loc_loss, tblParams.default, site_location, loc_land_init, args)
+@code_warntype fdiff_grads(loc_loss, tblParams.default, site_location, loc_land_init, args)
 
 
 args = (;
@@ -74,8 +74,8 @@ args = (;
     tem_variables,
     tem_optim,
     out_variables,
-    f_one,
-    );
+    f_one
+);
 
 site_location = loc_space_maps[1];
 loc_space_ind = loc_space_inds[1];
@@ -84,12 +84,12 @@ loc_output = loc_outputs[1]
 loc_forcing = loc_forcings[1]
 #mods = tem_models.forward
 
-#dualDefs = ForwardDiff.Dual{tem_helpers.numbers.numType}.(tblParams.defaults);
+#dualDefs = ForwardDiff.Dual{tem_helpers.numbers.num_type}.(tblParams.default);
 #mods = updateModelParametersType(tblParams, tem_models.forward, dualDefs);
 #mod_type = typeof(mods)
 #mods = [updateModelParametersType(tblParams, (m,), dualDefs) for m in tem_models.forward]
 
-@code_warntype loc_loss_f(tblParams.defaults, loc_space_ind, 
+@code_warntype loc_loss_f(tblParams.default, loc_space_ind,
     loc_output,
     loc_forcing,
     Val(loc_space_names),
@@ -97,7 +97,7 @@ loc_forcing = loc_forcings[1]
     loc_land_init,
     args...)
 
-@time loc_loss_f(tblParams.defaults, loc_space_ind, 
+@time loc_loss_f(tblParams.default, loc_space_ind,
     loc_output,
     loc_forcing,
     Val(loc_space_names),
@@ -105,4 +105,4 @@ loc_forcing = loc_forcings[1]
     loc_land_init,
     args...)
 
-@code_warntype updateModelParametersType(tblParams, forward, tblParams.defaults) # the main issue is the function itself
+@code_warntype updateModelParametersType(tblParams, forward, tblParams.default) # the main issue is the function itself

@@ -6,33 +6,33 @@ export capillaryFlow_VanDijk2010
 end
 #! format: on
 
-function define(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
-    capFlow = zero(land.pools.soilW)
+    capillary_flux = zero(land.pools.soilW)
 
     ## pack land variables
     @pack_land begin
-        capFlow => land.capillaryFlow
+        capillary_flux => land.capillaryFlow
     end
     return land
 end
 
-function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_capillaryFlow_VanDijk2010 o
+    @unpack_capillaryFlow_VanDijk2010 p_struct
 
     ## unpack land variables
     @unpack_land begin
         (p_kFC, p_wSat) ∈ land.soilWBase
-        capFlow ∈ land.capillaryFlow
+        capillary_flux ∈ land.capillaryFlow
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (numType, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
+        (num_type, 𝟘, 𝟙, tolerance) ∈ helpers.numbers
     end
 
     for sl ∈ 1:(length(land.pools.soilW)-1)
@@ -42,20 +42,20 @@ function compute(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
         lossCap = max_0(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
-        @rep_elem tmp => (capFlow, sl, :soilW)
-        @add_to_elem capFlow[sl] => (ΔsoilW, sl, :soilW)
-        @add_to_elem -capFlow[sl] => (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp => (capillary_flux, sl, :soilW)
+        @add_to_elem capillary_flux[sl] => (ΔsoilW, sl, :soilW)
+        @add_to_elem -capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
     end
 
     ## pack land variables
     @pack_land begin
-        capFlow => land.capillaryFlow
+        capillary_flux => land.capillaryFlow
         ΔsoilW => land.states
     end
     return land
 end
 
-function update(o::capillaryFlow_VanDijk2010, forcing, land, helpers)
+function update(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

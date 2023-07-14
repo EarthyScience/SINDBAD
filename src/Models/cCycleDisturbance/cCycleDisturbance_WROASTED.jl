@@ -4,58 +4,58 @@ export cCycleDisturbance_WROASTED
 struct cCycleDisturbance_WROASTED <: cCycleDisturbance end
 #! format: on
 
-function define(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
+function define(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     @unpack_land begin
-        (giver, taker) ∈ land.cCycleBase
+        (c_giver, c_taker) ∈ land.cCycleBase
     end
-    zixVegAll = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
-    ndxLoseToZixVec = Tuple{Int}[]
-    for zixVeg ∈ zixVegAll
+    zix_veg_all = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
+    c_lose_to_zix_vec = Tuple{Int}[]
+    for zixVeg ∈ zix_veg_all
         # make reserve pool flow to slow litter pool/woody debris
         if helpers.pools.components.cEco[zixVeg] == :cVegReserve
-            ndxLoseToZix = helpers.pools.zix.cLitSlow
+            c_lose_to_zix = helpers.pools.zix.cLitSlow
         else
-            ndxLoseToZix = taker[[(giver .== zixVeg)...]]
+            c_lose_to_zix = c_taker[[(c_giver .== zixVeg)...]]
         end
         ndxNoVeg = Int[]
-        for ndxl ∈ ndxLoseToZix
-            if ndxl ∉ zixVegAll
+        for ndxl ∈ c_lose_to_zix
+            if ndxl ∉ zix_veg_all
                 push!(ndxNoVeg, ndxl)
             end
         end
-        push!(ndxLoseToZixVec, Tuple(ndxNoVeg))
+        push!(c_lose_to_zix_vec, Tuple(ndxNoVeg))
     end
-    ndxLoseToZixVec = Tuple(ndxLoseToZixVec)
-    @pack_land (zixVegAll, ndxLoseToZixVec) => land.cCycleDisturbance
+    c_lose_to_zix_vec = Tuple(c_lose_to_zix_vec)
+    @pack_land (zix_veg_all, c_lose_to_zix_vec) => land.cCycleDisturbance
     return land
 end
 
-function compute(o::cCycleDisturbance_WROASTED, forcing, land, helpers)
+function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     ## unpack forcing
-    @unpack_forcing isDisturbed ∈ forcing
+    @unpack_forcing dist_intensity ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (zixVegAll, ndxLoseToZixVec) ∈ land.cCycleDisturbance
+        (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
-        (giver, taker, carbon_remain) ∈ land.cCycleBase
+        (c_giver, c_taker, c_remain) ∈ land.cCycleBase
         𝟘 ∈ helpers.numbers
     end
-    if isDisturbed > 𝟘
-        for zixVeg ∈ zixVegAll
-            cLoss = max(cEco[zixVeg] - carbon_remain, 𝟘) * isDisturbed
+    if dist_intensity > 𝟘
+        for zixVeg ∈ zix_veg_all
+            cLoss = max_0(cEco[zixVeg] - c_remain) * dist_intensity
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
-            ndxLoseToZix = ndxLoseToZixVec[zixVeg]
-            for tZ ∈ eachindex(ndxLoseToZix)
-                tarZix = ndxLoseToZix[tZ]
-                toGain = cLoss / length(ndxLoseToZix)
+            c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
+            for tZ ∈ eachindex(c_lose_to_zix)
+                tarZix = c_lose_to_zix[tZ]
+                toGain = cLoss / length(c_lose_to_zix)
                 @add_to_elem toGain => (cEco, tarZix, :cEco)
             end
         end
-
+        @pack_land cEco => land.pools
+        land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
     end
     ## pack land variables
-    @pack_land cEco => land.pools
     return land
 end
 

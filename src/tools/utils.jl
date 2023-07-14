@@ -11,6 +11,8 @@ export tcprint
 export set_component_from_main_pool, set_main_from_component_pool
 export clamp_01
 export min_0, max_0, min_1, max_1
+export valToSymbol
+export getFrac
 
 """
     noStackTrace()
@@ -582,7 +584,7 @@ end
 """
     set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 - sets the component pools value using the values for the main pool
-- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
 @generated function set_component_from_main_pool(
     # function set_component_from_main_pool(
@@ -629,7 +631,7 @@ end
 """
     set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 - sets the main pool from the values of the component pools
-- names are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
 @generated function set_main_from_component_pool(
     # function set_main_from_component_pool(
@@ -713,4 +715,25 @@ returns max(num, 1)
 """
 function max_1(num)
     return max(num, one(num))
+end
+
+"""
+valToSymbol(val)
+returns the symbol from which val was created for a type dispatch based on name
+"""
+function valToSymbol(val)
+    return typeof(val).parameters[1]
+end
+
+"""
+getFrac(num, den)
+return either a ratio or numerator depending on whether denomitor is a zero
+"""
+function getFrac(num, den)
+    if !iszero(den)
+        rat = num / den
+    else
+        rat = num
+    end
+    return rat
 end

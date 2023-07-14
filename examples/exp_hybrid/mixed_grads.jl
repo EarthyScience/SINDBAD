@@ -27,13 +27,13 @@ forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 # Instantiate land components
 land = (;
     pools=(; snowW=[0.0f0]),
-    states=(; ΔsnowW=[0.1f0], WBP=0.01f0, snowFraction=0.1f0),
-    fluxes=(; snowMelt=0.2f0),
+    states=(; ΔsnowW=[0.1f0], WBP=0.01f0, frac_snow=0.1f0),
+    fluxes=(; snow_melt=0.2f0),
     rainSnow=(;),
     snowMelt=(;))
 helpers = (;
     numbers=(; 𝟘=0.0f0),  # type that zero with \bbzero [TAB]
-    dates=(; nStepsDay=1),
+    dates=(; timesteps_in_day=1),
     run=(; output_all=true, runSpinup=false));
 tem = (; helpers, variables=(;));
 

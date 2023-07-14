@@ -2,18 +2,18 @@ export gppDirRadiation_none
 
 struct gppDirRadiation_none <: gppDirRadiation end
 
-function define(o::gppDirRadiation_none, forcing, land, helpers)
+function define(p_struct::gppDirRadiation_none, forcing, land, helpers)
 
     ## calculate variables
-    LightScGPP = helpers.numbers.𝟙
+    gpp_f_light = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land LightScGPP => land.gppDirRadiation
+    @pack_land gpp_f_light => land.gppDirRadiation
     return land
 end
 
 @doc """
-sets the light saturation scalar [light effect] on gppPot to one
+sets the light saturation scalar [light effect] on gpp_potential to one
 
 ---
 
@@ -24,7 +24,7 @@ Effect of direct radiation using gppDirRadiation_none
  - helpers
 
 *Outputs*
- - land.gppDirRadiation.LightScGPP: effect of light saturation on potential GPP
+ - land.gppDirRadiation.gpp_f_light: effect of light saturation on potential GPP
 
 # instantiate:
 instantiate/instantiate time-invariant variables for gppDirRadiation_none

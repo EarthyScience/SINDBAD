@@ -2,13 +2,13 @@ export aRespirationAirT_none
 
 struct aRespirationAirT_none <: aRespirationAirT end
 
-function define(o::aRespirationAirT_none, forcing, land, helpers)
+function define(p_struct::aRespirationAirT_none, forcing, land, helpers)
 
     ## calculate variables
-    fT = helpers.numbers.𝟙
+    auto_respiration_f_airT = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land fT => land.aRespirationAirT
+    @pack_land auto_respiration_f_airT => land.aRespirationAirT
     return land
 end
 

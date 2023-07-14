@@ -11,13 +11,13 @@ returns
   - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
 function getConstraintNames(optim::NamedTuple)
-    obsVariables = Symbol.(optim.variables2constrain)
+    obsVariables = Symbol.(optim.variables_to_constrain)
     modelVariables = String[]
     optimVariables = (;)
     for v ∈ obsVariables
         vinfo = getproperty(optim.constraints.variables, v)
-        push!(modelVariables, vinfo.modelFullVar)
-        vf, vvar = Symbol.(split(vinfo.modelFullVar, "."))
+        push!(modelVariables, vinfo.model_full_var)
+        vf, vvar = Symbol.(split(vinfo.model_full_var, "."))
         optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
     # optimVariables = getVariableGroups(modelVariables)
@@ -30,11 +30,11 @@ getCostOptions(optInfo)
 info.opti
 """
 function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
-    defNames = Symbol.(keys(optInfo.constraints.defaultCostOptions))
-    vals = values(optInfo.constraints.defaultCostOptions)
+    defNames = Symbol.(keys(optInfo.constraints.default_cost))
+    vals = values(optInfo.constraints.default_cost)
     defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
 
-    varlist = Symbol.(optInfo.variables2constrain)
+    varlist = Symbol.(optInfo.variables_to_constrain)
     all_options = []
     push!(all_options, varlist)
     for (pn, prop) ∈ enumerate(defNames)
@@ -45,7 +45,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
         vValues = []
         # vValues = typeof(defProp)[]
         for v ∈ varlist
-            optvar = getfield(getfield(optInfo.constraints.variables, v), :costOptions)
+            optvar = getfield(getfield(optInfo.constraints.variables, v), :cost_options)
             if hasproperty(optvar, prop)
                 tmpValue = getfield(optvar, prop)
                 if (tmpValue isa Number) && !(tmpValue isa Bool)
@@ -73,20 +73,20 @@ end
 """
     checkOptimizedParametersInModels(info::NamedTuple)
 
-checks if the parameters listed in optimized_parameters of opti.json exists in the selected model structure of modelStructure.json
+checks if the parameters listed in optimized_parameters of optimization.json exists in the selected model structure of model_structure.json
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
-    # @show info.opti.constraints, info.opti.optimized_parameters
+    # @show info.optimization.constraints, info.optimization.optimized_parameters
     tblParams = getParameters(info.tem.models.forward,
-        info.opti.default_parameter,
-        info.opti.optimized_parameters)
-    model_parameters = tblParams.varsModels
-    optim_parameters = info.opti.optimized_parameters
+        info.optimization.default_parameter,
+        info.optimization.optimized_parameters)
+    model_parameters = tblParams.name_full
+    optim_parameters = info.optimization.optimized_parameters
     op_names = nothing
     if typeof(optim_parameters) <: Vector
         op_names = optim_parameters
     else
-        op_names = [replace(String(_p), "_⚆_" => ".") for _p ∈ keys(optim_parameters)]
+        op_names = replace_comman_separator_in_params(keys(optim_parameters))
     end
 
     for omp ∈ eachindex(op_names)
@@ -94,7 +94,7 @@ function checkOptimizedParametersInModels(info::NamedTuple)
             @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
             @show model_parameters
             error(
-                "Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of opti.json, or check model structure to provide correct parameter name"
+                "Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of optimization.json, or check model structure to provide correct parameter name"
             )
         end
     end
@@ -104,45 +104,48 @@ function setupOptimization(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
-    info = setTupleSubfield(info, :optim, (:default_parameter, info.opti.default_parameter))
-    info = setTupleSubfield(info, :optim, (:variables2constrain, info.opti.variables2constrain))
+    info = setTupleSubfield(info, :optim, (:default_parameter, info.optimization.default_parameter))
+    info = setTupleSubfield(info, :optim, (:variables_to_constrain, info.optimization.variables_to_constrain))
     info = setTupleSubfield(info,
         :optim,
-        (:multiConstraintMethod, Val(Symbol(info.opti.multiConstraintMethod))))
+        (:multi_constraint_method, Val(Symbol(info.optimization.multi_constraint_method))))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
-    info = setTupleSubfield(info, :optim, (:optimized_parameters, info.opti.optimized_parameters))
+    info = setTupleSubfield(info, :optim, (:optimized_parameters, info.optimization.optimized_parameters))
 
     # set algorithm related options
     tmp_algorithm = (;)
-    algo_method = info.opti.algorithm.package * "_" * info.opti.algorithm.method
-    tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(algo_method))))
-    tmp_algorithm = setTupleField(tmp_algorithm, (:isMultiObj, info.opti.algorithm.isMultiObj))
-    if !isnothing(info.opti.algorithm.options_file)
-        options_path = info.opti.algorithm.options_file
+    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, info.optimization.multi_objective_algorithm))
+    optim_algorithm = info.optimization.algorithm
+    if endswith(optim_algorithm, ".json")
+        options_path = optim_algorithm
         if !isabspath(options_path)
             options_path = joinpath(info.settings_root, options_path)
         end
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
+        algo_method = options.package * "_" * options.method
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(algo_method))))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(optim_algorithm))))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
-    tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
-    info = setTupleSubfield(info, :optim, (:mapping, info.modelRun.mapping))
+    info = setTupleSubfield(info, :optim, (:mapping, info.model_run.mapping))
 
     # get the variables to be used during optimization
-    obsVars, optimVars, storeVars, modelVars = getConstraintNames(info.opti)
+    obsVars, optimVars, storeVars, modelVars = getConstraintNames(info.optimization)
     varibInfo = (;)
     varibInfo = setTupleField(varibInfo, (:obs, obsVars))
     varibInfo = setTupleField(varibInfo, (:optim, optimVars))
     varibInfo = setTupleField(varibInfo, (:store, storeVars))
     varibInfo = setTupleField(varibInfo, (:model, modelVars))
     info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
-    costOpt = getCostOptions(info.opti, varibInfo, info.tem.helpers.numbers)
-    info = setTupleSubfield(info, :optim, (:costOptions, costOpt))
+    costOpt = getCostOptions(info.optimization, varibInfo, info.tem.helpers.numbers)
+    info = setTupleSubfield(info, :optim, (:cost_options, costOpt))
 
     return info
 end

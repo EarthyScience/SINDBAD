@@ -8,15 +8,15 @@ export runoffSaturationExcess_Bergstroem1992VegFractionFroSoil
 end
 #! format: on
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
+function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil o
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil p_struct
     @unpack_forcing frozenFrac ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, vegFraction) ∈ land.states
+        (WBP, frac_vegetation) ∈ land.states
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
@@ -29,18 +29,18 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionFroSoil, for
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # get the berg parameters according the vegetation fraction
-    β_veg = max(β_min, β * vegFraction) # do this?
+    β_veg = max(β_min, β * frac_vegetation) # do this?
 
     # calculate land runoff from incoming water & current soil moisture
     tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
-    runoffSatExc = WBP * tmp_SatExFrac
+    sat_excess_runoff = WBP * tmp_SatExFrac
 
     # update water balance pool
-    WBP = WBP - runoffSatExc
+    WBP = WBP - sat_excess_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffSatExc => land.fluxes
+        sat_excess_runoff => land.fluxes
         (fracFrozen, β_veg) => land.runoffSaturationExcess
         WBP => land.states
     end
@@ -61,12 +61,12 @@ $(PARAMFIELDS)
  - forcing.fracFrozen : daily frozen soil fraction [0-1]
  - land.fracFrozen.scale : scaling parameter for frozen soil fraction
  - land.runoffSaturationExcess.fracFrozen : scaled frozen soil fraction
- - land.states.vegFraction : vegetation fraction
+ - land.states.frac_vegetation : vegetation fraction
  - smax1 : maximum water capacity of first soil layer [mm]
  - smax2 : maximum water capacity of second soil layer [mm]
 
 *Outputs*
- - land.fluxes.runoffSatExc : runoff from land [mm/time]
+ - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
  - land.runoffSaturationExcess.β_veg : scaled berg parameter
  - land.states.WBP : water balance pool [mm]
 

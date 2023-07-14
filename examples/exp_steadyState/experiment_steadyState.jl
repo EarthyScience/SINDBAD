@@ -7,20 +7,20 @@ noStackTrace()
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 for tj ∈ (10, 100, 1000, 10000)
     # tj = 10000
-    replace_info = Dict("spinup.diffEq.timeJump" => tj,
-        "spinup.diffEq.reltol" => 1e-2,
-        "spinup.diffEq.abstol" => 1,
-        "modelRun.rules.model_array_type" => "array",
-        "modelRun.flags.debugit" => false)
+    replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
+        "spinup.differential_eqn.relative_tolerance" => 1e-2,
+        "spinup.differential_eqn.absolute_tolerance" => 1,
+        "model_run.rules.model_array_type" => "array",
+        "model_run.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     output = setupOutput(info)
 
     forc = getKeyedArrayFromYaxArray(forcing)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
@@ -34,7 +34,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sel_pool = :cEco
 
     spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
-    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(900, 600))
+    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(1200, 900))
 
     plot!(getfield(land_init.pools, sel_pool);
         linewidth=5,
@@ -59,7 +59,7 @@ for tj ∈ (10, 100, 1000, 10000)
     @show "Exp_Init"
     sp = :spinup
     out_sp_exp = land_init
-    @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
         out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
@@ -85,7 +85,7 @@ for tj ∈ (10, 100, 1000, 10000)
     @show "Exp_ODE"
     sp = :spinup
     out_sp_exp_ode = out_sp_ode
-    @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
         out_sp_exp_ode = ForwardSindbad.doSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_ode),
@@ -197,7 +197,7 @@ for tj ∈ (10, 100, 1000, 10000)
     @show "Exp_NL"
     sp = :spinup
     out_sp_exp_nl = out_sp_nl
-    @time for nl ∈ 1:Int(info.tem.spinup.diffEq.timeJump)
+    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
         out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_nl),

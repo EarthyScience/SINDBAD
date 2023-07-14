@@ -6,9 +6,9 @@ export WUE_VPDDay
 end
 #! format: on
 
-function compute(o::WUE_VPDDay, forcing, land, helpers)
+function compute(p_struct::WUE_VPDDay, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_VPDDay o
+    @unpack_WUE_VPDDay p_struct
     @unpack_forcing VPDDay ∈ forcing
     @unpack_land (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
 
