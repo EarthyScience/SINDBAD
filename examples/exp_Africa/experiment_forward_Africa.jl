@@ -16,7 +16,7 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "latitude", "longitude"],
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"

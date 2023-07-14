@@ -16,7 +16,7 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.debug_model" => false,
     "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
@@ -68,7 +68,7 @@ end
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie:heatmap
+using CairoMakie: heatmap
 using AlgebraOfGraphics, DataFrames, Dates
 
 plotdat = output.data;

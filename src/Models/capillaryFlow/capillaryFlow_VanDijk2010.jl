@@ -88,7 +88,7 @@ Flux of water from lower to upper soil layers (upward soil moisture movement) us
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
 
