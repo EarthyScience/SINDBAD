@@ -8,12 +8,12 @@ export cAllocationRadiation_GSI
 end
 #! format: on
 
-function define(o::cAllocationRadiation_GSI, forcing, land, helpers)
+function define(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
     @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
-    # assume the initial fR as one
+    # assume the initial c_allocation_f_cloud as one
     fR_prev = 𝟙
 
     ## pack land variables
@@ -21,9 +21,9 @@ function define(o::cAllocationRadiation_GSI, forcing, land, helpers)
     return land
 end
 
-function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
+function compute(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_cAllocationRadiation_GSI o
+    @unpack_cAllocationRadiation_GSI p_struct
     @unpack_forcing PAR ∈ forcing
 
     ## unpack land variables
@@ -34,13 +34,13 @@ function compute(o::cAllocationRadiation_GSI, forcing, land, helpers)
 
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
-    fR = (𝟙 / (𝟙 + exp(-slope_Rad * (PAR - base_Rad))))
-    fR = fR_prev + (fR - fR_prev) * τ_Rad
+    c_allocation_f_cloud = (𝟙 / (𝟙 + exp(-slope_Rad * (PAR - base_Rad))))
+    c_allocation_f_cloud = fR_prev + (c_allocation_f_cloud - fR_prev) * τ_Rad
     # set the prev
-    fR_prev = fR
+    fR_prev = c_allocation_f_cloud
 
     ## pack land variables
-    @pack_land (fR, fR_prev) => land.cAllocationRadiation
+    @pack_land (c_allocation_f_cloud, fR_prev) => land.cAllocationRadiation
     return land
 end
 
@@ -59,7 +59,7 @@ $(PARAMFIELDS)
  - land.cAllocationRadiation.fR_prev: radiation effect on decomposition/mineralization from the previous time step
 
 *Outputs*
- - land.cAllocationRadiation.fR: radiation effect on decomposition/mineralization
+ - land.cAllocationRadiation.c_allocation_f_cloud: radiation effect on decomposition/mineralization
 
 ---
 

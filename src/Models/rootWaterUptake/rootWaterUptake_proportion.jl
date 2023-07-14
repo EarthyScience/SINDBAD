@@ -2,30 +2,30 @@ export rootWaterUptake_proportion
 
 struct rootWaterUptake_proportion <: rootWaterUptake end
 
-function define(o::rootWaterUptake_proportion, forcing, land, helpers)
+function define(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        numType ∈ helpers.numbers
+        num_type ∈ helpers.numbers
     end
-    wRootUptake = zero(soilW)
+    root_water_uptake = zero(soilW)
 
     ## pack land variables
     @pack_land begin
-        wRootUptake => land.states
+        root_water_uptake => land.states
     end
     return land
 end
 
-function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
+function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         PAW ∈ land.vegAvailableWater
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
-        (wRootUptake, ΔsoilW) ∈ land.states
+        (root_water_uptake, ΔsoilW) ∈ land.states
         (𝟘, tolerance) ∈ helpers.numbers
     end
     # get the transpiration
@@ -33,21 +33,21 @@ function compute(o::rootWaterUptake_proportion, forcing, land, helpers)
     PAWTotal = sum(PAW)
     # extract from top to bottom
     if PAWTotal > 𝟘
-        for sl ∈ 1:length(land.pools.soilW)
+        for sl ∈ eachindex(land.pools.soilW)
             uptakeProportion = max_0(PAW[sl] / PAWTotal)
-            @rep_elem toUptake * uptakeProportion => (wRootUptake, sl, :soilW)
-            @add_to_elem -wRootUptake[sl] => (ΔsoilW, sl, :soilW)
+            @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)
+            @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
         end
     end
     # pack land variables
     @pack_land begin
-        wRootUptake => land.states
+        root_water_uptake => land.states
         ΔsoilW => land.states
     end
     return land
 end
 
-function update(o::rootWaterUptake_proportion, forcing, land, helpers)
+function update(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin
@@ -84,7 +84,7 @@ Root water uptake (extract water from soil) using rootWaterUptake_proportion
  - land.states.PAW: plant available water [pix, zix]
 
 *Outputs*
- - land.states.wRootUptake: moisture uptake from each soil layer [nPix, nZix of soilW]
+ - land.states.root_water_uptake: moisture uptake from each soil layer [nPix, nZix of soilW]
 
 # update
 

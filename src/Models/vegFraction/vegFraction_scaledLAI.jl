@@ -6,9 +6,9 @@ export vegFraction_scaledLAI
 end
 #! format: on
 
-function compute(o::vegFraction_scaledLAI, forcing, land, helpers)
+function compute(p_struct::vegFraction_scaledLAI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledLAI o
+    @unpack_vegFraction_scaledLAI p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -17,15 +17,15 @@ function compute(o::vegFraction_scaledLAI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = min_1(LAI * LAIscale)
+    frac_vegetation = min_1(LAI * LAIscale)
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the LAI value
+sets the value of frac_vegetation by scaling the LAI value
 
 # Parameters
 $(PARAMFIELDS)
@@ -39,7 +39,7 @@ Fractional coverage of vegetation using vegFraction_scaledLAI
  - land.states.LAI : LAI
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 

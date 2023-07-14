@@ -57,13 +57,13 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
     n1930::TN = 1930.0 | (nothing, nothing) | "Saxton Parameters" | ""
 
 end
-# b::T =  | nothing | "Saxton Parameters" | ""
+# b::T =  | (nothing, nothing) | "Saxton Parameters" | ""
 
-function define(o::soilProperties_Saxton2006, forcing, land, helpers)
-    @unpack_soilProperties_Saxton2006 o
+function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
+    @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (𝟘, 𝟙, numType, sNT) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
     ## instantiate variables
@@ -88,8 +88,8 @@ function define(o::soilProperties_Saxton2006, forcing, land, helpers)
 end
 
 
-function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
-    @unpack_soilProperties_Saxton2006 o
+function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
+    @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
         (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
@@ -97,7 +97,7 @@ function precompute(o::soilProperties_Saxton2006, forcing, land, helpers)
     ## calculate variables
     # calculate & set the soil hydraulic properties for each layer
     for sl in eachindex(sp_α)
-        (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = calcPropsSaxton2006(o, land, helpers, sl)
+        (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = calcPropsSaxton2006(p_struct, land, helpers, sl)
         @rep_elem α => (sp_α, sl, :soilW)
         @rep_elem β => (sp_β, sl, :soilW)
         @rep_elem kFC => (sp_kFC, sl, :soilW)
@@ -182,7 +182,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Versions:
  - 1.0 on 22.11.2019 [skoirala]:
- - 1.1 on 03.12.2019 [skoirala]: included the option to handle lookup table when set to true  from modelRun.json  
+ - 1.1 on 03.12.2019 [skoirala]: included the option to handle lookup table when set to true  from model_run.json  
 
 # Created by:
  - skoirala
@@ -244,11 +244,11 @@ calculates the soil hydraulic properties based on Saxton 2006
  - SAT: Saturation moisture [0 kPa], #v
  - WP: Wilting point moisture [1500 kPa], #v
 """
-function calcPropsSaxton2006(o::soilProperties_Saxton2006, land, helpers, sl)
+function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers, sl)
 
-    @unpack_soilProperties_Saxton2006 o
+    @unpack_soilProperties_Saxton2006 p_struct
     @unpack_land begin
-        (𝟘, 𝟙, numType, sNT) ∈ helpers.numbers
+        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
 

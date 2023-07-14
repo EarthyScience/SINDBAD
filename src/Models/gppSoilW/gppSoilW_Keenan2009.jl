@@ -8,9 +8,9 @@ export gppSoilW_Keenan2009
 end
 #! format: on
 
-function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
+function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
     ## unpack parameters
-    @unpack_gppSoilW_Keenan2009 o
+    @unpack_gppSoilW_Keenan2009 p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -25,15 +25,15 @@ function compute(o::gppSoilW_Keenan2009, forcing, land, helpers)
 
     SM = max(sum(soilW), Smin)
     smsc = ((SM - Smin) / (Smax - Smin))^q
-    SMScGPP = clamp_01(smsc)
+    gpp_f_soilW = clamp_01(smsc)
 
     ## pack land variables
-    @pack_land SMScGPP => land.gppSoilW
+    @pack_land gpp_f_soilW => land.gppSoilW
     return land
 end
 
 @doc """
-soil moisture stress on gppPot based on Keenan2009
+soil moisture stress on gpp_potential based on Keenan2009
 
 # Parameters
 $(PARAMFIELDS)
@@ -49,7 +49,7 @@ Gpp as a function of soilW
  - land.soilWBase.p_wWP: wilting point
 
 *Outputs*
- - land.gppSoilW.SMScGPP: soil moisture stress on gppPot (0-1)
+ - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
 
 ---
 

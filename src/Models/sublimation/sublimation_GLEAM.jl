@@ -6,17 +6,18 @@ export sublimation_GLEAM
 end
 #! format: on
 
-function compute(o::sublimation_GLEAM, forcing, land, helpers)
+function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_sublimation_GLEAM o
+    @unpack_sublimation_GLEAM p_struct
     @unpack_forcing (PsurfDay, Rn, TairDay) ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        snowFraction ∈ land.states
+        frac_snow ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
+        n_snowW ∈ land.wCycleBase
     end
     # convert temperature to Kelvin
     T = TairDay + 273.15
@@ -49,9 +50,9 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
     # PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
-    sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * snowFraction) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
+    sublimation = min(snowW[1] + ΔsnowW[1], PTtermSub * frac_snow) # assumes that sublimation occurs from the 1st snow layer if there is multilayered snow model
 
-    ΔsnowW[1] = ΔsnowW[1] .- sublimation / length(snowW)
+    ΔsnowW[1] = ΔsnowW[1] .- sublimation / n_snowW
 
     ## pack land variables
     @pack_land begin
@@ -62,7 +63,7 @@ function compute(o::sublimation_GLEAM, forcing, land, helpers)
     return land
 end
 
-function update(o::sublimation_GLEAM, forcing, land, helpers)
+function update(p_struct::sublimation_GLEAM, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         snowW ∈ land.pools
@@ -97,7 +98,7 @@ Calculate sublimation and update snow water equivalent using sublimation_GLEAM
  - forcing.PsurfDay : atmospheric pressure during the daytime [kPa]
  - forcing.Rn : net radiation [MJ/m2/time]
  - forcing.TairDay : daytime temperature [C]
- - land.states.snowFraction: snow cover fraction []
+ - land.states.frac_snow: snow cover fraction []
  - land.sublimation.PTtermSub: Priestley-Taylor term [mm/MJ]
  - α: α coefficient for sublimation
 

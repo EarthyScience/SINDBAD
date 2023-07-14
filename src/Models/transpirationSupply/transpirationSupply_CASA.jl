@@ -2,16 +2,16 @@ export transpirationSupply_CASA
 
 struct transpirationSupply_CASA <: transpirationSupply end
 
-function compute(o::transpirationSupply_CASA, forcing, land, helpers)
+function compute(p_struct::transpirationSupply_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land PAW ∈ land.states
 
     ## calculate variables
-    tranSup = sum(PAW)
+    transpiration_supply = sum(PAW)
 
     ## pack land variables
-    @pack_land tranSup => land.transpirationSupply
+    @pack_land transpiration_supply => land.transpirationSupply
     return land
 end
 
@@ -30,7 +30,7 @@ Supply-limited transpiration using transpirationSupply_CASA
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.transpirationSupply.transpiration_supply: supply limited transpiration
 
 ---
 
@@ -39,7 +39,7 @@ Supply-limited transpiration using transpirationSupply_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand  supply: actual [minimum] is now just demSup approach of transpiration  
 
 *Created by:*
  - ncarval

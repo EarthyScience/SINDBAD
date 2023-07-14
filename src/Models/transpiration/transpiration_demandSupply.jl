@@ -2,15 +2,15 @@ export transpiration_demandSupply
 
 struct transpiration_demandSupply <: transpiration end
 
-function compute(o::transpiration_demandSupply, forcing, land, helpers)
+function compute(p_struct::transpiration_demandSupply, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        tranSup ∈ land.transpirationSupply
-        tranDem ∈ land.transpirationDemand
+        transpiration_supply ∈ land.transpirationSupply
+        transpiration_demand ∈ land.transpirationDemand
     end
 
-    transpiration = min(tranDem, tranSup)
+    transpiration = min(transpiration_demand, transpiration_supply)
 
     ## pack land variables
     @pack_land transpiration => land.fluxes
@@ -26,8 +26,8 @@ calculate the actual transpiration as the minimum of the supply & demand
 If coupled, computed from gpp and aoe from wue using transpiration_demandSupply
 
 *Inputs*
- - land.transpirationDemand.tranDem: climate demand driven transpiration
- - land.transpirationSupply.tranSup: supply limited transpiration
+ - land.transpirationDemand.transpiration_demand: climate demand driven transpiration
+ - land.transpirationSupply.transpiration_supply: supply limited transpiration
 
 *Outputs*
  - land.fluxes.transpiration: actual transpiration

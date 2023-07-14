@@ -7,7 +7,7 @@ SINDBAD is a model data integration framework that encompasses the biogeochemica
 ## Developers
 
 ### Sindbad model and experiments
-SINDBAD is being developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany. Following is the list of SINDBAD Julia developers.
+SINDBAD is developed at the Department of Biogeochemical Integration of the Max Planck Institute for Biogeochemistry in Jena, Germany. 
 
 - Sujan Koirala (<skoirala@bgc-jena.mpg.de>)
 
@@ -48,7 +48,7 @@ julia
 Note that you may need to do the following in the new BGC cluster
 
 ```
-ml porxy
+ml proxy
 ml julia
 ```
 

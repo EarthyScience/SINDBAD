@@ -9,7 +9,7 @@ runModels(forcing, models, out)
 function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
     return foldl_unrolled(models; init=out) do o, model
         return o = Models.compute(model, forcing, o, tem_helpers)
-        # if tem_helpers.run.runUpdateModels
+        # if tem_helpers.run.run_update_models
         #     o = Models.update(model, forcing, o, tem_helpers)
         # end
     end
@@ -49,7 +49,7 @@ end
         #@show [typeof(onew) for onew in out]
         #@show [typeof(onew) <: typeof(outold[i]) for (i,onew) in enumerate(out)]
         #@show out[46], outold[46]
-        return deepcopy(out)
+        deepcopy(out)
         # deepcopy(filterVariables(out, tem_variables; filter_variables=!tem_helpers.run.output_all))
     end
     # push!(debugcatcherr,res)
@@ -95,7 +95,7 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
         tem.helpers)
     #@show first(newforcing)
     land_spin_now = land_prec
-    if tem.helpers.run.runSpinup
+    if tem.helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(approaches,
             loc_forcing,
             land_spin_now,
@@ -123,9 +123,9 @@ function ecoLoc(approaches::Tuple,
     loc_names)
     loc_forcing = map(forcing) do a
         inds = map(zip(loc_names, additionaldims)) do (loc_index, lv)
-            return lv => loc_index
+            lv => loc_index
         end
-        return view(a; inds...)
+        view(a; inds...)
     end
     return coreEcosystem(approaches, loc_forcing, land_init, tem)
 end
@@ -163,7 +163,7 @@ function runEcosystem(approaches::Tuple,
         nts = length(first(res))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res))) do (its, iouter)
-                return res[iouter][its]
+                res[iouter][its]
             end
         res = nothing
         landWrapper(fullarrayoftuples)

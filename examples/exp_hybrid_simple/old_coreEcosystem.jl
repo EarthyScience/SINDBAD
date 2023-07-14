@@ -5,10 +5,10 @@ using ForwardDiff
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
 info, forcing = getForcing(info, Val{:zarr}());
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 
@@ -22,15 +22,26 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
 
+
+# @profview runEcosystem!(output.data,
+#     info.tem.models.forward,
+#     forc,
+#     tem_with_vals,
+#     loc_space_inds,
+#     loc_forcings,
+#     loc_outputs,
+#     land_init_space,
+#     f_one)
+
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -38,22 +49,22 @@ f_one = prepRunEcosystem(output,
     f_one)
 
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 
-getLossGradient(tblParams.defaults,
+getLossGradient(tblParams.default,
     forward,
     forc,
     output,
     obs,
     tblParams,
-    tem_vals,
+    tem_with_vals,
     tem_optim,
     loc_space_inds,
     loc_forcings,
@@ -64,19 +75,26 @@ getLossGradient(tblParams.defaults,
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        view(a; loc_space_map...)
     end
     ar_inds = last.(loc_space_map)
 
     loc_output = map(outcubes) do a
-        return getArrayView(a, ar_inds)
+        getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output, loc_obs
 end
 
+
+function reDoOneLocation1(loc_land_init, approaches, tem_helpers, loc_forcing, f_one)
+    land = ForwardSindbad.runDefine!(loc_land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
+        tem_helpers)
+    land = runModels!(land, f_one, approaches, tem_helpers)
+    return land
+end
 
 function reDoOneLocation(loc_land_init, approaches, tem_helpers, loc_forcing, f_one)
     land_prec = ForwardSindbad.runDefine!(loc_land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
@@ -199,7 +217,7 @@ kwargs = (;
     f_one
 );
 
-loc_loss(tblParams.defaults, forward, kwargs...)
+loc_loss(tblParams.default, forward, kwargs...)
 
 
 function l1(p)
@@ -216,26 +234,27 @@ function l1(p)
         f_one)
 end
 
-p_vec = tblParams.defaults;
+p_vec = tblParams.default;
 l1(p_vec)
 # CHUNK_SIZE = length(p_vec)
 CHUNK_SIZE = 8
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 
-gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_vals.helpers.numbers.numType},tem_vals.helpers.numbers.numType,CHUNK_SIZE}.(tblParams.defaults);
+gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tblParams.default);
 mods = Tuple(updateModelParametersType(tblParams, forward, gradDefs));
+dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_one);
 
-@time big_land = ForwardSindbad.coreEcosystem(
-    mods,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
+# @time big_land = ForwardSindbad.coreEcosystem(
+#     mods,
+#     loc_forcing,
+#     tem_helpers,
+#     tem_spinup,
+#     tem_models,
+#     loc_land_init,
+#     f_one);
 
-res_vec = Vector{typeof(big_land[end])}(undef, info.tem.helpers.dates.size);
+res_vec = Vector{typeof(dual_land)}(undef, info.tem.helpers.dates.size);
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
 

@@ -6,22 +6,24 @@ export groundWsurfaceWInteraction_fracGradient
 end
 #! format: on
 
-function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function compute(p_struct::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWsurfaceWInteraction_fracGradient o
+    @unpack_groundWsurfaceWInteraction_fracGradient p_struct
 
     ## unpack land variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
         (ΔsurfaceW, ΔgroundW) ∈ land.states
+        (n_surfaceW, n_groundW) ∈ land.wCycleBase
+
     end
 
     ## calculate variables
     tmp = kGW2Surf * (sum(groundW + ΔgroundW) - sum(surfaceW + ΔsurfaceW))
 
     # update the delta storages
-    ΔgroundW .= ΔgroundW .- GW2Surf / length(groundW)
-    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / length(surfaceW)
+    ΔgroundW .= ΔgroundW .- GW2Surf / n_groundW
+    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / n_surfaceW
 
     ## pack land variables
     @pack_land begin
@@ -32,7 +34,7 @@ function compute(o::groundWsurfaceWInteraction_fracGradient, forcing, land, help
     return land
 end
 
-function update(o::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
+function update(p_struct::groundWsurfaceWInteraction_fracGradient, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
