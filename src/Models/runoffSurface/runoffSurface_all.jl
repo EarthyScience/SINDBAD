@@ -2,17 +2,17 @@ export runoffSurface_all
 
 struct runoffSurface_all <: runoffSurface end
 
-function compute(o::runoffSurface_all, forcing, land, helpers)
+function compute(p_struct::runoffSurface_all, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land runoffOverland ∈ land.fluxes
+    @unpack_land overland_runoff ∈ land.fluxes
 
     ## calculate variables
     # all overland flow becomes surface runoff
-    runoffSurface = runoffOverland
+    surface_runoff = overland_runoff
 
     ## pack land variables
-    @pack_land runoffSurface => land.fluxes
+    @pack_land surface_runoff => land.fluxes
     return land
 end
 
@@ -25,11 +25,11 @@ assumes all overland runoff is lost as surface runoff
 Runoff from surface water storages using runoffSurface_all
 
 *Inputs*
- - land.fluxes.runoffOverland
+ - land.fluxes.overland_runoff
  - land.states.surfaceW[1]
 
 *Outputs*
- - land.fluxes.runoffSurface
+ - land.fluxes.surface_runoff
  - land.pools.surfaceW[1]
 
 ---
@@ -39,7 +39,7 @@ Runoff from surface water storages using runoffSurface_all
 *References*
 
 *Versions*
- - 1.0 on 20.11.2019 [skoirala]: combine runoffSurfaceDirect, Indir, surfaceWRec  
+ - 1.0 on 20.11.2019 [skoirala]: combine runoffSurfaceDirect, Indir, suw_recharge  
 
 *Created by:*
  - skoirala

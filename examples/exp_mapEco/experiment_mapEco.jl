@@ -20,7 +20,7 @@ outcubes = mapRunEcosystem(forcing,
     output,
     info.tem,
     info.tem.models.forward;
-    max_cache=info.modelRun.rules.yax_max_cache);
+    max_cache=info.model_run.rules.yax_max_cache);
 
 # optimization
 observations = getObservation(info, Val(:yaxarray));
@@ -32,4 +32,4 @@ opt_params = mapOptimizeModel(forcing,
     observations,
     ;
     spinup_forcing=nothing,
-    max_cache=info.modelRun.rules.yax_max_cache)
+    max_cache=info.model_run.rules.yax_max_cache)

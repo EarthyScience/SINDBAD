@@ -16,6 +16,6 @@ Fraction of absorbed photosynthetically active radiation
  - cVegLeaf: Compute FAPAR based on carbon pool of the leaves
  - forcing: sets the value of fAPAR from the forcing
  - LAI: calculate fAPAR as an exponential function of LAI
- - vegFraction: calculate fAPAR as a linear function of vegetated fraction 
+ - frac_vegetation: calculate fAPAR as a linear function of vegetated fraction 
 """
 fAPAR

@@ -1,7 +1,7 @@
 export getPools_simple
 
 struct getPools_simple <: getPools end
-function define(o::getPools_simple, forcing, land, helpers)
+function define(p_struct::getPools_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land rain ∈ land.rainSnow
     WBP = rain
@@ -10,7 +10,7 @@ function define(o::getPools_simple, forcing, land, helpers)
     return land
 end
 
-function compute(o::getPools_simple, forcing, land, helpers)
+function compute(p_struct::getPools_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land rain ∈ land.rainSnow

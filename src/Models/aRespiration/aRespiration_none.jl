@@ -2,15 +2,13 @@ export aRespiration_none
 
 struct aRespiration_none <: aRespiration end
 
-function define(o::aRespiration_none, forcing, land, helpers)
-    @unpack_land cEcoEfflux ∈ land.states
+function define(p_struct::aRespiration_none, forcing, land, helpers)
 
     ## calculate variables
-    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-    @rep_elem 𝟘 => (cEcoEfflux, zix, :cEco)
+    c_efflux = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land cEcoEfflux => land.states
+    @pack_land c_efflux => land.states
     return land
 end
 

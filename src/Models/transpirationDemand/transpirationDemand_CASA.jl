@@ -2,7 +2,7 @@ export transpirationDemand_CASA
 
 struct transpirationDemand_CASA <: transpirationDemand end
 
-function compute(o::transpirationDemand_CASA, forcing, land, helpers)
+function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -14,10 +14,10 @@ function compute(o::transpirationDemand_CASA, forcing, land, helpers)
     end
     VMC = clamp_01(sum(PAW) / sum(p_wAWC))
     RDR = (𝟙 + mean(p_α)) / (𝟙 + mean(p_α) * (VMC^mean(p_β)))
-    tranDem = percolation + (PET - percolation) * RDR
+    transpiration_demand = percolation + (PET - percolation) * RDR
 
     ## pack land variables
-    @pack_land tranDem => land.transpirationDemand
+    @pack_land transpiration_demand => land.transpirationDemand
     return land
 end
 
@@ -36,7 +36,7 @@ Demand-driven transpiration using transpirationDemand_CASA
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.tranDem.transpirationDemand: supply limited transpiration
+ - land.transpiration_demand.transpirationDemand: supply limited transpiration
 
 ---
 
@@ -45,7 +45,7 @@ Demand-driven transpiration using transpirationDemand_CASA
 *References*
 
 *Versions*
- - 1.0 on 22.11.2019 [skoirala]: split the original tranSup of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
+ - 1.0 on 22.11.2019 [skoirala]: split the original transpiration_supply of CASA into demand supply: actual [minimum] is now just demandSupply approach of transpiration  
 
 *Created by:*
  - ncarval

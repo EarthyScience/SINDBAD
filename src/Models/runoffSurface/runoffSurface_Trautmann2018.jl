@@ -6,58 +6,58 @@ export runoffSurface_Trautmann2018
 end
 #! format: on
 
-function define(o::runoffSurface_Trautmann2018, forcing, land, helpers)
-    @unpack_runoffSurface_Trautmann2018 o
+function define(p_struct::runoffSurface_Trautmann2018, forcing, land, helpers)
+    @unpack_runoffSurface_Trautmann2018 p_struct
 
     ## instantiate variables
     z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
     Rdelay = z / (sum(z) * ones(1, 61))
 
     ## pack land variables
-    @pack_land (z, Rdelay) => land.runoffSurface
+    @pack_land (z, Rdelay) => land.surface_runoff
     return land
 end
 
-function compute(o::runoffSurface_Trautmann2018, forcing, land, helpers)
+function compute(p_struct::runoffSurface_Trautmann2018, forcing, land, helpers)
     #@needscheck and redo
     ## unpack parameters
-    @unpack_runoffSurface_Trautmann2018 o
+    @unpack_runoffSurface_Trautmann2018 p_struct
 
     ## unpack land variables
-    @unpack_land (z, Rdelay) ∈ land.runoffSurface
+    @unpack_land (z, Rdelay) ∈ land.surface_runoff
 
     ## unpack land variables
     @unpack_land begin
         (rain, snow) ∈ land.rainSnow
         (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
-        (evaporation, runoffOverland, sublimation) ∈ land.fluxes
+        (evaporation, overland_runoff, sublimation) ∈ land.fluxes
     end
     # calculate delay function of previous days
     # calculate Q from delay of previous days
     if tix > 60
         tmin = maximum(tix - 60, 1)
-        runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
+        surface_runoff = sum(overland_runoff[tmin:tix] * Rdelay)
         # calculate surfaceW[1] by water balance
         delSnow = sum(snowW) - sum(snowW_prev)
         input = rain + snow
-        loss = evaporation + sublimation + runoffSurface
+        loss = evaporation + sublimation + surface_runoff
         delSoil = sum(soilW) - sum(soilW_prev)
         dSurf = input - loss - delSnow - delSoil
     else
-        runoffSurface = 0.0
-        dSurf = runoffOverland
+        surface_runoff = 0.0
+        dSurf = overland_runoff
     end
 
     ## pack land variables
     @pack_land begin
-        runoffSurface => land.fluxes
-        (Rdelay, dSurf) => land.runoffSurface
+        surface_runoff => land.fluxes
+        (Rdelay, dSurf) => land.surface_runoff
     end
     return land
 end
 
-function update(o::runoffSurface_Trautmann2018, forcing, land, helpers)
-    @unpack_runoffSurface_Trautmann2018 o
+function update(p_struct::runoffSurface_Trautmann2018, forcing, land, helpers)
+    @unpack_runoffSurface_Trautmann2018 p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -93,8 +93,8 @@ Runoff from surface water storages using runoffSurface_Trautmann2018
 *Inputs*
 
 *Outputs*
- - land.fluxes.runoffSurface : runoff from land [mm/time]
- - land.runoffSurface.Rdelay
+ - land.fluxes.surface_runoff : runoff from land [mm/time]
+ - land.surface_runoff.Rdelay
 
 # update
 

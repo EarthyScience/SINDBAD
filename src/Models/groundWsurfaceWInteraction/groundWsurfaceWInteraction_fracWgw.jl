@@ -6,22 +6,23 @@ export groundWsurfaceWInteraction_fracWgw
 end
 #! format: on
 
-function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
+function compute(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWsurfaceWInteraction_fracWgw o
+    @unpack_groundWsurfaceWInteraction_fracWgw p_struct
 
     ## unpack land variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
         (ΔsurfaceW, ΔgroundW) ∈ land.states
+        (n_surfaceW, n_groundW) ∈ land.wCycleBase
     end
 
     ## calculate variables
     GW2Surf = kGW2Surf * sum(groundW + ΔgroundW)
 
     # update the delta storages
-    ΔgroundW .= ΔgroundW .- GW2Surf / length(groundW)
-    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / length(surfaceW)
+    ΔgroundW .= ΔgroundW .- GW2Surf / n_groundW
+    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / n_surfaceW
 
     ## pack land variables
     @pack_land begin
@@ -31,7 +32,7 @@ function compute(o::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
     return land
 end
 
-function update(o::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
+function update(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
@@ -68,7 +69,7 @@ Water exchange between surface and groundwater using groundWsurfaceWInteraction_
 *Inputs*
  - land.pools.groundW: groundwater storage
  - land.pools.surfaceW: surface water storage
- - land.runoffSurface.dc: drainage parameter from surfaceW
+ - land.surface_runoff.dc: drainage parameter from surfaceW
 
 *Outputs*
  - land.fluxes.groundW2surfaceW: groundW to surfaceW [always positive]

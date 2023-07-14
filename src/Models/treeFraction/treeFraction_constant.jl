@@ -2,34 +2,25 @@ export treeFraction_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct treeFraction_constant{T1} <: treeFraction
-    constantTreeFrac::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
+    constant_frac_tree::T1 = 1.0 | (0.3, 1.0) | "Tree fraction" | ""
 end
 #! format: on
 
-function define(o::treeFraction_constant, forcing, land, helpers)
-    ## unpack parameters
-    @unpack_treeFraction_constant o
-    ## calculate variables
-    treeFraction = constantTreeFrac
-    ## pack land variables
-    @pack_land treeFraction => land.states
-    return land
-end
 
-function compute(o::treeFraction_constant, forcing, land, helpers)
+function compute(p_struct::treeFraction_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_treeFraction_constant o
+    @unpack_treeFraction_constant p_struct
 
     ## calculate variables
-    treeFraction = constantTreeFrac
+    frac_tree = constant_frac_tree
 
     ## pack land variables
-    @pack_land treeFraction => land.states
+    @pack_land frac_tree => land.states
     return land
 end
 
 @doc """
-sets the value of treeFraction as a constant
+sets the value of frac_tree as a constant
 
 # Parameters
 $(PARAMFIELDS)
@@ -43,7 +34,7 @@ Fractional coverage of trees using treeFraction_constant
  - info helper for array
 
 *Outputs*
- - land.states.treeFraction: an extra forcing that creates a time series of constant treeFraction
+ - land.states.frac_tree: an extra forcing that creates a time series of constant frac_tree
 
 ---
 

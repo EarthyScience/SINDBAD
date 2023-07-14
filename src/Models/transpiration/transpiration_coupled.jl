@@ -2,7 +2,7 @@ export transpiration_coupled
 
 struct transpiration_coupled <: transpiration end
 
-function compute(o::transpiration_coupled, forcing, land, helpers)
+function compute(p_struct::transpiration_coupled, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -18,7 +18,7 @@ function compute(o::transpiration_coupled, forcing, land, helpers)
 end
 
 @doc """
-calculate the actual transpiration as function of gppAct & WUE
+calculate the actual transpiration as function of gpp & WUE
 
 ---
 
@@ -27,7 +27,7 @@ If coupled, computed from gpp and aoe from wue using transpiration_coupled
 
 *Inputs*
  - land.WUE.AoE: water use efficiency in gC/mmH2O
- - land.fluxes.gppAct: GPP based on a minimum of demand & stressors (except water  limitation) out of gppAct_coupled in which tranSup is used to get  supply limited GPP
+ - land.fluxes.gpp: GPP based on a minimum of demand & stressors (except water  limitation) out of gpp_coupled in which transpiration_supply is used to get  supply limited GPP
 
 *Outputs*
  - land.fluxes.transpiration: actual transpiration

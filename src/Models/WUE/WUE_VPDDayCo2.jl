@@ -8,14 +8,14 @@ export WUE_VPDDayCo2
 end
 #! format: on
 
-function compute(o::WUE_VPDDayCo2, forcing, land, helpers)
+function compute(p_struct::WUE_VPDDayCo2, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_WUE_VPDDayCo2 o
+    @unpack_WUE_VPDDayCo2 p_struct
     @unpack_forcing VPDDay ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        ambCO2 ∈ land.states
+        ambient_CO2 ∈ land.states
         (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
     end
 
@@ -23,7 +23,7 @@ function compute(o::WUE_VPDDayCo2, forcing, land, helpers)
     # "WUEat1hPa"
     kpa_to_hpa = sNT(10) * 𝟙
     AoENoCO2 = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
-    fCO2_CO2 = 𝟙 + (ambCO2 - Ca0) / (ambCO2 - Ca0 + Cm)
+    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     AoE = AoENoCO2 * fCO2_CO2
 
     ## pack land variables

@@ -2,10 +2,10 @@ export cTau_none
 
 struct cTau_none <: cTau end
 
-function define(o::cTau_none, forcing, land, helpers)
+function define(p_struct::cTau_none, forcing, land, helpers)
 
     ## calculate variables
-    p_k = ones(helpers.numbers.numType, length(land.pools.cEco))
+    p_k = zero(land.pools.cEco) .+ helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land p_k => land.cTau

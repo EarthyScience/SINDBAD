@@ -2,15 +2,15 @@ export drainage_kUnsat
 
 struct drainage_kUnsat <: drainage end
 
-function define(o::drainage_kUnsat, forcing, land, helpers)
+function define(p_struct::drainage_kUnsat, forcing, land, helpers)
     ## instantiate drainage
-    drainage = zeros(helpers.numbers.numType, length(land.pools.soilW))
+    drainage = zero(land.pools.soilW)
     ## pack land variables
     @pack_land drainage => land.drainage
     return land
 end
 
-function compute(o::drainage_kUnsat, forcing, land, helpers)
+function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -42,7 +42,7 @@ function compute(o::drainage_kUnsat, forcing, land, helpers)
     return land
 end
 
-function update(o::drainage_kUnsat, forcing, land, helpers)
+function update(p_struct::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack variables
     @unpack_land begin

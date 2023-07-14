@@ -2,18 +2,18 @@ export cFlow_CASA
 
 struct cFlow_CASA <: cFlow end
 
-function compute(o::cFlow_CASA, forcing, land, helpers)
+function compute(p_struct::cFlow_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         (p_E, p_F) ∈ land.cFlowVegProperties
         (p_E, p_F) ∈ land.cFlowSoilProperties
-        cFlowE ∈ land.cCycleBase
+        c_flow_E ∈ land.cCycleBase
         (𝟘, 𝟙) ∈ helpers.numbers
     end
     #@nc : this needs to go in the full.
     # effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
-    tmp = repeat(reshape(cFlowE, [1 size(cFlowE)]), 1, 1)
+    tmp = repeat(reshape(c_flow_E, [1 size(c_flow_E)]), 1, 1)
     p_E = tmp + p_E + p_E
     # effects of soil & veg on the partitioning of c flows between carbon pools
     p_F = p_F + p_F
@@ -26,21 +26,21 @@ function compute(o::cFlow_CASA, forcing, land, helpers)
     # build A
     p_A = p_F * p_E
     # transfers
-    (taker, giver) = find(squeeze(sum(p_A > 𝟘)) >= 𝟙)
-    p_taker = taker
-    p_giver = giver
+    (c_taker, c_giver) = find(squeeze(sum(p_A > 𝟘)) >= 𝟙)
+    p_taker = c_taker
+    p_giver = c_giver
     # if there is flux order check that is consistent
-    if !isfield(land.cCycleBase, :flowOrder)
-        flowOrder = 1:length(taker)
+    if !isfield(land.cCycleBase, :c_flow_order)
+        c_flow_order = 1:length(c_taker)
     else
-        if length(flowOrder) != length(taker)
-            error(["ERR : cFlowAct_CASA : " "length(flowOrder) != length(taker)"])
+        if length(c_flow_order) != length(c_taker)
+            error(["ERR : cFlowAct_CASA : " "length(c_flow_order) != length(c_taker)"])
         end
     end
 
     ## pack land variables
     @pack_land begin
-        flowOrder => land.cCycleBase
+        c_flow_order => land.cCycleBase
         (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
     end
     return land
@@ -55,7 +55,7 @@ combine all the effects that change the transfers between carbon pools
 Actual transfers of c between pools (of diagonal components) using cFlow_CASA
 
 *Inputs*
- - land.cCycleBase.cFlowE: transfer matrix for carbon at ecosystem level
+ - land.cCycleBase.c_flow_E: transfer matrix for carbon at ecosystem level
  - land.cFlowSoilProperties.p_E: effect of soil on transfer efficiency between pools
  - land.cFlowSoilProperties.p_F: effect of vegetation on transfer fraction between pools
  - land.cFlowVegProperties.p_E: effect of soil on transfer efficiency between pools

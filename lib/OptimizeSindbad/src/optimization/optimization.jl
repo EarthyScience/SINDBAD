@@ -1,4 +1,5 @@
 include("losses.jl")
+include("temporalAggregation.jl")
 include("optimizeModel.jl")
 include("optimizeModelArray.jl")
 include("optimizer.jl")

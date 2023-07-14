@@ -8,7 +8,7 @@ export gppAirT_TEM
 end
 #! format: on
 
-function define(o::gppAirT_TEM, forcing, land, helpers)
+function define(p_struct::gppAirT_TEM, forcing, land, helpers)
     @unpack_land (𝟘, 𝟙, sNT) ∈ helpers.numbers
     ttwo = sNT(2.0)
     ## pack land variables
@@ -16,9 +16,9 @@ function define(o::gppAirT_TEM, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppAirT_TEM, forcing, land, helpers)
+function compute(p_struct::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_TEM o
+    @unpack_gppAirT_TEM p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
     @unpack_land ttwo ∈ land.gppAirT
@@ -29,15 +29,15 @@ function compute(o::gppAirT_TEM, forcing, land, helpers)
     pTmax = TairDay - Tmax
     pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - Topt)^ttwo)
     TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? zero(pTScGPP) : pTScGPP
-    TempScGPP = clamp_01(TScGPP)
+    gpp_f_airT = clamp_01(TScGPP)
 
     ## pack land variables
-    @pack_land TempScGPP => land.gppAirT
+    @pack_land gpp_f_airT => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress for gppPot based on TEM
+temperature stress for gpp_potential based on TEM
 
 # Parameters
 $(PARAMFIELDS)
@@ -51,7 +51,7 @@ Effect of temperature using gppAirT_TEM
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 
