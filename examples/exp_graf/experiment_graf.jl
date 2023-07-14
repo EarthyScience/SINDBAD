@@ -2,7 +2,7 @@ using Revise
 @time using Sindbad
 @time using ForwardSindbad
 # @time using OptimizeSindbad
-# noStackTrace()
+noStackTrace()
 domain = "africa";
 optimize_it = true;
 optimize_it = false;
@@ -12,32 +12,32 @@ optimize_it = false;
 # info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "modelRun.flags.runOpti" => optimize_it,
-    "modelRun.flags.calcCost" => true,
-    "modelRun.mapping.yaxarray" => [],
-    "modelRun.mapping.runEcosystem" => ["time", "id"],
-    "modelRun.flags.runSpinup" => true,
-    "modelRun.flags.debugit" => false,
-    "spinup.flags.doSpinup" => true); #one parameter set for whole domain
+    "model_run.flags.run_optimization" => optimize_it,
+    "model_run.flags.run_forward_and_cost" => true,
+    "model_run.mapping.yaxarray" => [],
+    "model_run.mapping.run_ecosystem" => ["time", "id"],
+    "model_run.flags.run_spinup" => true,
+    "model_run.flags.debug_model" => false,
+    "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-# obs = ForwardSindbad.getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
-info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)));
+# obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
 
 GC.gc()
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_vals, f_one =
+loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -47,7 +47,7 @@ for x ∈ 1:10
     @time runEcosystem!(output.data,
         info.tem.models.forward,
         forc,
-        tem_vals,
+        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -57,19 +57,19 @@ end
 @profview runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, tem_vals);
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
+using CairoMakie:heatmap
+using AlgebraOfGraphics, DataFrames, Dates
 
 plotdat = output.data;
 for i ∈ eachindex(output.variables)

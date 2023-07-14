@@ -18,16 +18,16 @@ export runoffSaturationExcess_Bergstroem1992VegFractionPFT
 end
 #! format: on
 
-function define(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
+function define(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT p_struct
 
     # get the PFT data & assign parameters
     β_veg = eval("β_PFT" * string(PFT))
 
     # get the berg parameters according the vegetation fraction
-    β_veg = max(β_min, β_veg * vegFraction) # do this?
+    β_veg = max(β_min, β_veg * frac_vegetation) # do this?
 
     ## pack land variables
     @pack_land begin
@@ -36,15 +36,15 @@ function define(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing,
     return land
 end
 
-function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
+function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing, land, helpers)
     ## unpack parameters and forcing
     #@needscheck
-    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT o
+    @unpack_runoffSaturationExcess_Bergstroem1992VegFractionPFT p_struct
     @unpack_forcing PFT ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
-        (WBP, vegFraction) ∈ land.states
+        (WBP, frac_vegetation) ∈ land.states
         β_veg ∈ land.runoffSaturationExcess
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
@@ -56,14 +56,14 @@ function compute(o::runoffSaturationExcess_Bergstroem1992VegFractionPFT, forcing
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = min((tmp_SoilTotal / tmp_smaxVeg^β_veg), 𝟙)
-    runoffSatExc = WBP * tmp_SatExFrac
+    tmp_SatExFrac = min_1((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
+    sat_excess_runoff = WBP * tmp_SatExFrac
     # update water balance pool
-    WBP = WBP - runoffSatExc
+    WBP = WBP - sat_excess_runoff
 
     ## pack land variables
     @pack_land begin
-        runoffSatExc => land.fluxes
+        sat_excess_runoff => land.fluxes
         WBP => land.states
     end
     return land
@@ -82,13 +82,13 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992VegFractionPFT
 
 *Inputs*
  - forcing.PFT : PFT classes
- - land.runoffSaturationExcess.p_berg_scale : scalar for land.states.vegFraction to define shape parameter of runoff-infiltration curve []
- - land.states.vegFraction : vegetation fraction
+ - land.runoffSaturationExcess.p_berg_scale : scalar for land.states.frac_vegetation to define shape parameter of runoff-infiltration curve []
+ - land.states.frac_vegetation : vegetation fraction
  - smax1 : maximum water capacity of first soil layer [mm]
  - smax2 : maximum water capacity of second soil layer [mm]
 
 *Outputs*
- - land.fluxes.runoffSatExc : runoff from land [mm/time]
+ - land.fluxes.sat_excess_runoff : runoff from land [mm/time]
  - land.runoffSaturationExcess.β_veg : scaled berg parameter
  - land.states.WBP : water balance pool [mm]
 
@@ -103,7 +103,7 @@ Saturation runoff using runoffSaturationExcess_Bergstroem1992VegFractionPFT
  - 1.0 on 10.09.2021 [ttraut]: based on runoffSaturation_BergstroemLinVegFr  
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
  - 1.1 on 27.11.2019 [skoirala]: changed to handle any number of soil layers
- - 1.2 on 10.02.2020 [ttraut]: modyfying variable names to match the new SINDBAD version
+ - 1.2 on 10.02.2020 [ttraut]: modyfying variable name to match the new SINDBAD version
 
 *Created by:*
  - ttraut

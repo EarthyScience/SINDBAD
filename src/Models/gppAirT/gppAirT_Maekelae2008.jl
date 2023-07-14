@@ -8,7 +8,7 @@ export gppAirT_Maekelae2008
 end
 #! format: on
 
-function define(o::gppAirT_Maekelae2008, forcing, land, helpers)
+function define(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_forcing TairDay ∈ forcing
 
@@ -19,9 +19,9 @@ function define(o::gppAirT_Maekelae2008, forcing, land, helpers)
     return land
 end
 
-function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
+function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppAirT_Maekelae2008 o
+    @unpack_gppAirT_Maekelae2008 p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
         (𝟘, 𝟙) ∈ helpers.numbers
@@ -33,19 +33,19 @@ function compute(o::gppAirT_Maekelae2008, forcing, land, helpers)
     X = X_prev + (𝟙 / TimConst) * (TairDay - X_prev)
 
     # calculate the stress & saturation
-    S = max(X - X0, 𝟘)
-    TempScGPP = clamp(S / Smax, 𝟘, 𝟙)
+    S = max_0(X - X0)
+    gpp_f_airT = clamp_01(S / Smax)
 
     # replace the previous X
     X_prev = X
 
     ## pack land variables
-    @pack_land (TempScGPP, X_prev) => land.gppAirT
+    @pack_land (gpp_f_airT, X_prev) => land.gppAirT
     return land
 end
 
 @doc """
-temperature stress on gppPot based on Maekelae2008 [eqn 3 & 4]
+temperature stress on gpp_potential based on Maekelae2008 [eqn 3 & 4]
 
 # Parameters
 $(PARAMFIELDS)
@@ -59,7 +59,7 @@ Effect of temperature using gppAirT_Maekelae2008
  - forcing.TairDay: daytime temperature [°C]
 
 *Outputs*
- - land.gppAirT.TempScGPP: effect of temperature on potential GPP
+ - land.gppAirT.gpp_f_airT: effect of temperature on potential GPP
 
 ---
 

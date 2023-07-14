@@ -2,51 +2,51 @@ export rootFraction_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct rootFraction_constant{T1} <: rootFraction
-    constantRootFrac::T1 = 0.05 | (0.01, 0.15) | "root fraction" | ""
+    constant_frac_root_to_soil_depth::T1 = 0.05 | (0.01, 0.15) | "root fraction" | ""
 end
 #! format: on
 
-function define(o::rootFraction_constant, forcing, land, helpers)
-    @unpack_rootFraction_constant o
-    @unpack_land soilLayerThickness ∈ land.soilWBase
+function define(p_struct::rootFraction_constant, forcing, land, helpers)
+    @unpack_rootFraction_constant p_struct
+    @unpack_land soil_layer_thickness ∈ land.soilWBase
     @unpack_land soilW ∈ land.pools
-    cumulativeDepths = cumsum(soilLayerThickness)
+    cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## instantiate
-    p_fracRoot2SoilD = zero(land.pools.soilW) .+ helpers.numbers.𝟙
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ helpers.numbers.𝟙
 
     ## pack land variables
     @pack_land begin
-        p_fracRoot2SoilD => land.rootFraction
-        cumulativeDepths => land.rootFraction
+        p_frac_root_to_soil_depth => land.rootFraction
+        cumulative_soil_depths => land.rootFraction
     end
 
     return land
 end
 
-function compute(o::rootFraction_constant, forcing, land, helpers)
+function compute(p_struct::rootFraction_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_rootFraction_constant o
+    @unpack_rootFraction_constant p_struct
 
     ## unpack land variables
     @unpack_land begin
-        soilLayerThickness ∈ land.soilWBase
-        (p_fracRoot2SoilD, cumulativeDepths) ∈ land.rootFraction
-        maxRootDepth ∈ land.states
+        soil_layer_thickness ∈ land.soilWBase
+        (p_frac_root_to_soil_depth, cumulative_soil_depths) ∈ land.rootFraction
+        max_root_depth ∈ land.states
         𝟘 ∈ helpers.numbers
     end
 
     ## calculate variables
-    # cumSum!(soilLayerThickness, cumulativeDepths)
-    # maxRootDepth = min(maxRootDepth, sum(soilDepths)); # maximum rootingdepth
+    # cumSum!(soil_layer_thickness, cumulative_soil_depths)
+    # max_root_depth = min(max_root_depth, sum(soilDepths)); # maximum rootingdepth
     for sl ∈ eachindex(land.pools.soilW)
-        soilcumuD = cumulativeDepths[sl]
-        rootOver = maxRootDepth - soilcumuD
-        rootFrac = rootOver > 𝟘 ? constantRootFrac : 𝟘
-        @rep_elem rootFrac => (p_fracRoot2SoilD, sl, :soilW)
+        soilcumuD = cumulative_soil_depths[sl]
+        rootOver = max_root_depth - soilcumuD
+        rootFrac = rootOver > 𝟘 ? constant_frac_root_to_soil_depth : zero(constant_frac_root_to_soil_depth)
+        @rep_elem rootFrac => (p_frac_root_to_soil_depth, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_land p_fracRoot2SoilD => land.rootFraction
+    @pack_land p_frac_root_to_soil_depth => land.rootFraction
     return land
 end
 
@@ -65,7 +65,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - land.states.maxRootD
 
 *Outputs*
- - land.rootFraction.p_fracRoot2SoilD
+ - land.rootFraction.p_frac_root_to_soil_depth
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootFraction_constant

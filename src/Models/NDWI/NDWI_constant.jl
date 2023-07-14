@@ -2,16 +2,16 @@ export NDWI_constant
 
 #! format: off
 @bounds @describe @units @with_kw struct NDWI_constant{T1} <: NDWI
-    constantNDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
+    constant_NDWI::T1 = 1.0 | (0.0, 1.0) | "NDWI" | ""
 end
 #! format: on
 
-function compute(o::NDWI_constant, forcing, land, helpers)
+function compute(p_struct::NDWI_constant, forcing, land, helpers)
     ## unpack parameters
-    @unpack_NDWI_constant o
+    @unpack_NDWI_constant p_struct
 
     ## calculate variables
-    NDWI = constantNDWI
+    NDWI = constant_NDWI
 
     ## pack land variables
     @pack_land NDWI => land.states

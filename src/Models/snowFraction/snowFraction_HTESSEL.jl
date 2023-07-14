@@ -6,16 +6,16 @@ export snowFraction_HTESSEL
 end
 #! format: on
 
-function define(o::snowFraction_HTESSEL, forcing, land, helpers)
-    snowFraction = helpers.numbers.𝟙
+function define(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
+    frac_snow = helpers.numbers.𝟙
     ## pack land variables
-    @pack_land snowFraction => land.states
+    @pack_land frac_snow => land.states
     return land
 end
 
-function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
+function compute(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
     ## unpack parameters
-    @unpack_snowFraction_HTESSEL o
+    @unpack_snowFraction_HTESSEL p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -27,10 +27,10 @@ function compute(o::snowFraction_HTESSEL, forcing, land, helpers)
     ## calculate variables
     # suggested by Sujan [after HTESSEL GHM]
 
-    snowFraction = min(𝟙, sum(snowW) / CoverParam)
+    frac_snow = min(𝟙, sum(snowW) / CoverParam)
 
     ## pack land variables
-    @pack_land snowFraction => land.states
+    @pack_land frac_snow => land.states
     return land
 end
 
@@ -51,7 +51,7 @@ Calculate snow cover fraction using snowFraction_HTESSEL
 *Outputs*
  - land.fluxes.evaporation: soil evaporation flux
  - land.pools.snowW: adds snow fall to the snow pack
- - land.states.snowFraction: updates snow cover fraction
+ - land.states.frac_snow: updates snow cover fraction
 
 ---
 

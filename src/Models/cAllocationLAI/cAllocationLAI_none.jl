@@ -2,13 +2,13 @@ export cAllocationLAI_none
 
 struct cAllocationLAI_none <: cAllocationLAI end
 
-function define(o::cAllocationLAI_none, forcing, land, helpers)
+function define(p_struct::cAllocationLAI_none, forcing, land, helpers)
 
     ## calculate variables
-    LL = helpers.numbers.𝟙
+    c_allocation_f_LAI = helpers.numbers.𝟙
 
     ## pack land variables
-    @pack_land LL => land.cAllocationLAI
+    @pack_land c_allocation_f_LAI => land.cAllocationLAI
     return land
 end
 
@@ -21,7 +21,7 @@ sets the LAI effect on allocation to one (no effect)
 - helpers.numbers.𝟙
 
 *Outputs*
-- land.cAllocationLAI.LL: LAI effect on cAllocation (0-1)
+- land.cAllocationLAI.c_allocation_f_LAI: LAI effect on cAllocation (0-1)
 
 ---
 

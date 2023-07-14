@@ -3,10 +3,10 @@ experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
 info, forcing = getForcing(info, Val{:zarr}());
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 
 # covariates
@@ -27,7 +27,7 @@ n_bs_feat = length(xfeatures.features)
 
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs,
-land_init_space, f_one =
+land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output.data,
         output.land_init,
         info.tem.models.forward,
@@ -44,8 +44,8 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
 end
 
 function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.defaults, tblParams.lower)
-    ub = oftype(tblParams.defaults, tblParams.upper)
+    lb = oftype(tblParams.default, tblParams.lower)
+    ub = oftype(tblParams.default, tblParams.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end

@@ -5,7 +5,7 @@ export runModels!, foldl_unrolled
     return Expr(:block, exes...)
 end
 
-@generated function foldl_unrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init) where {N}
+@generated function foldl_unrolled(f, x::Array{Sindbad.Models.LandEcosystem,N}; init) where {N}
     exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
     return Expr(:block, exes...)
 end
@@ -13,7 +13,7 @@ end
 """
 runModels(forcing, models, out)
 """
-function runModels!(out, forcing, models, tem_helpers, ::Val{:debugit})
+function runModels!(out, forcing, models, tem_helpers, ::Val{:debug_model})
     otype = typeof(out)
     return foldl_unrolled(models; init=out) do o, model
         @show typeof(model)

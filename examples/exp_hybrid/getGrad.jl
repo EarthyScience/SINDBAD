@@ -17,10 +17,10 @@ info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note 
 info, forcing = getForcing(info, Val{:zarr}());
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem);
+land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getObsKeyedArrayFromYaxArray(observations);
 
 @time _,
@@ -29,14 +29,14 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(op, forc, info.tem);
 
 
 @time runEcosystem!(op.data,
     info.tem.models.forward,
     forc,
-    tem_vals,
+    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
@@ -77,18 +77,18 @@ function g_loss(x,
         f_one)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.numType);
+rand_m = rand(info.tem.helpers.numbers.num_type);
 # op = setupOutput(info);
 
 mods = info.tem.models.forward;
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -99,13 +99,13 @@ for _ in 1:10
 end
 
 for _ in 1:10
-    lo_ss = g_loss(tblParams.defaults,
+    lo_ss = g_loss(tblParams.default,
         mods,
         forc,
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -115,7 +115,7 @@ for _ in 1:10
     @show lo_ss
 end
 
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.numType}.(tblParams.defaults);
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tblParams.default);
 newmods = updateModelParametersType(tblParams, mods, dualDefs);
 
 function l1(p)
@@ -125,7 +125,7 @@ function l1(p)
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -140,7 +140,7 @@ function l2(p)
         op,
         obs,
         tblParams,
-        tem_vals,
+        tem_with_vals,
         info.optim,
         loc_space_inds,
         loc_forcings,
@@ -148,10 +148,22 @@ function l2(p)
         land_init_space,
         f_one)
 end
-l1(tblParams.defaults .* rand_m)
-l2(tblParams.defaults .* rand_m)
-@time grad = ForwardDiff.gradient(l1, tblParams.defaults)
-@profview grad = ForwardDiff.gradient(l1, tblParams.defaults)
+
+
+op = setupOutput(info);
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
+# op = (; op..., data=op_dat);
+
+# @time grad = ForwardDiff.gradient(l1, tblParams.default)
+
+l1(tblParams.default .* rand_m)
+l2(tblParams.default .* rand_m)
+
+
+
+
+
+@profview grad = ForwardDiff.gradient(l1, tblParams.default)
 @time grad = ForwardDiff.gradient(l2, dualDefs)
 
 a = 2

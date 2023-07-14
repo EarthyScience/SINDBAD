@@ -43,7 +43,7 @@ function optimizer(cost_function,
         results.minimizer
     else
         @warn "Optim_LBFGS did not converge. Returning default as optimized parameters"
-        defaults
+        default
     end
     return optim_para
 end
@@ -64,7 +64,7 @@ function optimizer(cost_function,
         results.minimizer
     else
         @warn "Optim_BFGS did not converge. Returning default as optimized parameters"
-        defaults
+        default
     end
     return optim_para
 end

@@ -8,19 +8,19 @@ export cAllocationLAI_Friedlingstein1999
 end
 #! format: on
 
-function compute(o::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
+function compute(p_struct::cAllocationLAI_Friedlingstein1999, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cAllocationLAI_Friedlingstein1999 o
+    @unpack_cAllocationLAI_Friedlingstein1999 p_struct
 
     ## unpack land variables
     @unpack_land LAI ∈ land.states
 
     ## calculate variables
-    # light limitation [LL] calculation
-    LL = clamp(exp(-kext * LAI), minL, maxL)
+    # light limitation [c_allocation_f_LAI] calculation
+    c_allocation_f_LAI = clamp(exp(-kext * LAI), minL, maxL)
 
     ## pack land variables
-    @pack_land LL => land.cAllocationLAI
+    @pack_land c_allocation_f_LAI => land.cAllocationLAI
     return land
 end
 
@@ -39,8 +39,8 @@ Effect of lai on carbon allocation using cAllocationLAI_Friedlingstein1999
  - land.states.LAI: values for leaf area index
 
 *Outputs*
- - land.cAllocationLAI.LL: values for light limitation
- - land.cAllocationLAI.LL
+ - land.cAllocationLAI.c_allocation_f_LAI: values for light limitation
+ - land.cAllocationLAI.c_allocation_f_LAI
 
 ---
 

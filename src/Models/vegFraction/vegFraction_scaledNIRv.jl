@@ -6,9 +6,9 @@ export vegFraction_scaledNIRv
 end
 #! format: on
 
-function compute(o::vegFraction_scaledNIRv, forcing, land, helpers)
+function compute(p_struct::vegFraction_scaledNIRv, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledNIRv o
+    @unpack_vegFraction_scaledNIRv p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -17,15 +17,15 @@ function compute(o::vegFraction_scaledNIRv, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = clamp(NIRv * NIRvscale, 𝟘, 𝟙)
+    frac_vegetation = clamp_01(NIRv * NIRvscale)
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the NIRv value
+sets the value of frac_vegetation by scaling the NIRv value
 
 # Parameters
 $(PARAMFIELDS)
@@ -39,7 +39,7 @@ Fractional coverage of vegetation using vegFraction_scaledNIRv
  - land.states.NIRv : current NIRv value
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 
