@@ -12,7 +12,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.modelRun.rules.data_backend)));
+observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 tblParams = getParameters(info.tem.models.forward,
@@ -43,7 +43,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_vals,
+tem_with_vals,
 f_one = prepRunEcosystem(output,
     forc,
     info.tem);
@@ -57,8 +57,8 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
 end
 
 function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.defaults, tblParams.lower)
-    ub = oftype(tblParams.defaults, tblParams.upper)
+    lb = oftype(tblParams.default, tblParams.lower)
+    ub = oftype(tblParams.default, tblParams.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end
@@ -108,13 +108,13 @@ function pixel_run!(output,
         f_one)
 end
 
-tem_helpers = tem_vals.helpers;
-tem_spinup = tem_vals.spinup;
-tem_models = tem_vals.models;
-tem_variables = tem_vals.variables;
+tem_helpers = tem_with_vals.helpers;
+tem_spinup = tem_with_vals.spinup;
+tem_models = tem_with_vals.models;
+tem_variables = tem_with_vals.variables;
 tem_optim = info.optim;
 out_variables = output.variables;
-forward = tem_vals.models.forward;
+forward = tem_with_vals.models.forward;
 
 site_location = loc_space_maps[1];
 loc_forcing, loc_output, loc_obs =
@@ -126,13 +126,14 @@ loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
+def_params = tblParams.default .* rand()
 pixel_run!(output,
     forc,
     obs,
     site_location,
     tblParams,
     forward,
-    tblParams.defaults,
+    def_params,
     tem_helpers,
     tem_spinup,
     tem_models,
