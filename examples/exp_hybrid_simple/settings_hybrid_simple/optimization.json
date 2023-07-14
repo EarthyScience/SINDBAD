@@ -10,7 +10,7 @@
   "algorithm": "CMAEvolutionStrategy_CMAES",
   "multi_objective_algorithm": false,
   "default_parameter": {
-    "is_ml": false,
+    "is_ml": true,
     "distribution": ["normal", [0.0, 1.0]]
   },
   "optimized_parameters": {
@@ -20,7 +20,6 @@
     "cCycleBase,annk_LitFast": null,
     "cCycleBase,annk_SoilSlow": null,
     "cCycleBase,annk_SoilOld": null,
-    "cCycleBase,ηA": null,
     "cCycleBase,ηH": null,
     "cCycleBase,c_remain": null,
     "cFlow,f_τ": {
@@ -36,6 +35,7 @@
     "cFlow,slope_reserve_to_leaf_root": null,
     "cTauSoilT,Q10": null,
     "cTauSoilW,Wopt": null,
+    "drainage,dos_exp": null,
     "evaporation,α": null,
     "evaporation,k_evaporation": null,
     "fAPAR,kEffExt": null,
@@ -59,10 +59,10 @@
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_T": null,
     "snowMelt,melt_Rn": null,
+    "transpirationSupply,k_transpiration": null,
     "treeFraction,constant_frac_tree": null,
     "WUE,WUEatOnehPa": null,
-    "WUE,κ": null
-  },
+    "WUE,κ": null  },
   "constraints": {
     "function_name": {
       "import": "readObservation"
@@ -116,7 +116,7 @@
         "data": {
           "sindbad_unit": "gC m-2 day-1",
           "bounds": [-100.0, 100.0],
-          "source_variable": "NEE",
+          "source_variable": "nee",
           "source_unit": "gC m-2 day-1",
           "name_short": "Net Ecosystem Exchange"
         },
@@ -154,15 +154,13 @@
           "bounds": [0.0, 100.0],
           "source_variable": "evapotranspiration",
           "source_unit": "MJ m-2 d-1",
-          "source_to_sindbad_unit": 0.4081632653,
           "is_categorical": false,
           "name_short": "Evapotranspiration"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "le_σ",
-          "source_to_sindbad_unit": 0.4081632653
+          "source_variable": "le_σ"
         },
         "cost_options": {
           "cost_metric": "nseinv"
@@ -180,8 +178,7 @@
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "le_σ",
-          "source_to_sindbad_unit": 0.4081632653
+          "source_variable": "le_σ"
         },
         "cost_options": {
           "cost_metric": "nseinv"

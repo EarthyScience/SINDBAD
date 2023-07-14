@@ -25,6 +25,7 @@
 *.jpg
 .*
 ~*
+*_tmp
 tmp_*
 output_*
 *Manifest.toml
