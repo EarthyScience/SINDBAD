@@ -2,52 +2,52 @@ export gppDemand_min
 
 struct gppDemand_min <: gppDemand end
 
-function define(o::gppDemand_min, forcing, land, helpers)
-    @unpack_land (𝟘, 𝟙, tolerance, numType, sNT) ∈ helpers.numbers
+function define(p_struct::gppDemand_min, forcing, land, helpers)
+    @unpack_land (𝟘, 𝟙, tolerance, num_type, sNT) ∈ helpers.numbers
 
-    scall = ones(numType, 4)
+    gpp_climate_stressors = ones(num_type, 4)
 
     if hasproperty(land.pools, :soilW)
         if land.pools.soilW isa SVector
-            scall = SVector{4}(scall)
+            gpp_climate_stressors = SVector{4}(gpp_climate_stressors)
         end
     end
 
-    AllDemScGPP = 𝟙
-    gppE = 𝟘
-    @pack_land (scall, AllDemScGPP, gppE) => land.gppDemand
+    gpp_f_climate = 𝟙
+    gpp_demand = 𝟘
+    @pack_land (gpp_climate_stressors, gpp_f_climate, gpp_demand) => land.gppDemand
 
     return land
 end
 
-function compute(o::gppDemand_min, forcing, land, helpers)
+function compute(p_struct::gppDemand_min, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        CloudScGPP ∈ land.gppDiffRadiation
+        gpp_f_cloud ∈ land.gppDiffRadiation
         fAPAR ∈ land.states
-        gppPot ∈ land.gppPotential
-        LightScGPP ∈ land.gppDirRadiation
-        scall ∈ land.gppDemand
-        TempScGPP ∈ land.gppAirT
+        gpp_potential ∈ land.gppPotential
+        gpp_f_light ∈ land.gppDirRadiation
+        gpp_climate_stressors ∈ land.gppDemand
+        gpp_f_airT ∈ land.gppAirT
         (𝟘, 𝟙) ∈ helpers.numbers
     end
 
-    # @show TempScGPP, VPDScGPP, scall
+    # @show gpp_f_airT, gpp_f_vpd, gpp_climate_stressors
     # set 3d scalar matrix with current scalars
-    scall = rep_elem(scall, TempScGPP, scall, scall, 𝟘, 𝟙, 1)
-    scall = rep_elem(scall, VPDScGPP, scall, scall, 𝟘, 𝟙, 2)
-    scall = rep_elem(scall, LightScGPP, scall, scall, 𝟘, 𝟙, 3)
-    scall = rep_elem(scall, CloudScGPP, scall, scall, 𝟘, 𝟙, 4)
+    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_airT, gpp_climate_stressors, gpp_climate_stressors, 𝟘, 𝟙, 1)
+    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_vpd, gpp_climate_stressors, gpp_climate_stressors, 𝟘, 𝟙, 2)
+    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_light, gpp_climate_stressors, gpp_climate_stressors, 𝟘, 𝟙, 3)
+    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_cloud, gpp_climate_stressors, gpp_climate_stressors, 𝟘, 𝟙, 4)
 
     # compute the minumum of all the scalars
-    AllDemScGPP = minimum(scall)
+    gpp_f_climate = minimum(gpp_climate_stressors)
 
     # compute demand GPP
-    gppE = fAPAR * gppPot * AllDemScGPP
+    gpp_demand = fAPAR * gpp_potential * gpp_f_climate
 
     ## pack land variables
-    @pack_land (AllDemScGPP, gppE) => land.gppDemand
+    @pack_land (gpp_f_climate, gpp_demand) => land.gppDemand
     return land
 end
 
@@ -60,16 +60,16 @@ compute the demand GPP as minimum of all stress scalars [most limited]
 Combine effects as multiplicative or minimum using gppDemand_min
 
 *Inputs*
- - land.gppAirT.TempScGPP: temperature effect on GPP [-], between 0-1
- - land.gppDiffRadiation.CloudScGPP: cloudiness scalar [-], between 0-1
- - land.gppDirRadiation.LightScGPP: light saturation scalar [-], between 0-1
- - land.gppPotential.gppPot: maximum potential GPP based on radiation use efficiency
- - land.gppVPD.VPDScGPP: VPD effect on GPP [-], between 0-1
+ - land.gppAirT.gpp_f_airT: temperature effect on GPP [-], between 0-1
+ - land.gppDiffRadiation.gpp_f_cloud: cloudiness scalar [-], between 0-1
+ - land.gppDirRadiation.gpp_f_light: light saturation scalar [-], between 0-1
+ - land.gppPotential.gpp_potential: maximum potential GPP based on radiation use efficiency
+ - land.gppVPD.gpp_f_vpd: VPD effect on GPP [-], between 0-1
  - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  [-] (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*
- - land.gppDemand.AllDemScGPP [effective scalar, 0-1]
- - land.gppDemand.gppE: demand GPP [gC/m2/time]
+ - land.gppDemand.gpp_f_climate [effective scalar, 0-1]
+ - land.gppDemand.gpp_demand: demand GPP [gC/m2/time]
 
 ---
 

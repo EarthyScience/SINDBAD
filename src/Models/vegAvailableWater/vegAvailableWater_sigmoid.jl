@@ -6,9 +6,9 @@ export vegAvailableWater_sigmoid
 end
 #! format: on
 
-function define(o::vegAvailableWater_sigmoid, forcing, land, helpers)
+function define(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegAvailableWater_sigmoid o
+    @unpack_vegAvailableWater_sigmoid p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -26,14 +26,14 @@ function define(o::vegAvailableWater_sigmoid, forcing, land, helpers)
     return land
 end
 
-function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
+function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegAvailableWater_sigmoid o
+    @unpack_vegAvailableWater_sigmoid p_struct
 
     ## unpack land variables
     @unpack_land begin
         (p_wWP, p_wFC, p_wSat, p_β) ∈ land.soilWBase
-        p_fracRoot2SoilD ∈ land.rootFraction
+        p_frac_root_to_soil_depth ∈ land.rootFraction
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (𝟘, 𝟙) ∈ helpers.numbers
@@ -42,10 +42,10 @@ function compute(o::vegAvailableWater_sigmoid, forcing, land, helpers)
     for sl ∈ eachindex(soilW)
         θ_dos = (soilW[sl] + ΔsoilW[sl]) / p_wSat[sl]
         θ_fc_dos = p_wFC[sl] / p_wSat[sl]
-        tmpSoilWStress = clamp(𝟙 / (𝟙 + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))), 𝟘, 𝟙)
+        tmpSoilWStress = clamp_01(𝟙 / (𝟙 + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
-        maxWater = clamp(soilW[sl] + ΔsoilW[sl] - p_wWP[sl], 𝟘, 𝟙)
-        PAW_sl = p_fracRoot2SoilD[sl] * maxWater * tmpSoilWStress
+        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - p_wWP[sl])
+        PAW_sl = p_frac_root_to_soil_depth[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
@@ -69,7 +69,7 @@ Plant available water using vegAvailableWater_sigmoid
  - land.pools.soilW
 
 *Outputs*
- - land.rootFraction.p_fracRoot2SoilD as nPix;nZix for soilW
+ - land.rootFraction.p_frac_root_to_soil_depth as nPix;nZix for soilW
 
 ---
 

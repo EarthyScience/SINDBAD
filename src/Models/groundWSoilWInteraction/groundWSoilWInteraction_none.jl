@@ -2,13 +2,13 @@ export groundWSoilWInteraction_none
 
 struct groundWSoilWInteraction_none <: groundWSoilWInteraction end
 
-function define(o::groundWSoilWInteraction_none, forcing, land, helpers)
+function define(p_struct::groundWSoilWInteraction_none, forcing, land, helpers)
 
     ## calculate variables
-    gwCapFlow = helpers.numbers.𝟘
+    gw_capillary_flux = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land gwCapFlow => land.fluxes
+    @pack_land gw_capillary_flux => land.fluxes
     return land
 end
 

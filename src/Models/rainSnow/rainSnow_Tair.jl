@@ -6,7 +6,7 @@ export rainSnow_Tair
 end
 #! format: on
 
-function define(o::rainSnow_Tair, forcing, land, helpers)
+function define(p_struct::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     precip = helpers.numbers.𝟘
     rain = precip
@@ -15,9 +15,9 @@ function define(o::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
-function compute(o::rainSnow_Tair, forcing, land, helpers)
+function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_rainSnow_Tair o
+    @unpack_rainSnow_Tair p_struct
     @unpack_forcing (Rain, Tair) ∈ forcing
 
     ## unpack land variables
@@ -30,10 +30,10 @@ function compute(o::rainSnow_Tair, forcing, land, helpers)
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = 𝟘
+        rain = zero(Rain)
     else
         rain = Rain
-        snow = 𝟘
+        snow = zero(Rain)
     end
     precip = rain + snow
 
@@ -47,8 +47,8 @@ function compute(o::rainSnow_Tair, forcing, land, helpers)
     return land
 end
 
-function update(o::rainSnow_Tair, forcing, land, helpers)
-    @unpack_rainSnow_Tair o
+function update(p_struct::rainSnow_Tair, forcing, land, helpers)
+    @unpack_rainSnow_Tair p_struct
 
     ## unpack variables
     @unpack_land begin

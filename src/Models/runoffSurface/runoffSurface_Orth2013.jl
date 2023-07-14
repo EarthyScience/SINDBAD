@@ -6,51 +6,51 @@ export runoffSurface_Orth2013
 end
 #! format: on
 
-function define(o::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 o
+function define(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 p_struct
 
     ## instantiate variables
     z = exp(-((0:60) / (qt * ones(1, 61)))) - exp((((0:60) + 1) / (qt * ones(1, 61)))) # this looks to be wrong, some dots are missing
     Rdelay = z / (sum(z) * ones(1, 61))
 
     ## pack land variables
-    @pack_land (z, Rdelay) => land.runoffSurface
+    @pack_land (z, Rdelay) => land.surface_runoff
     return land
 end
 
-function compute(o::runoffSurface_Orth2013, forcing, land, helpers)
+function compute(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
     #@needscheck and redo
     ## unpack parameters
-    @unpack_runoffSurface_Orth2013 o
+    @unpack_runoffSurface_Orth2013 p_struct
 
     ## unpack land variables
-    @unpack_land (z, Rdelay) ∈ land.runoffSurface
+    @unpack_land (z, Rdelay) ∈ land.surface_runoff
 
     ## unpack land variables
     @unpack_land begin
         surfaceW ∈ land.pools
-        runoffOverland ∈ land.fluxes
+        overland_runoff ∈ land.fluxes
     end
     # calculate delay function of previous days
     # calculate Q from delay of previous days
     if tix > 60
         tmin = maximum(tix - 60, 1)
-        runoffSurface = sum(runoffOverland[tmin:tix] * Rdelay)
+        surface_runoff = sum(overland_runoff[tmin:tix] * Rdelay)
     else # | accumulate land runoff in surface storage
-        runoffSurface = 0.0
+        surface_runoff = 0.0
     end
     # update the water pool
 
     ## pack land variables
     @pack_land begin
-        runoffSurface => land.fluxes
-        Rdelay => land.runoffSurface
+        surface_runoff => land.fluxes
+        Rdelay => land.surface_runoff
     end
     return land
 end
 
-function update(o::runoffSurface_Orth2013, forcing, land, helpers)
-    @unpack_runoffSurface_Orth2013 o
+function update(p_struct::runoffSurface_Orth2013, forcing, land, helpers)
+    @unpack_runoffSurface_Orth2013 p_struct
 
     ## unpack variables
     @unpack_land begin
@@ -86,8 +86,8 @@ Runoff from surface water storages using runoffSurface_Orth2013
 *Inputs*
 
 *Outputs*
- - land.fluxes.runoffSurface : runoff from land [mm/time]
- - land.runoffSurface.Rdelay
+ - land.fluxes.surface_runoff : runoff from land [mm/time]
+ - land.surface_runoff.Rdelay
 
 # update
 

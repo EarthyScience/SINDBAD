@@ -2,7 +2,7 @@ export transpiration_none
 
 struct transpiration_none <: transpiration end
 
-function define(o::transpiration_none, forcing, land, helpers)
+function define(p_struct::transpiration_none, forcing, land, helpers)
 
     ## calculate variables
     transpiration = helpers.numbers.𝟘

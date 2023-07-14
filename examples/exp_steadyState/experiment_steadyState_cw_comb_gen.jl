@@ -43,11 +43,10 @@ function (TWS_spin::Spinup_TWS)(pout, p)
     land = TWS_spin.land
     helpers = TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max(p[l], 𝟘) => (TWS, lc, :TWS)
+        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
@@ -62,7 +61,6 @@ function (cEco_spin::Spinup_cEco)(pout, p)
     land = cEco_spin.land
     helpers = cEco_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
@@ -84,11 +82,9 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
     helpers = cEco_TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
-    @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco
     for (lc, l) in enumerate(zix.cEco)
         @rep_elem pout[l] => (cEco, lc, :cEco)
@@ -173,7 +169,7 @@ function doSpinup(spinup_models,
 end
 
 
-function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod)
+function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod, out_path)
     plot_elem = string(plot_elem)
     if plot_var == :cEco
         plt = plot(; legend=:outerbottom, size=(1800, 1200), yscale=:log10)
@@ -189,8 +185,8 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
 
     plot!(getfield(out_sp_exp.pools, plot_var);
         linewidth=5,
-        label="Exp_Init",)
-        # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
+        label="Exp_Init")
+    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
     plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,
@@ -235,31 +231,31 @@ nLoop_pre_spin = 10
 # for arraymethod ∈ ("staticarray",)
 # for arraymethod ∈ ("array",) #, "staticarray")
 for arraymethod ∈ ("staticarray", "array") #, "staticarray")
-    replace_info = Dict("spinup.diffEq.timeJump" => 1,
-        "spinup.diffEq.reltol" => 1e-2,
-        "spinup.diffEq.abstol" => 1,
-        "modelRun.rules.model_array_type" => arraymethod,
-        "modelRun.flags.debugit" => false)
+    replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
+        "spinup.differential_eqn.relative_tolerance" => 1e-2,
+        "spinup.differential_eqn.absolute_tolerance" => 1,
+        "model_run.rules.model_array_type" => arraymethod,
+        "model_run.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
-    info, forcing = getForcing(info, Val(Symbol(info.modelRun.rules.data_backend)))
+    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     output = setupOutput(info)
 
     forc = getKeyedArrayFromYaxArray(forcing)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)
 
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
     spinupforc = :recycleMSC
-    sel_forcing = getSpinupForcing(loc_forcing, tem_vals.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, tem_vals)
+    sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))
+    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_vals)
     theforcing = getfield(spinup_forcing, spinupforc)
 
-    spinup_models = tem_vals.models.forward[tem_vals.models.is_spinup]
+    spinup_models = tem_with_vals.models.forward[tem_with_vals.models.is_spinup]
     # for sel_pool in (:cEco_TWS,)
     # for sel_pool in (:cEco,)
     # for sel_pool in (:TWS,)
@@ -280,8 +276,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             land_for_s = ForwardSindbad.doSpinup(spinup_models,
                 theforcing,
                 land_for_s,
-                tem_vals.helpers,
-                tem_vals.spinup,
+                tem_with_vals.helpers,
+                tem_with_vals.spinup,
                 land_type,
                 f_one,
                 Val(:spinup))
@@ -294,8 +290,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         @time out_sp_nl = doSpinup(spinup_models,
             theforcing,
             deepcopy(land_for_s),
-            tem_vals.helpers,
-            tem_vals.spinup,
+            tem_with_vals.helpers,
+            tem_with_vals.spinup,
             land_type,
             f_one,
             Val(sp_method))
@@ -311,8 +307,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
                     theforcing,
                     out_sp_exp,
-                    tem_vals.helpers,
-                    tem_vals.spinup,
+                    tem_with_vals.helpers,
+                    tem_with_vals.spinup,
                     land_type,
                     f_one,
                     Val(sp))
@@ -326,19 +322,19 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
                     theforcing,
                     out_sp_exp_nl,
-                    tem_vals.helpers,
-                    tem_vals.spinup,
+                    tem_with_vals.helpers,
+                    tem_with_vals.spinup,
                     land_type,
                     f_one,
                     Val(sp))
             end
             if sel_pool in (:cEco_TWS,)
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, arraymethod)
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, sel_pool, :TWS, tj, arraymethod)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, arraymethod, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, sel_pool, :TWS, tj, arraymethod, out_path)
             elseif sel_pool == :cEco
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, :C, :cEco, tj, arraymethod)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, :C, :cEco, tj, arraymethod, out_path)
             else
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, :W, :TWS, tj, arraymethod)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, :W, :TWS, tj, arraymethod, out_path)
             end
         end
     end

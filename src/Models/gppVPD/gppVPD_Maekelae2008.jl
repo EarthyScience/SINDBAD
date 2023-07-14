@@ -6,23 +6,23 @@ export gppVPD_Maekelae2008
 end
 #! format: on
 
-function compute(o::gppVPD_Maekelae2008, forcing, land, helpers)
+function compute(p_struct::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_gppVPD_Maekelae2008 o
+    @unpack_gppVPD_Maekelae2008 p_struct
     @unpack_forcing VPDDay ∈ forcing
     @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
 
     ## calculate variables
-    VPDScGPP = exp(-k * VPDDay)
-    VPDScGPP = min(VPDScGPP, 𝟙)
+    gpp_f_vpd = exp(-k * VPDDay)
+    gpp_f_vpd = min_1(gpp_f_vpd)
 
     ## pack land variables
-    @pack_land VPDScGPP => land.gppVPD
+    @pack_land gpp_f_vpd => land.gppVPD
     return land
 end
 
 @doc """
-calculate the VPD stress on gppPot based on Maekelae2008 [eqn 5]
+calculate the VPD stress on gpp_potential based on Maekelae2008 [eqn 5]
 
 # Parameters
 $(PARAMFIELDS)
@@ -35,7 +35,7 @@ Vpd effect using gppVPD_Maekelae2008
 *Inputs*
 
 *Outputs*
- - land.gppVPD.VPDScGPP: VPD effect on GPP between 0-1
+ - land.gppVPD.gpp_f_vpd: VPD effect on GPP between 0-1
 
 ---
 

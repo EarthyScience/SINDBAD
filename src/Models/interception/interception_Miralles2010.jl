@@ -10,9 +10,9 @@ export interception_Miralles2010
 end
 #! format: on
 
-function compute(o::interception_Miralles2010, forcing, land, helpers)
+function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
     ## unpack parameters
-    @unpack_interception_Miralles2010 o
+    @unpack_interception_Miralles2010 p_struct
 
     ## unpack land variables
     @unpack_land begin

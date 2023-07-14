@@ -6,9 +6,9 @@ export vegFraction_scaledEVI
 end
 #! format: on
 
-function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
+function compute(p_struct::vegFraction_scaledEVI, forcing, land, helpers)
     ## unpack parameters
-    @unpack_vegFraction_scaledEVI o
+    @unpack_vegFraction_scaledEVI p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -17,15 +17,15 @@ function compute(o::vegFraction_scaledEVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    vegFraction = min(EVI * EVIscale, 𝟙)
+    frac_vegetation = min_1(EVI * EVIscale)
 
     ## pack land variables
-    @pack_land vegFraction => land.states
+    @pack_land frac_vegetation => land.states
     return land
 end
 
 @doc """
-sets the value of vegFraction by scaling the EVI value
+sets the value of frac_vegetation by scaling the EVI value
 
 # Parameters
 $(PARAMFIELDS)
@@ -39,7 +39,7 @@ Fractional coverage of vegetation using vegFraction_scaledEVI
  - land.states.EVI : current EVI value
 
 *Outputs*
- - land.states.vegFraction: current vegetation fraction
+ - land.states.frac_vegetation: current vegetation fraction
 
 ---
 

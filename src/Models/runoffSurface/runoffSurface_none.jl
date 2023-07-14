@@ -2,18 +2,18 @@ export runoffSurface_none
 
 struct runoffSurface_none <: runoffSurface end
 
-function define(o::runoffSurface_none, forcing, land, helpers)
+function define(p_struct::runoffSurface_none, forcing, land, helpers)
 
     ## calculate variables
-    runoffSurface = helpers.numbers.𝟘
+    surface_runoff = helpers.numbers.𝟘
 
     ## pack land variables
-    @pack_land runoffSurface => land.fluxes
+    @pack_land surface_runoff => land.fluxes
     return land
 end
 
 @doc """
-sets surface runoff [runoffSurface] from the storage to zero
+sets surface runoff [surface_runoff] from the storage to zero
 
 # instantiate:
 instantiate/instantiate time-invariant variables for runoffSurface_none

@@ -2,20 +2,20 @@ export cFlowSoilProperties_CASA
 
 #! format: off
 @bounds @describe @units @with_kw struct cFlowSoilProperties_CASA{T1,T2,T3,T4,T5,T6} <: cFlowSoilProperties
-    effA::T1 = 0.85 | nothing | "" | ""
-    effB::T2 = 0.68 | nothing | "" | ""
-    effCLAY_cMicSoil_A::T3 = 0.003 | nothing | "" | ""
-    effCLAY_cMicSoil_B::T4 = 0.032 | nothing | "" | ""
-    effCLAY_cSoilSlow_A::T5 = 0.003 | nothing | "" | ""
-    effCLAY_cSoilSlow_B::T6 = 0.009 | nothing | "" | ""
+    effA::T1 = 0.85 | (nothing, nothing) | "" | ""
+    effB::T2 = 0.68 | (nothing, nothing) | "" | ""
+    effCLAY_cMicSoil_A::T3 = 0.003 | (nothing, nothing) | "" | ""
+    effCLAY_cMicSoil_B::T4 = 0.032 | (nothing, nothing) | "" | ""
+    effCLAY_cSoilSlow_A::T5 = 0.003 | (nothing, nothing) | "" | ""
+    effCLAY_cSoilSlow_B::T6 = 0.009 | (nothing, nothing) | "" | ""
 end
 #! format: on
 
-function define(o::cFlowSoilProperties_CASA, forcing, land, helpers)
-    @unpack_cFlowSoilProperties_CASA o
+function define(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
+    @unpack_cFlowSoilProperties_CASA p_struct
 
     ## instantiate variables
-    p_E = repeat(zeros(helpers.numbers.numType, length(land.pools.cEco)),
+    p_E = repeat(zero(land.pools.cEco),
         1,
         1,
         length(land.pools.cEco))
@@ -25,9 +25,9 @@ function define(o::cFlowSoilProperties_CASA, forcing, land, helpers)
     return land
 end
 
-function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
+function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     ## unpack parameters
-    @unpack_cFlowSoilProperties_CASA o
+    @unpack_cFlowSoilProperties_CASA p_struct
 
     ## unpack land variables
     @unpack_land p_E ∈ land.cFlowSoilProperties
@@ -37,7 +37,7 @@ function compute(o::cFlowSoilProperties_CASA, forcing, land, helpers)
 
     ## calculate variables
     # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
-    # p_fSoil = zeros(helpers.numbers.numType, length(land.pools.cEco))
+    # p_fSoil = zero(land.pools.cEco)
     # #sujan
     p_F = p_E
     CLAY = mean(p_CLAY)
