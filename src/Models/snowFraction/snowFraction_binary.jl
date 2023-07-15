@@ -7,11 +7,12 @@ function compute(p_struct::snowFraction_binary, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         snowW ∈ land.pools
-        (𝟘, 𝟙) ∈ helpers.numbers
         ΔsnowW ∈ land.states
     end
+
     # if there is snow; then snow fraction is 1; otherwise 0
-    frac_snow = 𝟙 * (sum(snowW + ΔsnowW) > 𝟘)
+    tot_snow = addS(snowW, ΔsnowW)
+    frac_snow = tot_snow > zero(tot_snow) ? one(tot_snow) : zero(tot_snow)
 
     ## pack land variables
     @pack_land frac_snow => land.states

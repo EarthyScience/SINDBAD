@@ -24,7 +24,6 @@ function compute(p_struct::vegAvailableWater_rootFraction, forcing, land, helper
         p_frac_root_to_soil_depth ∈ land.rootFraction
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        𝟘 ∈ helpers.numbers
         PAW ∈ land.vegAvailableWater
     end
     for sl ∈ eachindex(soilW)

@@ -18,25 +18,6 @@ function compute(p_struct::getPools_simple, forcing, land, helpers)
     ## calculate variables
     WBP = rain
 
-    ## pack land variables
-    # set_components(land, helpers, Val(:TWS), Val(helpers.pools.all_components.TWS), Val(helpers.pools.zix))
-    # TWS = land.pools.TWS
-    # soilW = land.pools.soilW
-    # soilW = (Sindbad.rep_elem)(soilW, TWS[1], helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-    # soilW = (Sindbad.rep_elem)(soilW, TWS[2], helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, 2)
-    # soilW = (Sindbad.rep_elem)(soilW, TWS[3], helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, 3)
-    # soilW = (Sindbad.rep_elem)(soilW, TWS[4], helpers.pools.zeros.soilW, helpers.pools.ones.soilW, helpers.numbers.𝟘, helpers.numbers.𝟙, 4)
-    # land = (land..., pools=(; land.pools..., soilW=soilW))
-    # groundW = land.pools.groundW
-    # groundW = (Sindbad.rep_elem)(groundW, TWS[5], helpers.pools.zeros.groundW, helpers.pools.ones.groundW, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-    # land = (land..., pools=(; land.pools..., groundW=groundW))
-    # snowW = land.pools.snowW
-    # snowW = (Sindbad.rep_elem)(snowW, TWS[6], helpers.pools.zeros.snowW, helpers.pools.ones.snowW, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-    # land = (land..., pools=(; land.pools..., snowW=snowW))
-    # surfaceW = land.pools.surfaceW
-    # surfaceW = (Sindbad.rep_elem)(surfaceW, TWS[7], helpers.pools.zeros.surfaceW, helpers.pools.ones.surfaceW, helpers.numbers.𝟘, helpers.numbers.𝟙, 1)
-    # land = (land..., pools=(; land.pools..., surfaceW=surfaceW))
-
     @pack_land WBP => land.states
     return land
 end

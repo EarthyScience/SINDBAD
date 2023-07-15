@@ -13,7 +13,6 @@ function compute(p_struct::vegFraction_scaledLAI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         LAI ∈ land.states
-        𝟙 ∈ helpers.numbers
     end
 
     ## calculate variables

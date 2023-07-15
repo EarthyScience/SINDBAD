@@ -9,14 +9,6 @@ export gppVPD_PRELES
 end
 #! format: on
 
-function define(p_struct::gppVPD_PRELES, forcing, land, helpers)
-    gpp_f_vpd = helpers.numbers.𝟙
-
-    ## pack land variables
-    @pack_land gpp_f_vpd => land.gppVPD
-    return land
-end
-
 function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_PRELES p_struct

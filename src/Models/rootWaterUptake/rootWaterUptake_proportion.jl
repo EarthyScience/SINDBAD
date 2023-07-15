@@ -7,7 +7,6 @@ function define(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
     end
     root_water_uptake = zero(soilW)
 
