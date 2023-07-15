@@ -10,7 +10,6 @@ end
 function define(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
-        (num_type, 𝟘, 𝟙) ∈ helpers.numbers
     end
     c_efflux = zero(land.pools.cEco)
     p_km = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))

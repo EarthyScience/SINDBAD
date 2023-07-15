@@ -3,28 +3,26 @@ export cAllocation_GSI
 struct cAllocation_GSI <: cAllocation end
 
 function define(p_struct::cAllocation_GSI, forcing, land, helpers)
-    @unpack_land sNT ∈ helpers.numbers
-
     ## instantiate variables
     c_allocation = zero(land.pools.cEco)
     cVeg_names = (:cVegRoot, :cVegWood, :cVegLeaf)
 
     c_allocation_to_veg = zero(land.pools.cEco)
     cVeg_zix = Tuple{Int}[]
-    cVeg_nzix = helpers.numbers.num_type[]
+    cVeg_nzix = eltype(land.pools.cEco)[]
     cpI = 1
     for cpName ∈ cVeg_names
         zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
-        nZix = sNT(length(zix))
+        nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_zix, zix)
         push!(cVeg_nzix, nZix)
     end
-    ttwo = sNT(2.0)
+    t_two = oftype(first(c_allocation), 2)
     cVeg_zix = Tuple(cVeg_zix)
     cVeg_nzix = Tuple(cVeg_nzix)
     ## pack land variables
     @pack_land begin
-        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, ttwo) => land.cAllocation
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, t_two) => land.cAllocation
         c_allocation => land.states
     end
     return land
@@ -34,16 +32,15 @@ function compute(p_struct::cAllocation_GSI, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, ttwo) ∈ land.cAllocation
+        (cVeg_names, cVeg_zix, cVeg_nzix, c_allocation_to_veg, t_two) ∈ land.cAllocation
         c_allocation ∈ land.states
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     # allocation to root; wood & leaf
-    a_cVegRoot = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
-    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * ttwo)
+    a_cVegRoot = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * t_two)
+    a_cVegWood = c_allocation_f_soilW / ((c_allocation_f_soilW + c_allocation_f_soilT) * t_two)
     a_cVegLeaf = c_allocation_f_soilT / ((c_allocation_f_soilW + c_allocation_f_soilT))
 
     @rep_elem a_cVegRoot => (c_allocation_to_veg, 1, :cEco)

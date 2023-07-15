@@ -5,7 +5,7 @@ struct aRespirationAirT_none <: aRespirationAirT end
 function define(p_struct::aRespirationAirT_none, forcing, land, helpers)
 
     ## calculate variables
-    auto_respiration_f_airT = helpers.numbers.𝟙
+    auto_respiration_f_airT = one(first(land.pools.cEco))
 
     ## pack land variables
     @pack_land auto_respiration_f_airT => land.aRespirationAirT

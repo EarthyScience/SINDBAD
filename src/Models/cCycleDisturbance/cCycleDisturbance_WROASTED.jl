@@ -39,9 +39,8 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
-        𝟘 ∈ helpers.numbers
     end
-    if dist_intensity > 𝟘
+    if dist_intensity > zero(dist_intensity)
         for zixVeg ∈ zix_veg_all
             cLoss = max_0(cEco[zixVeg] - c_remain) * dist_intensity
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)

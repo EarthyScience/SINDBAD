@@ -18,7 +18,7 @@ function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
         PET ∈ land.PET
     end
     # scale the potential ET with bare soil fraction
-    PET_evaporation = PET * (helpers.numbers.𝟙 - frac_vegetation)
+    PET_evaporation = PET * (one(frac_vegetation) - frac_vegetation)
     # calculate actual ET as a fraction of PET_evaporation
     evaporation = min(PET_evaporation, (soilW[1] + ΔsoilW[1]) * ks)
 

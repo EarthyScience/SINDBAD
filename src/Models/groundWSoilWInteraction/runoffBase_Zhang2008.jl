@@ -6,14 +6,6 @@ export runoffBase_Zhang2008
 end
 #! format: on
 
-function define(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
-    base_runoff = helpers.numbers.𝟘
-
-    @pack_land begin
-        base_runoff => land.fluxes
-    end
-    return land
-end
 
 function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
     ## unpack parameters
@@ -23,8 +15,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
     @unpack_land begin
         groundW ∈ land.pools
         ΔgroundW ∈ land.states
-        𝟙 ∈ helpers.numbers
-        zero(land.pools.soilW) ∈ land.wCycleBase
+        n_soilW ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -33,7 +24,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
 
     # update groundwater changes
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / zero(land.pools.soilW))
+    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / n_soilW)
 
     ## pack land variables
     @pack_land begin

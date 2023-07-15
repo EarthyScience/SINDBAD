@@ -13,7 +13,6 @@ function compute(p_struct::vegFraction_scaledNIRv, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         NIRv ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables

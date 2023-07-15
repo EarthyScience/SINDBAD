@@ -6,13 +6,6 @@ export transpirationSupply_wAWC
 end
 #! format: on
 
-function define(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
-    transpiration_supply = helpers.numbers.𝟘
-
-    @pack_land transpiration_supply => land.transpirationSupply
-    return land
-end
-
 function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
     ## unpack parameters
     @unpack_transpirationSupply_wAWC p_struct
