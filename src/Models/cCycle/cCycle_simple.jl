@@ -4,7 +4,7 @@ struct cCycle_simple <: cCycle end
 
 function define(p_struct::cCycle_simple, forcing, land, helpers)
     @unpack_land begin
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     n_cEco = length(land.pools.cEco)
     n_cVeg = length(land.pools.cVeg)
@@ -19,11 +19,11 @@ function define(p_struct::cCycle_simple, forcing, land, helpers)
     cEco_prev = copy(land.pools.cEco)
     zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
-    nee = 𝟘
-    npp = 𝟘
-    auto_respiration = 𝟘
-    eco_respiration = 𝟘
-    hetero_respiration = 𝟘
+    nee = z_zero
+    npp = z_zero
+    auto_respiration = z_zero
+    eco_respiration = z_zero
+    hetero_respiration = z_zero
 
     @pack_land begin
         (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zixVeg, zero_c_eco_flow, zero_c_eco_influx) =>
@@ -53,10 +53,10 @@ function compute(p_struct::cCycle_simple, forcing, land, helpers)
         gpp ∈ land.fluxes
         (p_A, c_giver, c_taker) ∈ land.cFlow
         (c_flow_order) ∈ land.cCycleBase
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     ## reset ecoflow and influx to be zero at every time step
-    c_eco_flow = zero_c_eco_flow .* 𝟘
+    c_eco_flow = zero_c_eco_flow .* z_zero
     c_eco_influx = c_eco_influx
     ## compute losses
     c_eco_out = min.(cEco, cEco .* p_k)

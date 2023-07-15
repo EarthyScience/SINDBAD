@@ -17,7 +17,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         n_groundW ∈ land.wCycleBase
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
     # maximum groundwater storage
     p_gwmax = p_wSat[end] * smax_scale

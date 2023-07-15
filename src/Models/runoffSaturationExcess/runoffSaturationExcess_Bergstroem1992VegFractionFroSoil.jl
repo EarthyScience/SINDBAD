@@ -20,9 +20,9 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSo
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    o_one = one(β)
     # scale the input frozen soil fraction; maximum is 1
     fracFrozen = min_1(frozenFrac * scaleFro)
     tmp_smaxVeg = sum(p_wSat) * (o_one - fracFrozen + tolerance)

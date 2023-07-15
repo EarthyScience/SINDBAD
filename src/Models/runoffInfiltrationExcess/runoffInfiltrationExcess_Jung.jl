@@ -10,17 +10,16 @@ function compute(p_struct::runoffInfiltrationExcess_Jung, forcing, land, helpers
         p_kSat ∈ land.soilWBase
         rain ∈ land.rainSnow
         rainInt ∈ land.rainIntensity
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
 
     # get infiltration capacity of the first layer
-    z_zero = oftype(rain, 0)
-    o_one = oftype(rain, 1)
-    pInfCapacity = p_kSat[1] / oftype(rain, 24) # in mm/hr
+    pInfCapacity = p_kSat[1] / helpers.dates.timesteps_in_day in mm / hr
     InfExcess =
         rain - (rain * fAPAR +
                 (o_one - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
-    inf_excess_runoff = rain > z_zero ? InfExcess : zero(InfExcess)
+    inf_excess_runoff = rain > z_zero ? InfExcess : z_zero
     WBP = WBP - inf_excess_runoff
 
     ## pack land variables
