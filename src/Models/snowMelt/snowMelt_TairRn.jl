@@ -7,26 +7,6 @@ export snowMelt_TairRn
 end
 #! format: on
 
-function define(p_struct::snowMelt_TairRn, forcing, land, helpers)
-    ## unpack land variables
-    @unpack_land begin
-        WBP ∈ land.states
-        𝟘 ∈ helpers.numbers
-    end
-    # potential snow melt if T > 0.0 deg C
-    potential_snow_melt = 𝟘
-    snow_melt = 𝟘
-    # a Water Balance Pool variable that tracks how much water is still "available"
-    WBP = WBP + snow_melt
-    ## pack land variables
-    @pack_land begin
-        snow_melt => land.fluxes
-        potential_snow_melt => land.snowMelt
-        WBP => land.states
-    end
-    return land
-end
-
 function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_snowMelt_TairRn p_struct
@@ -37,7 +17,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
         (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         n_snowW ∈ land.wCycleBase
     end
 
@@ -48,7 +28,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     potential_snow_melt = (tmp_T + tmp_Rn) * frac_snow
 
     # potential snow melt if T > 0.0 deg C
-    potential_snow_melt = Tair > 𝟘 ? potential_snow_melt : zero(potential_snow_melt)
+    potential_snow_melt = Tair > z_zero ? potential_snow_melt : z_zero
     snow_melt = min(addS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers

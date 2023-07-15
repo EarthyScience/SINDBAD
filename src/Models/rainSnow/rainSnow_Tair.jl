@@ -15,13 +15,14 @@ function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     @unpack_land begin
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     rain = Rain
-    snow = zero(Rain)
+    snow = z_zero
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = zero(Rain)
+        rain = z_zero
     end
     precip = rain + snow
 

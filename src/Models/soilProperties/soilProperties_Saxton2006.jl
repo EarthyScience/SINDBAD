@@ -55,9 +55,6 @@ export soilProperties_Saxton2006, unsatK, soilParamsSaxton2006
     n36::TN = 36.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1500::TN = 1500.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1930::TN = 1930.0 | (nothing, nothing) | "Saxton Parameters" | ""
-    o_one::TN = 1.0 | (nothing, nothing) | "type stable one" | ""
-    z_zero::TN = 1.0 | (nothing, nothing) | "type stable zero" | ""
-
 end
 # b::T =  | (nothing, nothing) | "Saxton Parameters" | ""
 
@@ -196,6 +193,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
         (p_β, p_kSat, p_wSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -204,7 +202,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     θ_dos = clamp_01(θ_dos)
     β = p_β[sl]
     kSat = p_kSat[sl]
-    λ = one(θ_dos) / β
+    λ = o_one / β
     K = kSat * ((θ_dos)^(n3 + (n2 / λ)))
     return K
 end
@@ -247,6 +245,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     @unpack_soilProperties_Saxton2006 p_struct
     @unpack_land begin
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     CLAY = st_CLAY[sl]

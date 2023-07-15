@@ -11,7 +11,7 @@ function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     @unpack_cAllocationSoilT_gppGSI p_struct
 
     # assume initial prev as one (no stress)
-    fT_prev = one(τ_Tsoil)
+    fT_prev = land.wCycleBase.o_one
 
     @pack_land fT_prev => land.cAllocationSoilT
     return land

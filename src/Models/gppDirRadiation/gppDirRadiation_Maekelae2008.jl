@@ -14,11 +14,11 @@ function compute(p_struct::gppDirRadiation_Maekelae2008, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         fAPAR ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
-    gpp_f_light = 𝟙 / (γ * PAR * fAPAR + 𝟙)
+    gpp_f_light = o_one / (γ * PAR * fAPAR + o_one)
 
     ## pack land variables
     @pack_land gpp_f_light => land.gppDirRadiation

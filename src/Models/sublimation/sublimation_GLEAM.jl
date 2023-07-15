@@ -16,13 +16,13 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
         frac_snow ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         n_snowW ∈ land.wCycleBase
     end
     # convert temperature to Kelvin
     T = TairDay + 273.15
 
-    # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may 𝟙t to do this derivative yourself because my calculus is not as good as it used to; what I get is:
+    # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may o_onet to do this derivative yourself because my calculus is not as good as it used to; what I get is:
 
     Δ =
         (5723.265 / T^2.0 + 3.53068 / (T - 0.00728332)) *

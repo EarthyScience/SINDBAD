@@ -128,7 +128,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton1986})
     SAND = p_SAND[sl] * n100
     soilD = soil_layer_thickness[sl]
     θ = soilW[sl] / soilD
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (𝟙 / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
 
     ## pack land variables
     return K
@@ -143,7 +143,7 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
     @unpack_soilProperties_Saxton1986 p_struct
 
     @unpack_land begin
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         (p_CLAY, p_SAND) ∈ land.soilTexture
     end
 
@@ -161,9 +161,9 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
     # air entry pressure [kPa]
     ψ_e = abs(n100 * (d1 + d2 * θ_s))
     # θ = ones(typeof(CLAY), size(CLAY))
-    θ = 𝟙
+    θ = o_one
     if (ψ >= n10 & ψ <= n1500)
-        θ = ψ / A^(𝟙 / B)
+        θ = ψ / A^(o_one / B)
     end
     # clear ndx
     if (ψ >= ψ_e & ψ < n10)
@@ -175,12 +175,12 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
         θ = θ_10 + (n10 - ψ) * (θ_s - θ_10) / (n10 - ψ_e)
     end
     # clear ndx
-    if (ψ >= 𝟘 & ψ < ψ_e)
+    if (ψ >=z_zero& ψ < ψ_e)
         θ = θ_s
     end
     # clear ndx
     # hydraulic conductivity [mm/day]: original equation for mm/s
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (𝟙 / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
     α = A
     β = B
     ## pack land variables

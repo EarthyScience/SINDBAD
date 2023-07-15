@@ -58,11 +58,11 @@ scale the carbon pools using the scalars from cCycleBase
 """
 function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleAH})
     @unpack_land cEco ∈ land.pools
-    ηH = helpers.numbers.𝟙
+    ηH = land.wCycleBase.o_one
     if :ηH ∈ propertynames(land.cCycleBase)
         ηH = land.cCycleBase.ηH
     end
-    ηA = helpers.numbers.𝟙
+    ηA = land.wCycleBase.o_one
     if :ηA ∈ propertynames(land.cCycleBase)
         ηA = land.cCycleBase.ηA
     end
@@ -90,8 +90,8 @@ scale the carbon pools using the scalars from cCycleBase
 """
 function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     @unpack_land cEco ∈ land.pools
-    ηH = helpers.numbers.𝟙
-    c_remain = helpers.numbers.𝟙
+    ηH = land.wCycleBase.o_one
+    c_remain = land.wCycleBase.o_one
     if :ηH ∈ propertynames(land.cCycleBase)
         ηH = land.cCycleBase.ηH
         c_remain = land.cCycleBase.c_remain

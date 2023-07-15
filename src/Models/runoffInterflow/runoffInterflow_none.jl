@@ -5,7 +5,7 @@ struct runoffInterflow_none <: runoffInterflow end
 function define(p_struct::runoffInterflow_none, forcing, land, helpers)
 
     ## calculate variables
-    interflow_runoff = helpers.numbers.𝟘
+    interflow_runoff = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land interflow_runoff => land.fluxes

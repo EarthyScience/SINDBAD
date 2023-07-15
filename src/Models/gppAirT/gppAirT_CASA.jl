@@ -1,12 +1,11 @@
 export gppAirT_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_CASA{T1,T,T3,T4,T5} <: gppAirT
+@bounds @describe @units @with_kw struct gppAirT_CASA{T1,T,T3,T4} <: gppAirT
     Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
     ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
     ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
     Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
-    o_one::T5 = 1.0 | (nothing, nothing) | "type stable one" | ""
 end
 #! format: on
 
@@ -14,6 +13,7 @@ function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA p_struct
     @unpack_forcing TairDay ∈ forcing
+    @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
     # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
