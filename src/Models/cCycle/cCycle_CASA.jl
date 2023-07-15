@@ -157,7 +157,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         gpp ∈ land.fluxes
         (p_giver, p_taker) ∈ land.cFlow
         YG ∈ land.aRespiration
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -170,9 +170,8 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     # helpers
     nPix = 1
     nTix = info.tem.helpers.sizes.nTix
-    nZix = length(land.pools.cEco)
     # matrices for the calculations
-    cLossRate = zeros(num_type, nZix)
+    cLossRate = zero(cEco)
     cGain = cLossRate
     cLoxxRate = cLossRate
     ## some debugging

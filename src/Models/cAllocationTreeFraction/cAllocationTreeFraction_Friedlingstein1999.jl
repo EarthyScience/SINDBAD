@@ -1,10 +1,8 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1,T2,T3} <: cAllocationTreeFraction
+@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
     Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
-    o_one::T2 = 1.0 | (nothing, nothing) | "type stable one" | ""
-    z_zero::T3 = 0.0 | (nothing, nothing) | "type stable zero" | ""
 end
 #! format: on
 
@@ -36,6 +34,7 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     @unpack_land begin
         (c_allocation, frac_tree) ∈ land.states
         cVeg_names_for_c_allocation_frac_tree ∈ land.cAllocationTreeFraction
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
     r0 = z_zero

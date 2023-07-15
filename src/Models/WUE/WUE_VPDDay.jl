@@ -3,7 +3,6 @@ export WUE_VPDDay
 #! format: off
 @bounds @describe @units @with_kw struct WUE_VPDDay{T1,T2,T3} <: WUE
     WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
-    o_one::T2 = 1.0 | (nothing, nothing) | "type stable one" | ""
     kpa_to_hpa::T3 = 10.0 | (nothing, nothing) | "unit conversion kPa to hPa" | ""
 end
 #! format: on
@@ -12,8 +11,10 @@ function compute(p_struct::WUE_VPDDay, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_WUE_VPDDay p_struct
     @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (tolerance) ∈ helpers.numbers
-
+    @unpack_land begin
+        tolerance ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
+    end
     ## calculate variables
     # "WUEat1hPa"
     AoE = WUEatOnehPa * o_one / sqrt(kpa_to_hpa * (VPDDay + tolerance))

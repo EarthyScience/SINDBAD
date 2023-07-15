@@ -19,7 +19,7 @@ function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
     @unpack_PET_PriestleyTaylor1972 p_struct
     ## unpack forcing
     @unpack_forcing (Rn, Tair) ∈ forcing
-    @unpack_land 𝟘 ∈ helpers.numbers
+    @unpack_land z_zero ∈ land.wCycleBase
 
     ## calculate variables
     Δ = Δ_1 * exp(Δ_2 * Tair / (Δ_3 + Tair))

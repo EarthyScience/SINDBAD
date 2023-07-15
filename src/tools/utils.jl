@@ -608,8 +608,8 @@ end
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -655,8 +655,8 @@ end
                     Expr(:ref, s_comp, c_ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     ix)))
             c_ix += 1
         end

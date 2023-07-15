@@ -1,13 +1,11 @@
 export cFlow_GSI
 
 #! format: off
-@bounds @describe @units @with_kw struct cFlow_GSI{T1,T2,T3,T4,T5,T6} <: cFlow
+@bounds @describe @units @with_kw struct cFlow_GSI{T1,T2,T3,T4} <: cFlow
     slope_leaf_root_to_reserve::T1 = 0.1 | (0.01, 0.99) | "Leaf-Root to Reserve" | "fraction"
     slope_reserve_to_leaf_root::T2 = 0.1 | (0.01, 0.99) | "Reserve to Leaf-Root" | "fraction"
     k_shedding::T3 = 0.1 | (0.01, 0.99) | "rate of shedding" | "fraction"
     f_τ::T4 = 0.1 | (0.01, 0.99) | "contribution factor for current stressor" | "fraction"
-    o_one::T5 = 1.0 | (nothing, nothing) | "type stable one" | ""
-    z_zero::T6 = 0.0 | (nothing, nothing) | "type stable zero" | ""
 end
 #! format: on
 
@@ -55,26 +53,11 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         p_A = SVector{length(p_A)}(p_A)
     end
 
-    # eco_stressor_prev = o_one
     eco_stressor_prev = addS(land.pools.soilW) / land.soilWBase.s_wSat
-    ## pack land variables
-    # dummy init
-    # leaf_to_reserve = o_one
-    # leaf_to_reserve_frac = o_one
-    # root_to_reserve = o_one
-    # root_to_reserve_frac = o_one
-    # reserve_to_leaf = o_one
-    # reserve_to_root = o_one
-    # eco_stressor = o_one
-    # k_shedding_leaf = o_one
-    # k_shedding_leaf_frac = o_one
-    # k_shedding_root = o_one
-    # k_shedding_root_frac = o_one
-    # slope_eco_stressor = o_one
+
 
     @pack_land begin
         (p_A_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
-        # (p_A, eco_stressor_prev, ndxSrc, ndxTrg, c_taker, c_giver) => land.cFlow
         p_A => land.states
     end
 
@@ -105,6 +88,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
         c_allocation_f_soilT ∈ land.cAllocationSoilT
         c_allocation_f_cloud ∈ land.cAllocationRadiation
         (p_A, p_k) ∈ land.states
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     # Compute sigmoid functions
@@ -170,12 +154,12 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     reserve_to_leaf_frac = getFrac(Re2L_i, p_k_sum)
     reserve_to_root_frac = getFrac(Re2R_i, p_k_sum)
 
-    p_A = rep_elem(p_A, reserve_to_leaf_frac, p_A, p_A, z_zero, o_one, p_A_ind.reserve_to_leaf)
-    p_A = rep_elem(p_A, reserve_to_root_frac, p_A, p_A, z_zero, o_one, p_A_ind.reserve_to_root)
-    p_A = rep_elem(p_A, leaf_to_reserve_frac, p_A, p_A, z_zero, o_one, p_A_ind.leaf_to_reserve)
-    p_A = rep_elem(p_A, root_to_reserve_frac, p_A, p_A, z_zero, o_one, p_A_ind.root_to_reserve)
-    p_A = rep_elem(p_A, k_shedding_leaf_frac, p_A, p_A, z_zero, o_one, p_A_ind.k_shedding_leaf)
-    p_A = rep_elem(p_A, k_shedding_root_frac, p_A, p_A, z_zero, o_one, p_A_ind.k_shedding_root)
+    p_A = rep_elem(p_A, reserve_to_leaf_frac, p_A, p_A, p_A_ind.reserve_to_leaf)
+    p_A = rep_elem(p_A, reserve_to_root_frac, p_A, p_A, p_A_ind.reserve_to_root)
+    p_A = rep_elem(p_A, leaf_to_reserve_frac, p_A, p_A, p_A_ind.leaf_to_reserve)
+    p_A = rep_elem(p_A, root_to_reserve_frac, p_A, p_A, p_A_ind.root_to_reserve)
+    p_A = rep_elem(p_A, k_shedding_leaf_frac, p_A, p_A, p_A_ind.k_shedding_leaf)
+    p_A = rep_elem(p_A, k_shedding_root_frac, p_A, p_A, p_A_ind.k_shedding_root)
     # p_A[p_A_ind.reserve_to_leaf] = p_A
     # p_A[p_A_ind.reserve_to_root] = reserve_to_root_frac
     # p_A[p_A_ind.leaf_to_reserve] = leaf_to_reserve_frac

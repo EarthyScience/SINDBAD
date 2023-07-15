@@ -26,8 +26,8 @@ function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
         (s_wFC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
         t_two ∈ land.gppSoilW
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-    o_one = one(q)
     ## calculate variables
     SM = sum(soilW)
     maxAWC = max_0(s_wFC - s_wWP)

@@ -20,14 +20,16 @@ function compute(p_struct::gppAirT_TEM, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_TEM p_struct
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land t_two ∈ land.gppAirT
-
+    @unpack_land begin
+        t_two ∈ land.gppAirT
+        (z_zero, o_one) ∈ land.wCycleBase
+    end
 
     ## calculate variables
     pTmin = TairDay - Tmin
     pTmax = TairDay - Tmax
     pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - Topt)^t_two)
-    TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? zero(pTScGPP) : pTScGPP
+    TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? z_zero : pTScGPP
     gpp_f_airT = clamp_01(TScGPP)
 
     ## pack land variables

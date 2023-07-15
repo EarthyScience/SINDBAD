@@ -25,13 +25,14 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
         (root_water_uptake, ΔsoilW) ∈ land.states
-        (𝟘, tolerance) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
+        tolerance ∈ helpers.numbers
     end
     # get the transpiration
     toUptake = transpiration
     PAWTotal = sum(PAW)
     # extract from top to bottom
-    if PAWTotal > 𝟘
+    if PAWTotal > z_zero
         for sl ∈ eachindex(land.pools.soilW)
             uptakeProportion = max_0(PAW[sl] / PAWTotal)
             @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)

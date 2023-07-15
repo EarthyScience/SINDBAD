@@ -17,12 +17,12 @@ function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
     fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambient_CO2)^-Cκ)
-    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
+    fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     gpp_f_vpd = clamp_01(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables

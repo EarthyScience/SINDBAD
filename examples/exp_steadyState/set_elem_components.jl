@@ -27,8 +27,8 @@ export set_component_from_main_pool, set_main_from_component_pool
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -75,8 +75,8 @@ end
                     Expr(:ref, s_comp, c_ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     ix)))
             c_ix += 1
         end

@@ -8,7 +8,7 @@ function compute(p_struct::runoffInfiltrationExcess_kUnsat, forcing, land, helpe
     @unpack_land begin
         WBP ∈ land.states
         unsat_k_model ∈ land.soilProperties
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # get the unsaturated hydraulic conductivity based on soil properties for the first soil layer
     k_unsat = unsatK(land, helpers, 1, unsat_k_model)

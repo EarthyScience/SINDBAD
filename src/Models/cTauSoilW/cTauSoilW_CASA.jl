@@ -30,14 +30,14 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
         soilW_prev ∈ land.pools
         fsoilW_prev ∈ land.cTauSoilW
         PET ∈ land.PET
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
     TSPY = helpers.dates.timesteps_in_year #sujan
     TSPM = TSPY / 12
     # BELOW GROUND RATIO [BGRATIO] AND BELOW GROUND MOISTURE EFFECT [BGME]
-    BGRATIO = 𝟘
-    BGME = 𝟙
+    BGRATIO = z_zero
+    BGME = o_one
     # PREVIOUS TIME STEP VALUES
     pBGME = fsoilW_prev #sujan
     # FOR PET > 0
