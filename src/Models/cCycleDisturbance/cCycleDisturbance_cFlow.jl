@@ -34,9 +34,8 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         (zix_veg_all, c_lose_to_zix_vec) ∈ land.cCycleDisturbance
         cEco ∈ land.pools
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
-        𝟘 ∈ helpers.numbers
     end
-    if dist_intensity > 𝟘
+    if dist_intensity > zero(dist_intensity)
         for zixVeg ∈ zix_veg_all
             cLoss = 𝟘 # do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve

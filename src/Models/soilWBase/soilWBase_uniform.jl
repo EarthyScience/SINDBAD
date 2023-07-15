@@ -10,7 +10,6 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
         land.soilProperties
         (st_CLAY, st_ORGM, st_SAND, st_SILT) ∈ land.soilTexture
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
         n_soilW ∈ land.wCycleBase
     end
 

@@ -9,12 +9,10 @@ end
 #! format: on
 
 function define(p_struct::WUE_Medlyn2011, forcing, land, helpers)
-    @unpack_land begin
-        (sNT, 𝟙) ∈ helpers.numbers
-    end
+    @unpack_WUE_Medlyn2011 p_struct
 
     # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
-    umol_to_gC = 𝟙 * sNT(6.6667e-004)
+    umol_to_gC = oftype(DwDc, 6.6667e-004)
     ## pack land variables
     @pack_land umol_to_gC => land.WUE
     return land
@@ -28,7 +26,7 @@ function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
-        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
+        tolerance ∈ helpers.numbers
         umol_to_gC ∈ land.WUE
     end
 

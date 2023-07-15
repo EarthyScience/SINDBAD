@@ -3,9 +3,6 @@ export cCycle_GSI
 struct cCycle_GSI <: cCycle end
 
 function define(p_struct::cCycle_GSI, forcing, land, helpers)
-    @unpack_land begin
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
-    end
     ## instantiate variables
     c_eco_flow = zero(land.pools.cEco)
     c_eco_out = zero(land.pools.cEco)
@@ -44,7 +41,6 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (c_flow_order, c_giver, c_taker) ∈ land.cCycleBase
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
     @rep_vec c_eco_flow => helpers.pools.zeros.cEco

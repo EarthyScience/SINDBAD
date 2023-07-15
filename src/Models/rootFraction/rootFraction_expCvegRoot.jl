@@ -14,7 +14,7 @@ function define(p_struct::rootFraction_expCvegRoot, forcing, land, helpers)
         soil_layer_thickness ∈ land.soilWBase
     end
     ## instantiate variables
-    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ helpers.numbers.𝟙
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## pack land variables
     @pack_land begin

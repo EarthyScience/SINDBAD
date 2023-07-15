@@ -6,15 +6,6 @@ export gppPotential_Monteith
 end
 #! format: on
 
-function define(p_struct::gppPotential_Monteith, forcing, land, helpers)
-    # set rueGPP to a constant
-    gpp_potential = helpers.numbers.𝟘
-
-    ## pack land variables
-    @pack_land gpp_potential => land.gppPotential
-    return land
-end
-
 function compute(p_struct::gppPotential_Monteith, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppPotential_Monteith p_struct

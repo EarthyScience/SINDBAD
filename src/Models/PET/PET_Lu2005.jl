@@ -22,8 +22,9 @@ end
 
 function define(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
+    @unpack_PET_Lu2005 p_struct
     @unpack_forcing Tair ∈ forcing
-    PET = helpers.numbers.𝟘
+    PET = zero(α)
     ## calculate variables
     Tair_prev = Tair
 
@@ -40,7 +41,6 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
 
     @unpack_land begin
         Tair_prev ∈ land.PET
-        (𝟘, sNT) ∈ helpers.numbers
     end
 
     ## calculate variables
@@ -64,7 +64,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     # dt the difference of time [days]..
     ΔTair = Tair - Tair_prev
     G = G_base * (ΔTair) / Δt
-    G = 𝟘 #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
+    G = zero(α) #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
     PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
     PET = max_0(PET)
 

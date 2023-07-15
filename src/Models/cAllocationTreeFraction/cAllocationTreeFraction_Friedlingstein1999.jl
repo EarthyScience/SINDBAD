@@ -1,8 +1,10 @@
 export cAllocationTreeFraction_Friedlingstein1999
 
 #! format: off
-@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1} <: cAllocationTreeFraction
+@bounds @describe @units @with_kw struct cAllocationTreeFraction_Friedlingstein1999{T1,T2,T3} <: cAllocationTreeFraction
     Rf2Rc::T1 = 1.0 | (0.0, 1.0) | "carbon fraction allocated to fine roots" | "fraction"
+    o_one::T2 = 1.0 | (nothing, nothing) | "type stable one" | ""
+    z_zero::T3 = 0.0 | (nothing, nothing) | "type stable zero" | ""
 end
 #! format: on
 
@@ -34,19 +36,17 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     @unpack_land begin
         (c_allocation, frac_tree) ∈ land.states
         cVeg_names_for_c_allocation_frac_tree ∈ land.cAllocationTreeFraction
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
-
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
-    r0 = 𝟘
+    r0 = z_zero
     for ix ∈ getzix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
         r0 = r0 + c_allocation[ix]
     end
-    s0 = 𝟘
+    s0 = z_zero
     for ix ∈ getzix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
         s0 = s0 + c_allocation[ix]
     end
-    l0 = 𝟘
+    l0 = z_zero
     for ix ∈ getzix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
         l0 = l0 + c_allocation[ix]
     end     # this is to below ground root fine+coarse
@@ -54,11 +54,11 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     # adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
     cVegWood = frac_tree
-    cVegRoot = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - frac_tree)
-    cVegRootF = cVegRoot * (Rf2Rc * frac_tree + (𝟙 - frac_tree))
-    cVegRootC = cVegRoot * (𝟙 - Rf2Rc) * frac_tree
+    cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
+    cVegRootF = cVegRoot * (Rf2Rc * frac_tree + (o_one - frac_tree))
+    cVegRootC = cVegRoot * (o_one - Rf2Rc) * frac_tree
     # cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = 𝟙 + (s0 / (r0 + l0)) * (𝟙 - frac_tree)
+    cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
 
     c_allocation = setCAlloc(c_allocation, cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
     if hasproperty(cVeg_names_for_c_allocation_frac_tree, :cVegRootC)
