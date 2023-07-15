@@ -68,7 +68,7 @@ end
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie: heatmap
+using CairoMakie: heatmap, Colorbar, save
 using AlgebraOfGraphics, DataFrames, Dates
 
 plotdat = output.data;
