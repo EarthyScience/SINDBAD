@@ -37,8 +37,8 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.vegAvailableWater
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-    o_one = one(exp_factor)
     for sl ∈ eachindex(soilW)
         θ_dos = (soilW[sl] + ΔsoilW[sl]) / p_wSat[sl]
         θ_fc_dos = p_wFC[sl] / p_wSat[sl]

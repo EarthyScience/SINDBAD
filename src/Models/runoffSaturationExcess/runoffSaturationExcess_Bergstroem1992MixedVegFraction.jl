@@ -18,8 +18,8 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992MixedVegFraction
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-    o_one = one(βV)
     tmp_smaxVeg = sum(p_wSat)
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 

@@ -16,7 +16,7 @@ function compute(p_struct::gppVPD_expco2, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables

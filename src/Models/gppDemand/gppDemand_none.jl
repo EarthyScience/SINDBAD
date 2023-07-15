@@ -3,8 +3,8 @@ export gppDemand_none
 struct gppDemand_none <: gppDemand end
 
 function define(p_struct::gppDemand_none, forcing, land, helpers)
-    o_one = one(land.gppPotential.gpp_potential)
-    z_zero = zero(land.gppPotential.gpp_potential)
+    o_one = land.wCycleBase.o_one
+    z_zero = land.wCycleBase.z_zero
 
     gpp_f_climate = o_one
 

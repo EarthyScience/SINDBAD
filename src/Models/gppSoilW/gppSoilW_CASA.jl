@@ -10,9 +10,9 @@ function define(p_struct::gppSoilW_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     ## unpack land variables
     @unpack_land begin
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
-    gpp_f_soilW_prev = 𝟘
+    gpp_f_soilW_prev = z_zero
 
     ## pack land variables
     @pack_land gpp_f_soilW_prev => land.gppSoilW
@@ -29,14 +29,14 @@ function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
         gpp_f_soilW_prev ∈ land.gppSoilW
         PAW ∈ land.vegAvailableWater
         PET ∈ land.PET
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    OmBweOPET = (𝟙 - Bwe) / PET
+    OmBweOPET = (o_one - Bwe) / PET
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    gpp_f_soilW = clamp_01((Tair > 𝟘) & (PET > 𝟘) ? We : gpp_f_soilW_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
+    gpp_f_soilW = clamp_01((Tair > z_zero) & (PET > z_zero) ? We : gpp_f_soilW_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
 
     gpp_f_soilW_prev = gpp_f_soilW
 

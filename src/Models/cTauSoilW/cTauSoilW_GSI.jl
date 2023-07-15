@@ -32,12 +32,12 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_land begin
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
-        𝟙 ∈ helpers.numbers
+        o_one ∈ land.wCycleBase
     end
 
     ## for the litter pools; only use the top layer"s moisture
     soilW_top = frac2perc * soilW[1] / p_wSat[1]
-    soilW_top_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_top)
+    soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
         @rep_elem soilW_top_sc => (p_k_f_soilW, l_zix, :cEco)
@@ -45,7 +45,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = frac2perc * sum(soilW) / sum(p_wSat)
-    soilW_all_sc = fSoilW_cTau(𝟙, WoptA, WoptB, Wexp, Wopt, soilW_all)
+    soilW_all_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
     cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
@@ -57,16 +57,16 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     return land
 end
 
-function fSoilW_cTau(𝟙, A, B, wExp, wOpt, wSoil)
+function fSoilW_cTau(o_one, A, B, wExp, wOpt, wSoil)
     # first half of the response curve
-    W2p1 = 𝟙 / (𝟙 + exp(A * (-wExp))) / (𝟙 + exp(A * (-wExp)))
-    W2C1 = 𝟙 / W2p1
-    W21 = W2C1 / (𝟙 + exp(A * (wOpt - wExp - wSoil))) / (𝟙 + exp(A * (-wOpt - wExp + wSoil)))
+    W2p1 = o_one / (o_one + exp(A * (-wExp))) / (o_one + exp(A * (-wExp)))
+    W2C1 = o_one / W2p1
+    W21 = W2C1 / (o_one + exp(A * (wOpt - wExp - wSoil))) / (o_one + exp(A * (-wOpt - wExp + wSoil)))
 
     # second half of the response curve
-    W2p2 = 𝟙 / (𝟙 + exp(B * (-wExp))) / (𝟙 + exp(B * (-wExp)))
-    W2C2 = 𝟙 / W2p2
-    T22 = W2C2 / (𝟙 + exp(B * (wOpt - wExp - wSoil))) / (𝟙 + exp(B * (-wOpt - wExp + wSoil)))
+    W2p2 = o_one / (o_one + exp(B * (-wExp))) / (o_one + exp(B * (-wExp)))
+    W2C2 = o_one / W2p2
+    T22 = W2C2 / (o_one + exp(B * (wOpt - wExp - wSoil))) / (o_one + exp(B * (-wOpt - wExp + wSoil)))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21

@@ -31,6 +31,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
         cEco ∈ land.pools
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
@@ -39,17 +40,16 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     p_annk = zero(cEco)
 
     # if there is flux order check that is consistent
-    c_flow_order = Tuple(collect(1:length(findall(>(zero(first(land.pools.cEco))), c_flow_A))))
-    c_taker = Tuple([ind[1] for ind ∈ findall(>(zero(first(land.pools.cEco))), c_flow_A)])
-    c_giver = Tuple([ind[2] for ind ∈ findall(>(zero(first(land.pools.cEco))), c_flow_A)])
+    c_flow_order = Tuple(collect(1:length(findall(>(z_zero), c_flow_A))))
+    c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A)])
+    c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A)])
 
     c_model = Val(:cCycleBase_GSI)
 
-    o_one = one(first(land.pools.cEco))
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model, o_one) => land.cCycleBase
+        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
     end
     return land
 end
@@ -57,7 +57,8 @@ end
 function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
-        (p_C2Nveg, p_k_base, p_annk, o_one) ∈ land.cCycleBase
+        (p_C2Nveg, p_k_base, p_annk) ∈ land.cCycleBase
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## replace values
