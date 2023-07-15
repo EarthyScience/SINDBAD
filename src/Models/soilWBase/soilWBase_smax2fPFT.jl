@@ -24,7 +24,6 @@ function define(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
         n_soilW ∈ land.wCycleBase
     end
 
@@ -37,8 +36,8 @@ function define(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
     end
 
     ## instantiate variables
-    p_wSat = ones(num_type, n_soilW)
-    p_wFC = ones(num_type, n_soilW)
+    p_wSat = zero(land.pools.soilW)
+    p_wFC = zero(land.pools.soilW)
     p_wWP = zero(land.pools.soilW)
 
     ## pack land variables

@@ -1,46 +1,37 @@
 export gppAirT_CASA
 
 #! format: off
-@bounds @describe @units @with_kw struct gppAirT_CASA{T1,T,T3,T4} <: gppAirT
+@bounds @describe @units @with_kw struct gppAirT_CASA{T1,T,T3,T4,T5} <: gppAirT
     Topt::T1 = 25.0 | (5.0, 35.0) | "check in CASA code" | "°C"
     ToptA::T = 0.2 | (0.1, 0.3) | "increasing slope of sensitivity" | ""
     ToptB::T3 = 0.3 | (0.15, 0.5) | "decreasing slope of sensitivity" | ""
     Texp::T4 = 10.0 | (9.0, 11.0) | "reference for exponent of sensitivity" | ""
+    o_one::T5 = 1.0 | (nothing, nothing) | "type stable one" | ""
 end
 #! format: on
-
-function define(p_struct::gppAirT_CASA, forcing, land, helpers)
-    gpp_f_airT = helpers.numbers.𝟙
-    ## pack land variables
-    @pack_land gpp_f_airT => land.gppAirT
-    return land
-end
 
 function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA p_struct
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land begin
-        𝟙 ∈ helpers.numbers
-    end
 
     ## calculate variables
     # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
     # T1 = 0.8 + 0.02 * Topt - 0.0005 * Topt ^ 2 this would make sense if Topt would be the same everywhere.
 
     # first half of the response curve
-    Tp1 = 𝟙 / (𝟙 + exp(ToptA * (-Texp))) / (𝟙 + exp(ToptA * (-Texp)))
-    TC1 = 𝟙 / Tp1
+    Tp1 = o_one / (o_one + exp(ToptA * (-Texp))) / (o_one + exp(ToptA * (-Texp)))
+    TC1 = o_one / Tp1
     T1 =
-        TC1 / (𝟙 + exp(ToptA * (Topt - Texp - TairDay))) /
-        (𝟙 + exp(ToptA * (-Topt - Texp + TairDay)))
+        TC1 / (o_one + exp(ToptA * (Topt - Texp - TairDay))) /
+        (o_one + exp(ToptA * (-Topt - Texp + TairDay)))
 
     # second half of the response curve
-    Tp2 = 𝟙 / (𝟙 + exp(ToptB * (-Texp))) / (𝟙 + exp(ToptB * (-Texp)))
-    TC2 = 𝟙 / Tp2
+    Tp2 = o_one / (o_one + exp(ToptB * (-Texp))) / (o_one + exp(ToptB * (-Texp)))
+    TC2 = o_one / Tp2
     T2 =
-        TC2 / (𝟙 + exp(ToptB * (Topt - Texp - TairDay))) /
-        (𝟙 + exp(ToptB * (-Topt - Texp + TairDay)))
+        TC2 / (o_one + exp(ToptB * (Topt - Texp - TairDay))) /
+        (o_one + exp(ToptB * (-Topt - Texp + TairDay)))
 
     # get the scalar
     gpp_f_airT = TairDay >= Topt ? T2 : T1
