@@ -78,12 +78,12 @@ for i ∈ eachindex(output.variables)
     if size(pd, 2) == 1
         fig, ax, obj = heatmap(pd[:, 1, :])
         Colorbar(fig[1, 2], obj)
-        save("afr2d_$(vname).png", fig)
+        save(joinpath(info.output.figure, "afr2d_$(vname).png"), fig)
     else
         for ll ∈ 1:size(pd, 2)
             fig, ax, obj = heatmap(pd[:, ll, :])
             Colorbar(fig[1, 2], obj)
-            save("afr2d_$(vname)_$(ll).png", fig)
+            save(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"), fig)
         end
     end
 end
