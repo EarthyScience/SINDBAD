@@ -13,8 +13,8 @@ function define(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     @unpack_gppDiffRadiation_GSI p_struct
     @unpack_forcing Rg ∈ forcing
 
-    gpp_f_cloud_prev = zero(fR_base)
-    gpp_f_cloud = one(fR_base)
+    gpp_f_cloud_prev = land.wCycleBase.o_one
+    gpp_f_cloud = land.wCycleBase.o_one
     MJ_to_W = oftype(fR_base, 11.57407)
 
     ## pack land variables
@@ -30,8 +30,8 @@ function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (gpp_f_cloud_prev, MJ_to_W) ∈ land.gppDiffRadiation
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-    o_one = one(fR_base)
     ## calculate variables
     f_prev = gpp_f_cloud_prev
     Rg = Rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2

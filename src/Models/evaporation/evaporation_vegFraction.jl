@@ -17,11 +17,11 @@ function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         PET ∈ land.PET
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     # multiply equilibrium PET with αSoil & [1.0 - frac_vegetation] to get potential soil evap
-    tmp = PET * α * (𝟙 - frac_vegetation)
+    tmp = PET * α * (o_one - frac_vegetation)
     PET_evaporation = max_0(tmp)
 
     # scale the potential with the a fraction of available water & get the minimum of the current moisture

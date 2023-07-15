@@ -32,26 +32,27 @@ function getParameters(selectedModels)
         name_full)
 end
 
-function split_param(_p::Symbol, _splitter)
+function split_and_rename_param(_p::Symbol, _splitter)
     p_string = String(_p)
-    return split_param(p_string, _splitter)
+    return split_and_rename_param(p_string, _splitter)
 end
 
-function split_param(p_string::String, _splitter)
+function split_and_rename_param(p_string::String, _splitter)
+    p_name = strip(p_string)
     if occursin(_splitter, p_string)
-        return split(p_string, _splitter)
-    else
-        return (p_string, "")
+        p_split = split(p_string, _splitter)
+        p_model = strip(first(p_split))
+        p_param = strip(last(p_split))
+        p_name = "$(p_model).$(p_param)"
     end
+    return p_name
 end
 
 function replace_comman_separator_in_params(p_names_list)
     o_p_names_list = []
     foreach(p_names_list) do p
-        p_split = split_param(p, ",")
-        p_model = strip(first(p_split))
-        p_param = strip(last(p_split))
-        push!(o_p_names_list, "$(p_model).$(p_param)")
+        p_name = split_and_rename_param(p, ",")
+        push!(o_p_names_list, p_name)
     end
     return o_p_names_list
 end

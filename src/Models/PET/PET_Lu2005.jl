@@ -24,7 +24,7 @@ function define(p_struct::PET_Lu2005, forcing, land, helpers)
     ## unpack forcing
     @unpack_PET_Lu2005 p_struct
     @unpack_forcing Tair ∈ forcing
-    PET = zero(α)
+    PET = land.wCycleBase.z_zero
     ## calculate variables
     Tair_prev = Tair
 
@@ -41,6 +41,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
 
     @unpack_land begin
         Tair_prev ∈ land.PET
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -64,7 +65,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     # dt the difference of time [days]..
     ΔTair = Tair - Tair_prev
     G = G_base * (ΔTair) / Δt
-    G = zero(α) #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
+    G = z_zero #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
     PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
     PET = max_0(PET)
 

@@ -31,7 +31,7 @@ function compute(p_struct::rootFraction_expCvegRoot, forcing, land, helpers)
         soil_layer_thickness ∈ land.soilWBase
         (p_frac_root_to_soil_depth, cumulative_soil_depths) ∈ land.rootFraction
         max_root_depth ∈ land.states
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
         cVegRoot ∈ land.pools
     end
     ## calculate variables
@@ -41,7 +41,7 @@ function compute(p_struct::rootFraction_expCvegRoot, forcing, land, helpers)
     for sl ∈ eachindex(land.pools.soilW)
         soilcumuD = cumulative_soil_depths[sl]
         rootOver = max_root_depth - soilcumuD
-        rootFrac = rootOver > 𝟘 ? tmp_rootFrac : zero(tmp_rootFrac)
+        rootFrac = rootOver > z_zero ? tmp_rootFrac : z_zero
         @rep_elem rootFrac => (p_frac_root_to_soil_depth, sl, :soilW)
     end
     ## pack land variables

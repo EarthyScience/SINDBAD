@@ -45,7 +45,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     ## reset ecoflow and influx to be zero at every time step
     @rep_vec c_eco_flow => helpers.pools.zeros.cEco
     @rep_vec c_eco_influx => helpers.pools.zeros.cEco
-    # @rep_vec ΔcEco => ΔcEco .* 𝟘
+    # @rep_vec ΔcEco => ΔcEco .* z_zero
 
     ## compute losses
     for cl ∈ eachindex(cEco)
@@ -97,7 +97,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     nee = eco_respiration - gpp
 
     # cEco_prev = cEco 
-    # cEco_prev = cEco_prev .* 𝟘 .+ cEco
+    # cEco_prev = cEco_prev .*z_zero.+ cEco
     @rep_vec cEco_prev => cEco
     @pack_land cEco => land.pools
 

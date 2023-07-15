@@ -6,7 +6,6 @@ export gppSoilW_GSI
     fW_slope::T2 = 5.24 | (1.0, 10.0) | "slope of sigmoid" | "fraction"
     fW_slope_mult::T3 = 100.0 | (nothing, nothing) | "multiplier for the slope of sigmoid" | "fraction"
     fW_base::T4 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
-    o_one::T4 = 1.0 | (nothing, nothing) | "type stable one" | ""
 end
 #! format: on
 
@@ -30,6 +29,7 @@ function compute(p_struct::gppSoilW_GSI, forcing, land, helpers)
         (s_wAWC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
         (gpp_f_soilW_prev) ∈ land.gppSoilW
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     actAWC = max_0(addS(soilW) - s_wWP)

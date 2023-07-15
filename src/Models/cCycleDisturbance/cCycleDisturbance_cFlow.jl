@@ -7,6 +7,7 @@ struct cCycleDisturbance_cFlow <: cCycleDisturbance end
 function define(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
     @unpack_land begin
         (c_giver, c_taker) ∈ land.cCycleBase
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     zix_veg_all = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
     c_lose_to_zix_vec = []
@@ -35,9 +36,9 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         cEco ∈ land.pools
         (c_giver, c_taker, c_remain) ∈ land.cCycleBase
     end
-    if dist_intensity > zero(dist_intensity)
+    if dist_intensity > z_zero
         for zixVeg ∈ zix_veg_all
-            cLoss = 𝟘 # do not lose carbon if reserve pool
+            cLoss = z_zero# do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
                 cLoss = max_0(cEco[zixVeg] - c_remain) * dist_intensity
             end
