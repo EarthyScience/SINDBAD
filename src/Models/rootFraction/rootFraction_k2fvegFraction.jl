@@ -17,7 +17,7 @@ function define(p_struct::rootFraction_k2fvegFraction, forcing, land, helpers)
         error("rootFraction_k2fvegFraction approach works for 2 soil layers only.")
     end
     # create the arrays to fill in the soil properties 
-    p_frac_root_to_soil_depth = ones(helpers.numbers.num_type, length(land.pools.soilW))
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
 
     ## pack land variables
     @pack_land (p_frac_root_to_soil_depth) => land.rootFraction
@@ -37,8 +37,8 @@ function compute(p_struct::rootFraction_k2fvegFraction, forcing, land, helpers)
     ## calculate variables
     # check if the number of soil layers & number of elements in soil
     # the scaling parameters can be > 1 but k1RootFrac needs to be <= 1
-    k1RootFrac = min(helpers.numbers.𝟙, frac_vegetation * k1_scale) # the fraction of water that a root can uptake from the 1st soil layer
-    k2RootFrac = min(helpers.numbers.𝟙, frac_vegetation * k2_scale) # the fraction of water that a root can uptake from the 1st soil layer
+    k1RootFrac = min_1(frac_vegetation * k1_scale) # the fraction of water that a root can uptake from the 1st soil layer
+    k2RootFrac = min_1(frac_vegetation * k2_scale) # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
     p_frac_root_to_soil_depth[1] = p_frac_root_to_soil_depth[1] * k1RootFrac

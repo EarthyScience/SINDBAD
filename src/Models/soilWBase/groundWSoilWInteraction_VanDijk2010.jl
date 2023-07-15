@@ -6,21 +6,6 @@ export groundWSoilWInteraction_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
-    ## unpack land variables
-    @unpack_land begin
-        𝟘 ∈ helpers.numbers
-    end
-
-    # calculate recharge
-    gw_capillary_flux = 𝟘
-    ## pack land variables
-    @pack_land begin
-        gw_capillary_flux => land.fluxes
-    end
-    return land
-end
-
 function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
     @unpack_groundWSoilWInteraction_VanDijk2010 p_struct
@@ -31,7 +16,6 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         unsat_k_model ∈ land.soilProperties
-        (𝟘, 𝟙) ∈ helpers.numbers
         n_groundW ∈ land.wCycleBase
     end
 

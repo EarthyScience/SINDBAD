@@ -21,7 +21,6 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     @unpack_land begin
         (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
         (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, ΔTWS) ∈ land.states
-        𝟘 ∈ helpers.numbers
         zix ∈ helpers.pools
 
     end
@@ -53,11 +52,6 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     for l in eachindex(ΔsurfaceW)
         @rep_elem zero(eltype(ΔsurfaceW)) => (ΔsurfaceW, l, :surfaceW)
     end
-
-    # @rep_vec ΔgroundW => ΔgroundW .* 𝟘
-    # @rep_vec ΔsnowW => ΔsnowW .* 𝟘
-    # @rep_vec ΔsoilW => ΔsoilW .* 𝟘
-    # @rep_vec ΔsurfaceW => ΔsurfaceW .* 𝟘
 
     totalW = addS(soilW) + addS(groundW) + addS(surfaceW) + addS(snowW)
 

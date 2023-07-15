@@ -18,7 +18,7 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
     @unpack_land begin
         TWS ∈ land.pools
         (ΔTWS, zeroΔTWS) ∈ land.states
-        (𝟘, tolerance) ∈ helpers.numbers
+        tolerance ∈ helpers.numbers
     end
     totalW_prev = sum(TWS)
     #TWS_old = deepcopy(TWS)
@@ -26,7 +26,7 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
     TWS = add_vec(TWS, ΔTWS)
 
     # reset soil moisture changes to zero
-    if minimum(TWS) < 𝟘
+    if minimum(TWS) < zero(first(TWS))
         if abs(minimum(TWS)) < tolerance
             @error "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage"
             # @assert(false, "Numerically small negative TWS ($(TWS)) smaller than tolerance ($(tolerance)) were replaced with absolute value of the storage") 

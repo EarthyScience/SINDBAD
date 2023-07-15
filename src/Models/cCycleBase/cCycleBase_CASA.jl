@@ -31,12 +31,11 @@ function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
     @unpack_cCycleBase_CASA p_struct
 
     @unpack_land begin
-        num_type ∈ helpers.numbers
         cEco ∈ land.pools
     end
 
     ## instantiate variables
-    p_C2Nveg = ones(num_type, length(cEco)) #sujan
+    p_C2Nveg = zero(cEco) .+ one(first(cEco)) #sujan
 
     ## pack land variables
     @pack_land begin

@@ -12,7 +12,7 @@ function define(p_struct::rootFraction_constant, forcing, land, helpers)
     @unpack_land soilW ∈ land.pools
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## instantiate
-    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ helpers.numbers.𝟙
+    p_frac_root_to_soil_depth = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
 
     ## pack land variables
     @pack_land begin

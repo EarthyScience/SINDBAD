@@ -6,13 +6,6 @@ export snowFraction_HTESSEL
 end
 #! format: on
 
-function define(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
-    frac_snow = helpers.numbers.𝟙
-    ## pack land variables
-    @pack_land frac_snow => land.states
-    return land
-end
-
 function compute(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
     ## unpack parameters
     @unpack_snowFraction_HTESSEL p_struct

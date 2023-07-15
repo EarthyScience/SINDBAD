@@ -55,6 +55,8 @@ export soilProperties_Saxton2006, unsatK, soilParamsSaxton2006
     n36::TN = 36.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1500::TN = 1500.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1930::TN = 1930.0 | (nothing, nothing) | "Saxton Parameters" | ""
+    o_one::TN = 1.0 | (nothing, nothing) | "type stable one" | ""
+    z_zero::TN = 1.0 | (nothing, nothing) | "type stable zero" | ""
 
 end
 # b::T =  | (nothing, nothing) | "Saxton Parameters" | ""
@@ -63,7 +65,6 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
     ## instantiate variables
@@ -195,7 +196,6 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
         (p_β, p_kSat, p_wSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
@@ -204,7 +204,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     θ_dos = clamp_01(θ_dos)
     β = p_β[sl]
     kSat = p_kSat[sl]
-    λ = 𝟙 / β
+    λ = one(θ_dos) / β
     K = kSat * ((θ_dos)^(n3 + (n2 / λ)))
     return K
 end
@@ -246,7 +246,6 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
 
     @unpack_soilProperties_Saxton2006 p_struct
     @unpack_land begin
-        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
 
@@ -254,7 +253,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     SAND = st_SAND[sl]
     ORGM = st_ORGM[sl]
     # ORGM = sp_ORGM[sl]
-    # ORGM = 𝟘
+    # ORGM = z_zero
     # CLAY = CLAY
     # SAND = SAND
     # ORGM = ORGM
@@ -278,7 +277,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # θ_s: Saturated moisture [0 kPa], normal density, #v
     # rho_N: Normal density; g cm-3
     θ_s = θ_33 + θ_s_33 - i1 * SAND + i2
-    rho_N = (𝟙 - θ_s) * gravelDensity
+    rho_N = (o_one - θ_s) * gravelDensity
     ## Density effects
     # rho_DF: Adjusted density; g cm-3
     # θ_s_DF: Saturated moisture [0 kPa], adjusted density, #v
@@ -287,7 +286,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # DF: Density adjustment Factor [0.9-1.3]
     rho_DF = rho_N * DF
     # θ_s_DF = 1 - (rho_DF / gravelDensity); # original but does not include θ_s
-    θ_s_DF = θ_s * (𝟙 - (rho_DF / gravelDensity)) # may be includes θ_s
+    θ_s_DF = θ_s * (o_one - (rho_DF / gravelDensity)) # may be includes θ_s
     θ_33_DF = θ_33 - n02 * (θ_s - θ_s_DF)
     θ_1500_DF = θ_1500 - n02 * (θ_s - θ_s_DF)
     θ_s_33_DF = θ_s_DF - θ_33_DF
@@ -302,7 +301,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # λ: Slope of logarithmic tension-moisture curve
     # Ks: Saturated conductivity [matric soil], mm h-1
     # K_θ: Unsaturated conductivity at moisture θ; mm h-1
-    λ = 𝟙 / B
+    λ = o_one / B
     Ks = n1930 * ((θ_s - θ_33)^(n3 - λ)) * n24
     # K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
     ## Gravel Effects
@@ -312,10 +311,10 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # Rw: Weight fraction of gravel [decimal], g g-1
     # Kb: Saturated conductivity [bulk soil], mm h-1
     αRho = matricSoilDensity / gravelDensity
-    Rv = (αRho * Rw) / (𝟙 - Rw * (𝟙 - αRho))
-    rho_B = rho_N * (𝟙 - Rv) + Rv * gravelDensity
-    # PAW_B = PAW * (𝟙 - Rv)
-    Kb = Ks * ((𝟙 - Rw) / (𝟙 - Rw * (𝟙 - (n3 * αRho / n2))))
+    Rv = (αRho * Rw) / (o_one - Rw * (o_one - αRho))
+    rho_B = rho_N * (o_one - Rv) + Rv * gravelDensity
+    # PAW_B = PAW * (o_one - Rv)
+    Kb = Ks * ((o_one - Rw) / (o_one - Rw * (o_one - (n3 * αRho / n2))))
     ## Salinity Effects
     # ϕ_o: Osmotic potential at θ = θ_s; kPa
     # ϕ_o_θ: Osmotic potential at θ < θ_s; kPa
@@ -328,7 +327,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # θSat = θ_s_DF
     θSat = θ_s
     kSat = Kb
-    ψSat = 𝟘
+    ψSat = z_zero
     # θFC = θ_33_DF
     θFC = θ_33
     kFC = kSat * ((θFC / θSat)^(n3 + (n2 / λ)))

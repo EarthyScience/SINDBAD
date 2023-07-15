@@ -6,6 +6,7 @@ export gppSoilW_GSI
     fW_slope::T2 = 5.24 | (1.0, 10.0) | "slope of sigmoid" | "fraction"
     fW_slope_mult::T3 = 100.0 | (nothing, nothing) | "multiplier for the slope of sigmoid" | "fraction"
     fW_base::T4 = 0.2096 | (0.1, 0.8) | "base of sigmoid" | "fraction"
+    o_one::T4 = 1.0 | (nothing, nothing) | "type stable one" | ""
 end
 #! format: on
 
@@ -13,9 +14,7 @@ function define(p_struct::gppSoilW_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_gppSoilW_GSI p_struct
 
-    ## unpack land variables
-    @unpack_land (𝟙, sNT) ∈ helpers.numbers
-    gpp_f_soilW_prev = 𝟙
+    gpp_f_soilW_prev = o_one
 
     ## pack land variables
     @pack_land (gpp_f_soilW_prev) => land.gppSoilW
@@ -31,13 +30,12 @@ function compute(p_struct::gppSoilW_GSI, forcing, land, helpers)
         (s_wAWC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
         (gpp_f_soilW_prev) ∈ land.gppSoilW
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     actAWC = max_0(addS(soilW) - s_wWP)
     SM_nor = min_1(actAWC / s_wAWC)
-    c_allocation_f_soilW = (𝟙 - fW_τ) * gpp_f_soilW_prev + fW_τ * (𝟙 / (𝟙 + exp(-fW_slope * (SM_nor - fW_base))))
-    gpp_f_soilW = clamp_01(c_allocation_f_soilW)
+    gpp_f_soilW = (o_one - fW_τ) * gpp_f_soilW_prev + fW_τ * (o_one / (o_one + exp(-fW_slope * (SM_nor - fW_base))))
+    gpp_f_soilW = clamp_01(gpp_f_soilW)
     gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables

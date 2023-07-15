@@ -13,7 +13,6 @@ function compute(p_struct::vegFraction_scaledNDVI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         NDVI ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
 
     ## calculate variables
