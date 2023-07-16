@@ -2,6 +2,7 @@
   "variables_to_constrain": [
     "gpp",
     "nee",
+    "reco",
     "transpiration",
     "evapotranspiration",
     "agb",
@@ -91,7 +92,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "nnseinv",
+      "cost_metric": "nseinv",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -116,7 +117,7 @@
           "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       },
       "nee": {
@@ -139,7 +140,7 @@
           "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       },
       "reco": {
@@ -162,7 +163,7 @@
           "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       },
       "evapotranspiration": {
@@ -188,7 +189,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       },
       "transpiration": {
@@ -212,7 +213,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       },
       "agb": {
@@ -250,7 +251,7 @@
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nnseinv"
+          "cost_metric": "nseinv"
         }
       }
     }

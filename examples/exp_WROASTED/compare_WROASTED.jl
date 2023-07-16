@@ -3,52 +3,51 @@ using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
 using Dates
-noStackTrace()
-experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
 using Plots
+noStackTrace()
 
-# inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# inpath = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# inpath = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
-for domain ∈ sites
-    # domain = "DE-Hai"
-    inpath = "../data/fn/$(domain).1979.2017.daily.nc"
-    forcingConfig = "forcing_erai.json"
+site_index = 1
+for site_index in 1:205
+    # site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+    # site_index = Base.parse(Int, ARGS[1])
+    forcing = "erai"
+    site_info = Sindbad.CSV.File(
+        "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing).csv";
+        header=false);
+    domain = site_info[site_index][2]
 
-    obspath = inpath
-    optimize_it = false
-    optimize_it = true
-    outpath = nothing
+    experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
+    inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
+    obspath = inpath;
+    forcingConfig = "forcing_$(forcing).json";
 
+    outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad";
 
+    sYear = "1979"
+    eYear = "2017"
+    nrepeat = 200
     pl = "threads"
     replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
         "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => optimize_it,
+        "model_run.flags.run_optimization" => false,
         "model_run.flags.run_forward_and_cost" => true,
         "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
+        "model_run.flags.catch_model_errors" => false,
         "model_run.flags.spinup.run_spinup" => true,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => inpath,
         "model_run.output.path" => outpath,
         "model_run.mapping.parallelization" => pl,
-        "optimization.constraints.default_constraint.data_path" => obspath)
+        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
+        "optimization.constraints.default_constraint.data_path" => obspath,)
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
 
     ## get the spinup sequence
-    nrepeat = 200
 
     data_path = getAbsDataPath(info, inpath)
     nc = ForwardSindbad.NetCDF.open(data_path)
@@ -87,44 +86,30 @@ for domain ∈ sites
     end
 
     replace_info["model_run.spinup.sequence"] = sequence
+    replace_info["experiment.configuration_files.parameters"] = joinpath(info.output.optim, "optimized_parameters.csv")
+
     @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
-    @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
-
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
-    new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+    info = getExperimentInfo(experiment_json; replace_info=replace_info);# note that this will modify info
 
     info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
     forc = getKeyedArrayFromYaxArray(forcing)
 
-    output = setupOutput(info)
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+    obs = getObsKeyedArrayFromYaxArray(observations);
+    output = setupOutput(info);
 
-    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
-    obs = getObsKeyedArrayFromYaxArray(observations)
+    ml_data_path = joinpath("/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD/ERAinterim.v2/data", domain * ".1979.2017.daily.nc")
+    nc_ml = ForwardSindbad.NetCDF.open(ml_data_path);
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output,
-            forc,
-            info.tem)
-    @time runEcosystem!(output.data,
-        new_models,
-        forc,
-        tem_with_vals,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
+    varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO")
+
 
     # some plots
     ds = forcing.data[1]
-    opt_dat = output.data
-    def_dat = outcubes
+    opt_dat = outcubes
     out_vars = output.variables
-    costOpt = info.optim.cost_options
+    costOpt = info.optim.cost_options;
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     foreach(costOpt) do var_row
         v = var_row.variable
@@ -134,7 +119,13 @@ for domain ∈ sites
         if loss_name in (:nnseinv, :nseinv)
             lossMetric = Val(:nse)
         end
-        (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+        ml_dat = nc_ml[varib_dict[v]][:]
+        if v == :agb
+            ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
+        elseif v==:ndvi
+            ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
+        end        
+        (obs_var, obs_σ, jl_dat) = getDataArray(opt_dat, obs, var_row)
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
         if length(non_nan_index) < 2
@@ -143,14 +134,17 @@ for domain ∈ sites
             tspan = first(non_nan_index):last(non_nan_index)
         end
         xdata = [info.tem.helpers.dates.vector[tspan]...]
-        obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
-        metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-        (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
-        obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
-        metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-        plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
-        plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-        savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
+        obs_σ = obs_σ[tspan]
+        obs_var = obs_var[tspan]
+        jl_dat = jl_dat[tspan, 1, 1, 1]
+        ml_dat = ml_dat[tspan]
+        obs_var_n, obs_σ_n, ml_dat_n = filter_common_nan(obs_var, obs_σ, ml_dat)
+        obs_var_n, obs_σ_n, jl_dat_n = filter_common_nan(obs_var, obs_σ, jl_dat)
+        metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
+        metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
+        plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
+        plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+        plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+        savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v).png")
     end
 end

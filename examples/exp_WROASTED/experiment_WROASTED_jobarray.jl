@@ -118,6 +118,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
+
 # some plots
 ds = forcing.data[1]
 opt_dat = output.data
@@ -125,15 +126,29 @@ def_dat = outcubes
 out_vars = output.variables
 costOpt = info.optim.cost_options;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+
+# load matlab wroasted results
+ml_data_path = joinpath("/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD/ERAinterim.v2/data", domain * ".1979.2017.daily.nc")
+nc_ml = ForwardSindbad.NetCDF.open(ml_data_path);
+
+varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO")
+
 foreach(costOpt) do var_row
     v = var_row.variable
     @show "plot obs", v
+    ml_dat = nc_ml[varib_dict[v]][:]
+    if v == :agb
+        ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
+    elseif v==:ndvi
+        ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
+    end        
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
-    if loss_name == :nnseinv
+    if loss_name in (:nnseinv, :nseinv)
         lossMetric = Val(:nse)
     end
     (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
     obs_var_TMP = obs_var[:, 1, 1, 1]
     non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
     if length(non_nan_index) < 2
@@ -141,14 +156,23 @@ foreach(costOpt) do var_row
     else
         tspan = first(non_nan_index):last(non_nan_index)
     end
+    obs_σ = obs_σ[tspan]
+    obs_var = obs_var[tspan]
+    ml_dat = ml_dat[tspan]
+    def_var = def_var[tspan, 1, 1, 1]
+    opt_var = opt_var[tspan, 1, 1, 1]
+
     xdata = [info.tem.helpers.dates.vector[tspan]...]
+    obs_var_n, obs_σ_n, ml_dat_n = filter_common_nan(obs_var, obs_σ, ml_dat)
     obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
-    metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
     obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+    metr_ml = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
+    metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-    plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-    plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
-    plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
+    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot!(xdata, ml_dat; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
+
 end
