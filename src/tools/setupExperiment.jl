@@ -390,12 +390,12 @@ function setInputParameters(original_table::Table, updated_table::Table)
         subtbl = filter(
             row ->
                 row.name == Symbol(updated_table[i].name) &&
-                    row.models == Symbol(updated_table[i].models),
+                    row.model == Symbol(updated_table[i].model),
             original_table)
         if isempty(subtbl)
             error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
         else
-            posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
+            posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
             posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
             pindx = intersect(posmodel, posvar)
             pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
@@ -467,7 +467,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :params)
+    if hasproperty(info, :parameters)
         if !isempty(info.parameters)
             original_params_forward = getParameters(sel_appr_forward)
             input_params = info.parameters
