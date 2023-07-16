@@ -21,7 +21,7 @@ obspath = inpath;
 forcingConfig = "forcing_$(forcing).json";
 
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad";
+outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_nse";
 
 sYear = "1979"
 eYear = "2017"
@@ -62,21 +62,25 @@ end
 sequence = nothing
 if isnothing(nrepeat_d)
     sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d < 0
     sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d == 0
     sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d > 0
     sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
