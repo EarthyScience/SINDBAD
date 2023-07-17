@@ -258,7 +258,8 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
             nc = YAXArrays.open_dataset(zopen(data_path))
         end
         dv = nc[vinfo.source_variable]
-        v = YAXArrayBase.yaxconvert(DimArray, dv)
+        #v = YAXArrayBase.yaxconvert(DimArray, dv)
+        v = dv
         if !isnothing(forcing_mask)
             v = v #todo: mask the forcing variables here depending on the mask of 1 and 0
         end
@@ -268,14 +269,16 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         end
 
         @info "     $(k): source_var: $(vinfo.source_variable), source_file: $(data_path)"
-        yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(v))
-        if hasproperty(yax, Symbol(info.forcing.dimensions.time))
-            yax = yax[time=(Date(info.tem.helpers.dates.start_date),
-                Date(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step)]
+        #yax = YAXArrayBase.yaxconvert(YAXArray, Float64.(v))
+        yax = v
+        if hasproperty(yax, :Ti) # Symbol(info.forcing.dimensions.time)
+            init_date = DateTime(info.tem.helpers.dates.start_date)
+            last_date = DateTime(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step
+            yax = yax[time=(init_date..last_date)]
         end
 
         if vinfo.space_time_type == "spatiotemporal"
-            f_sizes = collect_forcing_sizes(info, yax)
+            f_sizes = collect_forcing_sizes(info, nc)
         end
 
         @info "getForcing: checking if permutation of data is needed..."
@@ -286,14 +289,26 @@ function getForcing(info::NamedTuple, ::Val{:zarr})
         end
         numtype = info.tem.helpers.numbers.sNT
         numtype = Val(info.tem.helpers.numbers.num_type)
-        vfill = 0
+        vfill = 0.0 # nans with zeros? # use type already here.
+        bounds = vinfo.bounds
+        s_to_su = vinfo.source_to_sindbad_unit
+        add_u_c = vinfo.additive_unit_conversion
+        isnan_to(x, vfill) = isnan(x) ? oftype(x, vfill) : x
+
         # vfill = mean(v[(.!isnan.(v))])
-        map(v -> cleanInputData(v, vfill, vinfo, numtype), yax)
+        yax = map(x -> isnan(x) ? vfill : x, yax)
+        yax = map(x -> applyUnitConversion(x, s_to_su, add_u_c), yax)
+        if !isnothing(bounds)
+            yax = map(x -> clamp(x, first(bounds), last(bounds)), yax)
+        end
+        #map(v -> cleanInputData(v, vfill, vinfo, numtype), yax) # type unstable, needs fixing.
+        yax
     end
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "getForcing: getting number of time steps..."
-    nts = length(incubes[1].time) # look for time instead of using the first yaxarray
+    #nts = length(incubes[1].time) # look for time instead of using the first yaxarray
+    nts = length(nc.time) # look for time instead of using the first yaxarray
     # nts = getNumberOfTimeSteps(incubes, info.forcing.dimensions.time)
     @info "getForcing: getting variable name..."
     forcing_variables = keys(info.forcing.variables)
