@@ -43,6 +43,9 @@
     "cCycleBase": {
       "approach": "GSI"
     },
+    "cCycleConsistency":{
+      "approach": "simple"
+    },
     "cCycleDisturbance": {
       "approach": "WROASTED",
       "use4spinup": false
