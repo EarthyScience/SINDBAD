@@ -53,20 +53,20 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (p_k_f_soilW) => land.cTauSoilW
+    @pack_land p_k_f_soilW => land.cTauSoilW
     return land
 end
 
 function fSoilW_cTau(o_one, A, B, wExp, wOpt, wSoil)
     # first half of the response curve
-    W2p1 = o_one / (o_one + exp(A * (-wExp))) / (o_one + exp(A * (-wExp)))
+    W2p1 = o_one / ((o_one + exp(A * -wExp)) * (o_one + exp(A * -wExp)))
     W2C1 = o_one / W2p1
-    W21 = W2C1 / (o_one + exp(A * (wOpt - wExp - wSoil))) / (o_one + exp(A * (-wOpt - wExp + wSoil)))
+    W21 = W2C1 / ((o_one + exp(A * (wOpt - wExp - wSoil))) * (o_one + exp(A * (-wOpt - wExp + wSoil))))
 
     # second half of the response curve
-    W2p2 = o_one / (o_one + exp(B * (-wExp))) / (o_one + exp(B * (-wExp)))
+    W2p2 = o_one / ((o_one + exp(B * -wExp)) * (o_one + exp(B * -wExp)))
     W2C2 = o_one / W2p2
-    T22 = W2C2 / (o_one + exp(B * (wOpt - wExp - wSoil))) / (o_one + exp(B * (-wOpt - wExp + wSoil)))
+    T22 = W2C2 / ((o_one + exp(B * (wOpt - wExp - wSoil))) * (o_one + exp(B * (-wOpt - wExp + wSoil))))
 
     # combine the response curves
     soilW_sc = wSoil >= wOpt ? T22 : W21

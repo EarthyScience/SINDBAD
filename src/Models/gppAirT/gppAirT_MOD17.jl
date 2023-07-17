@@ -11,7 +11,7 @@ function compute(p_struct::gppAirT_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_MOD17 p_struct
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land (z_zero, o_one) ∈ land.wCycleBase
+    @unpack_land o_one ∈ land.wCycleBase
 
     ## calculate variables
     tsc = TairDay / ((o_one - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
