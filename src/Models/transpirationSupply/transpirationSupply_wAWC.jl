@@ -2,7 +2,7 @@ export transpirationSupply_wAWC
 
 #! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_wAWC{T1} <: transpirationSupply
-    k_transpiration::T1 = 0.1 | (0.002, 0.2) | "fraction of total maximum available water that can be transpired" | ""
+    k_transpiration::T1 = 0.99 | (0.002, 1.0) | "fraction of total maximum available water that can be transpired" | ""
 end
 #! format: on
 

@@ -22,7 +22,7 @@ function compute(p_struct::WUE_expVPDDayCo2, forcing, land, helpers)
     end
 
     ## calculate variables
-    AoENoCO2 = WUEatOnehPa * exp(κ * -(kpa_to_hpa * VPDDay))
+    AoENoCO2 = WUEatOnehPa * exp(κ * -(VPDDay))
     fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     AoE = AoENoCO2 * fCO2_CO2
 
