@@ -24,7 +24,7 @@ function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     @unpack_gppAirT_Maekelae2008 p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
-        (z_zero, o_one) ∈ land.wCycleBase
+        o_one ∈ land.wCycleBase
         X_prev ∈ land.gppAirT
     end
 

@@ -17,8 +17,8 @@ function compute(p_struct::fAPAR_cVegLeaf, forcing, land, helpers)
     end
 
     ## calculate variables
-    cVegLeaf = addS(cVegLeaf)
-    fAPAR = o_one - exp(-(cVegLeaf * kEffExt))
+    cVegLeaf_sum = addS(cVegLeaf)
+    fAPAR = o_one - exp(-(cVegLeaf_sum * kEffExt))
 
     ## pack land variables
     @pack_land fAPAR => land.states
