@@ -45,7 +45,8 @@ end
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid_simple/experiment.json"
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info, Val{:zarr}())
+info, forcing = getForcing(info, Val{:zarr}());
+
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing)
