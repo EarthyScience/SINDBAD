@@ -36,7 +36,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     end
 
     ## for the litter pools; only use the top layer"s moisture
-    soilW_top = frac2perc * soilW[1] / p_wSat[1]
+    soilW_top = min(frac2perc * soilW[1] / p_wSat[1], frac2perc)
     soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
@@ -44,7 +44,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
-    soilW_all = frac2perc * sum(soilW) / sum(p_wSat)
+    soilW_all = min(frac2perc * sum(soilW) / sum(p_wSat), frac2perc)
     soilW_all_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
     cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
