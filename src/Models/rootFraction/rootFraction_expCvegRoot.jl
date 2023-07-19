@@ -2,9 +2,9 @@ export rootFraction_expCvegRoot
 
 #! format: off
 @bounds @describe @units @with_kw struct rootFraction_expCvegRoot{T1,T2,T3} <: rootFraction
-    k_cVegRoot::T1 = 0.2 | (0.001, 0.3) | "rate constant of exponential relationship" | "m2/kgC (inverse of carbon storage)"
-    frac_root_to_soil_depth_max::T2 = 0.15 | (0.08, 0.50) | "maximum root water uptake capacity" | ""
-    frac_root_to_soil_depth_min::T3 = 0.01 | (0.001, 0.03) | "minimum root water uptake threshold" | ""
+    k_cVegRoot::T1 = 0.02 | (0.001, 0.3) | "rate constant of exponential relationship" | "m2/kgC (inverse of carbon storage)"
+    frac_root_to_soil_depth_max::T2 = 0.95 | (0.7, 0.98) | "maximum root water uptake capacity" | ""
+    frac_root_to_soil_depth_min::T3 = 0.1 | (0.05, 0.3) | "minimum root water uptake threshold" | ""
 end
 #! format: on
 

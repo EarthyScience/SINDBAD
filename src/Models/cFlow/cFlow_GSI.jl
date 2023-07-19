@@ -17,26 +17,25 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
     ## instantiate variables
 
     # transfers
-    # cEco_comps = helpers.pools.components.cEco
-    # aTrg_a = []
-    # for t_rg in c_taker
-    #     if cEco_comps[t_rg] ∉ aTrg_a
-    #         push!(aTrg_a, cEco_comps[t_rg])
-    #     end
-    # end
-    # aSrc_a = []
-    # for s_rc in c_giver
-    #     if cEco_comps[s_rc] ∉ aSrc_a
-    #         push!(aSrc_a, cEco_comps[s_rc])
-    #     end
-    # end
+    cEco_comps = helpers.pools.components.cEco
+    aTrg = []
+    for t_rg in c_taker
+        push!(aTrg, cEco_comps[t_rg])
+    end
+    aSrc = []
+    for s_rc in c_giver
+        push!(aSrc, cEco_comps[s_rc])
+    end
 
     # aTrg_a = Tuple(aTrg_a)
     # aSrc_b = Tuple(aSrc_a)
 
-    flowVar = [:reserve_to_leaf, :reserve_to_root, :leaf_to_reserve, :root_to_reserve, :k_shedding_leaf, :k_shedding_root]
-    aSrc = (:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot)
-    aTrg = (:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast)
+    # flowVar = [:reserve_to_leaf, :reserve_to_root, :leaf_to_reserve, :root_to_reserve, :k_shedding_leaf, :k_shedding_root]
+    # aSrc = (:cVegReserve, :cVegReserve, :cVegLeaf, :cVegRoot, :cVegLeaf, :cVegRoot)
+    # aTrg = (:cVegLeaf, :cVegRoot, :cVegReserve, :cVegReserve, :cLitFast, :cLitFast)
+
+    aSrc = Tuple(aSrc)
+    aTrg = Tuple(aTrg)
 
     # @show aSrc, aSrc_b
     # @show aTrg, aTrg_a
@@ -47,7 +46,8 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         k_shedding_leaf=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    p_A = eltype(land.pools.cEco).(zero([c_taker...]))
+    # tcprint(p_A_ind)
+    p_A = eltype(land.pools.cEco).(zero([c_taker...]) .+ one(eltype(land.pools.cEco)))
 
     if land.pools.cEco isa SVector
         p_A = SVector{length(p_A)}(p_A)
@@ -184,7 +184,9 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
             root_to_reserve,
             root_to_reserve_frac,
             reserve_to_leaf,
+            reserve_to_leaf_frac,
             reserve_to_root,
+            reserve_to_root_frac,
             eco_stressor,
             k_shedding_leaf,
             k_shedding_leaf_frac,
