@@ -10,7 +10,7 @@ site_index = 37
 # site_index = 68
 sites = 1:100
 sites = [37, ]
-sites = 1:205
+# sites = 1:205
 sites = [33, ]
 forcing_set = "cruj"
 do_debug_figs = true
@@ -195,7 +195,7 @@ for site_index in sites
         # open the matlab simulation data
         # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
 
-        varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :p_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :p_k_f_soilT => "fT", :p_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut")
+        varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :p_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :p_k_f_soilT => "fT", :p_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF")
 
 
         # some plots for model simulations from JL and matlab versions
@@ -298,6 +298,8 @@ for site_index in sites
                 else
                     for ll ∈ 1:size(def_var, 2)
                         plot(xdata, def_var[:, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(v)_$(ll)")
+                            println("           layer => $ll")
+
                         if !isnothing(ml_dat)
                             plot!(xdata, ml_dat[1, ll, :]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, :]), digits=2)))")
                         end
