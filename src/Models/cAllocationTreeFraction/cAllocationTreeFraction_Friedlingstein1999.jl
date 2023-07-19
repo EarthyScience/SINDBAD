@@ -52,25 +52,25 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
 
     # adjust for spatial consideration of TreeFrac & plant level
     # partitioning between fine & coarse roots
-    cVegWood = frac_tree
-    cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
-    cVegRootF = cVegRoot * (Rf2Rc * frac_tree + (o_one - frac_tree))
-    cVegRootC = cVegRoot * (o_one - Rf2Rc) * frac_tree
+    a_cVegWood = frac_tree
+    a_cVegRoot = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
+    a_cVegRootF = a_cVegRoot * (Rf2Rc * frac_tree + (o_one - frac_tree))
+    a_cVegRootC = a_cVegRoot * (o_one - Rf2Rc) * frac_tree
     # cVegRoot = cVegRootF + cVegRootC
-    cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
+    a_cVegLeaf = o_one + (s0 / (r0 + l0)) * (o_one - frac_tree)
 
-    c_allocation = setCAlloc(c_allocation, cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
+    c_allocation = setCAlloc(c_allocation, a_cVegWood, land.pools.cVegWood, helpers.pools.zix.cVegWood, helpers)
     if hasproperty(cVeg_names_for_c_allocation_frac_tree, :cVegRootC)
-        c_allocation = setCAlloc(c_allocation, cVegRootC, land.pools.cVegRootC, helpers.pools.zix.cVegRootC,
+        c_allocation = setCAlloc(c_allocation, a_cVegRootC, land.pools.cVegRootC, helpers.pools.zix.cVegRootC,
             helpers)
-        c_allocation = setCAlloc(c_allocation, cVegRootF, land.pools.cVegRootF, helpers.pools.zix.cVegRootF,
+        c_allocation = setCAlloc(c_allocation, a_cVegRootF, land.pools.cVegRootF, helpers.pools.zix.cVegRootF,
             helpers)
     else
-        c_allocation = setCAlloc(c_allocation, cVegRoot, land.pools.cVegRoot, helpers.pools.zix.cVegRoot,
+        c_allocation = setCAlloc(c_allocation, a_cVegRoot, land.pools.cVegRoot, helpers.pools.zix.cVegRoot,
             helpers)
     end
 
-    c_allocation = setCAlloc(c_allocation, cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
+    c_allocation = setCAlloc(c_allocation, a_cVegLeaf, land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf, helpers)
 
     @pack_land c_allocation => land.states
 
