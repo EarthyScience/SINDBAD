@@ -65,8 +65,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
     # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing c_flow_order. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix ∈ eachindex(c_flow_order)
-        fO = c_flow_order[jix]
+    for fO ∈ c_flow_order
         take_r = c_taker[fO]
         give_r = c_giver[fO]
         tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * p_A[fO]
