@@ -12,7 +12,7 @@ function define(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
     end
-    c_efflux = zero(land.pools.cEco)
+    c_eco_efflux = zero(land.pools.cEco)
     p_km = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
     p_km4su = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
     auto_respiration_growth = zero(land.pools.cEco)
@@ -22,7 +22,7 @@ function define(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su, Fd) => land.aRespiration
-        (auto_respiration_growth, auto_respiration_maintain, c_efflux) => land.states
+        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
     end
     return land
 end
@@ -34,7 +34,7 @@ function compute(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (p_km, p_km4su, Fd) ∈ land.aRespiration
-        (c_allocation, c_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.states
+        (c_allocation, c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_C2Nveg ∈ land.cCycleBase
@@ -74,7 +74,7 @@ function compute(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
-        @rep_elem cEcoEfflux_ix => (c_efflux, ix, :cEco)
+        @rep_elem cEcoEfflux_ix => (c_eco_efflux, ix, :cEco)
         @rep_elem p_km_ix => (p_km, ix, :cEco)
         @rep_elem p_km4su_ix => (p_km4su, ix, :cEco)
         @rep_elem RA_M_ix => (auto_respiration_maintain, ix, :cEco)
@@ -83,7 +83,7 @@ function compute(p_struct::aRespiration_Thornley2000C, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (p_km, p_km4su) => land.aRespiration
-        (auto_respiration_growth, auto_respiration_maintain, c_efflux) => land.states
+        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
     end
     return land
 end
@@ -108,7 +108,7 @@ Determine growth and maintenance respiration using aRespiration_Thornley2000C
  - land.fluxes.gpp: gross primary productivity [gC.m2.δT-1]
 
 *Outputs*
- - land.states.c_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
+ - land.states.c_eco_efflux: autotrophic respiration from each plant pools [gC.m-2.δT-1]
  - land.states.auto_respiration_growth: growth respiration from each plant pools [gC.m-2.δT-1]
  - land.states.auto_respiration_maintain: maintenance respiration from each plant pools [gC.m-2.δT-1]
 

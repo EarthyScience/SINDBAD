@@ -5,10 +5,10 @@ struct aRespiration_none <: aRespiration end
 function define(p_struct::aRespiration_none, forcing, land, helpers)
 
     ## calculate variables
-    c_efflux = zero(land.pools.cEco)
+    c_eco_efflux = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land c_efflux => land.states
+    @pack_land c_eco_efflux => land.states
     return land
 end
 

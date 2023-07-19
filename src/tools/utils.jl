@@ -13,6 +13,7 @@ export clamp_01
 export min_0, max_0, min_1, max_1
 export valToSymbol
 export getFrac
+export showParamsOfAModel
 
 """
     noStackTrace()
@@ -736,4 +737,23 @@ function getFrac(num, den)
         rat = num
     end
     return rat
+end
+
+
+"""
+showParamsOfAModel(models, model::Symbol)
+shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
+"""
+function showParamsOfAModel(models, model::Symbol)
+    model_names = Symbol.(supertype.(typeof.(models)))
+    approach_names = nameof.(typeof.(models))
+    m_index = findall(m -> m == model, model_names)[1]
+    mod = models[m_index];
+    println("model: $(model_names[m_index])")
+    println("approach: $(approach_names[m_index])")
+    println("parameters:")
+    foreach(fieldnames(typeof(mod))) do fn
+        println("   $fn => $(getproperty(mod, fn))")
+    end
+    return nothing
 end

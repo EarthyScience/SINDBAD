@@ -5,23 +5,23 @@ struct cCycle_CASA <: cCycle end
 function define(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## instantiate variables
-    c_efflux = zero(land.pools.cEco) #sujan moved from get states
+    c_eco_efflux = zero(land.pools.cEco) #sujan moved from get states
     c_eco_influx = zero(land.pools.cEco)
     c_eco_flow = zero(land.pools.cEco)
 
     ## pack land variables
-    @pack_land (c_efflux, c_eco_influx, c_eco_flow) => land.cCycle
+    @pack_land (c_eco_efflux, c_eco_influx, c_eco_flow) => land.cCycle
     return land
 end
 
 function compute(p_struct::cCycle_CASA, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land (c_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
+    @unpack_land (c_eco_efflux, c_eco_influx, c_eco_flow) ∈ land.cCycle
 
     ## unpack land variables
     @unpack_land begin
-        (c_allocation, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
+        (c_allocation, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_k_act ∈ land.cTau
@@ -30,12 +30,12 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
     end
     # NUMBER OF TIME STEPS PER YEAR
     ## these all need to be zeros maybe is taken care automatically
-    c_efflux[!helpers.pools.flags.cVeg] = 0.0
+    c_eco_efflux[!helpers.pools.flags.cVeg] = 0.0
     ## compute losses
     c_eco_out = min.(cEco, cEco * p_k_act)
     ## gains to vegetation
     zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-    c_eco_npp = gpp .* c_allocation[zix] .- c_efflux[zix]
+    c_eco_npp = gpp .* c_allocation[zix] .- c_eco_efflux[zix]
     c_eco_influx[zix] .= c_eco_npp
     ## flows & losses
     # @nc; if flux order does not matter; remove.
@@ -44,13 +44,13 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
         c_giver = p_giver[c_flow_order[jix]]
         flow_tmp = c_eco_out[c_giver] * p_F(c_taker, c_giver)
         c_eco_flow[c_taker] = c_eco_flow[c_taker] + flow_tmp * p_E(c_taker, c_giver)
-        c_efflux[c_giver] = c_efflux[c_giver] + flow_tmp * (1.0 - p_E(c_taker, c_giver))
+        c_eco_efflux[c_giver] = c_eco_efflux[c_giver] + flow_tmp * (1.0 - p_E(c_taker, c_giver))
     end
     ## balance
     cEco = cEco + c_eco_flow + c_eco_influx - c_eco_out
     ## compute RA & RH
-    hetero_respiration = sum(c_efflux[!helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
-    auto_respiration = sum(c_efflux[helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    hetero_respiration = sum(c_eco_efflux[!helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
+    auto_respiration = sum(c_eco_efflux[helpers.pools.flags.cVeg]) #sujan added 1 to sum along all pools
     eco_respiration = hetero_respiration + auto_respiration
     c_eco_npp = sum(c_eco_npp)
     nee = eco_respiration - gpp
@@ -58,7 +58,7 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (nee, c_eco_npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
-        (c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) => land.states
+        (c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) => land.states
     end
     return land
 end
@@ -87,7 +87,7 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.fluxes.eco_respiration: values for ecosystem respiration
  - land.fluxes.hetero_respiration: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
- - land.states.c_efflux:
+ - land.states.c_eco_efflux:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycle_CASA

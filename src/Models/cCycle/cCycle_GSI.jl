@@ -27,7 +27,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (c_allocation,
-            c_efflux,
+            c_eco_efflux,
             c_eco_flow,
             c_eco_influx,
             cEco_prev,
@@ -55,7 +55,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
 
     ## gains to vegetation
     for zv ∈ getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-        c_eco_npp_zv = gpp * c_allocation[zv] - c_efflux[zv]
+        c_eco_npp_zv = gpp * c_allocation[zv] - c_eco_efflux[zv]
         @rep_elem c_eco_npp_zv => (c_eco_npp, zv, :cEco)
         @rep_elem c_eco_npp_zv => (c_eco_influx, zv, :cEco)
     end
@@ -107,7 +107,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
-        (ΔcEco, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
+        (ΔcEco, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
     end
     return land
 end
@@ -136,7 +136,7 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.fluxes.eco_respiration: values for ecosystem respiration
  - land.fluxes.hetero_respiration: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
- - land.states.c_efflux:
+ - land.states.c_eco_efflux:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycle_GSI
