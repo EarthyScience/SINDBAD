@@ -48,7 +48,7 @@
       "d_snow": "snowW"
     },
     "variables": {
-      "aRespirationAirT.auto_respiration_f_airT": null,
+      "autoRespirationAirT.auto_respiration_f_airT": null,
       "cTauSoilT.p_k_f_soilT": null,
       "cTauSoilW.p_k_f_soilW": "d_cEco",
       "fluxes.evapotranspiration": null,
