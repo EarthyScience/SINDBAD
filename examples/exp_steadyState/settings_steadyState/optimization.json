@@ -54,7 +54,7 @@
     "autoRespiration,RMN": null,
     "autoRespirationAirT,Q10": null,
     "runoffBase,bc": null,
-    "rootFraction,k_cVegRoot": null,
+    "rootWaterEfficiency,k_efficiency_cVegRoot": null,
     "rootMaximumDepth,constant_frac_max_root_depth": null,
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_T": null,

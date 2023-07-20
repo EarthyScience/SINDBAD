@@ -1,8 +1,8 @@
-export vegAvailableWater_rootFraction
+export vegAvailableWater_rootWaterEfficiency
 
-struct vegAvailableWater_rootFraction <: vegAvailableWater end
+struct vegAvailableWater_rootWaterEfficiency <: vegAvailableWater end
 
-function define(p_struct::vegAvailableWater_rootFraction, forcing, land, helpers)
+function define(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
@@ -16,18 +16,18 @@ function define(p_struct::vegAvailableWater_rootFraction, forcing, land, helpers
     return land
 end
 
-function compute(p_struct::vegAvailableWater_rootFraction, forcing, land, helpers)
+function compute(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
         p_wWP ∈ land.soilWBase
-        p_frac_root_to_soil_depth ∈ land.rootFraction
+        root_water_efficiency ∈ land.rootWaterEfficiency
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         PAW ∈ land.vegAvailableWater
     end
     for sl ∈ eachindex(soilW)
-        PAW_sl = p_frac_root_to_soil_depth[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - p_wWP[sl]))
+        PAW_sl = root_water_efficiency[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - p_wWP[sl]))
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
@@ -41,15 +41,15 @@ sets the maximum fraction of water that root can uptake from soil layers as cons
 ---
 
 # compute:
-Plant available water using vegAvailableWater_rootFraction
+Plant available water using vegAvailableWater_rootWaterEfficiency
 
 *Inputs*
  - land.pools.soilW
- - land.rootFraction.constant_frac_root_to_soil_depth
+ - land.rootWaterEfficiency.constant_root_water_efficiency
  - land.states.maxRootD
 
 *Outputs*
- - land.rootFraction.p_frac_root_to_soil_depth
+ - land.rootWaterEfficiency.root_water_efficiency
  - land.states.PAW
 
 ---
@@ -64,4 +64,4 @@ Plant available water using vegAvailableWater_rootFraction
 *Created by:*
  - skoirala
 """
-vegAvailableWater_rootFraction
+vegAvailableWater_rootWaterEfficiency

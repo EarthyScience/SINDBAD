@@ -58,7 +58,7 @@
       "pools.groundW": "d_ground",
       "pools.snowW": "d_snow",
       "pools.soilW": "d_soil",
-      "rootFraction.p_frac_root_to_soil_depth": "d_soil",
+      "rootWaterEfficiency.root_water_efficiency": "d_soil",
       "states.max_root_depth": null,
       "waterBalance.water_balance": null
     }

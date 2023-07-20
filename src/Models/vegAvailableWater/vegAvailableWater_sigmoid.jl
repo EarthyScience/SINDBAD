@@ -33,7 +33,7 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (p_wWP, p_wFC, p_wSat, p_β) ∈ land.soilWBase
-        p_frac_root_to_soil_depth ∈ land.rootFraction
+        root_water_efficiency ∈ land.rootWaterEfficiency
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.vegAvailableWater
@@ -45,7 +45,7 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
         tmpSoilWStress = clamp_01(o_one / (o_one + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
         maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - p_wWP[sl])
-        PAW_sl = p_frac_root_to_soil_depth[sl] * maxWater * tmpSoilWStress
+        PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
@@ -69,7 +69,7 @@ Plant available water using vegAvailableWater_sigmoid
  - land.pools.soilW
 
 *Outputs*
- - land.rootFraction.p_frac_root_to_soil_depth as nPix;nZix for soilW
+ - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
 
 ---
 
