@@ -1,8 +1,8 @@
-export aRespiration_none
+export autoRespiration_none
 
-struct aRespiration_none <: aRespiration end
+struct autoRespiration_none <: autoRespiration end
 
-function define(p_struct::aRespiration_none, forcing, land, helpers)
+function define(p_struct::autoRespiration_none, forcing, land, helpers)
 
     ## calculate variables
     c_eco_efflux = zero(land.pools.cEco)
@@ -16,11 +16,11 @@ end
 sets the outflow from all vegetation pools to zero
 
 # instantiate:
-instantiate/instantiate time-invariant variables for aRespiration_none
+instantiate/instantiate time-invariant variables for autoRespiration_none
 
 
 ---
 
 # Extended help
 """
-aRespiration_none
+autoRespiration_none

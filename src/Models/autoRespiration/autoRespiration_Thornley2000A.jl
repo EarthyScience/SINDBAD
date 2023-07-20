@@ -1,13 +1,13 @@
-export aRespiration_Thornley2000A
+export autoRespiration_Thornley2000A
 
 #! format: off
-@bounds @describe @units @with_kw struct aRespiration_Thornley2000A{T1,T2} <: aRespiration
+@bounds @describe @units @with_kw struct autoRespiration_Thornley2000A{T1,T2} <: autoRespiration
     RMN::T1 = 0.009085714285714286 | (0.0009085714285714285, 0.09085714285714286) | "Nitrogen efficiency rate of maintenance respiration" | "gC/gN/day"
     YG::T2 = 0.75 | (0.0, 1.0) | "growth yield coefficient, or growth efficiency. Loosely: (1-YG)*GPP is growth respiration" | "gC/gC"
 end
 #! format: on
 
-function define(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
+function define(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
     end
@@ -19,24 +19,24 @@ function define(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (p_km, p_km4su) => land.aRespiration
+        (p_km, p_km4su) => land.autoRespiration
         (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
     end
     return land
 end
 
-function compute(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
+function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers)
     ## unpack parameters
-    @unpack_aRespiration_Thornley2000A p_struct
+    @unpack_autoRespiration_Thornley2000A p_struct
 
     ## unpack land variables
     @unpack_land begin
-        (p_km, p_km4su) ∈ land.aRespiration
+        (p_km, p_km4su) ∈ land.autoRespiration
         (c_allocation, c_eco_efflux, auto_respiration_growth, auto_respiration_maintain) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_C2Nveg ∈ land.cCycleBase
-        auto_respiration_f_airT ∈ land.aRespirationAirT
+        auto_respiration_f_airT ∈ land.autoRespirationAirT
     end
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
@@ -79,7 +79,7 @@ function compute(p_struct::aRespiration_Thornley2000A, forcing, land, helpers)
     end
     ## pack land variables
     @pack_land begin
-        (p_km, p_km4su) => land.aRespiration
+        (p_km, p_km4su) => land.autoRespiration
         (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
     end
     return land
@@ -94,11 +94,11 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Determine growth and maintenance respiration using aRespiration_Thornley2000A
+Determine growth and maintenance respiration using autoRespiration_Thornley2000A
 
 *Inputs*
  - info.timeScale.stepsPerDay: number of time steps per day
- - land.aRespirationAirT.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
+ - land.autoRespirationAirT.auto_respiration_f_airT: temperature effect on autrotrophic respiration [δT-1]
  - land.cCycleBase.C2Nveg: carbon to nitrogen ratio [gC.gN-1]
  - land.states.c_allocation: carbon allocation []
  - land.pools.cEco: ecosystem carbon pools [gC.m2]
@@ -126,4 +126,4 @@ Determine growth and maintenance respiration using aRespiration_Thornley2000A
 *Notes*
  - Questions - practical - leave raAct per pool; | make a field land.fluxes.ra  that has all the autotrophic respiration components together?  
 """
-aRespiration_Thornley2000A
+autoRespiration_Thornley2000A

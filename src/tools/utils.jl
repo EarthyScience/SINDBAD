@@ -14,6 +14,7 @@ export min_0, max_0, min_1, max_1
 export valToSymbol
 export getFrac
 export showParamsOfAModel
+export showParamsOfAllModels
 
 """
     noStackTrace()
@@ -751,9 +752,27 @@ function showParamsOfAModel(models, model::Symbol)
     mod = models[m_index];
     println("model: $(model_names[m_index])")
     println("approach: $(approach_names[m_index])")
-    println("parameters:")
-    foreach(fieldnames(typeof(mod))) do fn
-        println("   $fn => $(getproperty(mod, fn))")
+    pnames = fieldnames(typeof(mod))
+    if length(pnames) == 0
+        println("parameters: none")
+    else
+        println("parameters:")
+        foreach(pnames) do fn
+            println("   $fn => $(getproperty(mod, fn))")
+        end
     end
     return nothing
 end
+
+"""
+showParamsOfAllModels(models)
+shows the current parameters of all given models
+"""
+function showParamsOfAllModels(models)
+    for mn in sort([nameof.(supertype.(typeof.(models)))...])
+        showParamsOfAModel(models, mn)
+        println("------------------------------------------------------------------")
+    end
+    return nothing
+end
+    

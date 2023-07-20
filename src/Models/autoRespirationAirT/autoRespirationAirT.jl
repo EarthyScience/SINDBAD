@@ -1,9 +1,9 @@
-export aRespirationAirT
+export autoRespirationAirT
 
-abstract type aRespirationAirT <: LandEcosystem end
+abstract type autoRespirationAirT <: LandEcosystem end
 
-include("aRespirationAirT_none.jl")
-include("aRespirationAirT_Q10.jl")
+include("autoRespirationAirT_none.jl")
+include("autoRespirationAirT_Q10.jl")
 
 @doc """
 Temperature effect on autotrophic maintenance respiration
@@ -12,4 +12,4 @@ Temperature effect on autotrophic maintenance respiration
  - none: sets the effect of temperature on RA to one [no effect]
  - Q10: temperature effect on autotrophic maintenance respiration - Q10 model
 """
-aRespirationAirT
+autoRespirationAirT
