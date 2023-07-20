@@ -5,7 +5,7 @@ using OptimizeSindbad
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
-eYear = "2017"
+eYear = "1981"
 using Dates
 using Plots
 
@@ -36,7 +36,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.run_forward_and_cost" => false,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => true,
-    "model_run.flags.spinup.run_spinup" => true,
+    "model_run.flags.spinup.run_spinup" => false,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,

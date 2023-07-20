@@ -44,7 +44,7 @@
     "autoRespiration,RMN",
     "autoRespirationAirT,Q10",
     "runoffBase,bc",
-    "rootFraction,k_cVegRoot",
+    "rootWaterEfficiency,k_efficiency_cVegRoot",
     "rootMaximumDepth,constant_frac_max_root_depth",
     "runoffSaturationExcess,β",
     "snowMelt,melt_T",

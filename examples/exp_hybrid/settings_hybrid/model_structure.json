@@ -131,7 +131,7 @@
     "rainSnow": {
       "approach": "Tair"
     },
-    "rootFraction": {
+    "rootWaterEfficiency": {
       "approach": "expCvegRoot"
     },
     "rootMaximumDepth": {
@@ -180,7 +180,7 @@
       "approach": "constant"
     },
     "vegAvailableWater": {
-      "approach": "rootFraction"
+      "approach": "rootWaterEfficiency"
     },
     "waterBalance": {
       "approach": "simple",
