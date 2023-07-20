@@ -70,6 +70,7 @@
       "pools.groundW": 1,
       "pools.snowW": 1,
       "pools.cEco": "d_cEco",
+      "rootWaterEfficiency.root_water_efficiency": "d_soil",
       "states.fAPAR": null,
       "states.p_k": "d_cEco",
       "states.c_allocation": "d_cEco",
