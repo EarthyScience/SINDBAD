@@ -1,12 +1,12 @@
-export rootFraction
+export rootWaterEfficiency
 
-abstract type rootFraction <: LandEcosystem end
+abstract type rootWaterEfficiency <: LandEcosystem end
 
-include("rootFraction_constant.jl")
-include("rootFraction_expCvegRoot.jl")
-include("rootFraction_k2fRD.jl")
-include("rootFraction_k2fvegFraction.jl")
-include("rootFraction_k2Layer.jl")
+include("rootWaterEfficiency_constant.jl")
+include("rootWaterEfficiency_expCvegRoot.jl")
+include("rootWaterEfficiency_k2fRD.jl")
+include("rootWaterEfficiency_k2fvegFraction.jl")
+include("rootWaterEfficiency_k2Layer.jl")
 
 @doc """
 Distribution of water uptake fraction/efficiency by root per soil layer
@@ -18,4 +18,4 @@ Distribution of water uptake fraction/efficiency by root per soil layer
  - k2fvegFraction: sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction
  - k2Layer: sets the maximum fraction of water that root can uptake from soil layers as calibration parameter; hard coded for 2 soil layers
 """
-rootFraction
+rootWaterEfficiency

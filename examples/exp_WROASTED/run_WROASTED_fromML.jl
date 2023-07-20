@@ -9,9 +9,9 @@ noStackTrace()
 site_index = 37
 # site_index = 68
 sites = 1:100
-sites = [37, ]
-# sites = 1:205
-sites = [33, ]
+# sites = [37, ]
+sites = 1:20
+# sites = [33, ]
 forcing_set = "cruj"
 do_debug_figs = true
 do_forcing_figs = false
@@ -22,6 +22,7 @@ info=nothing
 forcing=nothing
 models_with_matlab_params=nothing
 linit = nothing
+debug_span = 1:10000
 if !isnothing(models_with_matlab_params)
     showParamsOfAllModels(models_with_matlab_params)
 end
@@ -80,7 +81,6 @@ for site_index in sites
         y_start = Meta.parse(sYear)
         nrepeat_d = y_start - y_disturb
     end
-
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
@@ -124,7 +124,7 @@ for site_index in sites
         "model_run.flags.run_forward_and_cost" => true,
         "model_run.flags.spinup.save_spinup" => false,
         "model_run.flags.catch_model_errors" => false,
-        "model_run.flags.spinup.run_spinup" => true,
+        "model_run.flags.spinup.run_spinup" => false,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence[2:end],
@@ -159,7 +159,7 @@ for site_index in sites
             @show outparams[opi], "old"
             outparams[opi] = oftype(outparams[opi], ml_value)
             @show outparams[opi], "new"
-            println("--------------------")
+            println("------------------------------------------------")
         end
         models_with_matlab_params = updateModelParameters(tblParams, info.tem.models.forward, outparams);
 
@@ -198,7 +198,7 @@ for site_index in sites
         # open the matlab simulation data
         # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
 
-        varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :p_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :p_k_f_soilT => "fT", :p_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF")
+        varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :p_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :p_k_f_soilT => "fT", :p_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF", :root_water_efficiency => "p_rootFrac_fracRoot2SoilD")
 
 
         # some plots for model simulations from JL and matlab versions
@@ -284,7 +284,7 @@ for site_index in sites
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output.data[o][:, :, 1, 1]
-                xdata = [info.tem.helpers.dates.vector...]
+                xdata = [info.tem.helpers.dates.vector...][debug_span]
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
@@ -293,18 +293,18 @@ for site_index in sites
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[:, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(v)")
+                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(1200, 900), title="$(v)")
                     if !isnothing(ml_dat)
-                        plot!(xdata, ml_dat[:]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[:]), digits=2)))", size=(1200, 900), title="$(v)")
+                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(1200, 900), title="$(v)")
                     end
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
-                        plot(xdata, def_var[:, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(v)_$(ll)")
+                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(1200, 900), title="$(v)_$(ll)")
                             println("           layer => $ll")
 
                         if !isnothing(ml_dat)
-                            plot!(xdata, ml_dat[1, ll, :]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, :]), digits=2)))")
+                            plot!(xdata, ml_dat[1, ll, debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, debug_span]), digits=2)))")
                         end
                         savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v)_$(ll).png"))
                     end
