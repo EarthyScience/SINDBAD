@@ -22,6 +22,9 @@ info=nothing
 forcing=nothing
 models_with_matlab_params=nothing
 linit = nothing
+if !isnothing(models_with_matlab_params)
+    showParamsOfAllModels(models_with_matlab_params)
+end
 for site_index in sites
     # site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
     # site_index = Base.parse(Int, ARGS[1])
