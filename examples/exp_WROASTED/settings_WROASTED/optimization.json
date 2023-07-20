@@ -53,9 +53,9 @@
     "gppSoilW,θstar": null,
     "gppDiffRadiation,μ": null,
     "groundWRecharge,dos_exp": null,
-    "aRespiration,YG": null,
-    "aRespiration,RMN": null,
-    "aRespirationAirT,Q10_RM": null,
+    "autoRespiration,YG": null,
+    "autoRespiration,RMN": null,
+    "autoRespirationAirT,Q10": null,
     "runoffBase,bc": null,
     "rootFraction,k_cVegRoot": null,
     "rootMaximumDepth,constant_frac_max_root_depth": null,
@@ -92,7 +92,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "nseinv",
+      "cost_metric": "nnseinv",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -117,7 +117,7 @@
           "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "nee": {
@@ -140,7 +140,7 @@
           "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "reco": {
@@ -163,7 +163,7 @@
           "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "evapotranspiration": {
@@ -189,7 +189,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "transpiration": {
@@ -213,7 +213,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "agb": {
@@ -251,7 +251,7 @@
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       }
     }

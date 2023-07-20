@@ -1,24 +1,24 @@
-export aRespirationAirT_Q10
+export autoRespirationAirT_Q10
 
 #! format: off
-@bounds @describe @units @with_kw struct aRespirationAirT_Q10{T1,T2,T3} <: aRespirationAirT
-    Q10_RM::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
-    Tref_RM::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
+@bounds @describe @units @with_kw struct autoRespirationAirT_Q10{T1,T2,T3} <: autoRespirationAirT
+    Q10::T1 = 2.0 | (1.05, 3.0) | "Q10 parameter for maintenance respiration" | ""
+    Tref::T2 = 20.0 | (0.0, 40.0) | "Reference temperature for the maintenance respiration" | "°C"
     Q10_base::T3 = 10.0 | (nothing, nothing) | "base temperature difference" | "°C"
 end
 #! format: on
 
-function compute(p_struct::aRespirationAirT_Q10, forcing, land, helpers)
+function compute(p_struct::autoRespirationAirT_Q10, forcing, land, helpers)
     ## unpack parameters and forcing
-    @unpack_aRespirationAirT_Q10 p_struct
+    @unpack_autoRespirationAirT_Q10 p_struct
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
-    auto_respiration_f_airT = Q10_RM^((Tair - Tref_RM) / Q10_base)
+    auto_respiration_f_airT = Q10^((Tair - Tref) / Q10_base)
 
     ## pack land variables
     @pack_land begin
-        auto_respiration_f_airT => land.aRespirationAirT
+        auto_respiration_f_airT => land.autoRespirationAirT
     end
     return land
 end
@@ -32,13 +32,13 @@ $(PARAMFIELDS)
 ---
 
 # compute:
-Temperature effect on autotrophic maintenance respiration using aRespirationAirT_Q10
+Temperature effect on autotrophic maintenance respiration using autoRespirationAirT_Q10
 
 *Inputs*
  - forcing.Tair: air temperature [°C]
 
 *Outputs*
- - land.aRespirationAirT.auto_respiration_f_airT: autotrophic respiration rate [gC.m-2.δT-1]
+ - land.autoRespirationAirT.auto_respiration_f_airT: autotrophic respiration rate [gC.m-2.δT-1]
 
 ---
 
@@ -57,4 +57,4 @@ Temperature effect on autotrophic maintenance respiration using aRespirationAirT
 
 *Notes*
 """
-aRespirationAirT_Q10
+autoRespirationAirT_Q10

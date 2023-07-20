@@ -11,10 +11,10 @@
     "ambientCO2": {
       "approach": "forcing"
     },
-    "aRespiration": {
+    "autoRespiration": {
       "approach": "Thornley2000A"
     },
-    "aRespirationAirT": {
+    "autoRespirationAirT": {
       "approach": "Q10"
     },
     "capillaryFlow": {

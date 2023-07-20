@@ -153,10 +153,10 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
 
     @unpack_land begin
         cEco ∈ land.pools
-        (c_allocation, cEco, p_aRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
+        (c_allocation, cEco, p_autoRespiration_km4su, p_cFlow_A, p_cTau_k) ∈ land.history
         gpp ∈ land.fluxes
         (p_giver, p_taker) ∈ land.cFlow
-        YG ∈ land.aRespiration
+        YG ∈ land.autoRespiration
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -175,13 +175,13 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     cGain = cLossRate
     cLoxxRate = cLossRate
     ## some debugging
-    # if!isfield(land.history, "p_aRespiration_km4su")
-    # p_aRespiration_km4su = cLossRate
+    # if!isfield(land.history, "p_autoRespiration_km4su")
+    # p_autoRespiration_km4su = cLossRate
     # end
     # if!isfield(p, "raAct")
-    # p.aRespiration.YG = 1.0
+    # p.autoRespiration.YG = 1.0
     # elseif!isfield(land.raAct, "YG")
-    # p.aRespiration.YG = 1.0
+    # p.autoRespiration.YG = 1.0
     # end
     ## ORDER OF CALCULATIONS [1 to the end of pools]
     zixVec = getzix(cEco, helpers.pools.zix.cEco)
@@ -226,7 +226,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         # so that pools are not NaN
         if any(zix == helpers.pools.zix.cVeg)
             # additional losses [RA] in veg pools
-            cLoxxRate[zix, :] = min(1.0 - p_aRespiration_km4su[zix], 1)
+            cLoxxRate[zix, :] = min(1.0 - p_autoRespiration_km4su[zix], 1)
             # gains in veg pools
             gppShp = reshape(gpp, nPix, 1, nTix) # could be fxT?
             cGain[zix, :] = c_allocation[zix, :] * gppShp * YG

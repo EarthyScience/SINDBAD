@@ -21,7 +21,7 @@ obspath = inpath;
 forcingConfig = "forcing_$(forcing).json";
 
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_nse";
+outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_nnse";
 
 sYear = "1979"
 eYear = "2017"
