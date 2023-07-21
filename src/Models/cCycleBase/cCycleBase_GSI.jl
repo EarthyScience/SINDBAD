@@ -30,9 +30,8 @@ end
 function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
-        num_type ∈ helpers.numbers
-        (𝟘, 𝟙) ∈ helpers.numbers
         cEco ∈ land.pools
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     ## instantiate variables
     p_C2Nveg = zero(cEco) #sujan
@@ -41,11 +40,12 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     p_annk = zero(cEco)
 
     # if there is flux order check that is consistent
-    c_flow_order = Tuple(collect(1:length(findall(>(𝟘), c_flow_A))))
-    c_taker = Tuple([ind[1] for ind ∈ findall(>(𝟘), c_flow_A)])
-    c_giver = Tuple([ind[2] for ind ∈ findall(>(𝟘), c_flow_A)])
+    c_flow_order = Tuple(collect(1:length(findall(>(z_zero), c_flow_A))))
+    c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A)])
+    c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A)])
 
     c_model = Val(:cCycleBase_GSI)
+
 
     ## pack land variables
     @pack_land begin
@@ -58,7 +58,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @unpack_cCycleBase_GSI p_struct
     @unpack_land begin
         (p_C2Nveg, p_k_base, p_annk) ∈ land.cCycleBase
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## replace values
@@ -77,7 +77,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     end
 
     for i ∈ eachindex(p_k_base)
-        tmp = 𝟙 - (exp(-p_annk[i])^(𝟙 / helpers.dates.timesteps_in_year))
+        tmp = o_one - (exp(-p_annk[i])^(o_one / helpers.dates.timesteps_in_year))
         @rep_elem tmp => (p_k_base, i, :cEco)
     end
 

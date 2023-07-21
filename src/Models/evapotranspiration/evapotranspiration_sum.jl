@@ -3,14 +3,14 @@ export evapotranspiration_sum
 struct evapotranspiration_sum <: evapotranspiration end
 
 function define(p_struct::evapotranspiration_sum, forcing, land, helpers)
-    @unpack_land 𝟘 ∈ helpers.numbers
+    @unpack_land z_zero ∈ land.wCycleBase
 
     ## set variables to zero
-    evaporation = 𝟘
-    evapotranspiration = 𝟘
-    interception = 𝟘
-    sublimation = 𝟘
-    transpiration = 𝟘
+    evaporation = z_zero
+    evapotranspiration = z_zero
+    interception = z_zero
+    sublimation = z_zero
+    transpiration = z_zero
 
     ## pack land variables
     @pack_land begin

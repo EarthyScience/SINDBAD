@@ -9,7 +9,7 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
     plot_elem = string(plot_elem)
     if plot_var == :cEco
         plt = plot(; legend=:outerbottom, legendcolumns=4, size=(1800, 1200), yscale=:log10, left_margin=1Plots.cm)
-        ylims!(0.01, 1e10)
+        ylims!(0.00000001, 1e5)
     else
         plt = plot(; legend=:outerbottom, legendcolumns=4, size=(1800, 1200), left_margin=1Plots.cm)
         ylims!(10, 2000)
@@ -62,7 +62,7 @@ arraymethod = "staticarray"
 tjs = (1, 100, 1_000)#, 10_000)
 # tjs = (1000,)
 # tjs = (10_000,)
-nLoop_pre_spin = 1000
+nLoop_pre_spin = 10
 # for arraymethod ∈ ("staticarray",)
 # for arraymethod ∈ ("array",) #, "staticarray")
 for arraymethod ∈ ("staticarray", "array") #, "staticarray")
@@ -95,7 +95,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
     # for sel_pool in (:cEco,)
     # for sel_pool in (:TWS,)
     out_path = info.output.figure
-    for sel_pool in (:TWS, :cEco, :cEco_TWS)
+    for sel_pool in (:cEco,)
+        # for sel_pool in (:TWS, :cEco, :cEco_TWS)
 
         look_at = sel_pool
 
