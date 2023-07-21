@@ -16,15 +16,18 @@ Add skipping filter for pixels with all nans in YAXArrays
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
-function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
-    datapoint = isnan(datapoint) ? T(dfill) : T(datapoint)
-    datapoint = applyUnitConversion(datapoint, T(vinfo.source_to_sindbad_unit),
-        T(vinfo.additive_unit_conversion))
+
+
+function mapCleanInputData(yax, dfill, vinfo, ::Val{T}) where {T}
+    yax = map(x -> ismissing(x) ? dfill : x, yax)
+    yax = map(x -> isnan(x) ? dfill : x, yax)
+    yax = map(x -> applyUnitConversion(x, vinfo.source_to_sindbad_unit,
+    vinfo.additive_unit_conversion), yax)
     bounds = vinfo.bounds
     if !isnothing(bounds)
-        datapoint = clamp(datapoint, T(first(bounds)), T(last(bounds)))
+        yax = map(x -> clamp(x, first(bounds), last(bounds)), yax)
     end
-    return ismissing(datapoint) ? T(NaN) : datapoint
+    return T.(yax)
 end
 
 
@@ -37,7 +40,7 @@ end
 
 function getDataDims(c, mappinginfo)
     inax = [] # String[]
-    axnames = name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+    axnames = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
     inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
     return InDims(inax...; artype=KeyedArray, filter=AllNaN())

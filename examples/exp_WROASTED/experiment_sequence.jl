@@ -16,7 +16,7 @@ using Plots
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
-sites = ("CA-NS6",)
+# sites = ("CA-NS6",)
 for domain ∈ sites
     # domain = "DE-Hai"
     inpath = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -98,7 +98,7 @@ for domain ∈ sites
         info.optim.optimized_parameters)
     new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
-    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
+    info, forcing = getForcing(info)
     forc = getKeyedArrayFromYaxArray(forcing)
 
     output = setupOutput(info)
