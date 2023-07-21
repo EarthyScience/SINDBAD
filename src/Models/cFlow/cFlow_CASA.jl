@@ -9,7 +9,7 @@ function compute(p_struct::cFlow_CASA, forcing, land, helpers)
         (p_E, p_F) ∈ land.cFlowVegProperties
         (p_E, p_F) ∈ land.cFlowSoilProperties
         c_flow_E ∈ land.cCycleBase
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     #@nc : this needs to go in the full.
     # effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
@@ -18,15 +18,15 @@ function compute(p_struct::cFlow_CASA, forcing, land, helpers)
     # effects of soil & veg on the partitioning of c flows between carbon pools
     p_F = p_F + p_F
     # if there is fraction [F] & efficiency is 0, make efficiency 1
-    ndx = p_F > 𝟘 & p_E == zero
-    p_E[ndx] = 𝟙
+    ndx = p_F > z_zero & p_E == zero
+    p_E[ndx] = o_one
     # if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
-    ndx = p_E > 𝟘 & p_F == zero
-    p_F[ndx] = 𝟙
+    ndx = p_E > z_zero & p_F == zero
+    p_F[ndx] = o_one
     # build A
     p_A = p_F * p_E
     # transfers
-    (c_taker, c_giver) = find(squeeze(sum(p_A > 𝟘)) >= 𝟙)
+    (c_taker, c_giver) = find(squeeze(sum(p_A > z_zero)) >= o_one)
     p_taker = c_taker
     p_giver = c_giver
     # if there is flux order check that is consistent

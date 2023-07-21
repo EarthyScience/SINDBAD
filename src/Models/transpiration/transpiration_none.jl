@@ -5,7 +5,7 @@ struct transpiration_none <: transpiration end
 function define(p_struct::transpiration_none, forcing, land, helpers)
 
     ## calculate variables
-    transpiration = helpers.numbers.𝟘
+    transpiration = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land transpiration => land.fluxes

@@ -4,11 +4,11 @@ struct gpp_mult <: gpp end
 
 function define(p_struct::gpp_mult, forcing, land, helpers)
     @unpack_land begin
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
 
-    AllScGPP = 𝟘
-    gpp = 𝟘
+    AllScGPP = z_zero
+    gpp = z_zero
     ## pack land variables
     @pack_land begin
         AllScGPP => land.gpp

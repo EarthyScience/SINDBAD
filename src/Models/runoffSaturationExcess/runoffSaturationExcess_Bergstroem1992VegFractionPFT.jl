@@ -49,7 +49,6 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, 
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙, sNT) ∈ helpers.numbers
     end
     # get the PFT data & assign parameters
     tmp_smaxVeg = sum(p_wSat)

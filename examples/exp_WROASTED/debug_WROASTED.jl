@@ -5,7 +5,10 @@ using OptimizeSindbad
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
-eYear = "2017"
+eYear = "1981"
+using Dates
+using Plots
+
 
 # inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
@@ -14,7 +17,7 @@ eYear = "2017"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
-domain = "FI-Sod"
+domain = "CA-NS6"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -33,7 +36,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.run_forward_and_cost" => false,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => true,
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.spinup.run_spinup" => false,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,
@@ -75,6 +78,7 @@ elseif nrepeat_d == 0
     ]
 elseif nrepeat_d > 0
     sequence = [
+        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
         Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),

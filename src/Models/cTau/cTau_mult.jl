@@ -24,7 +24,6 @@ function compute(p_struct::cTau_mult, forcing, land, helpers)
         p_k_f_LAI ∈ land.cTauLAI
         p_k_base ∈ land.cCycleBase
         p_k ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
     for i ∈ eachindex(p_k)
         tmp = p_k_base[i] * p_k_f_LAI[i] * p_k_f_soil_props[i] * p_k_f_veg_props[i] * p_k_f_soilT * p_k_f_soilW[i]

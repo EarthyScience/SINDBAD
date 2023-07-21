@@ -32,7 +32,8 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
         (p_wSat, p_β, p_wFC) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙, tolerance) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
+        tolerance ∈ helpers.numbers
     end
 
     ## calculate drainage
@@ -44,12 +45,12 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
         lossCap = min(soilW_sl, max_drain)
         holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         drain = min(drainage_tmp, holdCap, lossCap)
-        tmp = drain > tolerance ? drain : zero(drain)
+        tmp = drain > tolerance ? drain : z_zero
         @rep_elem tmp => (drainage, sl, :soilW)
         @add_to_elem -tmp => (ΔsoilW, sl, :soilW)
         @add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
     end
-    @rep_elem 𝟘 => (drainage, lastindex(drainage), :soilW)
+    @rep_elem z_zero => (drainage, lastindex(drainage), :soilW)
     ## pack land variables
     @pack_land begin
         drainage => land.drainage
@@ -94,7 +95,7 @@ Recharge the soil using drainage_dos
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
 
 *Outputs*
  - drainage from the last layer is saved as groundwater recharge [gw_recharge]
