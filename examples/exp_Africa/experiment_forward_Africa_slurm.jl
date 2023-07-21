@@ -10,7 +10,7 @@ experiment_json = "exp_Africa/settings_Africa/experiment.json"
 info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 
 output = setupOutput(info);

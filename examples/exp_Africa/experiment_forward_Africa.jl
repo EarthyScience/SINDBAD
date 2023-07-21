@@ -23,7 +23,7 @@ experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 output = setupOutput(info);
 
 forc = getKeyedArrayFromYaxArray(forcing);
