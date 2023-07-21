@@ -82,7 +82,7 @@ function getOutDims(info, _, vname_full, land_init, _, ::Val{:yaxarray})
 
     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
     OutDims(inax[1],
-        RangeAxis(depth_name, 1:depth_size),
+        Dim{Symbol(depth_name)}(1:depth_size),
         inax[2:end]...;
         path=joinpath(outpath, "$(vname).$(outformat)"),
         backend=:zarr,
