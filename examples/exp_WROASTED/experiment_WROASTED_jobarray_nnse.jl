@@ -100,7 +100,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.optimized_parameters)
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
+info, forcing = getForcing(info)
 forc = getKeyedArrayFromYaxArray(forcing)
 
 output = setupOutput(info)

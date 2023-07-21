@@ -49,7 +49,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
