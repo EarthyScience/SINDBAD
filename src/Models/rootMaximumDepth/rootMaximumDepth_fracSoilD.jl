@@ -19,7 +19,7 @@ function define(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     return land
 end
 
-function compute(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
+function precompute(p_struct::rootMaximumDepth_fracSoilD, forcing, land, helpers)
     ## unpack parameters
     @unpack_rootMaximumDepth_fracSoilD p_struct
     @unpack_land sum_soil_depth ∈ land.rootMaximumDepth

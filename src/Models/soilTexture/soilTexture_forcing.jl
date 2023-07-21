@@ -8,7 +8,6 @@ function define(p_struct::soilTexture_forcing, forcing, land, helpers)
     @unpack_forcing (CLAY, ORGM, SAND, SILT) ∈ forcing
 
     ## unpack land variables
-    @unpack_land (𝟘, 𝟙, sNT) ∈ helpers.numbers
 
     st_CLAY_f = Tuple(CLAY)
     st_SAND_f = Tuple(SAND)

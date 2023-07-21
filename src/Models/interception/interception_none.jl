@@ -5,7 +5,7 @@ struct interception_none <: interception end
 function define(p_struct::interception_none, forcing, land, helpers)
 
     ## calculate variables
-    interception = helpers.numbers.𝟘
+    interception = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land interception => land.fluxes

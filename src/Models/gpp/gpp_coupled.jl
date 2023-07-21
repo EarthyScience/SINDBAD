@@ -2,12 +2,6 @@ export gpp_coupled
 
 struct gpp_coupled <: gpp end
 
-function define(p_struct::gpp_coupled, forcing, land, helpers)
-    gpp = helpers.numbers.𝟘
-    @pack_land gpp => land.fluxes
-    return land
-end
-
 function compute(p_struct::gpp_coupled, forcing, land, helpers)
 
     ## unpack land variables
@@ -16,7 +10,6 @@ function compute(p_struct::gpp_coupled, forcing, land, helpers)
         gpp_f_soilW ∈ land.gppSoilW
         gpp_demand ∈ land.gppDemand
         AoE ∈ land.WUE
-        𝟙 ∈ helpers.numbers
     end
 
     gpp = min(transpiration_supply * AoE, gpp_demand * gpp_f_soilW)

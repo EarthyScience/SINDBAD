@@ -24,13 +24,13 @@ function compute(p_struct::gppAirT_Maekelae2008, forcing, land, helpers)
     @unpack_gppAirT_Maekelae2008 p_struct
     @unpack_forcing TairDay ∈ forcing
     @unpack_land begin
-        (𝟘, 𝟙) ∈ helpers.numbers
+        o_one ∈ land.wCycleBase
         X_prev ∈ land.gppAirT
     end
 
     ## calculate variables
     # calculate temperature acclimation
-    X = X_prev + (𝟙 / TimConst) * (TairDay - X_prev)
+    X = X_prev + (o_one / TimConst) * (TairDay - X_prev)
 
     # calculate the stress & saturation
     S = max_0(X - X0)

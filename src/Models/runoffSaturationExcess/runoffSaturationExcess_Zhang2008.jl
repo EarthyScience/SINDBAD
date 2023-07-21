@@ -17,7 +17,7 @@ function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, help
         soilW ∈ land.pools
         PET ∈ land.PET
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # a supply - demand limit concept cf Budyko
     # calc demand limit [X0]
@@ -25,7 +25,7 @@ function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, help
     X0 = PET + res_sat
 
     # set sat_excess_runoff
-    sat_excess_runoff = WBP - WBP * (𝟙 + X0 / WBP - (𝟙 + (X0 / WBP)^(𝟙 / α))^α)
+    sat_excess_runoff = WBP - WBP * (o_one + X0 / WBP - (o_one + (X0 / WBP)^(o_one / α))^α)
     # adjust the remaining water
     WBP = WBP - sat_excess_runoff
 

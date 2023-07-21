@@ -1,0 +1,112 @@
+export rootWaterEfficiency_expCvegRoot
+
+#! format: off
+@bounds @describe @units @with_kw struct rootWaterEfficiency_expCvegRoot{T1,T2,T3} <: rootWaterEfficiency
+    k_efficiency_cVegRoot::T1 = 0.02 | (0.001, 0.3) | "rate constant of exponential relationship" | "m2/kgC (inverse of carbon storage)"
+    max_root_water_efficiency::T2 = 0.95 | (0.7, 0.98) | "maximum root water uptake capacity" | ""
+    min_root_water_efficiency::T3 = 0.1 | (0.05, 0.3) | "minimum root water uptake threshold" | ""
+end
+#! format: on
+
+function define(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+    @unpack_land begin
+        soil_layer_thickness ∈ land.soilWBase
+    end
+    ## instantiate variables
+    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    cumulative_soil_depths = cumsum(soil_layer_thickness)
+    root_over = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    ## pack land variables
+    @pack_land begin
+        (root_over, root_water_efficiency, cumulative_soil_depths) => land.rootWaterEfficiency
+    end
+    return land
+end
+
+function precompute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+    ## unpack land variables
+    @unpack_land begin
+        (root_over, cumulative_soil_depths) ∈ land.rootWaterEfficiency
+        z_zero ∈ land.wCycleBase
+        max_root_depth ∈ land.states
+    end
+    if max_root_depth > z_zero
+        @rep_elem one(eltype(root_over)) => (root_over, 1, :soilW)
+    end
+    for sl ∈ eachindex(land.pools.soilW)
+        if sl > 1
+            soilcumuD = cumulative_soil_depths[sl-1]
+            rootOver = max_root_depth - soilcumuD
+            rootEff = rootOver >= z_zero ? one(eltype(root_over)) : zero(eltype(root_over))
+            @rep_elem rootEff => (root_over, sl, :soilW)
+        end
+    end
+    ## pack land variables
+    @pack_land root_over => land.rootWaterEfficiency
+    return land
+end
+
+function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_rootWaterEfficiency_expCvegRoot p_struct
+    ## unpack land variables
+    @unpack_land begin
+        (root_over, root_water_efficiency) ∈ land.rootWaterEfficiency
+        z_zero ∈ land.wCycleBase
+        cVegRoot ∈ land.pools
+    end
+    ## calculate variables
+    tmp_rootEff = max_root_water_efficiency -
+                   (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * addS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
+
+    for sl ∈ eachindex(land.pools.soilW)
+        rootEff = root_over[sl] >= z_zero ? tmp_rootEff : z_zero
+        @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
+    end
+    ## pack land variables
+    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    return land
+end
+
+@doc """
+maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
+
+# Parameters
+$(PARAMFIELDS)
+
+---
+
+# compute:
+Distribution of water uptake fraction/efficiency by root per soil layer using rootWaterEfficiency_expCvegRoot
+
+*Inputs*
+ - soil_layer_thickness
+ - land.pools.cEco
+ - land.states.maxRootD [from rootWaterEfficiency_expCvegRoot]
+ - max_root_depth [from rootWaterEfficiency_expCvegRoot]
+
+*Outputs*
+ - initiates land.rootWaterEfficiency.root_water_efficiency as ones
+ - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
+ - land.rootWaterEfficiency.root_water_efficiency
+
+# instantiate:
+instantiate/instantiate time-invariant variables for rootWaterEfficiency_expCvegRoot
+
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 28.04.2020  
+
+*Created by:*
+ - skoirala
+"""
+rootWaterEfficiency_expCvegRoot

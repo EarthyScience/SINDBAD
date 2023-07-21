@@ -11,9 +11,9 @@ function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
     @unpack_evaporation_Snyder2000 p_struct
 
     ## unpack land variables
-    @unpack_land 𝟘 ∈ helpers.numbers
+    @unpack_land z_zero ∈ land.wCycleBase
 
-    sPET_prev = 𝟘
+    sPET_prev = z_zero
 
     ## pack land variables
     @pack_land begin
@@ -34,18 +34,18 @@ function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
         ΔsoilW ∈ land.states
         PET ∈ land.PET
         sPET_prev ∈ land.evaporation
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
-    PET = PET * α * (𝟙 - fAPAR)
+    PET = PET * α * (o_one - fAPAR)
     PET = max_0(PET)
 
-    sET = 𝟘
+    sET = z_zero
     # get the soil moisture available PET scaled by α & a proxy of vegetation cover
     soilWAvail = soilW[1] + ΔsoilW[1]
 
     β2 = β * β
-    isdry = soilWAvail < PET # assume wetting occurs with precip-interception > pet_soil; Snyder argued 𝟙 should use precip > 3*pet_soil but then it becomes inconsistent here
+    isdry = soilWAvail < PET # assume wetting occurs with precip-interception > pet_soil; Snyder argued o_one should use precip > 3*pet_soil but then it becomes inconsistent here
     sPET = isdry * (sPET_prev + PET)
     issat = sPET > β2 # same as sqrt(sPET) > β (see paper); issat is a flag for stage 2 evap (name "issat" not correct here)
     ET = isdry * (!issat * sPET + issat * sqrt(sPET) * β - sET) + !isdry * PET
