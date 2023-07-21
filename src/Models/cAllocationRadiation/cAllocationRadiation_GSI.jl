@@ -10,11 +10,10 @@ end
 
 function define(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack helper
-    @unpack_land 𝟙 ∈ helpers.numbers
 
     ## calculate variables
     # assume the initial c_allocation_f_cloud as one
-    fR_prev = 𝟙
+    fR_prev = land.wCycleBase.o_one
 
     ## pack land variables
     @pack_land fR_prev => land.cAllocationRadiation
@@ -29,12 +28,11 @@ function compute(p_struct::cAllocationRadiation_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         fR_prev ∈ land.cAllocationRadiation
-        𝟙 ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-
     ## calculate variables
     # computation for the radiation effect on decomposition/mineralization
-    c_allocation_f_cloud = (𝟙 / (𝟙 + exp(-slope_Rad * (PAR - base_Rad))))
+    c_allocation_f_cloud = (o_one / (o_one + exp(-slope_Rad * (PAR - base_Rad))))
     c_allocation_f_cloud = fR_prev + (c_allocation_f_cloud - fR_prev) * τ_Rad
     # set the prev
     fR_prev = c_allocation_f_cloud

@@ -11,7 +11,7 @@ function compute(p_struct::gppVPD_MOD17, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_MOD17 p_struct
     @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
     vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)

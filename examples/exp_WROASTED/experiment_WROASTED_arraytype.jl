@@ -35,7 +35,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
         "model_run.flags.run_forward_and_cost" => false,
         "model_run.flags.spinup.save_spinup" => false,
         "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.run_spinup" => false,
+        "model_run.flags.spinup.run_spinup" => false,
         "model_run.flags.debug_model" => false,
         "model_run.rules.model_array_type" => arraymethod,
         "model_run.flags.spinup.do_spinup" => true,

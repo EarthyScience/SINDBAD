@@ -306,7 +306,14 @@ function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init
 
 
     vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(ordered_variables), loc_space_names=Val(loc_space_names), debug_model=Val(:debug_model))
+    tem_dates = tem_helpers.dates
+    tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
+    tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))
+    tem_numbers = tem_helpers.numbers
+    tem_numbers = (; tolerance=tem_numbers.tolerance)
+    # tem_numbers = (; 𝟘=tem_numbers.𝟘, 𝟙=tem_numbers.𝟙, tolerance=tem_numbers.tolerance)
     tem_helpers = setTupleField(tem_helpers, (:vals, vals))
+    tem_helpers = setTupleField(tem_helpers, (:numbers, tem_numbers))
     new_tem = setTupleField(tem, (:helpers, tem_helpers))
 
     #@show loc_space_maps

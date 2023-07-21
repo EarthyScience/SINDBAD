@@ -16,7 +16,7 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         PET ∈ land.PET
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
     # calculate potential soil evaporation
     PET_evaporation = max_0(PET * α)

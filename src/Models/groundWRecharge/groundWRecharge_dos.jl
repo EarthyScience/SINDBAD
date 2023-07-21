@@ -9,10 +9,10 @@ end
 function define(p_struct::groundWRecharge_dos, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
 
-    gw_recharge = 𝟘
+    gw_recharge = z_zero
 
     ## pack land variables
     @pack_land begin
@@ -30,7 +30,7 @@ function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
         (p_wSat, p_β) ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         n_groundW ∈ land.wCycleBase
     end
     # calculate recharge

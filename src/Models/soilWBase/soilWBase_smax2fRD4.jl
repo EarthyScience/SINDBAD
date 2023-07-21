@@ -16,7 +16,6 @@ function define(p_struct::soilWBase_smax2fRD4, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
         n_soilW ∈ land.wCycleBase
     end
 

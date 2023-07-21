@@ -6,7 +6,7 @@ function define(p_struct::gppSoilW_none, forcing, land, helpers)
 
     ## calculate variables
     # set scalar to a constant one [no effect on potential GPP]
-    gpp_f_soilW = helpers.numbers.𝟙
+    gpp_f_soilW = land.wCycleBase.o_one
 
     ## pack land variables
     @pack_land gpp_f_soilW => land.gppSoilW

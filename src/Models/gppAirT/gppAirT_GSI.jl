@@ -14,13 +14,13 @@ end
 function define(p_struct::gppAirT_GSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_gppAirT_GSI p_struct
-    @unpack_land 𝟙 ∈ helpers.numbers
+    @unpack_land o_one ∈ land.wCycleBase
 
-    gpp_f_airT_c = 𝟙
-    gpp_f_airT_h = 𝟙
+    gpp_f_airT_c = o_one
+    gpp_f_airT_h = o_one
     f_smooth =
-        (f_p, f_n, τ, slope, base) -> (𝟙 - τ) * f_p +
-                                      τ * (𝟙 / (𝟙 + exp(-slope * (f_n - base))))
+        (f_p, f_n, τ, slope, base) -> (o_one - τ) * f_p +
+                                      τ * (o_one / (o_one + exp(-slope * (f_n - base))))
 
     ## pack land variables
     @pack_land (gpp_f_airT_c, gpp_f_airT_h, f_smooth) => land.gppAirT
@@ -35,7 +35,7 @@ function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (gpp_f_airT_c, gpp_f_airT_h, f_smooth) ∈ land.gppAirT
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables

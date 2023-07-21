@@ -1,0 +1,86 @@
+export rootWaterEfficiency_constant
+
+#! format: off
+@bounds @describe @units @with_kw struct rootWaterEfficiency_constant{T1} <: rootWaterEfficiency
+    constant_root_water_efficiency::T1 = 0.05 | (0.01, 0.15) | "root fraction" | ""
+end
+#! format: on
+
+function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
+    @unpack_rootWaterEfficiency_constant p_struct
+    @unpack_land soil_layer_thickness ∈ land.soilWBase
+    @unpack_land soilW ∈ land.pools
+    cumulative_soil_depths = cumsum(soil_layer_thickness)
+    ## instantiate
+    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+
+    ## pack land variables
+    @pack_land begin
+        root_water_efficiency => land.rootWaterEfficiency
+        cumulative_soil_depths => land.rootWaterEfficiency
+    end
+
+    return land
+end
+
+
+function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
+    ## unpack parameters
+    @unpack_rootWaterEfficiency_constant p_struct
+    ## unpack land variables
+    @unpack_land begin
+        (root_water_efficiency, cumulative_soil_depths) ∈ land.rootWaterEfficiency
+        z_zero ∈ land.wCycleBase
+        max_root_depth ∈ land.states
+    end
+    if max_root_depth >=0 z_zero
+        @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
+    end
+    for sl ∈ eachindex(land.pools.soilW)
+        if sl > 1
+            soilcumuD = cumulative_soil_depths[sl-1]
+            rootOver = max_root_depth - soilcumuD
+            rootEff = rootOver >= z_zero ? constant_root_water_efficiency : zero(eltype(root_water_efficiency))
+            @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
+        end
+    end
+    ## pack land variables
+    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    return land
+end
+
+
+@doc """
+sets the maximum fraction of water that root can uptake from soil layers as constant
+
+# Parameters
+$(PARAMFIELDS)
+
+---
+
+# compute:
+Distribution of water uptake fraction/efficiency by root per soil layer using rootWaterEfficiency_constant
+
+*Inputs*
+ - land.states.maxRootD
+
+*Outputs*
+ - land.rootWaterEfficiency.root_water_efficiency
+
+# instantiate:
+instantiate/instantiate time-invariant variables for rootWaterEfficiency_constant
+
+
+---
+
+# Extended help
+
+*References*
+
+*Versions*
+ - 1.0 on 21.11.2019  
+
+*Created by:*
+ - skoirala
+"""
+rootWaterEfficiency_constant
