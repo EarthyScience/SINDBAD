@@ -2,14 +2,6 @@ export runoffOverland_Sat
 
 struct runoffOverland_Sat <: runoffOverland end
 
-function define(p_struct::runoffOverland_Sat, forcing, land, helpers)
-    overland_runoff = helpers.numbers.𝟘
-
-    ## pack land variables
-    @pack_land overland_runoff => land.fluxes
-    return land
-end
-
 function compute(p_struct::runoffOverland_Sat, forcing, land, helpers)
 
     ## unpack land variables

@@ -7,14 +7,14 @@ function compute(p_struct::groundWRecharge_kUnsat, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         p_wSat ∈ land.soilWBase
-        unsatK ∈ land.soilProperties
+        unsat_k_model ∈ land.soilProperties
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         n_groundW ∈ land.wCycleBase
     end
 
     # calculate recharge
-    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW))
+    k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
     gw_recharge = min(k_unsat, soilW[end] + ΔsoilW[end])
 
     ΔgroundW .= ΔgroundW .+ gw_recharge / n_groundW
@@ -62,7 +62,7 @@ Recharge the groundwater using groundWRecharge_kUnsat
 
 *Inputs*
  - land.pools.soilW: soil moisture
- - land.soilProperties.unsatK: function handle to calculate unsaturated hydraulic conduct.
+ - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conduct.
  - land.soilWBase.p_wSat: moisture at saturation
 
 *Outputs*

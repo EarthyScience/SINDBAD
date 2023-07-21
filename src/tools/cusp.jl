@@ -82,24 +82,24 @@ macro rep_elem(outparams::Expr)
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
                 esc(Expr(:., :(helpers.pools.ones), hp_pool)),
-                esc(:(helpers.numbers.𝟘)),
-                esc(:(helpers.numbers.𝟙)),
                 esc(indx)))
     ]
-    # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(helpers.numbers.𝟘), :(helpers.numbers.𝟙), indx))]
+    # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(land.wCycleBase.z_zero), :(land.wCycleBase.o_one), indx))]
     return Expr(:block, outCode...)
 end
 
-function rep_elem(v::AbstractVector, v_elem, _, _, _, _, ind::Int)
+function rep_elem(v::AbstractVector, v_elem, _, _, ind::Int)
     v[ind] = v_elem
     return v
 end
 
-function rep_elem(v::SVector, v_elem, v_zero, v_one, n_𝟘, n_𝟙, ind::Int)
-    v_zero = v_zero .* n_𝟘
-    v_zero = Base.setindex(v_zero, one(eltype(v_zero)), ind)
-    v_one = v_one .* n_𝟘 .+ n_𝟙
-    v_one = Base.setindex(v_one, zero(eltype(v_one)), ind)
+function rep_elem(v::SVector, v_elem, v_zero, v_one, ind::Int)
+    n_0 = zero(first(v_zero))
+    n_1 = one(first(v_zero))
+    v_zero = v_zero .* n_0
+    v_zero = Base.setindex(v_zero, n_1, ind)
+    v_one = v_one .* n_0 .+ n_1
+    v_one = Base.setindex(v_one, n_0, ind)
     v = v .* v_one .+ v_zero .* v_elem
     # v = Base.setindex(v, v_elem, vlit_level)
     return v
@@ -111,17 +111,18 @@ macro rep_vec(outparams::Expr)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = esc(outparams.args[3])
-    outCode = [Expr(:(=), lhs, Expr(:call, rep_vec, lhs, rhs, esc(:(helpers.numbers.𝟘))))]
+    outCode = [Expr(:(=), lhs, Expr(:call, rep_vec, lhs, rhs))]
     return Expr(:block, outCode...)
 end
 
-function rep_vec(v::AbstractVector, v_new, n_𝟘)
+function rep_vec(v::AbstractVector, v_new)
     v .= v_new
     return v
 end
 
-function rep_vec(v::SVector, v_new, n_𝟘)
-    v = v .* n_𝟘 + v_new
+function rep_vec(v::SVector, v_new)
+    n_0 = zero(first(v))
+    v = v .* n_0 + v_new
     return v
 end
 
@@ -143,15 +144,17 @@ macro add_to_elem(outparams::Expr)
                 tar,
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
-                esc(:(helpers.numbers.𝟘)),
+                # esc(:(land.wCycleBase.z_zero)),
                 esc(indx)))
     ]
     return Expr(:block, outCode...)
 end
 
-function add_to_elem(v::SVector, Δv, v_zero, n_𝟘, ind::Int)
-    v_zero = v_zero .* n_𝟘
-    v_zero = Base.setindex(v_zero, one(eltype(v_zero)), ind)
+function add_to_elem(v::SVector, Δv, v_zero, ind::Int)
+    n_0 = zero(first(v_zero))
+    n_1 = one(first(v_zero))
+    v_zero = v_zero .* n_0
+    v_zero = Base.setindex(v_zero, n_1, ind)
     v = v .+ v_zero .* Δv
     return v
 end
@@ -202,8 +205,8 @@ end
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     c_ix)))
 
             c_ix += 1

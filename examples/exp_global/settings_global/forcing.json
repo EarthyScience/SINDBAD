@@ -1,0 +1,153 @@
+{
+  "dimensions": {
+    "permute": null,
+    "space": ["id"],
+    "time": "time"
+  },
+  "sel_mask": null,
+  "default_forcing": {
+    "sindbad_unit": null,
+    "bounds": [],
+    "source_variable": null,
+    "source_unit": null,
+    "name_short": null,
+    "source_to_sindbad_unit": 1.0,
+    "additive_unit_conversion": false,
+    "is_categorical": false,
+    "depth_dimension": null,
+    "space_time_type": "spatiotemporal",
+    "source_product": "Misc",
+    "data_path": null
+  },
+  "variables": {
+    "PET": {
+      "sindbad_unit": "mm d-1",
+      "bounds": [0.0, 100.0],
+      "source_variable": "PET",
+      "source_unit": "mm d-1",
+      "name_short": "PET",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PET.2dim.opti904.nc"
+    },
+    "Rain": {
+      "sindbad_unit": "mm d-1",
+      "bounds": [0, 1000],
+      "source_variable": "Rain_MSWEP",
+      "source_unit": "mm d-1",
+      "name_short": "Rain",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rain_MSWEP.2dim.opti904.nc"
+    },
+    "Rg": {
+      "sindbad_unit": "MJ m-2",
+      "bounds": [0, 600],
+      "source_variable": "SWdown",
+      "source_unit": "MJ m-2",
+      "name_short": "Global Radiation",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.SWdown.2dim.opti904.nc"
+    },
+    "PAR": {
+      "sindbad_unit": "MJ m-2",
+      "bounds": [0, 600],
+      "source_variable": "Rpot",
+      "source_unit": "MJ m-2",
+      "source_to_sindbad_unit": 0.5,
+      "name_short": "Photosynthetically active radiation (=Rg*.5)",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rpot.2dim.opti904.nc"
+    },
+    "PsurfDay": {
+      "sindbad_unit": "kPa",
+      "bounds": [0, 600],
+      "source_variable": "PsurfDay",
+      "source_unit": "pa",
+      "source_to_sindbad_unit": 0.001,
+      "name_short": "surface pressure",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PsurfDay.3dim.opti904.nc"
+    },
+    "RgPot": {
+      "sindbad_unit": "MJ m-2",
+      "bounds": [0, 600],
+      "source_variable": "Rpot",
+      "source_unit": "W m-2",
+      "source_to_sindbad_unit": 0.08640003041,
+      "name_short": "Potential Global Radiation",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rpot.2dim.opti904.nc"
+    },
+    "Rn": {
+      "sindbad_unit": "MJ m-2",
+      "bounds": [-50, 500],
+      "source_variable": "Rn",
+      "source_unit": "MJ m-2",
+      "name_short": "Net radiation",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Rn.2dim.opti904.nc"
+    },
+    "Tair": {
+      "sindbad_unit": "°C",
+      "bounds": [-80.0, 60.0],
+      "source_variable": "Tair",
+      "source_unit": "K",
+      "source_to_sindbad_unit": -273.15,
+      "additive_unit_conversion": true,
+      "name_short": "Tair",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.Tair.2dim.opti904.nc"
+    },
+    "TairDay": {
+      "sindbad_unit": "°C",
+      "bounds": [-80.0, 60.0],
+      "source_variable": "tair_day",
+      "source_unit": "K",
+      "source_to_sindbad_unit": -273.15,
+      "additive_unit_conversion": true,
+      "name_short": "TairDay",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.tair_day.2dim.opti904.nc"
+    },
+    "VPD": {
+      "sindbad_unit": "kPa",
+      "bounds": [-1, 10],
+      "source_variable": "vpd_cf",
+      "source_unit": "hPa",
+      "source_to_sindbad_unit": 0.1,
+      "name_short": "Vapor pressure deficit Day",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.vpd_cf.2dim.opti904.nc"
+    },
+    "VPDDay": {
+      "sindbad_unit": "kPa",
+      "bounds": [0.0, 100.0],
+      "source_variable": "vpd_daytime_mean",
+      "source_unit": "hPa",
+      "source_to_sindbad_unit": 0.1,
+      "name_short": "Vapor pressure deficit Day",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.vpd_daytime_mean.2dim.opti904.nc"
+    },
+    "frac_vegetation": {
+      "sindbad_unit": "-",
+      "bounds": [0, 1],
+      "source_variable": "EVI",
+      "source_unit": "-",
+      "name_short": "fAPAR from ndvi",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.EVI.2dim.opti904.nc"
+    }
+  }
+}

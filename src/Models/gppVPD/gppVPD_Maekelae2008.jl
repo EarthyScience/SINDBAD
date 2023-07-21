@@ -10,7 +10,7 @@ function compute(p_struct::gppVPD_Maekelae2008, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppVPD_Maekelae2008 p_struct
     @unpack_forcing VPDDay ∈ forcing
-    @unpack_land (𝟘, 𝟙) ∈ helpers.numbers
+    @unpack_land o_one ∈ land.wCycleBase
 
     ## calculate variables
     gpp_f_vpd = exp(-k * VPDDay)
