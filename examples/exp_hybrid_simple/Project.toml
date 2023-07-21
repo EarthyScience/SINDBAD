@@ -2,6 +2,7 @@
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
 ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 ForwardSindbad = "f6108451-10cb-42fa-b0c1-67671cf08f15"
