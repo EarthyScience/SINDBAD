@@ -10,12 +10,8 @@ function define(p_struct::cAllocationSoilT_gppGSI, forcing, land, helpers)
     ## unpack parameters
     @unpack_cAllocationSoilT_gppGSI p_struct
 
-    ## unpack land variables
-    @unpack_land begin
-        𝟙 ∈ helpers.numbers
-    end
     # assume initial prev as one (no stress)
-    fT_prev = 𝟙
+    fT_prev = land.wCycleBase.o_one
 
     @pack_land fT_prev => land.cAllocationSoilT
     return land

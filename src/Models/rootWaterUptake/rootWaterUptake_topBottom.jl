@@ -7,7 +7,6 @@ function define(p_struct::rootWaterUptake_topBottom, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
     end
     root_water_uptake = zero(soilW)
 
@@ -26,9 +25,9 @@ function compute(p_struct::rootWaterUptake_topBottom, forcing, land, helpers)
         soilW ∈ land.pools
         (ΔsoilW, root_water_uptake) ∈ land.states
         transpiration ∈ land.fluxes
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
-    root_water_uptake .= 𝟘
+    root_water_uptake .= z_zero
     # get the transpiration
     toUptake = transpiration
     for sl ∈ eachindex(land.pools.soilW)

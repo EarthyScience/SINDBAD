@@ -17,11 +17,11 @@ function compute(p_struct::runoffSurface_directIndirectFroSoil, forcing, land, h
         surfaceW ∈ land.pools
         ΔsurfaceW ∈ land.states
         overland_runoff ∈ land.fluxes
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         n_surfaceW ∈ land.wCycleBase
     end
     # fraction of overland runoff that flows out directly
-    fracFastQ = (𝟙 - rf) * (𝟙 - fracFrozen) + fracFrozen
+    fracFastQ = (o_one - rf) * (o_one - fracFrozen) + fracFrozen
 
     runoffSurfaceDirect = fracFastQ * overland_runoff
 

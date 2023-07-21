@@ -32,26 +32,27 @@ function getParameters(selectedModels)
         name_full)
 end
 
-function split_param(_p::Symbol, _splitter)
+function split_and_rename_param(_p::Symbol, _splitter)
     p_string = String(_p)
-    return split_param(p_string, _splitter)
+    return split_and_rename_param(p_string, _splitter)
 end
 
-function split_param(p_string::String, _splitter)
+function split_and_rename_param(p_string::String, _splitter)
+    p_name = strip(p_string)
     if occursin(_splitter, p_string)
-        return split(p_string, _splitter)
-    else
-        return (p_string, "")
+        p_split = split(p_string, _splitter)
+        p_model = strip(first(p_split))
+        p_param = strip(last(p_split))
+        p_name = "$(p_model).$(p_param)"
     end
+    return p_name
 end
 
 function replace_comman_separator_in_params(p_names_list)
     o_p_names_list = []
     foreach(p_names_list) do p
-        p_split = split_param(p, ",")
-        p_model = strip(first(p_split))
-        p_param = strip(last(p_split))
-        push!(o_p_names_list, "$(p_model).$(p_param)")
+        p_name = split_and_rename_param(p, ",")
+        push!(o_p_names_list, p_name)
     end
     return o_p_names_list
 end
@@ -95,7 +96,7 @@ getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
-    opt_parameter = opt_parameter
+    opt_parameter = replace_comman_separator_in_params(opt_parameter)
     paramstbl = getParameters(selectedModels, default_parameter)
     return filter(row -> row.name_full in opt_parameter, paramstbl)
 end
@@ -389,12 +390,12 @@ function setInputParameters(original_table::Table, updated_table::Table)
         subtbl = filter(
             row ->
                 row.name == Symbol(updated_table[i].name) &&
-                    row.models == Symbol(updated_table[i].models),
+                    row.model == Symbol(updated_table[i].model),
             original_table)
         if isempty(subtbl)
             error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
         else
-            posmodel = findall(x -> x == Symbol(updated_table[i].models), upoTable.models)
+            posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
             posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
             pindx = intersect(posmodel, posvar)
             pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
@@ -466,7 +467,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
     is_spinup = findall(is_spinup .== 1)
 
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :params)
+    if hasproperty(info, :parameters)
         if !isempty(info.parameters)
             original_params_forward = getParameters(sel_appr_forward)
             input_params = info.parameters

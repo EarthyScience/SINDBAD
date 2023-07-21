@@ -19,7 +19,7 @@ function define(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers
     cVeg_zix = []
     for cpName ∈ cVeg_names
         zix = getzix(getfield(land.pools.carbon, cpName), helpers.pools.zix, cpName)
-        nZix = helpers.numbers.sNT(length(zix))
+        nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_nzix, nZix)
         push!(cVeg_zix, zix)
     end
@@ -43,10 +43,10 @@ function compute(p_struct::cAllocation_Friedlingstein1999, forcing, land, helper
         (cVeg_names, cVeg_nzix, cVeg_zix, c_allocation_to_veg) ∈ land.cAllocation
         c_allocation_f_W_N ∈ land.cAllocationNutrients
         c_allocation_f_LAI ∈ land.cAllocationLAI
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     ## unpack land variables
     # allocation to root; wood & leaf
-    o_one = one(ro)
     a_cVegRoot = ro * (RelY + o_one) * c_allocation_f_LAI / (c_allocation_f_LAI + RelY * c_allocation_f_W_N)
     a_cVegWood = so * (RelY + o_one) * c_allocation_f_W_N / (RelY * c_allocation_f_LAI + c_allocation_f_W_N)
     a_cVegLeaf = o_one - cVegRoot - cVegWood

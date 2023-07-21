@@ -64,7 +64,7 @@
     "rainSnow": {
       "approach": "rain"
     },
-    "rootFraction": {
+    "rootWaterEfficiency": {
       "approach": "constant"
     },
     "rootMaximumDepth": {

@@ -16,7 +16,7 @@ function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
     @unpack_land begin
         (s_wSat, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     maxAWC = max_0(s_wSat - s_wWP)

@@ -6,13 +6,6 @@ export snowFraction_HTESSEL
 end
 #! format: on
 
-function define(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
-    frac_snow = helpers.numbers.𝟙
-    ## pack land variables
-    @pack_land frac_snow => land.states
-    return land
-end
-
 function compute(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
     ## unpack parameters
     @unpack_snowFraction_HTESSEL p_struct
@@ -21,13 +14,13 @@ function compute(p_struct::snowFraction_HTESSEL, forcing, land, helpers)
     @unpack_land begin
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        𝟙 ∈ helpers.numbers
+        o_one ∈ land.wCycleBase
     end
 
     ## calculate variables
     # suggested by Sujan [after HTESSEL GHM]
 
-    frac_snow = min(𝟙, sum(snowW) / CoverParam)
+    frac_snow = min(o_one, sum(snowW) / CoverParam)
 
     ## pack land variables
     @pack_land frac_snow => land.states

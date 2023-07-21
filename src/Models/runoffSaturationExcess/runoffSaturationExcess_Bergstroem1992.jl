@@ -6,16 +6,6 @@ export runoffSaturationExcess_Bergstroem1992
 end
 #! format: on
 
-function define(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
-    sat_excess_runoff = helpers.numbers.𝟘
-
-    ## pack land variables
-    @pack_land begin
-        sat_excess_runoff => land.fluxes
-    end
-    return land
-end
-
 function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land, helpers)
     ## unpack parameters
     @unpack_runoffSaturationExcess_Bergstroem1992 p_struct
@@ -26,7 +16,6 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land,
         p_wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
     end
     # @show WBP
     tmp_smaxVeg = sum(p_wSat)

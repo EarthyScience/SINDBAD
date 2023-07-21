@@ -2,16 +2,9 @@ export transpirationSupply_wAWC
 
 #! format: off
 @bounds @describe @units @with_kw struct transpirationSupply_wAWC{T1} <: transpirationSupply
-    k_transpiration::T1 = 0.1 | (0.002, 0.2) | "fraction of total maximum available water that can be transpired" | ""
+    k_transpiration::T1 = 0.99 | (0.002, 1.0) | "fraction of total maximum available water that can be transpired" | ""
 end
 #! format: on
-
-function define(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
-    transpiration_supply = helpers.numbers.𝟘
-
-    @pack_land transpiration_supply => land.transpirationSupply
-    return land
-end
 
 function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
     ## unpack parameters

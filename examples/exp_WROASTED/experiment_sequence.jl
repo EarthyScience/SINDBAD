@@ -16,6 +16,7 @@ using Plots
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
+sites = ("CA-NS6",)
 for domain ∈ sites
     # domain = "DE-Hai"
     inpath = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -36,7 +37,7 @@ for domain ∈ sites
         "model_run.flags.run_forward_and_cost" => true,
         "model_run.flags.spinup.save_spinup" => false,
         "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.run_spinup" => true,
+        "model_run.flags.spinup.run_spinup" => true,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => inpath,
@@ -131,7 +132,7 @@ for domain ∈ sites
         @show "plot obs", v
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
-        if loss_name == :nnseinv
+        if loss_name in (:nnseinv, :nseinv)
             lossMetric = Val(:nse)
         end
         (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)

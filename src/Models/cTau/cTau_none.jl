@@ -5,7 +5,7 @@ struct cTau_none <: cTau end
 function define(p_struct::cTau_none, forcing, land, helpers)
 
     ## calculate variables
-    p_k = zero(land.pools.cEco) .+ helpers.numbers.𝟙
+    p_k = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
     @pack_land p_k => land.cTau
