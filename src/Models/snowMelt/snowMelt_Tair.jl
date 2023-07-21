@@ -16,7 +16,7 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
         (WBP, frac_snow) ∈ land.states
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
         n_snowW ∈ land.wCycleBase
     end
     # effect of temperature on snow melt = snowMeltRate * Tair

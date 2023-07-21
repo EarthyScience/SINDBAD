@@ -1,10 +1,11 @@
 export WUE_VPDDayCo2
 
 #! format: off
-@bounds @describe @units @with_kw struct WUE_VPDDayCo2{T1,T2,T3} <: WUE
+@bounds @describe @units @with_kw struct WUE_VPDDayCo2{T1,T2,T3,T4,T5} <: WUE
     WUEatOnehPa::T1 = 9.2 | (4.0, 17.0) | "WUE at 1 hpa VPD" | "gC/mmH2O"
     Ca0::T2 = 380.0 | (300.0, 500.0) | "" | "ppm"
     Cm::T3 = 500.0 | (100.0, 2000.0) | "" | "ppm"
+    kpa_to_hpa::T5 = 10.0 | (nothing, nothing) | "unit conversion kPa to hPa" | ""
 end
 #! format: on
 
@@ -16,14 +17,14 @@ function compute(p_struct::WUE_VPDDayCo2, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
-        (𝟘, 𝟙, tolerance, sNT) ∈ helpers.numbers
+        tolerance ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
     # "WUEat1hPa"
-    kpa_to_hpa = sNT(10) * 𝟙
-    AoENoCO2 = WUEatOnehPa * 𝟙 / sqrt(kpa_to_hpa * (VPDDay + tolerance))
-    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
+    AoENoCO2 = WUEatOnehPa * o_one / sqrt(kpa_to_hpa * (VPDDay + tolerance))
+    fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     AoE = AoENoCO2 * fCO2_CO2
 
     ## pack land variables

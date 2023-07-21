@@ -31,12 +31,11 @@ function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
     @unpack_cCycleBase_CASA p_struct
 
     @unpack_land begin
-        num_type ∈ helpers.numbers
         cEco ∈ land.pools
     end
 
     ## instantiate variables
-    p_C2Nveg = ones(num_type, length(cEco)) #sujan
+    p_C2Nveg = zero(cEco) .+ one(first(cEco)) #sujan
 
     ## pack land variables
     @pack_land begin
@@ -52,7 +51,7 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         p_C2Nveg ∈ land.cCycleBase
-        𝟙 ∈ helpers.numbers
+        o_one ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -61,7 +60,7 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     # turnover rates
     TSPY = helpers.dates.timesteps_in_year
-    p_k_base = 𝟙 .- (exp.(-𝟙 .* annk) .^ (𝟙 / TSPY))
+    p_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
     @pack_land (p_k_base) => land.cCycleBase

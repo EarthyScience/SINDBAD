@@ -167,7 +167,7 @@ function (cEco_spin::SpinupCeco)(pout, p)
     helpers = cEco_spin.tem_helpers
 
     pout .= exp.(p)
-    # pout .= max.(p, helpers.numbers.𝟘)
+    # pout .= max.(p, land.wCycleBase.z_zero)
     zix = helpers.pools.zix
     @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco
@@ -188,7 +188,7 @@ function (cEcoTWS_spin::SpinupCecoTWS)(pout, p)
     helpers = cEcoTWS_spin.tem_helpers
 
     pout .= exp.(p)
-    # pout .= max.(p, helpers.numbers.𝟘)
+    # pout .= max.(p, land.wCycleBase.z_zero)
     zix = helpers.pools.zix
     @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco
@@ -223,7 +223,7 @@ function (CW_spin::SpinupCW)(pout, p)
     helpers = CW_spin.tem_helpers
 
     pout.cEco .= exp.(p.cEco)
-    # pout .= max.(p, helpers.numbers.𝟘)
+    # pout .= max.(p, land.wCycleBase.z_zero)
     zix = helpers.pools.zix
     @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco

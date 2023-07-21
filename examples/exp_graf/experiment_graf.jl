@@ -16,7 +16,7 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.debug_model" => false,
     "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
 
@@ -68,7 +68,7 @@ end
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie:heatmap
+using CairoMakie: heatmap, Colorbar, save
 using AlgebraOfGraphics, DataFrames, Dates
 
 plotdat = output.data;
@@ -78,12 +78,12 @@ for i ∈ eachindex(output.variables)
     if size(pd, 2) == 1
         fig, ax, obj = heatmap(pd[:, 1, :])
         Colorbar(fig[1, 2], obj)
-        save("afr2d_$(vname).png", fig)
+        save(joinpath(info.output.figure, "afr2d_$(vname).png"), fig)
     else
         for ll ∈ 1:size(pd, 2)
             fig, ax, obj = heatmap(pd[:, ll, :])
             Colorbar(fig[1, 2], obj)
-            save("afr2d_$(vname)_$(ll).png", fig)
+            save(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"), fig)
         end
     end
 end

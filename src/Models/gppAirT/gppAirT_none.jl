@@ -5,8 +5,8 @@ struct gppAirT_none <: gppAirT end
 function define(p_struct::gppAirT_none, forcing, land, helpers)
 
     ## calculate variables
-    # set scalar to a constant 𝟙 [no effect on potential GPP]
-    gpp_f_airT = helpers.numbers.𝟙
+    # set scalar to a constant o_one [no effect on potential GPP]
+    gpp_f_airT = land.wCycleBase.o_one
 
     ## pack land variables
     @pack_land gpp_f_airT => land.gppAirT

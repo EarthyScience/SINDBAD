@@ -18,7 +18,7 @@ function compute(p_struct::drainage_wFC, forcing, land, helpers)
         (p_nsoilLayers, p_wFC) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        𝟘 ∈ helpers.numbers
+        z_zero ∈ land.wCycleBase
     end
 
     ## calculate drainage

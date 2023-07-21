@@ -7,10 +7,10 @@
     "ambientCO2": {
       "approach": "forcing"
     },
-    "aRespiration": {
+    "autoRespiration": {
       "approach": "Thornley2000A"
     },
-    "aRespirationAirT": {
+    "autoRespirationAirT": {
       "approach": "Q10"
     },
     "capillaryFlow": {
@@ -130,7 +130,7 @@
     "rainSnow": {
       "approach": "Tair"
     },
-    "rootFraction": {
+    "rootWaterEfficiency": {
       "approach": "expCvegRoot"
     },
     "rootMaximumDepth": {
@@ -179,7 +179,7 @@
       "approach": "constant"
     },
     "vegAvailableWater": {
-      "approach": "rootFraction"
+      "approach": "rootWaterEfficiency"
     },
     "waterBalance": {
       "approach": "simple",

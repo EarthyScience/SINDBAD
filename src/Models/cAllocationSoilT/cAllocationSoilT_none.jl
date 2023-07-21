@@ -5,7 +5,7 @@ struct cAllocationSoilT_none <: cAllocationSoilT end
 function define(p_struct::cAllocationSoilT_none, forcing, land, helpers)
 
     ## calculate variables
-    c_allocation_f_soilT = helpers.numbers.𝟙 #sujan fsoilW was changed to fTSoil
+    c_allocation_f_soilT = one(first(land.pools.cEco)) #sujan fsoilW was changed to fTSoil
 
     ## pack land variables
     @pack_land c_allocation_f_soilT => land.cAllocationSoilT
@@ -18,7 +18,6 @@ sets the temperature effect on allocation to one (no effect)
 # instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
 - land.Radiation.c_allocation_f_soilT: temperature effect on cAllocation (0-1)

@@ -16,12 +16,12 @@ function compute(p_struct::runoffSurface_directIndirect, forcing, land, helpers)
         surfaceW ∈ land.pools
         ΔsurfaceW ∈ land.states
         overland_runoff ∈ land.fluxes
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         n_surfaceW ∈ land.wCycleBase
     end
     # fraction of overland runoff that recharges the surface water & the
     #fraction that flows out directly
-    runoffSurfaceDirect = (𝟙 - rf) * overland_runoff
+    runoffSurfaceDirect = (o_one - rf) * overland_runoff
 
     # fraction of surface storage that flows out irrespective of input
     suw_recharge = rf * overland_runoff
