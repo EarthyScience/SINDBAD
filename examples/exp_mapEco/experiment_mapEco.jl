@@ -11,7 +11,7 @@ info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 
-info, forcing = getForcing(info, Val(:yaxarray));
+info, forcing = getForcing(info, Val(:netcdf));
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
 output = setupOutput(info);
@@ -23,7 +23,7 @@ outcubes = mapRunEcosystem(forcing,
     max_cache=info.model_run.rules.yax_max_cache);
 
 # optimization
-observations = getObservation(info, Val(:yaxarray));
+observations = getObservation(info, Val(:netcdf));
 
 opt_params = mapOptimizeModel(forcing,
     output,

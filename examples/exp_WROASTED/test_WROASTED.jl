@@ -91,7 +91,7 @@ land_spin = land_init_space[1];
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 # obs = getKeyedArrayFromYaxArray(observations);
 obs = getObsKeyedArrayFromYaxArray(observations);
 
