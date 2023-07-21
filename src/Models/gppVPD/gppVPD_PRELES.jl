@@ -4,18 +4,10 @@ export gppVPD_PRELES
 @bounds @describe @units @with_kw struct gppVPD_PRELES{T1,T2,T3,T4} <: gppVPD
     κ::T1 = 0.4 | (0.06, 0.7) | "" | "kPa-1"
     Cκ::T2 = 0.4 | (-50.0, 10.0) | "" | ""
-    Ca0::T3 = 380.0 | (300.0, 500.0) | "" | "ppm"
+    Ca0::T3 = 295.0 | (250.0, 500.0) | "" | "ppm"
     Cm::T4 = 2000.0 | (400.0, 4000.0) | "" | "ppm"
 end
 #! format: on
-
-function define(p_struct::gppVPD_PRELES, forcing, land, helpers)
-    gpp_f_vpd = helpers.numbers.𝟙
-
-    ## pack land variables
-    @pack_land gpp_f_vpd => land.gppVPD
-    return land
-end
 
 function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack parameters and forcing
@@ -25,12 +17,16 @@ function compute(p_struct::gppVPD_PRELES, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         ambient_CO2 ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        o_one ∈ land.wCycleBase
     end
+    # fVPD_VPD                    = exp(p.gppfVPD.kappa .* -f.VPDDay(:,tix) .* (p.gppfVPD.Ca0 ./ s.cd.ambCO2) .^ -p.gppfVPD.Ckappa);
+    # fCO2_CO2                    = 1 + (s.cd.ambCO2 - p.gppfVPD.Ca0) ./ (s.cd.ambCO2 - p.gppfVPD.Ca0 + p.gppfVPD.Cm);
+    # VPDScGPP                    = max(0, min(1, fVPD_VPD .* fCO2_CO2));
+    # d.gppfVPD.VPDScGPP(:,tix)	= VPDScGPP;
 
     ## calculate variables
-    fVPD_VPD = exp(κ * -VPDDay * (Ca0 / ambient_CO2)^-Cκ)
-    fCO2_CO2 = 𝟙 + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
+    fVPD_VPD = exp(-κ * VPDDay * (Ca0 / ambient_CO2)^-Cκ)
+    fCO2_CO2 = o_one + (ambient_CO2 - Ca0) / (ambient_CO2 - Ca0 + Cm)
     gpp_f_vpd = clamp_01(fVPD_VPD * fCO2_CO2)
 
     ## pack land variables

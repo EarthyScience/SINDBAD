@@ -13,11 +13,10 @@ function compute(p_struct::vegFraction_scaledfAPAR, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         fAPAR ∈ land.states
-        𝟙 ∈ helpers.numbers
     end
 
     ## calculate variables
-    frac_vegetation = min(fAPAR * fAPARscale, 𝟙)
+    frac_vegetation = min_1(fAPAR * fAPARscale)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states

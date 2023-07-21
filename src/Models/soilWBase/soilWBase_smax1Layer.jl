@@ -11,20 +11,19 @@ function define(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
 
     @unpack_land begin
         soilW ∈ land.pools
-        num_type ∈ helpers.numbers
         n_soilW ∈ land.wCycleBase
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
     soil_layer_thickness = helpers.pools.layerThickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
-    if n_soilW!= 1
+    if n_soilW != 1
         error(["soilWBase_smax1Layer needs eactly 1 soil layer in model_structure.json."])
     end
 
     ## instantiate variables
-    p_wSat = ones(num_type, n_soilW)
-    p_wFC = ones(num_type, n_soilW)
+    p_wSat = zero(land.pools.soilW)
+    p_wFC = zero(land.pools.soilW)
     p_wWP = zero(land.pools.soilW)
 
     ## pack land variables

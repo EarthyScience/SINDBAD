@@ -81,10 +81,11 @@ function checkOptimizedParametersInModels(info::NamedTuple)
         info.optimization.default_parameter,
         info.optimization.optimized_parameters)
     model_parameters = tblParams.name_full
+    # @show model_parameters
     optim_parameters = info.optimization.optimized_parameters
     op_names = nothing
     if typeof(optim_parameters) <: Vector
-        op_names = optim_parameters
+        op_names = replace_comman_separator_in_params(optim_parameters)
     else
         op_names = replace_comman_separator_in_params(keys(optim_parameters))
     end

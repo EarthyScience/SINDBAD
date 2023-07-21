@@ -7,12 +7,6 @@ end
 #! format: on
 
 function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
-    ## unpack helper
-    @unpack_land 𝟙 ∈ helpers.numbers
-
-    ## calculate variables
-    # assume the initial c_allocation_f_cloud as one
-    # fW_prev = 𝟙
     fW_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
 
     ## pack land variables

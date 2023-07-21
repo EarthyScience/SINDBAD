@@ -5,7 +5,7 @@ struct runoffBase_none <: runoffBase end
 function define(p_struct::runoffBase_none, forcing, land, helpers)
 
     ## calculate variables
-    base_runoff = helpers.numbers.𝟘
+    base_runoff = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land base_runoff => land.fluxes

@@ -5,7 +5,7 @@ struct runoffOverland_none <: runoffOverland end
 function define(p_struct::runoffOverland_none, forcing, land, helpers)
 
     ## calculate variables
-    overland_runoff = helpers.numbers.𝟘
+    overland_runoff = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land overland_runoff => land.fluxes
