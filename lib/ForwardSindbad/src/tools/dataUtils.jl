@@ -7,6 +7,7 @@ export getKeyedArrayFromYaxArray
 export getNamedDimsArrayFromYaxArray
 export getDimArrayFromYaxArray
 export getObsKeyedArrayFromYaxArray
+export mapCleanForcingData
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -17,8 +18,7 @@ struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 
-
-function mapCleanInputData(yax, dfill, vinfo, ::Val{T}) where {T}
+function mapCleanForcingData(yax, dfill, vinfo, ::Val{T}) where {T}
     yax = map(x -> ismissing(x) ? dfill : x, yax)
     yax = map(x -> isnan(x) ? dfill : x, yax)
     yax = map(x -> applyUnitConversion(x, vinfo.source_to_sindbad_unit,

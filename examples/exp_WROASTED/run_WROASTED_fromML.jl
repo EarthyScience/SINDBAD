@@ -192,7 +192,7 @@ for site_index in sites
 
         outcubes = output.data
 
-        observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+        observations = getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)));
         obs = getObsKeyedArrayFromYaxArray(observations);
 
         # open the matlab simulation data
