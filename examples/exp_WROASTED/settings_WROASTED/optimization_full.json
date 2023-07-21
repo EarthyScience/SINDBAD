@@ -24,6 +24,7 @@
     "cCycleBase,annk_SoilSlow": null,
     "cCycleBase,annk_SoilOld": null,
     "cCycleBase,ηH": null,
+    "cCycleBase,c_remain": null,
     "cFlow,f_τ": {
       "is_ml": true,
       "distribution": ["gaussian", [0, 1, 2]]
@@ -61,6 +62,7 @@
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_T": null,
     "snowMelt,melt_Rn": null,
+    "transpirationSupply,k_transpiration": null,
     "treeFraction,constant_frac_tree": null,
     "WUE,WUEatOnehPa": null,
     "WUE,κ": null
@@ -90,7 +92,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "nseinv",
+      "cost_metric": "nnseinv",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -115,7 +117,7 @@
           "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "nee": {
@@ -138,7 +140,7 @@
           "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "reco": {
@@ -161,7 +163,7 @@
           "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "evapotranspiration": {
@@ -187,7 +189,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "transpiration": {
@@ -211,7 +213,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "agb": {
@@ -249,7 +251,7 @@
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       }
     }
