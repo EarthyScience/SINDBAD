@@ -74,6 +74,6 @@ function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 
     @info "runExperiment: get observations..."
     println("----------------------------------------------")
-    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
+    observations = getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)))
     return info, forcing, output, observations
 end

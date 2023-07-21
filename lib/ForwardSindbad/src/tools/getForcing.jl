@@ -1,5 +1,5 @@
-export getForcing, getPermutation, subset_space_in_data
-export getCombinedVariableInfo
+export getForcing, getPermutation, subset_space_in_data, load_data
+export getCombinedVariableInfo, get_yax_from_source
 
 """
     getCombinedVariableInfo(default_info, var_info)
@@ -32,7 +32,7 @@ end
 
 
 function get_forcing_sel_mask(mask_path::String)
-    mask = NetCDF.open(mask_path)
+    mask = load_data(data_path)
     mask_data = mask["mask"]
     return mask_data
 end
@@ -123,7 +123,7 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
 
     if !isnothing(tar_dims)
         permutes = getPermutation(YAXArrayBase.dimnames(yax), tar_dims)
-        @info "             permuting dimensions to $(tar_dims)..."
+        @info "     permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
     if hasproperty(yax, Symbol(info.forcing.dimensions.time))
@@ -138,9 +138,8 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
 
     #todo mean of the data instead of zero
     numtype = Val(info.tem.helpers.numbers.num_type)
-    vfill = 0.0
     vfill = zero(eltype(yax))
-    return mapCleanInputData(yax, vfill, vinfo, numtype)
+    return mapCleanForcingData(yax, vfill, vinfo, numtype)
 end
 
 function get_forcing_info_and_namedTuple(incubes, info, vinfo, f_sizes)
@@ -171,29 +170,43 @@ function get_target_dimensions(info)
     return tar_dims
 end
 
-
-function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:yaxarray})
-    if !doOnePath 
-        @info "  one_data_path: $(data_path)"
-        data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
+function load_data(data_path)
+    if endswith(data_path, ".nc")
         nc = NCDataset(data_path)
-    elseif isnothing(nc)
-        nc = NCDataset(data_path)
-        @info "   data_path: $(data_path)"
+    elseif endswith(data_path, ".zarr")
+        nc = YAXArrays.open_dataset(zopen(data_path))
+    else
+        error("The file ending/data type is not supported for $(datapath). Either use .nc or .zarr file")
     end
-    @info "                 source_var: $(vinfo.source_variable)"
+    return nc
+end
+
+function load_data_from_path(nc, doOnePath, vinfo, data_path)
+    if !doOnePath 
+        data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
+        @info "  data_path: $(data_path)"
+        nc = load_data(data_path)
+    elseif isnothing(nc)
+        @info "  one_data_path: $(data_path)"
+        nc = load_data(data_path)
+    end
+    @info "     source_var: $(vinfo.source_variable)"
+    return nc
+end
+
+function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:netcdf})
+    nc = load_data_from_path(nc, doOnePath, vinfo, data_path)
     v = nc[vinfo.source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
         if dn == info.forcing.dimensions.time
             t = nc[info.forcing.dimensions.time]
             rax = Dim{Symbol(dn)}(t[:])
-            nts = length(t)
         else
             if dn in keys(nc)
                 dv = info.tem.helpers.numbers.sNT.(nc[dn][:])
             else
-                error("cannot run sindbad when the dimension variable $(dn) is not available in data")
+                error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path). Add the variable to the data, and try again.")
             end
             rax = Dim{Symbol(dn)}(dv)    
         end
@@ -205,14 +218,7 @@ end
 
 
 function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:zarr})
-    if !doOnePath 
-        data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
-        nc = YAXArrays.open_dataset(zopen(data_path))
-        @info "     source_var: $(vinfo.source_variable), data_path: $(data_path)"
-    elseif isnothing(nc)
-        nc = YAXArrays.open_dataset(zopen(data_path))
-        @info "     source_var: $(vinfo.source_variable), data_path: $(data_path)"
-    end
+    nc = load_data_from_path(nc, doOnePath, vinfo, data_path)
     yax = nc[vinfo.source_variable]
     return nc, yax
 end
@@ -242,14 +248,14 @@ function getForcing(info::NamedTuple)
     vinfo = nothing
     f_sizes = nothing
     incubes = map(forcing_variables) do k
-        @info "   Getting: $(k)"
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
-        nc, yax = get_yax_from_source(nc, doOnePath, data_path, info, vinfo, Val(Symbol(info.model_run.rules.data_backend)))
-        subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
+        nc, yax = get_yax_from_source(nc, doOnePath, data_path, info, vinfo, Val(Symbol(info.model_run.rules.input_data_backend)))
         if vinfo.space_time_type == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
-    
+        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)   
+        @info "     sindbad_var: $(k) loaded\n "
+        incube
     end
     return get_forcing_info_and_namedTuple(incubes, info, vinfo, f_sizes)
 end

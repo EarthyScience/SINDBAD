@@ -94,8 +94,10 @@ info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
-
+# forc = getNamedDimsArrayFromYaxArray(forcing)
 forc = getKeyedArrayFromYaxArray(forcing);
+# forc = getDimArrayFromYaxArray(forcing);
+forc = (; Pair.(forcing.variables, forcing.data)...);
 output = setupOutput(info);
 
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
