@@ -156,9 +156,10 @@ getKeyedArrayFromYaxArray(input::NamedTuple)
 """
 function getKeyedArrayFromYaxArray(input)
     ks = input.variables
-    keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+    in_cubes = input.data
+    keyedData = map(in_cubes) do c
+        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+        KeyedArray(c.data; Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end
