@@ -23,7 +23,7 @@ arraymethod = "staticarray"
 replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "experiment.domain" => domain,
     "model_run.time.end_date" => eYear * "-12-31",
-    "model_run.flags.run_spinup" => false,
+    "model_run.flags.spinup.run_spinup" => false,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.rules.data_type" => data_type,

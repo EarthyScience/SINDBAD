@@ -6,15 +6,6 @@ export rainSnow_Tair
 end
 #! format: on
 
-function define(p_struct::rainSnow_Tair, forcing, land, helpers)
-    ## unpack parameters and forcing
-    precip = helpers.numbers.𝟘
-    rain = precip
-    snow = precip
-    @pack_land (precip, rain, snow) => land.rainSnow
-    return land
-end
-
 function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_rainSnow_Tair p_struct
@@ -24,16 +15,14 @@ function compute(p_struct::rainSnow_Tair, forcing, land, helpers)
     @unpack_land begin
         snowW ∈ land.pools
         ΔsnowW ∈ land.states
-        𝟘 ∈ helpers.numbers
-        (precip, rain, snow) ∈ land.rainSnow
+        (z_zero, o_one) ∈ land.wCycleBase
     end
+    rain = Rain
+    snow = z_zero
     ## calculate variables
     if Tair < Tair_thres
         snow = Rain
-        rain = zero(Rain)
-    else
-        rain = Rain
-        snow = zero(Rain)
+        rain = z_zero
     end
     precip = rain + snow
 

@@ -9,38 +9,29 @@ export gppAirT_CASA
 end
 #! format: on
 
-function define(p_struct::gppAirT_CASA, forcing, land, helpers)
-    gpp_f_airT = helpers.numbers.𝟙
-    ## pack land variables
-    @pack_land gpp_f_airT => land.gppAirT
-    return land
-end
-
 function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
     ## unpack parameters and forcing
     @unpack_gppAirT_CASA p_struct
     @unpack_forcing TairDay ∈ forcing
-    @unpack_land begin
-        𝟙 ∈ helpers.numbers
-    end
+    @unpack_land o_one ∈ land.wCycleBase
 
     ## calculate variables
     # CALCULATE T1: account for effects of temperature stress reflects the empirical observation that plants in very cold habitats typically have low maximum rates
     # T1 = 0.8 + 0.02 * Topt - 0.0005 * Topt ^ 2 this would make sense if Topt would be the same everywhere.
 
     # first half of the response curve
-    Tp1 = 𝟙 / (𝟙 + exp(ToptA * (-Texp))) / (𝟙 + exp(ToptA * (-Texp)))
-    TC1 = 𝟙 / Tp1
+    Tp1 = o_one / ((o_one + exp(ToptA * -Texp)) * (o_one + exp(ToptA * -Texp)))
+    TC1 = o_one / Tp1
     T1 =
-        TC1 / (𝟙 + exp(ToptA * (Topt - Texp - TairDay))) /
-        (𝟙 + exp(ToptA * (-Topt - Texp + TairDay)))
+        TC1 / ((o_one + exp(ToptA * (Topt - Texp - TairDay))) *
+        (o_one + exp(ToptA * (-Topt - Texp + TairDay))))
 
     # second half of the response curve
-    Tp2 = 𝟙 / (𝟙 + exp(ToptB * (-Texp))) / (𝟙 + exp(ToptB * (-Texp)))
-    TC2 = 𝟙 / Tp2
+    Tp2 = o_one / ((o_one + exp(ToptB * (-Texp))) * (o_one + exp(ToptB * (-Texp))))
+    TC2 = o_one / Tp2
     T2 =
-        TC2 / (𝟙 + exp(ToptB * (Topt - Texp - TairDay))) /
-        (𝟙 + exp(ToptB * (-Topt - Texp + TairDay)))
+        TC2 / ((o_one + exp(ToptB * (Topt - Texp - TairDay))) *
+        (o_one + exp(ToptB * (-Topt - Texp + TairDay))))
 
     # get the scalar
     gpp_f_airT = TairDay >= Topt ? T2 : T1

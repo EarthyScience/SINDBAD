@@ -28,18 +28,19 @@ arraymethod = "staticarray"
 replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
+    "forcing.default_forcing.data_path" => inpath,
     "model_run.time.end_date" => eYear * "-12-31",
     "model_run.flags.run_optimization" => optimize_it,
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.flags.spinup.save_spinup" => false,
-    "model_run.flags.catch_model_errors" => true,
-    "model_run.flags.run_spinup" => true,
+    "model_run.flags.catch_model_errors" => false,
+    "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,
-    "forcing.default_forcing.data_path" => inpath,
     "model_run.output.path" => outpath,
     "model_run.mapping.parallelization" => pl,
+    "optimization.algorithm" => "Optimization_GCMAES",
     "optimization.constraints.default_constraint.data_path" => obspath);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
@@ -124,10 +125,11 @@ foreach(costOpt) do var_row
     @show "plot obs", v
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
-    if loss_name == :nnseinv
+    if loss_name in (:nnseinv, :nseinv)
         lossMetric = Val(:nse)
     end
     (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
+    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
     obs_var_TMP = obs_var[:, 1, 1, 1]
     non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
     if length(non_nan_index) < 2
@@ -135,15 +137,19 @@ foreach(costOpt) do var_row
     else
         tspan = first(non_nan_index):last(non_nan_index)
     end
+    obs_σ = obs_σ[tspan]
+    obs_var = obs_var[tspan]
+    def_var = def_var[tspan, 1, 1, 1]
+    opt_var = opt_var[tspan, 1, 1, 1]
+
     xdata = [info.tem.helpers.dates.vector[tspan]...]
     obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
-    metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
-    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
     obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+    metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-    plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-    plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
-    plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
+    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
+    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+    plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
 # using JuliaFormatter

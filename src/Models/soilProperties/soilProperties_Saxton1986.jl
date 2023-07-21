@@ -1,4 +1,4 @@
-export soilProperties_Saxton1986, kSaxton1986, soilParamsSaxton1986
+export soilProperties_Saxton1986, unsatK, soilParamsSaxton1986
 
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton1986{T1,T2,T3,TN} <: soilProperties
@@ -51,11 +51,11 @@ function define(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
     p_θSat = zero(land.pools.soilW)
     p_ψSat = zero(land.pools.soilW)
 
-    p_unsatK = kSaxton1986::typeof(kSaxton1986)
+    unsat_k_model = Val(:kSaxton1986)
 
     ## pack land variables
     @pack_land begin
-        (p_kFC, p_kSat, p_unsatK, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP) => land.soilProperties
+        (p_kFC, p_kSat, p_kWP, p_α, p_β, p_θFC, p_θSat, p_θWP, p_ψFC, p_ψSat, p_ψWP, unsat_k_model) => land.soilProperties
         (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) => land.soilProperties
     end
     return land
@@ -116,7 +116,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Extended help
 """
-function kSaxton1986(land, helpers, sl)
+function unsatK(land, helpers, sl, ::Val{:kSaxton1986})
     @unpack_land begin
         (p_CLAY, p_SAND, soil_layer_thickness) ∈ land.soilWBase
         (n100, n1000, n2, n24, n3600, e1, e2, e3, e4, e5, e6, e7) ∈ land.soilProperties
@@ -128,7 +128,7 @@ function kSaxton1986(land, helpers, sl)
     SAND = p_SAND[sl] * n100
     soilD = soil_layer_thickness[sl]
     θ = soilW[sl] / soilD
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (𝟙 / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
 
     ## pack land variables
     return K
@@ -143,7 +143,7 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
     @unpack_soilProperties_Saxton1986 p_struct
 
     @unpack_land begin
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
         (p_CLAY, p_SAND) ∈ land.soilTexture
     end
 
@@ -161,9 +161,9 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
     # air entry pressure [kPa]
     ψ_e = abs(n100 * (d1 + d2 * θ_s))
     # θ = ones(typeof(CLAY), size(CLAY))
-    θ = 𝟙
+    θ = o_one
     if (ψ >= n10 & ψ <= n1500)
-        θ = ψ / A^(𝟙 / B)
+        θ = ψ / A^(o_one / B)
     end
     # clear ndx
     if (ψ >= ψ_e & ψ < n10)
@@ -175,12 +175,12 @@ function calcPropsSaxton1986(p_struct::soilProperties_Saxton1986, land, helpers,
         θ = θ_10 + (n10 - ψ) * (θ_s - θ_10) / (n10 - ψ_e)
     end
     # clear ndx
-    if (ψ >= 𝟘 & ψ < ψ_e)
+    if (ψ >=z_zero& ψ < ψ_e)
         θ = θ_s
     end
     # clear ndx
     # hydraulic conductivity [mm/day]: original equation for mm/s
-    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (𝟙 / θ))) * n1000 * n3600 * n24
+    K = e1 * (exp(e2 + e3 * SAND + (e4 + e5 * SAND + e6 * CLAY + e7 * CLAY^n2) * (o_one / θ))) * n1000 * n3600 * n24
     α = A
     β = B
     ## pack land variables

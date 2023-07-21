@@ -1,4 +1,4 @@
-export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
+export soilProperties_Saxton2006, unsatK, soilParamsSaxton2006
 
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton2006{T1,T2,T3,T4,T5,TN} <: soilProperties
@@ -55,7 +55,6 @@ export soilProperties_Saxton2006, kSaxton2006, soilParamsSaxton2006
     n36::TN = 36.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1500::TN = 1500.0 | (nothing, nothing) | "Saxton Parameters" | ""
     n1930::TN = 1930.0 | (nothing, nothing) | "Saxton Parameters" | ""
-
 end
 # b::T =  | (nothing, nothing) | "Saxton Parameters" | ""
 
@@ -63,7 +62,6 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
     end
     ## instantiate variables
@@ -80,10 +78,10 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     sp_ψSat = zero(land.pools.soilW)
 
     # generate the function handle to calculate soil hydraulic property
-    unsatK = kSaxton2006::typeof(kSaxton2006)
+    unsat_k_model = Val(:kSaxton2006)
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, n2, n3) => land.soilProperties
+    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, n2, n3, unsat_k_model) => land.soilProperties
     return land
 end
 
@@ -92,7 +90,7 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     @unpack_soilProperties_Saxton2006 p_struct
 
     @unpack_land begin
-        (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
+        (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) ∈ land.soilProperties
     end
     ## calculate variables
     # calculate & set the soil hydraulic properties for each layer
@@ -112,7 +110,7 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, unsatK, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
+    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
     return land
 end
 
@@ -170,8 +168,6 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Outputs:
  - K: the hydraulic conductivity at unsaturated land.pools.soilW [in mm/day]
- - is calculated using original equation if helpers.flags.useLookupK == 0.0
- - uses instantiated lookup table if helpers.flags.useLookupK == 1
 
 # Modifies:
 
@@ -191,13 +187,13 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
-function kSaxton2006(land, helpers, sl)
+function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     @unpack_land begin
         (n2, n3) ∈ land.soilProperties
         (p_β, p_kSat, p_wSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (𝟘, 𝟙) ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
@@ -206,7 +202,7 @@ function kSaxton2006(land, helpers, sl)
     θ_dos = clamp_01(θ_dos)
     β = p_β[sl]
     kSat = p_kSat[sl]
-    λ = 𝟙 / β
+    λ = o_one / β
     K = kSat * ((θ_dos)^(n3 + (n2 / λ)))
     return K
 end
@@ -248,15 +244,15 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
 
     @unpack_soilProperties_Saxton2006 p_struct
     @unpack_land begin
-        (𝟘, 𝟙, num_type, sNT) ∈ helpers.numbers
         (st_CLAY, st_ORGM, st_SAND) ∈ land.soilTexture
+        (z_zero, o_one) ∈ land.wCycleBase
     end
 
     CLAY = st_CLAY[sl]
     SAND = st_SAND[sl]
     ORGM = st_ORGM[sl]
     # ORGM = sp_ORGM[sl]
-    # ORGM = 𝟘
+    # ORGM = z_zero
     # CLAY = CLAY
     # SAND = SAND
     # ORGM = ORGM
@@ -280,7 +276,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # θ_s: Saturated moisture [0 kPa], normal density, #v
     # rho_N: Normal density; g cm-3
     θ_s = θ_33 + θ_s_33 - i1 * SAND + i2
-    rho_N = (𝟙 - θ_s) * gravelDensity
+    rho_N = (o_one - θ_s) * gravelDensity
     ## Density effects
     # rho_DF: Adjusted density; g cm-3
     # θ_s_DF: Saturated moisture [0 kPa], adjusted density, #v
@@ -289,7 +285,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # DF: Density adjustment Factor [0.9-1.3]
     rho_DF = rho_N * DF
     # θ_s_DF = 1 - (rho_DF / gravelDensity); # original but does not include θ_s
-    θ_s_DF = θ_s * (𝟙 - (rho_DF / gravelDensity)) # may be includes θ_s
+    θ_s_DF = θ_s * (o_one - (rho_DF / gravelDensity)) # may be includes θ_s
     θ_33_DF = θ_33 - n02 * (θ_s - θ_s_DF)
     θ_1500_DF = θ_1500 - n02 * (θ_s - θ_s_DF)
     θ_s_33_DF = θ_s_DF - θ_33_DF
@@ -304,7 +300,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # λ: Slope of logarithmic tension-moisture curve
     # Ks: Saturated conductivity [matric soil], mm h-1
     # K_θ: Unsaturated conductivity at moisture θ; mm h-1
-    λ = 𝟙 / B
+    λ = o_one / B
     Ks = n1930 * ((θ_s - θ_33)^(n3 - λ)) * n24
     # K_θ = Ks * ((θ / θ_s) ^ (3 + (2 / λ)))
     ## Gravel Effects
@@ -314,10 +310,10 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # Rw: Weight fraction of gravel [decimal], g g-1
     # Kb: Saturated conductivity [bulk soil], mm h-1
     αRho = matricSoilDensity / gravelDensity
-    Rv = (αRho * Rw) / (𝟙 - Rw * (𝟙 - αRho))
-    rho_B = rho_N * (𝟙 - Rv) + Rv * gravelDensity
-    # PAW_B = PAW * (𝟙 - Rv)
-    Kb = Ks * ((𝟙 - Rw) / (𝟙 - Rw * (𝟙 - (n3 * αRho / n2))))
+    Rv = (αRho * Rw) / (o_one - Rw * (o_one - αRho))
+    rho_B = rho_N * (o_one - Rv) + Rv * gravelDensity
+    # PAW_B = PAW * (o_one - Rv)
+    Kb = Ks * ((o_one - Rw) / (o_one - Rw * (o_one - (n3 * αRho / n2))))
     ## Salinity Effects
     # ϕ_o: Osmotic potential at θ = θ_s; kPa
     # ϕ_o_θ: Osmotic potential at θ < θ_s; kPa
@@ -330,7 +326,7 @@ function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers,
     # θSat = θ_s_DF
     θSat = θ_s
     kSat = Kb
-    ψSat = 𝟘
+    ψSat = z_zero
     # θFC = θ_33_DF
     θFC = θ_33
     kFC = kSat * ((θFC / θSat)^(n3 + (n2 / λ)))

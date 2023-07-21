@@ -12,10 +12,10 @@ function compute(p_struct::fAPAR_LAI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         LAI ∈ land.states
-        𝟙 ∈ helpers.numbers
+        (z_zero, o_one) ∈ land.wCycleBase
     end
     ## calculate variables
-    fAPAR = 𝟙 - exp(-(LAI * kEffExt))
+    fAPAR = o_one - exp(-(LAI * kEffExt))
 
     ## pack land variables
     @pack_land fAPAR => land.states

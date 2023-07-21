@@ -5,7 +5,7 @@ struct snowFraction_none <: snowFraction end
 function define(p_struct::snowFraction_none, forcing, land, helpers)
 
     ## calculate variables
-    frac_snow = helpers.numbers.𝟘
+    frac_snow = land.wCycleBase.z_zero
 
     ## pack land variables
     @pack_land frac_snow => land.states

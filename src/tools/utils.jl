@@ -13,6 +13,8 @@ export clamp_01
 export min_0, max_0, min_1, max_1
 export valToSymbol
 export getFrac
+export showParamsOfAModel
+export showParamsOfAllModels
 
 """
     noStackTrace()
@@ -608,8 +610,8 @@ end
                     Expr(:ref, s_main, ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     c_ix)))
 
             c_ix += 1
@@ -655,8 +657,8 @@ end
                     Expr(:ref, s_comp, c_ix),
                     Expr(:., :(helpers.pools.zeros), QuoteNode(s_main)),
                     Expr(:., :(helpers.pools.ones), QuoteNode(s_main)),
-                    :(helpers.numbers.𝟘),
-                    :(helpers.numbers.𝟙),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
                     ix)))
             c_ix += 1
         end
@@ -737,3 +739,40 @@ function getFrac(num, den)
     end
     return rat
 end
+
+
+"""
+showParamsOfAModel(models, model::Symbol)
+shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
+"""
+function showParamsOfAModel(models, model::Symbol)
+    model_names = Symbol.(supertype.(typeof.(models)))
+    approach_names = nameof.(typeof.(models))
+    m_index = findall(m -> m == model, model_names)[1]
+    mod = models[m_index];
+    println("model: $(model_names[m_index])")
+    println("approach: $(approach_names[m_index])")
+    pnames = fieldnames(typeof(mod))
+    if length(pnames) == 0
+        println("parameters: none")
+    else
+        println("parameters:")
+        foreach(pnames) do fn
+            println("   $fn => $(getproperty(mod, fn))")
+        end
+    end
+    return nothing
+end
+
+"""
+showParamsOfAllModels(models)
+shows the current parameters of all given models
+"""
+function showParamsOfAllModels(models)
+    for mn in sort([nameof.(supertype.(typeof.(models)))...])
+        showParamsOfAModel(models, mn)
+        println("------------------------------------------------------------------")
+    end
+    return nothing
+end
+    

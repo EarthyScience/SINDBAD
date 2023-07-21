@@ -14,7 +14,7 @@ function compute(p_struct::cTauSoilT_Q10, forcing, land, helpers)
     @unpack_forcing Tair ∈ forcing
 
     ## calculate variables
-    # CALCULATE EFFECT OF TEMPERATURE ON psoil CARBON FLUXES
+    # CALCULATE EFFECT OF TEMPERATURE ON SOIL CARBON FLUXES
     p_k_f_soilT = Q10^((Tair - Tref) / Q10_base)
 
     ## pack land variables
