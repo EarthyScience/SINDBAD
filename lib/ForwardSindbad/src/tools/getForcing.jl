@@ -245,11 +245,11 @@ function getForcing(info::NamedTuple)
         @info "   Getting: $(k)"
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         nc, yax = get_yax_from_source(nc, doOnePath, data_path, info, vinfo, Val(Symbol(info.model_run.rules.data_backend)))
-        subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
+        yax = subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
         if vinfo.space_time_type == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
-    
+        yax
     end
     return get_forcing_info_and_namedTuple(incubes, info, vinfo, f_sizes)
 end
