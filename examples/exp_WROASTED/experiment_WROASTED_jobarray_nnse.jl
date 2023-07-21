@@ -15,13 +15,13 @@ site_info = Sindbad.CSV.File(
     header=false);
 domain = site_info[site_index][2]
 
-experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
+experiment_json = "../exp_WROASTED/settings_WROASTED/experiment_nnse.json"
 inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
 obspath = inpath;
 forcingConfig = "forcing_$(forcing).json";
 
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_nse";
+outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_full_nnse";
 
 sYear = "1979"
 eYear = "2017"
