@@ -18,7 +18,6 @@ sets the carbon allocation to zero (nothing to allocated)
 # instantiate:
 
 *Inputs*
-- helpers.numbers.𝟙
 
 *Outputs*
 - land.cAllocation.c_allocation: carbon allocation

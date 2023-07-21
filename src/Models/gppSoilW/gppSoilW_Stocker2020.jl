@@ -8,11 +8,12 @@ end
 #! format: on
 
 function define(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
-    gpp_f_soilW = helpers.numbers.𝟙
-    ttwo = helpers.numbers.sNT(2.0)
+    @unpack_gppSoilW_Stocker2020 p_struct
+    t_two = oftype(q, 2.0)
+    gpp_f_soilW = oftype(q, 1.0)
 
     ## pack land variables
-    @pack_land (ttwo, gpp_f_soilW) => land.gppSoilW
+    @pack_land (t_two, gpp_f_soilW) => land.gppSoilW
     return land
 end
 
@@ -24,17 +25,16 @@ function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
     @unpack_land begin
         (s_wFC, s_wWP) ∈ land.soilWBase
         soilW ∈ land.pools
-        (𝟙, 𝟘) ∈ helpers.numbers
-        ttwo ∈ land.gppSoilW
+        t_two ∈ land.gppSoilW
+        (z_zero, o_one) ∈ land.wCycleBase
     end
-
     ## calculate variables
     SM = sum(soilW)
     maxAWC = max_0(s_wFC - s_wWP)
     actAWC = max_0(SM - s_wWP)
     SM_nor = min_1(actAWC / maxAWC)
-    tfW = -q * (SM_nor - θstar)^ttwo + 𝟙
-    c_allocation_f_soilW = SM_nor <= θstar ? tfW : one(tfW)
+    tfW = -q * (SM_nor - θstar)^t_two + o_one
+    c_allocation_f_soilW = SM_nor <= θstar ? tfW : o_one
     gpp_f_soilW = clamp_01(c_allocation_f_soilW)
 
     ## pack land variables

@@ -398,7 +398,10 @@ function getObservation(info::NamedTuple, ::Val{:yaxarray})
         has_mask = false
         dataPath_mask = mask_path
         if hasproperty(vinfo, :sel_mask)
-            vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            vinfo_sel_mask = default_info
+            if !isnothing(vinfo.sel_mask) 
+                vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            end
             dataPath_mask = vinfo_sel_mask.data_path
             if !isnothing(dataPath_mask)
                 nc_mask = getNCForMask(dataPath_mask)

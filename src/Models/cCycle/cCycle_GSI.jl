@@ -3,22 +3,20 @@ export cCycle_GSI
 struct cCycle_GSI <: cCycle end
 
 function define(p_struct::cCycle_GSI, forcing, land, helpers)
-    @unpack_land begin
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
-    end
     ## instantiate variables
     c_eco_flow = zero(land.pools.cEco)
     c_eco_out = zero(land.pools.cEco)
     c_eco_influx = zero(land.pools.cEco)
     zero_c_eco_flow = zero(c_eco_flow)
     zero_c_eco_influx = zero(c_eco_influx)
+    ΔcEco = zero(land.pools.cEco)
     c_eco_npp = zero(land.pools.cEco)
 
     cEco_prev = land.pools.cEco
     ## pack land variables
 
     @pack_land begin
-        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx) =>
+        (c_eco_flow, c_eco_influx, c_eco_out, cEco_prev, c_eco_npp, zero_c_eco_flow, zero_c_eco_influx, ΔcEco) =>
             land.states
     end
     return land
@@ -29,7 +27,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (c_allocation,
-            c_efflux,
+            c_eco_efflux,
             c_eco_flow,
             c_eco_influx,
             cEco_prev,
@@ -43,12 +41,11 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
         ΔcEco ∈ land.states
         gpp ∈ land.fluxes
         (c_flow_order, c_giver, c_taker) ∈ land.cCycleBase
-        (𝟘, 𝟙, num_type) ∈ helpers.numbers
     end
     ## reset ecoflow and influx to be zero at every time step
     @rep_vec c_eco_flow => helpers.pools.zeros.cEco
     @rep_vec c_eco_influx => helpers.pools.zeros.cEco
-    # @rep_vec ΔcEco => ΔcEco .* 𝟘
+    # @rep_vec ΔcEco => ΔcEco .* z_zero
 
     ## compute losses
     for cl ∈ eachindex(cEco)
@@ -58,7 +55,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
 
     ## gains to vegetation
     for zv ∈ getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
-        c_eco_npp_zv = gpp * c_allocation[zv] - c_efflux[zv]
+        c_eco_npp_zv = gpp * c_allocation[zv] - c_eco_efflux[zv]
         @rep_elem c_eco_npp_zv => (c_eco_npp, zv, :cEco)
         @rep_elem c_eco_npp_zv => (c_eco_influx, zv, :cEco)
     end
@@ -68,8 +65,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     # find out why. Led to having zeros in most of the carbon pools of the
     # explicit simple
     # old before cleanup was removed during biomascat when cFlowAct was changed to gsi. But original cFlowAct CASA was writing c_flow_order. So; in biomascat; the fields do not exist & this block of code will not work.
-    for jix ∈ eachindex(c_flow_order)
-        fO = c_flow_order[jix]
+    for fO ∈ c_flow_order
         take_r = c_taker[fO]
         give_r = c_giver[fO]
         tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * p_A[fO]
@@ -100,7 +96,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     nee = eco_respiration - gpp
 
     # cEco_prev = cEco 
-    # cEco_prev = cEco_prev .* 𝟘 .+ cEco
+    # cEco_prev = cEco_prev .*z_zero.+ cEco
     @rep_vec cEco_prev => cEco
     @pack_land cEco => land.pools
 
@@ -110,7 +106,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         (nee, npp, auto_respiration, eco_respiration, hetero_respiration) => land.fluxes
-        (ΔcEco, c_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
+        (ΔcEco, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp, cEco_prev) => land.states
     end
     return land
 end
@@ -139,7 +135,7 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.fluxes.eco_respiration: values for ecosystem respiration
  - land.fluxes.hetero_respiration: values for heterotrophic respiration
  - land.pools.cEco: values for the different carbon pools
- - land.states.c_efflux:
+ - land.states.c_eco_efflux:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cCycle_GSI
