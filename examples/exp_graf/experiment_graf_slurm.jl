@@ -31,7 +31,7 @@ noStackTrace()
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-@everywhere obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)));
+@everywhere obs = ForwardSindbad.getObservation(info);
 @everywhere info, forcing = ForwardSindbad.getForcing(info,
     Val(Symbol(info.model_run.rules.input_data_backend)));
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
