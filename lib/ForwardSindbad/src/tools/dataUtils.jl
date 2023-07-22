@@ -56,10 +56,10 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
 end
 
 function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
-    # if !isnothing(bounds_qc) && !isnothing(yax_qc)
-    #     yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
-    # end
     yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, Val(T)), yax)
+    if !isnothing(bounds_qc) && !isnothing(yax_qc)
+        yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
+    end
     return yax
 end
 
