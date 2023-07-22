@@ -130,12 +130,12 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_
         yax = get_spatial_subset(info.forcing.subset, yax)
     end
 
-    vfill = zero(eltype(yax))
+    #todo mean of the data instead of zero or nan
+    vfill = num_type(0.0)
     if fill_nan
         vfill = num_type(NaN)
     end
     if clean_data
-        #todo mean of the data instead of zero
         yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, Val(num_type))
     else
         yax = map(yax_point -> cleanInvalid(yax_point, vfill), yax)
