@@ -27,7 +27,7 @@ for (i, tj) ∈ enumerate(tjs)
 
     output = setupOutput(info)
 
-    forc = getKeyedArrayFromYaxArray(forcing)
+    forc = getKeyedArrayWithNames(forcing)
     # linit= createLandInit(info.tem);
 
     loc_space_maps,

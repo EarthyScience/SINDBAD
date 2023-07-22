@@ -103,7 +103,7 @@ for site_index in 1:2
         
         info, forcing = getForcing(info);
         
-        forc = getKeyedArrayFromYaxArray(forcing);
+        forc = getKeyedArrayWithNames(forcing);
         output = setupOutput(info);
                 
         loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
@@ -123,7 +123,7 @@ for site_index in 1:2
         
         outcubes = output.data
         observations = getObservation(info);
-        obs = getObsKeyedArrayFromYaxArray(observations);
+        obs = getKeyedArray(observations);
 
 
         ml_data_path = joinpath("/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD/ERAinterim.v2/data", domain * ".1979.2017.daily.nc")
