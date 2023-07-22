@@ -101,7 +101,7 @@ for site_index in 1:2
 
         info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
         
-        info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+        info, forcing = getForcing(info);
         
         forc = getKeyedArrayFromYaxArray(forcing);
         output = setupOutput(info);
@@ -122,7 +122,7 @@ for site_index in 1:2
             f_one)
         
         outcubes = output.data
-        observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+        observations = getObservation(info);
         obs = getObsKeyedArrayFromYaxArray(observations);
 
 

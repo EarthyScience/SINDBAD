@@ -4,12 +4,12 @@ function setup_wrosted()
     # settings 
     experiment_json = "../exp_hybrid/settings_gradWroasted/experiment.json"
     info = getExperimentInfo(experiment_json)#; replace_info=replace_info); # note that this will modify info
-    info, forcing = getForcing(info, Val{:zarr}())
+    info, forcing = getForcing(info)
     # Sindbad.eval(:(error_catcher = []));
     land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     output = setupOutput(info)
     forc = getKeyedArrayFromYaxArray(forcing)
-    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
+    observations = getObservation(info)
     obs = getKeyedArrayFromYaxArray(observations)
 
     loc_space_maps,

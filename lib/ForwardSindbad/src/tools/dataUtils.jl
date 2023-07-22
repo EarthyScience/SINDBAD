@@ -1,4 +1,4 @@
-export getDataDims, getNumberOfTimeSteps, cleanInputData, getAbsDataPath
+export getDataDims, getNumberOfTimeSteps, getAbsDataPath
 export AllNaN
 export getForcingTimeSize
 export getForcingForTimeStep
@@ -7,6 +7,17 @@ export getKeyedArrayFromYaxArray
 export getNamedDimsArrayFromYaxArray
 export getDimArrayFromYaxArray
 export getObsKeyedArrayFromYaxArray
+export mapCleanData
+export booleanize_mask
+
+
+function booleanize_mask(yax_mask)
+    dfill = 0.0
+    yax_mask = map(yax_point -> cleanInvalid(yax_point, dfill), yax_mask)
+    yax_mask_bits = all.(>(dfill), yax_mask)
+    return yax_mask_bits
+end
+
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -16,15 +27,58 @@ Add skipping filter for pixels with all nans in YAXArrays
 struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
-function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
-    datapoint = isnan(datapoint) ? dfill : datapoint
-    datapoint = applyUnitConversion(datapoint, vinfo.source_to_sindbad_unit,
-        vinfo.additive_unit_conversion)
+
+"""
+    applyQCBound(data_in, data_qc, bounds_qc, dfill)
+
+Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
+"""
+function applyQCBound(data_in, data_qc, bounds_qc, dfill)
+    data_out = data_in
+    if data_qc < first(bounds_qc) || data_qc > last(bounds_qc)
+        data_out = dfill
+    end
+    return data_out
+end
+
+"""
+    applyUnitConversion(data_in, conversion, isadditive=false)
+
+Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
+"""
+function applyUnitConversion(data_in, conversion, isadditive=false)
+    if isadditive
+        data_out = data_in + conversion
+    else
+        data_out = data_in * conversion
+    end
+    return data_out
+end
+
+function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
+    yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, Val(T)), yax)
+    if !isnothing(bounds_qc) && !isnothing(yax_qc)
+        yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
+    end
+    return yax
+end
+
+function cleanInvalid(yax_point, dfill)
+    yax_point = ismissing(yax_point) ? dfill : yax_point
+    yax_point = isnan(yax_point) ? dfill : yax_point
+    yax_point = isinf(yax_point) ? dfill : yax_point
+    return yax_point
+end
+
+function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
+    yax_point = cleanInvalid(yax_point, dfill)
+    yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
+    vinfo.additive_unit_conversion)
     bounds = vinfo.bounds
     if !isnothing(bounds)
-        datapoint = clamp(datapoint, first(bounds), last(bounds))
+        yax_point = clamp(yax_point, first(bounds), last(bounds))
     end
-    return ismissing(datapoint) ? T(NaN) : T(datapoint)
+    return T(yax_point)
 end
 
 
@@ -36,8 +90,8 @@ function getAbsDataPath(info, data_path)
 end
 
 function getDataDims(c, mappinginfo)
-    inax = String[]
-    axnames = YAXArrays.Axes.axname.(caxes(c))
+    inax = [] # String[]
+    axnames = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
     inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
     return InDims(inax...; artype=KeyedArray, filter=AllNaN())
@@ -153,9 +207,10 @@ getKeyedArrayFromYaxArray(input::NamedTuple)
 """
 function getKeyedArrayFromYaxArray(input)
     ks = input.variables
-    keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+    in_cubes = input.data
+    keyedData = map(in_cubes) do c
+        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+        KeyedArray(Array(c.data); Tuple(k => DimensionalData.lookup(c, k) for k ∈ namesCube)...)
     end
     return (; Pair.(ks, keyedData)...)
 end
@@ -167,8 +222,8 @@ getObsKeyedArrayFromYaxArray(input::NamedTuple)
 function getObsKeyedArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+        KeyedArray(Array(c.data); Tuple(k => DimensionalData.lookup(c, k) for k ∈ namesCube)...)
     end
     return keyedData
 end

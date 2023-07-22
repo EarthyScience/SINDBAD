@@ -8,13 +8,13 @@ experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
-info, forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 obs = getKeyedArrayFromYaxArray(observations);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =

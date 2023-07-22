@@ -14,7 +14,7 @@ eYear = "2017"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
-domain = "FI-Sod"
+domain = "AU-DaP"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -49,7 +49,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
@@ -91,7 +91,7 @@ land_spin = land_init_space[1];
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 # obs = getKeyedArrayFromYaxArray(observations);
 obs = getObsKeyedArrayFromYaxArray(observations);
 
