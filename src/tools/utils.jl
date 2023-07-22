@@ -1,5 +1,5 @@
 export PARAMFIELDS, @unpack_land, @pack_land, @unpack_forcing
-export getzix, setTupleField, setTupleSubfield, applyUnitConversion
+export getzix, setTupleField, setTupleSubfield
 export offDiag, offDiagUpper, offDiagLower, cumSum!
 export flagUpper, flagLower
 export nonUnique
@@ -63,19 +63,6 @@ function nonUnique(x::AbstractArray{T}) where {T}
     return duplicatedvector
 end
 
-"""
-    applyUnitConversion(data_in, conversion, isadditive=false)
-
-Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
-"""
-function applyUnitConversion(data_in, conversion, isadditive=false)
-    if isadditive
-        data_out = data_in + conversion
-    else
-        data_out = data_in * conversion
-    end
-    return data_out
-end
 
 """
     dictToNamedTuple(d::DataStructures.OrderedDict)

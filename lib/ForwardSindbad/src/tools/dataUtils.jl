@@ -1,4 +1,4 @@
-export getDataDims, getNumberOfTimeSteps, cleanInputData, getAbsDataPath
+export getDataDims, getNumberOfTimeSteps, getAbsDataPath
 export AllNaN
 export getForcingTimeSize
 export getForcingForTimeStep
@@ -7,7 +7,7 @@ export getKeyedArrayFromYaxArray
 export getNamedDimsArrayFromYaxArray
 export getDimArrayFromYaxArray
 export getObsKeyedArrayFromYaxArray
-export mapCleanForcingData
+export mapCleanData
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -18,17 +18,66 @@ struct AllNaN <: YAXArrays.DAT.ProcFilter end
 YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 
 
-function mapCleanForcingData(yax, dfill, vinfo, ::Val{T}) where {T}
-    yax = map(x -> ismissing(x) ? dfill : x, yax)
-    yax = map(x -> isnan(x) ? dfill : x, yax)
-    yax = map(x -> applyUnitConversion(x, vinfo.source_to_sindbad_unit,
-    vinfo.additive_unit_conversion), yax)
+"""
+    applyQCBound(data_in, data_qc, bounds_qc, dfill)
+
+Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
+"""
+function applyQCBound(data_in, data_qc, bounds_qc, dfill)
+    data_out = data_in
+    if data_qc < first(bounds_qc) || data_qc > last(bounds_qc)
+        data_out = dfill
+    end
+    return data_out
+end
+
+"""
+    applyUnitConversion(data_in, conversion, isadditive=false)
+
+Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
+"""
+function applyUnitConversion(data_in, conversion, isadditive=false)
+    if isadditive
+        data_out = data_in + conversion
+    else
+        data_out = data_in * conversion
+    end
+    return data_out
+end
+
+function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
+    yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, Val(T)), yax)
+    
+    # yax = mapCleanData(yax, dfill, vinfo, Val(T))
+    if !isnothing(bounds_qc) && !isnothing(yax_qc)
+        yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
+    end
+    return yax
+end
+
+function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
+    yax_point = ismissing(yax_point) ? dfill : yax_point
+    yax_point = isnan(yax_point) ? dfill : yax_point
+    yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
+    vinfo.additive_unit_conversion)
     bounds = vinfo.bounds
     if !isnothing(bounds)
-        yax = map(x -> clamp(x, first(bounds), last(bounds)), yax)
+        yax_point = clamp(yax_point, first(bounds), last(bounds))
     end
-    return T.(yax)
+    return T(yax_point)
 end
+
+# function mapCleanData(yax, dfill, vinfo, ::Val{T}) where {T}
+#     yax = map(x -> ismissing(x) ? dfill : x, yax)
+#     yax = map(x -> isnan(x) ? dfill : x, yax)
+#     yax = map(x -> applyUnitConversion(x, vinfo.source_to_sindbad_unit,
+#     vinfo.additive_unit_conversion), yax)
+#     bounds = vinfo.bounds
+#     if !isnothing(bounds)
+#         yax = map(x -> clamp(x, first(bounds), last(bounds)), yax)
+#     end
+#     return T.(yax)
+# end
 
 
 function getAbsDataPath(info, data_path)
