@@ -101,12 +101,12 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
 info, forcing = getForcing(info)
-forc = getKeyedArrayFromYaxArray(forcing)
+forc = getKeyedArrayWithNames(forcing)
 
 output = setupOutput(info)
 
 observations = getObservation(info);
-obs = getObsKeyedArrayFromYaxArray(observations);
+obs = getKeyedArray(observations);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output,

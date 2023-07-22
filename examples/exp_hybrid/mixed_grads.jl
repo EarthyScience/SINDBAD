@@ -14,7 +14,7 @@ experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json)
 info = setupExperiment(info);
 forcing = getForcing(info);
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 
 forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 
