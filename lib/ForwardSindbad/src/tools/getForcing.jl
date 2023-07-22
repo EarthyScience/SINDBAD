@@ -115,7 +115,7 @@ function subset_space_in_data(ss, v)
     return v
 end
 
-function subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
+function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type = info.tem.helpers.numbers.num_type)
 
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
@@ -136,13 +136,20 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)
         yax = subset_space_in_data(info.forcing.subset, yax)
     end
 
-    #todo mean of the data instead of zero
-    numtype = Val(info.tem.helpers.numbers.num_type)
-    vfill = zero(eltype(yax))
-    return mapCleanForcingData(yax, vfill, vinfo, numtype)
+    if clean_data
+        #todo mean of the data instead of zero
+        vfill = zero(eltype(yax))
+        if fill_nan
+            vfill = num_type(NaN)
+        end
+        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, Val(num_type))
+    else
+        yax = num_type.(yax)
+    end
+    return yax
 end
 
-function get_forcing_info_and_namedTuple(incubes, info, vinfo, f_sizes)
+function get_forcing_info(incubes, f_sizes, vinfo, info)
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "getForcing: getting variable name..."
@@ -181,11 +188,11 @@ function load_data(data_path)
     return nc
 end
 
-function load_data_from_path(nc, doOnePath, vinfo, data_path)
-    if !doOnePath 
-        data_path = getAbsDataPath(info, getfield(vinfo, :data_path))
-        @info "  data_path: $(data_path)"
-        nc = load_data(data_path)
+function load_data_from_path(nc, data_path, vinfo, info)
+    data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
+    if !isnothing(data_path_v) && (data_path_v !== data_path) 
+        @info "  data_path: $(data_path_v)"
+        nc = load_data(data_path_v)
     elseif isnothing(nc)
         @info "  one_data_path: $(data_path)"
         nc = load_data(data_path)
@@ -194,8 +201,8 @@ function load_data_from_path(nc, doOnePath, vinfo, data_path)
     return nc
 end
 
-function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:netcdf})
-    nc = load_data_from_path(nc, doOnePath, vinfo, data_path)
+function get_yax_from_source(nc, data_path, vinfo, info, ::Val{:netcdf})
+    nc = load_data_from_path(nc, data_path, vinfo, info)
     v = nc[vinfo.source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
@@ -217,8 +224,8 @@ function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:netcd
 end
 
 
-function get_yax_from_source(nc, doOnePath, data_path, info, vinfo, ::Val{:zarr})
-    nc = load_data_from_path(nc, doOnePath, vinfo, data_path)
+function get_yax_from_source(nc, data_path, vinfo, info, ::Val{:zarr})
+    nc = load_data_from_path(nc, data_path, vinfo, info)
     yax = nc[vinfo.source_variable]
     return nc, yax
 end
@@ -226,10 +233,8 @@ end
 
 function getForcing(info::NamedTuple)
     nc = nothing
-    doOnePath = false
     data_path = info.forcing.default_forcing.data_path
     if !isnothing(data_path)
-        doOnePath = true
         data_path = getAbsDataPath(info, data_path)
     end
 
@@ -249,14 +254,15 @@ function getForcing(info::NamedTuple)
     f_sizes = nothing
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
-        nc, yax = get_yax_from_source(nc, doOnePath, data_path, info, vinfo, Val(Symbol(info.model_run.rules.input_data_backend)))
+        nc, yax = get_yax_from_source(nc, data_path, vinfo, info, Val(Symbol(info.model_run.rules.input_data_backend)))
         if vinfo.space_time_type == "spatiotemporal"
             f_sizes = collect_forcing_sizes(info, yax)
         end
-        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, info, vinfo)   
-        @info "     sindbad_var: $(k) loaded\n "
+        # incube = yax  
+        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info)   
+        @info "     sindbad_var: $(k)\n "
         incube
     end
-    return get_forcing_info_and_namedTuple(incubes, info, vinfo, f_sizes)
+    return get_forcing_info(incubes, f_sizes, vinfo, info)
 end
 

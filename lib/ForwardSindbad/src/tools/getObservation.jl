@@ -2,35 +2,6 @@ export getObservation, cleanObsData
 
 
 
-function mapCleanForcingData(yax, yax_qc,  vinfo, bounds, bounds_qc, ::Val{T}) where {T}
-    dfill = T(NaN)
-    yax = mapCleanForcingData(yax, dfill, vinfo, Val(T))
-    # if !isnothing(bounds_qc)
-    #     if datapoint_qc < first(bounds_qc) || datapoint_qc > last(bounds_qc)
-    #         datapoint = T(NaN)
-    #     end
-    # end
-    return T.(yax)
-end
-
-function cleanObsData(datapoint, datapoint_qc, vinfo_data, bounds, bounds_qc, ::Val{T}) where {T}
-    datapoint = applyUnitConversion(datapoint,
-        vinfo_data.source_to_sindbad_unit,
-        vinfo_data.additive_unit_conversion)
-    if !isnothing(bounds)
-        if datapoint < first(bounds) || datapoint > last(bounds)
-            datapoint = T(NaN)
-        end
-    end
-    if !isnothing(bounds_qc)
-        if datapoint_qc < first(bounds_qc) || datapoint_qc > last(bounds_qc)
-            datapoint = T(NaN)
-        end
-    end
-    return ismissing(datapoint) ? T(NaN) : T(datapoint)
-end
-
-
 function getNCFromPath(data_path::String, ::Val{:netcdf})
     nc_data = load_data(data_path)
     return nc_data
@@ -76,23 +47,6 @@ function getObsYax(v, nc, info::NamedTuple, variable_name::String, data_path::St
     return yax
 end
 
-function time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info, forcing_info)
-    if hasproperty(cyax, Symbol(forcing_info.dimensions.time))
-        cyax = cyax[time=(Date(info.tem.helpers.dates.start_date),
-            Date(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step)]
-    end
-    if hasproperty(cyax_unc, Symbol(forcing_info.dimensions.time))
-        cyax_unc = cyax_unc[time=(Date(info.tem.helpers.dates.start_date),
-            Date(info.tem.helpers.dates.end_date) +
-            info.tem.helpers.dates.time_step)]
-    end
-    if hasproperty(yax_mask, Symbol(forcing_info.dimensions.time))
-        yax_mask = yax_mask[time=(Date(info.tem.helpers.dates.start_date),
-            Date(info.tem.helpers.dates.end_date) +
-            info.tem.helpers.dates.time_step)]
-    end
-    return cyax, cyax_unc, yax_mask
-end
 
 """
 getObservation(info)
@@ -130,7 +84,7 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         vinfo = getproperty(info.optimization.constraints.variables, k)
         vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
         vinfo_unc = nothing
-        vinfo_sel_mask = nothing
+        vinfo_mask = nothing
 
         src_var = vinfo_data.source_variable
 
@@ -200,8 +154,8 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
         has_mask = false
         data_path_mask = mask_path
         if hasproperty(vinfo, :sel_mask)
-            vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
-            data_path_mask = vinfo_sel_mask.data_path
+            vinfo_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            data_path_mask = vinfo_mask.data_path
             if !isnothing(data_path_mask)
                 nc_mask = YAXArrays.open_dataset(zopen(data_path_mask))
                 has_mask = true
@@ -295,186 +249,6 @@ function getObservation(info::NamedTuple, ::Val{:zarr})
     return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
 end
 
-"""
-getObservation(info)
-"""
-function getObservation(info::NamedTuple)
-    forcing_info = nothing
-    if hasproperty(info.tem, :forcing)
-        forcing_info = info.tem.forcing
-    else
-        error("info.tem does not include forcing dimensions. To get the observations properly, dimension information from forcing is necessary. Run: 
-        
-        info, forcing = getForcing(info);
-        
-        before running getObservation.")
-    end
-    permutes = forcing_info.dimensions.permute
-    doOnePath = false
-    data_path = info.optimization.constraints.default_constraint.data_path
-    nc = nothing
-    nc_qc = nothing
-    nc_unc = nothing
-    if !isnothing(data_path)
-        doOnePath = true
-        data_path = getAbsDataPath(info, data_path)
-    end
-    varnames = Symbol.(info.optimization.variables_to_constrain)
-    nc_mask = nothing
-    mask_path = nothing
-    if :one_sel_mask ∈ keys(info.optimization.constraints)
-        if !isnothing(info.optimization.constraints.one_sel_mask)
-            mask_path = getAbsDataPath(info, info.optimization.constraints.one_sel_mask)
-            nc_mask = getNCForMask(mask_path)
-        end
-    end
-    obscubes = []
-    @info "getObservation: getting observation variables..."
-    default_info = info.optimization.constraints.default_constraint
-    num_type = Val{info.tem.helpers.numbers.num_type}()
-    set_numtype = info.tem.helpers.numbers.sNT
-    tar_dims = get_target_dimensions(info)
-
-    map(varnames) do k
-        v = nothing
-        vinfo = getproperty(info.optimization.constraints.variables, k)
-        vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
-
-        src_var = vinfo_data.source_variable
-
-        yax = nothing
-        yax_qc = nothing
-        yax_unc = nothing
-        yax_mask = nothing
-        
-        nc, yax = get_yax_from_source(nc, doOnePath, data_path, info, vinfo_data, Val(Symbol(info.model_run.rules.input_data_backend)))
-        # get the quality flag data
-        bounds_qc = nothing
-        @info "      QFlag:"
-        if hasproperty(vinfo, :qflag)
-            vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
-            data_path_qc = data_path
-            if !isnothing(vinfo_qc.data_path)
-                nc_qc, yax_qc = get_yax_from_source(nc_qc, doOnePath, data_path_qc, info, vinfo_qc, Val(Symbol(info.model_run.rules.input_data_backend)))
-            else
-                nc_qc = nc
-                yax_qc = yax
-            end
-            bounds_qc = vinfo_qc.bounds
-        else
-            @info "          No qflag provided. All data points assumed to be the highest quality of 1."
-            yax_qc = map(x -> one(x), yax)
-        end
-
-        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.use_uncertainty to false
-        vinfo_unc = vinfo_data
-        @info "      Unc:"
-        if hasproperty(vinfo, :unc) && info.optimization.use_uncertainty
-            vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
-            unc_var = vinfo_unc.source_variable
-            # @info "UNCERTAINTY: Using $(unc_var) as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
-            data_path_unc = data_path
-            if !isnothing(vinfo_unc.data_path)
-                nc_unc, yax_unc = get_yax_from_source(nc_unc, doOnePath, data_path_unc, info, vinfo_unc, Val(Symbol(info.model_run.rules.input_data_backend)))
-            else
-                nc_unc = nc
-                yax_unc = yax
-            end
-        else
-            @info "         using ones as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
-            yax_unc = map(x -> one(x), yax)
-        end
-
-        # get the mask to apply to data and save to observation cube
-        has_mask = false
-        data_path_mask = mask_path
-        if hasproperty(vinfo, :sel_mask)
-            vinfo_sel_mask = default_info
-            if !isnothing(vinfo_sel_mask.data_path)
-                nc_unc, yax_unc = get_yax_from_source(nc_unc, doOnePath, data_path_unc, info, vinfo_unc, Val(Symbol(info.model_run.rules.input_data_backend)))
-            else
-                nc_unc = nc
-                yax_unc = yax
-            end
-
-            if !isnothing(vinfo.sel_mask) 
-                vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
-            end
-            data_path_mask = vinfo_sel_mask.data_path
-            if !isnothing(data_path_mask)
-                nc_mask, yax_mask = get_yax_from_source(nc_mask, doOnePath, data_path_mask, info, vinfo_mask, Val(Symbol(info.model_run.rules.input_data_backend)))
-                has_mask = true
-            else
-                data_path_mask = data_path
-                nc_mask = nc
-                yax_mask = yax
-            end
-        else
-            data_path_mask = data_path
-            nc_mask = nc
-            yax_mask = yax
-        end
-
-        v_mask = nothing
-        maskvar = "mask"
-        no_mask = false
-        @info "      Mask:"
-        if has_mask
-            @info "       using mask from $(data_path_mask)"
-        else
-            @info "       selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are either non-existent or set as null in json"
-            no_mask = true
-        end
-        cyax = subset_and_process_yax(yax, yax_mask, tar_dims, info, vinfo_data)   
-        cyax_unc = subset_and_process_yax(yax, yax_mask, tar_dims, info, vinfo_data)   
-
-    #     # if no_mask
-    #     #     yax_mask = map(x -> Bool(one(x)), yax_mask)
-    #     # else
-    #     #     yax_mask = Bool.(yax_mask)
-    #     # end
-
-    #     # clean the data by applying bounds
-    #    cyax = mapCleanForcingData(yax, yax_qc,  vinfo_data,  vinfo_data.bounds, bounds_qc, num_type)
-    #    cyax_unc = mapCleanForcingData(yax_unc, yax_qc,  vinfo_unc,  vinfo_unc.bounds, bounds_qc, num_type)
-        
-        # # cyax = map((da, dq) -> cleanObsData(da, dq, vinfo_data, vinfo_data.bounds, bounds_qc, numtype), yax, yax_qc)
-        # # cyax = map(da -> cleanObsData(da, vinfo, vinfo_data.bounds, numtype), yax)
-
-        # cyax_unc = yax_unc
-        # if !one_unc
-        #     cyax_unc = map((da, dq) -> cleanObsData(da, dq, vinfo_unc, bounds_unc, bounds_qc, numtype), yax_unc, yax_qc)
-        #     # cyax_unc = map(da -> cleanObsData(da, vinfo, bounds_unc, numtype), yax_unc)
-        # end
-        # if !isnothing(permutes)
-        #     @info "         permuting dimensions ..."
-        #     cyax = permutedims(cyax, permutes)
-        #     cyax_unc = permutedims(cyax_unc, permutes)
-        #     yax_mask = permutedims(yax_mask, permutes)
-        # end
-
-        # # cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info,
-        #     forcing_info)
-
-        push!(obscubes, cyax)
-        push!(obscubes, cyax_unc)
-        push!(obscubes, yax_mask)
-    end
-    @info "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
-    @info "getObservation: getting number of time steps..."
-    nts = forcing_info.sizes
-    @info "getObservation: getting variable name..."
-    varnames_all = []
-    for v ∈ varnames
-        push!(varnames_all, v)
-        push!(varnames_all, Symbol(string(v) * "_σ"))
-        push!(varnames_all, Symbol(string(v) * "_mask"))
-    end
-    println("----------------------------------------------")
-    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
-end
-
 
 
 """
@@ -513,7 +287,7 @@ function getObservation(info::NamedTuple, ::Val{:netcdf})
         vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
         vinfo_unc = nothing
         vinfo_qc = nothing
-        vinfo_sel_mask = nothing
+        vinfo_mask = nothing
 
         src_var = vinfo_data.source_variable
 
@@ -580,11 +354,11 @@ function getObservation(info::NamedTuple, ::Val{:netcdf})
         has_mask = false
         data_path_mask = mask_path
         if hasproperty(vinfo, :sel_mask)
-            vinfo_sel_mask = default_info
+            vinfo_mask = default_info
             if !isnothing(vinfo.sel_mask) 
-                vinfo_sel_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+                vinfo_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
             end
-            data_path_mask = vinfo_sel_mask.data_path
+            data_path_mask = vinfo_mask.data_path
             if !isnothing(data_path_mask)
                 nc_mask = getNCForMask(data_path_mask)
                 has_mask = true
@@ -653,6 +427,157 @@ function getObservation(info::NamedTuple, ::Val{:netcdf})
 
         cyax, cyax_unc, yax_mask = time_slice_yax_cubes(cyax, cyax_unc, yax_mask, info,
             forcing_info)
+
+        push!(obscubes, cyax)
+        push!(obscubes, cyax_unc)
+        push!(obscubes, yax_mask)
+    end
+    @info "getObservation: getting observation dimensions..."
+    indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
+    @info "getObservation: getting number of time steps..."
+    nts = forcing_info.sizes
+    @info "getObservation: getting variable name..."
+    varnames_all = []
+    for v ∈ varnames
+        push!(varnames_all, v)
+        push!(varnames_all, Symbol(string(v) * "_σ"))
+        push!(varnames_all, Symbol(string(v) * "_mask"))
+    end
+    println("----------------------------------------------")
+    return (; data=obscubes, dims=indims, n_timesteps=nts, variables=varnames_all)
+end
+
+
+
+"""
+getObservation(info)
+"""
+function getObservation(info::NamedTuple)
+    forcing_info = nothing
+    if hasproperty(info.tem, :forcing)
+        forcing_info = info.tem.forcing
+    else
+        error("info.tem does not include forcing dimensions. To get the observations properly, dimension information from forcing is necessary. Run: 
+        
+        info, forcing = getForcing(info);
+        
+        before running getObservation.")
+    end
+    permutes = forcing_info.dimensions.permute
+    data_path = info.optimization.constraints.default_constraint.data_path
+
+    nc = nothing
+    nc_qc = nothing
+    nc_unc = nothing
+    if !isnothing(data_path)
+        data_path = getAbsDataPath(info, data_path)
+    end
+    
+    varnames = Symbol.(info.optimization.variables_to_constrain)
+    nc_mask = nothing
+    mask_path = nothing
+    if :one_sel_mask ∈ keys(info.optimization.constraints)
+        if !isnothing(info.optimization.constraints.one_sel_mask)
+            mask_path = getAbsDataPath(info, info.optimization.constraints.one_sel_mask)
+            nc_mask = getNCForMask(mask_path)
+        end
+    end
+    obscubes = []
+    @info "getObservation: getting observation variables..."
+    default_info = info.optimization.constraints.default_constraint
+    num_type = Val{info.tem.helpers.numbers.num_type}()
+    set_numtype = info.tem.helpers.numbers.sNT
+    tar_dims = get_target_dimensions(info)
+
+    map(varnames) do k
+        v = nothing
+        vinfo = getproperty(info.optimization.constraints.variables, k)
+        vinfo_data = getCombinedVariableInfo(default_info, vinfo.data)
+
+        src_var = vinfo_data.source_variable
+
+        yax = nothing
+        yax_qc = nothing
+        yax_unc = nothing
+        yax_mask = nothing
+        
+        nc, yax = get_yax_from_source(nc, data_path, vinfo_data, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+        # get the quality flag data
+        bounds_qc = nothing
+        @info "      QFlag:"
+        if hasproperty(vinfo, :qflag)
+            vinfo_qc = getCombinedVariableInfo(default_info, vinfo.qflag)
+            data_path_qc = data_path
+            nc_qc = nothing
+            if !isnothing(vinfo_qc.data_path) && (data_path_qc == vinfo_qc.data_path)
+                nc_qc = nc
+            end
+            nc_qc, yax_qc = get_yax_from_source(nc_qc, data_path_qc, vinfo_qc, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+            bounds_qc = vinfo_qc.bounds
+        else
+            @info "          No qflag provided. All data points assumed to be the highest quality of 1."
+            yax_qc = map(x -> one(x), yax)
+        end
+
+        # get uncertainty data and add to observations. For all cases, uncertainties are used, but set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.use_uncertainty to false
+        vinfo_unc = vinfo_data
+        @info "      Unc:"
+        if hasproperty(vinfo, :unc) && info.optimization.use_uncertainty
+            vinfo_unc = getCombinedVariableInfo(default_info, vinfo.unc)
+            nc_unc = nothing
+            if !isnothing(vinfo_unc.data_path) && (data_path_unc == vinfo_unc.data_path)
+                nc_unc = nc
+            end
+            nc_unc, yax_unc = get_yax_from_source(nc_unc, data_path_unc, vinfo_unc, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+        else
+            @info "         using ones as uncertainty in optimization for $(k) => info.optimization.use_uncertainty is set as $(info.optimization.use_uncertainty)"
+            yax_unc = map(x -> one(x), yax)
+        end
+
+        # get the mask to apply to data and save to observation cube
+        has_mask = false
+        vinfo_mask = nothing
+        data_path_mask = mask_path
+        if hasproperty(vinfo, :sel_mask)
+            vinfo_mask = default_info
+            if !isnothing(vinfo_mask.data_path)
+                nc_unc, yax_unc = get_yax_from_source(nc_unc, doOnePath, data_path_unc, vinfo_unc, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+            else
+                nc_unc = nc
+                yax_unc = yax
+            end
+
+            if !isnothing(vinfo.sel_mask) 
+                vinfo_mask = getCombinedVariableInfo(default_info, vinfo.sel_mask)
+            end
+            data_path_mask = vinfo_mask.data_path
+            if !isnothing(data_path_mask)
+                nc_mask, yax_mask = get_yax_from_source(nc_mask, doOnePath, data_path_mask, vinfo_mask, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+                has_mask = true
+            else
+                data_path_mask = data_path
+                nc_mask = nc
+                yax_mask = yax
+            end
+        else
+            data_path_mask = data_path
+            nc_mask = nc
+            yax_mask = yax
+        end
+
+        v_mask = nothing
+        maskvar = "mask"
+        no_mask = false
+        @info "      Mask:"
+        if has_mask
+            @info "       using mask from $(data_path_mask)"
+        else
+            @info "       selecting locations of all available data points as the mask for $(k) => one_sel_mask and sel_mask are either non-existent or set as null in json"
+            no_mask = true
+        end
+        cyax = subset_and_process_yax(yax, yax_mask, tar_dims, vinfo_data, info; fill_nan=true, yax_qc=yax_qc, bounds_qc=bounds_qc)   
+        cyax_unc = subset_and_process_yax(yax, yax_mask, tar_dims, vinfo_unc, info;  fill_nan=true, yax_qc=yax_qc, bounds_qc=bounds_qc)   
+        yax_mask = subset_and_process_yax(yax_mask, yax_mask, tar_dims, vinfo_mask, info;  clean_data=false, num_type=Bool)   
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
