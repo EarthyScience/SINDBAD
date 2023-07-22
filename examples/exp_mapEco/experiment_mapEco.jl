@@ -11,7 +11,7 @@ info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
 
-info, forcing = getForcing(info, Val(:netcdf));
+info, forcing = getForcing(info);
 
 # spinup_forcing = getSpinupForcing(forcing.data, info.tem);
 output = setupOutput(info);
