@@ -66,7 +66,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)));
+observations = getObservation(info);
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);

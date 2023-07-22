@@ -103,7 +103,7 @@ for domain ∈ sites
 
     output = setupOutput(info)
 
-    observations = getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)))
+    observations = getObservation(info)
     obs = getObsKeyedArrayFromYaxArray(observations)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
