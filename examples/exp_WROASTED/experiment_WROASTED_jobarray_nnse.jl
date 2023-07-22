@@ -21,7 +21,7 @@ obspath = inpath;
 forcingConfig = "forcing_$(forcing).json";
 
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_full_nnse";
+outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_unc";
 
 sYear = "1979"
 eYear = "2017"
@@ -100,12 +100,12 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.optimized_parameters)
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
+info, forcing = getForcing(info)
 forc = getKeyedArrayFromYaxArray(forcing)
 
 output = setupOutput(info)
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 obs = getObsKeyedArrayFromYaxArray(observations);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =

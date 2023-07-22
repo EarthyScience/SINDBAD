@@ -4,11 +4,11 @@ using ForwardDiff
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 
@@ -181,7 +181,7 @@ function get_loc_loss(
         tem_models,
         loc_land_init,
         f_one)
-    # model_data = (; gpp = gpp)
+
     lossVec = getLossVectorArray(loc_obs, landWrapper(big_land), tem_optim)
     t_loss = combineLossArray(lossVec, Val{:sum}())
     return t_loss
@@ -256,16 +256,5 @@ dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_on
 
 res_vec = Vector{typeof(dual_land)}(undef, info.tem.helpers.dates.size);
 
-
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
-
-@time ForwardSindbad.coreEcosystem(
-    mods,
-    res_vec,
-    loc_forcing,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    loc_land_init,
-    f_one);
 

@@ -3,9 +3,6 @@ using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
 noStackTrace()
-experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "1981"
 using Dates
 using Plots
 
@@ -16,8 +13,12 @@ using Plots
 # forcingConfig = "forcing_DE-2.json"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
+experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
+sYear = "2005"
+eYear = "2017"
 domain = "DE-Hai"
 domain = "CA-NS6"
+domain = "DE-Hai"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -89,12 +90,14 @@ end
 replace_info["model_run.spinup.sequence"] = sequence
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
-
+# forc = getNamedDimsArrayFromYaxArray(forcing)
 forc = getKeyedArrayFromYaxArray(forcing);
+# forc = getDimArrayFromYaxArray(forcing);
+forc = (; Pair.(forcing.variables, forcing.data)...);
 output = setupOutput(info);
 
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
