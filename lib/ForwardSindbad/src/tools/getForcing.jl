@@ -109,7 +109,7 @@ function get_spatial_subset(ss, v)
     return v
 end
 
-function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type = info.tem.helpers.numbers.num_type)
+function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type=info.tem.helpers.numbers.num_type)
 
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
@@ -123,7 +123,7 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_
     if hasproperty(yax, Symbol(info.forcing.dimensions.time))
         init_date = DateTime(info.tem.helpers.dates.start_date)
         last_date = DateTime(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step
-        yax = yax[time=(init_date..last_date)]
+        yax = yax[time=(init_date .. last_date)]
     end
 
     if hasproperty(info.forcing, :subset)
@@ -184,7 +184,7 @@ function load_data(data_path)
 end
 
 function load_data_from_path(nc, data_path, data_path_v, source_variable)
-    if !isnothing(data_path_v) && (data_path_v !== data_path) 
+    if !isnothing(data_path_v) && (data_path_v !== data_path)
         @info "   data_path: $(data_path_v)"
         nc = load_data(data_path_v)
     elseif isnothing(nc)
@@ -211,11 +211,11 @@ function get_yax_from_source(nc, data_path, data_path_v, source_variable, info, 
             else
                 error("To avoid possible issues with dimensions, Sindbad does not run when the dimension variable $(dn) is not available in input data file $(data_path). Add the variable to the data, and try again.")
             end
-            rax = Dim{Symbol(dn)}(dv)    
+            rax = Dim{Symbol(dn)}(dv)
         end
         rax
     end
-    yax = YAXArray(Tuple(ax), v) 
+    yax = YAXArray(Tuple(ax), v)
     return nc, yax
 end
 
@@ -255,7 +255,7 @@ function getForcing(info::NamedTuple)
             f_sizes = collect_forcing_sizes(info, yax)
         end
         # incube = yax  
-        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info)   
+        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info)
         @info "     sindbad_var: $(k)\n "
         incube
     end
