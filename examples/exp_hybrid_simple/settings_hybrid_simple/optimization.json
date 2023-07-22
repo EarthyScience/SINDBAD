@@ -2,11 +2,13 @@
   "variables_to_constrain": [
     "gpp",
     "nee",
+    "reco",
     "transpiration",
-    "evapotranspiration"
+    "evapotranspiration",
+    "agb",
+    "ndvi"
   ],
   "multi_constraint_method": "sum",
-  "use_uncertainty": false,
   "algorithm": "CMAEvolutionStrategy_CMAES",
   "multi_objective_algorithm": false,
   "default_parameter": {
@@ -22,16 +24,9 @@
     "cCycleBase,annk_SoilOld": null,
     "cCycleBase,ηH": null,
     "cCycleBase,c_remain": null,
-    "cFlow,f_τ": {
-      "is_ml": true,
-      "distribution": ["gaussian", [0, 1, 2]]
-    },
-    "cFlow,k_shedding": {
-      "is_ml": true
-    },
-    "cFlow,slope_leaf_root_to_reserve": {
-      "distribution": ["gaussian", [0, 1, 5]]
-    },
+    "cFlow,f_τ": null,
+    "cFlow,k_shedding": null,
+    "cFlow,slope_leaf_root_to_reserve": null,
     "cFlow,slope_reserve_to_leaf_root": null,
     "cTauSoilT,Q10": null,
     "cTauSoilW,Wopt": null,
@@ -62,12 +57,12 @@
     "transpirationSupply,k_transpiration": null,
     "treeFraction,constant_frac_tree": null,
     "WUE,WUEatOnehPa": null,
-    "WUE,κ": null  },
+    "WUE,κ": null
+  },
   "constraints": {
-    "function_name": {
-      "import": "readObservation"
-    },
-    "default_constraint": {
+   "use_uncertainty": false,
+   "use_quality_flag": false,
+   "default_constraint": {
       "sindbad_unit": null,
       "bounds": null,
       "source_variable": null,
@@ -78,7 +73,7 @@
       "name_short": null,
       "space_time_type": "spatiotemporal",
       "source_product": "",
-      "data_path": "../data/fluxnet_cube/fluxnet_observations.zarr"
+      "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr"
     },
     "default_cost": {
       "aggr_order": "timespace",
@@ -88,7 +83,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "mse",
+      "cost_metric": "nnseinv",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -98,17 +93,22 @@
         "data": {
           "sindbad_unit": "gC m-2 day-1",
           "bounds": [0.0, 100.0],
-          "source_variable": "gpp",
+          "source_variable": "GPP_NT",
           "source_unit": "gC m-2 day-1",
           "name_short": "Gross Primary Productivity"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
+        },
+        "qflag": {
+          "data_path": null,
+          "bounds": [0.85, 1.0],
+          "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "nnseinv"
         }
       },
       "nee": {
@@ -116,17 +116,22 @@
         "data": {
           "sindbad_unit": "gC m-2 day-1",
           "bounds": [-100.0, 100.0],
-          "source_variable": "nee",
+          "source_variable": "NEE",
           "source_unit": "gC m-2 day-1",
           "name_short": "Net Ecosystem Exchange"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 400.0],
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
+        },
+        "qflag": {
+          "data_path": null,
+          "bounds": [0.85, 1.0],
+          "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "reco": {
@@ -134,17 +139,22 @@
         "data": {
           "sindbad_unit": "gC m-2 day-1",
           "bounds": [0.0, 100.0],
-          "source_variable": "reco",
+          "source_variable": "RECO_NT",
           "source_unit": "gC m-2 day-1",
           "name_short": "Ecosystem Respiration"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
+        },
+        "qflag": {
+          "data_path": null,
+          "bounds": [0.85, 1.0],
+          "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "evapotranspiration": {
@@ -152,18 +162,25 @@
         "data": {
           "sindbad_unit": "mm day-1",
           "bounds": [0.0, 100.0],
-          "source_variable": "evapotranspiration",
+          "source_variable": "LE",
           "source_unit": "MJ m-2 d-1",
+          "source_to_sindbad_unit": 0.4081632653,
           "is_categorical": false,
           "name_short": "Evapotranspiration"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "le_σ"
+          "source_variable": "LE_RANDUNC",
+          "source_to_sindbad_unit": 0.4081632653
+        },
+        "qflag": {
+          "data_path": null,
+          "bounds": [0.85, 1.0],
+          "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "transpiration": {
@@ -171,17 +188,23 @@
         "data": {
           "sindbad_unit": "mm day-1",
           "bounds": [0.0, 100.0],
-          "source_variable": "transpiration",
+          "source_variable": "T_NT_TEA",
           "source_unit": "mm day-1",
           "name_short": "transpiration"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 100.0],
-          "source_variable": "le_σ"
+          "source_variable": "LE_RANDUNC",
+          "source_to_sindbad_unit": 0.4081632653
+        },
+        "qflag": {
+          "data_path": null,
+          "bounds": [0.85, 1.0],
+          "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "agb": {
@@ -189,18 +212,16 @@
         "data": {
           "sindbad_unit": "gC m-2",
           "bounds": [0.0, 100000.0],
-          "source_variable": "agb",
+          "source_variable": "agb_merged",
           "source_unit": "gC m-2",
           "name_short": "Above-ground biomass"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 400.0],
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
-          "temporal_aggr": "mean",
-          "temporal_aggr_obs": true,
           "cost_metric": "nmae1r"
         }
       },
@@ -209,19 +230,19 @@
         "data": {
           "sindbad_unit": "adimensional",
           "bounds": [0.0, 1.0],
-          "source_variable": "ndvi",
+          "source_variable": "mergedNDVI_MCD43A",
           "source_unit": "adimensional",
-          "name_short": "kNDVI"
+          "name_short": "mergedNDVI_MCD43A"
         },
         "unc": {
           "data_path": null,
           "bounds": [0.0, 1.0],
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       }
     }
