@@ -50,7 +50,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     output = setupOutput(info)
 
-    forc = getKeyedArrayFromYaxArray(forcing)
+    forc = getKeyedArrayWithNames(forcing)
 
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 

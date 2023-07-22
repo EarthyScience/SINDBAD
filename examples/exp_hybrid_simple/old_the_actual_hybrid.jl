@@ -87,7 +87,7 @@ info = getExperimentInfo(experiment_json);
 info, forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem, info.tem.models.forward);
 output = setupOutput(info);
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 
 # this one does all the training
 train_losses = nn_machine(nn_args, x_args,

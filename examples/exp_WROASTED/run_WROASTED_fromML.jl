@@ -171,7 +171,7 @@ for site_index in sites
 
 
         ## run the model
-        forc = getKeyedArrayFromYaxArray(forcing);
+        forc = getKeyedArrayWithNames(forcing);
         output = setupOutput(info);
 
         loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
@@ -193,7 +193,7 @@ for site_index in sites
         outcubes = output.data
 
         observations = getObservation(info);
-        obs = getObsKeyedArrayFromYaxArray(observations);
+        obs = getKeyedArray(observations);
 
         # open the matlab simulation data
         # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
