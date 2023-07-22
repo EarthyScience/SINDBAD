@@ -5,9 +5,9 @@ info, forcing = getForcing(info);
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 observations = getObservation(info);
-obs = getKeyedArrayFromYaxArray(observations);
+obs = getKeyedArrayWithNames(observations);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);

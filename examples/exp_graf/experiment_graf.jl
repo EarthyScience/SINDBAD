@@ -27,7 +27,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # 
 info, forcing = getForcing(info);
 output = setupOutput(info);
 
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 
 GC.gc()
 
