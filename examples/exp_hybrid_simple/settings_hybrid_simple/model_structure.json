@@ -43,6 +43,9 @@
     "cCycleBase": {
       "approach": "GSI"
     },
+    "cCycleConsistency":{
+      "approach": "simple"
+    },
     "cCycleDisturbance": {
       "approach": "WROASTED",
       "use4spinup": false
@@ -205,7 +208,9 @@
         "surfaceW": [1, 0.01]
       },
       "combine": "TWS",
-      "state_variables": { "Δ": 0.0 }
+      "state_variables": {
+        "Δ": 0.0
+      }
     },
     "carbon": {
       "components": {
@@ -225,7 +230,7 @@
         }
       },
       "combine": "cEco",
-      "state_variables": { "Δ": 0.0 }
+      "state_variables": {}
     }
   }
 }

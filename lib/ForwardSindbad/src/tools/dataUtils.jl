@@ -8,6 +8,16 @@ export getNamedDimsArrayFromYaxArray
 export getDimArrayFromYaxArray
 export getObsKeyedArrayFromYaxArray
 export mapCleanData
+export booleanize_mask
+
+
+function booleanize_mask(yax_mask)
+    dfill = 0.0
+    yax_mask = map(yax_point -> cleanInvalid(yax_point, dfill), yax_mask)
+    yax_mask_bits = all.(>(dfill), yax_mask)
+    return yax_mask_bits
+end
+
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -46,18 +56,22 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
 end
 
 function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
+    # if !isnothing(bounds_qc) && !isnothing(yax_qc)
+    #     yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
+    # end
     yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, Val(T)), yax)
-    
-    # yax = mapCleanData(yax, dfill, vinfo, Val(T))
-    if !isnothing(bounds_qc) && !isnothing(yax_qc)
-        yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
-    end
     return yax
 end
 
-function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
+function cleanInvalid(yax_point, dfill)
     yax_point = ismissing(yax_point) ? dfill : yax_point
     yax_point = isnan(yax_point) ? dfill : yax_point
+    yax_point = isinf(yax_point) ? dfill : yax_point
+    return yax_point
+end
+
+function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
+    yax_point = cleanInvalid(yax_point, dfill)
     yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
     vinfo.additive_unit_conversion)
     bounds = vinfo.bounds
