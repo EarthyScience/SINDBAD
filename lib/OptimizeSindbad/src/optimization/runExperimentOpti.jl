@@ -22,8 +22,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_var
             max_cache=info.model_run.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        forc_array = getKeyedArrayFromYaxArray(forcing)
-        obs_array = getObsKeyedArrayFromYaxArray(observations)
+        forc_array = getKeyedArrayWithNames(forcing)
+        obs_array = getKeyedArray(observations)
         optim_params = optimizeModelArray(forc_array, output, obs_array, info.tem, info.optim)
         Sindbad.CSV.write(joinpath(info.output.optim, "optimized_parameters.csv"), optim_params)
         run_output = optim_params.optim
@@ -38,8 +38,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:cost})
     observations = getObservation(info)
-    forc_array = getKeyedArrayFromYaxArray(forcing)
-    obs_array = getObsKeyedArrayFromYaxArray(observations)
+    forc_array = getKeyedArrayWithNames(forcing)
+    obs_array = getKeyedArray(observations)
 
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."

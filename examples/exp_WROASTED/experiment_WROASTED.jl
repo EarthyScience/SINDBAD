@@ -52,7 +52,7 @@ info, forcing = getForcing(info);
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
 
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 output = setupOutput(info);
 
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
@@ -101,8 +101,8 @@ tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info);
-# obs = getKeyedArrayFromYaxArray(observations);
-obs = getObsKeyedArrayFromYaxArray(observations);
+# obs = getKeyedArrayWithNames(observations);
+obs = getKeyedArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 

@@ -287,7 +287,7 @@ function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init
     forcing_sizes = tem.forcing.sizes
 
     loopvars = collect(keys(forcing_sizes))
-    additionaldims = setdiff(loopvars, [:time])::Vector{Symbol}
+    additionaldims = setdiff(loopvars, [Symbol(tem.forcing.dimensions.time)])::Vector{Symbol}
     spacesize = values(forcing_sizes[additionaldims])::Tuple
     loc_space_maps = vec(
         collect(Iterators.product(Base.OneTo.(spacesize)...))

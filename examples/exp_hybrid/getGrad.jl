@@ -19,9 +19,9 @@ info, forcing = getForcing(info);
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = setupOutput(info);
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 observations = getObservation(info);
-obs = getObsKeyedArrayFromYaxArray(observations);
+obs = getKeyedArray(observations);
 
 @time _,
 _,

@@ -13,7 +13,7 @@ experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 info, forcing = getForcing(info);
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 
 forcing = (; Tair=forc.Tair, Rain=forc.Rain)
 
