@@ -14,7 +14,7 @@ eYear = "2017"
 # inpath = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
-domain = "AU-Dry"
+domain = "AU-DaP"
 inpath = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
