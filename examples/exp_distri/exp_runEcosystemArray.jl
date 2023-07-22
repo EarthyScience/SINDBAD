@@ -9,13 +9,10 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
 info, forcing = getForcing(info);
-
-# Sindbad.eval(:(error_catcher = []));
-
-output = setupOutput(info);
-forc = getKeyedArrayFromYaxArray(forcing);
 observations = getObservation(info);
-obs = getKeyedArrayFromYaxArray(observations);
+output = setupOutput(info);
+forc = getKeyedArrayWithNames(forcing);
+obs = getKeyedArray(observations);
 
 loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
     prepRunEcosystem(output, forc, info.tem);
@@ -37,18 +34,17 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 a = 1
 
 # some plots
-ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 site = 1
 
 plotdat = output.data;
-fig, ax, obj = heatmap(plotdat[end][:, 1, :])
+fig, ax, obj = CairoMakie.heatmap(plotdat[end][:, 1, :])
 Colorbar(fig[1, 2], obj)
-save("gpp.png", fig)
+save(joinpath(info.output.figure, "gpp.png"), fig)
 
 for site ∈ 1:16
     df = DataFrame(;
-        time=ds.time,
+        time=info.tem.helpers.dates.vector,
         gpp=output.data[end-1][:, 1, site],
         nee=output.data[end][:, 1, site],
         soilw1=output.data[2][:, 1, site])
@@ -59,6 +55,6 @@ for site ∈ 1:16
         fig = with_theme(theme_ggplot2(); resolution=(1200, 400)) do
             return draw(d)
         end
-        save("testfig_$(var)_$(site).png", fig)
+        save(joinpath(info.output.figure, "testfig_$(var)_$(site).png"), fig)
     end
 end
