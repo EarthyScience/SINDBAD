@@ -234,8 +234,8 @@ getObsKeyedArrayFromYaxArray(input::NamedTuple)
 function getObsKeyedArrayFromYaxArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+        KeyedArray(Array(c.data); Tuple(k => DimensionalData.lookup(c, k) for k ∈ namesCube)...)
     end
     return keyedData
 end
