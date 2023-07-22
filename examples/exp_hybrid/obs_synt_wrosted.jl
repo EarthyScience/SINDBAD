@@ -1,7 +1,7 @@
 # simulate fake gpp obs
 experiment_json = "../exp_hybrid/settings_gradWroasted/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
-info, forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info);
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 output = setupOutput(info);
