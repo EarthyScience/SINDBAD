@@ -81,18 +81,6 @@ function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
     return T(yax_point)
 end
 
-# function mapCleanData(yax, dfill, vinfo, ::Val{T}) where {T}
-#     yax = map(x -> ismissing(x) ? dfill : x, yax)
-#     yax = map(x -> isnan(x) ? dfill : x, yax)
-#     yax = map(x -> applyUnitConversion(x, vinfo.source_to_sindbad_unit,
-#     vinfo.additive_unit_conversion), yax)
-#     bounds = vinfo.bounds
-#     if !isnothing(bounds)
-#         yax = map(x -> clamp(x, first(bounds), last(bounds)), yax)
-#     end
-#     return T.(yax)
-# end
-
 
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
