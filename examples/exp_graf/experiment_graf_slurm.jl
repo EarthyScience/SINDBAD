@@ -31,9 +31,8 @@ noStackTrace()
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-@everywhere obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
-@everywhere info, forcing = ForwardSindbad.getForcing(info,
-    Val(Symbol(info.model_run.rules.data_backend)));
+@everywhere obs = ForwardSindbad.getObservation(info);
+@everywhere info, forcing = ForwardSindbad.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
@@ -50,7 +49,7 @@ noStackTrace()
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
-# forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+# forcing = getForcing(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 # output = setupOutput(info);
 

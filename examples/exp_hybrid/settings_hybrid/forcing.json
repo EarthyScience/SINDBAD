@@ -5,7 +5,7 @@
   "dimensions": {
     "permute": null,
     "space": ["site"],
-    "time": "time"
+    "time": "Ti"
   },
   "sel_mask": null,
   "default_forcing": {
@@ -100,7 +100,6 @@
       "bounds": [0.01, 100.0],
       "source_variable": "VPDDay",
       "source_unit": "Pa",
-      "source_to_sindbad_unit": 0.001,
       "name_short": "Vapor pressure deficit Day"
     },
     "CLAY": {

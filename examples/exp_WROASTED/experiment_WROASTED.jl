@@ -47,7 +47,7 @@ tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
@@ -100,7 +100,7 @@ tcprint(land_init_space[1])#; c_olor=false, t_ype=false)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 # obs = getKeyedArrayFromYaxArray(observations);
 obs = getObsKeyedArrayFromYaxArray(observations);
 

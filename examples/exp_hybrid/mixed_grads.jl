@@ -13,7 +13,7 @@ Random.seed!(13)
 experiment_json = "./settings_distri/experiment.json"
 info = getConfiguration(experiment_json)
 info = setupExperiment(info);
-forcing = getForcing(info, Val{:zarr}());
+forcing = getForcing(info);
 forc = getKeyedArrayFromYaxArray(forcing);
 
 forcing = (; Tair=forc.Tair, Rain=forc.Rain)

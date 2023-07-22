@@ -46,7 +46,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)));
+info, forcing = getForcing(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
@@ -66,7 +66,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)));
+observations = getObservation(info);
 obs = getKeyedArrayFromYaxArray(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);

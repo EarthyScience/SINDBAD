@@ -32,7 +32,7 @@
     "model_array_type": "staticarray",
     "forward_diff": false,
     "data_type": "Float32",
-    "data_backend": "yaxarray",
+    "input_data_backend": "netcdf",
     "tolerance": 1.0e-2,
     "yax_max_cache": 2e9
   },
