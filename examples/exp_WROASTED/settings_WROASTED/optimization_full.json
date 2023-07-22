@@ -9,7 +9,6 @@
     "ndvi"
   ],
   "multi_constraint_method": "sum",
-  "use_uncertainty": false,
   "algorithm": "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
   "multi_objective_algorithm": false,
   "default_parameter": {
@@ -68,10 +67,9 @@
     "WUE,κ": null
   },
   "constraints": {
-    "function_name": {
-      "import": "readObservation"
-    },
-    "default_constraint": {
+   "use_uncertainty": false,
+   "use_quality_flag": true,
+   "default_constraint": {
       "sindbad_unit": null,
       "bounds": null,
       "source_variable": null,
