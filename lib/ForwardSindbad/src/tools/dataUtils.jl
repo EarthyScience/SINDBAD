@@ -3,10 +3,9 @@ export AllNaN
 export getForcingTimeSize
 export getForcingForTimeStep
 export filterVariables
-export getKeyedArrayFromYaxArray
-export getNamedDimsArrayFromYaxArray
-export getDimArrayFromYaxArray
-export getObsKeyedArrayFromYaxArray
+export getKeyedArrayWithNames
+export getNamedDimsArrayWithNames
+export getKeyedArray
 export mapCleanData
 export booleanize_mask
 
@@ -180,50 +179,52 @@ function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables
 end
 
 """
-getNamedDimsArrayFromYaxArray(input::NamedTuple)
+getNamedDimsArrayWithNames(input::NamedTuple)
 """
-function getNamedDimsArrayFromYaxArray(input)
+function getNamedDimsArrayWithNames(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        namesCube = YAXArrayBase.dimnames(c)
-        NamedDimsArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)
+        t_dims = getTargetDims(c)
+        NamedDimsArray(Array(c.data); t_dims...)
     end
     return (; Pair.(ks, keyedData)...)
 end
 
 """
-getDimArrayFromYaxArray(input::NamedTuple)
+getTargetDims(c)
+prepare the dimensions of data and name them appropriately for use in internal SINDBAD functions
 """
-function getDimArrayFromYaxArray(input)
-    ks = input.variables
-    keyedData = map(input.data) do c
-        YAXArrayBase.yaxconvert(DimArray, Array(c.data))
+function getTargetDims(c)
+    dimnames = DimensionalData.name(dims(c))
+    act_dimnames = []
+    foreach(dimnames) do dimn
+        td=dimn
+        if dimn in (:Ti, :Time, :TIME, :t, :T, :TI)
+            td = :time
+        end
+        push!(act_dimnames, td)
     end
-    return (; Pair.(ks, keyedData)...)
+    return [act_dimnames[k] => getproperty(c, dimnames[k]) |> Array for k ∈ eachindex(dimnames)]  
 end
 
 """
-getKeyedArrayFromYaxArray(input::NamedTuple)
+getKeyedArrayWithNames(input::NamedTuple)
 """
-function getKeyedArrayFromYaxArray(input)
+function getKeyedArrayWithNames(input)
     ks = input.variables
-    in_cubes = input.data
-    keyedData = map(in_cubes) do c
-        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
-        KeyedArray(Array(c.data); Tuple(k => DimensionalData.lookup(c, k) for k ∈ namesCube)...)
-    end
+    keyedData = getKeyedArray(input)
     return (; Pair.(ks, keyedData)...)
 end
 
 
 """
-getObsKeyedArrayFromYaxArray(input::NamedTuple)
+getKeyedArray(input::NamedTuple)
 """
-function getObsKeyedArrayFromYaxArray(input)
+function getKeyedArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        namesCube = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
-        KeyedArray(Array(c.data); Tuple(k => DimensionalData.lookup(c, k) for k ∈ namesCube)...)
+        t_dims = getTargetDims(c)
+        KeyedArray(Array(c.data); t_dims...)
     end
     return keyedData
 end

@@ -413,7 +413,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
     info, forcing = getForcing(info)
     output = setupOutput(info)
 
-    forc = getKeyedArrayFromYaxArray(forcing)
+    forc = getKeyedArrayWithNames(forcing)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output, forc, info.tem)
