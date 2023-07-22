@@ -22,7 +22,7 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
-# obs = ForwardSindbad.getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)));
+# obs = ForwardSindbad.getObservation(info);
 info, forcing = getForcing(info);
 output = setupOutput(info);
 

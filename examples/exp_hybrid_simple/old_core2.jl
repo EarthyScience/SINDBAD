@@ -8,7 +8,7 @@ info, forcing = getForcing(info, Val{:zarr}());
 land_init = createLandInit(info.pools, info.tem);
 output = setupOutput(info);
 forc = getKeyedArrayFromYaxArray(forcing);
-observations = getObservation(info, Val(Symbol(info.model_run.rules.input_data_backend)));
+observations = getObservation(info);
 obs = getKeyedArrayFromYaxArray(observations);
 obsv = getObsKeyedArrayFromYaxArray(observations);
 
