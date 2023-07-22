@@ -8,7 +8,7 @@ experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
-info, forcing = getForcing(info, Val{:zarr}());
+info, forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 
