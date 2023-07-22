@@ -53,7 +53,7 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     end
     println("----------------------------------------------")
     @info "prepExperimentForward: get forcing data..."
-    info, forcing = getForcing(info, Val(Symbol(info.model_run.rules.data_backend)))
+    info, forcing = getForcing(info)
     # spinup_forcing = getSpinupForcing(forcing, info.tem);
     println("----------------------------------------------")
 
@@ -74,6 +74,6 @@ function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 
     @info "runExperiment: get observations..."
     println("----------------------------------------------")
-    observations = getObservation(info, Val(Symbol(info.model_run.rules.data_backend)))
+    observations = getObservation(info)
     return info, forcing, output, observations
 end

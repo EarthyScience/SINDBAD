@@ -1054,7 +1054,7 @@ end
 """
     getVariablesToStore(info)
 
-sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info::NamedTuple)
     writeStoreVars = getVariableGroups(collect(propertynames(info.model_run.output.variables)))
@@ -1065,7 +1065,7 @@ end
 """
     getLoopingInfo(info)
 
-sets info.tem.variables as the union of variables to write and store from modelrun[.json]. These are the variables for which the time series will be filtered and saved.
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getLoopingInfo(info::NamedTuple)
     run_info = (; info.model_run.flags..., (output_all = info.model_run.output.all))
