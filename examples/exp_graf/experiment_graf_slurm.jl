@@ -38,7 +38,7 @@ noStackTrace()
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 @everywhere output = setupOutput(info);
 
-@everywhere forc = getKeyedArrayFromYaxArray(forcing);
+@everywhere forc = getKeyedArrayWithNames(forcing);
 # @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 # @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 # @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
