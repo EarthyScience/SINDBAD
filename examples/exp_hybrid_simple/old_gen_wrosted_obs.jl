@@ -48,10 +48,10 @@ function synth_obs()
     info, forcing = getForcing(info)
     land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     output = setupOutput(info)
-    forc = getKeyedArrayFromYaxArray(forcing)
+    forc = getKeyedArrayWithNames(forcing)
     observations = getObservation(info)
-    obs = getKeyedArrayFromYaxArray(observations)
-    obsv = getObsKeyedArrayFromYaxArray(observations)
+    obs = getKeyedArrayWithNames(observations)
+    obsv = getKeyedArray(observations)
     tblParams = getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)

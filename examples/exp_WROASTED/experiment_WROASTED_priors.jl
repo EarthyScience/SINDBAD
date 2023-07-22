@@ -50,7 +50,7 @@ info, forcing = getForcing(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);
 output = setupOutput(info);
 
-forc = getKeyedArrayFromYaxArray(forcing);
+forc = getKeyedArrayWithNames(forcing);
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 #Sindbad.eval(:(error_catcher = []))    
@@ -67,7 +67,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     f_one)
 
 observations = getObservation(info);
-obs = getKeyedArrayFromYaxArray(observations);
+obs = getKeyedArrayWithNames(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
 
