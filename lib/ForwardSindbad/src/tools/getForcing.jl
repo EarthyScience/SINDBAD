@@ -185,10 +185,10 @@ end
 
 function load_data_from_path(nc, data_path, data_path_v, source_variable)
     if !isnothing(data_path_v) && (data_path_v !== data_path) 
-        @info "  data_path: $(data_path_v)"
+        @info "   data_path: $(data_path_v)"
         nc = load_data(data_path_v)
     elseif isnothing(nc)
-        @info "  one_data_path: $(data_path)"
+        @info " one_data_path: $(data_path)"
         nc = load_data(data_path)
     else
         nc = nc
