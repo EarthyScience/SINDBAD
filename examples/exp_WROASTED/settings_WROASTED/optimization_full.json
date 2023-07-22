@@ -67,7 +67,7 @@
     "WUE,κ": null
   },
   "constraints": {
-   "use_uncertainty": false,
+   "use_uncertainty": true,
    "use_quality_flag": true,
    "default_constraint": {
       "sindbad_unit": null,
