@@ -53,7 +53,6 @@ info, forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
-forc = (; Pair.(forcing.variables, forcing.data)...);
 
 forc = getKeyedArrayWithNames(forcing);
 output = setupOutput(info);
@@ -91,6 +90,8 @@ land_spin = land_init_space[1];
     f_one)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
+
+
 
 observations = getObservation(info);
 # obs = getKeyedArrayWithNames(observations);

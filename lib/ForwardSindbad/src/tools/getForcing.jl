@@ -1,37 +1,8 @@
-export getForcing, getPermutation, getSpatialSubset, loadDataFile
-export getCombinedVariableInfo, getYaxFromSource
-
-"""
-    getCombinedVariableInfo(default_info, var_info)
-
-combines the property values of the default with the properties set for the particular variable
-"""
-function getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
-    combined_info = (;)
-    default_fields = propertynames(default_info)
-    var_fields = propertynames(var_info)
-    all_fields = Tuple(unique([default_fields..., var_fields...]))
-    for var_field ∈ all_fields
-        field_value = nothing
-        if hasproperty(default_info, var_field)
-            field_value = getfield(default_info, var_field)
-        else
-            field_value = getfield(var_info, var_field)
-        end
-        if hasproperty(var_info, var_field)
-            var_prop = getfield(var_info, var_field)
-            if !isnothing(var_prop) && length(var_prop) > 0
-                field_value = getfield(var_info, var_field)
-            end
-        end
-        combined_info = setTupleField(combined_info,
-            (var_field, field_value))
-    end
-    return combined_info
-end
+export getForcing, getDimPermutation, loadDataFile
+export getYaxFromSource
 
 
-function getPermutation(datDims, permDims)
+function getDimPermutation(datDims, permDims)
     new_dim = Int[]
     for pd ∈ permDims
         datIndex = length(permDims)
@@ -75,48 +46,14 @@ function collectForcingInfo(info, f_sizes)
     return info
 end
 
-function getSpatialSubset(ss, v)
-    if !isnothing(ss)
-        ssname = propertynames(ss)
-        for ssn ∈ ssname
-            ss_r = getproperty(ss, ssn)
-            ss_range = ss_r[1]:ss_r[2]
-            if ssn == :site
-                v = v[site=ss_range]
-            elseif ssn == :latitude
-                v = v[latitude=ss_range]
-            elseif ssn == :lat
-                v = v[lat=ss_range]
-            elseif ssn == :longitude
-                v = v[longitude=ss_range]
-            elseif ssn == :lon
-                v = v[site=ss_range]
-            elseif ssn == :lon
-                v = v[lon=ss_range]
-            elseif ssn == :id
-                v = v[id=ss_range]
-            elseif ssn == :Id
-                v = v[Id=ss_range]
-            elseif ssn == :ID
-                v = v[ID=ss_range]
-            else
-                error(
-                    "subsetting by $(ssn) is not supported. check getSpatialSubset in getForcing.jl"
-                )
-            end
-        end
-    end
-    return v
-end
-
-function SubsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type=info.tem.helpers.numbers.num_type)
+function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type=info.tem.helpers.numbers.num_type)
 
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
     end
 
     if !isnothing(tar_dims)
-        permutes = getPermutation(YAXArrayBase.dimnames(yax), tar_dims)
+        permutes = getDimPermutation(YAXArrayBase.dimnames(yax), tar_dims)
         @info "     permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
@@ -144,7 +81,7 @@ function SubsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_dat
     return yax
 end
 
-function gettForcingInfo(incubes, f_sizes, vinfo, info)
+function gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
     @info "getForcing: getting forcing dimensions..."
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "getForcing: getting variable name..."
@@ -154,9 +91,9 @@ function gettForcingInfo(incubes, f_sizes, vinfo, info)
     forcing = (;
         data=incubes,
         dims=indims,
+        dimensions=Sindbad.DataStructures.OrderedDict(f_dimension...),
         variables=forcing_variables,
         sizes=f_sizes)
-
     return info, forcing
 end
 
@@ -237,7 +174,7 @@ function getForcing(info::NamedTuple)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
             _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.rules.input_data_backend)))
-            forcing_mask = booleanize_mask(forcing_mask)
+            forcing_mask = booleanizeMask(forcing_mask)
         end
     end
 
@@ -247,18 +184,20 @@ function getForcing(info::NamedTuple)
     @info "getForcing: getting forcing variables..."
     vinfo = nothing
     f_sizes = nothing
+    f_dimension = nothing
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
         if vinfo.space_time_type == "spatiotemporal"
             f_sizes = collectForcingSizes(info, yax)
+            f_dimension = getSindbadDims(yax)
         end
         # incube = yax  
-        incube = SubsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
+        incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
         @info "     sindbad_var: $(k)\n "
         incube
     end
-    return gettForcingInfo(incubes, f_sizes, vinfo, info)
+    return gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
 end
 
