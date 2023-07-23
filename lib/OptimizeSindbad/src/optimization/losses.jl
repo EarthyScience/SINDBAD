@@ -38,6 +38,20 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
     return nmae1r
 end
 
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor})
+    return corspearman(y, ŷ)
+end
+
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor2})
+    scor = loss(y, yσ, ŷ, Val(:scor))
+    return scor * scor
+end
+
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor2inv})
+    scor2inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Val(:scor2))
+    return scor2inv
+end
+
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:pcor})
     return cor(y, ŷ)
 end
