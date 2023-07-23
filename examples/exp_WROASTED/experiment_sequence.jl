@@ -17,7 +17,7 @@ using Plots
 # forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 # sites = ("AU-DaP", "AT-Neu")
-# sites = ("CA-NS6",)
+sites = ("CA-NS6",)
 for domain ∈ sites
     # domain = "DE-Hai"
     inpath = "../data/fn/$(domain).1979.2017.daily.nc"
