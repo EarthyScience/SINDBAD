@@ -7,14 +7,89 @@ export getKeyedArrayWithNames
 export getNamedDimsArrayWithNames
 export getKeyedArray
 export mapCleanData
-export booleanize_mask
+export booleanizeMask
+export getSpatialSubset
+export getCombinedVariableInfo
+export getSindbadDims
 
-
-function booleanize_mask(yax_mask)
+function booleanizeMask(yax_mask)
     dfill = 0.0
     yax_mask = map(yax_point -> cleanInvalid(yax_point, dfill), yax_mask)
     yax_mask_bits = all.(>(dfill), yax_mask)
     return yax_mask_bits
+end
+
+function spatialSubset(v, ss_range, ::Val{:site})
+    return v[site=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:lat})
+    return v[lat=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:latitude})
+    return v[latitude=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:lon})
+    return v[lon=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:longitude})
+    return v[longitude=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:id})
+    return v[id=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:Id})
+    return v[Id=ss_range]
+end
+
+function spatialSubset(v, ss_range, ::Val{:ID})
+    return v[ID=ss_range]
+end
+
+function getSpatialSubset(ss, v)
+    if !isnothing(ss)
+        ssname = propertynames(ss)
+        for ssn ∈ ssname
+            ss_r = getproperty(ss, ssn)
+            ss_range = ss_r[1]:ss_r[2]
+            v= spatialSubset(v, ss_range, Val(ssn))
+        end
+    end
+    return v
+end
+
+"""
+    getCombinedVariableInfo(default_info, var_info)
+
+combines the property values of the default with the properties set for the particular variable
+"""
+function getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
+    combined_info = (;)
+    default_fields = propertynames(default_info)
+    var_fields = propertynames(var_info)
+    all_fields = Tuple(unique([default_fields..., var_fields...]))
+    for var_field ∈ all_fields
+        field_value = nothing
+        if hasproperty(default_info, var_field)
+            field_value = getfield(default_info, var_field)
+        else
+            field_value = getfield(var_info, var_field)
+        end
+        if hasproperty(var_info, var_field)
+            var_prop = getfield(var_info, var_field)
+            if !isnothing(var_prop) && length(var_prop) > 0
+                field_value = getfield(var_info, var_field)
+            end
+        end
+        combined_info = setTupleField(combined_info,
+            (var_field, field_value))
+    end
+    return combined_info
 end
 
 
@@ -184,17 +259,17 @@ getNamedDimsArrayWithNames(input::NamedTuple)
 function getNamedDimsArrayWithNames(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        t_dims = getTargetDims(c)
+        t_dims = getSindbadDims(c)
         NamedDimsArray(Array(c.data); t_dims...)
     end
     return (; Pair.(ks, keyedData)...)
 end
 
 """
-getTargetDims(c)
+getSindbadDims(c)
 prepare the dimensions of data and name them appropriately for use in internal SINDBAD functions
 """
-function getTargetDims(c)
+function getSindbadDims(c)
     dimnames = DimensionalData.name(dims(c))
     act_dimnames = []
     foreach(dimnames) do dimn
@@ -223,7 +298,7 @@ getKeyedArray(input::NamedTuple)
 function getKeyedArray(input)
     ks = input.variables
     keyedData = map(input.data) do c
-        t_dims = getTargetDims(c)
+        t_dims = getSindbadDims(c)
         KeyedArray(Array(c.data); t_dims...)
     end
     return keyedData
