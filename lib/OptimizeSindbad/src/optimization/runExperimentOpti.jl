@@ -5,7 +5,7 @@ export runExperimentOpti
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:opti})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
     @info "-------------------Optimization Mode---------------------------"
     observations = getObservation(info)
     additionaldims = setdiff(keys(info.tem.forcing.sizes), [:time])
@@ -36,7 +36,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, output_vars, ::Val{:cost})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cost})
     observations = getObservation(info)
     forc_array = getKeyedArrayWithNames(forcing)
     obs_array = getKeyedArray(observations)
@@ -59,10 +59,10 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
     if info.tem.helpers.run.run_optimization
-        run_output = runExperiment(info, forcing, output, output.variables, Val(:opti))
+        run_output = runExperiment(info, forcing, output, Val(:opti))
     end
     if info.tem.helpers.run.run_forward_and_cost && !info.tem.helpers.run.run_optimization
-        run_output = runExperiment(info, forcing, output, output.variables, Val(:cost))
+        run_output = runExperiment(info, forcing, output, Val(:cost))
     end
     return run_output
 end
