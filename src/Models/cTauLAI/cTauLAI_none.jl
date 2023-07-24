@@ -5,10 +5,10 @@ struct cTauLAI_none <: cTauLAI end
 function define(p_struct::cTauLAI_none, forcing, land, helpers)
 
     ## calculate variables
-    p_k_f_LAI = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_LAI = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_k_f_LAI => land.cTauLAI
+    @pack_land c_eco_k_LAI => land.cTauLAI
     return land
 end
 
