@@ -6,198 +6,208 @@
         "description":""
     },
     "AoE__WUE": {
-        "description": "water use efficiency of the ecosystem",
         "long_name": "water_use_efficiency",
-        "units": "gC/mmH2O"
+        "units": "gC/mmH2O",
+        "description": "water use efficiency of the ecosystem"
     },
     "c_allocation__states": {
-        "description": "to every carboon pool",
-        "long_name": "Carbon allocation",
-        "units": "fraction"
+        "long_name": "carbon allocation per carbon pool",
+        "units": "fraction",
+        "description": "to every carboon pool"
     },
-    "c_efflux": {
-        "description": "carbon release from live vegetation carboon pools through autotrophic respiration",
+    "c_eco_efflux__states": {
         "long_name": "co2_efflux",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": "carbon release from live vegetation carboon pools through autotrophic respiration"
     },
-    "cEco": {
-        "description": "carboon storage content for every carbon pool",
+    "cEco__pools": {
         "long_name": "Ecosystem carbon content",
-        "units": "gC/m2"
+        "units": "gC/m2",
+        "description": "carboon storage content for every carbon pool"
     },
     "auto_respiration__fluxes": {
-        "description": "",
         "long_name": "Autotrophic respiration",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": ""
     },
-    "cRECO": {
-        "description": "",
+    "eco_respiration__fluxes": {
         "long_name": "Total ecosystem respiration",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": ""
     },
-    "cRH": {
-        "description": "",
+    "hetero_respiration__fluxes": {
         "long_name": "Heterotrophic respiration",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": ""
     },
-    "evapInt": {
-        "description": "",
+    "interception__fluxes": {
         "long_name": "Interception evaporation",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
     "evaporation__fluxes": {
-        "description": "",
         "long_name": "Soil evaporation",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
     "evapotranspiration__fluxes": {
-        "description": "",
-        "long_name": "Total evapotranspiration",
-        "units": "mm/time"
+        "long_name": "total evapotranspiration",
+        "units": "mm/time",
+        "description": ""
     },
     "fAPAR__states": {
-        "description": "",
-        "long_name": "Fraction of Absorbed Photosynthetically Active Radiation",
-        "units": "fraction"
+        "long_name": "fraction of absorbed photosynthetically active radiation",
+        "units": "fraction",
+        "description": ""
     },
-    "fT": {
-        "description": "1 for no stress, 0 for full stress.",
-        "long_name": "Soil temperature stressor on turnover rate of carbon",
-        "units": "fraction"
+    "c_eco_k_soilT__cTauSoilT": {
+        "long_name": "soil temperature stressor on decomposition rate of carbon",
+        "units": "fraction",
+        "description": "1 for no stress, 0 for full stress."
+    },
+    "gpp_f_airT__gppAirT": {
+        "long_name": "air temperature stressor on gpp",
+        "units": "fraction",
+        "description": "1 for no stress, 0 for full stress."
     },
     "npp__fluxes": {
-        "description": "",
-        "long_name": "Net primary productivity",
-        "units": "gC/m2/time"
+        "long_name": "net primary productivity",
+        "units": "gC/m2/time",
+        "description": ""
     },
     "gpp__fluxes": {
-        "description": "",
-        "long_name": "Gross primary productivity",
-        "units": "gC/m2/time"
+        "long_name": "gross primary productivity",
+        "units": "gC/m2/time",
+        "description": ""
     },
-    "gwRec__fluxes": {
-        "description": "",
-        "long_name": "Groundwater recharge",
-        "units": "mm/time"
+    "gw_recharge__fluxes": {
+        "long_name": "groundwater recharge",
+        "units": "mm/time",
+        "description": "from the last soil layer to groundwater storage"
+    },
+    "gw_capillary_flux__fluxes": {
+        "long_name": "groundwater capillary flux",
+        "units": "mm/time",
+        "description": "from groundwater storage to the last soil layer"
     },
     "latitude": {
-        "description": "",
         "long_name": "Latitude",
-        "units": "degree_north"
+        "units": "degree_north",
+        "description": ""
     },
-    "level_c": {
-        "description": "ID of the carbon pools",
-        "long_name": "carbon_pool_id",
-        "units": "-"
+    "d_cEco": {
+        "long_name": "carbon pool number",
+        "units": "-",
+        "description": "ID of the carbon pools from model_structure"
     },
-    "level_w": {
-        "description": "Check wSoilLayersThickness in modelStructure[*].json in settings directory of output for depths of soil layers",
-        "long_name": "Soil layer number",
-        "units": "-"
+    "d_soilW": {
+        "long_name": "ID of the soil water storage number from model_structure",
+        "units": "-",
+        "description": "model_structure"
     },
     "longitude": {
-        "description": "",
         "long_name": "Longitude",
-        "units": "degree_east"
+        "units": "degree_east",
+        "description": ""
     },
     "NEE": {
-        "description": "",
         "long_name": "net_ecosystem_exchange",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": "Net co2 exchange in the ecosystem"
     },
-    "p_cTauAct_k": {
-        "description": "for every carboon pool",
-        "long_name": "Actual turnover rate of carbon",
-        "units": "per time"
+    "c_eco_k": {
+        "long_name": "Actual decomposittion rate of carbon",
+        "units": "per time",
+        "description": "for every carboon pool"
     },
-    "p_cTaufwSoil_fwSoil": {
-        "description": "1 for no stress, 0 for full stress. for every carboon pool",
-        "long_name": "Soil moisture stressor on turnover rate of carbon",
-        "units": "fraction"
+    "c_eco_k_soilW": {
+        "long_name": "Soil moisture stressor on decomposittion rate of carbon per pool",
+        "units": "fraction",
+        "description": "1 for no stress, 0 for full stress"
     },
     "p_wSoilBase_wSat": {
-        "description": "for every soil layer",
         "long_name": "Soil moisture at porosity",
-        "units": "mm"
+        "units": "mm",
+        "description": "for every soil layer"
     },
     "pawAct": {
-        "description": "for every soil layer. Check wSoilLayersThickness in modelStructure[*].json in settings directory of output for depths of soil layers",
         "long_name": "Plant available water in soil",
-        "units": "mm"
+        "units": "mm",
+        "description": "for every soil layer. Check wSoilLayersThickness in modelStructure[*].json in settings directory of output for depths of soil layers"
     },
-    "pix": {
+    "site": {
         "description": "Pixel number for writing 1-D output",
         "long_name": "Pixel ID",
         "units": "-"
     },
     "cRG": {
-        "description": "",
         "long_name": "Autotrophic growth respiration",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": ""
     },
     "cRM": {
-        "description": "",
         "long_name": "Autotrophic maintenance respiration",
-        "units": "gC/m2/time"
+        "units": "gC/m2/time",
+        "description": ""
     },
     "base_runoff__fluxes": {
-        "description": "",
         "long_name": "Base runoff",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
     "roInf": {
-        "description": "",
         "long_name": "Infiltration excess runoff",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
     "roInt": {
-        "description": "",
         "long_name": "Interflow",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
     "roSat": {
-        "description": "",
         "long_name": "Saturation excess runoff",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
-    "roSurf": {
-        "description": "",
+    "sur": {
         "long_name": "Surface runoff",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
-    "roTotal": {
-        "description": "",
+    "total_runoff__fluxes": {
         "long_name": "Total runoff",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
-    "tranAct": {
-        "description": "",
+    "transpiration__fluxes": {
         "long_name": "Transpiration",
-        "units": "mm/time"
+        "units": "mm/time",
+        "description": ""
     },
-    "wGW": {
-        "description": "",
+    "groundW__pools": {
         "long_name": "Groundwater moisture storage",
-        "units": "mm"
+        "units": "mm",
+        "description": ""
     },
-    "wSnow": {
-        "description": "",
+    "snowW__pools": {
         "long_name": "Snow water equivalent",
-        "units": "mm"
+        "units": "mm",
+        "description": ""
     },
-    "wSoil": {
-        "description": "for every soil layer. Check wSoilLayersThickness in modelStructure[*].json in settings directory of output for depths of soil layers",
+    "soilW__pools": {
         "long_name": "Soil moisture",
-        "units": "mm"
+        "units": "mm",
+        "description": "for every soil layer. Check wSoilLayersThickness in modelStructure[*].json in settings directory of output for depths of soil layers"
     },
-    "wSurf": {
-        "description": "",
+    "surfacedW__pools": {
         "long_name": "Surface moisture storage",
-        "units": "mm"
+        "units": "mm",
+        "description": ""
     },
-    "wTotal": {
-        "description": "",
+    "TWS__pools": {
         "long_name": "Total moisture storage",
-        "units": "mm"
+        "units": "mm",
+        "description": ""
     }
 }

@@ -7,32 +7,32 @@ function define(p_struct::cTau_mult, forcing, land, helpers)
     @unpack_land begin
         cEco ∈ land.pools
     end
-    p_k = zero(cEco)
+    c_eco_k = zero(cEco)
 
     ## pack land variables
-    @pack_land p_k => land.states
+    @pack_land c_eco_k => land.states
     return land
 end
 
 function compute(p_struct::cTau_mult, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
-        p_k_f_veg_props ∈ land.cTauVegProperties
-        p_k_f_soilW ∈ land.cTauSoilW
-        p_k_f_soilT ∈ land.cTauSoilT
-        p_k_f_soil_props ∈ land.cTauSoilProperties
-        p_k_f_LAI ∈ land.cTauLAI
-        p_k_base ∈ land.cCycleBase
-        p_k ∈ land.states
+        c_eco_k_veg_props ∈ land.cTauVegProperties
+        c_eco_k_soilW ∈ land.cTauSoilW
+        c_eco_k_soilT ∈ land.cTauSoilT
+        c_eco_k_soil_props ∈ land.cTauSoilProperties
+        c_eco_k_LAI ∈ land.cTauLAI
+        c_eco_k_base ∈ land.cCycleBase
+        c_eco_k ∈ land.states
     end
-    for i ∈ eachindex(p_k)
-        tmp = p_k_base[i] * p_k_f_LAI[i] * p_k_f_soil_props[i] * p_k_f_veg_props[i] * p_k_f_soilT * p_k_f_soilW[i]
+    for i ∈ eachindex(c_eco_k)
+        tmp = c_eco_k_base[i] * c_eco_k_LAI[i] * c_eco_k_soil_props[i] * c_eco_k_veg_props[i] * c_eco_k_soilT * c_eco_k_soilW[i]
         tmp = clamp_01(tmp)
-        @rep_elem tmp => (p_k, i, :cEco)
+        @rep_elem tmp => (c_eco_k, i, :cEco)
     end
 
     ## pack land variables
-    @pack_land p_k => land.states
+    @pack_land c_eco_k => land.states
     return land
 end
 
@@ -45,16 +45,16 @@ multiply all effects that change the turnover rates [k]
 Combine effects of different factors on decomposition rates using cTau_mult
 
 *Inputs*
- - land.cCycleBase.p_k:
- - land.cTauLAI.p_k_f_LAI: LAI stressor values on the the turnover rates
- - land.cTauSoilProperties.p_k_f_soil_props: Soil texture stressor values on the the turnover rates
- - land.cTauSoilT.p_k_f_soilT: Air temperature stressor values on the the turnover rates
+ - land.cCycleBase.c_eco_k:
+ - land.cTauLAI.c_eco_k_LAI: LAI stressor values on the the turnover rates
+ - land.cTauSoilProperties.c_eco_k_soil_props: Soil texture stressor values on the the turnover rates
+ - land.cTauSoilT.c_eco_k_soilT: Air temperature stressor values on the the turnover rates
  - land.cTauSoilW.fsoilW: Soil moisture stressor values on the the turnover rates
- - land.cTauVegProperties.p_k_f_veg_props: Vegetation type stressor values on the the turnover rates
+ - land.cTauVegProperties.c_eco_k_veg_props: Vegetation type stressor values on the the turnover rates
 
 *Outputs*
- - land.cTau.p_k: values for actual turnover rates
- - land.cTau.p_k
+ - land.cTau.c_eco_k: values for actual turnover rates
+ - land.cTau.c_eco_k
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTau_mult

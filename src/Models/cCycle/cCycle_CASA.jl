@@ -26,7 +26,7 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
         gpp ∈ land.fluxes
         p_k_act ∈ land.cTau
         (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
-        (c_flow_order, p_annk) ∈ land.cCycleBase
+        (c_flow_order, c_eco_k_ann) ∈ land.cCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR
     ## these all need to be zeros maybe is taken care automatically
@@ -73,7 +73,7 @@ Allocate carbon to vegetation components using cCycle_CASA
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.p_annk: carbon allocation matrix
+ - land.cCycleBase.c_eco_k_ann: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
@@ -81,7 +81,7 @@ Allocate carbon to vegetation components using cCycle_CASA
  - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
+ - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration
