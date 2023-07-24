@@ -25,7 +25,7 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
         cEco ∈ land.pools
         gpp ∈ land.fluxes
         p_k_act ∈ land.cTau
-        (p_E, p_F, p_giver, p_taker) ∈ land.cFlow
+        (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
         (c_flow_order, p_annk) ∈ land.cCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR
@@ -42,9 +42,9 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
     for jix ∈ eachindex(c_flow_order)
         c_taker = p_taker[c_flow_order[jix]]
         c_giver = p_giver[c_flow_order[jix]]
-        flow_tmp = c_eco_out[c_giver] * p_F(c_taker, c_giver)
-        c_eco_flow[c_taker] = c_eco_flow[c_taker] + flow_tmp * p_E(c_taker, c_giver)
-        c_eco_efflux[c_giver] = c_eco_efflux[c_giver] + flow_tmp * (1.0 - p_E(c_taker, c_giver))
+        flow_tmp = c_eco_out[c_giver] * p_F_vec(c_taker, c_giver)
+        c_eco_flow[c_taker] = c_eco_flow[c_taker] + flow_tmp * p_E_vec(c_taker, c_giver)
+        c_eco_efflux[c_giver] = c_eco_efflux[c_giver] + flow_tmp * (1.0 - p_E_vec(c_taker, c_giver))
     end
     ## balance
     cEco = cEco + c_eco_flow + c_eco_influx - c_eco_out
@@ -74,7 +74,7 @@ Allocate carbon to vegetation components using cCycle_CASA
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
  - land.cCycleBase.p_annk: carbon allocation matrix
- - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
+ - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
@@ -115,7 +115,7 @@ Solve the steady state of the cCycle for the CASA model based on recurrent. Retu
 
 # Inputs:
 
-  - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
+  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
   - land.cFlow.p_giver: c_giver pool array
   - land.cFlow.p_taker: c_taker pool array
   - land.fluxes.gpp: values for gross primary productivity

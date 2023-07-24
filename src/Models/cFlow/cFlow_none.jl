@@ -9,14 +9,14 @@ function define(p_struct::cFlow_none, forcing, land, helpers)
         1,
         1,
         length(land.pools.cEco))
-    p_A = tmp
-    p_E = tmp
-    p_F = tmp
+    c_flow_A_vec = tmp
+    p_E_vec = tmp
+    p_F_vec = tmp
     p_taker = []
     p_giver = []
 
     ## pack land variables
-    @pack_land (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
+    @pack_land (c_flow_A_vec, p_E_vec, p_F_vec, p_giver, p_taker) => land.cFlow
     return land
 end
 

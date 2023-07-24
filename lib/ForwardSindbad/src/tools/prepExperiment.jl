@@ -1,22 +1,7 @@
-export saveOutCubes
 export getExperimentInfo
 export prepExperimentForward
 export prepExperimentOpti
 
-"""
-    saveOutCubes(data_vars::Tuple, data_dims::Vector)
-
-saves the output varibles from the forward run
-"""
-function saveOutCubes(data_vars::Tuple, data_dims::Vector)
-    for vn ∈ eachindex(data_dims)
-        data_var = data_vars[vn]
-        data_dim = data_dims[vn]
-        data_path = data_dim.backendargs[1]
-        @info "saving $(data_path)"
-        savecube(data_var, data_path; overwrite=true)
-    end
-end
 
 """
     getExperimentInfo(experiment_json::String; replace_info=nothing)

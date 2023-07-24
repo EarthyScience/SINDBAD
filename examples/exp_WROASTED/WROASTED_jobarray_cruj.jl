@@ -13,10 +13,10 @@ forcing_set = "cruj"
 site_info = Sindbad.CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
-    domain = string(site_info[site_index][2])
+domain = string(site_info[site_index][2])
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment_nnse.json"
-inpath=nothing
+path_input = nothing
 sYear = nothing
 eYear = nothing
 ml_main_dir = nothing
@@ -32,20 +32,20 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(sYear).$(eYear).daily.nc")
-inpath = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
-obspath = inpath;
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
+path_observation = path_input;
 
 forcingConfig = "forcing_$(forcing_set).json";
 exp_main = "wroasted_unc_nnse"
 exp_name = "$(exp_main)_$(forcing_set)"
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/";
+path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/";
 
 nrepeat = 200
 
 
 ## get the spinup sequence
-nc = ForwardSindbad.NetCDF.open(inpath)
+nc = ForwardSindbad.NetCDF.open(path_input)
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -98,11 +98,11 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.debug_model" => false,
     "model_run.flags.spinup.do_spinup" => true,
     "model_run.spinup.sequence" => sequence,
-    "forcing.default_forcing.data_path" => inpath,
-    "model_run.output.path" => outpath,
+    "forcing.default_forcing.data_path" => path_input,
+    "model_run.output.path" => path_output,
     "model_run.mapping.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
-    "optimization.constraints.default_constraint.data_path" => obspath,)
+    "optimization.constraints.default_constraint.data_path" => path_observation,)
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
@@ -156,10 +156,10 @@ foreach(costOpt) do var_row
     @show "plot obs", v
     ml_dat = nc_ml[varib_dict[v]][:]
     if v == :agb
-        ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
-    elseif v==:ndvi
+        ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
+    elseif v == :ndvi
         ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
-    end        
+    end
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
     if loss_name in (:nnseinv, :nseinv)

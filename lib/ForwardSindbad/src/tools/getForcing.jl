@@ -32,9 +32,10 @@ function collectForcingSizes(info, in_yax)
     return f_sizes
 end
 
-function collectForcingInfo(info, f_sizes)
+function collectForcingInfo(info, f_sizes, f_dimensions)
     f_info = (;)
     f_info = setTupleField(f_info, (:dimensions, info.forcing.dimensions))
+    f_info = setTupleField(f_info, (:axes, f_dimensions))
     if hasproperty(info.forcing, :subset)
         f_info = setTupleField(f_info, (:subset, info.forcing.subset))
     else
@@ -86,12 +87,14 @@ function gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "getForcing: getting variable name..."
     forcing_variables = keys(info.forcing.variables)
-    info = collectForcingInfo(info, f_sizes)
+    f_dimensions = f_dimension
+    # f_dimensions = Sindbad.DataStructures.OrderedDict(f_dimension...)
+    info = collectForcingInfo(info, f_sizes, f_dimensions)
     println("----------------------------------------------")
     forcing = (;
         data=incubes,
         dims=indims,
-        dimensions=Sindbad.DataStructures.OrderedDict(f_dimension...),
+        axes=f_dimensions,
         variables=forcing_variables,
         sizes=f_sizes)
     return info, forcing
