@@ -14,6 +14,7 @@ using JLD2: @save
 using NetCDF
 using NCDatasets
 using NLsolve
+using Pkg
 using ProgressMeter
 using RecursiveArrayTools
 using Statistics

@@ -13,10 +13,10 @@ forcing_set = "erai"
 site_info = Sindbad.CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
-    domain = string(site_info[site_index][2])
+domain = string(site_info[site_index][2])
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment_nnse.json"
-inpath=nothing
+path_input = nothing
 sYear = nothing
 eYear = nothing
 ml_main_dir = nothing
@@ -32,14 +32,14 @@ else
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
 ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(sYear).$(eYear).daily.nc")
-inpath = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
-obspath = inpath;
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
+path_observation = path_input;
 
 nrepeat = 200
 
 
 ## get the spinup sequence
-nc = ForwardSindbad.NetCDF.open(inpath)
+nc = ForwardSindbad.NetCDF.open(path_input)
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -99,10 +99,10 @@ opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 # opti_set = (:set10,)
 optimize_it = true;
 for o_set in opti_set
-    outpath = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)";
+    path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
-    
+
     replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
@@ -116,11 +116,11 @@ for o_set in opti_set
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence,
-        "forcing.default_forcing.data_path" => inpath,
-        "model_run.output.path" => outpath,
+        "forcing.default_forcing.data_path" => path_input,
+        "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
-        "optimization.constraints.default_constraint.data_path" => obspath,
+        "optimization.constraints.default_constraint.data_path" => path_observation,
         "optimization.variables_to_constrain" => opti_sets[o_set],)
 
     @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
@@ -139,8 +139,8 @@ for o_set in opti_set
 
     output = setupOutput(info)
 
-    observations = getObservation(info);
-    obs = getKeyedArray(observations);
+    observations = getObservation(info)
+    obs = getKeyedArray(observations)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
         prepRunEcosystem(output,
@@ -162,11 +162,11 @@ for o_set in opti_set
     opt_dat = output.data
     def_dat = outcubes
     out_vars = output.variables
-    costOpt = info.optim.cost_options;
+    costOpt = info.optim.cost_options
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
-    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
+    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
@@ -175,10 +175,10 @@ for o_set in opti_set
         @show "plot obs", v
         ml_dat = nc_ml[varib_dict[v]][:]
         if v == :agb
-            ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
-        elseif v==:ndvi
+            ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
+        elseif v == :ndvi
             ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
-        end        
+        end
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
         if loss_name in (:nnseinv, :nseinv)

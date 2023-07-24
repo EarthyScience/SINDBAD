@@ -7,47 +7,49 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
-# inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
+# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-# inpath = "../data/DE-2.1979.2017.daily.nc"
+# path_input = "../data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
-# inpath = "../data/BE-Vie.1979.2017.daily.nc"
+# path_input = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 domain = "DE-Hai"
 domain = "AU-DaP"
-inpath = "../data/fn/$(domain).1979.2017.daily.nc"
+path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
-obspath = inpath
+path_observation = path_input
 optimize_it = true
-# optimize_it = false
-outpath = nothing
+optimize_it = false
+path_output = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
 replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "forcing.default_forcing.data_path" => inpath,
+    "forcing.default_forcing.data_path" => path_input,
     "model_run.time.end_date" => eYear * "-12-31",
     "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
+    "model_run.flags.run_forward_and_cost" => false,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => false,
     "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.debug_model" => false,
     "model_run.rules.model_array_type" => arraymethod,
     "model_run.flags.spinup.do_spinup" => true,
-    "model_run.output.path" => outpath,
+    "model_run.output.path" => path_output,
+    "model_run.output.format" => "nc",
+    "model_run.output.save_single_file" => false,
     "model_run.mapping.parallelization" => pl,
     "optimization.algorithm" => "Optimization_GCMAES",
-    "optimization.constraints.default_constraint.data_path" => obspath);
+    "optimization.constraints.default_constraint.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
 
-tblParams = Sindbad.getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
+# tblParams = Sindbad.getParameters(info.tem.models.forward,
+#     info.optim.default_parameter,
+#     info.optim.optimized_parameters);
 
 info, forcing = getForcing(info);
 

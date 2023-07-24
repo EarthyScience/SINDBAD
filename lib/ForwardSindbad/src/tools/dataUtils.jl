@@ -57,7 +57,7 @@ function getSpatialSubset(ss, v)
         for ssn ∈ ssname
             ss_r = getproperty(ss, ssn)
             ss_range = ss_r[1]:ss_r[2]
-            v= spatialSubset(v, ss_range, Val(ssn))
+            v = spatialSubset(v, ss_range, Val(ssn))
         end
     end
     return v
@@ -147,7 +147,7 @@ end
 function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
     yax_point = cleanInvalid(yax_point, dfill)
     yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
-    vinfo.additive_unit_conversion)
+        vinfo.additive_unit_conversion)
     bounds = vinfo.bounds
     if !isnothing(bounds)
         yax_point = clamp(yax_point, first(bounds), last(bounds))
@@ -273,13 +273,13 @@ function getSindbadDims(c)
     dimnames = DimensionalData.name(dims(c))
     act_dimnames = []
     foreach(dimnames) do dimn
-        td=dimn
+        td = dimn
         if dimn in (:Ti, :Time, :TIME, :t, :T, :TI)
             td = :time
         end
         push!(act_dimnames, td)
     end
-    return [act_dimnames[k] => getproperty(c, dimnames[k]) |> Array for k ∈ eachindex(dimnames)]  
+    return [act_dimnames[k] => getproperty(c, dimnames[k]) |> Array for k ∈ eachindex(dimnames)]
 end
 
 """

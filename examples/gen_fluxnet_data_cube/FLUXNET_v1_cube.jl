@@ -7,11 +7,11 @@ using Dates
 using UnicodePlots
 using ProgressMeter
 
-inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
+path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 mainpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily"
 files = readdir(mainpath);
-inpath = joinpath(mainpath, files[10]);
-ds = NCDataset(inpath);
+path_input = joinpath(mainpath, files[10]);
+ds = NCDataset(path_input);
 
 function select_variables(ds)
     sizes = []
@@ -24,10 +24,10 @@ function select_variables(ds)
     return name_variables[selection], sizes
 end
 
-name_variables, sizes  = select_variables(ds);
+name_variables, sizes = select_variables(ds);
 
 function attr_dict(ds)
-    d = Dict{String, Any}()
+    d = Dict{String,Any}()
     for (attname, attval) in ds.attrib
         d[string(attname)] = attval
     end
@@ -43,12 +43,12 @@ att = attr_dict(varws)
 gattr1 = attr_dict(ds1)
 k = keys(gattr1)
 
- # vcat(gattr1["PFT"], gattr1["PFT"]) |> unique
+# vcat(gattr1["PFT"], gattr1["PFT"]) |> unique
 
- function attributes_sites(mainpath, files_sites)
+function attributes_sites(mainpath, files_sites)
     ds = NCDataset(joinpath(mainpath, files_sites[1]))
     gs_attr_o = attr_dict(ds)
-    gs_attr = Dict{String, Any}()
+    gs_attr = Dict{String,Any}()
     for k in keys(gs_attr_o)
         gs_attr[k] = [gs_attr_o[k]]
     end
@@ -68,27 +68,27 @@ k = keys(gattr1)
         end
     end
     return gs_attr
- end
+end
 
 
- function attributes_variable(mainpath, file, name_variable)
-    ds =  NCDataset(joinpath(mainpath, file))
+function attributes_variable(mainpath, file, name_variable)
+    ds = NCDataset(joinpath(mainpath, file))
     attr_o = attr_dict(ds[name_variable])
-    gs_attr = Dict{String, Any}()
+    gs_attr = Dict{String,Any}()
     for k in keys(attr_o)
         gs_attr[k] = [attr_o[k]]
     end
     return gs_attr
- end
+end
 
 function attributes_variable(gs_attr, attr_i)
     for k in keys(gs_attr)
         gs_attr[k] = vcat(gs_attr[k], attr_i[k])
     end
     return gs_attr
- end
+end
 
- function reduce_attributes_variable(gs_attr)
+function reduce_attributes_variable(gs_attr)
     # if is unique, reduce entries to one
     for k in keys(gs_attr)
         u_val = unique(gs_attr[k])
@@ -97,7 +97,7 @@ function attributes_variable(gs_attr, attr_i)
         end
     end
     return gs_attr
- end
+end
 
 
 # new cube
@@ -109,7 +109,7 @@ files = readdir(mainpath)
 # n_steps = length(alldates)
 
 function variable_names(mainpath, file)
-    ds = NCDataset(joinpath(mainpath, file));
+    ds = NCDataset(joinpath(mainpath, file))
     return keys(ds)
 end
 
@@ -120,29 +120,30 @@ function dims_variable(mainpath, file, name_variable, locations; n_files=1)
     v = ds[name_variable]
     var_keys = keys(v)
     if length(size(v)) == 3
-        if "longitude" in var_keys &&  "latitude" in var_keys && "time" in var_keys
+        if "longitude" in var_keys && "latitude" in var_keys && "time" in var_keys
             n_steps = size(ds["time"], 1)
             ax_list = (
                 Dim{:time}(ds["time"][:]),
                 Dim{:site}(locations[1:n_files])
-                )
+            )
             dims = (n_steps, n_files)
-        else "longitude" in var_keys &&  "latitude" in var_keys && "depth_soildGrids" in var_keys
+        else
+            "longitude" in var_keys && "latitude" in var_keys && "depth_soildGrids" in var_keys
             depth = length(ds["depth_soilGrids"][:])
             ax_list = (
                 Dim{:depth_soilGrids}(1:depth),
                 Dim{:site}(locations[1:n_files])
-                )
+            )
             dims = (depth, n_files)
         end
-    elseif length(size(v)) == 4 && "longitude" in var_keys &&  "latitude" in var_keys && "time" in var_keys && "depth_FLUXNET" in var_keys
+    elseif length(size(v)) == 4 && "longitude" in var_keys && "latitude" in var_keys && "time" in var_keys && "depth_FLUXNET" in var_keys
         n_steps = size(ds["time"], 1)
         depth = length(ds["depth_FLUXNET"][:])
         ax_list = (
-                Dim{:time}(ds["time"][:]),
-                Dim{:depth_FLUXNET}(1:depth),
-                Dim{:site}(locations[1:n_files]),
-                )
+            Dim{:time}(ds["time"][:]),
+            Dim{:depth_FLUXNET}(1:depth),
+            Dim{:site}(locations[1:n_files]),
+        )
         dims = (n_steps, depth, n_files)
     end
     return dims, ax_list
@@ -157,10 +158,10 @@ function get_data_from_file(mainpath, file, name_variable)
     gs_attr = attr_dict(ds[name_variable])
     new_data = nothing
 
-    if length(size(var_selected))==3
-        new_data = replace(var_selected[1,1,:], missing=>NaN)
+    if length(size(var_selected)) == 3
+        new_data = replace(var_selected[1, 1, :], missing => NaN)
     else
-        new_data = replace(var_selected[1,1,:,:], missing=>NaN)
+        new_data = replace(var_selected[1, 1, :, :], missing => NaN)
     end
     return new_data, gs_attr
 end
@@ -181,12 +182,12 @@ function get_data_variable(name_variable, mainpath, files)
 
     for (i, file) in enumerate(files)
         tmp_data, gs_attr_i = get_data_from_file(mainpath, file, name_variable)
-        if length(dims_arr)==3
-            to_fill[:,:, i] = tmp_data
+        if length(dims_arr) == 3
+            to_fill[:, :, i] = tmp_data
         else
             to_fill[:, i] = tmp_data
         end
-        if i>1
+        if i > 1
             gs_attr_o = attributes_variable(gs_attr_o, gs_attr_i)
         end
     end
@@ -194,7 +195,7 @@ function get_data_variable(name_variable, mainpath, files)
     return to_fill, gs_attr, ax_list
 end
 
-outpath = "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr"
+path_output = "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr"
 
 global_attributes = attributes_sites(mainpath, files);
 
@@ -207,10 +208,10 @@ ds_array = YAXArray(ax_list, f_arr, g_att)  # g_att
 
 key_var = Symbol(name_variables[1])
 data_set = YAXArrays.Dataset(; (key_var => ds_array, )..., properties = global_attributes)
-savedataset(data_set, path=outpath, driver=:zarr, overwrite=true) # overwrite=true
+savedataset(data_set, path=path_output, driver=:zarr, overwrite=true) # overwrite=true
 
 
-ds_open = open_dataset(outpath, driver=:zarr)
+ds_open = open_dataset(path_output, driver=:zarr)
 
 p = Progress(length(name_variables[2:end]))
 for var_name in name_variables[2:end]
@@ -218,11 +219,11 @@ for var_name in name_variables[2:end]
     ds_array = YAXArray(ax_list, f_arr, g_att) 
     key_var = Symbol(var_name)
     ds_new = YAXArrays.Dataset(; (key_var => ds_array, )...)
-    savedataset(ds_new, path=outpath, backend=:zarr, append=true)
+    savedataset(ds_new, path=path_output, backend=:zarr, append=true)
     next!(p; showvalues = [(:variable_name, var_name)])
 end
 
-ds_open = open_dataset(outpath, driver=:zarr)
+ds_open = open_dataset(path_output, driver=:zarr)
 =#
 
 
