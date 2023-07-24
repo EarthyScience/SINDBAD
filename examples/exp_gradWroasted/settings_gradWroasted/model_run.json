@@ -1,6 +1,6 @@
 {
   "time": {
-    "model_time_step": "daily",
+    "model_time_step": "day",
     "start_date": "2005-01-01",
     "end_date": "2017-12-31",
     "timesteps_in_day": 1,
@@ -37,6 +37,7 @@
     "yax_max_cache": 2e9
   },
   "output": {
+    "save_single_file": true,
     "output_array_type": "array",
     "all": false,
     "path": null,

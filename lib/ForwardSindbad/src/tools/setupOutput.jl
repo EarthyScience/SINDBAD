@@ -78,13 +78,13 @@ function getOutDimsArrays(datavars, info, _, land_init, _, _, ::Val{:yaxarray})
     outdims = map(datavars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
         inax = info.model_run.mapping.run_ecosystem
-        outpath = info.output.data
+        path_output = info.output.data
         outformat = info.model_run.output.format
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         OutDims(inax[1],
             Dim{Symbol(depth_name)}(1:depth_size),
             inax[2:end]...;
-            path=joinpath(outpath, "$(vname).$(outformat)"),
+            path=joinpath(path_output, "$(vname).$(outformat)"),
             backend=:zarr,
             overwrite=true)
     end
@@ -92,8 +92,8 @@ function getOutDimsArrays(datavars, info, _, land_init, _, _, ::Val{:yaxarray})
     return outdims, outarray
 end
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_dimensions,::Val{:array})
-    outarray, outdims = map(datavars) do vname_full
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:array})
+    outarray = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         ar = nothing
         ax_vals = values(forcing_sizes)
@@ -103,14 +103,34 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
             depth_size,
             ax_vals[2:end]...)
         ar .= info.tem.helpers.numbers.sNT(NaN)
-        OutDims(forcing_dimensions[1],
-            Dim{Symbol(depth_name)}(1:depth_size),
-            inax[2:end]...;
-            path=joinpath(outpath, "$(vname).$(outformat)"),
-            backend=:zarr,
-            overwrite=true)
     end
-    outdims = nothing
+    # @show forcing_axes
+    dim_loops = first.(forcing_axes)
+    axes_dims = []
+    if !isnothing(info.tem.forcing.dimensions.permute)
+        dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
+        if dim_loops !== dim_perms
+            for ix in eachindex(dim_perms)
+                dp_i = dim_perms[ix]
+                dl_ind = findall(x -> x == dp_i, dim_loops)[1]
+                f_a = forcing_axes[dl_ind]
+                ax_dim = Dim{first(f_a)}(last(f_a))
+                push!(axes_dims, ax_dim)
+            end
+        end
+    end
+    outdims = map(datavars) do vname_full
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        od = []
+        push!(od, axes_dims[1])
+        if depth_size > 1
+            push!(od, Dim{Symbol(depth_name)}(1:depth_size))
+        end
+        foreach(axes_dims[2:end]) do f_d
+            push!(od, f_d)
+        end
+        Tuple(od)
+    end
     return outdims, outarray
 
 end
@@ -168,7 +188,7 @@ function getVariableFields(datavars)
 end
 
 function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
-    forcing_dimensions = info.tem.forcing.dimensions
+    forcing_axes = info.tem.forcing.axes
     forcing_sizes = info.tem.forcing.sizes
     @info "setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
@@ -189,7 +209,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "setupOutput: getting output dimension and arrays..."
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_dimensions, Val(Symbol(info.model_run.output.output_array_type)))
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(Symbol(info.model_run.output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 

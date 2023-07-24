@@ -512,11 +512,11 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.time.model_time_step == "daily"
+    if info.model_run.time.model_time_step == "day"
         time_step = Day(1)
         # time_range = collect((Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)))
         time_range = Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)
-    elseif info.model_run.time.model_time_step == "hourly"
+    elseif info.model_run.time.model_time_step == "hour"
         time_step = Month(1)
         time_range =
             Date(info.model_run.time.start_date):Hour(1):Date(info.model_run.time.end_date)

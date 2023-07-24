@@ -16,16 +16,17 @@ site_info = Sindbad.CSV.File(
 domain = site_info[site_index][2]
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment_nnse.json"
-inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
-obspath = inpath;
+path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
+path_observation = path_input;
 forcingConfig = "forcing_$(forcing).json";
 
 optimize_it = true;
-outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_unc";
+path_output = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_unc";
 
 sYear = "1979"
 eYear = "2017"
 nrepeat = 200
+
 pl = "threads"
 replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
@@ -38,18 +39,18 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.spinup.run_spinup" => true,
     "model_run.flags.debug_model" => false,
     "model_run.flags.spinup.do_spinup" => true,
-    "forcing.default_forcing.data_path" => inpath,
-    "model_run.output.path" => outpath,
+    "forcing.default_forcing.data_path" => path_input,
+    "model_run.output.path" => path_output,
     "model_run.mapping.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
-    "optimization.constraints.default_constraint.data_path" => obspath,)
+    "optimization.constraints.default_constraint.data_path" => path_observation,)
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
 
 ## get the spinup sequence
 
-data_path = getAbsDataPath(info, inpath)
+data_path = getAbsDataPath(info, path_input)
 nc = ForwardSindbad.NetCDF.open(data_path)
 y_dist = nc.gatts["last_disturbance_on"]
 
@@ -142,10 +143,10 @@ foreach(costOpt) do var_row
     @show "plot obs", v
     ml_dat = nc_ml[varib_dict[v]][:]
     if v == :agb
-        ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
-    elseif v==:ndvi
+        ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
+    elseif v == :ndvi
         ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
-    end        
+    end
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
     if loss_name in (:nnseinv, :nseinv)
