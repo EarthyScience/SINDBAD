@@ -40,7 +40,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.flags.spinup.do_spinup" => true,
     "model_run.output.path" => path_output,
     "model_run.output.format" => "nc",
-    "model_run.output.save_single_file" => false,
+    "model_run.output.save_single_file" => true,
     "model_run.mapping.parallelization" => pl,
     "optimization.algorithm" => "Optimization_GCMAES",
     "optimization.constraints.default_constraint.data_path" => path_observation);

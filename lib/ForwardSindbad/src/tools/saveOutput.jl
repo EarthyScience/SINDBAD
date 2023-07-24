@@ -18,21 +18,40 @@ end
 
 function getVariableCatalog(info)
     variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
-    def_varib = variCat["default_varib"]
+    default_info = variCat["default_varib"]
     t_step = info.model_run.time.model_time_step
+    default_keys = keys(default_info)
+
     for vari_b ∈ keys(variCat)
         if vari_b !== "default_varib"
-            vinfo = getCombinedVariableInfo(def_varib, variCat[vari_b])
-            vtime_val = vinfo["units"]
-            vtime_new = replace(vtime_val, "time" => t_step)
-            vinfo["units"] = vtime_new
-            variCat[vari_b] = vinfo
+            var_info = variCat[vari_b]
+            var_fields = keys(var_info)
+            all_fields = Tuple(unique([default_keys..., var_fields...]))
+            for var_field ∈ all_fields
+                field_value = nothing
+                if haskey(default_info, var_field)
+                    field_value = default_info[var_field]
+                else
+                    field_value = var_info[var_field]
+                end
+                if haskey(var_info, var_field)
+                    var_prop = var_info[var_field]
+                    if !isnothing(var_prop) && length(var_prop) > 0
+                        field_value = var_info[var_field]
+                    end
+                end
+                if var_field == "units"
+                    field_value = replace(field_value, "time" => t_step)
+                end
+                variCat[vari_b][var_field] = field_value
+            end
         end
     end
     return variCat
 end
 
-function getYaxForVariable(data_out, data_dim, data_prop)
+function getYaxForVariable(data_out, data_dim, vname, varib_catalog)
+    data_prop = getVariableInfo(varib_catalog, String(vname))
     if size(data_out, 2) == 1
         data_out = getModelDataArray(data_out)
     end
@@ -47,11 +66,11 @@ function fillDefaultInfo(def_info, vari_b)
     return
 end
 function getVariableInfo(catalog, vari_b)
-    o_varib = catalog["default_varib"]
+    o_varib = copy(catalog["default_varib"])
     if vari_b ∈ keys(catalog)
         o_varib = catalog[vari_b]
     end
-    o_varib["standard_name"] = split(String(vari_b), "__")[1]
+    o_varib["standard_name"] = split(vari_b, "__")[1]
     return o_varib
 end
 """
@@ -62,11 +81,11 @@ saves the output varibles from the forward run
 function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, data, data_dims, out_format, ::Val{:true})
     @info "saving one file for all variables"
     all_vars = getVarFull.(data_vars)
-    all_yax = Tuple(getYaxForVariable.(data, data_dims, Ref(varib_catalog)))
+    all_yax = Tuple(getYaxForVariable.(data, data_dims, all_vars, Ref(varib_catalog)))
     data_path = data_path_base * "_all_variables.$(out_format)"
     @info data_path
     ds_new = YAXArrays.Dataset(; (; zip(all_vars, all_yax)...)..., properties=global_info)
-    savedataset(ds_new, path=data_path, append=true)
+    savedataset(ds_new, path=data_path, append=true, overwrite=true)
     return nothing
 end
 
@@ -76,8 +95,7 @@ function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, dat
     for vn ∈ eachindex(data_vars)
         var_s = data_vars[vn]
         vname = getVarFull(var_s)
-        var_prop = getVariableInfo(varib_catalog, vname)
-        data_yax = getYaxForVariable(data[vn], data_dims[vn], var_prop)
+        data_yax = getYaxForVariable(data[vn], data_dims[vn], vname, varib_catalog)
         data_path = data_path_base * "_$(vname).$(out_format)"
         @info "saving $(data_path)"
         ds_new = YAXArrays.Dataset(; (vname => data_yax,)..., properties=global_info)
@@ -102,11 +120,11 @@ function getGlobalAttributes(info)
         "experiment" => info.experiment.name,
         "domain" => info.experiment.domain,
         "date" => string(Date(now())),
-        "SINDBAD" => sindbad_version,
+        # "SINDBAD" => sindbad_version,
         "machine" => Sys.MACHINE,
         "os" => os,
         "host" => gethostname(),
-        "julia" => julia_info,
+        # "julia" => julia_info,
     )
     return global_attr
 end

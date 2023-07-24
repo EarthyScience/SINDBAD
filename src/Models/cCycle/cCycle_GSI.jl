@@ -33,7 +33,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
             cEco_prev,
             c_eco_out,
             c_eco_npp,
-            p_k,
+            c_eco_k,
             c_flow_A_vec,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
@@ -49,7 +49,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
 
     ## compute losses
     for cl ∈ eachindex(cEco)
-        c_eco_out_cl = min(cEco[cl], cEco[cl] * p_k[cl])
+        c_eco_out_cl = min(cEco[cl], cEco[cl] * c_eco_k[cl])
         @rep_elem c_eco_out_cl => (c_eco_out, cl, :cEco)
     end
 
@@ -121,7 +121,7 @@ Allocate carbon to vegetation components using cCycle_GSI
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.p_annk: carbon allocation matrix
+ - land.cCycleBase.c_eco_k_ann: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
@@ -129,7 +129,7 @@ Allocate carbon to vegetation components using cCycle_GSI
  - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
+ - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration
