@@ -44,7 +44,7 @@ function compute(p_struct::cCycle_simple, forcing, land, helpers)
             cEco_prev,
             c_eco_out,
             c_eco_npp,
-            p_k,
+            c_eco_k,
             zixVeg,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
@@ -59,7 +59,7 @@ function compute(p_struct::cCycle_simple, forcing, land, helpers)
     c_eco_flow = zero_c_eco_flow .* z_zero
     c_eco_influx = c_eco_influx
     ## compute losses
-    c_eco_out = min.(cEco, cEco .* p_k)
+    c_eco_out = min.(cEco, cEco .* c_eco_k)
 
     ## gains to vegetation
     for zv ∈ zixVeg
@@ -131,7 +131,7 @@ Allocate carbon to vegetation components using cCycle_simple
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.p_annk: carbon allocation matrix
+ - land.cCycleBase.c_eco_k_ann: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
@@ -139,7 +139,7 @@ Allocate carbon to vegetation components using cCycle_simple
  - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
+ - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration

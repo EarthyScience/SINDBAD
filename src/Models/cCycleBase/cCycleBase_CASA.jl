@@ -60,11 +60,11 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     # turnover rates
     TSPY = helpers.dates.timesteps_in_year
-    p_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
+    c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
-    @pack_land (p_k_base) => land.cCycleBase
-    # @pack_land (p_C2Nveg, p_k_base, c_flow_E_array) => land.cCycleBase
+    @pack_land (c_eco_k_base) => land.cCycleBase
+    # @pack_land (p_C2Nveg, c_eco_k_base, c_flow_E_array) => land.cCycleBase
     return land
 end
 

@@ -14,10 +14,10 @@ function define(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_cTauSoilW_GSI p_struct
 
     ## instantiate variables
-    p_k_f_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_k_f_soilW => land.cTauSoilW
+    @pack_land c_eco_k_soilW => land.cTauSoilW
     return land
 end
 
@@ -26,7 +26,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     @unpack_cTauSoilW_GSI p_struct
 
     ## unpack land variables
-    @unpack_land p_k_f_soilW ∈ land.cTauSoilW
+    @unpack_land c_eco_k_soilW ∈ land.cTauSoilW
 
     ## unpack land variables
     @unpack_land begin
@@ -40,7 +40,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc => (p_k_f_soilW, l_zix, :cEco)
+        @rep_elem soilW_top_sc => (c_eco_k_soilW, l_zix, :cEco)
     end
 
     ## repeat for the soil pools; using all soil moisture layers
@@ -49,11 +49,11 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
 
     cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc => (p_k_f_soilW, s_zix, :cEco)
+        @rep_elem soilW_all_sc => (c_eco_k_soilW, s_zix, :cEco)
     end
 
     ## pack land variables
-    @pack_land p_k_f_soilW => land.cTauSoilW
+    @pack_land c_eco_k_soilW => land.cTauSoilW
     return land
 end
 
@@ -88,7 +88,7 @@ Effect of soil moisture on decomposition rates using cTauSoilW_GSI
  - land.pools.soilW: soil temperature
 
 *Outputs*
- - land.cTauSoilW.p_k_f_soilW: effect of moisture on cTau for different pools
+ - land.cTauSoilW.c_eco_k_soilW: effect of moisture on cTau for different pools
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilW_GSI

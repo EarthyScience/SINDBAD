@@ -10,10 +10,10 @@ function define(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA p_struct
 
     ## instantiate variables
-    p_k_f_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
-    @pack_land p_k_f_soilW => land.cTauSoilW
+    @pack_land c_eco_k_soilW => land.cTauSoilW
     return land
 end
 
@@ -22,7 +22,7 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA p_struct
 
     ## unpack land variables
-    @unpack_land p_k_f_soilW ∈ land.cTauSoilW
+    @unpack_land c_eco_k_soilW ∈ land.cTauSoilW
 
     ## unpack land variables
     @unpack_land begin
@@ -62,7 +62,7 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     # FEED IT TO THE STRUCTURE
     fsoilW = BGME
     # set the same moisture stress to all carbon pools
-    p_k_f_soilW[helpers.pools.zix.cEco] = fsoilW
+    c_eco_k_soilW[helpers.pools.zix.cEco] = fsoilW
 
     ## pack land variables
     @pack_land fsoilW => land.cTauSoilW
