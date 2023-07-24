@@ -18,9 +18,9 @@ do_forcing_figs = false
 site_info = Sindbad.CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
-info=nothing
-forcing=nothing
-models_with_matlab_params=nothing
+info = nothing
+forcing = nothing
+models_with_matlab_params = nothing
 linit = nothing
 debug_span = 1:10000
 if !isnothing(models_with_matlab_params)
@@ -54,12 +54,12 @@ for site_index in sites
         ml_data_path = joinpath(ml_main_dir, "sindbad_raw_set1PF/fluxnetBGI2021.BRK15.DD", dataset, domain, "modelOutput")
     end
 
-    inpath = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
+    path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc")
 
-    obspath = inpath;
-    forcingConfig = "forcing_$(forcing_set).json";
+    path_observation = path_input
+    forcingConfig = "forcing_$(forcing_set).json"
 
-    outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_test";
+    path_output = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_test"
 
 
 
@@ -67,8 +67,8 @@ for site_index in sites
 
     nrepeat = 200
 
-    # data_path = getAbsDataPath(info, inpath)
-    data_path = inpath
+    # data_path = getAbsDataPath(info, path_input)
+    data_path = path_input
     if !isfile(data_path)
         continue
     end
@@ -118,7 +118,7 @@ for site_index in sites
         "experiment.configuration_files.optimization" => "optimization_1_1.json",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "forcing.default_forcing.data_path" => inpath,
+        "forcing.default_forcing.data_path" => path_input,
         "model_run.time.end_date" => eYear * "-12-31",
         "model_run.flags.run_optimization" => false,
         "model_run.flags.run_forward_and_cost" => true,
@@ -128,22 +128,22 @@ for site_index in sites
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence[2:end],
-        "model_run.output.path" => outpath,
+        "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
-        "optimization.constraints.default_constraint.data_path" => obspath,)
+        "optimization.constraints.default_constraint.data_path" => path_observation,)
 
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
-    info, forcing = getForcing(info);
+    info, forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
     tblParams = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
-        info.optim.optimized_parameters);
-    outparams = tblParams.optim;
-    param_names = tblParams.name_full;
+        info.optim.optimized_parameters)
+    outparams = tblParams.optim
+    param_names = tblParams.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
 
     if isfile(ml_param_file)
@@ -161,25 +161,25 @@ for site_index in sites
             @show outparams[opi], "new"
             println("------------------------------------------------")
         end
-        models_with_matlab_params = updateModelParameters(tblParams, info.tem.models.forward, outparams);
+        models_with_matlab_params = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
 
         tblParams_2 = Sindbad.getParameters(models_with_matlab_params,
             info.optim.default_parameter,
-            info.optim.optimized_parameters);
+            info.optim.optimized_parameters)
 
 
 
         ## run the model
-        forc = getKeyedArrayWithNames(forcing);
-        output = setupOutput(info);
+        forc = getKeyedArrayWithNames(forcing)
+        output = setupOutput(info)
 
         loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output,
                 models_with_matlab_params,
                 forc,
                 info.tem,
-                info.tem.helpers);
+                info.tem.helpers)
         @time runEcosystem!(output.data,
             models_with_matlab_params,
             forc,
@@ -192,8 +192,8 @@ for site_index in sites
 
         outcubes = output.data
 
-        observations = getObservation(info);
-        obs = getKeyedArray(observations);
+        observations = getObservation(info)
+        obs = getKeyedArray(observations)
 
         # open the matlab simulation data
         # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
@@ -205,7 +205,7 @@ for site_index in sites
         ds = forcing.data[1]
         opt_dat = outcubes
         out_vars = output.variables
-        costOpt = info.optim.cost_options;
+        costOpt = info.optim.cost_options
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
             v = var_row.variable
@@ -217,10 +217,10 @@ for site_index in sites
             end
             ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
             @show ml_data_file
-            nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
+            nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
             ml_dat = nc_ml[varib_dict[v]][:]
             if v == :agb
-                ml_dat = nc_ml[varib_dict[v]][1,2,:]
+                ml_dat = nc_ml[varib_dict[v]][1, 2, :]
             elseif v == :ndvi
                 ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
             end
@@ -256,18 +256,18 @@ for site_index in sites
         if do_debug_figs
             ##plot more diagnostic figures for sindbad jl
 
-            replace_info["model_run.flags.run_optimization"]= false
-            replace_info["model_run.flags.run_forward_and_cost"]= false
-            info = getExperimentInfo(experiment_json; replace_info=replace_info);
+            replace_info["model_run.flags.run_optimization"] = false
+            replace_info["model_run.flags.run_forward_and_cost"] = false
+            info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify info
-            info, forcing = getForcing(info);
-            output = setupOutput(info);
+            info, forcing = getForcing(info)
+            output = setupOutput(info)
             loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepRunEcosystem(output,
-                models_with_matlab_params,
-                forc,
-                info.tem,
-                info.tem.helpers);
+                prepRunEcosystem(output,
+                    models_with_matlab_params,
+                    forc,
+                    info.tem,
+                    info.tem.helpers)
             linit = land_init_space[1]
             @time runEcosystem!(output.data,
                 models_with_matlab_params,
@@ -280,7 +280,7 @@ for site_index in sites
                 f_one)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            out_vars = output.variables;
+            out_vars = output.variables
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output.data[o][:, :, 1, 1]
@@ -289,7 +289,7 @@ for site_index in sites
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
                     @show ml_data_file
-                    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
+                    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1
@@ -301,7 +301,7 @@ for site_index in sites
                 else
                     for ll ∈ 1:size(def_var, 2)
                         plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(1200, 900), title="$(v)_$(ll)")
-                            println("           layer => $ll")
+                        println("           layer => $ll")
 
                         if !isnothing(ml_dat)
                             plot!(xdata, ml_dat[1, ll, debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, debug_span]), digits=2)))")
@@ -310,18 +310,18 @@ for site_index in sites
                     end
                 end
             end
-        end 
+        end
 
         if do_forcing_figs
             ### PLOT the forcings
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            forc_vars = forcing.variables;
+            forc_vars = forcing.variables
             for (o, v) in enumerate(forc_vars)
                 println("plot forc-model => site: $domain, variable: $v")
                 def_var = forcing.data[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.vector...]
                 if size(def_var, 1) !== length(xdata)
-                    xdata=1:size(def_var,1)
+                    xdata = 1:size(def_var, 1)
                 end
                 if size(def_var, 2) == 1
                     plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(v)")

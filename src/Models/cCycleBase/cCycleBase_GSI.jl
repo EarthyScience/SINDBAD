@@ -10,7 +10,7 @@ export cCycleBase_GSI, adjust_and_pack_pool_components
     annk_LitFast::T6 = 14.8 | (0.5, 148.0) | "turnover rate of fast litter (leaf litter) carbon pool" | "yr-1"
     annk_SoilSlow::T7 = 0.2 | (0.02, 2.0) | "turnover rate of slow soil carbon pool" | "yr-1"
     annk_SoilOld::T8 = 0.0045 | (0.00045, 0.045) | "turnover rate of old soil carbon pool" | "yr-1"
-    c_flow_A::T9 = Float64[
+    c_flow_A_array::T9 = Float64[
                      -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
                      0.0 -1.0 0.0 0.0 0 0.0 0.0 0.0
                      0.0 0.0 -1.0 1.0 0.0 0 0.0 0.0
@@ -40,16 +40,16 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     p_annk = zero(cEco)
 
     # if there is flux order check that is consistent
-    c_flow_order = Tuple(collect(1:length(findall(>(z_zero), c_flow_A))))
-    c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A)])
-    c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A)])
+    c_flow_order = Tuple(collect(1:length(findall(>(z_zero), c_flow_A_array))))
+    c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A_array)])
+    c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A_array)])
 
     c_model = Val(:cCycleBase_GSI)
 
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
+        (p_C2Nveg, c_flow_A_array, p_k_base, p_annk, c_flow_order, c_taker, c_giver, c_remain, c_model) => land.cCycleBase
     end
     return land
 end
