@@ -7,12 +7,12 @@ function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         cEco ∈ land.pools
-        (c_giver, c_flow_A) ∈ land.cCycleBase
+        (c_giver, c_flow_A_array) ∈ land.cCycleBase
     end
     # make list of indices which give carbon to other pools during the flow, and separate them if 
     # they are above or below the diagonal in flow vector
-    giver_upper = Tuple([ind[2] for ind ∈ findall(>(0), flagUpper(c_flow_A) .* c_flow_A)])
-    giver_lower = Tuple([ind[2] for ind ∈ findall(>(0), flagUpper(c_flow_A) .* c_flow_A)])
+    giver_upper = Tuple([ind[2] for ind ∈ findall(>(0), flagUpper(c_flow_A_array) .* c_flow_A_array)])
+    giver_lower = Tuple([ind[2] for ind ∈ findall(>(0), flagUpper(c_flow_A_array) .* c_flow_A_array)])
     giver_upper_unique = unique(giver_upper)
     giver_lower_unique = unique(giver_lower)
     giver_upper_indices = []
@@ -47,7 +47,7 @@ function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         c_allocation ∈ land.states
-        p_A ∈ land.states
+        c_flow_A_vec ∈ land.states
         (giver_lower_unique, giver_lower_indices, giver_upper_unique, giver_upper_indices) ∈ land.cCycleConsistency
         tolerance ∈ helpers.numbers
         (z_zero, o_one) ∈ land.wCycleBase
@@ -55,13 +55,13 @@ function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
 
     # check allocation
     if helpers.run.catch_model_errors
-        for i in eachindex(c_allocation) 
+        for i in eachindex(c_allocation)
             if c_allocation[i] < z_zero
                 cry_and_die(land, "negative values in carbon_allocation at index $(i). Cannot continue")
             end
         end
 
-        for i in eachindex(c_allocation) 
+        for i in eachindex(c_allocation)
             if c_allocation[i] > o_one
                 cry_and_die(land, "carbon_allocation larger than one at index $(i). Cannot continue")
             end
@@ -73,15 +73,15 @@ function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
 
         # Check carbon flow vector
         # check if any of the off-diagonal values of flow vector is negative
-        for i in eachindex(p_A) 
-            if p_A[i] < z_zero
+        for i in eachindex(c_flow_A_vec)
+            if c_flow_A_vec[i] < z_zero
                 cry_and_die(land, "negative value in flow vector at index $(i). Cannot continue")
             end
         end
 
         # check if any of the off-diagonal values of flow vector is larger than 1.
-        for i in eachindex(p_A) 
-            if p_A[i] > o_one
+        for i in eachindex(c_flow_A_vec)
+            if c_flow_A_vec[i] > o_one
                 cry_and_die(land, "flow is greater than one in flow vector at index $(i). Cannot continue")
             end
         end
@@ -93,17 +93,17 @@ function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
         for (i, giv) in enumerate(giver_upper_unique)
             s = z_zero
             for ind in giver_upper_indices[i]
-                s = s + p_A[ind]
+                s = s + c_flow_A_vec[ind]
             end
             if (s - o_one) > helpers.numbers.tolerance
                 cry_and_die(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
             end
         end
-    
+
         for (i, giv) in enumerate(giver_lower_unique)
             s = z_zero
             for ind in giver_lower_indices[i]
-                s = s + p_A[ind]
+                s = s + c_flow_A_vec[ind]
             end
             if (s - o_one) > helpers.numbers.tolerance
                 cry_and_die(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")

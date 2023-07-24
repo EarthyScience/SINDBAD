@@ -13,26 +13,26 @@ for site_index in 1:2
     forcing = "erai"
     site_info = Sindbad.CSV.File(
         "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing).csv";
-        header=false);
+        header=false)
     domain = site_info[site_index][2]
 
     experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-    inpath=nothing
+    path_input = nothing
     sYear = nothing
     eYear = nothing
     if forcing == "erai"
-        inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc";
+        path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/$(domain).1979.2017.daily.nc"
         sYear = "1979"
         eYear = "2017"
     else
-        inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/CRUJRA.v2_2/daily/$(domain).1979.2017.daily.nc";
+        path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/CRUJRA.v2_2/daily/$(domain).1979.2017.daily.nc"
         sYear = "1901"
         eYear = "2019"
     end
-    obspath = inpath;
-    forcingConfig = "forcing_$(forcing).json";
+    path_observation = path_input
+    forcingConfig = "forcing_$(forcing).json"
 
-    outpath = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad";
+    path_output = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad"
 
     nrepeat = 200
     pl = "threads"
@@ -47,18 +47,18 @@ for site_index in 1:2
         "model_run.flags.spinup.run_spinup" => true,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
-        "forcing.default_forcing.data_path" => inpath,
-        "model_run.output.path" => outpath,
+        "forcing.default_forcing.data_path" => path_input,
+        "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
-        "optimization.constraints.default_constraint.data_path" => obspath,)
+        "optimization.constraints.default_constraint.data_path" => path_observation,)
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
 
     ## get the spinup sequence
 
-    data_path = getAbsDataPath(info, inpath)
+    data_path = getAbsDataPath(info, path_input)
     nc = ForwardSindbad.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
@@ -99,18 +99,18 @@ for site_index in 1:2
 
     if isfile(replace_info["experiment.configuration_files.parameters"])
 
-        info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
-        
-        info, forcing = getForcing(info);
-        
-        forc = getKeyedArrayWithNames(forcing);
-        output = setupOutput(info);
-                
+        info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+
+        info, forcing = getForcing(info)
+
+        forc = getKeyedArrayWithNames(forcing)
+        output = setupOutput(info)
+
         loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
             prepRunEcosystem(output,
                 forc,
-                info.tem);
-    
+                info.tem)
+
         @time runEcosystem!(output.data,
             info.tem.models.forward,
             forc,
@@ -120,14 +120,14 @@ for site_index in 1:2
             loc_outputs,
             land_init_space,
             f_one)
-        
+
         outcubes = output.data
-        observations = getObservation(info);
-        obs = getKeyedArray(observations);
+        observations = getObservation(info)
+        obs = getKeyedArray(observations)
 
 
         ml_data_path = joinpath("/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD/ERAinterim.v2/data", domain * ".1979.2017.daily.nc")
-        nc_ml = ForwardSindbad.NetCDF.open(ml_data_path);
+        nc_ml = ForwardSindbad.NetCDF.open(ml_data_path)
 
         varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO")
 
@@ -136,7 +136,7 @@ for site_index in 1:2
         ds = forcing.data[1]
         opt_dat = outcubes
         out_vars = output.variables
-        costOpt = info.optim.cost_options;
+        costOpt = info.optim.cost_options
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
             v = var_row.variable
@@ -148,10 +148,10 @@ for site_index in 1:2
             end
             ml_dat = nc_ml[varib_dict[v]][:]
             if v == :agb
-                ml_dat = nc_ml[varib_dict[v]][1,1,2,:]
-            elseif v==:ndvi
+                ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
+            elseif v == :ndvi
                 ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
-            end        
+            end
             (obs_var, obs_σ, jl_dat) = getDataArray(opt_dat, obs, var_row)
             obs_var_TMP = obs_var[:, 1, 1, 1]
             non_nan_index = findall(x -> !isnan(x), obs_var_TMP)

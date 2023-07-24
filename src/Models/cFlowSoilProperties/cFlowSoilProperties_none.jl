@@ -6,19 +6,19 @@ function define(p_struct::cFlowSoilProperties_none, forcing, land, helpers)
     @unpack_land c_taker ∈ land.cCycleBase
 
     ## calculate variables
-    p_E = eltype(land.pools.cEco).(zero([c_taker...]))
+    p_E_vec = eltype(land.pools.cEco).(zero([c_taker...]))
 
     if land.pools.cEco isa SVector
-        p_E = SVector{length(p_E)}(p_E)
+        p_E_vec = SVector{length(p_E_vec)}(p_E_vec)
     end
 
-    p_F = eltype(land.pools.cEco).(zero([c_taker...]))
+    p_F_vec = eltype(land.pools.cEco).(zero([c_taker...]))
     if land.pools.cEco isa SVector
-        p_F = SVector{length(p_F)}(p_F)
+        p_F_vec = SVector{length(p_F_vec)}(p_F_vec)
     end
 
     ## pack land variables
-    @pack_land (p_E, p_F) => land.cFlowSoilProperties
+    @pack_land (p_E_vec, p_F_vec) => land.cFlowSoilProperties
     return land
 end
 

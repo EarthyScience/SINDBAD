@@ -9,24 +9,24 @@ sYear = "1979"
 eYear = "2017"
 using Plots
 
-# inpath = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
+# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-# inpath = "../data/DE-2.1979.2017.daily.nc"
+# path_input = "../data/DE-2.1979.2017.daily.nc"
 # forcingConfig = "forcing_DE-2.json"
-# inpath = "../data/BE-Vie.1979.2017.daily.nc"
+# path_input = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 # sites = ("AU-DaP", "AT-Neu")
 sites = ("CA-NS6",)
 for domain ∈ sites
     # domain = "DE-Hai"
-    inpath = "../data/fn/$(domain).1979.2017.daily.nc"
+    path_input = "../data/fn/$(domain).1979.2017.daily.nc"
     forcingConfig = "forcing_erai.json"
 
-    obspath = inpath
+    path_observation = path_input
     optimize_it = false
     optimize_it = true
-    outpath = nothing
+    path_output = nothing
 
 
     pl = "threads"
@@ -41,10 +41,10 @@ for domain ∈ sites
         "model_run.flags.spinup.run_spinup" => true,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
-        "forcing.default_forcing.data_path" => inpath,
-        "model_run.output.path" => outpath,
+        "forcing.default_forcing.data_path" => path_input,
+        "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
-        "optimization.constraints.default_constraint.data_path" => obspath)
+        "optimization.constraints.default_constraint.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
 
@@ -52,7 +52,7 @@ for domain ∈ sites
     ## get the spinup sequence
     nrepeat = 200
 
-    data_path = getAbsDataPath(info, inpath)
+    data_path = getAbsDataPath(info, path_input)
     nc = ForwardSindbad.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
