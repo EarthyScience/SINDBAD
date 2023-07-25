@@ -18,7 +18,7 @@ end
 
 function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     @unpack_land begin
-        precip ∈ land.rainSnow
+        precip ∈ land.fluxes
         (totalW_prev, totalW) ∈ land.states
         (evapotranspiration, runoff) ∈ land.fluxes
         tolerance ∈ helpers.numbers
@@ -41,7 +41,7 @@ function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land water_balance => land.waterBalance
+    @pack_land water_balance => land.states
     return land
 end
 
@@ -58,7 +58,7 @@ Calculate the water balance using waterBalance_simple
  - TWS and TWS_prev
 
 *Outputs*
- - land.waterBalance.water_balance
+ - land.states.water_balance
 
 ---
 

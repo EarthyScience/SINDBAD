@@ -17,8 +17,8 @@ function compute(p_struct::interception_Miralles2010, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (WBP, fAPAR) ∈ land.states
-        rain ∈ land.rainSnow
-        rainInt ∈ land.rainIntensity
+        rain ∈ land.fluxes
+        rainInt ∈ land.states
     end
     tmp = 1.0
     CanopyStorage = CanopyStorage * tmp

@@ -28,7 +28,7 @@ function compute(p_struct::runoffSurface_Trautmann2018, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (rain, snow) ∈ land.rainSnow
+        (rain, snow) ∈ land.fluxes
         (snowW, snowW_prev, soilW, soilW_prev, surfaceW) ∈ land.pools
         (evaporation, overland_runoff, sublimation) ∈ land.fluxes
     end

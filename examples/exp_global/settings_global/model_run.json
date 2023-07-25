@@ -60,7 +60,7 @@
       "fluxes.surface_runoff": null,
       "fluxes.gpp": null,
       "pools.soilW": "d_soil",
-      "waterBalance.water_balance": null
+      "states.water_balance": null
     }
   },
   "spinup": {

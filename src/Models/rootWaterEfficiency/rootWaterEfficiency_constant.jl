@@ -16,7 +16,7 @@ function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        root_water_efficiency => land.rootWaterEfficiency
+        root_water_efficiency => land.states
         cumulative_soil_depths => land.rootWaterEfficiency
     end
 
@@ -29,11 +29,13 @@ function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpe
     @unpack_rootWaterEfficiency_constant p_struct
     ## unpack land variables
     @unpack_land begin
-        (root_water_efficiency, cumulative_soil_depths) ∈ land.rootWaterEfficiency
+        cumulative_soil_depths ∈ land.rootWaterEfficiency
+        root_water_efficiency ∈ land.states
         z_zero ∈ land.wCycleBase
         max_root_depth ∈ land.states
     end
-    if max_root_depth >=0 z_zero
+    if max_root_depth >= 0
+        z_zero
         @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
     end
     for sl ∈ eachindex(land.pools.soilW)
@@ -45,7 +47,7 @@ function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpe
         end
     end
     ## pack land variables
-    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -65,7 +67,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - land.states.maxRootD
 
 *Outputs*
- - land.rootWaterEfficiency.root_water_efficiency
+ - land.states.root_water_efficiency
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootWaterEfficiency_constant

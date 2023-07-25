@@ -29,12 +29,12 @@ function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
     PET = max_0(PET)
 
     ## pack land variables
-    @pack_land PET => land.PET
+    @pack_land PET => land.fluxes
     return land
 end
 
 @doc """
-Calculates the value of land.PET.PET from the forcing variables
+Calculates the value of land.fluxes.PET from the forcing variables
 
 # Parameters
 $(PARAMFIELDS)
@@ -49,7 +49,7 @@ Set potential evapotranspiration using PET_PriestleyTaylor1972
  - forcing.Tair: Air temperature
 
 *Outputs*
- - land.PET.PET: the value of PET for current time step
+ - land.fluxes.PET: the value of PET for current time step
 
 ---
 

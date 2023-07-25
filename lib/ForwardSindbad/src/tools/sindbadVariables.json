@@ -1,11 +1,4 @@
 {
-    "PET__PET": {
-      "standard_name": "PET",
-      "long_name": "PET",
-      "units": "mm/time",
-      "sindbad_field": "PET",
-      "description": "potential evapotranspiration"
-    },
     "PET__Tair_prev": {
       "standard_name": "Tair_prev",
       "long_name": "Tair prev",
@@ -461,26 +454,19 @@
       "sindbad_field": "cTauVegProperties",
       "description": "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
     },
-    "evaporation__PET_evaporation": {
-      "standard_name": "PET_evaporation",
-      "long_name": "PET evaporation",
-      "units": "mm/time",
-      "sindbad_field": "evaporation",
-      "description": "potential soil evaporation"
-    },
     "fluxes__auto_respiration": {
-      "standard_name": "auto_respiration",
+      "standard_name": "autotrophic_respiration",
       "long_name": "auto respiration",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as auto respiration"
+      "description": "carbon loss due to autotrophic respiration"
     },
     "fluxes__base_runoff": {
       "standard_name": "base_runoff",
       "long_name": "base runoff",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as base runoff"
+      "description": "base runoff"
     },
     "fluxes__drainage": {
       "standard_name": "drainage",
@@ -490,137 +476,172 @@
       "description": "soil moisture drainage per soil layer"
     },
     "fluxes__eco_respiration": {
-      "standard_name": "eco_respiration",
-      "long_name": "eco respiration",
+      "standard_name": "ecosystem_respiration",
+      "long_name": "total_ecosystem_respiration",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as eco respiration"
+      "description": "carbon loss due to ecosystem respiration"
     },
     "fluxes__evaporation": {
       "standard_name": "evaporation",
-      "long_name": "evaporation",
+      "long_name": "soil_evaporation",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as evaporation"
+      "description": "evaporation from the first soil layer"
     },
     "fluxes__evapotranspiration": {
       "standard_name": "evapotranspiration",
-      "long_name": "evapotranspiration",
+      "long_name": "total_land_evaporation",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as evapotranspiration"
+      "description": "total land evaporation including soil evaporation, vegetation transpiration, snow sublimation, and interception loss"
     },
     "fluxes__gpp": {
       "standard_name": "gpp",
       "long_name": "gpp",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as gpp"
+      "description": "gross primary prodcutivity"
     },
     "fluxes__gw_capillary_flux": {
       "standard_name": "gw_capillary_flux",
       "long_name": "gw capillary flux",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as gw capillary flux"
+      "description": "capillary flux from top groundwater layer to the lowermost soil layer"
     },
     "fluxes__gw_recharge": {
       "standard_name": "gw_recharge",
       "long_name": "gw recharge",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as gw recharge"
+      "description": "recharge to groundwater from the lowermost soil layer"
     },
     "fluxes__hetero_respiration": {
       "standard_name": "hetero_respiration",
-      "long_name": "hetero respiration",
+      "long_name": "heterotrophic_respiration",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as hetero respiration"
+      "description": "carbon loss due to heterotrophic respiration"
     },
     "fluxes__interception": {
       "standard_name": "interception",
       "long_name": "interception",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as interception"
+      "description": "interception evaporation loss"
+    },
+    "fluxes__PET_evaporation": {
+      "standard_name": "PET_evaporation",
+      "long_name": "PET evaporation",
+      "units": "mm/time",
+      "sindbad_field": "evaporation",
+      "description": "potential soil evaporation"
     },
     "fluxes__nee": {
       "standard_name": "nee",
       "long_name": "nee",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as nee"
+      "description": "net ecosystem carbon exchange for the ecosystem. negative value indicates carbon sink."
     },
     "fluxes__npp": {
       "standard_name": "npp",
       "long_name": "npp",
       "units": "gC/m2/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as npp"
+      "description": "net primary prodcutivity"
     },
     "fluxes__overland_runoff": {
       "standard_name": "overland_runoff",
       "long_name": "overland runoff",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as overland runoff"
+      "description": "overland runoff as a fraction of incoming water"
     },
     "fluxes__percolation": {
       "standard_name": "percolation",
       "long_name": "percolation",
       "units": "mm/time",
       "sindbad_field": "percolation",
-      "description": "amount of moisture percolating to the top of soil layers"
+      "description": "amount of moisture percolating to the top soil layer"
     },
+    "fluxes__PET": {
+        "standard_name": "PET",
+        "long_name": "PET",
+        "units": "mm/time",
+        "sindbad_field": "fluxes",
+        "description": "potential evapotranspiration"
+      },
+    "fluxes__precip": {
+        "standard_name": "precip",
+        "long_name": "precip",
+        "units": "mm/time",
+        "sindbad_field": "fluxes",
+        "description": "total land precipitation including snow and rain"
+      },
+    "fluxes__rain": {
+        "standard_name": "rain",
+        "long_name": "rain",
+        "units": "mm/time",
+        "sindbad_field": "fluxes",
+        "description": "amount of precipitation in liquid form"
+      },
     "fluxes__runoff": {
       "standard_name": "runoff",
       "long_name": "runoff",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as runoff"
+      "description": "total runoff"
     },
     "fluxes__sat_excess_runoff": {
       "standard_name": "sat_excess_runoff",
       "long_name": "sat excess runoff",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as sat excess runoff"
+      "description": "saturation excess runoff"
+    },
+    "fluxes__snow": {
+        "standard_name": "snow",
+        "long_name": "snow",
+        "units": "mm/time",
+        "sindbad_field": "fluxes",
+        "description": "amount of precipitation in solid form"
     },
     "fluxes__snow_melt": {
       "standard_name": "snow_melt",
       "long_name": "snow melt",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as snow melt"
+      "description": "snow melt"
     },
     "fluxes__soil_capillary_flux": {
       "standard_name": "soil_capillary_flux",
       "long_name": "soil capillary flux",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as soil capillary flux"
+      "description": "soil capillary flux per layer"
     },
     "fluxes__sublimation": {
       "standard_name": "sublimation",
       "long_name": "sublimation",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as sublimation"
+      "description": "total land precipitation including snow and rain"
     },
     "fluxes__surface_runoff": {
       "standard_name": "surface_runoff",
       "long_name": "surface runoff",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as surface runoff"
+      "description": "total surface runoff"
     },
     "fluxes__transpiration": {
       "standard_name": "transpiration",
       "long_name": "transpiration",
       "units": "mm/time",
       "sindbad_field": "fluxes",
-      "description": "water flux as transpiration"
+      "description": "transpiration"
     },
     "gppAirT__gpp_f_airT": {
       "standard_name": "gpp_f_airT",
@@ -711,91 +732,91 @@
       "long_name": "TWS",
       "units": "mm",
       "sindbad_field": "pools",
-      "description": "total terrestrial water storage"
+      "description": "terrestrial water storage including all water pools"
     },
     "pools__cEco": {
       "standard_name": "cEco",
       "long_name": "cEco",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cEco pool(s)"
+      "description": "carbon content of cEco pool(s)"
     },
     "pools__cLit": {
       "standard_name": "cLit",
       "long_name": "cLit",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cLit pool(s)"
+      "description": "carbon content of cLit pool(s)"
     },
     "pools__cLitFast": {
       "standard_name": "cLitFast",
       "long_name": "cLitFast",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cLitFast pool(s)"
+      "description": "carbon content of cLitFast pool(s)"
     },
     "pools__cLitSlow": {
       "standard_name": "cLitSlow",
       "long_name": "cLitSlow",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cLitSlow pool(s)"
+      "description": "carbon content of cLitSlow pool(s)"
     },
     "pools__cSoil": {
       "standard_name": "cSoil",
       "long_name": "cSoil",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cSoil pool(s)"
+      "description": "carbon content of cSoil pool(s)"
     },
     "pools__cSoilOld": {
       "standard_name": "cSoilOld",
       "long_name": "cSoilOld",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cSoilOld pool(s)"
+      "description": "carbon content of cSoilOld pool(s)"
     },
     "pools__cSoilSlow": {
       "standard_name": "cSoilSlow",
       "long_name": "cSoilSlow",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cSoilSlow pool(s)"
+      "description": "carbon content of cSoilSlow pool(s)"
     },
     "pools__cVeg": {
       "standard_name": "cVeg",
       "long_name": "cVeg",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cVeg pool(s)"
+      "description": "carbon content of cVeg pool(s)"
     },
     "pools__cVegLeaf": {
       "standard_name": "cVegLeaf",
       "long_name": "cVegLeaf",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cVegLeaf pool(s)"
+      "description": "carbon content of cVegLeaf pool(s)"
     },
     "pools__cVegReserve": {
       "standard_name": "cVegReserve",
       "long_name": "cVegReserve",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cVegReserve pool(s)"
+      "description": "carbon content of cVegReserve pool(s)"
     },
     "pools__cVegRoot": {
       "standard_name": "cVegRoot",
       "long_name": "cVegRoot",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cVegRoot pool(s)"
+      "description": "carbon content of cVegRoot pool(s)"
     },
     "pools__cVegWood": {
       "standard_name": "cVegWood",
       "long_name": "cVegWood",
       "units": "gC/m2",
       "sindbad_field": "pools",
-      "description": "carbon storage in cVegWood pool(s)"
+      "description": "carbon content of cVegWood pool(s)"
     },
     "pools__groundW": {
       "standard_name": "groundW",
@@ -825,27 +846,6 @@
       "sindbad_field": "pools",
       "description": "water storage in surfaceW pool(s)"
     },
-    "rainSnow__precip": {
-      "standard_name": "precip",
-      "long_name": "precip",
-      "units": "mm/time",
-      "sindbad_field": "rainSnow",
-      "description": "total land precipitation including snow and rain"
-    },
-    "rainSnow__rain": {
-      "standard_name": "rain",
-      "long_name": "rain",
-      "units": "mm/time",
-      "sindbad_field": "rainSnow",
-      "description": "amount of precipitation in liquid form"
-    },
-    "rainSnow__snow": {
-      "standard_name": "snow",
-      "long_name": "snow",
-      "units": "mm/time",
-      "sindbad_field": "rainSnow",
-      "description": "amount of precipitation in solid form"
-    },
     "rootMaximumDepth__sum_soil_depth": {
       "standard_name": "sum_soil_depth",
       "long_name": "sum soil depth",
@@ -866,13 +866,6 @@
       "units": "boolean",
       "sindbad_field": "rootWaterEfficiency",
       "description": "a boolean indicating if the root is allowed to exract water from a given layer depending on maximum rooting depth"
-    },
-    "rootWaterEfficiency__root_water_efficiency": {
-      "standard_name": "root_water_efficiency",
-      "long_name": "root water efficiency",
-      "units": "-",
-      "sindbad_field": "rootWaterEfficiency",
-      "description": "a efficiency like number that indicates the ease/fraction of soil water that can extracted by the root per layer"
     },
     "snowMelt__potential_snow_melt": {
       "standard_name": "potential_snow_melt",
@@ -995,105 +988,105 @@
     },
     "soilWBase__kFC": {
       "standard_name": "soil_kFC",
-      "long_name": "p kFC",
+      "long_name": "kFC",
       "units": "mm/time",
       "sindbad_field": "soilWBase",
       "description": "hydraulic conductivity of soil at field capacity per layer"
     },
     "soilWBase__kSat": {
       "standard_name": "kSat",
-      "long_name": "p kSat",
+      "long_name": "kSat",
       "units": "mm/time",
       "sindbad_field": "soilWBase",
       "description": "hydraulic conductivity of soil at saturation per layer"
     },
     "soilWBase__kWP": {
       "standard_name": "kWP",
-      "long_name": "p kWP",
+      "long_name": "kWP",
       "units": "mm/time",
       "sindbad_field": "soilWBase",
       "description": "hydraulic conductivity of soil at wilting point per layer"
     },
     "soilWBase__wAWC": {
       "standard_name": "wAWC",
-      "long_name": "p wAWC",
+      "long_name": "wAWC",
       "units": "mm",
       "sindbad_field": "soilWBase",
       "description": "maximum amount of water available for vegetation/transpiration per soil layer (wSat-WP)"
     },
     "soilWBase__wFC": {
       "standard_name": "wFC",
-      "long_name": "p wFC",
+      "long_name": "wFC",
       "units": "mm",
       "sindbad_field": "soilWBase",
       "description": "amount of water in the soil at field capacity per layer"
     },
     "soilWBase__wSat": {
       "standard_name": "wSat",
-      "long_name": "p wSat",
+      "long_name": "wSat",
       "units": "mm",
       "sindbad_field": "soilWBase",
       "description": "amount of water in the soil at saturation per layer"
     },
     "soilWBase__WP": {
       "standard_name": "WP",
-      "long_name": "p WP",
+      "long_name": "WP",
       "units": "mm",
       "sindbad_field": "soilWBase",
       "description": "amount of water in the soil at wiliting point per layer"
     },
     "soilWBase__soil_α": {
       "standard_name": "soil_α",
-      "long_name": "p α",
+      "long_name": "soil_α",
       "units": "number",
       "sindbad_field": "soilWBase",
       "description": "alpha parameter of soil per layer"
     },
     "soilWBase__soil_β": {
       "standard_name": "soil_β",
-      "long_name": "p β",
+      "long_name": "soil_β",
       "units": "number",
       "sindbad_field": "soilWBase",
       "description": "beta parameter of soil per layer"
     },
     "soilWBase__θFC": {
       "standard_name": "θFC",
-      "long_name": "p θFC",
+      "long_name": "θFC",
       "units": "-",
       "sindbad_field": "soilWBase",
       "description": "moisture content of soil at field capacity per layer"
     },
     "soilWBase__θSat": {
       "standard_name": "θSat",
-      "long_name": "p θSat",
+      "long_name": "θSat",
       "units": "-",
       "sindbad_field": "soilWBase",
       "description": "moisture content of soil at saturation (porosity) per layer"
     },
     "soilWBase__θWP": {
       "standard_name": "θWP",
-      "long_name": "p θWP",
+      "long_name": "θWP",
       "units": "-",
       "sindbad_field": "soilWBase",
       "description": "moisture content of soil at wilting point per layer"
     },
     "soilWBase__ψFC": {
       "standard_name": "ψFC",
-      "long_name": "p ψFC",
+      "long_name": "ψFC",
       "units": "m",
       "sindbad_field": "soilWBase",
       "description": "matric potential of soil at field capacity per layer"
     },
     "soilWBase__ψSat": {
       "standard_name": "ψSat",
-      "long_name": "p ψSat",
+      "long_name": "ψSat",
       "units": "m",
       "sindbad_field": "soilWBase",
       "description": "matric potential of soil at saturation per layer"
     },
     "soilWBase__ψWP": {
       "standard_name": "ψWP",
-      "long_name": "p ψWP",
+      "long_name": "ψWP",
       "units": "m",
       "sindbad_field": "soilWBase",
       "description": "matric potential of soil at wiliting point per layer"
@@ -1173,7 +1166,7 @@
       "long_name": "cEco_previous_time_step",
       "units": "gC/m2",
       "sindbad_field": "states",
-      "description": "ecosystem carbon storage in the previous time step"
+      "description": "ecosystem carbon content of the previous time step"
     },
     "states__c_allocation": {
       "standard_name": "c_allocation",
@@ -1259,6 +1252,20 @@
       "sindbad_field": "states",
       "description": "maximum depth of root"
     },
+    "states__PAW": {
+      "standard_name": "PAW",
+      "long_name": "PAW",
+      "units": "mm",
+      "sindbad_field": "states",
+      "description": "amount of water available for transpiration per soil layer"
+    },
+    "states__root_water_efficiency": {
+      "standard_name": "root_water_efficiency",
+      "long_name": "root water efficiency",
+      "units": "-",
+      "sindbad_field": "states",
+      "description": "a efficiency like number that indicates the ease/fraction of soil water that can extracted by the root per layer"
+    },
     "states__root_water_uptake": {
       "standard_name": "root_water_uptake",
       "long_name": "root water uptake",
@@ -1343,13 +1350,6 @@
       "sindbad_field": "transpirationSupply",
       "description": "total amount of water available in soil for transpiration"
     },
-    "vegAvailableWater__PAW": {
-      "standard_name": "PAW",
-      "long_name": "PAW",
-      "units": "mm",
-      "sindbad_field": "vegAvailableWater",
-      "description": "amount of water available for transpiration per soil layer"
-    },
     "wCycleBase__n_TWS": {
       "standard_name": "n_TWS",
       "long_name": "n TWS",
@@ -1406,11 +1406,11 @@
       "sindbad_field": "wCycleBase",
       "description": "a helper type stable 0 to be used across all models"
     },
-    "waterBalance__water_balance": {
+    "states__water_balance": {
       "standard_name": "water_balance",
       "long_name": "water balance",
       "units": "mm",
-      "sindbad_field": "waterBalance",
+      "sindbad_field": "states",
       "description": "misbalance of the water for the given time step calculated as the differences between total input, output and change in storages"
     }
   }

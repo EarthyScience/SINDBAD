@@ -27,8 +27,8 @@ function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         gpp_f_soilW_prev ∈ land.gppSoilW
-        PAW ∈ land.vegAvailableWater
-        PET ∈ land.PET
+        PAW ∈ land.states
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -56,8 +56,8 @@ $(PARAMFIELDS)
 # compute:
 
 *Inputs*
- - land.vegAvailableWater.PAW: values of soil moisture current time step
- - land.PET.PET: potential ET
+ - land.states.PAW: values of soil moisture current time step
+ - land.fluxes.PET: potential ET
 
 *Outputs*
  - land.gppSoilW.gpp_f_soilW: soil moisture stress on gpp_potential (0-1)
