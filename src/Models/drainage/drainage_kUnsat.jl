@@ -6,7 +6,7 @@ function define(p_struct::drainage_kUnsat, forcing, land, helpers)
     ## instantiate drainage
     drainage = zero(land.pools.soilW)
     ## pack land variables
-    @pack_land drainage => land.drainage
+    @pack_land drainage => land.fluxes
     return land
 end
 
@@ -14,9 +14,9 @@ function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        drainage ∈ land.drainage
+        drainage ∈ land.fluxes
         unsat_k_model ∈ land.soilProperties
-        (p_wSat, p_wFC, p_β, p_kFC, p_kSat) ∈ land.soilWBase
+        (wSat, wFC, soil_β, soil_kFC, kSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
@@ -25,8 +25,8 @@ function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
-        max_drain = p_wSat[sl] - p_wFC[sl]
+        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        max_drain = wSat[sl] - wFC[sl]
         lossCap = min(soilW[sl] + ΔsoilW[sl], max_drain)
         k = unsatK(land, helpers, sl, unsat_k_model)
         drain = min(k, holdCap, lossCap)
@@ -37,7 +37,7 @@ function compute(p_struct::drainage_kUnsat, forcing, land, helpers)
 
     ## pack land variables
     # @pack_land begin
-    # 	drainage => land.drainage
+    # 	drainage => land.fluxes
     # 	# ΔsoilW => land.states
     # end
     return land
@@ -79,7 +79,7 @@ Recharge the soil using drainage_kUnsat
  - land.soilProperties.unsatK: function to calculate unsaturated hydraulic conductivity.
 
 *Outputs*
-- land.drainage.drainage
+- land.fluxes.drainage
 - drainage from the last layer is calculated in groundWrecharge
 
 

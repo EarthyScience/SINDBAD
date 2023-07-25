@@ -27,7 +27,7 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
 
     ## unpack land variables
     @unpack_land begin
-        (p_kFC, p_kSat, p_wSat) ∈ land.soilWBase
+        (soil_kFC, kSat, wSat) ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         unsat_k_model ∈ land.soilProperties
@@ -37,9 +37,9 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
 
     # calculate recharge
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
-    dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
-    k_sat = p_kSat[end] # assume GW is saturated
-    k_fc = p_kFC[end] # assume GW is saturated
+    dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / wSat[end])
+    k_sat = kSat[end] # assume GW is saturated
+    k_fc = soil_kFC[end] # assume GW is saturated
     k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
 
     # get the capillary flux

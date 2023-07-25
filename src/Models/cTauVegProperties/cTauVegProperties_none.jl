@@ -5,7 +5,7 @@ struct cTauVegProperties_none <: cTauVegProperties end
 function define(p_struct::cTauVegProperties_none, forcing, land, helpers)
 
     ## calculate variables
-    c_eco_k_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
     LITC2N = land.wCycleBase.z_zero
     LIGNIN = land.wCycleBase.z_zero
     MTF = land.wCycleBase.o_one
@@ -13,7 +13,7 @@ function define(p_struct::cTauVegProperties_none, forcing, land, helpers)
     LIGEFF = land.wCycleBase.z_zero
 
     ## pack land variables
-    @pack_land (LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_veg_props) => land.cTauVegProperties
+    @pack_land (LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) => land.cTauVegProperties
     return land
 end
 

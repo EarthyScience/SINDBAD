@@ -34,7 +34,7 @@ Supply-limited transpiration using transpirationSupply_wAWCvegFraction
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
+ - land.soilWBase.wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
  - land.states.frac_vegetation: vegetation fraction
 

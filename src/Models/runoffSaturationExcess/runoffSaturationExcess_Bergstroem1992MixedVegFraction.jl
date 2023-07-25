@@ -15,12 +15,12 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992MixedVegFraction
     ## unpack land variables
     @unpack_land begin
         (WBP, frac_vegetation) ∈ land.states
-        p_wSat ∈ land.soilWBase
+        wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
-    tmp_smaxVeg = sum(p_wSat)
+    tmp_smaxVeg = sum(wSat)
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # get the berg parameters according the vegetation fraction

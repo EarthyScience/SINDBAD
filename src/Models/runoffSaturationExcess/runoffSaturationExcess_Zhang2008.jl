@@ -13,7 +13,7 @@ function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, help
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
-        p_wSat ∈ land.soilWBase
+        wSat ∈ land.soilWBase
         soilW ∈ land.pools
         PET ∈ land.PET
         ΔsoilW ∈ land.states
@@ -21,7 +21,7 @@ function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, help
     end
     # a supply - demand limit concept cf Budyko
     # calc demand limit [X0]
-    res_sat = max_0(sum(p_wSat) - sum(soilW + ΔsoilW))
+    res_sat = max_0(sum(wSat) - sum(soilW + ΔsoilW))
     X0 = PET + res_sat
 
     # set sat_excess_runoff
@@ -50,7 +50,7 @@ Saturation runoff using runoffSaturationExcess_Zhang2008
 
 *Inputs*
  - land.PET.PET: potential ET
- - land.soilWBase.p_wAWC: maximum available water in soil per layer
+ - land.soilWBase.wAWC: maximum available water in soil per layer
  - land.states.WBP: amount of incoming water
 
 *Outputs*
