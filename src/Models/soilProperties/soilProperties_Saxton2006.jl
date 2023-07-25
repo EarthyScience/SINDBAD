@@ -190,18 +190,18 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     @unpack_land begin
         (n2, n3) ∈ land.soilProperties
-        (p_β, p_kSat, p_wSat) ∈ land.soilWBase
+        (soil_β, kSat, wSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
-    wSat = p_wSat[sl]
+    wSat = wSat[sl]
     θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat
     θ_dos = clamp_01(θ_dos)
-    β = p_β[sl]
-    kSat = p_kSat[sl]
+    β = soil_β[sl]
+    kSat = kSat[sl]
     λ = o_one / β
     K = kSat * ((θ_dos)^(n3 + (n2 / λ)))
     return K
