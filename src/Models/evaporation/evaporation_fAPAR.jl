@@ -16,7 +16,7 @@ function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
         fAPAR ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # multiply equilibrium PET with αSoil & [1.0 - fAPAR] to get potential soil evap
@@ -30,7 +30,7 @@ function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        PET_evaporation => land.evaporation
+        PET_evaporation => land.fluxes
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
@@ -73,12 +73,12 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_fAPAR
 
 *Inputs*
- - land.PET.PET: forcing data set
+ - land.fluxes.PET: forcing data set
  - land.states.fAPAR [output of fAPAR module]
  - α
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update

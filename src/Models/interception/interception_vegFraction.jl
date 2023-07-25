@@ -13,7 +13,7 @@ function compute(p_struct::interception_vegFraction, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (WBP, frac_vegetation) ∈ land.states
-        rain ∈ land.rainSnow
+        rain ∈ land.fluxes
     end
     # calculate interception loss
     intCap = pInt * frac_vegetation

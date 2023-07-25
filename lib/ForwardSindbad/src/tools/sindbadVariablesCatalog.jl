@@ -91,7 +91,7 @@ function getVariableCatalogFromLand(land)
         elseif field == "pools"
             if startswith(subfield, "c")
                 var_dict["units"] = "gC/m2"
-                var_dict["description"] = "carbon storage in $((subfield)) pool(s)"
+                var_dict["description"] = "carbon content of $((subfield)) pool(s)"
             elseif endswith(subfield, "W")
                 var_dict["units"] = "mm"
                 var_dict["description"] = "water storage in $((subfield)) pool(s)"
@@ -101,7 +101,7 @@ function getVariableCatalogFromLand(land)
                 poolname = replace(subfield, "Δ" => "")
                 if startswith(poolname, " c")
                     var_dict["units"] = "gC/m2"
-                    var_dict["description"] = "change in carbon storage in $(poolname) pool(s)"
+                    var_dict["description"] = "change in carbon content of $(poolname) pool(s)"
                 else
                     var_dict["units"] = "mm"
                     var_dict["description"] = "change in water storage in $(poolname) pool(s)"

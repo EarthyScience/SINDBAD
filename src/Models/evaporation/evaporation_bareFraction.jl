@@ -15,7 +15,7 @@ function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
         frac_vegetation ∈ land.states
         ΔsoilW ∈ land.states
         soilW ∈ land.pools
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # scale the potential ET with bare soil fraction
@@ -28,7 +28,7 @@ function compute(p_struct::evaporation_bareFraction, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        PET_evaporation => land.evaporation
+        PET_evaporation => land.fluxes
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
@@ -71,11 +71,11 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_bareFraction
 
 *Inputs*
- - land.PET.PET: forcing data set
+ - land.fluxes.PET: forcing data set
  - land.states.frac_vegetation [output of frac_vegetation module]
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update

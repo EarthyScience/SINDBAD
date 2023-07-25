@@ -13,7 +13,7 @@ function compute(p_struct::transpirationDemand_PETvegFraction, forcing, land, he
     ## unpack land variables
     @unpack_land begin
         frac_vegetation ∈ land.states
-        PET ∈ land.PET
+        PET ∈ land.fluxes
     end
     transpiration_demand = PET * α * frac_vegetation
 
@@ -34,7 +34,7 @@ $(PARAMFIELDS)
 Demand-driven transpiration using transpirationDemand_PETvegFraction
 
 *Inputs*
- - land.PET.PET : potential evapotranspiration out of PET module
+ - land.fluxes.PET : potential evapotranspiration out of PET module
  - land.states.frac_vegetation: vegetation fraction
  - α: α parameter for potential transpiration
 

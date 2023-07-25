@@ -29,7 +29,7 @@ function define(p_struct::PET_Lu2005, forcing, land, helpers)
     Tair_prev = Tair
 
     ## pack land variables
-    @pack_land (PET, Tair_prev) => land.PET
+    @pack_land (PET, Tair_prev) => land.fluxes
     return land
 end
 
@@ -40,7 +40,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     @unpack_forcing (Rn, Tair) ∈ forcing
 
     @unpack_land begin
-        Tair_prev ∈ land.PET
+        Tair_prev ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -72,12 +72,12 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     Tair_prev = Tair
 
     ## pack land variables
-    @pack_land (PET, Tair_prev) => land.PET
+    @pack_land (PET, Tair_prev) => land.fluxes
     return land
 end
 
 @doc """
-Calculates the value of land.PET.PET from the forcing variables
+Calculates the value of land.fluxes.PET from the forcing variables
 
 # Parameters
 $(PARAMFIELDS)
@@ -92,7 +92,7 @@ Set potential evapotranspiration using PET_Lu2005
  - forcing.Tair: Air temperature
 
 *Outputs*
- - land.PET.PET: the value of PET for current time step
+ - land.fluxes.PET: the value of PET for current time step
 
 ---
 
