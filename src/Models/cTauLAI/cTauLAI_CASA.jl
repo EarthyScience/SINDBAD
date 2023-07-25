@@ -11,10 +11,10 @@ function define(p_struct::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA p_struct
 
     ## instantiate variables
-    c_eco_k_LAI = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_LAI = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
 
     ## pack land variables
-    @pack_land c_eco_k_LAI => land.cTauLAI
+    @pack_land c_eco_k_f_LAI => land.cTauLAI
     return land
 end
 
@@ -23,7 +23,7 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA p_struct
 
     ## unpack land variables
-    @unpack_land c_eco_k_LAI ∈ land.cTauLAI
+    @unpack_land c_eco_k_f_LAI ∈ land.cTauLAI
 
     ## unpack land variables
     @unpack_land begin
@@ -88,12 +88,12 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
     # Feed the output fluxes to cCycle components
     zix_veg = p_cVegLeafZix
-    c_eco_k_LAI[zix_veg] = c_τ_eco[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
+    c_eco_k_f_LAI[zix_veg] = c_τ_eco[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
     zix_root = p_cVegRootZix
-    c_eco_k_LAI[zix_root] = c_τ_eco[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
+    c_eco_k_f_LAI[zix_root] = c_τ_eco[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
 
     ## pack land variables
-    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_LAI) => land.cTauLAI
+    @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_f_LAI) => land.cTauLAI
     return land
 end
 
@@ -114,8 +114,8 @@ Calculate litterfall scalars (that affect the changes in the vegetation k) using
  - helpers.dates.timesteps_in_year: number of years of simulations
 
 *Outputs*
- - land.cTauLAI.c_eco_k_LAI:
- - land.cTauLAI.c_eco_k_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
+ - land.cTauLAI.c_eco_k_f_LAI:
+ - land.cTauLAI.c_eco_k_f_LAI: LAI stressor values on the the turnover rates based  on litter & root litter scalars
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauLAI_CASA
