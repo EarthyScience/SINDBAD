@@ -185,7 +185,7 @@ for tj ∈ (10, 100, 1000, 10000)
         f_one,
         Val(:nlsolve))
 
-    xtl = land_init.cCycleBase.c_eco_k_ann
+    xtl = land_init.cCycleBase.c_τ_eco
     xtname = info.tem.helpers.pools.components.cEco
     plot!(getfield(out_sp_nl.pools, sel_pool);
         linewidth=5,

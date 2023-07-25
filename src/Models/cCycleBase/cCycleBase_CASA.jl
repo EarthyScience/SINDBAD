@@ -23,7 +23,7 @@ export cCycleBase_CASA
     cVegRootC_AGE_per_PFT::T4 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of coarse roots" | "yr"
     cVegWood_AGE_per_PFT::T5 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of wood" | "yr"
     cVegLeaf_AGE_per_PFT::T6 = Float64[1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0]) | "mean age of leafs" | "yr"
-    C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+    p_C_to_N_cVeg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
@@ -35,11 +35,11 @@ function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
     end
 
     ## instantiate variables
-    p_C2Nveg = zero(cEco) .+ one(first(cEco)) #sujan
+    C_to_N_cVeg = zero(cEco) .+ one(first(cEco)) #sujan
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A_array, c_flow_E_array) => land.cCycleBase
+        (C_to_N_cVeg, c_flow_A_array, c_flow_E_array) => land.cCycleBase
     end
     return land
 end
@@ -50,13 +50,13 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        p_C2Nveg ∈ land.cCycleBase
+        C_to_N_cVeg ∈ land.cCycleBase
         o_one ∈ land.wCycleBase
     end
 
     ## calculate variables
     # carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
+    C_to_N_cVeg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
 
     # turnover rates
     TSPY = helpers.dates.timesteps_in_year
@@ -64,7 +64,7 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     ## pack land variables
     @pack_land (c_eco_k_base) => land.cCycleBase
-    # @pack_land (p_C2Nveg, c_eco_k_base, c_flow_E_array) => land.cCycleBase
+    # @pack_land (C_to_N_cVeg, c_eco_k_base, c_flow_E_array) => land.cCycleBase
     return land
 end
 

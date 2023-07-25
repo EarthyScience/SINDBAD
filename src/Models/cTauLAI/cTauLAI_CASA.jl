@@ -28,7 +28,7 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         LAI ∈ land.states
-        (c_eco_k_ann, c_eco_k) ∈ land.cCycleBase
+        (c_τ_eco, c_eco_k) ∈ land.cCycleBase
     end
     # set LAI stressor on τ to ones
     TSPY = helpers.dates.timesteps_in_year #sujan
@@ -88,9 +88,9 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     RTLAI[ndx] = (1.0 - kRTLAI) * (LTLAI[ndx] + LAI131st[ndx] / LAIsum[ndx]) / 2.0 + kRTLAI / TSPY
     # Feed the output fluxes to cCycle components
     zix_veg = p_cVegLeafZix
-    c_eco_k_LAI[zix_veg] = c_eco_k_ann[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
+    c_eco_k_LAI[zix_veg] = c_τ_eco[zix_veg] * LTLAI / c_eco_k[zix_veg] # leaf litter scalar
     zix_root = p_cVegRootZix
-    c_eco_k_LAI[zix_root] = c_eco_k_ann[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
+    c_eco_k_LAI[zix_root] = c_τ_eco[zix_root] * RTLAI / c_eco_k[zix_root] # root litter scalar
 
     ## pack land variables
     @pack_land (p_LAI13, p_cVegLeafZix, p_cVegRootZix, c_eco_k_LAI) => land.cTauLAI

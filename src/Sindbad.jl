@@ -9,7 +9,7 @@ using Parameters
 using Dates
 using ForwardDiff
 using JLD2
-using JSON: parsefile
+using JSON: parsefile, json
 using CSV: CSV
 using TypedTables: Table, @Select
 using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
