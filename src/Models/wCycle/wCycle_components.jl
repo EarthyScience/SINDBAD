@@ -75,7 +75,7 @@ update the water cycle pools per component
 *Inputs*
 - land.pools.storages: water storages
 - land.states.Δstorages: water storage changes
-- land.soilWBase.p_wSat: water holding capacity
+- land.soilWBase.wSat: water holding capacity
 
 *Outputs*
  - land.states.Δstorages: soil percolation

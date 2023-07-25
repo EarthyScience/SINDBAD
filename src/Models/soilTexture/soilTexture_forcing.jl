@@ -30,6 +30,13 @@ function define(p_struct::soilTexture_forcing, forcing, land, helpers)
             @rep_elem mean(st_SILT_f) => (st_SILT, sl, :soilW)
             @rep_elem mean(st_ORGM_f) => (st_ORGM, sl, :soilW)
         end
+    else
+        for sl ∈ eachindex(st_CLAY)
+            @rep_elem st_CLAY_f[sl] => (st_CLAY, sl, :soilW)
+            @rep_elem st_SAND_f[sl] => (st_SAND, sl, :soilW)
+            @rep_elem st_SILT_f[sl] => (st_SILT, sl, :soilW)
+            @rep_elem st_ORGM_f[sl] => (st_ORGM, sl, :soilW)
+        end
     end
 
     ## pack land variables

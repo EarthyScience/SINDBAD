@@ -15,7 +15,7 @@ function define(p_struct::percolation_WBP, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        percolation => land.percolation
+        percolation => fluxes.percolation
         WBP => land.states
     end
     return land
@@ -29,7 +29,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
         (ΔsoilW, WBP) ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
         tolerance ∈ helpers.numbers
-        p_wSat ∈ land.soilWBase
+        wSat ∈ land.soilWBase
     end
 
     # set WBP as the soil percolation
@@ -37,7 +37,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     toAllocate = percolation
     if toAllocate > z_zero
         for sl ∈ eachindex(land.pools.soilW)
-            allocated = min(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
+            allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
             @add_to_elem allocated => (ΔsoilW, sl, :soilW)
             toAllocate = toAllocate - allocated
         end
@@ -46,7 +46,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        percolation => land.percolation
+        percolation => fluxes.percolation
         WBP => land.states
         ΔsoilW => land.states
     end
