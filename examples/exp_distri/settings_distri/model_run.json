@@ -37,11 +37,11 @@
     "yax_max_cache": 2e9
   },
   "output": {
-    "save_single_file": true,
+    "save_single_file": false,
     "output_array_type": "array",
     "all": false,
     "path": null,
-    "format": "zarr",
+    "format": "nc",
     "depth_dimensions": {
       "d_soil": "soilW",
       "d_cEco": 8,
