@@ -1,61 +1,65 @@
-export getVariableCatalog
+export getStandardVariableCatalog
 export getVariableInfo
 export getVariableCatalogFromLand
 export saveVariableCatalogFromLand
 
-
-function getVariableInfo(catalog, vari_b)
-    o_varib = copy(catalog["default_varib"])
-    if vari_b ∈ keys(catalog)
-        o_varib = catalog[vari_b]
-    end
-    o_varib["standard_name"] = split(vari_b, "__")[1]
-    return o_varib
-end
-
-function getVariableCatalog(info)
-    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
-    default_info = variCat["default_varib"]
-    t_step = info.model_run.time.model_time_step
+function getVariableInfo(catalog, vari_b, t_step)
+    default_info = defaultVariableInfo()
     default_keys = keys(default_info)
-
-    for vari_b ∈ keys(variCat)
-        if vari_b !== "default_varib"
-            var_info = variCat[vari_b]
-            var_fields = keys(var_info)
-            all_fields = Tuple(unique([default_keys..., var_fields...]))
-            for var_field ∈ all_fields
-                field_value = nothing
-                if haskey(default_info, var_field)
-                    field_value = default_info[var_field]
-                else
+    o_varib = copy(default_info)
+    if vari_b ∈ keys(catalog)
+        var_info = catalog[vari_b]
+        var_fields = keys(var_info)
+        all_fields = Tuple(unique([default_keys..., var_fields...]))
+        for var_field ∈ all_fields
+            field_value = nothing
+            if haskey(default_info, var_field)
+                field_value = default_info[var_field]
+            else
+                field_value = var_info[var_field]
+            end
+            if haskey(var_info, var_field)
+                var_prop = var_info[var_field]
+                if !isnothing(var_prop) && length(var_prop) > 0
                     field_value = var_info[var_field]
                 end
-                if haskey(var_info, var_field)
-                    var_prop = var_info[var_field]
-                    if !isnothing(var_prop) && length(var_prop) > 0
-                        field_value = var_info[var_field]
-                    end
-                end
-                if var_field == "units"
-                    field_value = replace(field_value, "time" => t_step)
-                end
-                variCat[vari_b][var_field] = field_value
             end
+            if var_field == "units"
+                if !isnothing(field_value)
+                    field_value = replace(field_value, "time" => t_step)
+                else
+                    field_value = ""
+                end
+            end
+            o_varib[var_field] = field_value
         end
     end
+    if isnothing(o_varib["standard_name"])
+        o_varib["standard_name"] = split(vari_b, "__")[1]
+    end
+    if isnothing(o_varib["description"])
+        o_varib["description"] = ""
+    end
+    return Dict(o_varib)
+end
+
+function getStandardVariableCatalog(info)
+    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
     return variCat
 end
 
-
-function getVariableCatalogFromLand(land)
-    default_varib = Sindbad.DataStructures.OrderedDict(
+function defaultVariableInfo()
+    return Sindbad.DataStructures.OrderedDict(
         "standard_name" => "",
         "long_name" => "",
         "units" => nothing,
         "sindbad_field" => "",
         "description" => nothing
     )
+end
+
+function getVariableCatalogFromLand(land)
+    default_varib = defaultVariableInfo()
     landprops = propertynames(land)
     varnames = []
     variCat = Sindbad.DataStructures.OrderedDict()
@@ -67,7 +71,6 @@ function getVariableCatalogFromLand(land)
             push!(varnames, keyname)
         end
     end
-    @show varnames
     varnames = sort(varnames)
     for varn in varnames
 
@@ -96,8 +99,7 @@ function getVariableCatalogFromLand(land)
         elseif field == "states"
             if startswith(subfield, "Δ")
                 poolname = replace(subfield, "Δ" => "")
-                @show subfield, poolname
-                if startswith(subfield, "c")
+                if startswith(poolname, " c")
                     var_dict["units"] = "gC/m2"
                     var_dict["description"] = "change in carbon storage in $(poolname) pool(s)"
                 else
@@ -107,7 +109,6 @@ function getVariableCatalogFromLand(land)
             else
                 var_dict["units"] = "-"
             end
-            var_dict["units"] = "-"
         elseif startswith(subfield, "frac_")
             var_dict["units"] = "fraction"
         end
@@ -140,5 +141,3 @@ function saveVariableCatalogFromLand(land, file_name)
     end
     return nothing
 end
-
-

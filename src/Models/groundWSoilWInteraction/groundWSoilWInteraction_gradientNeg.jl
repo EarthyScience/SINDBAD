@@ -13,23 +13,23 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
 
     ## unpack land variables
     @unpack_land begin
-        p_wSat ∈ land.soilWBase
+        wSat ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         n_groundW ∈ land.wCycleBase
         z_zero ∈ land.wCycleBase
     end
     # maximum groundwater storage
-    p_gwmax = p_wSat[end] * smax_scale
+    p_gwmax = wSat[end] * smax_scale
 
     # gradient between groundW[1] & soilW
-    tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - (soilW[end] + ΔsoilW[end]) / p_wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
+    tmp_gradient = sum(groundW + ΔgroundW) / p_gwmax - (soilW[end] + ΔsoilW[end]) / wSat[end] # the sign of the gradient gives direction of flow: positive = flux to soil; negative = flux to gw from soilW
 
     # scale gradient with pot flux rate to get pot flux
     pot_flux = tmp_gradient * max_flux # need to make sure that the flux does not overflow | underflow storages
 
     # adjust the pot flux to what is there
-    tmp = min(pot_flux, p_wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
+    tmp = min(pot_flux, wSat[end] - (soilW[end] + ΔsoilW[end]), sum(groundW + ΔgroundW))
     tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # -> set all the positive values (from groundwater to soil) to zero
@@ -85,7 +85,7 @@ Groundwater soil moisture interactions (capilary flux) using groundWSoilWInterac
 *Inputs*
  - info : length(land.pools.soilW) = number of soil layers
  - land.groundWSoilWInteraction.p_gwmax : maximum storage capacity of the groundwater
- - land.soilWBase.p_wSat : maximum storage capacity of soil [mm]
+ - land.soilWBase.wSat : maximum storage capacity of soil [mm]
 
 *Outputs*
  - land.fluxes.gw_capillary_flux : flux between groundW & soilW

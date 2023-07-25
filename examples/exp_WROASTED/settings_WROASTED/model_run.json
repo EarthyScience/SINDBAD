@@ -50,8 +50,8 @@
     },
     "variables": {
       "autoRespirationAirT.auto_respiration_f_airT": null,
-      "cTauSoilT.c_eco_k_soilT": null,
-      "cTauSoilW.c_eco_k_soilW": "d_cEco",
+      "cTauSoilT.c_eco_k_f_soilT": null,
+      "cTauSoilW.c_eco_k_f_soilW": "d_cEco",
       "fluxes.evapotranspiration": null,
       "fluxes.transpiration": null,
       "fluxes.runoff": null,

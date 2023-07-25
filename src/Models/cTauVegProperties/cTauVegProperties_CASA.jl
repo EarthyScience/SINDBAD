@@ -16,11 +16,11 @@ function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA p_struct
 
     ## instantiate variables
-    c_eco_k_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
     annk = z_zero #sujan ones(size(AGE))
 
     ## pack land variables
-    @pack_land (c_eco_k_veg_props, annk) => land.cTauVegProperties
+    @pack_land (c_eco_k_f_veg_props, annk) => land.cTauVegProperties
     return land
 end
 
@@ -31,7 +31,7 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         PFT ∈ land.vegProperties
-        (c_eco_k_veg_props, annk) ∈ land.cTauVegProperties
+        (c_eco_k_f_veg_props, annk) ∈ land.cTauVegProperties
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -75,13 +75,13 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     # DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
     LIGEFF = exp(-LIGEFFA * SCLIGNIN)
     # feed the output
-    c_eco_k_veg_props[helpers.pools.zix.cLitLeafS] = LIGEFF
-    c_eco_k_veg_props[helpers.pools.zix.cLitRootFS] = LIGEFF
+    c_eco_k_f_veg_props[helpers.pools.zix.cLitLeafS] = LIGEFF
+    c_eco_k_f_veg_props[helpers.pools.zix.cLitRootFS] = LIGEFF
 
     ## pack land variables
     @pack_land begin
         c_τ_eco => land.cCycleBase
-        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_veg_props) =>
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) =>
             land.cTauVegProperties
     end
     return land
@@ -107,7 +107,7 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.cTauVegProperties.LITC2N:
  - land.cTauVegProperties.MTF:
  - land.cTauVegProperties.SCLIGNIN:
- - land.cTauVegProperties.c_eco_k_veg_props:
+ - land.cTauVegProperties.c_eco_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

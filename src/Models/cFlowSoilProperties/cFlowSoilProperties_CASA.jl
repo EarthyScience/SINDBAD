@@ -33,15 +33,15 @@ function compute(p_struct::cFlowSoilProperties_CASA, forcing, land, helpers)
     @unpack_land p_E_vec ∈ land.cFlowSoilProperties
 
     ## unpack land variables
-    @unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
+    @unpack_land (st_CLAY, st_SILT) ∈ land.soilTexture
 
     ## calculate variables
     # p_fSoil = zeros(length(info.tem.model.nPix), length(info.tem.model.nZix))
     # p_fSoil = zero(land.pools.cEco)
     # #sujan
     p_F_vec = p_E_vec
-    CLAY = mean(p_CLAY)
-    SILT = mean(p_SILT)
+    CLAY = mean(st_CLAY)
+    SILT = mean(st_SILT)
     # CONTROLS FOR C FLOW TRANSFERS EFFICIENCY [E] AND FRACTION [F] BASED ON PARTICULAR TEXTURE PARAMETERS.
     # SOURCE, TARGET, VALUE [increment in E & F caused by soil properties]
     aME = [:cMicSoil :cSoilSlow effA-(effB*(SILT+CLAY))
@@ -80,8 +80,8 @@ $(PARAMFIELDS)
 Effect of soil properties on the c transfers between pools using cFlowSoilProperties_CASA
 
 *Inputs*
- - land.soilWBase.p_CLAY: soil hydraulic properties for clay layer
- - land.soilWBase.p_SILT: soil hydraulic properties for silt layer
+ - land.soilTexture.st_CLAY: soil hydraulic properties for clay layer
+ - land.soilTexture.st_SILT: soil hydraulic properties for silt layer
 
 *Outputs*
  - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools

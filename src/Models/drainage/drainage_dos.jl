@@ -17,7 +17,7 @@ function define(p_struct::drainage_dos, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        drainage => land.drainage
+        drainage => land.fluxes
     end
     return land
 end
@@ -28,8 +28,8 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        drainage ∈ land.drainage
-        (p_wSat, p_β, p_wFC) ∈ land.soilWBase
+        drainage ∈ land.fluxes
+        (wSat, soil_β, wFC) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
@@ -38,12 +38,12 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        soilW_sl = min(max_0(soilW[sl] + ΔsoilW[sl]), p_wSat[sl])
-        drain_fraction = clamp_01(((soilW_sl) / p_wSat[sl])^(dos_exp * p_β[sl]))
+        soilW_sl = min(max_0(soilW[sl] + ΔsoilW[sl]), wSat[sl])
+        drain_fraction = clamp_01(((soilW_sl) / wSat[sl])^(dos_exp * soil_β[sl]))
         drainage_tmp = drain_fraction * (soilW_sl)
-        max_drain = p_wSat[sl] - p_wFC[sl]
+        max_drain = wSat[sl] - wFC[sl]
         lossCap = min(soilW_sl, max_drain)
-        holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         drain = min(drainage_tmp, holdCap, lossCap)
         tmp = drain > tolerance ? drain : z_zero
         @rep_elem tmp => (drainage, sl, :soilW)
@@ -53,7 +53,7 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
     @rep_elem z_zero => (drainage, lastindex(drainage), :soilW)
     ## pack land variables
     @pack_land begin
-        drainage => land.drainage
+        drainage => land.fluxes
         ΔsoilW => land.states
     end
     return land
