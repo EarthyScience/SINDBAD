@@ -15,7 +15,7 @@ function compute(p_struct::runoffSaturationExcess_Zhang2008, forcing, land, help
         WBP ∈ land.states
         wSat ∈ land.soilWBase
         soilW ∈ land.pools
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
@@ -49,7 +49,7 @@ $(PARAMFIELDS)
 Saturation runoff using runoffSaturationExcess_Zhang2008
 
 *Inputs*
- - land.PET.PET: potential ET
+ - land.fluxes.PET: potential ET
  - land.soilWBase.wAWC: maximum available water in soil per layer
  - land.states.WBP: amount of incoming water
 

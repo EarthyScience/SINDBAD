@@ -29,7 +29,7 @@ compute the fraction of snow cover.
 Calculate snow cover fraction using snowFraction_binary
 
 *Inputs*
- - land.rainSnow.snow : snow fall [mm/time]
+ - land.fluxes.snow : snow fall [mm/time]
 
 *Outputs*
  - land.states.frac_snow: sets frac_snow to 1 if there is snow; to 0 if there  is now snow

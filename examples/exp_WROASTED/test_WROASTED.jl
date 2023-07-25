@@ -101,9 +101,9 @@ obs = getKeyedArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
-tblParams = Sindbad.getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
+# tblParams = Sindbad.getParameters(info.tem.models.forward,
+#     info.optim.default_parameter,
+#     info.optim.optimized_parameters);
 new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
 output = setupOutput(info);
 @time runEcosystem!(output.data,

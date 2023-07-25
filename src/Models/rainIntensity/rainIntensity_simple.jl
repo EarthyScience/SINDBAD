@@ -15,7 +15,7 @@ function compute(p_struct::rainIntensity_simple, forcing, land, helpers)
     rainInt = Rain * rainIntFactor
 
     ## pack land variables
-    @pack_land rainInt => land.rainIntensity
+    @pack_land rainInt => land.states
     return land
 end
 
@@ -34,7 +34,7 @@ Set rainfall intensity using rainIntensity_simple
  - forcing.Rain
 
 *Outputs*
- - land.rainIntensity.rainInt: Intesity of rainfall during the day
+ - land.states.rainInt: Intesity of rainfall during the day
 
 ---
 

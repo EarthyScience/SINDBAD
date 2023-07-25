@@ -10,8 +10,8 @@ include("PET_PriestleyTaylor1972.jl")
 Set potential evapotranspiration
 
 # Approaches:
- - forcing: sets the value of land.PET.PET from the forcing
- - Lu2005: Calculates the value of land.PET.PET from the forcing variables
- - PriestleyTaylor1972: Calculates the value of land.PET.PET from the forcing variables
+ - forcing: sets the value of land.fluxes.PET from the forcing
+ - Lu2005: Calculates the value of land.fluxes.PET from the forcing variables
+ - PriestleyTaylor1972: Calculates the value of land.fluxes.PET from the forcing variables
 """
 PET

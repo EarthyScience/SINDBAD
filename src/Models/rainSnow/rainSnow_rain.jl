@@ -13,7 +13,7 @@ function define(p_struct::rainSnow_rain, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.rainSnow
+        (precip, rain, snow) => land.fluxes
     end
     return land
 end
@@ -30,7 +30,7 @@ function compute(p_struct::rainSnow_rain, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.rainSnow
+        (precip, rain, snow) => land.fluxes
     end
     return land
 end
@@ -50,8 +50,8 @@ Set all precip to rain
  - forcing.Rain
 
 *Outputs*
- - land.rainSnow.rain: liquid rainfall from forcing input
- - land.rainSnow.snow: 0
+ - land.fluxes.rain: liquid rainfall from forcing input
+ - land.fluxes.snow: 0
 
 # update
 
