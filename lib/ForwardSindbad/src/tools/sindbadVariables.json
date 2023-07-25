@@ -88,82 +88,75 @@
       "long_name": "cVeg names for c allocation frac tree",
       "units": "string",
       "sindbad_field": "cAllocationTreeFraction",
-      "description": null
+      "description": "name of vegetation carbon pools used in tree fraction correction for carbon allocation"
     },
     "cAllocation__cVeg_names": {
       "standard_name": "cVeg_names",
       "long_name": "cVeg names",
       "units": "string",
       "sindbad_field": "cAllocation",
-      "description": null
+      "description": "name of vegetation carbon pools used for carbon allocation"
     },
     "cAllocation__cVeg_nzix": {
       "standard_name": "cVeg_nzix",
       "long_name": "cVeg nzix",
       "units": "number",
       "sindbad_field": "cAllocation",
-      "description": null
+      "description": "number of pools/layers in each vegetation carbon component"
     },
     "cAllocation__cVeg_zix": {
       "standard_name": "cVeg_zix",
       "long_name": "cVeg zix",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cAllocation",
-      "description": null
+      "description": "number of pools/layers in each vegetation carbon component"
     },
     "cAllocation__c_allocation_to_veg": {
       "standard_name": "c_allocation_to_veg",
       "long_name": "c allocation to veg",
-      "units": null,
+      "units": "fraction",
       "sindbad_field": "cAllocation",
-      "description": null
-    },
-    "cAllocation__t_two": {
-      "standard_name": "t_two",
-      "long_name": "t two",
-      "units": null,
-      "sindbad_field": "cAllocation",
-      "description": null
+      "description": "carbon allocation to each vvegetation pool"
     },
     "cCycleBase__C_to_N_cVeg": {
       "standard_name": "C_to_N_cVeg",
       "long_name": "C to N cVeg",
-      "units": null,
+      "units": "ratio",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "carbon to nitrogen ratio in the vegetation pools"
     },
     "cCycleBase__c_eco_k_base": {
       "standard_name": "c_eco_k_base",
       "long_name": "c eco k base",
       "units": "/time",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "base carbon decomposition rate of the carbon pools"
     },
     "cCycleBase__c_flow_A_array": {
       "standard_name": "c_flow_A_array",
       "long_name": "c flow A array",
-      "units": null,
+      "units": "fraction",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "an array indicating the flow direction and connections across different pools, with elements larger than 0 indicating flow from column pool to row pool"
     },
     "cCycleBase__c_flow_order": {
       "standard_name": "c_flow_order",
       "long_name": "c flow order",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "order of pooling while calculating the carbon flow"
     },
     "cCycleBase__c_giver": {
       "standard_name": "c_giver",
       "long_name": "c giver",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "index of the source carbon pool for a given flow"
     },
     "cCycleBase__c_model": {
       "standard_name": "c_model",
       "long_name": "c model",
-      "units": null,
+      "units": "symbol",
       "sindbad_field": "cCycleBase",
       "description": "a base carbon cycle model to loop through the pools and fill the main or component pools needed for using static arrays. A mandatory field for every carbon model realization"
     },
@@ -177,58 +170,58 @@
     "cCycleBase__c_taker": {
       "standard_name": "c_taker",
       "long_name": "c taker",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "index of the source carbon pool for a given flow"
     },
     "cCycleBase__c_τ_eco": {
       "standard_name": "c_τ_eco",
       "long_name": "c τ eco",
-      "units": null,
+      "units": "years",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "number of years needed for carbon turnover per carbon pool"
     },
     "cCycleBase__ηA": {
       "standard_name": "ηA",
       "long_name": "ηA",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "scalar of autotrophic carbon pool for steady state guess"
     },
     "cCycleBase__ηH": {
       "standard_name": "ηH",
       "long_name": "ηH",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleBase",
-      "description": null
+      "description": "scalar of heterotrophic carbon pool for steady state guess"
     },
     "cCycleConsistency__giver_lower_indices": {
       "standard_name": "giver_lower_indices",
       "long_name": "giver lower indices",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleConsistency",
-      "description": null
+      "description": "indices of carbon pools whose flow is >0 below the diagonal in carbon flow matrix"
     },
     "cCycleConsistency__giver_lower_unique": {
       "standard_name": "giver_lower_unique",
       "long_name": "giver lower unique",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleConsistency",
-      "description": null
+      "description": "unique indices of carbon pools whose flow is >0 below the diagonal in carbon flow matrix"
     },
     "cCycleConsistency__giver_upper_indices": {
       "standard_name": "giver_upper_indices",
       "long_name": "giver upper indices",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleConsistency",
-      "description": null
+      "description": "indices of carbon pools whose flow is >0 above the diagonal in carbon flow matrix"
     },
     "cCycleConsistency__giver_upper_unique": {
       "standard_name": "giver_upper_unique",
       "long_name": "giver upper unique",
-      "units": null,
+      "units": "number",
       "sindbad_field": "cCycleConsistency",
-      "description": null
+      "description": "unique indices of carbon pools whose flow is >0 above the diagonal in carbon flow matrix"
     },
     "cCycleDisturbance__c_lose_to_zix_vec": {
       "standard_name": "c_lose_to_zix_vec",
@@ -263,28 +256,28 @@
       "long_name": "p E vec",
       "units": null,
       "sindbad_field": "cFlowVegProperties",
-      "description": null
+      "description": "carbon flow efficiency"
     },
     "cFlowVegProperties__p_F_vec": {
       "standard_name": "p_F_vec",
       "long_name": "p F vec",
-      "units": null,
+      "units": "fraction",
       "sindbad_field": "cFlowVegProperties",
-      "description": null
+      "description": "carbon flow efficiency fraction"
     },
     "cFlow__aSrc": {
       "standard_name": "aSrc",
       "long_name": "aSrc",
-      "units": null,
+      "units": "string",
       "sindbad_field": "cFlow",
-      "description": null
+      "description": "name of the source pool for the carbon flow"
     },
     "cFlow__aTrg": {
       "standard_name": "aTrg",
       "long_name": "aTrg",
       "units": "string",
       "sindbad_field": "cFlow",
-      "description": "null"
+      "description": "name of the target pool for carbon flow"
     },
     "cFlow__c_flow_A_vec_ind": {
       "standard_name": "c_flow_A_vec_ind",
@@ -452,14 +445,14 @@
       "long_name": "MTF",
       "units": "-",
       "sindbad_field": "cTauVegProperties",
-      "description": null
+      "description": ""
     },
     "cTauVegProperties__SCLIGNIN": {
       "standard_name": "SCLIGNIN",
       "long_name": "SCLIGNIN",
       "units": "-",
       "sindbad_field": "cTauVegProperties",
-      "description": 
+      "description": ""
     },
     "cTauVegProperties__c_eco_k_f_veg_props": {
       "standard_name": "c_eco_k_f_veg_props",
@@ -1012,14 +1005,14 @@
       "long_name": "p kSat",
       "units": "mm/time",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input hydraulic conductivity of soil at saturation per layer"
+      "description": "hydraulic conductivity of soil at saturation per layer"
     },
     "soilWBase__kWP": {
       "standard_name": "kWP",
       "long_name": "p kWP",
       "units": "mm/time",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input hydraulic conductivity of soil at wilting point per layer"
+      "description": "hydraulic conductivity of soil at wilting point per layer"
     },
     "soilWBase__wAWC": {
       "standard_name": "wAWC",
@@ -1054,56 +1047,56 @@
       "long_name": "p α",
       "units": "number",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input alpha parameter of soil per layer"
+      "description": "alpha parameter of soil per layer"
     },
     "soilWBase__soil_β": {
       "standard_name": "soil_β",
       "long_name": "p β",
       "units": "number",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input beta parameter of soil per layer"
+      "description": "beta parameter of soil per layer"
     },
     "soilWBase__θFC": {
       "standard_name": "θFC",
       "long_name": "p θFC",
       "units": "-",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input moisture content of soil at field capacity per layer"
+      "description": "moisture content of soil at field capacity per layer"
     },
     "soilWBase__θSat": {
       "standard_name": "θSat",
       "long_name": "p θSat",
       "units": "-",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input moisture content of soil at saturation (porosity) per layer"
+      "description": "moisture content of soil at saturation (porosity) per layer"
     },
     "soilWBase__θWP": {
       "standard_name": "θWP",
       "long_name": "p θWP",
       "units": "-",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input moisture content of soil at wilting point per layer"
+      "description": "moisture content of soil at wilting point per layer"
     },
     "soilWBase__ψFC": {
       "standard_name": "ψFC",
       "long_name": "p ψFC",
       "units": "m",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input matric potential of soil at field capacity per layer"
+      "description": "matric potential of soil at field capacity per layer"
     },
     "soilWBase__ψSat": {
       "standard_name": "ψSat",
       "long_name": "p ψSat",
       "units": "m",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input matric potential of soil at saturation per layer"
+      "description": "matric potential of soil at saturation per layer"
     },
     "soilWBase__ψWP": {
       "standard_name": "ψWP",
       "long_name": "p ψWP",
       "units": "m",
       "sindbad_field": "soilWBase",
-      "description": "calculated/input matric potential of soil at wiliting point per layer"
+      "description": "matric potential of soil at wiliting point per layer"
     },
     "soilWBase__sum_wAWC": {
       "standard_name": "sum_wAWC",
