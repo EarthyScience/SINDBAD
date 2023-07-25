@@ -131,7 +131,7 @@ Allocate carbon to vegetation components using cCycle_simple
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.c_eco_k_ann: carbon allocation matrix
+ - land.cCycleBase.c_τ_eco: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
