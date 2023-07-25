@@ -24,15 +24,15 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
         (c_allocation, c_eco_efflux, c_eco_flow, c_eco_influx, c_eco_out, c_eco_npp) ∈ land.states
         cEco ∈ land.pools
         gpp ∈ land.fluxes
-        p_k_act ∈ land.cTau
+        c_eco_k ∈ land.cTau
         (p_E_vec, p_F_vec, p_giver, p_taker) ∈ land.cFlow
-        (c_flow_order, c_eco_k_ann) ∈ land.cCycleBase
+        (c_flow_order, c_τ_eco) ∈ land.cCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR
     ## these all need to be zeros maybe is taken care automatically
     c_eco_efflux[!helpers.pools.flags.cVeg] = 0.0
     ## compute losses
-    c_eco_out = min.(cEco, cEco * p_k_act)
+    c_eco_out = min.(cEco, cEco * c_eco_k)
     ## gains to vegetation
     zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
     c_eco_npp = gpp .* c_allocation[zix] .- c_eco_efflux[zix]
@@ -73,7 +73,7 @@ Allocate carbon to vegetation components using cCycle_CASA
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.c_eco_k_ann: carbon allocation matrix
+ - land.cCycleBase.c_τ_eco: carbon allocation matrix
  - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array

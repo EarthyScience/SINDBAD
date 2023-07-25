@@ -32,7 +32,7 @@ function compute(p_struct::cFlowVegProperties_CASA, forcing, land, helpers)
     # p_fVeg = zeros(nPix, length(info.tem.model.c.nZix)); #sujan
     #p_fVeg = zero(land.pools.cEco)
     p_E_vec = p_F_vec
-    # ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, p_MTF;, :cVegLeaf, :cLitLeafS, 1, -, p_MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, p_MTF;, :cVegRootF, :cLitRootFS, 1, -, p_MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, p_SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, p_SCLIGNIN;, :cLitRootFS, :cSoilSlow, p_SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, p_SCLIGNIN;, :cLitWood, :cSoilSlow, WOODLIGFRAC;, :cLitWood, :cMicSurf, 1, -, WOODLIGFRAC;, :cLitRootC, :cSoilSlow, WOODLIGFRAC;, :cLitRootC, :cMicSoil, 1, -, WOODLIGFRAC;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
+    # ADJUST cFlow BASED ON PARTICULAR PARAMETERS # SOURCE, TARGET, INCREMENT aM = (:cVegLeaf, :cLitLeafM, MTF;, :cVegLeaf, :cLitLeafS, 1, -, MTF;, :cVegWood, :cLitWood, 1;, :cVegRootF, :cLitRootFM, MTF;, :cVegRootF, :cLitRootFS, 1, -, MTF;, :cVegRootC, :cLitRootC, 1;, :cLitLeafS, :cSoilSlow, SCLIGNIN;, :cLitLeafS, :cMicSurf, 1, -, SCLIGNIN;, :cLitRootFS, :cSoilSlow, SCLIGNIN;, :cLitRootFS, :cMicSoil, 1, -, SCLIGNIN;, :cLitWood, :cSoilSlow, WOODLIGFRAC;, :cLitWood, :cMicSurf, 1, -, WOODLIGFRAC;, :cLitRootC, :cSoilSlow, WOODLIGFRAC;, :cLitRootC, :cMicSoil, 1, -, WOODLIGFRAC;, :cSoilOld, :cMicSoil, 1;, :cLitLeafM, :cMicSurf, 1;, :cLitRootFM, :cMicSoil, 1;, :cMicSurf, :cSoilSlow, 1;)
     for ii ∈ 1:size(aM, 1)
         ndxSrc = helpers.pools.zix.(aM[ii, 1])
         ndxTrg = helpers.pools.zix.(aM[ii, 2]) #sujan is this 2 | 1?
@@ -61,8 +61,8 @@ $(PARAMFIELDS)
 Effect of vegetation properties on the c transfers between pools using cFlowVegProperties_CASA
 
 *Inputs*
- - land.cTauVegProperties.p_MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
- - land.cTauVegProperties.p_SCLIGNIN: fraction of C in structural litter pools from lignin
+ - land.cTauVegProperties.MTF: fraction of C in structural litter pools  that will be metabolic from lignin:N ratio
+ - land.cTauVegProperties.SCLIGNIN: fraction of C in structural litter pools from lignin
 
 *Outputs*
  - land.cFlowVegProperties.p_E_vec: effect of vegetation on transfer efficiency between pools
