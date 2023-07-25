@@ -20,7 +20,7 @@ function define(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, hel
     root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
 
     ## pack land variables
-    @pack_land (root_water_efficiency) => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -29,7 +29,7 @@ function compute(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, he
     @unpack_rootWaterEfficiency_k2fvegFraction p_struct
 
     ## unpack land variables
-    @unpack_land (root_water_efficiency) ∈ land.rootWaterEfficiency
+    @unpack_land root_water_efficiency ∈ land.states
 
     ## unpack land variables
     @unpack_land frac_vegetation ∈ land.states
@@ -46,7 +46,7 @@ function compute(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, he
     root_water_efficiency[2] = root_water_efficiency[2] * k2_root_water_efficiency
 
     ## pack land variables
-    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -66,7 +66,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - land.states.frac_vegetation : vegetation fraction
 
 *Outputs*
- - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency as nPix;nZix for soilW
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootWaterEfficiency_k2fvegFraction

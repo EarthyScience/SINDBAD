@@ -26,10 +26,10 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        rain ∈ land.rainSnow
+        rain ∈ land.fluxes
         soilW_prev ∈ land.pools
         fsoilW_prev ∈ land.cTauSoilW
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
@@ -82,10 +82,10 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.PET.PET: potential evapotranspiration [mm]
+ - land.fluxes.PET: potential evapotranspiration [mm]
  - land.cTauSoilW.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
  - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]
- - land.rainSnow.rain: rainfall
+ - land.fluxes.rain: rainfall
 
 *Outputs*
  - land.cTauSoilW.fsoilW: values for below ground moisture effect on decomposition processes

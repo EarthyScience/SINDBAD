@@ -11,7 +11,7 @@ function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
     @unpack_transpirationSupply_wAWC p_struct
 
     ## unpack land variables
-    @unpack_land PAW ∈ land.vegAvailableWater
+    @unpack_land PAW ∈ land.states
 
     ## calculate variables
     transpiration_supply = sum(PAW) * k_transpiration

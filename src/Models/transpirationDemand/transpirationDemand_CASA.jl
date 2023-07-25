@@ -6,10 +6,10 @@ function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        PAW ∈ land.vegAvailableWater
+        PAW ∈ land.states
         (wAWC, soil_α, soil_β) ∈ land.soilWBase
-        percolation ∈ fluxes.percolation
-        PET ∈ land.PET
+        percolation ∈ land.fluxes
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     VMC = clamp_01(sum(PAW) / sum(wAWC))

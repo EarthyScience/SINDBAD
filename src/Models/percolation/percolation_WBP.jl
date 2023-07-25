@@ -15,7 +15,7 @@ function define(p_struct::percolation_WBP, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        percolation => fluxes.percolation
+        percolation => land.fluxes
         WBP => land.states
     end
     return land
@@ -46,7 +46,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        percolation => fluxes.percolation
+        percolation => land.fluxes
         WBP => land.states
         ΔsoilW => land.states
     end
@@ -86,7 +86,7 @@ Calculate the soil percolation = wbp at this point using percolation_WBP
  - land.states.WBP: water budget pool
 
 *Outputs*
- - land.fluxes.percolation: soil percolation
+ - land.land.fluxes: soil percolation
 
 # update
 

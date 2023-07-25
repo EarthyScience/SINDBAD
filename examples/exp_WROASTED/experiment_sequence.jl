@@ -17,7 +17,7 @@ using Plots
 # forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 # sites = ("AU-DaP", "AT-Neu")
-sites = ("CA-NS6",)
+# sites = ("CA-NS6",)
 for domain ∈ sites
     # domain = "DE-Hai"
     path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -125,7 +125,6 @@ for domain ∈ sites
     ds = forcing.data[1]
     opt_dat = output.data
     def_dat = outcubes
-    out_vars = output.variables
     costOpt = info.optim.cost_options
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     foreach(costOpt) do var_row

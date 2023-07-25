@@ -38,7 +38,7 @@ Infiltration excess runoff using runoffInfiltrationExcess_kUnsat
  - land.pools.soilW of first layer
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
  - land.pools.soilW[1]: bare soil evaporation is only allowed from first soil layer
 

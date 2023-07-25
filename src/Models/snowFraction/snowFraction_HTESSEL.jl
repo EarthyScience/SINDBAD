@@ -39,7 +39,7 @@ $(PARAMFIELDS)
 Calculate snow cover fraction using snowFraction_HTESSEL
 
 *Inputs*
- - land.rainSnow.snow: snowfall
+ - land.fluxes.snow: snowfall
 
 *Outputs*
  - land.fluxes.evaporation: soil evaporation flux
