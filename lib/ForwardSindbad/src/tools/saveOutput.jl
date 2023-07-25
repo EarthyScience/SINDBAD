@@ -16,39 +16,6 @@ function getVarFull(var_pair)
     return Symbol(String(last(var_pair)) * "__" * String(first(var_pair)))
 end
 
-function getVariableCatalog(info)
-    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
-    default_info = variCat["default_varib"]
-    t_step = info.model_run.time.model_time_step
-    default_keys = keys(default_info)
-
-    for vari_b ∈ keys(variCat)
-        if vari_b !== "default_varib"
-            var_info = variCat[vari_b]
-            var_fields = keys(var_info)
-            all_fields = Tuple(unique([default_keys..., var_fields...]))
-            for var_field ∈ all_fields
-                field_value = nothing
-                if haskey(default_info, var_field)
-                    field_value = default_info[var_field]
-                else
-                    field_value = var_info[var_field]
-                end
-                if haskey(var_info, var_field)
-                    var_prop = var_info[var_field]
-                    if !isnothing(var_prop) && length(var_prop) > 0
-                        field_value = var_info[var_field]
-                    end
-                end
-                if var_field == "units"
-                    field_value = replace(field_value, "time" => t_step)
-                end
-                variCat[vari_b][var_field] = field_value
-            end
-        end
-    end
-    return variCat
-end
 
 function getYaxForVariable(data_out, data_dim, vname, varib_catalog)
     data_prop = getVariableInfo(varib_catalog, String(vname))
@@ -59,20 +26,6 @@ function getYaxForVariable(data_out, data_dim, vname, varib_catalog)
     return data_yax
 end
 
-function fillDefaultInfo(def_info, vari_b)
-    v_str = String(vari_b)
-    def_info["standard_name"] = split(v_str, "__")[1]
-
-    return
-end
-function getVariableInfo(catalog, vari_b)
-    o_varib = copy(catalog["default_varib"])
-    if vari_b ∈ keys(catalog)
-        o_varib = catalog[vari_b]
-    end
-    o_varib["standard_name"] = split(vari_b, "__")[1]
-    return o_varib
-end
 """
     saveOutCubes(data_vars::Tuple, data_dims::Vector)
 
@@ -124,7 +77,7 @@ function getGlobalAttributes(info)
         "machine" => Sys.MACHINE,
         "os" => os,
         "host" => gethostname(),
-        # "julia" => julia_info,
+        "julia" => string(VERSION),
     )
     return global_attr
 end
