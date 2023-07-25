@@ -65,6 +65,7 @@ end
     f_one)
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
+@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];

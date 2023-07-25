@@ -37,7 +37,7 @@
     "yax_max_cache": 2e9
   },
   "output": {
-    "save_single_file": true,
+    "save_single_file": false,
     "output_array_type": "array",
     "all": true,
     "path": null,
