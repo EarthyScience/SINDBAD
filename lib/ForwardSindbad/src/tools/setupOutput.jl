@@ -104,7 +104,6 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
             ax_vals[2:end]...)
         ar .= info.tem.helpers.numbers.sNT(NaN)
     end
-    # @show forcing_axes
     dim_loops = first.(forcing_axes)
     axes_dims = []
     if !isnothing(info.tem.forcing.dimensions.permute)
@@ -118,6 +117,8 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
                 push!(axes_dims, ax_dim)
             end
         end
+    else
+        axes_dims = forcing_axes
     end
     outdims = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
@@ -135,28 +136,16 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
 
 end
 
-function getOutDimsArrays(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:sizedarray})
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    ar = nothing
-    ax_vals = values(forcing_sizes)
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
-        length(values(forcing_sizes)) + 1}(undef,
-        ax_vals[1],
-        depth_size,
-        ax_vals[2:end]...)
-    return mar = SizedArray{Tuple{size(ar)...},eltype(ar)}(undef)
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:sizedarray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+    sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
+    return outdims, sized_array
 end
 
-function getOutDimsArrays(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:marray})
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    ar = nothing
-    ax_vals = values(forcing_sizes)
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
-        length(values(forcing_sizes)) + 1}(undef,
-        ax_vals[1],
-        depth_size,
-        ax_vals[2:end]...)
-    return mar = MArray{Tuple{size(ar)...},eltype(ar)}(undef)
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:marray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+    marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
+    return outdims, marray
 end
 
 function getOutArrayType(num_type, forwardDiff)

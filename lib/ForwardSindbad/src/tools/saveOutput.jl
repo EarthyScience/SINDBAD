@@ -1,4 +1,5 @@
 export saveOutCubes
+export getGlobalAttributesForOutCubes
 
 function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
     return model_data[:, 1]
@@ -84,7 +85,7 @@ function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, dat
     return nothing
 end
 
-function getGlobalAttributes(info)
+function getGlobalAttributesForOutCubes(info)
     os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
          "macOS" : Sys.islinux() ? "Linux" : "unknown"
     io = IOBuffer()
@@ -110,9 +111,9 @@ function getGlobalAttributes(info)
 end
 
 function saveOutCubes(info, out_cubes, output)
-    global_info = getGlobalAttributes(info)
+    global_info = getGlobalAttributesForOutCubes(info)
     varib_catalog = getStandardVariableCatalog(info)
-    file_suffix = joinpath(info.output.data, info.experiment.name * "_" * info.experiment.domain)
+    file_prefix = joinpath(info.output.data, info.experiment.name * "_" * info.experiment.domain)
     t_step = info.model_run.time.model_time_step
-    saveOutCubes(file_suffix, output.ordered_variables, global_info, varib_catalog, out_cubes, output.dims, info.model_run.output.format, t_step, Val(info.model_run.output.save_single_file))
+    saveOutCubes(file_prefix, output.ordered_variables, global_info, varib_catalog, out_cubes, output.dims, info.model_run.output.format, t_step, Val(info.model_run.output.save_single_file))
 end
