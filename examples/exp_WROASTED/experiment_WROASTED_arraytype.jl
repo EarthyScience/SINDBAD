@@ -26,6 +26,7 @@ plt = plot(; legend=:outerbottom, size=(1200, 900))
 lt = (:solid, :dash, :dot)
 pl = "threads"
 arraymethod = "view"
+info = nothing
 for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
     replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
@@ -83,7 +84,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
     #     end
     # end
 end
-savefig("tmp.png")
+savefig(joinpath(info.output.figure, "tmp.png"))
 #     savefig("wroasted_$(domain)_$(v).png")
 # using JuliaFormatter
 # format(".", MinimalStyle(), margin=100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true, trailing_comma=false)
