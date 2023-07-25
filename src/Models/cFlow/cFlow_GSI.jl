@@ -39,14 +39,14 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
 
     # @show aSrc, aSrc_b
     # @show aTrg, aTrg_a
-    p_A_ind = (reserve_to_leaf=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
+    c_flow_A_vec_ind = (reserve_to_leaf=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
         reserve_to_root=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1],
         leaf_to_reserve=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1],
         root_to_reserve=findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1],
         k_shedding_leaf=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    # tcprint(p_A_ind)
+    # tcprint(c_flow_A_vec_ind)
     c_flow_A_vec = eltype(land.pools.cEco).(zero([c_taker...]) .+ one(eltype(land.pools.cEco)))
 
     if land.pools.cEco isa SVector
@@ -57,7 +57,7 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
 
 
     @pack_land begin
-        (p_A_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
+        (c_flow_A_vec_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
         c_flow_A_vec => land.states
     end
 
@@ -83,7 +83,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI p_struct
     ## unpack land variables
     @unpack_land begin
-        (eco_stressor_prev, p_A_ind, aSrc, aTrg) ∈ land.cFlow
+        (eco_stressor_prev, c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
         c_allocation_f_cloud ∈ land.cAllocationRadiation
@@ -154,18 +154,18 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     reserve_to_leaf_frac = getFrac(Re2L_i, c_eco_k_sum)
     reserve_to_root_frac = getFrac(Re2R_i, c_eco_k_sum)
 
-    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.reserve_to_leaf)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.reserve_to_root)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.leaf_to_reserve)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.root_to_reserve)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.k_shedding_leaf)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, p_A_ind.k_shedding_root)
-    # c_flow_A_vec[p_A_ind.reserve_to_leaf] = c_flow_A_vec
-    # c_flow_A_vec[p_A_ind.reserve_to_root] = reserve_to_root_frac
-    # c_flow_A_vec[p_A_ind.leaf_to_reserve] = leaf_to_reserve_frac
-    # c_flow_A_vec[p_A_ind.root_to_reserve] = root_to_reserve_frac
-    # c_flow_A_vec[p_A_ind.k_shedding_leaf] = k_shedding_leaf_frac
-    # c_flow_A_vec[p_A_ind.k_shedding_root] = k_shedding_root_frac
+    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_leaf)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_root)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.leaf_to_reserve)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
+    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_leaf] = c_flow_A_vec
+    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_root] = reserve_to_root_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.leaf_to_reserve] = leaf_to_reserve_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.root_to_reserve] = root_to_reserve_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_leaf] = k_shedding_leaf_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_root] = k_shedding_root_frac
 
     # store the varibles in diagnostic structure
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?

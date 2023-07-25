@@ -19,7 +19,7 @@ export cCycleBase_simple
                      0.0 0.0 0.0 0.0 0.0 0.43 0.0 0.43 0.28 0.28 0.4 0.43 -1.0 0.0
                      0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.005 0.0026 -1.0
                  ] | (nothing, nothing) | "Transfer matrix for carbon at ecosystem level" | ""
-    C2Nveg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+    p_C_to_N_cVeg::T3 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
@@ -30,11 +30,11 @@ function define(p_struct::cCycleBase_simple, forcing, land, helpers)
         cEco ∈ land.pools
     end
     ## instantiate variables
-    p_C2Nveg = zero(cEco) .+ one(first(cEco)) #sujan
+    C_to_N_cVeg = zero(cEco) .+ one(first(cEco)) #sujan
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A_array) => land.cCycleBase
+        (C_to_N_cVeg, c_flow_A_array) => land.cCycleBase
     end
     return land
 end
@@ -45,20 +45,20 @@ function compute(p_struct::cCycleBase_simple, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        p_C2Nveg ∈ land.cCycleBase
+        C_to_N_cVeg ∈ land.cCycleBase
         o_one ∈ land.wCycleBase
     end
 
     ## calculate variables
     #carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
+    C_to_N_cVeg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
 
     # turnover rates
     TSPY = helpers.dates.timesteps_in_year
     c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
-    @pack_land (p_C2Nveg, c_eco_k_base, c_flow_A_array) => land.cCycleBase
+    @pack_land (C_to_N_cVeg, c_eco_k_base, c_flow_A_array) => land.cCycleBase
 
     return land
 end
