@@ -221,11 +221,6 @@
           "source_unit": "gC m-2",
           "name_short": "Above-ground biomass"
         },
-        "unc": {
-          "data_path": null,
-          "bounds": [0.0, 400.0],
-          "source_variable": "NEE_RANDUNC"
-        },
         "cost_options": {
           "cost_metric": "nmae1r"
         }
@@ -238,11 +233,6 @@
           "source_variable": "mergedNDVI_MCD43A",
           "source_unit": "adimensional",
           "name_short": "mergedNDVI_MCD43A"
-        },
-        "unc": {
-          "data_path": null,
-          "bounds": [0.0, 1.0],
-          "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
           "temporal_aggr": "dayAnomaly",

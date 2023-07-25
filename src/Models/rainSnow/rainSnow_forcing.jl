@@ -27,7 +27,7 @@ function compute(p_struct::rainSnow_forcing, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (precip, rain, snow) => land.rainSnow
+        (precip, rain, snow) => land.fluxes
         ΔsnowW => land.states
     end
     return land
@@ -70,8 +70,8 @@ Set rain and snow to fe.rainsnow. using rainSnow_forcing
  - info
 
 *Outputs*
- - land.rainSnow.rain: liquid rainfall from forcing input
- - land.rainSnow.snow: snowfall estimated as the rain when tair <  threshold
+ - land.fluxes.rain: liquid rainfall from forcing input
+ - land.fluxes.snow: snowfall estimated as the rain when tair <  threshold
 
 # update
 

@@ -16,7 +16,7 @@ function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
         frac_vegetation ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -32,7 +32,7 @@ function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        PET_evaporation => land.evaporation
+        PET_evaporation => land.fluxes
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
@@ -75,12 +75,12 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_vegFraction
 
 *Inputs*
- - land.PET.PET: forcing data set
+ - land.fluxes.PET: forcing data set
  - land.states.frac_vegetation [output of frac_vegetation module]
  - α
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update

@@ -71,7 +71,7 @@
       "pools.groundW": 1,
       "pools.snowW": 1,
       "pools.cEco": "d_cEco",
-      "rootWaterEfficiency.root_water_efficiency": "d_soil",
+      "states.root_water_efficiency": "d_soil",
       "states.fAPAR": null,
       "states.c_eco_k": "d_cEco",
       "states.c_allocation": "d_cEco",
@@ -88,8 +88,8 @@
       "states.frac_snow": null,
       "states.c_flow_A_vec": 10,
       "transpirationSupply.transpiration_supply": null,
-      "vegAvailableWater.PAW": "d_soil",
-      "waterBalance.water_balance": null
+      "states.PAW": "d_soil",
+      "states.water_balance": null
     }
   },
   "spinup": {
