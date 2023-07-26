@@ -62,7 +62,7 @@ function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpe
     end
     ## calculate variables
     tmp_rootEff = max_root_water_efficiency -
-                  (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * addS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
+                  (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * totalS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
 
     for sl ∈ eachindex(land.pools.soilW)
         rootEff = root_over[sl] >= z_zero ? tmp_rootEff : z_zero

@@ -20,7 +20,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
 
     ## calculate variables
     # simply assume that a fraction of the GWstorage is baseflow
-    base_runoff = bc * addS(groundW, ΔgroundW)
+    base_runoff = bc * totalS(groundW, ΔgroundW)
 
     # update groundwater changes
 
