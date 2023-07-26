@@ -7,6 +7,8 @@ export getKeyedArrayWithNames
 export getNamedDimsArrayWithNames
 export getKeyedArray
 export mapCleanData
+export cleanData
+export cleanInputData
 export booleanizeMask
 export getSpatialSubset
 export getCombinedVariableInfo
@@ -130,10 +132,12 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
 end
 
 function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
-    yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, Val(T)), yax)
-    if !isnothing(bounds_qc) && !isnothing(yax_qc)
-        yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
-    end
+    # if !isnothing(bounds_qc) && !isnothing(yax_qc)
+    #     yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
+    # end
+    vT=Val{T}()
+    yax = map(yax_point -> cleanInputData(yax_point, dfill, vinfo, vT), yax)
+    # yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, vT), yax)
     return yax
 end
 
@@ -142,6 +146,15 @@ function cleanInvalid(yax_point, dfill)
     yax_point = isnan(yax_point) ? dfill : yax_point
     yax_point = isinf(yax_point) ? dfill : yax_point
     return yax_point
+end
+
+function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
+    datapoint = isnan(datapoint) ? dfill : datapoint
+    datapoint = applyUnitConversion(datapoint, vinfo.source_to_sindbad_unit,
+        vinfo.additive_unit_conversion)
+    bounds = vinfo.bounds
+    datapoint = clamp(datapoint, bounds[1], bounds[2])
+    return ismissing(datapoint) ? T(NaN) : T(datapoint)
 end
 
 function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}

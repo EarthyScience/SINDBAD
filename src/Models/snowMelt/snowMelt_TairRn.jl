@@ -40,7 +40,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         snow_melt => land.fluxes
-        potential_snow_melt => land.snowMelt
+        potential_snow_melt => land.fluxes
         WBP => land.states
         ΔsnowW => land.states
     end
@@ -85,12 +85,12 @@ Calculate snowmelt and update s.w.wsnow using snowMelt_TairRn
  - forcing.Rn: net radiation [MJ/m2/day]
  - forcing.Tair: temperature [C]
  - info structure
- - land.snowMelt.potential_snow_melt : potential snow melt based on temperature & net radiation [mm/time]
+ - land.fluxes.potential_snow_melt : potential snow melt based on temperature & net radiation [mm/time]
  - land.states.frac_snow : snow cover fraction []
 
 *Outputs*
  - land.fluxes.snowMelt : snow melt [mm/time]
- - land.snowMelt.potential_snow_melt: potential snow melt [mm/time]
+ - land.fluxes.potential_snow_melt: potential snow melt [mm/time]
 
 # update
 
