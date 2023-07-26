@@ -1,5 +1,5 @@
 export sindbad_variables
-export what_is
+export whatIs
 export orD
 export defaultVariableInfo
 
@@ -1512,7 +1512,7 @@ function getVariableCatalogFromLand(land)
     return variCat
 end
 
-function disp_dict(dk, dv, exist=true)
+function displayVariableDict(dk, dv, exist=true)
     print("\n\n")
     if exist
         print(":$(dk)\n")
@@ -1532,47 +1532,47 @@ function disp_dict(dk, dv, exist=true)
     return nothing
 end
 
-function check_and_display(var_full)
+function checkDisplayVariableDict(var_full)
     sind_var_names = keys(sindbad_variables)
     if var_full in sind_var_names
         print("\nExisting catalog entry for $var_full from src/tools/sindbadVariableCatalog.jl")
-        disp_dict(var_full, sindbad_variables[var_full])
+        displayVariableDict(var_full, sindbad_variables[var_full])
     else
         new_d = defaultVariableInfo()
         new_d[:land_field] = split(string(var_full), "__")[1]
         new_d[:standard_name] = split(string(var_full), "__")[2]
         print("\n")
         @warn "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry and add to src/tools/sindbadVariableCatalog.jl with correct details using"
-        disp_dict(var_full, new_d, false)
+        displayVariableDict(var_full, new_d, false)
     end
     return nothing
 end
-function get_full_name(var_field::String, var_sfield::String)
+function getFullVariableKey(var_field::String, var_sfield::String)
     return Symbol(var_field * "__" * var_sfield)
 end
 
-function what_is(var_name::String)
+function whatIs(var_name::String)
     if startswith(var_name, "land")
         var_name = var_name[6:end]
     end
     var_field = split(var_name, ".")[1]
     var_sfield = split(var_name, ".")[2]
-    var_full = get_full_name(var_field, var_sfield)
+    var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_name as :$var_full in sindbad_variables catalog...")
-    check_and_display(var_full)
+    checkDisplayVariableDict(var_full)
     return nothing
 end
 
-function what_is(var_field::String, var_sfield::String)
-    var_full = get_full_name(var_field, var_sfield)
+function whatIs(var_field::String, var_sfield::String)
+    var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_field field and $var_sfield subfield as :$var_full in sindbad_variables catalog...")
-    check_and_display(var_full)
+    checkDisplayVariableDict(var_full)
     return nothing
 end
 
-function what_is(var_field::Symbol, var_sfield::Symbol)
-    var_full = get_full_name(string(var_field), string(var_sfield))
+function whatIs(var_field::Symbol, var_sfield::Symbol)
+    var_full = getFullVariableKey(string(var_field), string(var_sfield))
     println("\nchecking :$var_field field and :$var_sfield subfield as :$var_full in sindbad_variables catalog...")
-    check_and_display(var_full)
+    checkDisplayVariableDict(var_full)
     return nothing
 end
