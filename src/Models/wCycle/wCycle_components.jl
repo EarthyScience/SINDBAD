@@ -24,7 +24,7 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
         zix ∈ helpers.pools
         (z_zero, o_one) ∈ land.wCycleBase
     end
-    totalW_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
+    total_water_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## update variables
     groundW = add_vec(groundW, ΔgroundW)
@@ -53,11 +53,11 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
         @rep_elem z_zero => (ΔsurfaceW, l, :surfaceW)
     end
 
-    totalW = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
+    total_water = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## pack land variables
     @pack_land begin
-        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, totalW, totalW_prev) => land.states
+        (ΔgroundW, ΔsnowW, ΔsoilW, ΔsurfaceW, total_water, total_water_prev) => land.states
     end
     return land
 end
