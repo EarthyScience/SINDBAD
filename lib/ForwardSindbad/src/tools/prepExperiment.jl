@@ -39,7 +39,7 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     println("----------------------------------------------")
     @info "prepExperimentForward: get forcing data..."
     info, forcing = getForcing(info)
-    # spinup_forcing = getSpinupForcing(forcing, info.tem);
+
     println("----------------------------------------------")
 
     @info "prepExperimentForward: setup output..."

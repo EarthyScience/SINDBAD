@@ -78,8 +78,7 @@ land_spin = land_init_space[1];
     tem_with_vals.spinup,
     tem_with_vals.models,
     typeof(land_spin),
-    f_one;
-    spinup_forcing=nothing);
+    f_one);
 
 @time runEcosystem!(output.data,
     info.tem.models.forward,
