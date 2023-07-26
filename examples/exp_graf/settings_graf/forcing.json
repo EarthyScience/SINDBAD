@@ -81,7 +81,7 @@
       "name_short": "Potential Global Radiation",
       "space_time_type": "spatiotemporal",
       "source_product": "ERA5",
-      "data_path": "../data/graf/opt.2d.m.Africa.gapfld.rgPot.Rpot.2005-2013.nc"
+      "data_path": "../data/graf/opt.2d.m.Africa.gapfld.Rgpot.Rpot.2005-2013.nc"
     },
     "Rn": {
       "sindbad_unit": "MJ m-2",

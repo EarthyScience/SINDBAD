@@ -19,7 +19,7 @@ noStackTrace()
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
+    "model_run.flags.spinup.do_spinup" => true);
 
 @everywhere replace_info_site = Dict("experiment.domain" => domain * "_site",
     "model_run.flags.run_optimization" => optimize_it,
