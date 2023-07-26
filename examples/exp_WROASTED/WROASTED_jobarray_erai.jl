@@ -6,8 +6,8 @@ using Dates
 using Plots
 noStackTrace()
 
-site_index = 1
-# site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+# site_index = 1
+site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
 site_info = Sindbad.CSV.File(
@@ -95,8 +95,8 @@ forcingConfig = "forcing_$(forcing_set).json";
 pl = "threads"
 exp_main = "wroasted_unc"
 
-opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
-# opti_set = (:set10,)
+# opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
+opti_set = (:set1,)
 optimize_it = true;
 for o_set in opti_set
     path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
@@ -119,7 +119,7 @@ for o_set in opti_set
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
-        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
+        "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.constraints.default_constraint.data_path" => path_observation,
         "optimization.variables_to_constrain" => opti_sets[o_set],)
 
