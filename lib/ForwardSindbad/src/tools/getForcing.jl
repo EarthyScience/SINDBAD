@@ -73,7 +73,7 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_dat
     if fill_nan
         vfill = num_type(NaN)
     end
-    vNT =  Val{num_type}()
+    vNT = Val{num_type}()
     if clean_data
         # yax = map(yax_point -> cleanInputData(yax_point, vfill, vinfo, vNT), yax)
         # yax = map(yax_point -> cleanData(yax_point, vfill, vinfo, vNT), yax)
@@ -196,8 +196,8 @@ function getForcing(info::NamedTuple)
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
         # incube = yax  
         @info "     source_var: $(vinfo.source_variable)"
-        incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
         @info "     sindbad_var: $(k)\n "
+        incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(yax)
