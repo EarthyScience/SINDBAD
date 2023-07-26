@@ -18,6 +18,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
         (ΔsoilW, ΔgroundW) ∈ land.states
         n_groundW ∈ land.wCycleBase
         z_zero ∈ land.wCycleBase
+        gw_recharge ∈ land.fluxes
     end
     # maximum groundwater storage
     p_gwmax = wSat[end] * smax_scale
@@ -39,9 +40,12 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
     ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW
     ΔsoilW[end] = ΔsoilW[end] + gw_capillary_flux
 
+    # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
+    gw_recharge = gw_recharge - gw_capillary_flux
+
     ## pack land variables
     @pack_land begin
-        gw_capillary_flux => land.fluxes
+        (gw_capillary_flux, gw_recharge) => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land

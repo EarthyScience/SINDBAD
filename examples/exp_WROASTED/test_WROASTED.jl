@@ -31,7 +31,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "forcing.default_forcing.data_path" => path_input,
     "model_run.time.end_date" => eYear * "-12-31",
     "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => false,
+    "model_run.flags.run_forward_and_cost" => true,
     "model_run.flags.spinup.save_spinup" => false,
     "model_run.flags.catch_model_errors" => false,
     "model_run.flags.spinup.run_spinup" => true,
@@ -45,7 +45,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "optimization.algorithm" => "Optimization_GCMAES",
     "optimization.constraints.default_constraint.data_path" => path_observation);
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 # tblParams = Sindbad.getParameters(info.tem.models.forward,
 #     info.optim.default_parameter,
@@ -101,10 +101,24 @@ obs = getKeyedArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
+tblParams = Sindbad.getParameters(info.tem.models.forward,
+    info.optim.default_parameter,
+    info.optim.optimized_parameters);
+new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
+
+
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
+
 # tblParams = Sindbad.getParameters(info.tem.models.forward,
 #     info.optim.default_parameter,
 #     info.optim.optimized_parameters);
-new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
+
+info, forcing = getForcing(info);
+
+# mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
+# tcprint(mtup)
+
+forc = getKeyedArrayWithNames(forcing);
 output = setupOutput(info);
 @time runEcosystem!(output.data,
     new_models,
@@ -127,6 +141,9 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable
     @show "plot obs", v
+    v = (var_row.mod_field, var_row.mod_subfield)
+    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+    v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
     if loss_name in (:nnseinv, :nseinv)
@@ -151,8 +168,8 @@ foreach(costOpt) do var_row
     obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
+    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end

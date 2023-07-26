@@ -16,7 +16,7 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     # instatiate variables 
     soil_layer_thickness = zero(land.pools.soilW)
     wFC = zero(land.pools.soilW)
-    WP = zero(land.pools.soilW)
+    wWP = zero(land.pools.soilW)
     wSat = zero(land.pools.soilW)
 
     soilDepths = helpers.pools.layerThickness.soilW
@@ -39,8 +39,8 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
         @rep_elem sd_sl => (soil_layer_thickness, sl, :soilW)
         p_wFC_sl = θFC[sl] * sd_sl
         @rep_elem p_wFC_sl => (wFC, sl, :soilW)
-        WP_sl = θWP[sl] * sd_sl
-        @rep_elem WP_sl => (WP, sl, :soilW)
+        wWP_sl = θWP[sl] * sd_sl
+        @rep_elem wWP_sl => (wWP, sl, :soilW)
         p_wSat_sl = θSat[sl] * sd_sl
         @rep_elem p_wSat_sl => (wSat, sl, :soilW)
         soilW_sl = min(soilW[sl], wSat[sl])
@@ -48,11 +48,11 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     end
 
     # get the plant available water capacity
-    wAWC = wFC - WP
+    wAWC = wFC - wWP
 
     # save the sums of selected variables
     sum_wFC = sum(wFC)
-    sum_WP = sum(WP)
+    sum_WP = sum(wWP)
     sum_wSat = sum(wSat)
     sum_wAWC = sum(wAWC)
 
@@ -64,7 +64,7 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
             wAWC,
             wFC,
             wSat,
-            WP,
+            wWP,
             sum_wAWC,
             sum_wFC,
             sum_wSat,
