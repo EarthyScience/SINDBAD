@@ -154,4 +154,26 @@ for domain ∈ sites
         plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
         savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
     end
+
+    ### redo the forward run to save all output variables
+    replace_info["model_run.flags.run_forward_and_cost"] = false
+    replace_info["model_run.flags.run_optimization"] = false
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info, forcing = getForcing(info)
+    forc = getKeyedArrayWithNames(forcing)
+    output = setupOutput(info)
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+        prepRunEcosystem(output,
+            forc,
+            info.tem)
+    @time runEcosystem!(output.data,
+        new_models,
+        forc,
+        tem_with_vals,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+
 end
