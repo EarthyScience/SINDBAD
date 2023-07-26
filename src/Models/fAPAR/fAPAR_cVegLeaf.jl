@@ -17,7 +17,7 @@ function compute(p_struct::fAPAR_cVegLeaf, forcing, land, helpers)
     end
 
     ## calculate variables
-    cVegLeaf_sum = addS(cVegLeaf)
+    cVegLeaf_sum = totalS(cVegLeaf)
     fAPAR = o_one - exp(-(cVegLeaf_sum * kEffExt))
 
     ## pack land variables

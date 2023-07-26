@@ -6,7 +6,7 @@ export nonUnique
 export noStackTrace
 export dictToNamedTuple
 export getSindbadModels
-export addS
+export totalS
 export tcprint
 export set_component_from_main_pool, set_main_from_component_pool
 export clamp_01
@@ -434,10 +434,10 @@ function flagLower(A::AbstractMatrix)
 end
 
 """
-addS(s, sΔ)
+totalS(s, sΔ)
 return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
 """
-function addS(s, sΔ)
+function totalS(s, sΔ)
     sm = zero(eltype(s))
     for si ∈ eachindex(s)
         sm = sm + s[si] + sΔ[si]
@@ -446,10 +446,10 @@ function addS(s, sΔ)
 end
 
 """
-addS(s)
+totalS(s)
 return total storage amount given the storage without creating an allocation for a temporary array
 """
-function addS(s)
+function totalS(s)
     sm = zero(eltype(s))
     for si ∈ eachindex(s)
         sm = sm + s[si]
