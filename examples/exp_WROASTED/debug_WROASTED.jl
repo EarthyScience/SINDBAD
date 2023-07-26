@@ -127,8 +127,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 #     tem_with_vals.spinup,
 #     tem_with_vals.models,
 #     typeof(land_spin),
-#     f_one;
-#     spinup_forcing=nothing);
+#     f_one);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = output.variables;

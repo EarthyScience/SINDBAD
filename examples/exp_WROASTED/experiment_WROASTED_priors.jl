@@ -47,7 +47,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 info, forcing = getForcing(info);
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 output = setupOutput(info);
 
 forc = getKeyedArrayWithNames(forcing);
