@@ -132,7 +132,7 @@ Soil properties (hydraulic properties) using soilProperties_Saxton2006
  - land.soilTexture.sp_[CLAY/SAND]
 
 *Outputs*
- - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  (WP)
+ - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  ( wWP)
  - land.soilProperties.sp_[α/β]: properties of moisture-retention curves
  - land.soilProperties.sp_θFC/kFC/ψFC/sFC
  - land.soilProperties.sp_θSat/kSat/ψSat/sSat
@@ -217,7 +217,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - sl: soil layer to calculate property for
 
 # Outputs:
- - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  (WP)
+ - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  ( wWP)
  - properties of moisture-retention curves: (α & β)
 
 # Modifies:
@@ -238,7 +238,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - PAW: Plant Avail. moisture [33-1500 kPa, matric soil], #v
  - PAWB: Plant Avail. moisture [33-1500 kPa, bulk soil], #v
  - SAT: Saturation moisture [0 kPa], #v
- - WP: Wilting point moisture [1500 kPa], #v
+ - wWP: Wilting point moisture [1500 kPa], #v
 """
 function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers, sl)
 

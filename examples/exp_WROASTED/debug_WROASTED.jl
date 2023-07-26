@@ -47,7 +47,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.mapping.parallelization" => pl,
     "optimization.constraints.default_constraint.data_path" => path_observation);
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 nrepeat = 200
 
@@ -88,7 +88,7 @@ else
     error("cannot determine the repeat for disturbance")
 end
 replace_info["model_run.spinup.sequence"] = sequence
-info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 info, forcing = getForcing(info);
 
@@ -134,14 +134,17 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = output.variables;
 for (o, v) in enumerate(out_vars)
     def_var = output.data[o][:, :, 1, 1]
+    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
     xdata = [info.tem.helpers.dates.vector...]
     if size(def_var, 2) == 1
-        plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(v)")
-        savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(v).png"))
+        plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+        ylabel!("$(vinfo["standard_name"])")
+        savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(vinfo["standard_name"]).png"))
     else
         for ll ∈ 1:size(def_var, 2)
-            plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(v)")
-            savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(v)_$(ll).png"))
+            plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+            ylabel!("$(vinfo["standard_name"])")
+            savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(ll).png"))
         end
     end
 

@@ -46,7 +46,7 @@ for domain ∈ sites
         "model_run.mapping.parallelization" => pl,
         "optimization.constraints.default_constraint.data_path" => path_observation)
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
 
     ## get the spinup sequence
@@ -92,7 +92,7 @@ for domain ∈ sites
     @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
     @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
     tblParams = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
@@ -127,8 +127,14 @@ for domain ∈ sites
     def_dat = outcubes
     costOpt = info.optim.cost_options
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.name * "_" * info.experiment.domain)
+
     foreach(costOpt) do var_row
         v = var_row.variable
+        # @show "plot obs", v
+        v = (var_row.mod_field, var_row.mod_subfield)
+        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        v = vinfo["standard_name"]
         @show "plot obs", v
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
@@ -149,16 +155,17 @@ for domain ∈ sites
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
         obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-        plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+        plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
+        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
         plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-        savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
+        ylabel!("$(vinfo["standard_name"])")
+        savefig(fig_prefix * "_$(v).png")
     end
 
     ### redo the forward run to save all output variables
     replace_info["model_run.flags.run_forward_and_cost"] = false
     replace_info["model_run.flags.run_optimization"] = false
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     info, forcing = getForcing(info)
     forc = getKeyedArrayWithNames(forcing)
     output = setupOutput(info)
@@ -175,5 +182,37 @@ for domain ∈ sites
         loc_outputs,
         land_init_space,
         f_one)
+
+    # save the outcubes
+
+    out_info = getOutputFileInfo(info)
+    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(false))
+
+    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(false))
+
+
+    # plot the debug figures
+    default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+    out_vars = output.variables
+    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
+    for (o, v) in enumerate(out_vars)
+        def_var = output.data[o][:, :, 1, 1]
+        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        v = vinfo["standard_name"]
+        xdata = [info.tem.helpers.dates.vector...]
+        if size(def_var, 2) == 1
+            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+            ylabel!("$(vinfo["standard_name"])", fontsize=18)
+            savefig(fig_prefix * "_$(v).png")
+        else
+            for ll ∈ 1:size(def_var, 2)
+                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+                ylabel!("$(vinfo["standard_name"])", fontsize=18)
+                savefig(fig_prefix * "_$(v)_$(ll).png")
+            end
+        end
+    end
 
 end

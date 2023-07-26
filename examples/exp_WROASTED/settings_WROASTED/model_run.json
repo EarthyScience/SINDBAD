@@ -87,7 +87,7 @@
       "cFlow.k_shedding_root_frac": null,
       "states.frac_snow": null,
       "states.c_flow_A_vec": 10,
-      "transpirationSupply.transpiration_supply": null,
+      "states.transpiration_supply": null,
       "states.PAW": "d_soil",
       "states.water_balance": null
     }

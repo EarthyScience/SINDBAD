@@ -20,14 +20,14 @@ function compute(p_struct::vegAvailableWater_rootWaterEfficiency, forcing, land,
 
     ## unpack land variables
     @unpack_land begin
-        WP ∈ land.soilWBase
+        wWP ∈ land.soilWBase
         root_water_efficiency ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         PAW ∈ land.states
     end
     for sl ∈ eachindex(soilW)
-        PAW_sl = root_water_efficiency[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - WP[sl]))
+        PAW_sl = root_water_efficiency[sl] * (max_0(soilW[sl] + ΔsoilW[sl] - wWP[sl]))
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
