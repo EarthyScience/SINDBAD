@@ -29,7 +29,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
 
     # potential snow melt if T > 0.0 deg C
     potential_snow_melt = Tair > z_zero ? potential_snow_melt : z_zero
-    snow_melt = min(addS(snowW, ΔsnowW), potential_snow_melt)
+    snow_melt = min(totalS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers
     ΔsnowW = add_to_each_elem(ΔsnowW, -snow_melt / n_snowW)
