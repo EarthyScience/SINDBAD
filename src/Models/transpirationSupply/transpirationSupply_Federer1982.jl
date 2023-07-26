@@ -13,9 +13,9 @@ function compute(p_struct::transpirationSupply_Federer1982, forcing, land, helpe
     ## unpack land variables
     @unpack_land begin
         PAW ∈ land.states
-        wSat ∈ land.soilWBase
+        sum_wSat ∈ land.soilWBase
     end
-    transpiration_supply = maxRate * sum(PAW) / sum(wSat)
+    transpiration_supply = maxRate * sum(PAW) / sum_wSat
 
     ## pack land variables
     @pack_land transpiration_supply => land.states
