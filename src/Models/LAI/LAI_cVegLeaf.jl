@@ -13,7 +13,7 @@ function compute(p_struct::LAI_cVegLeaf, forcing, land, helpers)
     @unpack_land cVegLeaf ∈ land.pools
 
     ## calculate variables
-    cVegLeafTotal = addS(cVegLeaf)
+    cVegLeafTotal = totalS(cVegLeaf)
     LAI = cVegLeafTotal * SLA
 
     ## pack land variables
