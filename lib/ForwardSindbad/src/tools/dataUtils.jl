@@ -135,9 +135,9 @@ function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
     # if !isnothing(bounds_qc) && !isnothing(yax_qc)
     #     yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
     # end
-    vT=Val{T}()
-    yax = map(yax_point -> cleanInputData(yax_point, dfill, vinfo, vT), yax)
-    # yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, vT), yax)
+    vT = Val{T}()
+    # yax = map(yax_point -> cleanInputData(yax_point, dfill, vinfo, vT), yax)
+    yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, vT), yax)
     return yax
 end
 
@@ -148,14 +148,15 @@ function cleanInvalid(yax_point, dfill)
     return yax_point
 end
 
-function cleanInputData(datapoint, dfill, vinfo, ::Val{T}) where {T}
-    datapoint = isnan(datapoint) ? dfill : datapoint
-    datapoint = applyUnitConversion(datapoint, vinfo.source_to_sindbad_unit,
-        vinfo.additive_unit_conversion)
-    bounds = vinfo.bounds
-    datapoint = clamp(datapoint, bounds[1], bounds[2])
-    return ismissing(datapoint) ? T(NaN) : T(datapoint)
-end
+# function cleanInputData(yax_point, dfill, vinfo, ::Val{T}) where {T}
+#     yax_point = ismissing(yax_point) ? dfill : yax_point
+#     yax_point = isnan(yax_point) ? dfill : yax_point
+#     yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
+#         vinfo.additive_unit_conversion)
+#     bounds = vinfo.bounds
+#     yax_point = clamp(yax_point, bounds[1], bounds[2])
+#     return ismissing(yax_point) ? T(dfill) : T(yax_point)
+# end
 
 function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
     yax_point = cleanInvalid(yax_point, dfill)

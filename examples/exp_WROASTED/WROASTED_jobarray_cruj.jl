@@ -15,7 +15,7 @@ site_info = Sindbad.CSV.File(
     header=false);
 domain = string(site_info[site_index][2])
 
-experiment_json = "../exp_WROASTED/settings_WROASTED/experiment_nnse.json"
+experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 path_input = nothing
 sYear = nothing
 eYear = nothing
@@ -36,7 +36,7 @@ path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CL
 path_observation = path_input;
 
 forcingConfig = "forcing_$(forcing_set).json";
-exp_main = "wroasted_unc_nnse"
+exp_main = "wroasted_unc"
 exp_name = "$(exp_main)_$(forcing_set)"
 optimize_it = true;
 path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/";
@@ -108,7 +108,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
 
 
-info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
 tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
@@ -160,6 +160,9 @@ foreach(costOpt) do var_row
     elseif v == :ndvi
         ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
     end
+    v = (var_row.mod_field, var_row.mod_subfield)
+    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+    v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
     if loss_name in (:nnseinv, :nseinv)
@@ -187,8 +190,8 @@ foreach(costOpt) do var_row
     metr_ml = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
-    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+    plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
+    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     plot!(xdata, ml_dat; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "$(domain)_$(v)_$(exp_name).png"))

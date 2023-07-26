@@ -134,7 +134,7 @@ for site_index in sites
         "optimization.constraints.default_constraint.data_path" => path_observation,)
 
 
-    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify info
+    info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
     info, forcing = getForcing(info)
 
@@ -209,6 +209,10 @@ for site_index in sites
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
             v = var_row.variable
+            @show "plot obs", v
+            v = (var_row.mod_field, var_row.mod_subfield)
+            vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+            v = vinfo["standard_name"]
             println("plot obs-model => site: $domain, variable: $v")
             lossMetric = var_row.cost_metric
             loss_name = valToSymbol(lossMetric)
@@ -242,8 +246,8 @@ for site_index in sites
             obs_var_n, obs_σ_n, jl_dat_n = filter_common_nan(obs_var, obs_σ, jl_dat)
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
-            plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65)
-            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(v) -> $(valToSymbol(lossMetric))")
+            plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
+            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v).png")
         end
@@ -259,7 +263,7 @@ for site_index in sites
             replace_info["model_run.flags.run_optimization"] = false
             replace_info["model_run.flags.run_forward_and_cost"] = false
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
-            # note that this will modify info
+            # note that this will modify information from json with the replace_info
             info, forcing = getForcing(info)
             output = setupOutput(info)
             loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
@@ -282,6 +286,8 @@ for site_index in sites
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
             out_vars = output.variables
             for (o, v) in enumerate(out_vars)
+                vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+                v = vinfo["standard_name"]
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output.data[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.vector...][debug_span]
@@ -293,14 +299,14 @@ for site_index in sites
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(1200, 900), title="$(v)")
+                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
                     if !isnothing(ml_dat)
-                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(1200, 900), title="$(v)")
+                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(1200, 900))
                     end
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
-                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(1200, 900), title="$(v)_$(ll)")
+                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
                         println("           layer => $ll")
 
                         if !isnothing(ml_dat)

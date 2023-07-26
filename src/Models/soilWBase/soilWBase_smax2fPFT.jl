@@ -38,10 +38,10 @@ function define(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
     ## instantiate variables
     wSat = zero(land.pools.soilW)
     wFC = zero(land.pools.soilW)
-    WP = zero(land.pools.soilW)
+    wWP = zero(land.pools.soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, WP) => land.soilWBase
+    @pack_land (soil_layer_thickness, wSat, wFC, wWP) => land.soilWBase
     return land
 end
 
@@ -50,7 +50,7 @@ function compute(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
     @unpack_soilWBase_smax2fPFT p_struct
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, WP) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.soilWBase
     @unpack_forcing PFT ∈ forcing
 
     ## calculate variables
@@ -80,7 +80,7 @@ function compute(p_struct::soilWBase_smax2fPFT, forcing, land, helpers)
         wAWC,
         wFC,
         wSat,
-        WP,
+        wWP,
         n_soilW) => land.soilWBase
     return land
 end

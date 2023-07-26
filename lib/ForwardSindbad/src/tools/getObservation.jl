@@ -43,13 +43,12 @@ function getObservation(info::NamedTuple)
         forcing_info = info.tem.forcing
     else
         error("info.tem does not include forcing dimensions. To get the observations properly, dimension information from forcing is necessary. Run: 
-        
+
             info, forcing = getForcing(info);
-        
+
         before running getObservation.")
     end
 
-    permutes = forcing_info.dimensions.permute
     data_path = info.optimization.constraints.default_constraint.data_path
     default_info = info.optimization.constraints.default_constraint
     tar_dims = getTargetDimensionOrder(info)
@@ -59,9 +58,10 @@ function getObservation(info::NamedTuple)
 
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        nc = loadDataFromPath(nc, data_path, data_path, default_info.source_variable)
+        @info " default_constraint_data_path: $(data_path)"
+        nc = loadDataFile(data_path)
     end
-    
+
     varnames = Symbol.(info.optimization.variables_to_constrain)
 
     yax_mask = nothing
@@ -97,13 +97,13 @@ function getObservation(info::NamedTuple)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
         @info "   harmonizing qflag"
-        cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info;  clean_data=false)
+        cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info; clean_data=false)
         @info "   harmonizing data"
         cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing unc"
-        cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info;  fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
+        cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing mask"
-        yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info;  clean_data=false, num_type=Bool)
+        yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info; clean_data=false, num_type=Bool)
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)

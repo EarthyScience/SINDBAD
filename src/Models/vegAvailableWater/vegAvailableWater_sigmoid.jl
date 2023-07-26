@@ -32,7 +32,7 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (WP, wFC, wSat, soil_β) ∈ land.soilWBase
+        (wWP, wFC, wSat, soil_β) ∈ land.soilWBase
         root_water_efficiency ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
@@ -44,7 +44,7 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
         θ_fc_dos = wFC[sl] / wSat[sl]
         tmpSoilWStress = clamp_01(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
-        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - WP[sl])
+        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - wWP[sl])
         PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
