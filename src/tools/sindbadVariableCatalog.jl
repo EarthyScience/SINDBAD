@@ -530,6 +530,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "fluxes",
         :description => "carbon loss due to heterotrophic respiration"
     ),
+    :fluxes__interflow_runoff => orD(
+        :standard_name => "interflow_runoff",
+        :long_name => "interflow_runoff",
+        :units => "mm/time",
+        :land_field => "fluxes",
+        :description => "runoff loss from interflow in soil layers"
+    ),
     :fluxes__interception => orD(
         :standard_name => "interception",
         :long_name => "interception_loss",
