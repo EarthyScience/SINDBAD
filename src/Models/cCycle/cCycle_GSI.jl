@@ -88,8 +88,8 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     end
 
     ## compute RA & RH
-    npp = addS(c_eco_npp)
-    backNEP = addS(cEco) - addS(cEco_prev)
+    npp = totalS(c_eco_npp)
+    backNEP = totalS(cEco) - totalS(cEco_prev)
     auto_respiration = gpp - npp
     eco_respiration = gpp - backNEP
     hetero_respiration = eco_respiration - auto_respiration
