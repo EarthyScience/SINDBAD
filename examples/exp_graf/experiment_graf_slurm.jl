@@ -30,7 +30,7 @@ noStackTrace()
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
-@everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
+@everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 @everywhere obs = ForwardSindbad.getObservation(info);
 @everywhere info, forcing = ForwardSindbad.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
@@ -47,7 +47,7 @@ noStackTrace()
 
 # runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-# info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
+# info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info);
 # spinup_forcing = getSpinupForcing(forcing, info.tem);

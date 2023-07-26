@@ -47,7 +47,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cos
     runEcosystem!(output, forc_array, info.tem)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
-    run_output = getLossVectorArray(obs_array, output.data, info.optim)
+    run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
     return run_output
 end
 
