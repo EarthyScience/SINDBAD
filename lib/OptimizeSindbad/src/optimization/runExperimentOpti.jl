@@ -18,7 +18,6 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
             info.optim,
             observations,
             ;
-            spinup_forcing=nothing,
             max_cache=info.model_run.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
