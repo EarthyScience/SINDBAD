@@ -118,7 +118,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
             end
         end
     else
-        axes_dims = forcing_axes
+        axes_dims = map(x->ForwardSindbad.Dim{first(x)}(last(x)), forcing_axes)
     end
     outdims = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
