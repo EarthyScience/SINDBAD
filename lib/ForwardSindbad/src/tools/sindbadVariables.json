@@ -1266,15 +1266,15 @@
       "sindbad_field": "states",
       "description": "amount of water uptaken for transpiration per soil layer"
     },
-    "states__totalW": {
-      "standard_name": "totalW",
+    "states__total_water": {
+      "standard_name": "total_water",
       "long_name": "total_water",
       "units": "mm",
       "sindbad_field": "states",
       "description": "sum of water storage across all components"
     },
-    "states__totalW_prev": {
-      "standard_name": "totalW_prev",
+    "states__total_water_prev": {
+      "standard_name": "total_water_prev",
       "long_name": "total_water_previous",
       "units": "mm",
       "sindbad_field": "states",
