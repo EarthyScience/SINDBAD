@@ -1,5 +1,6 @@
 export saveOutCubes
 export getGlobalAttributesForOutCubes
+export getOutputFileInfo
 
 function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
     return model_data[:, 1]
@@ -51,11 +52,11 @@ function getYaxForVariable(data_out, data_dim, variable_name, catalogue_name, va
 end
 
 """
-    saveOutCubes(data_vars::Tuple, data_dims::Vector)
+    saveOutCubes(data_path_base, global_info, varib_catalog, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
 
-saves the output varibles from the forward run
+saves the output variables from the run as one file
 """
-function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, data, data_dims, out_format, t_step, ::Val{:true})
+function saveOutCubes(data_path_base, global_info, varib_catalog, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
     @info "saving one file for all variables"
     catalogue_names = getVarFull.(data_vars)
     variable_names = getUniqueVarNames(data_vars)
@@ -67,8 +68,12 @@ function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, dat
     return nothing
 end
 
+"""
+saveOutCubes(data_path_base, global_info, varib_catalog, data_vars, data, data_dims, out_format, t_step, ::Val{:false})
 
-function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, data, data_dims, out_format, t_step, ::Val{:false})
+saves the output variables from the run as one file per variable
+"""
+function saveOutCubes(data_path_base, global_info, varib_catalog, data_vars, data, data_dims, out_format, t_step, ::Val{:false})
     @info "saving one file per variable"
     catalogue_names = getVarFull.(data_vars)
     variable_names = getUniqueVarNames(data_vars)
@@ -110,10 +115,19 @@ function getGlobalAttributesForOutCubes(info)
     return global_attr
 end
 
-function saveOutCubes(info, out_cubes, output)
+function getOutputFileInfo(info)
     global_info = getGlobalAttributesForOutCubes(info)
     varib_catalog = getStandardVariableCatalog(info)
     file_prefix = joinpath(info.output.data, info.experiment.name * "_" * info.experiment.domain)
-    t_step = info.model_run.time.model_time_step
-    saveOutCubes(file_prefix, output.ordered_variables, global_info, varib_catalog, out_cubes, output.dims, info.model_run.output.format, t_step, Val(info.model_run.output.save_single_file))
+    out_file_info = (; global_info=global_info, varib_catalog=varib_catalog, file_prefix=file_prefix)
+    return out_file_info
+end
+
+"""
+saveOutCubes(saveOutCubes(info, out_cubes, output))
+
+saves the output variables from the run from the information in info
+"""function saveOutCubes(info, out_cubes, output)
+    out_file_info = getOutputFileInfo(info)
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, out_file_info.varib_catalog, output.ordered_variables, out_cubes, output.dims, info.model_run.output.format, info.model_run.time.model_time_step, Val(info.model_run.output.save_single_file))
 end
