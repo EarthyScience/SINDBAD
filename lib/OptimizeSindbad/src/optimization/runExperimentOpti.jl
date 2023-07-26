@@ -25,7 +25,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
         forc_array = getKeyedArrayWithNames(forcing)
         obs_array = getKeyedArray(observations)
         optim_params = optimizeModelArray(forc_array, output, obs_array, info.tem, info.optim)
-        Sindbad.CSV.write(joinpath(info.output.optim, "optimized_parameters.csv"), optim_params)
+        optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
+        Sindbad.CSV.write(optim_file_prefix * "_optimized_parameters.csv", optim_params)
         run_output = optim_params.optim
     end
     return run_output

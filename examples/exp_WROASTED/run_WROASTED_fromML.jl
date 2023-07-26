@@ -299,14 +299,14 @@ for site_index in sites
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
                     if !isnothing(ml_dat)
-                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(1200, 900))
+                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(2000, 1000))
                     end
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
-                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(1200, 900), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
+                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
                         println("           layer => $ll")
 
                         if !isnothing(ml_dat)
@@ -330,11 +330,11 @@ for site_index in sites
                     xdata = 1:size(def_var, 1)
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(1200, 900), title="$(v)")
+                    plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(v)")
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
-                        plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(1200, 900), title="$(v)")
+                        plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(v)")
                         savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(ll).png"))
                     end
                 end
