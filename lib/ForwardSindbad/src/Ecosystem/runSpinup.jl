@@ -525,7 +525,7 @@ function loopTimeSpinup(sel_spinup_models,
 end
 
 """
-runSpinup(forward_models, forcing, land_spin, tem; spinup_forcing=nothing)
+runSpinup(forward_models, forcing, land_spin, tem)
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using doSpinup functions for different spinup methods.
 """
 function runSpinup(forward_models,
@@ -535,8 +535,7 @@ function runSpinup(forward_models,
     tem_spinup,
     tem_models,
     land_type,
-    f_one;
-    spinup_forcing=nothing)
+    f_one)
     #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or runEcosystem. Need to figure out...
     land_spin = land_in
     if tem_helpers.run.spinup.load_spinup
@@ -554,19 +553,19 @@ function runSpinup(forward_models,
     history = tem_helpers.run.spinup.store_spinup_history
     land_spin = land_in
     # land_spin = deepcopy(land_in)
-    spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
+    # spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
     # @info "runSpinup:: running spinup sequences..."
     for spin_seq ∈ tem_spinup.sequence
         forc = spin_seq.forcing
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
 
-        sel_forcing = forcing
-        if isnothing(spinup_forcing)
-            sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
-        else
-            sel_forcing = spinup_forcing[forc]
-        end
+        sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
+        # if isnothing(spinup_forcing)
+        #     sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
+        # else
+        #     sel_forcing = spinup_forcing[forc]
+        # end
 
         spinup_models = forward_models
         if spinup_mode == :spinup
@@ -576,7 +575,7 @@ function runSpinup(forward_models,
         # if !tem_helpers.run.run_optimization
         #     @info "     sequence: $(seqN), spinup_mode: $(spinup_mode), forcing: $(forc)"
         # end
-        for nL ∈ 1:n_repeat
+        for _ ∈ 1:n_repeat
             # @showprogress "Computing n_repeat..." for nL in 1:n_repeat
             # if !tem_helpers.run.run_optimization
             #     println("         Loop: $(nL)/$(n_repeat)")
@@ -589,15 +588,15 @@ function runSpinup(forward_models,
                 land_type,
                 f_one,
                 spinup_mode)
-            if history
-                push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
-            end
+            # if history
+            #     push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
+            # end
         end
         seqN += 1
     end
-    if history
-        @pack_land spinuplog => land_spin.states
-    end
+    # if history
+    #     @pack_land spinuplog => land_spin.states
+    # end
     if tem_helpers.run.spinup.save_spinup
         spin_file = tem_spinup.paths.restart_file_out
         @info "runSpinup:: saving spinup data to $(spin_file)..."

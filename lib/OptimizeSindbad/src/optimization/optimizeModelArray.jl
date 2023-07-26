@@ -240,8 +240,7 @@ function optimizeModelArray(forcing::NamedTuple,
     output,
     observations,
     tem::NamedTuple,
-    optim::NamedTuple;
-    spinup_forcing=nothing)
+    optim::NamedTuple)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 

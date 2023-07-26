@@ -35,7 +35,7 @@ noStackTrace()
 @everywhere info, forcing = ForwardSindbad.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 @everywhere output = setupOutput(info);
 
 @everywhere forc = getKeyedArrayWithNames(forcing);
@@ -50,7 +50,7 @@ noStackTrace()
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info);
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 # output = setupOutput(info);
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
