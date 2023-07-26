@@ -31,7 +31,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :long_name => "air_temperature_effect_auto_respiration",
         :units => "-",
         :land_field => "autoRespirationAirT",
-        :description => "effect of air temperature on auto_respiration. 1: no stress, 0: complete stress"
+        :description => "effect of air temperature on autotrophic respiration. 0: no decomposition, >1 increase in decomposition rate"
     ),
     :autoRespiration__k_respiration_maintain => orD(
         :standard_name => "k_respiration_maintain",
@@ -52,35 +52,35 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :long_name => "LAI_effect_carbon_allocation",
         :units => "-",
         :land_field => "cAllocationLAI",
-        :description => "effect of LAI on c_allocation. 1: no stress, 0: complete stress"
+        :description => "effect of LAI on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationNutrients__c_allocation_f_W_N => orD(
         :standard_name => "c_allocation_f_W_N",
         :long_name => "W_N_effect_carbon_allocation",
         :units => "-",
         :land_field => "cAllocationNutrients",
-        :description => "effect of water and nutrient on c_allocation. 1: no stress, 0: complete stress"
+        :description => "effect of water and nutrient on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationRadiation__c_allocation_f_cloud => orD(
         :standard_name => "c_allocation_f_cloud",
         :long_name => "c allocation f cloud",
         :units => "-",
         :land_field => "cAllocationRadiation",
-        :description => "effect of cloud on c_allocation. 1: no stress, 0: complete stress"
+        :description => "effect of cloud on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationSoilT__c_allocation_f_soilT => orD(
         :standard_name => "c_allocation_f_soilT",
         :long_name => "soil_temperature_effect_carbon_allocation",
         :units => "-",
         :land_field => "cAllocationSoilT",
-        :description => "effect of soil temperature on c_allocation. 1: no stress, 0: complete stress"
+        :description => "effect of soil temperature on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationSoilW__c_allocation_f_soilW => orD(
         :standard_name => "c_allocation_f_soilW",
         :long_name => "soil_moisture_effect_carbon_allocation",
         :units => "-",
         :land_field => "cAllocationSoilW",
-        :description => "effect of soil moisture on c_allocation. 1: no stress, 0: complete stress"
+        :description => "effect of soil moisture on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationTreeFraction__cVeg_names_for_c_allocation_frac_tree => orD(
         :standard_name => "cVeg_names_for_c_allocation_frac_tree",
@@ -409,7 +409,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :long_name => "soil_temperature_effect_carbon_decomposition_rate",
         :units => "-",
         :land_field => "cTauSoilT",
-        :description => "effect of soil temperature on carbon decomposition rate. 1: no stress, 0: complete stress"
+        :description => "effect of soil temperature on heterotrophic respiration respiration. 0: no decomposition, >1 increase in decomposition"
     ),
     :cTauSoilW__c_eco_k_f_soilW => orD(
         :standard_name => "c_eco_k_f_soilW",
