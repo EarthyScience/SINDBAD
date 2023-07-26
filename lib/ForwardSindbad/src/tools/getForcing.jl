@@ -73,8 +73,11 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_dat
     if fill_nan
         vfill = num_type(NaN)
     end
+    vNT =  Val{num_type}()
     if clean_data
-        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, Val(num_type))
+        # yax = map(yax_point -> cleanInputData(yax_point, vfill, vinfo, vNT), yax)
+        # yax = map(yax_point -> cleanData(yax_point, vfill, vinfo, vNT), yax)
+        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, vNT)
     else
         yax = map(yax_point -> cleanInvalid(yax_point, vfill), yax)
         yax = num_type.(yax)
@@ -83,9 +86,10 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_dat
 end
 
 function gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
-    @info "getForcing: getting forcing dimensions..."
+    @info "   processing forcing information..."
+    @info "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
-    @info "getForcing: getting variable name..."
+    @info "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
     f_dimensions = f_dimension
     # f_dimensions = Sindbad.DataStructures.OrderedDict(f_dimension...)
@@ -124,16 +128,12 @@ function loadDataFile(data_path)
 end
 
 function loadDataFromPath(nc, data_path, data_path_v, source_variable)
-    if !isnothing(data_path_v) && (data_path_v !== data_path)
+    if isnothing(data_path_v) || (data_path_v === data_path)
+        nc = nc
+    else
         @info "   data_path: $(data_path_v)"
         nc = loadDataFile(data_path_v)
-    elseif isnothing(nc)
-        @info " one_data_path: $(data_path)"
-        nc = loadDataFile(data_path)
-    else
-        nc = nc
     end
-    @info "     source_var: $(source_variable)"
     return nc
 end
 
@@ -170,6 +170,8 @@ function getForcing(info::NamedTuple)
     data_path = info.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
+        @info " default_data_path: $(data_path)"
+        nc = loadDataFile(data_path)
     end
 
     forcing_mask = nothing
@@ -192,13 +194,14 @@ function getForcing(info::NamedTuple)
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
-        if vinfo.space_time_type == "spatiotemporal"
-            f_sizes = collectForcingSizes(info, yax)
-            f_dimension = getSindbadDims(yax)
-        end
         # incube = yax  
+        @info "     source_var: $(vinfo.source_variable)"
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
         @info "     sindbad_var: $(k)\n "
+        if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
+            f_sizes = collectForcingSizes(info, incube)
+            f_dimension = getSindbadDims(yax)
+        end
         incube
     end
     return gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)

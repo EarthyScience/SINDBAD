@@ -77,9 +77,9 @@ function saveOutCubes(data_path_base, data_vars, global_info, varib_catalog, dat
         catalogue_name = catalogue_names[vn]
         variable_name = variable_names[vn]
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalogue_name, varib_catalog, t_step)
-        data_path = data_path_base * "_$(vname).$(out_format)"
+        data_path = data_path_base * "_$(variable_name).$(out_format)"
         @info "saving $(data_path)"
-        ds_new = YAXArrays.Dataset(; (vname => data_yax,)..., properties=global_info)
+        ds_new = YAXArrays.Dataset(; (variable_name => data_yax,)..., properties=global_info)
         savedataset(ds_new, path=data_path, overwrite=true)
     end
     return nothing
