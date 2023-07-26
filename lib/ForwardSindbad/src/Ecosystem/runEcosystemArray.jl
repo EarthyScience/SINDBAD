@@ -221,8 +221,7 @@ function coreEcosystem!(loc_output,
             tem_spinup,
             tem_models,
             typeof(land_init),
-            f_one;
-            spinup_forcing=nothing)
+            f_one)
     end
     time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     timeLoopForward!(loc_output,

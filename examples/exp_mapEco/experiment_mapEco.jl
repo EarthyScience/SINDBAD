@@ -13,7 +13,6 @@ info = setupExperiment(info);
 
 info, forcing = getForcing(info);
 
-# spinup_forcing = getSpinupForcing(forcing.data, info.tem);
 output = setupOutput(info);
 
 outcubes = mapRunEcosystem(forcing,
@@ -30,6 +29,4 @@ opt_params = mapOptimizeModel(forcing,
     info.tem,
     info.optim,
     observations,
-    ;
-    spinup_forcing=nothing,
     max_cache=info.model_run.rules.yax_max_cache)

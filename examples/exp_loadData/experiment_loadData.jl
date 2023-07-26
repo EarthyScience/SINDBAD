@@ -34,5 +34,5 @@ run_output = runExperiment(experiment_jld2); #this one will only work if the rep
 # one can load info directly from file and run the experiment by skipping the get configuration by continuing with
 info = Sindbad.load("info.jld2")["info"];
 info, forcing = getForcing(info)
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 output = setupOutput(info)
