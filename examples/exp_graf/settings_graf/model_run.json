@@ -69,7 +69,7 @@
         "spinup_mode": "forward",
         "forcing": "full",
         "stop_function": null,
-        "n_repeat": 1
+        "n_repeat": 20
       }
     ],
     "differential_eqn": {

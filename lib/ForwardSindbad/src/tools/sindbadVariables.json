@@ -867,13 +867,6 @@
       "sindbad_field": "rootWaterEfficiency",
       "description": "a boolean indicating if the root is allowed to exract water from a given layer depending on maximum rooting depth"
     },
-    "snowMelt__potential_snow_melt": {
-      "standard_name": "potential_snow_melt",
-      "long_name": "potential snow melt",
-      "units": "mm/time",
-      "sindbad_field": "snowMelt",
-      "description": "total snow melt from all snow layer"
-    },
     "soilProperties__sp_kFC": {
       "standard_name": "sp_kFC",
       "long_name": "sp kFC",
@@ -1287,6 +1280,13 @@
       "sindbad_field": "states",
       "description": "sum of water storage across all components in previous time step"
     },
+    "states__transpiration_supply": {
+      "standard_name": "transpiration_supply",
+      "long_name": "transpiration supply",
+      "units": "mm",
+      "sindbad_field": "states",
+      "description": "total amount of water available in soil for transpiration"
+    },
     "states__zero_c_eco_flow": {
       "standard_name": "zero_c_eco_flow",
       "long_name": "zero c eco flow",
@@ -1342,13 +1342,6 @@
       "units": "mm",
       "sindbad_field": "states",
       "description": "change in water storage in surfaceW pool(s)"
-    },
-    "transpirationSupply__transpiration_supply": {
-      "standard_name": "transpiration_supply",
-      "long_name": "transpiration supply",
-      "units": "mm",
-      "sindbad_field": "transpirationSupply",
-      "description": "total amount of water available in soil for transpiration"
     },
     "wCycleBase__n_TWS": {
       "standard_name": "n_TWS",
