@@ -53,7 +53,7 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = addS(land.pools.soilW) / land.soilWBase.sum_wSat
+    eco_stressor_prev = totalS(land.pools.soilW) / land.soilWBase.sum_wSat
 
 
     @pack_land begin
