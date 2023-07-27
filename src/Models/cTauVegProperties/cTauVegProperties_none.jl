@@ -5,7 +5,7 @@ struct cTauVegProperties_none <: cTauVegProperties end
 function define(p_struct::cTauVegProperties_none, forcing, land, helpers)
 
     ## calculate variables
-    c_eco_k_f_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_veg_props = one.(land.pools.cEco)
     LITC2N = land.wCycleBase.z_zero
     LIGNIN = land.wCycleBase.z_zero
     MTF = land.wCycleBase.o_one

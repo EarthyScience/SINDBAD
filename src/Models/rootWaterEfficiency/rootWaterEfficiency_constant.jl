@@ -12,7 +12,7 @@ function define(p_struct::rootWaterEfficiency_constant, forcing, land, helpers)
     @unpack_land soilW ∈ land.pools
     cumulative_soil_depths = cumsum(soil_layer_thickness)
     ## instantiate
-    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_water_efficiency = one.(land.pools.soilW)
 
     ## pack land variables
     @pack_land begin

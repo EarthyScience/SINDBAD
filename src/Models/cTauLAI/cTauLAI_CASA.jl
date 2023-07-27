@@ -11,7 +11,7 @@ function define(p_struct::cTauLAI_CASA, forcing, land, helpers)
     @unpack_cTauLAI_CASA p_struct
 
     ## instantiate variables
-    c_eco_k_f_LAI = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_LAI = one.(land.pools.cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_LAI => land.cTauLAI
