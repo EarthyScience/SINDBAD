@@ -18,7 +18,7 @@ sYear = "2005"
 eYear = "2017"
 domain = "DE-Hai"
 domain = "CA-NS6"
-# domain = "AU-Emr"
+domain = "AU-Emr"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 

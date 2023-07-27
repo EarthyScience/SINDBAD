@@ -8,12 +8,12 @@ noStackTrace()
 
 site_index = 37
 # site_index = 68
-sites = 1:100
+sites = 1:205
 # sites = [37, ]
-sites = 1:20
-# sites = [33, ]
-forcing_set = "cruj"
-do_debug_figs = true
+# sites = 1:20
+# sites = [11, 33, 55, 105, 148]
+forcing_set = "erai"
+do_debug_figs = false
 do_forcing_figs = false
 site_info = Sindbad.CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
@@ -124,7 +124,7 @@ for site_index in sites
         "model_run.flags.run_forward_and_cost" => true,
         "model_run.flags.spinup.save_spinup" => false,
         "model_run.flags.catch_model_errors" => false,
-        "model_run.flags.spinup.run_spinup" => false,
+        "model_run.flags.spinup.run_spinup" => true,
         "model_run.flags.debug_model" => false,
         "model_run.flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence[2:end],
@@ -210,9 +210,6 @@ for site_index in sites
         foreach(costOpt) do var_row
             v = var_row.variable
             @show "plot obs", v
-            v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
-            v = vinfo["standard_name"]
             println("plot obs-model => site: $domain, variable: $v")
             lossMetric = var_row.cost_metric
             loss_name = valToSymbol(lossMetric)
@@ -246,10 +243,13 @@ for site_index in sites
             obs_var_n, obs_σ_n, jl_dat_n = filter_common_nan(obs_var, obs_σ, jl_dat)
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
+            v = (var_row.mod_field, var_row.mod_subfield)
+            vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+            v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
-            savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v).png")
+            savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v)_$(forcing_set).png")
         end
         # end
         # end
@@ -286,11 +286,10 @@ for site_index in sites
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
             out_vars = output.variables
             for (o, v) in enumerate(out_vars)
-                vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
-                v = vinfo["standard_name"]
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output.data[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.vector...][debug_span]
+                vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
@@ -303,7 +302,7 @@ for site_index in sites
                     if !isnothing(ml_dat)
                         plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(2000, 1000))
                     end
-                    savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v).png"))
+                    savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(forcing_set).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
                         plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
@@ -312,7 +311,7 @@ for site_index in sites
                         if !isnothing(ml_dat)
                             plot!(xdata, ml_dat[1, ll, debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, debug_span]), digits=2)))")
                         end
-                        savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(v)_$(ll).png"))
+                        savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(ll)_$(forcing_set).png"))
                     end
                 end
             end
@@ -331,11 +330,11 @@ for site_index in sites
                 end
                 if size(def_var, 2) == 1
                     plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(v)")
-                    savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v).png"))
+                    savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(forcing_set).png"))
                 else
                     for ll ∈ 1:size(def_var, 2)
                         plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(v)")
-                        savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(ll).png"))
+                        savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(ll)_$(forcing_set).png"))
                     end
                 end
 
