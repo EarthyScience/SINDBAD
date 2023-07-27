@@ -460,6 +460,13 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "cTauVegProperties",
         :description => "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
+    :deriveVariables__aboveground_biomass => orD(
+        :standard_name => "aboveground_biomass",
+        :long_name => "aboveground_woody_biomass",
+        :units => "gC/m2",
+        :land_field => "deriveVariables",
+        :description => "carbon content on the cVegWood component",
+    ),
     :fluxes__auto_respiration => orD(
         :standard_name => "auto_respiration",
         :long_name => "autotrophic_respiration",
@@ -1528,9 +1535,9 @@ function displayVariableDict(dk, dv, exist=true)
     end
     foreach(dv) do dvv
         if exist
-            println("   $dvv")
+            println("   $dvv,")
         else
-            println("       $dvv")
+            println("       $dvv,")
         end
     end
     if !exist
