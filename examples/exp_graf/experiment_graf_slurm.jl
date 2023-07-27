@@ -19,7 +19,7 @@ noStackTrace()
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.spinup.do_spinup" => true); #one parameter set for whole domain
+    "model_run.flags.spinup.do_spinup" => true);
 
 @everywhere replace_info_site = Dict("experiment.domain" => domain * "_site",
     "model_run.flags.run_optimization" => optimize_it,
@@ -30,12 +30,12 @@ noStackTrace()
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
-@everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
+@everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 @everywhere obs = ForwardSindbad.getObservation(info);
 @everywhere info, forcing = ForwardSindbad.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 @everywhere output = setupOutput(info);
 
 @everywhere forc = getKeyedArrayWithNames(forcing);
@@ -47,10 +47,10 @@ noStackTrace()
 
 # runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
 
-# info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify info
+# info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info);
-# spinup_forcing = getSpinupForcing(forcing, info.tem);
+
 # output = setupOutput(info);
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);

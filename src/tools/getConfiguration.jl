@@ -151,33 +151,33 @@ end
 sets up and creates output directory for the model simulation
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
-    outpath = infoTuple[:model_run][:output][:path]
-    if isnothing(outpath)
-        out_path_new = "output_"
-        out_path_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
-            out_path_new)
-    elseif !isabspath(outpath)
-        if !occursin("/", outpath)
-            out_path_new = "output_" * outpath
+    path_output = infoTuple[:model_run][:output][:path]
+    if isnothing(path_output)
+        path_output_new = "output_"
+        path_output_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+            path_output_new)
+    elseif !isabspath(path_output)
+        if !occursin("/", path_output)
+            path_output_new = "output_" * path_output
         else
-            out_path_new = "output_" * replace(outpath, "/" => "_")
+            path_output_new = "output_" * replace(path_output, "/" => "_")
         end
-        out_path_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
-            out_path_new)
+        path_output_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
+            path_output_new)
     else
         sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-1)], "/")
-        if occursin(sindbad_root, outpath)
+        if occursin(sindbad_root, path_output)
             error(
-                "You cannot specify output.path: $(outpath) in model_run.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
+                "You cannot specify output.path: $(path_output) in model_run.json as the absolute path within the sindbad_root: $(sindbad_root). Change it to null or a relative path or set output directory outside sindbad."
             )
         else
-            out_path_new = outpath
-            if !endswith(out_path_new, "/")
-                out_path_new = out_path_new * "/"
+            path_output_new = path_output
+            if !endswith(path_output_new, "/")
+                path_output_new = path_output_new * "/"
             end
         end
     end
-    out_path_new = out_path_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
+    path_output_new = path_output_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
 
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
@@ -190,10 +190,10 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     end
     for s_o ∈ sub_output
         if s_o == "root"
-            infoTuple = setTupleSubfield(infoTuple, :output, (Symbol(s_o), out_path_new))
+            infoTuple = setTupleSubfield(infoTuple, :output, (Symbol(s_o), path_output_new))
         else
             infoTuple = setTupleSubfield(infoTuple, :output,
-                (Symbol(s_o), joinpath(out_path_new, s_o)))
+                (Symbol(s_o), joinpath(path_output_new, s_o)))
             mkpath(getfield(getfield(infoTuple, :output), Symbol(s_o)))
         end
     end

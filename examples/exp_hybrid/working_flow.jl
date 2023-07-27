@@ -28,7 +28,7 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
 end
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
-info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 info, forcing = getForcing(info);
 

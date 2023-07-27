@@ -13,7 +13,7 @@ function compute(p_struct::interception_fAPAR, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         (WBP, fAPAR) ∈ land.states
-        rain ∈ land.rainSnow
+        rain ∈ land.fluxes
     end
     # calculate interception loss
     intCap = isp * fAPAR

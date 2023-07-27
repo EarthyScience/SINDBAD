@@ -13,12 +13,12 @@
     "distribution": ["normal", [0, 1]]
   },
   "optimized_parameters": [
-    "cCycleBase,annk_Root",
-    "cCycleBase,annk_Wood",
-    "cCycleBase,annk_LitSlow",
-    "cCycleBase,annk_LitFast",
-    "cCycleBase,annk_SoilSlow",
-    "cCycleBase,annk_SoilOld",
+    "cCycleBase,c_τ_Root",
+    "cCycleBase,c_τ_Wood",
+    "cCycleBase,c_τ_LitSlow",
+    "cCycleBase,c_τ_LitFast",
+    "cCycleBase,c_τ_SoilSlow",
+    "cCycleBase,c_τ_SoilOld",
     "cCycleBase,ηH",
     "cFlow,f_τ",
     "cFlow,k_shedding",

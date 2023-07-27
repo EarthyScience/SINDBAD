@@ -20,7 +20,7 @@ using RecursiveArrayTools
 using TableOperations: select
 using Tables: columntable, matrix
 using TypedTables: Table
-using StatsBase: mean, percentile, cor
+using StatsBase: mean, percentile, cor, corspearman
 
 using JLD2: @save
 

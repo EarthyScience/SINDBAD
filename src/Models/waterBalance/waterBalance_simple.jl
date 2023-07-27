@@ -18,17 +18,17 @@ end
 
 function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     @unpack_land begin
-        precip ∈ land.rainSnow
-        (totalW_prev, totalW) ∈ land.states
+        precip ∈ land.fluxes
+        (total_water_prev, total_water) ∈ land.states
         (evapotranspiration, runoff) ∈ land.fluxes
         tolerance ∈ helpers.numbers
     end
 
     ## calculate variables
-    dS = totalW - totalW_prev
+    dS = total_water - total_water_prev
     water_balance = precip - runoff - evapotranspiration - dS
     if !is_water_balance_valid(water_balance, tolerance, helpers)
-        msg = "water balance error: water_balance: $(water_balance), totalW: $(totalW), totalW_prev: $(totalW_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
+        msg = "water balance error: water_balance: $(water_balance), total_water: $(total_water), total_water_prev: $(total_water_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
         tcprint(land)
         tcprint(forcing)
         pprint(msg)
@@ -41,7 +41,7 @@ function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     end
 
     ## pack land variables
-    @pack_land water_balance => land.waterBalance
+    @pack_land water_balance => land.states
     return land
 end
 
@@ -58,7 +58,7 @@ Calculate the water balance using waterBalance_simple
  - TWS and TWS_prev
 
 *Outputs*
- - land.waterBalance.water_balance
+ - land.states.water_balance
 
 ---
 

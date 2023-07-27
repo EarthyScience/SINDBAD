@@ -21,7 +21,7 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
         tolerance ∈ helpers.numbers
         (z_zero, o_one) ∈ land.wCycleBase
     end
-    totalW_prev = sum(TWS)
+    total_water_prev = sum(TWS)
     #TWS_old = deepcopy(TWS)
     ## update variables
     TWS = add_vec(TWS, ΔTWS)
@@ -38,12 +38,12 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
     end
     ΔTWS = zeroΔTWS
 
-    totalW = sum(TWS)
+    total_water = sum(TWS)
 
     # pack land variables
     @pack_land begin
         (TWS) => land.pools
-        (ΔTWS, totalW, totalW_prev) => land.states
+        (ΔTWS, total_water, total_water_prev) => land.states
     end
     return land
 end

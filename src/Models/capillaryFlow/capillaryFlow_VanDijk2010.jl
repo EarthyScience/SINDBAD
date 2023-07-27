@@ -12,11 +12,11 @@ function define(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     @unpack_land begin
         soilW ∈ land.pools
     end
-    capillary_flux = zero(land.pools.soilW)
+    soil_capillary_flux = zero(land.pools.soilW)
 
     ## pack land variables
     @pack_land begin
-        capillary_flux => land.capillaryFlow
+        soil_capillary_flux => land.fluxes
     end
     return land
 end
@@ -27,8 +27,8 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (p_kFC, p_wSat) ∈ land.soilWBase
-        capillary_flux ∈ land.capillaryFlow
+        (soil_kFC, wSat) ∈ land.soilWBase
+        soil_capillary_flux ∈ land.fluxes
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         tolerance ∈ helpers.numbers
@@ -36,20 +36,20 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     end
 
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        dos_soilW = clamp_01((soilW[sl] + ΔsoilW[sl]) ./ p_wSat[sl])
-        tmpCapFlow = sqrt(p_kFC[sl+1] * p_kFC[sl]) * (o_one - dos_soilW)
-        holdCap = max_0(p_wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
+        dos_soilW = clamp_01((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
+        tmpCapFlow = sqrt(soil_kFC[sl+1] * soil_kFC[sl]) * (o_one - dos_soilW)
+        holdCap = max_0(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
         lossCap = max_0(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
-        @rep_elem tmp => (capillary_flux, sl, :soilW)
-        @add_to_elem capillary_flux[sl] => (ΔsoilW, sl, :soilW)
-        @add_to_elem -capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
+        @rep_elem tmp => (soil_capillary_flux, sl, :soilW)
+        @add_to_elem soil_capillary_flux[sl] => (ΔsoilW, sl, :soilW)
+        @add_to_elem -soil_capillary_flux[sl] => (ΔsoilW, sl + 1, :soilW)
     end
 
     ## pack land variables
     @pack_land begin
-        capillary_flux => land.capillaryFlow
+        soil_capillary_flux => land.fluxes
         ΔsoilW => land.states
     end
     return land

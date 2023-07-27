@@ -82,8 +82,7 @@ function coreEcosystem(approaches,
             tem_spinup,
             tem_models,
             typeof(land_init),
-            f_one,
-            spinup_forcing=nothing)
+            f_one)
     end
     time_steps = tem_helpers.dates.size
     timeLoopForward(
@@ -118,8 +117,7 @@ function coreEcosystem(approaches,
             tem_spinup,
             tem_models,
             typeof(land_init),
-            f_one;
-            spinup_forcing=nothing)
+            f_one)
     end
     time_steps = tem_helpers.dates.size
     out_stacked = timeLoopForward(approaches,
@@ -179,7 +177,7 @@ end
 
 
 """
-runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
+runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem(approaches,
     res_vec_space,
@@ -229,14 +227,12 @@ function runEcosystem(approaches,
 end
 
 """
-runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
+runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem(approaches::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
-    tem::NamedTuple,
-    loc_space_inds;
-    spinup_forcing=nothing)
+    tem::NamedTuple)
 
     land_all = if !isempty(loc_space_inds)
         _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
@@ -344,12 +340,11 @@ function doRunEcosystem(args...;
     land_init::NamedTuple,
     tem::NamedTuple,
     forward_models::Tuple,
-    forcing_variables::AbstractArray,
-    spinup_forcing::Any)
+    forcing_variables::AbstractArray)
     #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
+    land_out = runEcosystem(forward_models, forcing, land_init, tem)
     i = 1
     tem_variables = tem.variables
     for group ∈ keys(tem_variables)
@@ -377,7 +372,6 @@ function mapRunEcosystem(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
     forward_models::Tuple;
-    spinup_forcing=nothing,
     max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
@@ -393,7 +387,6 @@ function mapRunEcosystem(forcing::NamedTuple,
         tem=tem,
         forward_models=forward_models,
         forcing_variables=forcing_variables,
-        spinup_forcing=spinup_forcing,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache,

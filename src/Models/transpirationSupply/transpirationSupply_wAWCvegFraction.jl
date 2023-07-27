@@ -17,7 +17,7 @@ function compute(p_struct::transpirationSupply_wAWCvegFraction, forcing, land, h
     transpiration_supply = sum(PAW) * k_transpiration * frac_vegetation
 
     ## pack land variables
-    @pack_land transpiration_supply => land.transpirationSupply
+    @pack_land transpiration_supply => land.states
     return land
 end
 
@@ -34,12 +34,12 @@ Supply-limited transpiration using transpirationSupply_wAWCvegFraction
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
+ - land.soilWBase.wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
  - land.states.frac_vegetation: vegetation fraction
 
 *Outputs*
- - land.transpirationSupply.transpiration_supply: supply limited transpiration
+ - land.states.transpiration_supply: supply limited transpiration
 
 ---
 

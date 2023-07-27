@@ -102,9 +102,7 @@ function coreEcosystem(approaches, loc_forcing, land_init, tem)
             tem.helpers,
             tem.spinup,
             tem.models,
-            typeof(land_init);
-            spinup_forcing=nothing)
-        # land_spin_now = runSpinup(approaches, loc_forcing, land_spin_now, tem; spinup_forcing=nothing)
+            typeof(land_init))
     end
     time_steps = getForcingTimeSize(loc_forcing)
     #res = Array{NamedTuple}(undef, time_steps)
@@ -142,13 +140,12 @@ function fany(x,
 end
 
 """
-runEcosystem(approaches, forcing, land_init, tem; spinup_forcing=nothing)
+runEcosystem(approaches, forcing, land_init, tem)
 """
 function runEcosystem(approaches::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
-    tem::NamedTuple;
-    spinup_forcing=nothing)
+    tem::NamedTuple)
     #@info "runEcosystem:: running Ecosystem"
     additionaldims = setdiff(keys(tem.helpers.run.loop), [:time])
     land_all = if !isempty(additionaldims)
@@ -186,12 +183,11 @@ function doRunEcosystem(args...;
     land_init::NamedTuple,
     tem::NamedTuple,
     forward_models::Tuple,
-    forcing_variables::AbstractArray,
-    spinup_forcing::Any)
+    forcing_variables::AbstractArray)
     #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    land_out = runEcosystem(forward_models, forcing, land_init, tem; spinup_forcing=spinup_forcing)
+    land_out = runEcosystem(forward_models, forcing, land_init, tem)
     i = 1
     tem_variables = tem.variables
     for group ∈ keys(tem_variables)
@@ -218,8 +214,7 @@ end
 function mapRunEcosystem(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
-    forward_models::Tuple;
-    spinup_forcing=nothing,
+    forward_models::Tuple,
     max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
@@ -235,7 +230,6 @@ function mapRunEcosystem(forcing::NamedTuple,
         tem=tem,
         forward_models=forward_models,
         forcing_variables=forcing_variables,
-        spinup_forcing=spinup_forcing,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache,

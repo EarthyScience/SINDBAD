@@ -5,10 +5,10 @@ struct cTauSoilProperties_none <: cTauSoilProperties end
 function define(p_struct::cTauSoilProperties_none, forcing, land, helpers)
 
     ## calculate variables
-    p_k_f_soil_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_soil_props = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land p_k_f_soil_props => land.cTauSoilProperties
+    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
     return land
 end
 

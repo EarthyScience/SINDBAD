@@ -7,12 +7,12 @@ function compute(p_struct::PET_forcing, forcing, land, helpers)
     @unpack_forcing PET ∈ forcing
 
     ## pack land variables
-    @pack_land PET => land.PET
+    @pack_land PET => land.fluxes
     return land
 end
 
 @doc """
-sets the value of land.PET.PET from the forcing
+sets the value of land.fluxes.PET from the forcing
 
 ---
 
@@ -23,7 +23,7 @@ Set potential evapotranspiration using PET_forcing
  - forcing.PET read from the forcing data set
 
 *Outputs*
- - land.PET.PET: the value of PET for current time step
+ - land.fluxes.PET: the value of PET for current time step
 
 ---
 
