@@ -16,7 +16,7 @@ function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA p_struct
 
     ## instantiate variables
-    c_eco_k_f_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_veg_props = one.(land.pools.cEco)
     annk = z_zero #sujan ones(size(AGE))
 
     ## pack land variables

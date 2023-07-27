@@ -30,7 +30,7 @@ function define(p_struct::cCycleBase_simple, forcing, land, helpers)
         cEco ∈ land.pools
     end
     ## instantiate variables
-    C_to_N_cVeg = zero(cEco) .+ one(first(cEco)) #sujan
+    C_to_N_cVeg = one.(cEco)
 
     ## pack land variables
     @pack_land begin
