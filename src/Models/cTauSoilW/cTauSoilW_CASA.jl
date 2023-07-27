@@ -10,10 +10,10 @@ function define(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA p_struct
 
     ## instantiate variables
-    p_k_f_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_soilW = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land p_k_f_soilW => land.cTauSoilW
+    @pack_land c_eco_k_f_soilW => land.cTauSoilW
     return land
 end
 
@@ -22,14 +22,14 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA p_struct
 
     ## unpack land variables
-    @unpack_land p_k_f_soilW ∈ land.cTauSoilW
+    @unpack_land c_eco_k_f_soilW ∈ land.cTauSoilW
 
     ## unpack land variables
     @unpack_land begin
-        rain ∈ land.rainSnow
+        rain ∈ land.fluxes
         soilW_prev ∈ land.pools
         fsoilW_prev ∈ land.cTauSoilW
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # NUMBER OF TIME STEPS PER YEAR -> TIME STEPS PER MONTH
@@ -62,7 +62,7 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     # FEED IT TO THE STRUCTURE
     fsoilW = BGME
     # set the same moisture stress to all carbon pools
-    p_k_f_soilW[helpers.pools.zix.cEco] = fsoilW
+    c_eco_k_f_soilW[helpers.pools.zix.cEco] = fsoilW
 
     ## pack land variables
     @pack_land fsoilW => land.cTauSoilW
@@ -82,10 +82,10 @@ Effect of soil moisture on decomposition rates using cTauSoilW_CASA
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.PET.PET: potential evapotranspiration [mm]
+ - land.fluxes.PET: potential evapotranspiration [mm]
  - land.cTauSoilW.fsoilW_prev: previous time step below ground moisture effect on decomposition processes
  - land.pools.soilW_prev: soil moisture sum of all layers of previous time step [mm]
- - land.rainSnow.rain: rainfall
+ - land.fluxes.rain: rainfall
 
 *Outputs*
  - land.cTauSoilW.fsoilW: values for below ground moisture effect on decomposition processes

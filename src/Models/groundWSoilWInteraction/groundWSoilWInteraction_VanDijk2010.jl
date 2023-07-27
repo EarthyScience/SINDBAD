@@ -6,40 +6,26 @@ export groundWSoilWInteraction_VanDijk2010
 end
 #! format: on
 
-function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
-    ## unpack land variables
-    @unpack_land begin
-        z_zero ∈ land.wCycleBase
-    end
-
-    # calculate recharge
-    gw_capillary_flux = z_zero
-    ## pack land variables
-    @pack_land begin
-        gw_capillary_flux => land.fluxes
-    end
-    return land
-end
-
 function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
     @unpack_groundWSoilWInteraction_VanDijk2010 p_struct
 
     ## unpack land variables
     @unpack_land begin
-        (p_kFC, p_kSat, p_wSat) ∈ land.soilWBase
+        (soil_kFC, kSat, wSat) ∈ land.soilWBase
         (groundW, soilW) ∈ land.pools
         (ΔsoilW, ΔgroundW) ∈ land.states
         unsat_k_model ∈ land.soilProperties
         (z_zero, o_one) ∈ land.wCycleBase
         n_groundW ∈ land.wCycleBase
+        gw_recharge ∈ land.fluxes
     end
 
     # calculate recharge
     # degree of saturation & unsaturated hydraulic conductivity of the lowermost soil layer
-    dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / p_wSat[end])
-    k_sat = p_kSat[end] # assume GW is saturated
-    k_fc = p_kFC[end] # assume GW is saturated
+    dosSoilend = clamp_01((soilW[end] + ΔsoilW[end]) / wSat[end])
+    k_sat = kSat[end] # assume GW is saturated
+    k_fc = soil_kFC[end] # assume GW is saturated
     k_unsat = unsatK(land, helpers, lastindex(land.pools.soilW), unsat_k_model)
 
     # get the capillary flux
@@ -51,9 +37,12 @@ function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, h
     ΔgroundW = add_to_each_elem(ΔgroundW, -gw_capillary_flux / n_groundW)
     @add_to_elem gw_capillary_flux => (ΔsoilW, lastindex(ΔsoilW), :soilW)
 
+    # adjust the gw_recharge as net flux between soil and groundwater. positive from soil to gw
+    gw_recharge = gw_recharge - gw_capillary_flux
+
     ## pack land variables
     @pack_land begin
-        gw_capillary_flux => land.fluxes
+        (gw_capillary_flux, gw_recharge) => land.fluxes
         (ΔsoilW, ΔgroundW) => land.states
     end
     return land

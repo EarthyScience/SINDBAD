@@ -1,6 +1,6 @@
 {
   "time": {
-    "model_time_step": "daily",
+    "model_time_step": "day",
     "start_date": "2006-01-01",
     "end_date": "2015-12-31",
     "timesteps_in_day": 1,
@@ -37,6 +37,7 @@
     "yax_max_cache": 2e9
   },
   "output": {
+    "save_single_file": false,
     "output_array_type": "array",
     "all": true,
     "path": null,
@@ -59,7 +60,7 @@
       "fluxes.surface_runoff": null,
       "fluxes.gpp": null,
       "pools.soilW": "d_soil",
-      "waterBalance.water_balance": null
+      "states.water_balance": null
     }
   },
   "spinup": {

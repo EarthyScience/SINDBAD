@@ -34,7 +34,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sel_pool = :cEco
 
     spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
-    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(1200, 900))
+    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(2000, 1000))
 
     plot!(getfield(land_init.pools, sel_pool);
         linewidth=5,
@@ -185,7 +185,7 @@ for tj ∈ (10, 100, 1000, 10000)
         f_one,
         Val(:nlsolve))
 
-    xtl = land_init.cCycleBase.p_annk
+    xtl = land_init.cCycleBase.c_τ_eco
     xtname = info.tem.helpers.pools.components.cEco
     plot!(getfield(out_sp_nl.pools, sel_pool);
         linewidth=5,

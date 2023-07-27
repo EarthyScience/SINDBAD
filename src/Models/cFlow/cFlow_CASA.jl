@@ -6,27 +6,27 @@ function compute(p_struct::cFlow_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (p_E, p_F) ∈ land.cFlowVegProperties
-        (p_E, p_F) ∈ land.cFlowSoilProperties
-        c_flow_E ∈ land.cCycleBase
+        (p_E_vec, p_F_vec) ∈ land.cFlowVegProperties
+        (p_E_vec, p_F_vec) ∈ land.cFlowSoilProperties
+        c_flow_E_array ∈ land.cCycleBase
         (z_zero, o_one) ∈ land.wCycleBase
     end
     #@nc : this needs to go in the full.
     # effects of soil & veg on the [microbial] efficiency of c flows between carbon pools
-    tmp = repeat(reshape(c_flow_E, [1 size(c_flow_E)]), 1, 1)
-    p_E = tmp + p_E + p_E
+    tmp = repeat(reshape(c_flow_E_array, [1 size(c_flow_E_array)]), 1, 1)
+    p_E_vec = tmp + p_E_vec + p_E_vec
     # effects of soil & veg on the partitioning of c flows between carbon pools
-    p_F = p_F + p_F
+    p_F_vec = p_F_vec + p_F_vec
     # if there is fraction [F] & efficiency is 0, make efficiency 1
-    ndx = p_F > z_zero & p_E == zero
-    p_E[ndx] = o_one
+    ndx = p_F_vec > z_zero & p_E_vec == zero
+    p_E_vec[ndx] = o_one
     # if there is not fraction, but efficiency exists, make fraction == 1 [should give an error if there are more than 1 flux out of this pool]
-    ndx = p_E > z_zero & p_F == zero
-    p_F[ndx] = o_one
+    ndx = p_E_vec > z_zero & p_F_vec == zero
+    p_F_vec[ndx] = o_one
     # build A
-    p_A = p_F * p_E
+    c_flow_A_vec = p_F_vec * p_E_vec
     # transfers
-    (c_taker, c_giver) = find(squeeze(sum(p_A > z_zero)) >= o_one)
+    (c_taker, c_giver) = find(squeeze(sum(c_flow_A_vec > z_zero)) >= o_one)
     p_taker = c_taker
     p_giver = c_giver
     # if there is flux order check that is consistent
@@ -41,7 +41,7 @@ function compute(p_struct::cFlow_CASA, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         c_flow_order => land.cCycleBase
-        (p_A, p_E, p_F, p_giver, p_taker) => land.cFlow
+        (c_flow_A_vec, p_E_vec, p_F_vec, p_giver, p_taker) => land.cFlow
     end
     return land
 end
@@ -55,19 +55,19 @@ combine all the effects that change the transfers between carbon pools
 Actual transfers of c between pools (of diagonal components) using cFlow_CASA
 
 *Inputs*
- - land.cCycleBase.c_flow_E: transfer matrix for carbon at ecosystem level
- - land.cFlowSoilProperties.p_E: effect of soil on transfer efficiency between pools
- - land.cFlowSoilProperties.p_F: effect of vegetation on transfer fraction between pools
- - land.cFlowVegProperties.p_E: effect of soil on transfer efficiency between pools
- - land.cFlowVegProperties.p_F effect of vegetation on transfer fraction between pools
+ - land.cCycleBase.c_flow_E_array: transfer matrix for carbon at ecosystem level
+ - land.cFlowSoilProperties.p_E_vec: effect of soil on transfer efficiency between pools
+ - land.cFlowSoilProperties.p_F_vec: effect of vegetation on transfer fraction between pools
+ - land.cFlowVegProperties.p_E_vec: effect of soil on transfer efficiency between pools
+ - land.cFlowVegProperties.p_F_vec effect of vegetation on transfer fraction between pools
 
 *Outputs*
- - land.cFlow.p_A: effect of soil & vegetation on actual transfer rates between pools
- - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
- - land.cFlow.p_F: effect of soil & vegetation on transfer fraction between pools
- - land.cFlow.p_A
- - land.cFlow.p_E
- - land.cFlow.p_F
+ - land.cFlow.c_flow_A_vec: effect of soil & vegetation on actual transfer rates between pools
+ - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
+ - land.cFlow.p_F_vec: effect of soil & vegetation on transfer fraction between pools
+ - land.cFlow.c_flow_A_vec
+ - land.cFlow.p_E_vec
+ - land.cFlow.p_F_vec
 
 ---
 

@@ -13,12 +13,12 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land,
     ## unpack land variables
     @unpack_land begin
         WBP ∈ land.states
-        p_wSat ∈ land.soilWBase
+        wSat ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
     end
     # @show WBP
-    tmp_smaxVeg = sum(p_wSat)
+    tmp_smaxVeg = sum(wSat)
     tmp_SoilTotal = sum(soilW)
     # calculate land runoff from incoming water & current soil moisture
     tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β)

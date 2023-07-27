@@ -1,6 +1,6 @@
 {
   "time": {
-    "model_time_step": "daily",
+    "model_time_step": "day",
     "start_date": "2005-01-01",
     "end_date": "2017-12-31",
     "timesteps_in_day": 1,
@@ -37,10 +37,11 @@
     "yax_max_cache": 2e9
   },
   "output": {
+    "save_single_file": false,
     "output_array_type": "array",
     "all": false,
     "path": null,
-    "format": "zarr",
+    "format": "nc",
     "depth_dimensions": {
       "d_soil": "soilW",
       "d_cEco": 8,
@@ -54,7 +55,7 @@
       "fluxes.gpp": null,
       "pools.snowW": "d_snow",
       "pools.soilW": "d_soil",
-      "waterBalance.water_balance": null
+      "states.water_balance": null
     }
   },
   "spinup": {

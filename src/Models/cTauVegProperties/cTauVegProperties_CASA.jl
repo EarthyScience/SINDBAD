@@ -16,11 +16,11 @@ function define(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     @unpack_cTauVegProperties_CASA p_struct
 
     ## instantiate variables
-    p_k_f_veg_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_veg_props = one.(land.pools.cEco)
     annk = z_zero #sujan ones(size(AGE))
 
     ## pack land variables
-    @pack_land (p_k_f_veg_props, annk) => land.cTauVegProperties
+    @pack_land (c_eco_k_f_veg_props, annk) => land.cTauVegProperties
     return land
 end
 
@@ -31,14 +31,14 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
     ## unpack land variables
     @unpack_land begin
         PFT ∈ land.vegProperties
-        (p_k_f_veg_props, annk) ∈ land.cTauVegProperties
+        (c_eco_k_f_veg_props, annk) ∈ land.cTauVegProperties
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
-    # p_annk = annk; #sujan
+    # c_τ_eco = annk; #sujan
     # initialize the outputs to ones
-    p_C2LIGNIN = C2LIGNIN #sujan
+    C2LIGNIN = C2LIGNIN #sujan
     ## adjust the annk that are pft dependent directly on the p matrix
     pftVec = unique(PFT)
     # AGE = zero(land.pools.cEco); #sujan
@@ -52,36 +52,36 @@ function compute(p_struct::cTauVegProperties_CASA, forcing, land, helpers)
         annk[AGE>z_zero] = o_one / AGE[AGE>z_zero]
         # feed it to the new annual turnover rates
         zix = helpers.pools.zix.(cpN)
-        p_annk[zix] = annk #sujan
-        # p_annk[zix] = annk[zix]
+        c_τ_eco[zix] = annk #sujan
+        # c_τ_eco[zix] = annk[zix]
     end
     # feed the parameters that are pft dependent.
     pftVec = unique(PFT)
-    p_LITC2N = z_zero
-    p_LIGNIN = z_zero
+    LITC2N = z_zero
+    LIGNIN = z_zero
     for ij ∈ eachindex(pftVec)
-        p_LITC2N[p.vegProperties.PFT==pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
-        p_LIGNIN[p.vegProperties.PFT==pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
+        LITC2N[p.vegProperties.PFT==pftVec[ij]] = LITC2N_per_PFT[pftVec[ij]]
+        LIGNIN[p.vegProperties.PFT==pftVec[ij]] = LIGNIN_per_PFT[pftVec[ij]]
     end
     # CALCULATE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
     # CALCULATE LIGNIN 2 NITROGEN SCALAR
-    L2N = (p_LITC2N * p_LIGNIN) * NONSOL2SOLLIGNIN
+    L2N = (LITC2N * LIGNIN) * NONSOL2SOLLIGNIN
     # DETERMINE FRACTION OF LITTER THAT WILL BE METABOLIC FROM LIGNIN:N RATIO
     MTF = MTFA - (MTFB * L2N)
     MTF[MTF<z_zero] = z_zero
-    p_MTF = MTF
+    MTF = MTF
     # DETERMINE FRACTION OF C IN STRUCTURAL LITTER POOLS FROM LIGNIN
-    p_SCLIGNIN = (p_LIGNIN * p_C2LIGNIN * NONSOL2SOLLIGNIN) / (o_one - MTF)
+    SCLIGNIN = (LIGNIN * C2LIGNIN * NONSOL2SOLLIGNIN) / (o_one - MTF)
     # DETERMINE EFFECT OF LIGNIN CONTENT ON k OF cLitLeafS AND cLitRootFS
-    p_LIGEFF = exp(-LIGEFFA * p_SCLIGNIN)
+    LIGEFF = exp(-LIGEFFA * SCLIGNIN)
     # feed the output
-    p_k_f_veg_props[helpers.pools.zix.cLitLeafS] = p_LIGEFF
-    p_k_f_veg_props[helpers.pools.zix.cLitRootFS] = p_LIGEFF
+    c_eco_k_f_veg_props[helpers.pools.zix.cLitLeafS] = LIGEFF
+    c_eco_k_f_veg_props[helpers.pools.zix.cLitRootFS] = LIGEFF
 
     ## pack land variables
     @pack_land begin
-        p_annk => land.cCycleBase
-        (p_C2LIGNIN, p_LIGEFF, p_LIGNIN, p_LITC2N, p_MTF, p_SCLIGNIN, p_k_f_veg_props) =>
+        c_τ_eco => land.cCycleBase
+        (C2LIGNIN, LIGEFF, LIGNIN, LITC2N, MTF, SCLIGNIN, c_eco_k_f_veg_props) =>
             land.cTauVegProperties
     end
     return land
@@ -102,12 +102,12 @@ Effect of vegetation properties on soil decomposition rates using cTauVegPropert
  - land.vegProperties.PFT:
 
 *Outputs*
- - land.cTauVegProperties.p_LIGEFF:
- - land.cTauVegProperties.p_LIGNIN:
- - land.cTauVegProperties.p_LITC2N:
- - land.cTauVegProperties.p_MTF:
- - land.cTauVegProperties.p_SCLIGNIN:
- - land.cTauVegProperties.p_k_f_veg_props:
+ - land.cTauVegProperties.LIGEFF:
+ - land.cTauVegProperties.LIGNIN:
+ - land.cTauVegProperties.LITC2N:
+ - land.cTauVegProperties.MTF:
+ - land.cTauVegProperties.SCLIGNIN:
+ - land.cTauVegProperties.c_eco_k_f_veg_props:
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauVegProperties_CASA

@@ -74,55 +74,78 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
     return dimSize, dimName
 end
 
-function getOutDims(info, _, vname_full, land_init, _, ::Val{:yaxarray})
-    vname = Symbol(split(string(vname_full), '.')[end])
-    inax = info.model_run.mapping.run_ecosystem
-    outpath = info.output.data
-    outformat = info.model_run.output.format
-
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    OutDims(inax[1],
-        Dim{Symbol(depth_name)}(1:depth_size),
-        inax[2:end]...;
-        path=joinpath(outpath, "$(vname).$(outformat)"),
-        backend=:zarr,
-        overwrite=true)
+function getOutDimsArrays(datavars, info, _, land_init, _, _, ::Val{:yaxarray})
+    outdims = map(datavars) do vname_full
+        vname = Symbol(split(string(vname_full), '.')[end])
+        inax = info.model_run.mapping.run_ecosystem
+        path_output = info.output.data
+        outformat = info.model_run.output.format
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        OutDims(inax[1],
+            Dim{Symbol(depth_name)}(1:depth_size),
+            inax[2:end]...;
+            path=joinpath(path_output, "$(vname).$(outformat)"),
+            backend=:zarr,
+            overwrite=true)
+    end
+    outarray = nothing
+    return outdims, outarray
 end
 
-function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:array})
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    ar = nothing
-    ax_vals = values(forcing_sizes)
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
-        length(values(forcing_sizes)) + 1}(undef,
-        ax_vals[1],
-        depth_size,
-        ax_vals[2:end]...)
-    return ar .= info.tem.helpers.numbers.sNT(NaN)
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:array})
+    outarray = map(datavars) do vname_full
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        ar = nothing
+        ax_vals = values(forcing_sizes)
+        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
+            length(values(forcing_sizes)) + 1}(undef,
+            ax_vals[1],
+            depth_size,
+            ax_vals[2:end]...)
+        ar .= info.tem.helpers.numbers.sNT(NaN)
+    end
+    dim_loops = first.(forcing_axes)
+    axes_dims = []
+    if !isnothing(info.tem.forcing.dimensions.permute)
+        dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
+        if dim_loops !== dim_perms
+            for ix in eachindex(dim_perms)
+                dp_i = dim_perms[ix]
+                dl_ind = findall(x -> x == dp_i, dim_loops)[1]
+                f_a = forcing_axes[dl_ind]
+                ax_dim = Dim{first(f_a)}(last(f_a))
+                push!(axes_dims, ax_dim)
+            end
+        end
+    else
+        axes_dims = map(x -> ForwardSindbad.Dim{first(x)}(last(x)), forcing_axes)
+    end
+    outdims = map(datavars) do vname_full
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        od = []
+        push!(od, axes_dims[1])
+        if depth_size > 1
+            push!(od, Dim{Symbol(depth_name)}(1:depth_size))
+        end
+        foreach(axes_dims[2:end]) do f_d
+            push!(od, f_d)
+        end
+        Tuple(od)
+    end
+    return outdims, outarray
+
 end
 
-function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:sizedarray})
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    ar = nothing
-    ax_vals = values(forcing_sizes)
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
-        length(values(forcing_sizes)) + 1}(undef,
-        ax_vals[1],
-        depth_size,
-        ax_vals[2:end]...)
-    return mar = SizedArray{Tuple{size(ar)...},eltype(ar)}(undef)
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:sizedarray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+    sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
+    return outdims, sized_array
 end
 
-function getOutDims(info, tem_helpers, vname_full, land_init, forcing_sizes, ::Val{:marray})
-    depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    ar = nothing
-    ax_vals = values(forcing_sizes)
-    ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
-        length(values(forcing_sizes)) + 1}(undef,
-        ax_vals[1],
-        depth_size,
-        ax_vals[2:end]...)
-    return mar = MArray{Tuple{size(ar)...},eltype(ar)}(undef)
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:marray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+    marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
+    return outdims, marray
 end
 
 function getOutArrayType(num_type, forwardDiff)
@@ -154,6 +177,7 @@ function getVariableFields(datavars)
 end
 
 function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
+    forcing_axes = info.tem.forcing.axes
     forcing_sizes = info.tem.forcing.sizes
     @info "setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
@@ -173,22 +197,10 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
 
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
-    @info "setupOutput: getting output dimension for yaxarray..."
-    outdims = map(datavars) do vn
-        getOutDims(info, tem_helpers, vn, land_init, forcing_sizes, Val(:yaxarray))
-    end
+    @info "setupOutput: getting output dimension and arrays..."
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(Symbol(info.model_run.output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
-    @info "setupOutput: creating array output"
-    outarray = map(datavars) do vn
-        getOutDims(info,
-            tem_helpers,
-            vn,
-            land_init,
-            forcing_sizes,
-            Val(Symbol(info.model_run.output.output_array_type)))
-    end
     output_tuple = setTupleField(output_tuple, (:data, outarray))
-
 
     vnames = if hasproperty(info, :optim)
         map(info.optim.variables.obs) do vo
@@ -198,10 +210,10 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     else
         collect(Iterators.flatten(info.tem.variables))
     end
-    output_tuple = setTupleField(output_tuple, (:variables, vnames))
+    # output_tuple = setTupleField(output_tuple, (:variables, vnames))
 
     ovro = getVariableFields(datavars)
-    output_tuple = setTupleField(output_tuple, (:ordered_variables, ovro))
+    output_tuple = setTupleField(output_tuple, (:variables, ovro))
 
 
     if info.model_run.flags.run_optimization || tem_helpers.run.run_forward_and_cost

@@ -12,7 +12,7 @@ end
 function define(p_struct::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI p_struct
     @unpack_land begin
-        (c_giver, c_taker, c_flow_A) ∈ land.cCycleBase
+        (c_giver, c_taker, c_flow_A_array) ∈ land.cCycleBase
     end
     ## instantiate variables
 
@@ -39,43 +39,43 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
 
     # @show aSrc, aSrc_b
     # @show aTrg, aTrg_a
-    p_A_ind = (reserve_to_leaf=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
+    c_flow_A_vec_ind = (reserve_to_leaf=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegLeaf) .== true)[1],
         reserve_to_root=findall((aSrc .== :cVegReserve) .* (aTrg .== :cVegRoot) .== true)[1],
         leaf_to_reserve=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cVegReserve) .== true)[1],
         root_to_reserve=findall((aSrc .== :cVegRoot) .* (aTrg .== :cVegReserve) .== true)[1],
         k_shedding_leaf=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    # tcprint(p_A_ind)
-    p_A = eltype(land.pools.cEco).(zero([c_taker...]) .+ one(eltype(land.pools.cEco)))
+    # tcprint(c_flow_A_vec_ind)
+    c_flow_A_vec = one.(eltype(land.pools.cEco).(zero([c_taker...])))
 
     if land.pools.cEco isa SVector
-        p_A = SVector{length(p_A)}(p_A)
+        c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
     end
 
-    eco_stressor_prev = addS(land.pools.soilW) / land.soilWBase.s_wSat
+    eco_stressor_prev = totalS(land.pools.soilW) / land.soilWBase.sum_wSat
 
 
     @pack_land begin
-        (p_A_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
-        p_A => land.states
+        (c_flow_A_vec_ind, eco_stressor_prev, aSrc, aTrg) => land.cFlow
+        c_flow_A_vec => land.states
     end
 
     return land
 end
 
-function adjust_pk(p_k, kValue, flowValue, maxValue, zix, helpers)
-    p_k_sum = zero(eltype(p_k))
+function adjust_pk(c_eco_k, kValue, flowValue, maxValue, zix, helpers)
+    c_eco_k_f_sum = zero(eltype(c_eco_k))
     for ix ∈ zix
-        # @show ix, p_k[ix]
-        tmp = p_k[ix] + kValue + flowValue
+        # @show ix, c_eco_k[ix]
+        tmp = c_eco_k[ix] + kValue + flowValue
         if tmp > maxValue
             tmp = maxValue
         end
-        @rep_elem tmp => (p_k, ix, :cEco)
-        p_k_sum = p_k_sum + tmp
+        @rep_elem tmp => (c_eco_k, ix, :cEco)
+        c_eco_k_f_sum = c_eco_k_f_sum + tmp
     end
-    return p_k, p_k_sum
+    return c_eco_k, c_eco_k_f_sum
 end
 
 function compute(p_struct::cFlow_GSI, forcing, land, helpers)
@@ -83,11 +83,11 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     @unpack_cFlow_GSI p_struct
     ## unpack land variables
     @unpack_land begin
-        (eco_stressor_prev, p_A_ind, aSrc, aTrg) ∈ land.cFlow
+        (eco_stressor_prev, c_flow_A_vec_ind, aSrc, aTrg) ∈ land.cFlow
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
         c_allocation_f_cloud ∈ land.cAllocationRadiation
-        (p_A, p_k) ∈ land.states
+        (c_flow_A_vec, c_eco_k) ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -128,44 +128,44 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     # cVegRootzix = getzix(land.pools.cVegRoot)
     # cVegReservezix = getzix(land.pools.cVegReserve)
 
-    # p_k[cVegLeafzix] .= min.((p_k[cVegLeafzix] .+ k_shedding_leaf .+ leaf_to_reserve), o_one)
-    # leaf_to_reserve_frac = leaf_to_reserve ./ (p_k[cVegLeafzix])
-    # k_shedding_leaf_frac = k_shedding_leaf / (p_k[cVegLeafzix])
+    # c_eco_k[cVegLeafzix] .= min.((c_eco_k[cVegLeafzix] .+ k_shedding_leaf .+ leaf_to_reserve), o_one)
+    # leaf_to_reserve_frac = leaf_to_reserve ./ (c_eco_k[cVegLeafzix])
+    # k_shedding_leaf_frac = k_shedding_leaf / (c_eco_k[cVegLeafzix])
 
-    # p_k[cVegRootzix] .= min.((p_k[cVegRootzix] .+ k_shedding_root .+ root_to_reserve), o_one)
-    # root_to_reserve_frac = root_to_reserve ./ (p_k[cVegRootzix])
-    # k_shedding_root_frac = k_shedding_root / (p_k[cVegRootzix])
+    # c_eco_k[cVegRootzix] .= min.((c_eco_k[cVegRootzix] .+ k_shedding_root .+ root_to_reserve), o_one)
+    # root_to_reserve_frac = root_to_reserve ./ (c_eco_k[cVegRootzix])
+    # k_shedding_root_frac = k_shedding_root / (c_eco_k[cVegRootzix])
 
-    # p_k[cVegReservezix] .= min.((p_k[cVegReservezix] .+ reserve_to_leaf .+ reserve_to_root), o_one)
-    # reserve_to_leaf_frac = reserve_to_leaf ./ p_k[cVegReservezix]
-    # reserve_to_root_frac = reserve_to_root ./ p_k[cVegReservezix]
+    # c_eco_k[cVegReservezix] .= min.((c_eco_k[cVegReservezix] .+ reserve_to_leaf .+ reserve_to_root), o_one)
+    # reserve_to_leaf_frac = reserve_to_leaf ./ c_eco_k[cVegReservezix]
+    # reserve_to_root_frac = reserve_to_root ./ c_eco_k[cVegReservezix]
 
     # @show reserve_to_leaf_frac, reserve_to_root_frac
 
-    p_k, p_k_sum = adjust_pk(p_k, k_shedding_leaf, leaf_to_reserve, o_one, helpers.pools.zix.cVegLeaf, helpers)
-    leaf_to_reserve_frac = getFrac(leaf_to_reserve, p_k_sum)
-    k_shedding_leaf_frac = getFrac(k_shedding_leaf, p_k_sum)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_leaf, leaf_to_reserve, o_one, helpers.pools.zix.cVegLeaf, helpers)
+    leaf_to_reserve_frac = getFrac(leaf_to_reserve, c_eco_k_f_sum)
+    k_shedding_leaf_frac = getFrac(k_shedding_leaf, c_eco_k_f_sum)
 
-    p_k, p_k_sum = adjust_pk(p_k, k_shedding_root, root_to_reserve, o_one, helpers.pools.zix.cVegRoot, helpers)
-    root_to_reserve_frac = getFrac(root_to_reserve, p_k_sum)
-    k_shedding_root_frac = getFrac(k_shedding_root, p_k_sum)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, k_shedding_root, root_to_reserve, o_one, helpers.pools.zix.cVegRoot, helpers)
+    root_to_reserve_frac = getFrac(root_to_reserve, c_eco_k_f_sum)
+    k_shedding_root_frac = getFrac(k_shedding_root, c_eco_k_f_sum)
 
-    p_k, p_k_sum = adjust_pk(p_k, Re2L_i, Re2R_i, o_one, helpers.pools.zix.cVegReserve, helpers)
-    reserve_to_leaf_frac = getFrac(Re2L_i, p_k_sum)
-    reserve_to_root_frac = getFrac(Re2R_i, p_k_sum)
+    c_eco_k, c_eco_k_f_sum = adjust_pk(c_eco_k, Re2L_i, Re2R_i, o_one, helpers.pools.zix.cVegReserve, helpers)
+    reserve_to_leaf_frac = getFrac(Re2L_i, c_eco_k_f_sum)
+    reserve_to_root_frac = getFrac(Re2R_i, c_eco_k_f_sum)
 
-    p_A = rep_elem(p_A, reserve_to_leaf_frac, p_A, p_A, p_A_ind.reserve_to_leaf)
-    p_A = rep_elem(p_A, reserve_to_root_frac, p_A, p_A, p_A_ind.reserve_to_root)
-    p_A = rep_elem(p_A, leaf_to_reserve_frac, p_A, p_A, p_A_ind.leaf_to_reserve)
-    p_A = rep_elem(p_A, root_to_reserve_frac, p_A, p_A, p_A_ind.root_to_reserve)
-    p_A = rep_elem(p_A, k_shedding_leaf_frac, p_A, p_A, p_A_ind.k_shedding_leaf)
-    p_A = rep_elem(p_A, k_shedding_root_frac, p_A, p_A, p_A_ind.k_shedding_root)
-    # p_A[p_A_ind.reserve_to_leaf] = p_A
-    # p_A[p_A_ind.reserve_to_root] = reserve_to_root_frac
-    # p_A[p_A_ind.leaf_to_reserve] = leaf_to_reserve_frac
-    # p_A[p_A_ind.root_to_reserve] = root_to_reserve_frac
-    # p_A[p_A_ind.k_shedding_leaf] = k_shedding_leaf_frac
-    # p_A[p_A_ind.k_shedding_root] = k_shedding_root_frac
+    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_leaf)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_root)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.leaf_to_reserve)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
+    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
+    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_leaf] = c_flow_A_vec
+    # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_root] = reserve_to_root_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.leaf_to_reserve] = leaf_to_reserve_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.root_to_reserve] = root_to_reserve_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_leaf] = k_shedding_leaf_frac
+    # c_flow_A_vec[c_flow_A_vec_ind.k_shedding_root] = k_shedding_root_frac
 
     # store the varibles in diagnostic structure
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?
@@ -194,7 +194,7 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
             k_shedding_root_frac,
             slope_eco_stressor,
             eco_stressor_prev) => land.cFlow
-        (p_A, p_k) => land.states
+        (c_flow_A_vec, c_eco_k) => land.states
     end
     return land
 end
@@ -217,15 +217,15 @@ Actual transfers of c between pools (of diagonal components) using cFlow_GSI
  - land.cAllocationSoilT.fT_prev: previous temperature stressors for carbon allocation
  - land.cAllocationSoilW.c_allocation_f_soilW: water stressors for carbon allocation
  - land.cAllocationSoilW.fW_prev: previous water stressors for carbon allocation
- - land.cCycleBase.c_flow_A: transfer matrix for carbon at ecosystem level
+ - land.cCycleBase.c_flow_A_array: transfer matrix for carbon at ecosystem level
 
 *Outputs*
- - land.cFlow.p_A: updated transfer flow rate for carbon at ecosystem level
+ - land.cFlow.c_flow_A_vec: updated transfer flow rate for carbon at ecosystem level
  - land.cFlow.p_flowTable: a table with flow pools & parameters
  - land.cFlow.p_flowVar: the variable that represents the flow between the source & target pool
  - land.cFlow.p_ndxSrc: source pools
  - land.cFlow.p_ndxTrg: taget pools
- - land.cFlow.p_A
+ - land.cFlow.c_flow_A_vec
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cFlow_GSI

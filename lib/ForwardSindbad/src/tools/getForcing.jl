@@ -1,37 +1,8 @@
-export getForcing, getPermutation, get_spatial_subset, load_data
-export getCombinedVariableInfo, get_yax_from_source
-
-"""
-    getCombinedVariableInfo(default_info, var_info)
-
-combines the property values of the default with the properties set for the particular variable
-"""
-function getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
-    combined_info = (;)
-    default_fields = propertynames(default_info)
-    var_fields = propertynames(var_info)
-    all_fields = Tuple(unique([default_fields..., var_fields...]))
-    for var_field ∈ all_fields
-        field_value = nothing
-        if hasproperty(default_info, var_field)
-            field_value = getfield(default_info, var_field)
-        else
-            field_value = getfield(var_info, var_field)
-        end
-        if hasproperty(var_info, var_field)
-            var_prop = getfield(var_info, var_field)
-            if !isnothing(var_prop) && length(var_prop) > 0
-                field_value = getfield(var_info, var_field)
-            end
-        end
-        combined_info = setTupleField(combined_info,
-            (var_field, field_value))
-    end
-    return combined_info
-end
+export getForcing, getDimPermutation, loadDataFile
+export getYaxFromSource
 
 
-function getPermutation(datDims, permDims)
+function getDimPermutation(datDims, permDims)
     new_dim = Int[]
     for pd ∈ permDims
         datIndex = length(permDims)
@@ -43,7 +14,7 @@ function getPermutation(datDims, permDims)
     return new_dim
 end
 
-function collect_forcing_sizes(info, in_yax)
+function collectForcingSizes(info, in_yax)
     time_dim_name = Symbol(info.forcing.dimensions.time)
     dnames = Symbol[]
     dsizes = []
@@ -61,9 +32,10 @@ function collect_forcing_sizes(info, in_yax)
     return f_sizes
 end
 
-function collect_forcing_info(info, f_sizes)
+function collectForcingInfo(info, f_sizes, f_dimensions)
     f_info = (;)
     f_info = setTupleField(f_info, (:dimensions, info.forcing.dimensions))
+    f_info = setTupleField(f_info, (:axes, f_dimensions))
     if hasproperty(info.forcing, :subset)
         f_info = setTupleField(f_info, (:subset, info.forcing.subset))
     else
@@ -75,48 +47,14 @@ function collect_forcing_info(info, f_sizes)
     return info
 end
 
-function get_spatial_subset(ss, v)
-    if !isnothing(ss)
-        ssname = propertynames(ss)
-        for ssn ∈ ssname
-            ss_r = getproperty(ss, ssn)
-            ss_range = ss_r[1]:ss_r[2]
-            if ssn == :site
-                v = v[site=ss_range]
-            elseif ssn == :latitude
-                v = v[latitude=ss_range]
-            elseif ssn == :lat
-                v = v[lat=ss_range]
-            elseif ssn == :longitude
-                v = v[longitude=ss_range]
-            elseif ssn == :lon
-                v = v[site=ss_range]
-            elseif ssn == :lon
-                v = v[lon=ss_range]
-            elseif ssn == :id
-                v = v[id=ss_range]
-            elseif ssn == :Id
-                v = v[Id=ss_range]
-            elseif ssn == :ID
-                v = v[ID=ss_range]
-            else
-                error(
-                    "subsetting by $(ssn) is not supported. check get_spatial_subset in getForcing.jl"
-                )
-            end
-        end
-    end
-    return v
-end
-
-function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type=info.tem.helpers.numbers.num_type)
+function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing, num_type=info.tem.helpers.numbers.num_type)
 
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
     end
 
     if !isnothing(tar_dims)
-        permutes = getPermutation(YAXArrayBase.dimnames(yax), tar_dims)
+        permutes = getDimPermutation(YAXArrayBase.dimnames(yax), tar_dims)
         @info "     permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
@@ -127,7 +65,7 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_
     end
 
     if hasproperty(info.forcing, :subset)
-        yax = get_spatial_subset(info.forcing.subset, yax)
+        yax = getSpatialSubset(info.forcing.subset, yax)
     end
 
     #todo mean of the data instead of zero or nan
@@ -135,8 +73,11 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_
     if fill_nan
         vfill = num_type(NaN)
     end
+    vNT = Val{num_type}()
     if clean_data
-        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, Val(num_type))
+        # yax = map(yax_point -> cleanInputData(yax_point, vfill, vinfo, vNT), yax)
+        # yax = map(yax_point -> cleanData(yax_point, vfill, vinfo, vNT), yax)
+        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, vNT)
     else
         yax = map(yax_point -> cleanInvalid(yax_point, vfill), yax)
         yax = num_type.(yax)
@@ -144,23 +85,25 @@ function subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info; clean_
     return yax
 end
 
-function get_forcing_info(incubes, f_sizes, vinfo, info)
-    @info "getForcing: getting forcing dimensions..."
+function gettForcingInfo(incubes, f_sizes, f_dimensions, info)
+    @info "   processing forcing information..."
+    @info "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
-    @info "getForcing: getting variable name..."
+    @info "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
-    info = collect_forcing_info(info, f_sizes)
+    # f_dimensions = Sindbad.DataStructures.OrderedDict(f_dimension...)
+    info = collectForcingInfo(info, f_sizes, f_dimensions)
     println("----------------------------------------------")
     forcing = (;
         data=incubes,
         dims=indims,
+        axes=f_dimensions,
         variables=forcing_variables,
         sizes=f_sizes)
-
     return info, forcing
 end
 
-function get_target_dimensions(info)
+function getTargetDimensionOrder(info)
     tar_dims = nothing
     if !isnothing(info.forcing.dimensions.permute)
         tar_dims = Symbol[]
@@ -172,7 +115,7 @@ function get_target_dimensions(info)
     return tar_dims
 end
 
-function load_data(data_path)
+function loadDataFile(data_path)
     if endswith(data_path, ".nc")
         nc = NCDataset(data_path)
     elseif endswith(data_path, ".zarr")
@@ -183,22 +126,18 @@ function load_data(data_path)
     return nc
 end
 
-function load_data_from_path(nc, data_path, data_path_v, source_variable)
-    if !isnothing(data_path_v) && (data_path_v !== data_path)
-        @info "   data_path: $(data_path_v)"
-        nc = load_data(data_path_v)
-    elseif isnothing(nc)
-        @info " one_data_path: $(data_path)"
-        nc = load_data(data_path)
-    else
+function loadDataFromPath(nc, data_path, data_path_v, source_variable)
+    if isnothing(data_path_v) || (data_path_v === data_path)
         nc = nc
+    else
+        @info "   data_path: $(data_path_v)"
+        nc = loadDataFile(data_path_v)
     end
-    @info "     source_var: $(source_variable)"
     return nc
 end
 
-function get_yax_from_source(nc, data_path, data_path_v, source_variable, info, ::Val{:netcdf})
-    nc = load_data_from_path(nc, data_path, data_path_v, source_variable)
+function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::Val{:netcdf})
+    nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
@@ -219,8 +158,8 @@ function get_yax_from_source(nc, data_path, data_path_v, source_variable, info, 
     return nc, yax
 end
 
-function get_yax_from_source(nc, data_path, data_path_v, source_variable, _, ::Val{:zarr})
-    nc = load_data_from_path(nc, data_path, data_path_v, source_variable)
+function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::Val{:zarr})
+    nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     yax = nc[source_variable]
     return nc, yax
 end
@@ -230,35 +169,40 @@ function getForcing(info::NamedTuple)
     data_path = info.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
+        @info " default_data_path: $(data_path)"
+        nc = loadDataFile(data_path)
     end
 
     forcing_mask = nothing
     if :sel_mask ∈ keys(info.forcing)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = get_yax_from_source(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.rules.input_data_backend)))
-            forcing_mask = booleanize_mask(forcing_mask)
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.rules.input_data_backend)))
+            forcing_mask = booleanizeMask(forcing_mask)
         end
     end
 
     default_info = info.forcing.default_forcing
     forcing_variables = keys(info.forcing.variables)
-    tar_dims = get_target_dimensions(info)
+    tar_dims = getTargetDimensionOrder(info)
     @info "getForcing: getting forcing variables..."
     vinfo = nothing
     f_sizes = nothing
+    f_dimension = nothing
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
-        nc, yax = get_yax_from_source(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
-        if vinfo.space_time_type == "spatiotemporal"
-            f_sizes = collect_forcing_sizes(info, yax)
-        end
+        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
         # incube = yax  
-        incube = subset_and_process_yax(yax, forcing_mask, tar_dims, vinfo, info)
+        @info "     source_var: $(vinfo.source_variable)"
         @info "     sindbad_var: $(k)\n "
+        incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
+        if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
+            f_sizes = collectForcingSizes(info, incube)
+            f_dimension = getSindbadDims(incube)
+        end
         incube
     end
-    return get_forcing_info(incubes, f_sizes, vinfo, info)
+    return gettForcingInfo(incubes, f_sizes, f_dimension, info)
 end
 

@@ -143,10 +143,10 @@ end
 
 
 """
-filter_constraint_minimum_datapoints(obs, cost_options)
+filterConstraintMinimumDatapoints(obs, cost_options)
 remove all the variables that have less than minimum datapoints from being used in the optimization 
 """
-function filter_constraint_minimum_datapoints(obs, cost_options)
+function filterConstraintMinimumDatapoints(obs, cost_options)
     cost_options_filtered = cost_options
     foreach(cost_options) do cost_option
         obs_ind_start = cost_option.obs_ind
@@ -240,8 +240,7 @@ function optimizeModelArray(forcing::NamedTuple,
     output,
     observations,
     tem::NamedTuple,
-    optim::NamedTuple;
-    spinup_forcing=nothing)
+    optim::NamedTuple)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
@@ -250,7 +249,7 @@ function optimizeModelArray(forcing::NamedTuple,
         optim.default_parameter,
         optim.optimized_parameters)
 
-    cost_options = filter_constraint_minimum_datapoints(observations, optim.cost_options)
+    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tem.helpers.numbers.sNT.(tblParams.default)

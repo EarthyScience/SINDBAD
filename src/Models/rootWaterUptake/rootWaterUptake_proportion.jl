@@ -21,7 +21,7 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        PAW ∈ land.vegAvailableWater
+        PAW ∈ land.states
         soilW ∈ land.pools
         transpiration ∈ land.fluxes
         (root_water_uptake, ΔsoilW) ∈ land.states
