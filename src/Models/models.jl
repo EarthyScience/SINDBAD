@@ -116,7 +116,8 @@ model_list = (:wCycleBase,
     :evapotranspiration,
     :runoff,
     :wCycle,
-    :waterBalance)
+    :waterBalance,
+    :deriveVariables)
 
 ## create a table to view all sindbad models and their orders.
 sindbad_models = Table((; model=[model_list...]))
