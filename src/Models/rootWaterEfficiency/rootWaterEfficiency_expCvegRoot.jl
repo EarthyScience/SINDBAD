@@ -14,12 +14,13 @@ function define(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helper
         soil_layer_thickness ∈ land.soilWBase
     end
     ## instantiate variables
-    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_water_efficiency = one.(land.pools.soilW)
     cumulative_soil_depths = cumsum(soil_layer_thickness)
-    root_over = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_over = one.(land.pools.soilW)
     ## pack land variables
     @pack_land begin
-        (root_over, root_water_efficiency, cumulative_soil_depths) => land.rootWaterEfficiency
+        (root_over, cumulative_soil_depths) => land.rootWaterEfficiency
+        root_water_efficiency => land.states
     end
     return land
 end
@@ -54,20 +55,21 @@ function compute(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helpe
     @unpack_rootWaterEfficiency_expCvegRoot p_struct
     ## unpack land variables
     @unpack_land begin
-        (root_over, root_water_efficiency) ∈ land.rootWaterEfficiency
+        root_over ∈ land.rootWaterEfficiency
+        root_water_efficiency ∈ land.states
         z_zero ∈ land.wCycleBase
         cVegRoot ∈ land.pools
     end
     ## calculate variables
     tmp_rootEff = max_root_water_efficiency -
-                   (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * addS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
+                  (max_root_water_efficiency - min_root_water_efficiency) * (exp(-k_efficiency_cVegRoot * totalS(cVegRoot))) # root fraction/efficiency as a function of total carbon in root pools
 
     for sl ∈ eachindex(land.pools.soilW)
         rootEff = root_over[sl] >= z_zero ? tmp_rootEff : z_zero
         @rep_elem rootEff => (root_water_efficiency, sl, :soilW)
     end
     ## pack land variables
-    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -89,9 +91,9 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - max_root_depth [from rootWaterEfficiency_expCvegRoot]
 
 *Outputs*
- - initiates land.rootWaterEfficiency.root_water_efficiency as ones
- - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
- - land.rootWaterEfficiency.root_water_efficiency
+ - initiates land.states.root_water_efficiency as ones
+ - land.states.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootWaterEfficiency_expCvegRoot

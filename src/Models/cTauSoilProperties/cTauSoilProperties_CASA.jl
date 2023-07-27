@@ -10,10 +10,10 @@ function define(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA p_struct
 
     ## instantiate variables
-    p_k_f_soil_props = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_soil_props = one.(land.pools.cEco)
 
     ## pack land variables
-    @pack_land p_k_f_soil_props => land.cTauSoilProperties
+    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
     return land
 end
 
@@ -22,22 +22,22 @@ function compute(p_struct::cTauSoilProperties_CASA, forcing, land, helpers)
     @unpack_cTauSoilProperties_CASA p_struct
 
     ## unpack land variables
-    @unpack_land p_k_f_soil_props ∈ land.cTauSoilProperties
+    @unpack_land c_eco_k_f_soil_props ∈ land.cTauSoilProperties
 
     ## unpack land variables
-    @unpack_land (p_CLAY, p_SILT) ∈ land.soilWBase
+    @unpack_land (st_CLAY, st_SILT) ∈ land.soilTexture
 
     ## calculate variables
     #sujan: moving clay & silt from land.soilTexture to p_soilWBase.
-    CLAY = mean(p_CLAY)
-    SILT = mean(p_SILT)
+    CLAY = mean(st_CLAY)
+    SILT = mean(st_SILT)
     # TEXTURE EFFECT ON k OF cMicSoil
     zix = helpers.pools.zix.cMicSoil
-    p_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
+    c_eco_k_f_soil_props[zix] = (1.0 - (TEXTEFFA * (SILT + CLAY)))
     # (ineficient, should be pix zix_mic)
 
     ## pack land variables
-    @pack_land p_k_f_soil_props => land.cTauSoilProperties
+    @pack_land c_eco_k_f_soil_props => land.cTauSoilProperties
     return land
 end
 
@@ -53,11 +53,11 @@ $(PARAMFIELDS)
 Effect of soil texture on soil decomposition rates using cTauSoilProperties_CASA
 
 *Inputs*
- - land.soilWBase.p_CLAY: values for clay soil texture
- - land.soilWBase.p_SILT: values for silt soil texture
+ - land.soilTexture.st_CLAY: values for clay soil texture
+ - land.soilTexture.st_SILT: values for silt soil texture
 
 *Outputs*
- - land.cTauSoilProperties.p_k_f_soil_props: Soil texture stressor values on the the turnover rates
+ - land.cTauSoilProperties.c_eco_k_f_soil_props: Soil texture stressor values on the the turnover rates
 
 # instantiate:
 instantiate/instantiate time-invariant variables for cTauSoilProperties_CASA

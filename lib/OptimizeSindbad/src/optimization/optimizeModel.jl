@@ -101,14 +101,13 @@ getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVaria
 """
 function getLoss(pVector::AbstractArray,
     forcing::NamedTuple,
-    spinup_forcing::Any,
     initOut::NamedTuple,
     observations::NamedTuple,
     tblParams::Table,
     tem::NamedTuple,
     optim::NamedTuple)
     newApproaches = updateModelParameters(tblParams, tem.models.forward)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, tem; spinup_forcing=spinup_forcing) # spinup + forward run!
+    outevolution = runEcosystem(newApproaches, forcing, initOut, tem) # spinup + forward run!
     @info ".........................................."
     loss_vector = getLossVector(observations, outevolution, optim)
     @info "-------------------"
@@ -123,8 +122,7 @@ function optimizeModel(forcing::NamedTuple,
     initOut::NamedTuple,
     observations::NamedTuple,
     tem::NamedTuple,
-    optim::NamedTuple;
-    spinup_forcing=nothing)
+    optim::NamedTuple)
     # get the list of observed variables, model variables to compare observation against, 
     # obsVars, optimVars, storeVars = getConstraintNames(info);
 
@@ -138,7 +136,7 @@ function optimizeModel(forcing::NamedTuple,
 
     # make the cost function handle
     cost_function =
-        x -> getLoss(x, forcing, spinup_forcing, initOut, observations, tblParams, tem,
+        x -> getLoss(x, forcing, initOut, observations, tblParams, tem,
             optim)
 
     # run the optimizer
@@ -167,12 +165,11 @@ function doOptimizeModel(args...;
     tem::NamedTuple,
     optim::NamedTuple,
     forcing_variables::AbstractArray,
-    obs_variables::AbstractArray,
-    spinup_forcing::Any)
+    obs_variables::AbstractArray)
     output, forcing, observation = unpackYaxOpti(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
-    params = optimizeModel(forcing, out, observation, tem, optim; spinup_forcing=spinup_forcing)
+    params = optimizeModel(forcing, out, observation, tem, optim)
     return output[:] = params.optim
 end
 
@@ -182,7 +179,6 @@ function mapOptimizeModel(forcing::NamedTuple,
     optim::NamedTuple,
     observations::NamedTuple,
     ;
-    spinup_forcing=nothing,
     max_cache=1e9)
     incubes = (forcing.data..., observations.data...)
     indims = (forcing.dims..., observations.dims...)
@@ -198,7 +194,6 @@ function mapOptimizeModel(forcing::NamedTuple,
         optim=optim,
         forcing_variables=forcing_variables,
         obs_variables=obs_variables,
-        spinup_forcing=spinup_forcing,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache)

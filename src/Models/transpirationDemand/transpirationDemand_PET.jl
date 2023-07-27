@@ -11,7 +11,7 @@ function compute(p_struct::transpirationDemand_PET, forcing, land, helpers)
     @unpack_transpirationDemand_PET p_struct
 
     ## unpack land variables
-    @unpack_land PET ∈ land.PET
+    @unpack_land PET ∈ land.fluxes
 
     ## calculate variables
     transpiration_demand = PET * α
@@ -33,7 +33,7 @@ $(PARAMFIELDS)
 Demand-driven transpiration using transpirationDemand_PET
 
 *Inputs*
- - land.PET.PET : potential evapotranspiration out of PET module
+ - land.fluxes.PET : potential evapotranspiration out of PET module
  - α: α parameter for potential transpiration
 
 *Outputs*

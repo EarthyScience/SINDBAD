@@ -7,7 +7,7 @@ end
 #! format: on
 
 function define(p_struct::cAllocationSoilW_gppGSI, forcing, land, helpers)
-    fW_prev = sum(land.pools.soilW) / land.soilWBase.s_wSat
+    fW_prev = sum(land.pools.soilW) / land.soilWBase.sum_wSat
 
     ## pack land variables
     @pack_land fW_prev => land.cAllocationSoilW

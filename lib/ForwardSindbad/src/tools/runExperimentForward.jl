@@ -31,5 +31,6 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, output, Val(:forward))
+    saveOutCubes(info, run_output, output)
     return run_output
 end

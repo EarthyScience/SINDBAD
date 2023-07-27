@@ -17,10 +17,10 @@ function define(p_struct::rootWaterEfficiency_k2Layer, forcing, land, helpers)
         error("rootWaterEfficiency_k2Layer approach works for 2 soil layers only.")
     end
     # create the arrays to fill in the soil properties
-    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_water_efficiency = one.(land.pools.soilW)
 
     ## pack land variables
-    @pack_land (root_water_efficiency) => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -29,19 +29,20 @@ function compute(p_struct::rootWaterEfficiency_k2Layer, forcing, land, helpers)
     @unpack_rootWaterEfficiency_k2Layer p_struct
 
     ## unpack land variables
-    @unpack_land (root_water_efficiency) ∈ land.rootWaterEfficiency
+    @unpack_land root_water_efficiency ∈ land.states
 
     ## calculate variables
     k1_root_water_efficiency = k1 # the fraction of water that a root can uptake from the 1st soil layer
     k2_root_water_efficiency = k2 # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
-    root_water_efficiency[1] = root_water_efficiency[1] * k1_root_water_efficiency
+    @rep_elem k1_root_water_efficiency => (root_water_efficiency, 1, :soilW)
     # 2nd Layer
-    root_water_efficiency[2] = root_water_efficiency[2] * k2_root_water_efficiency
+    @rep_elem k2_root_water_efficiency => (root_water_efficiency, 2, :soilW)
+
 
     ## pack land variables
-    @pack_land root_water_efficiency => land.rootWaterEfficiency
+    @pack_land root_water_efficiency => land.states
     return land
 end
 
@@ -60,7 +61,7 @@ Distribution of water uptake fraction/efficiency by root per soil layer using ro
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency as nPix;nZix for soilW
 
 # instantiate:
 instantiate/instantiate time-invariant variables for rootWaterEfficiency_k2Layer
