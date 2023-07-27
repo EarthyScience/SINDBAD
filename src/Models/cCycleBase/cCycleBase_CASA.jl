@@ -3,7 +3,7 @@ export cCycleBase_CASA
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_CASA{T1,T2,T3,T4,T5,T6,T7} <: cCycleBase
     annk::T1 = Float64[1, 0.03, 0.03, 1, 14.8, 3.9, 18.5, 4.8, 0.2424, 0.2424, 6, 7.3, 0.2, 0.0045] | (Float64[0.05, 0.002, 0.002, 0.05, 1.48, 0.39, 1.85, 0.48, 0.02424, 0.02424, 0.6, 0.73, 0.02, 0.0045], Float64[3.3, 0.5, 0.5, 3.3, 148.0, 39.0, 185.0, 48.0, 2.424, 2.424, 60.0, 73.0, 2.0, 0.045]) | "turnover rate of ecosystem carbon pools" | "yr-1"
-    c_flow_E::T2 = Float64[
+    c_flow_E_array::T2 = Float64[
                      -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
                      0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
                      0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
@@ -23,7 +23,7 @@ export cCycleBase_CASA
     cVegRootC_AGE_per_PFT::T4 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of coarse roots" | "yr"
     cVegWood_AGE_per_PFT::T5 = Float64[41.0, 58.0, 58.0, 42.0, 27.0, 25.0, 25.0, 0.0, 5.5, 40.0, 1.0, 40.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0]) | "mean age of wood" | "yr"
     cVegLeaf_AGE_per_PFT::T6 = Float64[1.8, 1.2, 1.2, 5.0, 1.8, 1.0, 1.0, 0.0, 1.0, 2.8, 1.0, 1.0] | (Float64[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], Float64[20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0]) | "mean age of leafs" | "yr"
-    C2Nveg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
+    p_C_to_N_cVeg::T7 = Float64[25.0, 260.0, 260.0, 25.0] | (nothing, nothing) | "carbon to nitrogen ratio in vegetation pools" | "gC/gN"
 end
 #! format: on
 
@@ -35,11 +35,11 @@ function define(p_struct::cCycleBase_CASA, forcing, land, helpers)
     end
 
     ## instantiate variables
-    p_C2Nveg = zero(cEco) .+ one(first(cEco)) #sujan
+    C_to_N_cVeg = one.(cEco)
 
     ## pack land variables
     @pack_land begin
-        (p_C2Nveg, c_flow_A, c_flow_E) => land.cCycleBase
+        (C_to_N_cVeg, c_flow_A_array, c_flow_E_array) => land.cCycleBase
     end
     return land
 end
@@ -50,21 +50,21 @@ function compute(p_struct::cCycleBase_CASA, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        p_C2Nveg ∈ land.cCycleBase
+        C_to_N_cVeg ∈ land.cCycleBase
         o_one ∈ land.wCycleBase
     end
 
     ## calculate variables
     # carbon to nitrogen ratio [gC.gN-1]
-    p_C2Nveg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= C2Nveg
+    C_to_N_cVeg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
 
     # turnover rates
     TSPY = helpers.dates.timesteps_in_year
-    p_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
+    c_eco_k_base = o_one .- (exp.(-o_one .* annk) .^ (o_one / TSPY))
 
     ## pack land variables
-    @pack_land (p_k_base) => land.cCycleBase
-    # @pack_land (p_C2Nveg, p_k_base, c_flow_E) => land.cCycleBase
+    @pack_land (c_eco_k_base) => land.cCycleBase
+    # @pack_land (C_to_N_cVeg, c_eco_k_base, c_flow_E_array) => land.cCycleBase
     return land
 end
 

@@ -12,7 +12,7 @@ function compute(p_struct::snowFraction_binary, forcing, land, helpers)
     end
 
     # if there is snow; then snow fraction is 1; otherwise 0
-    tot_snow = addS(snowW, ΔsnowW)
+    tot_snow = totalS(snowW, ΔsnowW)
     frac_snow = tot_snow > z_zero ? o_one : z_zero
 
     ## pack land variables
@@ -29,7 +29,7 @@ compute the fraction of snow cover.
 Calculate snow cover fraction using snowFraction_binary
 
 *Inputs*
- - land.rainSnow.snow : snow fall [mm/time]
+ - land.fluxes.snow : snow fall [mm/time]
 
 *Outputs*
  - land.states.frac_snow: sets frac_snow to 1 if there is snow; to 0 if there  is now snow

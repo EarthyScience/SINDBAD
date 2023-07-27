@@ -17,7 +17,7 @@ function define(p_struct::evaporation_Snyder2000, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        sPET_prev => land.evaporation
+        sPET_prev => land.fluxes
     end
     return land
 end
@@ -32,8 +32,8 @@ function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
         fAPAR ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        PET ∈ land.PET
-        sPET_prev ∈ land.evaporation
+        PET ∈ land.fluxes
+        sPET_prev ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # set the PET and ET values as precomputation; because they are needed in the first time step & updated every time
@@ -64,7 +64,7 @@ function compute(p_struct::evaporation_Snyder2000, forcing, land, helpers)
 
     ## pack land variables
     @pack_land begin
-        (sET, sPET_prev) => land.evaporation
+        (sET, sPET_prev) => land.fluxes
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
@@ -107,14 +107,14 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_Snyder2000
 
 *Inputs*
- - land.PET.PET
- - land.PET.PET:
+ - land.fluxes.PET
+ - land.fluxes.PET:
  - land.states.fAPAR
  - α
  - β
 
 *Outputs*
- - land.evaporation.p_sPETOld & land.evaporation.sET of first time step
+ - land.fluxes.p_sPETOld & land.fluxes.sET of first time step
  - land.fluxes.evaporation
 
 # update

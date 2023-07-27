@@ -132,7 +132,7 @@ Soil properties (hydraulic properties) using soilProperties_Saxton2006
  - land.soilTexture.sp_[CLAY/SAND]
 
 *Outputs*
- - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  (WP)
+ - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  ( wWP)
  - land.soilProperties.sp_[α/β]: properties of moisture-retention curves
  - land.soilProperties.sp_θFC/kFC/ψFC/sFC
  - land.soilProperties.sp_θSat/kSat/ψSat/sSat
@@ -190,18 +190,18 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     @unpack_land begin
         (n2, n3) ∈ land.soilProperties
-        (p_β, p_kSat, p_wSat) ∈ land.soilWBase
+        (soil_β, kSat, wSat) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
     ## calculate variables
-    wSat = p_wSat[sl]
+    wSat = wSat[sl]
     θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat
     θ_dos = clamp_01(θ_dos)
-    β = p_β[sl]
-    kSat = p_kSat[sl]
+    β = soil_β[sl]
+    kSat = kSat[sl]
     λ = o_one / β
     K = kSat * ((θ_dos)^(n3 + (n2 / λ)))
     return K
@@ -217,7 +217,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - sl: soil layer to calculate property for
 
 # Outputs:
- - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  (WP)
+ - hydraulic conductivity [k], matric potention [ψ] & porosity  (θ) at saturation [Sat], field capacity [FC], & wilting point  ( wWP)
  - properties of moisture-retention curves: (α & β)
 
 # Modifies:
@@ -238,7 +238,7 @@ calculates the soil hydraulic properties based on Saxton 2006
  - PAW: Plant Avail. moisture [33-1500 kPa, matric soil], #v
  - PAWB: Plant Avail. moisture [33-1500 kPa, bulk soil], #v
  - SAT: Saturation moisture [0 kPa], #v
- - WP: Wilting point moisture [1500 kPa], #v
+ - wWP: Wilting point moisture [1500 kPa], #v
 """
 function calcPropsSaxton2006(p_struct::soilProperties_Saxton2006, land, helpers, sl)
 

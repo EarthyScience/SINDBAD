@@ -5,7 +5,7 @@ struct getPools_simple <: getPools end
 function compute(p_struct::getPools_simple, forcing, land, helpers)
 
     ## unpack land variables
-    @unpack_land rain ∈ land.rainSnow
+    @unpack_land rain ∈ land.fluxes
 
     ## calculate variables
     WBP = rain

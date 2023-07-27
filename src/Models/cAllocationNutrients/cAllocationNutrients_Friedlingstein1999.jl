@@ -13,11 +13,11 @@ function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, lan
 
     ## unpack land variables
     @unpack_land begin
-        PAW ∈ land.vegAvailableWater
-        s_wAWC ∈ land.soilWBase
+        PAW ∈ land.states
+        sum_wAWC ∈ land.soilWBase
         c_allocation_f_soilW ∈ land.cAllocationSoilW
         c_allocation_f_soilT ∈ land.cAllocationSoilT
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
@@ -26,7 +26,7 @@ function compute(p_struct::cAllocationNutrients_Friedlingstein1999, forcing, lan
     NL = PET > z_zero ? nl : o_one #@needscheck is the else value one or zero? In matlab version was set to ones.
 
     # water limitation calculation
-    WL = clamp(sum(PAW) / s_wAWC, minL, maxL)
+    WL = clamp(sum(PAW) / sum_wAWC, minL, maxL)
 
     # minimum of WL & NL
     c_allocation_f_W_N = min(WL, NL)
@@ -47,11 +47,11 @@ $(PARAMFIELDS)
 # compute:
 
 *Inputs*
- - land.PET.PET: values for potential evapotranspiration
+ - land.fluxes.PET: values for potential evapotranspiration
  - land.cAllocationSoilT.c_allocation_f_soilT: values for partial computation for the temperature effect on  decomposition/mineralization
  - land.cAllocationSoilW.c_allocation_f_soilW: values for partial computation for the moisture effect on  decomposition/mineralization
- - land.soilWBase.s_wAWC: sum of water available capacity
- - land.vegAvailableWater.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
+ - land.soilWBase.sum_wAWC: sum of water available capacity
+ - land.states.PAW: values for maximum fraction of water that root can uptake from soil layers as constant
 
 *Outputs*
  - land.cAllocationNutrients.c_allocation_f_W_N: nutrient limitation on cAllocation

@@ -221,8 +221,7 @@ function coreEcosystem!(loc_output,
             tem_spinup,
             tem_models,
             typeof(land_init),
-            f_one;
-            spinup_forcing=nothing)
+            f_one)
     end
     time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     timeLoopForward!(loc_output,
@@ -258,7 +257,7 @@ prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
 function prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
     approaches = tem.models.forward
     tem_helpers = tem.helpers
-    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+    return helpPrepRunEcosystem(output.data, approaches, output.variables, output.land_init, forcing, tem, tem_helpers)
 end
 
 
@@ -266,7 +265,7 @@ end
 prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
 """
 function prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
-    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+    return helpPrepRunEcosystem(output.data, approaches, output.variables, output.land_init, forcing, tem, tem_helpers)
 end
 
 """
@@ -274,13 +273,13 @@ prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple)
 """
 function prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple)
     tem_helpers = tem.helpers
-    return helpPrepRunEcosystem(output.data, approaches, output.ordered_variables, output.land_init, forcing, tem, tem_helpers)
+    return helpPrepRunEcosystem(output.data, approaches, output.variables, output.land_init, forcing, tem, tem_helpers)
 end
 
 """
 helpPrepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
 """
-function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+function helpPrepRunEcosystem(outcubes, approaches, variables, land_init, forcing::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
 
 
     # generate vals for dispatch of forcing and output
@@ -305,7 +304,7 @@ function helpPrepRunEcosystem(outcubes, approaches, ordered_variables, land_init
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
 
-    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(ordered_variables), loc_space_names=Val(loc_space_names), debug_model=Val(:debug_model))
+    vals = (; forc_vars=Val(keys(forcing)), output_vars=Val(variables), loc_space_names=Val(loc_space_names), debug_model=Val(:debug_model))
     tem_dates = tem_helpers.dates
     tem_dates = (; timesteps_in_day=tem_dates.timesteps_in_day, timesteps_in_year=tem_dates.timesteps_in_year)
     tem_helpers = setTupleField(tem_helpers, (:dates, tem_dates))

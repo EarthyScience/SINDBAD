@@ -7,7 +7,7 @@ function compute(p_struct::rainIntensity_forcing, forcing, land, helpers)
     @unpack_forcing rainInt ∈ forcing
 
     ## pack land variables
-    @pack_land rainInt => land.rainIntensity
+    @pack_land rainInt => land.states
     return land
 end
 
@@ -20,10 +20,10 @@ stores the time series of rainfall & snowfall from forcing
 Set rainfall intensity using rainIntensity_forcing
 
 *Inputs*
- - land.rainIntensity.rainInt
+ - land.states.rainInt
 
 *Outputs*
- - land.rainIntensity.rainInt: liquid rainfall from forcing input  threshold
+ - land.states.rainInt: liquid rainfall from forcing input  threshold
  - forcing.Snow using the snowfall scaling parameter which can be optimized
 
 ---
