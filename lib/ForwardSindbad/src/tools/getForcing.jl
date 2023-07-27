@@ -85,13 +85,12 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info; clean_dat
     return yax
 end
 
-function gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
+function gettForcingInfo(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing information..."
     @info "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
-    f_dimensions = f_dimension
     # f_dimensions = Sindbad.DataStructures.OrderedDict(f_dimension...)
     info = collectForcingInfo(info, f_sizes, f_dimensions)
     println("----------------------------------------------")
@@ -200,10 +199,10 @@ function getForcing(info::NamedTuple)
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info)
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
-            f_dimension = getSindbadDims(yax)
+            f_dimension = getSindbadDims(incube)
         end
         incube
     end
-    return gettForcingInfo(incubes, f_sizes, f_dimension, vinfo, info)
+    return gettForcingInfo(incubes, f_sizes, f_dimension, info)
 end
 
