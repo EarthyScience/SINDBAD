@@ -100,11 +100,14 @@ obs = getKeyedArray(observations);
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
-tblParams = Sindbad.getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
-new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams);
+new_models = info.tem.models.forward;
 
+if info.tem.helpers.run.run_optimization
+    tblParams = Sindbad.getParameters(info.tem.models.forward,
+        info.optim.default_parameter,
+        info.optim.optimized_parameters)
+    new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
