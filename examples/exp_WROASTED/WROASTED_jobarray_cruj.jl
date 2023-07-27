@@ -215,7 +215,7 @@ for o_set in opti_set
         plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric)), $(forcing_set), $(o_set)")
         plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
         plot!(xdata, ml_dat; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
-        savefig(fig_prefix * "_$(v).png")
+        savefig(fig_prefix * "_$(v)_$(forcing_set).png")
     end
 
 
@@ -262,12 +262,12 @@ for o_set in opti_set
         if size(def_var, 2) == 1
             plot(xdata, def_var[:, 1]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
-            savefig(fig_prefix * "_$(v).png")
+            savefig(fig_prefix * "_$(v)_$(forcing_set).png")
         else
             for ll ∈ 1:size(def_var, 2)
                 plot(xdata, def_var[:, ll]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
-                savefig(fig_prefix * "_$(v)_$(ll).png")
+                savefig(fig_prefix * "_$(v)_$(ll)_$(forcing_set).png")
             end
         end
     end
