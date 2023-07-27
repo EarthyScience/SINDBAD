@@ -12,7 +12,7 @@ noStackTrace()
 #Random.seed!(7)
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
-info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 info, forcing = getForcing(info);
 
@@ -114,10 +114,12 @@ l1(tblParams.default)
 
 p_vec = tblParams.default;
 CHUNK_SIZE = length(p_vec)
+CHUNK_SIZE = 10
+
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 op = setupOutput(info);
-op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
+op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
 op = (; op..., data=op_dat);
 
 # op = setupOutput(info);

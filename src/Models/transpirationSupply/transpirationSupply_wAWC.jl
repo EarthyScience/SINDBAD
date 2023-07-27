@@ -11,13 +11,13 @@ function compute(p_struct::transpirationSupply_wAWC, forcing, land, helpers)
     @unpack_transpirationSupply_wAWC p_struct
 
     ## unpack land variables
-    @unpack_land PAW ∈ land.vegAvailableWater
+    @unpack_land PAW ∈ land.states
 
     ## calculate variables
     transpiration_supply = sum(PAW) * k_transpiration
 
     ## pack land variables
-    @pack_land transpiration_supply => land.transpirationSupply
+    @pack_land transpiration_supply => land.states
     return land
 end
 
@@ -34,11 +34,11 @@ Supply-limited transpiration using transpirationSupply_wAWC
 
 *Inputs*
  - land.pools.soilW : total soil moisture
- - land.soilWBase.p_wAWC: total maximum plant available water [FC-WP]
+ - land.soilWBase.wAWC: total maximum plant available water [FC-WP]
  - land.states.PAW: actual extractable water
 
 *Outputs*
- - land.transpirationSupply.transpiration_supply: supply limited transpiration
+ - land.states.transpiration_supply: supply limited transpiration
 
 ---
 

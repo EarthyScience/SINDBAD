@@ -12,7 +12,7 @@ noStackTrace()
 Random.seed!(7)
 
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
-info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify info
+info = getExperimentInfo(experiment_json);
 
 info, forcing = getForcing(info);
 

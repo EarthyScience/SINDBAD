@@ -22,7 +22,7 @@ function define(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     maxWater = zero(soilW)
 
     ## pack land variables
-    @pack_land (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) => land.vegAvailableWater
+    @pack_land (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) => land.states
     return land
 end
 
@@ -32,25 +32,25 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        (p_wWP, p_wFC, p_wSat, p_β) ∈ land.soilWBase
-        root_water_efficiency ∈ land.rootWaterEfficiency
+        (wWP, wFC, wSat, soil_β) ∈ land.soilWBase
+        root_water_efficiency ∈ land.states
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.vegAvailableWater
+        (θ_dos, θ_fc_dos, PAW, soilWStress, maxWater) ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
     for sl ∈ eachindex(soilW)
-        θ_dos = (soilW[sl] + ΔsoilW[sl]) / p_wSat[sl]
-        θ_fc_dos = p_wFC[sl] / p_wSat[sl]
-        tmpSoilWStress = clamp_01(o_one / (o_one + exp(-exp_factor * p_β[sl] * (θ_dos - θ_fc_dos))))
+        θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat[sl]
+        θ_fc_dos = wFC[sl] / wSat[sl]
+        tmpSoilWStress = clamp_01(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
-        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - p_wWP[sl])
+        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - wWP[sl])
         PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
 
     ## pack land variables
-    @pack_land (PAW, soilWStress) => land.vegAvailableWater
+    @pack_land (PAW, soilWStress) => land.states
     return land
 end
 
@@ -69,7 +69,7 @@ Plant available water using vegAvailableWater_sigmoid
  - land.pools.soilW
 
 *Outputs*
- - land.rootWaterEfficiency.root_water_efficiency as nPix;nZix for soilW
+ - land.states.root_water_efficiency as nPix;nZix for soilW
 
 ---
 

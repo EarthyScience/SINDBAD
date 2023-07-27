@@ -7,15 +7,15 @@ function compute(p_struct::runoffInfiltrationExcess_Jung, forcing, land, helpers
     ## unpack land variables
     @unpack_land begin
         (WBP, fAPAR) ∈ land.states
-        p_kSat ∈ land.soilWBase
-        rain ∈ land.rainSnow
-        rainInt ∈ land.rainIntensity
+        kSat ∈ land.soilWBase
+        rain ∈ land.fluxes
+        rainInt ∈ land.states
         (z_zero, o_one) ∈ land.wCycleBase
     end
     # assumes infiltration capacity is unlimited in the vegetated fraction [infiltration flux = P*fpar] the infiltration flux for the unvegetated fraction is given as the minimum of the precip & the min of precip intensity [P] & infiltration capacity [I] scaled with rain duration [P/R]
 
     # get infiltration capacity of the first layer
-    pInfCapacity = p_kSat[1] / helpers.dates.timesteps_in_day in mm / hr
+    pInfCapacity = kSat[1] / helpers.dates.timesteps_in_day in mm / hr
     InfExcess =
         rain - (rain * fAPAR +
                 (o_one - fAPAR) * min(rain, min(pInfCapacity, rainInt) * rain / rainInt))
@@ -39,9 +39,9 @@ infiltration excess runoff as a function of rainintensity and vegetated fraction
 Infiltration excess runoff using runoffInfiltrationExcess_Jung
 
 *Inputs*
- - land.rainIntensity.rainInt: rain intensity [mm/h]
- - land.rainSnow.rain : rainfall [mm/time]
- - land.soilWBase.p_kSat: infiltration capacity [mm/day]
+ - land.states.rainInt: rain intensity [mm/h]
+ - land.fluxes.rain : rainfall [mm/time]
+ - land.soilWBase.kSat: infiltration capacity [mm/day]
  - land.states.fAPAR: fraction of absorbed photosynthetically active radiation  (equivalent to "canopy cover" in Gash & Miralles)
 
 *Outputs*

@@ -33,8 +33,8 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
             cEco_prev,
             c_eco_out,
             c_eco_npp,
-            p_k,
-            p_A,
+            c_eco_k,
+            c_flow_A_vec,
             zero_c_eco_flow,
             zero_c_eco_influx) ∈ land.states
         cEco ∈ land.pools
@@ -49,7 +49,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
 
     ## compute losses
     for cl ∈ eachindex(cEco)
-        c_eco_out_cl = min(cEco[cl], cEco[cl] * p_k[cl])
+        c_eco_out_cl = min(cEco[cl], cEco[cl] * c_eco_k[cl])
         @rep_elem c_eco_out_cl => (c_eco_out, cl, :cEco)
     end
 
@@ -68,13 +68,13 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     for fO ∈ c_flow_order
         take_r = c_taker[fO]
         give_r = c_giver[fO]
-        tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * p_A[fO]
+        tmp_flow = c_eco_flow[take_r] + c_eco_out[give_r] * c_flow_A_vec[fO]
         @rep_elem tmp_flow => (c_eco_flow, take_r, :cEco)
     end
     # for jix = 1:length(p_taker)
     # c_taker = p_taker[jix]
     # c_giver = p_giver[jix]
-    # c_flow = p_A(c_taker, c_giver)
+    # c_flow = c_flow_A_vec(c_taker, c_giver)
     # take_flow = c_eco_flow[c_taker]
     # give_flow = c_eco_out[c_giver]
     # c_eco_flow[c_taker] = take_flow + give_flow * c_flow
@@ -88,8 +88,8 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     end
 
     ## compute RA & RH
-    npp = addS(c_eco_npp)
-    backNEP = addS(cEco) - addS(cEco_prev)
+    npp = totalS(c_eco_npp)
+    backNEP = totalS(cEco) - totalS(cEco_prev)
     auto_respiration = gpp - npp
     eco_respiration = gpp - backNEP
     hetero_respiration = eco_respiration - auto_respiration
@@ -121,15 +121,15 @@ Allocate carbon to vegetation components using cCycle_GSI
 
 *Inputs*
  - helpers.dates.timesteps_in_year: number of time steps per year
- - land.cCycleBase.p_annk: carbon allocation matrix
- - land.cFlow.p_E: effect of soil & vegetation on transfer efficiency between pools
+ - land.cCycleBase.c_τ_eco: carbon allocation matrix
+ - land.cFlow.p_E_vec: effect of soil & vegetation on transfer efficiency between pools
  - land.cFlow.p_giver: c_giver pool array
  - land.cFlow.p_taker: c_taker pool array
  - land.fluxes.gpp: values for gross primary productivity
  - land.states.c_allocation: carbon allocation matrix
 
 *Outputs*
- - land.cCycleBase.p_k: decay rates for the carbon pool at each time step
+ - land.cCycleBase.c_eco_k: decay rates for the carbon pool at each time step
  - land.fluxes.c_eco_npp: values for net primary productivity
  - land.fluxes.auto_respiration: values for autotrophic respiration
  - land.fluxes.eco_respiration: values for ecosystem respiration

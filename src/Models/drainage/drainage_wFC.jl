@@ -6,7 +6,7 @@ function define(p_struct::drainage_wFC, forcing, land, helpers)
     ## instantiate drainage
     drainage = zero(land.pools.soilW)
     ## pack land variables
-    @pack_land drainage => land.drainage
+    @pack_land drainage => land.fluxes
     return land
 end
 
@@ -14,8 +14,8 @@ function compute(p_struct::drainage_wFC, forcing, land, helpers)
 
     ## unpack land variables
     @unpack_land begin
-        drainage ∈ land.drainage
-        (p_nsoilLayers, p_wFC) ∈ land.soilWBase
+        drainage ∈ land.fluxes
+        (p_nsoilLayers, wFC) ∈ land.soilWBase
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
         z_zero ∈ land.wCycleBase
@@ -23,9 +23,9 @@ function compute(p_struct::drainage_wFC, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        holdCap = p_wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
+        holdCap = wSat[sl+1] - (soilW[sl+1] + ΔsoilW[sl+1])
         lossCap = soilW[sl] + ΔsoilW[sl]
-        drainage[sl] = max_0(soilW[sl] + ΔsoilW[sl] - p_wFC[sl])
+        drainage[sl] = max_0(soilW[sl] + ΔsoilW[sl] - wFC[sl])
         drainage[sl] = min(drainage[sl], holdCap, lossCap)
         ΔsoilW[sl] = ΔsoilW[sl] - drainage[sl]
         ΔsoilW[sl+1] = ΔsoilW[sl+1] + drainage[sl]
@@ -33,7 +33,7 @@ function compute(p_struct::drainage_wFC, forcing, land, helpers)
 
     ## pack land variables
     # @pack_land begin
-    # 	drainage => land.drainage
+    # 	drainage => land.fluxes
     # 	# ΔsoilW => land.states
     # end
     return land
@@ -71,7 +71,7 @@ Recharge the soil using drainage_wFC
 
 *Inputs*
  - land.pools.soilW: soil moisture in different layers
- - land.soilWBase.p_wFC: field capacity of soil in mm
+ - land.soilWBase.wFC: field capacity of soil in mm
  - land.states.WBP amount of water that can potentially drain
 
 *Outputs*

@@ -15,7 +15,7 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
     @unpack_land begin
         soilW ∈ land.pools
         ΔsoilW ∈ land.states
-        PET ∈ land.PET
+        PET ∈ land.fluxes
         z_zero ∈ land.wCycleBase
     end
     # calculate potential soil evaporation
@@ -29,7 +29,7 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
     @add_to_elem -evaporation => (ΔsoilW, 1, :soilW)
     ## pack land variables
     @pack_land begin
-        (PET_evaporation, evaporationSupply) => land.evaporation
+        (PET_evaporation, evaporationSupply) => land.fluxes
         evaporation => land.fluxes
         ΔsoilW => land.states
     end
@@ -72,12 +72,12 @@ $(PARAMFIELDS)
 Soil evaporation using evaporation_demandSupply
 
 *Inputs*
- - land.PET.PET: extra forcing from prec
- - land.evaporation.PET_evaporation: extra forcing from prec
+ - land.fluxes.PET: extra forcing from prec
+ - land.fluxes.PET_evaporation: extra forcing from prec
  - α:
 
 *Outputs*
- - land.evaporation.PETSoil
+ - land.fluxes.PETSoil
  - land.fluxes.evaporation
 
 # update

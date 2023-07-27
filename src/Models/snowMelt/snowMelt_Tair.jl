@@ -24,7 +24,7 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     Tterm = max_0(pRate * Tair)
 
     # snow melt [mm/day] is calculated as a simple function of temperature & scaled with the snow covered fraction
-    snow_melt = min(sum(snowW + ΔsnowW), Tterm * frac_snow)
+    snow_melt = min(totalS(snowW, ΔsnowW), Tterm * frac_snow)
 
     # divide snowmelt loss equally from all layers
     ΔsnowW .= ΔsnowW .- snow_melt / n_snowW
@@ -35,7 +35,7 @@ function compute(p_struct::snowMelt_Tair, forcing, land, helpers)
     ## pack land variables
     @pack_land begin
         snow_melt => land.fluxes
-        Tterm => land.snowMelt
+        Tterm => land.fluxes
         WBP => land.states
         ΔsnowW => land.states
     end
@@ -79,7 +79,7 @@ Calculate snowmelt and update s.w.wsnow using snowMelt_Tair
 *Inputs*
  - forcing.Tair: temperature [C]
  - helpers.dates.timesteps_in_day: model time steps per day
- - land.snowMelt.Tterm: effect of temperature on snow melt [mm/time]
+ - land.fluxes.Tterm: effect of temperature on snow melt [mm/time]
  - land.states.frac_snow: snow cover fraction [-]
 
 *Outputs*

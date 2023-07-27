@@ -9,5 +9,5 @@
 #SBATCH --array=1-205%205
 
 export JULIA_NUM_THREADS=${SLURM_CPUS_PER_TASK}
-/Net/Groups/Services/HPC_22/apps/julia/julia-1.9.0/bin/julia --project=../exp_distri --heap-size-hint=2G experiment_WROASTED_jobarray.jl
+/Net/Groups/Services/HPC_22/apps/julia/julia-1.9.0/bin/julia --project=../exp_distri --heap-size-hint=3G WROASTED_jobarray_erai.jl
 # /Net/Groups/BGI/scratch/skoirala/.juliaup/bin/julia --project=../exp_distri --heap-size-hint=2G experiment_WROASTED_jobarray.jl

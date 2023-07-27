@@ -15,76 +15,68 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
 
     # instatiate variables 
     soil_layer_thickness = zero(land.pools.soilW)
-    p_wFC = zero(land.pools.soilW)
-    p_wWP = zero(land.pools.soilW)
-    p_wSat = zero(land.pools.soilW)
+    wFC = zero(land.pools.soilW)
+    wWP = zero(land.pools.soilW)
+    wSat = zero(land.pools.soilW)
 
     soilDepths = helpers.pools.layerThickness.soilW
     # soilDepths = helpers.pools.layerThickness.soilW
 
-    p_CLAY = st_CLAY
-    p_SAND = st_SAND
-    p_SILT = st_SILT
-    p_ORGM = st_ORGM
-    p_kSat = sp_kSat
-    p_kFC = sp_kFC
-    p_kWP = sp_kWP
-    p_ψSat = sp_ψSat
-    p_ψFC = sp_ψFC
-    p_ψWP = sp_ψWP
-    p_θSat = sp_θSat
-    p_θFC = sp_θFC
-    p_θWP = sp_θWP
-    p_α = sp_α
-    p_β = sp_β
+    kSat = sp_kSat
+    soil_kFC = sp_kFC
+    kWP = sp_kWP
+    ψSat = sp_ψSat
+    ψFC = sp_ψFC
+    ψWP = sp_ψWP
+    θSat = sp_θSat
+    θFC = sp_θFC
+    θWP = sp_θWP
+    soil_α = sp_α
+    soil_β = sp_β
 
     for sl ∈ eachindex(soilW)
         sd_sl = soilDepths[sl]
         @rep_elem sd_sl => (soil_layer_thickness, sl, :soilW)
-        p_wFC_sl = p_θFC[sl] * sd_sl
-        @rep_elem p_wFC_sl => (p_wFC, sl, :soilW)
-        p_wWP_sl = p_θWP[sl] * sd_sl
-        @rep_elem p_wWP_sl => (p_wWP, sl, :soilW)
-        p_wSat_sl = p_θSat[sl] * sd_sl
-        @rep_elem p_wSat_sl => (p_wSat, sl, :soilW)
-        soilW_sl = min(soilW[sl], p_wSat[sl])
+        p_wFC_sl = θFC[sl] * sd_sl
+        @rep_elem p_wFC_sl => (wFC, sl, :soilW)
+        wWP_sl = θWP[sl] * sd_sl
+        @rep_elem wWP_sl => (wWP, sl, :soilW)
+        p_wSat_sl = θSat[sl] * sd_sl
+        @rep_elem p_wSat_sl => (wSat, sl, :soilW)
+        soilW_sl = min(soilW[sl], wSat[sl])
         @rep_elem soilW_sl => (soilW, sl, :soilW)
     end
 
     # get the plant available water capacity
-    p_wAWC = p_wFC - p_wWP
+    wAWC = wFC - wWP
 
     # save the sums of selected variables
-    s_wFC = sum(p_wFC)
-    s_wWP = sum(p_wWP)
-    s_wSat = sum(p_wSat)
-    s_wAWC = sum(p_wAWC)
+    sum_wFC = sum(wFC)
+    sum_WP = sum(wWP)
+    sum_wSat = sum(wSat)
+    sum_wAWC = sum(wAWC)
 
     @pack_land begin
-        (p_CLAY,
-            p_ORGM,
-            p_SAND,
-            p_SILT,
-            p_kFC,
-            p_kSat,
-            p_kWP,
+        (soil_kFC,
+            kSat,
+            kWP,
             soil_layer_thickness,
-            p_wAWC,
-            p_wFC,
-            p_wSat,
-            p_wWP,
-            s_wAWC,
-            s_wFC,
-            s_wSat,
-            s_wWP,
-            p_α,
-            p_β,
-            p_θFC,
-            p_θSat,
-            p_θWP,
-            p_ψFC,
-            p_ψSat,
-            p_ψWP) => land.soilWBase
+            wAWC,
+            wFC,
+            wSat,
+            wWP,
+            sum_wAWC,
+            sum_wFC,
+            sum_wSat,
+            sum_WP,
+            soil_α,
+            soil_β,
+            θFC,
+            θSat,
+            θWP,
+            ψFC,
+            ψSat,
+            ψWP) => land.soilWBase
         soilW => land.pools
     end
     return land

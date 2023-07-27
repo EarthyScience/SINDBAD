@@ -16,12 +16,12 @@
     "distribution": ["normal", [0.0, 1.0]]
   },
   "optimized_parameters": {
-    "cCycleBase,annk_Root": null,
-    "cCycleBase,annk_Wood": null,
-    "cCycleBase,annk_LitSlow": null,
-    "cCycleBase,annk_LitFast": null,
-    "cCycleBase,annk_SoilSlow": null,
-    "cCycleBase,annk_SoilOld": null,
+    "cCycleBase,c_τ_Root": null,
+    "cCycleBase,c_τ_Wood": null,
+    "cCycleBase,c_τ_LitSlow": null,
+    "cCycleBase,c_τ_LitFast": null,
+    "cCycleBase,c_τ_SoilSlow": null,
+    "cCycleBase,c_τ_SoilOld": null,
     "cCycleBase,ηH": null,
     "cFlow,f_τ": {
       "is_ml": true,
@@ -65,7 +65,7 @@
     "WUE,κ": null
   },
   "constraints": {
-   "use_uncertainty": false,
+   "use_uncertainty": true,
    "use_quality_flag": true,
    "default_constraint": {
       "sindbad_unit": null,
@@ -88,7 +88,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "nseinv",
+      "cost_metric": "nnseinv",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -113,7 +113,7 @@
           "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "nee": {
@@ -136,7 +136,7 @@
           "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "reco": {
@@ -159,7 +159,7 @@
           "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "evapotranspiration": {
@@ -185,7 +185,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "transpiration": {
@@ -209,7 +209,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
         }
       },
       "agb": {
@@ -220,11 +220,6 @@
           "source_variable": "agb_merged",
           "source_unit": "gC m-2",
           "name_short": "Above-ground biomass"
-        },
-        "unc": {
-          "data_path": null,
-          "bounds": [0.0, 400.0],
-          "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
           "cost_metric": "nmae1r"
@@ -239,15 +234,25 @@
           "source_unit": "adimensional",
           "name_short": "mergedNDVI_MCD43A"
         },
-        "unc": {
-          "data_path": null,
-          "bounds": [0.0, 1.0],
-          "source_variable": "NEE_RANDUNC"
-        },
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nseinv"
+          "cost_metric": "nnseinv"
+        }
+      },
+      "nirv": {
+        "model_full_var": "fluxes.gpp",
+        "data": {
+          "sindbad_unit": "adimensional",
+          "bounds": [0.0, 1.0],
+          "source_variable": "NIRv_MCD43A",
+          "source_unit": "-",
+          "name_short": "Near Infrared Reflectance"
+        },
+        "cost_options": {
+          "cost_metric": "scor2inv",
+          "temporal_aggr": "dayAnomaly",
+          "temporal_aggr_obs": true
         }
       }
     }
