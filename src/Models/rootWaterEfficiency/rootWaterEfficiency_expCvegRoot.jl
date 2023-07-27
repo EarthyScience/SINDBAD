@@ -14,9 +14,9 @@ function define(p_struct::rootWaterEfficiency_expCvegRoot, forcing, land, helper
         soil_layer_thickness ∈ land.soilWBase
     end
     ## instantiate variables
-    root_water_efficiency = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_water_efficiency = one.(land.pools.soilW)
     cumulative_soil_depths = cumsum(soil_layer_thickness)
-    root_over = zero(land.pools.soilW) .+ one(first(land.pools.soilW))
+    root_over = one.(land.pools.soilW)
     ## pack land variables
     @pack_land begin
         (root_over, cumulative_soil_depths) => land.rootWaterEfficiency

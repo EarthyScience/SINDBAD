@@ -47,7 +47,7 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
     # tcprint(c_flow_A_vec_ind)
-    c_flow_A_vec = eltype(land.pools.cEco).(zero([c_taker...]) .+ one(eltype(land.pools.cEco)))
+    c_flow_A_vec = one.(eltype(land.pools.cEco).(zero([c_taker...])))
 
     if land.pools.cEco isa SVector
         c_flow_A_vec = SVector{length(c_flow_A_vec)}(c_flow_A_vec)
