@@ -18,7 +18,7 @@ sYear = "2005"
 eYear = "2017"
 domain = "DE-Hai"
 domain = "CA-NS6"
-domain = "DE-Hai"
+# domain = "AU-Emr"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -52,7 +52,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 nrepeat = 200
 
 data_path = getAbsDataPath(info, path_input)
-nc = ForwardSindbad.NetCDF.open(data_path)
+nc = ForwardSindbad.NetCDF.open(data_path);
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
