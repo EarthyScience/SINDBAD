@@ -112,7 +112,7 @@
         "data": {
           "sindbad_unit": "gC m-2 day-1",
           "bounds": [-100.0, 100.0],
-          "source_variable": "NEE",
+          "source_variable": "nee",
           "source_unit": "gC m-2 day-1",
           "name_short": "Net Ecosystem Exchange"
         },
