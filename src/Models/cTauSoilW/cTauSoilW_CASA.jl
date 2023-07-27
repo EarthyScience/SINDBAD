@@ -10,7 +10,7 @@ function define(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     @unpack_cTauSoilW_CASA p_struct
 
     ## instantiate variables
-    c_eco_k_f_soilW = zero(land.pools.cEco) .+ one(eltype(land.pools.cEco))
+    c_eco_k_f_soilW = one.(land.pools.cEco)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilW => land.cTauSoilW
