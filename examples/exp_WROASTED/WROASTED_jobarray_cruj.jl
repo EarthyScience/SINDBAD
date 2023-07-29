@@ -93,7 +93,7 @@ opti_sets = Dict(
 
 forcingConfig = "forcing_$(forcing_set).json";
 pl = "threads"
-exp_main = "wroasted_unc"
+exp_main = "wroasted_no_unc"
 
 # opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
@@ -205,9 +205,9 @@ for o_set in opti_set
         opt_var = opt_var[tspan, 1, 1, 1]
 
         xdata = [info.tem.helpers.dates.vector[tspan]...]
-        obs_var_n, obs_σ_n, ml_dat_n = filter_common_nan(obs_var, obs_σ, ml_dat)
-        obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
-        obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+        obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
+        obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
+        obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
         metr_ml = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
