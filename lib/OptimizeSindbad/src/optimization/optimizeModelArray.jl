@@ -134,7 +134,7 @@ function getLossVectorArray(observations, model_output, cost_options)
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
-        println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
+        # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
         metr
     end
     # println("-------------------")
