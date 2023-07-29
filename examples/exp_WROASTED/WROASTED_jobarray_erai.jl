@@ -93,7 +93,7 @@ opti_sets = Dict(
 
 forcingConfig = "forcing_$(forcing_set).json";
 pl = "threads"
-exp_main = "wroasted_no_unc"
+exp_main = "wroasted_no_unc_nse"
 
 # opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
 opti_set = (:set1,)
