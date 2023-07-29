@@ -65,7 +65,7 @@
     "WUE,κ": null
   },
   "constraints": {
-   "use_uncertainty": true,
+   "use_uncertainty": false,
    "use_quality_flag": true,
    "default_constraint": {
       "sindbad_unit": null,
@@ -104,7 +104,7 @@
         },
         "unc": {
           "data_path": null,
-          "bounds": [0.0, 100.0],
+          "bounds": [0.0, 400.0],
           "source_variable": "NEE_RANDUNC"
         },
         "qflag": {
@@ -150,7 +150,7 @@
         },
         "unc": {
           "data_path": null,
-          "bounds": [0.0, 100.0],
+          "bounds": [0.0, 400.0],
           "source_variable": "NEE_RANDUNC"
         },
         "qflag": {

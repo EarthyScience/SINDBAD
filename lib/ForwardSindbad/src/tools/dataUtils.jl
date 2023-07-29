@@ -13,6 +13,7 @@ export booleanizeMask
 export getSpatialSubset
 export getCombinedVariableInfo
 export getSindbadDims
+export isInvalid
 
 function booleanizeMask(yax_mask)
     dfill = 0.0
@@ -141,10 +142,12 @@ function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
     return yax
 end
 
+function isInvalid(num)
+    return isnothing(num) || ismissing(num) || isnan(num) || isinf(num)
+end
+
 function cleanInvalid(yax_point, dfill)
-    yax_point = ismissing(yax_point) ? dfill : yax_point
-    yax_point = isnan(yax_point) ? dfill : yax_point
-    yax_point = isinf(yax_point) ? dfill : yax_point
+    yax_point = isInvalid(yax_point) ? dfill : yax_point
     return yax_point
 end
 
