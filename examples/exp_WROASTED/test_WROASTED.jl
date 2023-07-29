@@ -20,7 +20,7 @@ forcingConfig = "forcing_erai.json"
 
 path_observation = path_input
 optimize_it = true
-optimize_it = false
+# optimize_it = false
 path_output = nothing
 
 pl = "threads"
@@ -42,7 +42,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.output.format" => "nc",
     "model_run.output.save_single_file" => true,
     "model_run.mapping.parallelization" => pl,
-    "optimization.algorithm" => "Optimization_GCMAES",
+    "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.constraints.default_constraint.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -98,7 +98,7 @@ observations = getObservation(info);
 # obs = getKeyedArrayWithNames(observations);
 obs = getKeyedArray(observations);
 
-# @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 new_models = info.tem.models.forward;
 

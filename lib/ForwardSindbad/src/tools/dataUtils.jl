@@ -8,7 +8,6 @@ export getNamedDimsArrayWithNames
 export getKeyedArray
 export mapCleanData
 export cleanData
-export cleanInputData
 export booleanizeMask
 export getSpatialSubset
 export getCombinedVariableInfo
@@ -137,7 +136,6 @@ function mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, ::Val{T}) where {T}
         yax = map((da, dq) -> applyQCBound(da, dq, bounds_qc, dfill), yax, yax_qc)
     end
     vT = Val{T}()
-    # yax = map(yax_point -> cleanInputData(yax_point, dfill, vinfo, vT), yax)
     yax = map(yax_point -> cleanData(yax_point, dfill, vinfo, vT), yax)
     return yax
 end
@@ -150,16 +148,6 @@ function cleanInvalid(yax_point, dfill)
     yax_point = isInvalid(yax_point) ? dfill : yax_point
     return yax_point
 end
-
-# function cleanInputData(yax_point, dfill, vinfo, ::Val{T}) where {T}
-#     yax_point = ismissing(yax_point) ? dfill : yax_point
-#     yax_point = isnan(yax_point) ? dfill : yax_point
-#     yax_point = applyUnitConversion(yax_point, vinfo.source_to_sindbad_unit,
-#         vinfo.additive_unit_conversion)
-#     bounds = vinfo.bounds
-#     yax_point = clamp(yax_point, bounds[1], bounds[2])
-#     return ismissing(yax_point) ? T(dfill) : T(yax_point)
-# end
 
 function cleanData(yax_point, dfill, vinfo, ::Val{T}) where {T}
     yax_point = cleanInvalid(yax_point, dfill)
@@ -181,8 +169,8 @@ function getAbsDataPath(info, data_path)
 end
 
 function getDataDims(c, mappinginfo)
-    inax = [] # String[]
-    axnames = DimensionalData.name(dims(c)) #YAXArrays.Axes.axname.(caxes(c))
+    inax = []
+    axnames = DimensionalData.name(dims(c))
     inollt = findall(∉(mappinginfo), axnames)
     !isempty(inollt) && append!(inax, axnames[inollt])
     return InDims(inax...; artype=KeyedArray, filter=AllNaN())
@@ -263,7 +251,6 @@ function filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables
         fout = (;)
         for k ∈ keys(varsinfo)
             v = getfield(varsinfo, k)
-            # fout = setTupleField(fout, (k, v, getfield(out, k)))
             fout = setTupleField(fout, (k, NamedTuple{v}(getfield(out, k))))
         end
     end
