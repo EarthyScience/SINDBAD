@@ -150,10 +150,10 @@ for domain ∈ sites
             tspan = first(non_nan_index):last(non_nan_index)
         end
         xdata = [info.tem.helpers.dates.vector[tspan]...]
-        obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
+        obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
-        obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+        obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
         plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
         plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")

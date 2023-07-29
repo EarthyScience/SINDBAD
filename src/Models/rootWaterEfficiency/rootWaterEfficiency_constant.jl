@@ -34,8 +34,7 @@ function precompute(p_struct::rootWaterEfficiency_constant, forcing, land, helpe
         z_zero ∈ land.wCycleBase
         max_root_depth ∈ land.states
     end
-    if max_root_depth >= 0
-        z_zero
+    if max_root_depth >= z_zero
         @rep_elem constant_root_water_efficiency => (root_water_efficiency, 1, :soilW)
     end
     for sl ∈ eachindex(land.pools.soilW)
