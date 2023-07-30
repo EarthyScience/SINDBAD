@@ -137,6 +137,10 @@ function parseSaveCode(info)
             # modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
             # write(outf, modcode * "\n")
             modstring = "# --------------------------------------\n"
+            if mi == lastindex(models)
+                modstring = "# --------------------------------------"
+            end
+
             write(outf, modstring)
         end
     end
