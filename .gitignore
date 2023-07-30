@@ -27,6 +27,7 @@
 ~*
 *_tmp
 tmp_*
+tmp*
 output_*
 *Manifest.toml
 */Manifest.toml

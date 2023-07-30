@@ -29,7 +29,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :autoRespirationAirT__auto_respiration_f_airT => orD(
         :standard_name => "auto_respiration_f_airT",
         :long_name => "air_temperature_effect_auto_respiration",
-        :units => "-",
+        :units => "scalar",
         :land_field => "autoRespirationAirT",
         :description => "effect of air temperature on autotrophic respiration. 0: no decomposition, >1 increase in decomposition rate"
     ),
@@ -50,35 +50,35 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cAllocationLAI__c_allocation_f_LAI => orD(
         :standard_name => "c_allocation_f_LAI",
         :long_name => "LAI_effect_carbon_allocation",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cAllocationLAI",
         :description => "effect of LAI on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationNutrients__c_allocation_f_W_N => orD(
         :standard_name => "c_allocation_f_W_N",
         :long_name => "W_N_effect_carbon_allocation",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cAllocationNutrients",
         :description => "effect of water and nutrient on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationRadiation__c_allocation_f_cloud => orD(
         :standard_name => "c_allocation_f_cloud",
-        :long_name => "c allocation f cloud",
-        :units => "-",
+        :long_name => "cloud_effect_carbon_allocation",
+        :units => "fraction",
         :land_field => "cAllocationRadiation",
         :description => "effect of cloud on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationSoilT__c_allocation_f_soilT => orD(
         :standard_name => "c_allocation_f_soilT",
         :long_name => "soil_temperature_effect_carbon_allocation",
-        :units => "-",
+        :units => "scalar",
         :land_field => "cAllocationSoilT",
         :description => "effect of soil temperature on carbon allocation. 1: no stress, 0: complete stress"
     ),
     :cAllocationSoilW__c_allocation_f_soilW => orD(
         :standard_name => "c_allocation_f_soilW",
         :long_name => "soil_moisture_effect_carbon_allocation",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cAllocationSoilW",
         :description => "effect of soil moisture on carbon allocation. 1: no stress, 0: complete stress"
     ),
@@ -288,14 +288,14 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__eco_stressor => orD(
         :standard_name => "eco_stressor",
         :long_name => "carbon_flow_ecosystem_stressor",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "ecosystem stress on carbon flow"
     ),
     :cFlow__eco_stressor_prev => orD(
         :standard_name => "eco_stressor_prev",
         :long_name => "carbon_flow_ecosystem_stressor_previous_time_step",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "ecosystem stress on carbon flow in the previous time step"
     ),
@@ -309,7 +309,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__k_shedding_leaf_frac => orD(
         :standard_name => "k_shedding_leaf_frac",
         :long_name => "carbon_shedding_fraction_leaf",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from leaf that flows to litter pool"
     ),
@@ -323,7 +323,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__k_shedding_root_frac => orD(
         :standard_name => "k_shedding_root_frac",
         :long_name => "carbon_shedding_fraction_root",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from root that flows to litter pool"
     ),
@@ -337,7 +337,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__leaf_to_reserve_frac => orD(
         :standard_name => "leaf_to_reserve_frac",
         :long_name => "carbon_flow_fraction_leaf_to_reserve",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from leaf that flows to leaf"
     ),
@@ -351,7 +351,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__reserve_to_leaf_frac => orD(
         :standard_name => "reserve_to_leaf_frac",
         :long_name => "carbon_flow_fraction_reserve_to_leaf",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from reserve that flows to leaf"
     ),
@@ -365,7 +365,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__reserve_to_root_frac => orD(
         :standard_name => "reserve_to_root_frac",
         :long_name => "carbon_flow_fraction_reserve_to_root",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from reserve that flows to root"
     ),
@@ -379,7 +379,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cFlow__root_to_reserve_frac => orD(
         :standard_name => "root_to_reserve_frac",
         :long_name => "carbon_flow_fraction_root_to_reserve",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cFlow",
         :description => "fraction of carbon loss from root that flows to reserve"
     ),
@@ -393,70 +393,70 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :cTauLAI__c_eco_k_f_LAI => orD(
         :standard_name => "c_eco_k_f_LAI",
         :long_name => "LAI_effect_carbon_decomposition_rate",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauLAI",
         :description => "effect of LAI on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
     :cTauSoilProperties__c_eco_k_f_soil_props => orD(
         :standard_name => "c_eco_k_f_soil_props",
         :long_name => "soil_property_effect_carbon_decomposition_rate",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauSoilProperties",
         :description => "effect of soil_props on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
     :cTauSoilT__c_eco_k_f_soilT => orD(
         :standard_name => "c_eco_k_f_soilT",
         :long_name => "soil_temperature_effect_carbon_decomposition_rate",
-        :units => "-",
+        :units => "scalar",
         :land_field => "cTauSoilT",
         :description => "effect of soil temperature on heterotrophic respiration respiration. 0: no decomposition, >1 increase in decomposition"
     ),
     :cTauSoilW__c_eco_k_f_soilW => orD(
         :standard_name => "c_eco_k_f_soilW",
         :long_name => "soil_moisture_effect_carbon_decomposition_rate",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauSoilW",
         :description => "effect of soil moisture on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
     :cTauVegProperties__LIGEFF => orD(
         :standard_name => "LIGEFF",
         :long_name => "LIGEFF",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => ""
     ),
     :cTauVegProperties__LIGNIN => orD(
         :standard_name => "LIGNIN",
         :long_name => "LIGNIN",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => ""
     ),
     :cTauVegProperties__LITC2N => orD(
         :standard_name => "LITC2N",
         :long_name => "LITC2N",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => ""
     ),
     :cTauVegProperties__MTF => orD(
         :standard_name => "MTF",
         :long_name => "MTF",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => ""
     ),
     :cTauVegProperties__SCLIGNIN => orD(
         :standard_name => "SCLIGNIN",
         :long_name => "SCLIGNIN",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => ""
     ),
     :cTauVegProperties__c_eco_k_f_veg_props => orD(
         :standard_name => "c_eco_k_f_veg_props",
         :long_name => "vegetation_property_effect_carbon_decomposition_rate",
-        :units => "-",
+        :units => "fraction",
         :land_field => "cTauVegProperties",
         :description => "effect of veg_props on carbon decomposition rate. 1: no stress, 0: complete stress"
     ),
@@ -666,14 +666,14 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :gppAirT__gpp_f_airT => orD(
         :standard_name => "gpp_f_airT",
         :long_name => "air_temperature_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppAirT",
         :description => "effect of air temperature on gpp. 1: no stress, 0: complete stress"
     ),
     :gppDemand__gpp_climate_stressors => orD(
         :standard_name => "gpp_climate_stressors",
         :long_name => "climate_effect_per_factor_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDemand",
         :description => "a collection of all gpp climate stressors including light, temperature, radiation, and vpd"
     ),
@@ -687,35 +687,35 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :gppDemand__gpp_f_climate => orD(
         :standard_name => "gpp_f_climate",
         :long_name => "net_climate_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDemand",
         :description => "effect of climate on gpp. 1: no stress, 0: complete stress"
     ),
     :gppDiffRadiation__CI_max => orD(
         :standard_name => "CI_max",
         :long_name => "maximum_cloudiness_index",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDiffRadiation",
         :description => "maximum of cloudiness index until the time step from the beginning of simulation (including spinup)"
     ),
     :gppDiffRadiation__CI_min => orD(
         :standard_name => "CI_min",
         :long_name => "minimum_cloudiness_index",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDiffRadiation",
         :description => "minimum of cloudiness index until the time step from the beginning of simulation (including spinup)"
     ),
     :gppDiffRadiation__gpp_f_cloud => orD(
         :standard_name => "gpp_f_cloud",
         :long_name => "cloudiness_index_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDiffRadiation",
         :description => "effect of cloud on gpp. 1: no stress, 0: complete stress"
     ),
     :gppDirRadiation__gpp_f_light => orD(
         :standard_name => "gpp_f_light",
         :long_name => "light_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppDirRadiation",
         :description => "effect of light on gpp. 1: no stress, 0: complete stress"
     ),
@@ -729,7 +729,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :gppSoilW__gpp_f_soilW => orD(
         :standard_name => "gpp_f_soilW",
         :long_name => "soil_moisture_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppSoilW",
         :description => "effect of soil moisture on gpp. 1: no stress, 0: complete stress"
     ),
@@ -743,7 +743,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :gppVPD__gpp_f_vpd => orD(
         :standard_name => "gpp_f_vpd",
         :long_name => "vapor_pressure_deficit_effect_gpp",
-        :units => "-",
+        :units => "fraction",
         :land_field => "gppVPD",
         :description => "effect of vpd on gpp. 1: no stress, 0: complete stress"
     ),
@@ -763,20 +763,20 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :pools__cLit => orD(
         :standard_name => "cLit",
-        :long_name => "litter_carbon_storage",
+        :long_name => "litter_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cLit pool(s)"
     ),
     :pools__cLitFast => orD(
         :standard_name => "cLitFast",
-        :long_name => "litter_carbon_storage_fast_turnover",
+        :long_name => "litter_carbon_storage_content_fast_turnover",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cLitFast pool(s)"
     ),
     :pools__cLitSlow => orD(
-        :standard_name => "litter_carbon_storage_slow_turnover",
+        :standard_name => "litter_carbon_storage_content_slow_turnover",
         :long_name => "cLitSlow",
         :units => "gC/m2",
         :land_field => "pools",
@@ -784,56 +784,56 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :pools__cSoil => orD(
         :standard_name => "cSoil",
-        :long_name => "soil_carbon_storage",
+        :long_name => "soil_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cSoil pool(s)"
     ),
     :pools__cSoilOld => orD(
         :standard_name => "cSoilOld",
-        :long_name => "old_soil_carbon_storage_slow_turnover",
+        :long_name => "old_soil_carbon_storage_content_slow_turnover",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cSoilOld pool(s)"
     ),
     :pools__cSoilSlow => orD(
         :standard_name => "cSoilSlow",
-        :long_name => "soil_carbon_storage_slow_turnover",
+        :long_name => "soil_carbon_storage_content_slow_turnover",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cSoilSlow pool(s)"
     ),
     :pools__cVeg => orD(
         :standard_name => "cVeg",
-        :long_name => "vegetation_carbon_storage",
+        :long_name => "vegetation_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cVeg pool(s)"
     ),
     :pools__cVegLeaf => orD(
         :standard_name => "cVegLeaf",
-        :long_name => "leaf_carbon_storage",
+        :long_name => "leaf_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cVegLeaf pool(s)"
     ),
     :pools__cVegReserve => orD(
         :standard_name => "cVegReserve",
-        :long_name => "reserve_carbon_storage",
+        :long_name => "reserve_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cVegReserve pool(s) that does not respire"
     ),
     :pools__cVegRoot => orD(
         :standard_name => "cVegRoot",
-        :long_name => "root_carbon_storage",
+        :long_name => "root_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cVegRoot pool(s)"
     ),
     :pools__cVegWood => orD(
         :standard_name => "cVegWood",
-        :long_name => "wood_carbon_storage",
+        :long_name => "wood_carbon_storage_content",
         :units => "gC/m2",
         :land_field => "pools",
         :description => "carbon content of cVegWood pool(s)"
@@ -1239,8 +1239,8 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :states__fAPAR => orD(
         :standard_name => "fAPAR",
-        :long_name => "fraction_absorbed_radiation",
-        :units => "-",
+        :long_name => "fraction_absorbed_photosyntheic_radiation",
+        :units => "fraction",
         :land_field => "states",
         :description => "fraction of absorbed photosynthetically active radiation"
     ),

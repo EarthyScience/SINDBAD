@@ -6,6 +6,151 @@ export prepNumericHelpers
 export replace_comman_separator_in_params
 
 """
+parseSaveCode(info)
+parse and save the code and structs of selected model structure for the given experiment
+"""
+function parseSaveCode(info)
+    models = info.tem.models.forward
+    outfile_define = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_definitions.jl")
+    outfile_code = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_structs.jl")
+    fallback_code_define = nothing
+    fallback_code_precompute = nothing
+    fallback_code_compute = nothing
+    
+    # write define
+    open(outfile_define, "w") do outf
+        modstring = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        write(outf, modstring)
+        modstring = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
+        write(outf, modstring)
+        for (mi, _mod) in enumerate(models)
+            apprname = String(nameof(typeof(_mod)))
+            modstring = "\n# $apprname\n"
+            write(outf, modstring)
+            modstring = "# call order: $mi\n\n"
+            write(outf, modstring)
+
+            modEnding = "\n\n"
+            if mi == lastindex(models)
+                modEnding = "\n"
+            end
+            modcode = @code_string Models.define(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_define)
+                    fallback_code_define = modcode
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+            modstring = "# --------------------------------------\n"
+            write(outf, modstring)
+
+        end
+        modstring = "\n# fallback define function for LandEcosystem\n"
+        write(outf, modstring)
+        write(outf, fallback_code_define)
+    end
+    
+    #write precompute and compute
+    open(outfile_code, "w") do outf
+        modstring = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
+        modstring = "# code for models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        write(outf, modstring)
+        modstring = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
+        write(outf, modstring)
+        for (mi, _mod) in enumerate(models)
+            apprname = String(nameof(typeof(_mod)))
+            modstring = "\n# $apprname\n"
+            write(outf, modstring)
+            modstring = "# call order: $mi\n\n"
+            write(outf, modstring)
+
+            modEnding = "\n\n"
+
+            modcode = @code_string Models.precompute(_mod, nothing, nothing, nothing)
+
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_precompute)
+                    fallback_code_precompute = modcode * "\n\n"
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+
+
+            modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_compute)
+                    fallback_code_compute = modcode
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+            modstring = "# --------------------------------------\n"
+            write(outf, modstring)
+
+        end
+        modstring = "\n# fallback precompute and compute functions for LandEcosystem\n"
+        write(outf, modstring)
+        write(outf, fallback_code_precompute)
+        write(outf, fallback_code_compute)
+    end
+
+    # write structs
+    open(outfile_struct, "w") do outf
+        modstring = "# code for parameter structs of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        write(outf, modstring)
+        modstring = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
+        write(outf, modstring)
+        mod_root = join(info.sindbad_root,  "src/Models/")
+
+        write(outf, "abstract type LandEcosystem end\n")
+
+        for (mi, _mod) in enumerate(models)
+            modname = string(nameof(supertype(typeof(_mod))))
+            apprname = string(nameof(typeof(_mod)))
+            mod_file = joinpath(info.sindbad_root,  "src/Models", modname, apprname * ".jl")
+            modstring = "\n# $apprname\n"
+            write(outf, modstring)
+            modstring = "# call order: $mi\n\n"
+            write(outf, modstring)
+
+            write(outf, "abstract type $modname <: LandEcosystem end\n")
+
+            modstring = string(@code_expr typeof(_mod)())
+            for xx = 1:100 # maximum line number with parameter definition. Chanage here if with crazy model with large number of parameters still show file path in generated struct.
+                if occursin(mod_file, modstring)
+                    modstring = replace(modstring, "#= $(mod_file):$(xx) =#\n" => "")
+                    modstring = replace(modstring, "#= $(mod_file):$(xx) =#" => "")
+                end
+            end
+            modstring = replace(modstring, " @bounds " => "@bounds")
+            modstring = replace(modstring, "@describe(" => "@describe")
+            modstring = replace(modstring, "@units(" => "@units")
+            modstring = replace(modstring, "@with_kw(" => "@with_kw ")
+            modstring = replace(modstring, "                    end)))" => "end")
+            modstring = replace(modstring, "                end)))" => "end")
+            modstring = replace(modstring, "    end" => "end")
+            modstring = replace(modstring, "                                        " => "    ")
+            modstring = replace(modstring, " = ((" => " = ")
+            modstring = replace(modstring, ") |" => " |")
+            # modstring = "\n # todo get model structs here \n"
+            write(outf, modstring * "\n\n")
+            # modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            # write(outf, modcode * "\n")
+            modstring = "# --------------------------------------\n"
+            if mi == lastindex(models)
+                modstring = "# --------------------------------------"
+            end
+
+            write(outf, modstring)
+        end
+    end
+
+    return nothing
+end
+"""
 getParameters(selectedModels)
 retrieve all model parameters
 """
@@ -1161,6 +1306,9 @@ function setupExperiment(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
+    @info "SetupExperiment: saving selected models code..."
+    _ = parseSaveCode(info)
+
     # add information related to model run
     @info "SetupExperiment: setting Mapping info..."
     run_info = getLoopingInfo(info)
