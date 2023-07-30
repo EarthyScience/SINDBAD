@@ -13,14 +13,14 @@ eYear = "2017"
 # forcingConfig = "forcing_DE-2.json"
 # path_input = "../data/BE-Vie.1979.2017.daily.nc"
 # forcingConfig = "forcing_erai.json"
-domain = "DE-Hai"
-domain = "MY-PSO"
+domain = "DE-RuS"
+# domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
 path_observation = path_input
 optimize_it = true
-optimize_it = false
+# optimize_it = false
 path_output = nothing
 
 pl = "threads"
@@ -42,7 +42,7 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
     "model_run.output.format" => "nc",
     "model_run.output.save_single_file" => true,
     "model_run.mapping.parallelization" => pl,
-    "optimization.algorithm" => "Optimization_GCMAES",
+    "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.constraints.default_constraint.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -166,8 +166,8 @@ foreach(costOpt) do var_row
     opt_var = opt_var[tspan, 1, 1, 1]
 
     xdata = [info.tem.helpers.dates.vector[tspan]...]
-    obs_var_n, obs_σ_n, def_var_n = filter_common_nan(obs_var, obs_σ, def_var)
-    obs_var_n, obs_σ_n, opt_var_n = filter_common_nan(obs_var, obs_σ, opt_var)
+    obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
+    obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)

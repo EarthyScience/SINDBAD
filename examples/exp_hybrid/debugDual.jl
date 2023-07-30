@@ -61,17 +61,18 @@ f_one = prepRunEcosystem(op, forc, info.tem);
     land_init_space,
     f_one)
 
-# res_vec_space = [Vector{typeof(land_init_space[1])}(undef, tem_with_vals.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
+res_vec_space = [Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
 
-
-# @time big_land = runEcosystem(info.tem.models.forward,
+# @time runEcosystem(info.tem.models.forward,
+#     res_vec_space,
 #     forc,
 #     tem_with_vals,
 #     loc_space_inds,
 #     loc_forcings,
 #     land_init_space,
-#     res_vec_space,
 #     f_one);
+
+#     big_land = landWrapper(res_vec_space);
 
 tblParams = Sindbad.getParameters(info.tem.models.forward,
     info.optim.default_parameter,
