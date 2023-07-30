@@ -1,5 +1,6 @@
 module Sindbad
 using Reexport: @reexport
+using CodeTracking
 using Crayons
 using DataStructures: DataStructures
 using InteractiveUtils

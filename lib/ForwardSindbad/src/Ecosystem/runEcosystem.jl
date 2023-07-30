@@ -84,7 +84,7 @@ function coreEcosystem(approaches,
             typeof(land_init),
             f_one)
     end
-    time_steps = tem_helpers.dates.size
+    time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     timeLoopForward(
         res_vec,
         approaches,
@@ -119,7 +119,7 @@ function coreEcosystem(approaches,
             typeof(land_init),
             f_one)
     end
-    time_steps = tem_helpers.dates.size
+    time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     out_stacked = timeLoopForward(approaches,
         loc_forcing,
         land_spin_now,
