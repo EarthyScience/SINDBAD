@@ -5,6 +5,10 @@ using ConstructionBase
 export prepNumericHelpers
 export replace_comman_separator_in_params
 
+"""
+parseSaveCode(info)
+parse and save the code and structs of selected model structure for the given experiment
+"""
 function parseSaveCode(info)
     models = info.tem.models.forward
     outfile_define = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_definitions.jl")
@@ -107,7 +111,6 @@ function parseSaveCode(info)
             modname = string(nameof(supertype(typeof(_mod))))
             apprname = string(nameof(typeof(_mod)))
             mod_file = joinpath(info.sindbad_root,  "src/Models", modname, apprname * ".jl")
-            @show mod_file
             modstring = "\n# $apprname\n"
             write(outf, modstring)
             modstring = "# call order: $mi\n\n"
