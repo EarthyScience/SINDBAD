@@ -5,6 +5,84 @@ using ConstructionBase
 export prepNumericHelpers
 export replace_comman_separator_in_params
 
+function parseSaveCode(info)
+    models = info.tem.models.forward
+    outfile_code = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_structs.jl")
+    fallback_code_define = nothing
+    fallback_code_precompute = nothing
+    fallback_code_compute = nothing
+    open(outfile_code, "w") do outf
+        modstring = "# code for models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        write(outf, modstring)
+        modstring = "# based on @code_string CodeTracking.jl. In case of conflicts, follow the original code in model approaches in inside src/Models/*/\n"
+        write(outf, modstring)
+        for (mi, _mod) in enumerate(models)
+            modname = String(nameof(typeof(_mod)))
+            modstring = "\n# $modname\n"
+            write(outf, modstring)
+            modstring = "# call order: $mi\n"
+            write(outf, modstring)
+
+            modEnding = "\n\n"
+            if mi == lastindex(models)
+                modEnding = "\n"
+            end
+            modcode = @code_string Models.define(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_define)
+                    fallback_code_define = modcode * "\n\n"
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+
+            modcode = @code_string Models.precompute(_mod, nothing, nothing, nothing)
+
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_precompute)
+                    fallback_code_precompute = modcode * "\n\n"
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+
+
+            modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", modcode)
+                if isnothing(fallback_code_compute)
+                    fallback_code_compute = modcode
+                end
+            else
+                write(outf, modcode * modEnding)
+            end
+            modstring = "# --------------------------------------\n"
+            write(outf, modstring)
+
+        end
+        modstring = "\n# Fallback functions for LandEcosystem\n"
+        write(outf, modstring)
+        write(outf, fallback_code_define)
+        write(outf, fallback_code_precompute)
+        write(outf, fallback_code_compute)
+
+
+    end
+
+    open(outfile_struct, "w") do outf
+        for _mod in models
+            modname = String(nameof(typeof(_mod)))
+            modstring = "\n # $modname\n"
+            write(outf, modstring)
+            modstring = "\n # todo get model structs here \n"
+            write(outf, modstring)
+            # modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            # write(outf, modcode * "\n")
+        end
+    end
+
+    return nothing
+end
 """
 getParameters(selectedModels)
 retrieve all model parameters
@@ -1161,6 +1239,9 @@ function setupExperiment(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
+    @info "SetupExperiment: saving selected models code..."
+    _ = parseSaveCode(info)
+
     # add information related to model run
     @info "SetupExperiment: setting Mapping info..."
     run_info = getLoopingInfo(info)
