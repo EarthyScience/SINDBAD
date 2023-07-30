@@ -12,6 +12,7 @@ optimize_it = false;
 # info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
+    "experiment.configuration_files.forcing" => "forcing.json",
     "model_run.flags.run_optimization" => optimize_it,
     "model_run.flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
@@ -23,8 +24,8 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-# obs = ForwardSindbad.getObservation(info);
 info, forcing = getForcing(info);
+obs = ForwardSindbad.getObservation(info);
 output = setupOutput(info);
 
 forc = getKeyedArrayWithNames(forcing);

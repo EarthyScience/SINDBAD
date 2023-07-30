@@ -181,7 +181,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
 
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
-    sub_output = ["data", "settings", "root", "figure"]
+    sub_output = ["code", "data", "figure", "root", "settings"]
     if infoTuple.model_run.flags.run_optimization || infoTuple.model_run.flags.run_forward_and_cost
         push!(sub_output, "optim")
     end
@@ -234,6 +234,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
         infoTuple = dictToNamedTuple(info)
     end
     infoTuple = (; infoTuple..., experiment_root=local_root)
+    sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
+    infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
     infoTuple = (; infoTuple..., settings_root=exp_base_path)
     infoTuple = setupOutputDirectory(infoTuple)
     @info "Setup output directories in: $(infoTuple.output.root)"

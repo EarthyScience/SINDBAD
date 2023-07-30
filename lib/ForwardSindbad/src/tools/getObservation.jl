@@ -6,7 +6,15 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
     v_info_sub = nothing
     bounds_sub = nothing
     @info "   $(data_sub_field)"
+    get_it_from_path = false
     if hasproperty(v_info, data_sub_field) && use_data_sub
+        get_it_from_path = true
+        v_info_var = getfield(v_info, data_sub_field)
+        if isnothing(v_info_var)
+            get_it_from_path = false
+        end
+    end
+    if get_it_from_path
         v_info_var = getfield(v_info, data_sub_field)
         v_info_sub = getCombinedVariableInfo(default_info, v_info_var)
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
@@ -19,7 +27,7 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
         elseif data_sub_field == :unc
             @info "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
         else
-            @info "     no \"$(data_sub_field)\" field in optimization settings"
+            @info "     no \"$(data_sub_field)\" field or sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
             @info "       assuming values of ones"
@@ -74,7 +82,7 @@ function getObservation(info::NamedTuple)
     end
     obscubes = []
     num_type = Val{info.tem.helpers.numbers.num_type}()
-    set_numtype = info.tem.helpers.numbers.sNT
+    num_type_bool = Val{Bool}()
 
     map(varnames) do k
         @info " constraint: $k"
@@ -97,13 +105,13 @@ function getObservation(info::NamedTuple)
             yax_mask_v .= yax_mask .* yax_mask_v
         end
         @info "   harmonizing qflag"
-        cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info; clean_data=false)
+        cyax_qc = subsetAndProcessYax(yax_qc, yax_mask_v, tar_dims, vinfo_qc, info, num_type; clean_data=false)
         @info "   harmonizing data"
-        cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
+        cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing unc"
-        cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
+        cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing mask"
-        yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info; clean_data=false, num_type=Bool)
+        yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info, num_type_bool; clean_data=false)
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
