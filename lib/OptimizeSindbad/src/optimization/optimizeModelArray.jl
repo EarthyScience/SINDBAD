@@ -3,7 +3,7 @@ export getSimulationDataArray, getLossArray, getLossGradient
 export getDataArray, combineLossArray
 export getLossVectorArray
 export get_ŷ_view
-export filter_common_nan
+export filterCommonNaN
 
 function get_ŷ_view(ŷ::AbstractArray{T,2}) where {T}
     return @view ŷ[:, 1]
@@ -22,24 +22,24 @@ function spatial_aggregation(y, yσ, ŷ, _, ::Val{:cat})
 end
 
 
-function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:timespace})
+function aggregateData(y, yσ, ŷ, cost_option, ::Val{:timespace})
     y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
     y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     return y, yσ, ŷ
 end
 
 
-function aggregate_data(y, yσ, ŷ, cost_option, ::Val{:spacetime})
+function aggregateData(y, yσ, ŷ, cost_option, ::Val{:spacetime})
     y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
     return y, yσ, ŷ
 end
 
 """
-filter_common_nan(y, yσ, ŷ)
+filterCommonNaN(y, yσ, ŷ)
 return model and obs data filtering for the common nan
 """
-function filter_common_nan(y, yσ, ŷ)
+function filterCommonNaN(y, yσ, ŷ)
     idxs = (.!isnan.(y .* yσ .* ŷ))
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
@@ -75,7 +75,7 @@ function getDataArray(model_output,
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
     # ymask = observations[obs_ind + 2]
-    y, yσ, ŷ = aggregate_data(y, yσ, ŷ, cost_option, cost_option.aggr_order)
+    y, yσ, ŷ = aggregateData(y, yσ, ŷ, cost_option, cost_option.aggr_order)
     # if size(ŷ) != size(y)
     #     error(
     #         "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
@@ -129,10 +129,10 @@ function getLossVectorArray(observations, model_output, cost_options)
     lossVec = map(cost_options) do cost_option
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
-        (y, yσ, ŷ) = filter_common_nan(y, yσ, ŷ)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
         metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
-            metr = eltype(y)(1e19)
+            metr = oftype(metr, 1e19)
         end
         # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
         metr
@@ -153,7 +153,8 @@ function filterConstraintMinimumDatapoints(obs, cost_options)
         min_points = cost_option.min_data_points
         var_name = cost_option.variable
         y = obs[obs_ind_start]
-        idxs = (.!isnan.(y))
+        yσ = obs[obs_ind_start+1]
+        idxs = (.!isnan.(y .* yσ))
         total_points = sum(idxs)
         if total_points < min_points
             cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
