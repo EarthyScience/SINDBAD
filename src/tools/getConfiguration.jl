@@ -234,6 +234,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
         infoTuple = dictToNamedTuple(info)
     end
     infoTuple = (; infoTuple..., experiment_root=local_root)
+    sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
+    infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
     infoTuple = (; infoTuple..., settings_root=exp_base_path)
     infoTuple = setupOutputDirectory(infoTuple)
     @info "Setup output directories in: $(infoTuple.output.root)"
