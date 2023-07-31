@@ -3,7 +3,7 @@ export getInitStates
 export getParameters, updateModelParameters, updateModelParametersType
 using ConstructionBase
 export prepNumericHelpers
-export replace_comman_separator_in_params
+export replaceCommaSeparatorParams
 
 """
 parseSaveCode(info)
@@ -155,6 +155,7 @@ function parseSaveCode(info)
 
     return nothing
 end
+
 """
 getParameters(selectedModels)
 retrieve all model parameters
@@ -182,12 +183,12 @@ function getParameters(selectedModels)
         name_full)
 end
 
-function split_and_rename_param(_p::Symbol, _splitter)
+function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)
-    return split_and_rename_param(p_string, _splitter)
+    return splitRenameParam(p_string, _splitter)
 end
 
-function split_and_rename_param(p_string::String, _splitter)
+function splitRenameParam(p_string::String, _splitter)
     p_name = strip(p_string)
     if occursin(_splitter, p_string)
         p_split = split(p_string, _splitter)
@@ -198,16 +199,17 @@ function split_and_rename_param(p_string::String, _splitter)
     return p_name
 end
 
-function replace_comman_separator_in_params(p_names_list)
+function replaceCommaSeparatorParams(p_names_list)
     o_p_names_list = []
     foreach(p_names_list) do p
-        p_name = split_and_rename_param(p, ",")
+        p_name = splitRenameParam(p, ",")
         push!(o_p_names_list, p_name)
     end
     return o_p_names_list
 end
+
 """
-getParameters(selectedModels)
+getParameters(selectedModels, default_parameter)
 retrieve all model parameters
 """
 function getParameters(selectedModels, default_parameter)
@@ -242,11 +244,11 @@ function getParameters(selectedModels, default_parameter)
 end
 
 """
-getParameters(selectedModels, listModelsParams::Vector{String})
+getParameters(selectedModels, default_parameter, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
-    opt_parameter = replace_comman_separator_in_params(opt_parameter)
+    opt_parameter = replaceCommaSeparatorParams(opt_parameter)
     paramstbl = getParameters(selectedModels, default_parameter)
     return filter(row -> row.name_full in opt_parameter, paramstbl)
 end
@@ -256,7 +258,7 @@ getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
 function getParameters(selectedModels, default_parameter, opt_parameter::NamedTuple)
-    param_list = replace_comman_separator_in_params(keys(opt_parameter))
+    param_list = replaceCommaSeparatorParams(keys(opt_parameter))
     paramstbl = getParameters(selectedModels, default_parameter, param_list)
     pTable = filter(row -> row.name_full in param_list, paramstbl)
     new_dist = pTable.dist
