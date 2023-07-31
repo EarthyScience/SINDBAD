@@ -17,134 +17,139 @@ function parseSaveCode(info)
     fallback_code_define = nothing
     fallback_code_precompute = nothing
     fallback_code_compute = nothing
-    
+
     # write define
-    open(outfile_define, "w") do outf
-        modstring = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. These functions are called just ONCE for variable/array definitions\n"
-        write(outf, modstring)
-        modstring = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
-        write(outf, modstring)
+    open(outfile_define, "w") do o_file
+        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
+        write(o_file, mod_string)
         for (mi, _mod) in enumerate(models)
-            apprname = String(nameof(typeof(_mod)))
-            modstring = "\n# $apprname\n"
-            write(outf, modstring)
-            modstring = "# call order: $mi\n\n"
-            write(outf, modstring)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
 
-            modEnding = "\n\n"
+            mod_ending = "\n\n"
             if mi == lastindex(models)
-                modEnding = "\n"
+                mod_ending = "\n"
             end
-            modcode = @code_string Models.define(_mod, nothing, nothing, nothing)
-            if occursin("LandEcosystem", modcode)
+            mod_code = @code_string Models.define(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_define)
-                    fallback_code_define = modcode
+                    fallback_code_define = mod_code
                 end
             else
-                write(outf, modcode * modEnding)
+                write(o_file, mod_code * mod_ending)
             end
-            modstring = "# --------------------------------------\n"
-            write(outf, modstring)
+            mod_string = "# --------------------------------------\n"
+            write(o_file, mod_string)
 
         end
-        modstring = "\n# fallback define function for LandEcosystem\n"
-        write(outf, modstring)
-        write(outf, fallback_code_define)
+        mod_string = "\n# fallback define function for LandEcosystem\n"
+        write(o_file, mod_string)
+        write(o_file, fallback_code_define)
     end
-    
+
     #write precompute and compute
-    open(outfile_code, "w") do outf
-        modstring = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
-        modstring = "# code for models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
-        write(outf, modstring)
-        modstring = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
-        write(outf, modstring)
+    open(outfile_code, "w") do o_file
+        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
+        mod_string = "# code for models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
+        write(o_file, mod_string)
         for (mi, _mod) in enumerate(models)
-            apprname = String(nameof(typeof(_mod)))
-            modstring = "\n# $apprname\n"
-            write(outf, modstring)
-            modstring = "# call order: $mi\n\n"
-            write(outf, modstring)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
 
-            modEnding = "\n\n"
+            mod_ending = "\n\n"
 
-            modcode = @code_string Models.precompute(_mod, nothing, nothing, nothing)
+            mod_code = @code_string Models.precompute(_mod, nothing, nothing, nothing)
 
-            if occursin("LandEcosystem", modcode)
+            if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_precompute)
-                    fallback_code_precompute = modcode * "\n\n"
+                    fallback_code_precompute = mod_code * "\n\n"
                 end
             else
-                write(outf, modcode * modEnding)
+                write(o_file, mod_code * mod_ending)
             end
 
 
-            modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
-            if occursin("LandEcosystem", modcode)
+            mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", mod_code)
                 if isnothing(fallback_code_compute)
-                    fallback_code_compute = modcode
+                    fallback_code_compute = mod_code
                 end
             else
-                write(outf, modcode * modEnding)
+                write(o_file, mod_code * mod_ending)
             end
-            modstring = "# --------------------------------------\n"
-            write(outf, modstring)
+            mod_string = "# --------------------------------------\n"
+            write(o_file, mod_string)
 
         end
-        modstring = "\n# fallback precompute and compute functions for LandEcosystem\n"
-        write(outf, modstring)
-        write(outf, fallback_code_precompute)
-        write(outf, fallback_code_compute)
+        mod_string = "\n# fallback precompute and compute functions for LandEcosystem\n"
+        write(o_file, mod_string)
+        write(o_file, fallback_code_precompute)
+        write(o_file, fallback_code_compute)
     end
 
     # write structs
-    open(outfile_struct, "w") do outf
-        modstring = "# code for parameter structs of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
-        write(outf, modstring)
-        modstring = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
-        write(outf, modstring)
-        mod_root = join(info.sindbad_root,  "src/Models/")
-
-        write(outf, "abstract type LandEcosystem end\n")
+    open(outfile_struct, "w") do o_file
+        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
+        write(o_file, mod_string)
+        write(o_file, "abstract type LandEcosystem end\n")
 
         for (mi, _mod) in enumerate(models)
-            modname = string(nameof(supertype(typeof(_mod))))
-            apprname = string(nameof(typeof(_mod)))
-            mod_file = joinpath(info.sindbad_root,  "src/Models", modname, apprname * ".jl")
-            modstring = "\n# $apprname\n"
-            write(outf, modstring)
-            modstring = "# call order: $mi\n\n"
-            write(outf, modstring)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
 
-            write(outf, "abstract type $modname <: LandEcosystem end\n")
+            write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
 
-            modstring = string(@code_expr typeof(_mod)())
+            mod_string = string(@code_expr typeof(_mod)())
             for xx = 1:100 # maximum line number with parameter definition. Chanage here if with crazy model with large number of parameters still show file path in generated struct.
-                if occursin(mod_file, modstring)
-                    modstring = replace(modstring, "#= $(mod_file):$(xx) =#\n" => "")
-                    modstring = replace(modstring, "#= $(mod_file):$(xx) =#" => "")
+                if occursin(mod_file, mod_string)
+                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#\n" => "")
+                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#" => "")
                 end
             end
-            modstring = replace(modstring, " @bounds " => "@bounds")
-            modstring = replace(modstring, "@describe(" => "@describe")
-            modstring = replace(modstring, "@units(" => "@units")
-            modstring = replace(modstring, "@with_kw(" => "@with_kw ")
-            modstring = replace(modstring, "                    end)))" => "end")
-            modstring = replace(modstring, "                end)))" => "end")
-            modstring = replace(modstring, "    end" => "end")
-            modstring = replace(modstring, "                                        " => "    ")
-            modstring = replace(modstring, " = ((" => " = ")
-            modstring = replace(modstring, ") |" => " |")
-            # modstring = "\n # todo get model structs here \n"
-            write(outf, modstring * "\n\n")
-            # modcode = @code_string Models.compute(_mod, nothing, nothing, nothing)
-            # write(outf, modcode * "\n")
-            modstring = "# --------------------------------------\n"
+            mod_string = replace(mod_string, " @bounds " => "@bounds")
+            mod_string = replace(mod_string, "@describe(" => "@describe")
+            mod_string = replace(mod_string, "@units(" => "@units")
+            mod_string = replace(mod_string, "@with_kw(" => "@with_kw ")
+            mod_string = replace(mod_string, "                    end)))" => "end")
+            mod_string = replace(mod_string, "                end)))" => "end")
+            mod_string = replace(mod_string, "    end" => "end")
+            mod_string = replace(mod_string, "                                        " => "    ")
+            mod_string = replace(mod_string, " = ((" => " = ")
+            mod_string = replace(mod_string, ") |" => " |")
+            # mod_string = "\n # todo get model structs here \n"
+            write(o_file, mod_string * "\n\n")
+            # mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            # write(o_file, mod_code * "\n")
+            mod_string = "# --------------------------------------\n"
             if mi == lastindex(models)
-                modstring = "# --------------------------------------"
+                mod_string = "# --------------------------------------"
             end
 
-            write(outf, modstring)
+            write(o_file, mod_string)
         end
     end
 
