@@ -92,7 +92,7 @@ function getOutDimsArrays(datavars, info, _, land_init, _, _, ::Val{:yaxarray})
     return outdims, outarray
 end
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:array})
+function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     outarray = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         ar = nothing
@@ -104,8 +104,12 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
             ax_vals[2:end]...)
         ar .= info.tem.helpers.numbers.sNT(NaN)
     end
+    return outarray
+end
+
+function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes; dthres=1)
     dim_loops = first.(forcing_axes)
-    axes_dims = []
+    axes_dims_pairs = []
     if !isnothing(info.tem.forcing.dimensions.permute)
         dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
         if dim_loops !== dim_perms
@@ -113,25 +117,72 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
                 dp_i = dim_perms[ix]
                 dl_ind = findall(x -> x == dp_i, dim_loops)[1]
                 f_a = forcing_axes[dl_ind]
-                ax_dim = Dim{first(f_a)}(last(f_a))
-                push!(axes_dims, ax_dim)
+                ax_dim = Pair(first(f_a), last(f_a))
+                push!(axes_dims_pairs, ax_dim)
             end
         end
     else
-        axes_dims = map(x -> ForwardSindbad.Dim{first(x)}(last(x)), forcing_axes)
+        axes_dims_pairs = map(x -> Pair(first(x), last(x)), forcing_axes)
     end
-    outdims = map(datavars) do vname_full
+    outdims_pairs = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         od = []
-        push!(od, axes_dims[1])
-        if depth_size > 1
-            push!(od, Dim{Symbol(depth_name)}(1:depth_size))
+        push!(od, axes_dims_pairs[1])
+        if depth_size > dthres
+            if depth_size == 1
+                depth_name = "idx"
+            end
+            push!(od, Pair(Symbol(depth_name), (1:depth_size)))
         end
-        foreach(axes_dims[2:end]) do f_d
+        foreach(axes_dims_pairs[2:end]) do f_d
             push!(od, f_d)
         end
         Tuple(od)
     end
+    return outdims_pairs
+end
+
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:array})
+    outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
+    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes)
+    outdims = map(outdims_pairs) do dim_pairs
+        od = []
+        for _dim in dim_pairs
+            push!(od, Dim{first(_dim)}(last(_dim)))
+        end
+        Tuple(od)
+    end
+
+    # dim_loops = first.(forcing_axes)
+    # axes_dims = []
+    # if !isnothing(info.tem.forcing.dimensions.permute)
+    #     dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
+    #     if dim_loops !== dim_perms
+    #         for ix in eachindex(dim_perms)
+    #             dp_i = dim_perms[ix]
+    #             dl_ind = findall(x -> x == dp_i, dim_loops)[1]
+    #             f_a = forcing_axes[dl_ind]
+    #             ax_dim = Dim{first(f_a)}(last(f_a))
+    #             push!(axes_dims, ax_dim)
+    #         end
+    #     end
+    # else
+    #     axes_dims = map(x -> ForwardSindbad.Dim{first(x)}(last(x)), forcing_axes)
+    # end
+    # outdims = map(datavars) do vname_full
+    #     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+    #     od = []
+    #     push!(od, axes_dims[1])
+    #     if depth_size > 1
+    #         push!(od, Dim{Symbol(depth_name)}(1:depth_size))
+    #     end
+    #     foreach(axes_dims[2:end]) do f_d
+    #         push!(od, f_d)
+    #     end
+    #     Tuple(od)
+    # end
+    # @show outdims, outdims_new
+    # @show outdims == outdims_new
     return outdims, outarray
 
 end
@@ -146,6 +197,33 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
     marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, marray
+end
+
+
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:keyedarray})
+    outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
+    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes; dthres=0)
+
+    # outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+    keyedarray = []
+    # keyedarray = outarray
+    outdims = []
+    for (_di, _dim) in enumerate(outdims_pairs)
+        @show _di, length(_dim)
+        d_to_push = _dim
+        push!(keyedarray, KeyedArray(outarray[_di]; _dim...))
+        if length(_dim) > 2    
+            if length(last(_dim[2])) == 1
+                d_to_push = []
+                push!(d_to_push, _dim[1])
+                foreach(_dim[3:end]) do f_d
+                    push!(d_to_push, f_d)
+                end
+            end
+        end
+        push!(outdims, Tuple(d_to_push))
+    end
+    return outdims, keyedarray
 end
 
 function getOutArrayType(num_type, forwardDiff)
