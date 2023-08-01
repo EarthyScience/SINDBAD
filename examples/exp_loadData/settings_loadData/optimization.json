@@ -235,7 +235,7 @@
           "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
-          "temporal_aggr": "dayAnomaly",
+          "temporal_aggr": "day_anomaly",
           "temporal_aggr_obs": true,
           "cost_metric": "nseinv"
         }
