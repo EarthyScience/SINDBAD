@@ -235,7 +235,7 @@
           "name_short": "mergedNDVI_MCD43A"
         },
         "cost_options": {
-          "temporal_aggr": "dayAnomaly",
+          "temporal_aggr": "day_anomaly",
           "temporal_aggr_obs": true,
           "cost_metric": "nnseinv"
         }
@@ -251,7 +251,7 @@
         },
         "cost_options": {
           "cost_metric": "scor2inv",
-          "temporal_aggr": "dayAnomaly",
+          "temporal_aggr": "day_anomaly",
           "temporal_aggr_obs": true
         }
       }

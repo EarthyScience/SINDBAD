@@ -29,7 +29,7 @@ end
 getCostOptions(optInfo)
 info.opti
 """
-function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
+function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
     defNames = Symbol.(keys(optInfo.constraints.default_cost))
     vals = values(optInfo.constraints.default_cost)
     defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
@@ -37,6 +37,8 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
     varlist = Symbol.(optInfo.variables_to_constrain)
     all_options = []
     push!(all_options, varlist)
+    aggIndices = []
+    aggrFuncs = []
     for (pn, prop) ∈ enumerate(defNames)
         defProp = defValues[pn]
         if (defProp isa Number) && !(defProp isa Bool)
@@ -55,6 +57,10 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
             else
                 push!(vValues, defProp)
             end
+            if prop == :temporal_aggr
+                aggInd = createTimeAggregator(dates_helpers.range, Val(valToSymbol(vValues[end])))
+                push!(aggIndices, aggInd)
+            end
         end
         push!(all_options, vValues)
     end
@@ -67,7 +73,8 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers)
     push!(all_options, mod_ind)
     push!(all_options, mod_field)
     push!(all_options, mod_subfield)
-    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield], all_options)...))
+    push!(all_options, aggIndices)
+    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :time_aggr_ind], all_options)...))
 end
 
 """
@@ -145,7 +152,7 @@ function setupOptimization(info::NamedTuple)
     varibInfo = setTupleField(varibInfo, (:store, storeVars))
     varibInfo = setTupleField(varibInfo, (:model, modelVars))
     info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
-    costOpt = getCostOptions(info.optimization, varibInfo, info.tem.helpers.numbers)
+    costOpt = getCostOptions(info.optimization, varibInfo, info.tem.helpers.numbers, info.tem.helpers.dates)
     info = setTupleSubfield(info, :optim, (:cost_options, costOpt))
 
     return info
