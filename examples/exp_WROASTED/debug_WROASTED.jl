@@ -118,6 +118,8 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
+@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
+
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
 # land_spin = land_init_space[1];
 # @time land_spin_now = runSpinup(info.tem.models.forward,
