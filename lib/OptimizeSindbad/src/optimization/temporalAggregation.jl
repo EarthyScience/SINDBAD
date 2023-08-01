@@ -1,73 +1,97 @@
+export temporalAggregation
 
-export temporal_aggregation
 
-function do_the_mean(dat, ::Val{:mean})
+function Base.view(x::AbstractArray, v::Sindbad.TimeAggregator; dim=1)
+    subarray_t = Base.promote_op(getindex, typeof(x), eltype(v.indices))
+    t = Base.promote_op(v.f, subarray_t)
+    Sindbad.TimeAggregatorViewInstance{t,ndims(x),dim,typeof(x),typeof(v)}(x, v, Val{dim}())
+end
+
+function doAnomaly(dat, ::Val{:mean})
+    return dat .- mean(dat)
+end
+
+function doAnomaly(dat, ::Val{:nanmean})
+    return dat .- nanmean(dat)
+end
+
+function doMean(dat, ::Val{:mean})
     return mean(dat)
 end
 
-function do_the_mean(dat, ::Val{:nanmean})
+function doMean(dat, ::Val{:nanmean})
     return nanmean(dat)
 end
 
-function temporal_aggregation(y, yσ, ŷ, cost_option, ::Val{:mean})
-    ŷ = do_the_mean(ŷ, cost_option.temporal_aggr_func)
+# works for everything for which only aggregation is needed
+function temporalAggregation(y, yσ, ŷ, cost_option)
+    ŷ = view(ŷ, cost_option.time_aggr_ind, dim=1)
     if cost_option.temporal_aggr_obs
-        y = do_the_mean(y, cost_option.temporal_aggr_func)
-        yσ = do_the_mean(yσ, cost_option.temporal_aggr_func)
+        y = view(y, cost_option.time_aggr_ind, dim=1)
+        yσ = view(yσ, cost_option.time_aggr_ind, dim=1)
     end
     return y, yσ, ŷ
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:day})
-    return y, yσ, ŷ
-end
-
-function temporal_aggregation(y, yσ, ŷ, cost_option, ::Val{:dayAnomaly})
-    μ_ŷ = do_the_mean(ŷ, cost_option.temporal_aggr_func)
-    ŷ .= ŷ .- μ_ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:mean})
+    ŷ = doMean(ŷ, cost_option.temporal_aggr_func)
     if cost_option.temporal_aggr_obs
-        μ_y = do_the_mean(y, cost_option.temporal_aggr_func)
-        y .= y .- μ_y
+        y = doMean(y, cost_option.temporal_aggr_func)
+        yσ = doMean(yσ, cost_option.temporal_aggr_func)
     end
     return y, yσ, ŷ
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:dayMSC})
+function temporalAggregation(y, yσ, ŷ, _, ::Val{:day})
     return y, yσ, ŷ
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:dayMSCAnomaly})
+
+function temporalAnomaly(y, yσ, ŷ, cost_option)
+    ŷ = doAnomaly(ŷ, cost_option.temporal_aggr_func)
+    if cost_option.temporal_aggr_obs
+        y = doAnomaly(y, cost_option.temporal_aggr_func)
+    end
     return y, yσ, ŷ
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:dayIAV})
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:day_anomaly})
+    y, yσ, ŷ = temporalAnomaly(y, yσ, ŷ, cost_option)
     return y, yσ, ŷ
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:month})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:day_msc})
+    return temporalAggregation(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:monthAnomaly})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:day_msc_anomaly})
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    return temporalAnomaly(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:monthMSC})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:month})
+    return temporalAggregation(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:monthMSCAnomaly})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:month_anomaly})
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    return temporalAnomaly(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:monthIAV})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:month_msc})
+    return temporalAggregation(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:year})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:month_msc_anomaly})
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    return temporalAnomaly(y, yσ, ŷ, cost_option)
 end
 
-function temporal_aggregation(y, yσ, ŷ, _, ::Val{:yearAnomaly})
-    return y, yσ, ŷ
+function temporalAggregation(y, yσ, ŷ, cost_option, ::Val{:year})
+    return temporalAggregation(y, yσ, ŷ, cost_option)
+end
+
+function temporalAggregation(y, yσ, ŷ, _, ::Val{:year_anomaly})
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    return temporalAnomaly(y, yσ, ŷ, cost_option)
 end

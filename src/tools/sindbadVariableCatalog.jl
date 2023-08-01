@@ -1239,7 +1239,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :states__fAPAR => orD(
         :standard_name => "fAPAR",
-        :long_name => "fraction_absorbed_photosyntheic_radiation",
+        :long_name => "fraction_absorbed_photosynthetic_radiation",
         :units => "fraction",
         :land_field => "states",
         :description => "fraction of absorbed photosynthetically active radiation"

@@ -17,21 +17,23 @@ function get_ŷ_view(ŷ::AbstractArray{T,4}) where {T}
     return @view ŷ[:, 1, :, :]
 end
 
-function spatial_aggregation(y, yσ, ŷ, _, ::Val{:cat})
+function spatialAggregation(y, yσ, ŷ, _, ::Val{:cat})
     return y, yσ, ŷ
 end
 
 
 function aggregateData(y, yσ, ŷ, cost_option, ::Val{:timespace})
-    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
-    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
+    # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
+    y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     return y, yσ, ŷ
 end
 
 
 function aggregateData(y, yσ, ŷ, cost_option, ::Val{:spacetime})
-    y, yσ, ŷ = spatial_aggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
-    y, yσ, ŷ = temporal_aggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
+    y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
+    # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
     return y, yσ, ŷ
 end
 
