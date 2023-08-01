@@ -1,7 +1,7 @@
 using Revise
 @time using Sindbad
 @time using ForwardSindbad
-# @time using OptimizeSindbad
+@time using OptimizeSindbad
 noStackTrace()
 domain = "africa";
 optimize_it = true;
@@ -25,7 +25,9 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 info, forcing = getForcing(info);
-obs = ForwardSindbad.getObservation(info);
+observations = getObservation(info);
+obs = getKeyedArray(observations);
+
 output = setupOutput(info);
 
 forc = getKeyedArrayWithNames(forcing);
@@ -44,6 +46,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     loc_outputs,
     land_init_space,
     f_one)
+
 for x ∈ 1:10
     @time runEcosystem!(output.data,
         info.tem.models.forward,

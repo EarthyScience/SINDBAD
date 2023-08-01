@@ -2,7 +2,7 @@
   "time": {
     "model_time_step": "day",
     "start_date": "2006-01-01",
-    "end_date": "2015-12-31",
+    "end_date": "2013-12-31",
     "timesteps_in_day": 1,
     "timesteps_in_year": 365
   },
