@@ -77,10 +77,8 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
             if prop == :temporal_aggr
                 t_a = string(valToSymbol(vValues[end]))
                 to_push_type = Val(:no_diff)
-                if endswith(t_a, "_anomaly")
-                    to_push_type = Val(:anomaly)
-                elseif endswith(t_a, "_iav")
-                        to_push_type = Val(:iav)
+                if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
+                    to_push_type = Val(:diff)
                 end
                 push!(agg_type, to_push_type)
                 push!(time_aggrs, valToSymbol(vValues[end]))
