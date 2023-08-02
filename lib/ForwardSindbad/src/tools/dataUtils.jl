@@ -1,18 +1,21 @@
-export getDataDims, getNumberOfTimeSteps, getAbsDataPath
 export AllNaN
+export booleanizeMask
+export cleanData
+export filterVariables
+export getAbsDataPath
+export getCombinedVariableInfo
+export getDataDims
 export getForcingTimeSize
 export getForcingForTimeStep
-export filterVariables
+export getKeyedArray
 export getKeyedArrayWithNames
 export getNamedDimsArrayWithNames
-export getKeyedArray
-export mapCleanData
-export cleanData
-export booleanizeMask
+export getNumberOfTimeSteps 
 export getSpatialSubset
-export getCombinedVariableInfo
 export getSindbadDims
 export isInvalid
+export landWrapper
+export mapCleanData
 
 function booleanizeMask(yax_mask)
     dfill = 0.0
@@ -307,3 +310,39 @@ function getKeyedArray(input)
     end
     return keyedData
 end
+
+"""
+    landWrapper{S}
+
+Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
+"""
+struct landWrapper{S}
+    s::S
+end
+struct GroupView{S}
+    groupname::Symbol
+    s::S
+end
+struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
+    s::S
+    groupname::Symbol
+    arrayname::Symbol
+end
+Base.getproperty(s::landWrapper, f::Symbol) = GroupView(f, getfield(s, :s))
+function Base.getproperty(g::GroupView, f::Symbol)
+    allarrays = getfield(g, :s)
+    groupname = getfield(g, :groupname)
+    T = typeof(first(allarrays)[groupname][f])
+    return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, f)
+end
+Base.size(a::ArrayView) = size(a.s)
+Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
+Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
+Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
+Base.keys(o::landWrapper) = propertynames(o)
+Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
+function Base.propertynames(o::GroupView)
+    return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
+end
+Base.keys(o::GroupView) = propertynames(o)
+Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
