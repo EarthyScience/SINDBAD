@@ -44,10 +44,11 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cos
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    runEcosystem!(output, forc_array, info.tem)
+    @time runEcosystem!(output, forc_array, info.tem)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
-    run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
+    # @time run_output = output.data
+    @time run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
     return run_output
 end
 
