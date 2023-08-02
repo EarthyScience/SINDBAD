@@ -29,29 +29,16 @@ function temporalAggregation(dat, temporal_aggregator, dim = 1)
     return dat
 end
 
-
-function temporalAggregation(dat, cost_option, ::Val{:no_diff})
-    return temporalAggregation(dat, cost_option.temporal_aggregator)
+function temporalAggregation(dat, temporal_aggregator)
+    return temporalAggregation(dat, first(temporal_aggregator))
 end
 
-function temporalAggregation(dat, cost_option, ::Val{:anomaly})
-    dat = temporalAggregation(dat, cost_option.temporal_aggregator)
-    return temporalAnomaly(dat, cost_option)
+function temporalAggregation(dat, temporal_aggregator, ::Val{:no_diff})
+    return temporalAggregation(dat, first(temporal_aggregator))
 end
 
-function temporalAggregation(dat, cost_option, ::Val{:iav})
-    t_aggregators = cost_option.temporal_aggregator
-    dat_agg = temporalAggregation(dat, t_aggregators[1])
-    dat_agg_to_remove = temporalAggregation(dat, t_aggregators[2])
-    return temporalIAV(dat_agg, dat_agg_to_remove)
-end
-
-
-function temporalAnomaly(dat, cost_option)
-    dat = doAnomaly(dat, cost_option.temporal_aggr_func)
-    return dat
-end
-
-function temporalIAV(dat_base, dat_remove)
-    return dat_base .- dat_remove
+function temporalAggregation(dat, temporal_aggregator, ::Val{:diff})
+    dat_agg = temporalAggregation(dat, first(temporal_aggregator))
+    dat_agg_to_remove = temporalAggregation(dat, last(temporal_aggregator))
+    return dat_agg .- dat_agg_to_remove
 end

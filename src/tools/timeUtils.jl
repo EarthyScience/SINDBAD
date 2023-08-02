@@ -14,17 +14,19 @@ end
 function createTimeAggregator(time, ::Val{:mean}, f=mean)
     stepvectime = [1:length(time)]
     mean_agg = TimeAggregator(stepvectime, f)
-    return mean_agg
+    return (mean_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:day}, f=mean)
     stepvectime = [[t] for t in 1:length(time)]
     day_agg = TimeAggregator(stepvectime, f)
-    return day_agg
+    return (day_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:day_anomaly}, f=mean)
-    return createTimeAggregator(time, Val(:day), f)
+    day_agg = createTimeAggregator(time, Val(:day), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
+    return (day_agg[1], mean_agg[1])
 end
 
 function createTimeAggregator(time, ::Val{:day_iav}, f=mean)
@@ -34,28 +36,32 @@ function createTimeAggregator(time, ::Val{:day_iav}, f=mean)
     days_msc_inds = [findall(==(dd), days) for dd in days_msc]
     days_iav_inds = [days_msc_inds[d] for d in days]
     day_iav_agg = TimeAggregator(days_iav_inds, f)
-    return (day_aggr, day_iav_agg)
+    return (day_aggr[1], day_iav_agg)
 end
 
 function createTimeAggregator(time, ::Val{:day_msc}, f=mean)
     days = dayofyear.(time)
     days_msc = unique(days)
     day_msc_agg = TimeAggregator([findall(==(dd), days) for dd in days_msc], f)
-    return day_msc_agg
+    return (day_msc_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:day_msc_anomaly}, f=mean)
-    return createTimeAggregator(time, Val(:day_msc), f)
+    day_msc_agg = createTimeAggregator(time, Val(:day_msc), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
+    return (day_msc_agg[1], mean_agg[1])
 end
 
 function createTimeAggregator(time, ::Val{:month}, f=mean)
     stepvectime = getIndicesForTimeGroups(month.(time))
     month_agg = TimeAggregator(stepvectime, f)
-    return month_agg
+    return (month_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:month_anomaly}, f=mean)
-    return createTimeAggregator(time, Val(:month), f)
+    month_agg = createTimeAggregator(time, Val(:month), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
+    return (month_agg[1], mean_agg[1])
 end
 
 function createTimeAggregator(time, ::Val{:month_iav}, f=mean)
@@ -73,21 +79,25 @@ function createTimeAggregator(time, ::Val{:month_msc}, f=mean)
     months = month.(time)
     months_msc = unique(months)
     month_msc_agg = TimeAggregator([findall(==(mm), months) for mm in months_msc], f)
-    return month_msc_agg
+    return (month_msc_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:month_msc_anomaly}, f=mean)
-    return createTimeAggregator(time, Val(:month_msc), f)
+    month_msc_agg = createTimeAggregator(time, Val(:month_msc), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
+    return (month_msc_agg[1], mean_agg[1])
 end
 
 function createTimeAggregator(time, ::Val{:year}, f=mean)
     stepvectime = getIndicesForTimeGroups(year.(time))
     year_agg = TimeAggregator(stepvectime, f)
-    return year_agg
+    return (year_agg, )
 end
 
 function createTimeAggregator(time, ::Val{:year_anomaly}, f=mean)
-    return createTimeAggregator(time, Val(:year), f)
+    year_agg = createTimeAggregator(time, Val(:year), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
+    return (year_agg[1], mean_agg[1])
 end
 
 

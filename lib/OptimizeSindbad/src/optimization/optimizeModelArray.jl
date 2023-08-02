@@ -23,14 +23,14 @@ end
 
 
 function aggregateData(dat, cost_option, ::Val{:timespace})
-    dat = temporalAggregation(dat, cost_option, cost_option.temporal_aggr_type)
+    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
     return dat
 end
 
 function aggregateData(dat, cost_option, ::Val{:spacetime})
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
-    dat = temporalAggregation(dat, cost_option, cost_option.temporal_aggr_type)
+    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
     return dat
 end
 
@@ -131,17 +131,23 @@ getLossVectorArray(observations, model_output::AbstractArray, cost_options)
 returns a vector of losses for variables in info.cost_options.variables_to_constrain
 """
 function getLossVectorArray(observations, model_output, cost_options)
-    lossVec = map(cost_options) do cost_option
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        metr = loss(y, yσ, ŷ, lossMetric)
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
+    lossVec = []
+    @time begin
+        foreach(cost_options) do cost_option
+        # lossVec = map(cost_options) do cost_option
+            lossMetric = cost_option.cost_metric
+            (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
+            (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+            @time metr = loss(y, yσ, ŷ, lossMetric)
+            if isnan(metr)
+                metr = oftype(metr, 1e19)
+            end
+            println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
+            push!(lossVec, metr)
+            # metr
         end
-        # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
-        metr
-    end
+end
+
     # println("-------------------")
     return lossVec
 end
