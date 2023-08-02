@@ -136,7 +136,7 @@ out_vars = output.variables;
 for (o, v) in enumerate(out_vars)
     def_var = output.data[o][:, :, 1, 1]
     vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
-    xdata = [info.tem.helpers.dates.vector...]
+    xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
         ylabel!("$(vinfo["standard_name"])")

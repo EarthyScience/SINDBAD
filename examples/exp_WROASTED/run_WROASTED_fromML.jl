@@ -234,7 +234,7 @@ for site_index in sites
             else
                 tspan = first(non_nan_index):last(non_nan_index)
             end
-            xdata = [info.tem.helpers.dates.vector[tspan]...]
+            xdata = [info.tem.helpers.dates.range[tspan]...]
             obs_σ = obs_σ[tspan]
             obs_var = obs_var[tspan]
             jl_dat = jl_dat[tspan, 1, 1, 1]
@@ -288,7 +288,7 @@ for site_index in sites
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output.data[o][:, :, 1, 1]
-                xdata = [info.tem.helpers.dates.vector...][debug_span]
+                xdata = [info.tem.helpers.dates.range...][debug_span]
                 vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
                 ml_dat = nothing
                 if v in keys(varib_dict)
@@ -324,7 +324,7 @@ for site_index in sites
             for (o, v) in enumerate(forc_vars)
                 println("plot forc-model => site: $domain, variable: $v")
                 def_var = forcing.data[o][:, :, 1, 1]
-                xdata = [info.tem.helpers.dates.vector...]
+                xdata = [info.tem.helpers.dates.range...]
                 if size(def_var, 1) !== length(xdata)
                     xdata = 1:size(def_var, 1)
                 end
