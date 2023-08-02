@@ -74,22 +74,22 @@ end
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
-using CairoMakie: heatmap, Colorbar, save
-using AlgebraOfGraphics, DataFrames, Dates
-
+using Plots
 plotdat = output.data;
 for i ∈ eachindex(output.variables)
-    vname = output.variables[i]
+    v = output.variables[i]
+    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+    vname = vinfo["standard_name"]
     pd = plotdat[i]
     if size(pd, 2) == 1
-        fig, ax, obj = heatmap(pd[:, 1, :])
-        Colorbar(fig[1, 2], obj)
-        save(joinpath(info.output.figure, "afr2d_$(vname).png"), fig)
+        heatmap(pd[:, 1, :])
+        # Colorbar(fig[1, 2], obj)
+        savefig(joinpath(info.output.figure, "afr2d_$(vname).png"))
     else
         for ll ∈ 1:size(pd, 2)
-            fig, ax, obj = heatmap(pd[:, ll, :])
-            Colorbar(fig[1, 2], obj)
-            save(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"), fig)
+            heatmap(pd[:, 1, :])
+            # Colorbar(fig[1, 2], obj)
+            savefig(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"))
         end
     end
 end

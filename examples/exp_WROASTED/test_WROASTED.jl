@@ -20,7 +20,7 @@ forcingConfig = "forcing_erai.json"
 
 path_observation = path_input
 optimize_it = true
-# optimize_it = false
+optimize_it = false
 path_output = nothing
 
 pl = "threads"
@@ -80,7 +80,7 @@ land_spin = land_init_space[1];
     typeof(land_spin),
     f_one);
 
-@time runEcosystem!(output.data,
+@benchmark runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     tem_with_vals,
