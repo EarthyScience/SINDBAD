@@ -149,7 +149,7 @@ for domain ∈ sites
         else
             tspan = first(non_nan_index):last(non_nan_index)
         end
-        xdata = [info.tem.helpers.dates.vector[tspan]...]
+        xdata = [info.tem.helpers.dates.range[tspan]...]
         obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
         (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
@@ -201,7 +201,7 @@ for domain ∈ sites
         def_var = output.data[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
         v = vinfo["standard_name"]
-        xdata = [info.tem.helpers.dates.vector...]
+        xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1
             plot(xdata, def_var[:, 1]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
