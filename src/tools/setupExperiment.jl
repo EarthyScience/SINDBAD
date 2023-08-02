@@ -680,7 +680,6 @@ function generateDatesInfo(info::NamedTuple)
     end
     tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:range, time_range)) #needs to come from the date vector
-    tmpDates = setTupleField(tmpDates, (:vector, Tuple(time_range))) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info

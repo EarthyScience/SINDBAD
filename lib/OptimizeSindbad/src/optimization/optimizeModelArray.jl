@@ -24,7 +24,7 @@ end
 
 function aggregateData(y, yσ, ŷ, cost_option, ::Val{:timespace})
     # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
-    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr_type)
     y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     return y, yσ, ŷ
 end
@@ -33,7 +33,7 @@ end
 function aggregateData(y, yσ, ŷ, cost_option, ::Val{:spacetime})
     y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
     # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
-    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr)
+    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr_type)
     return y, yσ, ŷ
 end
 

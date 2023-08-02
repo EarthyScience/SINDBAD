@@ -165,7 +165,7 @@ foreach(costOpt) do var_row
     def_var = def_var[tspan, 1, 1, 1]
     opt_var = opt_var[tspan, 1, 1, 1]
 
-    xdata = [info.tem.helpers.dates.vector[tspan]...]
+    xdata = [info.tem.helpers.dates.range[tspan]...]
     obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
     obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
