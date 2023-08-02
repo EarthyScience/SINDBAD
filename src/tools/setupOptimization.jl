@@ -25,6 +25,21 @@ function getConstraintNames(optim::NamedTuple)
     return obsVariables, optimVariables, storeVariables, modelVariables
 end
 
+function getAggrFunc(::Val{:mean})
+    return Sindbad.mean
+end
+
+function getAggrFunc(::Val{:sum})
+    return Sindbad.sum
+end
+function getAggrFunc(::Val{:nanmean})
+    return Sindbad.nanmean
+end
+function getAggrFunc(::Val{:nansum})
+    return Sindbad.nansum
+end
+
+
 """
 getCostOptions(optInfo)
 info.opti
@@ -36,9 +51,11 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
 
     varlist = Symbol.(optInfo.variables_to_constrain)
     all_options = []
+    agg_type = []
+    time_aggrs = []
+    aggr_funcs = []
+
     push!(all_options, varlist)
-    aggIndices = []
-    aggrFuncs = []
     for (pn, prop) ∈ enumerate(defNames)
         defProp = defValues[pn]
         if (defProp isa Number) && !(defProp isa Bool)
@@ -58,8 +75,18 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
                 push!(vValues, defProp)
             end
             if prop == :temporal_aggr
-                aggInd = createTimeAggregator(dates_helpers.range, Val(valToSymbol(vValues[end])))
-                push!(aggIndices, aggInd)
+                t_a = string(valToSymbol(vValues[end]))
+                to_push_type = Val(:no_diff)
+                if endswith(t_a, "_anomaly")
+                    to_push_type = Val(:anomaly)
+                elseif endswith(t_a, "_iav")
+                        to_push_type = Val(:iav)
+                end
+                push!(agg_type, to_push_type)
+                push!(time_aggrs, valToSymbol(vValues[end]))
+            end
+            if prop == :temporal_aggr_func
+                push!(aggr_funcs, valToSymbol(vValues[end]))
             end
         end
         push!(all_options, vValues)
@@ -69,12 +96,20 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
     obs_ind = [i + 2 * (i - 1) for i in mod_ind]
+
+    agg_indices = []
+    for (i, _aggr) in enumerate(time_aggrs)
+        aggr_func = getAggrFunc(Val(aggr_funcs[i]))
+        aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func)
+        push!(agg_indices, aggInd)
+    end
     push!(all_options, obs_ind)
     push!(all_options, mod_ind)
     push!(all_options, mod_field)
     push!(all_options, mod_subfield)
-    push!(all_options, aggIndices)
-    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :time_aggr_ind], all_options)...))
+    push!(all_options, agg_indices)
+    push!(all_options, agg_type)
+    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr_ind, :temporal_aggr_type], all_options)...))
 end
 
 """

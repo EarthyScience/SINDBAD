@@ -45,7 +45,7 @@ save(joinpath(info.output.figure, "gpp.png"), fig)
 
 for site ∈ 1:16
     df = DataFrame(;
-        time=info.tem.helpers.dates.vector,
+        time=info.tem.helpers.dates.range,
         gpp=output.data[end-1][:, 1, site],
         nee=output.data[end][:, 1, site],
         soilw1=output.data[2][:, 1, site])

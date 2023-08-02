@@ -15,6 +15,7 @@ export valToSymbol
 export getFrac
 export showParamsOfAModel
 export showParamsOfAllModels
+export nanmax, nanmean, nanmin, nansum
 
 """
     noStackTrace()
@@ -762,4 +763,33 @@ function showParamsOfAllModels(models)
     end
     return nothing
 end
-    
+
+
+"""
+    nanmax(dat) = maximum(filter(!isnan, dat))
+
+Calculate the maximum of an array while skipping nan
+"""
+nanmax(dat) = maximum(filter(!isnan, dat))
+
+"""
+    nanmean(dat) = mean(filter(!isnan, dat))
+
+Calculate the mean of an array while skipping nan
+"""
+nanmean(dat) = mean(filter(!isnan, dat))
+
+"""
+    nanmin(dat) = minimum(filter(!isnan, dat))
+
+Calculate the minimum of an array while skipping nan
+"""
+nanmin(dat) = minimum(filter(!isnan, dat))
+
+
+"""
+    nansum(dat) = sum(filter(!isnan, dat))
+
+Calculate the sum of an array while skipping nan
+"""
+nansum(dat) = sum(filter(!isnan, dat))
