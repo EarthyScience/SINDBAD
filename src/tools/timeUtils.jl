@@ -29,11 +29,12 @@ end
 
 function createTimeAggregator(time, ::Val{:day_iav}, f=mean)
     days = dayofyear.(time)
+    day_aggr = createTimeAggregator(time, Val(:day), f)
     days_msc = unique(days)
     days_msc_inds = [findall(==(dd), days) for dd in days_msc]
     days_iav_inds = [days_msc_inds[d] for d in days]
     day_iav_agg = TimeAggregator(days_iav_inds, f)
-    return day_iav_agg
+    return (day_aggr, day_iav_agg)
 end
 
 function createTimeAggregator(time, ::Val{:day_msc}, f=mean)
@@ -59,13 +60,13 @@ end
 
 function createTimeAggregator(time, ::Val{:month_iav}, f=mean)
     months = month.(time) # month for each time step, size = number of time steps
-    month_aggr = createTimeAggregator(time, Val(:month), mean) #to get the month per month, size = number of months
+    month_aggr = createTimeAggregator(time, Val(:month), f) #to get the month per month, size = number of months
     months_series=Int.(view(months, month_aggr)) # aggregate the months per time step
     months_msc = unique(months) # get unique months
     months_msc_inds = [findall(==(mm), months) for mm in months_msc] # all timesteps per unique month
     months_iav_inds = [months_msc_inds[mm] for mm in months_series] # repeat monthlymsc indices for each month in time range
     month_iav_agg = TimeAggregator(months_iav_inds, f) # generate aggregator
-    return month_iav_agg
+    return (month_aggr, month_iav_agg)
 end
 
 function createTimeAggregator(time, ::Val{:month_msc}, f=mean)
@@ -89,9 +90,6 @@ function createTimeAggregator(time, ::Val{:year_anomaly}, f=mean)
     return createTimeAggregator(time, Val(:year), f)
 end
 
-function createTimeAggregator(time, ::Val{:year_iav}, f=mean)
-    return createTimeAggregator(time, Val(:year), f)
-end
 
 function getIndicesForTimeGroups(groups)
     _, rl = rle(groups)

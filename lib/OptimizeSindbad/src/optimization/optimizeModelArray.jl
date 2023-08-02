@@ -2,39 +2,36 @@ export optimizeModelArray
 export getSimulationDataArray, getLossArray, getLossGradient
 export getDataArray, combineLossArray
 export getLossVectorArray
-export get_ŷ_view
+export getModelOutputView
 export filterCommonNaN
 
-function get_ŷ_view(ŷ::AbstractArray{T,2}) where {T}
-    return @view ŷ[:, 1]
+function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
+    return @view mod_dat[:, 1]
 end
 
-function get_ŷ_view(ŷ::AbstractArray{T,3}) where {T}
-    return @view ŷ[:, 1, :]
+function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
+    return @view mod_dat[:, 1, :]
 end
 
-function get_ŷ_view(ŷ::AbstractArray{T,4}) where {T}
-    return @view ŷ[:, 1, :, :]
+function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
+    return @view mod_dat[:, 1, :, :]
 end
 
-function spatialAggregation(y, yσ, ŷ, _, ::Val{:cat})
-    return y, yσ, ŷ
-end
-
-
-function aggregateData(y, yσ, ŷ, cost_option, ::Val{:timespace})
-    # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
-    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr_type)
-    y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
-    return y, yσ, ŷ
+function spatialAggregation(dat, _, ::Val{:cat})
+    return dat
 end
 
 
-function aggregateData(y, yσ, ŷ, cost_option, ::Val{:spacetime})
-    y, yσ, ŷ = spatialAggregation(y, yσ, ŷ, cost_option, cost_option.spatial_aggr)
-    # y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option)
-    y, yσ, ŷ = temporalAggregation(y, yσ, ŷ, cost_option, cost_option.temporal_aggr_type)
-    return y, yσ, ŷ
+function aggregateData(dat, cost_option, ::Val{:timespace})
+    dat = temporalAggregation(dat, cost_option, cost_option.temporal_aggr_type)
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    return dat
+end
+
+function aggregateData(dat, cost_option, ::Val{:spacetime})
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    dat = temporalAggregation(dat, cost_option, cost_option.temporal_aggr_type)
+    return dat
 end
 
 """
@@ -72,12 +69,18 @@ function getDataArray(model_output,
     obs_ind = cost_option.obs_ind
     ŷ = getModelData(model_output, cost_option)
     if size(ŷ, 2) == 1
-        ŷ = get_ŷ_view(ŷ)
+        ŷ = getModelOutputView(ŷ)
     end
     y = observations[obs_ind]
     yσ = observations[obs_ind+1]
     # ymask = observations[obs_ind + 2]
-    y, yσ, ŷ = aggregateData(y, yσ, ŷ, cost_option, cost_option.aggr_order)
+
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+
+    if cost_option.temporal_aggr_obs
+        y = aggregateData(y, cost_option, cost_option.aggr_order)
+        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
+    end
     # if size(ŷ) != size(y)
     #     error(
     #         "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => model and observation dimensions do not match"
