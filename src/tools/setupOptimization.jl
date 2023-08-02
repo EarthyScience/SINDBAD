@@ -109,7 +109,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     push!(all_options, mod_subfield)
     push!(all_options, agg_indices)
     push!(all_options, agg_type)
-    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr_ind, :temporal_aggr_type], all_options)...))
+    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type], all_options)...))
 end
 
 """

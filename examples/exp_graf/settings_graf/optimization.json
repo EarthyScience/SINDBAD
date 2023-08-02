@@ -1,7 +1,7 @@
 {
   "variables_to_constrain": ["gpp", "runoff", "evapotranspiration", "tws"],
   "multi_constraint_method": "sum",
-  "algorithm": "CMAEvolutionStrategy_CMAES",
+  "algorithm": "CMAEvolutionStrategy_CMAES.json",
   "multi_objective_algorithm": false,
   "default_parameter": {
     "is_ml": false,
@@ -70,10 +70,10 @@
           "source_unit": "gC m-2 day-1",
           "name_short": "Gross Primary Productivity",
           "space_time_type": "spatiotemporal",
-          "data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc"
         },
         "unc": {
-          "data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
           "bounds": [0.0, 100.0],
           "source_variable": "GPP_mad"
         },
@@ -94,15 +94,18 @@
           "source_unit": "mm day-1",
           "name_short": "Runoff",
           "space_time_type": "spatiotemporal",
-          "data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc"
         },
         "cost_options": {
-          "cost_metric": "nseinv"
+          "cost_metric": "nseinv",
+          "temporal_aggr": "month_msc",
+          "temporal_aggr_obs": false,
+          "temporal_aggr_func": "nanmean"
         }
       },
       "tws": {
         "sel_mask": null,
-        "model_full_var": "pools.TWS",
+        "model_full_var": "states.total_water",
         "data": {
           "sindbad_unit": "mm",
           "bounds": [0.0, 100.0],
@@ -146,9 +149,9 @@
         },
         "cost_options": {
           "cost_metric": "nseinv",
-          "temporal_aggr": "month_iav",
+          "temporal_aggr": "month",
           "temporal_aggr_obs": false,
-          "temporal_aggr_func": "nanmean"
+          "temporal_aggr_func": "mean"
         }
       }
     }
