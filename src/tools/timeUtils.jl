@@ -2,11 +2,6 @@ export createTimeAggregator
 export TimeAggregator
 export TimeAggregatorViewInstance
 
-struct TimeAggregator{I,F}
-    indices::I
-    f::F
-end
-
 function createTimeAggregator(time, t_step::Symbol, f=mean)
     return createTimeAggregator(time, Val(t_step), f)
 end
@@ -67,12 +62,12 @@ end
 function createTimeAggregator(time, ::Val{:month_iav}, f=mean)
     months = month.(time) # month for each time step, size = number of time steps
     month_aggr = createTimeAggregator(time, Val(:month), f) #to get the month per month, size = number of months
-    months_series=Int.(view(months, month_aggr)) # aggregate the months per time step
+    months_series = Int.(view(months, month_aggr[1])) # aggregate the months per time step
     months_msc = unique(months) # get unique months
     months_msc_inds = [findall(==(mm), months) for mm in months_msc] # all timesteps per unique month
     months_iav_inds = [months_msc_inds[mm] for mm in months_series] # repeat monthlymsc indices for each month in time range
     month_iav_agg = TimeAggregator(months_iav_inds, f) # generate aggregator
-    return (month_aggr, month_iav_agg)
+    return (month_aggr[1], month_iav_agg)
 end
 
 function createTimeAggregator(time, ::Val{:month_msc}, f=mean)
@@ -106,6 +101,11 @@ function getIndicesForTimeGroups(groups)
     cums = [0; cumsum(rl)]
     stepvectime = [cums[i]+1:cums[i+1] for i in 1:length(rl)]
     return stepvectime
+end
+
+struct TimeAggregator{I,F}
+    indices::I
+    f::F
 end
 
 struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T,N}
