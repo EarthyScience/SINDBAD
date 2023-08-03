@@ -101,13 +101,15 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
         aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func)
         push!(agg_indices, aggInd)
     end
+    push!(all_options, 1:length(obs_ind))
     push!(all_options, obs_ind)
     push!(all_options, mod_ind)
     push!(all_options, mod_field)
     push!(all_options, mod_subfield)
     push!(all_options, agg_indices)
     push!(all_options, agg_type)
-    return Table((; Pair.([:variable, defNames..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type], all_options)...))
+    push!(all_options, number_helpers.sNT.(zero(mod_ind)))
+    return Table((; Pair.([:variable, defNames..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type, :loss], all_options)...))
 end
 
 """

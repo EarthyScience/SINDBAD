@@ -2,6 +2,7 @@ export AllNaN
 export booleanizeMask
 export cleanData
 export filterVariables
+export getArray
 export getAbsDataPath
 export getCombinedVariableInfo
 export getDataDims
@@ -303,12 +304,22 @@ end
 getKeyedArray(input::NamedTuple)
 """
 function getKeyedArray(input)
-    ks = input.variables
     keyedData = map(input.data) do c
         t_dims = getSindbadDims(c)
         KeyedArray(Array(c.data); t_dims...)
     end
     return keyedData
+end
+
+
+"""
+getKeyedArray(input::NamedTuple)
+"""
+function getArray(input)
+    arrayData = map(input.data) do c
+        Array(c.data)
+    end
+    return arrayData
 end
 
 """

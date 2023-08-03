@@ -26,7 +26,7 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 info, forcing = getForcing(info);
 observations = getObservation(info);
-obs = getKeyedArray(observations);
+obs = getArray(observations);
 
 
 output = setupOutput(info);
@@ -68,6 +68,8 @@ end
     loc_outputs,
     land_init_space,
     f_one)
+
+getLossVectorArray(info.optim.cost_options.loss, obs, output.data, info.optim.cost_options)
 
 # @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);

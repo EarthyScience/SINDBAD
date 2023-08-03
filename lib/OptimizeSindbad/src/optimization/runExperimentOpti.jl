@@ -22,7 +22,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
     else
         @info "runExperiment: do spatial optimization..."
         forc_array = getKeyedArrayWithNames(forcing)
-        obs_array = getKeyedArray(observations)
+        obs_array = getArray(observations)
+        # obs_array = getKeyedArray(observations)
         optim_params = optimizeModelArray(forc_array, output, obs_array, info.tem, info.optim)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
         Sindbad.CSV.write(optim_file_prefix * "_optimized_parameters.csv", optim_params)
@@ -39,7 +40,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cost})
     observations = getObservation(info)
     forc_array = getKeyedArrayWithNames(forcing)
-    obs_array = getKeyedArray(observations)
+    obs_array = getArray(observations)
 
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
@@ -48,7 +49,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cos
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
     # @time run_output = output.data
-    @time run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
+    run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
     return run_output
 end
 
