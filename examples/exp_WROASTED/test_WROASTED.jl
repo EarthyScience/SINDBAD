@@ -70,17 +70,8 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 
 
 # @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
-land_spin = land_init_space[1];
-@time land_spin_now = runSpinup(info.tem.models.forward,
-    loc_forcings[1],
-    land_spin,
-    tem_with_vals.helpers,
-    tem_with_vals.spinup,
-    tem_with_vals.models,
-    typeof(land_spin),
-    f_one);
 
-@benchmark runEcosystem!(output.data,
+@time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
     tem_with_vals,
@@ -96,7 +87,8 @@ land_spin = land_init_space[1];
 
 observations = getObservation(info);
 # obs = getKeyedArrayWithNames(observations);
-obs = getKeyedArray(observations);
+obs = getArray(observations);
+@time getLossVectorArray(obs, output.data, info.optim.cost_options)
 
 @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
 
