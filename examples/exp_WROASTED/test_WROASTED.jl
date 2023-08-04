@@ -68,9 +68,6 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
         forc,
         info.tem);
 
-
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
-
 @time runEcosystem!(output.data,
     info.tem.models.forward,
     forc,
@@ -83,10 +80,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-
-
 observations = getObservation(info);
-# obs = getKeyedArrayWithNames(observations);
 obs = getArray(observations);
 @time getLossVectorArray(obs, output.data, info.optim.cost_options)
 
@@ -103,14 +97,7 @@ end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-# tblParams = Sindbad.getParameters(info.tem.models.forward,
-#     info.optim.default_parameter,
-#     info.optim.optimized_parameters);
-
 info, forcing = getForcing(info);
-
-# mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
-# tcprint(mtup)
 
 forc = getKeyedArrayWithNames(forcing);
 output = setupOutput(info);
