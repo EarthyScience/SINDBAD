@@ -99,7 +99,7 @@
       },
       "tws": {
         "sel_mask": null,
-        "model_full_var": "pools.TWS",
+        "model_full_var": "states.total_water",
         "data": {
           "sindbad_unit": "mm",
           "bounds": [0.0, 100.0],
@@ -108,10 +108,10 @@
           "source_to_sindbad_unit": 10.0,
           "name_short": "Terrestrial water storage",
           "space_time_type": "spatiotemporal",
-          "data_path": "../data/graf/opt.2d.m.Africa.month_anomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc"
         },
         "unc": {
-          "data_path": "../data/graf/opt.2d.m.Africa.month_anomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
           "bounds": [-500, 500],
           "source_variable": "uncertainty"
         },

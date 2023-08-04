@@ -19,14 +19,6 @@ function createTimeAggregator(time, t_step::Symbol, f=mean, is_model_time_step=f
     return createTimeAggregator(time, Val(t_step), f, is_model_time_step)
 end
 
-function createTimeAggregator(time, ::Val{:mean_repeat}, f=mean)
-    # mean_repeat_inds = getTimeArray([1:length(time) for _ in time], getArType())
-    # mean_repeat_agg = TimeAggregator(mean_repeat_inds, f)
-    # return [mean_repeat_agg, ]
-    return createTimeAggregator(time, Val(:mean), f)
-
-end
-
 
 function createTimeAggregator(time, ::Val{:same}, f=mean)
     stepvectime = getTimeArray([1:length(time)], getArType())
@@ -42,7 +34,6 @@ end
 
 function createTimeAggregator(time, ::Val{:day}, f=mean, is_model_time_step=false)
     stepvectime = [getTimeArray([t], getArType()) for t in 1:length(time)]
-    # stepvectime = [getTimeArray([1:length(time)], getArType())]
     day_agg = TimeAggregator(stepvectime, f)
     if is_model_time_step
         day_agg = nothing
@@ -52,7 +43,7 @@ end
 
 function createTimeAggregator(time, ::Val{:day_anomaly}, f=mean, is_model_time_step=false)
     day_agg = createTimeAggregator(time, Val(:day), f, is_model_time_step)
-    mean_agg = createTimeAggregator(time, Val(:mean_repeat), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
     return [day_agg[1], mean_agg[1]]
 end
 
@@ -76,7 +67,7 @@ end
 
 function createTimeAggregator(time, ::Val{:day_msc_anomaly}, f=mean, is_model_time_step=false)
     day_msc_agg = createTimeAggregator(time, Val(:day_msc), f, is_model_time_step)
-    mean_agg = createTimeAggregator(time, Val(:mean_repeat), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
     return [day_msc_agg[1], mean_agg[1]]
 end
 
@@ -88,7 +79,7 @@ end
 
 function createTimeAggregator(time, ::Val{:month_anomaly}, f=mean, is_model_time_step=false)
     month_agg = createTimeAggregator(time, Val(:month), f, is_model_time_step)
-    mean_agg = createTimeAggregator(time, Val(:mean_repeat), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
     return [month_agg[1], mean_agg[1]]
 end
 
@@ -112,7 +103,7 @@ end
 
 function createTimeAggregator(time, ::Val{:month_msc_anomaly}, f=mean, is_model_time_step=false)
     month_msc_agg = createTimeAggregator(time, Val(:month_msc), f, is_model_time_step)
-    mean_agg = createTimeAggregator(time, Val(:mean_repeat), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
     return [month_msc_agg[1], mean_agg[1]]
 end
 
@@ -124,7 +115,7 @@ end
 
 function createTimeAggregator(time, ::Val{:year_anomaly}, f=mean, is_model_time_step=false)
     year_agg = createTimeAggregator(time, Val(:year), f, is_model_time_step)
-    mean_agg = createTimeAggregator(time, Val(:mean_repeat), f)
+    mean_agg = createTimeAggregator(time, Val(:mean), f)
     return [year_agg[1], mean_agg[1]]
 end
 
