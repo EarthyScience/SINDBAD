@@ -65,24 +65,24 @@ for domain ∈ sites
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
