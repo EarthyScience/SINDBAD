@@ -64,7 +64,7 @@
     "sequence": [
       {
         "spinup_mode": "forward",
-        "forcing": "recycleMSC",
+        "forcing": "day_msc",
         "stop_function": null,
         "n_repeat": 7
       }

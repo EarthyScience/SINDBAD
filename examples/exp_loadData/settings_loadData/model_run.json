@@ -64,19 +64,19 @@
     "sequence": [
       {
         "spinup_mode": "forward",
-        "forcing": "recycleMSC",
+        "forcing": "day_msc",
         "stop_function": null,
         "n_repeat": 15
       },
       {
         "spinup_mode": "forward",
-        "forcing": "full",
+        "forcing": "all_years",
         "stop_function": null,
         "n_repeat": 1
       },
       {
         "spinup_mode": "ηScaleAH",
-        "forcing": "recycleMSC",
+        "forcing": "day_msc",
         "stop_function": null,
         "n_repeat": 1
       }

@@ -20,9 +20,19 @@
     "data_path": null
   },
   "variables": {
+    "PET": {
+      "sindbad_unit": "mm d-1",
+      "bounds": [0.0, 100.0],
+      "source_variable": "PET",
+      "source_unit": "mm d-1",
+      "name_short": "PET",
+      "space_time_type": "spatiotemporal",
+      "source_product": "ERA5",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PET.2dim.opti904.nc"
+    },
     "Rain": {
       "sindbad_unit": "mm d-1",
-      "bounds": [0, 1000],
+      "bounds": [0.0, 1000.0],
       "source_variable": "Rain_MSWEP",
       "source_unit": "mm d-1",
       "name_short": "Rain",
@@ -32,7 +42,7 @@
     },
     "Rg": {
       "sindbad_unit": "MJ m-2",
-      "bounds": [0, 600],
+      "bounds": [0.0, 600.0],
       "source_variable": "SWdown",
       "source_unit": "MJ m-2",
       "name_short": "Global Radiation",
@@ -42,7 +52,7 @@
     },
     "PAR": {
       "sindbad_unit": "MJ m-2",
-      "bounds": [0, 600],
+      "bounds": [0.0, 600.0],
       "source_variable": "Rpot",
       "source_unit": "MJ m-2",
       "source_to_sindbad_unit": 0.5,
@@ -53,7 +63,7 @@
     },
     "PsurfDay": {
       "sindbad_unit": "kPa",
-      "bounds": [0, 600],
+      "bounds": [0.0, 600.0],
       "source_variable": "PsurfDay",
       "source_unit": "pa",
       "source_to_sindbad_unit": 0.001,
@@ -64,7 +74,7 @@
     },
     "RgPot": {
       "sindbad_unit": "MJ m-2",
-      "bounds": [0, 600],
+      "bounds": [0.0, 600.0],
       "source_variable": "Rpot",
       "source_unit": "W m-2",
       "source_to_sindbad_unit": 0.08640003041,
@@ -75,7 +85,7 @@
     },
     "Rn": {
       "sindbad_unit": "MJ m-2",
-      "bounds": [-50, 500],
+      "bounds": [0.0, 500.0],
       "source_variable": "Rn",
       "source_unit": "MJ m-2",
       "name_short": "Net radiation",
@@ -109,7 +119,7 @@
     },
     "VPD": {
       "sindbad_unit": "kPa",
-      "bounds": [-1, 10],
+      "bounds": [0.0, 10.0],
       "source_variable": "vpd_cf",
       "source_unit": "hPa",
       "source_to_sindbad_unit": 0.1,
@@ -131,7 +141,7 @@
     },
     "frac_vegetation": {
       "sindbad_unit": "-",
-      "bounds": [0, 1],
+      "bounds": [0.0, 1.0],
       "source_variable": "EVI",
       "source_unit": "-",
       "name_short": "fAPAR from ndvi",

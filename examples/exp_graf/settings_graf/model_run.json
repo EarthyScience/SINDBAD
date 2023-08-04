@@ -67,7 +67,7 @@
     "sequence": [
       {
         "spinup_mode": "forward",
-        "forcing": "full",
+        "forcing": "all_years",
         "stop_function": null,
         "n_repeat": 1
       }

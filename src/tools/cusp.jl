@@ -1,66 +1,6 @@
-# export update_state_pools
-# export cusp, ups
-export rep_elem, @rep_elem, rep_vec, @rep_vec
 export add_to_elem, @add_to_elem, add_to_each_elem, add_vec
+export rep_elem, @rep_elem, rep_vec, @rep_vec
 export set_components
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T}) where T<:Number
-#     sp[:] = sp .+ Δs
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T,1}) where T<:Number
-#     sp[1] = sp[1] + Δs[1]
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::Number) where T<:Number
-#     sp[1] = sp[1] + Δs
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T,1}, level::Int) where T<:Number
-#     sp[level] = sp[level] + Δs[1]
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::Number, level::Int) where T<:Number
-#     sp[level] = sp[level] + Δs
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T,1}, ::Val{:split}) where T<:Number
-#     sp[:] = sp .+ Δs[1]/size(sp,1)
-#     return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::AbstractArray{T,1}, split::Symbol) where T<:Number
-#     return update_state_pools(sp, Δs, Val(split))
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::Number, ::Val{:split}) where T<:Number
-#     sp[:] = sp .+ Δs/size(sp,1)
-#     return sp
-#     #return sp
-# end
-
-# function update_state_pools(sp::Union{AbstractArray{T}, Buffer{T, <:AbstractArray{T}}}, Δs::Number, split::Symbol) where T<:Number
-#     return update_state_pools(sp, Δs, Val(split))
-# end
-
-# function cusp(sp, Δsp) # cusp
-#     b_sp = Buffer(sp)
-#     copyto!(b_sp, sp)
-#     b_sp = update_state_pools(b_sp, Δsp)
-#     return copy(b_sp)
-# end
-
-# function cusp(sp, Δsp, split_level::Union{Symbol, Int})
-#     b_sp = Buffer(sp)
-#     copyto!(b_sp, sp)
-#     b_sp = update_state_pools(b_sp, Δsp, split_level)
-#     return copy(b_sp)
-# end
 
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
@@ -70,7 +10,6 @@ macro rep_elem(outparams::Expr)
     rhs = outparams.args[3]
     rhsa = rhs.args
     tar = esc(rhsa[1])
-    # hp_pool = QuoteNode(rhsa[2])
     indx = rhsa[2]
     hp_pool = rhsa[3]
     outCode = [
@@ -84,7 +23,6 @@ macro rep_elem(outparams::Expr)
                 esc(Expr(:., :(helpers.pools.ones), hp_pool)),
                 esc(indx)))
     ]
-    # outCode = [Expr(:(=), tar, Expr(:call, :rep_elem, tar, lhs, Expr(:., :(helpers.pools.zeros), hp_pool), Expr(:., :(helpers.pools.ones), hp_pool), :(land.wCycleBase.z_zero), :(land.wCycleBase.o_one), indx))]
     return Expr(:block, outCode...)
 end
 
