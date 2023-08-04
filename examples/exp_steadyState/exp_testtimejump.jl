@@ -41,7 +41,7 @@ for (i, tj) ∈ enumerate(tjs)
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
-    spinupforc = :recycleMSC
+    spinupforc = :day_msc
     sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))
     spinup_forcing = getSpinupForcing(loc_forcing, tem_with_vals)
 

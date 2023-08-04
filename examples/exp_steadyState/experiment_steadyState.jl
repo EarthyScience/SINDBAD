@@ -25,7 +25,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
 
-    spinupforc = :recycleMSC
+    spinupforc = :day_msc
     sel_forcing = getSpinupForcing(loc_forcing, info.tem.helpers, Val(spinupforc))
     spinup_forcing = getSpinupForcing(loc_forcing, info.tem)
 
