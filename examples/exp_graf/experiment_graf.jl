@@ -59,19 +59,9 @@ for x ∈ 1:10
         land_init_space,
         f_one)
 end
-@profview runEcosystem!(output.data,
-    info.tem.models.forward,
-    forc,
-    tem_with_vals,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
 
-getLossVectorArray(info.optim.cost_options.loss, obs, output.data, info.optim.cost_options)
+getLossVectorArray(obs, output.data, info.optim.cost_options)
 
-# @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 

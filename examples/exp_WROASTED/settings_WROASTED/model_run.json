@@ -96,7 +96,7 @@
     "sequence": [
       {
         "spinup_mode": "forward",
-        "forcing": "recycleMSC",
+        "forcing": "first_year",
         "stop_function": null,
         "n_repeat": 200
       }
