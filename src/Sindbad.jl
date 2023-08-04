@@ -15,7 +15,7 @@ using Parameters
 @reexport using PrettyPrinting: pprint
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
 using Statistics
-using StatsBase: mean, rle
+using StatsBase: mean, rle, sample
 using TypedTables: Table, @Select
 
 

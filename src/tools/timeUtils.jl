@@ -2,6 +2,45 @@ export createTimeAggregator
 export TimeAggregator
 export TimeAggregatorViewInstance
 
+## base structs/functions for time aggregators
+function getIndicesForTimeGroups(groups)
+    _, rl = rle(groups)
+    cums = [0; cumsum(rl)]
+    stepvectime = [cums[i]+1:cums[i+1] for i in 1:length(rl)]
+    return stepvectime
+end
+
+struct TimeAggregator{I,F}
+    indices::I
+    f::F
+end
+
+struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T,N}
+    parent::P
+    agg::AV
+    dim::Val{D}
+end
+
+getdim(a::TimeAggregatorViewInstance{<:Any,<:Any,D}) where {D} = D
+
+function Base.size(a::TimeAggregatorViewInstance, i)
+    if i === getdim(a)
+        size(a.agg.indices, 1)
+    else
+        size(a.parent, i)
+    end
+end
+
+Base.size(a::TimeAggregatorViewInstance) = ntuple(i -> size(a, i), ndims(a))
+
+function Base.getindex(a::TimeAggregatorViewInstance, I::Vararg{Int,N}) where {N}
+    idim = getdim(a)
+    indices = I
+    indices = Base.setindex(indices, a.agg.indices[I[idim]], idim)
+    a.agg.f(view(a.parent, indices...))
+end
+
+
 function getArType()
     return Val(:array)
     # return Val(:sized_array)
@@ -15,15 +54,9 @@ function getTimeArray(ar, ::Val{:array})
     return ar
 end
 
+## time aggregators for model output and observations
 function createTimeAggregator(time, t_step::Symbol, f=mean, is_model_time_step=false)
     return createTimeAggregator(time, Val(t_step), f, is_model_time_step)
-end
-
-
-function createTimeAggregator(time, ::Val{:same}, f=mean)
-    stepvectime = getTimeArray([1:length(time)], getArType())
-    mean_agg = TimeAggregator(stepvectime, Sindbad.returnIt)
-    return [mean_agg, ]
 end
 
 function createTimeAggregator(time, ::Val{:mean}, f=mean)
@@ -119,40 +152,39 @@ function createTimeAggregator(time, ::Val{:year_anomaly}, f=mean, is_model_time_
     return [year_agg[1], mean_agg[1]]
 end
 
-
-function getIndicesForTimeGroups(groups)
-    _, rl = rle(groups)
-    cums = [0; cumsum(rl)]
-    stepvectime = [cums[i]+1:cums[i+1] for i in 1:length(rl)]
-    return stepvectime
+## spinup forcing related aggregators and functions
+function getIndexForSelectedYear(years, sel_year)
+    return getTimeArray(findall(==(sel_year), years), getArType())
 end
 
-struct TimeAggregator{I,F}
-    indices::I
-    f::F
+function createTimeAggregator(time, ::Val{:all_years}, f=mean, is_model_time_step=false)
+    stepvectime = getTimeArray([1:length(time)], getArType())
+    all_agg = TimeAggregator(stepvectime, f)
+    return [all_agg, ]
 end
 
-struct TimeAggregatorViewInstance{T,N,D,P,AV<:TimeAggregator} <: AbstractArray{T,N}
-    parent::P
-    agg::AV
-    dim::Val{D}
+function createTimeAggregator(time, ::Val{:first_year}, f=mean, is_model_time_step=false)
+    years = year.(time)
+    first_year = minimum(years)
+    year_inds = getIndexForSelectedYear(years, first_year)
+    year_agg = TimeAggregator(year_inds, f)
+    return [year_agg, ]
 end
 
-getdim(a::TimeAggregatorViewInstance{<:Any,<:Any,D}) where {D} = D
-
-function Base.size(a::TimeAggregatorViewInstance, i)
-    if i === getdim(a)
-        size(a.agg.indices, 1)
-    else
-        size(a.parent, i)
-    end
+function createTimeAggregator(time, ::Val{:random_year}, f=mean, is_model_time_step=false)
+    years = year.(time)
+    random_year = rand(unique(years))
+    year_inds = getIndexForSelectedYear(years, random_year)
+    year_agg = TimeAggregator(year_inds, f)
+    return [year_agg, ]
 end
 
-Base.size(a::TimeAggregatorViewInstance) = ntuple(i -> size(a, i), ndims(a))
-
-function Base.getindex(a::TimeAggregatorViewInstance, I::Vararg{Int,N}) where {N}
-    idim = getdim(a)
-    indices = I
-    indices = Base.setindex(indices, a.agg.indices[I[idim]], idim)
-    a.agg.f(view(a.parent, indices...))
+function createTimeAggregator(time, ::Val{:shuffle_years}, f=mean, is_model_time_step=false)
+    years = year.(time)
+    unique_years = unique(years)
+    shuffled_unique_years = Sindbad.sample(unique_years, length(unique_years), replace=false)
+    year_inds = getIndexForSelectedYear.(Ref(years), shuffled_unique_years)
+    year_agg = TimeAggregator(year_inds, f)
+    return [year_agg, ]
 end
+

@@ -1324,10 +1324,24 @@ function setupExperiment(info::NamedTuple)
     info = getRestartFilePath(info)
     infospin = info.model_run.spinup
 
-    # change spinup sequence dispatch variables to Val
+    # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
     for seq in seqq
+        # @show seq
         for kk in keys(seq)
+            if kk == "forcing"
+                is_model_time_step=false
+                if startswith(kk, info.tem.helpers.dates.model_time_step)
+                    is_model_time_step = true
+                end    
+                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_time_step)
+                seq["aggregator"] = aggregator
+                seq["aggregator_type"] = Val(:no_diff)
+                if occursin("_year", seq[kk])
+                    seq["aggregator"] = vcat(aggregator[1].indices...)
+                    seq["aggregator_type"] = Val(:indexed)
+                end
+            end
             if seq[kk] isa String
                 seq[kk] = Val(Symbol(seq[kk]))
             end

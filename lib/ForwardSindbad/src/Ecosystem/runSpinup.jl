@@ -555,12 +555,14 @@ function runSpinup(forward_models,
     # land_spin = deepcopy(land_in)
     # spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
     # @info "runSpinup:: running spinup sequences..."
+    spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
     for spin_seq ∈ tem_spinup.sequence
-        forc = spin_seq.forcing
+        # forc_name = valToSymbol(spin_seq.forcing)
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
-
-        sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
+        # @show spin_seq.forcing, forc_name
+        sel_forcing = getSpinupForcing(forcing, tem_helpers, f_one, spin_seq.aggregator, spin_seq.aggregator_type)
+        # sel_forcing = spinup_forcing[forc_name]
         # if isnothing(spinup_forcing)
         #     sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
         # else
