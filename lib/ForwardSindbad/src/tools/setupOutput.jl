@@ -152,37 +152,6 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
         end
         Tuple(od)
     end
-
-    # dim_loops = first.(forcing_axes)
-    # axes_dims = []
-    # if !isnothing(info.tem.forcing.dimensions.permute)
-    #     dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
-    #     if dim_loops !== dim_perms
-    #         for ix in eachindex(dim_perms)
-    #             dp_i = dim_perms[ix]
-    #             dl_ind = findall(x -> x == dp_i, dim_loops)[1]
-    #             f_a = forcing_axes[dl_ind]
-    #             ax_dim = Dim{first(f_a)}(last(f_a))
-    #             push!(axes_dims, ax_dim)
-    #         end
-    #     end
-    # else
-    #     axes_dims = map(x -> ForwardSindbad.Dim{first(x)}(last(x)), forcing_axes)
-    # end
-    # outdims = map(datavars) do vname_full
-    #     depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-    #     od = []
-    #     push!(od, axes_dims[1])
-    #     if depth_size > 1
-    #         push!(od, Dim{Symbol(depth_name)}(1:depth_size))
-    #     end
-    #     foreach(axes_dims[2:end]) do f_d
-    #         push!(od, f_d)
-    #     end
-    #     Tuple(od)
-    # end
-    # @show outdims, outdims_new
-    # @show outdims == outdims_new
     return outdims, outarray
 
 end
