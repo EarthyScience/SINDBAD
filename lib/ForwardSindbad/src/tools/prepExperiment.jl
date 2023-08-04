@@ -10,7 +10,7 @@ A helper function just to get info after experiment has been loaded and modified
 """
 function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     @info "prepExperimentForward: load configurations..."
-    info = getConfiguration(sindbad_experiment; replace_info=replace_info)
+    info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
 
     @info "prepExperimentForward: setup experiment..."
     info = setupExperiment(info)
