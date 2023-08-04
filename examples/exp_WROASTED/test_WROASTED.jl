@@ -20,7 +20,7 @@ forcingConfig = "forcing_erai.json"
 
 path_observation = path_input
 optimize_it = true
-optimize_it = false
+# optimize_it = false
 path_output = nothing
 
 pl = "threads"

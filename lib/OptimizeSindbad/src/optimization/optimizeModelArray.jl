@@ -125,55 +125,12 @@ function combineLossArray(lossVector::AbstractArray, percentile_value::T) where 
     return percentile(lossVector, percentile_value)
 end
 
-
-"""
-getLossVectorArray(observations, model_output::AbstractArray, cost_options)
-returns a vector of losses for variables in info.cost_options.variables_to_constrain
-"""
-function getLossVectorArray(lossVec, observations, model_output, cost_options)
-        foreach(cost_options) do cost_option
-            lossMetric = cost_option.cost_metric
-            (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
-            (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-            # metr = loss(y, yσ, ŷ, lossMetric)
-            @time metr = loss(y, yσ, ŷ, lossMetric)
-            if isnan(metr)
-                metr = oftype(metr, 1e19)
-            end
-            lossVec[cost_option.ind] = metr
-        end
-        return nothing
-    # lossVec = cost_options.loss
-    # li=1
-    # foreach(cost_options) do cost_option
-    #     # lossVec = map(cost_options) do cost_option
-    #         # println(cost_option.temporal_aggr)
-    #         lossMetric = cost_option.cost_metric
-    #         (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
-    #         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-    #         # metr = loss(y, yσ, ŷ, lossMetric)
-    #         @time metr = loss(y, yσ, ŷ, lossMetric)
-    #         if isnan(metr)
-    #             metr = oftype(metr, 1e19)
-    #         end
-    #         lossVec[li] = metr
-    #         li += 1
-    #         # push!(lossVec, metr)
-    #         # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
-    #         # metr
-    #     end
-
-    # println("-------------------")
-    # return lossVec
-end
-
-
 """
 getLossVectorArray(observations, model_output::AbstractArray, cost_options)
 returns a vector of losses for variables in info.cost_options.variables_to_constrain
 """
 function getLossVectorArray(observations, model_output, cost_options)
-        return lossVec = map(cost_options) do cost_option
+    lossVec = map(cost_options) do cost_option
             lossMetric = cost_option.cost_metric
             (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
             (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
@@ -184,28 +141,8 @@ function getLossVectorArray(observations, model_output, cost_options)
             end
             metr
         end
-    # lossVec = cost_options.loss
-    # li=1
-    # foreach(cost_options) do cost_option
-    #     # lossVec = map(cost_options) do cost_option
-    #         # println(cost_option.temporal_aggr)
-    #         lossMetric = cost_option.cost_metric
-    #         (y, yσ, ŷ) = getDataArray(model_output, observations, cost_option)
-    #         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-    #         # metr = loss(y, yσ, ŷ, lossMetric)
-    #         @time metr = loss(y, yσ, ŷ, lossMetric)
-    #         if isnan(metr)
-    #             metr = oftype(metr, 1e19)
-    #         end
-    #         lossVec[li] = metr
-    #         li += 1
-    #         # push!(lossVec, metr)
-    #         # println("$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)")
-    #         # metr
-    #     end
-
     # println("-------------------")
-    # return lossVec
+    return lossVec
 end
 
 

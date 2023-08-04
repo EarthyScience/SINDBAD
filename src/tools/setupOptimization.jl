@@ -98,7 +98,12 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     agg_indices = []
     for (i, _aggr) in enumerate(time_aggrs)
         aggr_func = getAggrFunc(Val(aggr_funcs[i]))
-        aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func)
+        _aggrName = string(_aggr)
+        is_model_time_step=false
+        if startswith(_aggrName, dates_helpers.model_time_step)
+            is_model_time_step = true
+        end
+        aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func, is_model_time_step)
         push!(agg_indices, aggInd)
     end
     push!(all_options, 1:length(obs_ind))
