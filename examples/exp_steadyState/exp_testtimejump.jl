@@ -23,7 +23,7 @@ for (i, tj) ∈ enumerate(tjs)
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
 
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
 
     output = setupOutput(info)
 

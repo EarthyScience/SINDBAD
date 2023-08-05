@@ -13,13 +13,13 @@ Random.seed!(7)
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 forc = getKeyedArrayWithNames(forcing);
-observations = getObservation(info);
+observations = getObservation(info, forcing.helpers);
 obs = getKeyedArrayWithNames(observations);
 
 @time loc_space_maps,

@@ -4,11 +4,11 @@ using ForwardDiff
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 forc = getKeyedArrayWithNames(forcing);
-observations = getObservation(info);
+observations = getObservation(info, forcing.helpers);
 obs = getKeyedArrayWithNames(observations);
 obsv = getKeyedArray(observations);
 

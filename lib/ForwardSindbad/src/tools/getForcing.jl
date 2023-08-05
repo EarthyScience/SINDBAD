@@ -32,19 +32,17 @@ function collectForcingSizes(info, in_yax)
     return f_sizes
 end
 
-function collectForcingInfo(info, f_sizes, f_dimensions)
-    f_info = (;)
-    f_info = setTupleField(f_info, (:dimensions, info.forcing.dimensions))
-    f_info = setTupleField(f_info, (:axes, f_dimensions))
+function collectForcingHelpers(info, f_sizes, f_dimensions)
+    f_helpers = (;)
+    f_helpers = setTupleField(f_helpers, (:dimensions, info.forcing.dimensions))
+    f_helpers = setTupleField(f_helpers, (:axes, f_dimensions))
     if hasproperty(info.forcing, :subset)
-        f_info = setTupleField(f_info, (:subset, info.forcing.subset))
+        f_helpers = setTupleField(f_helpers, (:subset, info.forcing.subset))
     else
-        f_info = setTupleField(f_info, (:subset, nothing))
+        f_helpers = setTupleField(f_helpers, (:subset, nothing))
     end
-    f_info = setTupleField(f_info, (:sizes, f_sizes))
-    new_tem = (info.tem..., forcing=f_info)
-    info = setTupleField(info, (:tem, new_tem))
-    return info
+    f_helpers = setTupleField(f_helpers, (:sizes, f_sizes))
+    return f_helpers
 end
 
 function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
@@ -83,21 +81,20 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
     return yax
 end
 
-function gettForcingInfo(incubes, f_sizes, f_dimensions, info)
-    @info "   processing forcing information..."
+function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
+    @info "   processing forcing helpers..."
     @info "     ::dimensions::"
     indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
     @info "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
-    info = collectForcingInfo(info, f_sizes, f_dimensions)
+    f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
     println("----------------------------------------------")
     forcing = (;
         data=incubes,
         dims=indims,
-        axes=f_dimensions,
         variables=forcing_variables,
-        sizes=f_sizes)
-    return info, forcing
+        helpers=f_helpers)
+    return forcing
 end
 
 function getTargetDimensionOrder(info)
@@ -200,6 +197,6 @@ function getForcing(info::NamedTuple)
         end
         incube
     end
-    return gettForcingInfo(incubes, f_sizes, f_dimension, info)
+    return getForcingNamedTuple(incubes, f_sizes, f_dimension, info)
 end
 
