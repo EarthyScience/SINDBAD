@@ -24,12 +24,12 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-info, forcing = getForcing(info);
-observations = getObservation(info);
+forcing = getForcing(info);
+observations = getObservation(info, forcing.helpers);
 obs = getArray(observations);
 
 
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 
 forc = getKeyedArrayWithNames(forcing);
 

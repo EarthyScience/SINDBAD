@@ -14,13 +14,13 @@ Random.seed!(7)
 experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
 info = getExperimentInfo(experiment_json);
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = setupOutput(info);
 forc = getKeyedArrayWithNames(forcing);
-observations = getObservation(info);
+observations = getObservation(info, forcing.helpers);
 obs = getKeyedArray(observations);
 
 @time _,

@@ -7,7 +7,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
     @info "-------------------Optimization Mode---------------------------"
-    observations = getObservation(info)
+    observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(info.tem.forcing.sizes), [:time])
 
     if isempty(additionaldims)
@@ -38,7 +38,7 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cost})
-    observations = getObservation(info)
+    observations = getObservation(info, forcing.helpers)
     forc_array = getKeyedArrayWithNames(forcing)
     obs_array = getArray(observations)
 

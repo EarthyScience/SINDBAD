@@ -38,7 +38,7 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     end
     println("----------------------------------------------")
     @info "prepExperimentForward: get forcing data..."
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
 
     println("----------------------------------------------")
 
@@ -59,6 +59,6 @@ function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 
     @info "runExperiment: get observations..."
     println("----------------------------------------------")
-    observations = getObservation(info)
+    observations = getObservation(info, forcing.helpers)
     return info, forcing, output, observations
 end
