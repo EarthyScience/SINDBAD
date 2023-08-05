@@ -25,9 +25,9 @@ for (i, tj) ∈ enumerate(tjs)
 
     forcing = getForcing(info)
 
-    output = setupOutput(info)
 
-    forc = getKeyedArrayWithNames(forcing)
+
+
     # linit= createLandInit(info.tem);
 
     loc_space_maps,
@@ -37,9 +37,9 @@ for (i, tj) ∈ enumerate(tjs)
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepRunEcosystem(output, forc, info.tem)
+    f_one = prepRunEcosystem(forcing, info)
 
-    loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
+    loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
     spinupforc = :day_msc
     sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))

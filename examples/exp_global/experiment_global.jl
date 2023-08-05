@@ -23,30 +23,27 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_global/settings_global/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-# obs = ForwardSindbad.getObservation(info, forcing.helpers);
 forcing = getForcing(info);
-output = setupOutput(info, forcing.helpers);
-
-forc = getKeyedArrayWithNames(forcing);
 
 GC.gc()
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
 
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
+
 for x ∈ 1:10
-    @time runEcosystem!(output.data,
+    @time runEcosystem!(output_array,
         info.tem.models.forward,
-        forc,
+        forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
         loc_forcings,
@@ -54,9 +51,10 @@ for x ∈ 1:10
         land_init_space,
         f_one)
 end
-@profview runEcosystem!(output.data,
+
+@profview runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -64,26 +62,5 @@ end
     land_init_space,
     f_one)
 
-# @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-
-ds = forcing.data[1];
-using CairoMakie: heatmap, Colorbar, save
-using AlgebraOfGraphics, DataFrames, Dates
-
-plotdat = output.data;
-for i ∈ eachindex(output.variables)
-    vname = output.variables[i]
-    pd = plotdat[i]
-    if size(pd, 2) == 1
-        fig, ax, obj = heatmap(pd[:, 1, :])
-        Colorbar(fig[1, 2], obj)
-        save(joinpath(info.output.figure, "afr2d_$(vname).png"), fig)
-    else
-        for ll ∈ 1:size(pd, 2)
-            fig, ax, obj = heatmap(pd[:, ll, :])
-            Colorbar(fig[1, 2], obj)
-            save(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"), fig)
-        end
-    end
-end
+# @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
+@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

@@ -1,37 +1,118 @@
 export optimizeModel
-export getSimulationData, loss, getLoss
-export getData
-export mapOptimizeModel
+export getSimulationDataArray, getLoss, getLossGradient
+export getData, combineLoss
+export getLocObs!
 export getLossVector
+export getModelOutputView
+export filterCommonNaN
 
-"""
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getData(outsmodel::NamedTuple, observations::NamedTuple, obsV::Symbol, modelVarInfo::Tuple)
-    ŷ = getproperty(outsmodel, modelVarInfo[2])
-    y = getproperty(observations, obsV)
-    yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    if size(ŷ) != size(y)
-        @warn "$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ"
-        ŷ = permutedims(ŷ, (2, 3, 1))
+
+@generated function getLocObs!(obs_array,
+    ::Val{obs_vars},
+    ::Val{s_names},
+    loc_obs,
+    s_locs) where {obs_vars,s_names}
+    output = quote end
+    foreach(obs_vars) do obsv
+        push!(output.args, Expr(:(=), :d, Expr(:., :obs_array, QuoteNode(obsv))))
+        s_ind = 1
+        foreach(s_names) do s_name
+            expr = Expr(:(=),
+                :d,
+                Expr(:call,
+                    :view,
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
+            push!(output.args, expr)
+            return s_ind += 1
+        end
+        return push!(output.args,
+            Expr(:(=),
+                :loc_obs,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
     end
-    #@show size(y[:]), size(yσ[:]), size(ŷ)
-    return (y[:], yσ[:], ŷ)
+    return output
+end
+
+function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
+    return @view mod_dat[:, 1]
+end
+
+function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
+    return @view mod_dat[:, 1, :]
+end
+
+function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
+    return @view mod_dat[:, 1, :, :]
+end
+
+function spatialAggregation(dat, _, ::Val{:cat})
+    return dat
+end
+
+
+function aggregateData(dat, cost_option, ::Val{:timespace})
+    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    return dat
+end
+
+function aggregateData(dat, cost_option, ::Val{:spacetime})
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+    return dat
 end
 
 """
-getSimulationData(outsmodel, observations, modelVariables, obsVariables)
+filterCommonNaN(y, yσ, ŷ)
+return model and obs data filtering for the common nan
 """
-function getData(outsmodel::landWrapper,
-    observations::NamedTuple,
-    obsV::Symbol,
-    modelVarInfo::Tuple)
-    ŷField = getproperty(outsmodel, modelVarInfo[1])
-    ŷ = getproperty(ŷField, modelVarInfo[2])
-    y = getproperty(observations, obsV)
-    yσ = getproperty(observations, Symbol(string(obsV) * "_σ"))
-    if size(ŷ) != size(y)
-        error("$(obsV) size:: model: $(size(ŷ)), obs: $(size(y)) => permuting dimensions of model ŷ")
+function filterCommonNaN(y, yσ, ŷ)
+    idxs = (.!isnan.(y .* yσ .* ŷ))
+    return y[idxs], yσ[idxs], ŷ[idxs]
+end
+
+"""
+getModelData(model_output::landWrapper, cost_option)
+"""
+function getModelData(model_output::landWrapper, cost_option)
+    mod_field = cost_option.mod_field
+    mod_subfield = cost_option.mod_subfield
+    ŷField = getproperty(model_output, mod_field)
+    ŷ = getproperty(ŷField, mod_subfield)
+    return ŷ
+end
+
+"""
+getModelData(model_output::AbstractArray, cost_option)
+"""
+function getModelData(model_output::AbstractArray, cost_option)
+    return model_output[cost_option.mod_ind]
+end
+
+"""
+getData(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getData(model_output,
+    observations, cost_option)
+    obs_ind = cost_option.obs_ind
+    ŷ = getModelData(model_output, cost_option)
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+    end
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    # ymask = observations[obs_ind + 2]
+
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+
+    if cost_option.temporal_aggr_obs
+        y = aggregateData(y, cost_option, cost_option.aggr_order)
+        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
     end
     return (y, yσ, ŷ)
 end
@@ -73,71 +154,160 @@ function combineLoss(lossVector::AbstractArray, percentile_value::T) where {T<:R
 end
 
 """
-getLossVector(observations::NamedTuple, tblParams::Table, optimVars::NamedTuple, optim::NamedTuple)
-returns a vector of losses for variables in info.optim.variables_to_constrain
+getLossVector(observations, model_output::AbstractArray, cost_options)
+returns a vector of losses for variables in info.cost_options.variables_to_constrain
 """
-function getLossVector(observations::NamedTuple, model_output, optim::NamedTuple)
-    lossVec = []
-    cost_options = optim.cost_options
-    optimVars = optim.variables.optim
-    for var_row ∈ cost_options
-        obsV = var_row.variable
-        lossMetric = var_row.cost_metric
-        mod_variable = getfield(optimVars, obsV)
-        (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
-        metr = loss(y, yσ, ŷ, Val(lossMetric))
+function getLossVector(observations, model_output, cost_options)
+    lossVec = map(cost_options) do cost_option
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        metr = loss(y, yσ, ŷ, lossMetric)
+        # @time metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
-            push!(lossVec, 1.0E19)
-        else
-            push!(lossVec, metr)
+            metr = oftype(metr, 1e19)
         end
-        #@info "$(obsV) => $(lossMetric): $(metr)"
+        metr
     end
+    # println("-------------------")
     return lossVec
 end
 
+
 """
-getLoss(pVector, approaches, initOut, forcing, observations, tblParams, obsVariables, modelVariables)
+filterConstraintMinimumDatapoints(obs_array, cost_options)
+remove all the variables that have less than minimum datapoints from being used in the optimization 
+"""
+function filterConstraintMinimumDatapoints(obs_array, cost_options)
+    cost_options_filtered = cost_options
+    foreach(cost_options) do cost_option
+        obs_ind_start = cost_option.obs_ind
+        min_points = cost_option.min_data_points
+        var_name = cost_option.variable
+        y = obs_array[obs_ind_start]
+        yσ = obs_array[obs_ind_start+1]
+        idxs = (.!isnan.(y .* yσ))
+        total_points = sum(idxs)
+        if total_points < min_points
+            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
+            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
+        end
+    end
+    return cost_options_filtered
+end
+
+"""
+getLossGradient(pVector, approaches, initOut, forcing, observations, tbl_params, obsVariables, modelVariables)
+"""
+function getLossGradient(pVector::AbstractArray,
+    base_models,
+    forcing,
+    output_array,
+    observations,
+    tbl_params,
+    tem,
+    optim,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
+    upVector = pVector
+    #newApproaches = base_models
+    newApproaches = Tuple(updateModelParametersType(tbl_params, base_models, upVector))
+    lopo = Tuple([lo for lo in loc_outputs])
+
+    runEcosystem!(output_array,
+        newApproaches,
+        forcing,
+        tem,
+        loc_space_inds,
+        loc_forcings,
+        lopo,
+        land_init_space,
+        f_one)
+    loss_vector = getLossVector(observations, output_array, optim.cost_options)
+    return combineLoss(loss_vector, optim.multi_constraint_method)
+end
+
+"""
+getLoss(pVector, approaches, initOut, forcing, observations, tbl_params, obsVariables, modelVariables)
 """
 function getLoss(pVector::AbstractArray,
-    forcing::NamedTuple,
-    initOut::NamedTuple,
-    observations::NamedTuple,
-    tblParams::Table,
-    tem::NamedTuple,
-    optim::NamedTuple)
-    newApproaches = updateModelParameters(tblParams, tem.models.forward)
-    outevolution = runEcosystem(newApproaches, forcing, initOut, tem) # spinup + forward run!
-    @info ".........................................."
-    loss_vector = getLossVector(observations, outevolution, optim)
-    @info "-------------------"
-
-    return combineLoss(loss_vector, Val(optim.multi_constraint_method))
+    base_models,
+    forcing,
+    output_array,
+    observations,
+    tbl_params,
+    tem,
+    cost_options,
+    multiconstraint_method,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    f_one)
+    upVector = pVector
+    newApproaches = updateModelParameters(tbl_params, base_models, upVector)
+    runEcosystem!(output_array,
+        newApproaches,
+        forcing,
+        tem,
+        loc_space_inds,
+        loc_forcings,
+        loc_outputs,
+        land_init_space,
+        f_one)
+    loss_vector = getLossVector(observations, output_array, cost_options)
+    return combineLoss(loss_vector, multiconstraint_method)
 end
 
 """
 optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
 function optimizeModel(forcing::NamedTuple,
-    initOut::NamedTuple,
-    observations::NamedTuple,
-    tem::NamedTuple,
-    optim::NamedTuple)
-    # get the list of observed variables, model variables to compare observation against, 
-    # obsVars, optimVars, storeVars = getConstraintNames(info);
+    observations,
+    info::NamedTuple)
 
+    tem = info.tem
+    optim = info.optim
     # get the subset of parameters table that consists of only optimized parameters
-    tblParams = getParameters(tem.models.forward, optim.optimized_parameters)
+    tbl_params = Sindbad.getParameters(tem.models.forward,
+        optim.default_parameter,
+        optim.optimized_parameters)
+
+    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
 
     # get the default and bounds
-    default_values = tem.helpers.numbers.sNT.(tblParams.default)
-    lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
-    upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
+    default_values = tem.helpers.numbers.sNT.(tbl_params.default)
+    lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
+    upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    # make the cost function handle
+    forcing_nt_array,
+    output_array,
+    _,
+    _,
+    loc_space_inds,
+    loc_forcings,
+    loc_outputs,
+    land_init_space,
+    tem_with_vals,
+    f_one = prepRunEcosystem(forcing, info)
     cost_function =
-        x -> getLoss(x, forcing, initOut, observations, tblParams, tem,
-            optim)
+        x -> getLoss(x,
+            tem.models.forward,
+            forcing_nt_array,
+            output_array,
+            observations,
+            tbl_params,
+            tem_with_vals,
+            cost_options,
+            optim.multi_constraint_method,
+            loc_space_inds,
+            loc_forcings,
+            loc_outputs,
+            land_init_space,
+            f_one)
 
     # run the optimizer
     optim_para = optimizer(cost_function,
@@ -145,57 +315,9 @@ function optimizeModel(forcing::NamedTuple,
         lower_bounds,
         upper_bounds,
         optim.algorithm.options,
-        Val(optim.algorithm.method))
+        optim.algorithm.method)
 
     # update the parameter table with the optimized values
-    tblParams.optim .= optim_para
-    return tblParams
-end
-
-function unpackYaxOpti(args; forcing_variables::AbstractArray)
-    nforc = length(forcing_variables)
-    outputs = first(args)
-    forcings = args[2:(nforc+1)]
-    observations = args[(nforc+2):end]
-    return outputs, forcings, observations
-end
-
-function doOptimizeModel(args...;
-    out::NamedTuple,
-    tem::NamedTuple,
-    optim::NamedTuple,
-    forcing_variables::AbstractArray,
-    obs_variables::AbstractArray)
-    output, forcing, observation = unpackYaxOpti(args; forcing_variables)
-    forcing = (; Pair.(forcing_variables, forcing)...)
-    observation = (; Pair.(obs_variables, observation)...)
-    params = optimizeModel(forcing, out, observation, tem, optim)
-    return output[:] = params.optim
-end
-
-function mapOptimizeModel(forcing::NamedTuple,
-    output::NamedTuple,
-    tem::NamedTuple,
-    optim::NamedTuple,
-    observations::NamedTuple,
-    ;
-    max_cache=1e9)
-    incubes = (forcing.data..., observations.data...)
-    indims = (forcing.dims..., observations.dims...)
-    forcing_variables = collect(forcing.variables)
-    outdims = output.paramdims
-    out = output.land_init
-    obs_variables = collect(observations.variables)
-
-    params = mapCube(doOptimizeModel,
-        (incubes...,);
-        out=out,
-        tem=tem,
-        optim=optim,
-        forcing_variables=forcing_variables,
-        obs_variables=obs_variables,
-        indims=indims,
-        outdims=outdims,
-        max_cache=max_cache)
-    return params
+    tbl_params.optim .= optim_para
+    return tbl_params
 end

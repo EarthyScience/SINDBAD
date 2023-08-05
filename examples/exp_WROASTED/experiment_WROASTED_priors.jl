@@ -48,17 +48,12 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-output = setupOutput(info, forcing.helpers);
-
-forc = getKeyedArrayWithNames(forcing);
-linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
-@time runEcosystem!(output.data,
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -67,9 +62,9 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     f_one)
 
 observations = getObservation(info, forcing.helpers);
-obs = getKeyedArrayWithNames(observations);
+obs_array = getKeyedArrayWithNames(observations);
 
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 
 """
@@ -85,8 +80,8 @@ function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     optimVars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
-        y = getproperty(obs, obsV)
-        yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
+        y = getproperty(obs_array, obsV)
+        yσ = getproperty(obs_array, Symbol(string(obsV) * "_σ"))
         [vec(y) vec(yσ)]
     end
     resM = vcat(res...)
@@ -113,7 +108,7 @@ function getPredAndObsVector(observations::NamedTuple,
         obsV = var_row.variable
         mod_variable = getfield(optimVars, obsV)
         #TODO care for equal size
-        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
+        (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         [vec(y) vec(yσ) vec(ŷ)]
     end
     resM = vcat(res...)
@@ -121,39 +116,36 @@ function getPredAndObsVector(observations::NamedTuple,
     #TODO do with fewer allocations
 end
 
-outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
-pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
+out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
+pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
 
 develop_f =
     () -> begin
         #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
-        #code run from @infiltrate in optimizeModelArray
+        #code run from @infiltrate in optimizeModel
         # d = shifloNormal(2,5)
         # using StatsPlots
         # plot(d)
 
-        tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
+        tbl_params = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
             optim.optimized_parameters)
         # get the default and bounds
-        default_values = tem.helpers.numbers.sNT.(tblParams.default)
-        lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
-        upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
+        default_values = tem.helpers.numbers.sNT.(tbl_params.default)
+        lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
+        upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepRunEcosystem(output.data,
-                output.land_init,
-                tem.models.forward,
-                forc, tem)
+        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+            prepRunEcosystem(tem.models.forward, forcing, tem)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
-        pred_obs, is_finite_obs = getObsAndUnc(obs, optim)
+        pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
 
         #TODO get y and sigmay beforehand and construct MvNormal
 
         #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
+        #output, tem.models.forward, forcing, tem, forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
         #output_variables, optim
-        m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
+        m_sesamfit = Turing.@model function sesamfit(obs_array, ::Type{T}=Float64) where {T}
             #assumptions/priors
             local popt = Vector{T}(undef, length(priors_opt))
             #popt_unscaled = Vector{T}(undef, length(popt_dist))
@@ -164,11 +156,11 @@ develop_f =
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            # tblParams.optim .= popt  # TODO replace mutation
+            # tbl_params.optim .= popt  # TODO replace mutation
 
-            newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
+            newApproaches = updateModelParameters(tbl_params, tem.models.forward, popt)
             # TODO run model with updated parameters
-            runEcosystem!(output.data,
+            runEcosystem!(output_array,
                 output.land_init,
                 newApproaches,
                 forcing,

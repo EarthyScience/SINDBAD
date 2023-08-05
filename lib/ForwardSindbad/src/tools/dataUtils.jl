@@ -11,7 +11,7 @@ export getForcingForTimeStep
 export getKeyedArray
 export getKeyedArrayWithNames
 export getNamedDimsArrayWithNames
-export getNumberOfTimeSteps 
+export getNumberOfTimeSteps
 export getSpatialSubset
 export getSindbadDims
 export isInvalid
@@ -382,19 +382,19 @@ function getTimeAggrArray(mod_dat::AbstractArray{T,4}) where {T}
 end
 
 # works for everything for which aggregator is needed
-function temporalAggregation(dat::AxisKeys.KeyedArray, temporal_aggregator::Sindbad.TimeAggregator, dim = 1)
+function temporalAggregation(dat::AxisKeys.KeyedArray, temporal_aggregator::Sindbad.TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return dat
 end
 
 # works for everything for which aggregator is needed
-function temporalAggregation(dat, temporal_aggregator::Sindbad.TimeAggregator, dim = 1)
+function temporalAggregation(dat, temporal_aggregator::Sindbad.TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end
 
 # works for everything for which no aggregation is needed
-function temporalAggregation(dat, temporal_aggregator::Nothing, dim = 1)
+function temporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
     return dat
 end
 

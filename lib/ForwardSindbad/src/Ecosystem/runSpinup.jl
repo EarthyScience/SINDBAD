@@ -498,10 +498,10 @@ function doSpinup(spinup_models,
 end
 
 """
-runModels(forcing, models, out)
+runCompute(forcing, models, out)
 """
 function runSpinupModels!(out, forcing, models, tem_helpers, _)
-    return foldl_unrolled(models; init=out) do o, model
+    return foldlUnrolled(models; init=out) do o, model
         o = Models.compute(model, forcing, o, tem_helpers)
     end
 end

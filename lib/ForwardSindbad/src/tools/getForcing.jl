@@ -53,7 +53,7 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
 
     if !isnothing(tar_dims)
         permutes = getDimPermutation(YAXArrayBase.dimnames(yax), tar_dims)
-        @info "     permuting dimensions to $(tar_dims)..."
+        @info "     -> permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
     if hasproperty(yax, Symbol(info.forcing.dimensions.time))
@@ -183,14 +183,14 @@ function getForcing(info::NamedTuple)
     vinfo = nothing
     f_sizes = nothing
     f_dimension = nothing
-    num_type=Val{info.tem.helpers.numbers.num_type}()
+    num_type = Val{info.tem.helpers.numbers.num_type}()
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
         @info "     source_var: $(vinfo.source_variable)"
-        @info "     sindbad_var: $(k)\n "
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
+        @info "     sindbad_var: $(k)\n "
         if vinfo.space_time_type == "spatiotemporal" && isnothing(f_sizes)
             f_sizes = collectForcingSizes(info, incube)
             f_dimension = getSindbadDims(incube)
