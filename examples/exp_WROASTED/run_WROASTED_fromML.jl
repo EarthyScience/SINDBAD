@@ -136,7 +136,7 @@ for site_index in sites
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
     tblParams = Sindbad.getParameters(info.tem.models.forward,
@@ -192,7 +192,7 @@ for site_index in sites
 
         outcubes = output.data
 
-        observations = getObservation(info)
+        observations = getObservation(info, forcing.helpers)
         obs = getKeyedArray(observations)
 
         # open the matlab simulation data
@@ -264,7 +264,7 @@ for site_index in sites
             replace_info["model_run.flags.run_forward_and_cost"] = false
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify information from json with the replace_info
-            info, forcing = getForcing(info)
+            forcing = getForcing(info)
             output = setupOutput(info)
             loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
                 prepRunEcosystem(output,

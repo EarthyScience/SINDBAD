@@ -107,11 +107,13 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     return outarray
 end
 
-function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes; dthres=1)
+function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres=1)
+    forcing_sizes = forcing_helpers.sizes
+    forcing_axes = forcing_helpers.axes
     dim_loops = first.(forcing_axes)
     axes_dims_pairs = []
-    if !isnothing(info.tem.forcing.dimensions.permute)
-        dim_perms = Symbol.(info.tem.forcing.dimensions.permute)
+    if !isnothing(forcing_helpers.dimensions.permute)
+        dim_perms = Symbol.(forcing_helpers.dimensions.permute)
         if dim_loops !== dim_perms
             for ix in eachindex(dim_perms)
                 dp_i = dim_perms[ix]
@@ -142,9 +144,10 @@ function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, 
     return outdims_pairs
 end
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:array})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:array})
+    forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
-    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes)
+    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers)
     outdims = map(outdims_pairs) do dim_pairs
         od = []
         for _dim in dim_pairs
@@ -156,24 +159,24 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes,
 
 end
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:sizedarray})
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:sizedarray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
     sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, sized_array
 end
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:marray})
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:marray})
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
     marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, marray
 end
 
 
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, ::Val{:keyedarray})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyedarray})
+    forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
-    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes; dthres=0)
+    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres=0)
 
-    # outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(:array))
     keyedarray = []
     # keyedarray = outarray
     outdims = []
@@ -223,9 +226,7 @@ function getVariableFields(datavars)
     return ovro
 end
 
-function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
-    forcing_axes = info.tem.forcing.axes
-    forcing_sizes = info.tem.forcing.sizes
+function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     @info "setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
     outformat = info.model_run.output.format
@@ -245,7 +246,7 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "setupOutput: getting output dimension and arrays..."
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_sizes, forcing_axes, Val(Symbol(info.model_run.output.output_array_type)))
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.model_run.output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
@@ -271,12 +272,12 @@ function setupBaseOutput(info::NamedTuple, tem_helpers::NamedTuple)
     return output_tuple
 end
 
-function setupOutput(info::NamedTuple)
-    return setupBaseOutput(info, info.tem.helpers)
+function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple)
+    return setupBaseOutput(info, forcing_helpers, info.tem.helpers)
 end
 
-function setupOutput(info::NamedTuple, tem_helpers::NamedTuple)
-    return setupBaseOutput(info, tem_helpers)
+function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+    return setupBaseOutput(info, forcing_helpers, tem_helpers)
 end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)

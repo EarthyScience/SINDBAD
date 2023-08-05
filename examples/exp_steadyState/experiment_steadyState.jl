@@ -15,7 +15,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
     output = setupOutput(info)
 
     forc = getKeyedArrayWithNames(forcing)

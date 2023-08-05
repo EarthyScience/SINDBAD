@@ -22,9 +22,9 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-# obs = ForwardSindbad.getObservation(info);
-info, forcing = getForcing(info);
-output = setupOutput(info);
+# obs = ForwardSindbad.getObservation(info, forcing.helpers);
+forcing = getForcing(info);
+output = setupOutput(info, forcing.helpers);
 
 forc = getKeyedArrayWithNames(forcing);
 
