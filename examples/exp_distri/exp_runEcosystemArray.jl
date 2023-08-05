@@ -10,35 +10,34 @@ info = setupExperiment(info);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
-output = setupOutput(info, forcing.helpers);
-forc = getKeyedArrayWithNames(forcing);
-obs = getKeyedArray(observations);
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
+obs_array = getKeyedArray(observations);
 
-@time runEcosystem!(output.data,
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
+
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
     f_one)
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
+# @profview runEcosystem!(output_array, info.tem.models.forward, forcing_nt_array info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
 
-@time outcubes = runExperimentForward(experiment_json);
-@time outcubes = runExperimentOpti(experiment_json);
+@time output_default = runExperimentForward(experiment_json);
+@time out_params = runExperimentOpti(experiment_json);
 
-# @benchmark runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem)
+# @benchmark runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array info.tem)
 a = 1
 
 # some plots
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 site = 1
 
-plotdat = output.data;
+plotdat = output_array;
 fig, ax, obj = CairoMakie.heatmap(plotdat[end][:, 1, :])
 Colorbar(fig[1, 2], obj)
 save(joinpath(info.output.figure, "gpp.png"), fig)
@@ -46,9 +45,9 @@ save(joinpath(info.output.figure, "gpp.png"), fig)
 for site ∈ 1:16
     df = DataFrame(;
         time=info.tem.helpers.dates.range,
-        gpp=output.data[end-1][:, 1, site],
-        nee=output.data[end][:, 1, site],
-        soilw1=output.data[2][:, 1, site])
+        gpp=output_array[end-1][:, 1, site],
+        nee=output_array[end][:, 1, site],
+        soilw1=output_array[2][:, 1, site])
 
     for var ∈ (:gpp, :nee, :soilw1)
         d = data(df) * mapping(:time, var) * visual(Lines; linewidth=0.5)

@@ -47,30 +47,18 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-# tblParams = Sindbad.getParameters(info.tem.models.forward,
+# tbl_params = Sindbad.getParameters(info.tem.models.forward,
 #     info.optim.default_parameter,
 #     info.optim.optimized_parameters);
 
 forcing = getForcing(info);
 
-# mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
-# tcprint(mtup)
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
 
-forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info, forcing.helpers);
-
-linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
-
-
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output,
-        forc,
-        info.tem);
-
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -78,32 +66,30 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
+@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
-obs = getArray(observations);
-@time getLossVectorArray(obs, output.data, info.optim.cost_options)
+obs_array = getArray(observations);
+@time getLossVector(obs_array, output_default, info.optim.cost_options)
 
-@time outparams = runExperimentOpti(experiment_json; replace_info=replace_info);
+@time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 new_models = info.tem.models.forward;
 
 if info.tem.helpers.run.run_optimization
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
-    new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+    new_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
 
-forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info, forcing.helpers);
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     new_models,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -114,9 +100,8 @@ output = setupOutput(info, forcing.helpers);
 # some plots
 using Plots
 ds = forcing.data[1];
-opt_dat = output.data;
-def_dat = outcubes;
-out_vars = output.variables;
+opt_dat = output_array;
+def_dat = output_default;
 costOpt = info.optim.cost_options;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
@@ -130,8 +115,8 @@ foreach(costOpt) do var_row
     if loss_name in (:nnseinv, :nseinv)
         lossMetric = Val(:nse)
     end
-    (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
-    (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
+    (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
+    (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
     obs_var_TMP = obs_var[:, 1, 1, 1]
     non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
     if length(non_nan_index) < 2

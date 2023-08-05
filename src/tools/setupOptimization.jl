@@ -99,7 +99,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     for (i, _aggr) in enumerate(time_aggrs)
         aggr_func = getAggrFunc(Val(aggr_funcs[i]))
         _aggrName = string(_aggr)
-        is_model_time_step=false
+        is_model_time_step = false
         if startswith(_aggrName, dates_helpers.model_time_step)
             is_model_time_step = true
         end
@@ -124,10 +124,10 @@ checks if the parameters listed in optimized_parameters of optimization.json exi
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
     # @show info.optimization.constraints, info.optimization.optimized_parameters
-    tblParams = getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optimization.default_parameter,
         info.optimization.optimized_parameters)
-    model_parameters = tblParams.name_full
+    model_parameters = tbl_params.name_full
     # @show model_parameters
     optim_parameters = info.optimization.optimized_parameters
     op_names = nothing

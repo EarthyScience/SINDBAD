@@ -35,4 +35,4 @@ run_output = runExperiment(experiment_jld2); #this one will only work if the rep
 info = Sindbad.load("info.jld2")["info"];
 forcing = getForcing(info)
 
-output = setupOutput(info)
+

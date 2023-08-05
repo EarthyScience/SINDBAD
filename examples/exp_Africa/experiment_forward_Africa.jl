@@ -22,19 +22,15 @@ replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-# obs = ForwardSindbad.getObservation(info, forcing.helpers);
 forcing = getForcing(info);
-output = setupOutput(info, forcing.helpers);
-
-forc = getKeyedArrayWithNames(forcing);
 
 GC.gc()
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
-@time runEcosystem!(output.data,
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -46,7 +42,7 @@ ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
 using Statistics
-plotdat = output.data;
+plotdat = output_array;
 # pd = mean(plotdat[1], dims=1)
 fig, ax, obj = heatmap(mean(plotdat[1]; dims=1)[1, 1, :, :])
 Colorbar(fig[1, 2], obj)

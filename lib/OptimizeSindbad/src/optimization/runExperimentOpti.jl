@@ -8,7 +8,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
     @info "-------------------Optimization Mode---------------------------"
     observations = getObservation(info, forcing.helpers)
-    additionaldims = setdiff(keys(info.tem.forcing.sizes), [:time])
+    additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
 
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
@@ -21,10 +21,9 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
             max_cache=info.model_run.rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        forc_array = getKeyedArrayWithNames(forcing)
         obs_array = getArray(observations)
         # obs_array = getKeyedArray(observations)
-        optim_params = optimizeModelArray(forc_array, output, obs_array, info.tem, info.optim)
+        optim_params = optimizeModel(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
         Sindbad.CSV.write(optim_file_prefix * "_optimized_parameters.csv", optim_params)
         run_output = optim_params.optim
@@ -37,20 +36,19 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:cost})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     observations = getObservation(info, forcing.helpers)
-    forc_array = getKeyedArrayWithNames(forcing)
     obs_array = getArray(observations)
 
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    @time runEcosystem!(output, forc_array, info.tem)
+    @time output_array = runEcosystem!(forcing, info)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
     # @time run_output = output.data
-    run_output = getLossVectorArray(obs_array, output.data, info.optim.cost_options)
-    return run_output
+    loss_vector = getLossVector(obs_array, output_array, info.optim.cost_options)
+    return loss_vector
 end
 
 """
@@ -65,7 +63,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
         run_output = runExperiment(info, forcing, output, Val(:opti))
     end
     if info.tem.helpers.run.run_forward_and_cost && !info.tem.helpers.run.run_optimization
-        run_output = runExperiment(info, forcing, output, Val(:cost))
+        run_output = runExperiment(info, forcing, Val(:cost))
     end
     return run_output
 end

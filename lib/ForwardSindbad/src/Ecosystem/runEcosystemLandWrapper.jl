@@ -1,25 +1,6 @@
 export runEcosystem
-export removeEmptyFields
-export runPrecompute
-export mapRunEcosystem
 
-"""
-runModels(forcing, models, out)
-"""
-function runModels(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    return foldl_unrolled(models; init=out) do o, model
-        o = Models.compute(model, forcing, o, tem_helpers)
-    end
-end
-
-function runPrecompute(forcing::NamedTuple, models::Tuple, out::NamedTuple, tem_helpers::NamedTuple)
-    return foldl_unrolled(models; init=out) do o, model
-        o = Models.define(model, forcing, o, tem_helpers)
-    end
-end
-
-
-function timeLoopForward(
+function timeLoopForwardVector(
     res_vec,
     forward_models,
     forcing,
@@ -30,7 +11,7 @@ function timeLoopForward(
 )
     for ts = 1:time_steps
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        out = runModels!(out, f, forward_models, tem_helpers)
+        out = runCompute(out, f, forward_models, tem_helpers)
         res_vec[ts] = out
     end
     return nothing
@@ -47,22 +28,13 @@ function timeLoopForward(
 )
     out_stacked = map(1:time_steps) do ts
         f = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        out = runModels!(out, f, forward_models, tem_helpers)
+        out = runCompute(out, f, forward_models, tem_helpers)
     end
     return out_stacked
 end
 
-"""
-removeEmptyFields(tpl)
-"""
-function removeEmptyFields(tpl::NamedTuple)
-    indx = findall(x -> x != NamedTuple(), values(tpl))
-    nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
-    return NamedTuple{nkeys}(nvals)
-end
 
-
-function coreEcosystem(approaches,
+function coreEcosystemVector(approaches,
     res_vec,
     loc_forcing,
     tem_helpers,
@@ -71,7 +43,7 @@ function coreEcosystem(approaches,
     land_init,
     f_one)
 
-    land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
+    land_prec = runPrecompute(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
     if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(
@@ -85,7 +57,7 @@ function coreEcosystem(approaches,
             f_one)
     end
     time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
-    timeLoopForward(
+    timeLoopForwardVector(
         res_vec,
         approaches,
         loc_forcing,
@@ -105,7 +77,7 @@ function coreEcosystem(approaches,
     tem_models,
     land_init,
     f_one)
-    land_prec = runPrecompute!(land_init, f_one, approaches, tem_helpers)
+    land_prec = runPrecompute(land_init, f_one, approaches, tem_helpers)
     land_spin_now = land_prec
     # land_spin_now = land_init
 
@@ -129,7 +101,7 @@ function coreEcosystem(approaches,
     return out_stacked
 end
 
-function ecoLoc(approaches,
+function ecoLocVector(approaches,
     res_vec,
     forcing,
     tem_helpers,
@@ -140,7 +112,7 @@ function ecoLoc(approaches,
     land_init,
     f_one)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
-    coreEcosystem(approaches,
+    coreEcosystemVector(approaches,
         res_vec,
         loc_forcing,
         tem_helpers,
@@ -213,7 +185,7 @@ function runEcosystem(approaches,
         # res_vec_space = nothing
         landWrapper(fullarrayoftuples)
     else
-        coreEcosystem(approaches,
+        coreEcosystemVector(approaches,
             res_vec_space,
             loc_forcing,
             tem_helpers,
@@ -235,8 +207,8 @@ function runEcosystem(approaches::Tuple,
     tem::NamedTuple)
 
     land_all = if !isempty(loc_space_inds)
-        _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
-            prepRunEcosystem(output, forcing, tem)
+        forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
+            prepRunEcosystem(forcing, tem)
         res = parallelizeIt(tem_with_vals.models.forward,
             res_vec,
             forcing,
@@ -257,7 +229,7 @@ function runEcosystem(approaches::Tuple,
         res = nothing
         fullarrayoftuples
     else
-        res = coreEcosystem(approaches,
+        res = coreEcosystemVector(approaches,
             res_vec,
             loc_forcing,
             tem_helpers,
@@ -327,71 +299,4 @@ function parallelizeIt(approaches,
         i = i + 1
     end
     return out_eco
-end
-function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
-    nin = length(forcing_variables)
-    nout = sum(length, tem.variables)
-    outputs = args[1:nout]
-    inputs = args[(nout+1):(nout+nin)]
-    return outputs, inputs
-end
-
-function doRunEcosystem(args...;
-    land_init::NamedTuple,
-    tem::NamedTuple,
-    forward_models::Tuple,
-    forcing_variables::AbstractArray)
-    #@show "doRun", Threads.threadid()
-    outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
-    forcing = (; Pair.(forcing_variables, inputs)...)
-    land_out = runEcosystem(forward_models, forcing, land_init, tem)
-    i = 1
-    tem_variables = tem.variables
-    for group ∈ keys(tem_variables)
-        data = land_out[group]
-        for k ∈ tem_variables[group]
-            viewcopy(outputs[i], data[k])
-            i += 1
-        end
-    end
-end
-
-function viewcopy(xout, xin)
-    if ndims(xout) == ndims(xin)
-        for i ∈ eachindex(xin)
-            xout[i] = xin[i][1]
-        end
-    else
-        for i ∈ CartesianIndices(xin)
-            xout[:, i] .= xin[i]
-        end
-    end
-end
-
-function mapRunEcosystem(forcing::NamedTuple,
-    output::NamedTuple,
-    tem::NamedTuple,
-    forward_models::Tuple;
-    max_cache=1e9)
-    incubes = forcing.data
-    indims = forcing.dims
-    forcing_variables = collect(forcing.variables)
-    outdims = output.dims
-    land_init = deepcopy(output.land_init)
-    #additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-    #nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
-
-    outcubes = mapCube(doRunEcosystem,
-        (incubes...,);
-        land_init=land_init,
-        tem=tem,
-        forward_models=forward_models,
-        forcing_variables=forcing_variables,
-        indims=indims,
-        outdims=outdims,
-        max_cache=max_cache,
-        ispar=true
-        #nthreads = [1],
-    )
-    return outcubes
 end
