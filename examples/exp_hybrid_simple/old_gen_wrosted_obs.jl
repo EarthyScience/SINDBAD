@@ -5,7 +5,7 @@ using Flux
 using Random
 #using GLMakie
 
-function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
+function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
     loc_forcing = map(forcing) do a
         return view(a; loc_space_map...)
     end
@@ -28,9 +28,9 @@ function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (
         Flux.Dense(n_neurons => n_params, Flux.sigmoid))
 end
 
-function getParamsAct(pNorm, tblParams)
-    lb = oftype(tblParams.default, tblParams.lower)
-    ub = oftype(tblParams.default, tblParams.upper)
+function getParamsAct(pNorm, tbl_params)
+    lb = oftype(tbl_params.default, tbl_params.lower)
+    ub = oftype(tbl_params.default, tbl_params.upper)
     pVec = pNorm .* (ub .- lb) .+ lb
     return pVec
 end
@@ -47,12 +47,12 @@ function synth_obs()
     info = getExperimentInfo(experiment_json)
     forcing = getForcing(info)
     land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
-    output = setupOutput(info)
-    forc = getKeyedArrayWithNames(forcing)
+
+
     observations = getObservation(info, forcing.helpers)
-    obs = getKeyedArrayWithNames(observations)
+    obs_array = getKeyedArrayWithNames(observations)
     obsv = getKeyedArray(observations)
-    tblParams = getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
 
@@ -72,7 +72,7 @@ function synth_obs()
     # sites = setdiff!(sites, ["RU-Ha1", "IT-PT1", "US-Me5"])
     n_bs_feat = length(xfeatures.features)
     n_neurons = 32
-    n_params = sum(tblParams.is_ml)
+    n_params = sum(tbl_params.is_ml)
 
     loc_space_maps,
     loc_space_names,
@@ -81,9 +81,7 @@ function synth_obs()
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepRunEcosystem(output,
-        forc,
-        info.tem)
+    f_one = prepRunEcosystem(forcing, info)
 
 
     ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
@@ -93,13 +91,13 @@ function synth_obs()
     #sites_parameters .= 0.0
     #@show sites_parameters
 
-    params_bounded = getParamsAct.(sites_parameters, tblParams)
+    params_bounded = getParamsAct.(sites_parameters, tbl_params)
 
     function pixel_run!(output,
         forc,
-        obs,
+        obs_array,
         site_location,
-        tblParams,
+        tbl_params,
         forward,
         upVector,
         tem_helpers,
@@ -108,9 +106,9 @@ function synth_obs()
         land_init_site,
         f_one)
 
-        loc_forcing, loc_output, _ = getLocDataObsN(output.data, forc, obs, site_location)
-        up_apps = updateModelParametersType(tblParams, forward, upVector)
-        # up_apps = Tuple(updateModelParametersType(tblParams, forward, upVector))
+        loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
+        up_apps = updateModelParametersType(tbl_params, forward, upVector)
+        # up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
         return coreEcosystem!(loc_output,
             up_apps,
             loc_forcing,
@@ -126,13 +124,12 @@ function synth_obs()
     tem_models = tem_with_vals.models
     tem_variables = tem_with_vals.variables
     tem_optim = info.optim
-    out_variables = output.variables
     forward = tem_with_vals.models.forward
 
     site_location = loc_space_maps[1]
     loc_forcing, loc_output, loc_obs =
-        getLocDataObsN(output.data,
-            forc, obs, site_location)
+        getLocDataObsN(output_array,
+            forc, obs_array, site_location)
 
     loc_space_ind = loc_space_inds[1]
     loc_land_init = land_init_space[1]
@@ -141,11 +138,11 @@ function synth_obs()
 
     pixel_run!(output,
         forc,
-        obs,
+        obs_array,
         site_location,
-        tblParams,
+        tbl_params,
         forward,
-        tblParams.default,
+        tbl_params.default,
         tem_helpers,
         tem_spinup,
         tem_models,
@@ -153,16 +150,16 @@ function synth_obs()
         f_one)
 
 
-    loc_forcing, loc_output, loc_obs = getLocDataObsN(output.data, forc, obs, site_location)
+    loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
 
     function space_run!(up_params,
-        tblParams,
+        tbl_params,
         sites_f,
         land_init_space,
         cov_sites,
         output,
         forc,
-        obs,
+        obs_array,
         forward,
         tem_helpers,
         tem_spinup,
@@ -176,9 +173,9 @@ function synth_obs()
             loc_land_init = land_init_space[site_location[1][2]]
             pixel_run!(output,
                 forc,
-                obs,
+                obs_array,
                 site_location,
-                tblParams,
+                tbl_params,
                 forward,
                 x_params,
                 tem_helpers,
@@ -192,13 +189,13 @@ function synth_obs()
     cov_sites = xfeatures.site
 
     space_run!(params_bounded,
-        tblParams,
+        tbl_params,
         sites_f,
         land_init_space,
         cov_sites,
         output,
         forc,
-        obs,
+        obs_array,
         forward,
         tem_helpers,
         tem_spinup,
@@ -207,13 +204,13 @@ function synth_obs()
 
 
 
-    gppOut = output.data[1]
+    gppOut = output_array[1]
     t_steps = info.tem.helpers.dates.size
 
     gpp_synt = reshape(gppOut, (t_steps, 205))
     gppKA = KeyedArray(Float32.(gpp_synt); time=obs.gpp.time, site=obs.gpp.site)
 
-    neeOut = output.data[2]
+    neeOut = output_array[2]
     nee_synt = reshape(neeOut, (t_steps, 205))
     t_plot = 15
 
@@ -223,13 +220,13 @@ function synth_obs()
 
     #series(permutedims(nee_synt[:, 1:t_plot], (2, 1)); color=resample_cmap(:glasbey_hv_n256, t_plot))
 
-    transpirationOut = output.data[3]
+    transpirationOut = output_array[3]
     transpiration_synt = reshape(transpirationOut, (t_steps, 205))
     transpirationKA = KeyedArray(Float32.(transpiration_synt); time=obs.gpp.time, site=obs.gpp.site)
     #series(permutedims(transpiration_synt[:, 1:t_plot], (2, 1)); color=resample_cmap(:glasbey_hv_n256, t_plot))
 
 
-    evapotranspirationOut = output.data[4]
+    evapotranspirationOut = output_array[4]
     evapotranspiration_synt = reshape(evapotranspirationOut, (t_steps, 205))
     evapotranspirationKA = KeyedArray(Float32.(evapotranspiration_synt); time=obs.gpp.time,
         site=obs.gpp.site)
@@ -259,7 +256,7 @@ function synth_obs()
         sites,
         sites_f,
         params_bounded,
-        tblParams,
+        tbl_params,
         n_params,
         n_neurons,
         loc_forcings,
@@ -267,7 +264,7 @@ function synth_obs()
         land_init_space,
         loc_space_maps,
         forward,
-        out_data=output.data,
+        out_data=output_array,
         tem_helpers,
         tem_models,
         tem_optim,

@@ -8,7 +8,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:forward})
     @info "-------------------Forward Run Mode---------------------------"
 
-    additionaldims = setdiff(keys(info.tem.forcing.sizes), [:time])
+    additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
         run_output = mapRunEcosystem(forcing,
             output,
@@ -16,9 +16,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
             info.tem.models.forward;
             max_cache=info.model_run.rules.yax_max_cache)
     else
-        forc = getKeyedArrayWithNames(forcing)
-        runEcosystem!(output, forc, info.tem)
-        run_output = output.data
+        run_output = runEcosystem!(forcing, info)
     end
     return run_output
 end

@@ -12,8 +12,6 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 forcing = getForcing(info);
 
-output = setupOutput(info, forcing.helpers);
-
 outcubes = mapRunEcosystem(forcing,
     output,
     info.tem,

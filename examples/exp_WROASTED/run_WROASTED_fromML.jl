@@ -139,50 +139,42 @@ for site_index in sites
     forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
-    outparams = tblParams.optim
-    param_names = tblParams.name_full
+    opt_params = tbl_params.optim
+    param_names = tbl_params.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
 
     if isfile(ml_param_file)
         ml_params = Sindbad.parsefile(ml_param_file; dicttype=Sindbad.DataStructures.OrderedDict)["parameter"]
 
-        for opi in eachindex(outparams)
+        for opi in eachindex(opt_params)
             jl_name = param_names[opi]
             ml_name = param_maps[jl_name]
             println(jl_name, "=>", ml_name)
             ml_model = split(ml_name, ".")[1]
             ml_p = split(ml_name, ".")[2]
             ml_value = ml_params[ml_model][ml_p]
-            @show outparams[opi], "old"
-            outparams[opi] = oftype(outparams[opi], ml_value)
-            @show outparams[opi], "new"
+            @show opt_params[opi], "old"
+            opt_params[opi] = oftype(opt_params[opi], ml_value)
+            @show opt_params[opi], "new"
             println("------------------------------------------------")
         end
-        models_with_matlab_params = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+        models_with_matlab_params = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
 
-        tblParams_2 = Sindbad.getParameters(models_with_matlab_params,
+        tbl_params_2 = Sindbad.getParameters(models_with_matlab_params,
             info.optim.default_parameter,
             info.optim.optimized_parameters)
 
-
-
         ## run the model
-        forc = getKeyedArrayWithNames(forcing)
-        output = setupOutput(info)
 
-        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepRunEcosystem(output,
-                models_with_matlab_params,
-                forc,
-                info.tem,
-                info.tem.helpers)
-        @time runEcosystem!(output.data,
+
+        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepRunEcosystem(models_with_matlab_params, forcing, info)
+        @time runEcosystem!(output_array,
             models_with_matlab_params,
-            forc,
+            forcing_nt_array,
             tem_with_vals,
             loc_space_inds,
             loc_forcings,
@@ -190,10 +182,10 @@ for site_index in sites
             land_init_space,
             f_one)
 
-        outcubes = output.data
+        outcubes = output_array
 
         observations = getObservation(info, forcing.helpers)
-        obs = getKeyedArray(observations)
+        obs_array = getKeyedArray(observations)
 
         # open the matlab simulation data
         # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
@@ -204,7 +196,7 @@ for site_index in sites
         # some plots for model simulations from JL and matlab versions
         ds = forcing.data[1]
         opt_dat = outcubes
-        out_vars = output.variables
+        out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
         costOpt = info.optim.cost_options
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
@@ -225,7 +217,7 @@ for site_index in sites
             elseif v == :ndvi
                 ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
             end
-            (obs_var, obs_σ, jl_dat) = getDataArray(opt_dat, obs, var_row)
+            (obs_var, obs_σ, jl_dat) = getData(opt_dat, obs_array, var_row)
             obs_var_TMP = obs_var[:, 1, 1, 1]
             non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
             tspan = 1:length(obs_var_TMP)
@@ -265,17 +257,16 @@ for site_index in sites
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
-            output = setupOutput(info)
-            loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-                prepRunEcosystem(output,
-                    models_with_matlab_params,
-                    forc,
+
+            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+                prepRunEcosystem(models_with_matlab_params,
+                    forcing_nt_array,
                     info.tem,
                     info.tem.helpers)
             linit = land_init_space[1]
-            @time runEcosystem!(output.data,
+            @time runEcosystem!(output_array,
                 models_with_matlab_params,
-                forc,
+                forcing_nt_array,
                 tem_with_vals,
                 loc_space_inds,
                 loc_forcings,
@@ -284,10 +275,10 @@ for site_index in sites
                 f_one)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            out_vars = output.variables
+            out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
-                def_var = output.data[o][:, :, 1, 1]
+                def_var = output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
                 vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
                 ml_dat = nothing

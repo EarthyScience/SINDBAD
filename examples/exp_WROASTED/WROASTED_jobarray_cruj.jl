@@ -123,32 +123,27 @@ for o_set in opti_set
         "optimization.constraints.default_constraint.data_path" => path_observation,
         "optimization.variables_to_constrain" => opti_sets[o_set],)
 
-    @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
-    @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
+    @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
+    @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info)
 
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
-    new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+    new_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
-    forc = getKeyedArrayWithNames(forcing)
-
-    output = setupOutput(info)
 
     observations = getObservation(info, forcing.helpers)
-    obs = getKeyedArray(observations)
+    obs_array = getKeyedArray(observations)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output,
-            forc,
-            info.tem)
-    @time runEcosystem!(output.data,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+        prepRunEcosystem(forcing, info)
+    @time runEcosystem!(output_array,
         new_models,
-        forc,
+        forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
         loc_forcings,
@@ -159,9 +154,8 @@ for o_set in opti_set
 
     # some plots
     ds = forcing.data[1]
-    opt_dat = output.data
-    def_dat = outcubes
-    out_vars = output.variables
+    opt_dat = output_array
+    def_dat = output_default
     costOpt = info.optim.cost_options
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
@@ -189,8 +183,8 @@ for o_set in opti_set
         if loss_name in (:nnseinv, :nseinv)
             lossMetric = Val(:nse)
         end
-        (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
-        (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
+        (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
+        (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
         if length(non_nan_index) < 2
@@ -224,15 +218,12 @@ for o_set in opti_set
     replace_info["model_run.flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     forcing = getForcing(info)
-    forc = getKeyedArrayWithNames(forcing)
-    output = setupOutput(info)
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output,
-            forc,
-            info.tem)
-    @time runEcosystem!(output.data,
+
+
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepRunEcosystem(forcing, info)
+    @time runEcosystem!(output_array,
         new_models,
-        forc,
+        forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
         loc_forcings,
@@ -241,21 +232,21 @@ for o_set in opti_set
         f_one)
 
     # save the outcubes
-
+    out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_time_step, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_time_step, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_time_step, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_time_step, Val(false))
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    out_vars = output.variables
+    out_vars = out_vars
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
-        def_var = output.data[o][:, :, 1, 1]
+        def_var = output_array[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
