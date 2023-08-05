@@ -382,6 +382,12 @@ function getTimeAggrArray(mod_dat::AbstractArray{T,4}) where {T}
 end
 
 # works for everything for which aggregator is needed
+function temporalAggregation(dat::AxisKeys.KeyedArray, temporal_aggregator::Sindbad.TimeAggregator, dim = 1)
+    dat = view(dat, temporal_aggregator, dim=dim)
+    return dat
+end
+
+# works for everything for which aggregator is needed
 function temporalAggregation(dat, temporal_aggregator::Sindbad.TimeAggregator, dim = 1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
