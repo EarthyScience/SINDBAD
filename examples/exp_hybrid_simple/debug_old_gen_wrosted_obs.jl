@@ -45,8 +45,8 @@ end
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid_simple/experiment.json"
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info);
-# info, forcing = getForcing(info);
+forcing = getForcing(info);
+# forcing = getForcing(info);
 
 
 
@@ -58,9 +58,9 @@ info, forcing = getForcing(info);
 
 
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models)
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 forc = getKeyedArrayWithNames(forcing)
-observations = getObservation(info)
+observations = getObservation(info, forcing.helpers)
 obs = getKeyedArrayWithNames(observations)
 obsv = getKeyedArray(observations)
 tblParams = getParameters(info.tem.models.forward,

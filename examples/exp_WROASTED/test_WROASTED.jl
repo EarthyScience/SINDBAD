@@ -51,13 +51,13 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 #     info.optim.default_parameter,
 #     info.optim.optimized_parameters);
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
 
 forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
@@ -80,7 +80,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
 
 @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
 
-observations = getObservation(info);
+observations = getObservation(info, forcing.helpers);
 obs = getArray(observations);
 @time getLossVectorArray(obs, output.data, info.optim.cost_options)
 
@@ -97,10 +97,10 @@ end
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 @time runEcosystem!(output.data,
     new_models,
     forc,

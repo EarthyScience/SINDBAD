@@ -8,9 +8,9 @@ experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 
-info, forcing = getForcing(info);
-observations = getObservation(info);
-output = setupOutput(info);
+forcing = getForcing(info);
+observations = getObservation(info, forcing.helpers);
+output = setupOutput(info, forcing.helpers);
 forc = getKeyedArrayWithNames(forcing);
 obs = getKeyedArray(observations);
 

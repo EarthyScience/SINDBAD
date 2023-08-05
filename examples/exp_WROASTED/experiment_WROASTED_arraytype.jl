@@ -47,7 +47,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
 
     output = setupOutput(info)
 
