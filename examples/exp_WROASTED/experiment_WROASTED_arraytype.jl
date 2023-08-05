@@ -49,17 +49,17 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     forcing = getForcing(info)
 
-    output = setupOutput(info)
 
-    forc = getKeyedArrayWithNames(forcing)
+
+
 
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output, forc, info.tem)
-    @time runEcosystem!(output.data,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+        prepRunEcosystem(forcing, info)
+    @time runEcosystem!(output_array,
         info.tem.models.forward,
-        forc,
+        forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
         loc_forcings,
@@ -68,7 +68,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
         f_one)
     # some plots
     ds = forcing.data[1]
-    opt_dat = output.data
+    opt_dat = output_array
     plot!(opt_dat[3][end, :, 1, 1];
         linewidth=5,
         ls=lt[i],
@@ -78,7 +78,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
     #     if v in obsMod
     #         obsv = obsVar[findall(obsMod .== v)[1]]
     #         @show "plot obs", v
-    #         obs_var = getfield(obs, obsv)[tspan, 1, 1, 1]
+    #         obs_var = getfield(obs_array, obsv)[tspan, 1, 1, 1]
     #         plot!(obs_var; label="obs")
     #         # title(obsv)
     #     end

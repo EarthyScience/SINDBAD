@@ -286,11 +286,11 @@ function getParameters(selectedModels, default_parameter, opt_parameter::NamedTu
 end
 
 """
-updateParameters(tblParams, approaches)
+updateParameters(tbl_params, approaches)
 """
-function updateModelParameters(tblParams::Table, approaches::Tuple)
-    function filtervar(var, modelName, tblParams, approachx)
-        subtbl = filter(row -> row.name == var && row.model_approach == modelName, tblParams)
+function updateModelParameters(tbl_params::Table, approaches::Tuple)
+    function filtervar(var, modelName, tbl_params, approachx)
+        subtbl = filter(row -> row.name == var && row.model_approach == modelName, tbl_params)
         if isempty(subtbl)
             return getproperty(approachx, var)
         else
@@ -301,11 +301,11 @@ function updateModelParameters(tblParams::Table, approaches::Tuple)
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
-        newapproachx = if modelName in tblParams.model_approach
+        newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
-                inOptim = filtervar(var, modelName, tblParams, approachx)
+                inOptim = filtervar(var, modelName, tbl_params, approachx)
                 push!(newvals, var => inOptim)
             end
             typeof(approachx)(; newvals...)
@@ -319,24 +319,24 @@ end
 
 
 """
-updateModelParametersType(tblParams, approaches, pVector)
+updateModelParametersType(tbl_params, approaches, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateModelParametersType(tblParams, approaches::Tuple, pVector)
+function updateModelParametersType(tbl_params, approaches::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
         model_obj = approachx
-        newapproachx = if modelName in tblParams.model_approach
+        newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
                 pindex = findall(row -> row.name == var && row.model_approach == modelName,
-                    tblParams)
+                    tbl_params)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
-                    model_obj = tblParams[pindex[1]].approach_func
+                    model_obj = tbl_params[pindex[1]].approach_func
                     pval = pVector[pindex[1]]
                 end
                 push!(newvals, var => pval)
@@ -352,23 +352,23 @@ end
 
 
 # """
-# updateModelParametersType(tblParams, approaches, pVector)
+# updateModelParametersType(tbl_params, approaches, pVector)
 # get the new instances of the model with same parameter types as mentioned in pVector
 # """
-# function updateModelParametersType(tblParams, approaches, pVector)
+# function updateModelParametersType(tbl_params, approaches, pVector)
 #     updatedModels = Models.LandEcosystem[]
 #     foreach(approaches) do approachx
 #         modelName = nameof(typeof(approachx))
 #         #model_obj = approachx
-#         newapproachx = if modelName in tblParams.model_approach
+#         newapproachx = if modelName in tbl_params.model_approach
 #             vars = getproperties(approachx)
 #             newvals = Pair[]
 #             for (k, var) ∈ pairs(vars)
 #                 pindex = findall(row -> row.name == k && row.model_approach == modelName,
-#                     tblParams)
+#                     tbl_params)
 #                 #pval = getproperty(approachx, var)
 #                 if !isempty(pindex)
-#                     #model_obj = tblParams[pindex[1]].approach_func
+#                     #model_obj = tbl_params[pindex[1]].approach_func
 #                     var = pVector[pindex[1]]
 #                 end
 #                 push!(newvals, k => var)
@@ -383,21 +383,21 @@ end
 # end
 
 """
-updateModelParameters(tblParams, approaches, pVector)
+updateModelParameters(tbl_params, approaches, pVector)
 does not depend on the mutated table of parameters
 """
-function updateModelParameters(tblParams, approaches::Tuple, pVector)
+function updateModelParameters(tbl_params, approaches::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
         approachx = approaches[idx]
         model_obj = approachx
-        newapproachx = if modelName in tblParams.model_approach
+        newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
             for var ∈ vars
                 pindex = findall(row -> row.name == var && row.model_approach == modelName,
-                    tblParams)
+                    tbl_params)
                 pval = getproperty(approachx, var)
                 if !isempty(pindex)
                     pval = pVector[pindex[1]]
@@ -1330,10 +1330,10 @@ function setupExperiment(info::NamedTuple)
         # @show seq
         for kk in keys(seq)
             if kk == "forcing"
-                is_model_time_step=false
+                is_model_time_step = false
                 if startswith(kk, info.tem.helpers.dates.model_time_step)
                     is_model_time_step = true
-                end    
+                end
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_time_step)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = Val(:no_diff)

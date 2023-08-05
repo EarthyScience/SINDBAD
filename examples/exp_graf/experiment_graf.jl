@@ -26,21 +26,16 @@ experiment_json = "../exp_graf/settings_graf/experiment.json";
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
-obs = getArray(observations);
-
-
-output = setupOutput(info, forcing.helpers);
-
-forc = getKeyedArrayWithNames(forcing);
+obs_array = getArray(observations);
 
 GC.gc()
 
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
 
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -49,9 +44,9 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     f_one)
 
 for x ∈ 1:10
-    @time runEcosystem!(output.data,
+    @time runEcosystem!(output_array,
         info.tem.models.forward,
-        forc,
+        forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
         loc_forcings,
@@ -60,16 +55,17 @@ for x ∈ 1:10
         f_one)
 end
 
-getLossVectorArray(obs, output.data, info.optim.cost_options)
+getLossVector(obs_array, output_array, info.optim.cost_options)
 
-@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+@time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
+@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
 ds = forcing.data[1];
 using Plots
-plotdat = output.data;
-for i ∈ eachindex(output.variables)
-    v = output.variables[i]
+plotdat = output_array;
+out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+for i ∈ eachindex(out_vars)
+    v = out_vars[i]
     vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
     vname = vinfo["standard_name"]
     pd = plotdat[i]

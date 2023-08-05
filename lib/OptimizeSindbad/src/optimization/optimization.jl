@@ -1,5 +1,5 @@
 include("losses.jl")
 include("optimizeModel.jl")
-include("optimizeModelArray.jl")
+include("optimizeModelYax.jl")
 include("optimizer.jl")
 include("runExperimentOpti.jl")

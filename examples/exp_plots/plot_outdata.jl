@@ -18,10 +18,9 @@ forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-output = setupOutput(info, forcing.helpers);
-forc = getKeyedArrayWithNames(forcing);
+
 observations = getObservation(info, forcing.helpers);
-obs = getKeyedArrayWithNames(observations);
+obs_array = getKeyedArrayWithNames(observations);
 
 @time loc_space_maps,
 loc_space_names,
@@ -29,11 +28,11 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(output, forc, info.tem);
+f_one = prepRunEcosystem(forcing, info);
 
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -46,16 +45,17 @@ using Colors
 Makie.inline!(false)
 lines(1:10)
 
-names_pair = Dict(output.variables .=> 1:4)
+out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+names_pair = Dict(out_vars .=> 1:4)
 
 var_name = Observable(1)
-gpp = @lift(output.data[$var_name]);
+gpp = @lift(output_array[$var_name]);
 s = Observable(9)
 gpp_site = @lift($gpp[:, 1, $s])
 
 fig = Figure(; resolution=(1200, 600))
 menu = Menu(fig;
-    options=output.variables,
+    options=out_vars,
     cell_color_hover=RGB(0.7, 0.3, 0.25),
     cell_color_active=RGB(0.2, 0.3, 0.5))
 ax = Axis(fig[1, 1])

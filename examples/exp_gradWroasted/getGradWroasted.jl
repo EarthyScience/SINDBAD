@@ -18,10 +18,9 @@ forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-output = setupOutput(info, forcing.helpers);
-forc = getKeyedArrayWithNames(forcing);
+
 observations = getObservation(info, forcing.helpers);
-obs = getKeyedArray(observations);
+obs_array = getKeyedArray(observations);
 
 @time loc_space_maps,
 loc_space_names,
@@ -30,12 +29,12 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(output, forc, info.tem);
+f_one = prepRunEcosystem(forcing, info);
 
 
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -43,18 +42,18 @@ f_one = prepRunEcosystem(output, forc, info.tem);
     land_init_space,
     f_one)
 
-# @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = getParameters(info.tem.models.forward,
+# @time out_params = runExperimentOpti(experiment_json);  
+tbl_params = getParameters(info.tem.models.forward,
     info.optim.default_parameter,
     info.optim.optimized_parameters);
 
-# @time outcubes = runExperimentOpti(experiment_json);  
+# @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
-    forc,
+    forcing_nt_array,
     op,
-    obs,
-    tblParams,
+    obs_array,
+    tbl_params,
     info_tem,
     info_optim,
     loc_space_inds,
@@ -64,10 +63,10 @@ function g_loss(x,
     f_one)
     l = getLossGradient(x,
         mods,
-        forc,
+        forcing_nt_array,
         op,
-        obs,
-        tblParams,
+        obs_array,
+        tbl_params,
         info_tem,
         info_optim,
         loc_space_inds,
@@ -80,12 +79,12 @@ end
 op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(tblParams.default,
+g_loss(tbl_params.default,
     mods,
-    forc,
+    forcing_nt_array,
     op,
-    obs,
-    tblParams,
+    obs_array,
+    tbl_params,
     tem_with_vals,
     info.optim,
     loc_space_inds,
@@ -97,10 +96,10 @@ g_loss(tblParams.default,
 function l1(p)
     return g_loss(p,
         mods,
-        forc,
+        forcing_nt_array,
         op,
-        obs,
-        tblParams,
+        obs_array,
+        tbl_params,
         tem_with_vals,
         info.optim,
         loc_space_inds,
@@ -109,10 +108,10 @@ function l1(p)
         land_init_space,
         f_one)
 end
-l1(tblParams.default)
+l1(tbl_params.default)
 
 
-p_vec = tblParams.default;
+p_vec = tbl_params.default;
 CHUNK_SIZE = length(p_vec)
 CHUNK_SIZE = 10
 
@@ -133,7 +132,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(op, forc, info.tem);
+f_one = prepRunEcosystem(op, forcing_nt_array, info.tem);
 
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)

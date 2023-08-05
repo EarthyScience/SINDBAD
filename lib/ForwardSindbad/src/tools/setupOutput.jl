@@ -184,7 +184,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
         @show _di, length(_dim)
         d_to_push = _dim
         push!(keyedarray, KeyedArray(outarray[_di]; _dim...))
-        if length(_dim) > 2    
+        if length(_dim) > 2
             if length(last(_dim[2])) == 1
                 d_to_push = []
                 push!(d_to_push, _dim[1])
@@ -227,10 +227,10 @@ function getVariableFields(datavars)
 end
 
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
-    @info "setupOutput: creating initial out/land..."
+    @info "     setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
     outformat = info.model_run.output.format
-    @info "setupOutput: getting data variables..."
+    @info "     setupOutput: getting data variables..."
 
     datavars = if hasproperty(info, :optim)
         map(info.optim.variables.obs) do vo
@@ -245,7 +245,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
 
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
-    @info "setupOutput: getting output dimension and arrays..."
+    @info "     setupOutput: getting output dimension and arrays..."
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.model_run.output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
@@ -265,7 +265,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
 
 
     if info.model_run.flags.run_optimization || tem_helpers.run.run_forward_and_cost
-        @info "setupOutput: getting parameter output for optimization..."
+        @info "     setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
     println("----------------------------------------------")
