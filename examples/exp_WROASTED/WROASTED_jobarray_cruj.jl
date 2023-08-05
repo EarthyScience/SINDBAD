@@ -134,12 +134,12 @@ for o_set in opti_set
         info.optim.optimized_parameters)
     new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
 
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
     forc = getKeyedArrayWithNames(forcing)
 
     output = setupOutput(info)
 
-    observations = getObservation(info)
+    observations = getObservation(info, forcing.helpers)
     obs = getKeyedArray(observations)
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
@@ -223,7 +223,7 @@ for o_set in opti_set
     replace_info["model_run.flags.run_forward_and_cost"] = false
     replace_info["model_run.flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
-    info, forcing = getForcing(info)
+    forcing = getForcing(info)
     forc = getKeyedArrayWithNames(forcing)
     output = setupOutput(info)
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =

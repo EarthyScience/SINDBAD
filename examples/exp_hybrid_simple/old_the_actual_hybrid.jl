@@ -84,9 +84,9 @@ nn_args = (;
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json";
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem, info.tem.models.forward);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 forc = getKeyedArrayWithNames(forcing);
 
 # this one does all the training

@@ -10,9 +10,9 @@ experiment_json = "exp_Africa/settings_Africa/experiment.json"
 info = getConfiguration(experiment_json);
 
 info = setupExperiment(info);
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 
 outcubes = mapRunEcosystem(forcing,
     output,

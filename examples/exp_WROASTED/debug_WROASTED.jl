@@ -90,13 +90,13 @@ end
 replace_info["model_run.spinup.sequence"] = sequence
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 # mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
 # tcprint(mtup)
 # forc = getNamedDimsArrayWithNames(forcing)
 forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 

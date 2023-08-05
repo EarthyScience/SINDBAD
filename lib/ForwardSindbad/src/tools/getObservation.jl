@@ -43,20 +43,9 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
 end
 
 """
-getObservation(info)
+getObservation(info, forcing.helpers)
 """
-function getObservation(info::NamedTuple)
-    forcing_info = nothing
-    if hasproperty(info.tem, :forcing)
-        forcing_info = info.tem.forcing
-    else
-        error("info.tem does not include forcing dimensions. To get the observations properly, dimension information from forcing is necessary. Run: 
-
-            info, forcing = getForcing(info);
-
-        before running getObservation.")
-    end
-
+function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     data_path = info.optimization.constraints.default_constraint.data_path
     default_info = info.optimization.constraints.default_constraint
     tar_dims = getTargetDimensionOrder(info)
@@ -121,7 +110,7 @@ function getObservation(info::NamedTuple)
     @info "getObservation: getting observation dimensions..."
     indims = getDataDims.(obscubes, Ref(info.model_run.mapping.yaxarray))
     @info "getObservation: getting number of time steps..."
-    nts = forcing_info.sizes
+    nts = forcing_helpers.sizes
     @info "getObservation: getting variable name..."
     varnames_all = []
     for v ∈ varnames

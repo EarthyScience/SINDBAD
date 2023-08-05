@@ -31,12 +31,12 @@ noStackTrace()
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-@everywhere obs = ForwardSindbad.getObservation(info);
+@everywhere obs = ForwardSindbad.getObservation(info, forcing.helpers);
 @everywhere info, forcing = ForwardSindbad.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 
-@everywhere output = setupOutput(info);
+@everywhere output = setupOutput(info, forcing.helpers);
 
 @everywhere forc = getKeyedArrayWithNames(forcing);
 # @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
@@ -51,7 +51,7 @@ noStackTrace()
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info);
 
-# output = setupOutput(info);
+# output = setupOutput(info, forcing.helpers);
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
 

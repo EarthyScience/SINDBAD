@@ -46,9 +46,9 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
-output = setupOutput(info);
+output = setupOutput(info, forcing.helpers);
 
 forc = getKeyedArrayWithNames(forcing);
 linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
@@ -66,7 +66,7 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-observations = getObservation(info);
+observations = getObservation(info, forcing.helpers);
 obs = getKeyedArrayWithNames(observations);
 
 @time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
