@@ -36,22 +36,20 @@ noStackTrace()
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 
-@everywhere output = setupOutput(info, forcing.helpers);
 
-@everywhere forc = getKeyedArrayWithNames(forcing);
-# @code_warntype runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-# @profview runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
-# @benchmark $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem)
-# @btime $runEcosystem!($output.data, $info.tem.models.forward, $forc, $info.tem, land_init);
-@time runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+@everywhere # @code_warntype runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
+# @profview runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
+# @benchmark $runEcosystem!($output_array, $info.tem.models.forward, $forcing_nt_array, $info.tem)
+# @btime $runEcosystem!($output_array, $info.tem.models.forward, $forcing_nt_array, $info.tem, land_init);
+@time runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
 
-# runEcosystem!(output.data, output.land_init, info.tem.models.forward, forc, info.tem);
+# runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this
 # forcing = getForcing(info);
 
-# output = setupOutput(info, forcing.helpers);
+# 
 
 # run_output_spatial = runExperiment(experiment_json; replace_info=replace_info_spatial);
 

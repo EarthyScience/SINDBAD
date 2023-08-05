@@ -240,15 +240,15 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
     forcing = getForcing(info)
-    output = setupOutput(info)
 
-    forc = getKeyedArrayWithNames(forcing)
+
+
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
-        prepRunEcosystem(output, forc, info.tem)
+        prepRunEcosystem(forcing, info)
 
 
-    loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
+    loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
     spinupforc = :day_msc
     sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))

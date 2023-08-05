@@ -32,19 +32,19 @@ end
 #end
 
 
-# out_data = output.data
-function grads_batch!(f_grads, up_params_now, xbatch, out_data, forc, obs, sites_f, forward,
-    tblParams, land_init_space, loc_loss, kwargs_fixed; enabled=true)
+# out_data = output_array
+function grads_batch!(f_grads, up_params_now, xbatch, out_data, forc, obs_array, sites_f, forward,
+    tbl_params, land_init_space, loc_loss, kwargs_fixed; enabled=true)
 
     p = Progress(length(xbatch); desc="Computing batch grads...", color=:yellow, enabled=enabled)
     for (site_index, site_name) ∈ enumerate(xbatch)
         x_params = up_params_now(; site=site_name)
-        scaled_params = getParamsAct(x_params, tblParams)
+        scaled_params = getParamsAct(x_params, tbl_params)
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
-        loc_forcing, loc_output, loc_obs = getLocDataObsN(out_data, forc, obs, site_location)
+        loc_forcing, loc_output, loc_obs = getLocDataObsN(out_data, forc, obs_array, site_location)
 
-        gg = fdiff_grads(loc_loss, scaled_params, forward, tblParams,
+        gg = fdiff_grads(loc_loss, scaled_params, forward, tbl_params,
             loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
         #if sum(gg) == 0.0
         #println("what!!!, why?!!: site_index $(scaled_params): site_name $(site_name)", scaled_params)
@@ -58,9 +58,9 @@ function grads_batch!(f_grads, up_params_now, xbatch, out_data, forc, obs, sites
 end
 
 
-# grads_args = (; tblParams, sites_f, land_init_space, output, forc, obs_synt, forward, helpers, spinup, models, out_vars, f_one)
+# grads_args = (; tbl_params, sites_f, land_init_space, output, forc, obs_synt, forward, helpers, spinup, models, out_vars, f_one)
 function get_∇params(xfeatures, re, flat, xbatch, n_params, n_bs_sites,
-    out_data, forc, obs, sites_f, forward, tblParams, land_init_space, loc_loss, kwargs_fixed)
+    out_data, forc, obs_array, sites_f, forward, tbl_params, land_init_space, loc_loss, kwargs_fixed)
 
     f_grads = zeros(Float32, n_params, n_bs_sites)
     x_feat = xfeatures(; site=xbatch)
@@ -71,8 +71,8 @@ function get_∇params(xfeatures, re, flat, xbatch, n_params, n_bs_sites,
     #    error("please stop...")
     #end
 
-    grads_batch!(f_grads, inst_params, xbatch, out_data, forc, obs, sites_f, forward,
-        tblParams, land_init_space, loc_loss, kwargs_fixed; enabled=false)
+    grads_batch!(f_grads, inst_params, xbatch, out_data, forc, obs_array, sites_f, forward,
+        tbl_params, land_init_space, loc_loss, kwargs_fixed; enabled=false)
     _, ∇params = pb(f_grads)
 
     #@show f_grads[1:10, 1]
@@ -82,8 +82,8 @@ function get_∇params(xfeatures, re, flat, xbatch, n_params, n_bs_sites,
 end
 
 #x_args = (; shuffle=true, bs=16, sites)
-function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forward,
-    tblParams, info_tem, loc_loss, kwargs_fixed; nepochs=10)
+function nn_machine(nn_args, x_args, xfeatures, info, forc, obs_array, sites_f, forward,
+    tbl_params, info_tem, loc_loss, kwargs_fixed; nepochs=10)
 
     flat, re, opt_state = init_ml_nn(nn_args...)
     mb_idxs = bs_iter(length(x_args.sites); batch_size=x_args.bs)
@@ -93,7 +93,9 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forwar
 
     for epoch ∈ 1:nepochs
         p = Progress(length(xbatches); desc="Computing batch grads...")
-        output = setupOutput(info)
+
+        forcing_nt_array,
+        output_array,
         loc_space_maps,
         loc_space_names,
         loc_space_inds,
@@ -101,10 +103,8 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forwar
         loc_outputs,
         land_init_space,
         tem_with_vals,
-        f_one = prepRunEcosystem(output,
-            forc,
-            info_tem)
-        out_data = output.data
+        f_one = prepRunEcosystem(forcing, info)
+        out_data = output_array
 
         xbatches = if x_args.shuffle
             shuffle_indxs(x_args.sites, x_args.bs, mb_idxs; seed=epoch + 123)
@@ -114,7 +114,7 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forwar
 
         for (batch_id, xbatch) ∈ enumerate(xbatches)
             ∇params = get_∇params(xfeatures, re, flat, xbatch, nn_args.n_params, x_args.bs,
-                out_data, forc, obs, sites_f, forward, tblParams, land_init_space, loc_loss, kwargs_fixed)
+                out_data, forc, obs_array, sites_f, forward, tbl_params, land_init_space, loc_loss, kwargs_fixed)
             #if isnan(sum(∇params)) || sum(∇params) == 0
             #    @show ∇params
             #    error("please stop...")
@@ -127,12 +127,12 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs, sites_f, forwar
         tot_loss[:, epoch] = get_site_losses(up_params_now,
             out_data,
             forc,
-            obs,
+            obs_array,
             new_sites,
             sites_f,
             land_init_space,
             forward,
-            tblParams,
+            tbl_params,
             kwargs_fixed
         )
     end
@@ -147,14 +147,14 @@ function get_site_losses(up_params_now,
     sites_f,
     land_init_space,
     forward,
-    tblParams,
+    tbl_params,
     kwargs_fixed
 )
     tot_loss = fill(NaN32, length(new_sites))
     for s_id ∈ eachindex(new_sites)
         site_name = new_sites[s_id]
         x_params = up_params_now(; site=site_name)
-        scaled_params = getParamsAct(x_params, tblParams)
+        scaled_params = getParamsAct(x_params, tbl_params)
         site_location = name_to_id(site_name, sites_f)
         loc_land_init_now = land_init_space[site_location[1][2]]
 
@@ -163,7 +163,7 @@ function get_site_losses(up_params_now,
         tot_loss[s_id] = loc_loss(
             scaled_params,
             forward,
-            tblParams,
+            tbl_params,
             loc_obs_now,
             loc_forcing_now,
             loc_land_init_now,

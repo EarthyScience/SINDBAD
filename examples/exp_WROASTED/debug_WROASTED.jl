@@ -17,8 +17,8 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "2005"
 eYear = "2017"
 domain = "DE-Hai"
-domain = "CA-NS6"
-domain = "AU-Emr"
+# domain = "CA-NS6"
+# domain = "AU-Emr"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
 
@@ -92,25 +92,14 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-# mtup = Tuple([(nameof.(typeof.(info.tem.models.forward))..., info.tem.models.forward...)]);
-# tcprint(mtup)
 # forc = getNamedDimsArrayWithNames(forcing)
-forc = getKeyedArrayWithNames(forcing);
-output = setupOutput(info, forcing.helpers);
-
-linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    prepRunEcosystem(forcing, info);
 
 
-
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output,
-        forc,
-        info.tem);
-
-
-@time runEcosystem!(output.data,
+@time runEcosystem!(output_array,
     info.tem.models.forward,
-    forc,
+    forcing_nt_array,
     tem_with_vals,
     loc_space_inds,
     loc_forcings,
@@ -118,23 +107,12 @@ loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land
     land_init_space,
     f_one)
 
-@time outcubes = runExperimentForward(experiment_json; replace_info=replace_info);
-
-# @profview runEcosystem!(output.data, info.tem.models.forward, forc, info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
-# land_spin = land_init_space[1];
-# @time land_spin_now = runSpinup(info.tem.models.forward,
-#     loc_forcings[1],
-#     land_spin,
-#     tem_with_vals.helpers,
-#     tem_with_vals.spinup,
-#     tem_with_vals.models,
-#     typeof(land_spin),
-#     f_one);
+@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-out_vars = output.variables;
+out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars);
 for (o, v) in enumerate(out_vars)
-    def_var = output.data[o][:, :, 1, 1]
+    def_var = output_array[o][:, :, 1, 1]
     vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1

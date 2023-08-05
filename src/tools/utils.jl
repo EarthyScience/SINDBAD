@@ -20,6 +20,7 @@ export showParamsOfAllModels
 export tcprint
 export totalS
 export valToSymbol
+export removeEmptyTupleFields
 
 """
     noStackTrace()
@@ -741,7 +742,7 @@ function showParamsOfAModel(models, model::Symbol)
     model_names = Symbol.(supertype.(typeof.(models)))
     approach_names = nameof.(typeof.(models))
     m_index = findall(m -> m == model, model_names)[1]
-    mod = models[m_index];
+    mod = models[m_index]
     println("model: $(model_names[m_index])")
     println("approach: $(approach_names[m_index])")
     pnames = fieldnames(typeof(mod))
@@ -807,4 +808,14 @@ return the input as is
 """
 function returnIt(dat)
     return dat
+end
+
+
+"""
+removeEmptyTupleFields(tpl)
+"""
+function removeEmptyTupleFields(tpl::NamedTuple)
+    indx = findall(x -> x != NamedTuple(), values(tpl))
+    nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
+    return NamedTuple{nkeys}(nvals)
 end
