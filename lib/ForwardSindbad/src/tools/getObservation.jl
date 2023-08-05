@@ -27,7 +27,7 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
         elseif data_sub_field == :unc
             @info "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
         else
-            @info "     no \"$(data_sub_field)\" field or sel_mask=null in optimization settings"
+            @info "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
         if !isnothing(yax)
             @info "       assuming values of ones"
