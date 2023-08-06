@@ -338,14 +338,12 @@ returns a vector of duplicates in the input vector
 function nonUnique(x::AbstractArray{T}) where {T}
     xs = sort(x)
     duplicatedvector = T[]
-    for i ∈ eachindex(xs)
-        if i > 1
-            if (
-                isequal(xs[i], xs[i-1]) &&
-                (length(duplicatedvector) == 0 || !isequal(duplicatedvector[end], xs[i]))
-            )
-                push!(duplicatedvector, xs[i])
-            end
+    for i ∈ eachindex(xs)[2:end]
+        if (
+            isequal(xs[i], xs[i-1]) &&
+            (length(duplicatedvector) == 0 || !isequal(duplicatedvector[end], xs[i]))
+        )
+            push!(duplicatedvector, xs[i])
         end
     end
     return duplicatedvector
