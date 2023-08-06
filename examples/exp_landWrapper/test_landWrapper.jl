@@ -67,7 +67,7 @@ land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dat
 
 observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
-@time getLossVector(obs_array, output_default, info.optim.cost_options) |> sum
+@time getLossVector(obs_array, output_array, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries_prep, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries_vec, info.optim.cost_options) |> sum
