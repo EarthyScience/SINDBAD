@@ -139,9 +139,9 @@ for o_set in opti_set
     obs_array = getKeyedArray(observations)
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
+        prepTEM(forcing, info)
 
-    @time simulateEcosystem!(output_array,
+    @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
         tem_with_vals,
@@ -221,8 +221,8 @@ for o_set in opti_set
     forcing = getForcing(info)
 
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepSimulation(forcing, info)
-    @time simulateEcosystem!(output_array,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info)
+    @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
         tem_with_vals,

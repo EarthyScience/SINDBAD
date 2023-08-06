@@ -2,6 +2,7 @@ export clamp01
 export cumSum!
 export dictToNamedTuple
 export flagUpper, flagLower
+export getBool
 export getFrac
 export getSindbadModels
 export getZix
@@ -174,6 +175,14 @@ function flagLower(A::AbstractMatrix)
     return o_mat
 end
 
+function getBool(var::Bool)
+    return var
+end
+
+function getBool(var)
+    return valToSymbol(var)
+end
+
 """
 getFrac(num, den)
 return either a ratio or numerator depending on whether denomitor is a zero
@@ -185,6 +194,22 @@ function getFrac(num, den)
         rat = num
     end
     return rat
+end
+
+
+"""
+    getSindbadModels()
+
+helper function to return a table of sindbad model and approaches
+"""
+function getSindbadModels()
+    approaches = []
+
+    for _md ∈ sindbad_models.model
+        push!(approaches, join(subtypes(getfield(Sindbad.Models, _md)), ", "))
+    end
+    model_approaches = Table((; model=[sindbad_models.model...], approaches=[approaches...]))
+    return model_approaches
 end
 
 """
@@ -235,21 +260,6 @@ function getZix(dat::SVector, zixhelpersPool)
     return zixhelpersPool
 end
 
-
-"""
-    getSindbadModels()
-
-helper function to return a table of sindbad model and approaches
-"""
-function getSindbadModels()
-    approaches = []
-
-    for _md ∈ sindbad_models.model
-        push!(approaches, join(subtypes(getfield(Sindbad.Models, _md)), ", "))
-    end
-    model_approaches = Table((; model=[sindbad_models.model...], approaches=[approaches...]))
-    return model_approaches
-end
 
 
 """

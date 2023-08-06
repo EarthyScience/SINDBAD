@@ -25,10 +25,10 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepSimulation(forcing, info);
+f_one = prepTEM(forcing, info);
 
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -128,7 +128,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepSimulation(op, forcing_nt_array, info.tem);
+f_one = prepTEM(op, forcing_nt_array, info.tem);
 
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)

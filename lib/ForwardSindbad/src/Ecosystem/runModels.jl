@@ -1,7 +1,7 @@
 export foldlUnrolled
-export runCompute
-export runDefinePrecompute
-export runPrecompute
+export runModelCompute
+export runModelDefinePrecompute
+export runModelPrecompute
 
 @generated function foldlUnrolled(f, x::Tuple{Vararg{Any,N}}; init) where {N}
     exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
@@ -14,44 +14,44 @@ end
 end
 
 """
-runCompute(out, forcing, models, tem_helpers, ::Val{:false})
+runModelCompute(land, forcing, models, tem_helpers, ::Val{:false})
 """
-function runCompute(out, forcing, models, tem_helpers, ::Val{:true}) # debug the models
-    otype = typeof(out)
-    return foldlUnrolled(models; init=out) do o, model
+function runModelCompute(land, forcing, models, tem_helpers, ::Val{:true}) # debug the models
+    otype = typeof(land)
+    return foldlUnrolled(models; init=land) do _land, model
         @show typeof(model)
-        @time o = Models.compute(model, forcing, o, tem_helpers)::otype
+        @time _land = Models.compute(model, forcing, _land, tem_helpers)::otype
     end
 end
 
 """
-runCompute(out, forcing, models, tem_helpers)
+runModelCompute(land, forcing, models, tem_helpers)
 """
-function runCompute(out, forcing, models, tem_helpers, ::Val{:false}) # do not debug the models 
-    return foldlUnrolled(models; init=out) do o, model
-        o = Models.compute(model, forcing, o, tem_helpers)
+function runModelCompute(land, forcing, models, tem_helpers, ::Val{:false}) # do not debug the models 
+    return foldlUnrolled(models; init=land) do _land, model
+        _land = Models.compute(model, forcing, _land, tem_helpers)
     end
 end
 
 
 """
-runCompute(out, forcing, models, tem_helpers)
+runModelCompute(land, forcing, models, tem_helpers)
 """
-function runCompute(out, forcing, models, tem_helpers) # do not debug the models 
-    return foldlUnrolled(models; init=out) do o, model
-        o = Models.compute(model, forcing, o, tem_helpers)
+function runModelCompute(land, forcing, models, tem_helpers) # do not debug the models 
+    return foldlUnrolled(models; init=land) do _land, model
+        _land = Models.compute(model, forcing, _land, tem_helpers)
     end
 end
 
-function runDefinePrecompute(out, forcing, models, tem_helpers)
-    return foldlUnrolled(models; init=out) do o, model
-        o = Models.define(model, forcing, o, tem_helpers)
-        o = Models.precompute(model, forcing, o, tem_helpers)
+function runModelDefinePrecompute(land, forcing, models, tem_helpers)
+    return foldlUnrolled(models; init=land) do _land, model
+        _land = Models.define(model, forcing, _land, tem_helpers)
+        _land = Models.precompute(model, forcing, _land, tem_helpers)
     end
 end
 
-function runPrecompute(out, forcing, models, tem_helpers)
-    return foldlUnrolled(models; init=out) do o, model
-        o = Models.precompute(model, forcing, o, tem_helpers)
+function runModelPrecompute(land, forcing, models, tem_helpers)
+    return foldlUnrolled(models; init=land) do _land, model
+        _land = Models.precompute(model, forcing, _land, tem_helpers)
     end
 end

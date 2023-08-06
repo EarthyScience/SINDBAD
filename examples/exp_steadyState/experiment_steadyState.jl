@@ -21,7 +21,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
+        prepTEM(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
@@ -124,7 +124,7 @@ for tj ∈ (10, 100, 1000, 10000)
         pout .= exp.(p)# .* s.pooldiff
         # s.land_init.pools.TWS .= pout.TWS
         s.land_init.pools.cEco .= pout.cEco
-        update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
+        update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
             s.f_one)
         # pout.TWS .= update_init.pools.TWS
         pout.cEco .= update_init.pools.cEco
@@ -143,7 +143,7 @@ for tj ∈ (10, 100, 1000, 10000)
         # @rep_vec tmp => pout.cEco
         # s = @set s.land_init.pools.cEco = tmp
 
-        # update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.f_one)
+        # update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.f_one)
 
         # pout = @set pout.TWS = update_init.pools.TWS
         # pout = @set pout.cEco = update_init.pools.cEco

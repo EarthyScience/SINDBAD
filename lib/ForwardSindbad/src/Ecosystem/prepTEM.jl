@@ -1,4 +1,4 @@
-export prepSimulation
+export prepTEM
 
 function addSpinupLog(land, seq, ::Val{true}) # when history is true
     n_repeat = 1
@@ -28,43 +28,43 @@ function debugModel(_, ::Val{:false}) # do nothing debug model is false/off
     return nothing
 end
 
-function simulateOneLocation(output_array::AbstractArray, land_init, selected_models, forcing, tem, loc_space_map)
+function runOneLocation(output_array::AbstractArray, land_init, selected_models, forcing, tem, loc_space_map)
     loc_forcing, loc_output = getLocData(output_array, forcing, loc_space_map)
-    land_prec = runDefinePrecompute(land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land_prec = runModelDefinePrecompute(land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
-    land_one = runCompute(land_prec, f_one, selected_models, tem.helpers)
+    land_one = runModelCompute(land_prec, f_one, selected_models, tem.helpers)
     setOutputForTimeStep!(loc_output, land_one, tem.helpers.vals.output_vars, 1)
     debugModel(land_one, tem.helpers.run.debug_model)
     return land_one, f_one
 end
 
 """
-prepSimulation(output, forcing::NamedTuple, tem::NamedTuple)
+prepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 """
-function prepSimulation(forcing::NamedTuple, info::NamedTuple)
-    @info "prepSimulation: preparing to run ecosystem"
+function prepTEM(forcing::NamedTuple, info::NamedTuple)
+    @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
     selected_models = info.tem.models.forward
     tem_helpers = info.tem.helpers
     # get the output named tuple
     output = setupOutput(info, forcing.helpers)
-    return helpPrepSimulation(selected_models, forcing, output, info.tem, tem_helpers)
+    return helpPrepTEM(selected_models, forcing, output, info.tem, tem_helpers)
 end
 
 """
-prepSimulation(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
+prepTEM(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 """
-function prepSimulation(selected_models, forcing::NamedTuple, info::NamedTuple)
-    @info "prepSimulation: preparing to run ecosystem"
+function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
+    @info "prepTEM: preparing to run ecosystem"
     tem_helpers = info.tem.helpers
     output = setupOutput(info, forcing.helpers)
-    return helpPrepSimulation(selected_models, forcing, output, info.tem, tem_helpers)
+    return helpPrepTEM(selected_models, forcing, output, info.tem, tem_helpers)
 end
 
 """
-helpPrepSimulation(output, forcing::NamedTuple, tem::NamedTuple)
+helpPrepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 """
-function helpPrepSimulation(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
     # generate vals for dispatch of forcing and output
     @info "     getting the space locations to loop"
     forcing_sizes = forcing.helpers.sizes
@@ -116,7 +116,7 @@ function helpPrepSimulation(selected_models, forcing::NamedTuple, output::NamedT
     @info "     producing model output with one location and one time step for preallocating local, threaded, and spatial data"
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1]) #312
     loc_space_maps = loc_space_maps[allNans.==false]
-    land_one, f_one = simulateOneLocation(output_array, land_init, selected_models, forcing_nt_array, new_tem,
+    land_one, f_one = runOneLocation(output_array, land_init, selected_models, forcing_nt_array, new_tem,
         loc_space_maps[1])
     land_one = addSpinupLog(land_one, new_tem.spinup.sequence, new_tem.helpers.run.spinup.store_spinup_history)
 
