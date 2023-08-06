@@ -21,39 +21,39 @@ end
 
 
 """
-    combineLoss(lossVector, ::Val{:sum})
+    combineLoss(loss_vector, ::Val{:sum})
 
 return the total of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:sum})
-    return sum(lossVector)
+function combineLoss(loss_vector::AbstractArray, ::Val{:sum})
+    return sum(loss_vector)
 end
 
 """
-    combineLoss(lossVector, ::Val{:minimum})
+    combineLoss(loss_vector, ::Val{:minimum})
 
 return the minimum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:minimum})
-    return minimum(lossVector)
+function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
+    return minimum(loss_vector)
 end
 
 """
-    combineLoss(lossVector, ::Val{:maximum})
+    combineLoss(loss_vector, ::Val{:maximum})
 
 return the maximum of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, ::Val{:maximum})
-    return maximum(lossVector)
+function combineLoss(loss_vector::AbstractArray, ::Val{:maximum})
+    return maximum(loss_vector)
 end
 
 """
-    combineLoss(lossVector, percentile_value)
+    combineLoss(loss_vector, percentile_value)
 
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
-function combineLoss(lossVector::AbstractArray, percentile_value::T) where {T<:Real}
-    return percentile(lossVector, percentile_value)
+function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
+    return percentile(loss_vector, percentile_value)
 end
 
 """
@@ -209,7 +209,7 @@ getLossVector(observations, model_output::AbstractArray, cost_options)
 returns a vector of losses for variables in info.cost_options.variables_to_constrain
 """
 function getLossVector(observations, model_output, cost_options)
-    lossVec = map(cost_options) do cost_option
+    loss_vector = map(cost_options) do cost_option
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
@@ -222,7 +222,7 @@ function getLossVector(observations, model_output, cost_options)
         metr
     end
     # println("-------------------")
-    return lossVec
+    return loss_vector
 end
 
 

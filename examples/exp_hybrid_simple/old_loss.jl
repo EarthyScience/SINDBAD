@@ -16,9 +16,9 @@ function get_loc_loss(
         tem_models,
         loc_land_init,
         f_one)
-    lossVec = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
-    #@show lossVec
-    t_loss = combineLoss(lossVec, Val{:sum}())
+    loss_vector = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
+    #@show loss_vector
+    t_loss = combineLoss(loss_vector, Val{:sum}())
     return t_loss
 end
 
