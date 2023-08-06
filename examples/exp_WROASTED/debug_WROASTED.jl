@@ -7,12 +7,6 @@ using Dates
 using Plots
 
 
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "2005"
 eYear = "2017"
@@ -94,10 +88,10 @@ forcing = getForcing(info);
 
 # forc = getNamedDimsArrayWithNames(forcing)
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepSimulation(forcing, info);
+    prepTEM(forcing, info);
 
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -130,6 +124,3 @@ for (o, v) in enumerate(out_vars)
 end
 
 
-# using JuliaFormatter
-# format(".", MinimalStyle(), margin=100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true, trailing_comma=false)
-# format(".", margin = 100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true)

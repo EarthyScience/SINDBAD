@@ -171,8 +171,8 @@ for site_index in sites
         ## run the model
 
 
-        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepSimulation(models_with_matlab_params, forcing, info)
-        @time simulateEcosystem!(output_array,
+        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(models_with_matlab_params, forcing, info)
+        @time TEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
             tem_with_vals,
@@ -259,12 +259,12 @@ for site_index in sites
             forcing = getForcing(info)
 
             forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-                prepSimulation(models_with_matlab_params,
+                prepTEM(models_with_matlab_params,
                     forcing_nt_array,
                     info.tem,
                     info.tem.helpers)
             linit = land_init_space[1]
-            @time simulateEcosystem!(output_array,
+            @time TEM!(output_array,
                 models_with_matlab_params,
                 forcing_nt_array,
                 tem_with_vals,

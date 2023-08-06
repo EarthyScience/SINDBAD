@@ -16,7 +16,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
             info.tem.models.forward;
             max_cache=info.model_run.rules.yax_max_cache)
     else
-        run_output = simulateEcosystem!(forcing, info)
+        run_output = TEM!(forcing, info)
     end
     return run_output
 end

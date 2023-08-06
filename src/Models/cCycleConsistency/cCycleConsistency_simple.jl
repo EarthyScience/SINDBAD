@@ -32,10 +32,10 @@ function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
 end
 
 """
-cry_and_die(land, msg)
+throwError(land, msg)
 display and error msg and stop when there is inconsistency
 """
-function cry_and_die(land, msg)
+function throwError(land, msg)
     tcPrint(land)
     if hasproperty(Sindbad, :error_catcher)
         push!(Sindbad.error_catcher, land)
@@ -43,7 +43,7 @@ function cry_and_die(land, msg)
     error(msg)
 end
 
-function check_model_errors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::Val{:true}) #when check is on
+function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::Val{:true}) #when check is on
     ## unpack land variables
     @unpack_land begin
         c_allocation ∈ land.states
@@ -56,32 +56,32 @@ function check_model_errors(p_struct::cCycleConsistency_simple, forcing, land, h
     # check allocation
     for i in eachindex(c_allocation)
         if c_allocation[i] < z_zero
-            cry_and_die(land, "negative values in carbon_allocation at index $(i). Cannot continue")
+            throwError(land, "negative values in carbon_allocation at index $(i). Cannot continue")
         end
     end
 
     for i in eachindex(c_allocation)
         if c_allocation[i] > o_one
-            cry_and_die(land, "carbon_allocation larger than one at index $(i). Cannot continue")
+            throwError(land, "carbon_allocation larger than one at index $(i). Cannot continue")
         end
     end
 
     if !isapprox(sum(c_allocation), o_one; atol=tolerance)
-        cry_and_die(land, "cAllocation does not sum to 1. Cannot continue")
+        throwError(land, "cAllocation does not sum to 1. Cannot continue")
     end
 
     # Check carbon flow vector
     # check if any of the off-diagonal values of flow vector is negative
     for i in eachindex(c_flow_A_vec)
         if c_flow_A_vec[i] < z_zero
-            cry_and_die(land, "negative value in flow vector at index $(i). Cannot continue")
+            throwError(land, "negative value in flow vector at index $(i). Cannot continue")
         end
     end
 
     # check if any of the off-diagonal values of flow vector is larger than 1.
     for i in eachindex(c_flow_A_vec)
         if c_flow_A_vec[i] > o_one
-            cry_and_die(land, "flow is greater than one in flow vector at index $(i). Cannot continue")
+            throwError(land, "flow is greater than one in flow vector at index $(i). Cannot continue")
         end
     end
 
@@ -95,7 +95,7 @@ function check_model_errors(p_struct::cCycleConsistency_simple, forcing, land, h
             s = s + c_flow_A_vec[ind]
         end
         if (s - o_one) > helpers.numbers.tolerance
-            cry_and_die(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 
@@ -105,19 +105,19 @@ function check_model_errors(p_struct::cCycleConsistency_simple, forcing, land, h
             s = s + c_flow_A_vec[ind]
         end
         if (s - o_one) > helpers.numbers.tolerance
-            cry_and_die(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
         end
     end
 
     return nothing
 end
 
-function check_model_errors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::Val{:false}) #when check is off/false
+function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::Val{:false}) #when check is off/false
     return nothing
 end
 
 function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
-    check_model_errors(p_struct, forcing, land, helpers, helpers.run.catch_model_errors)
+    checkCcycleErrors(p_struct, forcing, land, helpers, helpers.run.catch_model_errors)
     return land
 end
 

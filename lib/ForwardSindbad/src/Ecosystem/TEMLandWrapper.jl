@@ -11,7 +11,7 @@ function timeLoopForwardVector(
 )
     for ts = 1:num_time_steps
         f_ts = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        land = runCompute(land, f_ts, forward_models, tem_helpers)
+        land = runModelCompute(land, f_ts, forward_models, tem_helpers)
         res_vec[ts] = land
     end
     return nothing
@@ -28,7 +28,7 @@ function timeLoopForward(
 )
     land_stacked = map(1:num_time_steps) do ts
         f_ts = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        land = runCompute(land, f_ts, forward_models, tem_helpers)
+        land = runModelCompute(land, f_ts, forward_models, tem_helpers)
         land
     end
     return land_stacked
@@ -44,7 +44,7 @@ function coreEcosystemVector(selected_models,
     land_init,
     f_one)
 
-    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
+    land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
     land_spin_now = land_prec
     if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(
@@ -78,7 +78,7 @@ function coreEcosystem(selected_models,
     tem_models,
     land_init,
     f_one)
-    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
+    land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
     land_spin_now = land_prec
     # land_spin_now = land_init
 
@@ -209,7 +209,7 @@ function runEcosystem(selected_models::Tuple,
 
     land_all = if !isempty(loc_space_inds)
         forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, _, land_init_space, tem_with_vals, f_one =
-            prepSimulation(forcing, tem)
+            prepTEM(forcing, tem)
         res = parallelizeIt(tem_with_vals.models.forward,
             res_vec,
             forcing,

@@ -52,7 +52,7 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         end
         ## pack land variables
         @pack_land cEco => land.pools
-        land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
+        land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     end
     return land
 end

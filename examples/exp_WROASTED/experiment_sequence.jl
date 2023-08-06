@@ -3,23 +3,16 @@ using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
 using Dates
+using Plots
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
-using Plots
 
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 # sites = ("AU-DaP", "AT-Neu")
 # sites = ("CA-NS6",)
 for domain ∈ sites
-    # domain = "DE-Hai"
     path_input = "../data/fn/$(domain).1979.2017.daily.nc"
     forcingConfig = "forcing_erai.json"
 
@@ -107,8 +100,8 @@ for domain ∈ sites
     observations = getObservation(info, forcing.helpers)
     obs_array = getKeyedArray(observations)
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepSimulation(forcing, info)
-    @time simulateEcosystem!(output_array,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info)
+    @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
         tem_with_vals,
@@ -166,8 +159,8 @@ for domain ∈ sites
     forcing = getForcing(info)
 
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepSimulation(forcing, info)
-    @time simulateEcosystem!(output_array,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info)
+    @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
         tem_with_vals,
