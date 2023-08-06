@@ -106,7 +106,7 @@ function doSpinup(_, _, land_spin, _, _, _, _, ::Val{:false}) # dont do the spin
     return land_spin
 end
 
-function doSpinup(forward_models, forcing, land_spin, tem_helpers, tem_spinup, tem_models, f_one, ::Val{:true}) # do the spinup
+function doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
     @debug "runSpinup:: running spinup sequences..."
     # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
     seq_index = 1
@@ -146,9 +146,9 @@ do/run the spinup and update the state using a simple timeloop through the input
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     _,
-    f_one,
     ::Val{:spinup})
     land_spin = runTimeLoopSpinup(sel_spinup_models,
         sel_spinup_forcing,
@@ -165,9 +165,9 @@ do/run the spinup and update the state using a simple timeloop through the input
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     _,
-    f_one,
     ::Val{:forward})
     land_spin = runTimeLoopSpinup(sel_spinup_models,
         sel_spinup_forcing,
@@ -181,9 +181,9 @@ end
 function doSpinup(spinup_models,
     spinup_forcing,
     land,
+    f_one,
     tem_helpers,
     _,
-    f_one,
     ::Val{:nlsove_fixedpoint_trustregion_TWS})
     TWS_spin = DoSpinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, f_one)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
@@ -197,9 +197,9 @@ end
 function doSpinup(spinup_models,
     spinup_forcing,
     land,
+    f_one,
     tem_helpers,
     _,
-    f_one,
     ::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
     cEco_TWS_spin = DoSpinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), f_one, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
@@ -226,9 +226,9 @@ end
 function doSpinup(spinup_models,
     spinup_forcing,
     land,
+    f_one,
     tem_helpers,
     _,
-    f_one,
     ::Val{:nlsove_fixedpoint_trustregion_cEco})
     cEco_spin = DoSpinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), f_one)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
@@ -245,7 +245,7 @@ end
 doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleAH})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleAH})
+function doSpinup(_, _, land, _, helpers, _, ::Val{:ηScaleAH})
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -279,7 +279,7 @@ end
 doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleA0H})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleA0H})
+function doSpinup(_, _, land, _, helpers, _, ::Val{:ηScaleA0H})
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -320,9 +320,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     tem_spinup,
-    f_one,
     ::Val{:ODE_AutoTsit5_Rodas5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(sel_spinup_models,
@@ -351,9 +351,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     tem_spinup,
-    f_one,
     ::Val{:ODE_DP5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(sel_spinup_models,
@@ -383,9 +383,9 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     tem_spinup,
-    f_one,
     ::Val{:ODE_Tsit5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(sel_spinup_models,
@@ -415,9 +415,9 @@ do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of Di
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     tem_spinup,
-    f_one,
     ::Val{:SSP_DynamicSS_Tsit5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(sel_spinup_models,
@@ -443,9 +443,9 @@ do/run the spinup using SteadyState solver and SSRootfind method of Differential
 function doSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_in,
+    f_one,
     tem_helpers,
     tem_spinup,
-    f_one,
     ::Val{:SSP_SSRootfind})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(sel_spinup_models,
@@ -481,8 +481,8 @@ function getDeltaPool(pool_dat::AbstractArray, spinup_info, t::Any)
     land_spin = runTimeLoopSpinup(sel_spinup_models,
         sel_spinup_forcing,
         deepcopy(land_spin),
-        tem_helpers,
-        f_one)
+        f_one,
+        tem_helpers)
     tmp = getfield(land_spin.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
     return Δpool
@@ -496,9 +496,9 @@ function getSpinupInfo(sel_spinup_models,
     sel_spinup_forcing,
     spinup_pool_name,
     land_in,
+    f_one,
     tem_helpers,
-    tem_spinup,
-    f_one)
+    tem_spinup)
     spinup_info = (;)
     spinup_info = setTupleField(spinup_info, (:pool, spinup_pool_name))
     spinup_info = setTupleField(spinup_info, (:land_in, land_in))
@@ -529,8 +529,8 @@ do/run the time loop of the spinup models to update the pool. Note that, in this
 function runTimeLoopSpinup(sel_spinup_models,
     sel_spinup_forcing,
     land_spin,
-    tem_helpers,
-    f_one)
+    f_one,
+    tem_helpers)
     num_time_steps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
     for t ∈ 1:num_time_steps
         f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
@@ -547,16 +547,16 @@ The main spinup function that handles the spinup method based on inputs from spi
 function runSpinup(forward_models,
     forcing,
     land_in,
+    f_one,
     tem_helpers,
-    tem_spinup,
     tem_models,
-    f_one)
+    tem_spinup)
 
-    #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or runEcosystem. Need to figure out...
+    #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or TEM!. Need to figure out but not critical as long as the spinup is not the bottleneck...
     land_spin = loadSpinup(land_in, tem_spinup, tem_helpers.run.spinup.load_spinup)
 
     #check if the spinup still needs to be done after loading spinup
-    land_spin = doSpinup(forward_models, forcing, land_spin, tem_helpers, tem_spinup, tem_models, f_one, tem_helpers.run.spinup.do_spinup)
+    land_spin = doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_models, tem_spinup, tem_helpers.run.spinup.do_spinup)
 
     saveSpinup(land_spin, tem_spinup, tem_helpers.run.spinup.save_spinup)
     return land_spin
