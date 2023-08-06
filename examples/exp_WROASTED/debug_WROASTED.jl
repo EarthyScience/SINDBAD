@@ -94,10 +94,10 @@ forcing = getForcing(info);
 
 # forc = getNamedDimsArrayWithNames(forcing)
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(forcing, info);
+    prepSimulation(forcing, info);
 
 
-@time runEcosystem!(output_array,
+@time simulateEcosystem!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,

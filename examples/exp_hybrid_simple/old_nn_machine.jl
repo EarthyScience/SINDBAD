@@ -103,7 +103,7 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs_array, sites_f, 
         loc_outputs,
         land_init_space,
         tem_with_vals,
-        f_one = prepRunEcosystem(forcing, info)
+        f_one = prepSimulation(forcing, info)
         out_data = output_array
 
         xbatches = if x_args.shuffle

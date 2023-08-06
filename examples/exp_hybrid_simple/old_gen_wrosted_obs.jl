@@ -81,7 +81,7 @@ function synth_obs()
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepRunEcosystem(forcing, info)
+    f_one = prepSimulation(forcing, info)
 
 
     ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
@@ -109,7 +109,7 @@ function synth_obs()
         loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
         up_apps = updateModelParametersType(tbl_params, forward, upVector)
         # up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
-        return coreEcosystem!(loc_output,
+        return runEcosystemCore!(loc_output,
             up_apps,
             loc_forcing,
             tem_helpers,

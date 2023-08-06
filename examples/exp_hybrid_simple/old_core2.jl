@@ -22,7 +22,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(forcing, info);
+f_one = prepSimulation(forcing, info);
 
 tem_helpers = tem_with_vals.helpers;
 tem_spinup = tem_with_vals.spinup;

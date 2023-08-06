@@ -5,6 +5,26 @@ using ConstructionBase
 export prepNumericHelpers
 export replaceCommaSeparatorParams
 
+
+function convertRunFlagsToVal(info)
+    new_run = (;)
+    dr = info.model_run.flags
+    for pr in propertynames(dr)
+        prf = getfield(dr, pr)
+        prtoset = Val(prf)
+        if isa(prf, NamedTuple)
+            st = (;)
+            for prs in propertynames(prf)
+                prsf = getfield(prf, prs)
+                st = setTupleField(st, (prs, Val(prsf)))
+            end
+            prtoset = st
+        end
+        new_run = setTupleField(new_run, (pr, prtoset))
+    end
+    return new_run
+end
+
 """
 parseSaveCode(info)
 parse and save the code and structs of selected model structure for the given experiment
@@ -1220,9 +1240,10 @@ end
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getLoopingInfo(info::NamedTuple)
-    run_info = (; info.model_run.flags..., (output_all = info.model_run.output.all))
+    run_vals = convertRunFlagsToVal(info)
+    run_info = (; run_vals..., (output_all = Val(info.model_run.output.all)))
     # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, info.model_run.rules.forward_diff))
+    run_info = setTupleField(run_info, (:forward_diff, Val(info.model_run.rules.forward_diff)))
     run_info = setTupleField(run_info,
         (:parallelization, Val(Symbol(info.model_run.mapping.parallelization))))
     return run_info
