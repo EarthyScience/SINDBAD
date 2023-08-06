@@ -74,7 +74,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
     return dimSize, dimName
 end
 
-function getOutDimsArrays(datavars, info, _, land_init, _, _, ::Val{:yaxarray})
+function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
     outdims = map(datavars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
         inax = info.model_run.mapping.run_ecosystem
