@@ -27,12 +27,12 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "prepExperimentForward: getting experiment info..."
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
-    if info.tem.helpers.run.save_info
+    if valToSymbol(info.tem.helpers.run.save_info)
         @info "prepExperimentForward: saving info..."
         @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
     end
 
-    if info.tem.helpers.run.catch_model_errors
+    if valToSymbol(info.tem.helpers.run.catch_model_errors)
         @info "prepExperimentForward: setting error catcher..."
         Sindbad.eval(:(error_catcher = []))
     end

@@ -42,10 +42,10 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(op, forcing_nt_array, info.tem);
+f_one = prepSimulation(op, forcing_nt_array, info.tem);
 
 
-@time runEcosystem!(op.data,
+@time simulateEcosystem!(op.data,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -85,9 +85,9 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(op, forcing_nt_array, info.tem);
+f_one = prepSimulation(op, forcing_nt_array, info.tem);
 
-@time runEcosystem!(op.data,
+@time simulateEcosystem!(op.data,
     mods,
     forcing_nt_array,
     tem_with_vals,
@@ -190,10 +190,10 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(op, updated_mods, forcing_nt_array, info.tem, updated_tem_helpers);
+f_one = prepSimulation(op, updated_mods, forcing_nt_array, info.tem, updated_tem_helpers);
 
 
-@time runEcosystem!(op.data,
+@time simulateEcosystem!(op.data,
     updated_mods,
     forcing_nt_array,
     tem_with_vals,

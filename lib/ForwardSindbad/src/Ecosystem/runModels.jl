@@ -14,9 +14,9 @@ end
 end
 
 """
-runCompute(out, forcing, models, tem_helpers, ::Val{:debug_model})
+runCompute(out, forcing, models, tem_helpers, ::Val{:false})
 """
-function runCompute(out, forcing, models, tem_helpers, ::Val{:debug_model})
+function runCompute(out, forcing, models, tem_helpers, ::Val{:true}) # debug the models
     otype = typeof(out)
     return foldlUnrolled(models; init=out) do o, model
         @show typeof(model)
@@ -27,7 +27,17 @@ end
 """
 runCompute(out, forcing, models, tem_helpers)
 """
-function runCompute(out, forcing, models, tem_helpers)
+function runCompute(out, forcing, models, tem_helpers, ::Val{:false}) # do not debug the models 
+    return foldlUnrolled(models; init=out) do o, model
+        o = Models.compute(model, forcing, o, tem_helpers)
+    end
+end
+
+
+"""
+runCompute(out, forcing, models, tem_helpers)
+"""
+function runCompute(out, forcing, models, tem_helpers) # do not debug the models 
     return foldlUnrolled(models; init=out) do o, model
         o = Models.compute(model, forcing, o, tem_helpers)
     end

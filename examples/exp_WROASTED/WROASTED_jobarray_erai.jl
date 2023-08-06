@@ -132,17 +132,17 @@ for o_set in opti_set
     tbl_params = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
-    new_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
+    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
     observations = getObservation(info, forcing.helpers)
     obs_array = getKeyedArray(observations)
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(forcing, info)
+        prepSimulation(forcing, info)
 
-    @time runEcosystem!(output_array,
-        new_models,
+    @time simulateEcosystem!(output_array,
+        optimized_models,
         forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
@@ -221,9 +221,9 @@ for o_set in opti_set
     forcing = getForcing(info)
 
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepRunEcosystem(forcing, info)
-    @time runEcosystem!(output_array,
-        new_models,
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepSimulation(forcing, info)
+    @time simulateEcosystem!(output_array,
+        optimized_models,
         forcing_nt_array,
         tem_with_vals,
         loc_space_inds,
