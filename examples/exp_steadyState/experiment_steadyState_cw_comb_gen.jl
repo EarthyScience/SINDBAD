@@ -50,7 +50,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
     end
     @pack_land TWS => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
-    update_init = loopTimeSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
     pout .= update_init.pools.TWS
     return nothing
 end
@@ -71,7 +71,7 @@ function (cEco_spin::Spinup_cEco)(pout, p)
     @pack_land cEco => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
-    update_init = loopTimeSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
 
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -101,7 +101,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     @pack_land TWS => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
-    update_init = loopTimeSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.f_one)
 
     pout .= log.(update_init.pools.cEco)
     cEco_TWS_spin.TWS .= update_init.pools.TWS
@@ -245,7 +245,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
+        prepTEM(forcing, info)
 
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])

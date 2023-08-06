@@ -2,17 +2,12 @@ using Revise
 using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
+using Plots
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
 domain = "DE-RuS"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
@@ -48,16 +43,12 @@ replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-# tbl_params = Sindbad.getParameters(info.tem.models.forward,
-#     info.optim.default_parameter,
-#     info.optim.optimized_parameters);
-
 forcing = getForcing(info);
 
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepSimulation(forcing, info);
+    prepTEM(forcing, info);
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -77,7 +68,7 @@ obs_array = getArray(observations);
 
 optimized_models = info.tem.models.forward;
 
-if valToSymbol(info.tem.helpers.run.run_optimization)
+if getBool(info.tem.helpers.run.run_optimization)
     tbl_params = Sindbad.getParameters(info.tem.models.forward,
         info.optim.default_parameter,
         info.optim.optimized_parameters)
@@ -88,7 +79,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     optimized_models,
     forcing_nt_array,
     tem_with_vals,
@@ -99,7 +90,6 @@ forcing = getForcing(info);
     f_one)
 
 # some plots
-using Plots
 ds = forcing.data[1];
 opt_dat = output_array;
 def_dat = output_default;
@@ -140,6 +130,3 @@ foreach(costOpt) do var_row
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end
-# using JuliaFormatter
-# format(".", MinimalStyle(), margin=100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true, trailing_comma=false)
-# format(".", margin = 100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true)

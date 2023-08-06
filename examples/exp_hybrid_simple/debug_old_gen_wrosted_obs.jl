@@ -94,10 +94,10 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepSimulation(forcing, info);
+f_one = prepTEM(forcing, info);
 
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forc,
     tem_with_vals,
@@ -132,7 +132,7 @@ function pixel_run!(output,
 
     loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
     up_apps = updateModelParametersType(tbl_params, forward, upVector)
-    return runEcosystemCore!(loc_output,
+    return runTEMCore!(loc_output,
         up_apps,
         loc_forcing,
         tem_helpers,

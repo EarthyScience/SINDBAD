@@ -22,10 +22,10 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepSimulation(forcing, info);
+f_one = prepTEM(forcing, info);
 
 
-# @profview simulateEcosystem!(output_array,
+# @profview TEM!(output_array,
 #     info.tem.models.forward,
 #     forc,
 #     tem_with_vals,
@@ -35,7 +35,7 @@ f_one = prepSimulation(forcing, info);
 #     land_init_space,
 #     f_one)
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forc,
     tem_with_vals,
@@ -86,19 +86,19 @@ end
 
 
 function reDoOneLocation1(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
-    land = ForwardSindbad.runDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
-    land = runCompute(land, f_one, selected_models, tem_helpers)
+    land = runModelCompute(land, f_one, selected_models, tem_helpers)
     return land
 end
 
 function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
-    land_prec = ForwardSindbad.runDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land_prec = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
         f = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, ts, f_one)
-        land = runCompute(land, f, selected_models, tem_helpers)
+        land = runModelCompute(land, f, selected_models, tem_helpers)
     end
     return land
 end

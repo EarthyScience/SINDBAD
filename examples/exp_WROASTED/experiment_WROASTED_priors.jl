@@ -50,8 +50,8 @@ forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepSimulation(forcing, info);
-@time simulateEcosystem!(output_array,
+    prepTEM(forcing, info);
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -135,7 +135,7 @@ develop_f =
         upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
         forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepSimulation(tem.models.forward, forcing, tem)
+            prepTEM(tem.models.forward, forcing, tem)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
@@ -160,7 +160,7 @@ develop_f =
 
             updated_models = updateModelParameters(tbl_params, tem.models.forward, popt)
             # TODO run model with updated parameters
-            simulateEcosystem!(output_array,
+            TEM!(output_array,
                 output.land_init,
                 updated_models,
                 forcing,
