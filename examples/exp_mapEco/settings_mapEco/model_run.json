@@ -38,7 +38,7 @@
   },
   "output": {
     "save_single_file": true,
-    "output_array_type": "array",
+    "output_array_type": "yaxarray",
     "all": true,
     "path": "exp_mapFN/output/",
     "format": "zarr",

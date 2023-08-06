@@ -196,7 +196,7 @@ for domain ∈ sites
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
             savefig(fig_prefix * "_$(v).png")
         else
-            for ll ∈ 1:size(def_var, 2)
+            foreach(axes(def_var, 2)) do ll
                 plot(xdata, def_var[:, ll]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
                 savefig(fig_prefix * "_$(v)_$(ll).png")
