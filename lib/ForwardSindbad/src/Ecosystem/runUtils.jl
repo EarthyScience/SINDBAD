@@ -1,7 +1,7 @@
 export getLocData
 export getLocForcing!
 export getLocOutput!
-export setOutputT!
+export setOutputForTimeStep!
 
 function fillLocOutput!(ar, val, ts::Int64)
     data_ts = getLocOutputView(ar, val, ts)
@@ -67,7 +67,7 @@ function getLocOutputView(ar, val::Real, ts::Int64)
     return view(ar, ts)
 end
 
-function setOutputT!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
+function setOutputForTimeStep!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
     if @generated
         output = quote end
         for (i, ov) in enumerate(output_vars)

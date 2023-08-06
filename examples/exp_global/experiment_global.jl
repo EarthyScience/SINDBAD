@@ -28,9 +28,9 @@ forcing = getForcing(info);
 GC.gc()
 
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(forcing, info);
+    prepSimulation(forcing, info);
 
-@time runEcosystem!(output_array,
+@time simulateEcosystem!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -41,7 +41,7 @@ forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds,
     f_one)
 
 for x ∈ 1:10
-    @time runEcosystem!(output_array,
+    @time simulateEcosystem!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
         tem_with_vals,
@@ -52,7 +52,7 @@ for x ∈ 1:10
         f_one)
 end
 
-@profview runEcosystem!(output_array,
+@profview simulateEcosystem!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
