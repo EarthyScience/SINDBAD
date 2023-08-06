@@ -50,7 +50,7 @@ end
 sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction; & for the second soil layer additional as function of RD
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

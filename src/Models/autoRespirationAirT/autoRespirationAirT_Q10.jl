@@ -27,7 +27,7 @@ end
 temperature effect on autotrophic maintenance respiration - Q10 model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

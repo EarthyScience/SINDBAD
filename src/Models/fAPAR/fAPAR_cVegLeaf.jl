@@ -29,7 +29,7 @@ end
 Compute FAPAR based on carbon pool of the leave; SLA; kLAI
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

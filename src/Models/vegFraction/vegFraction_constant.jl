@@ -22,7 +22,7 @@ end
 sets the value of frac_vegetation as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -25,7 +25,7 @@ end
 sets the value of land.states.LAI from the carbon in the leaves of the previous time step
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

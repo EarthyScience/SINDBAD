@@ -3,22 +3,18 @@ using ForwardDiff
 
 using Sindbad
 using ForwardSindbad
-using ForwardSindbad: timeLoopForward
 using OptimizeSindbad
-using AxisKeys: KeyedArray as KA
-#using Lux, Zygote, Optimisers, ComponentArrays, NNlib
-using Random
-noStackTrace()
-Random.seed!(7)
 
-experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
+noStackTrace()
+
+experiment_json = "../exp_gradWroastedsettings_gradWroastedexperiment.json"
 info = getExperimentInfo(experiment_json);
 
 forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-op = setupOutput(info);
+op = setupOutput(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
@@ -61,7 +57,7 @@ function g_loss(x,
     loc_outputs,
     land_init_space,
     f_one)
-    l = getLossGradient(x,
+    l = getLoss(x,
         mods,
         forcing_nt_array,
         op,
@@ -77,7 +73,7 @@ function g_loss(x,
     return l
 end
 rand_m = rand(info.tem.helpers.numbers.num_type);
-# op = setupOutput(info);
+# op = setupOutput(info, forcing.helpers);
 
 mods = info.tem.models.forward;
 for _ in 1:10
@@ -121,11 +117,11 @@ p_vec = tbl_params.default;
 CHUNK_SIZE = 10#length(p_vec)
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
-op = setupOutput(info);
+op = setupOutput(info, forcing.helpers);
 op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
 op = (; op..., data=op_dat);
 
-# op = setupOutput(info);
+# op = setupOutput(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 # op = (; op..., data=op_dat);
 

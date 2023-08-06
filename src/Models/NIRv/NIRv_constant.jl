@@ -22,7 +22,7 @@ end
 sets the value of NIRv as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

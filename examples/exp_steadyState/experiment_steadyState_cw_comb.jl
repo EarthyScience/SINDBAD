@@ -119,25 +119,25 @@ function add_w_to_land(p, land, zix, helpers, 𝟘)
 
     snowW = land.pools.snowW
     for (lc, l) in enumerate(zix.snowW)
-        @rep_elem max_0(p[l]) => (snowW, lc, :snowW)
+        @rep_elem max0(p[l]) => (snowW, lc, :snowW)
     end
     @pack_land snowW => land.pools
 
     soilW = land.pools.soilW
     for (lc, l) in enumerate(zix.soilW)
-        @rep_elem max_0(p[l]) => (soilW, lc, :soilW)
+        @rep_elem max0(p[l]) => (soilW, lc, :soilW)
     end
     @pack_land soilW => land.pools
 
     groundW = land.pools.groundW
     for (lc, l) in enumerate(zix.groundW)
-        @rep_elem max_0(p[l]) => (groundW, lc, :groundW)
+        @rep_elem max0(p[l]) => (groundW, lc, :groundW)
     end
     @pack_land groundW => land.pools
 
     surfaceW = land.pools.surfaceW
     for (lc, l) in enumerate(zix.surfaceW)
-        @rep_elem max_0(p[l]) => (surfaceW, lc, :surfaceW)
+        @rep_elem max0(p[l]) => (surfaceW, lc, :surfaceW)
     end
     @pack_land surfaceW => land.pools
     return land
@@ -151,7 +151,7 @@ function (TWS_spin::SpinupTWS)(pout, p)
     @unpack_land 𝟘 ∈ helpers.numbers
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
+        @rep_elem max0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     land = add_w_to_land(p, land, zix, helpers, 𝟘)
@@ -197,7 +197,7 @@ function (cEcoTWS_spin::SpinupCecoTWS)(pout, p)
     end
     @pack_land cEco => land.pools
     land = add_c_to_land(pout, land, zix, helpers, 𝟘)
-    # tcprint(("in", land.pools.cEco))
+    # tcPrint(("in", land.pools.cEco))
 
     TWS = land.pools.TWS
     TWS_prev = cEcoTWS_spin.TWS
@@ -207,13 +207,13 @@ function (cEcoTWS_spin::SpinupCecoTWS)(pout, p)
 
     @pack_land TWS => land.pools
     land = add_w_to_land(TWS, land, zix, helpers, 𝟘)
-    # tcprint(("TWS_prev", cEcoTWS_spin.TWS, land.pools))
+    # tcPrint(("TWS_prev", cEcoTWS_spin.TWS, land.pools))
 
     update_init = loopTimeSpinup(cEcoTWS_spin.models, cEcoTWS_spin.forcing, land, cEcoTWS_spin.tem_helpers, cEcoTWS_spin.land_type, cEcoTWS_spin.f_one)
     # pout .= update_init.pools.cEco
     pout .= log.(update_init.pools.cEco)
     cEcoTWS_spin.TWS .= update_init.pools.TWS
-    # tcprint(("out", update_init.pools.cEco))
+    # tcPrint(("out", update_init.pools.cEco))
     # println("-------------------------------------------------------------------------------------------------------------------")
     return nothing
 end

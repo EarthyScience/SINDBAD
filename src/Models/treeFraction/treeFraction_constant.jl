@@ -23,7 +23,7 @@ end
 sets the value of frac_tree as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

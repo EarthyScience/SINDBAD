@@ -24,7 +24,7 @@ function compute(p_struct::runoffBase_Zhang2008, forcing, land, helpers)
 
     # update groundwater changes
 
-    ΔgroundW = add_to_each_elem(ΔgroundW, -base_runoff / n_groundW)
+    ΔgroundW = addToEachElem(ΔgroundW, -base_runoff / n_groundW)
 
     ## pack land variables
     @pack_land begin
@@ -61,7 +61,7 @@ end
 computes baseflow from a linear ground water storage
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

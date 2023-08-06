@@ -31,7 +31,7 @@ end
 computes the snow pack & fraction of snow cover following the HTESSEL approach
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

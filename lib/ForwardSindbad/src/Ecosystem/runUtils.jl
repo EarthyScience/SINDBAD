@@ -5,7 +5,7 @@ export setOutputT!
 
 function fillLocOutput!(ar, val, ts::Int64)
     data_ts = getLocOutputView(ar, val, ts)
-    return data_ts .= val # Sindbad.ForwardDiff.value.(val)
+    return data_ts .= val
 end
 
 function getLocData(output_array, forcing, loc_space_map)
@@ -19,13 +19,6 @@ function getLocData(output_array, forcing, loc_space_map)
         getArrayView(a, ar_inds)
     end
     return loc_forcing, loc_output
-end
-
-function getLocOutput!(output_array, ar_inds, loc_output)
-    for i ∈ eachindex(output_array)
-        loc_output[i] = getArrayView(output_array[i], ar_inds)
-    end
-    return nothing
 end
 
 @generated function getLocForcing!(forcing,
