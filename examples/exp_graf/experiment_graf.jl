@@ -5,7 +5,7 @@ using Revise
 noStackTrace()
 domain = "africa";
 optimize_it = true;
-optimize_it = false;
+# optimize_it = false;
 
 # experiment_json = "./settings_distri/experimentW.json"
 # info = getConfiguration(experiment_json);
@@ -30,29 +30,28 @@ obs_array = getArray(observations);
 
 GC.gc()
 
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepTEM(forcing, info);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
 
 @time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 for x ∈ 1:10
     @time TEM!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
-        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        f_one,
+        tem_with_vals)
 end
 
 getLossVector(obs_array, output_array, info.optim.cost_options)

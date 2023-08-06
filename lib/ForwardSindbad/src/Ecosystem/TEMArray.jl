@@ -186,7 +186,7 @@ runEcosystem(selected_models, forcing, land_init, tem)
 """
 function TEM!(forcing::NamedTuple, info::NamedTuple)
     forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info)
-    TEM!(output_array, tem_with_vals.models.forward, forcing_nt_array, tem_with_val, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one)
+    TEM!(output_array, tem_with_vals.models.forward, forcing_nt_array, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, tem_with_vals)
     return output_array
 end
 
@@ -196,12 +196,12 @@ runEcosystem(selected_models, forcing, land_init, tem)
 function TEM!(output_array::AbstractArray,
     selected_models,
     forcing_nt_array::NamedTuple,
-    tem_with_vals::NamedTuple,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals::NamedTuple)
     parallelizeTEM!(output_array,
         selected_models,
         forcing_nt_array,

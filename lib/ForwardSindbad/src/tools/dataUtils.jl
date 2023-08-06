@@ -367,8 +367,6 @@ function Base.view(x::AbstractArray, v::Sindbad.TimeAggregator; dim=1)
     Sindbad.TimeAggregatorViewInstance{t,ndims(x),dim,typeof(x),typeof(v)}(x, v, Val{dim}())
 end
 
-
-
 function getTimeAggrArray(_dat::AbstractArray{T,2}) where {T}
     return _dat[:, :]
 end
@@ -377,7 +375,7 @@ function getTimeAggrArray(_dat::AbstractArray{T,3}) where {T}
     return _dat[:, :, :]
 end
 
-function getTimeAggrArray(mod_dat::AbstractArray{T,4}) where {T}
+function getTimeAggrArray(_dat::AbstractArray{T,4}) where {T}
     return _dat[:, :, :, :]
 end
 
@@ -388,7 +386,13 @@ function temporalAggregation(dat::AxisKeys.KeyedArray, temporal_aggregator::Sind
 end
 
 # works for everything for which aggregator is needed
-function temporalAggregation(dat, temporal_aggregator::Sindbad.TimeAggregator, dim=1)
+function temporalAggregation(dat::AbstractArray, temporal_aggregator::Sindbad.TimeAggregator, dim=1)
+    dat = view(dat, temporal_aggregator, dim=dim)
+    return dat
+end
+
+# works for everything for which aggregator is needed
+function temporalAggregation(dat::SubArray, temporal_aggregator::Sindbad.TimeAggregator, dim=1)
     dat = view(dat, temporal_aggregator, dim=dim)
     return getTimeAggrArray(dat)
 end

@@ -5,7 +5,7 @@ export getLocObs!
 export getLoss
 export getLossVector
 export getModelOutputView
-export optimizeModel
+export optimizeTEM
 
 function aggregateData(dat, cost_option, ::Val{:timespace})
     dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
@@ -88,13 +88,42 @@ function filterConstraintMinimumDatapoints(obs_array, cost_options)
 end
 
 
+
 """
 getData(outsmodel, observations, modelVariables, obsVariables)
 """
-function getData(model_output,
-    observations, cost_option)
+function getData(model_output::landWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
-    ŷ = getModelData(model_output, cost_option)
+    mod_field = cost_option.mod_field
+    mod_subfield = cost_option.mod_subfield
+    ŷField = getproperty(model_output, mod_field)
+    ŷ = getproperty(ŷField, mod_subfield)
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+        y = y[:]
+        yσ = yσ[:]
+    end
+    # @show size(ŷ), size(y), size(yσ)
+    # @show typeof(ŷ), typeof(y), typeof(yσ)
+    # ymask = observations[obs_ind + 2]
+
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+
+    if cost_option.temporal_aggr_obs
+        y = aggregateData(y, cost_option, cost_option.aggr_order)
+        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
+    end
+    return (y, yσ, ŷ)
+end
+
+"""
+getData(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getData(model_output::AbstractArray, observations, cost_option)
+    obs_ind = cost_option.obs_ind
+    ŷ = model_output[cost_option.mod_ind]
     if size(ŷ, 2) == 1
         ŷ = getModelOutputView(ŷ)
     end
@@ -165,12 +194,12 @@ function getLoss(pVector::AbstractArray,
     TEM!(output_array,
         updated_models,
         forcing_nt_array,
-        tem,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        f_one,
+        tem)
     loss_vector = getLossVector(observations, output_array, cost_options)
     return combineLoss(loss_vector, multiconstraint_method)
 end
@@ -189,6 +218,7 @@ function getLossVector(observations, model_output, cost_options)
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
+        @debug "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
         metr
     end
     # println("-------------------")
@@ -196,24 +226,13 @@ function getLossVector(observations, model_output, cost_options)
 end
 
 
-"""
-getModelData(model_output::landWrapper, cost_option)
-"""
-function getModelData(model_output::landWrapper, cost_option)
-    mod_field = cost_option.mod_field
-    mod_subfield = cost_option.mod_subfield
-    ŷField = getproperty(model_output, mod_field)
-    ŷ = getproperty(ŷField, mod_subfield)
-    return ŷ
+function getModelOutputView(mod_dat)
+    return mod_dat[:]
 end
 
-"""
-getModelData(model_output::AbstractArray, cost_option)
-"""
-function getModelData(model_output::AbstractArray, cost_option)
-    return model_output[cost_option.mod_ind]
+function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
+    return @view mod_dat[:, 1]
 end
-
 
 function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
     return @view mod_dat[:, 1]
@@ -232,9 +251,9 @@ function spatialAggregation(dat, _, ::Val{:cat})
 end
 
 """
-optimizeModel(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
+optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
-function optimizeModel(forcing::NamedTuple,
+function optimizeTEM(forcing::NamedTuple,
     observations,
     info::NamedTuple)
 

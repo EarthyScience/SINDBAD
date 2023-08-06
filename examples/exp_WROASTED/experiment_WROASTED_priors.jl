@@ -49,17 +49,16 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepTEM(forcing, info);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
 @time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArrayWithNames(observations);
@@ -122,7 +121,7 @@ pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
 develop_f =
     () -> begin
         #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
-        #code run from @infiltrate in optimizeModel
+        #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
         # plot(d)
@@ -135,16 +134,13 @@ develop_f =
         upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
         forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepTEM(tem.models.forward, forcing, tem)
+            prepTEM(tem.models.forward, forcing, info)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
 
         #TODO get y and sigmay beforehand and construct MvNormal
 
-        #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
-        #output_variables, optim
         m_sesamfit = Turing.@model function sesamfit(obs_array, ::Type{T}=Float64) where {T}
             #assumptions/priors
             local popt = Vector{T}(undef, length(priors_opt))
@@ -164,12 +160,12 @@ develop_f =
                 output.land_init,
                 updated_models,
                 forcing,
-                tem_with_vals,
                 loc_space_inds,
                 loc_forcings,
                 loc_outputs,
                 land_init_space,
-                f_one)
+                f_one,
+                tem_with_vals)
 
             # get predictions and observations
             model_output = (; Pair.(output_variables, output)...)
