@@ -30,9 +30,9 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-f_one = prepRunEcosystem(forcing, info);
+f_one = prepSimulation(forcing, info);
 
-@time runEcosystem!(output_array,
+@time simulateEcosystem!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,

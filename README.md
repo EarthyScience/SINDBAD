@@ -84,4 +84,3 @@ Sindbad is divided into following sub-packages which can be imported in your exa
 - Sindbad: pacckage including core models and setup of SINDBAD experiment
 - ForwardSindbad: package to run SINDABD experiment in the forward mode
 - OptimizeSindbad: package to carry out paramater optimization and invesion
-- HybridSindbbad: package including ML based dependencies

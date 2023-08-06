@@ -162,7 +162,7 @@ function getLoss(pVector::AbstractArray,
     f_one)
     upVector = pVector
     updated_models = updateModelParameters(tbl_params, base_models, upVector)
-    runEcosystem!(output_array,
+    simulateEcosystem!(output_array,
         updated_models,
         forcing_nt_array,
         tem,
@@ -261,7 +261,7 @@ function optimizeModel(forcing::NamedTuple,
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepRunEcosystem(forcing, info)
+    f_one = prepSimulation(forcing, info)
     cost_function =
         x -> getLoss(x,
             tem.models.forward,

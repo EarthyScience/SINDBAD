@@ -37,7 +37,7 @@ for (i, tj) ∈ enumerate(tjs)
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepRunEcosystem(forcing, info)
+    f_one = prepSimulation(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
