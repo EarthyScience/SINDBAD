@@ -1,8 +1,8 @@
-export runEcosystem!
-export runEcosystemCore!
-export simulateEcosystem!
+export runTEM!
+export runTEMCore!
+export TEM!
 
-function runEcosystemCore!(loc_output,
+function runTEMCore!(loc_output,
     selected_models,
     loc_forcing,
     tem_helpers,
@@ -12,7 +12,7 @@ function runEcosystemCore!(loc_output,
     f_one,
     ::Val{:false}) # without spinup
 
-    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
+    land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
     runTimeLoop!(loc_output,
         selected_models,
@@ -24,7 +24,7 @@ function runEcosystemCore!(loc_output,
     return nothing
 end
 
-function runEcosystemCore!(loc_output,
+function runTEMCore!(loc_output,
     selected_models,
     loc_forcing,
     tem_helpers,
@@ -34,7 +34,7 @@ function runEcosystemCore!(loc_output,
     f_one,
     ::Val{:true}) # with spinup
 
-    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
+    land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
     land_spin = runSpinup(selected_models,
         loc_forcing,
@@ -42,7 +42,6 @@ function runEcosystemCore!(loc_output,
         tem_helpers,
         tem_spinup,
         tem_models,
-        typeof(land_init),
         f_one)
 
     runTimeLoop!(loc_output,
@@ -55,7 +54,7 @@ function runEcosystemCore!(loc_output,
     return nothing
 end
 
-function runEcosystem!(output_array,
+function runTEM!(output_array,
     selected_models,
     forcing,
     tem_helpers,
@@ -68,7 +67,7 @@ function runEcosystem!(output_array,
     f_one)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
     getLocOutput!(output_array, loc_space_ind, loc_output)
-    runEcosystemCore!(loc_output,
+    runTEMCore!(loc_output,
         selected_models,
         loc_forcing,
         tem_helpers,
@@ -81,7 +80,7 @@ function runEcosystem!(output_array,
 end
 
 
-function parallelizeSimulation!(output_array,
+function parallelizeTEM!(output_array,
     selected_models,
     forcing_nt_array,
     tem_helpers,
@@ -94,7 +93,7 @@ function parallelizeSimulation!(output_array,
     f_one,
     ::Val{:threads})
     Threads.@threads for i ∈ eachindex(loc_space_inds)
-        runEcosystem!(output_array,
+        runTEM!(output_array,
             selected_models,
             forcing_nt_array,
             tem_helpers,
@@ -110,9 +109,9 @@ function parallelizeSimulation!(output_array,
 end
 
 """
-parallelizeSimulation!((output_array, selected_models, forcing, tem_helpers, tem_spinup, tem_models, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, ::Val{:qbmap})
+parallelizeTEM!((output_array, selected_models, forcing, tem_helpers, tem_spinup, tem_models, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, ::Val{:qbmap})
 """
-function parallelizeSimulation!(output_array,
+function parallelizeTEM!(output_array,
     selected_models,
     forcing_nt_array,
     tem_helpers,
@@ -126,7 +125,7 @@ function parallelizeSimulation!(output_array,
     ::Val{:qbmap})
     spI = 1
     qbmap(loc_space_inds) do loc_space_ind
-        runEcosystem!(output_array,
+        runTEM!(output_array,
             selected_models,
             forcing_nt_array,
             tem_helpers,
@@ -153,7 +152,7 @@ function runTimeLoop!(loc_output,
     num_time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     for ts ∈ 1:num_time_steps
         f_ts = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, ts, f_one)
-        land = runCompute(land, f_ts, forward_models, tem_helpers)
+        land = runModelCompute(land, f_ts, forward_models, tem_helpers)
         setOutputForTimeStep!(loc_output, land, tem_helpers.vals.output_vars, ts)
     end
     return nothing
@@ -171,10 +170,10 @@ function runTimeLoop!(loc_output,
     @time f_ts = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, 1, f_one)
     println("-------------")
     @show "each model"
-    @time land = runCompute(land, f_ts, forward_models, tem_helpers, tem_helpers.run.debug_model)
+    @time land = runModelCompute(land, f_ts, forward_models, tem_helpers, tem_helpers.run.debug_model)
     println("-------------")
     @show "all models"
-    @time land = runCompute(land, f_ts, forward_models, tem_helpers)
+    @time land = runModelCompute(land, f_ts, forward_models, tem_helpers)
     println("-------------")
     @show "land"
     @time setOutputForTimeStep!(loc_output, land, tem_helpers.vals.output_vars, 1)
@@ -185,11 +184,11 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function simulateEcosystem!(forcing::NamedTuple,
+function TEM!(forcing::NamedTuple,
     tem::NamedTuple)
     forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepSimulation(forcing, tem)
-    parallelizeSimulation!(output_array,
+        prepTEM(forcing, tem)
+    parallelizeTEM!(output_array,
         tem_with_vals.models.forward,
         forcing_nt_array,
         tem_with_vals.helpers,
@@ -207,7 +206,7 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function simulateEcosystem!(output_array::AbstractArray,
+function TEM!(output_array::AbstractArray,
     selected_models,
     forcing_nt_array::NamedTuple,
     tem_with_vals::NamedTuple,
@@ -216,7 +215,7 @@ function simulateEcosystem!(output_array::AbstractArray,
     loc_outputs,
     land_init_space,
     f_one)
-    parallelizeSimulation!(output_array,
+    parallelizeTEM!(output_array,
         selected_models,
         forcing_nt_array,
         tem_with_vals.helpers,

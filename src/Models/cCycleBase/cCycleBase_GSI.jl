@@ -1,4 +1,4 @@
-export cCycleBase_GSI, adjust_and_pack_pool_components
+export cCycleBase_GSI, adjustPackPoolComponents
 
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
@@ -88,7 +88,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function adjust_and_pack_pool_components(land, helpers, ::Val{:cCycleBase_GSI})
+function adjustPackPoolComponents(land, helpers, ::Val{:cCycleBase_GSI})
     @unpack_land (cVeg,
         cLit,
         cSoil,

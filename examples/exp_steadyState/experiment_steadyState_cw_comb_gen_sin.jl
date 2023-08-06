@@ -80,7 +80,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
+        prepTEM(forcing, info)
 
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])

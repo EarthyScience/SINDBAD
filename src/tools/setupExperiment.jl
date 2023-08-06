@@ -1371,7 +1371,7 @@ function setupExperiment(info::NamedTuple)
 
     infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
-    if info.model_run.flags.run_optimization || info.tem.helpers.run.run_forward_and_cost
+    if getBool(info.model_run.flags.run_optimization) || getBool(info.tem.helpers.run.run_forward_and_cost)
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end
@@ -1379,8 +1379,8 @@ function setupExperiment(info::NamedTuple)
     sel_vars = nothing
     if info.model_run.flags.run_optimization
         sel_vars = info.optim.variables.store
-    elseif info.tem.helpers.run.run_forward_and_cost
-        if info.model_run.flags.run_forward
+    elseif getBool(info.tem.helpers.run.run_forward_and_cost)
+        if getBool(info.model_run.flags.run_forward)
             sel_vars = getVariableGroups(
                 union(String.(keys(info.model_run.output.variables)),
                     info.optim.variables.model)

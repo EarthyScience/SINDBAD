@@ -43,7 +43,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     @info "-------------------Cost Calculation Mode---------------------------"
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
-    @time output_array = simulateEcosystem!(forcing, info)
+    @time output_array = TEM!(forcing, info)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------")
     # @time run_output = output.data
@@ -59,10 +59,10 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
     run_output = nothing
-    if valToSymbol(info.tem.helpers.run.run_optimization)
+    if getBool(info.tem.helpers.run.run_optimization)
         run_output = runExperiment(info, forcing, output, Val(:opti))
     end
-    if valToSymbol(info.tem.helpers.run.run_forward_and_cost) && !valToSymbol(info.tem.helpers.run.run_optimization)
+    if getBool(info.tem.helpers.run.run_forward_and_cost) && !getBool(info.tem.helpers.run.run_optimization)
         run_output = runExperiment(info, forcing, Val(:cost))
     end
     return run_output

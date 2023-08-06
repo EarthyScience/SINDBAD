@@ -27,8 +27,8 @@ forcing = getForcing(info);
 GC.gc()
 
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepSimulation(forcing, info);
-@time simulateEcosystem!(output_array,
+    prepTEM(forcing, info);
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,

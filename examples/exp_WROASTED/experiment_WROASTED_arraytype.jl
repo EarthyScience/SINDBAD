@@ -8,12 +8,6 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
 domain = "AU-DaP"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
@@ -56,8 +50,8 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
-    @time simulateEcosystem!(output_array,
+        prepTEM(forcing, info)
+    @time TEM!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
         tem_with_vals,
@@ -86,6 +80,3 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 end
 savefig(joinpath(info.output.figure, "tmp.png"))
 #     savefig("wroasted_$(domain)_$(v).png")
-# using JuliaFormatter
-# format(".", MinimalStyle(), margin=100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true, trailing_comma=false)
-# format(".", margin = 100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true)

@@ -31,9 +31,9 @@ obs_array = getArray(observations);
 GC.gc()
 
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepSimulation(forcing, info);
+    prepTEM(forcing, info);
 
-@time simulateEcosystem!(output_array,
+@time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -44,7 +44,7 @@ forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds,
     f_one)
 
 for x ∈ 1:10
-    @time simulateEcosystem!(output_array,
+    @time TEM!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
         tem_with_vals,
