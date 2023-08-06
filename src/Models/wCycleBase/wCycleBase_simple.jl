@@ -1,4 +1,4 @@
-export wCycleBase_simple, adjust_and_pack_pool_components
+export wCycleBase_simple, adjustPackPoolComponents
 
 
 #! format: off
@@ -38,7 +38,7 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
 end
 
 
-function adjust_and_pack_pool_components(land, helpers, ::Val{:wCycleBase_simple})
+function adjustPackPoolComponents(land, helpers, ::Val{:wCycleBase_simple})
     @unpack_land TWS ∈ land.pools
     zix = helpers.pools.zix
     if hasproperty(land.pools, :groundW)

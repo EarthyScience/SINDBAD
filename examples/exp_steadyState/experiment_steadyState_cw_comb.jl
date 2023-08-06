@@ -155,7 +155,7 @@ function (TWS_spin::SpinupTWS)(pout, p)
     end
     @pack_land TWS => land.pools
     land = add_w_to_land(p, land, zix, helpers, 𝟘)
-    update_init = loopTimeSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
     pout .= update_init.pools.TWS
     return nothing
 end
@@ -176,7 +176,7 @@ function (cEco_spin::SpinupCeco)(pout, p)
     end
     @pack_land cEco => land.pools
     land = add_c_to_land(pout, land, zix, helpers, 𝟘)
-    update_init = loopTimeSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
     # pout .= update_init.pools.cEco
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -209,7 +209,7 @@ function (cEcoTWS_spin::SpinupCecoTWS)(pout, p)
     land = add_w_to_land(TWS, land, zix, helpers, 𝟘)
     # tcPrint(("TWS_prev", cEcoTWS_spin.TWS, land.pools))
 
-    update_init = loopTimeSpinup(cEcoTWS_spin.models, cEcoTWS_spin.forcing, land, cEcoTWS_spin.tem_helpers, cEcoTWS_spin.land_type, cEcoTWS_spin.f_one)
+    update_init = runTimeLoopSpinup(cEcoTWS_spin.models, cEcoTWS_spin.forcing, land, cEcoTWS_spin.tem_helpers, cEcoTWS_spin.land_type, cEcoTWS_spin.f_one)
     # pout .= update_init.pools.cEco
     pout .= log.(update_init.pools.cEco)
     cEcoTWS_spin.TWS .= update_init.pools.TWS
@@ -243,7 +243,7 @@ function (CW_spin::SpinupCW)(pout, p)
     @pack_land TWS => land.pools
     land = add_w_to_land(ptmp, land, zix, helpers, 𝟘)
 
-    update_init = loopTimeSpinup(CW_spin.models, CW_spin.forcing, land, CW_spin.tem_helpers, CW_spin.land_type, CW_spin.f_one)
+    update_init = runTimeLoopSpinup(CW_spin.models, CW_spin.forcing, land, CW_spin.tem_helpers, CW_spin.land_type, CW_spin.f_one)
     # pout .= update_init.pools.cEco
     pout.cEco .= log.(update_init.pools.cEco)
     pout.TWS .= update_init.pools.TWS
@@ -416,7 +416,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepSimulation(forcing, info)
+        prepTEM(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 

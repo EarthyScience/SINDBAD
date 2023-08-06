@@ -100,7 +100,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     @rep_vec cEco_prev => cEco
     @pack_land cEco => land.pools
 
-    land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
+    land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     # setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
     ## pack land variables
