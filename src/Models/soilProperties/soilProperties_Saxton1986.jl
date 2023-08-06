@@ -99,7 +99,7 @@ end
 assigns the soil hydraulic properties based on Saxton; 1986 to land.soilProperties.sp_
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 # instantiate:
 instantiate/instantiate time-invariant variables for soilProperties_Saxton1986

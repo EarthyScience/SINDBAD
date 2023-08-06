@@ -46,10 +46,10 @@ function (TWS_spin::Spinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
+        @rep_elem max0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
-    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
     update_init = loopTimeSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
     pout .= update_init.pools.TWS
     return nothing
@@ -69,7 +69,7 @@ function (cEco_spin::Spinup_cEco)(pout, p)
         @rep_elem pout[l] => (cEco, lc, :cEco)
     end
     @pack_land cEco => land.pools
-    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
     update_init = loopTimeSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
 
@@ -90,7 +90,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
         @rep_elem pout[l] => (cEco, lc, :cEco)
     end
     @pack_land cEco => land.pools
-    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
     TWS = land.pools.TWS
     TWS_prev = cEco_TWS_spin.TWS
@@ -99,7 +99,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     end
 
     @pack_land TWS => land.pools
-    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
     update_init = loopTimeSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.f_one)
 
@@ -122,7 +122,7 @@ function doSpinup(spinup_models,
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
     @pack_land TWS => land.pools
-    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
+    setComponentFromMainPool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
     return land
 end
 
@@ -144,8 +144,8 @@ function doSpinup(spinup_models,
     TWS_prev = cEco_TWS_spin.TWS
     TWS = oftype(land.pools.TWS, TWS_prev)
     @pack_land TWS => land.pools
-    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
-    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
+    setComponentFromMainPool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
+    setComponentFromMainPool(land, tem_helpers, tem_helpers.pools.vals.self.TWS, tem_helpers.pools.vals.all_components.TWS, tem_helpers.pools.vals.zix.TWS)
     return land
 end
 
@@ -164,7 +164,7 @@ function doSpinup(spinup_models,
     cEco = exp.(r.zero)
     cEco = oftype(land.pools.cEco, cEco)
     @pack_land cEco => land.pools
-    set_component_from_main_pool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
+    setComponentFromMainPool(land, tem_helpers, tem_helpers.pools.vals.self.cEco, tem_helpers.pools.vals.all_components.cEco, tem_helpers.pools.vals.zix.cEco)
     return land
 end
 

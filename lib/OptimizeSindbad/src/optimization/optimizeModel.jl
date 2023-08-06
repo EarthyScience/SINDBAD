@@ -1,59 +1,11 @@
-export optimizeModel
-export getSimulationDataArray, getLoss, getLossGradient
-export getData, combineLoss
+export combineLoss
+export filterCommonNaN
+export getData
 export getLocObs!
+export getLoss
 export getLossVector
 export getModelOutputView
-export filterCommonNaN
-
-
-@generated function getLocObs!(obs_array,
-    ::Val{obs_vars},
-    ::Val{s_names},
-    loc_obs,
-    s_locs) where {obs_vars,s_names}
-    output = quote end
-    foreach(obs_vars) do obsv
-        push!(output.args, Expr(:(=), :d, Expr(:., :obs_array, QuoteNode(obsv))))
-        s_ind = 1
-        foreach(s_names) do s_name
-            expr = Expr(:(=),
-                :d,
-                Expr(:call,
-                    :view,
-                    Expr(:parameters,
-                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
-                    :d))
-            push!(output.args, expr)
-            return s_ind += 1
-        end
-        return push!(output.args,
-            Expr(:(=),
-                :loc_obs,
-                Expr(:macrocall,
-                    Symbol("@set"),
-                    :(),
-                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
-    end
-    return output
-end
-
-function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
-    return @view mod_dat[:, 1]
-end
-
-function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
-    return @view mod_dat[:, 1, :]
-end
-
-function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
-    return @view mod_dat[:, 1, :, :]
-end
-
-function spatialAggregation(dat, _, ::Val{:cat})
-    return dat
-end
-
+export optimizeModel
 
 function aggregateData(dat, cost_option, ::Val{:timespace})
     dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
@@ -67,55 +19,6 @@ function aggregateData(dat, cost_option, ::Val{:spacetime})
     return dat
 end
 
-"""
-filterCommonNaN(y, yσ, ŷ)
-return model and obs data filtering for the common nan
-"""
-function filterCommonNaN(y, yσ, ŷ)
-    idxs = (.!isnan.(y .* yσ .* ŷ))
-    return y[idxs], yσ[idxs], ŷ[idxs]
-end
-
-"""
-getModelData(model_output::landWrapper, cost_option)
-"""
-function getModelData(model_output::landWrapper, cost_option)
-    mod_field = cost_option.mod_field
-    mod_subfield = cost_option.mod_subfield
-    ŷField = getproperty(model_output, mod_field)
-    ŷ = getproperty(ŷField, mod_subfield)
-    return ŷ
-end
-
-"""
-getModelData(model_output::AbstractArray, cost_option)
-"""
-function getModelData(model_output::AbstractArray, cost_option)
-    return model_output[cost_option.mod_ind]
-end
-
-"""
-getData(outsmodel, observations, modelVariables, obsVariables)
-"""
-function getData(model_output,
-    observations, cost_option)
-    obs_ind = cost_option.obs_ind
-    ŷ = getModelData(model_output, cost_option)
-    if size(ŷ, 2) == 1
-        ŷ = getModelOutputView(ŷ)
-    end
-    y = observations[obs_ind]
-    yσ = observations[obs_ind+1]
-    # ymask = observations[obs_ind + 2]
-
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    if cost_option.temporal_aggr_obs
-        y = aggregateData(y, cost_option, cost_option.aggr_order)
-        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    end
-    return (y, yσ, ŷ)
-end
 
 """
     combineLoss(lossVector, ::Val{:sum})
@@ -154,25 +57,13 @@ function combineLoss(lossVector::AbstractArray, percentile_value::T) where {T<:R
 end
 
 """
-getLossVector(observations, model_output::AbstractArray, cost_options)
-returns a vector of losses for variables in info.cost_options.variables_to_constrain
+filterCommonNaN(y, yσ, ŷ)
+return model and obs data filtering for the common nan
 """
-function getLossVector(observations, model_output, cost_options)
-    lossVec = map(cost_options) do cost_option
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        metr = loss(y, yσ, ŷ, lossMetric)
-        # @time metr = loss(y, yσ, ŷ, lossMetric)
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        metr
-    end
-    # println("-------------------")
-    return lossVec
+function filterCommonNaN(y, yσ, ŷ)
+    idxs = (.!isnan.(y .* yσ .* ŷ))
+    return y[idxs], yσ[idxs], ŷ[idxs]
 end
-
 
 """
 filterConstraintMinimumDatapoints(obs_array, cost_options)
@@ -196,46 +87,68 @@ function filterConstraintMinimumDatapoints(obs_array, cost_options)
     return cost_options_filtered
 end
 
-"""
-getLossGradient(pVector, approaches, initOut, forcing, observations, tbl_params, obsVariables, modelVariables)
-"""
-function getLossGradient(pVector::AbstractArray,
-    base_models,
-    forcing,
-    output_array,
-    observations,
-    tbl_params,
-    tem,
-    optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
-    upVector = pVector
-    #newApproaches = base_models
-    newApproaches = Tuple(updateModelParametersType(tbl_params, base_models, upVector))
-    lopo = Tuple([lo for lo in loc_outputs])
 
-    runEcosystem!(output_array,
-        newApproaches,
-        forcing,
-        tem,
-        loc_space_inds,
-        loc_forcings,
-        lopo,
-        land_init_space,
-        f_one)
-    loss_vector = getLossVector(observations, output_array, optim.cost_options)
-    return combineLoss(loss_vector, optim.multi_constraint_method)
+"""
+getData(outsmodel, observations, modelVariables, obsVariables)
+"""
+function getData(model_output,
+    observations, cost_option)
+    obs_ind = cost_option.obs_ind
+    ŷ = getModelData(model_output, cost_option)
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+    end
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    # ymask = observations[obs_ind + 2]
+
+    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+
+    if cost_option.temporal_aggr_obs
+        y = aggregateData(y, cost_option, cost_option.aggr_order)
+        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
+    end
+    return (y, yσ, ŷ)
 end
 
+@generated function getLocObs!(obs_array,
+    ::Val{obs_vars},
+    ::Val{s_names},
+    loc_obs,
+    s_locs) where {obs_vars,s_names}
+    output = quote end
+    foreach(obs_vars) do obsv
+        push!(output.args, Expr(:(=), :d, Expr(:., :obs_array, QuoteNode(obsv))))
+        s_ind = 1
+        foreach(s_names) do s_name
+            expr = Expr(:(=),
+                :d,
+                Expr(:call,
+                    :view,
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
+            push!(output.args, expr)
+            return s_ind += 1
+        end
+        return push!(output.args,
+            Expr(:(=),
+                :loc_obs,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
+    end
+    return output
+end
+
+
 """
-getLoss(pVector, approaches, initOut, forcing, observations, tbl_params, obsVariables, modelVariables)
+getLoss(pVector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
 function getLoss(pVector::AbstractArray,
     base_models,
-    forcing,
+    forcing_nt_array,
     output_array,
     observations,
     tbl_params,
@@ -248,10 +161,10 @@ function getLoss(pVector::AbstractArray,
     land_init_space,
     f_one)
     upVector = pVector
-    newApproaches = updateModelParameters(tbl_params, base_models, upVector)
+    updated_models = updateModelParameters(tbl_params, base_models, upVector)
     runEcosystem!(output_array,
-        newApproaches,
-        forcing,
+        updated_models,
+        forcing_nt_array,
         tem,
         loc_space_inds,
         loc_forcings,
@@ -260,6 +173,62 @@ function getLoss(pVector::AbstractArray,
         f_one)
     loss_vector = getLossVector(observations, output_array, cost_options)
     return combineLoss(loss_vector, multiconstraint_method)
+end
+
+"""
+getLossVector(observations, model_output::AbstractArray, cost_options)
+returns a vector of losses for variables in info.cost_options.variables_to_constrain
+"""
+function getLossVector(observations, model_output, cost_options)
+    lossVec = map(cost_options) do cost_option
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        metr = loss(y, yσ, ŷ, lossMetric)
+        # @time metr = loss(y, yσ, ŷ, lossMetric)
+        if isnan(metr)
+            metr = oftype(metr, 1e19)
+        end
+        metr
+    end
+    # println("-------------------")
+    return lossVec
+end
+
+
+"""
+getModelData(model_output::landWrapper, cost_option)
+"""
+function getModelData(model_output::landWrapper, cost_option)
+    mod_field = cost_option.mod_field
+    mod_subfield = cost_option.mod_subfield
+    ŷField = getproperty(model_output, mod_field)
+    ŷ = getproperty(ŷField, mod_subfield)
+    return ŷ
+end
+
+"""
+getModelData(model_output::AbstractArray, cost_option)
+"""
+function getModelData(model_output::AbstractArray, cost_option)
+    return model_output[cost_option.mod_ind]
+end
+
+
+function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
+    return @view mod_dat[:, 1]
+end
+
+function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
+    return @view mod_dat[:, 1, :]
+end
+
+function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
+    return @view mod_dat[:, 1, :, :]
+end
+
+function spatialAggregation(dat, _, ::Val{:cat})
+    return dat
 end
 
 """

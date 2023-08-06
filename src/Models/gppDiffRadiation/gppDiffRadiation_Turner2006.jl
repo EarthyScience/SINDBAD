@@ -51,7 +51,7 @@ end
 cloudiness scalar [radiation diffusion] on gpp_potential based on Turner2006
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

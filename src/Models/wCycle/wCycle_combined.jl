@@ -24,7 +24,7 @@ function compute(p_struct::wCycle_combined, forcing, land, helpers)
     total_water_prev = sum(TWS)
     #TWS_old = deepcopy(TWS)
     ## update variables
-    TWS = add_vec(TWS, ΔTWS)
+    TWS = addVec(TWS, ΔTWS)
 
     # reset soil moisture changes to zero
     if minimum(TWS) < z_zero

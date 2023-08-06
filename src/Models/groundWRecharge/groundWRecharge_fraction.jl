@@ -61,7 +61,7 @@ end
 GW recharge as a fraction of moisture of the lowermost soil layer
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

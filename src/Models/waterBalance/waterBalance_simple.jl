@@ -29,8 +29,8 @@ function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     water_balance = precip - runoff - evapotranspiration - dS
     if !is_water_balance_valid(water_balance, tolerance, helpers)
         msg = "water balance error: water_balance: $(water_balance), total_water: $(total_water), total_water_prev: $(total_water_prev), WBP: $(land.states.WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
-        tcprint(land)
-        tcprint(forcing)
+        tcPrint(land)
+        tcPrint(forcing)
         pprint(msg)
         if hasproperty(Sindbad, :error_catcher)
             push!(Sindbad.error_catcher, land)

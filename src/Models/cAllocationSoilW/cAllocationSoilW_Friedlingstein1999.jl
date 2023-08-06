@@ -27,7 +27,7 @@ end
 partial moisture effect on decomposition/mineralization based on Friedlingstein1999
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

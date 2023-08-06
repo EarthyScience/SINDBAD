@@ -1,16 +1,16 @@
 export prepRunEcosystem
 
-function doOneLocation(output_array::AbstractArray, land_init, approaches, forcing, tem, loc_space_map)
+function doOneLocation(output_array::AbstractArray, land_init, selected_models, forcing, tem, loc_space_map)
     loc_forcing, loc_output = getLocData(output_array, forcing, loc_space_map)
-    land_prec = runDefinePrecompute(land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
+    land_prec = runDefinePrecompute(land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem.helpers)
     f_one = getForcingForTimeStep(loc_forcing, 1)
-    land_one = runCompute(land_prec, f_one, approaches, tem.helpers)
+    land_one = runCompute(land_prec, f_one, selected_models, tem.helpers)
     setOutputT!(loc_output, land_one, tem.helpers.vals.output_vars, 1)
     if tem.helpers.run.debug_model
         Sindbad.eval(:(error_catcher = []))
         push!(Sindbad.error_catcher, land_one)
-        tcprint(land_one)
+        tcPrint(land_one)
     end
     return land_one, f_one
 end
@@ -20,27 +20,27 @@ prepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
 """
 function prepRunEcosystem(forcing::NamedTuple, info::NamedTuple)
     @info "prepRunEcosystem: preparing to run ecosystem"
-    approaches = info.tem.models.forward
+    selected_models = info.tem.models.forward
     tem_helpers = info.tem.helpers
     # get the output named tuple
     output = setupOutput(info, forcing.helpers)
-    return helpPrepRunEcosystem(approaches, forcing, output, info.tem, tem_helpers)
+    return helpPrepRunEcosystem(selected_models, forcing, output, info.tem, tem_helpers)
 end
 
 """
-prepRunEcosystem(output, approaches, forcing::NamedTuple, tem::NamedTuple)
+prepRunEcosystem(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 """
-function prepRunEcosystem(approaches, forcing::NamedTuple, info::NamedTuple)
+function prepRunEcosystem(selected_models, forcing::NamedTuple, info::NamedTuple)
     @info "prepRunEcosystem: preparing to run ecosystem"
     tem_helpers = info.tem.helpers
     output = setupOutput(info, forcing.helpers)
-    return helpPrepRunEcosystem(approaches, forcing, output, info.tem, tem_helpers)
+    return helpPrepRunEcosystem(selected_models, forcing, output, info.tem, tem_helpers)
 end
 
 """
 helpPrepRunEcosystem(output, forcing::NamedTuple, tem::NamedTuple)
 """
-function helpPrepRunEcosystem(approaches, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+function helpPrepRunEcosystem(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
     # generate vals for dispatch of forcing and output
     @info "     getting the space locations to loop"
     forcing_sizes = forcing.helpers.sizes
@@ -92,7 +92,7 @@ function helpPrepRunEcosystem(approaches, forcing::NamedTuple, output::NamedTupl
     @info "     producing model output with one location and one time step for preallocating local, threaded, and spatial data"
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1]) #312
     loc_space_maps = loc_space_maps[allNans.==false]
-    land_one, f_one = doOneLocation(output_array, land_init, approaches, forcing_nt_array, new_tem,
+    land_one, f_one = doOneLocation(output_array, land_init, selected_models, forcing_nt_array, new_tem,
         loc_space_maps[1])
     loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
     loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])

@@ -77,7 +77,7 @@ end
 maximum root water fraction that plants can uptake from soil layers according to total carbon in root [cVegRoot]. sets the maximum fraction of water that root can uptake from soil layers according to total carbon in root [cVegRoot]
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

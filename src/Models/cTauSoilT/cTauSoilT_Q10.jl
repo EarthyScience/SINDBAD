@@ -26,7 +26,7 @@ end
 Compute effect of temperature on psoil carbon fluxes
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

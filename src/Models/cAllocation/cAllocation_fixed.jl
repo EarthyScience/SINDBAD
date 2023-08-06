@@ -17,7 +17,7 @@ function define(p_struct::cAllocation_fixed, forcing, land, helpers)
     cVeg_nzix = []
     cVeg_zix = []
     for cpName ∈ cVeg_names
-        zix = getzix(getfield(land.pools.carbon, cpName), helpers.pools.zix, cpName)
+        zix = getZix(getfield(land.pools.carbon, cpName), helpers.pools.zix, cpName)
         nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_nzix, nZix)
         push!(cVeg_zix, zix)
@@ -67,7 +67,7 @@ end
 compute the fraction of npp that is allocated to the different plant organs. In this case; the allocation is fixed in time according to the parameters in These parameters are adjusted according to the TreeFrac fraction (land.states.frac_tree). Allocation to roots is partitioned into fine [cf2Root] & coarse roots (cf2RootCoarse) according to Rf2Rc.
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -36,7 +36,7 @@ cry_and_die(land, msg)
 display and error msg and stop when there is inconsistency
 """
 function cry_and_die(land, msg)
-    tcprint(land)
+    tcPrint(land)
     if hasproperty(Sindbad, :error_catcher)
         push!(Sindbad.error_catcher, land)
     end
