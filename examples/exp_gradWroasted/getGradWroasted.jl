@@ -16,16 +16,7 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
-@time forcing_nt_array,
-output_array,
-loc_space_maps,
-loc_space_names,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-tem_with_vals,
-f_one = prepTEM(forcing, info);
+forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
 
 
 @time TEM!(output_array,
@@ -47,7 +38,7 @@ tbl_params = getParameters(info.tem.models.forward,
 function g_loss(x,
     mods,
     forcing_nt_array,
-    op,
+    output_array,
     obs_array,
     tbl_params,
     info_tem,
@@ -60,11 +51,12 @@ function g_loss(x,
     l = getLoss(x,
         mods,
         forcing_nt_array,
-        op,
+        output_array,
         obs_array,
         tbl_params,
         info_tem,
-        info_optim,
+        info_optim.cost_options,
+        info_optim.multi_constraint_method,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
@@ -72,13 +64,12 @@ function g_loss(x,
         f_one)
     return l
 end
-op = setupOutput(info, forcing.helpers);
 
 mods = info.tem.models.forward;
 g_loss(tbl_params.default,
     mods,
     forcing_nt_array,
-    op,
+    output_array,
     obs_array,
     tbl_params,
     tem_with_vals,
@@ -93,7 +84,7 @@ function l1(p)
     return g_loss(p,
         mods,
         forcing_nt_array,
-        op,
+        output_array,
         obs_array,
         tbl_params,
         tem_with_vals,
@@ -113,22 +104,18 @@ CHUNK_SIZE = 10
 
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
-op = setupOutput(info, forcing.helpers);
-op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
-op = (; op..., data=op_dat);
+# op = setupOutput(info, forcing.helpers);
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
+# op = (; op..., data=op_dat);
+# output_array = op_dat;
+
+dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
+mods = updateModelParametersType(tbl_params, mods, dualDefs);
+
 
 # op = setupOutput(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 # op = (; op..., data=op_dat);
-
-@time _,
-_,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-tem_with_vals,
-f_one = prepTEM(op, forcing_nt_array, info.tem);
 
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
