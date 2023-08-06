@@ -35,12 +35,12 @@ f_one = prepTEM(forcing, info);
 @time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 using GLMakie
 using Colors

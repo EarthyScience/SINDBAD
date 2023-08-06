@@ -100,12 +100,12 @@ f_one = prepTEM(forcing, info);
 @time TEM!(output_array,
     info.tem.models.forward,
     forc,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
