@@ -1,6 +1,64 @@
-export add_to_elem, @add_to_elem, add_to_each_elem, add_vec
-export rep_elem, @rep_elem, rep_vec, @rep_vec
-export set_components
+export addToElem, @add_to_elem, addToEachElem, addVec
+export repElem, @rep_elem, repVec, @rep_vec
+export setComponents
+
+macro add_to_elem(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = outparams.args[3]
+    rhsa = rhs.args
+    tar = esc(rhsa[1])
+    indx = rhsa[2]
+    hp_pool = rhsa[3]
+    outCode = [
+        Expr(:(=),
+            tar,
+            Expr(:call,
+                addToElem,
+                tar,
+                lhs,
+                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
+                # esc(:(land.wCycleBase.z_zero)),
+                esc(indx)))
+    ]
+    return Expr(:block, outCode...)
+end
+
+function addToElem(v::SVector, Δv, v_zero, ind::Int)
+    n_0 = zero(first(v_zero))
+    n_1 = one(first(v_zero))
+    v_zero = v_zero .* n_0
+    v_zero = Base.setindex(v_zero, n_1, ind)
+    v = v .+ v_zero .* Δv
+    return v
+end
+
+function addToElem(v::AbstractVector, Δv, _, _, ind::Int)
+    v[ind] = v[ind] + Δv
+    return v
+end
+
+function addToEachElem(v::SVector, Δv::Real)
+    v = v .+ Δv
+    return v
+end
+
+function addToEachElem(v::AbstractVector, Δv::Real)
+    v .= v .+ Δv
+    return v
+end
+
+function addVec(v::SVector, Δv::SVector)
+    v = v + Δv
+    return v
+end
+
+function addVec(v::AbstractVector, Δv::AbstractVector)
+    v .= v .+ Δv
+    return v
+end
 
 macro rep_elem(outparams::Expr)
     @assert outparams.head == :call || outparams.head == :(=)
@@ -16,7 +74,7 @@ macro rep_elem(outparams::Expr)
         Expr(:(=),
             tar,
             Expr(:call,
-                rep_elem,
+                repElem,
                 tar,
                 lhs,
                 esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
@@ -26,12 +84,12 @@ macro rep_elem(outparams::Expr)
     return Expr(:block, outCode...)
 end
 
-function rep_elem(v::AbstractVector, v_elem, _, _, ind::Int)
+function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
     v[ind] = v_elem
     return v
 end
 
-function rep_elem(v::SVector, v_elem, v_zero, v_one, ind::Int)
+function repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
     n_0 = zero(first(v_zero))
     n_1 = one(first(v_zero))
     v_zero = v_zero .* n_0
@@ -49,80 +107,22 @@ macro rep_vec(outparams::Expr)
     @assert length(outparams.args) == 3
     lhs = esc(outparams.args[2])
     rhs = esc(outparams.args[3])
-    outCode = [Expr(:(=), lhs, Expr(:call, rep_vec, lhs, rhs))]
+    outCode = [Expr(:(=), lhs, Expr(:call, repVec, lhs, rhs))]
     return Expr(:block, outCode...)
 end
 
-function rep_vec(v::AbstractVector, v_new)
+function repVec(v::AbstractVector, v_new)
     v .= v_new
     return v
 end
 
-function rep_vec(v::SVector, v_new)
+function repVec(v::SVector, v_new)
     n_0 = zero(first(v))
     v = v .* n_0 + v_new
     return v
 end
 
-macro add_to_elem(outparams::Expr)
-    @assert outparams.head == :call || outparams.head == :(=)
-    @assert outparams.args[1] == :(=>)
-    @assert length(outparams.args) == 3
-    lhs = esc(outparams.args[2])
-    rhs = outparams.args[3]
-    rhsa = rhs.args
-    tar = esc(rhsa[1])
-    indx = rhsa[2]
-    hp_pool = rhsa[3]
-    outCode = [
-        Expr(:(=),
-            tar,
-            Expr(:call,
-                add_to_elem,
-                tar,
-                lhs,
-                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
-                # esc(:(land.wCycleBase.z_zero)),
-                esc(indx)))
-    ]
-    return Expr(:block, outCode...)
-end
-
-function add_to_elem(v::SVector, Δv, v_zero, ind::Int)
-    n_0 = zero(first(v_zero))
-    n_1 = one(first(v_zero))
-    v_zero = v_zero .* n_0
-    v_zero = Base.setindex(v_zero, n_1, ind)
-    v = v .+ v_zero .* Δv
-    return v
-end
-
-function add_to_elem(v::AbstractVector, Δv, _, _, ind::Int)
-    v[ind] = v[ind] + Δv
-    return v
-end
-
-function add_to_each_elem(v::SVector, Δv::Real)
-    v = v .+ Δv
-    return v
-end
-
-function add_to_each_elem(v::AbstractVector, Δv::Real)
-    v .= v .+ Δv
-    return v
-end
-
-function add_vec(v::SVector, Δv::SVector)
-    v = v + Δv
-    return v
-end
-
-function add_vec(v::AbstractVector, Δv::AbstractVector)
-    v .= v .+ Δv
-    return v
-end
-
-@generated function set_components(
+@generated function setComponents(
     land,
     helpers,
     ::Val{s_main},

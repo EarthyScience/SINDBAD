@@ -89,7 +89,7 @@ end
 defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is defined as PFT specific parameters from forcing
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

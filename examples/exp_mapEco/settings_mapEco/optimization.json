@@ -76,7 +76,7 @@
       "spatial_cost_aggr": "spatial",
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
-      "temporal_aggr_func": "nanmean",
+      "temporal_aggr_func": "nanMean",
       "cost_metric": "mse",
       "cost_weight": 1.0,
       "area_weight": false

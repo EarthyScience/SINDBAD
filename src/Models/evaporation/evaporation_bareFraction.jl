@@ -63,7 +63,7 @@ end
 calculates the bare soil evaporation from 1-frac_vegetation of the grid & PET_evaporation
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

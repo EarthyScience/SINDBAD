@@ -1,12 +1,12 @@
-export set_component_from_main_pool, set_main_from_component_pool
+export setComponentFromMainPool, setMainFromComponentPool
 
 """
-    set_component_from_main_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 - sets the component pools value using the values for the main pool
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
-@generated function set_component_from_main_pool(
-    # function set_component_from_main_pool(
+@generated function setComponentFromMainPool(
+    # function setComponentFromMainPool(
     land,
     helpers,
     ::Val{s_main},
@@ -48,13 +48,13 @@ end
 
 
 """
-    set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 - sets the main pool from the values of the component pools
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
 
-@generated function set_main_from_component_pool(
-    # function set_main_from_component_pool(
+@generated function setMainFromComponentPool(
+    # function setMainFromComponentPool(
     land,
     helpers,
     ::Val{s_main},

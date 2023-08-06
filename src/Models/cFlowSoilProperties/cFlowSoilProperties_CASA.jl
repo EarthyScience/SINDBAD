@@ -72,7 +72,7 @@ end
 effects of soil that change the transfers between carbon pools
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

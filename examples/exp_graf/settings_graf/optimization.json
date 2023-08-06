@@ -81,7 +81,7 @@
           "cost_metric": "nseinv",
           "temporal_aggr": "month_msc",
           "temporal_aggr_obs": false,
-          "temporal_aggr_func": "nanmean"
+          "temporal_aggr_func": "nanMean"
         }
       },
       "runoff": {
@@ -100,7 +100,7 @@
           "cost_metric": "nseinv",
           "temporal_aggr": "month_msc",
           "temporal_aggr_obs": false,
-          "temporal_aggr_func": "nanmean"
+          "temporal_aggr_func": "nanMean"
         }
       },
       "tws": {
@@ -125,7 +125,7 @@
           "cost_metric": "pcor2inv",
           "temporal_aggr": "month_anomaly",
           "temporal_aggr_obs": false,
-          "temporal_aggr_func": "nanmean"
+          "temporal_aggr_func": "nanMean"
             }
       },
       "evapotranspiration": {

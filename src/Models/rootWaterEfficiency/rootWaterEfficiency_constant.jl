@@ -55,7 +55,7 @@ end
 sets the maximum fraction of water that root can uptake from soil layers as constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

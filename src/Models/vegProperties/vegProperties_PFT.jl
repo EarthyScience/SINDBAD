@@ -19,7 +19,7 @@ end
 sets a uniform PFT class
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

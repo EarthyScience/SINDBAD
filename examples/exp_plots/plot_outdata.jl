@@ -22,7 +22,9 @@ land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArrayWithNames(observations);
 
-@time loc_space_maps,
+@time forcing_nt_array,
+output_array,
+loc_space_maps,
 loc_space_names,
 loc_space_inds,
 loc_forcings,

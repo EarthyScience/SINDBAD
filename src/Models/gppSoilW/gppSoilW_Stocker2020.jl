@@ -30,12 +30,12 @@ function compute(p_struct::gppSoilW_Stocker2020, forcing, land, helpers)
     end
     ## calculate variables
     SM = sum(soilW)
-    maxAWC = max_0(sum_wFC - sum_WP)
-    actAWC = max_0(SM - sum_WP)
-    SM_nor = min_1(actAWC / maxAWC)
+    maxAWC = max0(sum_wFC - sum_WP)
+    actAWC = max0(SM - sum_WP)
+    SM_nor = min1(actAWC / maxAWC)
     tfW = -q * (SM_nor - θstar)^t_two + o_one
     c_allocation_f_soilW = SM_nor <= θstar ? tfW : o_one
-    gpp_f_soilW = clamp_01(c_allocation_f_soilW)
+    gpp_f_soilW = clamp01(c_allocation_f_soilW)
 
     ## pack land variables
     @pack_land gpp_f_soilW => land.gppSoilW
@@ -46,7 +46,7 @@ end
 soil moisture stress on gpp_potential based on Stocker2020
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

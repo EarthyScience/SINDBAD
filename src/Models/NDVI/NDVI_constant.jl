@@ -22,7 +22,7 @@ end
 sets the value of NDVI as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
