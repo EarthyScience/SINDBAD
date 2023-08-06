@@ -118,7 +118,7 @@ end
 assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -199,7 +199,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     ## calculate variables
     wSat = wSat[sl]
     θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat
-    θ_dos = clamp_01(θ_dos)
+    θ_dos = clamp01(θ_dos)
     β = soil_β[sl]
     kSat = kSat[sl]
     λ = o_one / β

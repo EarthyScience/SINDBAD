@@ -74,7 +74,7 @@ end
 defines the maximum soil water content of 2 soil layers the first layer is a fraction [i.e. 1] of the soil depth the second layer is a linear combination of scaled rooting depth data from forcing
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -17,7 +17,7 @@ function define(p_struct::cCycle_simple, forcing, land, helpers)
     c_eco_npp = zero(land.pools.cEco)
 
     cEco_prev = copy(land.pools.cEco)
-    zixVeg = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zixVeg = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     ## pack land variables
     nee = z_zero
     npp = z_zero

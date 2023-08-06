@@ -73,7 +73,7 @@ end
 calculates a buffer storage that gives water to the soil when the soil dries up; while the soil gives water to the buffer when the soil is wet but the buffer low
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

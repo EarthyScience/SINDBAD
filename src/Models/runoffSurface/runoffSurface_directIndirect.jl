@@ -69,7 +69,7 @@ end
 assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

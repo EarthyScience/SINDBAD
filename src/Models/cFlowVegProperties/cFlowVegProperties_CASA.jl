@@ -53,7 +53,7 @@ end
 effects of vegetation that change the transfers between carbon pools
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

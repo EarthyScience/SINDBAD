@@ -286,9 +286,9 @@ function getParameters(selectedModels, default_parameter, opt_parameter::NamedTu
 end
 
 """
-updateParameters(tbl_params, approaches)
+updateParameters(tbl_params, selected_models)
 """
-function updateModelParameters(tbl_params::Table, approaches::Tuple)
+function updateModelParameters(tbl_params::Table, selected_models::Tuple)
     function filtervar(var, modelName, tbl_params, approachx)
         subtbl = filter(row -> row.name == var && row.model_approach == modelName, tbl_params)
         if isempty(subtbl)
@@ -298,9 +298,9 @@ function updateModelParameters(tbl_params::Table, approaches::Tuple)
         end
     end
     updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = approaches[idx]
+        approachx = selected_models[idx]
         newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
             newvals = Pair[]
@@ -319,14 +319,14 @@ end
 
 
 """
-updateModelParametersType(tbl_params, approaches, pVector)
+updateModelParametersType(tbl_params, selected_models, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
 """
-function updateModelParametersType(tbl_params, approaches::Tuple, pVector)
+function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = approaches[idx]
+        approachx = selected_models[idx]
         model_obj = approachx
         newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
@@ -352,12 +352,12 @@ end
 
 
 # """
-# updateModelParametersType(tbl_params, approaches, pVector)
+# updateModelParametersType(tbl_params, selected_models, pVector)
 # get the new instances of the model with same parameter types as mentioned in pVector
 # """
-# function updateModelParametersType(tbl_params, approaches, pVector)
+# function updateModelParametersType(tbl_params, selected_models, pVector)
 #     updatedModels = Models.LandEcosystem[]
-#     foreach(approaches) do approachx
+#     foreach(selected_models) do approachx
 #         modelName = nameof(typeof(approachx))
 #         #model_obj = approachx
 #         newapproachx = if modelName in tbl_params.model_approach
@@ -383,14 +383,14 @@ end
 # end
 
 """
-updateModelParameters(tbl_params, approaches, pVector)
+updateModelParameters(tbl_params, selected_models, pVector)
 does not depend on the mutated table of parameters
 """
-function updateModelParameters(tbl_params, approaches::Tuple, pVector)
+function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(approaches)) # a better way to do this?
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
     for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = approaches[idx]
+        approachx = selected_models[idx]
         model_obj = approachx
         newapproachx = if modelName in tbl_params.model_approach
             vars = propertynames(approachx)
@@ -951,7 +951,7 @@ function generatePoolsInfo(info::NamedTuple)
         hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
     end
     hlp_new = (;)
-    # tcprint(hlpStates)
+    # tcPrint(hlpStates)
     eleprops = propertynames(hlpStates)
     if :carbon in eleprops && :water in eleprops
         for prop ∈ propertynames(hlpStates.carbon)
@@ -967,7 +967,7 @@ function generatePoolsInfo(info::NamedTuple)
                 end
             end
             # @show prop, cfield, wfield
-            # tcprint(cwfield)
+            # tcPrint(cwfield)
             hlp_new = setTupleField(hlp_new, (prop, cwfield))
         end
     elseif :carbon in eleprops && :water ∉ eleprops

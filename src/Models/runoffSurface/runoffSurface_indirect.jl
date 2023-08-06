@@ -62,7 +62,7 @@ end
 assumes all overland runoff is recharged to surface water first, which then generates surface runoff
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

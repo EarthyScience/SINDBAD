@@ -33,7 +33,7 @@ end
 computes canopy interception evaporation as a fraction of fAPAR
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

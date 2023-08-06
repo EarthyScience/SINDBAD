@@ -42,7 +42,7 @@ end
 temperature effect on allocation from same for GPP based on GSI approach
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

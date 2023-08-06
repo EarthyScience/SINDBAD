@@ -61,7 +61,7 @@ end
 calculates the moisture exchange between groundwater & surface water as a fraction of difference between the storages
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

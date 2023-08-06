@@ -35,7 +35,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     end
     ## instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
-    # C_to_N_cVeg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
+    # C_to_N_cVeg[getZix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
     c_eco_k_base = zero(cEco)
     c_τ_eco = zero(cEco)
 
@@ -71,7 +71,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @rep_elem c_τ_SoilSlow => (c_τ_eco, 7, :cEco)
     @rep_elem c_τ_SoilOld => (c_τ_eco, 8, :cEco)
 
-    vegZix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    vegZix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ eachindex(vegZix)
         @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
     end
@@ -164,7 +164,7 @@ end
 Compute carbon to nitrogen ratio & annual turnover rates
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

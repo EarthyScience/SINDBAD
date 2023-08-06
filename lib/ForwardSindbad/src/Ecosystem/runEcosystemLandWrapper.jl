@@ -34,7 +34,7 @@ function timeLoopForward(
 end
 
 
-function coreEcosystemVector(approaches,
+function coreEcosystemVector(selected_models,
     res_vec,
     loc_forcing,
     tem_helpers,
@@ -43,11 +43,11 @@ function coreEcosystemVector(approaches,
     land_init,
     f_one)
 
-    land_prec = runPrecompute(land_init, f_one, approaches, tem_helpers)
+    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
     land_spin_now = land_prec
     if tem_helpers.run.spinup.run_spinup
         land_spin_now = runSpinup(
-            approaches,
+            selected_models,
             loc_forcing,
             land_spin_now,
             tem_helpers,
@@ -59,7 +59,7 @@ function coreEcosystemVector(approaches,
     time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     timeLoopForwardVector(
         res_vec,
-        approaches,
+        selected_models,
         loc_forcing,
         land_spin_now,
         tem_helpers,
@@ -70,19 +70,19 @@ end
 
 
 
-function coreEcosystem(approaches,
+function coreEcosystem(selected_models,
     loc_forcing,
     tem_helpers,
     tem_spinup,
     tem_models,
     land_init,
     f_one)
-    land_prec = runPrecompute(land_init, f_one, approaches, tem_helpers)
+    land_prec = runPrecompute(land_init, f_one, selected_models, tem_helpers)
     land_spin_now = land_prec
     # land_spin_now = land_init
 
     if tem_helpers.run.spinup.run_spinup
-        land_spin_now = runSpinup(approaches,
+        land_spin_now = runSpinup(selected_models,
             loc_forcing,
             land_spin_now,
             tem_helpers,
@@ -92,7 +92,7 @@ function coreEcosystem(approaches,
             f_one)
     end
     time_steps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
-    out_stacked = timeLoopForward(approaches,
+    out_stacked = timeLoopForward(selected_models,
         loc_forcing,
         land_spin_now,
         tem_helpers,
@@ -101,7 +101,7 @@ function coreEcosystem(approaches,
     return out_stacked
 end
 
-function ecoLocVector(approaches,
+function ecoLocVector(selected_models,
     res_vec,
     forcing,
     tem_helpers,
@@ -112,7 +112,7 @@ function ecoLocVector(approaches,
     land_init,
     f_one)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
-    coreEcosystemVector(approaches,
+    coreEcosystemVector(selected_models,
         res_vec,
         loc_forcing,
         tem_helpers,
@@ -124,7 +124,7 @@ function ecoLocVector(approaches,
 end
 
 function fany(x,
-    approaches,
+    selected_models,
     forcing,
     tem_helpers,
     tem_spinup,
@@ -134,7 +134,7 @@ function fany(x,
     land_init,
     f_one)
     #@show "fany", Threads.threadid()
-    eout = ecoLoc(approaches,
+    eout = ecoLoc(selected_models,
         res_vec,
         forcing,
         tem_helpers,
@@ -149,9 +149,9 @@ end
 
 
 """
-runEcosystem(approaches, forcing, land_init, tem)
+runEcosystem(selected_models, forcing, land_init, tem)
 """
-function runEcosystem(approaches,
+function runEcosystem(selected_models,
     res_vec_space,
     forcing,
     tem_with_vals,
@@ -175,7 +175,7 @@ function runEcosystem(approaches,
             land_init_space,
             f_one,
             tem_with_vals.helpers.run.parallelization)
-        #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
+        #res = qbmap(x -> fany(x,selected_models, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         # landWrapper(res_vec_space)
         nts = length(first(res_out))
         fullarrayoftuples =
@@ -185,7 +185,7 @@ function runEcosystem(approaches,
         # res_vec_space = nothing
         landWrapper(fullarrayoftuples)
     else
-        coreEcosystemVector(approaches,
+        coreEcosystemVector(selected_models,
             res_vec_space,
             loc_forcing,
             tem_helpers,
@@ -199,9 +199,9 @@ function runEcosystem(approaches,
 end
 
 """
-runEcosystem(approaches, forcing, land_init, tem)
+runEcosystem(selected_models, forcing, land_init, tem)
 """
-function runEcosystem(approaches::Tuple,
+function runEcosystem(selected_models::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
     tem::NamedTuple)
@@ -220,7 +220,7 @@ function runEcosystem(approaches::Tuple,
             land_init_space,
             f_one,
             tem_with_vals.helpers.run.parallelization)
-        #res = qbmap(x -> fany(x,approaches, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
+        #res = qbmap(x -> fany(x,selected_models, forcing, deepcopy(land_init), tem, additionaldims), Iterators.product(Base.OneTo.(spacesize)...))
         nts = length(first(res))
         fullarrayoftuples =
             map(Iterators.product(1:nts, CartesianIndices(res))) do (its, iouter)
@@ -229,7 +229,7 @@ function runEcosystem(approaches::Tuple,
         res = nothing
         fullarrayoftuples
     else
-        res = coreEcosystemVector(approaches,
+        res = coreEcosystemVector(selected_models,
             res_vec,
             loc_forcing,
             tem_helpers,
@@ -243,7 +243,7 @@ function runEcosystem(approaches::Tuple,
 end
 
 
-function parallelizeIt(approaches,
+function parallelizeIt(selected_models,
     res_vec_space,
     forcing,
     tem_helpers,
@@ -257,7 +257,7 @@ function parallelizeIt(approaches,
     i = 1
     ltype = typeof(land_init_space[1])
     out_eco = qbmap(loc_space_inds) do loc_space_ind
-        ecoLoc(approaches,
+        ecoLoc(selected_models,
             res_vec_space[i],
             forcing,
             tem_helpers,
@@ -272,7 +272,7 @@ function parallelizeIt(approaches,
     return out_eco
 end
 
-function parallelizeIt(approaches,
+function parallelizeIt(selected_models,
     res_vec_space,
     forcing,
     tem_helpers,
@@ -286,7 +286,7 @@ function parallelizeIt(approaches,
     i = 1
     out_eco = land_init_space[1]
     qbmap(loc_space_inds) do loc_space_ind
-        out_eco = ecoLoc(approaches,
+        out_eco = ecoLoc(selected_models,
             res_vec_space[i],
             forcing,
             tem_helpers,
