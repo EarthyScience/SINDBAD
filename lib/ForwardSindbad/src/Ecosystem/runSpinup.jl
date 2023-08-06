@@ -45,7 +45,7 @@ function (cEco_spin::DoSpinup_cEco)(pout, p)
     end
     @pack_land cEco => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
-    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.f_one, cEco_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -77,7 +77,7 @@ function (cEco_TWS_spin::DoSpinup_cEco_TWS)(pout, p)
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
 
-    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.f_one, cEco_TWS_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     cEco_TWS_spin.TWS .= update_init.pools.TWS
@@ -96,7 +96,7 @@ function (TWS_spin::DoSpinup_TWS)(pout, p)
     end
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
-    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.f_one, TWS_spin.tem_helpers)
     pout .= update_init.pools.TWS
     return nothing
 end
@@ -125,9 +125,9 @@ function doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_mo
             land_spin = doSpinup(spinup_models,
                 sel_forcing,
                 land_spin,
+                f_one,
                 tem_helpers,
                 tem_spinup,
-                f_one,
                 spinup_mode)
             land_spin = setSpinupLog(land_spin, log_index, tem_helpers.run.spinup.store_spinup_history)
             log_index += 1
@@ -153,8 +153,8 @@ function doSpinup(sel_spinup_models,
     land_spin = runTimeLoopSpinup(sel_spinup_models,
         sel_spinup_forcing,
         land_in,
-        tem_helpers,
-        f_one)
+        f_one,
+        tem_helpers)
     return land_spin
 end
 
@@ -172,8 +172,8 @@ function doSpinup(sel_spinup_models,
     land_spin = runTimeLoopSpinup(sel_spinup_models,
         sel_spinup_forcing,
         land_in,
-        tem_helpers,
-        f_one)
+        f_one,
+        tem_helpers)
     return land_spin
 end
 

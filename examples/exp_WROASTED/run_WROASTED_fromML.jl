@@ -175,12 +175,12 @@ for site_index in sites
         @time TEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
-            tem_with_vals,
             loc_space_inds,
             loc_forcings,
             loc_outputs,
             land_init_space,
-            f_one)
+            f_one,
+            tem_with_vals)
 
         outcubes = output_array
 
@@ -267,12 +267,12 @@ for site_index in sites
             @time TEM!(output_array,
                 models_with_matlab_params,
                 forcing_nt_array,
-                tem_with_vals,
                 loc_space_inds,
                 loc_forcings,
                 loc_outputs,
                 land_init_space,
-                f_one)
+                f_one,
+                tem_with_vals)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
             out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)

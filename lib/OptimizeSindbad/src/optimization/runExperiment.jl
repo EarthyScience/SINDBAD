@@ -23,7 +23,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
         @info "runExperiment: do spatial optimization..."
         obs_array = getArray(observations)
         # obs_array = getKeyedArray(observations)
-        optim_params = optimizeModel(forcing, obs_array, info)
+        optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
         Sindbad.CSV.write(optim_file_prefix * "_optimized_parameters.csv", optim_params)
         run_output = optim_params.optim
