@@ -48,12 +48,12 @@ f_one = prepTEM(op, forcing_nt_array, info.tem);
 @time TEM!(op.data,
     info.tem.models.forward,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 res_vec_space = [Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size) for _ ∈ 1:length(loc_space_inds)];
 
@@ -90,12 +90,12 @@ f_one = prepTEM(op, forcing_nt_array, info.tem);
 @time TEM!(op.data,
     mods,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 # @time out_params = runExperimentOpti(experiment_json);  
 
@@ -196,12 +196,12 @@ f_one = prepTEM(op, updated_mods, forcing_nt_array, info.tem, updated_tem_helper
 @time TEM!(op.data,
     updated_mods,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)
 @profview grad = ForwardDiff.gradient(l1, p_vec, cfg)
