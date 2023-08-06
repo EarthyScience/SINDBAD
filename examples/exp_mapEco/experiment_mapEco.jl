@@ -5,7 +5,7 @@ noStackTrace()
 
 tbl = getSindbadModels()
 
-experiment_json = "exp_mapEco/settings_mapEco/experiment.json";
+experiment_json = "../exp_mapEco/settings_mapEco/experiment.json";
 
 info = getConfiguration(experiment_json);
 
@@ -13,7 +13,7 @@ info = setupExperiment(info);
 
 forcing = getForcing(info);
 
-
+output = setupOutput(info, forcing.helpers);
 
 outcubes = mapRunEcosystem(forcing,
     output,

@@ -234,10 +234,6 @@ function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
     return @view mod_dat[:, 1]
 end
 
-function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
-    return @view mod_dat[:, 1]
-end
-
 function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
     return @view mod_dat[:, 1, :]
 end

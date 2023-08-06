@@ -17,7 +17,7 @@
     "depth_dimension": null,
     "space_time_type": "spatiotemporal",
     "source_product": "FLUXNET",
-    "data_path": "../data/DE-All.1979.2017.daily.nc"
+    "data_path": "../data/DE-2.1979.2017.daily.nc"
   },
   "variables": {
     "ambient_CO2": {
