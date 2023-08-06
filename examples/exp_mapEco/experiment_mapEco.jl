@@ -22,7 +22,7 @@ outcubes = mapRunEcosystem(forcing,
     max_cache=info.model_run.rules.yax_max_cache);
 
 # optimization
-observations = getObservation(info, Val(:netcdf));
+observations = getObservation(info, forcing.helpers);
 
 opt_params = mapOptimizeModel(forcing,
     output,

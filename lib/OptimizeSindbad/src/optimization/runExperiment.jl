@@ -6,7 +6,7 @@ export runExperimentOpti
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
-    @info "-------------------Optimization Mode---------------------------"
+    println("-------------------Optimization Mode---------------------------")
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
 
@@ -40,7 +40,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     observations = getObservation(info, forcing.helpers)
     obs_array = getArray(observations)
 
-    @info "-------------------Cost Calculation Mode---------------------------"
+    println("-------------------Cost Calculation Mode---------------------------")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------")
     @time output_array = TEM!(forcing, info)
