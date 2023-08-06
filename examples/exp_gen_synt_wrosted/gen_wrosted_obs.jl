@@ -45,7 +45,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepRunEcosystem(forcing, info);
+f_one = prepSimulation(forcing, info);
 # neural network design
 
 function ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=0, seed=1618) # ~ (1+√5)/2
@@ -97,7 +97,7 @@ function pixel_run!(output_array,
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
     up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
-    return coreEcosystem!(loc_output,
+    return runEcosystemCore!(loc_output,
         up_apps,
         loc_forcing,
         tem_helpers,

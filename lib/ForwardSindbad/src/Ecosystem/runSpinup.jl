@@ -516,12 +516,82 @@ function loopTimeSpinup(sel_spinup_models,
     tem_helpers,
     land_type,
     f_one)
-    time_steps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
-    for t ∈ 1:time_steps
+    num_time_steps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
+    for t ∈ 1:num_time_steps
         f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
         land_spin = runSpinupModels!(land_spin, f, sel_spinup_models, tem_helpers, land_type)
     end
     return land_spin
+end
+
+function loadSpinup(_, tem_spinup, ::Val{true}) # when load_spinup is true
+    @info "runSpinup:: loading spinup data from $(tem_spinup.paths.restart_file_in)..."
+    restart_data = load(tem_spinup.paths.restart_file_in)
+    land_spin = restart_data["land_spin"]
+    return land_spin
+end
+
+function loadSpinup(land_spin, _, ::Val{false}) # when load_spinup is false
+    return land_spin
+end
+
+function setSpinupLog(land_spin, log_index, ::Val{:true})
+    land_spin.states.spinuplog[log_index] = land_spin.pools
+    return land_spin
+end
+
+function setSpinupLog(land_spin, _, ::Val{:false})
+    return land_spin
+end
+
+function doSpinup(forward_models, forcing, land_spin, tem_helpers, tem_spinup, tem_models, land_type, f_one, ::Val{:true}) # do the spinup
+    @debug "runSpinup:: running spinup sequences..."
+    # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
+    seq_index = 1
+    log_index = 1
+    for spin_seq ∈ tem_spinup.sequence
+        # forc_name = valToSymbol(spin_seq.forcing)
+        n_repeat = spin_seq.n_repeat
+        spinup_mode = spin_seq.spinup_mode
+        # @show spin_seq.forcing, forc_name
+        sel_forcing = getSpinupForcing(forcing, tem_helpers, f_one, spin_seq.aggregator, spin_seq.aggregator_type)
+
+        spinup_models = forward_models
+        if spinup_mode == :spinup
+            spinup_models = forward_models[tem_models.is_spinup]
+        end
+        @debug "     sequence: $(seq_index), spinup_mode: $(spinup_mode), forcing: $(forc)"
+        for loop_index ∈ 1:n_repeat
+            @debug "         Loop: $(loop_index)/$(n_repeat)"
+            land_spin = doSpinup(spinup_models,
+                sel_forcing,
+                land_spin,
+                tem_helpers,
+                tem_spinup,
+                land_type,
+                f_one,
+                spinup_mode)
+            land_spin = setSpinupLog(land_spin, log_index, tem_helpers.run.spinup.store_spinup_history)
+            log_index += 1
+        end
+        seq_index += 1
+    end
+    return land_spin
+end
+
+function doSpinup(_, _, land_spin, _, _, _, _, _, ::Val{:false}) # dont do the spinup
+    return land_spin
+end
+
+function saveSpinup(land_spin, tem_spinup, ::Val{:true}) # dont ave the spinup
+    spin_file = tem_spinup.paths.restart_file_out
+    @info "runSpinup:: saving spinup data to $(spin_file)..."
+    @save spin_file land_spin
+    return nothing
+end
+
+function saveSpinup(_, _, ::Val{:false}) # dont ave the spinup
+    return nothing
 end
 
 """
@@ -536,67 +606,13 @@ function runSpinup(forward_models,
     tem_models,
     land_type,
     f_one)
+
     #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or runEcosystem. Need to figure out...
-    land_spin = land_in
-    if tem_helpers.run.spinup.load_spinup
-        @info "runSpinup:: loading spinup data from $(tem_spinup.paths.restart_file_in)..."
-        restart_data = load(tem_spinup.paths.restart_file_in)
-        land_spin = restart_data["land_spin"]
-    end
+    land_spin = loadSpinup(land_in, tem_spinup, tem_helpers.run.spinup.load_spinup)
 
     #check if the spinup still needs to be done after loading spinup
-    if !tem_helpers.run.spinup.do_spinup
-        return land_spin
-    end
+    land_spin = doSpinup(forward_models, forcing, land_spin, tem_helpers, tem_spinup, tem_models, land_type, f_one, tem_helpers.run.spinup.do_spinup)
 
-    seqN = 1
-    history = tem_helpers.run.spinup.store_spinup_history
-    land_spin = land_in
-    # land_spin = deepcopy(land_in)
-    spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
-    @debug "runSpinup:: running spinup sequences..."
-    # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
-    for spin_seq ∈ tem_spinup.sequence
-        # forc_name = valToSymbol(spin_seq.forcing)
-        n_repeat = spin_seq.n_repeat
-        spinup_mode = spin_seq.spinup_mode
-        # @show spin_seq.forcing, forc_name
-        sel_forcing = getSpinupForcing(forcing, tem_helpers, f_one, spin_seq.aggregator, spin_seq.aggregator_type)
-        # sel_forcing = spinup_forcing[forc_name]
-        # if isnothing(spinup_forcing)
-        #     sel_forcing = getSpinupForcing(forcing, tem_helpers, forc)
-        # else
-        #     sel_forcing = spinup_forcing[forc]
-        # end
-
-        spinup_models = forward_models
-        if spinup_mode == :spinup
-            spinup_models = forward_models[tem_models.is_spinup]
-        end
-        @debug "     sequence: $(seqN), spinup_mode: $(spinup_mode), forcing: $(forc)"
-        for nL ∈ 1:n_repeat
-            @debug "         Loop: $(nL)/$(n_repeat)"
-            land_spin = doSpinup(spinup_models,
-                sel_forcing,
-                land_spin,
-                tem_helpers,
-                tem_spinup,
-                land_type,
-                f_one,
-                spinup_mode)
-            if history
-                push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
-            end
-        end
-        seqN += 1
-    end
-    if history
-        @pack_land spinuplog => land_spin.states
-    end
-    if tem_helpers.run.spinup.save_spinup
-        spin_file = tem_spinup.paths.restart_file_out
-        @info "runSpinup:: saving spinup data to $(spin_file)..."
-        @save spin_file land_spin
-    end
+    saveSpinup(land_spin, tem_spinup, tem_helpers.run.spinup.save_spinup)
     return land_spin
 end

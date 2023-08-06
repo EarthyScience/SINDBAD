@@ -14,9 +14,9 @@ observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
 forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(forcing, info);
+    prepSimulation(forcing, info);
 
-@time runEcosystem!(output_array,
+@time simulateEcosystem!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
     tem_with_vals,
@@ -25,12 +25,12 @@ forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds,
     loc_outputs,
     land_init_space,
     f_one)
-# @profview runEcosystem!(output_array, info.tem.models.forward, forcing_nt_array info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
+# @profview simulateEcosystem!(output_array, info.tem.models.forward, forcing_nt_array info.tem, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one)
 
 @time output_default = runExperimentForward(experiment_json);
 @time out_params = runExperimentOpti(experiment_json);
 
-# @benchmark runEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array info.tem)
+# @benchmark simulateEcosystem!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array info.tem)
 a = 1
 
 # some plots
