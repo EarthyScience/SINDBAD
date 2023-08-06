@@ -12,7 +12,7 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSo
     ## unpack parameters and forcing
     #@needscheck
     @unpack_runoffSaturationExcess_Bergstroem1992VegFractionFroSoil p_struct
-    @unpack_forcing frozenFrac ∈ forcing
+    @unpack_forcing frac_frozen_soil ∈ forcing
 
     ## unpack land variables
     @unpack_land begin
@@ -24,7 +24,7 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionFroSo
     end
 
     # scale the input frozen soil fraction; maximum is 1
-    fracFrozen = min1(frozenFrac * scaleFro)
+    fracFrozen = min1(frac_frozen_soil * scaleFro)
     tmp_smaxVeg = sum(wSat) * (o_one - fracFrozen + tolerance)
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
