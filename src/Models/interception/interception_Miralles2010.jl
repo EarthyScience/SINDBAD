@@ -78,7 +78,7 @@ end
 computes canopy interception evaporation according to the Gash model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -59,7 +59,7 @@ end
 defines the maximum soil water content of 2 soil layers as fraction of the soil depth defined in the model_structure.json based on the older version of the Pre-Tokyo Model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

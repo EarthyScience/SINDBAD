@@ -48,7 +48,7 @@ end
 calculates the WUE/AOE ci/ca as a function of daytime mean VPD. calculates the WUE/AOE ci/ca as a function of daytime mean VPD & ambient co2
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

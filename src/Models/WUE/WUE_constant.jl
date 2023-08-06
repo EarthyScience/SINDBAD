@@ -22,7 +22,7 @@ end
 calculates the WUE/AOE as a constant in space & time
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

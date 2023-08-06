@@ -40,7 +40,7 @@ end
 pseudo-nutrient limitation calculation based on Friedlingstein1999
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

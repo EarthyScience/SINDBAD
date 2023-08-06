@@ -3,15 +3,10 @@ using ForwardDiff
 
 using Sindbad
 using ForwardSindbad
-using ForwardSindbad: timeLoopForward
 using OptimizeSindbad
-using AxisKeys: KeyedArray as KA
-using Lux, Zygote, Optimisers, ComponentArrays, NNlib
-using Random
 noStackTrace()
-Random.seed!(7)
 
-experiment_json = "../exp_hybrid/settings_hybrid/experiment.json"
+experiment_json = "../exp_gradWroastedsettings_gradWroastedexperiment.json"
 
 sYear = "2002"
 eYear = "2017"
@@ -36,7 +31,7 @@ forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-op = setupOutput(info);
+op = setupOutput(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
@@ -118,7 +113,7 @@ function g_loss(x,
     loc_outputs,
     land_init_space,
     f_one)
-    l = getLossGradient(x,
+    l = getLoss(x,
         mods,
         forcing_nt_array,
         op,
@@ -134,7 +129,7 @@ function g_loss(x,
     return l
 end
 rand_m = info.tem.helpers.numbers.sNT(rand());
-# op = setupOutput(info);
+# op = setupOutput(info, forcing.helpers);
 
 for _ in 1:10
     lo_ss = g_loss(tbl_params.default,
@@ -184,7 +179,7 @@ op = setupOutput(info, updated_tem_helpers);
 new_params = new_dtype.(tbl_params.default);
 updated_mods = updateModelParametersType(tbl_params, mods, new_params);
 
-# op = setupOutput(info);
+# op = setupOutput(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
 # op = (; op..., data=op_dat);
 

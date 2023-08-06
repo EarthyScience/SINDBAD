@@ -49,13 +49,13 @@ function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
 end
 
 
-function reDoOneLocation(loc_land_init, approaches, tem_helpers, loc_forcing, f_one)
-    land_prec = ForwardSindbad.runDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), approaches,
+function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
+    land_prec = ForwardSindbad.runDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
         f = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, ts, f_one)
-        land = runCompute(land, f, approaches, tem_helpers)
+        land = runCompute(land, f, selected_models, tem_helpers)
     end
     return land
 end
@@ -128,7 +128,7 @@ fdiff_grads(loc_loss, tbl_params.default, forward, loc_obs, loc_forcing, loc_lan
 
 #=
 function get_loc_loss(
-    newApproaches,
+    updated_models,
     loc_obs,
     loc_forcing,
     tem_helpers,
@@ -138,7 +138,7 @@ function get_loc_loss(
     loc_land_init,
     f_one)
     big_land = ForwardSindbad.coreEcosystem(
-        newApproaches,
+        updated_models,
         loc_forcing,
         tem_helpers,
         tem_spinup,
@@ -163,8 +163,8 @@ get_loc_loss(
 
 
 function loc_loss(upVector, forward, kwargs...)
-    newApproaches = Tuple(updateModelParametersType(tbl_params, forward, upVector))
-    return get_loc_loss(newApproaches, kwargs...)
+    updated_models = Tuple(updateModelParametersType(tbl_params, forward, upVector))
+    return get_loc_loss(updated_models, kwargs...)
 end
 
 kwargs = (;

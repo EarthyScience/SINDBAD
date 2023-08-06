@@ -36,7 +36,7 @@ end
 calculates the WUE/AOE as a function of WUE at 1hpa daily mean VPD
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

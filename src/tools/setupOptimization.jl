@@ -32,11 +32,11 @@ end
 function getAggrFunc(::Val{:sum})
     return Sindbad.sum
 end
-function getAggrFunc(::Val{:nanmean})
-    return Sindbad.nanmean
+function getAggrFunc(::Val{:nanMean})
+    return Sindbad.nanMean
 end
-function getAggrFunc(::Val{:nansum})
-    return Sindbad.nansum
+function getAggrFunc(::Val{:nanSum})
+    return Sindbad.nanSum
 end
 
 

@@ -111,7 +111,7 @@ function doSpinup(_, _, land, helpers, _, land_type, _, ::Val{:ηScaleA0H})
     end
 
     for cVegZix ∈ helpers.pools.zix.cVeg
-        cLoss = max_0(cEco[cVegZix] - c_remain)
+        cLoss = max0(cEco[cVegZix] - c_remain)
         cVegNew = cEco[cVegZix] - cLoss
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end
@@ -367,7 +367,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max_0(p[l]) => (TWS, lc, :TWS)
+        @rep_elem max0(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     land = Sindbad.adjust_and_pack_pool_components(land, helpers, land.wCycleBase.w_model)
@@ -553,8 +553,8 @@ function runSpinup(forward_models,
     history = tem_helpers.run.spinup.store_spinup_history
     land_spin = land_in
     # land_spin = deepcopy(land_in)
-    # spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
-    # @info "runSpinup:: running spinup sequences..."
+    spinuplog = history ? [values(land_spin)[1:length(land_spin.pools)]] : nothing
+    @debug "runSpinup:: running spinup sequences..."
     # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
     for spin_seq ∈ tem_spinup.sequence
         # forc_name = valToSymbol(spin_seq.forcing)
@@ -573,15 +573,9 @@ function runSpinup(forward_models,
         if spinup_mode == :spinup
             spinup_models = forward_models[tem_models.is_spinup]
         end
-        # println("     sequence: $(seqN), spinup_mode: $(spinup_mode), forcing: $(forc)")
-        # if !tem_helpers.run.run_optimization
-        #     @info "     sequence: $(seqN), spinup_mode: $(spinup_mode), forcing: $(forc)"
-        # end
-        for _ ∈ 1:n_repeat
-            # @showprogress "Computing n_repeat..." for nL in 1:n_repeat
-            # if !tem_helpers.run.run_optimization
-            #     println("         Loop: $(nL)/$(n_repeat)")
-            # end
+        @debug "     sequence: $(seqN), spinup_mode: $(spinup_mode), forcing: $(forc)"
+        for nL ∈ 1:n_repeat
+            @debug "         Loop: $(nL)/$(n_repeat)"
             land_spin = doSpinup(spinup_models,
                 sel_forcing,
                 land_spin,
@@ -590,15 +584,15 @@ function runSpinup(forward_models,
                 land_type,
                 f_one,
                 spinup_mode)
-            # if history
-            #     push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
-            # end
+            if history
+                push!(spinuplog, values(deepcopy(land_spin))[1:length(land_spin.pools)])
+            end
         end
         seqN += 1
     end
-    # if history
-    #     @pack_land spinuplog => land_spin.states
-    # end
+    if history
+        @pack_land spinuplog => land_spin.states
+    end
     if tem_helpers.run.spinup.save_spinup
         spin_file = tem_spinup.paths.restart_file_out
         @info "runSpinup:: saving spinup data to $(spin_file)..."

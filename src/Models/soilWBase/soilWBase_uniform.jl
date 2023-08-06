@@ -86,7 +86,7 @@ end
 distributes the soil hydraulic properties for different soil layers assuming an uniform vertical distribution of all soil properties
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
