@@ -122,13 +122,15 @@ function runTimeLoop(
     ::Val{:false}) # do not debug the models
     num_time_steps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     for ts = 1:num_time_steps
-        f_ts = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
-        land_time_series[ts] = runModelCompute(land, f_ts, selected_models, tem_helpers)
+        f_ts = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_one)
+        land = runModelCompute(land, f_ts, selected_models, tem_helpers)
+        land_time_series[ts] = land
     end
     return nothing
 end
 
-function runTimeLoop(_,
+function runTimeLoop(
+    land_time_series,
     selected_models,
     forcing,
     land,
@@ -154,7 +156,7 @@ function runTimeLoop(
     ::Val{:false}) # do not debug the models
     num_time_steps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     land_time_series = map(1:num_time_steps) do ts
-        f_ts = getForcingForTimeStep(forcing, Val(keys(forcing)), ts, f_one)
+        f_ts = getForcingForTimeStep(forcing, tem_helpers.vals.forc_vars, ts, f_one)
         land = runModelCompute(land, f_ts, selected_models, tem_helpers)
         land
     end
@@ -177,7 +179,7 @@ function runTimeLoop(
     @show "all models"
     @time land = runModelCompute(land, f_ts, selected_models, tem_helpers)
     println("-------------")
-    return nothing
+    return [land]
 end
 
 
