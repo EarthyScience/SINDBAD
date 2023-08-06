@@ -104,12 +104,12 @@ for domain ∈ sites
     @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
-        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        f_one,
+        tem_with_vals)
 
     # some plots
     ds = forcing.data[1]
@@ -163,12 +163,12 @@ for domain ∈ sites
     @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
-        tem_with_vals,
         loc_space_inds,
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        f_one,
+        tem_with_vals)
 
     # save the outcubes
     out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)

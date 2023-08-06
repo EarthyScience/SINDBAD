@@ -45,18 +45,17 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepTEM(forcing, info);
+forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
 
 @time TEM!(output_array,
     info.tem.models.forward,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
@@ -82,12 +81,12 @@ forcing = getForcing(info);
 @time TEM!(output_array,
     optimized_models,
     forcing_nt_array,
-    tem_with_vals,
     loc_space_inds,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    f_one,
+    tem_with_vals)
 
 # some plots
 ds = forcing.data[1];

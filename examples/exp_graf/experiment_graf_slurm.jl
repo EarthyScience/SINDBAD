@@ -37,12 +37,6 @@ noStackTrace()
 # forcing = (; forcing..., data = (chunkeddata));
 
 
-@everywhere # @code_warntype TEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
-# @profview TEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
-# @benchmark $TEM!($output_array, $info.tem.models.forward, $forcing_nt_array, $info.tem)
-# @btime $TEM!($output_array, $info.tem.models.forward, $forcing_nt_array, $info.tem, land_init);
-@time TEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
-
 # TEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
