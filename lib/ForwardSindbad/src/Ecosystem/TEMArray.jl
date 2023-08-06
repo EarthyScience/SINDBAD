@@ -2,7 +2,8 @@ export runTEM!
 export runTEMCore!
 export TEM!
 
-function parallelizeTEM!(output_array,
+function parallelizeTEM!(
+    output_array,
     selected_models,
     forcing_nt_array,
     loc_space_inds,
@@ -16,7 +17,8 @@ function parallelizeTEM!(output_array,
     ::Val{:threads})
     Threads.@threads for space_index ∈ eachindex(loc_space_inds)
         thread_id = Threads.threadid()
-        runTEM!(output_array,
+        runTEM!(
+            output_array,
             selected_models,
             forcing_nt_array,
             loc_space_inds[space_index],
@@ -34,7 +36,8 @@ end
 """
 parallelizeTEM!((output_array, selected_models, forcing, tem_helpers, tem_spinup, tem_models, loc_space_inds, loc_forcings, loc_outputs, land_init_space, f_one, ::Val{:qbmap})
 """
-function parallelizeTEM!(output_array,
+function parallelizeTEM!(
+    output_array,
     selected_models,
     forcing_nt_array,
     loc_space_inds,
@@ -48,7 +51,8 @@ function parallelizeTEM!(output_array,
     ::Val{:qbmap})
     space_index = 1
     qbmap(loc_space_inds) do loc_space_ind
-        runTEM!(output_array,
+        runTEM!(
+            output_array,
             selected_models,
             forcing_nt_array,
             loc_space_ind,
@@ -64,7 +68,8 @@ function parallelizeTEM!(output_array,
     return nothing
 end
 
-function runTEMCore!(loc_output,
+function runTEMCore!(
+    loc_output,
     selected_models,
     loc_forcing,
     land_init,
@@ -76,7 +81,8 @@ function runTEMCore!(loc_output,
 
     land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
-    runTimeLoop!(loc_output,
+    runTimeLoop!(
+        loc_output,
         selected_models,
         loc_forcing,
         land_prec,
@@ -86,7 +92,8 @@ function runTEMCore!(loc_output,
     return nothing
 end
 
-function runTEMCore!(loc_output,
+function runTEMCore!(
+    loc_output,
     selected_models,
     loc_forcing,
     land_init,
@@ -98,7 +105,8 @@ function runTEMCore!(loc_output,
 
     land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
-    land_spin = runSpinup(selected_models,
+    land_spin = runSpinup(
+        selected_models,
         loc_forcing,
         land_prec,
         f_one,
@@ -106,7 +114,8 @@ function runTEMCore!(loc_output,
         tem_models,
         tem_spinup)
 
-    runTimeLoop!(loc_output,
+    runTimeLoop!(
+        loc_output,
         selected_models,
         loc_forcing,
         land_spin,
@@ -116,7 +125,8 @@ function runTEMCore!(loc_output,
     return nothing
 end
 
-function runTEM!(output_array,
+function runTEM!(
+    output_array,
     selected_models,
     forcing,
     loc_space_ind,
@@ -129,7 +139,8 @@ function runTEM!(output_array,
     tem_spinup)
     getLocForcing!(forcing, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names, loc_forcing, loc_space_ind)
     getLocOutput!(output_array, loc_space_ind, loc_output)
-    runTEMCore!(loc_output,
+    runTEMCore!(
+        loc_output,
         selected_models,
         loc_forcing,
         land_init,
@@ -142,7 +153,8 @@ function runTEM!(output_array,
 end
 
 
-function runTimeLoop!(loc_output,
+function runTimeLoop!(
+    loc_output,
     selected_models,
     loc_forcing,
     land,
@@ -159,7 +171,8 @@ function runTimeLoop!(loc_output,
 end
 
 
-function runTimeLoop!(loc_output,
+function runTimeLoop!(
+    loc_output,
     selected_models,
     loc_forcing,
     land,
@@ -193,7 +206,8 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function TEM!(output_array::AbstractArray,
+function TEM!(
+    output_array::AbstractArray,
     selected_models,
     forcing_nt_array::NamedTuple,
     loc_space_inds,
@@ -202,7 +216,8 @@ function TEM!(output_array::AbstractArray,
     land_init_space,
     f_one,
     tem_with_vals::NamedTuple)
-    parallelizeTEM!(output_array,
+    parallelizeTEM!(
+        output_array,
         selected_models,
         forcing_nt_array,
         loc_space_inds,

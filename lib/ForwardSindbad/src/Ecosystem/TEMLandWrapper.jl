@@ -35,7 +35,8 @@ function runTEMCore(
 
     land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
-    land_spin = runSpinup(selected_models,
+    land_spin = runSpinup(
+        selected_models,
         forcing,
         land_prec,
         f_one,
@@ -43,7 +44,8 @@ function runTEMCore(
         tem_models,
         tem_spinup)
 
-    land_time_series = runTimeLoop(selected_models,
+    land_time_series = runTimeLoop(
+        selected_models,
         forcing,
         land_spin,
         f_one,
@@ -90,7 +92,8 @@ function runTEMCore(
 
     land_prec = runModelPrecompute(land_init, f_one, selected_models, tem_helpers)
 
-    land_spin = runSpinup(selected_models,
+    land_spin = runSpinup(
+        selected_models,
         forcing,
         land_prec,
         f_one,
@@ -98,7 +101,8 @@ function runTEMCore(
         tem_models,
         tem_spinup)
 
-    runTimeLoop(land_time_series,
+    runTimeLoop(
+        land_time_series,
         selected_models,
         forcing,
         land_spin,
@@ -108,7 +112,8 @@ function runTEMCore(
     return nothing
 end
 
-function runTimeLoop(land_time_series,
+function runTimeLoop(
+    land_time_series,
     selected_models,
     forcing,
     land,
@@ -130,7 +135,8 @@ function runTimeLoop(_,
     f_one,
     tem_helpers,
     ::Val{:true}) # debug the models
-    runTimeLoop(selected_models,
+    runTimeLoop(
+        selected_models,
         forcing,
         land,
         f_one,
@@ -139,7 +145,8 @@ function runTimeLoop(_,
     return nothing
 end
 
-function runTimeLoop(selected_models,
+function runTimeLoop(
+    selected_models,
     forcing,
     land,
     f_one,
@@ -154,7 +161,8 @@ function runTimeLoop(selected_models,
     return land_time_series
 end
 
-function runTimeLoop(selected_models,
+function runTimeLoop(
+    selected_models,
     forcing,
     land,
     f_one,
@@ -185,7 +193,8 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function TEM(selected_models::Tuple,
+function TEM(
+    selected_models::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
     f_one,
@@ -198,7 +207,8 @@ end
 """
 TEM(selected_models, forcing, land_init, tem)
 """
-function TEM(land_time_series,
+function TEM(
+    land_time_series,
     selected_models::Tuple,
     forcing::NamedTuple,
     land_init::NamedTuple,
