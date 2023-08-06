@@ -3,9 +3,11 @@ using ForwardDiff
 using Sindbad
 using ForwardSindbad
 using OptimizeSindbad
+using Random
 noStackTrace()
 
-experiment_json = "../exp_gradWroastedsettings_gradWroastedexperiment.json"
+
+experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
 info = getExperimentInfo(experiment_json);
 
 forcing = getForcing(info);
@@ -16,14 +18,7 @@ op = setupOutput(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
-@time _,
-_,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-tem_with_vals,
-f_one = prepTEM(op, forcing_nt_array, info.tem);
+forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
 
 
 @time TEM!(op.data,
