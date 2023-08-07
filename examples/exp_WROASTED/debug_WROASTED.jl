@@ -86,18 +86,17 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-# forc = getNamedDimsArrayWithNames(forcing)
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
 
 
-@time TEM!(output_array,
-    info.tem.models.forward,
+@time TEM!(info.tem.models.forward,
     forcing_nt_array,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one,
+    loc_space_inds,
     tem_with_vals)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
@@ -106,7 +105,7 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars);
 for (o, v) in enumerate(out_vars)
     def_var = output_array[o][:, :, 1, 1]
-    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+    vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)

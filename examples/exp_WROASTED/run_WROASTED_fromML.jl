@@ -171,7 +171,7 @@ for site_index in sites
         ## run the model
 
 
-        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(models_with_matlab_params, forcing, info)
+        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
         @time TEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
@@ -179,7 +179,7 @@ for site_index in sites
             loc_forcings,
             loc_outputs,
             land_init_space,
-            f_one,
+            forcing_one_timestep,
             tem_with_vals)
 
         outcubes = output_array
@@ -236,7 +236,7 @@ for site_index in sites
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+            vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
@@ -258,7 +258,7 @@ for site_index in sites
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
 
-            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
                 prepTEM(models_with_matlab_params,
                     forcing_nt_array,
                     info.tem,
@@ -271,7 +271,7 @@ for site_index in sites
                 loc_forcings,
                 loc_outputs,
                 land_init_space,
-                f_one,
+                forcing_one_timestep,
                 tem_with_vals)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
@@ -280,7 +280,7 @@ for site_index in sites
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
-                vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+                vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")

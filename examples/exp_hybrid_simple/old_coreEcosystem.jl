@@ -22,7 +22,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepTEM(forcing, info);
+forcing_one_timestep = prepTEM(forcing, info);
 
 
 
@@ -33,7 +33,7 @@ f_one = prepTEM(forcing, info);
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one,
+    forcing_one_timestep,
     tem_with_vals)
 
 
@@ -57,7 +57,7 @@ getLoss(tbl_params.default,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    forcing_one_timestep)
 
 
 function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
@@ -76,19 +76,19 @@ function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
 end
 
 
-function reDoOneLocation1(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
+function reDoOneLocation1(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
     land = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
-    land = runModelCompute(land, f_one, selected_models, tem_helpers)
+    land = runModelCompute(land, forcing_one_timestep, selected_models, tem_helpers)
     return land
 end
 
-function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
+function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
     land_prec = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
-        f = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, ts, f_one)
+        f = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
         land = runModelCompute(land, f, selected_models, tem_helpers)
     end
     return land
@@ -112,7 +112,7 @@ res_out = ForwardSindbad.coreEcosystem(
     tem_spinup,
     tem_models,
     loc_land_init,
-    f_one);
+    forcing_one_timestep);
 
 @time ForwardSindbad.coreEcosystem(
     forward,
@@ -121,7 +121,7 @@ res_out = ForwardSindbad.coreEcosystem(
     tem_spinup,
     tem_models,
     loc_land_init,
-    f_one);
+    forcing_one_timestep);
 
 
 # res_vec = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
@@ -137,7 +137,7 @@ res_vec = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
     tem_spinup,
     tem_models,
     loc_land_init,
-    f_one);
+    forcing_one_timestep);
 
 @time big_land = ForwardSindbad.coreEcosystem(
     forward,
@@ -146,7 +146,7 @@ res_vec = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
     tem_spinup,
     tem_models,
     loc_land_init,
-    f_one);
+    forcing_one_timestep);
 
 function get_loc_loss(
     updated_models,
@@ -158,7 +158,7 @@ function get_loc_loss(
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one)
+    forcing_one_timestep)
     big_land = ForwardSindbad.coreEcosystem(
         updated_models,
         res_vec,
@@ -167,7 +167,7 @@ function get_loc_loss(
         tem_spinup,
         tem_models,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
 
     loss_vector = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
     t_loss = combineLoss(loss_vector, Val{:sum}())
@@ -184,7 +184,7 @@ get_loc_loss(
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one)
+    forcing_one_timestep)
 
 
 function loc_loss(upVector, forward, kwargs...)
@@ -201,7 +201,7 @@ kwargs = (;
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one
+    forcing_one_timestep
 );
 
 loc_loss(tbl_params.default, forward, kwargs...)
@@ -218,7 +218,7 @@ function l1(p)
         tem_models,
         tem_optim,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
 end
 
 p_vec = tbl_params.default;
@@ -230,7 +230,7 @@ cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
 mods = Tuple(updateModelParametersType(tbl_params, forward, gradDefs));
-dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_one);
+dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, forcing_one_timestep);
 
 # @time big_land = ForwardSindbad.coreEcosystem(
 #     mods,
@@ -239,7 +239,7 @@ dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, f_on
 #     tem_spinup,
 #     tem_models,
 #     loc_land_init,
-#     f_one);
+#     forcing_one_timestep);
 
 res_vec = Vector{typeof(dual_land)}(undef, info.tem.helpers.dates.size);
 

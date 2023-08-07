@@ -22,7 +22,7 @@ loc_forcings,
 loc_outputs,
 land_init_space,
 tem_with_vals,
-f_one = prepTEM(forcing, info);
+forcing_one_timestep = prepTEM(forcing, info);
 
 tem_helpers = tem_with_vals.helpers;
 tem_spinup = tem_with_vals.spinup;
@@ -49,12 +49,12 @@ function getLocDataObsN(outcubes, forcing, obs_array, loc_space_map)
 end
 
 
-function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, f_one)
+function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
     land_prec = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
-        f = getForcingForTimeStep(loc_forcing, tem_helpers.vals.forc_vars, ts, f_one)
+        f = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
         land = runModelCompute(land, f, selected_models, tem_helpers)
     end
     return land
@@ -79,7 +79,7 @@ loc_forcing = loc_forcings[1];
     tem_spinup,
     tem_models,
     loc_land_init,
-    f_one);
+    forcing_one_timestep);
 
 function get_loc_loss(
     new_apps,
@@ -90,7 +90,7 @@ function get_loc_loss(
     tem_spinup,
     tem_models,
     tem_optim,
-    f_one)
+    forcing_one_timestep)
     big_land = ForwardSindbad.coreEcosystem(
         new_apps,
         loc_forcing,
@@ -98,7 +98,7 @@ function get_loc_loss(
         tem_spinup,
         tem_models,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
     loss_vector = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
     t_loss = combineLoss(loss_vector, Val{:sum}())
     return t_loss
@@ -119,7 +119,7 @@ kwargs_fixed = (;
     tem_spinup,
     tem_models,
     tem_optim,
-    f_one
+    forcing_one_timestep
 );
 
 fdiff_grads(loc_loss, tbl_params.default, forward, loc_obs, loc_forcing, loc_land_init, kwargs_fixed)
@@ -136,7 +136,7 @@ function get_loc_loss(
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one)
+    forcing_one_timestep)
     big_land = ForwardSindbad.coreEcosystem(
         updated_models,
         loc_forcing,
@@ -144,7 +144,7 @@ function get_loc_loss(
         tem_spinup,
         tem_models,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
     loss_vector = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
     t_loss = combineLoss(loss_vector, Val{:sum}())
     return t_loss
@@ -159,7 +159,7 @@ get_loc_loss(
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one)
+    forcing_one_timestep)
 
 
 function loc_loss(upVector, forward, kwargs...)
@@ -175,7 +175,7 @@ kwargs = (;
     tem_models,
     tem_optim,
     loc_land_init,
-    f_one
+    forcing_one_timestep
 );
 
 @time loc_loss(tbl_params.default, forward, kwargs...)

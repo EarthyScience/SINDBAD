@@ -7,7 +7,7 @@ orD = Sindbad.DataStructures.OrderedDict
 sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :PET__Tair_prev => orD(
         :standard_name => "Tair_prev",
-        :long_name => "Tair_previous_time_step",
+        :long_name => "Tair_previous_timestep",
         :units => "degC",
         :land_field => "PET",
         :description => "air temperature in the previous time step"
@@ -294,7 +294,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :cFlow__eco_stressor_prev => orD(
         :standard_name => "eco_stressor_prev",
-        :long_name => "carbon_flow_ecosystem_stressor_previous_time_step",
+        :long_name => "carbon_flow_ecosystem_stressor_previous_timestep",
         :units => "fraction",
         :land_field => "cFlow",
         :description => "ecosystem stress on carbon flow in the previous time step"
@@ -1176,7 +1176,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :states__cEco_prev => orD(
         :standard_name => "cEco_prev",
-        :long_name => "ecosystem_carbon_pool_previous_time_step",
+        :long_name => "ecosystem_carbon_pool_previous_timestep",
         :units => "gC/m2",
         :land_field => "states",
         :description => "ecosystem carbon content of the previous time step"
