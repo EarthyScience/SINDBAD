@@ -36,7 +36,7 @@ function runOneLocation(selected_models, forcing, output_array::AbstractArray, l
     land_one = runModelCompute(selected_models, forcing_one_timestep, land_prec, tem.helpers)
     setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
     debugModel(land_one, tem.helpers.run.debug_model)
-    return land_one, forcing_one_timestep
+    return forcing_one_timestep, land_one
 end
 
 """
@@ -132,8 +132,8 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     output_array,
     loc_outputs,
     land_init_space,
-    new_tem,
+    loc_space_inds,
     loc_space_maps,
     loc_space_names,
-    loc_space_inds
+    new_tem
 end
