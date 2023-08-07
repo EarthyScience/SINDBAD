@@ -100,16 +100,16 @@ for domain ∈ sites
     observations = getObservation(info, forcing.helpers)
     obs_array = getKeyedArray(observations)
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time TEM!(output_array,
-        optimized_models,
+    @time TEM!(optimized_models,
         forcing_nt_array,
-        loc_space_inds,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        forcing_one_timestep,
+        loc_space_inds,
         tem_with_vals)
 
     # some plots
@@ -160,16 +160,16 @@ for domain ∈ sites
     forcing = getForcing(info)
 
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time TEM!(output_array,
-        optimized_models,
+    @time TEM!(optimized_models,
         forcing_nt_array,
-        loc_space_inds,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        forcing_one_timestep,
+        loc_space_inds,
         tem_with_vals)
 
     # save the outcubes
