@@ -87,10 +87,10 @@ Set the spinup forcing as full input forcing.
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:no_diff})
@@ -109,10 +109,10 @@ Set the spinup forcing as full input forcing.
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:indexed})
@@ -130,10 +130,10 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `spin_seq`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
     spinup_forcing = (;)

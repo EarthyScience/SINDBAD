@@ -52,8 +52,8 @@ DOCSTRING
 # Arguments:
 - `v`: DESCRIPTION
 - `Δv`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
 - `ind`: DESCRIPTION
 """
 function addToElem(v::AbstractVector, Δv, _, _, ind::Int)
@@ -128,8 +128,8 @@ DOCSTRING
 # Arguments:
 - `v`: DESCRIPTION
 - `v_elem`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
 - `ind`: DESCRIPTION
 """
 function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
@@ -194,7 +194,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `land`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION

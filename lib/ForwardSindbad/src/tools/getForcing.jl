@@ -48,7 +48,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `f_sizes`: DESCRIPTION
 - `f_dimensions`: DESCRIPTION
 """
@@ -75,7 +75,7 @@ DOCSTRING
 - `forcing_mask`: DESCRIPTION
 - `tar_dims`: DESCRIPTION
 - `vinfo`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 - `clean_data`: DESCRIPTION
 - `fill_nan`: DESCRIPTION
@@ -127,7 +127,7 @@ DOCSTRING
 - `incubes`: DESCRIPTION
 - `f_sizes`: DESCRIPTION
 - `f_dimensions`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
 function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing helpers..."
@@ -209,7 +209,7 @@ DOCSTRING
 - `data_path`: DESCRIPTION
 - `data_path_v`: DESCRIPTION
 - `source_variable`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::Val{:netcdf})
@@ -244,7 +244,7 @@ DOCSTRING
 - `data_path`: DESCRIPTION
 - `data_path_v`: DESCRIPTION
 - `source_variable`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::Val{:zarr})
