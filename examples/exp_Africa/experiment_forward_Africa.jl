@@ -13,9 +13,9 @@ optimize_it = false;
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.run_forward_and_cost" => false,
-    "experiment.flags.spinup.run_spinup" => true,
-    "experiment.flags.spinup.do_spinup" => true);
+    "experiment.flags.calc_cost" => false,
+    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.spinup.run_spinup" => true);
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
