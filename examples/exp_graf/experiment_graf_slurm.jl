@@ -15,18 +15,14 @@ noStackTrace()
 @everywhere optimize_it = false;
 
 @everywhere replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
-    "model_run.mapping.yaxarray" => [],
-    "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.spinup.do_spinup" => true);
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => true,
+    "model_run.experiment_flags.spinup.do_spinup" => true);
 
 @everywhere replace_info_site = Dict("experiment.domain" => domain * "_site",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => false,
-    "model_run.mapping.yaxarray" => ["id"],
-    "model_run.mapping.run_ecosystem" => ["time"],
-    "model_run.flags.spinup.do_spinup" => true); #one parameter set per each site
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => false,
+    "model_run.experiment_flags.spinup.do_spinup" => true); #one parameter set per each site
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 

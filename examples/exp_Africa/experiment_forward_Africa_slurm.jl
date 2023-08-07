@@ -16,4 +16,4 @@ outcubes = mapRunEcosystem(forcing,
     output,
     info.tem,
     info.tem.models.forward;
-    max_cache=info.model_run.rules.yax_max_cache);
+    max_cache=info.model_run.experiment_rules.yax_max_cache);

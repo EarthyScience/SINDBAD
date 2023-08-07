@@ -1,9 +1,9 @@
 {
-  "package": "Optim",
   "method": "LBFGS",
   "options": {
-    "show_trace": true,
+    "autodiff": "forward",
     "iterations": 50,
-    "autodiff": "forward"
-  }
+    "show_trace": true
+  },
+  "package": "Optim"
 }
