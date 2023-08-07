@@ -14,6 +14,11 @@ deep_merge(d...) = d[end]
 
 replace the fields of info from json with the values providded in the replace dictionary
 """
+"""
+    replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
+
+DOCSTRING
+"""
 function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
     nested_replace_dict = createNestedDict(replace_dict)
     info = deep_merge(Dict(info), nested_replace_dict)
@@ -30,6 +35,11 @@ dict = Dict("a.b.c" => 2)
 nested_dict = createNestedDict(dict)
 
 nested_dict["a"]["b"]["c"]
+"""
+"""
+    createNestedDict(dict::AbstractDict)
+
+DOCSTRING
 """
 function createNestedDict(dict::AbstractDict)
     nested_dict = Dict()
@@ -69,6 +79,11 @@ end
 
 get the basic configuration from experiment json
 """
+"""
+    getExperimentConfiguration(experiment_json::String; replace_info = nothing)
+
+DOCSTRING
+"""
 function getExperimentConfiguration(experiment_json::String; replace_info=nothing)
     parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)
     info = DataStructures.OrderedDict()
@@ -89,6 +104,11 @@ end
     readConfiguration(config_files)
 
 read configuration experiment json and return dictionary
+"""
+"""
+    readConfiguration(info_exp::AbstractDict, base_path::String)
+
+DOCSTRING
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
@@ -126,6 +146,11 @@ end
 
 remove unnecessary comment files starting with certain expressions from the dictionary keys
 """
+"""
+    removeComments(inputDict::AbstractDict)
+
+DOCSTRING
+"""
 function removeComments(inputDict::AbstractDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
     newDict = filter(x -> !occursin("comments", first(x)), newDict)
@@ -139,6 +164,11 @@ removeComments(input) = input
 
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 """
+"""
+    convertToAbsolutePath(; inputDict = inputDict)
+
+DOCSTRING
+"""
 function convertToAbsolutePath(; inputDict=inputDict)
     #### NOT DONE YET
     newDict = filter(x -> !occursin("path", first(x)), inputDict)
@@ -149,6 +179,11 @@ end
     setupOutputDirectory(infoTuple)
 
 sets up and creates output directory for the model simulation
+"""
+"""
+    setupOutputDirectory(infoTuple::NamedTuple)
+
+DOCSTRING
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
     path_output = infoTuple[:experiment][:model_output][:path]
@@ -204,6 +239,11 @@ end
     getConfiguration(sindbad_experiment)
 
 get the experiment info from either json or load the named tuple
+"""
+"""
+    getConfiguration(sindbad_experiment::String; replace_info = nothing)
+
+DOCSTRING
 """
 function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     local_root = dirname(Base.active_project())

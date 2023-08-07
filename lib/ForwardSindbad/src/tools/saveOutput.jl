@@ -3,11 +3,21 @@ export getGlobalAttributesForOutCubes
 export getOutputFileInfo
 export getVariableInfo
 
+"""
+    getVariableInfo(vari_b, t_step = day)
+
+DOCSTRING
+"""
 function getVariableInfo(vari_b, t_step="day")
     vname = getVarFull(vari_b)
     return getVariableInfo(vname, t_step)
 end
 
+"""
+    getVariableInfo(vari_b::Symbol, t_step = day)
+
+DOCSTRING
+"""
 function getVariableInfo(vari_b::Symbol, t_step="day")
     catalog = sindbad_variables
     default_info = defaultVariableInfo(true)
@@ -50,31 +60,66 @@ function getVariableInfo(vari_b::Symbol, t_step="day")
     return Dict(o_varib)
 end
 
+"""
+    getModelDataArray(model_data::AbstractArray{T, 2})
+
+DOCSTRING
+"""
 function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
     return model_data[:, 1]
 end
 
+"""
+    getModelDataArray(model_data::AbstractArray{T, 3})
+
+DOCSTRING
+"""
 function getModelDataArray(model_data::AbstractArray{T,3}) where {T}
     return model_data[:, 1, :]
 end
 
+"""
+    getModelDataArray(model_data::AbstractArray{T, 4})
+
+DOCSTRING
+"""
 function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
     return model_data[:, 1, :, :]
 end
 
+"""
+    getVarName(var_pair)
+
+DOCSTRING
+"""
 function getVarName(var_pair)
     return last(var_pair)
 end
 
+"""
+    getVarField(var_pair)
+
+DOCSTRING
+"""
 function getVarField(var_pair)
     return first(var_pair)
 end
 
+"""
+    getVarFull(var_pair)
+
+DOCSTRING
+"""
 function getVarFull(var_pair)
     return Symbol(String(first(var_pair)) * "__" * String(last(var_pair)))
     # return Symbol(String(last(var_pair)) * "__" * String(first(var_pair)))
 end
 
+"""
+    getUniqueVarNames(data_vars)
+
+DOCSTRING
+"""
 function getUniqueVarNames(data_vars)
     pure_vars = getVarName.(data_vars)
     fields = getVarField.(data_vars)
@@ -90,6 +135,18 @@ function getUniqueVarNames(data_vars)
     return uniq_vars
 end
 
+"""
+    getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
+
+DOCSTRING
+
+# Arguments:
+- `data_out`: DESCRIPTION
+- `data_dim`: DESCRIPTION
+- `variable_name`: DESCRIPTION
+- `catalog_name`: DESCRIPTION
+- `t_step`: DESCRIPTION
+"""
 function getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
     data_prop = getVariableInfo(catalog_name, t_step)
     if size(data_out, 2) == 1
@@ -103,6 +160,21 @@ end
     saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
 
 saves the output variables from the run as one file
+"""
+"""
+    saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, nothing::Val{:(true)})
+
+DOCSTRING
+
+# Arguments:
+- `data_path_base`: DESCRIPTION
+- `global_info`: DESCRIPTION
+- `data_vars`: DESCRIPTION
+- `data`: DESCRIPTION
+- `data_dims`: DESCRIPTION
+- `out_format`: DESCRIPTION
+- `t_step`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
     @info "saving one file for all variables"
@@ -121,6 +193,21 @@ saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format
 
 saves the output variables from the run as one file per variable
 """
+"""
+    saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, nothing::Val{:(false)})
+
+DOCSTRING
+
+# Arguments:
+- `data_path_base`: DESCRIPTION
+- `global_info`: DESCRIPTION
+- `data_vars`: DESCRIPTION
+- `data`: DESCRIPTION
+- `data_dims`: DESCRIPTION
+- `out_format`: DESCRIPTION
+- `t_step`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:false})
     @info "saving one file per variable"
     catalog_names = getVarFull.(data_vars)
@@ -138,6 +225,11 @@ function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, o
     return nothing
 end
 
+"""
+    getGlobalAttributesForOutCubes(info)
+
+DOCSTRING
+"""
 function getGlobalAttributesForOutCubes(info)
     os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
          "macOS" : Sys.islinux() ? "Linux" : "unknown"
@@ -163,6 +255,11 @@ function getGlobalAttributesForOutCubes(info)
     return global_attr
 end
 
+"""
+    getOutputFileInfo(info)
+
+DOCSTRING
+"""
 function getOutputFileInfo(info)
     global_info = getGlobalAttributesForOutCubes(info)
     file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
@@ -174,6 +271,16 @@ end
 saveOutCubes(saveOutCubes(info, out_cubes, output))
 
 saves the output variables from the run from the information in info
+"""
+"""
+    saveOutCubes(info, out_cubes, output)
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `out_cubes`: DESCRIPTION
+- `output`: DESCRIPTION
 """
 function saveOutCubes(info, out_cubes, output)
     out_file_info = getOutputFileInfo(info)

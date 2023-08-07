@@ -1428,12 +1428,20 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     )
 )
 
+"""
+    getStandardVariableCatalog(info)
 
+DOCSTRING
+"""
 function getStandardVariableCatalog(info)
     variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
     return variCat
 end
+"""
+    defaultVariableInfo(string_key = false)
 
+DOCSTRING
+"""
 function defaultVariableInfo(string_key=false)
     if string_key
         return Sindbad.DataStructures.OrderedDict(
@@ -1453,7 +1461,11 @@ function defaultVariableInfo(string_key=false)
         )
     end
 end
+"""
+    getVariableCatalogFromLand(land)
 
+DOCSTRING
+"""
 function getVariableCatalogFromLand(land)
     default_varib = defaultVariableInfo()
     landprops = propertynames(land)
@@ -1525,7 +1537,16 @@ function getVariableCatalogFromLand(land)
     end
     return variCat
 end
+"""
+    displayVariableDict(dk, dv, exist = true)
 
+DOCSTRING
+
+# Arguments:
+- `dk`: DESCRIPTION
+- `dv`: DESCRIPTION
+- `exist`: DESCRIPTION
+"""
 function displayVariableDict(dk, dv, exist=true)
     print("\n\n")
     if exist
@@ -1545,7 +1566,11 @@ function displayVariableDict(dk, dv, exist=true)
     end
     return nothing
 end
+"""
+    checkDisplayVariableDict(var_full)
 
+DOCSTRING
+"""
 function checkDisplayVariableDict(var_full)
     sind_var_names = keys(sindbad_variables)
     if var_full in sind_var_names
@@ -1561,10 +1586,19 @@ function checkDisplayVariableDict(var_full)
     end
     return nothing
 end
+"""
+    getFullVariableKey(var_field::String, var_sfield::String)
+
+DOCSTRING
+"""
 function getFullVariableKey(var_field::String, var_sfield::String)
     return Symbol(var_field * "__" * var_sfield)
 end
+"""
+    whatIs(var_name::String)
 
+DOCSTRING
+"""
 function whatIs(var_name::String)
     if startswith(var_name, "land")
         var_name = var_name[6:end]
@@ -1576,14 +1610,22 @@ function whatIs(var_name::String)
     checkDisplayVariableDict(var_full)
     return nothing
 end
+"""
+    whatIs(var_field::String, var_sfield::String)
 
+DOCSTRING
+"""
 function whatIs(var_field::String, var_sfield::String)
     var_full = getFullVariableKey(var_field, var_sfield)
     println("\nchecking $var_field field and $var_sfield subfield as :$var_full in sindbad_variables catalog...")
     checkDisplayVariableDict(var_full)
     return nothing
 end
+"""
+    whatIs(var_field::Symbol, var_sfield::Symbol)
 
+DOCSTRING
+"""
 function whatIs(var_field::Symbol, var_sfield::Symbol)
     var_full = getFullVariableKey(string(var_field), string(var_sfield))
     println("\nchecking :$var_field field and :$var_sfield subfield as :$var_full in sindbad_variables catalog...")

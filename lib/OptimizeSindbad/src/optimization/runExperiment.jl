@@ -5,6 +5,17 @@ export runExperimentOpti
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+"""
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, nothing::Val{:opti})
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `output`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
     println("-------------------Optimization Mode---------------------------\n")
     observations = getObservation(info, forcing.helpers)
@@ -37,6 +48,16 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+"""
+    runExperiment(info::NamedTuple, forcing::NamedTuple, nothing::Val{:cost})
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     observations = getObservation(info, forcing.helpers)
     obs_array = getArray(observations)
@@ -57,6 +78,11 @@ end
     runExperiment(sindbad_experiment::String; replace_info=nothing)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+"""
+"""
+    runExperimentOpti(sindbad_experiment::String; replace_info = nothing)
+
+DOCSTRING
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
