@@ -11,7 +11,7 @@ DOCSTRING
 - `default_info`: DESCRIPTION
 - `v_info`: DESCRIPTION
 - `data_sub_field`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `yax`: DESCRIPTION
 - `use_data_sub`: DESCRIPTION
 """

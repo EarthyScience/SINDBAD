@@ -164,11 +164,11 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
 - `spinup_pool_name`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 """
 function getSpinupInfo(
     sel_spinup_models,
@@ -196,8 +196,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `_`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `_`: unused argument
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function loadSpinup(_, tem_spinup, ::Val{true}) # when load_spinup is true
@@ -214,7 +214,7 @@ DOCSTRING
 
 # Arguments:
 - `land_spin`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function loadSpinup(land_spin, _, ::Val{false}) # when load_spinup is false
@@ -227,13 +227,13 @@ end
 DOCSTRING
 
 # Arguments:
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `_`: unused argument
 - `land_spin`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(_, _, _, land_spin, _, _, _, ::Val{:false}) # dont do the spinup
@@ -247,12 +247,12 @@ DOCSTRING
 
 # Arguments:
 - `forward_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_spin`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_models`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
@@ -302,10 +302,10 @@ DOCSTRING
 # Arguments:
 - `spinup_models`: DESCRIPTION
 - `spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -337,10 +337,10 @@ DOCSTRING
 # Arguments:
 - `spinup_models`: DESCRIPTION
 - `spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -368,10 +368,10 @@ DOCSTRING
 # Arguments:
 - `spinup_models`: DESCRIPTION
 - `spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -399,10 +399,10 @@ DOCSTRING
 # Arguments:
 - `spinup_models`: DESCRIPTION
 - `spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -443,10 +443,10 @@ DOCSTRING
 # Arguments:
 - `spinup_models`: DESCRIPTION
 - `spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -479,12 +479,12 @@ scale the carbon pools using the scalars from cCycleBase
 DOCSTRING
 
 # Arguments:
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `land`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `_`: unused argument
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleAH})
@@ -528,12 +528,12 @@ scale the carbon pools using the scalars from cCycleBase
 DOCSTRING
 
 # Arguments:
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
-- `land`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `_`: unused argument
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function runSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleA0H})
@@ -583,10 +583,10 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -631,10 +631,10 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -680,10 +680,10 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -729,10 +729,10 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -774,10 +774,10 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function runSpinup(
@@ -822,12 +822,12 @@ DOCSTRING
 
 # Arguments:
 - `forward_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_models`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 """
 function spinupTEM(
     forward_models,
@@ -855,7 +855,7 @@ DOCSTRING
 
 # Arguments:
 - `land_spin`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function saveSpinup(land_spin, tem_spinup, ::Val{:true}) # save the spinup
@@ -871,8 +871,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function saveSpinup(_, _, ::Val{:false}) # dont save the spinup
@@ -902,7 +902,7 @@ DOCSTRING
 
 # Arguments:
 - `land_spin`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function setSpinupLog(land_spin, _, ::Val{:false})
@@ -923,9 +923,9 @@ DOCSTRING
 # Arguments:
 - `sel_spinup_models`: DESCRIPTION
 - `sel_spinup_forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_spin`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function timeLoopTEMSpinup(
     sel_spinup_models,

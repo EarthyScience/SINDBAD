@@ -6,7 +6,7 @@ export prepTEM
 DOCSTRING
 
 # Arguments:
-- `land`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `seq`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -63,10 +63,10 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `output_array`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `output_array`: an output array/view for ALL locations
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `loc_space_map`: DESCRIPTION
 - `tem`: DESCRIPTION
 """
@@ -109,9 +109,9 @@ prepTEM(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `info`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run ecosystem"
@@ -130,11 +130,11 @@ helpPrepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
     # generate vals for dispatch of forcing and output
