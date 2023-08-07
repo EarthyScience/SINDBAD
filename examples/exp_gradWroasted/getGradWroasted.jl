@@ -16,7 +16,7 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 
 @time TEM!(info.tem.models.forward,
@@ -31,8 +31,8 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 
 # @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
+    info.optim.model_parameter_default,
+    info.optim.model_parameters_to_optimize);
 
 # @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,

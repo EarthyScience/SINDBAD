@@ -23,21 +23,21 @@ for domain ∈ sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => optimize_it,
-        "model_run.flags.run_forward_and_cost" => true,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.spinup.run_spinup" => true,
-        "model_run.flags.debug_model" => false,
-        "model_run.flags.spinup.do_spinup" => true,
+        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_flags.run_optimization" => optimize_it,
+        "model_run.experiment_flags.run_forward_and_cost" => true,
+        "model_run.experiment_flags.spinup.save_spinup" => false,
+        "model_run.experiment_flags.catch_model_errors" => true,
+        "model_run.experiment_flags.spinup.run_spinup" => true,
+        "model_run.experiment_flags.debug_model" => false,
+        "model_run.experiment_flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
-        "optimization.constraints.default_constraint.data_path" => path_observation)
+        "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
@@ -52,7 +52,7 @@ for domain ∈ sites
     nrepeat_d = nothing
     if y_dist !== "undisturbed"
         y_disturb = year(Date(y_dist))
-        y_start = year(Date(info.tem.helpers.dates.start_date))
+        y_start = year(Date(info.tem.helpers.dates.date_begin))
         nrepeat_d = y_start - y_disturb
     end
     sequence = nothing
@@ -88,8 +88,8 @@ for domain ∈ sites
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
     tbl_params = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
+        info.optim.model_parameter_default,
+        info.optim.model_parameters_to_optimize)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
@@ -124,7 +124,7 @@ for domain ∈ sites
         v = var_row.variable
         # @show "plot obs", v
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
         v = vinfo["standard_name"]
         @show "plot obs", v
         lossMetric = var_row.cost_metric
@@ -154,8 +154,8 @@ for domain ∈ sites
     end
 
     ### redo the forward run to save all output variables
-    replace_info["model_run.flags.run_forward_and_cost"] = false
-    replace_info["model_run.flags.run_optimization"] = false
+    replace_info["model_run.experiment_flags.run_forward_and_cost"] = false
+    replace_info["model_run.experiment_flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     forcing = getForcing(info)
 
@@ -178,11 +178,11 @@ for domain ∈ sites
     out_info = getOutputFileInfo(info)
 
     output = setupOutput(info, forcing.helpers)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(false))
 
 
     # plot the debug figures
@@ -190,7 +190,7 @@ for domain ∈ sites
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

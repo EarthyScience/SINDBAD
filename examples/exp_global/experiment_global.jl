@@ -12,13 +12,13 @@ optimize_it = false;
 # info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => true,
     "model_run.mapping.yaxarray" => [],
     "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.spinup.run_spinup" => true,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.do_spinup" => true);
+    "model_run.experiment_flags.spinup.run_spinup" => true,
+    "model_run.experiment_flags.debug_model" => false,
+    "model_run.experiment_flags.spinup.do_spinup" => true);
 
 experiment_json = "../exp_global/settings_global/experiment.json";
 
@@ -27,7 +27,7 @@ forcing = getForcing(info);
 
 GC.gc()
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 @time TEM!(info.tem.models.forward,
     forcing_nt_array,

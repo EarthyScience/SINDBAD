@@ -28,28 +28,28 @@ path_output = nothing
 # t
 domain = "DE-Hai"
 pl = "threads"
-replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "model_run.time.end_date" => eYear * "-12-31",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
-    "model_run.flags.spinup.save_spinup" => false,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.run_spinup" => true,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.do_spinup" => true,
+    "model_run.experiment_time .date_end" => eYear * "-12-31",
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => true,
+    "model_run.experiment_flags.spinup.save_spinup" => false,
+    "model_run.experiment_flags.debug_model" => false,
+    "model_run.experiment_flags.spinup.run_spinup" => true,
+    "model_run.experiment_flags.debug_model" => false,
+    "model_run.experiment_flags.spinup.do_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "model_run.output.path" => path_output,
     "model_run.mapping.parallelization" => pl,
-    "optimization.constraints.default_constraint.data_path" => path_observation);
+    "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 @time TEM!(info.tem.models.forward,
     forcing_nt_array,
@@ -121,20 +121,20 @@ pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
 
 develop_f =
     () -> begin
-        #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
+        #tbl = getParameters(info.tem.models.forward, info.optim.model_parameters_to_optimize);
         #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
         # plot(d)
 
-        tbl_params = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
-            optim.optimized_parameters)
+        tbl_params = Sindbad.getParameters(tem.models.forward, optim.model_parameter_default,
+            optim.model_parameters_to_optimize)
         # get the default and bounds
         default_values = tem.helpers.numbers.sNT.(tbl_params.default)
         lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-        forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info)
+        forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
