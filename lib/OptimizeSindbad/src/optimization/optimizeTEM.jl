@@ -45,6 +45,7 @@ end
 
 return the total of cost of each constraint as the overall cost
 """
+
 """
     combineLoss(loss_vector::AbstractArray, nothing::Val{:sum})
 
@@ -59,6 +60,7 @@ end
 
 return the minimum of cost of each constraint as the overall cost
 """
+
 """
     combineLoss(loss_vector::AbstractArray, nothing::Val{:minimum})
 
@@ -73,6 +75,7 @@ end
 
 return the maximum of cost of each constraint as the overall cost
 """
+
 """
     combineLoss(loss_vector::AbstractArray, nothing::Val{:maximum})
 
@@ -87,6 +90,7 @@ end
 
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
+
 """
     combineLoss(loss_vector::AbstractArray, percentile_value::T)
 
@@ -100,6 +104,7 @@ end
 filterCommonNaN(y, yσ, ŷ)
 return model and obs data filtering for the common nan
 """
+
 """
     filterCommonNaN(y, yσ, ŷ)
 
@@ -119,6 +124,7 @@ end
 filterConstraintMinimumDatapoints(obs_array, cost_options)
 remove all the variables that have less than minimum datapoints from being used in the optimization 
 """
+
 """
     filterConstraintMinimumDatapoints(obs_array, cost_options)
 
@@ -147,6 +153,7 @@ end
 """
 getData(outsmodel, observations, modelVariables, obsVariables)
 """
+
 """
     getData(model_output::landWrapper, observations, cost_option)
 
@@ -186,6 +193,7 @@ end
 """
 getData(outsmodel, observations, modelVariables, obsVariables)
 """
+
 """
     getData(model_output::AbstractArray, observations, cost_option)
 
@@ -263,6 +271,7 @@ end
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
+
 """
     getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
@@ -303,6 +312,7 @@ end
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
+
 """
     getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
@@ -340,6 +350,7 @@ end
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
+
 """
     getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
@@ -394,6 +405,7 @@ end
 getLossVector(observations, model_output::AbstractArray, cost_options)
 returns a vector of losses for variables in info.cost_options.observational_constraints
 """
+
 """
     getLossVector(observations, model_output, cost_options)
 
@@ -475,6 +487,7 @@ end
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
+
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:array})
 
@@ -540,6 +553,7 @@ end
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
+
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_stacked})
 
@@ -602,6 +616,7 @@ end
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
+
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_timeseries})
 

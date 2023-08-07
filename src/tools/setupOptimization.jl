@@ -10,6 +10,7 @@ returns
   - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
   - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
+
 """
     getConstraintNames(optim::NamedTuple)
 
@@ -68,6 +69,7 @@ end
 getCostOptions(optInfo)
 info.opti
 """
+
 """
     getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
 
@@ -157,6 +159,7 @@ end
 
 checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
+
 """
     checkOptimizedParametersInModels(info::NamedTuple)
 
