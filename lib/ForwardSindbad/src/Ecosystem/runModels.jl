@@ -14,7 +14,7 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
@@ -38,7 +38,7 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
@@ -60,7 +60,7 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
@@ -77,7 +77,7 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
@@ -125,7 +125,7 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """

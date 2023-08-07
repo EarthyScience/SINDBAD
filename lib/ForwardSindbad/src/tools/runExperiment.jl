@@ -13,7 +13,7 @@ DOCSTRING
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """

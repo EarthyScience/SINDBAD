@@ -39,7 +39,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: DESCRIPTION
 - `forward_models`: DESCRIPTION
