@@ -281,7 +281,7 @@ saves the output variables from the run from the information in info
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `out_cubes`: DESCRIPTION
 - `output`: DESCRIPTION
 """

@@ -24,8 +24,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
-- `output_array`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `output_array`: an output array/view for ALL locations
 - `loc_space_map`: DESCRIPTION
 """
 function getLocData(forcing, output_array, loc_space_map)
@@ -47,8 +47,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
-- `loc_forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `loc_forcing`: a forcing time series set for a single location
 - `s_locs`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
@@ -91,8 +91,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `output_array`: DESCRIPTION
-- `loc_output`: DESCRIPTION
+- `output_array`: an output array/view for ALL locations
+- `loc_output`: an output array/view for a single location
 - `ar_inds`: DESCRIPTION
 """
 function getLocOutput!(output_array, loc_output, ar_inds)
@@ -137,7 +137,7 @@ DOCSTRING
 
 # Arguments:
 - `outputs`: DESCRIPTION
-- `land`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `ts`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """

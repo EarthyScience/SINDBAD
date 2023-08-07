@@ -7,13 +7,13 @@ export runTEM
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land_init`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function coreTEM(
@@ -44,13 +44,13 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land_init`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_models`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function coreTEM(
@@ -91,14 +91,14 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: DESCRIPTION
-- `land_init`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `_`: DESCRIPTION
-- `_`: DESCRIPTION
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function coreTEM(
@@ -131,14 +131,14 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: DESCRIPTION
-- `land_init`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_models`: DESCRIPTION
-- `tem_spinup`: DESCRIPTION
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `nothing`: DESCRIPTION
 """
 function coreTEM(
@@ -200,10 +200,10 @@ runEcosystem(selected_models, forcing, land_init, tem)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `tem_with_vals`: DESCRIPTION
 """
 function runTEM(
@@ -227,11 +227,11 @@ runTEM(selected_models, forcing, land_init, tem)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `tem_with_vals`: DESCRIPTION
 """
 function runTEM(
@@ -251,12 +251,12 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function timeLoopTEM(
@@ -282,12 +282,12 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function timeLoopTEM(
@@ -314,11 +314,11 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function timeLoopTEM(
@@ -343,11 +343,11 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function timeLoopTEM(

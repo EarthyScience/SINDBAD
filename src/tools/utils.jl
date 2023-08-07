@@ -667,7 +667,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `land`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
@@ -753,7 +753,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `land`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION

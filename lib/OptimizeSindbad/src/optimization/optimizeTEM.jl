@@ -281,9 +281,9 @@ DOCSTRING
 - `param_vector`: DESCRIPTION
 - `base_models`: DESCRIPTION
 - `forcing_nt`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_timeseries`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: DESCRIPTION
 - `observations`: DESCRIPTION
 - `tbl_params`: DESCRIPTION
@@ -322,8 +322,8 @@ DOCSTRING
 - `param_vector`: DESCRIPTION
 - `base_models`: DESCRIPTION
 - `forcing_nt`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: DESCRIPTION
 - `observations`: DESCRIPTION
 - `tbl_params`: DESCRIPTION
@@ -359,13 +359,13 @@ DOCSTRING
 # Arguments:
 - `param_vector`: DESCRIPTION
 - `base_models`: DESCRIPTION
-- `forcing_nt_array`: DESCRIPTION
-- `loc_forcings`: DESCRIPTION
-- `forcing_one_timestep`: DESCRIPTION
-- `output_array`: DESCRIPTION
-- `loc_outputs`: DESCRIPTION
-- `land_init_space`: DESCRIPTION
-- `loc_space_inds`: DESCRIPTION
+- `forcing_nt_array`: a forcing NT that contain the forcing time series set for ALL locations, with each variable as an instantiated array in memory
+- `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `output_array`: an output array/view for ALL locations
+- `loc_outputs`: a collection of copies of outputs for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
+- `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
+- `loc_space_inds`: a collection of spatial indices/pairs of indices used to loop through space in parallelization
 - `tem`: DESCRIPTION
 - `observations`: DESCRIPTION
 - `tbl_params`: DESCRIPTION
@@ -477,7 +477,7 @@ DOCSTRING
 
 # Arguments:
 - `dat`: DESCRIPTION
-- `_`: DESCRIPTION
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function spatialAggregation(dat, _, ::Val{:cat})
@@ -494,9 +494,9 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
@@ -560,9 +560,9 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
@@ -623,9 +623,9 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
