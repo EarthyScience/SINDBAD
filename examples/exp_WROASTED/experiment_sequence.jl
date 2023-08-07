@@ -23,10 +23,10 @@ for domain ∈ sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_time.date_end" => eYear * "-12-31",
         "model_run.experiment_flags.run_optimization" => optimize_it,
         "model_run.experiment_flags.run_forward_and_cost" => true,
         "model_run.experiment_flags.spinup.save_spinup" => false,
@@ -124,7 +124,7 @@ for domain ∈ sites
         v = var_row.variable
         # @show "plot obs", v
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
         v = vinfo["standard_name"]
         @show "plot obs", v
         lossMetric = var_row.cost_metric
@@ -178,11 +178,11 @@ for domain ∈ sites
     out_info = getOutputFileInfo(info)
 
     output = setupOutput(info, forcing.helpers)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.timestep, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.timestep, Val(false))
 
 
     # plot the debug figures
@@ -190,7 +190,7 @@ for domain ∈ sites
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

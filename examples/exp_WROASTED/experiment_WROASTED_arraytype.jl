@@ -22,10 +22,10 @@ pl = "threads"
 arraymethod = "view"
 info = nothing
 for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
-    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_time.date_end" => eYear * "-12-31",
         "model_run.experiment_flags.run_optimization" => false,
         "model_run.experiment_flags.run_forward_and_cost" => false,
         "model_run.experiment_flags.spinup.save_spinup" => false,

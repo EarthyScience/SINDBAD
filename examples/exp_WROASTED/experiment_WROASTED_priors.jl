@@ -28,10 +28,10 @@ path_output = nothing
 # t
 domain = "DE-Hai"
 pl = "threads"
-replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "model_run.experiment_time .date_end" => eYear * "-12-31",
+    "model_run.experiment_time.date_end" => eYear * "-12-31",
     "model_run.experiment_flags.run_optimization" => optimize_it,
     "model_run.experiment_flags.run_forward_and_cost" => true,
     "model_run.experiment_flags.spinup.save_spinup" => false,
