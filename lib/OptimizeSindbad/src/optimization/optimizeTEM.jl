@@ -312,7 +312,7 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, _, _, loc_space_inds = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_vals = prepTEM(forcing, info)
 
     cost_function =
         x -> getLoss(x,

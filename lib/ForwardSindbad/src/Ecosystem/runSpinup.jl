@@ -45,7 +45,7 @@ function (cEco_spin::DoSpinup_cEco)(pout, p)
     end
     @pack_land cEco => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
-    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.forcing_one_timestep, cEco_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, cEco_spin.forcing_one_timestep, land, cEco_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -77,7 +77,7 @@ function (cEco_TWS_spin::DoSpinup_cEco_TWS)(pout, p)
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
 
-    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.forcing_one_timestep, cEco_TWS_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, cEco_TWS_spin.forcing_one_timestep, land, cEco_TWS_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     cEco_TWS_spin.TWS .= update_init.pools.TWS
@@ -96,25 +96,25 @@ function (TWS_spin::DoSpinup_TWS)(pout, p)
     end
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
-    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.forcing_one_timestep, TWS_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, TWS_spin.forcing_one_timestep, land, TWS_spin.tem_helpers)
     pout .= update_init.pools.TWS
     return nothing
 end
 
 
-function doSpinup(_, _, land_spin, _, _, _, _, ::Val{:false}) # dont do the spinup
+function doSpinup(_, _, _, land_spin, _, _, _, ::Val{:false}) # dont do the spinup
     return land_spin
 end
 
-function doSpinup(forward_models, forcing, land_spin, forcing_one_timestep, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
+function doSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
     @debug "runSpinup:: running spinup sequences..."
-    # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, forcing_one_timestep);
+    # spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
-        sel_forcing = getSpinupForcing(forcing, tem_helpers, forcing_one_timestep, spin_seq.aggregator, spin_seq.aggregator_type)
+        sel_forcing = getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
         spinup_models = forward_models
         if spinup_mode == :spinup
             spinup_models = forward_models[tem_models.is_spinup]
@@ -124,8 +124,8 @@ function doSpinup(forward_models, forcing, land_spin, forcing_one_timestep, tem_
             @debug "         Loop: $(loop_index)/$(n_repeat)"
             land_spin = doSpinup(spinup_models,
                 sel_forcing,
-                land_spin,
                 forcing_one_timestep,
+                land_spin,
                 tem_helpers,
                 tem_spinup,
                 spinup_mode)
@@ -153,8 +153,8 @@ function doSpinup(
     ::Val{:spinup})
     land_spin = runTimeLoopSpinup(spinup_models,
         spinup_forcing,
-        land,
         forcing_one_timestep,
+        land,
         tem_helpers)
     return land_spin
 end
@@ -173,8 +173,8 @@ function doSpinup(
     ::Val{:forward})
     land_spin = runTimeLoopSpinup(spinup_models,
         spinup_forcing,
-        land,
         forcing_one_timestep,
+        land,
         tem_helpers)
     return land_spin
 end

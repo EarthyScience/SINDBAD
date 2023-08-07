@@ -81,28 +81,19 @@ Set the spinup forcing as full input forcing.
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:indexed})
     return getForcingForTimePeriod(forcing, time_aggregator)
-    # return getForcingForTimePeriod(forcing, forcing_one_timestep, time_aggregator, tem_helpers.vals.forc_vars)
-end
-
-"""
-getSpinupForcing(forcing, tem, ::Val{:random_year})
-Set the spinup forcing as the forcing of a random full year from the full input forcing.
-"""
-function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers, _)
-    return getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
 end
 
 """
 getSpinupForcing(forcing, tem)
 A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
 """
-function getSpinupForcing(forcing, forcing_one_timestep, tem_helpers, tem_spinup)
+function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
     spinup_forcing = (;)
-    for seq ∈ tem_spinup.sequence
+    for seq ∈ spin_seq
         forc = getfield(seq, :forcing)
         forc_name = valToSymbol(forc)
         if forc_name ∉ keys(spinup_forcing)
-            spinup_forc = getSpinupForcing(forcing, forcing_one_timestep, seq, tem_helpers, tem_spinup)
+            spinup_forc = getSpinupForcing(forcing, forcing_one_timestep, seq.aggregator, tem_helpers, seq.aggregator_type)
             spinup_forcing = setTupleField(spinup_forcing, (valToSymbol(forc), spinup_forc))
         end
     end
