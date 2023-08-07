@@ -16,13 +16,13 @@ noStackTrace()
 
 @everywhere replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.run_forward_and_cost" => true,
-    "experiment.flags.spinup.do_spinup" => true);
+    "experiment.flags.calc_cost" => true,
+    "experiment.flags.spinup.run_spinup" => true);
 
 @everywhere replace_info_site = Dict("experiment.basics.domain" => domain * "_site",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.run_forward_and_cost" => false,
-    "experiment.flags.spinup.do_spinup" => true); #one parameter set per each site
+    "experiment.flags.calc_cost" => false,
+    "experiment.flags.spinup.run_spinup" => true); #one parameter set per each site
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 

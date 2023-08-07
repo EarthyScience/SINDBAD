@@ -560,7 +560,7 @@ function spinupTEM(
     land_spin = loadSpinup(land_in, tem_spinup, tem_helpers.run.spinup.load_spinup)
 
     #check if the spinup still needs to be done after loading spinup
-    land_spin = runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, tem_helpers.run.spinup.do_spinup)
+    land_spin = runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, tem_helpers.run.spinup.run_spinup)
 
     saveSpinup(land_spin, tem_spinup, tem_helpers.run.spinup.save_spinup)
     return land_spin
