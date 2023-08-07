@@ -11,6 +11,7 @@ using ForwardDiff
 using InteractiveUtils
 using JLD2
 using JSON: parsefile, json
+using Logging
 using Parameters
 @reexport using PrettyPrinting: pprint
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray

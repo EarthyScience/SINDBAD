@@ -1,5 +1,5 @@
 export runTEMCore
-export TEM
+export simulateTEM
 
 function runTEMCore(
     selected_models,
