@@ -63,7 +63,7 @@ plotdat = output_array;
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
+    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
     vname = vinfo["standard_name"]
     pd = plotdat[i]
     if size(pd, 2) == 1

@@ -177,5 +177,5 @@ saves the output variables from the run from the information in info
 """
 function saveOutCubes(info, out_cubes, output)
     out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, output.variables, out_cubes, output.dims, info.model_run.output.format, info.model_run.experiment_time.timestep, Val(info.model_run.output.save_single_file))
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, output.variables, out_cubes, output.dims, info.model_run.output.format, info.model_run.experiment_time.temporal_resolution, Val(info.model_run.output.save_single_file))
 end
