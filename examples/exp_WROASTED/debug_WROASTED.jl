@@ -24,7 +24,7 @@ path_output = nothing
 pl = "threads"
 arraymethod = "staticarray"
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
-    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.config_files.forcing" => forcingConfig,
     "experiment.basics.domain" => domain,
     "experiment.basics.time.date_end" => eYear * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
@@ -33,12 +33,12 @@ replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
     "experiment.flags.catch_model_errors" => true,
     "experiment.flags.spinup.run_spinup" => true,
     "experiment.flags.debug_model" => false,
-    "experiment.data_rules.model_array_type" => arraymethod,
+    "experiment.exe_rules.model_array_type" => arraymethod,
     "experiment.flags.spinup.do_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.output_array_type" => "array",
-    "experiment.data_rules.parallelization" => pl,
+    "experiment.exe_rules.parallelization" => pl,
     "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info

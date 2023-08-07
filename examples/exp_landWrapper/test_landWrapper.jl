@@ -22,7 +22,7 @@ path_output = nothing
 pl = "threads"
 arraymethod = "staticarray"
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
-    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.config_files.forcing" => forcingConfig,
     "experiment.basics.domain" => domain,
     "forcing.default_forcing.data_path" => path_input,
     "experiment.basics.time.date_end" => eYear * "-12-31",
@@ -32,12 +32,12 @@ replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
     "experiment.flags.catch_model_errors" => false,
     "experiment.flags.spinup.run_spinup" => true,
     "experiment.flags.debug_model" => false,
-    "experiment.data_rules.model_array_type" => arraymethod,
+    "experiment.exe_rules.model_array_type" => arraymethod,
     "experiment.flags.spinup.do_spinup" => true,
     "experiment.model_output.path" => path_output,
     "experiment.model_output.format" => "nc",
     "experiment.model_output.save_single_file" => true,
-    "experiment.data_rules.parallelization" => pl,
+    "experiment.exe_rules.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
