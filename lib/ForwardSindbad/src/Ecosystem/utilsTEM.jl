@@ -3,11 +3,31 @@ export getLocForcing!
 export getLocOutput!
 export setOutputForTimeStep!
 
+"""
+    fillLocOutput!(ar, val, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
 function fillLocOutput!(ar, val, ts::Int64)
     data_ts = getLocOutputView(ar, val, ts)
     return data_ts .= val
 end
 
+"""
+    getLocData(forcing, output_array, loc_space_map)
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_space_map`: DESCRIPTION
+"""
 function getLocData(forcing, output_array, loc_space_map)
     loc_forcing = map(forcing) do a
         view(a; loc_space_map...)
@@ -21,6 +41,18 @@ function getLocData(forcing, output_array, loc_space_map)
     return loc_forcing, loc_output
 end
 
+"""
+    getLocForcing!(forcing, loc_forcing, s_locs, nothing::Val{forc_vars}, nothing::Val{s_names})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `s_locs`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 @generated function getLocForcing!(
     forcing,
     loc_forcing,
@@ -53,6 +85,16 @@ end
     return output
 end
 
+"""
+    getLocOutput!(output_array, loc_output, ar_inds)
+
+DOCSTRING
+
+# Arguments:
+- `output_array`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `ar_inds`: DESCRIPTION
+"""
 function getLocOutput!(output_array, loc_output, ar_inds)
     for i ∈ eachindex(output_array)
         loc_output[i] = getArrayView(output_array[i], ar_inds)
@@ -60,14 +102,45 @@ function getLocOutput!(output_array, loc_output, ar_inds)
     return nothing
 end
 
+"""
+    getLocOutputView(ar, val::AbstractVector, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
 function getLocOutputView(ar, val::AbstractVector, ts::Int64)
     return view(ar, ts, 1:length(val))
 end
 
+"""
+    getLocOutputView(ar, val::Real, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
 function getLocOutputView(ar, val::Real, ts::Int64)
     return view(ar, ts)
 end
 
+"""
+    setOutputForTimeStep!(outputs, land, ts, nothing::Val{output_vars})
+
+DOCSTRING
+
+# Arguments:
+- `outputs`: DESCRIPTION
+- `land`: DESCRIPTION
+- `ts`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {output_vars}
     if @generated
         output = quote end
@@ -94,6 +167,15 @@ function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {out
 end
 
 
+"""
+    viewCopyYax(xout, xin)
+
+DOCSTRING
+
+# Arguments:
+- `xout`: DESCRIPTION
+- `xin`: DESCRIPTION
+"""
 function viewCopyYax(xout, xin)
     if ndims(xout) == ndims(xin)
         for i ∈ eachindex(xin)

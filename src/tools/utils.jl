@@ -33,6 +33,11 @@ end
     collectColorForTypes(d; c_olor=true)
 utility function to collect colors for all types from nested namedtuples
 """
+"""
+    collectColorForTypes(d; c_olor = true)
+
+DOCSTRING
+"""
 function collectColorForTypes(d; c_olor=true)
     all_types = []
     all_types = getTypes!(d, all_types)
@@ -53,6 +58,11 @@ end
 clamp01(num)
 returns max(min(num, 1), 0)
 """
+"""
+    clamp01(num)
+
+DOCSTRING
+"""
 function clamp01(num)
     return clamp(num, zero(num), one(num))
 end
@@ -61,6 +71,11 @@ end
     cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
 
 fill out the output vector with the cumulative sum of elements from input vector
+"""
+"""
+    cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
+
+DOCSTRING
 """
 function cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
     for i ∈ eachindex(i_n)
@@ -75,6 +90,11 @@ end
 
 covert nested dictionary to NamedTuple
 """
+"""
+    dictToNamedTuple(d::AbstractDict)
+
+DOCSTRING
+"""
 function dictToNamedTuple(d::AbstractDict)
     for k ∈ keys(d)
         if d[k] isa Array{Any,1}
@@ -87,7 +107,16 @@ function dictToNamedTuple(d::AbstractDict)
     return dTuple
 end
 
+"""
+    DocStringExtensions.format(abbrv::BoundFields, buf, doc)
 
+DOCSTRING
+
+# Arguments:
+- `abbrv`: DESCRIPTION
+- `buf`: DESCRIPTION
+- `doc`: DESCRIPTION
+"""
 function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     local docs = get(doc.data, :fields, Dict())
     local binding = doc.data[:binding]
@@ -136,6 +165,11 @@ end
 
 returns a matrix of same shape as input with 1 for all non diagonal elements
 """
+"""
+    flagOffDiag(A::AbstractMatrix)
+
+DOCSTRING
+"""
 function flagOffDiag(A::AbstractMatrix)
     o_mat = zeros(size(A))
     for ι ∈ CartesianIndices(A)
@@ -150,6 +184,11 @@ end
     flagUpper(A::AbstractMatrix)
 
 returns a matrix of same shape as input with 1 for all above diagonal elements and 0 elsewhere
+"""
+"""
+    flagUpper(A::AbstractMatrix)
+
+DOCSTRING
 """
 function flagUpper(A::AbstractMatrix)
     o_mat = zeros(size(A))
@@ -166,6 +205,11 @@ end
 
 returns a matrix of same shape as input with 1 for all below diagonal elements and 0 elsewhere
 """
+"""
+    flagLower(A::AbstractMatrix)
+
+DOCSTRING
+"""
 function flagLower(A::AbstractMatrix)
     o_mat = zeros(size(A))
     for ι ∈ CartesianIndices(A)
@@ -175,11 +219,19 @@ function flagLower(A::AbstractMatrix)
     end
     return o_mat
 end
+"""
+    getBool(var::Bool)
 
+DOCSTRING
+"""
 function getBool(var::Bool)
     return var
 end
+"""
+    getBool(var)
 
+DOCSTRING
+"""
 function getBool(var)
     return valToSymbol(var)
 end
@@ -187,6 +239,11 @@ end
 """
 getFrac(num, den)
 return either a ratio or numerator depending on whether denomitor is a zero
+"""
+"""
+    getFrac(num, den)
+
+DOCSTRING
 """
 function getFrac(num, den)
     if !iszero(den)
@@ -203,6 +260,11 @@ end
 
 helper function to return a table of sindbad model and approaches
 """
+"""
+    getSindbadModels()
+
+DOCSTRING
+"""
 function getSindbadModels()
     approaches = []
 
@@ -216,6 +278,11 @@ end
 """
 getTypes!(d, all_types)
 utility function to collect all types from nested namedtuples
+"""
+"""
+    getTypes!(d, all_types)
+
+DOCSTRING
 """
 function getTypes!(d, all_types)
     for k ∈ keys(d)
@@ -233,6 +300,11 @@ end
 getZix(dat::SubArray)
 returns the indices of a view for a subArray
 """
+"""
+    getZix(dat::SubArray)
+
+DOCSTRING
+"""
 function getZix(dat::SubArray)
     return first(parentindices(dat))
 end
@@ -240,6 +312,11 @@ end
 """
 getZix(dat::SubArray)
 returns the indices of a view for a subArray
+"""
+"""
+    getZix(dat::SubArray, zixhelpersPool)
+
+DOCSTRING
 """
 function getZix(dat::SubArray, zixhelpersPool)
     return first(parentindices(dat))
@@ -249,6 +326,11 @@ end
 getZix(dat::Array)
 returns the indices of a view for a subArray
 """
+"""
+    getZix(dat::Array, zixhelpersPool)
+
+DOCSTRING
+"""
 function getZix(dat::Array, zixhelpersPool)
     return zixhelpersPool
 end
@@ -256,6 +338,11 @@ end
 """
 getZix(dat::SVector)
 returns the indices of a view for a subArray
+"""
+"""
+    getZix(dat::SVector, zixhelpersPool)
+
+DOCSTRING
 """
 function getZix(dat::SVector, zixhelpersPool)
     return zixhelpersPool
@@ -267,6 +354,11 @@ end
 max0(num)
 returns max(num, 0)
 """
+"""
+    max0(num)
+
+DOCSTRING
+"""
 function max0(num)
     return max(num, zero(num))
 end
@@ -275,6 +367,11 @@ end
 """
 max1(num)
 returns max(num, 1)
+"""
+"""
+    max1(num)
+
+DOCSTRING
 """
 function max1(num)
     return max(num, one(num))
@@ -285,6 +382,11 @@ end
 min0(num)
 returns min(num, 0)
 """
+"""
+    min0(num)
+
+DOCSTRING
+"""
 function min0(num)
     return min(num, zero(num))
 end
@@ -293,6 +395,11 @@ end
 """
 min1(num)
 returns min(num, 1)
+"""
+"""
+    min1(num)
+
+DOCSTRING
 """
 function min1(num)
     return min(num, one(num))
@@ -336,6 +443,11 @@ nanSum(dat) = sum(filter(!isnan, dat))
 
 returns a vector of duplicates in the input vector
 """
+"""
+    nonUnique(x::AbstractArray{T})
+
+DOCSTRING
+"""
 function nonUnique(x::AbstractArray{T}) where {T}
     xs = sort(x)
     duplicatedvector = T[]
@@ -356,6 +468,11 @@ end
 
 Modifies Base.show to reduce the size of error stacktrace of sindbad
 """
+"""
+    noStackTrace()
+
+DOCSTRING
+"""
 function noStackTrace()
     eval(:(Base.show(io::IO, nt::Type{<:NamedTuple}) = print(io, "NT")))
     eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
@@ -368,6 +485,11 @@ end
 
 returns a vector comprising of off diagonal elements of a matrix
 """
+"""
+    offDiag(A::AbstractMatrix)
+
+DOCSTRING
+"""
 function offDiag(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] ≠ ι[2]]]
 end
@@ -376,6 +498,11 @@ end
     offDiagUpper(A::AbstractMatrix)
 
 returns a vector comprising of above diagonal elements of a matrix
+"""
+"""
+    offDiagUpper(A::AbstractMatrix)
+
+DOCSTRING
 """
 function offDiagUpper(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] < ι[2]]]
@@ -386,10 +513,14 @@ end
 
 returns a vector comprising of below diagonal elements of a matrix
 """
+"""
+    offDiagLower(A::AbstractMatrix)
+
+DOCSTRING
+"""
 function offDiagLower(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] > ι[2]]]
 end
-
 
 macro pack_land(outparams)
     @assert outparams.head == :block || outparams.head == :call || outparams.head == :(=)
@@ -402,7 +533,11 @@ macro pack_land(outparams)
     return outCode
 end
 
+"""
+    processPackLand(ex)
 
+DOCSTRING
+"""
 function processPackLand(ex)
     rename, ex = if ex.args[1] == :(=)
         ex.args[2], ex.args[3]
@@ -457,6 +592,11 @@ function processPackLand(ex)
     return Expr(:block, lines...)
 end
 
+"""
+    processUnpackForcing(ex)
+
+DOCSTRING
+"""
 function processUnpackForcing(ex)
     rename, ex = if ex.head == :(=)
         ex.args[1], ex.args[2]
@@ -486,7 +626,11 @@ function processUnpackForcing(ex)
     return Expr(:block, lines...)
 end
 
+"""
+    processUnpackLand(ex)
 
+DOCSTRING
+"""
 function processUnpackLand(ex)
     rename, ex = if ex.head == :(=)
         ex.args[1], ex.args[2]
@@ -520,6 +664,11 @@ end
 """
 removeEmptyTupleFields(tpl)
 """
+"""
+    removeEmptyTupleFields(tpl::NamedTuple)
+
+DOCSTRING
+"""
 function removeEmptyTupleFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
     nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
@@ -531,6 +680,11 @@ end
 
 return the input as is
 """
+"""
+    returnIt(dat)
+
+DOCSTRING
+"""
 function returnIt(dat)
     return dat
 end
@@ -541,6 +695,18 @@ end
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 - sets the component pools value using the values for the main pool
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+"""
+"""
+    setComponentFromMainPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
+
+DOCSTRING
+
+# Arguments:
+- `land`: DESCRIPTION
+- `helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 @generated function setComponentFromMainPool(
     # function setComponentFromMainPool(
@@ -583,12 +749,20 @@ end
     return output
 end
 
+"""
+    setLogLevel()
 
+DOCSTRING
+"""
 function setLogLevel()
     logger = ConsoleLogger(stderr, Logging.Info)
     global_logger(logger)
 end
+"""
+    setLogLevel(log_level)
 
+DOCSTRING
+"""
 function setLogLevel(log_level)
     logger = ConsoleLogger(stderr, Logging.Info)
     if log_level == :debug
@@ -607,7 +781,19 @@ end
 - sets the main pool from the values of the component pools
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
-@generated function setMainFromComponentPool(
+"""
+    setMainFromComponentPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
+
+DOCSTRING
+
+# Arguments:
+- `land`: DESCRIPTION
+- `helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
+function setMainFromComponentPool(
     # function setMainFromComponentPool(
     land,
     helpers,
@@ -646,7 +832,16 @@ end
                         Expr(:kw, s_main, s_main))))))))
     return output
 end
+"""
+    setTupleSubfield(out, fieldname, vals)
 
+DOCSTRING
+
+# Arguments:
+- `out`: DESCRIPTION
+- `fieldname`: DESCRIPTION
+- `vals`: DESCRIPTION
+"""
 function setTupleSubfield(out, fieldname, vals)
     return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
 end
@@ -657,6 +852,11 @@ setTupleField(out, vals) = (; out..., first(vals) => last(vals))
 """
 showParamsOfAllModels(models)
 shows the current parameters of all given models
+"""
+"""
+    showParamsOfAllModels(models)
+
+DOCSTRING
 """
 function showParamsOfAllModels(models)
     for mn in sort([nameof.(supertype.(typeof.(models)))...])
@@ -670,6 +870,11 @@ end
 """
 showParamsOfAModel(models, model::Symbol)
 shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
+"""
+"""
+    showParamsOfAModel(models, model::Symbol)
+
+DOCSTRING
 """
 function showParamsOfAModel(models, model::Symbol)
     model_names = Symbol.(supertype.(typeof.(models)))
@@ -698,6 +903,18 @@ const SindbadParameters = BoundFields(false)
 - a helper function to navigate the input named tuple and annotate types.
 - a random set of colors is chosen per type of the data/field
 - a mixed colored output within a feild usually warrants caution on type mismatches
+"""
+"""
+    tcPrint(d, df = 1; c_olor = true, t_ype = true, istop = true)
+
+DOCSTRING
+
+# Arguments:
+- `d`: DESCRIPTION
+- `df`: DESCRIPTION
+- `c_olor`: DESCRIPTION
+- `t_ype`: DESCRIPTION
+- `istop`: DESCRIPTION
 """
 function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
     colors_types = collectColorForTypes(d; c_olor=c_olor)
@@ -774,6 +991,11 @@ end
 totalS(s, sΔ)
 return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
 """
+"""
+    totalS(s, sΔ)
+
+DOCSTRING
+"""
 function totalS(s, sΔ)
     sm = zero(eltype(s))
     for si ∈ eachindex(s)
@@ -785,6 +1007,11 @@ end
 """
 totalS(s)
 return total storage amount given the storage without creating an allocation for a temporary array
+"""
+"""
+    totalS(s)
+
+DOCSTRING
 """
 function totalS(s)
     sm = zero(eltype(s))
@@ -799,7 +1026,6 @@ macro unpack_forcing(inparams)
     @assert inparams.head == :call || inparams.head == :(=)
     return outputs = processUnpackForcing(inparams)
 end
-
 
 
 macro unpack_land(inparams)
@@ -817,6 +1043,11 @@ end
 """
 valToSymbol(val)
 returns the symbol from which val was created for a type dispatch based on name
+"""
+"""
+    valToSymbol(val)
+
+DOCSTRING
 """
 function valToSymbol(val)
     return typeof(val).parameters[1]

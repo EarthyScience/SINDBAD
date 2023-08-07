@@ -10,6 +10,11 @@ returns
   - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
   - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
+"""
+    getConstraintNames(optim::NamedTuple)
+
+DOCSTRING
+"""
 function getConstraintNames(optim::NamedTuple)
     obsVariables = Symbol.(optim.observational_constraints)
     modelVariables = String[]
@@ -24,17 +29,36 @@ function getConstraintNames(optim::NamedTuple)
     storeVariables = getVariableGroups(modelVariables)
     return obsVariables, optimVariables, storeVariables, modelVariables
 end
+"""
+    getAggrFunc(nothing::Val{:mean})
 
+DOCSTRING
+"""
 function getAggrFunc(::Val{:mean})
     return Sindbad.mean
 end
 
+"""
+    getAggrFunc(nothing::Val{:sum})
+
+DOCSTRING
+"""
 function getAggrFunc(::Val{:sum})
     return Sindbad.sum
 end
+"""
+    getAggrFunc(nothing::Val{:nanMean})
+
+DOCSTRING
+"""
 function getAggrFunc(::Val{:nanMean})
     return Sindbad.nanMean
 end
+"""
+    getAggrFunc(nothing::Val{:nanSum})
+
+DOCSTRING
+"""
 function getAggrFunc(::Val{:nanSum})
     return Sindbad.nanSum
 end
@@ -43,6 +67,17 @@ end
 """
 getCostOptions(optInfo)
 info.opti
+"""
+"""
+    getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
+
+DOCSTRING
+
+# Arguments:
+- `optInfo`: DESCRIPTION
+- `varibInfo`: DESCRIPTION
+- `number_helpers`: DESCRIPTION
+- `dates_helpers`: DESCRIPTION
 """
 function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
     defNames = Symbol.(keys(optInfo.observations.default_cost))
@@ -122,6 +157,11 @@ end
 
 checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
+"""
+    checkOptimizedParametersInModels(info::NamedTuple)
+
+DOCSTRING
+"""
 function checkOptimizedParametersInModels(info::NamedTuple)
     # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
     tbl_params = getParameters(info.tem.models.forward,
@@ -147,7 +187,11 @@ function checkOptimizedParametersInModels(info::NamedTuple)
         end
     end
 end
+"""
+    setupOptimization(info::NamedTuple)
 
+DOCSTRING
+"""
 function setupOptimization(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
 
