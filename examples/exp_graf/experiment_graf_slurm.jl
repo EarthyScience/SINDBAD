@@ -33,7 +33,7 @@ noStackTrace()
 # forcing = (; forcing..., data = (chunkeddata));
 
 
-# TEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
+# simulateTEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this

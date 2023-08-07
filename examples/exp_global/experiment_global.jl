@@ -14,8 +14,6 @@ optimize_it = false;
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "model_run.experiment_flags.run_optimization" => optimize_it,
     "model_run.experiment_flags.run_forward_and_cost" => true,
-    "model_run.mapping.yaxarray" => [],
-    "model_run.mapping.run_ecosystem" => ["time", "id"],
     "model_run.experiment_flags.spinup.run_spinup" => true,
     "model_run.experiment_flags.debug_model" => false,
     "model_run.experiment_flags.spinup.do_spinup" => true);
@@ -29,7 +27,7 @@ GC.gc()
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time TEM!(info.tem.models.forward,
+@time simulateTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -40,7 +38,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 for x ∈ 1:10
-    @time TEM!(info.tem.models.forward,
+    @time simulateTEM!(info.tem.models.forward,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -51,7 +49,7 @@ for x ∈ 1:10
         tem_with_vals)
 end
 
-@profview TEM!(info.tem.models.forward,
+@profview simulateTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,

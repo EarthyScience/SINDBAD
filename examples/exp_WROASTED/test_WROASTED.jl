@@ -37,7 +37,7 @@ replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
     "model_run.output.path" => path_output,
     "model_run.output.format" => "nc",
     "model_run.output.save_single_file" => true,
-    "model_run.mapping.parallelization" => pl,
+    "model_run.experiment_rules.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
@@ -47,7 +47,7 @@ forcing = getForcing(info);
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time TEM!(info.tem.models.forward,
+@time simulateTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -78,7 +78,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-@time TEM!(optimized_models,
+@time simulateTEM!(optimized_models,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,

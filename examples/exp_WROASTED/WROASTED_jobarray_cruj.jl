@@ -118,7 +118,7 @@ for o_set in opti_set
         "model_run.spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
+        "model_run.experiment_rules.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
@@ -140,7 +140,7 @@ for o_set in opti_set
     obs_array = getKeyedArray(observations)
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
-    @time TEM!(optimized_models,
+    @time simulateTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -219,7 +219,7 @@ for o_set in opti_set
 
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
-    @time TEM!(optimized_models,
+    @time simulateTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,

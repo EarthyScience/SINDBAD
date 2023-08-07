@@ -36,7 +36,7 @@ for domain ∈ sites
         "model_run.experiment_flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
+        "model_run.experiment_rules.parallelization" => pl,
         "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
@@ -102,7 +102,7 @@ for domain ∈ sites
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time TEM!(optimized_models,
+    @time simulateTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -162,7 +162,7 @@ for domain ∈ sites
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time TEM!(optimized_models,
+    @time simulateTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,

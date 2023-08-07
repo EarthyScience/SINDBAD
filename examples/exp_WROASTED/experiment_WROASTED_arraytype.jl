@@ -36,7 +36,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
         "model_run.experiment_flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
+        "model_run.experiment_rules.parallelization" => pl,
         "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
@@ -51,7 +51,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
-    @time TEM!(output_array,
+    @time simulateTEM!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
         loc_space_inds,
