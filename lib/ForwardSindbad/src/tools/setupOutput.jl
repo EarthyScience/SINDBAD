@@ -97,7 +97,7 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         ar = nothing
         ax_vals = values(forcing_sizes)
-        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.experiment.data_rules.forward_diff),
+        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.experiment.exe_rules.forward_diff),
             length(values(forcing_sizes)) + 1}(undef,
             ax_vals[1],
             depth_size,
