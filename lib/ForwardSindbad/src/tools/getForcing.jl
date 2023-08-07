@@ -15,7 +15,7 @@ function getDimPermutation(datDims, permDims)
 end
 
 function collectForcingSizes(info, in_yax)
-    time_dim_name = Symbol(info.forcing.dimensions.time)
+    time_dim_name = Symbol(info.forcing.data_dimensions.time)
     dnames = Symbol[]
     dsizes = []
     push!(dnames, time_dim_name)
@@ -24,7 +24,7 @@ function collectForcingSizes(info, in_yax)
     else
         push!(dsizes, length(DimensionalData.lookup(in_yax, time_dim_name)))
     end
-    for space ∈ info.forcing.dimensions.space
+    for space ∈ info.forcing.data_dimensions.space
         push!(dnames, Symbol(space))
         push!(dsizes, length(getproperty(in_yax, Symbol(space))))
     end
@@ -34,7 +34,7 @@ end
 
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
-    f_helpers = setTupleField(f_helpers, (:dimensions, info.forcing.dimensions))
+    f_helpers = setTupleField(f_helpers, (:dimensions, info.forcing.data_dimensions))
     f_helpers = setTupleField(f_helpers, (:axes, f_dimensions))
     if hasproperty(info.forcing, :subset)
         f_helpers = setTupleField(f_helpers, (:subset, info.forcing.subset))
@@ -56,9 +56,9 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
         @info "     -> permuting dimensions to $(tar_dims)..."
         yax = permutedims(yax, permutes)
     end
-    if hasproperty(yax, Symbol(info.forcing.dimensions.time))
-        init_date = DateTime(info.tem.helpers.dates.start_date)
-        last_date = DateTime(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.timestep
+    if hasproperty(yax, Symbol(info.forcing.data_dimensions.time))
+        init_date = DateTime(info.tem.helpers.dates.date_begin)
+        last_date = DateTime(info.tem.helpers.dates.date_end) + info.tem.helpers.dates.timestep
         yax = yax[time=(init_date .. last_date)]
     end
 
@@ -84,7 +84,7 @@ end
 function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing helpers..."
     @info "     ::dimensions::"
-    indims = getDataDims.(incubes, Ref(info.model_run.mapping.yaxarray))
+    indims = getDataDims.(incubes, Ref(info.forcing.data_dimensions.space))
     @info "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
@@ -99,9 +99,9 @@ end
 
 function getTargetDimensionOrder(info)
     tar_dims = nothing
-    if !isnothing(info.forcing.dimensions.permute)
+    if !isnothing(info.forcing.data_dimensions.permute)
         tar_dims = Symbol[]
-        for pd ∈ info.forcing.dimensions.permute
+        for pd ∈ info.forcing.data_dimensions.permute
             tdn = Symbol(pd)
             push!(tar_dims, tdn)
         end
@@ -135,8 +135,8 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::V
     v = nc[source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
         rax = nothing
-        if dn == info.forcing.dimensions.time
-            t = nc[info.forcing.dimensions.time]
+        if dn == info.forcing.data_dimensions.time
+            t = nc[info.forcing.data_dimensions.time]
             rax = Dim{Symbol(dn)}(t[:])
         else
             if dn in keys(nc)
@@ -171,7 +171,7 @@ function getForcing(info::NamedTuple)
     if :sel_mask ∈ keys(info.forcing)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.rules.input_data_backend)))
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.experiment_rules.input_data_backend)))
             forcing_mask = booleanizeMask(forcing_mask)
         end
     end
@@ -187,7 +187,7 @@ function getForcing(info::NamedTuple)
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
-        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.rules.input_data_backend)))
+        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.model_run.experiment_rules.input_data_backend)))
         @info "     source_var: $(vinfo.source_variable)"
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
         @info "     sindbad_var: $(k)\n "

@@ -18,7 +18,7 @@ op = setupOutput(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 
 @time TEM!(info.tem.models.forward,
@@ -33,8 +33,8 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 
 # @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = Sindbad.getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
+    info.optim.model_parameter_default,
+    info.optim.model_parameters_to_optimize);
 
 # @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
@@ -206,7 +206,7 @@ function full_gradient(x, y_real; NNmodel=NNmodel, g_loss=floss, ps_NN=ps_NN, st
     # Jacobian of the process-based model's parameters w.r.t. the
     # Weights of the NN
     NN_grad = Zygote.jacobian(ps -> NNmodel(x, ps, st)[1], ps_NN)[1]
-    # Apply Chain rules to get ∂loss/∂NN_parameters
+    # Apply Chain experiment_rules to get ∂loss/∂NN_parameters
     full_grad = sum(f_grad .* NN_grad; dims=1)
     # Reshape output for the optimization
     return reshape_weight(full_grad, ps_NN)

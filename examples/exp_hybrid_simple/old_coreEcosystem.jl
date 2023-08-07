@@ -12,8 +12,8 @@ obs_array = getKeyedArrayWithNames(observations);
 obsv = getKeyedArray(observations);
 
 tbl_params = getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters)
+    info.optim.model_parameter_default,
+    info.optim.model_parameters_to_optimize)
 
 loc_space_maps,
 loc_space_names,

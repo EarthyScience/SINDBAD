@@ -13,13 +13,11 @@ optimize_it = true;
 
 replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
     "experiment.configuration_files.forcing" => "forcing.json",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
-    "model_run.mapping.yaxarray" => [],
-    "model_run.mapping.run_ecosystem" => ["time", "id"],
-    "model_run.flags.spinup.run_spinup" => true,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.do_spinup" => true);
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => true,
+    "model_run.experiment_flags.spinup.run_spinup" => true,
+    "model_run.experiment_flags.debug_model" => false,
+    "model_run.experiment_flags.spinup.do_spinup" => true);
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
@@ -65,7 +63,7 @@ plotdat = output_array;
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+    vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
     vname = vinfo["standard_name"]
     pd = plotdat[i]
     if size(pd, 2) == 1

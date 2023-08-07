@@ -8,7 +8,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :PET__Tair_prev => orD(
         :standard_name => "Tair_prev",
         :long_name => "Tair_previous_timestep",
-        :units => "degC",
+        :units => "degree_C",
         :land_field => "PET",
         :description => "air temperature in the previous time step"
     ),
@@ -1309,98 +1309,98 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :states__zero_c_eco_flow => orD(
         :standard_name => "zero_c_eco_flow",
-        :long_name => "zero c eco flow",
+        :long_name => "zero_vector_for_c_eco_flow",
         :units => "gC/m2/time",
         :land_field => "states",
         :description => "helper for resetting c_eco_flow in every time step"
     ),
     :states__zero_c_eco_influx => orD(
         :standard_name => "zero_c_eco_influx",
-        :long_name => "zero c eco influx",
+        :long_name => "zero_vector_for_c_eco_influx",
         :units => "gC/m2/time",
         :land_field => "states",
         :description => "helper for resetting c_eco_influx in every time step"
     ),
     :states__ΔTWS => orD(
         :standard_name => "ΔTWS",
-        :long_name => "ΔTWS",
+        :long_name => "delta_change_TWS",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in TWS pool(s)"
     ),
     :states__ΔcEco => orD(
         :standard_name => "ΔcEco",
-        :long_name => "ΔcEco",
+        :long_name => "delta_change_cEco",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in cEco pool(s)"
     ),
     :states__ΔgroundW => orD(
         :standard_name => "ΔgroundW",
-        :long_name => "ΔgroundW",
+        :long_name => "delta_change_groundW",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in groundW pool(s)"
     ),
     :states__ΔsnowW => orD(
         :standard_name => "ΔsnowW",
-        :long_name => "ΔsnowW",
+        :long_name => "delta_change_snowW",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in snowW pool(s)"
     ),
     :states__ΔsoilW => orD(
         :standard_name => "ΔsoilW",
-        :long_name => "ΔsoilW",
+        :long_name => "delta_change_soilW",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in soilW pool(s)"
     ),
     :states__ΔsurfaceW => orD(
         :standard_name => "ΔsurfaceW",
-        :long_name => "ΔsurfaceW",
+        :long_name => "delta_change_surfaceW",
         :units => "mm",
         :land_field => "states",
         :description => "change in water storage in surfaceW pool(s)"
     ),
     :wCycleBase__n_TWS => orD(
         :standard_name => "n_TWS",
-        :long_name => "n TWS",
+        :long_name => "num_layers_TWS",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "total number of water pools"
     ),
     :wCycleBase__n_groundW => orD(
         :standard_name => "n_groundW",
-        :long_name => "n groundW",
+        :long_name => "num_layers_groundW",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "total number of layers in groundwater pool"
     ),
     :wCycleBase__n_snowW => orD(
         :standard_name => "n_snowW",
-        :long_name => "n snowW",
+        :long_name => "num_layers_snowW",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "total number of layers in snow pool"
     ),
     :wCycleBase__n_soilW => orD(
         :standard_name => "n_soilW",
-        :long_name => "n soilW",
+        :long_name => "num_layers_soilW",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "total number of layers in soil moisture pool"
     ),
     :wCycleBase__n_surfaceW => orD(
         :standard_name => "n_surfaceW",
-        :long_name => "n surfaceW",
+        :long_name => "num_layers_surfaceW",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "total number of layers in surface water pool"
     ),
     :wCycleBase__o_one => orD(
         :standard_name => "o_one",
-        :long_name => "o one",
+        :long_name => "type_stable_one",
         :units => "numver",
         :land_field => "wCycleBase",
         :description => "a helper type stable 1 to be used across all models"
@@ -1414,14 +1414,14 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :wCycleBase__z_zero => orD(
         :standard_name => "z_zero",
-        :long_name => "z zero",
+        :long_name => "type_stable_zero",
         :units => "number",
         :land_field => "wCycleBase",
         :description => "a helper type stable 0 to be used across all models"
     ),
     :states__water_balance => orD(
         :standard_name => "water_balance",
-        :long_name => "water balance",
+        :long_name => "water_balance_error",
         :units => "mm",
         :land_field => "states",
         :description => "misbalance of the water for the given time step calculated as the differences between total input, output and change in storages"

@@ -8,7 +8,7 @@ export replaceCommaSeparatorParams
 
 function convertRunFlagsToVal(info)
     new_run = (;)
-    dr = info.model_run.flags
+    dr = info.model_run.experiment_flags
     for pr in propertynames(dr)
         prf = getfield(dr, pr)
         prtoset = Val(prf)
@@ -229,10 +229,10 @@ function replaceCommaSeparatorParams(p_names_list)
 end
 
 """
-getParameters(selectedModels, default_parameter)
+getParameters(selectedModels, model_parameter_default)
 retrieve all model parameters
 """
-function getParameters(selectedModels, default_parameter)
+function getParameters(selectedModels, model_parameter_default)
     default = [flatten(selectedModels)...]
     constrains = metaflatten(selectedModels, Models.bounds)
     nbounds = length(constrains)
@@ -243,11 +243,11 @@ function getParameters(selectedModels, default_parameter)
     model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
     name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
     approach_func = [getfield(Models, m) for m ∈ model_approach]
-    dp_dist = typeof(default[1]).(default_parameter[:distribution][2])
+    dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
     # dp_dist = Tuple(dp_dist)
-    dist = [default_parameter[:distribution][1] for m ∈ model_approach]
+    dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
     p_dist = [dp_dist for m ∈ model_approach]
-    is_ml = [default_parameter.is_ml for m ∈ model_approach]
+    is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
     return Table(;
         name,
         default,
@@ -264,12 +264,12 @@ function getParameters(selectedModels, default_parameter)
 end
 
 """
-getParameters(selectedModels, default_parameter, listModelsParams::Vector{String})
+getParameters(selectedModels, model_parameter_default, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
-function getParameters(selectedModels, default_parameter, opt_parameter::Vector)
+function getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    paramstbl = getParameters(selectedModels, default_parameter)
+    paramstbl = getParameters(selectedModels, model_parameter_default)
     return filter(row -> row.name_full in opt_parameter, paramstbl)
 end
 
@@ -277,9 +277,9 @@ end
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
-function getParameters(selectedModels, default_parameter, opt_parameter::NamedTuple)
+function getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    paramstbl = getParameters(selectedModels, default_parameter, param_list)
+    paramstbl = getParameters(selectedModels, model_parameter_default, param_list)
     pTable = filter(row -> row.name_full in param_list, paramstbl)
     new_dist = pTable.dist
     new_p_dist = pTable.p_dist
@@ -684,18 +684,18 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.time.model_timestep == "day"
+    if info.model_run.experiment_time .timestep == "day"
         timestep = Day(1)
-        # time_range = collect((Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)))
-        time_range = Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)
-    elseif info.model_run.time.model_timestep == "hour"
+        # time_range = collect((Date(info.model_run.experiment_time .date_begin):Day(1):Date(info.model_run.experiment_time .date_end)))
+        time_range = Date(info.model_run.experiment_time .date_begin):Day(1):Date(info.model_run.experiment_time .date_end)
+    elseif info.model_run.experiment_time .timestep == "hour"
         timestep = Month(1)
         time_range =
-            Date(info.model_run.time.start_date):Hour(1):Date(info.model_run.time.end_date)
-        # collect((Date(info.model_run.time.start_date):Hour(1):Date(info.model_run.time.end_date)))
+            Date(info.model_run.experiment_time .date_begin):Hour(1):Date(info.model_run.experiment_time .date_end)
+        # collect((Date(info.model_run.experiment_time .date_begin):Hour(1):Date(info.model_run.experiment_time .date_end)))
     else
         error(
-            "Sindbad only supports hourly and daily simulation. Change time.model_timestep in model_run.json"
+            "Sindbad only supports hourly and daily simulation. Change time.timestep in model_run.json"
         )
     end
     tmpDates = setTupleField(tmpDates, (:timestep, timestep)) #needs to come from the date vector
@@ -773,7 +773,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
     tmpStates = (;)
     hlpStates = (;)
-    arrayType = Symbol(info.model_run.rules.model_array_type)
+    arrayType = Symbol(info.model_run.experiment_rules.model_array_type)
 
     for element ∈ elements
         valsTuple = (;)
@@ -962,8 +962,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleField(tmpElem, (:state_variables, state_variables))
         end
         arraytype = :view
-        if hasproperty(info.model_run.rules, :model_array_type)
-            arraytype = Symbol(info.model_run.rules.model_array_type)
+        if hasproperty(info.model_run.experiment_rules, :model_array_type)
+            arraytype = Symbol(info.model_run.experiment_rules.model_array_type)
         end
         tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
         tmpElem = setTupleField(tmpElem, (:create, create))
@@ -1131,7 +1131,7 @@ end
 
 
 """
-    prepNumericHelpers(info, ttype=info.model_run.rules.data_type)
+    prepNumericHelpers(info, ttype=info.model_run.experiment_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
@@ -1140,22 +1140,22 @@ function prepNumericHelpers(info::NamedTuple, ttype)
     𝟘 = num_type(0.0)
     𝟙 = num_type(1.0)
 
-    tolerance = num_type(info.model_run.rules.tolerance)
+    tolerance = num_type(info.model_run.experiment_rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.model_run.rules.data_type)
+    if occursin("ForwardDiff.Dual", info.model_run.experiment_rules.data_type)
         tag_type = ForwardDiff.tagtype(𝟘)
         @show tag_type, num_type
         try
             sNT = (a) -> num_type(tag_type(a))
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.model_run.rules.tolerance)
+            tolerance = sNT(info.model_run.experiment_rules.tolerance)
         catch
             sNT = (a) -> num_type(a)
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.model_run.rules.tolerance)
+            tolerance = sNT(info.model_run.experiment_rules.tolerance)
         end
     end
     num_helpers = (;
@@ -1169,11 +1169,11 @@ function prepNumericHelpers(info::NamedTuple, ttype)
 end
 
 """
-    setNumericHelpers(info, ttype=info.model_run.rules.data_type)
+    setNumericHelpers(info, ttype=info.model_run.experiment_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
-function setNumericHelpers(info::NamedTuple, ttype=info.model_run.rules.data_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.model_run.experiment_rules.data_type)
     num_helpers = prepNumericHelpers(info, ttype)
     info = (;
         info...,
@@ -1243,7 +1243,7 @@ function getLoopingInfo(info::NamedTuple)
     run_vals = convertRunFlagsToVal(info)
     run_info = (; run_vals..., (output_all = Val(info.model_run.output.all)))
     # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, Val(info.model_run.rules.forward_diff)))
+    run_info = setTupleField(run_info, (:forward_diff, Val(info.model_run.experiment_rules.forward_diff)))
     run_info = setTupleField(run_info,
         (:parallelization, Val(Symbol(info.model_run.mapping.parallelization))))
     return run_info
@@ -1258,10 +1258,10 @@ function getRestartFilePath(info::NamedTuple)
     restart_file_in = info.model_run.spinup.paths.restart_file_in
     restart_file_out = info.model_run.spinup.paths.restart_file_out
     restart_file = nothing
-    if info.model_run.flags.spinup.save_spinup
+    if info.model_run.experiment_flags.spinup.save_spinup
         if isnothing(restart_file_out)
             error(
-                "info.model_run.spinup.paths.restartFile is null, but info.model_run.flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
+                "info.model_run.spinup.paths.restartFile is null, but info.model_run.experiment_flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
             )
         else
             # ensure that the output file for spinup is jld2 format
@@ -1281,15 +1281,15 @@ function getRestartFilePath(info::NamedTuple)
         end
     end
 
-    if info.model_run.flags.spinup.load_spinup
+    if info.model_run.experiment_flags.spinup.load_spinup
         if isnothing(restart_file_in)
             error(
-                "info.model_run.spinup.paths.restartFile is null, but info.model_run.flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
+                "info.model_run.spinup.paths.restartFile is null, but info.model_run.experiment_flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
             )
         else
             if restart_file_in[(end-4):end] != ".jld2"
                 error(
-                    "info.model_run.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.model_run.flags.spinup.load_spinup to false."
+                    "info.model_run.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.model_run.experiment_flags.spinup.load_spinup to false."
                 )
             end
             if isabspath(restart_file_in)
@@ -1352,7 +1352,7 @@ function setupExperiment(info::NamedTuple)
         for kk in keys(seq)
             if kk == "forcing"
                 is_model_timestep = false
-                if startswith(kk, info.tem.helpers.dates.model_timestep)
+                if startswith(kk, info.tem.helpers.dates.timestep)
                     is_model_timestep = true
                 end
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_timestep)
@@ -1371,16 +1371,16 @@ function setupExperiment(info::NamedTuple)
 
     infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
-    if getBool(info.model_run.flags.run_optimization) || getBool(info.tem.helpers.run.run_forward_and_cost)
+    if getBool(info.model_run.experiment_flags.run_optimization) || getBool(info.tem.helpers.run.run_forward_and_cost)
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end
     # adjust the model variable list for different model runSpinup
     sel_vars = nothing
-    if info.model_run.flags.run_optimization
+    if info.model_run.experiment_flags.run_optimization
         sel_vars = info.optim.variables.store
     elseif getBool(info.tem.helpers.run.run_forward_and_cost)
-        if getBool(info.model_run.flags.run_forward)
+        if getBool(info.model_run.experiment_flags.run_forward)
             sel_vars = getVariableGroups(
                 union(String.(keys(info.model_run.output.variables)),
                     info.optim.variables.model)
