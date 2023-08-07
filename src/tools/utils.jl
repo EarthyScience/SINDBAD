@@ -15,6 +15,7 @@ export @pack_land, @unpack_land, @unpack_forcing
 export removeEmptyTupleFields
 export returnIt
 export setComponentFromMainPool, setMainFromComponentPool
+export setLogLevel
 export setTupleField, setTupleSubfield
 export showParamsOfAModel
 export showParamsOfAllModels
@@ -582,6 +583,20 @@ end
     return output
 end
 
+function setLogLevel(log_level)
+    logger = ConsoleLogger(stderr, Logging.Info)
+    if log_level == :debug
+        logger = ConsoleLogger(stderr, Logging.Debug)
+    elseif log_level == :warn
+        logger = ConsoleLogger(stderr, Logging.Warning)
+    elseif log_level == :error
+        logger = ConsoleLogger(stderr, Logging.Warning)
+    elseif isnothing(log_level)
+        logger = ConsoleLogger(stderr, Logging.Info)
+    end
+    global_logger(logger)
+end
+    
 
 """
     setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
