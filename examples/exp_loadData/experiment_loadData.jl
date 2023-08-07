@@ -13,7 +13,7 @@ path_output = nothing
 domain = "DE-Hai"
 
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
-    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.config_files.forcing" => forcingConfig,
     "experiment.basics.domain" => domain,
     "experiment.basics.time.date_end" => eYear * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,

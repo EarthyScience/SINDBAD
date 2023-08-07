@@ -69,7 +69,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
     replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "experiment.data_rules.model_array_type" => arraymethod,
+        "experiment.exe_rules.model_array_type" => arraymethod,
         "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
