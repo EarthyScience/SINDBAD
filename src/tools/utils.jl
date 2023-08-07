@@ -30,13 +30,9 @@ end
 
 
 """
-    collectColorForTypes(d; c_olor=true)
-utility function to collect colors for all types from nested namedtuples
-"""
-"""
     collectColorForTypes(d; c_olor = true)
 
-DOCSTRING
+utility function to collect colors for all types from nested namedtuples
 """
 function collectColorForTypes(d; c_olor=true)
     all_types = []
@@ -53,15 +49,10 @@ function collectColorForTypes(d; c_olor=true)
     return c_types
 end
 
-
-"""
-clamp01(num)
-returns max(min(num, 1), 0)
-"""
 """
     clamp01(num)
 
-DOCSTRING
+returns max(min(num, 1), 0)
 """
 function clamp01(num)
     return clamp(num, zero(num), one(num))
@@ -72,11 +63,6 @@ end
 
 fill out the output vector with the cumulative sum of elements from input vector
 """
-"""
-    cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
-
-DOCSTRING
-"""
 function cumSum!(i_n::AbstractVector, o_ut::AbstractVector)
     for i ∈ eachindex(i_n)
         o_ut[i] = sum(i_n[1:i])
@@ -86,14 +72,9 @@ end
 
 
 """
-    dictToNamedTuple(d::DataStructures.OrderedDict)
-
-covert nested dictionary to NamedTuple
-"""
-"""
     dictToNamedTuple(d::AbstractDict)
 
-DOCSTRING
+covert nested dictionary to NamedTuple
 """
 function dictToNamedTuple(d::AbstractDict)
     for k ∈ keys(d)
@@ -159,16 +140,10 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     return nothing
 end
 
-
 """
     flagOffDiag(A::AbstractMatrix)
 
 returns a matrix of same shape as input with 1 for all non diagonal elements
-"""
-"""
-    flagOffDiag(A::AbstractMatrix)
-
-DOCSTRING
 """
 function flagOffDiag(A::AbstractMatrix)
     o_mat = zeros(size(A))
@@ -185,11 +160,6 @@ end
 
 returns a matrix of same shape as input with 1 for all above diagonal elements and 0 elsewhere
 """
-"""
-    flagUpper(A::AbstractMatrix)
-
-DOCSTRING
-"""
 function flagUpper(A::AbstractMatrix)
     o_mat = zeros(size(A))
     for ι ∈ CartesianIndices(A)
@@ -205,11 +175,6 @@ end
 
 returns a matrix of same shape as input with 1 for all below diagonal elements and 0 elsewhere
 """
-"""
-    flagLower(A::AbstractMatrix)
-
-DOCSTRING
-"""
 function flagLower(A::AbstractMatrix)
     o_mat = zeros(size(A))
     for ι ∈ CartesianIndices(A)
@@ -219,6 +184,7 @@ function flagLower(A::AbstractMatrix)
     end
     return o_mat
 end
+
 """
     getBool(var::Bool)
 
@@ -227,6 +193,7 @@ DOCSTRING
 function getBool(var::Bool)
     return var
 end
+
 """
     getBool(var)
 
@@ -237,13 +204,9 @@ function getBool(var)
 end
 
 """
-getFrac(num, den)
-return either a ratio or numerator depending on whether denomitor is a zero
-"""
-"""
     getFrac(num, den)
 
-DOCSTRING
+return either a ratio or numerator depending on whether denomitor is a zero
 """
 function getFrac(num, den)
     if !iszero(den)
@@ -260,11 +223,6 @@ end
 
 helper function to return a table of sindbad model and approaches
 """
-"""
-    getSindbadModels()
-
-DOCSTRING
-"""
 function getSindbadModels()
     approaches = []
 
@@ -276,13 +234,9 @@ function getSindbadModels()
 end
 
 """
-getTypes!(d, all_types)
-utility function to collect all types from nested namedtuples
-"""
-"""
     getTypes!(d, all_types)
 
-DOCSTRING
+utility function to collect all types from nested namedtuples
 """
 function getTypes!(d, all_types)
     for k ∈ keys(d)
@@ -297,13 +251,9 @@ function getTypes!(d, all_types)
 end
 
 """
-getZix(dat::SubArray)
-returns the indices of a view for a subArray
-"""
-"""
     getZix(dat::SubArray)
 
-DOCSTRING
+returns the indices of a view for a subArray
 """
 function getZix(dat::SubArray)
     return first(parentindices(dat))
@@ -313,6 +263,7 @@ end
 getZix(dat::SubArray)
 returns the indices of a view for a subArray
 """
+
 """
     getZix(dat::SubArray, zixhelpersPool)
 
@@ -326,6 +277,7 @@ end
 getZix(dat::Array)
 returns the indices of a view for a subArray
 """
+
 """
     getZix(dat::Array, zixhelpersPool)
 
@@ -339,6 +291,7 @@ end
 getZix(dat::SVector)
 returns the indices of a view for a subArray
 """
+
 """
     getZix(dat::SVector, zixhelpersPool)
 
@@ -354,6 +307,7 @@ end
 max0(num)
 returns max(num, 0)
 """
+
 """
     max0(num)
 
@@ -368,6 +322,7 @@ end
 max1(num)
 returns max(num, 1)
 """
+
 """
     max1(num)
 
@@ -382,6 +337,7 @@ end
 min0(num)
 returns min(num, 0)
 """
+
 """
     min0(num)
 
@@ -396,6 +352,7 @@ end
 min1(num)
 returns min(num, 1)
 """
+
 """
     min1(num)
 
@@ -443,6 +400,7 @@ nanSum(dat) = sum(filter(!isnan, dat))
 
 returns a vector of duplicates in the input vector
 """
+
 """
     nonUnique(x::AbstractArray{T})
 
@@ -468,6 +426,7 @@ end
 
 Modifies Base.show to reduce the size of error stacktrace of sindbad
 """
+
 """
     noStackTrace()
 
@@ -485,6 +444,7 @@ end
 
 returns a vector comprising of off diagonal elements of a matrix
 """
+
 """
     offDiag(A::AbstractMatrix)
 
@@ -499,6 +459,7 @@ end
 
 returns a vector comprising of above diagonal elements of a matrix
 """
+
 """
     offDiagUpper(A::AbstractMatrix)
 
@@ -513,6 +474,7 @@ end
 
 returns a vector comprising of below diagonal elements of a matrix
 """
+
 """
     offDiagLower(A::AbstractMatrix)
 
@@ -664,6 +626,7 @@ end
 """
 removeEmptyTupleFields(tpl)
 """
+
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 
@@ -680,6 +643,7 @@ end
 
 return the input as is
 """
+
 """
     returnIt(dat)
 
@@ -696,6 +660,7 @@ end
 - sets the component pools value using the values for the main pool
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
+
 """
     setComponentFromMainPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
 
@@ -781,6 +746,7 @@ end
 - sets the main pool from the values of the component pools
 - name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 """
+
 """
     setMainFromComponentPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
 
@@ -853,6 +819,7 @@ setTupleField(out, vals) = (; out..., first(vals) => last(vals))
 showParamsOfAllModels(models)
 shows the current parameters of all given models
 """
+
 """
     showParamsOfAllModels(models)
 
@@ -871,6 +838,7 @@ end
 showParamsOfAModel(models, model::Symbol)
 shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
 """
+
 """
     showParamsOfAModel(models, model::Symbol)
 
@@ -904,6 +872,7 @@ const SindbadParameters = BoundFields(false)
 - a random set of colors is chosen per type of the data/field
 - a mixed colored output within a feild usually warrants caution on type mismatches
 """
+
 """
     tcPrint(d, df = 1; c_olor = true, t_ype = true, istop = true)
 
@@ -991,6 +960,7 @@ end
 totalS(s, sΔ)
 return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
 """
+
 """
     totalS(s, sΔ)
 
@@ -1008,6 +978,7 @@ end
 totalS(s)
 return total storage amount given the storage without creating an allocation for a temporary array
 """
+
 """
     totalS(s)
 
@@ -1044,6 +1015,7 @@ end
 valToSymbol(val)
 returns the symbol from which val was created for a type dispatch based on name
 """
+
 """
     valToSymbol(val)
 

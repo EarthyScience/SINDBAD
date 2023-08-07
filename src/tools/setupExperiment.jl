@@ -33,6 +33,7 @@ end
 parseSaveCode(info)
 parse and save the code and structs of selected model structure for the given experiment
 """
+
 """
     parseSaveCode(info)
 
@@ -189,6 +190,7 @@ end
 getParameters(selectedModels)
 retrieve all model parameters
 """
+
 """
     getParameters(selectedModels)
 
@@ -258,6 +260,7 @@ end
 getParameters(selectedModels, model_parameter_default)
 retrieve all model parameters
 """
+
 """
     getParameters(selectedModels, model_parameter_default)
 
@@ -298,6 +301,7 @@ end
 getParameters(selectedModels, model_parameter_default, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
+
 """
     getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
 
@@ -318,6 +322,7 @@ end
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
+
 """
     getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
 
@@ -359,6 +364,7 @@ end
 """
 updateParameters(tbl_params, selected_models)
 """
+
 """
     updateModelParameters(tbl_params::Table, selected_models::Tuple)
 
@@ -398,6 +404,7 @@ end
 updateModelParametersType(tbl_params, selected_models, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
 """
+
 """
     updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
 
@@ -472,6 +479,7 @@ end
 updateModelParameters(tbl_params, selected_models, pVector)
 does not depend on the mutated table of parameters
 """
+
 """
     updateModelParameters(tbl_params, selected_models::Tuple, pVector)
 
@@ -514,6 +522,7 @@ end
 
 checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl.
 """
+
 """
     checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
 
@@ -540,6 +549,7 @@ returns a list of models reordered according to orders provided in model_structu
   - models cannot be set before getPools or after cCycle
     USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
 """
+
 """
     changeModelOrder(info::NamedTuple, selModels::AbstractArray)
 
@@ -622,6 +632,7 @@ gets the ordered list of selected models from info.model_structure.models
   - orders them as given in sindbad_models in models.jl.
   - consistency check using checkSelectedModels for the existence of user-provided model.
 """
+
 """
     getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
 
@@ -647,6 +658,7 @@ updates the model parameters based on input from params.json
 
   - new table with the optimised/modified values from params.json.
 """
+
 """
     setInputParameters(original_table::Table, updated_table::Table)
 
@@ -678,6 +690,7 @@ end
 
   - get Sindbad model, and instatiate them with the datatype set in model_run
 """
+
 """
     getTypedModel(model, sNT)
 
@@ -712,6 +725,7 @@ sets the spinup and forward subfields of info.tem.models to select a separated s
   - relies on use4spinup flag in model_structure
   - by design, the spinup models should be subset of forward models
 """
+
 """
     getSpinupAndForwardModels(info::NamedTuple)
 
@@ -779,6 +793,7 @@ end
 
 fills info.tem.helpers.dates with date and time related fields needed in the models.
 """
+
 """
     generateDatesInfo(info::NamedTuple)
 
@@ -820,6 +835,7 @@ end
 
 A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
 """
+
 """
     getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename = , num_type = Float64)
 
@@ -896,6 +912,7 @@ end
 
 generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
 """
+
 """
     generatePoolsInfo(info::NamedTuple)
 
@@ -1195,6 +1212,7 @@ end
 
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array.
 """
+
 """
     getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
@@ -1248,6 +1266,7 @@ end
 
 returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
 """
+
 """
     getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
@@ -1313,6 +1332,7 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
+
 """
     prepNumericHelpers(info::NamedTuple, ttype)
 
@@ -1356,6 +1376,7 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
+
 """
     setNumericHelpers(info::NamedTuple, ttype)
 
@@ -1373,6 +1394,7 @@ end
     getNumberType(t::String)
 A helper function to get the number type from the specified string
 """
+
 """
     getNumberType(t::String)
 
@@ -1387,6 +1409,7 @@ end
     getNumberType(t::DataType)
 A helper function to get the number type from the specified string
 """
+
 """
     getNumberType(t::DataType)
 
@@ -1401,6 +1424,7 @@ end
 
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
 """
+
 """
     getVariableGroups(varList::AbstractArray)
 
@@ -1431,6 +1455,7 @@ end
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
+
 """
     getVariablesToStore(info::NamedTuple)
 
@@ -1447,6 +1472,7 @@ end
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
+
 """
     getLoopingInfo(info::NamedTuple)
 
@@ -1467,6 +1493,7 @@ end
 
 Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
+
 """
     getRestartFilePath(info::NamedTuple)
 
@@ -1530,6 +1557,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+
 """
     setupExperiment(info::NamedTuple)
 
