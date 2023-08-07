@@ -64,7 +64,7 @@ function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     if getBool(info.tem.helpers.run.run_optimization)
         run_output = runExperiment(info, forcing, output, Val(:opti))
     end
-    if getBool(info.tem.helpers.run.run_forward_and_cost) && !getBool(info.tem.helpers.run.run_optimization)
+    if getBool(info.tem.helpers.run.calc_cost) && !getBool(info.tem.helpers.run.run_optimization)
         run_output = runExperiment(info, forcing, Val(:cost))
     end
     return run_output

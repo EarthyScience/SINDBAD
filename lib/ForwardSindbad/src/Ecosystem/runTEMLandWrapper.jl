@@ -118,7 +118,7 @@ runEcosystem(selected_models, forcing, land_init, tem)
 """
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
-    land_time_series = coreTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    land_time_series = coreTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -131,7 +131,7 @@ function runTEM(
     forcing_one_timestep,
     land_init::NamedTuple,
     tem_with_vals::NamedTuple)
-    land_time_series = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    land_time_series = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -146,7 +146,7 @@ function runTEM(
     land_time_series,
     land_init::NamedTuple,
     tem_with_vals::NamedTuple)
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 

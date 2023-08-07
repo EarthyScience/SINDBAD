@@ -121,12 +121,12 @@ for site_index in sites
         "forcing.default_forcing.data_path" => path_input,
         "experiment.basics.time.date_end" => eYear * "-12-31",
         "experiment.flags.run_optimization" => false,
-        "experiment.flags.run_forward_and_cost" => true,
+        "experiment.flags.calc_cost" => true,
         "experiment.flags.spinup.save_spinup" => false,
         "experiment.flags.catch_model_errors" => false,
-        "experiment.flags.spinup.run_spinup" => true,
+        "experiment.flags.spinup.spinup_TEM" => true,
         "experiment.flags.debug_model" => false,
-        "experiment.flags.spinup.do_spinup" => true,
+        "experiment.flags.spinup.run_spinup" => true,
         "experiment.model_spinup.sequence" => sequence[2:end],
         "experiment.model_output.path" => path_output,
         "experiment.exe_rules.parallelization" => pl,
@@ -253,7 +253,7 @@ for site_index in sites
             ##plot more diagnostic figures for sindbad jl
 
             replace_info["experiment.flags.run_optimization"] = false
-            replace_info["experiment.flags.run_forward_and_cost"] = false
+            replace_info["experiment.flags.calc_cost"] = false
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
