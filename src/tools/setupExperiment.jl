@@ -8,7 +8,7 @@ export replaceCommaSeparatorParams
 
 function convertRunFlagsToVal(info)
     new_run = (;)
-    dr = info.model_run.experiment_flags
+    dr = info.experiment.flags
     for pr in propertynames(dr)
         prf = getfield(dr, pr)
         prtoset = Val(prf)
@@ -31,16 +31,16 @@ parse and save the code and structs of selected model structure for the given ex
 """
 function parseSaveCode(info)
     models = info.tem.models.forward
-    outfile_define = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_definitions.jl")
-    outfile_code = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_functions.jl")
-    outfile_struct = joinpath(info.output.code, info.experiment.name * "_" * info.experiment.domain * "_model_structs.jl")
+    outfile_define = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_definitions.jl")
+    outfile_code = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_structs.jl")
     fallback_code_define = nothing
     fallback_code_precompute = nothing
     fallback_code_compute = nothing
 
     # write define
     open(outfile_define, "w") do o_file
-        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
@@ -77,8 +77,8 @@ function parseSaveCode(info)
 
     #write precompute and compute
     open(outfile_code, "w") do o_file
-        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
-        mod_string = "# code for models of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
+        mod_string = "# code for models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
         write(o_file, mod_string)
@@ -125,7 +125,7 @@ function parseSaveCode(info)
 
     # write structs
     open(outfile_struct, "w") do o_file
-        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.name) experiment applied to $(info.experiment.domain) domain\n"
+        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
         write(o_file, mod_string)
         mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
         write(o_file, mod_string)
@@ -675,7 +675,7 @@ fills info.tem.helpers.dates with date and time related fields needed in the mod
 """
 function generateDatesInfo(info::NamedTuple)
     tmpDates = (;)
-    timeData = getfield(info.model_run, :experiment_time)
+    timeData = getfield(info.experiment.basics, :time)
     timeProps = propertynames(timeData)
     for timeProp ∈ timeProps
         propVal = getfield(timeData, timeProp)
@@ -684,19 +684,19 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.experiment_time.temporal_resolution == "day"
+    if info.experiment.basics.time.temporal_resolution == "day"
         timestep = Day(1)
-        time_range = Date(info.model_run.experiment_time.date_begin):Day(1):Date(info.model_run.experiment_time.date_end)
-    elseif info.model_run.experiment_time.temporal_resolution == "hour"
+        time_range = Date(info.experiment.basics.time.date_begin):Day(1):Date(info.experiment.basics.time.date_end)
+    elseif info.experiment.basics.time.temporal_resolution == "hour"
         timestep = Month(1)
         time_range =
-            Date(info.model_run.experiment_time.date_begin):Hour(1):Date(info.model_run.experiment_time.date_end)
+            Date(info.experiment.basics.time.date_begin):Hour(1):Date(info.experiment.basics.time.date_end)
     else
         error(
             "Sindbad only supports hourly and daily simulation. Change time.timestep in model_run.json"
         )
     end
-    tmpDates = setTupleField(tmpDates, (:temporal_resolution, info.model_run.experiment_time.temporal_resolution))
+    tmpDates = setTupleField(tmpDates, (:temporal_resolution, info.experiment.basics.time.temporal_resolution))
     tmpDates = setTupleField(tmpDates, (:timestep, timestep))
     tmpDates = setTupleField(tmpDates, (:range, time_range))
     tmpDates = setTupleField(tmpDates, (:size, length(time_range)))
@@ -772,7 +772,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
     tmpStates = (;)
     hlpStates = (;)
-    arrayType = Symbol(info.model_run.experiment_rules.model_array_type)
+    arrayType = Symbol(info.experiment.data_rules.model_array_type)
 
     for element ∈ elements
         valsTuple = (;)
@@ -961,8 +961,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleField(tmpElem, (:state_variables, state_variables))
         end
         arraytype = :view
-        if hasproperty(info.model_run.experiment_rules, :model_array_type)
-            arraytype = Symbol(info.model_run.experiment_rules.model_array_type)
+        if hasproperty(info.experiment.data_rules, :model_array_type)
+            arraytype = Symbol(info.experiment.data_rules.model_array_type)
         end
         tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
         tmpElem = setTupleField(tmpElem, (:create, create))
@@ -1130,7 +1130,7 @@ end
 
 
 """
-    prepNumericHelpers(info, ttype=info.model_run.experiment_rules.data_type)
+    prepNumericHelpers(info, ttype=info.experiment.data_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
@@ -1139,22 +1139,22 @@ function prepNumericHelpers(info::NamedTuple, ttype)
     𝟘 = num_type(0.0)
     𝟙 = num_type(1.0)
 
-    tolerance = num_type(info.model_run.experiment_rules.tolerance)
+    tolerance = num_type(info.experiment.data_rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.model_run.experiment_rules.data_type)
+    if occursin("ForwardDiff.Dual", info.experiment.data_rules.data_type)
         tag_type = ForwardDiff.tagtype(𝟘)
         @show tag_type, num_type
         try
             sNT = (a) -> num_type(tag_type(a))
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.model_run.experiment_rules.tolerance)
+            tolerance = sNT(info.experiment.data_rules.tolerance)
         catch
             sNT = (a) -> num_type(a)
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.model_run.experiment_rules.tolerance)
+            tolerance = sNT(info.experiment.data_rules.tolerance)
         end
     end
     num_helpers = (;
@@ -1168,11 +1168,11 @@ function prepNumericHelpers(info::NamedTuple, ttype)
 end
 
 """
-    setNumericHelpers(info, ttype=info.model_run.experiment_rules.data_type)
+    setNumericHelpers(info, ttype=info.experiment.data_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
-function setNumericHelpers(info::NamedTuple, ttype=info.model_run.experiment_rules.data_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.experiment.data_rules.data_type)
     num_helpers = prepNumericHelpers(info, ttype)
     info = (;
         info...,
@@ -1228,7 +1228,7 @@ end
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
 function getVariablesToStore(info::NamedTuple)
-    writeStoreVars = getVariableGroups(collect(propertynames(info.model_run.output.variables)))
+    writeStoreVars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
     return info
 end
@@ -1240,27 +1240,27 @@ sets info.tem.variables as the union of variables to write and store from model_
 """
 function getLoopingInfo(info::NamedTuple)
     run_vals = convertRunFlagsToVal(info)
-    run_info = (; run_vals..., (output_all = Val(info.model_run.output.all)))
+    run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
     # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, Val(info.model_run.experiment_rules.forward_diff)))
+    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.data_rules.forward_diff)))
     run_info = setTupleField(run_info,
-        (:parallelization, Val(Symbol(info.model_run.experiment_rules.parallelization))))
+        (:parallelization, Val(Symbol(info.experiment.data_rules.parallelization))))
     return run_info
 end
 
 """
     getRestartFilePath(info)
 
-Checks if the restartFile in model_run.spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
+Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
-    restart_file_in = info.model_run.spinup.paths.restart_file_in
-    restart_file_out = info.model_run.spinup.paths.restart_file_out
+    restart_file_in = info.experiment.model_spinup.paths.restart_file_in
+    restart_file_out = info.experiment.model_spinup.paths.restart_file_out
     restart_file = nothing
-    if info.model_run.experiment_flags.spinup.save_spinup
+    if info.experiment.flags.spinup.save_spinup
         if isnothing(restart_file_out)
             error(
-                "info.model_run.spinup.paths.restartFile is null, but info.model_run.experiment_flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
+                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.save_spinup is set to true. Cannot continue. Either give a path for restartFile or set saveSpinup to false"
             )
         else
             # ensure that the output file for spinup is jld2 format
@@ -1275,20 +1275,20 @@ function getRestartFilePath(info::NamedTuple)
             info = (;
                 info...,
                 spinup=(;
-                    info.model_run.spinup...,
-                    paths=(; info.model_run.spinup.paths..., restart_file_out=restart_file)))
+                    info.experiment.model_spinup...,
+                    paths=(; info.experiment.model_spinup.paths..., restart_file_out=restart_file)))
         end
     end
 
-    if info.model_run.experiment_flags.spinup.load_spinup
+    if info.experiment.flags.spinup.load_spinup
         if isnothing(restart_file_in)
             error(
-                "info.model_run.spinup.paths.restartFile is null, but info.model_run.experiment_flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
+                "info.experiment.model_spinup.paths.restartFile is null, but info.experiment.flags.spinup.load_spinup is set to true. Cannot continue. Either give a path for restartFile or set loadSpinup to false"
             )
         else
             if restart_file_in[(end-4):end] != ".jld2"
                 error(
-                    "info.model_run.spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.model_run.experiment_flags.spinup.load_spinup to false."
+                    "info.experiment.model_spinup.paths.restartFile has a file ending other than .jld2. Only jld2 files are supported for loading spinup. Either give a correct file or set info.experiment.flags.spinup.load_spinup to false."
                 )
             end
             if isabspath(restart_file_in)
@@ -1300,8 +1300,8 @@ function getRestartFilePath(info::NamedTuple)
         info = (;
             info...,
             spinup=(;
-                info.model_run.spinup...,
-                paths=(; info.model_run.spinup.paths..., restart_file_in=restart_file)))
+                info.experiment.model_spinup...,
+                paths=(; info.experiment.model_spinup.paths..., restart_file_in=restart_file)))
     end
     return info
 end
@@ -1342,7 +1342,7 @@ function setupExperiment(info::NamedTuple)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
     info = getRestartFilePath(info)
-    infospin = info.model_run.spinup
+    infospin = info.experiment.model_spinup
 
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
@@ -1369,18 +1369,18 @@ function setupExperiment(info::NamedTuple)
 
     infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
     info = setTupleSubfield(info, :tem, (:spinup, infospin))
-    if getBool(info.model_run.experiment_flags.run_optimization) || getBool(info.tem.helpers.run.run_forward_and_cost)
+    if getBool(info.experiment.flags.run_optimization) || getBool(info.tem.helpers.run.run_forward_and_cost)
         @info "SetupExperiment: setting Optimization info..."
         info = setupOptimization(info)
     end
-    # adjust the model variable list for different model runSpinup
+    # adjust the model variable list for different model spinupTEM
     sel_vars = nothing
-    if info.model_run.experiment_flags.run_optimization
+    if info.experiment.flags.run_optimization
         sel_vars = info.optim.variables.store
     elseif getBool(info.tem.helpers.run.run_forward_and_cost)
-        if getBool(info.model_run.experiment_flags.run_forward)
+        if getBool(info.experiment.flags.run_forward)
             sel_vars = getVariableGroups(
-                union(String.(keys(info.model_run.output.variables)),
+                union(String.(keys(info.experiment.model_output.variables)),
                     info.optim.variables.model)
             )
         else

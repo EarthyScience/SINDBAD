@@ -22,21 +22,21 @@ pl = "threads"
 arraymethod = "view"
 info = nothing
 for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
-    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-        "experiment.configuration_files.forcing" => forcingConfig,
-        "experiment.domain" => domain,
-        "model_run.experiment_time.date_end" => eYear * "-12-31",
-        "model_run.experiment_flags.run_optimization" => false,
-        "model_run.experiment_flags.run_forward_and_cost" => false,
-        "model_run.experiment_flags.spinup.save_spinup" => false,
-        "model_run.experiment_flags.catch_model_errors" => true,
-        "model_run.experiment_flags.spinup.run_spinup" => false,
-        "model_run.experiment_flags.debug_model" => false,
-        "model_run.experiment_rules.model_array_type" => arraymethod,
-        "model_run.experiment_flags.spinup.do_spinup" => true,
+    replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+        "experiment.basics.configuration_files.forcing" => forcingConfig,
+        "experiment.basics.domain" => domain,
+        "experiment.basics.time.date_end" => eYear * "-12-31",
+        "experiment.flags.run_optimization" => false,
+        "experiment.flags.run_forward_and_cost" => false,
+        "experiment.flags.spinup.save_spinup" => false,
+        "experiment.flags.catch_model_errors" => true,
+        "experiment.flags.spinup.run_spinup" => false,
+        "experiment.flags.debug_model" => false,
+        "experiment.data_rules.model_array_type" => arraymethod,
+        "experiment.flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.output.path" => path_output,
-        "model_run.experiment_rules.parallelization" => pl,
+        "experiment.model_output.path" => path_output,
+        "experiment.data_rules.parallelization" => pl,
         "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
@@ -51,7 +51,7 @@ for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
 
     forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
-    @time simulateTEM!(output_array,
+    @time runTEM!(output_array,
         info.tem.models.forward,
         forcing_nt_array,
         loc_space_inds,

@@ -10,8 +10,8 @@ for tj ∈ (10, 100, 1000, 10000)
     replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "model_run.experiment_rules.model_array_type" => "array",
-        "model_run.experiment_flags.debug_model" => false)
+        "experiment.data_rules.model_array_type" => "array",
+        "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
@@ -46,7 +46,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     sp = :ODE_Tsit5
     @show "ODE_Init"
-    @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
+    @time out_sp_ode = ForwardSindbad.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
         info.tem.helpers,
@@ -60,7 +60,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp = land_init
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
+        out_sp_exp = ForwardSindbad.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
             info.tem.helpers,
@@ -73,7 +73,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     sp = :ODE_Tsit5
     @show "ODE_Exp"
-    @time out_sp_ode_exp = ForwardSindbad.doSpinup(spinup_models,
+    @time out_sp_ode_exp = ForwardSindbad.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(out_sp_exp),
         info.tem.helpers,
@@ -86,7 +86,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp_ode = out_sp_ode
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_ode = ForwardSindbad.doSpinup(spinup_models,
+        out_sp_exp_ode = ForwardSindbad.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_ode),
             info.tem.helpers,
@@ -124,7 +124,7 @@ for tj ∈ (10, 100, 1000, 10000)
         pout .= exp.(p)# .* s.pooldiff
         # s.land_init.pools.TWS .= pout.TWS
         s.land_init.pools.cEco .= pout.cEco
-        update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
+        update_init = timeLoopTEMSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
             s.forcing_one_timestep)
         # pout.TWS .= update_init.pools.TWS
         pout.cEco .= update_init.pools.cEco
@@ -143,14 +143,14 @@ for tj ∈ (10, 100, 1000, 10000)
         # @rep_vec tmp => pout.cEco
         # s = @set s.land_init.pools.cEco = tmp
 
-        # update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.forcing_one_timestep)
+        # update_init = timeLoopTEMSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.forcing_one_timestep)
 
         # pout = @set pout.TWS = update_init.pools.TWS
         # pout = @set pout.cEco = update_init.pools.cEco
         # pout .= log.(pout)# ./ s.pooldiff
     end
 
-    function doSpinup(spinup_models,
+    function runSpinup(spinup_models,
         spinup_forcing,
         land_init,
         tem_helpers,
@@ -176,7 +176,7 @@ for tj ∈ (10, 100, 1000, 10000)
     end
 
     @show "NL_solve"
-    @time out_sp_nl = doSpinup(spinup_models,
+    @time out_sp_nl = runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
         info.tem.helpers,
@@ -198,7 +198,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp_nl = out_sp_nl
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
+        out_sp_exp_nl = ForwardSindbad.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_nl),
             info.tem.helpers,

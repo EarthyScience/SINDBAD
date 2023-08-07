@@ -151,8 +151,8 @@ function getGlobalAttributesForOutCubes(info)
     sindbad_version = String(take!(io))
     global_attr = Dict(
         "simulation_by" => ENV["USER"],
-        "experiment" => info.experiment.name,
-        "domain" => info.experiment.domain,
+        "experiment" => info.experiment.basics.name,
+        "domain" => info.experiment.basics.domain,
         "date" => string(Date(now())),
         # "SINDBAD" => sindbad_version,
         "machine" => Sys.MACHINE,
@@ -165,7 +165,7 @@ end
 
 function getOutputFileInfo(info)
     global_info = getGlobalAttributesForOutCubes(info)
-    file_prefix = joinpath(info.output.data, info.experiment.name * "_" * info.experiment.domain)
+    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
     out_file_info = (; global_info=global_info, file_prefix=file_prefix)
     return out_file_info
 end
@@ -177,5 +177,5 @@ saves the output variables from the run from the information in info
 """
 function saveOutCubes(info, out_cubes, output)
     out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, output.variables, out_cubes, output.dims, info.model_run.output.format, info.model_run.experiment_time.temporal_resolution, Val(info.model_run.output.save_single_file))
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, output.variables, out_cubes, output.dims, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, Val(info.experiment.model_output.save_single_file))
 end

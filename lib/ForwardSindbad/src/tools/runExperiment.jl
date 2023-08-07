@@ -14,9 +14,9 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
             output,
             info.tem,
             info.tem.models.forward;
-            max_cache=info.model_run.experiment_rules.yax_max_cache)
+            max_cache=info.experiment.data_rules.yax_max_cache)
     else
-        run_output = simulateTEM!(forcing, info)
+        run_output = runTEM!(forcing, info)
     end
     return run_output
 end

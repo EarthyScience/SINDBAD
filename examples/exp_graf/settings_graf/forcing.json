@@ -1,5 +1,5 @@
 {
-  "data_dimensions": {
+  "data_dimension": {
     "time": "time",
     "permute": null,
     "space": ["id"]

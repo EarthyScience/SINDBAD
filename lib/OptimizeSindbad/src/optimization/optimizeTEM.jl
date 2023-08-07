@@ -189,7 +189,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = simulateTEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
@@ -210,9 +210,8 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = simulateTEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
-    @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
 end
 
@@ -235,7 +234,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    @time simulateTEM!(updated_models,
+    runTEM!(updated_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -245,7 +244,6 @@ function getLoss(
         loc_space_inds,
         tem)
     loss_vector = getLossVector(observations, output_array, cost_options)
-    @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
 end
 
@@ -258,12 +256,12 @@ function getLossVector(observations, model_output, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        @time metr = loss(y, yσ, ŷ, lossMetric)
-        # @time metr = loss(y, yσ, ŷ, lossMetric)
+        @debug @time metr = loss(y, yσ, ŷ, lossMetric)
+        metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
-        @debug "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
+        @info "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
         metr
     end
     # println("-------------------")
@@ -369,7 +367,7 @@ function optimizeTEM(forcing::NamedTuple,
 
     _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
 
-        
+
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
@@ -420,8 +418,8 @@ function optimizeTEM(forcing::NamedTuple,
 
     _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
 
-    land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
-    
+    land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
+
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
