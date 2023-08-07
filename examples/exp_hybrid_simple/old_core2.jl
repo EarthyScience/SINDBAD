@@ -50,12 +50,12 @@ end
 
 
 function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
-    land_prec = ForwardSindbad.runModelDefinePrecompute(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land_prec = ForwardSindbad.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
         f = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
-        land = runModelCompute(land, f, selected_models, tem_helpers)
+        land = computeTEM(land, f, selected_models, tem_helpers)
     end
     return land
 end

@@ -23,22 +23,22 @@ path_output = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
-replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-    "experiment.configuration_files.forcing" => forcingConfig,
-    "experiment.domain" => domain,
-    "model_run.experiment_time.date_end" => eYear * "-12-31",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => false,
-    "model_run.experiment_flags.spinup.save_spinup" => false,
-    "model_run.experiment_flags.catch_model_errors" => true,
-    "model_run.experiment_flags.spinup.run_spinup" => true,
-    "model_run.experiment_flags.debug_model" => false,
-    "model_run.experiment_rules.model_array_type" => arraymethod,
-    "model_run.experiment_flags.spinup.do_spinup" => true,
+replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.domain" => domain,
+    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => false,
+    "experiment.flags.spinup.save_spinup" => false,
+    "experiment.flags.catch_model_errors" => true,
+    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.debug_model" => false,
+    "experiment.data_rules.model_array_type" => arraymethod,
+    "experiment.flags.spinup.do_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
-    "model_run.output.path" => path_output,
-    "model_run.output.output_array_type" => "array",
-    "model_run.experiment_rules.parallelization" => pl,
+    "experiment.model_output.path" => path_output,
+    "experiment.model_output.output_array_type" => "array",
+    "experiment.data_rules.parallelization" => pl,
     "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -81,7 +81,7 @@ elseif nrepeat_d > 0
 else
     error("cannot determine the repeat for disturbance")
 end
-replace_info["model_run.spinup.sequence"] = sequence
+replace_info["experiment.model_spinup.sequence"] = sequence
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
@@ -89,7 +89,7 @@ forcing = getForcing(info);
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 
-@time simulateTEM!(info.tem.models.forward,
+@time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -105,7 +105,7 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars);
 for (o, v) in enumerate(out_vars)
     def_var = output_array[o][:, :, 1, 1]
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)

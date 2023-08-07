@@ -17,7 +17,7 @@ function doOptimizeModel(args...;
     output, forcing, observation = unpackYaxOpti(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
-    params = optimizeTEM(forcing, observation, info)
+    params = optimizeTEM(forcing, observation, info, Val(:land_stacked))
     return output[:] = params.optim
 end
 

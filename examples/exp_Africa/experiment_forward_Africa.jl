@@ -11,11 +11,11 @@ optimize_it = false;
 # info = getConfiguration(experiment_json);
 # info = setupExperiment(info);
 
-replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => false,
-    "model_run.experiment_flags.spinup.run_spinup" => true,
-    "model_run.experiment_flags.spinup.do_spinup" => true);
+replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => false,
+    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.spinup.do_spinup" => true);
 
 experiment_json = "../exp_Africa/settings_Africa/experiment.json"
 
@@ -25,7 +25,7 @@ forcing = getForcing(info);
 GC.gc()
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
-@time simulateTEM!(info.tem.models.forward,
+@time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,

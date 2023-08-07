@@ -14,15 +14,15 @@ noStackTrace()
 # @everywhere optimize_it = true;
 @everywhere optimize_it = false;
 
-@everywhere replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => true,
-    "model_run.experiment_flags.spinup.do_spinup" => true);
+@everywhere replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => true,
+    "experiment.flags.spinup.do_spinup" => true);
 
-@everywhere replace_info_site = Dict("experiment.domain" => domain * "_site",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => false,
-    "model_run.experiment_flags.spinup.do_spinup" => true); #one parameter set per each site
+@everywhere replace_info_site = Dict("experiment.basics.domain" => domain * "_site",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => false,
+    "experiment.flags.spinup.do_spinup" => true); #one parameter set per each site
 
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
@@ -33,7 +33,7 @@ noStackTrace()
 # forcing = (; forcing..., data = (chunkeddata));
 
 
-# simulateTEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
+# runTEM!(output_array, output.land_init, info.tem.models.forward, forcing_nt_array, info.tem);
 
 # info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 # info = getExperimentInfo(experiment_json) # note that the modification will not work with this

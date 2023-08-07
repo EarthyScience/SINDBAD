@@ -59,13 +59,13 @@
   "multi_constraint_method": "sum",
   "multi_objective_algorithm": false,
   "observational_constraints": [
-    "ndvi",
     "gpp",
     "nee",
     "reco",
     "transpiration",
     "evapotranspiration",
-    "agb"
+    "agb",
+    "ndvi"
   ],
   "observations": {
     "default_cost": {
@@ -107,7 +107,7 @@
           "source_unit": "gC m-2",
           "source_variable": "agb_merged"
         },
-        "model_full_var": "deriveVariables.aboveground_biomass"
+        "model_full_var": "pools.cVegWood"
       },
       "evapotranspiration": {
         "cost_options": {
