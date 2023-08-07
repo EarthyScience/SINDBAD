@@ -2,6 +2,11 @@ export getForcing, getDimPermutation, loadDataFile
 export getYaxFromSource
 
 
+"""
+    getDimPermutation(datDims, permDims)
+
+DOCSTRING
+"""
 function getDimPermutation(datDims, permDims)
     new_dim = Int[]
     for pd ∈ permDims
@@ -14,6 +19,11 @@ function getDimPermutation(datDims, permDims)
     return new_dim
 end
 
+"""
+    collectForcingSizes(info, in_yax)
+
+DOCSTRING
+"""
 function collectForcingSizes(info, in_yax)
     time_dim_name = Symbol(info.forcing.data_dimension.time)
     dnames = Symbol[]
@@ -32,6 +42,16 @@ function collectForcingSizes(info, in_yax)
     return f_sizes
 end
 
+"""
+    collectForcingHelpers(info, f_sizes, f_dimensions)
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `f_sizes`: DESCRIPTION
+- `f_dimensions`: DESCRIPTION
+"""
 function collectForcingHelpers(info, f_sizes, f_dimensions)
     f_helpers = (;)
     f_helpers = setTupleField(f_helpers, (:dimensions, info.forcing.data_dimension))
@@ -45,6 +65,23 @@ function collectForcingHelpers(info, f_sizes, f_dimensions)
     return f_helpers
 end
 
+"""
+    subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, nothing::Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
+
+DOCSTRING
+
+# Arguments:
+- `yax`: DESCRIPTION
+- `forcing_mask`: DESCRIPTION
+- `tar_dims`: DESCRIPTION
+- `vinfo`: DESCRIPTION
+- `info`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `clean_data`: DESCRIPTION
+- `fill_nan`: DESCRIPTION
+- `yax_qc`: DESCRIPTION
+- `bounds_qc`: DESCRIPTION
+"""
 function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
 
     if !isnothing(forcing_mask)
@@ -81,6 +118,17 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
     return yax
 end
 
+"""
+    getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
+
+DOCSTRING
+
+# Arguments:
+- `incubes`: DESCRIPTION
+- `f_sizes`: DESCRIPTION
+- `f_dimensions`: DESCRIPTION
+- `info`: DESCRIPTION
+"""
 function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing helpers..."
     @debug "     ::dimensions::"
@@ -97,6 +145,11 @@ function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     return forcing
 end
 
+"""
+    getTargetDimensionOrder(info)
+
+DOCSTRING
+"""
 function getTargetDimensionOrder(info)
     tar_dims = nothing
     if !isnothing(info.forcing.data_dimension.permute)
@@ -109,6 +162,11 @@ function getTargetDimensionOrder(info)
     return tar_dims
 end
 
+"""
+    loadDataFile(data_path)
+
+DOCSTRING
+"""
 function loadDataFile(data_path)
     if endswith(data_path, ".nc")
         nc = NCDataset(data_path)
@@ -120,6 +178,17 @@ function loadDataFile(data_path)
     return nc
 end
 
+"""
+    loadDataFromPath(nc, data_path, data_path_v, source_variable)
+
+DOCSTRING
+
+# Arguments:
+- `nc`: DESCRIPTION
+- `data_path`: DESCRIPTION
+- `data_path_v`: DESCRIPTION
+- `source_variable`: DESCRIPTION
+"""
 function loadDataFromPath(nc, data_path, data_path_v, source_variable)
     if isnothing(data_path_v) || (data_path_v === data_path)
         nc = nc
@@ -130,6 +199,19 @@ function loadDataFromPath(nc, data_path, data_path_v, source_variable)
     return nc
 end
 
+"""
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, nothing::Val{:netcdf})
+
+DOCSTRING
+
+# Arguments:
+- `nc`: DESCRIPTION
+- `data_path`: DESCRIPTION
+- `data_path_v`: DESCRIPTION
+- `source_variable`: DESCRIPTION
+- `info`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::Val{:netcdf})
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
@@ -152,12 +234,30 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::V
     return nc, yax
 end
 
+"""
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, nothing::Val{:zarr})
+
+DOCSTRING
+
+# Arguments:
+- `nc`: DESCRIPTION
+- `data_path`: DESCRIPTION
+- `data_path_v`: DESCRIPTION
+- `source_variable`: DESCRIPTION
+- `_`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::Val{:zarr})
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     yax = nc[source_variable]
     return nc, yax
 end
 
+"""
+    getForcing(info::NamedTuple)
+
+DOCSTRING
+"""
 function getForcing(info::NamedTuple)
     nc = nothing
     data_path = info.forcing.default_forcing.data_path

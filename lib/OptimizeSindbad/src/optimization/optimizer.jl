@@ -5,6 +5,19 @@ export optimizer
 
 Optimize model parameters using CMAES method of Evolutionary.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Evolutionary_CMAES})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -25,6 +38,19 @@ end
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optim_LBFGS})
 
 Optimize model parameters using LBFGS method of Optim.jl package
+"""
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_LBFGS})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizer(cost_function,
     default_values,
@@ -53,6 +79,19 @@ end
 
 Optimize model parameters using BFGS method of Optim.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_BFGS})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -73,6 +112,19 @@ end
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:CMAEvolutionStrategy_CMAES})
 
 Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
+"""
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:CMAEvolutionStrategy_CMAES})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizer(cost_function,
     default_values,
@@ -96,6 +148,19 @@ end
 
 Optimize model parameters using Fminbox_GradientDescent method of Optimization.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_Fminbox_GradientDescent_FD})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -115,6 +180,19 @@ end
 
 Optimize model parameters using NelderMead method of Optimization.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_NelderMead})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -131,6 +209,19 @@ end
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optimization_BFGS}) 
 
 Optimize model parameters using BFGS method of Optimization.jl package
+"""
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BFGS})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizer(cost_function,
     default_values,
@@ -149,6 +240,19 @@ end
 
 Optimize model parameters using MultistartOptimization method of Optimization.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_MultistartOptimization})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -165,6 +269,19 @@ end
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optimization_BBO_adaptive}) 
 
 Optimize model parameters using Black Box Optimization method of Optimization.jl package
+"""
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BBO_adaptive})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizer(cost_function,
     default_values,
@@ -183,6 +300,19 @@ end
 
 Optimize model parameters using GCMAES method of Optimization.jl package
 """
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizer(cost_function,
     default_values,
     lower_bounds,
@@ -200,6 +330,19 @@ end
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Val{:Optimization_GCMAES_FD}) 
 
 Optimize model parameters using GCMAES method of Optimization.jl package with automatic forward difference
+"""
+"""
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES_FD})
+
+DOCSTRING
+
+# Arguments:
+- `cost_function`: DESCRIPTION
+- `default_values`: DESCRIPTION
+- `lower_bounds`: DESCRIPTION
+- `upper_bounds`: DESCRIPTION
+- `algo_options`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizer(cost_function,
     default_values,

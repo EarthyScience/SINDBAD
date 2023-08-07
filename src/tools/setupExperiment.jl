@@ -5,7 +5,11 @@ using ConstructionBase
 export prepNumericHelpers
 export replaceCommaSeparatorParams
 
+"""
+    convertRunFlagsToVal(info)
 
+DOCSTRING
+"""
 function convertRunFlagsToVal(info)
     new_run = (;)
     dr = info.experiment.flags
@@ -28,6 +32,11 @@ end
 """
 parseSaveCode(info)
 parse and save the code and structs of selected model structure for the given experiment
+"""
+"""
+    parseSaveCode(info)
+
+DOCSTRING
 """
 function parseSaveCode(info)
     models = info.tem.models.forward
@@ -180,6 +189,11 @@ end
 getParameters(selectedModels)
 retrieve all model parameters
 """
+"""
+    getParameters(selectedModels)
+
+DOCSTRING
+"""
 function getParameters(selectedModels)
     default = [flatten(selectedModels)...]
     constrains = metaflatten(selectedModels, Models.bounds)
@@ -202,12 +216,20 @@ function getParameters(selectedModels)
         approach_func,
         name_full)
 end
+"""
+    splitRenameParam(_p::Symbol, _splitter)
 
+DOCSTRING
+"""
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)
     return splitRenameParam(p_string, _splitter)
 end
+"""
+    splitRenameParam(p_string::String, _splitter)
 
+DOCSTRING
+"""
 function splitRenameParam(p_string::String, _splitter)
     p_name = strip(p_string)
     if occursin(_splitter, p_string)
@@ -218,7 +240,11 @@ function splitRenameParam(p_string::String, _splitter)
     end
     return p_name
 end
+"""
+    replaceCommaSeparatorParams(p_names_list)
 
+DOCSTRING
+"""
 function replaceCommaSeparatorParams(p_names_list)
     o_p_names_list = []
     foreach(p_names_list) do p
@@ -231,6 +257,11 @@ end
 """
 getParameters(selectedModels, model_parameter_default)
 retrieve all model parameters
+"""
+"""
+    getParameters(selectedModels, model_parameter_default)
+
+DOCSTRING
 """
 function getParameters(selectedModels, model_parameter_default)
     default = [flatten(selectedModels)...]
@@ -267,6 +298,16 @@ end
 getParameters(selectedModels, model_parameter_default, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
 """
+"""
+    getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
+
+DOCSTRING
+
+# Arguments:
+- `selectedModels`: DESCRIPTION
+- `model_parameter_default`: DESCRIPTION
+- `opt_parameter`: DESCRIPTION
+"""
 function getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
     paramstbl = getParameters(selectedModels, model_parameter_default)
@@ -276,6 +317,16 @@ end
 """
 getParameters(selectedModels, listModelsParams::Vector{String})
 retrieve all selected model parameters from string input
+"""
+"""
+    getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `selectedModels`: DESCRIPTION
+- `model_parameter_default`: DESCRIPTION
+- `opt_parameter`: DESCRIPTION
 """
 function getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
@@ -307,6 +358,11 @@ end
 
 """
 updateParameters(tbl_params, selected_models)
+"""
+"""
+    updateModelParameters(tbl_params::Table, selected_models::Tuple)
+
+DOCSTRING
 """
 function updateModelParameters(tbl_params::Table, selected_models::Tuple)
     function filtervar(var, modelName, tbl_params, approachx)
@@ -341,6 +397,16 @@ end
 """
 updateModelParametersType(tbl_params, selected_models, pVector)
 get the new instances of the model with same parameter types as mentioned in pVector
+"""
+"""
+    updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
+
+DOCSTRING
+
+# Arguments:
+- `tbl_params`: DESCRIPTION
+- `selected_models`: DESCRIPTION
+- `pVector`: DESCRIPTION
 """
 function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
@@ -406,6 +472,16 @@ end
 updateModelParameters(tbl_params, selected_models, pVector)
 does not depend on the mutated table of parameters
 """
+"""
+    updateModelParameters(tbl_params, selected_models::Tuple, pVector)
+
+DOCSTRING
+
+# Arguments:
+- `tbl_params`: DESCRIPTION
+- `selected_models`: DESCRIPTION
+- `pVector`: DESCRIPTION
+"""
 function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
     updatedModels = Models.LandEcosystem[]
     namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
@@ -438,6 +514,11 @@ end
 
 checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl.
 """
+"""
+    checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
+
+DOCSTRING
+"""
 function checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
     for sm ∈ selModels
         if sm ∉ fullModels
@@ -458,6 +539,11 @@ returns a list of models reordered according to orders provided in model_structu
   - default order is taken from sindbad_models
   - models cannot be set before getPools or after cCycle
     USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
+"""
+"""
+    changeModelOrder(info::NamedTuple, selModels::AbstractArray)
+
+DOCSTRING
 """
 function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     fullModels = sindbad_models.model
@@ -536,6 +622,11 @@ gets the ordered list of selected models from info.model_structure.models
   - orders them as given in sindbad_models in models.jl.
   - consistency check using checkSelectedModels for the existence of user-provided model.
 """
+"""
+    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
+
+DOCSTRING
+"""
 function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
     fullModels = changeModelOrder(info, selModels)
     checkSelectedModels(fullModels, selModels)
@@ -555,6 +646,11 @@ end
 updates the model parameters based on input from params.json
 
   - new table with the optimised/modified values from params.json.
+"""
+"""
+    setInputParameters(original_table::Table, updated_table::Table)
+
+DOCSTRING
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)
@@ -581,6 +677,11 @@ end
     getTypedModel(model, sNT)
 
   - get Sindbad model, and instatiate them with the datatype set in model_run
+"""
+"""
+    getTypedModel(model, sNT)
+
+DOCSTRING
 """
 function getTypedModel(model, sNT)
     model_obj = getfield(Sindbad.Models, Symbol(model))
@@ -610,6 +711,11 @@ sets the spinup and forward subfields of info.tem.models to select a separated s
   - allows for a faster spinup if some models can be turned off
   - relies on use4spinup flag in model_structure
   - by design, the spinup models should be subset of forward models
+"""
+"""
+    getSpinupAndForwardModels(info::NamedTuple)
+
+DOCSTRING
 """
 function getSpinupAndForwardModels(info::NamedTuple)
     sel_appr_forward = ()
@@ -673,6 +779,11 @@ end
 
 fills info.tem.helpers.dates with date and time related fields needed in the models.
 """
+"""
+    generateDatesInfo(info::NamedTuple)
+
+DOCSTRING
+"""
 function generateDatesInfo(info::NamedTuple)
     tmpDates = (;)
     timeData = getfield(info.experiment.basics, :time)
@@ -708,6 +819,23 @@ end
     getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", num_type=Float64)
 
 A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
+"""
+"""
+    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename = , num_type = Float64)
+
+DOCSTRING
+
+# Arguments:
+- `mainPools`: DESCRIPTION
+- `poolData`: DESCRIPTION
+- `layerThicknesses`: DESCRIPTION
+- `nlayers`: DESCRIPTION
+- `layer`: DESCRIPTION
+- `inits`: DESCRIPTION
+- `subPoolName`: DESCRIPTION
+- `mainPoolName`: DESCRIPTION
+- `prename`: DESCRIPTION
+- `num_type`: DESCRIPTION
 """
 function getPoolInformation(mainPools,
     poolData,
@@ -767,6 +895,11 @@ end
     generatePoolsInfo(info)
 
 generates the info.tem.helpers.pools and info.pools. The first one is used in the models, while the second one is used in instantiating the pools for initial output tuple.
+"""
+"""
+    generatePoolsInfo(info::NamedTuple)
+
+DOCSTRING
 """
 function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
@@ -1003,7 +1136,19 @@ function generatePoolsInfo(info::NamedTuple)
     # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:view})
 
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:view})
     if ismain
         num_type.(inVals)
@@ -1011,11 +1156,35 @@ function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:vie
         @view poolArray[[indx...]]
     end
 end
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:array})
 
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:array})
     return num_type.(inVals)
 end
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:staticarray})
 
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:staticarray})
     return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
     # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
@@ -1025,6 +1194,11 @@ end
     getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
 returns a named tuple with initial pool variables as subfields that is used in out.pools. Uses @view to create components of pools as a view of main pool that just references the original array.
+"""
+"""
+    getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
+
+DOCSTRING
 """
 function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
     initPools = (;)
@@ -1073,6 +1247,11 @@ end
     getInitStates(info)
 
 returns a named tuple with initial state variables as subfields that is used in out.states. Extended from getInitPools, it uses @view to create components of states as a view of main state that just references the original array. The states to be intantiate are taken from state_variables in model_structure.json. The entries their are prefix to parent pool, when the state variables are created.
+"""
+"""
+    getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
+
+DOCSTRING
 """
 function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
     initStates = (;)
@@ -1134,6 +1313,11 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
+"""
+    prepNumericHelpers(info::NamedTuple, ttype)
+
+DOCSTRING
+"""
 function prepNumericHelpers(info::NamedTuple, ttype)
     num_type = getNumberType(ttype)
     𝟘 = num_type(0.0)
@@ -1172,6 +1356,11 @@ end
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
+"""
+    setNumericHelpers(info::NamedTuple, ttype)
+
+DOCSTRING
+"""
 function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.data_type)
     num_helpers = prepNumericHelpers(info, ttype)
     info = (;
@@ -1184,6 +1373,11 @@ end
     getNumberType(t::String)
 A helper function to get the number type from the specified string
 """
+"""
+    getNumberType(t::String)
+
+DOCSTRING
+"""
 function getNumberType(t::String)
     ttype = eval(Meta.parse(t))
     return ttype
@@ -1193,6 +1387,11 @@ end
     getNumberType(t::DataType)
 A helper function to get the number type from the specified string
 """
+"""
+    getNumberType(t::DataType)
+
+DOCSTRING
+"""
 function getNumberType(t::DataType)
     return t
 end
@@ -1201,6 +1400,11 @@ end
     getVariableGroups(varList)
 
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
+"""
+"""
+    getVariableGroups(varList::AbstractArray)
+
+DOCSTRING
 """
 function getVariableGroups(varList::AbstractArray)
     var_dict = Dict()
@@ -1227,6 +1431,11 @@ end
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
+"""
+    getVariablesToStore(info::NamedTuple)
+
+DOCSTRING
+"""
 function getVariablesToStore(info::NamedTuple)
     writeStoreVars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
     info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
@@ -1237,6 +1446,11 @@ end
     getLoopingInfo(info)
 
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
+"""
+"""
+    getLoopingInfo(info::NamedTuple)
+
+DOCSTRING
 """
 function getLoopingInfo(info::NamedTuple)
     run_vals = convertRunFlagsToVal(info)
@@ -1252,6 +1466,11 @@ end
     getRestartFilePath(info)
 
 Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
+"""
+"""
+    getRestartFilePath(info::NamedTuple)
+
+DOCSTRING
 """
 function getRestartFilePath(info::NamedTuple)
     restart_file_in = info.experiment.model_spinup.paths.restart_file_in
@@ -1310,6 +1529,11 @@ end
     setupExperiment(info)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+"""
+"""
+    setupExperiment(info::NamedTuple)
+
+DOCSTRING
 """
 function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Numeric Helpers..."

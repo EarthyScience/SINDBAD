@@ -5,6 +5,16 @@ createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
 
 create the initial out named tuple with subfields for pools, states, and all selected models.
 """
+"""
+    createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `info_pools`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `tem_models`: DESCRIPTION
+"""
 function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
     initPools = getInitPools(info_pools, tem_helpers)
     initStates = getInitStates(info_pools, tem_helpers)
@@ -16,6 +26,11 @@ function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_mod
     return out
 end
 
+"""
+    getPoolSize(info_pools::NamedTuple, poolName::Symbol)
+
+DOCSTRING
+"""
 function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     poolsize = nothing
     for elem ∈ keys(info_pools)
@@ -31,6 +46,16 @@ function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     end
 end
 
+"""
+    getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `vname`: DESCRIPTION
+- `info`: DESCRIPTION
+- `land_init`: DESCRIPTION
+"""
 function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
     field_name = first(split(string(vname), '.'))
     vname_s = split(string(vname), '.')[end]
@@ -74,6 +99,19 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
     return dimSize, dimName
 end
 
+"""
+    getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `_`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `_`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
     outdims = map(datavars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
@@ -92,6 +130,18 @@ function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
     return outdims, outarray
 end
 
+"""
+    getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_sizes`: DESCRIPTION
+"""
 function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     outarray = map(datavars) do vname_full
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
@@ -107,6 +157,19 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     return outarray
 end
 
+"""
+    getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres = 1)
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `dthres`: DESCRIPTION
+"""
 function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres=1)
     forcing_sizes = forcing_helpers.sizes
     forcing_axes = forcing_helpers.axes
@@ -144,6 +207,19 @@ function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers
     return outdims_pairs
 end
 
+"""
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:array})
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:array})
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
@@ -159,12 +235,38 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 
 end
 
+"""
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:sizedarray})
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:sizedarray})
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
     sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, sized_array
 end
 
+"""
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:marray})
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:marray})
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
     marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
@@ -172,6 +274,19 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 
+"""
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:keyedarray})
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyedarray})
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
@@ -198,10 +313,20 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
     return outdims, keyedarray
 end
 
+"""
+    getOutArrayType(num_type, forwardDiff)
+
+DOCSTRING
+"""
 function getOutArrayType(num_type, forwardDiff)
     return num_type
 end
 
+"""
+    getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
+
+DOCSTRING
+"""
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
     for var ∈ varlist
         vname = Symbol(split(string(var), '.')[end])
@@ -212,8 +337,14 @@ function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
 end
 
 """
-function getVariableFields(datavars)
+getVariableFields(datavars)
 get a namedTuple with field and subfields vectors for extracting data from land
+"""
+
+"""
+    getVariableFields(datavars)
+
+DOCSTRING
 """
 function getVariableFields(datavars)
     vf = Symbol[]
@@ -226,6 +357,16 @@ function getVariableFields(datavars)
     return ovro
 end
 
+"""
+    setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+"""
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     @info "     setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
@@ -272,14 +413,34 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
     return output_tuple
 end
 
+"""
+    setupOutput(info::NamedTuple, forcing_helpers::NamedTuple)
+
+DOCSTRING
+"""
 function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, info.tem.helpers)
 end
 
+"""
+    setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `info`: DESCRIPTION
+- `forcing_helpers`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+"""
 function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, tem_helpers)
 end
 
+"""
+    setupOptiOutput(info::NamedTuple, output::NamedTuple)
+
+DOCSTRING
+"""
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.model_parameters_to_optimize
     paramaxis = Dim{:parameter}(params)

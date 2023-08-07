@@ -2,6 +2,22 @@ export coreTEM!
 export runTEM!
 export TEM!
 
+"""
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, nothing::Val{:(false)})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `_`: DESCRIPTION
+- `_`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function coreTEM!(
     selected_models,
     loc_forcing,
@@ -26,6 +42,22 @@ function coreTEM!(
     return nothing
 end
 
+"""
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `tem_models`: DESCRIPTION
+- `tem_spinup`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function coreTEM!(
     selected_models,
     loc_forcing,
@@ -59,6 +91,25 @@ function coreTEM!(
     return nothing
 end
 
+"""
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, nothing::Val{:threads})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing_nt_array`: DESCRIPTION
+- `loc_forcings`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_outputs`: DESCRIPTION
+- `land_init_space`: DESCRIPTION
+- `loc_space_inds`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `tem_models`: DESCRIPTION
+- `tem_spinup`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function parallelizeTEM!(
     selected_models,
     forcing_nt_array,
@@ -92,6 +143,25 @@ end
 
 """
 parallelizeTEM!((output_array, selected_models, forcing, tem_helpers, tem_spinup, tem_models, loc_space_inds, loc_forcings, loc_outputs, land_init_space, forcing_one_timestep, ::Val{:qbmap})
+"""
+"""
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, nothing::Val{:qbmap})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing_nt_array`: DESCRIPTION
+- `loc_forcings`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_outputs`: DESCRIPTION
+- `land_init_space`: DESCRIPTION
+- `loc_space_inds`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `tem_models`: DESCRIPTION
+- `tem_spinup`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function parallelizeTEM!(
     selected_models,
@@ -129,6 +199,11 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
+"""
+    runTEM!(forcing::NamedTuple, info::NamedTuple)
+
+DOCSTRING
+"""
 function runTEM!(forcing::NamedTuple, info::NamedTuple)
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_vals = prepTEM(forcing, info)
     runTEM!(tem_with_vals.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals)
@@ -137,6 +212,22 @@ end
 
 """
 runEcosystem(selected_models, forcing, land_init, tem)
+"""
+"""
+    runTEM!(selected_models, forcing_nt_array::NamedTuple, loc_forcings, forcing_one_timestep, output_array::AbstractArray, loc_outputs, land_init_space, loc_space_inds, tem_with_vals::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing_nt_array`: DESCRIPTION
+- `loc_forcings`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_outputs`: DESCRIPTION
+- `land_init_space`: DESCRIPTION
+- `loc_space_inds`: DESCRIPTION
+- `tem_with_vals`: DESCRIPTION
 """
 function runTEM!(
     selected_models,
@@ -164,6 +255,24 @@ function runTEM!(
     return nothing
 end
 
+"""
+    TEM!(selected_models, forcing, loc_forcing, forcing_one_timestep, output_array, loc_output, land_init, loc_space_ind, tem_helpers, tem_models, tem_spinup)
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `loc_space_ind`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `tem_models`: DESCRIPTION
+- `tem_spinup`: DESCRIPTION
+"""
 function TEM!(
     selected_models,
     forcing,
@@ -192,6 +301,20 @@ function TEM!(
 end
 
 
+"""
+    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(false)})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `land`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function timeLoopTEM!(
     selected_models,
     loc_forcing,
@@ -210,6 +333,20 @@ function timeLoopTEM!(
 end
 
 
+"""
+    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(true)})
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `loc_forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `loc_output`: DESCRIPTION
+- `land`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function timeLoopTEM!(
     selected_models,
     loc_forcing,

@@ -1,5 +1,10 @@
 export mapOptimizeModel
 
+"""
+    unpackYaxOpti(args; forcing_variables::AbstractArray)
+
+DOCSTRING
+"""
 function unpackYaxOpti(args; forcing_variables::AbstractArray)
     nforc = length(forcing_variables)
     outputs = first(args)
@@ -8,6 +13,19 @@ function unpackYaxOpti(args; forcing_variables::AbstractArray)
     return outputs, forcings, observations
 end
 
+"""
+    doOptimizeModel(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray)
+
+DOCSTRING
+
+# Arguments:
+- `args`: DESCRIPTION
+- `out`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `optim`: DESCRIPTION
+- `forcing_variables`: DESCRIPTION
+- `obs_variables`: DESCRIPTION
+"""
 function doOptimizeModel(args...;
     out::NamedTuple,
     tem::NamedTuple,
@@ -21,6 +39,19 @@ function doOptimizeModel(args...;
     return output[:] = params.optim
 end
 
+"""
+    mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, optim::NamedTuple, observations::NamedTuple; max_cache = 1.0e9)
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `output`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `optim`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `max_cache`: DESCRIPTION
+"""
 function mapOptimizeModel(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,

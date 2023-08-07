@@ -1,6 +1,18 @@
 export mapRunEcosystem
 
 
+"""
+    doRunEcosystem(args; land_init::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray)
+
+DOCSTRING
+
+# Arguments:
+- `args`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `forward_models`: DESCRIPTION
+- `forcing_variables`: DESCRIPTION
+"""
 function doRunEcosystem(args...;
     land_init::NamedTuple,
     tem::NamedTuple,
@@ -21,6 +33,18 @@ function doRunEcosystem(args...;
     end
 end
 
+"""
+    mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, forward_models::Tuple; max_cache = 1.0e9)
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `output`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `forward_models`: DESCRIPTION
+- `max_cache`: DESCRIPTION
+"""
 function mapRunEcosystem(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
@@ -50,6 +74,16 @@ function mapRunEcosystem(forcing::NamedTuple,
 end
 
 
+"""
+    unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
+
+DOCSTRING
+
+# Arguments:
+- `args`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `forcing_variables`: DESCRIPTION
+"""
 function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
     nin = length(forcing_variables)
     nout = sum(length, tem.variables)

@@ -8,6 +8,11 @@ export prepExperimentOpti
 
 A helper function just to get info after experiment has been loaded and modified
 """
+"""
+    getExperimentInfo(sindbad_experiment::String; replace_info = nothing)
+
+DOCSTRING
+"""
 function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     @info "prepExperimentForward: load configurations..."
     info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
@@ -20,6 +25,11 @@ end
 """
 prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+"""
+"""
+    prepExperimentForward(sindbad_experiment::String; replace_info = nothing)
+
+DOCSTRING
 """
 function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     println("----------------------------------------------")
@@ -51,6 +61,11 @@ end
 """
 prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+"""
+"""
+    prepExperimentOpti(sindbad_experiment::String; replace_info = nothing)
+
+DOCSTRING
 """
 function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     println("----------------------------------------------")
