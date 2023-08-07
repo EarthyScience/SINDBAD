@@ -2,7 +2,7 @@
   "data_dimensions": {
     "permute": null,
     "space": ["longitude", "latitude"],
-    "experiment_time": "time"
+    "time": "time"
   },
   "default_forcing": {
     "additive_unit_conversion": false,

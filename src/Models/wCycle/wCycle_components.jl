@@ -2,19 +2,6 @@ export wCycle_components
 
 struct wCycle_components <: wCycle end
 
-function define(p_struct::wCycle_components, forcing, land, helpers)
-    ## unpack variables
-    @unpack_land begin
-        (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
-    end
-
-    # TWS = zero(TWS)
-
-    # @pack_land begin
-    #     TWS => land.pools
-    # end
-    return land
-end
 
 function compute(p_struct::wCycle_components, forcing, land, helpers)
     ## unpack variables

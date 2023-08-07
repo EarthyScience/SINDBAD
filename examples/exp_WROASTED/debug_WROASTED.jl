@@ -105,7 +105,7 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars);
 for (o, v) in enumerate(out_vars)
     def_var = output_array[o][:, :, 1, 1]
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
+    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
