@@ -140,7 +140,8 @@ function getData(model_output::AbstractArray, observations, cost_option)
     return (y, yσ, ŷ)
 end
 
-@generated function getLocObs!(obs_array,
+@generated function getLocObs!(
+    obs_array,
     ::Val{obs_vars},
     ::Val{s_names},
     loc_obs,
@@ -173,34 +174,78 @@ end
 
 
 """
-getLoss(pVector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
+getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
-function getLoss(pVector::AbstractArray,
+function getLoss(
+    param_vector::AbstractArray,
     base_models,
-    forcing_nt_array,
-    output_array,
+    forcing_nt,
+    forcing_one_timestep,
+    land_timeseries,
+    land_init,
+    tem,
     observations,
     tbl_params,
-    tem,
     cost_options,
-    multiconstraint_method,
-    loc_space_inds,
+    multiconstraint_method)
+    updated_models = updateModelParameters(tbl_params, base_models, param_vector)
+    land_wrapper_timeseries = TEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
+    loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
+    @debug loss_vector
+    return combineLoss(loss_vector, multiconstraint_method)
+end
+
+"""
+getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
+"""
+function getLoss(
+    param_vector::AbstractArray,
+    base_models,
+    forcing_nt,
+    forcing_one_timestep,
+    land_init,
+    tem,
+    observations,
+    tbl_params,
+    cost_options,
+    multiconstraint_method)
+    updated_models = updateModelParameters(tbl_params, base_models, param_vector)
+    land_wrapper_timeseries = TEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
+    loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
+    @debug loss_vector
+    return combineLoss(loss_vector, multiconstraint_method)
+end
+
+"""
+getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
+"""
+function getLoss(
+    param_vector::AbstractArray,
+    base_models,
+    forcing_nt_array,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one)
-    upVector = pVector
-    updated_models = updateModelParameters(tbl_params, base_models, upVector)
-    TEM!(output_array,
-        updated_models,
+    loc_space_inds,
+    tem,
+    observations,
+    tbl_params,
+    cost_options,
+    multiconstraint_method)
+    updated_models = updateModelParameters(tbl_params, base_models, param_vector)
+    TEM!(updated_models,
         forcing_nt_array,
-        loc_space_inds,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        f_one,
+        loc_space_inds,
         tem)
     loss_vector = getLossVector(observations, output_array, cost_options)
+    @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
 end
 
@@ -267,31 +312,23 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    forcing_nt_array,
-    output_array,
-    _,
-    _,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    tem_with_vals,
-    f_one = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, _, _, loc_space_inds = prepTEM(forcing, info)
+
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
             forcing_nt_array,
-            output_array,
-            observations,
-            tbl_params,
-            tem_with_vals,
-            cost_options,
-            optim.multi_constraint_method,
-            loc_space_inds,
             loc_forcings,
+            forcing_one_timestep,
+            output_array,
             loc_outputs,
             land_init_space,
-            f_one)
+            loc_space_inds,
+            tem_with_vals,
+            observations,
+            tbl_params,
+            cost_options,
+            optim.multi_constraint_method)
 
     # run the optimizer
     optim_para = optimizer(cost_function,

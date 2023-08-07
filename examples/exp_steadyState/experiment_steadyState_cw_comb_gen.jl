@@ -12,7 +12,7 @@ struct Spinup_TWS{M,F,T,I,L,O}
     tem_helpers::T
     land::I
     land_type::L
-    f_one::O
+    forcing_one_timestep::O
 end
 
 
@@ -23,7 +23,7 @@ struct Spinup_cEco_TWS{M,F,T,I,L,O,TWS}
     tem_helpers::T
     land::I
     land_type::L
-    f_one::O
+    forcing_one_timestep::O
     TWS::TWS
 end
 
@@ -34,7 +34,7 @@ struct Spinup_cEco{M,F,T,I,L,O}
     tem_helpers::T
     land::I
     land_type::L
-    f_one::O
+    forcing_one_timestep::O
 end
 
 
@@ -50,7 +50,7 @@ function (TWS_spin::Spinup_TWS)(pout, p)
     end
     @pack_land TWS => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
-    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.tem_helpers, TWS_spin.land_type, TWS_spin.forcing_one_timestep)
     pout .= update_init.pools.TWS
     return nothing
 end
@@ -71,7 +71,7 @@ function (cEco_spin::Spinup_cEco)(pout, p)
     @pack_land cEco => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
-    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.tem_helpers, cEco_spin.land_type, cEco_spin.forcing_one_timestep)
 
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -101,7 +101,7 @@ function (cEco_TWS_spin::Spinup_cEco_TWS)(pout, p)
     @pack_land TWS => land.pools
     setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
-    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.f_one)
+    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.tem_helpers, cEco_TWS_spin.land_type, cEco_TWS_spin.forcing_one_timestep)
 
     pout .= log.(update_init.pools.cEco)
     cEco_TWS_spin.TWS .= update_init.pools.TWS
@@ -115,9 +115,9 @@ function doSpinup(spinup_models,
     tem_helpers,
     _,
     land_type,
-    f_one,
+    forcing_one_timestep,
     ::Val{:nlsove_fixedpoint_trustregion_TWS})
-    TWS_spin = Spinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, land_type, f_one)
+    TWS_spin = Spinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, land_type, forcing_one_timestep)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
@@ -133,9 +133,9 @@ function doSpinup(spinup_models,
     tem_helpers,
     _,
     land_type,
-    f_one,
+    forcing_one_timestep,
     ::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
-    cEco_TWS_spin = Spinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, f_one, Vector(deepcopy(land.pools.TWS)))
+    cEco_TWS_spin = Spinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, forcing_one_timestep, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
     cEco = exp.(r.zero)
@@ -156,9 +156,9 @@ function doSpinup(spinup_models,
     tem_helpers,
     _,
     land_type,
-    f_one,
+    forcing_one_timestep,
     ::Val{:nlsove_fixedpoint_trustregion_cEco})
-    cEco_spin = Spinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, f_one)
+    cEco_spin = Spinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), land_type, forcing_one_timestep)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     r = fixedpoint(cEco_spin, p_init; method=:trust_region)
     cEco = exp.(r.zero)
@@ -244,7 +244,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
 
 
@@ -279,7 +279,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 tem_with_vals.helpers,
                 tem_with_vals.spinup,
                 land_type,
-                f_one,
+                forcing_one_timestep,
                 Val(:spinup))
         end
 
@@ -293,7 +293,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             tem_with_vals.helpers,
             tem_with_vals.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp_method))
 
 
@@ -310,7 +310,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                     tem_with_vals.helpers,
                     tem_with_vals.spinup,
                     land_type,
-                    f_one,
+                    forcing_one_timestep,
                     Val(sp))
             end
 
@@ -325,7 +325,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                     tem_with_vals.helpers,
                     tem_with_vals.spinup,
                     land_type,
-                    f_one,
+                    forcing_one_timestep,
                     Val(sp))
             end
             if sel_pool in (:cEco_TWS,)

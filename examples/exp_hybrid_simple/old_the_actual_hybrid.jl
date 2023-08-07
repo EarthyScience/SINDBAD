@@ -20,7 +20,7 @@ kwargs_fixed = (;
     tem_spinup=syn.tem_spinup,
     tem_models=syn.tem_models,
     tem_optim=syn.tem_optim,
-    f_one=syn.f_one
+    forcing_one_timestep=syn.forcing_one_timestep
 );
 
 site_location = syn.loc_space_maps[1]

@@ -58,7 +58,7 @@ function grads_batch!(f_grads, up_params_now, xbatch, out_data, forc, obs_array,
 end
 
 
-# grads_args = (; tbl_params, sites_f, land_init_space, output, forc, obs_synt, forward, helpers, spinup, models, out_vars, f_one)
+# grads_args = (; tbl_params, sites_f, land_init_space, output, forc, obs_synt, forward, helpers, spinup, models, out_vars, forcing_one_timestep)
 function get_∇params(xfeatures, re, flat, xbatch, n_params, n_bs_sites,
     out_data, forc, obs_array, sites_f, forward, tbl_params, land_init_space, loc_loss, kwargs_fixed)
 
@@ -103,7 +103,7 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs_array, sites_f, 
         loc_outputs,
         land_init_space,
         tem_with_vals,
-        f_one = prepTEM(forcing, info)
+        forcing_one_timestep = prepTEM(forcing, info)
         out_data = output_array
 
         xbatches = if x_args.shuffle

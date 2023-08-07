@@ -81,7 +81,7 @@ function synth_obs()
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepTEM(forcing, info)
+    forcing_one_timestep = prepTEM(forcing, info)
 
 
     ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
@@ -104,7 +104,7 @@ function synth_obs()
         tem_spinup,
         tem_models,
         land_init_site,
-        f_one)
+        forcing_one_timestep)
 
         loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
         up_apps = updateModelParametersType(tbl_params, forward, upVector)
@@ -116,7 +116,7 @@ function synth_obs()
             tem_spinup,
             tem_models,
             land_init_site,
-            f_one)
+            forcing_one_timestep)
     end
 
     tem_helpers = tem_with_vals.helpers
@@ -147,7 +147,7 @@ function synth_obs()
         tem_spinup,
         tem_models,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
 
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
@@ -164,7 +164,7 @@ function synth_obs()
         tem_helpers,
         tem_spinup,
         tem_models,
-        f_one)
+        forcing_one_timestep)
         #Threads.@threads for site_index ∈ eachindex(cov_sites)
         for site_index ∈ eachindex(cov_sites)
             site_name = cov_sites[site_index]
@@ -182,7 +182,7 @@ function synth_obs()
                 tem_spinup,
                 tem_models,
                 loc_land_init,
-                f_one
+                forcing_one_timestep
             )
         end
     end
@@ -200,7 +200,7 @@ function synth_obs()
         tem_helpers,
         tem_spinup,
         tem_models,
-        f_one)
+        forcing_one_timestep)
 
 
 
@@ -270,7 +270,7 @@ function synth_obs()
         tem_optim,
         tem_spinup,
         tem_with_vals,
-        f_one
+        forcing_one_timestep
     )
 end
 

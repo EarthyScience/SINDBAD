@@ -20,7 +20,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
 
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
@@ -52,7 +52,7 @@ for tj ∈ (10, 100, 1000, 10000)
         info.tem.helpers,
         info.tem.spinup,
         land_type,
-        f_one,
+        forcing_one_timestep,
         Val(sp))
     out_sp_ode_init = deepcopy(out_sp_ode)
 
@@ -66,7 +66,7 @@ for tj ∈ (10, 100, 1000, 10000)
             info.tem.helpers,
             info.tem.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp))
     end
     out_sp_exp_init = deepcopy(out_sp_exp)
@@ -79,7 +79,7 @@ for tj ∈ (10, 100, 1000, 10000)
         info.tem.helpers,
         info.tem.spinup,
         land_type,
-        f_one,
+        forcing_one_timestep,
         Val(sp))
 
     @show "Exp_ODE"
@@ -92,7 +92,7 @@ for tj ∈ (10, 100, 1000, 10000)
             info.tem.helpers,
             info.tem.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp))
     end
 
@@ -117,7 +117,7 @@ for tj ∈ (10, 100, 1000, 10000)
         tem_helpers::T
         land_init::I
         land_type::L
-        f_one::O
+        forcing_one_timestep::O
     end
 
     function (s::Spinupper)(pout, p)
@@ -125,7 +125,7 @@ for tj ∈ (10, 100, 1000, 10000)
         # s.land_init.pools.TWS .= pout.TWS
         s.land_init.pools.cEco .= pout.cEco
         update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
-            s.f_one)
+            s.forcing_one_timestep)
         # pout.TWS .= update_init.pools.TWS
         pout.cEco .= update_init.pools.cEco
         pout .= log.(pout)# ./ s.pooldiff
@@ -143,7 +143,7 @@ for tj ∈ (10, 100, 1000, 10000)
         # @rep_vec tmp => pout.cEco
         # s = @set s.land_init.pools.cEco = tmp
 
-        # update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.f_one)
+        # update_init = runTimeLoopSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.forcing_one_timestep)
 
         # pout = @set pout.TWS = update_init.pools.TWS
         # pout = @set pout.cEco = update_init.pools.cEco
@@ -156,9 +156,9 @@ for tj ∈ (10, 100, 1000, 10000)
         tem_helpers,
         _,
         land_type,
-        f_one,
+        forcing_one_timestep,
         ::Val{:nlsolve})
-        s = Spinupper(spinup_models, spinup_forcing, tem_helpers, deepcopy(land_init), land_type, f_one)
+        s = Spinupper(spinup_models, spinup_forcing, tem_helpers, deepcopy(land_init), land_type, forcing_one_timestep)
         mypools = ComponentArray((
             cEco = deepcopy(land_init.pools.cEco)))
         # mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
@@ -182,7 +182,7 @@ for tj ∈ (10, 100, 1000, 10000)
         info.tem.helpers,
         info.tem.spinup,
         land_type,
-        f_one,
+        forcing_one_timestep,
         Val(:nlsolve))
 
     xtl = land_init.cCycleBase.c_τ_eco
@@ -204,7 +204,7 @@ for tj ∈ (10, 100, 1000, 10000)
             info.tem.helpers,
             info.tem.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp))
     end
     plot!(getfield(out_sp_exp_nl.pools, sel_pool);
