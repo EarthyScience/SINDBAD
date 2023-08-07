@@ -1,10 +1,10 @@
 {
-  "name": "landWrapper",
-  "domain": "asite",
   "configuration_files": {
     "forcing": "forcing.json",
-    "model_structure": "model_structure.json",
     "model_run": "model_run.json",
+    "model_structure": "model_structure.json",
     "optimization": "optimization.json"
-  }
+  },
+  "domain": "asite",
+  "name": "landWrapper"
 }

@@ -53,8 +53,8 @@ function synth_obs()
     obs_array = getKeyedArrayWithNames(observations)
     obsv = getKeyedArray(observations)
     tbl_params = getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
+        info.optim.model_parameter_default,
+        info.optim.model_parameters_to_optimize)
 
     # covariates
     # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
