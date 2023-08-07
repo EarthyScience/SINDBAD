@@ -1,5 +1,15 @@
 export prepTEM
 
+"""
+    addSpinupLog(land, seq, nothing::Val{true})
+
+DOCSTRING
+
+# Arguments:
+- `land`: DESCRIPTION
+- `seq`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function addSpinupLog(land, seq, ::Val{true}) # when history is true
     n_repeat = 1
     for _seq in seq
@@ -10,12 +20,26 @@ function addSpinupLog(land, seq, ::Val{true}) # when history is true
     return land
 end
 
+"""
+    addSpinupLog(land, _, nothing::Val{false})
+
+DOCSTRING
+
+# Arguments:
+- `land`: sindbad land
+- `::Val{false}`: indicates not to store the spinup history
+"""
 function addSpinupLog(land, _, ::Val{false}) # when history is false
     spinuplog = nothing
     @pack_land spinuplog => land.states
     return land
 end
 
+"""
+    debugModel(land_one, nothing::Val{:(true)})
+
+DOCSTRING
+"""
 function debugModel(land_one, ::Val{:true}) # print land when debug model is true/on
     Sindbad.eval(:(error_catcher = []))
     push!(Sindbad.error_catcher, land_one)
@@ -24,10 +48,28 @@ function debugModel(land_one, ::Val{:true}) # print land when debug model is tru
 end
 
 
+"""
+    debugModel(_, nothing::Val{:(false)})
+
+DOCSTRING
+"""
 function debugModel(_, ::Val{:false}) # do nothing debug model is false/off
     return nothing
 end
 
+"""
+    runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `loc_space_map`: DESCRIPTION
+- `tem`: DESCRIPTION
+"""
 function runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
     loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
@@ -42,6 +84,11 @@ end
 """
 prepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 """
+"""
+    prepTEM(forcing::NamedTuple, info::NamedTuple)
+
+DOCSTRING
+"""
 function prepTEM(forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
     selected_models = info.tem.models.forward
@@ -54,6 +101,16 @@ end
 """
 prepTEM(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 """
+"""
+    prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `info`: DESCRIPTION
+"""
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run ecosystem"
     tem_helpers = info.tem.helpers
@@ -63,6 +120,18 @@ end
 
 """
 helpPrepTEM(output, forcing::NamedTuple, tem::NamedTuple)
+"""
+"""
+    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `selected_models`: DESCRIPTION
+- `forcing`: DESCRIPTION
+- `output`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
     # generate vals for dispatch of forcing and output
