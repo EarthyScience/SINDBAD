@@ -103,11 +103,11 @@ for o_set in opti_set
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
-    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
         "experiment.name" => exp_name,
-        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_time.date_end" => eYear * "-12-31",
         "model_run.experiment_flags.run_optimization" => optimize_it,
         "model_run.experiment_flags.run_forward_and_cost" => true,
         "model_run.experiment_flags.spinup.save_spinup" => false,
@@ -174,7 +174,7 @@ for o_set in opti_set
             ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
@@ -232,11 +232,11 @@ for o_set in opti_set
     # save the outcubes
     out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.timestep, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.timestep, Val(false))
 
 
     # plot the debug figures
@@ -245,7 +245,7 @@ for o_set in opti_set
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

@@ -114,12 +114,12 @@ for site_index in sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
         "experiment.configuration_files.optimization" => "optimization_1_1.json",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_time.date_end" => eYear * "-12-31",
         "model_run.experiment_flags.run_optimization" => false,
         "model_run.experiment_flags.run_forward_and_cost" => true,
         "model_run.experiment_flags.spinup.save_spinup" => false,
@@ -236,7 +236,7 @@ for site_index in sites
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+            vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
@@ -280,7 +280,7 @@ for site_index in sites
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
-                vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+                vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
