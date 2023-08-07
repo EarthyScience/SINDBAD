@@ -118,7 +118,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     loc_space_maps = loc_space_maps[allNans.==false]
     forcing_one_timestep, land_one = runOneLocation(selected_models, forcing_nt_array, output_array, land_init,
         loc_space_maps[1], new_tem)
-    land_one = addSpinupLog(land_one, new_tem.spinup.sequence, new_tem.helpers.run.spinup.store_spinup_history)
+    land_one = addSpinupLog(land_one, new_tem.spinup.sequence, new_tem.helpers.run.spinup.store_spinup)
 
     loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
     loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])

@@ -188,7 +188,7 @@ function runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem
                 tem_helpers,
                 tem_spinup,
                 spinup_mode)
-            land_spin = setSpinupLog(land_spin, log_index, tem_helpers.run.spinup.store_spinup_history)
+            land_spin = setSpinupLog(land_spin, log_index, tem_helpers.run.spinup.store_spinup)
             log_index += 1
         end
         seq_index += 1
