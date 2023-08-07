@@ -30,16 +30,16 @@ obs_array = getArray(observations);
 
 GC.gc()
 
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
 
-@time TEM!(output_array,
-    info.tem.models.forward,
+@time TEM!(info.tem.models.forward,
     forcing_nt_array,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one,
+    loc_space_inds,
     tem_with_vals)
 
 for x ∈ 1:10
@@ -50,7 +50,7 @@ for x ∈ 1:10
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one,
+        forcing_one_timestep,
         tem_with_vals)
 end
 
@@ -65,7 +65,7 @@ plotdat = output_array;
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+    vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
     vname = vinfo["standard_name"]
     pd = plotdat[i]
     if size(pd, 2) == 1

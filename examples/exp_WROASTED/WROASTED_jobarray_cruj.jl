@@ -139,7 +139,7 @@ for o_set in opti_set
     observations = getObservation(info, forcing.helpers)
     obs_array = getKeyedArray(observations)
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
     @time TEM!(output_array,
         optimized_models,
@@ -148,7 +148,7 @@ for o_set in opti_set
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one,
+        forcing_one_timestep,
         tem_with_vals)
 
 
@@ -176,7 +176,7 @@ for o_set in opti_set
             ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
@@ -220,7 +220,7 @@ for o_set in opti_set
     forcing = getForcing(info)
 
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info)
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep = prepTEM(forcing, info)
     @time TEM!(output_array,
         optimized_models,
         forcing_nt_array,
@@ -228,17 +228,17 @@ for o_set in opti_set
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one,
+        forcing_one_timestep,
         tem_with_vals)
 
     # save the outcubes
     out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(false))
 
 
     # plot the debug figures
@@ -247,7 +247,7 @@ for o_set in opti_set
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

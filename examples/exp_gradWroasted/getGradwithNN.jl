@@ -18,17 +18,17 @@ op = setupOutput(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
-forcing_nt_array, output_array, _, _, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
 
 
-@time TEM!(op.data,
-    info.tem.models.forward,
+@time TEM!(info.tem.models.forward,
     forcing_nt_array,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one,
+    loc_space_inds,
     tem_with_vals)
 
 # @time out_params = runExperimentOpti(experiment_json);  
@@ -49,7 +49,7 @@ function g_loss(x,
     loc_forcings,
     loc_outputs,
     land_init_space,
-    f_one)
+    forcing_one_timestep)
     l = getLoss(x,
         mods,
         forcing_nt_array,
@@ -62,7 +62,7 @@ function g_loss(x,
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        forcing_one_timestep)
     return l
 end
 rand_m = rand(info.tem.helpers.numbers.num_type);
@@ -82,7 +82,7 @@ for _ in 1:10
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        forcing_one_timestep)
     @show lo_ss
 end
 
@@ -99,7 +99,7 @@ for _ in 1:10
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        forcing_one_timestep)
     @show lo_ss
 end
 
@@ -119,7 +119,7 @@ function l1(p)
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        forcing_one_timestep)
 end
 function l2(p)
     return g_loss(p,
@@ -134,12 +134,12 @@ function l2(p)
         loc_forcings,
         loc_outputs,
         land_init_space,
-        f_one)
+        forcing_one_timestep)
 end
 
 
 op = setupOutput(info, forcing.helpers);
-# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in output_array];
 # op = (; op..., data=op_dat);
 
 # @time grad = ForwardDiff.gradient(l1, tbl_params.default)

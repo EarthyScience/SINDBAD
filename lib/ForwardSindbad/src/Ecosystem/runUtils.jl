@@ -8,7 +8,7 @@ function fillLocOutput!(ar, val, ts::Int64)
     return data_ts .= val
 end
 
-function getLocData(output_array, forcing, loc_space_map)
+function getLocData(forcing, output_array, loc_space_map)
     loc_forcing = map(forcing) do a
         view(a; loc_space_map...)
     end
@@ -21,11 +21,12 @@ function getLocData(output_array, forcing, loc_space_map)
     return loc_forcing, loc_output
 end
 
-@generated function getLocForcing!(forcing,
-    ::Val{forc_vars},
-    ::Val{s_names},
+@generated function getLocForcing!(
+    forcing,
     loc_forcing,
-    s_locs) where {forc_vars,s_names}
+    s_locs,
+    ::Val{forc_vars},
+    ::Val{s_names}) where {forc_vars,s_names}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :d, Expr(:., :forcing, QuoteNode(forc))))
@@ -52,7 +53,7 @@ end
     return output
 end
 
-function getLocOutput!(output_array, ar_inds, loc_output)
+function getLocOutput!(output_array, loc_output, ar_inds)
     for i ∈ eachindex(output_array)
         loc_output[i] = getArrayView(output_array[i], ar_inds)
     end
@@ -67,7 +68,7 @@ function getLocOutputView(ar, val::Real, ts::Int64)
     return view(ar, ts)
 end
 
-function setOutputForTimeStep!(outputs, land, ::Val{output_vars}, ts) where {output_vars}
+function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {output_vars}
     if @generated
         output = quote end
         for (i, ov) in enumerate(output_vars)

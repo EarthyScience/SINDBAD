@@ -684,21 +684,21 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.time.model_time_step == "day"
-        time_step = Day(1)
+    if info.model_run.time.model_timestep == "day"
+        timestep = Day(1)
         # time_range = collect((Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)))
         time_range = Date(info.model_run.time.start_date):Day(1):Date(info.model_run.time.end_date)
-    elseif info.model_run.time.model_time_step == "hour"
-        time_step = Month(1)
+    elseif info.model_run.time.model_timestep == "hour"
+        timestep = Month(1)
         time_range =
             Date(info.model_run.time.start_date):Hour(1):Date(info.model_run.time.end_date)
         # collect((Date(info.model_run.time.start_date):Hour(1):Date(info.model_run.time.end_date)))
     else
         error(
-            "Sindbad only supports hourly and daily simulation. Change time.model_time_step in model_run.json"
+            "Sindbad only supports hourly and daily simulation. Change time.model_timestep in model_run.json"
         )
     end
-    tmpDates = setTupleField(tmpDates, (:time_step, time_step)) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:timestep, timestep)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:range, time_range)) #needs to come from the date vector
     tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
@@ -1351,11 +1351,11 @@ function setupExperiment(info::NamedTuple)
         # @show seq
         for kk in keys(seq)
             if kk == "forcing"
-                is_model_time_step = false
-                if startswith(kk, info.tem.helpers.dates.model_time_step)
-                    is_model_time_step = true
+                is_model_timestep = false
+                if startswith(kk, info.tem.helpers.dates.model_timestep)
+                    is_model_timestep = true
                 end
-                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_time_step)
+                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_timestep)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = Val(:no_diff)
                 if occursin("_year", seq[kk])

@@ -9,7 +9,7 @@ struct DoSpinup_TWS{M,F,T,I,O}
     forcing::F
     tem_helpers::T
     land::I
-    f_one::O
+    forcing_one_timestep::O
 end
 
 struct DoSpinup_cEco_TWS{M,F,T,I,O,TWS}
@@ -17,7 +17,7 @@ struct DoSpinup_cEco_TWS{M,F,T,I,O,TWS}
     forcing::F
     tem_helpers::T
     land::I
-    f_one::O
+    forcing_one_timestep::O
     TWS::TWS
 end
 
@@ -27,7 +27,7 @@ struct DoSpinup_cEco{M,F,T,I,O}
     forcing::F
     tem_helpers::T
     land::I
-    f_one::O
+    forcing_one_timestep::O
 end
 
 
@@ -45,7 +45,7 @@ function (cEco_spin::DoSpinup_cEco)(pout, p)
     end
     @pack_land cEco => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
-    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.f_one, cEco_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(cEco_spin.models, cEco_spin.forcing, land, cEco_spin.forcing_one_timestep, cEco_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     return nothing
@@ -77,7 +77,7 @@ function (cEco_TWS_spin::DoSpinup_cEco_TWS)(pout, p)
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
 
-    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.f_one, cEco_TWS_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(cEco_TWS_spin.models, cEco_TWS_spin.forcing, land, cEco_TWS_spin.forcing_one_timestep, cEco_TWS_spin.tem_helpers)
 
     pout .= log.(update_init.pools.cEco)
     cEco_TWS_spin.TWS .= update_init.pools.TWS
@@ -96,7 +96,7 @@ function (TWS_spin::DoSpinup_TWS)(pout, p)
     end
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
-    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.f_one, TWS_spin.tem_helpers)
+    update_init = runTimeLoopSpinup(TWS_spin.models, TWS_spin.forcing, land, TWS_spin.forcing_one_timestep, TWS_spin.tem_helpers)
     pout .= update_init.pools.TWS
     return nothing
 end
@@ -106,15 +106,15 @@ function doSpinup(_, _, land_spin, _, _, _, _, ::Val{:false}) # dont do the spin
     return land_spin
 end
 
-function doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
+function doSpinup(forward_models, forcing, land_spin, forcing_one_timestep, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
     @debug "runSpinup:: running spinup sequences..."
-    # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, f_one);
+    # spinup_forcing = getSpinupForcing(forcing, tem_spinup, tem_helpers, forcing_one_timestep);
     seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
-        sel_forcing = getSpinupForcing(forcing, tem_helpers, f_one, spin_seq.aggregator, spin_seq.aggregator_type)
+        sel_forcing = getSpinupForcing(forcing, tem_helpers, forcing_one_timestep, spin_seq.aggregator, spin_seq.aggregator_type)
         spinup_models = forward_models
         if spinup_mode == :spinup
             spinup_models = forward_models[tem_models.is_spinup]
@@ -125,7 +125,7 @@ function doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_mo
             land_spin = doSpinup(spinup_models,
                 sel_forcing,
                 land_spin,
-                f_one,
+                forcing_one_timestep,
                 tem_helpers,
                 tem_spinup,
                 spinup_mode)
@@ -143,17 +143,18 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:spinup})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :spinup, only the models chosen as use4spinup in model_structure.json are run.
 """
-function doSpinup(sel_spinup_models,
-    sel_spinup_forcing,
-    land_in,
-    f_one,
+function doSpinup(
+    spinup_models,
+    spinup_forcing,
+    forcing_one_timestep,
+    land,
     tem_helpers,
     _,
     ::Val{:spinup})
-    land_spin = runTimeLoopSpinup(sel_spinup_models,
-        sel_spinup_forcing,
-        land_in,
-        f_one,
+    land_spin = runTimeLoopSpinup(spinup_models,
+        spinup_forcing,
+        land,
+        forcing_one_timestep,
         tem_helpers)
     return land_spin
 end
@@ -162,30 +163,32 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in sel_spinup_models. In case of :forward, all the models chosen in model_structure.json are run.
 """
-function doSpinup(sel_spinup_models,
-    sel_spinup_forcing,
-    land_in,
-    f_one,
+function doSpinup(
+    spinup_models,
+    spinup_forcing,
+    forcing_one_timestep,
+    land,
     tem_helpers,
     _,
     ::Val{:forward})
-    land_spin = runTimeLoopSpinup(sel_spinup_models,
-        sel_spinup_forcing,
-        land_in,
-        f_one,
+    land_spin = runTimeLoopSpinup(spinup_models,
+        spinup_forcing,
+        land,
+        forcing_one_timestep,
         tem_helpers)
     return land_spin
 end
 
 
-function doSpinup(spinup_models,
+function doSpinup(
+    spinup_models,
     spinup_forcing,
+    forcing_one_timestep,
     land,
-    f_one,
     tem_helpers,
     _,
     ::Val{:nlsove_fixedpoint_trustregion_TWS})
-    TWS_spin = DoSpinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, f_one)
+    TWS_spin = DoSpinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, forcing_one_timestep)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
     TWS = r.zero
     TWS = oftype(land.pools.TWS, TWS)
@@ -194,14 +197,15 @@ function doSpinup(spinup_models,
     return land
 end
 
-function doSpinup(spinup_models,
+function doSpinup(
+    spinup_models,
     spinup_forcing,
+    forcing_one_timestep,
     land,
-    f_one,
     tem_helpers,
     _,
     ::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
-    cEco_TWS_spin = DoSpinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), f_one, Vector(deepcopy(land.pools.TWS)))
+    cEco_TWS_spin = DoSpinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     # r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
     # cEco = exp.(r.zero)
@@ -223,14 +227,15 @@ function doSpinup(spinup_models,
 end
 
 
-function doSpinup(spinup_models,
+function doSpinup(
+    spinup_models,
     spinup_forcing,
+    forcing_one_timestep,
     land,
-    f_one,
     tem_helpers,
     _,
     ::Val{:nlsove_fixedpoint_trustregion_cEco})
-    cEco_spin = DoSpinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), f_one)
+    cEco_spin = DoSpinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     r = fixedpoint(cEco_spin, p_init; method=:trust_region)
     cEco = exp.(r.zero)
@@ -242,10 +247,11 @@ end
 
 
 """
-doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleAH})
+doSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleAH})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, _, helpers, _, ::Val{:ηScaleAH})
+
+function doSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleAH})
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -276,10 +282,10 @@ end
 
 
 """
-doSpinup(_, _, land, helpers, _, _, ::Val{:ηScaleA0H})
+doSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleA0H})
 scale the carbon pools using the scalars from cCycleBase
 """
-function doSpinup(_, _, land, _, helpers, _, ::Val{:ηScaleA0H})
+function doSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleA0H})
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -317,21 +323,23 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_AutoTsit5_Rodas5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models,
+function doSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_spinup,
     ::Val{:ODE_AutoTsit5_Rodas5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(sel_spinup_models,
+        p_info = getSpinupInfo(
+            sel_spinup_models,
             sel_spinup_forcing,
-            Symbol(sel_pool),
+            forcing_one_timestep,
             land_in,
+            Symbol(sel_pool),
             tem_helpers,
-            tem_spinup,
-            f_one)
+            tem_spinup)
         tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -348,21 +356,23 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_DP5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models,
+function doSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_spinup,
     ::Val{:ODE_DP5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(sel_spinup_models,
+        p_info = getSpinupInfo(
+            sel_spinup_models,
             sel_spinup_forcing,
-            Symbol(sel_pool),
+            forcing_one_timestep,
             land_in,
+            Symbol(sel_pool),
             tem_helpers,
-            tem_spinup,
-            f_one)
+            tem_spinup)
         tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -380,21 +390,23 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:ODE_Tsit5})
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models,
+function doSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_spinup,
     ::Val{:ODE_Tsit5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(sel_spinup_models,
+        p_info = getSpinupInfo(
+            sel_spinup_models,
             sel_spinup_forcing,
-            Symbol(sel_pool),
+            forcing_one_timestep,
             land_in,
+            Symbol(sel_pool),
             tem_helpers,
-            tem_spinup,
-            f_one)
+            tem_spinup)
         tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
@@ -412,21 +424,23 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models,
+function doSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_spinup,
     ::Val{:SSP_DynamicSS_Tsit5})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(sel_spinup_models,
+        p_info = getSpinupInfo(
+            sel_spinup_models,
             sel_spinup_forcing,
-            Symbol(sel_pool),
+            forcing_one_timestep,
             land_in,
+            Symbol(sel_pool),
             tem_helpers,
-            tem_spinup,
-            f_one)
+            tem_spinup)
         tspan = (0.0, tem_spinup.differential_eqn.time_jump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
@@ -440,21 +454,23 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_in, tem, ::Val{:SSP_DynamicSS_Tsit5})
 do/run the spinup using SteadyState solver and SSRootfind method of DifferentialEquations.jl.
 """
-function doSpinup(sel_spinup_models,
+function doSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_spinup,
     ::Val{:SSP_SSRootfind})
     for sel_pool ∈ tem_spinup.differential_eqn.pools
-        p_info = getSpinupInfo(sel_spinup_models,
+        p_info = getSpinupInfo(
+            sel_spinup_models,
             sel_spinup_forcing,
-            Symbol(sel_pool),
+            forcing_one_timestep,
             land_in,
+            Symbol(sel_pool),
             tem_helpers,
-            tem_spinup,
-            f_one)
+            tem_spinup)
         tspan = (0.0, tem_spinup.differential_eqn.time_jump)
         init_pool = deepcopy(getfield(p_info.land_in[:pools], p_info.pool))
         ssp_prob = SteadyStateProblem(getDeltaPool, init_pool, p_info)
@@ -475,13 +491,14 @@ function getDeltaPool(pool_dat::AbstractArray, spinup_info, t::Any)
     tem_helpers = spinup_info.tem_helpers
     sel_spinup_models = spinup_info.sel_spinup_models
     sel_spinup_forcing = spinup_info.sel_spinup_forcing
-    f_one = spinup_info.f_one
+    forcing_one_timestep = spinup_info.forcing_one_timestep
     land_spin = setTupleSubfield(land_spin, :pools, (spinup_info.pool, pool_dat))
 
-    land_spin = runTimeLoopSpinup(sel_spinup_models,
+    land_spin = runTimeLoopSpinup(
+        sel_spinup_models,
         sel_spinup_forcing,
+        forcing_one_timestep,
         deepcopy(land_spin),
-        f_one,
         tem_helpers)
     tmp = getfield(land_spin.pools, spinup_info.pool)
     Δpool = tmp - pool_dat
@@ -492,11 +509,12 @@ end
 getSpinupInfo(sel_spinup_models, sel_spinup_forcing, spinup_pool_name, land_in, tem_helpers)
 helper function to create a NamedTuple with all the variables needed to run the spinup models in getDeltaPool. Used in solvers from DifferentialEquations.jl.
 """
-function getSpinupInfo(sel_spinup_models,
+function getSpinupInfo(
+    sel_spinup_models,
     sel_spinup_forcing,
-    spinup_pool_name,
+    forcing_one_timestep,
     land_in,
-    f_one,
+    spinup_pool_name,
     tem_helpers,
     tem_spinup)
     spinup_info = (;)
@@ -506,7 +524,7 @@ function getSpinupInfo(sel_spinup_models,
     spinup_info = setTupleField(spinup_info, (:sel_spinup_models, sel_spinup_models))
     spinup_info = setTupleField(spinup_info, (:tem_helpers, tem_helpers))
     spinup_info = setTupleField(spinup_info, (:tem_spinup, tem_spinup))
-    spinup_info = setTupleField(spinup_info, (:f_one, f_one))
+    spinup_info = setTupleField(spinup_info, (:forcing_one_timestep, forcing_one_timestep))
     return spinup_info
 end
 
@@ -526,15 +544,16 @@ end
 doSpinup(sel_spinup_models, sel_spinup_forcing, land_spin, tem)
 do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land_spin/land is overwritten with every iteration. Only the state at the end is returned.
 """
-function runTimeLoopSpinup(sel_spinup_models,
+function runTimeLoopSpinup(
+    sel_spinup_models,
     sel_spinup_forcing,
+    forcing_one_timestep,
     land_spin,
-    f_one,
     tem_helpers)
-    num_time_steps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
-    for t ∈ 1:num_time_steps
-        f = getForcingForTimeStep(sel_spinup_forcing, tem_helpers.vals.forc_vars, t, f_one)
-        land_spin = runModelCompute(land_spin, f, sel_spinup_models, tem_helpers)
+    num_timesteps = getForcingTimeSize(sel_spinup_forcing, tem_helpers.vals.forc_vars)
+    for ts ∈ 1:num_timesteps
+        f_ts = getForcingForTimeStep(sel_spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
+        land_spin = runModelCompute(sel_spinup_models, f_ts, land_spin, tem_helpers)
     end
     return land_spin
 end
@@ -544,10 +563,11 @@ end
 runSpinup(forward_models, forcing, land_spin, tem)
 The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using doSpinup functions for different spinup methods.
 """
-function runSpinup(forward_models,
+function runSpinup(
+    forward_models,
     forcing,
+    forcing_one_timestep,
     land_in,
-    f_one,
     tem_helpers,
     tem_models,
     tem_spinup)
@@ -556,7 +576,7 @@ function runSpinup(forward_models,
     land_spin = loadSpinup(land_in, tem_spinup, tem_helpers.run.spinup.load_spinup)
 
     #check if the spinup still needs to be done after loading spinup
-    land_spin = doSpinup(forward_models, forcing, land_spin, f_one, tem_helpers, tem_models, tem_spinup, tem_helpers.run.spinup.do_spinup)
+    land_spin = doSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, tem_helpers.run.spinup.do_spinup)
 
     saveSpinup(land_spin, tem_spinup, tem_helpers.run.spinup.save_spinup)
     return land_spin

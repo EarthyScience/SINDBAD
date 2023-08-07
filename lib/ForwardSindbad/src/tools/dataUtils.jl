@@ -214,7 +214,7 @@ end
     return output
 end
 
-@generated function getForcingForTimeStep(forcing, ::Val{forc_vars}, ts, f_t) where {forc_vars}
+@generated function getForcingForTimeStep(forcing, f_t, ts, ::Val{forc_vars}) where {forc_vars}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
@@ -232,7 +232,7 @@ end
     return output
 end
 
-function getForcingForTimeStep(forcing::NamedTuple, ts::Int64, forcing_t)
+function getForcingForTimeStep(forcing::NamedTuple, forcing_t, ts::Int64)
     for f ∈ keys(forcing)
         v = forcing[f]
         forcing_t = @set forcing_t[f] = in(:time, AxisKeys.dimnames(v)) ? v[time=ts] : v

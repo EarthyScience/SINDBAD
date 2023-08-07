@@ -7,7 +7,7 @@ function get_loc_loss(
     tem_spinup,
     tem_models,
     tem_optim,
-    f_one)
+    forcing_one_timestep)
     big_land = ForwardSindbad.coreEcosystem(
         new_apps,
         loc_forcing,
@@ -15,7 +15,7 @@ function get_loc_loss(
         tem_spinup,
         tem_models,
         loc_land_init,
-        f_one)
+        forcing_one_timestep)
     loss_vector = getLossVector(loc_obs, landWrapper(big_land), tem_optim)
     #@show loss_vector
     t_loss = combineLoss(loss_vector, Val{:sum}())

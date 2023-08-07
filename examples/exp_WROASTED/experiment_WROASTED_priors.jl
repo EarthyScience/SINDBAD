@@ -49,15 +49,16 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
-@time TEM!(output_array,
-    info.tem.models.forward,
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+
+@time TEM!(info.tem.models.forward,
     forcing_nt_array,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one,
+    loc_space_inds,
     tem_with_vals)
 
 observations = getObservation(info, forcing.helpers);
@@ -133,8 +134,7 @@ develop_f =
         lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepTEM(tem.models.forward, forcing, info)
+        forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info)
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
@@ -164,7 +164,7 @@ develop_f =
                 loc_forcings,
                 loc_outputs,
                 land_init_space,
-                f_one,
+                forcing_one_timestep,
                 tem_with_vals)
 
             # get predictions and observations

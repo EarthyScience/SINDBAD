@@ -37,7 +37,7 @@ for (i, tj) ∈ enumerate(tjs)
     loc_outputs,
     land_init_space,
     tem_with_vals,
-    f_one = prepTEM(forcing, info)
+    forcing_one_timestep = prepTEM(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
@@ -59,7 +59,7 @@ for (i, tj) ∈ enumerate(tjs)
         tem_with_vals.helpers,
         tem_with_vals.spinup,
         land_type,
-        f_one,
+        forcing_one_timestep,
         Val(sp))
 
     out_sp_ode_init = deepcopy(out_sp_ode)
@@ -73,7 +73,7 @@ for (i, tj) ∈ enumerate(tjs)
             tem_with_vals.helpers,
             tem_with_vals.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp))
     end
     out_sp_exp_init = deepcopy(out_sp_exp)
