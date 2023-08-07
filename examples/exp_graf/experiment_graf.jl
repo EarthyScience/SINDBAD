@@ -12,7 +12,7 @@ optimize_it = true;
 # info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
-    "experiment.basics.configuration_files.forcing" => "forcing.json",
+    "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.run_forward_and_cost" => true,
     "experiment.flags.spinup.run_spinup" => true,

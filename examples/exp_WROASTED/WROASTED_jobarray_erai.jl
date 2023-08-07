@@ -104,7 +104,7 @@ for o_set in opti_set
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
     replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
-        "experiment.basics.configuration_files.forcing" => forcingConfig,
+        "experiment.basics.config_files.forcing" => forcingConfig,
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => eYear * "-12-31",
@@ -118,7 +118,7 @@ for o_set in opti_set
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
-        "experiment.data_rules.parallelization" => pl,
+        "experiment.exe_rules.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)
