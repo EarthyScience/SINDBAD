@@ -1,5 +1,6 @@
 export combineLoss
 export filterCommonNaN
+export filterConstraintMinimumDatapoints
 export getData
 export getLocObs!
 export getLoss
@@ -359,7 +360,7 @@ DOCSTRING
 # Arguments:
 - `param_vector`: DESCRIPTION
 - `base_models`: DESCRIPTION
-- `forcing_nt_array`: a forcing NT that contain the forcing time series set for ALL locations, with each variable as an instantiated array in memory
+- `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `output_array`: an output array/view for ALL locations
@@ -418,10 +419,12 @@ DOCSTRING
 """
 function getLossVector(observations, model_output, cost_options)
     loss_vector = map(cost_options) do cost_option
+        @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        @debug size(y), size(yσ), size(ŷ)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        @debug @time metr = loss(y, yσ, ŷ, lossMetric)
+        # @debug @time metr = loss(y, yσ, ŷ, lossMetric)
         metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
             metr = oftype(metr, 1e19)
@@ -494,7 +497,7 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
@@ -560,7 +563,7 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
@@ -623,7 +626,7 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION

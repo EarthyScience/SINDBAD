@@ -103,7 +103,7 @@
           "source_unit": "gC m-2",
           "source_variable": "agb"
         },
-        "model_full_var": "pools.cVegWood",
+        "model_full_var": "deriveVariables.aboveground_biomass",
         "unc": {
           "bounds": [0.0, 400.0],
           "data_path": null,

@@ -1,6 +1,6 @@
 include("prepExperiment.jl")
 include("runExperiment.jl")
-include("dataUtils.jl")
+include("utilsData.jl")
 include("getForcing.jl")
 include("getSpinupForcing.jl")
 include("setupOutput.jl")
