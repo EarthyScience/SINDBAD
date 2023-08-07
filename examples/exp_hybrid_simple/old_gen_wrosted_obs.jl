@@ -109,7 +109,7 @@ function synth_obs()
         loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
         up_apps = updateModelParametersType(tbl_params, forward, upVector)
         # up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
-        return runTEMCore!(loc_output,
+        return coreTEM!(loc_output,
             up_apps,
             loc_forcing,
             tem_helpers,

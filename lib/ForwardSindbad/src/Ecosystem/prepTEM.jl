@@ -31,9 +31,9 @@ end
 function runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
     loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
-    land_prec = runModelDefinePrecompute(selected_models, forcing_one_timestep, land_init,
+    land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
         tem.helpers)
-    land_one = runModelCompute(selected_models, forcing_one_timestep, land_prec, tem.helpers)
+    land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers)
     setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
     debugModel(land_one, tem.helpers.run.debug_model)
     return forcing_one_timestep, land_one

@@ -34,7 +34,7 @@ end
 function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
     field_name = first(split(string(vname), '.'))
     vname_s = split(string(vname), '.')[end]
-    tmp_vars = info.model_run.output.variables
+    tmp_vars = info.experiment.model_output.variables
     dimSize = 1
     dimName = vname_s * "_idx"
     if vname in keys(tmp_vars)
@@ -49,8 +49,8 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
         elseif isa(vdim, Int64)
             dimSize = vdim
         elseif isa(vdim, String)
-            if Symbol(vdim) in keys(info.model_run.output.depth_dimensions)
-                dimSizeK = getfield(info.model_run.output.depth_dimensions, Symbol(vdim))
+            if Symbol(vdim) in keys(info.experiment.model_output.depth_dimensions)
+                dimSizeK = getfield(info.experiment.model_output.depth_dimensions, Symbol(vdim))
                 if isa(dimSizeK, Int64)
                     dimSize = dimSizeK
                 elseif isa(dimSizeK, String)
@@ -77,9 +77,9 @@ end
 function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
     outdims = map(datavars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
-        inax = info.forcing.data_dimensions.time
+        inax = info.forcing.data_dimension.time
         path_output = info.output.data
-        outformat = info.model_run.output.format
+        outformat = info.experiment.model_output.format
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         OutDims(inax[1],
             Dim{Symbol(depth_name)}(1:depth_size),
@@ -97,7 +97,7 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         ar = nothing
         ax_vals = values(forcing_sizes)
-        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.experiment_rules.forward_diff),
+        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.experiment.data_rules.forward_diff),
             length(values(forcing_sizes)) + 1}(undef,
             ax_vals[1],
             depth_size,
@@ -229,7 +229,7 @@ end
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     @info "     setupOutput: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
-    outformat = info.model_run.output.format
+    outformat = info.experiment.model_output.format
     @info "     setupOutput: getting data variables..."
 
     datavars = if hasproperty(info, :optim)
@@ -239,14 +239,14 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
         end
     else
         map(Iterators.flatten(info.tem.variables)) do vn
-            ForwardSindbad.getOrderedOutputList(collect(keys(info.model_run.output.variables)), vn)
+            ForwardSindbad.getOrderedOutputList(collect(keys(info.experiment.model_output.variables)), vn)
         end
     end
 
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "     setupOutput: getting output dimension and arrays..."
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.model_run.output.output_array_type)))
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.experiment.model_output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 
@@ -264,7 +264,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
     output_tuple = setTupleField(output_tuple, (:variables, ovro))
 
 
-    if getBool(info.model_run.experiment_flags.run_optimization) || getBool(tem_helpers.run.run_forward_and_cost)
+    if getBool(info.experiment.flags.run_optimization) || getBool(tem_helpers.run.run_forward_and_cost)
         @info "     setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
@@ -285,7 +285,7 @@ function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     paramaxis = Dim{:parameter}(params)
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "model_parameters_to_optimize$(info.model_run.output.format)"),
+            "model_parameters_to_optimize$(info.experiment.model_output.format)"),
         backend=:zarr,
         overwrite=true)
     # od = OutDims(paramaxis)

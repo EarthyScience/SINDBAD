@@ -97,7 +97,7 @@ function pixel_run!(output_array,
 
     loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
     up_apps = Tuple(updateModelParametersType(tbl_params, forward, upVector))
-    return runTEMCore!(loc_output,
+    return coreTEM!(loc_output,
         up_apps,
         loc_forcing,
         tem_helpers,

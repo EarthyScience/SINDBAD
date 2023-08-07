@@ -92,9 +92,10 @@ read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
-    for (k, v) ∈ info_exp["experiment"]["configuration_files"]
+    for (k, v) ∈ info_exp["experiment"]["basics"]["configuration_files"]
         config_path = joinpath(base_path, v)
-        info_exp["experiment"]["configuration_files"][k] = config_path
+        @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
+        info_exp["experiment"]["basics"]["configuration_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
@@ -103,7 +104,6 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
             tmp = Table(prm)
             info[k] = tmp
         end
-        @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
     end
 
     # rm second level
@@ -151,7 +151,7 @@ end
 sets up and creates output directory for the model simulation
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
-    path_output = infoTuple[:model_run][:output][:path]
+    path_output = infoTuple[:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"
         path_output_new = joinpath(join(split(infoTuple.settings_root, "/")[1:(end-1)], "/"),
@@ -177,15 +177,15 @@ function setupOutputDirectory(infoTuple::NamedTuple)
             end
         end
     end
-    path_output_new = path_output_new * infoTuple.experiment.domain * "_" * infoTuple.experiment.name
+    path_output_new = path_output_new * infoTuple.experiment.basics.domain * "_" * infoTuple.experiment.basics.name
 
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
     sub_output = ["code", "data", "figure", "root", "settings"]
-    if infoTuple.model_run.experiment_flags.run_optimization || infoTuple.model_run.experiment_flags.run_forward_and_cost
+    if infoTuple.experiment.flags.run_optimization || infoTuple.experiment.flags.run_forward_and_cost
         push!(sub_output, "optim")
     end
-    if infoTuple.model_run.experiment_flags.spinup.save_spinup
+    if infoTuple.experiment.flags.spinup.save_spinup
         push!(sub_output, "spinup")
     end
     for s_o ∈ sub_output
@@ -243,8 +243,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     cp(sindbad_experiment,
         joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
         force=true)
-    for k ∈ keys(infoTuple.experiment.configuration_files)
-        v = getfield(infoTuple.experiment.configuration_files, k)
+    for k ∈ keys(infoTuple.experiment.basics.configuration_files)
+        v = getfield(infoTuple.experiment.basics.configuration_files, k)
         cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
     end
     println("----------------------------------------------")
