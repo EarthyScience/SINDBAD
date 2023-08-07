@@ -5,6 +5,7 @@ export optimizer
 
 Optimize model parameters using CMAES method of Evolutionary.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Evolutionary_CMAES})
 
@@ -39,6 +40,7 @@ end
 
 Optimize model parameters using LBFGS method of Optim.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_LBFGS})
 
@@ -79,6 +81,7 @@ end
 
 Optimize model parameters using BFGS method of Optim.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_BFGS})
 
@@ -113,6 +116,7 @@ end
 
 Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:CMAEvolutionStrategy_CMAES})
 
@@ -148,6 +152,7 @@ end
 
 Optimize model parameters using Fminbox_GradientDescent method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_Fminbox_GradientDescent_FD})
 
@@ -180,6 +185,7 @@ end
 
 Optimize model parameters using NelderMead method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_NelderMead})
 
@@ -210,6 +216,7 @@ end
 
 Optimize model parameters using BFGS method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BFGS})
 
@@ -240,6 +247,7 @@ end
 
 Optimize model parameters using MultistartOptimization method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_MultistartOptimization})
 
@@ -270,6 +278,7 @@ end
 
 Optimize model parameters using Black Box Optimization method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BBO_adaptive})
 
@@ -300,6 +309,7 @@ end
 
 Optimize model parameters using GCMAES method of Optimization.jl package
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES})
 
@@ -331,6 +341,7 @@ end
 
 Optimize model parameters using GCMAES method of Optimization.jl package with automatic forward difference
 """
+
 """
     optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES_FD})
 
