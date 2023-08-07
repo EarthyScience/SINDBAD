@@ -86,16 +86,16 @@ function getExperimentConfiguration(experiment_json::String; replace_info=nothin
 end
 
 """
-    readConfiguration(configuration_files)
+    readConfiguration(config_files)
 
 read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
-    for (k, v) ∈ info_exp["experiment"]["basics"]["configuration_files"]
+    for (k, v) ∈ info_exp["experiment"]["basics"]["config_files"]
         config_path = joinpath(base_path, v)
         @info "getConfiguration: readConfiguration:: $(k) ::: $(config_path)"
-        info_exp["experiment"]["basics"]["configuration_files"][k] = config_path
+        info_exp["experiment"]["basics"]["config_files"][k] = config_path
         if endswith(v, ".json")
             tmp = parsefile(config_path; dicttype=DataStructures.OrderedDict)
             info[k] = removeComments(tmp) # remove on first level
@@ -243,8 +243,8 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     cp(sindbad_experiment,
         joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
         force=true)
-    for k ∈ keys(infoTuple.experiment.basics.configuration_files)
-        v = getfield(infoTuple.experiment.basics.configuration_files, k)
+    for k ∈ keys(infoTuple.experiment.basics.config_files)
+        v = getfield(infoTuple.experiment.basics.config_files, k)
         cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
     end
     println("----------------------------------------------")
