@@ -1,6 +1,6 @@
 {
   "basics": {
-    "configuration_files": {
+    "config_files": {
       "forcing": "forcing.json",
       "model_structure": "model_structure.json",
       "optimization": "optimization.json"
@@ -15,7 +15,7 @@
       "timesteps_in_year": 365
     }
   },
-  "data_rules": {
+  "exe_rules": {
     "data_type": "Float64",
     "forward_diff": false,
     "input_data_backend": "netcdf",
@@ -37,7 +37,7 @@
       "load_spinup": false,
       "run_spinup": true,
       "save_spinup": false,
-      "store_spinup_history": false
+      "store_spinup": false
     }
   },
   "model_output": {
