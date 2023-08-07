@@ -112,7 +112,7 @@ function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers
     forcing_axes = forcing_helpers.axes
     dim_loops = first.(forcing_axes)
     axes_dims_pairs = []
-    if !isnothing(forcing_helpers.data_dimensions.permute)
+    if !isnothing(forcing_helpers.dimensions.permute)
         dim_perms = Symbol.(forcing_helpers.dimensions.permute)
         if dim_loops !== dim_perms
             for ix in eachindex(dim_perms)

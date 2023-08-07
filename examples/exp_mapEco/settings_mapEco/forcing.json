@@ -1,6 +1,6 @@
 {
   "data_dimensions": {
-    "experiment_time": "time",
+    "time": "time",
     "permute": null,
     "space": ["latitude", "longitude"]
   },

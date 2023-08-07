@@ -108,7 +108,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         @info " \n"
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.forcing.dimensions.space))
+    indims = getDataDims.(obscubes, Ref(info.forcing.data_dimensions.space))
     @info "getObservation: getting number of time steps..."
     nts = forcing_helpers.sizes
     @info "getObservation: getting variable name..."

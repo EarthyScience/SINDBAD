@@ -70,7 +70,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     forcing_sizes = forcing.helpers.sizes
 
     loopvars = collect(keys(forcing_sizes))
-    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.data_dimensions.time)])::Vector{Symbol}
+    additionaldims = setdiff(loopvars, [Symbol(forcing.helpers.dimensions.time)])::Vector{Symbol}
     spacesize = values(forcing_sizes[additionaldims])::Tuple
     loc_space_maps = vec(
         collect(Iterators.product(Base.OneTo.(spacesize)...))
