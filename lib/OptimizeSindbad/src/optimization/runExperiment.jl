@@ -5,6 +5,7 @@ export runExperimentOpti
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+
 """
     runExperiment(info::NamedTuple, forcing::NamedTuple, output, nothing::Val{:opti})
 
@@ -48,6 +49,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+
 """
     runExperiment(info::NamedTuple, forcing::NamedTuple, nothing::Val{:cost})
 
@@ -79,6 +81,7 @@ end
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
 """
+
 """
     runExperimentOpti(sindbad_experiment::String; replace_info = nothing)
 

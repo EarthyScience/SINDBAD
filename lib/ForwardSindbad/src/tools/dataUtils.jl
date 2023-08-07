@@ -206,6 +206,7 @@ end
 
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 """
+
 """
     applyQCBound(data_in, data_qc, bounds_qc, dfill)
 
@@ -230,6 +231,7 @@ end
 
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 """
+
 """
     applyUnitConversion(data_in, conversion, isadditive = false)
 
@@ -447,6 +449,7 @@ end
 """
 filterVariables(out::NamedTuple, varsinfo; filter_variables=true)
 """
+
 """
     filterVariables(out::NamedTuple, varsinfo::NamedTuple; filter_variables = true)
 
@@ -473,6 +476,7 @@ end
 """
 getNamedDimsArrayWithNames(input::NamedTuple)
 """
+
 """
     getNamedDimsArrayWithNames(input)
 
@@ -491,6 +495,7 @@ end
 getSindbadDims(c)
 prepare the dimensions of data and name them appropriately for use in internal SINDBAD functions
 """
+
 """
     getSindbadDims(c)
 
@@ -512,6 +517,7 @@ end
 """
 getKeyedArrayWithNames(input::NamedTuple)
 """
+
 """
     getKeyedArrayWithNames(input)
 
@@ -527,6 +533,7 @@ end
 """
 getKeyedArray(input::NamedTuple)
 """
+
 """
     getKeyedArray(input)
 
@@ -544,6 +551,7 @@ end
 """
 getKeyedArray(input::NamedTuple)
 """
+
 """
     getArray(input)
 
