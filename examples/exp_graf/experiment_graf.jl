@@ -14,10 +14,10 @@ optimize_it = true;
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.run_forward_and_cost" => true,
-    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.calc_cost" => true,
+    "experiment.flags.spinup.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
-    "experiment.flags.spinup.do_spinup" => true);
+    "experiment.flags.spinup.run_spinup" => true);
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 

@@ -187,7 +187,7 @@ function TEM!(
         tem_helpers,
         tem_models,
         tem_spinup,
-        tem_helpers.run.spinup.run_spinup)
+        tem_helpers.run.spinup.spinup_TEM)
     return nothing
 end
 

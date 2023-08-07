@@ -182,7 +182,7 @@ function setupOutputDirectory(infoTuple::NamedTuple)
     # create output and subdirectories
     infoTuple = setTupleField(infoTuple, (:output, (;)))
     sub_output = ["code", "data", "figure", "root", "settings"]
-    if infoTuple.experiment.flags.run_optimization || infoTuple.experiment.flags.run_forward_and_cost
+    if infoTuple.experiment.flags.run_optimization || infoTuple.experiment.flags.calc_cost
         push!(sub_output, "optim")
     end
     if infoTuple.experiment.flags.spinup.save_spinup
