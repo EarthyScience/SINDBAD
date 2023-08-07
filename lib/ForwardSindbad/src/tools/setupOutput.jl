@@ -264,7 +264,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
     output_tuple = setTupleField(output_tuple, (:variables, ovro))
 
 
-    if getBool(info.experiment.flags.run_optimization) || getBool(tem_helpers.run.run_forward_and_cost)
+    if getBool(info.experiment.flags.run_optimization) || getBool(tem_helpers.run.calc_cost)
         @info "     setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
