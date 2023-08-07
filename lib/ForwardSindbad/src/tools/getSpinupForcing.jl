@@ -80,6 +80,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
+
 """
     getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:no_diff})
 
@@ -101,6 +102,7 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
+
 """
     getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:indexed})
 
@@ -121,6 +123,7 @@ end
 getSpinupForcing(forcing, tem)
 A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
 """
+
 """
     getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
 

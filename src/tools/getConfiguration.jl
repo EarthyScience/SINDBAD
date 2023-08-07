@@ -14,6 +14,7 @@ deep_merge(d...) = d[end]
 
 replace the fields of info from json with the values providded in the replace dictionary
 """
+
 """
     replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
 
@@ -36,6 +37,7 @@ nested_dict = createNestedDict(dict)
 
 nested_dict["a"]["b"]["c"]
 """
+
 """
     createNestedDict(dict::AbstractDict)
 
@@ -79,6 +81,7 @@ end
 
 get the basic configuration from experiment json
 """
+
 """
     getExperimentConfiguration(experiment_json::String; replace_info = nothing)
 
@@ -105,6 +108,7 @@ end
 
 read configuration experiment json and return dictionary
 """
+
 """
     readConfiguration(info_exp::AbstractDict, base_path::String)
 
@@ -146,6 +150,7 @@ end
 
 remove unnecessary comment files starting with certain expressions from the dictionary keys
 """
+
 """
     removeComments(inputDict::AbstractDict)
 
@@ -164,6 +169,7 @@ removeComments(input) = input
 
 find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 """
+
 """
     convertToAbsolutePath(; inputDict = inputDict)
 
@@ -180,6 +186,7 @@ end
 
 sets up and creates output directory for the model simulation
 """
+
 """
     setupOutputDirectory(infoTuple::NamedTuple)
 
@@ -240,6 +247,7 @@ end
 
 get the experiment info from either json or load the named tuple
 """
+
 """
     getConfiguration(sindbad_experiment::String; replace_info = nothing)
 

@@ -7,6 +7,7 @@ mean squared error
 
 ``mse = {|y - ŷ|}^2``
 """
+
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:mse})
 
@@ -30,6 +31,7 @@ Relative normalized model absolute error
 
 ``nmae1r = \\frac{(|y - ŷ|)}{one(eltype(ŷ)) + y}``
 """
+
 """
     loss(y, yσ, ŷ, nothing::Val{:nmae1r})
 
@@ -53,6 +55,7 @@ Relative normalized model absolute error
 
 ``nmae1r = \\frac{mean(|y - ŷ|)}{one(eltype(ŷ)) + mean(y)}``
 """
+
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nmae1r})
 
