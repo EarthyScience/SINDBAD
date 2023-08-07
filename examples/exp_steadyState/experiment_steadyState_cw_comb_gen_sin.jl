@@ -69,8 +69,8 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
     replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "model_run.experiment_rules.model_array_type" => arraymethod,
-        "model_run.experiment_flags.debug_model" => false)
+        "experiment.data_rules.model_array_type" => arraymethod,
+        "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
@@ -110,7 +110,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         xtname_w = get_xtick_names(info, land_for_s, :TWS)
 
         @time for nl ∈ 1:nLoop_pre_spin
-            land_for_s = ForwardSindbad.doSpinup(spinup_models,
+            land_for_s = ForwardSindbad.runSpinup(spinup_models,
                 theforcing,
                 land_for_s,
                 tem_with_vals.helpers,
@@ -124,7 +124,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
         # sel_pool = :TWS
         sp_method = Symbol("nlsove_fixedpoint_trustregion_$(string(sel_pool))")
         @show "NL_solve"
-        @time out_sp_nl = ForwardSindbad.doSpinup(spinup_models,
+        @time out_sp_nl = ForwardSindbad.runSpinup(spinup_models,
             theforcing,
             deepcopy(land_for_s),
             tem_with_vals.helpers,
@@ -141,7 +141,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             sp = :spinup
             out_sp_exp = deepcopy(land_for_s)
             @time for nl ∈ 1:tj
-                out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
+                out_sp_exp = ForwardSindbad.runSpinup(spinup_models,
                     theforcing,
                     out_sp_exp,
                     tem_with_vals.helpers,
@@ -155,7 +155,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             sp = :spinup
             out_sp_exp_nl = deepcopy(out_sp_nl)
             @time for nl ∈ 1:tj
-                out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
+                out_sp_exp_nl = ForwardSindbad.runSpinup(spinup_models,
                     theforcing,
                     out_sp_exp_nl,
                     tem_with_vals.helpers,

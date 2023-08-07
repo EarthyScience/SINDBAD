@@ -11,13 +11,13 @@ optimize_it = true;
 # info = getConfiguration(experiment_json);
 # info = setupExperiment(info);
 
-replace_info_spatial = Dict("experiment.domain" => domain * "_spatial",
-    "experiment.configuration_files.forcing" => "forcing.json",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => true,
-    "model_run.experiment_flags.spinup.run_spinup" => true,
-    "model_run.experiment_flags.debug_model" => false,
-    "model_run.experiment_flags.spinup.do_spinup" => true);
+replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
+    "experiment.basics.configuration_files.forcing" => "forcing.json",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => true,
+    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.debug_model" => false,
+    "experiment.flags.spinup.do_spinup" => true);
 
 experiment_json = "../exp_graf/settings_graf/experiment.json";
 
@@ -30,7 +30,7 @@ GC.gc()
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time simulateTEM!(info.tem.models.forward,
+@time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -41,7 +41,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 for x ∈ 1:10
-    @time simulateTEM!(info.tem.models.forward,
+    @time runTEM!(info.tem.models.forward,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -63,7 +63,7 @@ plotdat = output_array;
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     vname = vinfo["standard_name"]
     pd = plotdat[i]
     if size(pd, 2) == 1

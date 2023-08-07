@@ -1,12 +1,5 @@
 export mapRunEcosystem
 
-function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
-    nin = length(forcing_variables)
-    nout = sum(length, tem.variables)
-    outputs = args[1:nout]
-    inputs = args[(nout+1):(nout+nin)]
-    return outputs, inputs
-end
 
 function doRunEcosystem(args...;
     land_init::NamedTuple,
@@ -54,4 +47,13 @@ function mapRunEcosystem(forcing::NamedTuple,
         #nthreads = [1],
     )
     return outcubes
+end
+
+
+function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
+    nin = length(forcing_variables)
+    nout = sum(length, tem.variables)
+    outputs = args[1:nout]
+    inputs = args[(nout+1):(nout+nin)]
+    return outputs, inputs
 end

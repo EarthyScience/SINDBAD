@@ -23,20 +23,20 @@ for domain ∈ sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-        "experiment.configuration_files.forcing" => forcingConfig,
-        "experiment.domain" => domain,
-        "model_run.experiment_time.date_end" => eYear * "-12-31",
-        "model_run.experiment_flags.run_optimization" => optimize_it,
-        "model_run.experiment_flags.run_forward_and_cost" => true,
-        "model_run.experiment_flags.spinup.save_spinup" => false,
-        "model_run.experiment_flags.catch_model_errors" => true,
-        "model_run.experiment_flags.spinup.run_spinup" => true,
-        "model_run.experiment_flags.debug_model" => false,
-        "model_run.experiment_flags.spinup.do_spinup" => true,
+    replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+        "experiment.basics.configuration_files.forcing" => forcingConfig,
+        "experiment.basics.domain" => domain,
+        "experiment.basics.time.date_end" => eYear * "-12-31",
+        "experiment.flags.run_optimization" => optimize_it,
+        "experiment.flags.run_forward_and_cost" => true,
+        "experiment.flags.spinup.save_spinup" => false,
+        "experiment.flags.catch_model_errors" => true,
+        "experiment.flags.spinup.run_spinup" => true,
+        "experiment.flags.debug_model" => false,
+        "experiment.flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.output.path" => path_output,
-        "model_run.experiment_rules.parallelization" => pl,
+        "experiment.model_output.path" => path_output,
+        "experiment.data_rules.parallelization" => pl,
         "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
@@ -81,7 +81,7 @@ for domain ∈ sites
         error("cannot determine the repeat for disturbance")
     end
 
-    replace_info["model_run.spinup.sequence"] = sequence
+    replace_info["experiment.model_spinup.sequence"] = sequence
     @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
     @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info)
 
@@ -102,7 +102,7 @@ for domain ∈ sites
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time simulateTEM!(optimized_models,
+    @time runTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -118,13 +118,13 @@ for domain ∈ sites
     def_dat = output_default
     costOpt = info.optim.cost_options
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.name * "_" * info.experiment.domain)
+    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
         # @show "plot obs", v
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
         @show "plot obs", v
         lossMetric = var_row.cost_metric
@@ -154,15 +154,15 @@ for domain ∈ sites
     end
 
     ### redo the forward run to save all output variables
-    replace_info["model_run.experiment_flags.run_forward_and_cost"] = false
-    replace_info["model_run.experiment_flags.run_optimization"] = false
+    replace_info["experiment.flags.run_forward_and_cost"] = false
+    replace_info["experiment.flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     forcing = getForcing(info)
 
 
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
 
-    @time simulateTEM!(optimized_models,
+    @time runTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -178,19 +178,19 @@ for domain ∈ sites
     out_info = getOutputFileInfo(info)
 
     output = setupOutput(info, forcing.helpers)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.temporal_resolution, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time.temporal_resolution, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.temporal_resolution, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time.temporal_resolution, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(false))
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
+    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

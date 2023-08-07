@@ -97,7 +97,7 @@ tem_with_vals,
 forcing_one_timestep = prepTEM(forcing, info);
 
 
-@time simulateTEM!(output_array,
+@time runTEM!(output_array,
     info.tem.models.forward,
     forc,
     loc_space_inds,
@@ -132,7 +132,7 @@ function pixel_run!(output,
 
     loc_forcing, loc_output, _ = getLocDataObsN(output_array, forc, obs_array, site_location)
     up_apps = updateModelParametersType(tbl_params, forward, upVector)
-    return runTEMCore!(loc_output,
+    return coreTEM!(loc_output,
         up_apps,
         loc_forcing,
         tem_helpers,
