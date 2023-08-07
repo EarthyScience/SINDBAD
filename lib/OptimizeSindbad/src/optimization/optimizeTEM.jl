@@ -235,7 +235,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    simulateTEM!(updated_models,
+    @time simulateTEM!(updated_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -258,7 +258,7 @@ function getLossVector(observations, model_output, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        metr = loss(y, yσ, ŷ, lossMetric)
+        @time metr = loss(y, yσ, ŷ, lossMetric)
         # @time metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
             metr = oftype(metr, 1e19)
