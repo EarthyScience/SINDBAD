@@ -58,7 +58,7 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
     end
     if hasproperty(yax, Symbol(info.forcing.dimensions.time))
         init_date = DateTime(info.tem.helpers.dates.start_date)
-        last_date = DateTime(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.time_step
+        last_date = DateTime(info.tem.helpers.dates.end_date) + info.tem.helpers.dates.timestep
         yax = yax[time=(init_date .. last_date)]
     end
 

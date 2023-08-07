@@ -14,9 +14,9 @@ end
 end
 
 """
-runModelCompute(land, forcing, models, tem_helpers, ::Val{:false})
+runModelCompute(models, forcing, land, tem_helpers, ::Val{:false})
 """
-function runModelCompute(land, forcing, models, tem_helpers, ::Val{:true}) # debug the models
+function runModelCompute(models, forcing, land, tem_helpers, ::Val{:true}) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         @show typeof(model)
@@ -25,9 +25,9 @@ function runModelCompute(land, forcing, models, tem_helpers, ::Val{:true}) # deb
 end
 
 """
-runModelCompute(land, forcing, models, tem_helpers)
+runModelCompute(models, forcing, land, tem_helpers)
 """
-function runModelCompute(land, forcing, models, tem_helpers, ::Val{:false}) # do not debug the models 
+function runModelCompute(models, forcing, land, tem_helpers, ::Val{:false}) # do not debug the models 
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, tem_helpers)
     end
@@ -35,22 +35,22 @@ end
 
 
 """
-runModelCompute(land, forcing, models, tem_helpers)
+runModelCompute(models, forcing, land, tem_helpers)
 """
-function runModelCompute(land, forcing, models, tem_helpers) # do not debug the models 
+function runModelCompute(models, forcing, land, tem_helpers) # do not debug the models 
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, tem_helpers)
     end
 end
 
-function runModelDefinePrecompute(land, forcing, models, tem_helpers)
+function runModelDefinePrecompute(models, forcing, land, tem_helpers)
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.define(model, forcing, _land, tem_helpers)
         _land = Models.precompute(model, forcing, _land, tem_helpers)
     end
 end
 
-function runModelPrecompute(land, forcing, models, tem_helpers)
+function runModelPrecompute(models, forcing, land, tem_helpers)
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.precompute(model, forcing, _land, tem_helpers)
     end

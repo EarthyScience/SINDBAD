@@ -45,25 +45,26 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
 
-@time TEM!(output_array,
-    info.tem.models.forward,
+@time TEM!(info.tem.models.forward,
     forcing_nt_array,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one,
+    loc_space_inds,
     tem_with_vals)
 
-@time lw_timeseries_prep = TEM(info.tem.models.forward, loc_forcings[1], land_init_space[1], f_one, tem_with_vals);
+
+@time lw_timeseries_prep = TEM(info.tem.models.forward, loc_forcings[1], land_init_space[1], forcing_one_timestep, tem_with_vals);
 
 @time lw_timeseries = TEM(forcing, info);
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = TEM(land_timeseries, info.tem.models.forward, loc_forcings[1], land_init_space[1], f_one, tem_with_vals);
+@time lw_timeseries_vec = TEM(land_timeseries, info.tem.models.forward, loc_forcings[1], land_init_space[1], forcing_one_timestep, tem_with_vals);
 
 observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
