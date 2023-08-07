@@ -23,7 +23,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
         @info "runExperiment: do spatial optimization..."
         obs_array = getArray(observations)
         # obs_array = getKeyedArray(observations)
-        optim_params = optimizeTEM(forcing, obs_array, info)
+        optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
         optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
         Sindbad.CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
@@ -43,7 +43,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------\n")
-    @time output_array = TEM!(forcing, info)
+    @time output_array = simulateTEM!(forcing, info)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------\n")
     # @time run_output = output.data

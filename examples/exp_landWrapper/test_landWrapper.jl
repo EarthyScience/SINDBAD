@@ -37,7 +37,7 @@ replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
     "model_run.output.path" => path_output,
     "model_run.output.format" => "nc",
     "model_run.output.save_single_file" => true,
-    "model_run.mapping.parallelization" => pl,
+    "model_run.experiment_rules.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
@@ -47,7 +47,7 @@ forcing = getForcing(info);
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time TEM!(info.tem.models.forward,
+@time simulateTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -58,13 +58,13 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 
-@time lw_timeseries_prep = TEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
+@time lw_timeseries_prep = simulateTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
 
-@time lw_timeseries = TEM(forcing, info);
+@time lw_timeseries = simulateTEM(forcing, info);
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = TEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
+@time lw_timeseries_vec = simulateTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);

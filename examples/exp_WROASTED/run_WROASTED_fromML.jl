@@ -129,7 +129,7 @@ for site_index in sites
         "model_run.experiment_flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence[2:end],
         "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
+        "model_run.experiment_rules.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
         "optimization.observations.default_observation.data_path" => path_observation,)
 
@@ -172,7 +172,7 @@ for site_index in sites
 
 
         forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
-        @time TEM!(output_array,
+        @time simulateTEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
             loc_space_inds,
@@ -264,7 +264,7 @@ for site_index in sites
                     info.tem,
                     info.tem.helpers)
             linit = land_init_space[1]
-            @time TEM!(output_array,
+            @time simulateTEM!(output_array,
                 models_with_matlab_params,
                 forcing_nt_array,
                 loc_space_inds,

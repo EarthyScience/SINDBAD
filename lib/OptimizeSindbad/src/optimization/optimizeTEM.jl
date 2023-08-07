@@ -189,7 +189,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = TEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
+    land_wrapper_timeseries = simulateTEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
@@ -210,7 +210,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = TEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
+    land_wrapper_timeseries = simulateTEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
@@ -235,7 +235,7 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    TEM!(updated_models,
+    simulateTEM!(updated_models,
         forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
@@ -296,7 +296,8 @@ optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVari
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
-    info::NamedTuple)
+    info::NamedTuple,
+    ::Val{:array})
 
     tem = info.tem
     optim = info.optim
@@ -324,6 +325,110 @@ function optimizeTEM(forcing::NamedTuple,
             loc_outputs,
             land_init_space,
             loc_space_inds,
+            tem_with_vals,
+            observations,
+            tbl_params,
+            cost_options,
+            optim.multi_constraint_method)
+
+    # run the optimizer
+    optim_para = optimizer(cost_function,
+        default_values,
+        lower_bounds,
+        upper_bounds,
+        optim.algorithm.options,
+        optim.algorithm.method)
+
+    # update the parameter table with the optimized values
+    tbl_params.optim .= optim_para
+    return tbl_params
+end
+
+
+"""
+optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
+"""
+function optimizeTEM(forcing::NamedTuple,
+    observations,
+    info::NamedTuple,
+    ::Val{:land_stacked})
+
+    tem = info.tem
+    optim = info.optim
+    # get the subset of parameters table that consists of only optimized parameters
+    tbl_params = Sindbad.getParameters(tem.models.forward,
+        optim.model_parameter_default,
+        optim.model_parameters_to_optimize)
+
+    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
+
+    # get the default and bounds
+    default_values = tem.helpers.numbers.sNT.(tbl_params.default)
+    lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
+    upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
+
+    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
+
+        
+    cost_function =
+        x -> getLoss(x,
+            tem.models.forward,
+            loc_forcings[1],
+            forcing_one_timestep,
+            land_init_space[1],
+            tem_with_vals,
+            observations,
+            tbl_params,
+            cost_options,
+            optim.multi_constraint_method)
+
+    # run the optimizer
+    optim_para = optimizer(cost_function,
+        default_values,
+        lower_bounds,
+        upper_bounds,
+        optim.algorithm.options,
+        optim.algorithm.method)
+
+    # update the parameter table with the optimized values
+    tbl_params.optim .= optim_para
+    return tbl_params
+end
+
+
+"""
+optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
+"""
+function optimizeTEM(forcing::NamedTuple,
+    observations,
+    info::NamedTuple,
+    ::Val{:land_timeseries})
+
+    tem = info.tem
+    optim = info.optim
+    # get the subset of parameters table that consists of only optimized parameters
+    tbl_params = Sindbad.getParameters(tem.models.forward,
+        optim.model_parameter_default,
+        optim.model_parameters_to_optimize)
+
+    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
+
+    # get the default and bounds
+    default_values = tem.helpers.numbers.sNT.(tbl_params.default)
+    lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
+    upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
+
+    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
+
+    land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
+    
+    cost_function =
+        x -> getLoss(x,
+            tem.models.forward,
+            loc_forcings[1],
+            forcing_one_timestep,
+            land_timeseries,
+            land_init_space[1],
             tem_with_vals,
             observations,
             tbl_params,

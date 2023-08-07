@@ -38,7 +38,7 @@ replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
     "forcing.default_forcing.data_path" => path_input,
     "model_run.output.path" => path_output,
     "model_run.output.output_array_type" => "array",
-    "model_run.mapping.parallelization" => pl,
+    "model_run.experiment_rules.parallelization" => pl,
     "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
@@ -89,7 +89,7 @@ forcing = getForcing(info);
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 
-@time TEM!(info.tem.models.forward,
+@time simulateTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
