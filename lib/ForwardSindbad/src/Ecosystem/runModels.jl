@@ -14,9 +14,9 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function computeTEM(models, forcing, land, tem_helpers, ::Val{:true}) # debug the models
@@ -38,9 +38,9 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 """
 function computeTEM(models, forcing, land, tem_helpers, ::Val{:false}) # do not debug the models 
@@ -60,9 +60,9 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function computeTEM(models, forcing, land, tem_helpers) # do not debug the models 
     return foldlUnrolled(models; init=land) do _land, model
@@ -77,9 +77,9 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function definePrecomputeTEM(models, forcing, land, tem_helpers)
     return foldlUnrolled(models; init=land) do _land, model
@@ -125,9 +125,9 @@ DOCSTRING
 
 # Arguments:
 - `models`: DESCRIPTION
-- `forcing`: DESCRIPTION
-- `land`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function precomputeTEM(models, forcing, land, tem_helpers)
     return foldlUnrolled(models; init=land) do _land, model

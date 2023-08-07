@@ -27,7 +27,7 @@ function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
 end
 
 """
-    createNestedDict(dict)
+    createNestedDict(dict::AbstractDict)
 
 Creates a nested dict from one-depth dict, when string keys are strings separated by a .
 
@@ -36,12 +36,6 @@ dict = Dict("a.b.c" => 2)
 nested_dict = createNestedDict(dict)
 
 nested_dict["a"]["b"]["c"]
-"""
-
-"""
-    createNestedDict(dict::AbstractDict)
-
-DOCSTRING
 """
 function createNestedDict(dict::AbstractDict)
     nested_dict = Dict()
@@ -77,15 +71,9 @@ function createNestedDict(dict::AbstractDict)
 end
 
 """
-    getConfigurationFiles(experiment_json)
-
-get the basic configuration from experiment json
-"""
-
-"""
     getExperimentConfiguration(experiment_json::String; replace_info = nothing)
 
-DOCSTRING
+get the basic configuration from experiment json
 """
 function getExperimentConfiguration(experiment_json::String; replace_info=nothing)
     parseFile = parsefile(experiment_json; dicttype=DataStructures.OrderedDict)

@@ -45,7 +45,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: DESCRIPTION
 - `optim`: DESCRIPTION

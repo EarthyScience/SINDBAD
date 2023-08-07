@@ -412,7 +412,7 @@ DOCSTRING
 
 # Arguments:
 - `tbl_params`: DESCRIPTION
-- `selected_models`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
 - `pVector`: DESCRIPTION
 """
 function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
@@ -487,7 +487,7 @@ DOCSTRING
 
 # Arguments:
 - `tbl_params`: DESCRIPTION
-- `selected_models`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
 - `pVector`: DESCRIPTION
 """
 function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
