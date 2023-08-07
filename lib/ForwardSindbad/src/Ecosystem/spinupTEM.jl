@@ -247,7 +247,7 @@ DOCSTRING
 
 # Arguments:
 - `forward_models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_spin`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
@@ -822,7 +822,7 @@ DOCSTRING
 
 # Arguments:
 - `forward_models`: DESCRIPTION
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_in`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies

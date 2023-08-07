@@ -24,7 +24,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output_array`: an output array/view for ALL locations
 - `loc_space_map`: DESCRIPTION
 """
@@ -47,7 +47,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `loc_forcing`: a forcing time series set for a single location
 - `s_locs`: DESCRIPTION
 - `nothing`: DESCRIPTION

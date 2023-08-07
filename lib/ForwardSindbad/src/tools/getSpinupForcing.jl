@@ -87,7 +87,7 @@ Set the spinup forcing as full input forcing.
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
@@ -109,7 +109,7 @@ Set the spinup forcing as full input forcing.
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
@@ -130,7 +130,7 @@ A function to prepare the spinup forcing. Returns a NamedTuple with subfields fo
 DOCSTRING
 
 # Arguments:
-- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `spin_seq`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
