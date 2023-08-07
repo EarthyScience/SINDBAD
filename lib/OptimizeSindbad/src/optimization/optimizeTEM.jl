@@ -7,12 +7,32 @@ export getLossVector
 export getModelOutputView
 export optimizeTEM
 
+"""
+    aggregateData(dat, cost_option, nothing::Val{:timespace})
+
+DOCSTRING
+
+# Arguments:
+- `dat`: DESCRIPTION
+- `cost_option`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function aggregateData(dat, cost_option, ::Val{:timespace})
     dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
     return dat
 end
 
+"""
+    aggregateData(dat, cost_option, nothing::Val{:spacetime})
+
+DOCSTRING
+
+# Arguments:
+- `dat`: DESCRIPTION
+- `cost_option`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function aggregateData(dat, cost_option, ::Val{:spacetime})
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
     dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
@@ -25,6 +45,11 @@ end
 
 return the total of cost of each constraint as the overall cost
 """
+"""
+    combineLoss(loss_vector::AbstractArray, nothing::Val{:sum})
+
+DOCSTRING
+"""
 function combineLoss(loss_vector::AbstractArray, ::Val{:sum})
     return sum(loss_vector)
 end
@@ -33,6 +58,11 @@ end
     combineLoss(loss_vector, ::Val{:minimum})
 
 return the minimum of cost of each constraint as the overall cost
+"""
+"""
+    combineLoss(loss_vector::AbstractArray, nothing::Val{:minimum})
+
+DOCSTRING
 """
 function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
     return minimum(loss_vector)
@@ -43,6 +73,11 @@ end
 
 return the maximum of cost of each constraint as the overall cost
 """
+"""
+    combineLoss(loss_vector::AbstractArray, nothing::Val{:maximum})
+
+DOCSTRING
+"""
 function combineLoss(loss_vector::AbstractArray, ::Val{:maximum})
     return maximum(loss_vector)
 end
@@ -52,6 +87,11 @@ end
 
 return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
+"""
+    combineLoss(loss_vector::AbstractArray, percentile_value::T)
+
+DOCSTRING
+"""
 function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(loss_vector, percentile_value)
 end
@@ -59,6 +99,16 @@ end
 """
 filterCommonNaN(y, yσ, ŷ)
 return model and obs data filtering for the common nan
+"""
+"""
+    filterCommonNaN(y, yσ, ŷ)
+
+DOCSTRING
+
+# Arguments:
+- `y`: DESCRIPTION
+- `yσ`: DESCRIPTION
+- `ŷ`: DESCRIPTION
 """
 function filterCommonNaN(y, yσ, ŷ)
     idxs = (.!isnan.(y .* yσ .* ŷ))
@@ -68,6 +118,11 @@ end
 """
 filterConstraintMinimumDatapoints(obs_array, cost_options)
 remove all the variables that have less than minimum datapoints from being used in the optimization 
+"""
+"""
+    filterConstraintMinimumDatapoints(obs_array, cost_options)
+
+DOCSTRING
 """
 function filterConstraintMinimumDatapoints(obs_array, cost_options)
     cost_options_filtered = cost_options
@@ -91,6 +146,16 @@ end
 
 """
 getData(outsmodel, observations, modelVariables, obsVariables)
+"""
+"""
+    getData(model_output::landWrapper, observations, cost_option)
+
+DOCSTRING
+
+# Arguments:
+- `model_output`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `cost_option`: DESCRIPTION
 """
 function getData(model_output::landWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
@@ -121,6 +186,16 @@ end
 """
 getData(outsmodel, observations, modelVariables, obsVariables)
 """
+"""
+    getData(model_output::AbstractArray, observations, cost_option)
+
+DOCSTRING
+
+# Arguments:
+- `model_output`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `cost_option`: DESCRIPTION
+"""
 function getData(model_output::AbstractArray, observations, cost_option)
     obs_ind = cost_option.obs_ind
     ŷ = model_output[cost_option.mod_ind]
@@ -140,6 +215,18 @@ function getData(model_output::AbstractArray, observations, cost_option)
     return (y, yσ, ŷ)
 end
 
+"""
+    getLocObs!(obs_array, nothing::Val{obs_vars}, nothing::Val{s_names}, loc_obs, s_locs)
+
+DOCSTRING
+
+# Arguments:
+- `obs_array`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `loc_obs`: DESCRIPTION
+- `s_locs`: DESCRIPTION
+"""
 @generated function getLocObs!(
     obs_array,
     ::Val{obs_vars},
@@ -176,6 +263,24 @@ end
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
+"""
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+
+DOCSTRING
+
+# Arguments:
+- `param_vector`: DESCRIPTION
+- `base_models`: DESCRIPTION
+- `forcing_nt`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `land_timeseries`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `tbl_params`: DESCRIPTION
+- `cost_options`: DESCRIPTION
+- `multiconstraint_method`: DESCRIPTION
+"""
 function getLoss(
     param_vector::AbstractArray,
     base_models,
@@ -198,6 +303,23 @@ end
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
 """
+"""
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+
+DOCSTRING
+
+# Arguments:
+- `param_vector`: DESCRIPTION
+- `base_models`: DESCRIPTION
+- `forcing_nt`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `land_init`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `tbl_params`: DESCRIPTION
+- `cost_options`: DESCRIPTION
+- `multiconstraint_method`: DESCRIPTION
+"""
 function getLoss(
     param_vector::AbstractArray,
     base_models,
@@ -217,6 +339,27 @@ end
 
 """
 getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
+"""
+"""
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multiconstraint_method)
+
+DOCSTRING
+
+# Arguments:
+- `param_vector`: DESCRIPTION
+- `base_models`: DESCRIPTION
+- `forcing_nt_array`: DESCRIPTION
+- `loc_forcings`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `output_array`: DESCRIPTION
+- `loc_outputs`: DESCRIPTION
+- `land_init_space`: DESCRIPTION
+- `loc_space_inds`: DESCRIPTION
+- `tem`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `tbl_params`: DESCRIPTION
+- `cost_options`: DESCRIPTION
+- `multiconstraint_method`: DESCRIPTION
 """
 function getLoss(
     param_vector::AbstractArray,
@@ -251,6 +394,16 @@ end
 getLossVector(observations, model_output::AbstractArray, cost_options)
 returns a vector of losses for variables in info.cost_options.observational_constraints
 """
+"""
+    getLossVector(observations, model_output, cost_options)
+
+DOCSTRING
+
+# Arguments:
+- `observations`: DESCRIPTION
+- `model_output`: DESCRIPTION
+- `cost_options`: DESCRIPTION
+"""
 function getLossVector(observations, model_output, cost_options)
     loss_vector = map(cost_options) do cost_option
         lossMetric = cost_option.cost_metric
@@ -269,28 +422,69 @@ function getLossVector(observations, model_output, cost_options)
 end
 
 
+"""
+    getModelOutputView(mod_dat)
+
+DOCSTRING
+"""
 function getModelOutputView(mod_dat)
     return mod_dat[:]
 end
 
+"""
+    getModelOutputView(mod_dat::AbstractArray{T, 2})
+
+DOCSTRING
+"""
 function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
     return @view mod_dat[:, 1]
 end
 
+"""
+    getModelOutputView(mod_dat::AbstractArray{T, 3})
+
+DOCSTRING
+"""
 function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
     return @view mod_dat[:, 1, :]
 end
 
+"""
+    getModelOutputView(mod_dat::AbstractArray{T, 4})
+
+DOCSTRING
+"""
 function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
     return @view mod_dat[:, 1, :, :]
 end
 
+"""
+    spatialAggregation(dat, _, nothing::Val{:cat})
+
+DOCSTRING
+
+# Arguments:
+- `dat`: DESCRIPTION
+- `_`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function spatialAggregation(dat, _, ::Val{:cat})
     return dat
 end
 
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
+"""
+"""
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:array})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `info`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
@@ -346,6 +540,17 @@ end
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
 """
+"""
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_stacked})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `info`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function optimizeTEM(forcing::NamedTuple,
     observations,
     info::NamedTuple,
@@ -396,6 +601,17 @@ end
 
 """
 optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
+"""
+"""
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_timeseries})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `observations`: DESCRIPTION
+- `info`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,

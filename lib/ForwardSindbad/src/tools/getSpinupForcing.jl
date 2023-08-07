@@ -46,6 +46,11 @@ export getForcingForTimePeriod
 # end
 
 
+"""
+    getTimeAggregatedForcing(forcing, time_aggregator)
+
+DOCSTRING
+"""
 function getTimeAggregatedForcing(forcing, time_aggregator)
     sub_forcing = map(forcing) do v
         vtmp = v
@@ -59,6 +64,11 @@ function getTimeAggregatedForcing(forcing, time_aggregator)
     return sub_forcing
 end
 
+"""
+    getForcingForTimePeriod(forcing, tperiod::Vector{Int64})
+
+DOCSTRING
+"""
 function getForcingForTimePeriod(forcing, tperiod::Vector{Int64})
     sub_forcing = map(forcing) do v
         in(:time, AxisKeys.dimnames(v)) ? v[time=tperiod] : v
@@ -70,6 +80,18 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
+"""
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:no_diff})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `time_aggregator`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:no_diff})
     return getTimeAggregatedForcing(forcing, time_aggregator)
 end
@@ -79,6 +101,18 @@ end
 getSpinupForcing(forcing, tem, ::Val{:full})
 Set the spinup forcing as full input forcing.
 """
+"""
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:indexed})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `time_aggregator`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:indexed})
     return getForcingForTimePeriod(forcing, time_aggregator)
 end
@@ -86,6 +120,17 @@ end
 """
 getSpinupForcing(forcing, tem)
 A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
+"""
+"""
+    getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: DESCRIPTION
+- `forcing_one_timestep`: DESCRIPTION
+- `spin_seq`: DESCRIPTION
+- `tem_helpers`: DESCRIPTION
 """
 function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
     spinup_forcing = (;)
