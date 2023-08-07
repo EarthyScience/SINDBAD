@@ -1,7 +1,7 @@
-export runTEMCore
-export simulateTEM
+export coreTEM
+export runTEM
 
-function runTEMCore(
+function coreTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -11,9 +11,9 @@ function runTEMCore(
     _,
     ::Val{:false}) # without spinup
 
-    land_prec = runModelPrecompute(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_time_series = runTimeLoop(
+    land_time_series = timeLoopTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -23,7 +23,7 @@ function runTEMCore(
     return land_time_series
 end
 
-function runTEMCore(
+function coreTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -33,9 +33,9 @@ function runTEMCore(
     tem_spinup,
     ::Val{:true}) # with spinup
 
-    land_prec = runModelPrecompute(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = runSpinup(
+    land_spin = spinupTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -44,7 +44,7 @@ function runTEMCore(
         tem_models,
         tem_spinup)
 
-    land_time_series = runTimeLoop(
+    land_time_series = timeLoopTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -55,7 +55,7 @@ function runTEMCore(
 end
 
 
-function runTEMCore(
+function coreTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -66,9 +66,9 @@ function runTEMCore(
     _,
     ::Val{:false}) # without spinup
 
-    land_prec = runModelPrecompute(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    runTimeLoop(
+    timeLoopTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -79,7 +79,7 @@ function runTEMCore(
     return nothing
 end
 
-function runTEMCore(
+function coreTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -90,9 +90,9 @@ function runTEMCore(
     tem_spinup,
     ::Val{:true}) # with spinup
 
-    land_prec = runModelPrecompute(selected_models, forcing_one_timestep, land_init, tem_helpers)
+    land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
-    land_spin = runSpinup(
+    land_spin = spinupTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -101,7 +101,7 @@ function runTEMCore(
         tem_models,
         tem_spinup)
 
-    runTimeLoop(
+    timeLoopTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -112,7 +112,45 @@ function runTEMCore(
     return nothing
 end
 
-function runTimeLoop(
+
+"""
+runEcosystem(selected_models, forcing, land_init, tem)
+"""
+function runTEM(forcing::NamedTuple, info::NamedTuple)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
+    land_time_series = coreTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    return landWrapper(land_time_series)
+end
+
+"""
+runEcosystem(selected_models, forcing, land_init, tem)
+"""
+function runTEM(
+    selected_models::Tuple,
+    forcing::NamedTuple,
+    forcing_one_timestep,
+    land_init::NamedTuple,
+    tem_with_vals::NamedTuple)
+    land_time_series = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    return landWrapper(land_time_series)
+end
+
+
+"""
+runTEM(selected_models, forcing, land_init, tem)
+"""
+function runTEM(
+    selected_models::Tuple,
+    forcing::NamedTuple,
+    forcing_one_timestep,
+    land_time_series,
+    land_init::NamedTuple,
+    tem_with_vals::NamedTuple)
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
+    return landWrapper(land_time_series)
+end
+
+function timeLoopTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -123,13 +161,13 @@ function runTimeLoop(
     num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     for ts = 1:num_timesteps
         f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
-        land = runModelCompute(selected_models, f_ts, land, tem_helpers)
+        land = computeTEM(selected_models, f_ts, land, tem_helpers)
         land_time_series[ts] = land
     end
     return nothing
 end
 
-function runTimeLoop(
+function timeLoopTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -137,7 +175,7 @@ function runTimeLoop(
     land,
     tem_helpers,
     ::Val{:true}) # debug the models
-    runTimeLoop(
+    timeLoopTEM(
         selected_models,
         forcing,
         forcing_one_timestep,
@@ -147,7 +185,7 @@ function runTimeLoop(
     return nothing
 end
 
-function runTimeLoop(
+function timeLoopTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -157,13 +195,13 @@ function runTimeLoop(
     num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     land_time_series = map(1:num_timesteps) do ts
         f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
-        land = runModelCompute(selected_models, f_ts, land, tem_helpers)
+        land = computeTEM(selected_models, f_ts, land, tem_helpers)
         land
     end
     return land_time_series
 end
 
-function runTimeLoop(
+function timeLoopTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
@@ -174,48 +212,10 @@ function runTimeLoop(
     @time f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
     println("-------------")
     @show "each model"
-    @time land = runModelCompute(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
+    @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
     println("-------------")
     @show "all models"
-    @time land = runModelCompute(selected_models, f_ts, land, tem_helpers)
+    @time land = computeTEM(selected_models, f_ts, land, tem_helpers)
     println("-------------")
     return [land]
-end
-
-
-"""
-runEcosystem(selected_models, forcing, land_init, tem)
-"""
-function simulateTEM(forcing::NamedTuple, info::NamedTuple)
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
-    land_time_series = runTEMCore(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
-    return landWrapper(land_time_series)
-end
-
-"""
-runEcosystem(selected_models, forcing, land_init, tem)
-"""
-function simulateTEM(
-    selected_models::Tuple,
-    forcing::NamedTuple,
-    forcing_one_timestep,
-    land_init::NamedTuple,
-    tem_with_vals::NamedTuple)
-    land_time_series = runTEMCore(selected_models, forcing, forcing_one_timestep, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
-    return landWrapper(land_time_series)
-end
-
-
-"""
-simulateTEM(selected_models, forcing, land_init, tem)
-"""
-function simulateTEM(
-    selected_models::Tuple,
-    forcing::NamedTuple,
-    forcing_one_timestep,
-    land_time_series,
-    land_init::NamedTuple,
-    tem_with_vals::NamedTuple)
-    runTEMCore(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_with_vals.helpers, tem_with_vals.models, tem_with_vals.spinup, tem_with_vals.helpers.run.spinup.run_spinup)
-    return landWrapper(land_time_series)
 end

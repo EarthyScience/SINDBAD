@@ -1,11 +1,99 @@
 {
-  "configuration_files": {
-    "forcing": "forcing.json",
-    "model_run": "model_run.json",
-    "model_structure": "model_structure.json",
-    "optimization": "optimization.json",
-    "parameters": "params.csv"
+  "basics": {
+    "configuration_files": {
+      "forcing": "forcing.json",
+      "model_structure": "model_structure.json",
+      "optimization": "optimization.json"
+    },
+    "domain": "FLUXNET",
+    "name": "LoadInfo",
+    "time": {
+      "date_begin": "1979-01-01",
+      "date_end": "2017-12-31",
+      "temporal_resolution": "day",
+      "timesteps_in_day": 1,
+      "timesteps_in_year": 365
+    }
   },
-  "domain": "FLUXNET",
-  "name": "WROASTED"
+  "data_rules": {
+    "data_type": "Float64",
+    "forward_diff": false,
+    "input_data_backend": "netcdf",
+    "model_array_type": "staticarray",
+    "parallelization": "threads",
+    "tolerance": 1.0e-3,
+    "yax_max_cache": 2e9
+  },
+  "flags": {
+    "catch_model_errors": true,
+    "debug_model": false,
+    "run_forward": true,
+    "run_forward_and_cost": true,
+    "run_optimization": true,
+    "run_update_models": false,
+    "save_info": true,
+    "spinup": {
+      "do_spinup": true,
+      "load_spinup": false,
+      "run_spinup": true,
+      "save_spinup": false,
+      "store_spinup_history": false
+    }
+  },
+  "model_output": {
+    "all": true,
+    "depth_dimensions": {
+      "d_cEco": 8,
+      "d_snow": "snowW",
+      "d_soil": "soilW"
+    },
+    "format": "zarr",
+    "output_array_type": "array",
+    "path": null,
+    "save_single_file": true,
+    "variables": {
+      "fluxes.evapotranspiration": null,
+      "fluxes.gpp": null,
+      "fluxes.nee": null,
+      "fluxes.runoff": null,
+      "fluxes.surface_runoff": null,
+      "fluxes.transpiration": null,
+      "pools.cEco": "d_cEco",
+      "pools.snowW": "d_snow",
+      "pools.soilW": "d_soil",
+      "states.water_balance": null
+    }
+  },
+  "model_spinup": {
+    "differential_eqn": {
+      "absolute_tolerance": 1e-2,
+      "pools": ["cEco"],
+      "relative_tolerance": 1e-2,
+      "time_jump": 200.0
+    },
+    "paths": {
+      "restart_file_in": "exp_loadData/output_DE-Hai_WROASTED/restart.jld2",
+      "restart_file_out": "out.restart.jld2"
+    },
+    "sequence": [
+      {
+        "forcing": "day_msc",
+        "n_repeat": 15,
+        "spinup_mode": "forward",
+        "stop_function": null
+      },
+      {
+        "forcing": "all_years",
+        "n_repeat": 1,
+        "spinup_mode": "forward",
+        "stop_function": null
+      },
+      {
+        "forcing": "day_msc",
+        "n_repeat": 1,
+        "spinup_mode": "ηScaleAH",
+        "stop_function": null
+      }
+    ]
+  }
 }

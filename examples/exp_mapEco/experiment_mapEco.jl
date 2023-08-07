@@ -19,7 +19,7 @@ outcubes = mapRunEcosystem(forcing,
     output,
     info.tem,
     info.tem.models.forward;
-    max_cache=info.model_run.experiment_rules.yax_max_cache);
+    max_cache=info.experiment.data_rules.yax_max_cache);
 
 # optimization
 observations = getObservation(info, forcing.helpers);
@@ -29,4 +29,4 @@ opt_params = mapOptimizeModel(forcing,
     info.tem,
     info.optim,
     observations,
-    max_cache=info.model_run.experiment_rules.yax_max_cache)
+    max_cache=info.experiment.data_rules.yax_max_cache)

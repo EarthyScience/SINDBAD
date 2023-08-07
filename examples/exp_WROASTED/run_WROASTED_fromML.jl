@@ -114,22 +114,22 @@ for site_index in sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-        "experiment.configuration_files.optimization" => "optimization_1_1.json",
-        "experiment.configuration_files.forcing" => forcingConfig,
-        "experiment.domain" => domain,
+    replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+        "experiment.basics.configuration_files.optimization" => "optimization_1_1.json",
+        "experiment.basics.configuration_files.forcing" => forcingConfig,
+        "experiment.basics.domain" => domain,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.experiment_time.date_end" => eYear * "-12-31",
-        "model_run.experiment_flags.run_optimization" => false,
-        "model_run.experiment_flags.run_forward_and_cost" => true,
-        "model_run.experiment_flags.spinup.save_spinup" => false,
-        "model_run.experiment_flags.catch_model_errors" => false,
-        "model_run.experiment_flags.spinup.run_spinup" => true,
-        "model_run.experiment_flags.debug_model" => false,
-        "model_run.experiment_flags.spinup.do_spinup" => true,
-        "model_run.spinup.sequence" => sequence[2:end],
-        "model_run.output.path" => path_output,
-        "model_run.experiment_rules.parallelization" => pl,
+        "experiment.basics.time.date_end" => eYear * "-12-31",
+        "experiment.flags.run_optimization" => false,
+        "experiment.flags.run_forward_and_cost" => true,
+        "experiment.flags.spinup.save_spinup" => false,
+        "experiment.flags.catch_model_errors" => false,
+        "experiment.flags.spinup.run_spinup" => true,
+        "experiment.flags.debug_model" => false,
+        "experiment.flags.spinup.do_spinup" => true,
+        "experiment.model_spinup.sequence" => sequence[2:end],
+        "experiment.model_output.path" => path_output,
+        "experiment.data_rules.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
         "optimization.observations.default_observation.data_path" => path_observation,)
 
@@ -172,7 +172,7 @@ for site_index in sites
 
 
         forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
-        @time simulateTEM!(output_array,
+        @time runTEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
             loc_space_inds,
@@ -236,7 +236,7 @@ for site_index in sites
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+            vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
@@ -252,8 +252,8 @@ for site_index in sites
         if do_debug_figs
             ##plot more diagnostic figures for sindbad jl
 
-            replace_info["model_run.experiment_flags.run_optimization"] = false
-            replace_info["model_run.experiment_flags.run_forward_and_cost"] = false
+            replace_info["experiment.flags.run_optimization"] = false
+            replace_info["experiment.flags.run_forward_and_cost"] = false
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
@@ -264,7 +264,7 @@ for site_index in sites
                     info.tem,
                     info.tem.helpers)
             linit = land_init_space[1]
-            @time simulateTEM!(output_array,
+            @time runTEM!(output_array,
                 models_with_matlab_params,
                 forcing_nt_array,
                 loc_space_inds,
@@ -280,7 +280,7 @@ for site_index in sites
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
-                vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+                vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")

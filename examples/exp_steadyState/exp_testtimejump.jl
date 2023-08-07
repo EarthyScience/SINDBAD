@@ -17,8 +17,8 @@ for (i, tj) ∈ enumerate(tjs)
     replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "model_run.experiment_rules.model_array_type" => "staticarray",
-        "model_run.experiment_flags.debug_model" => false)
+        "experiment.data_rules.model_array_type" => "staticarray",
+        "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
@@ -53,7 +53,7 @@ for (i, tj) ∈ enumerate(tjs)
     cInit = deepcopy(getfield(land_init.pools, sel_pool))
     sp = :ODE_Tsit5
     @show "ODE_Init", tj
-    @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
+    @time out_sp_ode = ForwardSindbad.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
         tem_with_vals.helpers,
@@ -67,7 +67,7 @@ for (i, tj) ∈ enumerate(tjs)
     sp = :spinup
     out_sp_exp = land_init
     @time for nl ∈ 1:Int(tem_with_vals.spinup.differential_eqn.time_jump)
-        out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
+        out_sp_exp = ForwardSindbad.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
             tem_with_vals.helpers,

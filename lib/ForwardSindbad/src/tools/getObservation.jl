@@ -19,7 +19,7 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
         v_info_sub = getCombinedVariableInfo(default_info, v_info_var)
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
-        nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, Val(Symbol(info.model_run.experiment_rules.input_data_backend)))
+        nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, Val(Symbol(info.experiment.data_rules.input_data_backend)))
         bounds_sub = v_info_sub.bounds
     else
         if data_sub_field == :qflag
@@ -65,7 +65,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     if :one_sel_mask ∈ keys(info.optimization.observations)
         if !isnothing(info.optimization.observations.one_sel_mask)
             mask_path = getAbsDataPath(info, info.optimization.observations.one_sel_mask)
-            _, yax_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.model_run.experiment_rules.input_data_backend)))
+            _, yax_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.experiment.data_rules.input_data_backend)))
             yax_mask = booleanizeMask(yax_mask)
         end
     end
@@ -108,7 +108,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         @info " \n"
     end
     @info "getObservation: getting observation dimensions..."
-    indims = getDataDims.(obscubes, Ref(info.forcing.data_dimensions.space))
+    indims = getDataDims.(obscubes, Ref(info.forcing.data_dimension.space))
     @info "getObservation: getting number of time steps..."
     nts = forcing_helpers.sizes
     @info "getObservation: getting variable name..."

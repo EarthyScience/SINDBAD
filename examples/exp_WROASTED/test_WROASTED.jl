@@ -21,23 +21,23 @@ path_output = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
-replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-    "experiment.configuration_files.forcing" => forcingConfig,
-    "experiment.domain" => domain,
+replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.domain" => domain,
     "forcing.default_forcing.data_path" => path_input,
-    "model_run.experiment_time.date_end" => eYear * "-12-31",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => true,
-    "model_run.experiment_flags.spinup.save_spinup" => false,
-    "model_run.experiment_flags.catch_model_errors" => false,
-    "model_run.experiment_flags.spinup.run_spinup" => true,
-    "model_run.experiment_flags.debug_model" => false,
-    "model_run.experiment_rules.model_array_type" => arraymethod,
-    "model_run.experiment_flags.spinup.do_spinup" => true,
-    "model_run.output.path" => path_output,
-    "model_run.output.format" => "nc",
-    "model_run.output.save_single_file" => true,
-    "model_run.experiment_rules.parallelization" => pl,
+    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => true,
+    "experiment.flags.spinup.save_spinup" => false,
+    "experiment.flags.catch_model_errors" => false,
+    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.debug_model" => false,
+    "experiment.data_rules.model_array_type" => arraymethod,
+    "experiment.flags.spinup.do_spinup" => true,
+    "experiment.model_output.path" => path_output,
+    "experiment.model_output.format" => "nc",
+    "experiment.model_output.save_single_file" => true,
+    "experiment.data_rules.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
@@ -47,7 +47,7 @@ forcing = getForcing(info);
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time simulateTEM!(info.tem.models.forward,
+@time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -78,7 +78,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-@time simulateTEM!(optimized_models,
+@time runTEM!(optimized_models,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -98,7 +98,7 @@ foreach(costOpt) do var_row
     v = var_row.variable
     @show "plot obs", v
     v = (var_row.mod_field, var_row.mod_subfield)
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
+    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)

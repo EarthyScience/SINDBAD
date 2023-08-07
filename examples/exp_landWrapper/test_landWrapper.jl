@@ -21,23 +21,23 @@ path_output = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
-replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
-    "experiment.configuration_files.forcing" => forcingConfig,
-    "experiment.domain" => domain,
+replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+    "experiment.basics.configuration_files.forcing" => forcingConfig,
+    "experiment.basics.domain" => domain,
     "forcing.default_forcing.data_path" => path_input,
-    "model_run.experiment_time.date_end" => eYear * "-12-31",
-    "model_run.experiment_flags.run_optimization" => optimize_it,
-    "model_run.experiment_flags.run_forward_and_cost" => true,
-    "model_run.experiment_flags.spinup.save_spinup" => false,
-    "model_run.experiment_flags.catch_model_errors" => false,
-    "model_run.experiment_flags.spinup.run_spinup" => true,
-    "model_run.experiment_flags.debug_model" => false,
-    "model_run.experiment_rules.model_array_type" => arraymethod,
-    "model_run.experiment_flags.spinup.do_spinup" => true,
-    "model_run.output.path" => path_output,
-    "model_run.output.format" => "nc",
-    "model_run.output.save_single_file" => true,
-    "model_run.experiment_rules.parallelization" => pl,
+    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.run_forward_and_cost" => true,
+    "experiment.flags.spinup.save_spinup" => false,
+    "experiment.flags.catch_model_errors" => false,
+    "experiment.flags.spinup.run_spinup" => true,
+    "experiment.flags.debug_model" => false,
+    "experiment.data_rules.model_array_type" => arraymethod,
+    "experiment.flags.spinup.do_spinup" => true,
+    "experiment.model_output.path" => path_output,
+    "experiment.model_output.format" => "nc",
+    "experiment.model_output.save_single_file" => true,
+    "experiment.data_rules.parallelization" => pl,
     "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
     "optimization.observations.default_observation.data_path" => path_observation);
 
@@ -47,7 +47,7 @@ forcing = getForcing(info);
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
-@time simulateTEM!(info.tem.models.forward,
+@time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
@@ -58,13 +58,13 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 
-@time lw_timeseries_prep = simulateTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
+@time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
 
-@time lw_timeseries = simulateTEM(forcing, info);
+@time lw_timeseries = runTEM(forcing, info);
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = simulateTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
+@time lw_timeseries_vec = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
@@ -81,7 +81,7 @@ tbl_params = Sindbad.getParameters(info.tem.models.forward,
 
 defaults = tbl_params.default
 
-getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
 
 getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
 
