@@ -45,7 +45,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 @time TEM!(info.tem.models.forward,
     forcing_nt_array,
@@ -58,17 +58,33 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 
-@time lw_timeseries_prep = TEM(info.tem.models.forward, loc_forcings[1], land_init_space[1], forcing_one_timestep, tem_with_vals);
+@time lw_timeseries_prep = TEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
 
 @time lw_timeseries = TEM(forcing, info);
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = TEM(land_timeseries, info.tem.models.forward, loc_forcings[1], land_init_space[1], forcing_one_timestep, tem_with_vals);
+@time lw_timeseries_vec = TEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
 
+# calculate the losses
 observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
 @time getLossVector(obs_array, output_array, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries_prep, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries, info.optim.cost_options) |> sum
 @time getLossVector(obs_array, lw_timeseries_vec, info.optim.cost_options) |> sum
+
+
+tbl_params = Sindbad.getParameters(info.tem.models.forward,
+    info.optim.default_parameter,
+    info.optim.optimized_parameters)
+
+defaults = tbl_params.default
+
+getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
+
+getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
+
+getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals, obs_array, tbl_params, info.optim.cost_options, info.optim.multi_constraint_method)
+
+

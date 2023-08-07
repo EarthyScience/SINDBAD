@@ -30,7 +30,7 @@ obs_array = getArray(observations);
 
 GC.gc()
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem_with_vals, loc_space_maps, loc_space_names, loc_space_inds = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
 
 @time TEM!(info.tem.models.forward,
     forcing_nt_array,
@@ -43,14 +43,14 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_vals)
 
 for x ∈ 1:10
-    @time TEM!(output_array,
-        info.tem.models.forward,
+    @time TEM!(info.tem.models.forward,
         forcing_nt_array,
-        loc_space_inds,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        forcing_one_timestep,
+        loc_space_inds,
         tem_with_vals)
 end
 
