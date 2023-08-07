@@ -97,7 +97,7 @@ tem_with_vals,
 forcing_one_timestep = prepTEM(forcing, info);
 
 
-@time TEM!(output_array,
+@time simulateTEM!(output_array,
     info.tem.models.forward,
     forc,
     loc_space_inds,

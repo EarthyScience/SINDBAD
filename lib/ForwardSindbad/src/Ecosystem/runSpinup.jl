@@ -572,7 +572,7 @@ function runSpinup(
     tem_models,
     tem_spinup)
 
-    #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or TEM!. Need to figure out but not critical as long as the spinup is not the bottleneck...
+    #todo probably the load and save spinup have to move outside. As of now, only pixel values are saved as the data reaching here are mapped through mapEco or mapOpt or simulateTEM!. Need to figure out but not critical as long as the spinup is not the bottleneck...
     land_spin = loadSpinup(land_in, tem_spinup, tem_helpers.run.spinup.load_spinup)
 
     #check if the spinup still needs to be done after loading spinup

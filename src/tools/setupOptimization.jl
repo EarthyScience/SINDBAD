@@ -182,7 +182,6 @@ function setupOptimization(info::NamedTuple)
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
-    info = setTupleSubfield(info, :optim, (:mapping, info.model_run.mapping))
 
     # get the variables to be used during optimization
     obsVars, optimVars, storeVars, modelVars = getConstraintNames(info.optimization)
