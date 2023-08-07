@@ -12,8 +12,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
-- `forcing`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -56,8 +56,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
-- `forcing`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `nothing`: DESCRIPTION
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})

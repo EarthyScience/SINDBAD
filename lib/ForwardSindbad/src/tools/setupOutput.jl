@@ -13,8 +13,8 @@ DOCSTRING
 
 # Arguments:
 - `info_pools`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `tem_models`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 """
 function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
     initPools = getInitPools(info_pools, tem_helpers)
@@ -54,8 +54,8 @@ DOCSTRING
 
 # Arguments:
 - `vname`: DESCRIPTION
-- `info`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `land_init`: initial SINDBAD land with all fields and subfields
 """
 function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
     field_name = first(split(string(vname), '.'))
@@ -107,10 +107,10 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `_`: DESCRIPTION
-- `land_init`: DESCRIPTION
-- `_`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `_`: unused argument
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
@@ -138,9 +138,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_sizes`: DESCRIPTION
 """
 function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
@@ -165,9 +165,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
 - `dthres`: DESCRIPTION
 """
@@ -215,9 +215,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -243,9 +243,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -262,9 +262,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -282,9 +282,9 @@ DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
-- `info`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -364,9 +364,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing_helpers`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     @info "     setupOutput: creating initial out/land..."
@@ -429,9 +429,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `info`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing_helpers`: DESCRIPTION
-- `tem_helpers`: DESCRIPTION
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, tem_helpers)

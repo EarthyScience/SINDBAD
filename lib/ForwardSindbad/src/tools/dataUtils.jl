@@ -394,7 +394,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `f_t`: DESCRIPTION
 - `ts`: DESCRIPTION
 - `nothing`: DESCRIPTION
@@ -423,7 +423,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `forcing_t`: DESCRIPTION
 - `ts`: DESCRIPTION
 """

@@ -8,7 +8,7 @@ DOCSTRING
 
 # Arguments:
 - `args`: DESCRIPTION
-- `land_init`: DESCRIPTION
+- `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: DESCRIPTION
 - `forward_models`: DESCRIPTION
 - `forcing_variables`: DESCRIPTION
@@ -39,7 +39,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `forcing`: DESCRIPTION
+- `forcing`: a forcing NT that contain the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: DESCRIPTION
 - `forward_models`: DESCRIPTION
