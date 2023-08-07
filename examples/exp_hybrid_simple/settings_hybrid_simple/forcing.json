@@ -1,6 +1,6 @@
 {
   "data_dimensions": {
-    "experiment_time": "Ti",
+    "time": "Ti",
     "permute": null,
     "space": ["site"]
   },

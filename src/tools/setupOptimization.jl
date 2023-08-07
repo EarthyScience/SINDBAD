@@ -100,7 +100,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
         aggr_func = getAggrFunc(Val(aggr_funcs[i]))
         _aggrName = string(_aggr)
         is_model_timestep = false
-        if startswith(_aggrName, dates_helpers.timestep)
+        if startswith(_aggrName, dates_helpers.temporal_resolution)
             is_model_timestep = true
         end
         aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func, is_model_timestep)

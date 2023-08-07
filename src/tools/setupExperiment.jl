@@ -675,7 +675,7 @@ fills info.tem.helpers.dates with date and time related fields needed in the mod
 """
 function generateDatesInfo(info::NamedTuple)
     tmpDates = (;)
-    timeData = getfield(info.model_run, :time)
+    timeData = getfield(info.model_run, :experiment_time)
     timeProps = propertynames(timeData)
     for timeProp ∈ timeProps
         propVal = getfield(timeData, timeProp)
@@ -684,23 +684,22 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.experiment_time.timestep == "day"
+    if info.model_run.experiment_time.temporal_resolution == "day"
         timestep = Day(1)
-        # time_range = collect((Date(info.model_run.experiment_time.date_begin):Day(1):Date(info.model_run.experiment_time.date_end)))
         time_range = Date(info.model_run.experiment_time.date_begin):Day(1):Date(info.model_run.experiment_time.date_end)
-    elseif info.model_run.experiment_time.timestep == "hour"
+    elseif info.model_run.experiment_time.temporal_resolution == "hour"
         timestep = Month(1)
         time_range =
             Date(info.model_run.experiment_time.date_begin):Hour(1):Date(info.model_run.experiment_time.date_end)
-        # collect((Date(info.model_run.experiment_time.date_begin):Hour(1):Date(info.model_run.experiment_time.date_end)))
     else
         error(
             "Sindbad only supports hourly and daily simulation. Change time.timestep in model_run.json"
         )
     end
-    tmpDates = setTupleField(tmpDates, (:timestep, timestep)) #needs to come from the date vector
-    tmpDates = setTupleField(tmpDates, (:range, time_range)) #needs to come from the date vector
-    tmpDates = setTupleField(tmpDates, (:size, length(time_range))) #needs to come from the date vector
+    tmpDates = setTupleField(tmpDates, (:temporal_resolution, info.model_run.experiment_time.temporal_resolution))
+    tmpDates = setTupleField(tmpDates, (:timestep, timestep))
+    tmpDates = setTupleField(tmpDates, (:range, time_range))
+    tmpDates = setTupleField(tmpDates, (:size, length(time_range)))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
     return info
 end
@@ -1245,7 +1244,7 @@ function getLoopingInfo(info::NamedTuple)
     # run_info = setTupleField(run_info, (:loop, (;)))
     run_info = setTupleField(run_info, (:forward_diff, Val(info.model_run.experiment_rules.forward_diff)))
     run_info = setTupleField(run_info,
-        (:parallelization, Val(Symbol(info.model_run.mapping.parallelization))))
+        (:parallelization, Val(Symbol(info.model_run.experiment_rules.parallelization))))
     return run_info
 end
 
@@ -1348,11 +1347,10 @@ function setupExperiment(info::NamedTuple)
     # change spinup sequence dispatch variables to Val, get the temporal aggregators
     seqq = infospin.sequence
     for seq in seqq
-        # @show seq
         for kk in keys(seq)
             if kk == "forcing"
                 is_model_timestep = false
-                if startswith(kk, info.tem.helpers.dates.timestep)
+                if startswith(kk, info.tem.helpers.dates.temporal_resolution)
                     is_model_timestep = true
                 end
                 aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_timestep)

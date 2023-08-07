@@ -98,7 +98,7 @@ foreach(costOpt) do var_row
     v = var_row.variable
     @show "plot obs", v
     v = (var_row.mod_field, var_row.mod_subfield)
-    vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
+    vinfo = getVariableInfo(v, info.model_run.experiment_time.temporal_resolution)
     v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
