@@ -12,17 +12,17 @@ optimize_it = false
 path_output = nothing
 domain = "DE-Hai"
 
-replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "model_run.time.end_date" => eYear * "-12-31",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => false,
-    "model_run.flags.spinup.save_spinup" => true,
-    "model_run.flags.spinup.load_spinup" => true,
+    "model_run.experiment_time .date_end" => eYear * "-12-31",
+    "model_run.experiment_flags.run_optimization" => optimize_it,
+    "model_run.experiment_flags.run_forward_and_cost" => false,
+    "model_run.experiment_flags.spinup.save_spinup" => true,
+    "model_run.experiment_flags.spinup.load_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
     "model_run.output.path" => path_output,
-    "optimization.constraints.default_constraint.data_path" => path_observation);
+    "optimization.observations.default_observation.data_path" => path_observation);
 
 run_output = runExperiment(experiment_json; replace_info=replace_info);
 

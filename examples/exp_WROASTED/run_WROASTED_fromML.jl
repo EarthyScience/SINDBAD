@@ -114,24 +114,24 @@ for site_index in sites
 
 
     pl = "threads"
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
         "experiment.configuration_files.optimization" => "optimization_1_1.json",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => false,
-        "model_run.flags.run_forward_and_cost" => true,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => false,
-        "model_run.flags.spinup.run_spinup" => true,
-        "model_run.flags.debug_model" => false,
-        "model_run.flags.spinup.do_spinup" => true,
+        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_flags.run_optimization" => false,
+        "model_run.experiment_flags.run_forward_and_cost" => true,
+        "model_run.experiment_flags.spinup.save_spinup" => false,
+        "model_run.experiment_flags.catch_model_errors" => false,
+        "model_run.experiment_flags.spinup.run_spinup" => true,
+        "model_run.experiment_flags.debug_model" => false,
+        "model_run.experiment_flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence[2:end],
         "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
-        "optimization.constraints.default_constraint.data_path" => path_observation,)
+        "optimization.observations.default_observation.data_path" => path_observation,)
 
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
@@ -140,8 +140,8 @@ for site_index in sites
 
     ### update the model parameters with values from matlab optimization
     tbl_params = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
+        info.optim.model_parameter_default,
+        info.optim.model_parameters_to_optimize)
     opt_params = tbl_params.optim
     param_names = tbl_params.name_full
     param_maps = Sindbad.parsefile("examples/exp_WROASTED/settings_WROASTED/ml_to_jl_params.json"; dicttype=Sindbad.DataStructures.OrderedDict)
@@ -165,8 +165,8 @@ for site_index in sites
 
 
         tbl_params_2 = Sindbad.getParameters(models_with_matlab_params,
-            info.optim.default_parameter,
-            info.optim.optimized_parameters)
+            info.optim.model_parameter_default,
+            info.optim.model_parameters_to_optimize)
 
         ## run the model
 
@@ -236,7 +236,7 @@ for site_index in sites
             metr_def = loss(obs_var_n, obs_σ_n, ml_dat_n, lossMetric)
             metr_opt = loss(obs_var_n, obs_σ_n, jl_dat_n, lossMetric)
             v = (var_row.mod_field, var_row.mod_subfield)
-            vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+            vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
             plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
@@ -252,8 +252,8 @@ for site_index in sites
         if do_debug_figs
             ##plot more diagnostic figures for sindbad jl
 
-            replace_info["model_run.flags.run_optimization"] = false
-            replace_info["model_run.flags.run_forward_and_cost"] = false
+            replace_info["model_run.experiment_flags.run_optimization"] = false
+            replace_info["model_run.experiment_flags.run_forward_and_cost"] = false
             info = getExperimentInfo(experiment_json; replace_info=replace_info)
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
@@ -280,7 +280,7 @@ for site_index in sites
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
-                vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+                vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
                 ml_dat = nothing
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")

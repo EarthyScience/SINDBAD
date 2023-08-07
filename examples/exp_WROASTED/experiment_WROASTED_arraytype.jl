@@ -22,22 +22,22 @@ pl = "threads"
 arraymethod = "view"
 info = nothing
 for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => false,
-        "model_run.flags.run_forward_and_cost" => false,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.spinup.run_spinup" => false,
-        "model_run.flags.debug_model" => false,
-        "model_run.rules.model_array_type" => arraymethod,
-        "model_run.flags.spinup.do_spinup" => true,
+        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_flags.run_optimization" => false,
+        "model_run.experiment_flags.run_forward_and_cost" => false,
+        "model_run.experiment_flags.spinup.save_spinup" => false,
+        "model_run.experiment_flags.catch_model_errors" => true,
+        "model_run.experiment_flags.spinup.run_spinup" => false,
+        "model_run.experiment_flags.debug_model" => false,
+        "model_run.experiment_rules.model_array_type" => arraymethod,
+        "model_run.experiment_flags.spinup.do_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
-        "optimization.constraints.default_constraint.data_path" => path_observation)
+        "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 

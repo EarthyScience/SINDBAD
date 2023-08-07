@@ -251,7 +251,7 @@ end
 
 """
 getLossVector(observations, model_output::AbstractArray, cost_options)
-returns a vector of losses for variables in info.cost_options.variables_to_constrain
+returns a vector of losses for variables in info.cost_options.observational_constraints
 """
 function getLossVector(observations, model_output, cost_options)
     loss_vector = map(cost_options) do cost_option
@@ -302,8 +302,8 @@ function optimizeTEM(forcing::NamedTuple,
     optim = info.optim
     # get the subset of parameters table that consists of only optimized parameters
     tbl_params = Sindbad.getParameters(tem.models.forward,
-        optim.default_parameter,
-        optim.optimized_parameters)
+        optim.model_parameter_default,
+        optim.model_parameters_to_optimize)
 
     cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
 

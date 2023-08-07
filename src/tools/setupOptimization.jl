@@ -11,11 +11,11 @@ returns
   - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 """
 function getConstraintNames(optim::NamedTuple)
-    obsVariables = Symbol.(optim.variables_to_constrain)
+    obsVariables = Symbol.(optim.observational_constraints)
     modelVariables = String[]
     optimVariables = (;)
     for v ∈ obsVariables
-        vinfo = getproperty(optim.constraints.variables, v)
+        vinfo = getproperty(optim.observations.variables, v)
         push!(modelVariables, vinfo.model_full_var)
         vf, vvar = Symbol.(split(vinfo.model_full_var, "."))
         optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
@@ -45,11 +45,11 @@ getCostOptions(optInfo)
 info.opti
 """
 function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
-    defNames = Symbol.(keys(optInfo.constraints.default_cost))
-    vals = values(optInfo.constraints.default_cost)
+    defNames = Symbol.(keys(optInfo.observations.default_cost))
+    vals = values(optInfo.observations.default_cost)
     defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
 
-    varlist = Symbol.(optInfo.variables_to_constrain)
+    varlist = Symbol.(optInfo.observational_constraints)
     all_options = []
     agg_type = []
     time_aggrs = []
@@ -64,7 +64,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
         vValues = []
         # vValues = typeof(defProp)[]
         for v ∈ varlist
-            optvar = getfield(getfield(optInfo.constraints.variables, v), :cost_options)
+            optvar = getfield(getfield(optInfo.observations.variables, v), :cost_options)
             if hasproperty(optvar, prop)
                 tmpValue = getfield(optvar, prop)
                 if (tmpValue isa Number) && !(tmpValue isa Bool)
@@ -100,7 +100,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
         aggr_func = getAggrFunc(Val(aggr_funcs[i]))
         _aggrName = string(_aggr)
         is_model_timestep = false
-        if startswith(_aggrName, dates_helpers.model_timestep)
+        if startswith(_aggrName, dates_helpers.timestep)
             is_model_timestep = true
         end
         aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func, is_model_timestep)
@@ -120,16 +120,16 @@ end
 """
     checkOptimizedParametersInModels(info::NamedTuple)
 
-checks if the parameters listed in optimized_parameters of optimization.json exists in the selected model structure of model_structure.json
+checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
 function checkOptimizedParametersInModels(info::NamedTuple)
-    # @show info.optimization.constraints, info.optimization.optimized_parameters
+    # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
     tbl_params = getParameters(info.tem.models.forward,
-        info.optimization.default_parameter,
-        info.optimization.optimized_parameters)
+        info.optimization.model_parameter_default,
+        info.optimization.model_parameters_to_optimize)
     model_parameters = tbl_params.name_full
     # @show model_parameters
-    optim_parameters = info.optimization.optimized_parameters
+    optim_parameters = info.optimization.model_parameters_to_optimize
     op_names = nothing
     if typeof(optim_parameters) <: Vector
         op_names = replaceCommaSeparatorParams(optim_parameters)
@@ -142,7 +142,7 @@ function checkOptimizedParametersInModels(info::NamedTuple)
             @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
             @show model_parameters
             error(
-                "Cannot continue with the model inconsistency. Either delete the invalid parameters in optimized_parameters of optimization.json, or check model structure to provide correct parameter name"
+                "Cannot continue with the model inconsistency. Either delete the invalid parameters in model_parameters_to_optimize of optimization.json, or check model structure to provide correct parameter name"
             )
         end
     end
@@ -152,15 +152,15 @@ function setupOptimization(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
 
     # set information related to cost metrics for each variable
-    info = setTupleSubfield(info, :optim, (:default_parameter, info.optimization.default_parameter))
-    info = setTupleSubfield(info, :optim, (:variables_to_constrain, info.optimization.variables_to_constrain))
+    info = setTupleSubfield(info, :optim, (:model_parameter_default, info.optimization.model_parameter_default))
+    info = setTupleSubfield(info, :optim, (:observational_constraints, info.optimization.observational_constraints))
     info = setTupleSubfield(info,
         :optim,
         (:multi_constraint_method, Val(Symbol(info.optimization.multi_constraint_method))))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
-    info = setTupleSubfield(info, :optim, (:optimized_parameters, info.optimization.optimized_parameters))
+    info = setTupleSubfield(info, :optim, (:model_parameters_to_optimize, info.optimization.model_parameters_to_optimize))
 
     # set algorithm related options
     tmp_algorithm = (;)

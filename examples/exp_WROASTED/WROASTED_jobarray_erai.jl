@@ -103,25 +103,25 @@ for o_set in opti_set
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
+    replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
         "experiment.configuration_files.forcing" => forcingConfig,
         "experiment.domain" => domain,
         "experiment.name" => exp_name,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => optimize_it,
-        "model_run.flags.run_forward_and_cost" => true,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.spinup.run_spinup" => true,
-        "model_run.flags.debug_model" => false,
-        "model_run.flags.spinup.do_spinup" => true,
+        "model_run.experiment_time .date_end" => eYear * "-12-31",
+        "model_run.experiment_flags.run_optimization" => optimize_it,
+        "model_run.experiment_flags.run_forward_and_cost" => true,
+        "model_run.experiment_flags.spinup.save_spinup" => false,
+        "model_run.experiment_flags.catch_model_errors" => true,
+        "model_run.experiment_flags.spinup.run_spinup" => true,
+        "model_run.experiment_flags.debug_model" => false,
+        "model_run.experiment_flags.spinup.do_spinup" => true,
         "model_run.spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "model_run.output.path" => path_output,
         "model_run.mapping.parallelization" => pl,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
-        "optimization.constraints.default_constraint.data_path" => path_observation,
-        "optimization.variables_to_constrain" => opti_sets[o_set],)
+        "optimization.observations.default_observation.data_path" => path_observation,
+        "optimization.observational_constraints" => opti_sets[o_set],)
 
     @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
     @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info)
@@ -130,8 +130,8 @@ for o_set in opti_set
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
     tbl_params = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
+        info.optim.model_parameter_default,
+        info.optim.model_parameters_to_optimize)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
     forcing = getForcing(info)
@@ -175,7 +175,7 @@ for o_set in opti_set
             ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
         loss_name = valToSymbol(lossMetric)
@@ -213,8 +213,8 @@ for o_set in opti_set
 
 
     ### redo the forward run to save all output variables
-    replace_info["model_run.flags.run_forward_and_cost"] = false
-    replace_info["model_run.flags.run_optimization"] = false
+    replace_info["model_run.experiment_flags.run_forward_and_cost"] = false
+    replace_info["model_run.experiment_flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
     forcing = getForcing(info)
 
@@ -233,11 +233,11 @@ for o_set in opti_set
     # save the outcubes
 
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.time.model_timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.model_run.experiment_time .timestep, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.time.model_timestep, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.model_run.experiment_time .timestep, Val(false))
 
 
     # plot the debug figures
@@ -246,7 +246,7 @@ for o_set in opti_set
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
     for (o, v) in enumerate(out_vars)
         def_var = output_array[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.time.model_timestep)
+        vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1

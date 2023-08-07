@@ -77,7 +77,7 @@ end
 function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
     outdims = map(datavars) do vname_full
         vname = Symbol(split(string(vname_full), '.')[end])
-        inax = info.model_run.mapping.run_ecosystem
+        inax = info.forcing.data_dimensions.time
         path_output = info.output.data
         outformat = info.model_run.output.format
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
@@ -97,7 +97,7 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
         depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
         ar = nothing
         ax_vals = values(forcing_sizes)
-        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.rules.forward_diff),
+        ar = Array{getOutArrayType(tem_helpers.numbers.num_type, info.model_run.experiment_rules.forward_diff),
             length(values(forcing_sizes)) + 1}(undef,
             ax_vals[1],
             depth_size,
@@ -112,7 +112,7 @@ function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers
     forcing_axes = forcing_helpers.axes
     dim_loops = first.(forcing_axes)
     axes_dims_pairs = []
-    if !isnothing(forcing_helpers.dimensions.permute)
+    if !isnothing(forcing_helpers.data_dimensions.permute)
         dim_perms = Symbol.(forcing_helpers.dimensions.permute)
         if dim_loops !== dim_perms
             for ix in eachindex(dim_perms)
@@ -264,7 +264,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
     output_tuple = setTupleField(output_tuple, (:variables, ovro))
 
 
-    if getBool(info.model_run.flags.run_optimization) || getBool(tem_helpers.run.run_forward_and_cost)
+    if getBool(info.model_run.experiment_flags.run_optimization) || getBool(tem_helpers.run.run_forward_and_cost)
         @info "     setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
@@ -281,11 +281,11 @@ function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers:
 end
 
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
-    params = info.optim.optimized_parameters
+    params = info.optim.model_parameters_to_optimize
     paramaxis = Dim{:parameter}(params)
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "optimized_parameters$(info.model_run.output.format)"),
+            "model_parameters_to_optimize$(info.model_run.output.format)"),
         backend=:zarr,
         overwrite=true)
     # od = OutDims(paramaxis)

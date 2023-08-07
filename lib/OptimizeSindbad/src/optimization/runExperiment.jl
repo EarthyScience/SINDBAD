@@ -18,14 +18,14 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
             info.optim,
             observations,
             ;
-            max_cache=info.model_run.rules.yax_max_cache)
+            max_cache=info.model_run.experiment_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = getArray(observations)
         # obs_array = getKeyedArray(observations)
         optim_params = optimizeTEM(forcing, obs_array, info)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.name * "_" * info.experiment.domain)
-        Sindbad.CSV.write(optim_file_prefix * "_optimized_parameters.csv", optim_params)
+        Sindbad.CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
     end
     return run_output

@@ -10,8 +10,8 @@ for tj ∈ (10, 100, 1000, 10000)
     replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "model_run.rules.model_array_type" => "array",
-        "model_run.flags.debug_model" => false)
+        "model_run.experiment_rules.model_array_type" => "array",
+        "model_run.experiment_flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
     info = setupExperiment(info)
