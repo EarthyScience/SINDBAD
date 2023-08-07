@@ -23,10 +23,10 @@ path_output = nothing
 
 pl = "threads"
 arraymethod = "staticarray"
-replace_info = Dict("model_run.experiment_time .date_begin" => sYear * "-01-01",
+replace_info = Dict("model_run.experiment_time.date_begin" => sYear * "-01-01",
     "experiment.configuration_files.forcing" => forcingConfig,
     "experiment.domain" => domain,
-    "model_run.experiment_time .date_end" => eYear * "-12-31",
+    "model_run.experiment_time.date_end" => eYear * "-12-31",
     "model_run.experiment_flags.run_optimization" => optimize_it,
     "model_run.experiment_flags.run_forward_and_cost" => false,
     "model_run.experiment_flags.spinup.save_spinup" => false,
@@ -105,7 +105,7 @@ default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars);
 for (o, v) in enumerate(out_vars)
     def_var = output_array[o][:, :, 1, 1]
-    vinfo = getVariableInfo(v, info.model_run.experiment_time .timestep)
+    vinfo = getVariableInfo(v, info.model_run.experiment_time.timestep)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
         plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)

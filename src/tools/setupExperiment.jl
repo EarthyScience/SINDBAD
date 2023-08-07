@@ -684,15 +684,15 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.model_run.experiment_time .timestep == "day"
+    if info.model_run.experiment_time.timestep == "day"
         timestep = Day(1)
-        # time_range = collect((Date(info.model_run.experiment_time .date_begin):Day(1):Date(info.model_run.experiment_time .date_end)))
-        time_range = Date(info.model_run.experiment_time .date_begin):Day(1):Date(info.model_run.experiment_time .date_end)
-    elseif info.model_run.experiment_time .timestep == "hour"
+        # time_range = collect((Date(info.model_run.experiment_time.date_begin):Day(1):Date(info.model_run.experiment_time.date_end)))
+        time_range = Date(info.model_run.experiment_time.date_begin):Day(1):Date(info.model_run.experiment_time.date_end)
+    elseif info.model_run.experiment_time.timestep == "hour"
         timestep = Month(1)
         time_range =
-            Date(info.model_run.experiment_time .date_begin):Hour(1):Date(info.model_run.experiment_time .date_end)
-        # collect((Date(info.model_run.experiment_time .date_begin):Hour(1):Date(info.model_run.experiment_time .date_end)))
+            Date(info.model_run.experiment_time.date_begin):Hour(1):Date(info.model_run.experiment_time.date_end)
+        # collect((Date(info.model_run.experiment_time.date_begin):Hour(1):Date(info.model_run.experiment_time.date_end)))
     else
         error(
             "Sindbad only supports hourly and daily simulation. Change time.timestep in model_run.json"
