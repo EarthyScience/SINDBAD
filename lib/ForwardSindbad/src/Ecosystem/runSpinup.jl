@@ -108,18 +108,20 @@ end
 
 function doSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
     @debug "runSpinup:: running spinup sequences..."
-    # spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
+    spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
+        forc_name = valToSymbol(spin_seq.forcing)
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
-        sel_forcing = getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
+        sel_forcing = getfield(spinup_forcing, forc_name)
+        # sel_forcing = getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
         spinup_models = forward_models
         if spinup_mode == :spinup
             spinup_models = forward_models[tem_models.is_spinup]
         end
-        @debug "     sequence: $(seq_index), spinup_mode: $(spinup_mode), forcing: $(forc)"
+        @debug "     sequence: $(seq_index), spinup_mode: $(spinup_mode), forcing: $(forc_name)"
         for loop_index ∈ 1:n_repeat
             @debug "         Loop: $(loop_index)/$(n_repeat)"
             land_spin = doSpinup(spinup_models,
