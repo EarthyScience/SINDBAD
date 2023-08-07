@@ -28,15 +28,15 @@ function debugModel(_, ::Val{:false}) # do nothing debug model is false/off
     return nothing
 end
 
-function runOneLocation(output_array::AbstractArray, land_init, selected_models, forcing, tem, loc_space_map)
-    loc_forcing, loc_output = getLocData(output_array, forcing, loc_space_map)
-    land_prec = runModelDefinePrecompute(land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+function runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
+    loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
+    forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
+    land_prec = runModelDefinePrecompute(selected_models, forcing_one_timestep, land_init,
         tem.helpers)
-    f_one = getForcingForTimeStep(loc_forcing, 1)
-    land_one = runModelCompute(land_prec, f_one, selected_models, tem.helpers)
-    setOutputForTimeStep!(loc_output, land_one, tem.helpers.vals.output_vars, 1)
+    land_one = runModelCompute(selected_models, forcing_one_timestep, land_prec, tem.helpers)
+    setOutputForTimeStep!(loc_output, land_one, 1, tem.helpers.vals.output_vars)
     debugModel(land_one, tem.helpers.run.debug_model)
-    return land_one, f_one
+    return land_one, forcing_one_timestep
 end
 
 """
@@ -109,15 +109,15 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     #@show loc_space_maps
     allNans = Bool[]
     for i ∈ eachindex(loc_space_maps)
-        loc_forcing, _ = getLocData(output_array, forcing_nt_array, loc_space_maps[i]) #312
+        loc_forcing, _ = getLocData(forcing_nt_array, output_array, loc_space_maps[i]) #312
         push!(allNans, all(isnan, loc_forcing[1]))
     end
 
     @info "     producing model output with one location and one time step for preallocating local, threaded, and spatial data"
-    loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1]) #312
+    loc_forcing, loc_output = getLocData(forcing_nt_array, output_array, loc_space_maps[1]) #312
     loc_space_maps = loc_space_maps[allNans.==false]
-    land_one, f_one = runOneLocation(output_array, land_init, selected_models, forcing_nt_array, new_tem,
-        loc_space_maps[1])
+    forcing_one_timestep, land_one = runOneLocation(selected_models, forcing_nt_array, output_array, land_init,
+        loc_space_maps[1], new_tem)
     land_one = addSpinupLog(land_one, new_tem.spinup.sequence, new_tem.helpers.run.spinup.store_spinup_history)
 
     loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
@@ -127,13 +127,13 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     println("----------------------------------------------")
 
     return forcing_nt_array,
-    output_array,
-    loc_space_maps,
-    loc_space_names,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
     new_tem,
-    f_one
+    loc_space_maps,
+    loc_space_names,
+    loc_space_inds
 end

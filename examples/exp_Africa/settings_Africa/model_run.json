@@ -1,6 +1,6 @@
 {
   "time": {
-    "model_time_step": "day",
+    "model_timestep": "day",
     "start_date": "2005-01-01",
     "end_date": "2013-12-31",
     "timesteps_in_day": 1,

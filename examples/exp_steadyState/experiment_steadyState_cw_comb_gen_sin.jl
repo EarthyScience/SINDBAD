@@ -79,7 +79,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
 
 
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, f_one =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, forcing_one_timestep =
         prepTEM(forcing, info)
 
 
@@ -116,7 +116,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                 tem_with_vals.helpers,
                 tem_with_vals.spinup,
                 land_type,
-                f_one,
+                forcing_one_timestep,
                 Val(:spinup))
         end
 
@@ -130,7 +130,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
             tem_with_vals.helpers,
             tem_with_vals.spinup,
             land_type,
-            f_one,
+            forcing_one_timestep,
             Val(sp_method))
 
 
@@ -147,7 +147,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                     tem_with_vals.helpers,
                     tem_with_vals.spinup,
                     land_type,
-                    f_one,
+                    forcing_one_timestep,
                     Val(sp))
             end
 
@@ -161,7 +161,7 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                     tem_with_vals.helpers,
                     tem_with_vals.spinup,
                     land_type,
-                    f_one,
+                    forcing_one_timestep,
                     Val(sp))
             end
             if sel_pool in (:cEco_TWS,)
