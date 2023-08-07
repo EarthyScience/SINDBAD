@@ -18,7 +18,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
             info.optim,
             observations,
             ;
-            max_cache=info.experiment.data_rules.yax_max_cache)
+            max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = getArray(observations)
