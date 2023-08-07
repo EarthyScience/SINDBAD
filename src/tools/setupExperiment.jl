@@ -772,7 +772,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
     tmpStates = (;)
     hlpStates = (;)
-    arrayType = Symbol(info.experiment.data_rules.model_array_type)
+    arrayType = Symbol(info.experiment.exe_rules.model_array_type)
 
     for element ∈ elements
         valsTuple = (;)
@@ -961,8 +961,8 @@ function generatePoolsInfo(info::NamedTuple)
             tmpElem = setTupleField(tmpElem, (:state_variables, state_variables))
         end
         arraytype = :view
-        if hasproperty(info.experiment.data_rules, :model_array_type)
-            arraytype = Symbol(info.experiment.data_rules.model_array_type)
+        if hasproperty(info.experiment.exe_rules, :model_array_type)
+            arraytype = Symbol(info.experiment.exe_rules.model_array_type)
         end
         tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
         tmpElem = setTupleField(tmpElem, (:create, create))
@@ -1130,7 +1130,7 @@ end
 
 
 """
-    prepNumericHelpers(info, ttype=info.experiment.data_rules.data_type)
+    prepNumericHelpers(info, ttype=info.experiment.exe_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
@@ -1139,22 +1139,22 @@ function prepNumericHelpers(info::NamedTuple, ttype)
     𝟘 = num_type(0.0)
     𝟙 = num_type(1.0)
 
-    tolerance = num_type(info.experiment.data_rules.tolerance)
+    tolerance = num_type(info.experiment.exe_rules.tolerance)
     info = (; info..., tem=(;))
     sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.experiment.data_rules.data_type)
+    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.data_type)
         tag_type = ForwardDiff.tagtype(𝟘)
         @show tag_type, num_type
         try
             sNT = (a) -> num_type(tag_type(a))
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.data_rules.tolerance)
+            tolerance = sNT(info.experiment.exe_rules.tolerance)
         catch
             sNT = (a) -> num_type(a)
             𝟘 = sNT(0.0)
             𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.data_rules.tolerance)
+            tolerance = sNT(info.experiment.exe_rules.tolerance)
         end
     end
     num_helpers = (;
@@ -1168,11 +1168,11 @@ function prepNumericHelpers(info::NamedTuple, ttype)
 end
 
 """
-    setNumericHelpers(info, ttype=info.experiment.data_rules.data_type)
+    setNumericHelpers(info, ttype=info.experiment.exe_rules.data_type)
 
 prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
 """
-function setNumericHelpers(info::NamedTuple, ttype=info.experiment.data_rules.data_type)
+function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.data_type)
     num_helpers = prepNumericHelpers(info, ttype)
     info = (;
         info...,
@@ -1242,9 +1242,9 @@ function getLoopingInfo(info::NamedTuple)
     run_vals = convertRunFlagsToVal(info)
     run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
     # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.data_rules.forward_diff)))
+    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.exe_rules.forward_diff)))
     run_info = setTupleField(run_info,
-        (:parallelization, Val(Symbol(info.experiment.data_rules.parallelization))))
+        (:parallelization, Val(Symbol(info.experiment.exe_rules.parallelization))))
     return run_info
 end
 

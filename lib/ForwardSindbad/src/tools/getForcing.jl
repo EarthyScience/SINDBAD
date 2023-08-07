@@ -171,7 +171,7 @@ function getForcing(info::NamedTuple)
     if :sel_mask ∈ keys(info.forcing)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.experiment.data_rules.input_data_backend)))
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
             forcing_mask = booleanizeMask(forcing_mask)
         end
     end
@@ -187,7 +187,7 @@ function getForcing(info::NamedTuple)
     incubes = map(forcing_variables) do k
         vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
-        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.experiment.data_rules.input_data_backend)))
+        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
         @info "     source_var: $(vinfo.source_variable)"
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
         @info "     sindbad_var: $(k)\n "
