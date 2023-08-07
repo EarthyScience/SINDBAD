@@ -1,6 +1,6 @@
 export runTEM!
 export runTEMCore!
-export TEM!
+export simulateTEM!
 
 function parallelizeTEM!(
     selected_models,
@@ -198,16 +198,16 @@ end
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function TEM!(forcing::NamedTuple, info::NamedTuple)
+function simulateTEM!(forcing::NamedTuple, info::NamedTuple)
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_vals = prepTEM(forcing, info)
-    TEM!(tem_with_vals.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals)
+    simulateTEM!(tem_with_vals.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals)
     return output_array
 end
 
 """
 runEcosystem(selected_models, forcing, land_init, tem)
 """
-function TEM!(
+function simulateTEM!(
     selected_models,
     forcing_nt_array::NamedTuple,
     loc_forcings,
