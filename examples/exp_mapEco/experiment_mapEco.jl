@@ -3,7 +3,7 @@ using Sindbad
 using ProgressMeter
 noStackTrace()
 
-tbl = getSindbadModels()
+# tbl = getSindbadModels()
 
 experiment_json = "../exp_mapEco/settings_mapEco/experiment.json";
 

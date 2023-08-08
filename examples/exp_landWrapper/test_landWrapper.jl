@@ -60,6 +60,16 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
 
+# function nanmean(a;dims=:)
+#     init = (0,0.0)
+#     r = foldl(a;init,dims) do (n,s),b
+#         isnan(b) ? (n,s) : (n+1,s+b)
+#     end
+#     @show r
+#     last.(r)/first.(r)
+# end
+
+
 @time lw_timeseries = runTEM(forcing, info);
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
@@ -71,6 +81,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
 cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
 
+# @profview getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries_prep, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries, cost_options) # |> sum
@@ -85,8 +96,8 @@ defaults = tbl_params.default
 
 @time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 

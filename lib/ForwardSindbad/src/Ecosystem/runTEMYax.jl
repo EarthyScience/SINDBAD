@@ -52,12 +52,15 @@ function mapRunEcosystem(forcing::NamedTuple,
     max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
+    innames = get_indim_symbiols
     forcing_variables = collect(forcing.variables)
     outdims = output.dims
     land_init = deepcopy(output.land_init)
     #additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     #nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
-
+    # @show "I am here"
+    # @show indims
+    # @show outdims
     outcubes = mapCube(doRunEcosystem,
         (incubes...,);
         land_init=land_init,
@@ -67,7 +70,7 @@ function mapRunEcosystem(forcing::NamedTuple,
         indims=indims,
         outdims=outdims,
         max_cache=max_cache,
-        ispar=true
+        ispar=false,
         #nthreads = [1],
     )
     return outcubes
