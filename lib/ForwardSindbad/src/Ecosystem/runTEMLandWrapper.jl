@@ -243,7 +243,7 @@ time loop of the model run where forcing for the time step is used to run model 
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::Val{:false}`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
+- `Val{:false}`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
 """
 function timeLoopTEM(
     selected_models,
@@ -274,7 +274,7 @@ time loop of the model run where forcing for ONE time step is used to run model 
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::Val{:true}`: a flag indicating that the models should be debugged and run for only one time step
+- `Val{:true}`: a flag indicating that the models should be debugged and run for only one time step
 """
 function timeLoopTEM(
     selected_models,

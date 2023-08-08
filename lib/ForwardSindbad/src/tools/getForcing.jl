@@ -132,7 +132,7 @@ DOCSTRING
 function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @info "   processing forcing helpers..."
     @debug "     ::dimensions::"
-    indims = getDataDims.(incubes, Ref(info.forcing.data_dimension.space))
+    indims = getDataDims.(incubes, Ref(Symbol.(info.forcing.data_dimension.space)))
     @debug "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)

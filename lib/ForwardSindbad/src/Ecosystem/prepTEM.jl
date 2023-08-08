@@ -27,7 +27,7 @@ DOCSTRING
 
 # Arguments:
 - `land`: sindbad land
-- `::Val{false}`: indicates not to store the spinup history
+- `Val{false}`: indicates not to store the spinup history
 """
 function addSpinupLog(land, _, ::Val{false}) # when history is false
     spinuplog = nothing

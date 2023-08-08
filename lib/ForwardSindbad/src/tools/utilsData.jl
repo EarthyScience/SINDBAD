@@ -640,6 +640,14 @@ function getTimeAggrArray(_dat::AbstractArray{T,2}) where {T}
     return _dat[:, :]
 end
 
+# function getTimeAggrArray(_dat::AbstractArray{<:Any,N}) where N
+#     inds = ntuple(_->Colon(),N)
+#     inds = map(size(_data)) do _
+#         Colon()
+#     end
+#     _dat[inds...]
+# end
+
 """
     getTimeAggrArray(_dat::AbstractArray{T, 3})
 
