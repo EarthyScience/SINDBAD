@@ -1,7 +1,7 @@
 export prepTEM
 
 """
-    addSpinupLog(land, seq, nothing::Val{true})
+    addSpinupLog(land, seq, Val{true})
 
 DOCSTRING
 
@@ -21,7 +21,7 @@ function addSpinupLog(land, seq, ::Val{true}) # when history is true
 end
 
 """
-    addSpinupLog(land, _, nothing::Val{false})
+    addSpinupLog(land, _, Val{false})
 
 DOCSTRING
 
@@ -36,7 +36,7 @@ function addSpinupLog(land, _, ::Val{false}) # when history is false
 end
 
 """
-    debugModel(land_one, nothing::Val{:(true)})
+    debugModel(land_one, Val{:(true)})
 
 DOCSTRING
 """
@@ -49,7 +49,7 @@ end
 
 
 """
-    debugModel(_, nothing::Val{:(false)})
+    debugModel(_, Val{:(false)})
 
 DOCSTRING
 """

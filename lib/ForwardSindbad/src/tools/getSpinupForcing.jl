@@ -82,7 +82,7 @@ Set the spinup forcing as full input forcing.
 """
 
 """
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:no_diff})
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, Val{:no_diff})
 
 DOCSTRING
 
@@ -104,7 +104,7 @@ Set the spinup forcing as full input forcing.
 """
 
 """
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, nothing::Val{:indexed})
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, Val{:indexed})
 
 DOCSTRING
 

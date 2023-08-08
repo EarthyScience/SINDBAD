@@ -36,7 +36,7 @@ function checkOptimizedParametersInModels(info::NamedTuple)
 end
 
 """
-    getAggrFunc(nothing::Val{:mean})
+    getAggrFunc(Val{:mean})
 
 DOCSTRING
 """
@@ -45,7 +45,7 @@ function getAggrFunc(::Val{:mean})
 end
 
 """
-    getAggrFunc(nothing::Val{:sum})
+    getAggrFunc(Val{:sum})
 
 DOCSTRING
 """
@@ -54,7 +54,7 @@ function getAggrFunc(::Val{:sum})
 end
 
 """
-    getAggrFunc(nothing::Val{:nanMean})
+    getAggrFunc(Val{:nanMean})
 
 DOCSTRING
 """
@@ -63,7 +63,7 @@ function getAggrFunc(::Val{:nanMean})
 end
 
 """
-    getAggrFunc(nothing::Val{:nanSum})
+    getAggrFunc(Val{:nanSum})
 
 DOCSTRING
 """

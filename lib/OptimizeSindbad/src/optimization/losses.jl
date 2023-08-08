@@ -9,7 +9,7 @@ mean squared error
 """
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:mse})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:mse})
 
 DOCSTRING
 
@@ -33,7 +33,7 @@ Relative normalized model absolute error
 """
 
 """
-    loss(y, yσ, ŷ, nothing::Val{:nmae1r})
+    loss(y, yσ, ŷ, Val{:nmae1r})
 
 DOCSTRING
 
@@ -57,7 +57,7 @@ Relative normalized model absolute error
 """
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nmae1r})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nmae1r})
 
 DOCSTRING
 
@@ -75,7 +75,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:scor})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:scor})
 
 DOCSTRING
 
@@ -90,7 +90,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:s
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:scor2})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:scor2})
 
 DOCSTRING
 
@@ -106,7 +106,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:s
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:scor2inv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:scor2inv})
 
 DOCSTRING
 
@@ -122,7 +122,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:s
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:pcor})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:pcor})
 
 DOCSTRING
 
@@ -137,7 +137,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:p
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:pcor2})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:pcor2})
 
 DOCSTRING
 
@@ -153,7 +153,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:p
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:pcor2inv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:pcor2inv})
 
 DOCSTRING
 
@@ -169,7 +169,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:p
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nseσ})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nseσ})
 
 DOCSTRING
 
@@ -188,7 +188,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nseσinv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nseσinv})
 
 DOCSTRING
 
@@ -204,7 +204,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nnseσ})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nnseσ})
 
 DOCSTRING
 
@@ -221,7 +221,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nnseσinv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nnseσinv})
 
 DOCSTRING
 
@@ -237,7 +237,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nse})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nse})
 
 DOCSTRING
 
@@ -253,7 +253,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nseinv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nseinv})
 
 DOCSTRING
 
@@ -269,7 +269,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nnse})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nnse})
 
 DOCSTRING
 
@@ -286,7 +286,7 @@ function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:n
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, nothing::Val{:nnseinv})
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, Val{:nnseinv})
 
 DOCSTRING
 
