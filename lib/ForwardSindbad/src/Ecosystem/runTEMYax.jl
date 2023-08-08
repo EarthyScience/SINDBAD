@@ -9,7 +9,7 @@ DOCSTRING
 # Arguments:
 - `args`: DESCRIPTION
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forward_models`: DESCRIPTION
 - `forcing_variables`: DESCRIPTION
 """
@@ -41,7 +41,7 @@ DOCSTRING
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forward_models`: DESCRIPTION
 - `max_cache`: DESCRIPTION
 """
@@ -81,7 +81,7 @@ DOCSTRING
 
 # Arguments:
 - `args`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing_variables`: DESCRIPTION
 """
 function unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)

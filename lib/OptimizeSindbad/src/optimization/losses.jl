@@ -14,9 +14,9 @@ mean squared error
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:mse})
@@ -38,9 +38,9 @@ Relative normalized model absolute error
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y, yσ, ŷ, ::Val{:nmae1r})
@@ -62,9 +62,9 @@ Relative normalized model absolute error
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nmae1r})
@@ -80,9 +80,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor})
@@ -95,9 +95,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor2})
@@ -111,9 +111,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:scor2inv})
@@ -127,9 +127,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:pcor})
@@ -142,9 +142,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:pcor2})
@@ -158,9 +158,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:pcor2inv})
@@ -174,9 +174,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nseσ})
@@ -193,9 +193,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nseσinv})
@@ -209,9 +209,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nnseσ})
@@ -226,9 +226,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nnseσinv})
@@ -242,9 +242,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nse})
@@ -258,9 +258,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nseinv})
@@ -274,9 +274,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nnse})
@@ -291,9 +291,9 @@ end
 DOCSTRING
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Val{:nnseinv})

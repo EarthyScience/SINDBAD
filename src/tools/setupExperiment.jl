@@ -1275,7 +1275,7 @@ end
 update models/parameters without mutating the table of parameters
 
 # Arguments:
-- `tbl_params`: DESCRIPTION
+- `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of models selected for the given model structure
 - `pVector`: DESCRIPTION
 """
@@ -1312,7 +1312,7 @@ end
 get the new instances of the model with same parameter types as mentioned in pVector
 
 # Arguments:
-- `tbl_params`: DESCRIPTION
+- `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `selected_models`: a tuple of models selected for the given model structure
 - `pVector`: DESCRIPTION
 """
