@@ -7,7 +7,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, output, nothing::Val{:forward})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, Val{:forward})
 
 DOCSTRING
 

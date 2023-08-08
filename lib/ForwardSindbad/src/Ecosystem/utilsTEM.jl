@@ -42,7 +42,7 @@ function getLocData(forcing, output_array, loc_space_map)
 end
 
 """
-    getLocForcing!(forcing, loc_forcing, s_locs, nothing::Val{forc_vars}, nothing::Val{s_names})
+    getLocForcing!(forcing, loc_forcing, s_locs, Val{forc_vars}, Val{s_names})
 
 DOCSTRING
 
@@ -131,7 +131,7 @@ function getLocOutputView(ar, val::Real, ts::Int64)
 end
 
 """
-    setOutputForTimeStep!(outputs, land, ts, nothing::Val{output_vars})
+    setOutputForTimeStep!(outputs, land, ts, Val{output_vars})
 
 DOCSTRING
 
