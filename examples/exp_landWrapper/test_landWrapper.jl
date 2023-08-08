@@ -71,10 +71,10 @@ observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
 cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
 
-@time getLossVector(obs_array, output_array, cost_options) |> sum
-@time getLossVector(obs_array, lw_timeseries_prep, cost_options) |> sum
-@time getLossVector(obs_array, lw_timeseries, cost_options) |> sum
-@time getLossVector(obs_array, lw_timeseries_vec, cost_options) |> sum
+@time getLossVector(obs_array, output_array, cost_options) # |> sum
+@time getLossVector(obs_array, lw_timeseries_prep, cost_options) # |> sum
+@time getLossVector(obs_array, lw_timeseries, cost_options) # |> sum
+@time getLossVector(obs_array, lw_timeseries_vec, cost_options) #|> sum
 
 
 tbl_params = Sindbad.getParameters(info.tem.models.forward,
