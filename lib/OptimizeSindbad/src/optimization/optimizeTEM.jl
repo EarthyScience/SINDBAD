@@ -127,7 +127,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `model_output`: DESCRIPTION
+- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 """
@@ -163,7 +163,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `model_output`: DESCRIPTION
+- `model_output`: a collection of SINDBAD model output time series as a preallocated array
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 """
@@ -192,18 +192,18 @@ end
 DOCSTRING
 
 # Arguments:
-- `obs_array`: DESCRIPTION
-- `nothing`: DESCRIPTION
-- `nothing`: DESCRIPTION
-- `loc_obs`: DESCRIPTION
-- `s_locs`: DESCRIPTION
+- `obs_array`: an array of all observation variables for all locations
+- `loc_obs`: a NT of observations for a given location to be used as reference to overwrite using @set
+- `s_locs`: name and values of the location/space dimensions
+- `Val{obs_vars}`: a Val dispatch to generate the code based on the list of observation variables
+- `Val{s_names}`: a Val dispatch to generate the code based on names the location/space dimensions
 """
 @generated function getLocObs!(
     obs_array,
-    ::Val{obs_vars},
-    ::Val{s_names},
     loc_obs,
-    s_locs) where {obs_vars,s_names}
+    s_locs,
+    ::Val{obs_vars},
+    ::Val{s_names}) where {obs_vars,s_names}
     output = quote end
     foreach(obs_vars) do obsv
         push!(output.args, Expr(:(=), :d, Expr(:., :obs_array, QuoteNode(obsv))))
@@ -240,7 +240,7 @@ DOCSTRING
 - `base_models`: a Tuple of selected SINDBAD models in the given model structure, the parameter(s) of which are optimized
 - `forcing`: a forcing NT that contains the forcing time series set for a given location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
-- `land_timeseries`: DESCRIPTION
+- `land_timeseries`: a timeseries of preallocated vector with one time step  output land as the element
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
@@ -359,7 +359,7 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output`: DESCRIPTION
+- `model_output`: a collection of SINDBAD model output time series, either as a preallocated array or as a time series of stacked land NT
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
 function getLossVector(observations, model_output, cost_options)
@@ -374,7 +374,7 @@ function getLossVector(observations, model_output, cost_options)
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
-        @info "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
+        # @info "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
         metr
     end
     # println("-------------------")
@@ -503,7 +503,7 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `::Val{:land_stacked}`: a value to indicate that the time loop of the model will stack the land as a time series when runTEM is called
+- `Val{:land_stacked}`: a value to indicate that the time loop of the model will stack the land as a time series when runTEM is called
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
