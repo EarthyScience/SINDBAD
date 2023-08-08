@@ -191,7 +191,7 @@ end
 
 
 """
-    loadSpinup(_, tem_spinup, nothing::Val{true})
+    loadSpinup(_, tem_spinup, Val{true})
 
 DOCSTRING
 
@@ -208,7 +208,7 @@ function loadSpinup(_, tem_spinup, ::Val{true}) # when load_spinup is true
 end
 
 """
-    loadSpinup(land_spin, _, nothing::Val{false})
+    loadSpinup(land_spin, _, Val{false})
 
 DOCSTRING
 
@@ -222,7 +222,7 @@ function loadSpinup(land_spin, _, ::Val{false}) # when load_spinup is false
 end
 
 """
-    runSpinup(_, _, _, land_spin, _, _, _, nothing::Val{:(false)})
+    runSpinup(_, _, _, land_spin, _, _, _, Val{:(false)})
 
 DOCSTRING
 
@@ -241,7 +241,7 @@ function runSpinup(_, _, _, land_spin, _, _, _, ::Val{:false}) # dont do the spi
 end
 
 """
-    runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
+    runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, Val{:(true)})
 
 DOCSTRING
 
@@ -294,7 +294,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 """
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, nothing::Val{:spinup})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:spinup})
 
 DOCSTRING
 
@@ -329,7 +329,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 """
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, nothing::Val{:forward})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:forward})
 
 DOCSTRING
 
@@ -360,7 +360,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, nothing::Val{:nlsove_fixedpoint_trustregion_TWS})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_TWS})
 
 DOCSTRING
 
@@ -391,7 +391,7 @@ function runSpinup(
 end
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, nothing::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
 
 DOCSTRING
 
@@ -435,7 +435,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, nothing::Val{:nlsove_fixedpoint_trustregion_cEco})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_cEco})
 
 DOCSTRING
 
@@ -473,7 +473,7 @@ scale the carbon pools using the scalars from cCycleBase
 """
 
 """
-    runSpinup(_, _, _, land, helpers, _, nothing::Val{:ηScaleAH})
+    runSpinup(_, _, _, land, helpers, _, Val{:ηScaleAH})
 
 DOCSTRING
 
@@ -522,7 +522,7 @@ scale the carbon pools using the scalars from cCycleBase
 """
 
 """
-    runSpinup(_, _, _, land, helpers, _, nothing::Val{:ηScaleA0H})
+    runSpinup(_, _, _, land, helpers, _, Val{:ηScaleA0H})
 
 DOCSTRING
 
@@ -575,7 +575,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
 
 """
-    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, nothing::Val{:ODE_AutoTsit5_Rodas5})
+    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, Val{:ODE_AutoTsit5_Rodas5})
 
 DOCSTRING
 
@@ -623,7 +623,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
 
 """
-    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, nothing::Val{:ODE_DP5})
+    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, Val{:ODE_DP5})
 
 DOCSTRING
 
@@ -672,7 +672,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 """
 
 """
-    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, nothing::Val{:ODE_Tsit5})
+    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, Val{:ODE_Tsit5})
 
 DOCSTRING
 
@@ -721,7 +721,7 @@ do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of Di
 """
 
 """
-    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, nothing::Val{:SSP_DynamicSS_Tsit5})
+    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, Val{:SSP_DynamicSS_Tsit5})
 
 DOCSTRING
 
@@ -766,7 +766,7 @@ do/run the spinup using SteadyState solver and SSRootfind method of Differential
 """
 
 """
-    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, nothing::Val{:SSP_SSRootfind})
+    runSpinup(sel_spinup_models, sel_spinup_forcing, forcing_one_timestep, land_in, tem_helpers, tem_spinup, Val{:SSP_SSRootfind})
 
 DOCSTRING
 
@@ -848,7 +848,7 @@ function spinupTEM(
 end
 
 """
-    saveSpinup(land_spin, tem_spinup, nothing::Val{:(true)})
+    saveSpinup(land_spin, tem_spinup, Val{:(true)})
 
 DOCSTRING
 
@@ -865,7 +865,7 @@ function saveSpinup(land_spin, tem_spinup, ::Val{:true}) # save the spinup
 end
 
 """
-    saveSpinup(_, _, nothing::Val{:(false)})
+    saveSpinup(_, _, Val{:(false)})
 
 DOCSTRING
 
@@ -880,7 +880,7 @@ end
 
 
 """
-    setSpinupLog(land_spin, log_index, nothing::Val{:(true)})
+    setSpinupLog(land_spin, log_index, Val{:(true)})
 
 DOCSTRING
 
@@ -895,7 +895,7 @@ function setSpinupLog(land_spin, log_index, ::Val{:true})
 end
 
 """
-    setSpinupLog(land_spin, _, nothing::Val{:(false)})
+    setSpinupLog(land_spin, _, Val{:(false)})
 
 DOCSTRING
 

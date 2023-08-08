@@ -3,7 +3,7 @@ export runTEM!
 export locTEM!
 
 """
-    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, nothing::Val{:(false)})
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, Val{:(false)})
 
 core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
@@ -44,7 +44,7 @@ function coreTEM!(
 end
 
 """
-    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, Val{:(true)})
 
 core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
@@ -138,7 +138,7 @@ function locTEM!(
 end
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, nothing::Val{:threads})
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, Val{:threads})
 
 parallelize SINDBAD TEM using threads as backend
 
@@ -188,7 +188,7 @@ function parallelizeTEM!(
 end
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, nothing::Val{:qbmap})
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, Val{:qbmap})
 
 parallelize SINDBAD TEM using qbmap as backend
 
@@ -298,7 +298,7 @@ end
 
 
 """
-    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(false)})
+    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, Val{:(false)})
 
 time loop of the model run where forcing for the time step is used to run model compute function, whose output are assigned to preallocated output array
 
@@ -330,7 +330,7 @@ end
 
 
 """
-    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(true)})
+    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, Val{:(true)})
 
 time loop of the model run where forcing for ONE time step is used to run model compute function, save the output, and display debugging information on allocations and time
 

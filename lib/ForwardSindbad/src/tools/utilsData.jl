@@ -90,7 +90,7 @@ function booleanizeMask(yax_mask)
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:site})
+    spatialSubset(v, ss_range, Val{:site})
 
 DOCSTRING
 
@@ -104,7 +104,7 @@ function spatialSubset(v, ss_range, ::Val{:site})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:lat})
+    spatialSubset(v, ss_range, Val{:lat})
 
 DOCSTRING
 
@@ -118,7 +118,7 @@ function spatialSubset(v, ss_range, ::Val{:lat})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:latitude})
+    spatialSubset(v, ss_range, Val{:latitude})
 
 DOCSTRING
 
@@ -132,7 +132,7 @@ function spatialSubset(v, ss_range, ::Val{:latitude})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:lon})
+    spatialSubset(v, ss_range, Val{:lon})
 
 DOCSTRING
 
@@ -146,7 +146,7 @@ function spatialSubset(v, ss_range, ::Val{:lon})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:longitude})
+    spatialSubset(v, ss_range, Val{:longitude})
 
 DOCSTRING
 
@@ -160,7 +160,7 @@ function spatialSubset(v, ss_range, ::Val{:longitude})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:id})
+    spatialSubset(v, ss_range, Val{:id})
 
 DOCSTRING
 
@@ -174,7 +174,7 @@ function spatialSubset(v, ss_range, ::Val{:id})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:Id})
+    spatialSubset(v, ss_range, Val{:Id})
 
 DOCSTRING
 
@@ -188,7 +188,7 @@ function spatialSubset(v, ss_range, ::Val{:Id})
 end
 
 """
-    spatialSubset(v, ss_range, nothing::Val{:ID})
+    spatialSubset(v, ss_range, Val{:ID})
 
 DOCSTRING
 
@@ -301,7 +301,7 @@ function applyUnitConversion(data_in, conversion, isadditive=false)
 end
 
 """
-    mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, nothing::Val{T})
+    mapCleanData(yax, yax_qc, dfill, bounds_qc, vinfo, Val{T})
 
 DOCSTRING
 
@@ -342,7 +342,7 @@ function cleanInvalid(yax_point, dfill)
 end
 
 """
-    cleanData(yax_point, dfill, vinfo, nothing::Val{T})
+    cleanData(yax_point, dfill, vinfo, Val{T})
 
 DOCSTRING
 
@@ -415,7 +415,7 @@ function getForcingTimeSize(forcing::NamedTuple)
 end
 
 """
-    getForcingTimeSize(forcing, nothing::Val{forc_vars})
+    getForcingTimeSize(forcing, Val{forc_vars})
 
 DOCSTRING
 """
@@ -438,7 +438,7 @@ DOCSTRING
 end
 
 """
-    getForcingForTimeStep(forcing, f_t, ts, nothing::Val{forc_vars})
+    getForcingForTimeStep(forcing, f_t, ts, Val{forc_vars})
 
 DOCSTRING
 
@@ -722,7 +722,7 @@ function temporalAggregation(dat, temporal_aggregator::Nothing, dim=1)
 end
 
 """
-    temporalAggregation(dat, temporal_aggregators, nothing::Val{:no_diff})
+    temporalAggregation(dat, temporal_aggregators, Val{:no_diff})
 
 DOCSTRING
 
@@ -736,7 +736,7 @@ function temporalAggregation(dat, temporal_aggregators, ::Val{:no_diff})
 end
 
 """
-    temporalAggregation(dat, temporal_aggregators, nothing::Val{:diff})
+    temporalAggregation(dat, temporal_aggregators, Val{:diff})
 
 DOCSTRING
 

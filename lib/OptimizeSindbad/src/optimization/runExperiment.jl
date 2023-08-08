@@ -7,7 +7,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, output, nothing::Val{:opti})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, Val{:opti})
 
 DOCSTRING
 
@@ -51,7 +51,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, nothing::Val{:cost})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, Val{:cost})
 
 DOCSTRING
 
