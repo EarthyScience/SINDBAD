@@ -115,14 +115,14 @@ function getVarFull(var_pair)
 end
 
 """
-    getUniqueVarNames(data_vars)
+    getUniqueVarNames(var_pairs)
 
 return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
 - uses field__variablename in case of duplicates, else uses the actual model variable name
 """
-function getUniqueVarNames(data_vars)
-    pure_vars = getVarName.(data_vars)
-    fields = getVarField.(data_vars)
+function getUniqueVarNames(var_pairs)
+    pure_vars = getVarName.(var_pairs)
+    fields = getVarField.(var_pairs)
     uniq_vars = Symbol[]
     for i in eachindex(pure_vars)
         n_occur = sum(pure_vars .== pure_vars[i])
@@ -157,30 +157,30 @@ function getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_st
 end
 
 """
-    saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
+    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:true})
 
 saves the output variables from the run as one file
 """
 
 """
-    saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, nothing::Val{:(true)})
+    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, nothing::Val{:(true)})
 
 DOCSTRING
 
 # Arguments:
 - `data_path_base`: DESCRIPTION
 - `global_info`: DESCRIPTION
-- `data_vars`: DESCRIPTION
+- `var_pairs`: DESCRIPTION
 - `data`: DESCRIPTION
 - `data_dims`: DESCRIPTION
 - `out_format`: DESCRIPTION
 - `t_step`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:true})
+function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:true})
     @info "saving one file for all variables"
-    catalog_names = getVarFull.(data_vars)
-    variable_names = getUniqueVarNames(data_vars)
+    catalog_names = getVarFull.(var_pairs)
+    variable_names = getUniqueVarNames(var_pairs)
     all_yax = Tuple(getYaxForVariable.(data, data_dims, variable_names, catalog_names, Ref(t_step)))
     data_path = data_path_base * "_all_variables.$(out_format)"
     @info data_path
@@ -190,32 +190,32 @@ function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, o
 end
 
 """
-saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:false})
+saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:false})
 
 saves the output variables from the run as one file per variable
 """
 
 """
-    saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, nothing::Val{:(false)})
+    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, nothing::Val{:(false)})
 
 DOCSTRING
 
 # Arguments:
 - `data_path_base`: DESCRIPTION
 - `global_info`: DESCRIPTION
-- `data_vars`: DESCRIPTION
+- `var_pairs`: DESCRIPTION
 - `data`: DESCRIPTION
 - `data_dims`: DESCRIPTION
 - `out_format`: DESCRIPTION
 - `t_step`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_info, data_vars, data, data_dims, out_format, t_step, ::Val{:false})
+function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:false})
     @info "saving one file per variable"
-    catalog_names = getVarFull.(data_vars)
-    variable_names = getUniqueVarNames(data_vars)
-    for vn ∈ eachindex(data_vars)
-        var_s = data_vars[vn]
+    catalog_names = getVarFull.(var_pairs)
+    variable_names = getUniqueVarNames(var_pairs)
+    for vn ∈ eachindex(var_pairs)
+        var_s = var_pairs[vn]
         catalog_name = catalog_names[vn]
         variable_name = variable_names[vn]
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalog_name, t_step)
