@@ -648,7 +648,7 @@ end
 """
 
 """
-    setComponentFromMainPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
+    setComponentFromMainPool(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
 DOCSTRING
 
@@ -735,7 +735,7 @@ end
 """
 
 """
-    setMainFromComponentPool(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
+    setMainFromComponentPool(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
 DOCSTRING
 

@@ -9,7 +9,7 @@ export getModelOutputView
 export optimizeTEM
 
 """
-    aggregateData(dat, cost_option, nothing::Val{:timespace})
+    aggregateData(dat, cost_option, Val{:timespace})
 
 DOCSTRING
 
@@ -25,7 +25,7 @@ function aggregateData(dat, cost_option, ::Val{:timespace})
 end
 
 """
-    aggregateData(dat, cost_option, nothing::Val{:spacetime})
+    aggregateData(dat, cost_option, Val{:spacetime})
 
 DOCSTRING
 
@@ -41,7 +41,7 @@ function aggregateData(dat, cost_option, ::Val{:spacetime})
 end
 
 """
-    combineLoss(loss_vector::AbstractArray, nothing::Val{:sum})
+    combineLoss(loss_vector::AbstractArray, Val{:sum})
 
 return the total of cost of each constraint as the overall cost
 """
@@ -51,7 +51,7 @@ end
 
 
 """
-    combineLoss(loss_vector::AbstractArray, nothing::Val{:minimum})
+    combineLoss(loss_vector::AbstractArray, Val{:minimum})
 
 return the minimum of cost of each constraint as the overall cost
 """
@@ -60,7 +60,7 @@ function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
 end
 
 """
-    combineLoss(loss_vector::AbstractArray, nothing::Val{:maximum})
+    combineLoss(loss_vector::AbstractArray, Val{:maximum})
 
 return the maximum of cost of each constraint as the overall cost
 """
@@ -187,7 +187,7 @@ function getData(model_output::AbstractArray, observations, cost_option)
 end
 
 """
-    getLocObs!(obs_array, nothing::Val{obs_vars}, nothing::Val{s_names}, loc_obs, s_locs)
+    getLocObs!(obs_array, Val{obs_vars}, Val{s_names}, loc_obs, s_locs)
 
 DOCSTRING
 
@@ -419,7 +419,7 @@ function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
 end
 
 """
-    spatialAggregation(dat, _, nothing::Val{:cat})
+    spatialAggregation(dat, _, Val{:cat})
 
 DOCSTRING
 
@@ -433,7 +433,7 @@ function spatialAggregation(dat, _, ::Val{:cat})
 end
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:array})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:array})
 
 DOCSTRING
 
@@ -495,7 +495,7 @@ end
 
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_stacked})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_stacked})
 
 DOCSTRING
 
@@ -554,7 +554,7 @@ end
 
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_timeseries})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_timeseries})
 
 DOCSTRING
 
