@@ -665,7 +665,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregator`: DESCRIPTION
 - `dim`: DESCRIPTION
 """
@@ -681,7 +681,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregator`: DESCRIPTION
 - `dim`: DESCRIPTION
 """
@@ -697,7 +697,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregator`: DESCRIPTION
 - `dim`: DESCRIPTION
 """
@@ -713,7 +713,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregator`: DESCRIPTION
 - `dim`: DESCRIPTION
 """
@@ -727,7 +727,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregators`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
@@ -741,7 +741,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `temporal_aggregators`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """

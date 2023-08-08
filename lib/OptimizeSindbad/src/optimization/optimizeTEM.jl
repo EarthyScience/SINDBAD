@@ -14,8 +14,8 @@ export optimizeTEM
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
-- `cost_option`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
+- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 - `nothing`: DESCRIPTION
 """
 function aggregateData(dat, cost_option, ::Val{:timespace})
@@ -30,8 +30,8 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
-- `cost_option`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
+- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 - `nothing`: DESCRIPTION
 """
 function aggregateData(dat, cost_option, ::Val{:spacetime})
@@ -40,105 +40,77 @@ function aggregateData(dat, cost_option, ::Val{:spacetime})
     return dat
 end
 
-
-"""
-    combineLoss(loss_vector, ::Val{:sum})
-
-return the total of cost of each constraint as the overall cost
-"""
-
 """
     combineLoss(loss_vector::AbstractArray, nothing::Val{:sum})
 
-DOCSTRING
+return the total of cost of each constraint as the overall cost
 """
 function combineLoss(loss_vector::AbstractArray, ::Val{:sum})
     return sum(loss_vector)
 end
 
-"""
-    combineLoss(loss_vector, ::Val{:minimum})
-
-return the minimum of cost of each constraint as the overall cost
-"""
 
 """
     combineLoss(loss_vector::AbstractArray, nothing::Val{:minimum})
 
-DOCSTRING
+return the minimum of cost of each constraint as the overall cost
 """
 function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
     return minimum(loss_vector)
 end
 
 """
-    combineLoss(loss_vector, ::Val{:maximum})
-
-return the maximum of cost of each constraint as the overall cost
-"""
-
-"""
     combineLoss(loss_vector::AbstractArray, nothing::Val{:maximum})
 
-DOCSTRING
+return the maximum of cost of each constraint as the overall cost
 """
 function combineLoss(loss_vector::AbstractArray, ::Val{:maximum})
     return maximum(loss_vector)
 end
 
-"""
-    combineLoss(loss_vector, percentile_value)
-
-return the percentile_value^th percentile of cost of each constraint as the overall cost
-"""
 
 """
     combineLoss(loss_vector::AbstractArray, percentile_value::T)
 
-DOCSTRING
+return the percentile_value^th percentile of cost of each constraint as the overall cost
 """
 function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(loss_vector, percentile_value)
 end
 
 """
-filterCommonNaN(y, yσ, ŷ)
-return model and obs data filtering for the common nan
-"""
-
-"""
     filterCommonNaN(y, yσ, ŷ)
 
-DOCSTRING
+return model and obs data filtering for the common nan
 
 # Arguments:
-- `y`: DESCRIPTION
-- `yσ`: DESCRIPTION
-- `ŷ`: DESCRIPTION
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
 """
 function filterCommonNaN(y, yσ, ŷ)
     idxs = (.!isnan.(y .* yσ .* ŷ))
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
-"""
-filterConstraintMinimumDatapoints(obs_array, cost_options)
-remove all the variables that have less than minimum datapoints from being used in the optimization 
-"""
 
 """
     filterConstraintMinimumDatapoints(obs_array, cost_options)
 
-DOCSTRING
+remove all the variables that have less than minimum datapoints from being used in the optimization
+
+# Arguments:
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function filterConstraintMinimumDatapoints(obs_array, cost_options)
+function filterConstraintMinimumDatapoints(observations, cost_options)
     cost_options_filtered = cost_options
     foreach(cost_options) do cost_option
         obs_ind_start = cost_option.obs_ind
         min_points = cost_option.min_data_points
         var_name = cost_option.variable
-        y = obs_array[obs_ind_start]
-        yσ = obs_array[obs_ind_start+1]
+        y = observations[obs_ind_start]
+        yσ = observations[obs_ind_start+1]
         idxs = (.!isnan.(y .* yσ))
         total_points = sum(idxs)
         if total_points < min_points
@@ -149,12 +121,6 @@ function filterConstraintMinimumDatapoints(obs_array, cost_options)
     return cost_options_filtered
 end
 
-
-
-"""
-getData(outsmodel, observations, modelVariables, obsVariables)
-"""
-
 """
     getData(model_output::landWrapper, observations, cost_option)
 
@@ -163,7 +129,7 @@ DOCSTRING
 # Arguments:
 - `model_output`: DESCRIPTION
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: DESCRIPTION
+- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 """
 function getData(model_output::landWrapper, observations, cost_option)
     obs_ind = cost_option.obs_ind
@@ -192,10 +158,6 @@ function getData(model_output::landWrapper, observations, cost_option)
 end
 
 """
-getData(outsmodel, observations, modelVariables, obsVariables)
-"""
-
-"""
     getData(model_output::AbstractArray, observations, cost_option)
 
 DOCSTRING
@@ -203,7 +165,7 @@ DOCSTRING
 # Arguments:
 - `model_output`: DESCRIPTION
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: DESCRIPTION
+- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 """
 function getData(model_output::AbstractArray, observations, cost_option)
     obs_ind = cost_option.obs_ind
@@ -268,33 +230,28 @@ DOCSTRING
     return output
 end
 
-
 """
-getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
-"""
-
-"""
-    getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
 DOCSTRING
 
 # Arguments:
-- `param_vector`: DESCRIPTION
-- `base_models`: DESCRIPTION
-- `forcing_nt`: DESCRIPTION
+- `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
+- `base_models`: a Tuple of selected SINDBAD models in the given model structure, the parameter(s) of which are optimized
+- `forcing`: a forcing NT that contains the forcing time series set for a given location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_timeseries`: DESCRIPTION
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `tbl_params`: DESCRIPTION
-- `cost_options`: DESCRIPTION
-- `multiconstraint_method`: DESCRIPTION
+- `tbl_params`: a table of SINDBAD model parameters selected for the optimization
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
     base_models,
-    forcing_nt,
+    forcing,
     forcing_one_timestep,
     land_timeseries,
     land_init,
@@ -304,37 +261,34 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = runTEM(updated_models, forcing_nt, forcing_one_timestep, land_timeseries, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
     return combineLoss(loss_vector, multiconstraint_method)
 end
 
-"""
-getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
-"""
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing_nt, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
 DOCSTRING
 
 # Arguments:
-- `param_vector`: DESCRIPTION
-- `base_models`: DESCRIPTION
-- `forcing_nt`: DESCRIPTION
+- `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
+- `base_models`: a Tuple of selected SINDBAD models in the given model structure, the parameter(s) of which are optimized
+- `forcing`: a forcing NT that contains the forcing time series set for a given location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `tbl_params`: DESCRIPTION
-- `cost_options`: DESCRIPTION
-- `multiconstraint_method`: DESCRIPTION
+- `tbl_params`: a table of SINDBAD model parameters selected for the optimization
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
     base_models,
-    forcing_nt,
+    forcing,
     forcing_one_timestep,
     land_init,
     tem,
@@ -343,14 +297,10 @@ function getLoss(
     cost_options,
     multiconstraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
-    land_wrapper_timeseries = runTEM(updated_models, forcing_nt, forcing_one_timestep, land_init, tem)
+    land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     return combineLoss(loss_vector, multiconstraint_method)
 end
-
-"""
-getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, tbl_params, obsVariables, modelVariables)
-"""
 
 """
     getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multiconstraint_method)
@@ -358,8 +308,8 @@ getLoss(param_vector, selected_models, initOut, forcing_nt_array, observations, 
 DOCSTRING
 
 # Arguments:
-- `param_vector`: DESCRIPTION
-- `base_models`: DESCRIPTION
+- `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
+- `base_models`: a Tuple of selected SINDBAD models in the given model structure, the parameter(s) of which are optimized
 - `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
@@ -367,11 +317,11 @@ DOCSTRING
 - `loc_outputs`: a collection of copies of outputs for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
 - `loc_space_inds`: a collection of spatial indices/pairs of indices used to loop through space in parallelization
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `tbl_params`: DESCRIPTION
-- `cost_options`: DESCRIPTION
-- `multiconstraint_method`: DESCRIPTION
+- `tbl_params`: a table of SINDBAD model parameters selected for the optimization
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
@@ -403,19 +353,14 @@ function getLoss(
 end
 
 """
-getLossVector(observations, model_output::AbstractArray, cost_options)
-returns a vector of losses for variables in info.cost_options.observational_constraints
-"""
-
-"""
     getLossVector(observations, model_output, cost_options)
 
-DOCSTRING
+returns a vector of losses for variables in info.cost_options.observational_constraints
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `model_output`: DESCRIPTION
-- `cost_options`: DESCRIPTION
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
 function getLossVector(observations, model_output, cost_options)
     loss_vector = map(cost_options) do cost_option
@@ -479,17 +424,13 @@ end
 DOCSTRING
 
 # Arguments:
-- `dat`: DESCRIPTION
+- `dat`: a data array/vector to aggregate
 - `_`: unused argument
 - `nothing`: DESCRIPTION
 """
 function spatialAggregation(dat, _, ::Val{:cat})
     return dat
 end
-
-"""
-optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
-"""
 
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:array})
@@ -554,10 +495,6 @@ end
 
 
 """
-optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
-"""
-
-"""
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_stacked})
 
 DOCSTRING
@@ -615,10 +552,6 @@ function optimizeTEM(forcing::NamedTuple,
     return tbl_params
 end
 
-
-"""
-optimizeTEM(forcing, observations, selectedModels, optimParams, initOut, obsVariables, modelVariables)
-"""
 
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, nothing::Val{:land_timeseries})

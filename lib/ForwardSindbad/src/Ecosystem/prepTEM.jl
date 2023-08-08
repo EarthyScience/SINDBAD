@@ -68,7 +68,7 @@ DOCSTRING
 - `output_array`: an output array/view for ALL locations
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `loc_space_map`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
     loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
@@ -133,7 +133,7 @@ DOCSTRING
 - `selected_models`: a tuple of models selected for the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
