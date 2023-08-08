@@ -89,7 +89,7 @@ function getArType()
 end
 
 """
-    getTimeArray(ar, nothing::Val{:sized_array})
+    getTimeArray(ar, Val{:sized_array})
 
 DOCSTRING
 """
@@ -98,7 +98,7 @@ function getTimeArray(ar, ::Val{:sized_array})
 end
 
 """
-    getTimeArray(ar, nothing::Val{:array})
+    getTimeArray(ar, Val{:array})
 
 DOCSTRING
 """
@@ -123,7 +123,7 @@ function createTimeAggregator(time, t_step::Symbol, f=mean, is_model_timestep=fa
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:mean}, f = mean)
+    createTimeAggregator(time, Val{:mean}, f = mean)
 
 DOCSTRING
 
@@ -139,7 +139,7 @@ function createTimeAggregator(time, ::Val{:mean}, f=mean)
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:day}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:day}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -159,7 +159,7 @@ function createTimeAggregator(time, ::Val{:day}, f=mean, is_model_timestep=false
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:day_anomaly}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:day_anomaly}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -176,7 +176,7 @@ function createTimeAggregator(time, ::Val{:day_anomaly}, f=mean, is_model_timest
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:day_iav}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:day_iav}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -197,7 +197,7 @@ function createTimeAggregator(time, ::Val{:day_iav}, f=mean, is_model_timestep=f
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:day_msc}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:day_msc}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -216,7 +216,7 @@ function createTimeAggregator(time, ::Val{:day_msc}, f=mean, is_model_timestep=f
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:day_msc_anomaly}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:day_msc_anomaly}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -233,7 +233,7 @@ function createTimeAggregator(time, ::Val{:day_msc_anomaly}, f=mean, is_model_ti
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:month}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:month}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -250,7 +250,7 @@ function createTimeAggregator(time, ::Val{:month}, f=mean, is_model_timestep=fal
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:month_anomaly}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:month_anomaly}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -267,7 +267,7 @@ function createTimeAggregator(time, ::Val{:month_anomaly}, f=mean, is_model_time
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:month_iav}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:month_iav}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -289,7 +289,7 @@ function createTimeAggregator(time, ::Val{:month_iav}, f=mean, is_model_timestep
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:month_msc}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:month_msc}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -307,7 +307,7 @@ function createTimeAggregator(time, ::Val{:month_msc}, f=mean, is_model_timestep
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:month_msc_anomaly}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:month_msc_anomaly}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -324,7 +324,7 @@ function createTimeAggregator(time, ::Val{:month_msc_anomaly}, f=mean, is_model_
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:year}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:year}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -341,7 +341,7 @@ function createTimeAggregator(time, ::Val{:year}, f=mean, is_model_timestep=fals
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:year_anomaly}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:year_anomaly}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -368,7 +368,7 @@ function getIndexForSelectedYear(years, sel_year)
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:all_years}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:all_years}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -385,7 +385,7 @@ function createTimeAggregator(time, ::Val{:all_years}, f=mean, is_model_timestep
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:first_year}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:first_year}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -404,7 +404,7 @@ function createTimeAggregator(time, ::Val{:first_year}, f=mean, is_model_timeste
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:random_year}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:random_year}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 
@@ -423,7 +423,7 @@ function createTimeAggregator(time, ::Val{:random_year}, f=mean, is_model_timest
 end
 
 """
-    createTimeAggregator(time, nothing::Val{:shuffle_years}, f = mean, is_model_timestep = false)
+    createTimeAggregator(time, Val{:shuffle_years}, f = mean, is_model_timestep = false)
 
 DOCSTRING
 

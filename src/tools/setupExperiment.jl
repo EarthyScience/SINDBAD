@@ -1412,7 +1412,7 @@ function setInputParameters(original_table::Table, updated_table::Table)
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:view})
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:view})
 
 DOCSTRING
 
@@ -1433,7 +1433,7 @@ function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:vie
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:array})
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:array})
 
 DOCSTRING
 
@@ -1450,7 +1450,7 @@ function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:arr
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:staticarray})
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:staticarray})
 
 DOCSTRING
 

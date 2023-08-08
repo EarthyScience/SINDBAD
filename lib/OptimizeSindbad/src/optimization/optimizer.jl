@@ -7,7 +7,7 @@ Optimize model parameters using CMAES method of Evolutionary.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Evolutionary_CMAES})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Evolutionary_CMAES})
 
 DOCSTRING
 
@@ -42,7 +42,7 @@ Optimize model parameters using LBFGS method of Optim.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_LBFGS})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optim_LBFGS})
 
 DOCSTRING
 
@@ -83,7 +83,7 @@ Optimize model parameters using BFGS method of Optim.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optim_BFGS})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optim_BFGS})
 
 DOCSTRING
 
@@ -118,7 +118,7 @@ Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:CMAEvolutionStrategy_CMAES})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:CMAEvolutionStrategy_CMAES})
 
 DOCSTRING
 
@@ -154,7 +154,7 @@ Optimize model parameters using Fminbox_GradientDescent method of Optimization.j
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_Fminbox_GradientDescent_FD})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_Fminbox_GradientDescent_FD})
 
 DOCSTRING
 
@@ -187,7 +187,7 @@ Optimize model parameters using NelderMead method of Optimization.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_NelderMead})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_NelderMead})
 
 DOCSTRING
 
@@ -218,7 +218,7 @@ Optimize model parameters using BFGS method of Optimization.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BFGS})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_BFGS})
 
 DOCSTRING
 
@@ -249,7 +249,7 @@ Optimize model parameters using MultistartOptimization method of Optimization.jl
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_MultistartOptimization})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_MultistartOptimization})
 
 DOCSTRING
 
@@ -280,7 +280,7 @@ Optimize model parameters using Black Box Optimization method of Optimization.jl
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_BBO_adaptive})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_BBO_adaptive})
 
 DOCSTRING
 
@@ -311,7 +311,7 @@ Optimize model parameters using GCMAES method of Optimization.jl package
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_GCMAES})
 
 DOCSTRING
 
@@ -343,7 +343,7 @@ Optimize model parameters using GCMAES method of Optimization.jl package with au
 """
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, nothing::Val{:Optimization_GCMAES_FD})
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, Val{:Optimization_GCMAES_FD})
 
 DOCSTRING
 

@@ -200,7 +200,7 @@ function repVec(v::SVector, v_new)
 end
 
 """
-    setComponents(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
+    setComponents(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
 DOCSTRING
 
