@@ -17,7 +17,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `_`: unused argument
-- `::Val{:true}`: a flag to indicate that spinup is NOT included
+- `Val{:true}`: a flag to indicate that spinup is NOT included
 """
 function coreTEM!(
     selected_models,
@@ -43,6 +43,9 @@ function coreTEM!(
     return nothing
 end
 
+struct DoSpinup end
+struct NoSpinUp end
+
 """
     coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
 
@@ -57,7 +60,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `::Val{:true}`: a flag to indicate that spinup is included
+- `Val{:true}`: a flag to indicate that spinup is included
 """
 function coreTEM!(
     selected_models,
@@ -154,7 +157,7 @@ parallelize SINDBAD TEM using threads as backend
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `::Val{:threads}`: dispatch for threads
+- `Val{:threads}`: dispatch for threads
 """
 function parallelizeTEM!(
     selected_models,
@@ -204,7 +207,7 @@ parallelize SINDBAD TEM using qbmap as backend
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `::Val{:qbmap}`: dispatch for qbmap
+- `Val{:qbmap}`: dispatch for qbmap
 """
 function parallelizeTEM!(
     selected_models,
@@ -309,7 +312,7 @@ time loop of the model run where forcing for the time step is used to run model 
 - `loc_output`: an output array/view for a single location
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::Val{:false}`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
+- `Val{:false}`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
 """
 function timeLoopTEM!(
     selected_models,
@@ -342,7 +345,7 @@ time loop of the model run where forcing for ONE time step is used to run model 
 - `loc_output`: an output array/view for a single location
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::Val{:true}`: a flag indicating that the models should be debugged and run for only one time step
+- `Val{:true}`: a flag indicating that the models should be debugged and run for only one time step
 """
 function timeLoopTEM!(
     selected_models,

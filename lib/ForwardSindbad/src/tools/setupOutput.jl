@@ -100,36 +100,6 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
     return dimSize, dimName
 end
 
-"""
-    getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
-
-DOCSTRING
-
-# Arguments:
-- `datavars`: DESCRIPTION
-- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `_`: unused argument
-- `land_init`: initial SINDBAD land with all fields and subfields
-- `_`: unused argument
-- `nothing`: DESCRIPTION
-"""
-function getOutDimsArrays(datavars, info, _, land_init, _, ::Val{:yaxarray})
-    outdims = map(datavars) do vname_full
-        vname = Symbol(split(string(vname_full), '.')[end])
-        inax = info.forcing.data_dimension.time
-        path_output = info.output.data
-        outformat = info.experiment.model_output.format
-        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
-        OutDims(inax[1],
-            Dim{Symbol(depth_name)}(1:depth_size),
-            inax[2:end]...;
-            path=joinpath(path_output, "$(vname).$(outformat)"),
-            backend=:zarr,
-            overwrite=true)
-    end
-    outarray = nothing
-    return outdims, outarray
-end
 
 """
     getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
@@ -158,55 +128,55 @@ function getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     return outarray
 end
 
+
 """
-    getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres = 1)
+    getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
 
 DOCSTRING
 
 # Arguments:
 - `datavars`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `_`: unused argument
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `forcing_helpers`: DESCRIPTION
-- `dthres`: DESCRIPTION
+- `_`: unused argument
+- `nothing`: DESCRIPTION
 """
-function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres=1)
-    forcing_sizes = forcing_helpers.sizes
-    forcing_axes = forcing_helpers.axes
-    dim_loops = first.(forcing_axes)
-    axes_dims_pairs = []
-    if !isnothing(forcing_helpers.dimensions.permute)
-        dim_perms = Symbol.(forcing_helpers.dimensions.permute)
-        if dim_loops !== dim_perms
-            for ix in eachindex(dim_perms)
-                dp_i = dim_perms[ix]
-                dl_ind = findall(x -> x == dp_i, dim_loops)[1]
-                f_a = forcing_axes[dl_ind]
-                ax_dim = Pair(first(f_a), last(f_a))
-                push!(axes_dims_pairs, ax_dim)
-            end
-        end
-    else
-        axes_dims_pairs = map(x -> Pair(first(x), last(x)), forcing_axes)
-    end
-    outdims_pairs = map(datavars) do vname_full
-        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+function getOutDimsArrays(datavars, info, _, land_init, forcing_helpers, ::Val{:yaxarray})
+    outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers);
+    info.forcing.data_dimension.time
+    space_dims = Symbol.(info.forcing.data_dimension.space)
+    var_dims = map(outdims_pairs) do dim_pairs
         od = []
-        push!(od, axes_dims_pairs[1])
-        if depth_size > dthres
-            if depth_size == 1
-                depth_name = "idx"
+        for _dim in dim_pairs
+            if first(_dim) ∉ space_dims
+                push!(od, Dim{first(_dim)}(last(_dim)))
             end
-            push!(od, Pair(Symbol(depth_name), (1:depth_size)))
-        end
-        foreach(axes_dims_pairs[2:end]) do f_d
-            push!(od, f_d)
         end
         Tuple(od)
     end
-    return outdims_pairs
+    out_file_info = getOutputFileInfo(info);
+    v_index = 1
+    outdims = map(datavars) do vname_full
+        vname = Symbol(split(string(vname_full), '.')[end])
+        vdims = var_dims[v_index]
+        path_output = info.output.data
+        outformat = info.experiment.model_output.format
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        out_dim = OutDims(vdims[1],
+            Dim{Symbol(depth_name)}(1:depth_size),
+            vdims[2:end]...;
+            path=joinpath(out_file_info.file_prefix, "$(vname).$(outformat)"),
+            backend=:zarr,
+            overwrite=true)
+        v_index += 1
+        out_dim
+    end
+    outarray = nothing
+    return outdims, outarray
 end
+
+
 
 """
     getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:array})
@@ -224,7 +194,7 @@ DOCSTRING
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:array})
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
-    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers)
+    outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers)
     outdims = map(outdims_pairs) do dim_pairs
         od = []
         for _dim in dim_pairs
@@ -291,13 +261,12 @@ DOCSTRING
 function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyedarray})
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
-    outdims_pairs = getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers; dthres=0)
+    outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres=0)
 
     keyedarray = []
     # keyedarray = outarray
     outdims = []
     for (_di, _dim) in enumerate(outdims_pairs)
-        @show _di, length(_dim)
         d_to_push = _dim
         push!(keyedarray, KeyedArray(outarray[_di]; _dim...))
         if length(_dim) > 2
@@ -312,6 +281,57 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
         push!(outdims, Tuple(d_to_push))
     end
     return outdims, keyedarray
+end
+
+
+"""
+    getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres = 1)
+
+DOCSTRING
+
+# Arguments:
+- `datavars`: DESCRIPTION
+- `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `forcing_helpers`: DESCRIPTION
+- `dthres`: DESCRIPTION
+"""
+function getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres=1)
+    forcing_sizes = forcing_helpers.sizes
+    forcing_axes = forcing_helpers.axes
+    dim_loops = first.(forcing_axes)
+    axes_dims_pairs = []
+    if !isnothing(forcing_helpers.dimensions.permute)
+        dim_perms = Symbol.(forcing_helpers.dimensions.permute)
+        if dim_loops !== dim_perms
+            for ix in eachindex(dim_perms)
+                dp_i = dim_perms[ix]
+                dl_ind = findall(x -> x == dp_i, dim_loops)[1]
+                f_a = forcing_axes[dl_ind]
+                ax_dim = Pair(first(f_a), last(f_a))
+                push!(axes_dims_pairs, ax_dim)
+            end
+        end
+    else
+        axes_dims_pairs = map(x -> Pair(first(x), last(x)), forcing_axes)
+    end
+    outdims_pairs = map(datavars) do vname_full
+        depth_size, depth_name = getDepthDimensionSizeName(vname_full, info, land_init)
+        od = []
+        push!(od, axes_dims_pairs[1])
+        if depth_size > dthres
+            if depth_size == 1
+                depth_name = "idx"
+            end
+            push!(od, Pair(Symbol(depth_name), (1:depth_size)))
+        end
+        foreach(axes_dims_pairs[2:end]) do f_d
+            push!(od, f_d)
+        end
+        Tuple(od)
+    end
+    return outdims_pairs
 end
 
 """
@@ -447,7 +467,7 @@ function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     paramaxis = Dim{:parameter}(params)
     od = OutDims(paramaxis;
         path=joinpath(info.output.optim,
-            "model_parameters_to_optimize$(info.experiment.model_output.format)"),
+            "optimized_parameters.$(info.experiment.model_output.format)"),
         backend=:zarr,
         overwrite=true)
     # od = OutDims(paramaxis)
