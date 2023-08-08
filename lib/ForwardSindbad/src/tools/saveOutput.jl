@@ -163,7 +163,7 @@ saves the output variables from the run as one file
 """
 
 """
-    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, nothing::Val{:(true)})
+    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, Val{:(true)})
 
 DOCSTRING
 
@@ -190,15 +190,9 @@ function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, o
 end
 
 """
-saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:false})
+    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, Val{:(false)})
 
 saves the output variables from the run as one file per variable
-"""
-
-"""
-    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, nothing::Val{:(false)})
-
-DOCSTRING
 
 # Arguments:
 - `data_path_base`: DESCRIPTION
