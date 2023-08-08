@@ -1,30 +1,21 @@
-export getConfiguration, getExperimentConfiguration, readConfiguration
-export createNestedDict, deep_merge
+export createNestedDict
+export deep_merge
+export getConfiguration
+export getExperimentConfiguration
+export readConfiguration
+
 
 """
-    deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
+    convertToAbsolutePath(; inputDict = inputDict)
 
-recursively merge nested dictionary fields with priority for the second dictionary
+find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
 """
-deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
-deep_merge(d...) = d[end]
-
-"""
-    replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
-
-replace the fields of info from json with the values providded in the replace dictionary
-"""
-
-"""
-    replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
-
-DOCSTRING
-"""
-function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
-    nested_replace_dict = createNestedDict(replace_dict)
-    info = deep_merge(Dict(info), nested_replace_dict)
-    return info
+function convertToAbsolutePath(; inputDict=inputDict)
+    #### NOT DONE YET
+    newDict = filter(x -> !occursin("path", first(x)), inputDict)
+    return newDict
 end
+
 
 """
     createNestedDict(dict::AbstractDict)
@@ -71,6 +62,70 @@ function createNestedDict(dict::AbstractDict)
 end
 
 """
+    deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
+
+recursively merge nested dictionary fields with priority for the second dictionary
+"""
+deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
+deep_merge(d...) = d[end]
+
+
+"""
+    getConfiguration(sindbad_experiment::String; replace_info = nothing)
+
+get the experiment info from either json or load the named tuple
+
+"""
+function getConfiguration(sindbad_experiment::String; replace_info=nothing)
+    local_root = dirname(Base.active_project())
+    if !isabspath(sindbad_experiment)
+        sindbad_experiment = joinpath(local_root, sindbad_experiment)
+    end
+    exp_base_path = dirname(sindbad_experiment)
+    if endswith(sindbad_experiment, ".json")
+        info_exp = getExperimentConfiguration(sindbad_experiment; replace_info=replace_info)
+        info = readConfiguration(info_exp, exp_base_path)
+    elseif endswith(sindbad_experiment, ".jld2")
+        #todo running from the jld2 file here still does not work because the loaded info is a named tuple and replacing the fields will not work due to issues with merge and creating a dictionary from nested namedtuple
+        # info = Dict(pairs(load(sindbad_experiment)["info"]))
+        info = load(sindbad_experiment)["info"]
+    else
+        error(
+            "sindbad can only be run with either a json or a jld2 data file. Provide a correct experiment file"
+        )
+    end
+    if !isnothing(replace_info)
+        non_exp_dict = filter(x -> !startswith(first(x), "experiment"), replace_info)
+        if !isempty(non_exp_dict)
+            info = replaceInfoFields(info, non_exp_dict)
+        end
+    end
+    infoTuple = info
+    if !endswith(sindbad_experiment, ".jld2")
+        infoTuple = dictToNamedTuple(info)
+    end
+    infoTuple = (; infoTuple..., experiment_root=local_root)
+    sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
+    infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
+    infoTuple = (; infoTuple..., settings_root=exp_base_path)
+    infoTuple = setupOutputDirectory(infoTuple)
+    @info "Setup output directories in: $(infoTuple.output.root)"
+    @info "Saving a copy of json settings to: $(infoTuple.output.settings)"
+    cp(sindbad_experiment,
+        joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
+        force=true)
+    for k ∈ keys(infoTuple.experiment.basics.config_files)
+        v = getfield(infoTuple.experiment.basics.config_files, k)
+        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
+    end
+    @info "\n----------------------------------------------\n"
+    return infoTuple
+    # return info
+end
+
+
+
+"""
     getExperimentConfiguration(experiment_json::String; replace_info = nothing)
 
 get the basic configuration from experiment json
@@ -91,16 +146,11 @@ function getExperimentConfiguration(experiment_json::String; replace_info=nothin
     return info
 end
 
-"""
-    readConfiguration(config_files)
-
-read configuration experiment json and return dictionary
-"""
 
 """
     readConfiguration(info_exp::AbstractDict, base_path::String)
 
-DOCSTRING
+read configuration experiment json and return dictionary
 """
 function readConfiguration(info_exp::AbstractDict, base_path::String)
     info = DataStructures.OrderedDict()
@@ -152,33 +202,11 @@ function removeComments(inputDict::AbstractDict)
 end
 removeComments(input) = input
 
-"""
-    convertToAbsolutePath(; inputDict = inputDict)
-
-find all variables with path and convert them to absolute path assuming all non-absolute path values are relative to the sindbad root
-"""
-
-"""
-    convertToAbsolutePath(; inputDict = inputDict)
-
-DOCSTRING
-"""
-function convertToAbsolutePath(; inputDict=inputDict)
-    #### NOT DONE YET
-    newDict = filter(x -> !occursin("path", first(x)), inputDict)
-    return newDict
-end
-
-"""
-    setupOutputDirectory(infoTuple)
-
-sets up and creates output directory for the model simulation
-"""
 
 """
     setupOutputDirectory(infoTuple::NamedTuple)
 
-DOCSTRING
+sets up and creates output directory for the model simulation
 """
 function setupOutputDirectory(infoTuple::NamedTuple)
     path_output = infoTuple[:experiment][:model_output][:path]
@@ -231,59 +259,12 @@ function setupOutputDirectory(infoTuple::NamedTuple)
 end
 
 """
-    getConfiguration(sindbad_experiment)
+    replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
 
-get the experiment info from either json or load the named tuple
+replace the fields of info from json with the values providded in the replace dictionary
 """
-
-"""
-    getConfiguration(sindbad_experiment::String; replace_info = nothing)
-
-DOCSTRING
-"""
-function getConfiguration(sindbad_experiment::String; replace_info=nothing)
-    local_root = dirname(Base.active_project())
-    if !isabspath(sindbad_experiment)
-        sindbad_experiment = joinpath(local_root, sindbad_experiment)
-    end
-    exp_base_path = dirname(sindbad_experiment)
-    if endswith(sindbad_experiment, ".json")
-        info_exp = getExperimentConfiguration(sindbad_experiment; replace_info=replace_info)
-        info = readConfiguration(info_exp, exp_base_path)
-    elseif endswith(sindbad_experiment, ".jld2")
-        #todo running from the jld2 file here still does not work because the loaded info is a named tuple and replacing the fields will not work due to issues with merge and creating a dictionary from nested namedtuple
-        # info = Dict(pairs(load(sindbad_experiment)["info"]))
-        info = load(sindbad_experiment)["info"]
-    else
-        error(
-            "sindbad can only be run with either a json or a jld2 data file. Provide a correct experiment file"
-        )
-    end
-    if !isnothing(replace_info)
-        non_exp_dict = filter(x -> !startswith(first(x), "experiment"), replace_info)
-        if !isempty(non_exp_dict)
-            info = replaceInfoFields(info, non_exp_dict)
-        end
-    end
-    infoTuple = info
-    if !endswith(sindbad_experiment, ".jld2")
-        infoTuple = dictToNamedTuple(info)
-    end
-    infoTuple = (; infoTuple..., experiment_root=local_root)
-    sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
-    infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
-    infoTuple = (; infoTuple..., settings_root=exp_base_path)
-    infoTuple = setupOutputDirectory(infoTuple)
-    @info "Setup output directories in: $(infoTuple.output.root)"
-    @info "Saving a copy of json settings to: $(infoTuple.output.settings)"
-    cp(sindbad_experiment,
-        joinpath(infoTuple.output.settings, split(sindbad_experiment, "/")[end]);
-        force=true)
-    for k ∈ keys(infoTuple.experiment.basics.config_files)
-        v = getfield(infoTuple.experiment.basics.config_files, k)
-        cp(v, joinpath(infoTuple.output.settings, split(v, "/")[end]); force=true)
-    end
-    println("----------------------------------------------")
-    return infoTuple
-    # return info
+function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
+    nested_replace_dict = createNestedDict(replace_dict)
+    info = deep_merge(Dict(info), nested_replace_dict)
+    return info
 end

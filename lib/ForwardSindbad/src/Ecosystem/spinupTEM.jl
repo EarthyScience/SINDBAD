@@ -256,7 +256,6 @@ DOCSTRING
 - `nothing`: DESCRIPTION
 """
 function runSpinup(forward_models, forcing, forcing_one_timestep, land_spin, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
-    @info "spinupTEM:: running spinup sequences..."
     # spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1

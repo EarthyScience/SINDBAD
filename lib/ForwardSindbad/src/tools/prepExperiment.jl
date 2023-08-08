@@ -34,7 +34,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 DOCSTRING
 """
 function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
 
     @info "prepExperimentForward: getting experiment info..."
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
@@ -48,14 +48,14 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
         @info "prepExperimentForward: setting error catcher..."
         Sindbad.eval(:(error_catcher = []))
     end
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     @info "prepExperimentForward: get forcing data..."
     forcing = getForcing(info)
 
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
 
     @info "prepExperimentForward: setup output..."
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     output = setupOutput(info, forcing.helpers)
     return info, forcing, output
 end
@@ -71,12 +71,12 @@ uses the configuration read from the json files, and consolidates and sets info 
 DOCSTRING
 """
 function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
 
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
 
     @info "runExperiment: get observations..."
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     observations = getObservation(info, forcing.helpers)
     return info, forcing, output, observations
 end
