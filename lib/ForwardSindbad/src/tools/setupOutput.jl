@@ -179,7 +179,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:array})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:array})
 
 DOCSTRING
 
@@ -207,7 +207,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:sizedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sizedarray})
 
 DOCSTRING
 
@@ -226,7 +226,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:marray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:marray})
 
 DOCSTRING
 
@@ -246,7 +246,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:keyedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyedarray})
 
 DOCSTRING
 
