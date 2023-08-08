@@ -21,7 +21,7 @@ DOCSTRING
 # Arguments:
 - `args`: DESCRIPTION
 - `out`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `optim`: DESCRIPTION
 - `forcing_variables`: DESCRIPTION
 - `obs_variables`: DESCRIPTION
@@ -47,7 +47,7 @@ DOCSTRING
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `optim`: DESCRIPTION
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `max_cache`: DESCRIPTION

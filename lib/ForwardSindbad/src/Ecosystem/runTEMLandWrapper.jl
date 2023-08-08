@@ -195,7 +195,7 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function runTEM(
     selected_models::Tuple,
@@ -218,7 +218,7 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
-- `tem`: DESCRIPTION
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
 function runTEM(
     selected_models::Tuple,
