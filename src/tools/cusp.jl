@@ -25,6 +25,7 @@ macro add_to_elem(outparams::Expr)
     ]
     return Expr(:block, outCode...)
 end
+
 """
     addToElem(v::SVector, Δv, v_zero, ind::Int)
 
@@ -44,6 +45,7 @@ function addToElem(v::SVector, Δv, v_zero, ind::Int)
     v = v .+ v_zero .* Δv
     return v
 end
+
 """
     addToElem(v::AbstractVector, Δv, _, _, ind::Int)
 
@@ -60,6 +62,7 @@ function addToElem(v::AbstractVector, Δv, _, _, ind::Int)
     v[ind] = v[ind] + Δv
     return v
 end
+
 """
     addToEachElem(v::SVector, Δv::Real)
 
@@ -69,6 +72,7 @@ function addToEachElem(v::SVector, Δv::Real)
     v = v .+ Δv
     return v
 end
+
 """
     addToEachElem(v::AbstractVector, Δv::Real)
 
@@ -78,6 +82,7 @@ function addToEachElem(v::AbstractVector, Δv::Real)
     v .= v .+ Δv
     return v
 end
+
 """
     addVec(v::SVector, Δv::SVector)
 
@@ -87,6 +92,7 @@ function addVec(v::SVector, Δv::SVector)
     v = v + Δv
     return v
 end
+
 """
     addVec(v::AbstractVector, Δv::AbstractVector)
 
@@ -120,6 +126,7 @@ macro rep_elem(outparams::Expr)
     ]
     return Expr(:block, outCode...)
 end
+
 """
     repElem(v::AbstractVector, v_elem, _, _, ind::Int)
 
@@ -136,6 +143,7 @@ function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
     v[ind] = v_elem
     return v
 end
+
 """
     repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
 
@@ -169,6 +177,7 @@ macro rep_vec(outparams::Expr)
     outCode = [Expr(:(=), lhs, Expr(:call, repVec, lhs, rhs))]
     return Expr(:block, outCode...)
 end
+
 """
     repVec(v::AbstractVector, v_new)
 
@@ -178,6 +187,7 @@ function repVec(v::AbstractVector, v_new)
     v .= v_new
     return v
 end
+
 """
     repVec(v::SVector, v_new)
 
@@ -188,6 +198,7 @@ function repVec(v::SVector, v_new)
     v = v .* n_0 + v_new
     return v
 end
+
 """
     setComponents(land, helpers, nothing::Val{s_main}, nothing::Val{s_comps}, nothing::Val{zix})
 

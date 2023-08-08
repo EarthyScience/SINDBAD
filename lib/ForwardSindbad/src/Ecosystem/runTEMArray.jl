@@ -5,7 +5,7 @@ export TEM!
 """
     coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, nothing::Val{:(false)})
 
-A core function of SINDBAD TEM that includes the precompute, spinup, and time loop of the model run
+core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
 
 # Arguments:
@@ -46,7 +46,7 @@ end
 """
     coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
 
-A core function of SINDBAD TEM that includes the precompute, spinup, and time loop of the model run
+core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
 # Arguments:
 - `selected_models`: a tuple of models selected for the given model structure
@@ -197,7 +197,7 @@ end
 """
     runTEM!(forcing::NamedTuple, info::NamedTuple)
 
-The main SINDBAD Terrestrial Ecosystem Model function that runs the simulation for all pixels and time using preallocated array as model data backend, with only info and forcing as input, and model simulation output as arrays 
+a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locations and time using preallocated array as model data backend, with with only info and forcing as input, and model simulation output as arrays 
 
 # Arguments:
 - `forcing`: a tuple of models selected for the given model structure
@@ -212,7 +212,7 @@ end
 """
     runTEM!(selected_models, forcing_nt_array::NamedTuple, loc_forcings, forcing_one_timestep, output_array::AbstractArray, loc_outputs, land_init_space, loc_space_inds, tem_with_vals::NamedTuple)
 
-The main SINDBAD Terrestrial Ecosystem Model function that runs the simulation for all pixels and time using preallocated array as model data backend, with precomputed helper objects for efficient runs during optimization.
+a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locations and time using preallocated array as model data backend, with precomputed helper objects for efficient runs during optimization
 
 # Arguments:
 - `selected_models`: a tuple of models selected for the given model structure
@@ -254,7 +254,7 @@ end
 """
     TEM!(selected_models, forcing, loc_forcing, forcing_one_timestep, output_array, loc_output, land_init, loc_space_ind, tem_helpers, tem_models, tem_spinup)
 
-DOCSTRING
+SINDBAD Terrestrial Ecosystem Model for a single location using preallocated array as data backend
 
 # Arguments:
 - `selected_models`: a tuple of models selected for the given model structure
@@ -300,7 +300,7 @@ end
 """
     timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(false)})
 
-Time loop of the model run where forcing for the time step is used to run model compute function and save the output into preallocated output array
+time loop of the model run where forcing for the time step is used to run model compute function, whose output are assigned to preallocated output array
 
 # Arguments:
 - `selected_models`: a tuple of models selected for the given model structure
@@ -332,7 +332,7 @@ end
 """
     timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, nothing::Val{:(true)})
 
-Time loop of the model run where forcing for ONE time step is used to run model compute function and save the output with debugging information on allocations and time
+time loop of the model run where forcing for ONE time step is used to run model compute function, save the output, and display debugging information on allocations and time
 
 
 # Arguments:
@@ -352,17 +352,17 @@ function timeLoopTEM!(
     land,
     tem_helpers,
     ::Val{:true}) # debug the models
-    @show "forc"
+    @info "\nforc\n"
     @time f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
-    println("-------------")
-    @show "each model"
+    @info "\n-------------\n"
+    @info "\neach model\n"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
-    println("-------------")
-    @show "all models"
+    @info "\n-------------\n"
+    @info "\nall models\n"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers)
-    println("-------------")
-    @show "set output"
+    @info "\n-------------\n"
+    @info "\nset output\n"
     @time setOutputForTimeStep!(loc_output, land, 1, tem_helpers.vals.output_vars)
-    println("-------------")
+    @info "\n-------------\n"
     return nothing
 end

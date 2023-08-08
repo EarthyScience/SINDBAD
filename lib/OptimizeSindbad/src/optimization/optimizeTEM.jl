@@ -422,7 +422,7 @@ function getLossVector(observations, model_output, cost_options)
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug size(y), size(yσ), size(ŷ)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
         # @debug @time metr = loss(y, yσ, ŷ, lossMetric)
         metr = loss(y, yσ, ŷ, lossMetric)

@@ -1,7 +1,7 @@
+export defaultVariableInfo
+export orD
 export sindbad_variables
 export whatIs
-export orD
-export defaultVariableInfo
 
 orD = Sindbad.DataStructures.OrderedDict
 sindbad_variables = orD{Symbol,orD{Symbol,String}}(
@@ -1429,14 +1429,27 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
 )
 
 """
-    getStandardVariableCatalog(info)
+    checkDisplayVariableDict(var_full)
 
 DOCSTRING
 """
-function getStandardVariableCatalog(info)
-    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
-    return variCat
+function checkDisplayVariableDict(var_full)
+    sind_var_names = keys(sindbad_variables)
+    if var_full in sind_var_names
+        print("\nExisting catalog entry for $var_full from src/tools/sindbadVariableCatalog.jl")
+        displayVariableDict(var_full, sindbad_variables[var_full])
+    else
+        new_d = defaultVariableInfo()
+        new_d[:land_field] = split(string(var_full), "__")[1]
+        new_d[:standard_name] = split(string(var_full), "__")[2]
+        print("\n")
+        @warn "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry and add to src/tools/sindbadVariableCatalog.jl with correct details using"
+        displayVariableDict(var_full, new_d, false)
+    end
+    return nothing
 end
+
+
 """
     defaultVariableInfo(string_key = false)
 
@@ -1461,6 +1474,60 @@ function defaultVariableInfo(string_key=false)
         )
     end
 end
+
+
+"""
+    displayVariableDict(dk, dv, exist = true)
+
+DOCSTRING
+
+# Arguments:
+- `dk`: DESCRIPTION
+- `dv`: DESCRIPTION
+- `exist`: DESCRIPTION
+"""
+function displayVariableDict(dk, dv, exist=true)
+    print("\n\n")
+    if exist
+        print(":$(dk)\n")
+    else
+        print(":$(dk) => orD(\n")
+    end
+    foreach(dv) do dvv
+        if exist
+            println("   $dvv,")
+        else
+            println("       $dvv,")
+        end
+    end
+    if !exist
+        print(" )\n")
+    end
+    return nothing
+end
+
+
+"""
+    getFullVariableKey(var_field::String, var_sfield::String)
+
+DOCSTRING
+"""
+function getFullVariableKey(var_field::String, var_sfield::String)
+    return Symbol(var_field * "__" * var_sfield)
+end
+
+
+"""
+    getStandardVariableCatalog(info)
+
+DOCSTRING
+"""
+function getStandardVariableCatalog(info)
+    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
+    return variCat
+end
+
+
 """
     getVariableCatalogFromLand(land)
 
@@ -1537,63 +1604,7 @@ function getVariableCatalogFromLand(land)
     end
     return variCat
 end
-"""
-    displayVariableDict(dk, dv, exist = true)
 
-DOCSTRING
-
-# Arguments:
-- `dk`: DESCRIPTION
-- `dv`: DESCRIPTION
-- `exist`: DESCRIPTION
-"""
-function displayVariableDict(dk, dv, exist=true)
-    print("\n\n")
-    if exist
-        print(":$(dk)\n")
-    else
-        print(":$(dk) => orD(\n")
-    end
-    foreach(dv) do dvv
-        if exist
-            println("   $dvv,")
-        else
-            println("       $dvv,")
-        end
-    end
-    if !exist
-        print(" )\n")
-    end
-    return nothing
-end
-"""
-    checkDisplayVariableDict(var_full)
-
-DOCSTRING
-"""
-function checkDisplayVariableDict(var_full)
-    sind_var_names = keys(sindbad_variables)
-    if var_full in sind_var_names
-        print("\nExisting catalog entry for $var_full from src/tools/sindbadVariableCatalog.jl")
-        displayVariableDict(var_full, sindbad_variables[var_full])
-    else
-        new_d = defaultVariableInfo()
-        new_d[:land_field] = split(string(var_full), "__")[1]
-        new_d[:standard_name] = split(string(var_full), "__")[2]
-        print("\n")
-        @warn "$(var_full) does not exist in current sindbad catalog of variables. If it is a new or known variable, create an entry and add to src/tools/sindbadVariableCatalog.jl with correct details using"
-        displayVariableDict(var_full, new_d, false)
-    end
-    return nothing
-end
-"""
-    getFullVariableKey(var_field::String, var_sfield::String)
-
-DOCSTRING
-"""
-function getFullVariableKey(var_field::String, var_sfield::String)
-    return Symbol(var_field * "__" * var_sfield)
-end
 """
     whatIs(var_name::String)
 
@@ -1610,6 +1621,7 @@ function whatIs(var_name::String)
     checkDisplayVariableDict(var_full)
     return nothing
 end
+
 """
     whatIs(var_field::String, var_sfield::String)
 
@@ -1621,6 +1633,7 @@ function whatIs(var_field::String, var_sfield::String)
     checkDisplayVariableDict(var_full)
     return nothing
 end
+
 """
     whatIs(var_field::Symbol, var_sfield::Symbol)
 

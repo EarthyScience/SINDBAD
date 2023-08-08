@@ -159,7 +159,7 @@ for site_index in sites
             @show opt_params[opi], "old"
             opt_params[opi] = oftype(opt_params[opi], ml_value)
             @show opt_params[opi], "new"
-            println("------------------------------------------------")
+            @info "\n------------------------------------------------\n"
         end
         models_with_matlab_params = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
