@@ -1,6 +1,6 @@
 export coreTEM!
 export runTEM!
-export TEM!
+export locTEM!
 
 """
     coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, nothing::Val{:(false)})
@@ -93,6 +93,51 @@ function coreTEM!(
 end
 
 """
+    locTEM!(selected_models, forcing, loc_forcing, forcing_one_timestep, output_array, loc_output, land_init, loc_space_ind, tem_helpers, tem_models, tem_spinup)
+
+helper function to collect the forcing and output, and then run the core SINDBAD TEM for a single location using preallocated array as data backend
+
+# Arguments:
+- `selected_models`: a tuple of models selected for the given model structure
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_forcing`: a forcing time series set for a single location
+- `forcing_one_timestep`: a forcing NT for a single location and a single time step
+- `output_array`: an output array/view for ALL locations
+- `loc_output`: an output array/view for a single location
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `loc_space_ind`: an index/pair of indices to spatially map the location of the current location/pixel being run
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
+"""
+function locTEM!(
+    selected_models,
+    forcing,
+    loc_forcing,
+    forcing_one_timestep,
+    output_array,
+    loc_output,
+    land_init,
+    loc_space_ind,
+    tem_helpers,
+    tem_models,
+    tem_spinup)
+    getLocForcing!(forcing, loc_forcing, loc_space_ind, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names)
+    getLocOutput!(output_array, loc_output, loc_space_ind)
+    coreTEM!(
+        selected_models,
+        loc_forcing,
+        forcing_one_timestep,
+        loc_output,
+        land_init,
+        tem_helpers,
+        tem_models,
+        tem_spinup,
+        tem_helpers.run.spinup.spinup_TEM)
+    return nothing
+end
+
+"""
     parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, nothing::Val{:threads})
 
 parallelize SINDBAD TEM using threads as backend
@@ -126,7 +171,7 @@ function parallelizeTEM!(
     ::Val{:threads})
     Threads.@threads for space_index ∈ eachindex(loc_space_inds)
         thread_id = Threads.threadid()
-        TEM!(
+        locTEM!(
             selected_models,
             forcing_nt_array,
             loc_forcings[thread_id],
@@ -177,7 +222,7 @@ function parallelizeTEM!(
     space_index = 1
     qbmap(loc_space_inds) do loc_space_ind
         thread_id = Threads.threadid()
-        TEM!(
+        locTEM!(
             selected_models,
             forcing_nt_array,
             loc_forcings[thread_id],
@@ -248,51 +293,6 @@ function runTEM!(
         tem_with_vals.models,
         tem_with_vals.spinup,
         tem_with_vals.helpers.run.parallelization)
-    return nothing
-end
-
-"""
-    TEM!(selected_models, forcing, loc_forcing, forcing_one_timestep, output_array, loc_output, land_init, loc_space_ind, tem_helpers, tem_models, tem_spinup)
-
-SINDBAD Terrestrial Ecosystem Model for a single location using preallocated array as data backend
-
-# Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
-- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `loc_forcing`: a forcing time series set for a single location
-- `forcing_one_timestep`: a forcing NT for a single location and a single time step
-- `output_array`: an output array/view for ALL locations
-- `loc_output`: an output array/view for a single location
-- `land_init`: initial SINDBAD land with all fields and subfields
-- `loc_space_ind`: an index/pair of indices to spatially map the location of the current location/pixel being run
-- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
-- `tem_spinup`: a NT with information/instruction on spinning up the TEM
-"""
-function TEM!(
-    selected_models,
-    forcing,
-    loc_forcing,
-    forcing_one_timestep,
-    output_array,
-    loc_output,
-    land_init,
-    loc_space_ind,
-    tem_helpers,
-    tem_models,
-    tem_spinup)
-    getLocForcing!(forcing, loc_forcing, loc_space_ind, tem_helpers.vals.forc_vars, tem_helpers.vals.loc_space_names)
-    getLocOutput!(output_array, loc_output, loc_space_ind)
-    coreTEM!(
-        selected_models,
-        loc_forcing,
-        forcing_one_timestep,
-        loc_output,
-        land_init,
-        tem_helpers,
-        tem_models,
-        tem_spinup,
-        tem_helpers.run.spinup.spinup_TEM)
     return nothing
 end
 
