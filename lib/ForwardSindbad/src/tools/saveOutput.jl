@@ -63,7 +63,7 @@ end
 """
     getModelDataArray(model_data::AbstractArray{T, 2})
 
-DOCSTRING
+return model data with 1 sized dimension removed in case of 2-dimensional matrix
 """
 function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
     return model_data[:, 1]
@@ -72,7 +72,7 @@ end
 """
     getModelDataArray(model_data::AbstractArray{T, 3})
 
-DOCSTRING
+return model data with 1 sized dimension removed in case of 3-dimensional matrix
 """
 function getModelDataArray(model_data::AbstractArray{T,3}) where {T}
     return model_data[:, 1, :]
@@ -81,7 +81,7 @@ end
 """
     getModelDataArray(model_data::AbstractArray{T, 4})
 
-DOCSTRING
+return model data with 1 sized dimension removed in case of 4-dimensional matrix
 """
 function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
     return model_data[:, 1, :, :]
@@ -90,7 +90,7 @@ end
 """
     getVarName(var_pair)
 
-DOCSTRING
+return the model variable name from a pair consisting of the field and subfield of SINDBAD land
 """
 function getVarName(var_pair)
     return last(var_pair)
@@ -99,7 +99,7 @@ end
 """
     getVarField(var_pair)
 
-DOCSTRING
+return the field name from a pair consisting of the field and subfield of SINDBAD land
 """
 function getVarField(var_pair)
     return first(var_pair)
@@ -108,17 +108,17 @@ end
 """
     getVarFull(var_pair)
 
-DOCSTRING
+return the variable full name used as the key in the catalog of sindbad_variables from a pair consisting of the field and subfield of SINDBAD land. Convention is field__subfield of land
 """
 function getVarFull(var_pair)
     return Symbol(String(first(var_pair)) * "__" * String(last(var_pair)))
-    # return Symbol(String(last(var_pair)) * "__" * String(first(var_pair)))
 end
 
 """
     getUniqueVarNames(data_vars)
 
-DOCSTRING
+return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
+- uses field__variablename in case of duplicates, else uses the actual model variable name
 """
 function getUniqueVarNames(data_vars)
     pure_vars = getVarName.(data_vars)
@@ -128,7 +128,7 @@ function getUniqueVarNames(data_vars)
         n_occur = sum(pure_vars .== pure_vars[i])
         var_i = pure_vars[i]
         if n_occur > 1
-            var_i = Symbol(String(pure_vars[i]) * "__" * String(fields[i]))
+            var_i = Symbol(String(fields[i]) * "__" * String(pure_vars[i]))
         end
         push!(uniq_vars, var_i)
     end
@@ -270,15 +270,9 @@ function getOutputFileInfo(info)
 end
 
 """
-saveOutCubes(saveOutCubes(info, out_cubes, output))
-
-saves the output variables from the run from the information in info
-"""
-
-"""
     saveOutCubes(info, out_cubes, output)
 
-DOCSTRING
+saves the output variables from the run from the information in info
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
