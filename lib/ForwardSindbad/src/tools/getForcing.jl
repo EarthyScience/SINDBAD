@@ -66,7 +66,7 @@ function collectForcingHelpers(info, f_sizes, f_dimensions)
 end
 
 """
-    subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, nothing::Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
+    subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
 
 DOCSTRING
 
@@ -200,7 +200,7 @@ function loadDataFromPath(nc, data_path, data_path_v, source_variable)
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, nothing::Val{:netcdf})
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, Val{:netcdf})
 
 DOCSTRING
 
@@ -235,7 +235,7 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::V
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, nothing::Val{:zarr})
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, Val{:zarr})
 
 DOCSTRING
 

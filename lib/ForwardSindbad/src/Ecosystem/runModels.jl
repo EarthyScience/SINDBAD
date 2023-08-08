@@ -8,7 +8,7 @@ computeTEM(models, forcing, land, tem_helpers, ::Val{:false})
 """
 
 """
-    computeTEM(models, forcing, land, tem_helpers, nothing::Val{:(true)})
+    computeTEM(models, forcing, land, tem_helpers, Val{:(true)})
 
 DOCSTRING
 
@@ -32,7 +32,7 @@ computeTEM(models, forcing, land, tem_helpers)
 """
 
 """
-    computeTEM(models, forcing, land, tem_helpers, nothing::Val{:(false)})
+    computeTEM(models, forcing, land, tem_helpers, Val{:(false)})
 
 DOCSTRING
 

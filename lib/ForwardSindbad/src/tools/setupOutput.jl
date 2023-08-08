@@ -101,7 +101,7 @@ function getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::N
 end
 
 """
-    getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
+    getOutDimsArrays(datavars, info, _, land_init, _, Val{:yaxarray})
 
 DOCSTRING
 
@@ -209,7 +209,7 @@ function getOutDimsPairs(datavars, info, tem_helpers, land_init, forcing_helpers
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:array})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:array})
 
 DOCSTRING
 
@@ -237,7 +237,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:sizedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sizedarray})
 
 DOCSTRING
 
@@ -256,7 +256,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:marray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:marray})
 
 DOCSTRING
 
@@ -276,7 +276,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, nothing::Val{:keyedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyedarray})
 
 DOCSTRING
 
