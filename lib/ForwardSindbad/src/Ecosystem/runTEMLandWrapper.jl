@@ -2,7 +2,7 @@ export coreTEM
 export runTEM
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, _, _, nothing::Val{:(false)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, _, _, Val{:(false)})
 
 DOCSTRING
 
@@ -39,7 +39,7 @@ function coreTEM(
 end
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, Val{:(true)})
 
 DOCSTRING
 
@@ -86,7 +86,7 @@ end
 
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, nothing::Val{:(false)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, Val{:(false)})
 
 DOCSTRING
 
@@ -126,7 +126,7 @@ function coreTEM(
 end
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, nothing::Val{:(true)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, Val{:(true)})
 
 DOCSTRING
 
@@ -232,7 +232,7 @@ function runTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, nothing::Val{:(false)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, Val{:(false)})
 
 time loop of the model run where forcing for the time step is used to run model compute function, in which land has been preallocated as a vector
 
@@ -263,7 +263,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, nothing::Val{:(true)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, Val{:(true)})
 
 time loop of the model run where forcing for ONE time step is used to run model compute function, and display debugging information on allocations and time, in which land has been preallocated as a vector
 
@@ -295,7 +295,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, nothing::Val{:(false)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, Val{:(false)})
 
 DOCSTRING
 
@@ -324,7 +324,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, nothing::Val{:(true)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, Val{:(true)})
 
 DOCSTRING
 
