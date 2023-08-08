@@ -359,12 +359,12 @@ function timeLoopTEM(
     ::Val{:true}) # debug the models
     @show "forc"
     @time f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
-    println("-------------")
+    @info "\n-------------\n"
     @show "each model"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers, tem_helpers.run.debug_model)
-    println("-------------")
+    @info "\n-------------\n"
     @show "all models"
     @time land = computeTEM(selected_models, f_ts, land, tem_helpers)
-    println("-------------")
+    @info "\n-------------\n"
     return [land]
 end

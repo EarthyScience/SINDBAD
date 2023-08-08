@@ -410,7 +410,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
         @info "     setupOutput: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     return output_tuple
 end
 
