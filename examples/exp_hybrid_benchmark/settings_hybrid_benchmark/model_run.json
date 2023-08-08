@@ -1,7 +1,7 @@
 {
   "time": {
     "model_time_step": "day",
-    "start_date": "2005-01-01",
+    "start_date": "1979-01-01",
     "end_date": "2017-12-31",
     "timesteps_in_day": 1,
     "timesteps_in_year": 365.0
@@ -14,10 +14,10 @@
   "flags": {
     "save_info": true,
     "debug_model": false,
-    "catch_model_errors": false,
+    "catch_model_errors": true,
     "run_forward": true,
     "run_update_models": false,
-    "run_optimization": true,
+    "run_optimization": false,
     "run_forward_and_cost": true,
     "spinup": {
       "do_spinup": true,
