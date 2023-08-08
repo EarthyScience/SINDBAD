@@ -139,6 +139,6 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_σ"))
         push!(varnames_all, Symbol(string(v) * "_mask"))
     end
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     return (; data=obscubes, dims=indims, variables=Tuple(varnames_all))
 end

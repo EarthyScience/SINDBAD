@@ -1,35 +1,40 @@
-export getCostOptions, setupOptimization
 export getConstraintNames
+export getCostOptions
+export setupOptimization
+
+
 
 """
-    getConstraintNames(info)
+    checkOptimizedParametersInModels(info::NamedTuple)
 
-returns
-
-  - obsVariables: a list of observation variables that will be used to calculate cost
-  - optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
-  - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
+checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
 """
-
-"""
-    getConstraintNames(optim::NamedTuple)
-
-DOCSTRING
-"""
-function getConstraintNames(optim::NamedTuple)
-    obsVariables = Symbol.(optim.observational_constraints)
-    modelVariables = String[]
-    optimVariables = (;)
-    for v ∈ obsVariables
-        vinfo = getproperty(optim.observations.variables, v)
-        push!(modelVariables, vinfo.model_full_var)
-        vf, vvar = Symbol.(split(vinfo.model_full_var, "."))
-        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
+function checkOptimizedParametersInModels(info::NamedTuple)
+    # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
+    tbl_params = getParameters(info.tem.models.forward,
+        info.optimization.model_parameter_default,
+        info.optimization.model_parameters_to_optimize)
+    model_parameters = tbl_params.name_full
+    # @show model_parameters
+    optim_parameters = info.optimization.model_parameters_to_optimize
+    op_names = nothing
+    if typeof(optim_parameters) <: Vector
+        op_names = replaceCommaSeparatorParams(optim_parameters)
+    else
+        op_names = replaceCommaSeparatorParams(keys(optim_parameters))
     end
-    # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(modelVariables)
-    return obsVariables, optimVariables, storeVariables, modelVariables
+
+    for omp ∈ eachindex(op_names)
+        if op_names[omp] ∉ model_parameters
+            @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
+            @show model_parameters
+            error(
+                "Cannot continue with the model inconsistency. Either delete the invalid parameters in model_parameters_to_optimize of optimization.json, or check model structure to provide correct parameter name"
+            )
+        end
+    end
 end
+
 """
     getAggrFunc(nothing::Val{:mean})
 
@@ -47,6 +52,7 @@ DOCSTRING
 function getAggrFunc(::Val{:sum})
     return Sindbad.sum
 end
+
 """
     getAggrFunc(nothing::Val{:nanMean})
 
@@ -55,6 +61,7 @@ DOCSTRING
 function getAggrFunc(::Val{:nanMean})
     return Sindbad.nanMean
 end
+
 """
     getAggrFunc(nothing::Val{:nanSum})
 
@@ -65,10 +72,6 @@ function getAggrFunc(::Val{:nanSum})
 end
 
 
-"""
-getCostOptions(optInfo)
-info.opti
-"""
 
 """
     getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
@@ -155,41 +158,28 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
 end
 
 """
-    checkOptimizedParametersInModels(info::NamedTuple)
+    getConstraintNames(optim::NamedTuple)
 
-checks if the parameters listed in model_parameters_to_optimize of optimization.json exists in the selected model structure of model_structure.json
-"""
+- obsVariables: a list of observation variables that will be used to calculate cost
+- optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
+- storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 
 """
-    checkOptimizedParametersInModels(info::NamedTuple)
-
-DOCSTRING
-"""
-function checkOptimizedParametersInModels(info::NamedTuple)
-    # @show info.optimization.observations, info.optimization.model_parameters_to_optimize
-    tbl_params = getParameters(info.tem.models.forward,
-        info.optimization.model_parameter_default,
-        info.optimization.model_parameters_to_optimize)
-    model_parameters = tbl_params.name_full
-    # @show model_parameters
-    optim_parameters = info.optimization.model_parameters_to_optimize
-    op_names = nothing
-    if typeof(optim_parameters) <: Vector
-        op_names = replaceCommaSeparatorParams(optim_parameters)
-    else
-        op_names = replaceCommaSeparatorParams(keys(optim_parameters))
+function getConstraintNames(optim::NamedTuple)
+    obsVariables = Symbol.(optim.observational_constraints)
+    modelVariables = String[]
+    optimVariables = (;)
+    for v ∈ obsVariables
+        vinfo = getproperty(optim.observations.variables, v)
+        push!(modelVariables, vinfo.model_full_var)
+        vf, vvar = Symbol.(split(vinfo.model_full_var, "."))
+        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
     end
-
-    for omp ∈ eachindex(op_names)
-        if op_names[omp] ∉ model_parameters
-            @warn "Model Inconsistency: the parameter $(op_names[omp]) does not exist in the selected model structure."
-            @show model_parameters
-            error(
-                "Cannot continue with the model inconsistency. Either delete the invalid parameters in model_parameters_to_optimize of optimization.json, or check model structure to provide correct parameter name"
-            )
-        end
-    end
+    # optimVariables = getVariableGroups(modelVariables)
+    storeVariables = getVariableGroups(modelVariables)
+    return obsVariables, optimVariables, storeVariables, modelVariables
 end
+
 """
     setupOptimization(info::NamedTuple)
 
