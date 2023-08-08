@@ -25,7 +25,7 @@
         "depth_dimension": null,
         "space_time_type": "spatiotemporal",
         "source_product": "FLUXNET",
-        "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr"
+        "data_path": "../data/fluxnet_cube/FLUXNET_v1.zarr"
     },
     "variables": {
         "ambient_CO2": {

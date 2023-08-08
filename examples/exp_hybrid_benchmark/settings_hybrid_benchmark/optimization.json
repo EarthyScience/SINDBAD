@@ -5,7 +5,6 @@
     "reco",
     "transpiration",
     "evapotranspiration",
-    "agb",
     "ndvi"
   ],
   "multi_constraint_method": "sum",
@@ -18,45 +17,11 @@
   "optimized_parameters": {
     "cCycleBase,c_τ_Root": null,
     "cCycleBase,c_τ_Wood": null,
-    "cCycleBase,c_τ_LitSlow": null,
-    "cCycleBase,c_τ_LitFast": null,
-    "cCycleBase,c_τ_SoilSlow": null,
-    "cCycleBase,c_τ_SoilOld": null,
-    "cCycleBase,ηH": null,
-    "cCycleBase,c_remain": null,
-    "cFlow,f_τ": null,
-    "cFlow,k_shedding": null,
-    "cFlow,slope_leaf_root_to_reserve": null,
-    "cFlow,slope_reserve_to_leaf_root": null,
-    "cTauSoilT,Q10": null,
-    "cTauSoilW,Wopt": null,
-    "drainage,dos_exp": null,
-    "evaporation,α": null,
-    "evaporation,k_evaporation": null,
-    "fAPAR,kEffExt": null,
-    "gppPotential,εmax": null,
-    "gppAirT,Topt": null,
-    "gppAirT,ToptA": null,
-    "gppAirT,ToptB": null,
-    "gppVPD,κ": null,
-    "gppVPD,Cκ": null,
     "gppVPD,Cm": null,
-    "gppSoilW,q": null,
-    "gppSoilW,θstar": null,
     "gppDiffRadiation,μ": null,
     "groundWRecharge,dos_exp": null,
-    "autoRespiration,YG": null,
-    "autoRespiration,RMN": null,
-    "autoRespirationAirT,Q10": null,
-    "runoffBase,bc": null,
-    "rootWaterEfficiency,k_efficiency_cVegRoot": null,
-    "rootMaximumDepth,constant_frac_max_root_depth": null,
-    "runoffSaturationExcess,β": null,
-    "snowMelt,melt_T": null,
     "snowMelt,melt_Rn": null,
-    "transpirationSupply,k_transpiration": null,
     "treeFraction,constant_frac_tree": null,
-    "WUE,WUEatOnehPa": null,
     "WUE,κ": null
   },
   "constraints": {
@@ -73,7 +38,7 @@
       "name_short": null,
       "space_time_type": "spatiotemporal",
       "source_product": "",
-      "data_path": "/Net/Groups/BGI/work_3/scratch/lalonso/FLUXNET_v1.zarr"
+      "data_path": "../data/fluxnet_cube/FLUXNET_v1.zarr"
     },
     "default_cost": {
       "aggr_order": "timespace",
@@ -83,7 +48,7 @@
       "temporal_aggr": "day",
       "temporal_aggr_obs": false,
       "temporal_aggr_func": "nanmean",
-      "cost_metric": "nnseinv",
+      "cost_metric": "mse",
       "cost_weight": 1.0,
       "area_weight": false
     },
@@ -108,7 +73,7 @@
           "source_variable": "GPP_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       },
       "nee": {
@@ -131,7 +96,7 @@
           "source_variable": "NEE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       },
       "reco": {
@@ -154,7 +119,7 @@
           "source_variable": "RECO_QC_NT_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       },
       "evapotranspiration": {
@@ -180,7 +145,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       },
       "transpiration": {
@@ -204,7 +169,7 @@
           "source_variable": "LE_QC_merged"
         },
         "cost_options": {
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       },
       "agb": {
@@ -222,7 +187,7 @@
           "source_variable": "NEE_RANDUNC"
         },
         "cost_options": {
-          "cost_metric": "nmae1r"
+          "cost_metric": "mse"
         }
       },
       "ndvi": {
@@ -242,7 +207,7 @@
         "cost_options": {
           "temporal_aggr": "dayAnomaly",
           "temporal_aggr_obs": true,
-          "cost_metric": "nnseinv"
+          "cost_metric": "mse"
         }
       }
     }
