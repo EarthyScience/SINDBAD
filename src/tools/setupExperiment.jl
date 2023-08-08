@@ -1,559 +1,21 @@
-export setupExperiment, getInitPools, setNumberType
+export getInitPools
 export getInitStates
-export getParameters, updateModelParameters, updateModelParametersType
-using ConstructionBase
+export getParameters
 export prepNumericHelpers
 export replaceCommaSeparatorParams
-
-"""
-    convertRunFlagsToVal(info)
-
-DOCSTRING
-"""
-function convertRunFlagsToVal(info)
-    new_run = (;)
-    dr = info.experiment.flags
-    for pr in propertynames(dr)
-        prf = getfield(dr, pr)
-        prtoset = Val(prf)
-        if isa(prf, NamedTuple)
-            st = (;)
-            for prs in propertynames(prf)
-                prsf = getfield(prf, prs)
-                st = setTupleField(st, (prs, Val(prsf)))
-            end
-            prtoset = st
-        end
-        new_run = setTupleField(new_run, (pr, prtoset))
-    end
-    return new_run
-end
-
-"""
-parseSaveCode(info)
-parse and save the code and structs of selected model structure for the given experiment
-"""
-
-"""
-    parseSaveCode(info)
-
-DOCSTRING
-"""
-function parseSaveCode(info)
-    models = info.tem.models.forward
-    outfile_define = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_definitions.jl")
-    outfile_code = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_functions.jl")
-    outfile_struct = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_structs.jl")
-    fallback_code_define = nothing
-    fallback_code_precompute = nothing
-    fallback_code_compute = nothing
-
-    # write define
-    open(outfile_define, "w") do o_file
-        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
-        write(o_file, mod_string)
-        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
-        write(o_file, mod_string)
-        for (mi, _mod) in enumerate(models)
-            mod_name = string(nameof(supertype(typeof(_mod))))
-            appr_name = string(nameof(typeof(_mod)))
-            mod_string = "\n# $appr_name\n"
-            write(o_file, mod_string)
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
-            write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
-            write(o_file, mod_string)
-
-            mod_ending = "\n\n"
-            if mi == lastindex(models)
-                mod_ending = "\n"
-            end
-            mod_code = @code_string Models.define(_mod, nothing, nothing, nothing)
-            if occursin("LandEcosystem", mod_code)
-                if isnothing(fallback_code_define)
-                    fallback_code_define = mod_code
-                end
-            else
-                write(o_file, mod_code * mod_ending)
-            end
-            mod_string = "# --------------------------------------\n"
-            write(o_file, mod_string)
-
-        end
-        mod_string = "\n# fallback define function for LandEcosystem\n"
-        write(o_file, mod_string)
-        write(o_file, fallback_code_define)
-    end
-
-    #write precompute and compute
-    open(outfile_code, "w") do o_file
-        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
-        mod_string = "# code for models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
-        write(o_file, mod_string)
-        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
-        write(o_file, mod_string)
-        for (mi, _mod) in enumerate(models)
-            mod_name = string(nameof(supertype(typeof(_mod))))
-            appr_name = string(nameof(typeof(_mod)))
-            mod_string = "\n# $appr_name\n"
-            write(o_file, mod_string)
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
-            write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
-            write(o_file, mod_string)
-
-            mod_ending = "\n\n"
-
-            mod_code = @code_string Models.precompute(_mod, nothing, nothing, nothing)
-
-            if occursin("LandEcosystem", mod_code)
-                if isnothing(fallback_code_precompute)
-                    fallback_code_precompute = mod_code * "\n\n"
-                end
-            else
-                write(o_file, mod_code * mod_ending)
-            end
-
-
-            mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
-            if occursin("LandEcosystem", mod_code)
-                if isnothing(fallback_code_compute)
-                    fallback_code_compute = mod_code
-                end
-            else
-                write(o_file, mod_code * mod_ending)
-            end
-            mod_string = "# --------------------------------------\n"
-            write(o_file, mod_string)
-
-        end
-        mod_string = "\n# fallback precompute and compute functions for LandEcosystem\n"
-        write(o_file, mod_string)
-        write(o_file, fallback_code_precompute)
-        write(o_file, fallback_code_compute)
-    end
-
-    # write structs
-    open(outfile_struct, "w") do o_file
-        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
-        write(o_file, mod_string)
-        mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
-        write(o_file, mod_string)
-        write(o_file, "abstract type LandEcosystem end\n")
-
-        for (mi, _mod) in enumerate(models)
-            mod_name = string(nameof(supertype(typeof(_mod))))
-            appr_name = string(nameof(typeof(_mod)))
-            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
-            mod_string = "\n# $appr_name\n"
-            write(o_file, mod_string)
-            write(o_file, "# " * mod_file * "\n")
-            mod_string = "# call order: $mi\n\n"
-            write(o_file, mod_string)
-
-            write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
-
-            mod_string = string(@code_expr typeof(_mod)())
-            for xx = 1:100 # maximum line number with parameter definition. Chanage here if with crazy model with large number of parameters still show file path in generated struct.
-                if occursin(mod_file, mod_string)
-                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#\n" => "")
-                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#" => "")
-                end
-            end
-            mod_string = replace(mod_string, " @bounds " => "@bounds")
-            mod_string = replace(mod_string, "@describe(" => "@describe")
-            mod_string = replace(mod_string, "@units(" => "@units")
-            mod_string = replace(mod_string, "@with_kw(" => "@with_kw ")
-            mod_string = replace(mod_string, "                    end)))" => "end")
-            mod_string = replace(mod_string, "                end)))" => "end")
-            mod_string = replace(mod_string, "    end" => "end")
-            mod_string = replace(mod_string, "                                        " => "    ")
-            mod_string = replace(mod_string, " = ((" => " = ")
-            mod_string = replace(mod_string, ") |" => " |")
-            # mod_string = "\n # todo get model structs here \n"
-            write(o_file, mod_string * "\n\n")
-            # mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
-            # write(o_file, mod_code * "\n")
-            mod_string = "# --------------------------------------\n"
-            if mi == lastindex(models)
-                mod_string = "# --------------------------------------"
-            end
-
-            write(o_file, mod_string)
-        end
-    end
-
-    return nothing
-end
-
-"""
-getParameters(selectedModels)
-retrieve all model parameters
-"""
-
-"""
-    getParameters(selectedModels)
-
-DOCSTRING
-"""
-function getParameters(selectedModels)
-    default = [flatten(selectedModels)...]
-    constrains = metaflatten(selectedModels, Models.bounds)
-    nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selectedModels)...]
-    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
-    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
-    approach_func = [getfield(Models, m) for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full)
-end
-"""
-    splitRenameParam(_p::Symbol, _splitter)
-
-DOCSTRING
-"""
-function splitRenameParam(_p::Symbol, _splitter)
-    p_string = String(_p)
-    return splitRenameParam(p_string, _splitter)
-end
-"""
-    splitRenameParam(p_string::String, _splitter)
-
-DOCSTRING
-"""
-function splitRenameParam(p_string::String, _splitter)
-    p_name = strip(p_string)
-    if occursin(_splitter, p_string)
-        p_split = split(p_string, _splitter)
-        p_model = strip(first(p_split))
-        p_param = strip(last(p_split))
-        p_name = "$(p_model).$(p_param)"
-    end
-    return p_name
-end
-"""
-    replaceCommaSeparatorParams(p_names_list)
-
-DOCSTRING
-"""
-function replaceCommaSeparatorParams(p_names_list)
-    o_p_names_list = []
-    foreach(p_names_list) do p
-        p_name = splitRenameParam(p, ",")
-        push!(o_p_names_list, p_name)
-    end
-    return o_p_names_list
-end
-
-"""
-getParameters(selectedModels, model_parameter_default)
-retrieve all model parameters
-"""
-
-"""
-    getParameters(selectedModels, model_parameter_default)
-
-DOCSTRING
-"""
-function getParameters(selectedModels, model_parameter_default)
-    default = [flatten(selectedModels)...]
-    constrains = metaflatten(selectedModels, Models.bounds)
-    nbounds = length(constrains)
-    lower = [constrains[i][1] for i ∈ 1:nbounds]
-    upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selectedModels)...]
-    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
-    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
-    approach_func = [getfield(Models, m) for m ∈ model_approach]
-    dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
-    # dp_dist = Tuple(dp_dist)
-    dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
-    p_dist = [dp_dist for m ∈ model_approach]
-    is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
-    return Table(;
-        name,
-        default,
-        optim=default,
-        lower,
-        upper,
-        model,
-        model_approach,
-        approach_func,
-        name_full,
-        dist,
-        p_dist,
-        is_ml)
-end
-
-"""
-getParameters(selectedModels, model_parameter_default, listModelsParams::Vector{String})
-retrieve all selected model parameters from string input
-"""
-
-"""
-    getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
-
-DOCSTRING
-
-# Arguments:
-- `selectedModels`: DESCRIPTION
-- `model_parameter_default`: DESCRIPTION
-- `opt_parameter`: DESCRIPTION
-"""
-function getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
-    opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    paramstbl = getParameters(selectedModels, model_parameter_default)
-    return filter(row -> row.name_full in opt_parameter, paramstbl)
-end
-
-"""
-getParameters(selectedModels, listModelsParams::Vector{String})
-retrieve all selected model parameters from string input
-"""
-
-"""
-    getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
-
-DOCSTRING
-
-# Arguments:
-- `selectedModels`: DESCRIPTION
-- `model_parameter_default`: DESCRIPTION
-- `opt_parameter`: DESCRIPTION
-"""
-function getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
-    param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    paramstbl = getParameters(selectedModels, model_parameter_default, param_list)
-    pTable = filter(row -> row.name_full in param_list, paramstbl)
-    new_dist = pTable.dist
-    new_p_dist = pTable.p_dist
-    new_is_ml = pTable.is_ml
-    pInd = 1
-    for pp ∈ param_list
-        p_ = opt_parameter[pInd]
-        if !isnothing(p_)
-            if hasproperty(p_, :is_ml)
-                new_is_ml[pInd] = getfield(p_, :is_ml)
-            end
-            if hasproperty(p_, :distribution)
-                nd = getproperty(p_, :distribution)
-                new_dist[pInd] = nd[1]
-                new_p_dist[pInd] = nd[2]
-            end
-        end
-        pInd = pInd + 1
-    end
-    pTable.is_ml .= new_is_ml
-    pTable.dist .= new_dist
-    pTable.p_dist .= new_p_dist
-    return pTable
-end
-
-"""
-updateParameters(tbl_params, selected_models)
-"""
-
-"""
-    updateModelParameters(tbl_params::Table, selected_models::Tuple)
-
-DOCSTRING
-"""
-function updateModelParameters(tbl_params::Table, selected_models::Tuple)
-    function filtervar(var, modelName, tbl_params, approachx)
-        subtbl = filter(row -> row.name == var && row.model_approach == modelName, tbl_params)
-        if isempty(subtbl)
-            return getproperty(approachx, var)
-        else
-            return subtbl.optim[1]
-        end
-    end
-    updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
-    for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = selected_models[idx]
-        newapproachx = if modelName in tbl_params.model_approach
-            vars = propertynames(approachx)
-            newvals = Pair[]
-            for var ∈ vars
-                inOptim = filtervar(var, modelName, tbl_params, approachx)
-                push!(newvals, var => inOptim)
-            end
-            typeof(approachx)(; newvals...)
-        else
-            approachx
-        end
-        push!(updatedModels, newapproachx)
-    end
-    return (updatedModels...,)
-end
-
-
-"""
-updateModelParametersType(tbl_params, selected_models, pVector)
-get the new instances of the model with same parameter types as mentioned in pVector
-"""
-
-"""
-    updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
-
-DOCSTRING
-
-# Arguments:
-- `tbl_params`: DESCRIPTION
-- `selected_models`: a tuple of models selected for the given model structure
-- `pVector`: DESCRIPTION
-"""
-function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
-    updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
-    for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = selected_models[idx]
-        model_obj = approachx
-        newapproachx = if modelName in tbl_params.model_approach
-            vars = propertynames(approachx)
-            newvals = Pair[]
-            for var ∈ vars
-                pindex = findall(row -> row.name == var && row.model_approach == modelName,
-                    tbl_params)
-                pval = getproperty(approachx, var)
-                if !isempty(pindex)
-                    model_obj = tbl_params[pindex[1]].approach_func
-                    pval = pVector[pindex[1]]
-                end
-                push!(newvals, var => pval)
-            end
-            model_obj(; newvals...)
-        else
-            approachx
-        end
-        push!(updatedModels, newapproachx)
-    end
-    return (updatedModels...,)
-end
-
-
-# """
-# updateModelParametersType(tbl_params, selected_models, pVector)
-# get the new instances of the model with same parameter types as mentioned in pVector
-# """
-# function updateModelParametersType(tbl_params, selected_models, pVector)
-#     updatedModels = Models.LandEcosystem[]
-#     foreach(selected_models) do approachx
-#         modelName = nameof(typeof(approachx))
-#         #model_obj = approachx
-#         newapproachx = if modelName in tbl_params.model_approach
-#             vars = getproperties(approachx)
-#             newvals = Pair[]
-#             for (k, var) ∈ pairs(vars)
-#                 pindex = findall(row -> row.name == k && row.model_approach == modelName,
-#                     tbl_params)
-#                 #pval = getproperty(approachx, var)
-#                 if !isempty(pindex)
-#                     #model_obj = tbl_params[pindex[1]].approach_func
-#                     var = pVector[pindex[1]]
-#                 end
-#                 push!(newvals, k => var)
-#             end
-#             constructorof(typeof(approachx))(; newvals...)
-#         else
-#             approachx
-#         end
-#         push!(updatedModels, newapproachx)
-#     end
-#     return updatedModels
-# end
-
-"""
-updateModelParameters(tbl_params, selected_models, pVector)
-does not depend on the mutated table of parameters
-"""
-
-"""
-    updateModelParameters(tbl_params, selected_models::Tuple, pVector)
-
-DOCSTRING
-
-# Arguments:
-- `tbl_params`: DESCRIPTION
-- `selected_models`: a tuple of models selected for the given model structure
-- `pVector`: DESCRIPTION
-"""
-function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
-    updatedModels = Models.LandEcosystem[]
-    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
-    for (idx, modelName) ∈ enumerate(namesApproaches)
-        approachx = selected_models[idx]
-        model_obj = approachx
-        newapproachx = if modelName in tbl_params.model_approach
-            vars = propertynames(approachx)
-            newvals = Pair[]
-            for var ∈ vars
-                pindex = findall(row -> row.name == var && row.model_approach == modelName,
-                    tbl_params)
-                pval = getproperty(approachx, var)
-                if !isempty(pindex)
-                    pval = pVector[pindex[1]]
-                end
-                push!(newvals, var => pval)
-            end
-            typeof(approachx)(; newvals...)
-        else
-            approachx
-        end
-        push!(updatedModels, newapproachx)
-    end
-    return (updatedModels...,)
-end
-
-"""
-    checkSelectedModels(fullModels, selModels)
-
-checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl.
-"""
-
-"""
-    checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
-
-DOCSTRING
-"""
-function checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
-    for sm ∈ selModels
-        if sm ∉ fullModels
-            @show fullModels
-            error(sm,
-                " is not a valid model from fullModels. check model_structure settings in json")
-            return false
-        end
-    end
-    return true
-end
-
-"""
-    changeModelOrder(info, selModels)
-
-returns a list of models reordered according to orders provided in model_structure json.
-
-  - default order is taken from sindbad_models
-  - models cannot be set before getPools or after cCycle
-    USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
-"""
+export setNumberType
+export setupExperiment
+export updateModelParameters
+export updateModelParametersType
 
 """
     changeModelOrder(info::NamedTuple, selModels::AbstractArray)
 
-DOCSTRING
+returns a list of models reordered according to orders provided in model_structure json.
+
+- default order is taken from sindbad_models
+- models cannot be set before getPools or after cCycle
+- USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
 """
 function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     fullModels = sindbad_models.model
@@ -582,10 +44,10 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
                 )
             end
             if order_changed_warn
-                @info " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
+                @warn " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
-            @info "     $(sm) order:: old: $(findfirst(e->e==sm, fullModels)), new: $(modInfo.order)"
+            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, fullModels)), new: $(modInfo.order)"
         end
     end
 
@@ -624,169 +86,49 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     #todo make sure that this function is functioning correctly before deploying it
 end
 
-"""
-    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
-
-gets the ordered list of selected models from info.model_structure.models
-
-  - orders them as given in sindbad_models in models.jl.
-  - consistency check using checkSelectedModels for the existence of user-provided model.
-"""
 
 """
-    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
+    checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
 
-DOCSTRING
+checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl
 """
-function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
-    fullModels = changeModelOrder(info, selModels)
-    checkSelectedModels(fullModels, selModels)
-    selModelsOrdered = []
-    for msm ∈ fullModels
-        if msm in selModels
-            push!(selModelsOrdered, msm)
+function checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
+    for sm ∈ selModels
+        if sm ∉ fullModels
+            @show fullModels
+            error(sm,
+                " is not a valid model from fullModels. check model_structure settings in json")
+            return false
         end
     end
-
-    return selModelsOrdered
+    return true
 end
 
-"""
-    setInputParameters(original_table::Table, updated_table::Table)
-
-updates the model parameters based on input from params.json
-
-  - new table with the optimised/modified values from params.json.
-"""
 
 """
-    setInputParameters(original_table::Table, updated_table::Table)
+    convertRunFlagsToVal(info)
 
 DOCSTRING
 """
-function setInputParameters(original_table::Table, updated_table::Table)
-    upoTable = copy(original_table)
-    for i ∈ eachindex(updated_table)
-        subtbl = filter(
-            row ->
-                row.name == Symbol(updated_table[i].name) &&
-                    row.model == Symbol(updated_table[i].model),
-            original_table)
-        if isempty(subtbl)
-            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
-        else
-            posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
-            posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
-            pindx = intersect(posmodel, posvar)
-            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
-            upoTable.optim[pindx] = updated_table.optim[i]
-        end
-    end
-    return upoTable
-end
-
-"""
-    getTypedModel(model, sNT)
-
-  - get Sindbad model, and instatiate them with the datatype set in model_run
-"""
-
-"""
-    getTypedModel(model, sNT)
-
-DOCSTRING
-"""
-function getTypedModel(model, sNT)
-    model_obj = getfield(Sindbad.Models, Symbol(model))
-    model_instance = model_obj()
-    param_names = fieldnames(model_obj)
-    if length(param_names) > 0
-        param_vals = []
-        for pn ∈ param_names
-            param = getfield(model_obj(), pn)
-            param_typed = if typeof(param) <: Array
-                sNT.(param)
-            else
-                sNT(param)
+function convertRunFlagsToVal(info)
+    new_run = (;)
+    dr = info.experiment.flags
+    for pr in propertynames(dr)
+        prf = getfield(dr, pr)
+        prtoset = Val(prf)
+        if isa(prf, NamedTuple)
+            st = (;)
+            for prs in propertynames(prf)
+                prsf = getfield(prf, prs)
+                st = setTupleField(st, (prs, Val(prsf)))
             end
-            push!(param_vals, param_typed)
+            prtoset = st
         end
-        model_instance = model_obj(param_vals...)
+        new_run = setTupleField(new_run, (pr, prtoset))
     end
-    return model_instance
+    return new_run
 end
 
-"""
-    getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
-
-sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run.
-
-  - allows for a faster spinup if some models can be turned off
-  - relies on use4spinup flag in model_structure
-  - by design, the spinup models should be subset of forward models
-"""
-
-"""
-    getSpinupAndForwardModels(info::NamedTuple)
-
-DOCSTRING
-"""
-function getSpinupAndForwardModels(info::NamedTuple)
-    sel_appr_forward = ()
-    sel_appr_spinup = ()
-    is_spinup = Int64[]
-    selModelsOrdered = info.tem.models.selected_models.model
-    default_model = getfield(info.model_structure, :default_model)
-    for sm ∈ selModelsOrdered
-        modInfo = getfield(info.model_structure.models, sm)
-        modAppr = modInfo.approach
-        sel_approach = String(sm) * "_" * modAppr
-        sel_approach_func = getTypedModel(Symbol(sel_approach), info.tem.helpers.numbers.sNT)
-        # sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
-        sel_appr_forward = (sel_appr_forward..., sel_approach_func)
-        if :use4spinup in propertynames(modInfo)
-            use4spinup = modInfo.use4spinup
-        else
-            use4spinup = default_model.use4spinup
-        end
-        if use4spinup == true
-            push!(is_spinup, 1)
-        else
-            push!(is_spinup, 0)
-        end
-    end
-    # change is_spinup to a vector of indices
-    is_spinup = findall(is_spinup .== 1)
-
-    # update the parameters of the approaches if a parameter value has been added from the experiment configuration
-    if hasproperty(info, :parameters)
-        if !isempty(info.parameters)
-            original_params_forward = getParameters(sel_appr_forward)
-            input_params = info.parameters
-            updated_params = setInputParameters(original_params_forward, input_params)
-            updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward)
-
-            info = (;
-                info...,
-                tem=(;
-                    info.tem...,
-                    models=(;
-                        info.tem.models...,
-                        forward=updated_appr_forward,
-                        is_spinup=is_spinup)))
-        end
-    else
-        info = (;
-            info...,
-            tem=(;
-                info.tem...,
-                models=(;
-                    info.tem.models...,
-                    forward=sel_appr_forward,
-                    is_spinup=is_spinup)))
-    end
-    return info
-end
 
 """
     generateDatesInfo(info)
@@ -830,82 +172,6 @@ function generateDatesInfo(info::NamedTuple)
     return info
 end
 
-"""
-    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", num_type=Float64)
-
-A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
-"""
-
-"""
-    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename = , num_type = Float64)
-
-DOCSTRING
-
-# Arguments:
-- `mainPools`: DESCRIPTION
-- `poolData`: DESCRIPTION
-- `layerThicknesses`: DESCRIPTION
-- `nlayers`: DESCRIPTION
-- `layer`: DESCRIPTION
-- `inits`: DESCRIPTION
-- `subPoolName`: DESCRIPTION
-- `mainPoolName`: DESCRIPTION
-- `prename`: DESCRIPTION
-- `num_type`: DESCRIPTION
-"""
-function getPoolInformation(mainPools,
-    poolData,
-    layerThicknesses,
-    nlayers,
-    layer,
-    inits,
-    subPoolName,
-    mainPoolName;
-    prename="",
-    num_type=Float64)
-    for mainPool ∈ mainPools
-        prefix = prename
-        poolInfo = getproperty(poolData, mainPool)
-        if !isa(poolInfo, NamedTuple)
-            if isa(poolInfo[1], Number)
-                lenpool = poolInfo[1]
-                # layerThickNess = repeat([nothing], lenpool)
-                layerThickNess = num_type.(poolInfo[1])
-            else
-                lenpool = length(poolInfo[1])
-                layerThickNess = num_type.(poolInfo[1])
-            end
-
-            append!(layerThicknesses, layerThickNess)
-            append!(nlayers, fill(1, lenpool))
-            append!(layer, collect(1:lenpool))
-            append!(inits, fill(num_type(poolInfo[2]), lenpool))
-
-            if prename == ""
-                append!(subPoolName, fill(mainPool, lenpool))
-                append!(mainPoolName, fill(mainPool, lenpool))
-            else
-                append!(subPoolName, fill(Symbol(String(prename) * string(mainPool)), lenpool))
-                append!(mainPoolName, fill(Symbol(String(prename)), lenpool))
-            end
-        else
-            prefix = prename * String(mainPool)
-            subPools = propertynames(poolInfo)
-            layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName =
-                getPoolInformation(subPools,
-                    poolInfo,
-                    layerThicknesses,
-                    nlayers,
-                    layer,
-                    inits,
-                    subPoolName,
-                    mainPoolName;
-                    prename=prefix,
-                    num_type=num_type)
-        end
-    end
-    return layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName
-end
 
 """
     generatePoolsInfo(info)
@@ -1153,59 +419,7 @@ function generatePoolsInfo(info::NamedTuple)
     # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
     return info
 end
-"""
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:view})
 
-DOCSTRING
-
-# Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
-"""
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:view})
-    if ismain
-        num_type.(inVals)
-    else
-        @view poolArray[[indx...]]
-    end
-end
-"""
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:array})
-
-DOCSTRING
-
-# Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
-"""
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:array})
-    return num_type.(inVals)
-end
-"""
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:staticarray})
-
-DOCSTRING
-
-# Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
-- `num_type`: DESCRIPTION
-- `indx`: DESCRIPTION
-- `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
-"""
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:staticarray})
-    return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
-    # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
-end
 
 """
     getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
@@ -1328,67 +542,26 @@ end
 
 
 """
-    prepNumericHelpers(info, ttype=info.experiment.exe_rules.data_type)
+    getLoopingInfo(info)
 
-prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
 """
 
 """
-    prepNumericHelpers(info::NamedTuple, ttype)
+    getLoopingInfo(info::NamedTuple)
 
 DOCSTRING
 """
-function prepNumericHelpers(info::NamedTuple, ttype)
-    num_type = getNumberType(ttype)
-    𝟘 = num_type(0.0)
-    𝟙 = num_type(1.0)
-
-    tolerance = num_type(info.experiment.exe_rules.tolerance)
-    info = (; info..., tem=(;))
-    sNT = (a) -> num_type(a)
-    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.data_type)
-        tag_type = ForwardDiff.tagtype(𝟘)
-        @show tag_type, num_type
-        try
-            sNT = (a) -> num_type(tag_type(a))
-            𝟘 = sNT(0.0)
-            𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.exe_rules.tolerance)
-        catch
-            sNT = (a) -> num_type(a)
-            𝟘 = sNT(0.0)
-            𝟙 = sNT(1.0)
-            tolerance = sNT(info.experiment.exe_rules.tolerance)
-        end
-    end
-    num_helpers = (;
-        𝟘=𝟘,
-        𝟙=𝟙,
-        tolerance=tolerance,
-        num_type=num_type,
-        sNT=sNT
-    )
-    return num_helpers
+function getLoopingInfo(info::NamedTuple)
+    run_vals = convertRunFlagsToVal(info)
+    run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
+    # run_info = setTupleField(run_info, (:loop, (;)))
+    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.exe_rules.forward_diff)))
+    run_info = setTupleField(run_info,
+        (:parallelization, Val(Symbol(info.experiment.exe_rules.parallelization))))
+    return run_info
 end
 
-"""
-    setNumericHelpers(info, ttype=info.experiment.exe_rules.data_type)
-
-prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run.
-"""
-
-"""
-    setNumericHelpers(info::NamedTuple, ttype)
-
-DOCSTRING
-"""
-function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.data_type)
-    num_helpers = prepNumericHelpers(info, ttype)
-    info = (;
-        info...,
-        tem=(; helpers=(; numbers=num_helpers)))
-    return info
-end
 
 """
     getNumberType(t::String)
@@ -1419,85 +592,228 @@ function getNumberType(t::DataType)
     return t
 end
 
-"""
-    getVariableGroups(varList)
-
-get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land).
-"""
 
 """
-    getVariableGroups(varList::AbstractArray)
+    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
 
-DOCSTRING
+gets the ordered list of selected models from info.model_structure.models
+- orders them as given in sindbad_models in models.jl.
+- consistency check using checkSelectedModels for the existence of user-provided model.
 """
-function getVariableGroups(varList::AbstractArray)
-    var_dict = Dict()
-    for var ∈ varList
-        var_l = String(var)
-        vf = split(var_l, ".")[1]
-        vvar = split(var_l, ".")[2]
-        if vf ∉ keys(var_dict)
-            var_dict[vf] = []
-            push!(var_dict[vf], vvar)
-        else
-            push!(var_dict[vf], vvar)
+function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
+    fullModels = changeModelOrder(info, selModels)
+    checkSelectedModels(fullModels, selModels)
+    selModelsOrdered = []
+    for msm ∈ fullModels
+        if msm in selModels
+            push!(selModelsOrdered, msm)
         end
     end
-    varNT = (;)
-    for (k, v) ∈ var_dict
-        varNT = setTupleField(varNT, (Symbol(k), tuple(Symbol.(v)...)))
+
+    return selModelsOrdered
+end
+
+"""
+    getParameters(selectedModels)
+
+DOCSTRING
+"""
+function getParameters(selectedModels)
+    default = [flatten(selectedModels)...]
+    constrains = metaflatten(selectedModels, Models.bounds)
+    nbounds = length(constrains)
+    lower = [constrains[i][1] for i ∈ 1:nbounds]
+    upper = [constrains[i][2] for i ∈ 1:nbounds]
+    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selectedModels)...]
+    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
+    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
+    approach_func = [getfield(Models, m) for m ∈ model_approach]
+    return Table(;
+        name,
+        default,
+        optim=default,
+        lower,
+        upper,
+        model,
+        model_approach,
+        approach_func,
+        name_full)
+end
+
+
+"""
+    getParameters(selectedModels, model_parameter_default)
+
+retrieve all model parameters
+"""
+function getParameters(selectedModels, model_parameter_default)
+    default = [flatten(selectedModels)...]
+    constrains = metaflatten(selectedModels, Models.bounds)
+    nbounds = length(constrains)
+    lower = [constrains[i][1] for i ∈ 1:nbounds]
+    upper = [constrains[i][2] for i ∈ 1:nbounds]
+    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selectedModels)...]
+    model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
+    name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
+    approach_func = [getfield(Models, m) for m ∈ model_approach]
+    dp_dist = typeof(default[1]).(model_parameter_default[:distribution][2])
+    # dp_dist = Tuple(dp_dist)
+    dist = [model_parameter_default[:distribution][1] for m ∈ model_approach]
+    p_dist = [dp_dist for m ∈ model_approach]
+    is_ml = [model_parameter_default.is_ml for m ∈ model_approach]
+    return Table(;
+        name,
+        default,
+        optim=default,
+        lower,
+        upper,
+        model,
+        model_approach,
+        approach_func,
+        name_full,
+        dist,
+        p_dist,
+        is_ml)
+end
+
+"""
+    getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
+
+DOCSTRING
+
+# Arguments:
+- `selectedModels`: DESCRIPTION
+- `model_parameter_default`: DESCRIPTION
+- `opt_parameter`: DESCRIPTION
+"""
+function getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
+    opt_parameter = replaceCommaSeparatorParams(opt_parameter)
+    paramstbl = getParameters(selectedModels, model_parameter_default)
+    return filter(row -> row.name_full in opt_parameter, paramstbl)
+end
+
+"""
+    getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
+
+DOCSTRING
+
+# Arguments:
+- `selectedModels`: DESCRIPTION
+- `model_parameter_default`: DESCRIPTION
+- `opt_parameter`: DESCRIPTION
+"""
+function getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
+    param_list = replaceCommaSeparatorParams(keys(opt_parameter))
+    paramstbl = getParameters(selectedModels, model_parameter_default, param_list)
+    pTable = filter(row -> row.name_full in param_list, paramstbl)
+    new_dist = pTable.dist
+    new_p_dist = pTable.p_dist
+    new_is_ml = pTable.is_ml
+    pInd = 1
+    for pp ∈ param_list
+        p_ = opt_parameter[pInd]
+        if !isnothing(p_)
+            if hasproperty(p_, :is_ml)
+                new_is_ml[pInd] = getfield(p_, :is_ml)
+            end
+            if hasproperty(p_, :distribution)
+                nd = getproperty(p_, :distribution)
+                new_dist[pInd] = nd[1]
+                new_p_dist[pInd] = nd[2]
+            end
+        end
+        pInd = pInd + 1
     end
-    return varNT
+    pTable.is_ml .= new_is_ml
+    pTable.dist .= new_dist
+    pTable.p_dist .= new_p_dist
+    return pTable
 end
 
-"""
-    getVariablesToStore(info)
-
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
-"""
 
 """
-    getVariablesToStore(info::NamedTuple)
+    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", num_type=Float64)
+
+A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
+"""
+
+"""
+    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename = , num_type = Float64)
 
 DOCSTRING
+
+# Arguments:
+- `mainPools`: DESCRIPTION
+- `poolData`: DESCRIPTION
+- `layerThicknesses`: DESCRIPTION
+- `nlayers`: DESCRIPTION
+- `layer`: DESCRIPTION
+- `inits`: DESCRIPTION
+- `subPoolName`: DESCRIPTION
+- `mainPoolName`: DESCRIPTION
+- `prename`: DESCRIPTION
+- `num_type`: DESCRIPTION
 """
-function getVariablesToStore(info::NamedTuple)
-    writeStoreVars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
-    info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
-    return info
+function getPoolInformation(mainPools,
+    poolData,
+    layerThicknesses,
+    nlayers,
+    layer,
+    inits,
+    subPoolName,
+    mainPoolName;
+    prename="",
+    num_type=Float64)
+    for mainPool ∈ mainPools
+        prefix = prename
+        poolInfo = getproperty(poolData, mainPool)
+        if !isa(poolInfo, NamedTuple)
+            if isa(poolInfo[1], Number)
+                lenpool = poolInfo[1]
+                # layerThickNess = repeat([nothing], lenpool)
+                layerThickNess = num_type.(poolInfo[1])
+            else
+                lenpool = length(poolInfo[1])
+                layerThickNess = num_type.(poolInfo[1])
+            end
+
+            append!(layerThicknesses, layerThickNess)
+            append!(nlayers, fill(1, lenpool))
+            append!(layer, collect(1:lenpool))
+            append!(inits, fill(num_type(poolInfo[2]), lenpool))
+
+            if prename == ""
+                append!(subPoolName, fill(mainPool, lenpool))
+                append!(mainPoolName, fill(mainPool, lenpool))
+            else
+                append!(subPoolName, fill(Symbol(String(prename) * string(mainPool)), lenpool))
+                append!(mainPoolName, fill(Symbol(String(prename)), lenpool))
+            end
+        else
+            prefix = prename * String(mainPool)
+            subPools = propertynames(poolInfo)
+            layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName =
+                getPoolInformation(subPools,
+                    poolInfo,
+                    layerThicknesses,
+                    nlayers,
+                    layer,
+                    inits,
+                    subPoolName,
+                    mainPoolName;
+                    prename=prefix,
+                    num_type=num_type)
+        end
+    end
+    return layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName
 end
-
-"""
-    getLoopingInfo(info)
-
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
-"""
-
-"""
-    getLoopingInfo(info::NamedTuple)
-
-DOCSTRING
-"""
-function getLoopingInfo(info::NamedTuple)
-    run_vals = convertRunFlagsToVal(info)
-    run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
-    # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.exe_rules.forward_diff)))
-    run_info = setTupleField(run_info,
-        (:parallelization, Val(Symbol(info.experiment.exe_rules.parallelization))))
-    return run_info
-end
-
-"""
-    getRestartFilePath(info)
-
-Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
-"""
 
 """
     getRestartFilePath(info::NamedTuple)
 
-DOCSTRING
+Checks if the restartFile in experiment.model_spinup is an absolute path. If not, uses experiment_root as the base path to create an absolute path for loadSpinup, and uses output.root as the base for saveSpinup
 """
 function getRestartFilePath(info::NamedTuple)
     restart_file_in = info.experiment.model_spinup.paths.restart_file_in
@@ -1553,15 +869,623 @@ function getRestartFilePath(info::NamedTuple)
 end
 
 """
-    setupExperiment(info)
+    getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
 
-uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run.
+
+  - allows for a faster spinup if some models can be turned off
+  - relies on use4spinup flag in model_structure
+  - by design, the spinup models should be subset of forward models
 """
+
+"""
+    getSpinupAndForwardModels(info::NamedTuple)
+
+DOCSTRING
+"""
+function getSpinupAndForwardModels(info::NamedTuple)
+    sel_appr_forward = ()
+    sel_appr_spinup = ()
+    is_spinup = Int64[]
+    selModelsOrdered = info.tem.models.selected_models.model
+    default_model = getfield(info.model_structure, :default_model)
+    for sm ∈ selModelsOrdered
+        modInfo = getfield(info.model_structure.models, sm)
+        modAppr = modInfo.approach
+        sel_approach = String(sm) * "_" * modAppr
+        sel_approach_func = getTypedModel(Symbol(sel_approach), info.tem.helpers.numbers.sNT)
+        # sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
+        sel_appr_forward = (sel_appr_forward..., sel_approach_func)
+        if :use4spinup in propertynames(modInfo)
+            use4spinup = modInfo.use4spinup
+        else
+            use4spinup = default_model.use4spinup
+        end
+        if use4spinup == true
+            push!(is_spinup, 1)
+        else
+            push!(is_spinup, 0)
+        end
+    end
+    # change is_spinup to a vector of indices
+    is_spinup = findall(is_spinup .== 1)
+
+    # update the parameters of the approaches if a parameter value has been added from the experiment configuration
+    if hasproperty(info, :parameters)
+        if !isempty(info.parameters)
+            original_params_forward = getParameters(sel_appr_forward)
+            input_params = info.parameters
+            updated_params = setInputParameters(original_params_forward, input_params)
+            updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward)
+
+            info = (;
+                info...,
+                tem=(;
+                    info.tem...,
+                    models=(;
+                        info.tem.models...,
+                        forward=updated_appr_forward,
+                        is_spinup=is_spinup)))
+        end
+    else
+        info = (;
+            info...,
+            tem=(;
+                info.tem...,
+                models=(;
+                    info.tem.models...,
+                    forward=sel_appr_forward,
+                    is_spinup=is_spinup)))
+    end
+    return info
+end
+
+
+"""
+    getTypedModel(model, sNT)
+
+get Sindbad model, and instatiate them with the datatype set in model_run
+"""
+function getTypedModel(model, sNT)
+    model_obj = getfield(Sindbad.Models, Symbol(model))
+    model_instance = model_obj()
+    param_names = fieldnames(model_obj)
+    if length(param_names) > 0
+        param_vals = []
+        for pn ∈ param_names
+            param = getfield(model_obj(), pn)
+            param_typed = if typeof(param) <: Array
+                sNT.(param)
+            else
+                sNT(param)
+            end
+            push!(param_vals, param_typed)
+        end
+        model_instance = model_obj(param_vals...)
+    end
+    return model_instance
+end
+
+"""
+    getVariableGroups(varList::AbstractArray)
+
+get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land
+"""
+function getVariableGroups(varList::AbstractArray)
+    var_dict = Dict()
+    for var ∈ varList
+        var_l = String(var)
+        vf = split(var_l, ".")[1]
+        vvar = split(var_l, ".")[2]
+        if vf ∉ keys(var_dict)
+            var_dict[vf] = []
+            push!(var_dict[vf], vvar)
+        else
+            push!(var_dict[vf], vvar)
+        end
+    end
+    varNT = (;)
+    for (k, v) ∈ var_dict
+        varNT = setTupleField(varNT, (Symbol(k), tuple(Symbol.(v)...)))
+    end
+    return varNT
+end
+
+"""
+    getVariablesToStore(info::NamedTuple)
+
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
+"""
+function getVariablesToStore(info::NamedTuple)
+    writeStoreVars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
+    info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
+    return info
+end
+
+
+
+"""
+    parseSaveCode(info)
+
+parse and save the code and structs of selected model structure for the given experiment
+"""
+function parseSaveCode(info)
+    models = info.tem.models.forward
+    outfile_define = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_definitions.jl")
+    outfile_code = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_functions.jl")
+    outfile_struct = joinpath(info.output.code, info.experiment.basics.name * "_" * info.experiment.basics.domain * "_model_structs.jl")
+    fallback_code_define = nothing
+    fallback_code_precompute = nothing
+    fallback_code_compute = nothing
+
+    # write define
+    open(outfile_define, "w") do o_file
+        mod_string = "# code for define functions (variable definition) in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. These functions are called just ONCE for variable/array definitions\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in define functions of model approaches in src/Models/[model]/[approach].jl\n"
+        write(o_file, mod_string)
+        for (mi, _mod) in enumerate(models)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
+
+            mod_ending = "\n\n"
+            if mi == lastindex(models)
+                mod_ending = "\n"
+            end
+            mod_code = @code_string Models.define(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", mod_code)
+                if isnothing(fallback_code_define)
+                    fallback_code_define = mod_code
+                end
+            else
+                write(o_file, mod_code * mod_ending)
+            end
+            mod_string = "# --------------------------------------\n"
+            write(o_file, mod_string)
+
+        end
+        mod_string = "\n# fallback define function for LandEcosystem\n"
+        write(o_file, mod_string)
+        write(o_file, fallback_code_define)
+    end
+
+    #write precompute and compute
+    open(outfile_code, "w") do o_file
+        mod_string = "# code for precompute and compute functions in models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain. The precompute functions are called once outside the time loop per iteration in optimization, while compute functions are called every time step. So, derived parameters that depend on model parameters that are optimized should be placed in precompute functions\n"
+        mod_string = "# code for models of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_string from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n"
+        write(o_file, mod_string)
+        for (mi, _mod) in enumerate(models)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
+
+            mod_ending = "\n\n"
+
+            mod_code = @code_string Models.precompute(_mod, nothing, nothing, nothing)
+
+            if occursin("LandEcosystem", mod_code)
+                if isnothing(fallback_code_precompute)
+                    fallback_code_precompute = mod_code * "\n\n"
+                end
+            else
+                write(o_file, mod_code * mod_ending)
+            end
+
+
+            mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            if occursin("LandEcosystem", mod_code)
+                if isnothing(fallback_code_compute)
+                    fallback_code_compute = mod_code
+                end
+            else
+                write(o_file, mod_code * mod_ending)
+            end
+            mod_string = "# --------------------------------------\n"
+            write(o_file, mod_string)
+
+        end
+        mod_string = "\n# fallback precompute and compute functions for LandEcosystem\n"
+        write(o_file, mod_string)
+        write(o_file, fallback_code_precompute)
+        write(o_file, fallback_code_compute)
+    end
+
+    # write structs
+    open(outfile_struct, "w") do o_file
+        mod_string = "# code for parameter structs of SINDBAD for $(info.experiment.basics.name) experiment applied to $(info.experiment.basics.domain) domain\n"
+        write(o_file, mod_string)
+        mod_string = "# based on @code_expr from CodeTracking.jl. In case of conflicts, follow the original code in model approaches in src/Models/[model]/[approach].jl\n\n"
+        write(o_file, mod_string)
+        write(o_file, "abstract type LandEcosystem end\n")
+
+        for (mi, _mod) in enumerate(models)
+            mod_name = string(nameof(supertype(typeof(_mod))))
+            appr_name = string(nameof(typeof(_mod)))
+            mod_file = joinpath(info.sindbad_root, "src/Models", mod_name, appr_name * ".jl")
+            mod_string = "\n# $appr_name\n"
+            write(o_file, mod_string)
+            write(o_file, "# " * mod_file * "\n")
+            mod_string = "# call order: $mi\n\n"
+            write(o_file, mod_string)
+
+            write(o_file, "abstract type $mod_name <: LandEcosystem end\n")
+
+            mod_string = string(@code_expr typeof(_mod)())
+            for xx = 1:100 # maximum line number with parameter definition. Chanage here if with crazy model with large number of parameters still show file path in generated struct.
+                if occursin(mod_file, mod_string)
+                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#\n" => "")
+                    mod_string = replace(mod_string, "#= $(mod_file):$(xx) =#" => "")
+                end
+            end
+            mod_string = replace(mod_string, " @bounds " => "@bounds")
+            mod_string = replace(mod_string, "@describe(" => "@describe")
+            mod_string = replace(mod_string, "@units(" => "@units")
+            mod_string = replace(mod_string, "@with_kw(" => "@with_kw ")
+            mod_string = replace(mod_string, "                    end)))" => "end")
+            mod_string = replace(mod_string, "                end)))" => "end")
+            mod_string = replace(mod_string, "    end" => "end")
+            mod_string = replace(mod_string, "                                        " => "    ")
+            mod_string = replace(mod_string, " = ((" => " = ")
+            mod_string = replace(mod_string, ") |" => " |")
+            # mod_string = "\n # todo get model structs here \n"
+            write(o_file, mod_string * "\n\n")
+            # mod_code = @code_string Models.compute(_mod, nothing, nothing, nothing)
+            # write(o_file, mod_code * "\n")
+            mod_string = "# --------------------------------------\n"
+            if mi == lastindex(models)
+                mod_string = "# --------------------------------------"
+            end
+
+            write(o_file, mod_string)
+        end
+    end
+
+    return nothing
+end
+
+"""
+    prepNumericHelpers(info::NamedTuple, ttype)
+
+prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run
+"""
+function prepNumericHelpers(info::NamedTuple, ttype)
+    num_type = getNumberType(ttype)
+    𝟘 = num_type(0.0)
+    𝟙 = num_type(1.0)
+
+    tolerance = num_type(info.experiment.exe_rules.tolerance)
+    info = (; info..., tem=(;))
+    sNT = (a) -> num_type(a)
+    if occursin("ForwardDiff.Dual", info.experiment.exe_rules.data_type)
+        tag_type = ForwardDiff.tagtype(𝟘)
+        @show tag_type, num_type
+        try
+            sNT = (a) -> num_type(tag_type(a))
+            𝟘 = sNT(0.0)
+            𝟙 = sNT(1.0)
+            tolerance = sNT(info.experiment.exe_rules.tolerance)
+        catch
+            sNT = (a) -> num_type(a)
+            𝟘 = sNT(0.0)
+            𝟙 = sNT(1.0)
+            tolerance = sNT(info.experiment.exe_rules.tolerance)
+        end
+    end
+    num_helpers = (;
+        𝟘=𝟘,
+        𝟙=𝟙,
+        tolerance=tolerance,
+        num_type=num_type,
+        sNT=sNT
+    )
+    return num_helpers
+end
+
+"""
+    replaceCommaSeparatorParams(p_names_list)
+
+DOCSTRING
+"""
+function replaceCommaSeparatorParams(p_names_list)
+    o_p_names_list = []
+    foreach(p_names_list) do p
+        p_name = splitRenameParam(p, ",")
+        push!(o_p_names_list, p_name)
+    end
+    return o_p_names_list
+end
+
+"""
+    splitRenameParam(_p::Symbol, _splitter)
+
+DOCSTRING
+"""
+function splitRenameParam(_p::Symbol, _splitter)
+    p_string = String(_p)
+    return splitRenameParam(p_string, _splitter)
+end
+
+"""
+    splitRenameParam(p_string::String, _splitter)
+
+DOCSTRING
+"""
+function splitRenameParam(p_string::String, _splitter)
+    p_name = strip(p_string)
+    if occursin(_splitter, p_string)
+        p_split = split(p_string, _splitter)
+        p_model = strip(first(p_split))
+        p_param = strip(last(p_split))
+        p_name = "$(p_model).$(p_param)"
+    end
+    return p_name
+end
+
+"""
+    updateModelParameters(tbl_params::Table, selected_models::Tuple)
+
+DOCSTRING
+"""
+function updateModelParameters(tbl_params::Table, selected_models::Tuple)
+    function filtervar(var, modelName, tbl_params, approachx)
+        subtbl = filter(row -> row.name == var && row.model_approach == modelName, tbl_params)
+        if isempty(subtbl)
+            return getproperty(approachx, var)
+        else
+            return subtbl.optim[1]
+        end
+    end
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
+    for (idx, modelName) ∈ enumerate(namesApproaches)
+        approachx = selected_models[idx]
+        newapproachx = if modelName in tbl_params.model_approach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var ∈ vars
+                inOptim = filtervar(var, modelName, tbl_params, approachx)
+                push!(newvals, var => inOptim)
+            end
+            typeof(approachx)(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
+
+"""
+    updateModelParameters(tbl_params, selected_models::Tuple, pVector)
+
+update models/parameters without mutating the table of parameters
+
+# Arguments:
+- `tbl_params`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `pVector`: DESCRIPTION
+"""
+function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
+    for (idx, modelName) ∈ enumerate(namesApproaches)
+        approachx = selected_models[idx]
+        model_obj = approachx
+        newapproachx = if modelName in tbl_params.model_approach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var ∈ vars
+                pindex = findall(row -> row.name == var && row.model_approach == modelName,
+                    tbl_params)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    pval = pVector[pindex[1]]
+                end
+                push!(newvals, var => pval)
+            end
+            typeof(approachx)(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
+"""
+    updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
+
+get the new instances of the model with same parameter types as mentioned in pVector
+
+# Arguments:
+- `tbl_params`: DESCRIPTION
+- `selected_models`: a tuple of models selected for the given model structure
+- `pVector`: DESCRIPTION
+"""
+function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)
+    updatedModels = Models.LandEcosystem[]
+    namesApproaches = nameof.(typeof.(selected_models)) # a better way to do this?
+    for (idx, modelName) ∈ enumerate(namesApproaches)
+        approachx = selected_models[idx]
+        model_obj = approachx
+        newapproachx = if modelName in tbl_params.model_approach
+            vars = propertynames(approachx)
+            newvals = Pair[]
+            for var ∈ vars
+                pindex = findall(row -> row.name == var && row.model_approach == modelName,
+                    tbl_params)
+                pval = getproperty(approachx, var)
+                if !isempty(pindex)
+                    model_obj = tbl_params[pindex[1]].approach_func
+                    pval = pVector[pindex[1]]
+                end
+                push!(newvals, var => pval)
+            end
+            model_obj(; newvals...)
+        else
+            approachx
+        end
+        push!(updatedModels, newapproachx)
+    end
+    return (updatedModels...,)
+end
+
+
+# """
+# updateModelParametersType(tbl_params, selected_models, pVector)
+# get the new instances of the model with same parameter types as mentioned in pVector
+# """
+# function updateModelParametersType(tbl_params, selected_models, pVector)
+#     updatedModels = Models.LandEcosystem[]
+#     foreach(selected_models) do approachx
+#         modelName = nameof(typeof(approachx))
+#         #model_obj = approachx
+#         newapproachx = if modelName in tbl_params.model_approach
+#             vars = getproperties(approachx)
+#             newvals = Pair[]
+#             for (k, var) ∈ pairs(vars)
+#                 pindex = findall(row -> row.name == k && row.model_approach == modelName,
+#                     tbl_params)
+#                 #pval = getproperty(approachx, var)
+#                 if !isempty(pindex)
+#                     #model_obj = tbl_params[pindex[1]].approach_func
+#                     var = pVector[pindex[1]]
+#                 end
+#                 push!(newvals, k => var)
+#             end
+#             constructorof(typeof(approachx))(; newvals...)
+#         else
+#             approachx
+#         end
+#         push!(updatedModels, newapproachx)
+#     end
+#     return updatedModels
+# end
+
+
+"""
+    setInputParameters(original_table::Table, updated_table::Table)
+
+updates the model parameters based on input from params.json
+
+  - new table with the optimised/modified values from params.json.
+"""
+
+"""
+    setInputParameters(original_table::Table, updated_table::Table)
+
+DOCSTRING
+"""
+function setInputParameters(original_table::Table, updated_table::Table)
+    upoTable = copy(original_table)
+    for i ∈ eachindex(updated_table)
+        subtbl = filter(
+            row ->
+                row.name == Symbol(updated_table[i].name) &&
+                    row.model == Symbol(updated_table[i].model),
+            original_table)
+        if isempty(subtbl)
+            error("model: parameter $(updated_table[i].name) not found in model $(updated_table[i].models). Make sure that the parameter exists in the selected approach for $(updated_table[i].models) or correct the parameter name in params input.")
+        else
+            posmodel = findall(x -> x == Symbol(updated_table[i].model), upoTable.model)
+            posvar = findall(x -> x == Symbol(updated_table[i].name), upoTable.name)
+            pindx = intersect(posmodel, posvar)
+            pindx = length(pindx) == 1 ? pindx[1] : error("Delete duplicates in parameters table.")
+            upoTable.optim[pindx] = updated_table.optim[i]
+        end
+    end
+    return upoTable
+end
+
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:view})
+
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:view})
+    if ismain
+        num_type.(inVals)
+    else
+        @view poolArray[[indx...]]
+    end
+end
+
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:array})
+
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:array})
+    return num_type.(inVals)
+end
+
+"""
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, nothing::Val{:staticarray})
+
+DOCSTRING
+
+# Arguments:
+- `inVals`: DESCRIPTION
+- `poolArray`: DESCRIPTION
+- `num_type`: DESCRIPTION
+- `indx`: DESCRIPTION
+- `ismain`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:staticarray})
+    return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
+    # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
+end
+
+
+"""
+    setNumericHelpers(info::NamedTuple, ttype)
+
+prepare helpers related to numeric data type. This is essentially a holder of information that is needed to maintain the type of data across models, and has alias for 0 and 1 with the number type selected in info.model_run
+"""
+function setNumericHelpers(info::NamedTuple, ttype=info.experiment.exe_rules.data_type)
+    num_helpers = prepNumericHelpers(info, ttype)
+    info = (;
+        info...,
+        tem=(; helpers=(; numbers=num_helpers)))
+    return info
+end
+
 
 """
     setupExperiment(info::NamedTuple)
 
-DOCSTRING
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function setupExperiment(info::NamedTuple)
     @info "SetupExperiment: setting Numeric Helpers..."
@@ -1642,6 +1566,6 @@ function setupExperiment(info::NamedTuple)
         sel_vars = info.tem.variables
     end
     info = (; info..., tem=(; info.tem..., variables=sel_vars))
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
     return info
 end

@@ -196,7 +196,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
     land_one = removeEmptyTupleFields(land_one)
     land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
-    println("----------------------------------------------")
+    @info "\n----------------------------------------------\n"
 
     return forcing_nt_array,
     loc_forcings,

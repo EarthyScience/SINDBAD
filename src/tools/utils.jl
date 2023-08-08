@@ -72,23 +72,6 @@ end
 
 
 """
-    dictToNamedTuple(d::AbstractDict)
-
-covert nested dictionary to NamedTuple
-"""
-function dictToNamedTuple(d::AbstractDict)
-    for k ∈ keys(d)
-        if d[k] isa Array{Any,1}
-            d[k] = [v for v ∈ d[k]]
-        elseif d[k] isa DataStructures.OrderedDict
-            d[k] = dictToNamedTuple(d[k])
-        end
-    end
-    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
-    return dTuple
-end
-
-"""
     DocStringExtensions.format(abbrv::BoundFields, buf, doc)
 
 DOCSTRING
@@ -141,6 +124,24 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
 end
 
 """
+    dictToNamedTuple(d::AbstractDict)
+
+covert nested dictionary to NamedTuple
+"""
+function dictToNamedTuple(d::AbstractDict)
+    for k ∈ keys(d)
+        if d[k] isa Array{Any,1}
+            d[k] = [v for v ∈ d[k]]
+        elseif d[k] isa DataStructures.OrderedDict
+            d[k] = dictToNamedTuple(d[k])
+        end
+    end
+    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
+    return dTuple
+end
+
+
+"""
     flagOffDiag(A::AbstractMatrix)
 
 returns a matrix of same shape as input with 1 for all non diagonal elements
@@ -149,6 +150,22 @@ function flagOffDiag(A::AbstractMatrix)
     o_mat = zeros(size(A))
     for ι ∈ CartesianIndices(A)
         if ι[1] ≠ ι[2]
+            o_mat[ι] = 1
+        end
+    end
+    return o_mat
+end
+
+
+"""
+    flagLower(A::AbstractMatrix)
+
+returns a matrix of same shape as input with 1 for all below diagonal elements and 0 elsewhere
+"""
+function flagLower(A::AbstractMatrix)
+    o_mat = zeros(size(A))
+    for ι ∈ CartesianIndices(A)
+        if ι[1] > ι[2]
             o_mat[ι] = 1
         end
     end
@@ -170,20 +187,6 @@ function flagUpper(A::AbstractMatrix)
     return o_mat
 end
 
-"""
-    flagLower(A::AbstractMatrix)
-
-returns a matrix of same shape as input with 1 for all below diagonal elements and 0 elsewhere
-"""
-function flagLower(A::AbstractMatrix)
-    o_mat = zeros(size(A))
-    for ι ∈ CartesianIndices(A)
-        if ι[1] > ι[2]
-            o_mat[ι] = 1
-        end
-    end
-    return o_mat
-end
 
 """
     getBool(var::Bool)
@@ -444,29 +447,8 @@ end
 
 returns a vector comprising of off diagonal elements of a matrix
 """
-
-"""
-    offDiag(A::AbstractMatrix)
-
-DOCSTRING
-"""
 function offDiag(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] ≠ ι[2]]]
-end
-
-"""
-    offDiagUpper(A::AbstractMatrix)
-
-returns a vector comprising of above diagonal elements of a matrix
-"""
-
-"""
-    offDiagUpper(A::AbstractMatrix)
-
-DOCSTRING
-"""
-function offDiagUpper(A::AbstractMatrix)
-    @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] < ι[2]]]
 end
 
 """
@@ -474,15 +456,19 @@ end
 
 returns a vector comprising of below diagonal elements of a matrix
 """
-
-"""
-    offDiagLower(A::AbstractMatrix)
-
-DOCSTRING
-"""
 function offDiagLower(A::AbstractMatrix)
     @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] > ι[2]]]
 end
+
+"""
+    offDiagUpper(A::AbstractMatrix)
+
+returns a vector comprising of above diagonal elements of a matrix
+"""
+function offDiagUpper(A::AbstractMatrix)
+    @view A[[ι for ι ∈ CartesianIndices(A) if ι[1] < ι[2]]]
+end
+
 
 macro pack_land(outparams)
     @assert outparams.head == :block || outparams.head == :call || outparams.head == :(=)
@@ -723,6 +709,7 @@ function setLogLevel()
     logger = ConsoleLogger(stderr, Logging.Info)
     global_logger(logger)
 end
+
 """
     setLogLevel(log_level)
 
@@ -798,6 +785,7 @@ function setMainFromComponentPool(
                         Expr(:kw, s_main, s_main))))))))
     return output
 end
+
 """
     setTupleSubfield(out, fieldname, vals)
 
@@ -1012,14 +1000,9 @@ end
 
 
 """
-valToSymbol(val)
-returns the symbol from which val was created for a type dispatch based on name
-"""
-
-"""
     valToSymbol(val)
 
-DOCSTRING
+returns the symbol from which val was created for a type dispatch based on name
 """
 function valToSymbol(val)
     return typeof(val).parameters[1]

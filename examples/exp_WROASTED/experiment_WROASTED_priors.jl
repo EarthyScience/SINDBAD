@@ -5,6 +5,7 @@ using OptimizeSindbad
 
 # TODO add to OptimizeSindbad
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains
+
 # using Cthulhu
 using BenchmarkTools
 noStackTrace()
@@ -14,13 +15,6 @@ eYear = "2017"
 
 path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 forcingConfig = "forcing_erai.json"
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-path_input = "../data/BE-Vie.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
 path_observation = path_input
 optimize_it = true
 optimize_it = false

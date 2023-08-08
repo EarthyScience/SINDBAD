@@ -1,6 +1,7 @@
 module Sindbad
 using Reexport: @reexport
 using CodeTracking
+using ConstructionBase
 using Crayons
 using CSV: CSV
 using DataStructures: DataStructures
