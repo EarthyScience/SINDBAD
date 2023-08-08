@@ -162,7 +162,7 @@ DOCSTRING
 
 # Arguments:
 - `model_output`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: DESCRIPTION
 """
 function getData(model_output::landWrapper, observations, cost_option)
@@ -202,7 +202,7 @@ DOCSTRING
 
 # Arguments:
 - `model_output`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_option`: DESCRIPTION
 """
 function getData(model_output::AbstractArray, observations, cost_option)
@@ -286,7 +286,7 @@ DOCSTRING
 - `land_timeseries`: DESCRIPTION
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: DESCRIPTION
 - `cost_options`: DESCRIPTION
 - `multiconstraint_method`: DESCRIPTION
@@ -326,7 +326,7 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: DESCRIPTION
 - `cost_options`: DESCRIPTION
 - `multiconstraint_method`: DESCRIPTION
@@ -368,7 +368,7 @@ DOCSTRING
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
 - `loc_space_inds`: a collection of spatial indices/pairs of indices used to loop through space in parallelization
 - `tem`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: DESCRIPTION
 - `cost_options`: DESCRIPTION
 - `multiconstraint_method`: DESCRIPTION
@@ -413,7 +413,7 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 DOCSTRING
 
 # Arguments:
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `model_output`: DESCRIPTION
 - `cost_options`: DESCRIPTION
 """
@@ -498,7 +498,7 @@ DOCSTRING
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """
@@ -564,9 +564,9 @@ DOCSTRING
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `nothing`: DESCRIPTION
+- `::Val{:land_stacked}`: a value to indicate that the time loop of the model will stack the land as a time series when runTEM is called
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
@@ -627,7 +627,7 @@ DOCSTRING
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 """

@@ -49,7 +49,7 @@ DOCSTRING
 - `output`: DESCRIPTION
 - `tem`: DESCRIPTION
 - `optim`: DESCRIPTION
-- `observations`: DESCRIPTION
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `max_cache`: DESCRIPTION
 """
 function mapOptimizeModel(forcing::NamedTuple,
