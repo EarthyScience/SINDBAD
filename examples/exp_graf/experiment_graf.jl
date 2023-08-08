@@ -4,8 +4,8 @@ using Revise
 @time using OptimizeSindbad
 noStackTrace()
 domain = "africa";
-optimize_it = true;
-# optimize_it = false;
+# optimize_it = true;
+optimize_it = false;
 
 # experiment_json = "./settings_distri/experimentW.json"
 # info = getConfiguration(experiment_json);
@@ -14,7 +14,7 @@ optimize_it = true;
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => true,
+    "experiment.flags.calc_cost" => optimize_it,
     "experiment.flags.spinup.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.flags.spinup.run_spinup" => true);
@@ -25,6 +25,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = getArray(observations);
+output = setupOutput(info, forcing.helpers);
 
 GC.gc()
 

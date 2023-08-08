@@ -3,6 +3,99 @@ export getGlobalAttributesForOutCubes
 export getOutputFileInfo
 export getVariableInfo
 
+
+"""
+    getGlobalAttributesForOutCubes(info)
+
+DOCSTRING
+"""
+function getGlobalAttributesForOutCubes(info)
+    os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
+         "macOS" : Sys.islinux() ? "Linux" : "unknown"
+    io = IOBuffer()
+    versioninfo(io)
+    str = String(take!(io))
+    julia_info = split(str, "\n")
+
+    io = IOBuffer()
+    Pkg.status("Sindbad", io=io)
+    sindbad_version = String(take!(io))
+    global_attr = Dict(
+        "simulation_by" => ENV["USER"],
+        "experiment" => info.experiment.basics.name,
+        "domain" => info.experiment.basics.domain,
+        "date" => string(Date(now())),
+        # "SINDBAD" => sindbad_version,
+        "machine" => Sys.MACHINE,
+        "os" => os,
+        "host" => gethostname(),
+        "julia" => string(VERSION),
+    )
+    return global_attr
+end
+
+"""
+    getModelDataArray(model_data::AbstractArray{T, 2})
+
+return model data with 1 sized dimension removed in case of 2-dimensional matrix
+"""
+function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
+    return model_data[:, 1]
+end
+
+"""
+    getModelDataArray(model_data::AbstractArray{T, 3})
+
+return model data with 1 sized dimension removed in case of 3-dimensional matrix
+"""
+function getModelDataArray(model_data::AbstractArray{T,3}) where {T}
+    return model_data[:, 1, :]
+end
+
+"""
+    getModelDataArray(model_data::AbstractArray{T, 4})
+
+return model data with 1 sized dimension removed in case of 4-dimensional matrix
+"""
+function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
+    return model_data[:, 1, :, :]
+end
+
+"""
+    getOutputFileInfo(info)
+
+DOCSTRING
+"""
+function getOutputFileInfo(info)
+    global_info = getGlobalAttributesForOutCubes(info)
+    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
+    out_file_info = (; global_info=global_info, file_prefix=file_prefix)
+    return out_file_info
+end
+
+
+"""
+    getUniqueVarNames(var_pairs)
+
+return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
+- uses field__variablename in case of duplicates, else uses the actual model variable name
+"""
+function getUniqueVarNames(var_pairs)
+    pure_vars = getVarName.(var_pairs)
+    fields = getVarField.(var_pairs)
+    uniq_vars = Symbol[]
+    for i in eachindex(pure_vars)
+        n_occur = sum(pure_vars .== pure_vars[i])
+        var_i = pure_vars[i]
+        if n_occur > 1
+            var_i = Symbol(String(fields[i]) * "__" * String(pure_vars[i]))
+        end
+        push!(uniq_vars, var_i)
+    end
+    return uniq_vars
+end
+
+
 """
     getVariableInfo(vari_b, t_step = day)
 
@@ -60,41 +153,6 @@ function getVariableInfo(vari_b::Symbol, t_step="day")
     return Dict(o_varib)
 end
 
-"""
-    getModelDataArray(model_data::AbstractArray{T, 2})
-
-return model data with 1 sized dimension removed in case of 2-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,2}) where {T}
-    return model_data[:, 1]
-end
-
-"""
-    getModelDataArray(model_data::AbstractArray{T, 3})
-
-return model data with 1 sized dimension removed in case of 3-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,3}) where {T}
-    return model_data[:, 1, :]
-end
-
-"""
-    getModelDataArray(model_data::AbstractArray{T, 4})
-
-return model data with 1 sized dimension removed in case of 4-dimensional matrix
-"""
-function getModelDataArray(model_data::AbstractArray{T,4}) where {T}
-    return model_data[:, 1, :, :]
-end
-
-"""
-    getVarName(var_pair)
-
-return the model variable name from a pair consisting of the field and subfield of SINDBAD land
-"""
-function getVarName(var_pair)
-    return last(var_pair)
-end
 
 """
     getVarField(var_pair)
@@ -114,26 +172,17 @@ function getVarFull(var_pair)
     return Symbol(String(first(var_pair)) * "__" * String(last(var_pair)))
 end
 
-"""
-    getUniqueVarNames(var_pairs)
 
-return the list of variable names to be used to write model outputs to a field. - checks if the variable name is duplicated across different fields of SINDBAD land
-- uses field__variablename in case of duplicates, else uses the actual model variable name
 """
-function getUniqueVarNames(var_pairs)
-    pure_vars = getVarName.(var_pairs)
-    fields = getVarField.(var_pairs)
-    uniq_vars = Symbol[]
-    for i in eachindex(pure_vars)
-        n_occur = sum(pure_vars .== pure_vars[i])
-        var_i = pure_vars[i]
-        if n_occur > 1
-            var_i = Symbol(String(fields[i]) * "__" * String(pure_vars[i]))
-        end
-        push!(uniq_vars, var_i)
-    end
-    return uniq_vars
+    getVarName(var_pair)
+
+return the model variable name from a pair consisting of the field and subfield of SINDBAD land
+"""
+function getVarName(var_pair)
+    return last(var_pair)
 end
+
+
 
 """
     getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
@@ -215,7 +264,6 @@ function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, o
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
     for vn ∈ eachindex(var_pairs)
-        var_s = var_pairs[vn]
         catalog_name = catalog_names[vn]
         variable_name = variable_names[vn]
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalog_name, t_step)
@@ -227,47 +275,6 @@ function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, o
     return nothing
 end
 
-"""
-    getGlobalAttributesForOutCubes(info)
-
-DOCSTRING
-"""
-function getGlobalAttributesForOutCubes(info)
-    os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
-         "macOS" : Sys.islinux() ? "Linux" : "unknown"
-    io = IOBuffer()
-    versioninfo(io)
-    str = String(take!(io))
-    julia_info = split(str, "\n")
-
-    io = IOBuffer()
-    Pkg.status("Sindbad", io=io)
-    sindbad_version = String(take!(io))
-    global_attr = Dict(
-        "simulation_by" => ENV["USER"],
-        "experiment" => info.experiment.basics.name,
-        "domain" => info.experiment.basics.domain,
-        "date" => string(Date(now())),
-        # "SINDBAD" => sindbad_version,
-        "machine" => Sys.MACHINE,
-        "os" => os,
-        "host" => gethostname(),
-        "julia" => string(VERSION),
-    )
-    return global_attr
-end
-
-"""
-    getOutputFileInfo(info)
-
-DOCSTRING
-"""
-function getOutputFileInfo(info)
-    global_info = getGlobalAttributesForOutCubes(info)
-    file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    out_file_info = (; global_info=global_info, file_prefix=file_prefix)
-    return out_file_info
-end
 
 """
     saveOutCubes(info, out_cubes, output)
