@@ -1,7 +1,6 @@
 using Revise
 # using YAXArrays
-using Sindbad
-using ForwardSindbad
+using SindbadTEM
 
 Sindbad.noStackTrace()
 experiment_json = "../exp_distri/settings_distri/experiment.json"

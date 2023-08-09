@@ -1,7 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadTEM
 noStackTrace()
 using Dates
 using Plots
@@ -46,7 +44,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 nrepeat = 200
 
 data_path = getAbsDataPath(info, path_input)
-nc = ForwardSindbad.NetCDF.open(data_path);
+nc = SindbadTEM.NetCDF.open(data_path);
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -108,12 +106,12 @@ for (o, v) in enumerate(out_vars)
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     xdata = [info.tem.helpers.dates.range...]
     if size(def_var, 2) == 1
-        plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+        plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
         ylabel!("$(vinfo["standard_name"])")
         savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(vinfo["standard_name"]).png"))
     else
         foreach(axes(def_var, 2)) do ll
-            plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+            plot(xdata, def_var[:, ll]; label="def ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
             ylabel!("$(vinfo["standard_name"])")
             savefig(joinpath(info.output.figure, "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(ll).png"))
         end

@@ -401,7 +401,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
         end
     else
         map(Iterators.flatten(info.tem.variables)) do vn
-            ForwardSindbad.getOrderedOutputList(collect(keys(info.experiment.model_output.variables)), vn)
+            SindbadTEM.getOrderedOutputList(collect(keys(info.experiment.model_output.variables)), vn)
         end
     end
 

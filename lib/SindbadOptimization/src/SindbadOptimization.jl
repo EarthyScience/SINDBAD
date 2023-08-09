@@ -1,7 +1,8 @@
-module OptimizeSindbad
+module SindbadOptimization
 using InteractiveUtils
-using Sindbad
-using ForwardSindbad
+using Reexport: @reexport
+@reexport using Sindbad
+@reexport using SindbadTEM
 using CMAEvolutionStrategy: minimize, xbest
 using Dates
 # using DifferentialEquations
