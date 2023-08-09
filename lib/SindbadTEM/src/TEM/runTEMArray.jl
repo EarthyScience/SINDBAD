@@ -9,7 +9,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `loc_forcing`: a forcing time series set for a single location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `loc_output`: an output array/view for a single location
@@ -52,7 +52,7 @@ struct NoSpinUp end
 core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `loc_forcing`: a forcing time series set for a single location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `loc_output`: an output array/view for a single location
@@ -101,7 +101,7 @@ end
 helper function to collect the forcing and output, and then run the core SINDBAD TEM for a single location using preallocated array as data backend
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `loc_forcing`: a forcing time series set for a single location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
@@ -146,7 +146,7 @@ end
 parallelize SINDBAD TEM using threads as backend
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
@@ -196,7 +196,7 @@ end
 parallelize SINDBAD TEM using qbmap as backend
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
@@ -263,7 +263,7 @@ end
 a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locations and time using preallocated array as model data backend, with precomputed helper objects for efficient runs during optimization
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
@@ -306,7 +306,7 @@ end
 time loop of the model run where forcing for the time step is used to run model compute function, whose output are assigned to preallocated output array
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `loc_forcing`: a forcing time series set for a single location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `loc_output`: an output array/view for a single location
@@ -339,7 +339,7 @@ time loop of the model run where forcing for ONE time step is used to run model 
 
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `loc_forcing`: a forcing time series set for a single location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `loc_output`: an output array/view for a single location
