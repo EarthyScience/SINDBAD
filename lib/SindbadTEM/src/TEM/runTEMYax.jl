@@ -10,7 +10,7 @@ DOCSTRING
 - `args`: DESCRIPTION
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `selected_models`: DESCRIPTION
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing_variables`: DESCRIPTION
 """
 function TEMYax(args...;
@@ -43,7 +43,7 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `selected_models`: DESCRIPTION
+- `selected_models`: a tuple of all models selected in the given model structure
 - `max_cache`: DESCRIPTION
 """
 function runTEMYAX(forcing::NamedTuple,

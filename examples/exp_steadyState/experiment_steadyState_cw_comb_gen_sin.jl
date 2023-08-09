@@ -4,7 +4,7 @@ using Plots
 using Accessors
 noStackTrace()
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, arraymethod, out_path)
+function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, model_array_type, out_path)
     plot_elem = string(plot_elem)
     if plot_var == :cEco
         plt = plot(; legend=:outerbottom, legendcolumns=4, size=(1800, 1200), yscale=:log10, left_margin=1Plots.cm)
@@ -21,7 +21,7 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
     plot!(getfield(out_sp_exp.pools, plot_var);
         linewidth=5,
         label="Exp_Init")
-    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(arraymethod)")
+    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(model_array_type)")
     plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,
@@ -33,7 +33,7 @@ function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_
         xticks=(1:length(xtname) |> collect, string.(xtname)),
         rotation=45)
 
-    savefig(joinpath(out_path, "$(string(plot_var))_sin_explicit_$(plot_elem)_$(arraymethod)_tj-$(tj).png"))
+    savefig(joinpath(out_path, "$(string(plot_var))_sin_explicit_$(plot_elem)_$(model_array_type)_tj-$(tj).png"))
     return nothing
 end
 
@@ -57,18 +57,18 @@ function get_xtick_names(info, land_for_s, look_at)
 end
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 out_sp_exp = nothing
-arraymethod = "staticarray"
+model_array_type = "staticarray"
 tjs = (1, 100, 1_000)#, 10_000)
 # tjs = (1000,)
 # tjs = (10_000,)
 nLoop_pre_spin = 10
-# for arraymethod ∈ ("staticarray",)
-# for arraymethod ∈ ("array",) #, "staticarray")
-for arraymethod ∈ ("staticarray", "array") #, "staticarray")
+# for model_array_type ∈ ("staticarray",)
+# for model_array_type ∈ ("array",) #, "staticarray")
+for model_array_type ∈ ("staticarray", "array") #, "staticarray")
     replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "experiment.exe_rules.model_array_type" => arraymethod,
+        "experiment.exe_rules.model_array_type" => model_array_type,
         "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
@@ -164,12 +164,12 @@ for arraymethod ∈ ("staticarray", "array") #, "staticarray")
                     Val(sp))
             end
             if sel_pool in (:cEco_TWS,)
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, arraymethod, out_path)
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, sel_pool, :TWS, tj, arraymethod, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, model_array_type, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, sel_pool, :TWS, tj, model_array_type, out_path)
             elseif sel_pool == :cEco
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, :C, :cEco, tj, arraymethod, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, :C, :cEco, tj, model_array_type, out_path)
             else
-                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, :W, :TWS, tj, arraymethod, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, :W, :TWS, tj, model_array_type, out_path)
             end
         end
     end

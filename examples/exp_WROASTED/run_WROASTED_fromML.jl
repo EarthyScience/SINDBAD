@@ -55,7 +55,7 @@ for site_index in sites
     path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc")
 
     path_observation = path_input
-    forcingConfig = "forcing_$(forcing_set).json"
+    forcing_config = "forcing_$(forcing_set).json"
 
     path_output = "/Net/Groups/BGI/scratch/skoirala/wroasted_sjindbad_test"
 
@@ -111,10 +111,10 @@ for site_index in sites
 
 
 
-    pl = "threads"
+    parallelization_lib = "threads"
     replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
         "experiment.basics.config_files.optimization" => "optimization_1_1.json",
-        "experiment.basics.config_files.forcing" => forcingConfig,
+        "experiment.basics.config_files.forcing" => forcing_config,
         "experiment.basics.domain" => domain,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.basics.time.date_end" => eYear * "-12-31",
@@ -127,7 +127,7 @@ for site_index in sites
         "experiment.flags.spinup.run_spinup" => true,
         "experiment.model_spinup.sequence" => sequence[2:end],
         "experiment.model_output.path" => path_output,
-        "experiment.exe_rules.parallelization" => pl,
+        "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES.json",
         "optimization.observations.default_observation.data_path" => path_observation,)
 

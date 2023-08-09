@@ -1276,7 +1276,7 @@ update models/parameters without mutating the table of parameters
 
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `pVector`: DESCRIPTION
 """
 function updateModelParameters(tbl_params, selected_models::Tuple, pVector)
@@ -1313,7 +1313,7 @@ get the new instances of the model with same parameter types as mentioned in pVe
 
 # Arguments:
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `pVector`: DESCRIPTION
 """
 function updateModelParametersType(tbl_params, selected_models::Tuple, pVector)

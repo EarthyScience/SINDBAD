@@ -1,5 +1,5 @@
 export createNestedDict
-export deep_merge
+export deepMerge
 export getConfiguration
 export getExperimentConfiguration
 export readConfiguration
@@ -55,19 +55,19 @@ function createNestedDict(dict::AbstractDict)
                 delete!(key_dict, key_list[key_index+1] * string(key_index + 1))
                 delete!(nested_dict, key_list[key_index+1] * string(key_index + 1))
             end
-            nested_dict = deep_merge(nested_dict, key_dict)
+            nested_dict = deepMerge(nested_dict, key_dict)
         end
     end
     return nested_dict
 end
 
 """
-    deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
+    deepMerge(d::AbstractDict...) = merge(deepMerge, d...)
 
 recursively merge nested dictionary fields with priority for the second dictionary
 """
-deep_merge(d::AbstractDict...) = merge(deep_merge, d...)
-deep_merge(d...) = d[end]
+deepMerge(d::AbstractDict...) = merge(deepMerge, d...)
+deepMerge(d...) = d[end]
 
 
 """
@@ -265,6 +265,6 @@ replace the fields of info from json with the values providded in the replace di
 """
 function replaceInfoFields(info::AbstractDict, replace_dict::AbstractDict)
     nested_replace_dict = createNestedDict(replace_dict)
-    info = deep_merge(Dict(info), nested_replace_dict)
+    info = deepMerge(Dict(info), nested_replace_dict)
     return info
 end

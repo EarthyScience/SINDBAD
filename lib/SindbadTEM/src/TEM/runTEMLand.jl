@@ -7,7 +7,7 @@ export runTEM
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
@@ -44,7 +44,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
@@ -91,7 +91,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
@@ -131,7 +131,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
@@ -191,7 +191,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_init`: initial SINDBAD land with all fields and subfields
@@ -213,7 +213,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
@@ -237,7 +237,7 @@ end
 time loop of the model run where forcing for the time step is used to run model compute function, in which land has been preallocated as a vector
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
@@ -268,7 +268,7 @@ end
 time loop of the model run where forcing for ONE time step is used to run model compute function, and display debugging information on allocations and time, in which land has been preallocated as a vector
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
@@ -300,7 +300,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
@@ -329,7 +329,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
