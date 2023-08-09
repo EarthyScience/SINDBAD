@@ -1,10 +1,9 @@
 using Revise
 using ForwardDiff
 
-using Sindbad
-using ForwardSindbad
-using ForwardSindbad: timeLoopForward
-using OptimizeSindbad
+using SindbadTEM
+using SindbadTEM: timeLoopForward
+using SindbadOptimization
 #using AxisKeys: KeyedArray as KA
 #using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 #using Random

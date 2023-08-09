@@ -1,7 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 using Dates
 using Plots
 noStackTrace()
@@ -72,7 +70,7 @@ for site_index in sites
     if !isfile(data_path)
         continue
     end
-    nc = ForwardSindbad.NetCDF.open(data_path)
+    nc = SindbadTEM.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
     nrepeat_d = nothing
@@ -188,7 +186,7 @@ for site_index in sites
         obs_array = getKeyedArray(observations)
 
         # open the matlab simulation data
-        # nc_ml = ForwardSindbad.NetCDF.open(ml_data_file);
+        # nc_ml = SindbadTEM.NetCDF.open(ml_data_file);
 
         varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :c_eco_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :c_eco_k_f_soilT => "fT", :c_eco_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF", :root_water_efficiency => "p_rootFrac_fracRoot2SoilD")
 
@@ -210,12 +208,12 @@ for site_index in sites
             end
             ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
             @show ml_data_file
-            nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
+            nc_ml = SindbadTEM.NetCDF.open(ml_data_file)
             ml_dat = nc_ml[varib_dict[v]][:]
             if v == :agb
                 ml_dat = nc_ml[varib_dict[v]][1, 2, :]
             elseif v == :ndvi
-                ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
+                ml_dat = ml_dat .- SindbadTEM.Statistics.mean(ml_dat)
             end
             (obs_var, obs_σ, jl_dat) = getData(opt_dat, obs_array, var_row)
             obs_var_TMP = obs_var[:, 1, 1, 1]
@@ -285,22 +283,22 @@ for site_index in sites
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
                     @show ml_data_file
-                    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
+                    nc_ml = SindbadTEM.NetCDF.open(ml_data_file)
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+                    plot(xdata, def_var[debug_span, 1]; label="julia ($(round(SindbadTEM.mean(def_var[debug_span, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
                     if !isnothing(ml_dat)
-                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[debug_span]), digits=2)))", size=(2000, 1000))
+                        plot!(xdata, ml_dat[debug_span]; label="matlab ($(round(SindbadTEM.mean(ml_dat[debug_span]), digits=2)))", size=(2000, 1000))
                     end
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(forcing_set).png"))
                 else
                     foreach(axes(def_var, 2)) do ll
-                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(ForwardSindbad.mean(def_var[debug_span, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
+                        plot(xdata, def_var[debug_span, ll]; label="julia ($(round(SindbadTEM.mean(def_var[debug_span, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $ll ($(vinfo["units"]))", left_margin=1Plots.cm)
                         println("           layer => $ll")
 
                         if !isnothing(ml_dat)
-                            plot!(xdata, ml_dat[1, ll, debug_span]; label="matlab ($(round(ForwardSindbad.mean(ml_dat[1, ll, debug_span]), digits=2)))")
+                            plot!(xdata, ml_dat[1, ll, debug_span]; label="matlab ($(round(SindbadTEM.mean(ml_dat[1, ll, debug_span]), digits=2)))")
                         end
                         savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "dbg_wroasted_$(domain)_$(vinfo["standard_name"])_$(ll)_$(forcing_set).png"))
                     end
@@ -320,11 +318,11 @@ for site_index in sites
                     xdata = 1:size(def_var, 1)
                 end
                 if size(def_var, 2) == 1
-                    plot(xdata, def_var[:, 1]; label="def ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(v)")
+                    plot(xdata, def_var[:, 1]; label="def ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(v)")
                     savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(forcing_set).png"))
                 else
                     foreach(axes(def_var, 2)) do ll
-                        plot(xdata, def_var[:, ll]; label="def ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(v)")
+                        plot(xdata, def_var[:, ll]; label="def ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(v)")
                         savefig(joinpath("examples/exp_WROASTED/tmp_figs_comparison/", "forc_wroasted_$(domain)_$(v)_$(ll)_$(forcing_set).png"))
                     end
                 end

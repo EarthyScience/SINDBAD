@@ -1,4 +1,4 @@
-using Sindbad, ForwardSindbad, OptimizeSindbad
+using Sindbad, SindbadTEM, SindbadOptimization
 using ForwardDiff
 
 
@@ -77,14 +77,14 @@ end
 
 
 function reDoOneLocation1(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
-    land = ForwardSindbad.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land = SindbadTEM.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = computeTEM(land, forcing_one_timestep, selected_models, tem_helpers)
     return land
 end
 
 function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
-    land_prec = ForwardSindbad.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land_prec = SindbadTEM.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
@@ -105,7 +105,7 @@ loc_land_init = land_init_space[1];
 loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
-res_out = ForwardSindbad.coreEcosystem(
+res_out = SindbadTEM.coreEcosystem(
     forward,
     loc_forcing,
     tem_helpers,
@@ -114,7 +114,7 @@ res_out = ForwardSindbad.coreEcosystem(
     loc_land_init,
     forcing_one_timestep);
 
-@time ForwardSindbad.coreEcosystem(
+@time SindbadTEM.coreEcosystem(
     forward,
     loc_forcing,
     tem_helpers,
@@ -129,7 +129,7 @@ res_vec = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
 # res_vec = Vector{Any}(undef, info.tem.helpers.dates.size);
 # res_vec = SVector{typeof(land_init_space[1])}[land_init_space[1] for _ in info.tem.helpers.dates.range];
 # res_vec = [land_init_space[1] for _ in info.tem.helpers.dates.range];
-@time big_land = ForwardSindbad.coreEcosystem(
+@time big_land = SindbadTEM.coreEcosystem(
     forward,
     res_vec,
     loc_forcing,
@@ -139,7 +139,7 @@ res_vec = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
     loc_land_init,
     forcing_one_timestep);
 
-@time big_land = ForwardSindbad.coreEcosystem(
+@time big_land = SindbadTEM.coreEcosystem(
     forward,
     loc_forcing,
     tem_helpers,
@@ -159,7 +159,7 @@ function get_loc_loss(
     tem_optim,
     loc_land_init,
     forcing_one_timestep)
-    big_land = ForwardSindbad.coreEcosystem(
+    big_land = SindbadTEM.coreEcosystem(
         updated_models,
         res_vec,
         loc_forcing,
@@ -232,7 +232,7 @@ gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.num
 mods = Tuple(updateModelParametersType(tbl_params, forward, gradDefs));
 dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, forcing_one_timestep);
 
-# @time big_land = ForwardSindbad.coreEcosystem(
+# @time big_land = SindbadTEM.coreEcosystem(
 #     mods,
 #     loc_forcing,
 #     tem_helpers,

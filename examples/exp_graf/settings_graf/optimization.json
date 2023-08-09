@@ -91,7 +91,7 @@
         "cost_options": {
           "cost_metric": "nseinv",
           "temporal_aggr": "month_msc",
-          "temporal_aggr_func": "nanMean",
+          "temporal_aggr_func": "nanmean",
           "temporal_aggr_obs": false
         },
         "data": {
@@ -115,7 +115,7 @@
         "cost_options": {
           "cost_metric": "nseinv",
           "temporal_aggr": "month_msc",
-          "temporal_aggr_func": "nanMean",
+          "temporal_aggr_func": "nanmean",
           "temporal_aggr_obs": false
         },
         "data": {
@@ -134,7 +134,7 @@
         "cost_options": {
           "cost_metric": "pcor2inv",
           "temporal_aggr": "month_anomaly",
-          "temporal_aggr_func": "nanMean",
+          "temporal_aggr_func": "nanmean",
           "temporal_aggr_obs": false
         },
         "data": {

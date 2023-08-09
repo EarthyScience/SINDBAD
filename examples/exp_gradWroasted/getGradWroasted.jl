@@ -1,9 +1,7 @@
 using Revise
 using ForwardDiff
 
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 noStackTrace()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"

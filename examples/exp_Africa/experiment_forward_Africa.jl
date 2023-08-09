@@ -1,15 +1,10 @@
 using Revise
-using Sindbad
-using ForwardSindbad
+using SindbadTEM
 noStackTrace()
 
 domain = "africa";
 optimize_it = true;
 optimize_it = false;
-
-# experiment_json = "./settings_distri/experimentW.json"
-# info = getConfiguration(experiment_json);
-# info = setupExperiment(info);
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,

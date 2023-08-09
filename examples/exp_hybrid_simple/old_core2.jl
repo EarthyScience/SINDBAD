@@ -1,4 +1,4 @@
-using Sindbad, ForwardSindbad, OptimizeSindbad
+using Sindbad, SindbadTEM, SindbadOptimization
 using ForwardDiff
 
 
@@ -50,7 +50,7 @@ end
 
 
 function reDoOneLocation(loc_land_init, selected_models, tem_helpers, loc_forcing, forcing_one_timestep)
-    land_prec = ForwardSindbad.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
+    land_prec = SindbadTEM.definePrecomputeTEM(loc_land_init, getForcingForTimeStep(loc_forcing, 1), selected_models,
         tem_helpers)
     land = land_prec
     for ts = 1:tem_helpers.dates.size
@@ -72,7 +72,7 @@ loc_output = loc_outputs[1];
 loc_forcing = loc_forcings[1];
 
 
-@time big_land = ForwardSindbad.coreEcosystem(
+@time big_land = SindbadTEM.coreEcosystem(
     forward,
     loc_forcing,
     tem_helpers,
@@ -91,7 +91,7 @@ function get_loc_loss(
     tem_models,
     tem_optim,
     forcing_one_timestep)
-    big_land = ForwardSindbad.coreEcosystem(
+    big_land = SindbadTEM.coreEcosystem(
         new_apps,
         loc_forcing,
         tem_helpers,
@@ -137,7 +137,7 @@ function get_loc_loss(
     tem_optim,
     loc_land_init,
     forcing_one_timestep)
-    big_land = ForwardSindbad.coreEcosystem(
+    big_land = SindbadTEM.coreEcosystem(
         updated_models,
         loc_forcing,
         tem_helpers,

@@ -1,4 +1,4 @@
-export mapOptimizeModel
+export optimizeTEMYax
 
 """
     unpackYaxOpti(args; forcing_variables::AbstractArray)
@@ -14,7 +14,7 @@ function unpackYaxOpti(args; forcing_variables::AbstractArray)
 end
 
 """
-    doOptimizeModel(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray)
+    optimizeYax(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray)
 
 DOCSTRING
 
@@ -26,7 +26,7 @@ DOCSTRING
 - `forcing_variables`: DESCRIPTION
 - `obs_variables`: DESCRIPTION
 """
-function doOptimizeModel(args...;
+function optimizeYax(args...;
     out::NamedTuple,
     tem::NamedTuple,
     optim::NamedTuple,
@@ -40,7 +40,7 @@ function doOptimizeModel(args...;
 end
 
 """
-    mapOptimizeModel(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, optim::NamedTuple, observations::NamedTuple; max_cache = 1.0e9)
+    optimizeTEMYax(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, optim::NamedTuple, observations::NamedTuple; max_cache = 1.0e9)
 
 DOCSTRING
 
@@ -52,7 +52,7 @@ DOCSTRING
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `max_cache`: DESCRIPTION
 """
-function mapOptimizeModel(forcing::NamedTuple,
+function optimizeTEMYax(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
     optim::NamedTuple,
@@ -66,7 +66,7 @@ function mapOptimizeModel(forcing::NamedTuple,
     out = output.land_init
     obs_variables = collect(observations.variables)
 
-    params = mapCube(doOptimizeModel,
+    params = mapCube(optimizeYax,
         (incubes...,);
         out=out,
         tem=tem,

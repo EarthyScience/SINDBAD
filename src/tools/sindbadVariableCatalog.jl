@@ -1523,7 +1523,7 @@ end
 DOCSTRING
 """
 function getStandardVariableCatalog(info)
-    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/ForwardSindbad/src/tools/sindbadVariables.json"), dicttype=Dict)
+    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/SindbadTEM/src/tools/sindbadVariables.json"), dicttype=Dict)
     return variCat
 end
 

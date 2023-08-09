@@ -12,7 +12,7 @@ info = getConfiguration(experiment_json);
 info = setupExperiment(info);
 forcing = getForcing(info);
 
-outcubes = mapRunEcosystem(forcing,
+outcubes = runTEMYAX(forcing,
     output,
     info.tem,
     info.tem.models.forward;

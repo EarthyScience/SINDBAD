@@ -7,7 +7,6 @@ export getFrac
 export getSindbadModels
 export getZix
 export max0, max1, min0, min1
-export nanMax, nanMean, nanMin, nanSum
 export nonUnique
 export noStackTrace
 export offDiag, offDiagUpper, offDiagLower
@@ -364,38 +363,6 @@ DOCSTRING
 function min1(num)
     return min(num, one(num))
 end
-
-
-
-"""
-    nanMax(dat) = maximum(filter(!isnan, dat))
-
-Calculate the maximum of an array while skipping nan
-"""
-nanMax(dat) = maximum(filter(!isnan, dat))
-
-"""
-    nanMean(dat) = mean(filter(!isnan, dat))
-
-Calculate the mean of an array while skipping nan
-"""
-nanMean(dat) = mean(filter(!isnan, dat))
-
-"""
-    nanMin(dat) = minimum(filter(!isnan, dat))
-
-Calculate the minimum of an array while skipping nan
-"""
-nanMin(dat) = minimum(filter(!isnan, dat))
-
-
-"""
-    nanSum(dat) = sum(filter(!isnan, dat))
-
-Calculate the sum of an array while skipping nan
-"""
-nanSum(dat) = sum(filter(!isnan, dat))
-
 
 
 """

@@ -73,7 +73,7 @@
       "spatial_aggr": "cat",
       "spatial_cost_aggr": "spatial",
       "temporal_aggr": "day",
-      "temporal_aggr_func": "nanMean",
+      "temporal_aggr_func": "nanmean",
       "temporal_aggr_obs": false
     },
     "default_observation": {
