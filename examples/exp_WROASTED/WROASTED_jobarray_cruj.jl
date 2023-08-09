@@ -89,8 +89,8 @@ opti_sets = Dict(
     :set10 => ["agb", "ndvi", "nirv"],
 )
 
-forcingConfig = "forcing_$(forcing_set).json";
-pl = "threads"
+forcing_config = "forcing_$(forcing_set).json";
+parallelization_lib = "threads"
 exp_main = "wroasted_no_unc_nnse"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
@@ -102,7 +102,7 @@ for o_set in opti_set
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
     replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
-        "experiment.basics.config_files.forcing" => forcingConfig,
+        "experiment.basics.config_files.forcing" => forcing_config,
         "experiment.basics.domain" => domain,
         "experiment.basics.name" => exp_name,
         "experiment.basics.time.date_end" => eYear * "-12-31",
@@ -116,7 +116,7 @@ for o_set in opti_set
         "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
         "experiment.model_output.path" => path_output,
-        "experiment.exe_rules.parallelization" => pl,
+        "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
         "optimization.observations.default_observation.data_path" => path_observation,
         "optimization.observational_constraints" => opti_sets[o_set],)

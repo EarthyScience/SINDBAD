@@ -63,7 +63,7 @@ end
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output_array`: an output array/view for ALL locations
 - `land_init`: initial SINDBAD land with all fields and subfields
@@ -109,7 +109,7 @@ prepTEM(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 """
@@ -130,7 +130,7 @@ helpPrepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 DOCSTRING
 
 # Arguments:
-- `selected_models`: a tuple of models selected for the given model structure
+- `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
