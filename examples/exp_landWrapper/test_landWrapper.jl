@@ -55,6 +55,32 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_space_inds,
     tem_with_vals)
 
+@time land_spin_now = runSpinup(info.tem.models.forward,
+loc_forcings[1],
+forcing_one_timestep,
+land_init_space[1],
+tem_with_vals.helpers,
+tem_with_vals.models,
+tem_with_vals.spinup, Val(:true));
+
+
+@time land_spin_now = runSpinup(info.tem.models.forward,
+loc_forcings[1],
+forcing_one_timestep,
+land_init_space[1],
+tem_with_vals.helpers,
+tem_with_vals.models,
+tem_with_vals.spinup, DoRunSpinup());
+
+
+@time land_spin_now = runSpinup(info.tem.models.forward,
+loc_forcings[1],
+forcing_one_timestep,
+land_init_space[1],
+tem_with_vals.helpers,
+tem_with_vals.models,
+tem_with_vals.spinup, DontRunSpinup());
+
 
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
 
