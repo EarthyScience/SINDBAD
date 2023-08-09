@@ -22,7 +22,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:for
 
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
-        run_output = mapRunEcosystem(forcing,
+        run_output = runTEMYAX(forcing,
             output,
             info.tem,
             info.tem.models.forward;

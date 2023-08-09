@@ -30,7 +30,7 @@ SINDBAD is developed at the Department of Biogeochemical Integration of the Max 
 ### Installation
 
 - with git repo access
-```julia
+```
 julia]
 pkg > add https://git.bgc-jena.mpg.de/sindbad/sindbad.jl.git
 ```
@@ -59,13 +59,13 @@ cd examples
 
 Create a new experiment directory, e.g., my_env and go to that directory
 
-```julia
+```
 julia > run(`mkdir -p my_env`)
 julia > run(`cd my_env`)
 ```
 
 Create the julia environment and instantiate all dependencies and packages as,
-```julia
+```
 julia > include("../start_environment.jl")
 ```
 
@@ -82,5 +82,5 @@ bash download_example_data.sh
 Sindbad is divided into following sub-packages which can be imported in your example with
 ```using $PACKAGE```
 - Sindbad: pacckage including core models and setup of SINDBAD experiment
-- ForwardSindbad: package to run SINDABD experiment in the forward mode
-- OptimizeSindbad: package to carry out paramater optimization and invesion
+- SindbadTEM: package to run SINDABD experiment in the forward mode
+- SindbadOptimization: package to carry out paramater optimization and invesion

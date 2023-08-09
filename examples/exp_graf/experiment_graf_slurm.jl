@@ -6,7 +6,7 @@ addprocs(16)
 @everywhere Pkg.activate(joinpath(@__DIR__, "../exp_distri/"))
 
 @everywhere using Sindbad
-@everywhere using ForwardSindbad
+@everywhere using SindbadTEM
 # using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
 noStackTrace()
@@ -27,8 +27,8 @@ noStackTrace()
 @everywhere experiment_json = "../exp_graf/settings_graf/experiment.json";
 
 @everywhere info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
-@everywhere obs = ForwardSindbad.getObservation(info, forcing.helpers);
-@everywhere info, forcing = ForwardSindbad.getForcing(info);
+@everywhere obs = SindbadTEM.getObservation(info, forcing.helpers);
+@everywhere info, forcing = SindbadTEM.getForcing(info);
 # chunkeddata = setchunks.(forcing.data, ((id=1,),));
 # forcing = (; forcing..., data = (chunkeddata));
 

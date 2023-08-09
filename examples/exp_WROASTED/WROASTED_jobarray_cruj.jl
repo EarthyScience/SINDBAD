@@ -1,7 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 using Dates
 using Plots
 noStackTrace()
@@ -39,7 +37,7 @@ nrepeat = 200
 
 
 ## get the spinup sequence
-nc = ForwardSindbad.NetCDF.open(path_input)
+nc = SindbadTEM.NetCDF.open(path_input)
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -158,7 +156,7 @@ for o_set in opti_set
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
-    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
+    nc_ml = SindbadTEM.NetCDF.open(ml_data_file)
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
@@ -171,7 +169,7 @@ for o_set in opti_set
         if v == :agb
             ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
         elseif v == :ndvi
-            ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
+            ml_dat = ml_dat .- SindbadTEM.Statistics.mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
@@ -249,12 +247,12 @@ for o_set in opti_set
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1
-            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
             savefig(fig_prefix * "_$(v)_$(forcing_set).png")
         else
             foreach(axes(def_var, 2)) do ll
-                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
                 savefig(fig_prefix * "_$(v)_$(ll)_$(forcing_set).png")
             end

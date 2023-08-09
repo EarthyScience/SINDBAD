@@ -1,8 +1,6 @@
 using Revise
 using ForwardDiff
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 using Random
 noStackTrace()
 

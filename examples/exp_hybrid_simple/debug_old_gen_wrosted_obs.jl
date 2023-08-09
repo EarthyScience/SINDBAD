@@ -1,4 +1,4 @@
-using Sindbad, ForwardSindbad, OptimizeSindbad
+using Sindbad, SindbadTEM, SindbadOptimization
 using YAXArrays, YAXArrayBase
 using AxisKeys
 using Flux

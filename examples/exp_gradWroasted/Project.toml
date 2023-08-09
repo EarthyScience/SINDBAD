@@ -1,5 +1,5 @@
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-ForwardSindbad = "f6108451-10cb-42fa-b0c1-67671cf08f15"
-OptimizeSindbad = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
+SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
+SindbadOptimization = "64fff8bd-0c13-402c-aa96-b97d0bc3655c"
 Sindbad = "6686e6de-2010-4bf8-9178-b2bcc470766e"

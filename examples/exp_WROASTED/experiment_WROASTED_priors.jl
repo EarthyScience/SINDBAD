@@ -1,9 +1,7 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 
-# TODO add to OptimizeSindbad
+# TODO add to SindbadOptimization
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains
 
 # using Cthulhu

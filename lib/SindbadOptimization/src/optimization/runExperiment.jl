@@ -24,7 +24,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
 
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
-        run_output = mapOptimizeModel(forcing,
+        run_output = optimizeTEMYax(forcing,
             output,
             info.tem,
             info.optim,
