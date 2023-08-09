@@ -1,7 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadOptimization
 using Plots
 noStackTrace()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"

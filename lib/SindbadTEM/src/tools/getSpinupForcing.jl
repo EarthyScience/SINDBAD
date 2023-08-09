@@ -141,8 +141,8 @@ function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
         forc = getfield(seq, :forcing)
         forc_name = valToSymbol(forc)
         if forc_name ∉ keys(spinup_forcing)
-            spinup_forc = getSpinupForcing(forcing, forcing_one_timestep, seq.aggregator, tem_helpers, seq.aggregator_type)
-            spinup_forcing = setTupleField(spinup_forcing, (valToSymbol(forc), spinup_forc))
+            @time spinup_forc = getSpinupForcing(forcing, forcing_one_timestep, seq.aggregator, tem_helpers, seq.aggregator_type)
+            @time spinup_forcing = setTupleField(spinup_forcing, (forc_name, spinup_forc))
         end
     end
     return spinup_forcing

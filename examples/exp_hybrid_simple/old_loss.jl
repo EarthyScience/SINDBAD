@@ -8,7 +8,7 @@ function get_loc_loss(
     tem_models,
     tem_optim,
     forcing_one_timestep)
-    big_land = ForwardSindbad.coreEcosystem(
+    big_land = SindbadTEM.coreEcosystem(
         new_apps,
         loc_forcing,
         tem_helpers,

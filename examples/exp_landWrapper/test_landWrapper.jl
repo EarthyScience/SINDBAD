@@ -1,7 +1,5 @@
 using Revise
-@time using Sindbad
-@time using ForwardSindbad
-@time using OptimizeSindbad
+@time using SindbadOptimization
 using Plots
 noStackTrace()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
@@ -92,7 +90,7 @@ tbl_params = Sindbad.getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
     info.optim.model_parameters_to_optimize)
 
-defaults = tbl_params.default
+defaults = tbl_params.default;
 
 @time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
