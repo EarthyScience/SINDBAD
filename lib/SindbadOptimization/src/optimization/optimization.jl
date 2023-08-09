@@ -1,3 +1,4 @@
+include("optimizationTypes.jl")
 include("losses.jl")
 include("optimizeTEM.jl")
 include("optimizeTEMYax.jl")
