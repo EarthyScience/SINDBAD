@@ -1,6 +1,6 @@
-module ForwardSindbad
+module SindbadTEM
 using Reexport: @reexport
-using Sindbad
+@reexport using Sindbad
 using Accessors
 using AxisKeys: KeyedArray, AxisKeys
 using AxisKeys, FillArrays
@@ -29,6 +29,6 @@ using Zarr
 
 
 include("tools/tools.jl")
-include("Ecosystem/Ecosystem.jl")
+include("TEM/TEM.jl")
 
 end

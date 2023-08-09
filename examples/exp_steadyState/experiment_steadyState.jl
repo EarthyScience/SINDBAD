@@ -1,6 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
+using SindbadTEM
 using Plots
 noStackTrace()
 
@@ -46,7 +45,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     sp = :ODE_Tsit5
     @show "ODE_Init"
-    @time out_sp_ode = ForwardSindbad.runSpinup(spinup_models,
+    @time out_sp_ode = SindbadTEM.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
         info.tem.helpers,
@@ -60,7 +59,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp = land_init
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp = ForwardSindbad.runSpinup(spinup_models,
+        out_sp_exp = SindbadTEM.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
             info.tem.helpers,
@@ -73,7 +72,7 @@ for tj ∈ (10, 100, 1000, 10000)
 
     sp = :ODE_Tsit5
     @show "ODE_Exp"
-    @time out_sp_ode_exp = ForwardSindbad.runSpinup(spinup_models,
+    @time out_sp_ode_exp = SindbadTEM.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(out_sp_exp),
         info.tem.helpers,
@@ -86,7 +85,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp_ode = out_sp_ode
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_ode = ForwardSindbad.runSpinup(spinup_models,
+        out_sp_exp_ode = SindbadTEM.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_ode),
             info.tem.helpers,
@@ -198,7 +197,7 @@ for tj ∈ (10, 100, 1000, 10000)
     sp = :spinup
     out_sp_exp_nl = out_sp_nl
     @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_nl = ForwardSindbad.runSpinup(spinup_models,
+        out_sp_exp_nl = SindbadTEM.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp_nl),
             info.tem.helpers,

@@ -54,21 +54,21 @@ function getAggrFunc(::Val{:sum})
 end
 
 """
-    getAggrFunc(Val{:nanMean})
+    getAggrFunc(Val{:nanmean})
 
 DOCSTRING
 """
-function getAggrFunc(::Val{:nanMean})
-    return Sindbad.nanMean
+function getAggrFunc(::Val{:nanmean})
+    return Sindbad.nanmean
 end
 
 """
-    getAggrFunc(Val{:nanSum})
+    getAggrFunc(Val{:nansum})
 
 DOCSTRING
 """
-function getAggrFunc(::Val{:nanSum})
-    return Sindbad.nanSum
+function getAggrFunc(::Val{:nansum})
+    return Sindbad.nansum
 end
 
 

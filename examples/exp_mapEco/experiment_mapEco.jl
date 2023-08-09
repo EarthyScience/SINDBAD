@@ -15,7 +15,7 @@ forcing = getForcing(info);
 
 output = setupOutput(info, forcing.helpers);
 
-outcubes = mapRunEcosystem(forcing,
+outcubes = runTEMYAX(forcing,
     output,
     info.tem,
     info.tem.models.forward;
@@ -24,7 +24,7 @@ outcubes = mapRunEcosystem(forcing,
 # optimization
 observations = getObservation(info, forcing.helpers);
 
-opt_params = mapOptimizeModel(forcing,
+opt_params = optimizeTEMYax(forcing,
     output,
     info.tem,
     info.optim,

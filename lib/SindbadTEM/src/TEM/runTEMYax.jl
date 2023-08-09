@@ -1,8 +1,8 @@
-export mapRunEcosystem
+export runTEMYAX
 
 
 """
-    doRunEcosystem(args; land_init::NamedTuple, tem::NamedTuple, forward_models::Tuple, forcing_variables::AbstractArray)
+    TEMYax(args; land_init::NamedTuple, tem::NamedTuple, selected_models::Tuple, forcing_variables::AbstractArray)
 
 DOCSTRING
 
@@ -10,18 +10,19 @@ DOCSTRING
 - `args`: DESCRIPTION
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `forward_models`: DESCRIPTION
+- `selected_models`: DESCRIPTION
 - `forcing_variables`: DESCRIPTION
 """
-function doRunEcosystem(args...;
+function TEMYax(args...;
     land_init::NamedTuple,
     tem::NamedTuple,
-    forward_models::Tuple,
+    selected_models::Tuple,
     forcing_variables::AbstractArray)
-    #@show "doRun", Threads.threadid()
     outputs, inputs = unpackYaxForward(args; tem, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-    land_out = runEcosystem(forward_models, forcing, land_init, tem)
+
+    land_out = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+
     i = 1
     tem_variables = tem.variables
     for group ∈ keys(tem_variables)
@@ -34,7 +35,7 @@ function doRunEcosystem(args...;
 end
 
 """
-    mapRunEcosystem(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, forward_models::Tuple; max_cache = 1.0e9)
+    runTEMYAX(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, selected_models::Tuple; max_cache = 1.0e9)
 
 DOCSTRING
 
@@ -42,13 +43,13 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
-- `forward_models`: DESCRIPTION
+- `selected_models`: DESCRIPTION
 - `max_cache`: DESCRIPTION
 """
-function mapRunEcosystem(forcing::NamedTuple,
+function runTEMYAX(forcing::NamedTuple,
     output::NamedTuple,
     tem::NamedTuple,
-    forward_models::Tuple;
+    selected_models::Tuple;
     max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
@@ -61,11 +62,11 @@ function mapRunEcosystem(forcing::NamedTuple,
     # @show "I am here"
     # @show indims
     # @show outdims
-    outcubes = mapCube(doRunEcosystem,
+    outcubes = mapCube(TEMYax,
         (incubes...,);
         land_init=land_init,
         tem=tem,
-        forward_models=forward_models,
+        selected_models=selected_models,
         forcing_variables=forcing_variables,
         indims=indims,
         outdims=outdims,

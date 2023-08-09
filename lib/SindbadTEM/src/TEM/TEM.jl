@@ -1,7 +1,7 @@
 include("utilsTEM.jl")
 include("runModels.jl")
 include("prepTEM.jl")
-include("runTEMLandWrapper.jl")
+include("runTEMLand.jl")
 include("runTEMArray.jl")
 include("runTEMYax.jl")
 include("spinupTEM.jl")

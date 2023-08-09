@@ -1,6 +1,5 @@
 using Revise
-using Sindbad
-using ForwardSindbad
+using SindbadTEM
 using Plots
 noStackTrace()
 
@@ -53,7 +52,7 @@ for (i, tj) ∈ enumerate(tjs)
     cInit = deepcopy(getfield(land_init.pools, sel_pool))
     sp = :ODE_Tsit5
     @show "ODE_Init", tj
-    @time out_sp_ode = ForwardSindbad.runSpinup(spinup_models,
+    @time out_sp_ode = SindbadTEM.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
         deepcopy(land_init),
         tem_with_vals.helpers,
@@ -67,7 +66,7 @@ for (i, tj) ∈ enumerate(tjs)
     sp = :spinup
     out_sp_exp = land_init
     @time for nl ∈ 1:Int(tem_with_vals.spinup.differential_eqn.time_jump)
-        out_sp_exp = ForwardSindbad.runSpinup(spinup_models,
+        out_sp_exp = SindbadTEM.runSpinup(spinup_models,
             getfield(spinup_forcing, spinupforc),
             deepcopy(out_sp_exp),
             tem_with_vals.helpers,

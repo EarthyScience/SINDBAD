@@ -13,6 +13,7 @@ using InteractiveUtils
 using JLD2
 using JSON: parsefile, json
 using Logging
+@reexport using NaNStatistics
 using Parameters
 @reexport using PrettyPrinting: pprint
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
