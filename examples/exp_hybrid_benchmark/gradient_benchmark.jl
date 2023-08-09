@@ -119,14 +119,11 @@ kwargs_batch = (;
     f_one
 );
 
-gradsBatch!(loc_loss_inner, f_grads, inst_params_new, xbatch, kwargs_batch...)
-gradsBatch!(loss_function, f_grads, inst_params, xbatch, kwargs...; enabled=false)
 
+
+#gradsBatch!(loc_loss_inner, f_grads, inst_params_new, xbatch, kwargs_batch...)
 init_model = DenseNN(length(xfeatures.features), n_neurons, n_params; extra_hlayers=2)
-#p_model, re = Flux.destructure(init_model)
 flat, re, opt_state = destructureNN(init_model)
 n_params = length(init_model[end].bias)
-
-∇params = get∇params(loc_loss_inner, xfeatures, re, flat, xbatch, n_params, kwargs_batch...)
-
-exMachina(init_model, loc_loss_inner, xfeatures[site=1:12], kwargs_batch...)
+#∇params = get∇params(loc_loss_inner, xfeatures, re, flat, xbatch, n_params, kwargs_batch...)
+tot_loss, re, flat = exMachina(init_model, loc_loss_inner, xfeatures[site=1:12], kwargs_batch...)
