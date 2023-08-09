@@ -4,10 +4,10 @@ export runSpinup
 export spinupTEM
 export timeLoopTEMSpinup
 export DoRunSpinup
-export land
+export DontRunSpinup
 
-struct land end
 struct DoRunSpinup end
+struct DontRunSpinup end
 
 struct RunSpinup_TWS{M,F,T,I,O}
     models::M
@@ -244,7 +244,7 @@ function runSpinup(_, _, _, land, _, _, _, ::Val{:false}) # dont do the spinup
     return land
 end
 
-function runSpinup(_, _, _, land, _, _, _, run_spinup::land) # dont do the spinup
+function runSpinup(_, _, _, land, _, _, _, ::DontRunSpinup) # dont do the spinup
     return land
 end
 
@@ -295,7 +295,7 @@ function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_hel
     return land
 end
 
-function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, run_spinup::DoRunSpinup) # do the spinup
+function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::DoRunSpinup) # do the spinup
     spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
