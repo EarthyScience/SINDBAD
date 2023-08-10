@@ -13,7 +13,7 @@ for tj ∈ (10, 100, 1000, 10000)
         "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)
-    info = setupExperiment(info)
+    info = setupInfo(info)
     forcing = getForcing(info)
 
 

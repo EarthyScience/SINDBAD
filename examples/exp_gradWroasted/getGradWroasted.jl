@@ -102,7 +102,7 @@ CHUNK_SIZE = 10
 
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
-# op = setupOutput(info, forcing.helpers);
+# op = prepTEMOut(info, forcing.helpers);
 # output_array = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in output_array];
 output_array = [Array{Any}(undef, size(od)) for od in output_array];
 # op = (; op..., data=op_dat);
@@ -112,7 +112,7 @@ dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.
 mods = updateModelParametersType(tbl_params, mods, dualDefs);
 
 
-# op = setupOutput(info, forcing.helpers);
+# op = prepTEMOut(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in output_array];
 # op = (; op..., data=op_dat);
 

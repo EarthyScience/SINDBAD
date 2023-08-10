@@ -3,11 +3,62 @@ export doNothing
 export getAbsDataPath
 export getBool
 export isInvalid
+export landWrapper
 export nonUnique
 export replaceInvalid
 export setLogLevel
+export tabularizeList
 export toggleStackTraceNT
 export valToSymbol
+
+"""
+    landWrapper{S}
+
+Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
+"""
+struct landWrapper{S}
+    s::S
+end
+struct GroupView{S}
+    groupname::Symbol
+    s::S
+end
+struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
+    s::S
+    groupname::Symbol
+    arrayname::Symbol
+end
+Base.getproperty(s::landWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
+"""
+    Base.getproperty(g::GroupView, aggr_func::Symbol)
+
+DOCSTRING
+"""
+function Base.getproperty(g::GroupView, aggr_func::Symbol)
+    allarrays = getfield(g, :s)
+    groupname = getfield(g, :groupname)
+    T = typeof(first(allarrays)[groupname][aggr_func])
+    return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, aggr_func)
+end
+Base.size(a::ArrayView) = size(a.s)
+Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
+Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
+Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
+Base.keys(o::landWrapper) = propertynames(o)
+Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
+
+"""
+    Base.propertynames(o::GroupView)
+
+DOCSTRING
+"""
+function Base.propertynames(o::GroupView)
+    return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
+end
+Base.keys(o::GroupView) = propertynames(o)
+Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
+
+
 
 """
     booleanizeArray(_array)
@@ -132,6 +183,15 @@ function setLogLevel(log_level)
     global_logger(logger)
 end
 
+"""
+    tabularizeList(_list)
+
+convert a list/tuple to a Table from TypedTables
+"""
+function tabularizeList(_list)
+    table = Table((; name=[_list...]))
+    return table
+end
 
 """
     toggleStackTraceNT()
@@ -142,11 +202,11 @@ function toggleStackTraceNT(toggle=true)
     if toggle
         eval(:(Base.show(io::IO, nt::Type{<:NamedTuple}) = print(io, "NT")))
         eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
-        show = eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
+        eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
     else
-        show = Base.show
+        eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = Base.show(io::IO, nt::Type{<:NTuple})))
     end
-    return show
+    return nothing
 end
 
 
@@ -158,3 +218,4 @@ returns the symbol from which val was created for a type dispatch based on name
 function valToSymbol(val)
     return typeof(val).parameters[1]
 end
+
