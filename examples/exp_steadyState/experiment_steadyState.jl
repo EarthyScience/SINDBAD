@@ -1,7 +1,7 @@
 using Revise
 using SindbadTEM
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 for tj ∈ (10, 100, 1000, 10000)

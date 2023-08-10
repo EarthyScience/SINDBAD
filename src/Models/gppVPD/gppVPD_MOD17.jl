@@ -15,7 +15,7 @@ function compute(p_struct::gppVPD_MOD17, forcing, land, helpers)
 
     ## calculate variables
     vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
-    gpp_f_vpd = clamp01(vsc)
+    gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
     @pack_land gpp_f_vpd => land.gppVPD

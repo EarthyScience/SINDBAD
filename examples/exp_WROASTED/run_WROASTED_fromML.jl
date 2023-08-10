@@ -2,7 +2,7 @@ using Revise
 using SindbadOptimization
 using Dates
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 
 site_index = 37
 # site_index = 68

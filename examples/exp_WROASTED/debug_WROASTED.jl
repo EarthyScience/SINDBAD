@@ -1,6 +1,6 @@
 using Revise
 using SindbadTEM
-noStackTrace()
+toggleStackTraceNT()
 using Dates
 using Plots
 

@@ -1,7 +1,7 @@
 using Revise
 using Sindbad
 using ProgressMeter
-noStackTrace()
+toggleStackTraceNT()
 
 # tbl = getSindbadModels()
 

@@ -2,7 +2,7 @@ using Revise
 # using YAXArrays
 using SindbadTEM
 
-Sindbad.noStackTrace()
+Sindbad.toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupExperiment(info);

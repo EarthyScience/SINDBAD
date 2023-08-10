@@ -9,7 +9,7 @@ addprocs(16)
 @everywhere using SindbadTEM
 # using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
 
-noStackTrace()
+toggleStackTraceNT()
 @everywhere domain = "africa";
 # @everywhere optimize_it = true;
 @everywhere optimize_it = false;

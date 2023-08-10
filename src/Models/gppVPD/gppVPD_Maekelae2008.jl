@@ -14,7 +14,7 @@ function compute(p_struct::gppVPD_Maekelae2008, forcing, land, helpers)
 
     ## calculate variables
     gpp_f_vpd = exp(-k * VPDDay)
-    gpp_f_vpd = min1(gpp_f_vpd)
+    gpp_f_vpd = minOne(gpp_f_vpd)
 
     ## pack land variables
     @pack_land gpp_f_vpd => land.gppVPD
