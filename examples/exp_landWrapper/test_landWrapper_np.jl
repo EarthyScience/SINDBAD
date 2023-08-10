@@ -1,12 +1,12 @@
 using Revise
-using Sindbad
-using SindbadUtils
-using SindbadData
-using SindbadTEM
-using SindbadUtils
-using SindbadMetrics
-using SindbadOptimization
-@time using SindbadOptimization
+# using Sindbad
+# using SindbadUtils
+# using SindbadData
+# using SindbadTEM
+# using SindbadUtils
+# using SindbadMetrics
+# using SindbadOptimization
+# @time using SindbadOptimization
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
@@ -26,7 +26,7 @@ path_output = nothing
 
 
 parallelization_lib = "threads"
-model_array_type = "staticarray"
+model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
@@ -110,7 +110,7 @@ land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dat
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
-obs_array = getArray(observations);
+obs_array = observations.data;
 cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
 
 # @profview getLossVector(obs_array, output_array, cost_options) # |> sum

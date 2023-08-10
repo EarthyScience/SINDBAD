@@ -74,7 +74,6 @@ deepMerge(d...) = d[end]
     getConfiguration(sindbad_experiment::String; replace_info = nothing)
 
 get the experiment info from either json or load the named tuple
-
 """
 function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     local_root = dirname(Base.active_project())
@@ -183,16 +182,11 @@ function readConfiguration(info_exp::AbstractDict, base_path::String)
     return info
 end
 
-"""
-    removeComments(; inputDict = inputDict)
-
-remove unnecessary comment files starting with certain expressions from the dictionary keys
-"""
 
 """
     removeComments(inputDict::AbstractDict)
 
-DOCSTRING
+remove unnecessary comment files starting with certain expressions from the dictionary keys
 """
 function removeComments(inputDict::AbstractDict)
     newDict = filter(x -> !occursin(".c", first(x)), inputDict)
@@ -206,7 +200,7 @@ removeComments(input) = input
 """
     prepTEMOutDirectory(infoTuple::NamedTuple)
 
-sets up and creates output directory for the model simulation
+setup and create output directory for the experiment
 """
 function prepTEMOutDirectory(infoTuple::NamedTuple)
     path_output = infoTuple[:experiment][:model_output][:path]

@@ -18,10 +18,10 @@ YAXArrays.DAT.checkskip(::AllNaN, x) = all(isnan, x)
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 
 # Arguments:
-- `_data`: DESCRIPTION
-- `data_qc`: DESCRIPTION
-- `bounds_qc`: DESCRIPTION
-- `_data_fill`: DESCRIPTION
+- `_data`: data to check
+- `data_qc`: data of quality flag
+- `bounds_qc`: validity bounds of quality flag
+- `_data_fill`: data to replace with in case outside quality bounds
 """
 function applyQCBound(_data, data_qc, bounds_qc, _data_fill)
     _data_out = _data
@@ -38,9 +38,9 @@ end
 Applies a simple factor to the input, either additively or multiplicatively depending on isadditive flag
 
 # Arguments:
-- `_data`: DESCRIPTION
-- `conversion`: DESCRIPTION
-- `isadditive`: DESCRIPTION
+- `_data`: data to convert
+- `conversion`: conversion factor
+- `isadditive`: whether to apply the factor as addition or multiplication
 """
 function applyUnitConversion(_data, conversion, isadditive=false)
     if isadditive
@@ -54,39 +54,27 @@ end
 
 
 """
-    cleanData(_data, _data_fill, vinfo, Val{T})
+    cleanData(_data, _data_fill, _data_info, Val{T})
 
 DOCSTRING
 
 # Arguments:
-- `_data`: DESCRIPTION
-- `_data_fill`: DESCRIPTION
-- `vinfo`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `_data`: data to clean
+- `_data_fill`: value for filling invalid data
+- `_data_info`: information of data such as bounds and unit conversion factors
+- `::Val{T}`: type converter for data
 """
-function cleanData(_data, _data_fill, vinfo, ::Val{T}) where {T}
+function cleanData(_data, _data_fill, _data_info, ::Val{T}) where {T}
     _data = replaceInvalid(_data, _data_fill)
-    _data = applyUnitConversion(_data, vinfo.source_to_sindbad_unit,
-        vinfo.additive_unit_conversion)
-    bounds = vinfo.bounds
+    _data = applyUnitConversion(_data, _data_info.source_to_sindbad_unit,
+        _data_info.additive_unit_conversion)
+    bounds = _data_info.bounds
     if !isnothing(bounds)
         _data = clamp(_data, first(bounds), last(bounds))
     end
     return T(_data)
 end
 
-
-"""
-    getArray(input)
-
-DOCSTRING
-"""
-function getArray(input)
-    arrayData = map(input.data) do c
-        Array(c.data)
-    end
-    return arrayData
-end
 
 
 """
@@ -133,7 +121,6 @@ function getDataDims(c, mappinginfo)
     return InDims(inax...; artype=KeyedArray, filter=AllNaN())
 end
 
-
 """
     getDimPermutation(datDims, permDims)
 
@@ -151,44 +138,51 @@ function getDimPermutation(datDims, permDims)
     return new_dim
 end
 
-
-
 """
-    getKeyedArrayWithNames(input)
+    getInputArrayOfType(input_data, nothing::Val{:array})
 
 DOCSTRING
 """
-function getKeyedArrayWithNames(input)
-    ks = input.variables
-    keyedData = getKeyedArray(input)
-    return (; Pair.(ks, keyedData)...)
+function getInputArrayOfType(input_data, ::Val{:array})
+    array_data = map(input_data) do c
+        Array(c.data)
+    end
+    return array_data
 end
 
 """
-    getKeyedArray(input)
+    getInputArrayOfType(input_data, nothing::Val{:keyed_array})
 
 DOCSTRING
 """
-function getKeyedArray(input)
-    keyedData = map(input.data) do c
+function getInputArrayOfType(input_data, ::Val{:keyed_array})
+    keyed_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
         KeyedArray(Array(c.data); t_dims...)
     end
-    return keyedData
+    return keyed_array_data
 end
 
 """
-    getNamedDimsArrayWithNames(input)
+    getInputArrayOfType(input_data, nothing::Val{:named_dims_array})
 
 DOCSTRING
 """
-function getNamedDimsArrayWithNames(input)
-    ks = input.variables
-    keyedData = map(input.data) do c
+function getInputArrayOfType(input_data, ::Val{:named_dims_array})
+    named_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
         NamedDimsArray(Array(c.data); t_dims...)
     end
-    return (; Pair.(ks, keyedData)...)
+    return named_array_data
+end
+
+"""
+    getInputArrayOfType(input_data, nothing::Val{:yaxarray})
+
+DOCSTRING
+"""
+function getInputArrayOfType(input_data, ::Val{:yaxarray})
+    return input_data
 end
 
 
@@ -319,7 +313,7 @@ function loadDataFromPath(nc, data_path, data_path_v, source_variable)
 end
 
 """
-    mapCleanData(_data, _data_qc, _data_fill, bounds_qc, vinfo, Val{T})
+    mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, Val{T})
 
 DOCSTRING
 
@@ -328,21 +322,21 @@ DOCSTRING
 - `_data_qc`: DESCRIPTION
 - `_data_fill`: DESCRIPTION
 - `bounds_qc`: DESCRIPTION
-- `vinfo`: DESCRIPTION
+- `_data_info`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function mapCleanData(_data, _data_qc, _data_fill, bounds_qc, vinfo, ::Val{T}) where {T}
+function mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, ::Val{T}) where {T}
     if !isnothing(bounds_qc) && !isnothing(_data_qc)
         _data = map((da, dq) -> applyQCBound(da, dq, bounds_qc, _data_fill), _data, _data_qc)
     end
     vT = Val{T}()
-    _data = map(_data -> cleanData(_data, _data_fill, vinfo, vT), _data)
+    _data = map(_data -> cleanData(_data, _data_fill, _data_info, vT), _data)
     return _data
 end
 
 
 """
-    subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
+    subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
 
 DOCSTRING
 
@@ -350,7 +344,7 @@ DOCSTRING
 - `yax`: DESCRIPTION
 - `forcing_mask`: DESCRIPTION
 - `tar_dims`: DESCRIPTION
-- `vinfo`: DESCRIPTION
+- `_data_info`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `nothing`: DESCRIPTION
 - `clean_data`: DESCRIPTION
@@ -358,7 +352,7 @@ DOCSTRING
 - `yax_qc`: DESCRIPTION
 - `bounds_qc`: DESCRIPTION
 """
-function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
+function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Val{num_type}; clean_data=true, fill_nan=false, yax_qc=nothing, bounds_qc=nothing) where {num_type}
 
     if !isnothing(forcing_mask)
         yax = yax #todo: mask the forcing variables here depending on the mask of 1 and 0
@@ -386,7 +380,7 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, ::Val{num
     end
     vNT = Val{num_type}()
     if clean_data
-        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, vinfo, vNT)
+        yax = mapCleanData(yax, yax_qc, vfill, bounds_qc, _data_info, vNT)
     else
         yax = map(yax_point -> replaceInvalid(yax_point, vfill), yax)
         yax = num_type.(yax)

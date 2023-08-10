@@ -1,9 +1,8 @@
 export defaultVariableInfo
-export orD
 export sindbad_variables
 export whatIs
 
-orD = Sindbad.DataStructures.OrderedDict
+orD = DataStructures.OrderedDict
 sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     :PET__Tair_prev => orD(
         :standard_name => "Tair_prev",
@@ -1457,7 +1456,7 @@ DOCSTRING
 """
 function defaultVariableInfo(string_key=false)
     if string_key
-        return Sindbad.DataStructures.OrderedDict(
+        return DataStructures.OrderedDict(
             "standard_name" => "",
             "long_name" => "",
             "units" => "",
@@ -1465,7 +1464,7 @@ function defaultVariableInfo(string_key=false)
             "description" => ""
         )
     else
-        return Sindbad.DataStructures.OrderedDict(
+        return DataStructures.OrderedDict(
             :standard_name => "",
             :long_name => "",
             :units => "",
@@ -1523,7 +1522,7 @@ end
 DOCSTRING
 """
 function getStandardVariableCatalog(info)
-    variCat = Sindbad.parsefile(joinpath(info.experiment_root, "../../lib/SindbadTEM/src/tools/sindbadVariables.json"), dicttype=Dict)
+    variCat = parsefile(joinpath(info.experiment_root, "../../lib/SindbadTEM/src/tools/sindbadVariables.json"), dicttype=Dict)
     return variCat
 end
 
@@ -1537,7 +1536,7 @@ function getVariableCatalogFromLand(land)
     default_varib = defaultVariableInfo()
     landprops = propertynames(land)
     varnames = []
-    variCat = Sindbad.DataStructures.OrderedDict()
+    variCat = DataStructures.OrderedDict()
     for lf in landprops
         lsf = propertynames(getproperty(land, lf))
         for lsff in lsf

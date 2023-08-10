@@ -11,6 +11,7 @@ module SindbadSetup
     @reexport using SindbadUtils
 
     include("getConfiguration.jl")
+    include("setupOptimInfo.jl")
     include("setupInfo.jl")
 
 end # module SindbadSetup

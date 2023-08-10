@@ -1,5 +1,7 @@
 export dictToNamedTuple
 export removeEmptyTupleFields
+export setTupleField
+export setTupleSubfield
 export tcPrint
 
 """
