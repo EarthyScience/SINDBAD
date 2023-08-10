@@ -1,0 +1,8 @@
+name = "SindbadMetrics"
+uuid = "7a8077d0-ecf5-44b0-95d4-89eadbafc35c"
+authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
