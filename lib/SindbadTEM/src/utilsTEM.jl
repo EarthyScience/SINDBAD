@@ -1,5 +1,6 @@
-export getForcingTimeSize
 export getForcingForTimeStep
+export getForcingNamedTuple
+export getForcingTimeSize
 export getLocData
 export getLocForcing!
 export getLocOutput!
@@ -20,43 +21,6 @@ function fillLocOutput!(ar, val, ts::Int64)
     return data_ts .= val
 end
 
-"""
-    getForcingTimeSize(forcing::NamedTuple)
-
-DOCSTRING
-"""
-function getForcingTimeSize(forcing::NamedTuple)
-    forcingTimeSize = 1
-    for v ∈ forcing
-        if in(:time, AxisKeys.dimnames(v))
-            forcingTimeSize = size(v, 1)
-        end
-    end
-    return forcingTimeSize
-end
-
-"""
-    getForcingTimeSize(forcing, Val{forc_vars})
-
-DOCSTRING
-"""
-@generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where {forc_vars}
-    output = quote
-        forcingTimeSize = 1
-    end
-    foreach(forc_vars) do forc
-        push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
-        push!(output.args,
-            quote
-                forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
-                                  forcingTimeSize
-            end)
-    end
-    push!(output.args, quote
-        forcingTimeSize
-    end)
-    return output
-end
 
 """
     getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_vars})
@@ -116,6 +80,55 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
+
+"""
+    getForcingNamedTuple(input_data, forcing_names)
+
+DOCSTRING
+"""
+function getForcingNamedTuple(input_data, forcing_names)
+    return (; Pair.(forcing_names, input_data)...)
+end
+
+
+
+"""
+    getForcingTimeSize(forcing::NamedTuple)
+
+DOCSTRING
+"""
+function getForcingTimeSize(forcing::NamedTuple)
+    forcingTimeSize = 1
+    for v ∈ forcing
+        if in(:time, AxisKeys.dimnames(v))
+            forcingTimeSize = size(v, 1)
+        end
+    end
+    return forcingTimeSize
+end
+
+"""
+    getForcingTimeSize(forcing, Val{forc_vars})
+
+DOCSTRING
+"""
+@generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where {forc_vars}
+    output = quote
+        forcingTimeSize = 1
+    end
+    foreach(forc_vars) do forc
+        push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
+        push!(output.args,
+            quote
+                forcingTimeSize = in(:time, AxisKeys.dimnames(v)) ? size(v, 1) :
+                                  forcingTimeSize
+            end)
+    end
+    push!(output.args, quote
+        forcingTimeSize
+    end)
+    return output
+end
 """
     getLocData(forcing, output_array, loc_space_map)
 

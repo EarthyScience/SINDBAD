@@ -19,7 +19,7 @@ lt = (:solid, :dash, :dot)
 parallelization_lib = "threads"
 model_array_type = "view"
 info = nothing
-for (i, model_array_type) in enumerate(("array", "view", "staticarray"))
+for (i, model_array_type) in enumerate(("array", "view", "static_array"))
     replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
         "experiment.basics.domain" => domain,

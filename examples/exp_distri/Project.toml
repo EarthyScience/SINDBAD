@@ -1,5 +1,6 @@
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
+AutomaticDocstrings = "70b36510-7dee-11e9-28d4-77afe9445f67"
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
 ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"

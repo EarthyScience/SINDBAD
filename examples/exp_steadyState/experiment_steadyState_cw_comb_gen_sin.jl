@@ -57,14 +57,14 @@ function get_xtick_names(info, land_for_s, look_at)
 end
 experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
 out_sp_exp = nothing
-model_array_type = "staticarray"
+model_array_type = "static_array"
 tjs = (1, 100, 1_000)#, 10_000)
 # tjs = (1000,)
 # tjs = (10_000,)
 nLoop_pre_spin = 10
-# for model_array_type ∈ ("staticarray",)
-# for model_array_type ∈ ("array",) #, "staticarray")
-for model_array_type ∈ ("staticarray", "array") #, "staticarray")
+# for model_array_type ∈ ("static_array",)
+# for model_array_type ∈ ("array",) #, "static_array")
+for model_array_type ∈ ("static_array", "array") #, "static_array")
     replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,

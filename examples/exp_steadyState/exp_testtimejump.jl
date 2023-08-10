@@ -16,7 +16,7 @@ for (i, tj) ∈ enumerate(tjs)
     replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
         "spinup.differential_eqn.relative_tolerance" => 1e-2,
         "spinup.differential_eqn.absolute_tolerance" => 1,
-        "experiment.exe_rules.model_array_type" => "staticarray",
+        "experiment.exe_rules.model_array_type" => "static_array",
         "experiment.flags.debug_model" => false)
 
     info = getConfiguration(experiment_json; replace_info=replace_info)

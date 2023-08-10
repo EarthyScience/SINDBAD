@@ -1,6 +1,6 @@
 module Sindbad
 using Reexport: @reexport
-using DataStructures: DataStructures
+@reexport using DataStructures: DataStructures
 using DocStringExtensions
 @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
 using InteractiveUtils
