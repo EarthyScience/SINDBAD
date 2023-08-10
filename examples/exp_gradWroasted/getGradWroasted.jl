@@ -2,7 +2,7 @@ using Revise
 using ForwardDiff
 
 using SindbadOptimization
-noStackTrace()
+toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info

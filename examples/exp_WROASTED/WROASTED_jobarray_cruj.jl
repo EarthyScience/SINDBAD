@@ -2,7 +2,7 @@ using Revise
 using SindbadOptimization
 using Dates
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 
 # site_index = 1
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])

@@ -19,13 +19,13 @@ function compute(p_struct::gppSoilW_Keenan2009, forcing, land, helpers)
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    maxAWC = max0(sum_wSat - sum_WP)
+    maxAWC = maxZero(sum_wSat - sum_WP)
     Smax = sSmax * maxAWC
     Smin = sSmin * Smax
 
     SM = max(sum(soilW), Smin)
     smsc = ((SM - Smin) / (Smax - Smin))^q
-    gpp_f_soilW = clamp01(smsc)
+    gpp_f_soilW = clampZeroOne(smsc)
 
     ## pack land variables
     @pack_land gpp_f_soilW => land.gppSoilW

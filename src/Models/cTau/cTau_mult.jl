@@ -27,7 +27,7 @@ function compute(p_struct::cTau_mult, forcing, land, helpers)
     end
     for i ∈ eachindex(c_eco_k)
         tmp = c_eco_k_base[i] * c_eco_k_f_LAI[i] * c_eco_k_f_soil_props[i] * c_eco_k_f_veg_props[i] * c_eco_k_f_soilT * c_eco_k_f_soilW[i]
-        tmp = clamp01(tmp)
+        tmp = clampZeroOne(tmp)
         @rep_elem tmp => (c_eco_k, i, :cEco)
     end
 

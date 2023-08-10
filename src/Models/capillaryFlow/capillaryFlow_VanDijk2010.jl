@@ -36,10 +36,10 @@ function compute(p_struct::capillaryFlow_VanDijk2010, forcing, land, helpers)
     end
 
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        dos_soilW = clamp01((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
+        dos_soilW = clampZeroOne((soilW[sl] + ΔsoilW[sl]) ./ wSat[sl])
         tmpCapFlow = sqrt(soil_kFC[sl+1] * soil_kFC[sl]) * (o_one - dos_soilW)
-        holdCap = max0(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
-        lossCap = max0(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
+        holdCap = maxZero(wSat[sl] - (soilW[sl] + ΔsoilW[sl]))
+        lossCap = maxZero(max_frac * (soilW[sl+1] + ΔsoilW[sl+1]))
         minFlow = min(tmpCapFlow, holdCap, lossCap)
         tmp = minFlow > tolerance ? minFlow : zero(minFlow)
         @rep_elem tmp => (soil_capillary_flux, sl, :soilW)

@@ -1,59 +1,133 @@
-export clamp01
+export addToElem, @add_to_elem, addToEachElem, addVec
+export clampZeroOne
 export cumSum!
-export dictToNamedTuple
 export flagUpper, flagLower
-export getBool
 export getFrac
 export getSindbadModels
 export getZix
-export max0, max1, min0, min1
-export nonUnique
-export noStackTrace
+export maxZero, maxOne, minZero, minOne
 export offDiag, offDiagUpper, offDiagLower
 export @pack_land, @unpack_land, @unpack_forcing
-export removeEmptyTupleFields
-export returnIt
+export repElem, @rep_elem, repVec, @rep_vec
+export setComponents
 export setComponentFromMainPool, setMainFromComponentPool
-export setLogLevel
-export setTupleField, setTupleSubfield
 export showParamsOfAModel
 export showParamsOfAllModels
 export SindbadParameters
-export tcPrint
 export totalS
-export valToSymbol
 
 struct BoundFields <: DocStringExtensions.Abbreviation
     types::Bool
 end
 
-
-"""
-    collectColorForTypes(d; c_olor = true)
-
-utility function to collect colors for all types from nested namedtuples
-"""
-function collectColorForTypes(d; c_olor=true)
-    all_types = []
-    all_types = getTypes!(d, all_types)
-    c_types = Dict{DataType,Int}()
-    for t ∈ all_types
-        if c_olor == true
-            c = rand(0:255)
-        else
-            c = 0
-        end
-        c_types[t] = c
-    end
-    return c_types
+macro add_to_elem(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = outparams.args[3]
+    rhsa = rhs.args
+    tar = esc(rhsa[1])
+    indx = rhsa[2]
+    hp_pool = rhsa[3]
+    outCode = [
+        Expr(:(=),
+            tar,
+            Expr(:call,
+                addToElem,
+                tar,
+                lhs,
+                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
+                # esc(:(land.wCycleBase.z_zero)),
+                esc(indx)))
+    ]
+    return Expr(:block, outCode...)
 end
 
 """
-    clamp01(num)
+    addToElem(v::SVector, Δv, v_zero, ind::Int)
+
+DOCSTRING
+
+# Arguments:
+- `v`: DESCRIPTION
+- `Δv`: DESCRIPTION
+- `v_zero`: DESCRIPTION
+- `ind`: DESCRIPTION
+"""
+function addToElem(v::SVector, Δv, v_zero, ind::Int)
+    n_0 = zero(first(v_zero))
+    n_1 = one(first(v_zero))
+    v_zero = v_zero .* n_0
+    v_zero = Base.setindex(v_zero, n_1, ind)
+    v = v .+ v_zero .* Δv
+    return v
+end
+
+"""
+    addToElem(v::AbstractVector, Δv, _, _, ind::Int)
+
+DOCSTRING
+
+# Arguments:
+- `v`: DESCRIPTION
+- `Δv`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `ind`: DESCRIPTION
+"""
+function addToElem(v::AbstractVector, Δv, _, _, ind::Int)
+    v[ind] = v[ind] + Δv
+    return v
+end
+
+"""
+    addToEachElem(v::SVector, Δv::Real)
+
+DOCSTRING
+"""
+function addToEachElem(v::SVector, Δv::Real)
+    v = v .+ Δv
+    return v
+end
+
+"""
+    addToEachElem(v::AbstractVector, Δv::Real)
+
+DOCSTRING
+"""
+function addToEachElem(v::AbstractVector, Δv::Real)
+    v .= v .+ Δv
+    return v
+end
+
+"""
+    addVec(v::SVector, Δv::SVector)
+
+DOCSTRING
+"""
+function addVec(v::SVector, Δv::SVector)
+    v = v + Δv
+    return v
+end
+
+"""
+    addVec(v::AbstractVector, Δv::AbstractVector)
+
+DOCSTRING
+"""
+function addVec(v::AbstractVector, Δv::AbstractVector)
+    v .= v .+ Δv
+    return v
+end
+
+
+"""
+    clampZeroOne(num)
 
 returns max(min(num, 1), 0)
 """
-function clamp01(num)
+function clampZeroOne(num)
     return clamp(num, zero(num), one(num))
 end
 
@@ -122,22 +196,6 @@ function DocStringExtensions.format(abbrv::BoundFields, buf, doc)
     return nothing
 end
 
-"""
-    dictToNamedTuple(d::AbstractDict)
-
-covert nested dictionary to NamedTuple
-"""
-function dictToNamedTuple(d::AbstractDict)
-    for k ∈ keys(d)
-        if d[k] isa Array{Any,1}
-            d[k] = [v for v ∈ d[k]]
-        elseif d[k] isa DataStructures.OrderedDict
-            d[k] = dictToNamedTuple(d[k])
-        end
-    end
-    dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
-    return dTuple
-end
 
 
 """
@@ -187,23 +245,6 @@ function flagUpper(A::AbstractMatrix)
 end
 
 
-"""
-    getBool(var::Bool)
-
-DOCSTRING
-"""
-function getBool(var::Bool)
-    return var
-end
-
-"""
-    getBool(var)
-
-DOCSTRING
-"""
-function getBool(var)
-    return valToSymbol(var)
-end
 
 """
     getFrac(num, den)
@@ -236,23 +277,6 @@ function getSindbadModels()
 end
 
 """
-    getTypes!(d, all_types)
-
-utility function to collect all types from nested namedtuples
-"""
-function getTypes!(d, all_types)
-    for k ∈ keys(d)
-        if d[k] isa NamedTuple
-            push!(all_types, typeof(d[k]))
-            getTypes!(d[k], all_types)
-        else
-            push!(all_types, typeof(d[k]))
-        end
-    end
-    return unique(all_types)
-end
-
-"""
     getZix(dat::SubArray)
 
 returns the indices of a view for a subArray
@@ -261,151 +285,73 @@ function getZix(dat::SubArray)
     return first(parentindices(dat))
 end
 
-"""
-getZix(dat::SubArray)
-returns the indices of a view for a subArray
-"""
 
 """
     getZix(dat::SubArray, zixhelpersPool)
 
-DOCSTRING
+returns the indices of a view for a subArray
 """
 function getZix(dat::SubArray, zixhelpersPool)
     return first(parentindices(dat))
 end
 
 """
-getZix(dat::Array)
-returns the indices of a view for a subArray
-"""
-
-"""
     getZix(dat::Array, zixhelpersPool)
 
-DOCSTRING
+returns the indices of a view for an array
 """
 function getZix(dat::Array, zixhelpersPool)
     return zixhelpersPool
 end
 
-"""
-getZix(dat::SVector)
-returns the indices of a view for a subArray
-"""
 
 """
     getZix(dat::SVector, zixhelpersPool)
 
-DOCSTRING
+returns the indices of a view for a subArray
 """
 function getZix(dat::SVector, zixhelpersPool)
     return zixhelpersPool
 end
 
 
-
 """
-max0(num)
+    maxZero(num)
+
 returns max(num, 0)
 """
-
-"""
-    max0(num)
-
-DOCSTRING
-"""
-function max0(num)
+function maxZero(num)
     return max(num, zero(num))
 end
 
 
 """
-max1(num)
+    maxOne(num)
+
 returns max(num, 1)
 """
-
-"""
-    max1(num)
-
-DOCSTRING
-"""
-function max1(num)
+function maxOne(num)
     return max(num, one(num))
 end
 
 
 """
-min0(num)
+    minZero(num)
+
 returns min(num, 0)
 """
-
-"""
-    min0(num)
-
-DOCSTRING
-"""
-function min0(num)
+function minZero(num)
     return min(num, zero(num))
 end
 
 
 """
-min1(num)
+    minOne(num)
+
 returns min(num, 1)
 """
-
-"""
-    min1(num)
-
-DOCSTRING
-"""
-function min1(num)
+function minOne(num)
     return min(num, one(num))
-end
-
-
-"""
-    nonUnique(x::AbstractArray{T}) where T
-
-returns a vector of duplicates in the input vector
-"""
-
-"""
-    nonUnique(x::AbstractArray{T})
-
-DOCSTRING
-"""
-function nonUnique(x::AbstractArray{T}) where {T}
-    xs = sort(x)
-    duplicatedvector = T[]
-    for i ∈ eachindex(xs)[2:end]
-        if (
-            isequal(xs[i], xs[i-1]) &&
-            (length(duplicatedvector) == 0 || !isequal(duplicatedvector[end], xs[i]))
-        )
-            push!(duplicatedvector, xs[i])
-        end
-    end
-    return duplicatedvector
-end
-
-
-"""
-    noStackTrace()
-
-Modifies Base.show to reduce the size of error stacktrace of sindbad
-"""
-
-"""
-    noStackTrace()
-
-DOCSTRING
-"""
-function noStackTrace()
-    eval(:(Base.show(io::IO, nt::Type{<:NamedTuple}) = print(io, "NT")))
-    eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
-    return eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
 end
 
 
@@ -576,48 +522,161 @@ function processUnpackLand(ex)
 end
 
 
-"""
-removeEmptyTupleFields(tpl)
-"""
-
-"""
-    removeEmptyTupleFields(tpl::NamedTuple)
-
-DOCSTRING
-"""
-function removeEmptyTupleFields(tpl::NamedTuple)
-    indx = findall(x -> x != NamedTuple(), values(tpl))
-    nkeys, nvals = tuple(collect(keys(tpl))[indx]...), values(tpl)[indx]
-    return NamedTuple{nkeys}(nvals)
+macro rep_elem(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = outparams.args[3]
+    rhsa = rhs.args
+    tar = esc(rhsa[1])
+    indx = rhsa[2]
+    hp_pool = rhsa[3]
+    outCode = [
+        Expr(:(=),
+            tar,
+            Expr(:call,
+                repElem,
+                tar,
+                lhs,
+                esc(Expr(:., :(helpers.pools.zeros), hp_pool)),
+                esc(Expr(:., :(helpers.pools.ones), hp_pool)),
+                esc(indx)))
+    ]
+    return Expr(:block, outCode...)
 end
 
 """
-    returnIt(dat) = dat
+    repElem(v::AbstractVector, v_elem, _, _, ind::Int)
 
-return the input as is
+DOCSTRING
+
+# Arguments:
+- `v`: DESCRIPTION
+- `v_elem`: DESCRIPTION
+- `_`: unused argument
+- `_`: unused argument
+- `ind`: DESCRIPTION
 """
+function repElem(v::AbstractVector, v_elem, _, _, ind::Int)
+    v[ind] = v_elem
+    return v
+end
 
 """
-    returnIt(dat)
+    repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
+
+DOCSTRING
+
+# Arguments:
+- `v`: DESCRIPTION
+- `v_elem`: DESCRIPTION
+- `v_zero`: DESCRIPTION
+- `v_one`: DESCRIPTION
+- `ind`: DESCRIPTION
+"""
+function repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
+    n_0 = zero(first(v_zero))
+    n_1 = one(first(v_zero))
+    v_zero = v_zero .* n_0
+    v_zero = Base.setindex(v_zero, n_1, ind)
+    v_one = v_one .* n_0 .+ n_1
+    v_one = Base.setindex(v_one, n_0, ind)
+    v = v .* v_one .+ v_zero .* v_elem
+    # v = Base.setindex(v, v_elem, vlit_level)
+    return v
+end
+
+macro rep_vec(outparams::Expr)
+    @assert outparams.head == :call || outparams.head == :(=)
+    @assert outparams.args[1] == :(=>)
+    @assert length(outparams.args) == 3
+    lhs = esc(outparams.args[2])
+    rhs = esc(outparams.args[3])
+    outCode = [Expr(:(=), lhs, Expr(:call, repVec, lhs, rhs))]
+    return Expr(:block, outCode...)
+end
+
+"""
+    repVec(v::AbstractVector, v_new)
 
 DOCSTRING
 """
-function returnIt(dat)
-    return dat
+function repVec(v::AbstractVector, v_new)
+    v .= v_new
+    return v
 end
 
+"""
+    repVec(v::SVector, v_new)
 
+DOCSTRING
+"""
+function repVec(v::SVector, v_new)
+    n_0 = zero(first(v))
+    v = v .* n_0 + v_new
+    return v
+end
 
 """
-    setComponentFromMainPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
-- sets the component pools value using the values for the main pool
-- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+    setComponents(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
+
+DOCSTRING
+
+# Arguments:
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `helpers`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
+function setComponents(
+    land,
+    helpers,
+    ::Val{s_main},
+    ::Val{s_comps},
+    ::Val{zix}) where {s_main,s_comps,zix}
+    output = quote end
+    push!(output.args, Expr(:(=), s_main, Expr(:., :(land.pools), QuoteNode(s_main))))
+    foreach(s_comps) do s_comp
+        push!(output.args, Expr(:(=), s_comp, Expr(:., :(land.pools), QuoteNode(s_comp))))
+        zix_pool = getfield(zix, s_comp)
+        c_ix = 1
+        foreach(zix_pool) do ix
+            push!(output.args, Expr(:(=),
+                s_comp,
+                Expr(:call,
+                    rep_elem,
+                    s_comp,
+                    Expr(:ref, s_main, ix),
+                    Expr(:., :(helpers.pools.zeros), QuoteNode(s_comp)),
+                    Expr(:., :(helpers.pools.ones), QuoteNode(s_comp)),
+                    :(land.wCycleBase.z_zero),
+                    :(land.wCycleBase.o_one),
+                    c_ix)))
+
+            c_ix += 1
+        end
+        push!(output.args, Expr(:(=),
+            :land,
+            Expr(:tuple,
+                Expr(:(...), :land),
+                Expr(:(=),
+                    :pools,
+                    (Expr(:tuple,
+                        Expr(:parameters, Expr(:(...), :(land.pools)),
+                            Expr(:kw, s_comp, s_comp))))))))
+    end
+    return output
+end
+
 
 """
     setComponentFromMainPool(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
-DOCSTRING
+- sets the component pools value using the values for the main pool
+- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
+
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
@@ -667,44 +726,12 @@ DOCSTRING
     return output
 end
 
-"""
-    setLogLevel()
-
-DOCSTRING
-"""
-function setLogLevel()
-    logger = ConsoleLogger(stderr, Logging.Info)
-    global_logger(logger)
-end
-
-"""
-    setLogLevel(log_level)
-
-DOCSTRING
-"""
-function setLogLevel(log_level)
-    logger = ConsoleLogger(stderr, Logging.Info)
-    if log_level == :debug
-        logger = ConsoleLogger(stderr, Logging.Debug)
-    elseif log_level == :warn
-        logger = ConsoleLogger(stderr, Logging.Warn)
-    elseif log_level == :error
-        logger = ConsoleLogger(stderr, Logging.Error)
-    end
-    global_logger(logger)
-end
-
-
-"""
-    setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
-- sets the main pool from the values of the component pools
-- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
-"""
 
 """
     setMainFromComponentPool(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
-DOCSTRING
+- sets the main pool from the values of the component pools
+- name are generated using the components in helpers so that the model formulations are not specific for poolnames and are dependent on model structure.json
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
@@ -754,31 +781,9 @@ function setMainFromComponentPool(
 end
 
 """
-    setTupleSubfield(out, fieldname, vals)
-
-DOCSTRING
-
-# Arguments:
-- `out`: DESCRIPTION
-- `fieldname`: DESCRIPTION
-- `vals`: DESCRIPTION
-"""
-function setTupleSubfield(out, fieldname, vals)
-    return (; out..., fieldname => (; getfield(out, fieldname)..., first(vals) => last(vals)))
-end
-
-setTupleField(out, vals) = (; out..., first(vals) => last(vals))
-
-
-"""
-showParamsOfAllModels(models)
-shows the current parameters of all given models
-"""
-
-"""
     showParamsOfAllModels(models)
 
-DOCSTRING
+shows the current parameters of all given models
 """
 function showParamsOfAllModels(models)
     for mn in sort([nameof.(supertype.(typeof.(models)))...])
@@ -790,14 +795,9 @@ end
 
 
 """
-showParamsOfAModel(models, model::Symbol)
-shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
-"""
-
-"""
     showParamsOfAModel(models, model::Symbol)
 
-DOCSTRING
+shows the current parameters of a given model (Symboll) [NOT APPRAOCH] based on the list of models provided
 """
 function showParamsOfAModel(models, model::Symbol)
     model_names = Symbol.(supertype.(typeof.(models)))
@@ -820,106 +820,10 @@ end
 
 const SindbadParameters = BoundFields(false)
 
-
-"""
-    tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
-- a helper function to navigate the input named tuple and annotate types.
-- a random set of colors is chosen per type of the data/field
-- a mixed colored output within a feild usually warrants caution on type mismatches
-"""
-
-"""
-    tcPrint(d, df = 1; c_olor = true, t_ype = true, istop = true)
-
-DOCSTRING
-
-# Arguments:
-- `d`: DESCRIPTION
-- `df`: DESCRIPTION
-- `c_olor`: DESCRIPTION
-- `t_ype`: DESCRIPTION
-- `istop`: DESCRIPTION
-"""
-function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
-    colors_types = collectColorForTypes(d; c_olor=c_olor)
-    lc = nothing
-    tt = "\t"
-    for k ∈ keys(d)
-        # lc = colors_types[typeof(d[k])]
-        if d[k] isa NamedTuple
-            tt = ""
-            if t_ype == true
-                tp = " = (; "
-                # lc = colors_types[typeof(d[k])]
-            else
-                tp = ""
-            end
-            if df != 1
-                tt = repeat("\t", df)
-            end
-            print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k)$(tp)\n")
-            tcPrint(d[k], df; c_olor=c_olor, t_ype=t_ype, istop=false)
-        else
-            tt = repeat("\t", df)
-            if t_ype == true
-                tp = "::$(typeof(d[k]))"
-                if tp == "::NT"
-                    tp = "::Tuple"
-                end
-
-            else
-                tt = repeat("\t", df)
-                tp = ""
-            end
-            if typeof(d[k]) <: Float32
-                print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])f0$(tp),\n")
-            elseif typeof(d[k]) <: SVector
-                print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = SVector{$(length(d[k]))}($(d[k]))$(tp),\n")
-            elseif typeof(d[k]) <: Matrix
-                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt) $(k) = [\n")
-                tt_row = repeat(tt[1], length(tt) + 1)
-                for _d ∈ eachrow(d[k])
-                    d_str = nothing
-                    if eltype(_d) == Float32
-                        d_str = join(_d, "f0 ") * "f0"
-                    else
-                        d_str = join(_d, " ")
-                    end
-                    print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                        "$(tt_row) $(d_str);\n")
-                end
-                print(Crayon(; foreground=colors_types[typeof(d[k])]), "$(tt_row) ]$(tp),\n")
-            else
-                print(Crayon(; foreground=colors_types[typeof(d[k])]),
-                    "$(tt) $(k) = $(d[k])$(tp),\n")
-            end
-            lc = colors_types[typeof(d[k])]
-        end
-        # if k == last(keys(d))
-        #     print(Crayon(foreground = colors_types[typeof(d[k])]), "$(tt))::NamedTuple,\n")
-        # end
-        df = 1
-    end
-    if t_ype == true
-        tt = tt * " "
-        print(Crayon(; foreground=lc), "$(tt))::NamedTuple,\n")
-    else
-        print(Crayon(; foreground=lc), "$(tt)),\n")
-    end
-end
-
-
-"""
-totalS(s, sΔ)
-return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
-"""
-
 """
     totalS(s, sΔ)
 
-DOCSTRING
+return total storage amount given the storage and the current delta storage without creating an allocation for a temporary array
 """
 function totalS(s, sΔ)
     sm = zero(eltype(s))
@@ -930,14 +834,9 @@ function totalS(s, sΔ)
 end
 
 """
-totalS(s)
-return total storage amount given the storage without creating an allocation for a temporary array
-"""
-
-"""
     totalS(s)
 
-DOCSTRING
+return total storage amount given the storage without creating an allocation for a temporary array
 """
 function totalS(s)
     sm = zero(eltype(s))
@@ -965,12 +864,3 @@ macro unpack_land(inparams)
     return outCode
 end
 
-
-"""
-    valToSymbol(val)
-
-returns the symbol from which val was created for a type dispatch based on name
-"""
-function valToSymbol(val)
-    return typeof(val).parameters[1]
-end
