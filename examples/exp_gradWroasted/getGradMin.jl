@@ -12,7 +12,7 @@ forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-op = setupOutput(info, forcing.helpers);
+op = prepTEMOut(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
@@ -37,7 +37,7 @@ tbl_params = Sindbad.getParameters(info.tem.models.forward,
 
 
 rand_m = rand(info.tem.helpers.numbers.num_type);
-# op = setupOutput(info, forcing.helpers);
+# op = prepTEMOut(info, forcing.helpers);
 
 mods = info.tem.models.forward;
 
@@ -68,7 +68,7 @@ p_vec = tbl_params.default;
 CHUNK_SIZE = 10#length(p_vec)
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
-output = setupOutput(info, forcing.helpers);
+output = prepTEMOut(info, forcing.helpers);
 output_array = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in output.data];
 
 

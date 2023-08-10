@@ -108,7 +108,7 @@ function getConfiguration(sindbad_experiment::String; replace_info=nothing)
     sindbad_root = join(split(infoTuple.experiment_root, "/")[1:(end-2)], "/")
     infoTuple = (; infoTuple..., sindbad_root=sindbad_root)
     infoTuple = (; infoTuple..., settings_root=exp_base_path)
-    infoTuple = setupOutputDirectory(infoTuple)
+    infoTuple = prepTEMOutDirectory(infoTuple)
     @info "Setup output directories in: $(infoTuple.output.root)"
     @info "Saving a copy of json settings to: $(infoTuple.output.settings)"
     cp(sindbad_experiment,
@@ -204,11 +204,11 @@ removeComments(input) = input
 
 
 """
-    setupOutputDirectory(infoTuple::NamedTuple)
+    prepTEMOutDirectory(infoTuple::NamedTuple)
 
 sets up and creates output directory for the model simulation
 """
-function setupOutputDirectory(infoTuple::NamedTuple)
+function prepTEMOutDirectory(infoTuple::NamedTuple)
     path_output = infoTuple[:experiment][:model_output][:path]
     if isnothing(path_output)
         path_output_new = "output_"

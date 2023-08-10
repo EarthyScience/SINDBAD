@@ -1,9 +1,10 @@
 module SindbadMetrics
-using StatsBase: mean, percentile, cor, corspearman
-using SindbadUtils
 
-include("metricTypes.jl")
-include("metrics.jl")
-include("getMetrics.jl")
+    using SindbadUtils
+    using StatsBase: mean, percentile, cor, corspearman
+
+    include("metricTypes.jl")
+    include("metrics.jl")
+    include("getMetrics.jl")
 
 end # module SindbadMetrics

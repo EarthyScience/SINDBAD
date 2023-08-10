@@ -12,7 +12,7 @@ forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-op = setupOutput(info, forcing.helpers);
+op = prepTEMOut(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
@@ -64,7 +64,7 @@ function g_loss(x,
     return l
 end
 rand_m = rand(info.tem.helpers.numbers.num_type);
-# op = setupOutput(info, forcing.helpers);
+# op = prepTEMOut(info, forcing.helpers);
 
 mods = info.tem.models.forward;
 for _ in 1:10
@@ -136,7 +136,7 @@ function l2(p)
 end
 
 
-op = setupOutput(info, forcing.helpers);
+op = prepTEMOut(info, forcing.helpers);
 # op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in output_array];
 # op = (; op..., data=op_dat);
 

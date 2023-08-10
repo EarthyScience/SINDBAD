@@ -4,59 +4,6 @@ export getLocData
 export getLocForcing!
 export getLocOutput!
 export getNumberOfTimeSteps
-export landWrapper
-export setOutputForTimeStep!
-export viewCopyYax
-
-"""
-    landWrapper{S}
-
-Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
-"""
-struct landWrapper{S}
-    s::S
-end
-struct GroupView{S}
-    groupname::Symbol
-    s::S
-end
-struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
-    s::S
-    groupname::Symbol
-    arrayname::Symbol
-end
-Base.getproperty(s::landWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
-"""
-    Base.getproperty(g::GroupView, aggr_func::Symbol)
-
-DOCSTRING
-"""
-function Base.getproperty(g::GroupView, aggr_func::Symbol)
-    allarrays = getfield(g, :s)
-    groupname = getfield(g, :groupname)
-    T = typeof(first(allarrays)[groupname][aggr_func])
-    return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, aggr_func)
-end
-Base.size(a::ArrayView) = size(a.s)
-Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
-Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
-Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
-Base.keys(o::landWrapper) = propertynames(o)
-Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
-
-"""
-    Base.propertynames(o::GroupView)
-
-DOCSTRING
-"""
-function Base.propertynames(o::GroupView)
-    return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
-end
-Base.keys(o::GroupView) = propertynames(o)
-Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
-
-
-
 
 """
     fillLocOutput!(ar, val, ts::Int64)
@@ -112,17 +59,17 @@ DOCSTRING
 end
 
 """
-    getForcingForTimeStep(forcing, f_t, ts, Val{forc_vars})
+    getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_vars})
 
 DOCSTRING
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `f_t`: DESCRIPTION
+- `forcing_t`: DESCRIPTION
 - `ts`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-@generated function getForcingForTimeStep(forcing, f_t, ts, ::Val{forc_vars}) where {forc_vars}
+@generated function getForcingForTimeStep(forcing, forcing_t, ts, ::Val{forc_vars}) where {forc_vars}
     output = quote end
     foreach(forc_vars) do forc
         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
@@ -131,11 +78,11 @@ DOCSTRING
         end)
         push!(output.args,
             Expr(:(=),
-                :f_t,
+                :forcing_t,
                 Expr(:macrocall,
                     Symbol("@set"),
                     :(),
-                    Expr(:(=), Expr(:., :f_t, QuoteNode(forc)), :d)))) #= none:1 =#
+                    Expr(:(=), Expr(:., :forcing_t, QuoteNode(forc)), :d)))) #= none:1 =#
     end
     return output
 end
