@@ -95,7 +95,7 @@ function prepTEM(forcing::NamedTuple, info::NamedTuple)
     selected_models = info.tem.models.forward
     tem_helpers = info.tem.helpers
     # get the output named tuple
-    output = setupOutput(info, forcing.helpers)
+    output = prepTEMOut(info, forcing.helpers)
     return helpPrepTEM(selected_models, forcing, output, info.tem, tem_helpers)
 end
 
@@ -116,7 +116,7 @@ DOCSTRING
 function prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run ecosystem"
     tem_helpers = info.tem.helpers
-    output = setupOutput(info, forcing.helpers)
+    output = prepTEMOut(info, forcing.helpers)
     return helpPrepTEM(selected_models, forcing, output, info.tem, tem_helpers)
 end
 

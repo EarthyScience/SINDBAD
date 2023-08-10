@@ -1,26 +1,24 @@
 module SindbadTEM
-using Reexport: @reexport
-@reexport using Sindbad
-using Accessors
-using FillArrays
-using ComponentArrays
-using Dates
-using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
-using InteractiveUtils
-using JLD2: @save
-using NLsolve
-using Pkg
-using ProgressMeter
-using RecursiveArrayTools
-using Statistics
-using ThreadPools
-using TypedTables: Table
-using YAXArrays: savecube
-using Zarr
-# using DifferentialEquations
 
+    using Accessors
+    using ComponentArrays
+    using InteractiveUtils
+    using NLsolve
+    using Pkg
+    using ProgressMeter
+    using SindbadSetup
+    @reexport using SindbadSetup
+    using ThreadPools
+    using YAXArrays
 
-include("tools/tools.jl")
-include("TEM/TEM.jl")
+    include("utilsTEM.jl")
+    include("deriveSpinupForcing.jl")
+    include("prepTEMOut.jl")
+    include("runModels.jl")
+    include("prepTEM.jl")
+    include("runTEMLand.jl")
+    include("runTEMArray.jl")
+    include("runTEMYax.jl")
+    include("spinupTEM.jl")
 
-end
+end # module SindbadTEM

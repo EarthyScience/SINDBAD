@@ -1,4 +1,4 @@
-export createLandInit, setupOutput, setupOptiOutput
+export createLandInit, prepTEMOut, setupOptiOutput
 
 """
 createLandInit(info_pools::NamedTuple, info_tem::NamedTuple)
@@ -389,10 +389,10 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
-    @info "     setupOutput: creating initial out/land..."
+    @info "     prepTEMOut: creating initial out/land..."
     land_init = createLandInit(info.pools, tem_helpers, info.tem.models)
     outformat = info.experiment.model_output.format
-    @info "     setupOutput: getting data variables..."
+    @info "     prepTEMOut: getting data variables..."
 
     datavars = if hasproperty(info, :optim)
         map(info.optim.variables.obs) do vo
@@ -407,7 +407,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
 
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
-    @info "     setupOutput: getting output dimension and arrays..."
+    @info "     prepTEMOut: getting output dimension and arrays..."
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.experiment.model_output.output_array_type)))
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
@@ -427,7 +427,7 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
 
 
     if getBool(info.experiment.flags.run_optimization) || getBool(tem_helpers.run.calc_cost)
-        @info "     setupOutput: getting parameter output for optimization..."
+        @info "     prepTEMOut: getting parameter output for optimization..."
         output_tuple = setupOptiOutput(info, output_tuple)
     end
     @info "\n----------------------------------------------\n"
@@ -435,16 +435,16 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
 end
 
 """
-    setupOutput(info::NamedTuple, forcing_helpers::NamedTuple)
+    prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
 
 DOCSTRING
 """
-function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple)
+function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, info.tem.helpers)
 end
 
 """
-    setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+    prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
 
 DOCSTRING
 
@@ -453,7 +453,7 @@ DOCSTRING
 - `forcing_helpers`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function setupOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
+function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, tem_helpers)
 end
 
