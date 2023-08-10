@@ -64,9 +64,10 @@ function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @debug "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
+    typed_cubes = getInputArrayOfType(incubes, Val(Symbol(info.experiment.exe_rules.input_array_type)))
     @info "\n----------------------------------------------\n"
     forcing = (;
-        data=incubes,
+        data=typed_cubes,
         dims=indims,
         variables=forcing_variables,
         helpers=f_helpers)

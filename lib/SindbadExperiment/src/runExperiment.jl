@@ -57,7 +57,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
             max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        obs_array = getArray(observations)
+        obs_array = observations.data
         # obs_array = getKeyedArray(observations)
         setLogLevel(:warn)
         optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
@@ -80,7 +80,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     observations = getObservation(info, forcing.helpers)
-    obs_array = getArray(observations)
+    obs_array = observations.data
 
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."

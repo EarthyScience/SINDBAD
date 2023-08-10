@@ -18,8 +18,9 @@
   "exe_rules": {
     "data_type": "Float32",
     "forward_diff": true,
+    "input_array_type": "keyed_array",
     "input_data_backend": "zarr",
-    "model_array_type": "staticarray",
+    "model_array_type": "static_array",
     "parallelization": "threads",
     "tolerance": 1.0e-3,
     "yax_max_cache": 2e9
