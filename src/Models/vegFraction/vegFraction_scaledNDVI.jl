@@ -16,7 +16,7 @@ function compute(p_struct::vegFraction_scaledNDVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    frac_vegetation = clamp01(NDVI * NDVIscale)
+    frac_vegetation = clampZeroOne(NDVI * NDVIscale)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states

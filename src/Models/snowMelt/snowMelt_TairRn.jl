@@ -24,7 +24,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
     # @show Tair, melt_T
     tmp_T = Tair * melt_T
-    tmp_Rn = max0(Rn * melt_Rn)
+    tmp_Rn = maxZero(Rn * melt_Rn)
     potential_snow_melt = (tmp_T + tmp_Rn) * frac_snow
 
     # potential snow melt if T > 0.0 deg C

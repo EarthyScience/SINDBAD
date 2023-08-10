@@ -16,7 +16,7 @@ function compute(p_struct::vegFraction_scaledEVI, forcing, land, helpers)
     end
 
     ## calculate variables
-    frac_vegetation = min1(EVI * EVIscale)
+    frac_vegetation = minOne(EVI * EVIscale)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states

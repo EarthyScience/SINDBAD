@@ -16,7 +16,7 @@ function compute(p_struct::vegFraction_scaledNIRv, forcing, land, helpers)
     end
 
     ## calculate variables
-    frac_vegetation = clamp01(NIRv * NIRvscale)
+    frac_vegetation = clampZeroOne(NIRv * NIRvscale)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states

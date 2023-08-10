@@ -7,7 +7,7 @@ using SindbadOptimization
 #using AxisKeys: KeyedArray as KA
 #using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 #using Random
-noStackTrace()
+toggleStackTraceNT()
 #Random.seed!(7)
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"

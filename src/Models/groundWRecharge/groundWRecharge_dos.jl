@@ -34,8 +34,8 @@ function compute(p_struct::groundWRecharge_dos, forcing, land, helpers)
         n_groundW ∈ land.wCycleBase
     end
     # calculate recharge
-    dosSoilEnd = clamp01((soilW[end] + ΔsoilW[end]) / wSat[end])
-    recharge_fraction = clamp01((dosSoilEnd)^(dos_exp * soil_β[end]))
+    dosSoilEnd = clampZeroOne((soilW[end] + ΔsoilW[end]) / wSat[end])
+    recharge_fraction = clampZeroOne((dosSoilEnd)^(dos_exp * soil_β[end]))
     gw_recharge = recharge_fraction * (soilW[end] + ΔsoilW[end])
 
     ΔgroundW = addToEachElem(ΔgroundW, gw_recharge / n_groundW)
