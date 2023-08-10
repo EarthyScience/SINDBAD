@@ -1,0 +1,4 @@
+name = "SindbadUtils"
+uuid = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
+authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
+version = "0.1.0"

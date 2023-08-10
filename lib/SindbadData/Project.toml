@@ -1,0 +1,8 @@
+name = "SindbadData"
+uuid = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
+authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+YAXArrayBase = "90b8fcef-0c2d-428d-9c56-5f86629e9d14"
+YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
