@@ -7,7 +7,7 @@ export setNumberType
 export setupInfo
 
 """
-    changeModelOrder(info::NamedTuple, selModels::AbstractArray)
+    changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
 
 returns a list of models reordered according to orders provided in model_structure json.
 
@@ -15,18 +15,18 @@ returns a list of models reordered according to orders provided in model_structu
 - models cannot be set before getPools or after cCycle
 - USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
 """
-function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
-    fullModels = sindbad_models.model
-    checkSelectedModels(fullModels, selModels)
+function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
+    all_sindbad_models = sindbad_models
+    checkSelectedModels(all_sindbad_models, selected_models)
     # get orders of fixed models that cannot be changed
-    order_getPools = findfirst(e -> e == :getPools, fullModels)
-    order_cCycle = findfirst(e -> e == :cCycle, fullModels)
+    order_getPools = findfirst(e -> e == :getPools, all_sindbad_models)
+    order_cCycle = findfirst(e -> e == :cCycle, all_sindbad_models)
 
     # get the new orders and models from model_structure.json
     newOrders = Int64[]
     newModels = (;)
     order_changed_warn = true
-    for sm ∈ selModels
+    for sm ∈ selected_models
         modInfo = getfield(info.model_structure.models, sm)
         if :order in propertynames(modInfo)
             push!(newOrders, modInfo.order)
@@ -45,7 +45,7 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
                 @warn " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
-            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, fullModels)), new: $(modInfo.order)"
+            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, all_sindbad_models)), new: $(modInfo.order)"
         end
     end
 
@@ -61,7 +61,7 @@ function changeModelOrder(info::NamedTuple, selModels::AbstractArray)
     newOrders = sort(newOrders; rev=true)
 
     # create re-ordered list of full models
-    fullModels_reordered = deepcopy(fullModels)
+    fullModels_reordered = deepcopy(all_sindbad_models)
     for new_order ∈ newOrders
         sm = nothing
         for nm ∈ keys(newModels)
@@ -86,16 +86,16 @@ end
 
 
 """
-    checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
+    checkSelectedModels(all_sindbad_models::AbstractArray, selected_models::AbstractArray)
 
 checks if the list of selected models in model_structure.json are available in the full list of sindbad_models defined in models.jl
 """
-function checkSelectedModels(fullModels::AbstractArray, selModels::AbstractArray)
-    for sm ∈ selModels
-        if sm ∉ fullModels
-            @show fullModels
+function checkSelectedModels(all_sindbad_models, selected_models::AbstractArray)
+    for sm ∈ selected_models
+        if sm ∉ all_sindbad_models
+            @show all_sindbad_models
             error(sm,
-                " is not a valid model from fullModels. check model_structure settings in json")
+                " is not a valid model from all_sindbad_models [Sindbad.sindbad_models]. check model_structure settings in json")
             return false
         end
     end
@@ -167,7 +167,7 @@ function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:arr
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:staticarray})
+    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:static_array})
 
 DOCSTRING
 
@@ -179,7 +179,7 @@ DOCSTRING
 - `ismain`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:staticarray})
+function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:static_array})
     return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
     # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
 end
@@ -649,18 +649,18 @@ end
 
 
 """
-    getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
+    getOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
 
 gets the ordered list of selected models from info.model_structure.models
 - orders them as given in sindbad_models in models.jl.
 - consistency check using checkSelectedModels for the existence of user-provided model.
 """
-function getOrderedSelectedModels(info::NamedTuple, selModels::AbstractArray)
-    fullModels = changeModelOrder(info, selModels)
-    checkSelectedModels(fullModels, selModels)
+function getOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
+    all_sindbad_models_reordered = changeModelOrder(info, selected_models)
+    checkSelectedModels(all_sindbad_models_reordered, selected_models)
     selModelsOrdered = []
-    for msm ∈ fullModels
-        if msm in selModels
+    for msm ∈ all_sindbad_models_reordered
+        if msm in selected_models
             push!(selModelsOrdered, msm)
         end
     end
@@ -1356,11 +1356,11 @@ function setupInfo(info::NamedTuple)
     info = generatePoolsInfo(info)
     @info "SetupExperiment: setting Dates Helpers..."
     info = generateDatesInfo(info)
-    selModels = collect(propertynames(info.model_structure.models))
+    selected_models = collect(propertynames(info.model_structure.models))
     # @show sel
-    # selModels = (selModels..., :dummy)
+    # selected_models = (selected_models..., :dummy)
     @info "SetupExperiment: setting Models..."
-    selected_models = getOrderedSelectedModels(info, selModels)
+    selected_models = getOrderedSelectedModels(info, selected_models)
     info = (;
         info...,
         tem=(;
@@ -1387,7 +1387,7 @@ function setupInfo(info::NamedTuple)
                 if startswith(kk, info.tem.helpers.dates.temporal_resolution)
                     is_model_timestep = true
                 end
-                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), Sindbad.mean, is_model_timestep)
+                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), mean, is_model_timestep)
                 seq["aggregator"] = aggregator
                 seq["aggregator_type"] = Val(:no_diff)
                 if occursin("_year", seq[kk])

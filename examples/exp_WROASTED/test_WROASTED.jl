@@ -18,7 +18,7 @@ path_output = nothing
 
 
 parallelization_lib = "threads"
-model_array_type = "staticarray"
+model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
@@ -58,7 +58,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = getArray(observations);
+obs_array = observations.data;
 @time getLossVector(obs_array, output_default, info.optim.cost_options)
 
 @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);

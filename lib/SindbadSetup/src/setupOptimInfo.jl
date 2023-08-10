@@ -41,7 +41,7 @@ end
 DOCSTRING
 """
 function getAggrFunc(::Val{:mean})
-    return Sindbad.mean
+    return mean
 end
 
 """
@@ -50,7 +50,7 @@ end
 DOCSTRING
 """
 function getAggrFunc(::Val{:sum})
-    return Sindbad.sum
+    return sum
 end
 
 """
@@ -59,7 +59,7 @@ end
 DOCSTRING
 """
 function getAggrFunc(::Val{:nanmean})
-    return Sindbad.nanmean
+    return nanmean
 end
 
 """
@@ -68,7 +68,7 @@ end
 DOCSTRING
 """
 function getAggrFunc(::Val{:nansum})
-    return Sindbad.nansum
+    return nansum
 end
 
 
