@@ -2,7 +2,7 @@ using Revise
 using SindbadOptimization
 using Dates
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"

@@ -2,7 +2,7 @@ using Revise
 @time using Sindbad
 @time using SindbadTEM
 # @time using SindbadOptimization
-noStackTrace()
+toggleStackTraceNT()
 domain = "global";
 optimize_it = true;
 optimize_it = false;

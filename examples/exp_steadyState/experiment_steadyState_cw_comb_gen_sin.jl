@@ -2,7 +2,7 @@ using Revise
 using SindbadTEM
 using Plots
 using Accessors
-noStackTrace()
+toggleStackTraceNT()
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, model_array_type, out_path)
     plot_elem = string(plot_elem)

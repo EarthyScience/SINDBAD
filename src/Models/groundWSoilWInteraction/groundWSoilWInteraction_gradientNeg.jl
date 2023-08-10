@@ -34,7 +34,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
     tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # -> set all the positive values (from groundwater to soil) to zero
-    gw_capillary_flux = min0(tmp)
+    gw_capillary_flux = minZero(tmp)
 
     # adjust the delta storages
     ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW

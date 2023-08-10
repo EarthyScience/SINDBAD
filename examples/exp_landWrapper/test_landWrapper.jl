@@ -1,7 +1,7 @@
 using Revise
 @time using SindbadOptimization
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
 sYear = "1979"
 eYear = "2017"

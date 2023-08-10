@@ -1,5 +1,11 @@
 module SindbadSetup
+using CodeTracking
+using CSV: CSV
+using JSON: parsefile, json
+using Dates
 
-greet() = print("Hello World!")
+include("getConfiguration.jl")
+include("prepExperiment.jl")
+include("setupExperiment.jl")
 
 end # module SindbadSetup

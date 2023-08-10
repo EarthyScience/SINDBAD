@@ -21,7 +21,7 @@ function compute(p_struct::evaporation_fAPAR, forcing, land, helpers)
     end
     # multiply equilibrium PET with αSoil & [1.0 - fAPAR] to get potential soil evap
     tmp = PET * α * (o_one - fAPAR)
-    PET_evaporation = max0(tmp)
+    PET_evaporation = maxZero(tmp)
     # scale the potential with the a fraction of available water & get the minimum of the current moisture
     evaporation = min(PET_evaporation, k_evaporation * (soilW[1] + ΔsoilW[1]))
 

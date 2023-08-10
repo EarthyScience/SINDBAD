@@ -1,6 +1,6 @@
 using Revise
 using SindbadTEM
-noStackTrace()
+toggleStackTraceNT()
 
 domain = "africa";
 optimize_it = true;

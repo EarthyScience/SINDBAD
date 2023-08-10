@@ -35,13 +35,13 @@ function compute(p_struct::gppDiffRadiation_Wang2015, forcing, land, helpers)
     ## calculate variables
     ## FROM SHANNING
 
-    CI = clamp01(o_one - getFrac(Rg, RgPot)) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
+    CI = clampZeroOne(o_one - getFrac(Rg, RgPot)) #@needscheck: this is different to Turner which does not have 1- . So, need to check if this correct
 
     # update the minimum and maximum on the go
     CI_min = min(CI, CI_min)
     CI_max = max(CI, CI_max)
 
-    CI_nor = clamp01(getFrac(CI - CI_min, CI_max - CI_min)) # @needscheck: originally, CI_min and max were based on the year's data. see below.
+    CI_nor = clampZeroOne(getFrac(CI - CI_min, CI_max - CI_min)) # @needscheck: originally, CI_min and max were based on the year's data. see below.
 
 
     cScGPP = o_one - μ * (o_one - CI_nor)

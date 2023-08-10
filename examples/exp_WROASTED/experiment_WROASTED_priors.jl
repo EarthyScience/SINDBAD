@@ -6,7 +6,7 @@ using Distributions, PDMats, DistributionFits, Turing, MCMCChains
 
 # using Cthulhu
 using BenchmarkTools
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"

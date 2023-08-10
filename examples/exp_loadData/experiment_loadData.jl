@@ -1,7 +1,7 @@
 using Revise
 using Sindbad
 
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "exp_loadData/settings_loadData/experiment.json"
 sYear = "1979"
 eYear = "2017"
