@@ -87,7 +87,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         if !isnothing(info.optimization.observations.one_sel_mask)
             mask_path = getAbsDataPath(info, info.optimization.observations.one_sel_mask)
             _, yax_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
-            yax_mask = booleanizeMask(yax_mask)
+            yax_mask = booleanizeArray(yax_mask)
         end
     end
     obscubes = []
@@ -110,7 +110,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         nc_unc, yax_unc, vinfo_unc, bounds_unc = getAllConstraintData(nc, data_path, default_info, vinfo, :unc, info; yax=yax, use_data_sub=info.optimization.observations.use_uncertainty)
 
         _, yax_mask_v, vinfo_mask, bounds_mask = getAllConstraintData(nc, data_path, default_info, vinfo, :sel_mask, info; yax=yax)
-        yax_mask_v = booleanizeMask(yax_mask_v)
+        yax_mask_v = booleanizeArray(yax_mask_v)
         if !isnothing(yax_mask)
             yax_mask_v .= yax_mask .* yax_mask_v
         end

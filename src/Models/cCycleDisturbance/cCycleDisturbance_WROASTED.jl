@@ -43,7 +43,7 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
     end
     if dist_intensity > z_zero
         for zixVeg ∈ zix_veg_all
-            cLoss = max0(cEco[zixVeg] - c_remain) * dist_intensity
+            cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
             c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
             for tZ ∈ eachindex(c_lose_to_zix)

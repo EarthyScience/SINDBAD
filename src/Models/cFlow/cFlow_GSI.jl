@@ -103,9 +103,9 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
-    leaf_root_to_reserve = min1(max0(-slope_eco_stressor) * slope_leaf_root_to_reserve) # * (cVeg_growth < z_zero)
-    reserve_to_leaf_root = min1(max0(slope_eco_stressor) * slope_reserve_to_leaf_root) # * (cVeg_growth > 0.0)
-    shedding_rate = min1(max0(-slope_eco_stressor) * k_shedding)
+    leaf_root_to_reserve = minOne(maxZero(-slope_eco_stressor) * slope_leaf_root_to_reserve) # * (cVeg_growth < z_zero)
+    reserve_to_leaf_root = minOne(maxZero(slope_eco_stressor) * slope_reserve_to_leaf_root) # * (cVeg_growth > 0.0)
+    shedding_rate = minOne(maxZero(-slope_eco_stressor) * k_shedding)
 
     # set the Leaf & Root to Reserve flow rate as the same
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?

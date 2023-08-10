@@ -2,7 +2,7 @@ using Revise
 using ForwardDiff
 using SindbadOptimization
 using Random
-noStackTrace()
+toggleStackTraceNT()
 
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"

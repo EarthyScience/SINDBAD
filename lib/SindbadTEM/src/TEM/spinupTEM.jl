@@ -112,7 +112,7 @@ function (TWS_spin::RunSpinup_TWS)(pout, p)
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
-        @rep_elem max0(p[l]) => (TWS, lc, :TWS)
+        @rep_elem maxZero(p[l]) => (TWS, lc, :TWS)
     end
     @pack_land TWS => land.pools
     land = Sindbad.adjustPackPoolComponents(land, helpers, land.wCycleBase.w_model)
@@ -586,7 +586,7 @@ function runSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleA0H})
     end
 
     for cVegZix ∈ helpers.pools.zix.cVeg
-        cLoss = max0(cEco[cVegZix] - c_remain)
+        cLoss = maxZero(cEco[cVegZix] - c_remain)
         cVegNew = cEco[cVegZix] - cLoss
         @rep_elem cVegNew => (cEco, cVegZix, :cEco)
     end

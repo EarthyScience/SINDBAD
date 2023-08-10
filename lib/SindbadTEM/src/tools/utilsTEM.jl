@@ -1,90 +1,76 @@
 export getForcingTimeSize
 export getForcingForTimeStep
-export getKeyedArray
-export getKeyedArrayWithNames
-export getNamedDimsArrayWithNames
+export getLocData
+export getLocForcing!
+export getLocOutput!
 export getNumberOfTimeSteps
+export landWrapper
+export setOutputForTimeStep!
+export viewCopyYax
 
 """
-getKeyedArray(input::NamedTuple)
-"""
+    landWrapper{S}
 
+Wrap the nested fields of namedtuple output of sindbad land into a nested structure of views that can be easily accessed with a dot notation
 """
-    getArray(input)
-
-DOCSTRING
-"""
-function getArray(input)
-    arrayData = map(input.data) do c
-        Array(c.data)
-    end
-    return arrayData
+struct landWrapper{S}
+    s::S
 end
-
-
-"""
-getNamedDimsArrayWithNames(input::NamedTuple)
-"""
-
-"""
-    getNamedDimsArrayWithNames(input)
-
-DOCSTRING
-"""
-function getNamedDimsArrayWithNames(input)
-    ks = input.variables
-    keyedData = map(input.data) do c
-        t_dims = getSindbadDims(c)
-        NamedDimsArray(Array(c.data); t_dims...)
-    end
-    return (; Pair.(ks, keyedData)...)
+struct GroupView{S}
+    groupname::Symbol
+    s::S
 end
-
-
-"""
-getKeyedArrayWithNames(input::NamedTuple)
-"""
-
-"""
-    getKeyedArrayWithNames(input)
-
-DOCSTRING
-"""
-function getKeyedArrayWithNames(input)
-    ks = input.variables
-    keyedData = getKeyedArray(input)
-    return (; Pair.(ks, keyedData)...)
+struct ArrayView{T,N,S<:AbstractArray{<:Any,N}} <: AbstractArray{T,N}
+    s::S
+    groupname::Symbol
+    arrayname::Symbol
 end
-
-
+Base.getproperty(s::landWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfield(s, :s))
 """
-getKeyedArray(input::NamedTuple)
-"""
-
-"""
-    getKeyedArray(input)
+    Base.getproperty(g::GroupView, aggr_func::Symbol)
 
 DOCSTRING
 """
-function getKeyedArray(input)
-    keyedData = map(input.data) do c
-        t_dims = getSindbadDims(c)
-        KeyedArray(Array(c.data); t_dims...)
-    end
-    return keyedData
+function Base.getproperty(g::GroupView, aggr_func::Symbol)
+    allarrays = getfield(g, :s)
+    groupname = getfield(g, :groupname)
+    T = typeof(first(allarrays)[groupname][aggr_func])
+    return ArrayView{T,ndims(allarrays),typeof(allarrays)}(allarrays, groupname, aggr_func)
 end
-
-
-
+Base.size(a::ArrayView) = size(a.s)
+Base.IndexStyle(a::Type{<:ArrayView}) = IndexLinear()
+Base.getindex(a::ArrayView, i::Int) = a.s[i][a.groupname][a.arrayname]
+Base.propertynames(o::landWrapper) = propertynames(first(getfield(o, :s)))
+Base.keys(o::landWrapper) = propertynames(o)
+Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
 
 """
-    getNumberOfTimeSteps(incubes, time_name)
+    Base.propertynames(o::GroupView)
 
 DOCSTRING
 """
-function getNumberOfTimeSteps(incubes, time_name)
-    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
-    return length(getAxis(time_name, incubes[i1]).values)
+function Base.propertynames(o::GroupView)
+    return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
+end
+Base.keys(o::GroupView) = propertynames(o)
+Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
+
+
+
+
+"""
+    fillLocOutput!(ar, val, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
+function fillLocOutput!(ar, val, ts::Int64)
+    data_ts = getLocOutputView(ar, val, ts)
+    return data_ts .= val
 end
 
 """
@@ -183,26 +169,184 @@ function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     end
 end
 
+"""
+    getLocData(forcing, output_array, loc_space_map)
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output_array`: an output array/view for ALL locations
+- `loc_space_map`: DESCRIPTION
+"""
+function getLocData(forcing, output_array, loc_space_map)
+    loc_forcing = map(forcing) do a
+        view(a; loc_space_map...)
+    end
+    # ar_inds = last.(loc_space_map)
+    ar_inds = Tuple(last.(loc_space_map))
+
+    loc_output = map(output_array) do a
+        getArrayView(a, ar_inds)
+    end
+    return loc_forcing, loc_output
+end
 
 """
-getSindbadDims(c)
-prepare the dimensions of data and name them appropriately for use in internal SINDBAD functions
+    getLocForcing!(forcing, loc_forcing, s_locs, Val{forc_vars}, Val{s_names})
+
+DOCSTRING
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_forcing`: a forcing time series set for a single location
+- `s_locs`: DESCRIPTION
+- `nothing`: DESCRIPTION
+- `nothing`: DESCRIPTION
 """
+@generated function getLocForcing!(
+    forcing,
+    loc_forcing,
+    s_locs,
+    ::Val{forc_vars},
+    ::Val{s_names}) where {forc_vars,s_names}
+    output = quote end
+    foreach(forc_vars) do forc
+        push!(output.args, Expr(:(=), :d, Expr(:., :forcing, QuoteNode(forc))))
+        s_ind = 1
+        foreach(s_names) do s_name
+            expr = Expr(:(=),
+                :d,
+                Expr(:call,
+                    :view,
+                    Expr(:parameters,
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                    :d))
+            push!(output.args, expr)
+            s_ind += 1
+        end
+        push!(output.args,
+            Expr(:(=),
+                :loc_forcing,
+                Expr(:macrocall,
+                    Symbol("@set"),
+                    :(),
+                    Expr(:(=), Expr(:., :loc_forcing, QuoteNode(forc)), :d)))) #= none:1 =#
+    end
+    return output
+end
 
 """
-    getSindbadDims(c)
+    getLocOutput!(output_array, loc_output, ar_inds)
+
+DOCSTRING
+
+# Arguments:
+- `output_array`: an output array/view for ALL locations
+- `loc_output`: an output array/view for a single location
+- `ar_inds`: DESCRIPTION
+"""
+function getLocOutput!(output_array, loc_output, ar_inds)
+    for i ∈ eachindex(output_array)
+        loc_output[i] = getArrayView(output_array[i], ar_inds)
+    end
+    return nothing
+end
+
+"""
+    getLocOutputView(ar, val::AbstractVector, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
+function getLocOutputView(ar, val::AbstractVector, ts::Int64)
+    return view(ar, ts, 1:length(val))
+end
+
+"""
+    getLocOutputView(ar, val::Real, ts::Int64)
+
+DOCSTRING
+
+# Arguments:
+- `ar`: DESCRIPTION
+- `val`: DESCRIPTION
+- `ts`: DESCRIPTION
+"""
+function getLocOutputView(ar, val::Real, ts::Int64)
+    return view(ar, ts)
+end
+
+
+"""
+    getNumberOfTimeSteps(incubes, time_name)
 
 DOCSTRING
 """
-function getSindbadDims(c)
-    dimnames = DimensionalData.name(dims(c))
-    act_dimnames = []
-    foreach(dimnames) do dimn
-        td = dimn
-        if dimn in (:Ti, :Time, :TIME, :t, :T, :TI)
-            td = :time
+function getNumberOfTimeSteps(incubes, time_name)
+    i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
+    return length(getAxis(time_name, incubes[i1]).values)
+end
+
+
+"""
+    setOutputForTimeStep!(outputs, land, ts, Val{output_vars})
+
+DOCSTRING
+
+# Arguments:
+- `outputs`: DESCRIPTION
+- `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
+- `ts`: DESCRIPTION
+- `nothing`: DESCRIPTION
+"""
+function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {output_vars}
+    if @generated
+        output = quote end
+        for (i, ov) in enumerate(output_vars)
+            field = first(ov)
+            subfield = last(ov)
+            push!(output.args,
+                Expr(:(=), :data_l, Expr(:., Expr(:., :land, QuoteNode(field)), QuoteNode(subfield))))
+            push!(output.args, quote
+                data_o = outputs[$i]
+                fillLocOutput!(data_o, data_l, ts)
+            end)
         end
-        push!(act_dimnames, td)
+        return output
+    else
+        for (i, ov) in enumerate(output_vars)
+            field = first(ov)
+            subfield = last(ov)
+            data_l = getfield(getfield(land, field), subfield)
+            data_o = outputs[i]
+            fillLocOutput!(data_o, data_l, ts)
+        end
     end
-    return [act_dimnames[k] => getproperty(c, dimnames[k]) |> Array for k ∈ eachindex(dimnames)]
+end
+
+
+"""
+    viewCopyYax(xout, xin)
+
+DOCSTRING
+
+# Arguments:
+- `xout`: DESCRIPTION
+- `xin`: DESCRIPTION
+"""
+function viewCopyYax(xout, xin)
+    if ndims(xout) == ndims(xin)
+        for i ∈ eachindex(xin)
+            xout[i] = xin[i][1]
+        end
+    else
+        for i ∈ CartesianIndices(xin)
+            xout[:, i] .= xin[i]
+        end
+    end
 end

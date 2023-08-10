@@ -5,7 +5,7 @@ using ..Sindbad
 using FieldMetadata: @metadata
 using TypedTables: Table
 using Parameters: @with_kw
-using Statistics: mean
+using StatsBase: mean
 @metadata describe "" String
 @metadata bounds (nothing, nothing) Tuple
 @metadata units "" String
