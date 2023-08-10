@@ -64,10 +64,17 @@ julia > run(`mkdir -p my_env`)
 julia > run(`cd my_env`)
 ```
 
-Create the julia environment and instantiate all dependencies and packages as,
+Create the julia environment, activate it, and instantiate all dev dependencies and packages by pasting the following in the package mode of Julia REPL,
 ```
-julia > include("../start_environment.jl")
+dev ../.. ../../lib/SindbadData ../../lib/SindbadExperiment ../../lib/SindbadMetrics ../../lib/SindbadOptimization ../../lib/SindbadSetup ../../lib/SindbadTEM ../../lib/SindbadUtils
 ```
+
+Once the dev dependencies are built, run
+```
+resolve
+instantiate
+```
+
 
 ### Download the example data
 
@@ -80,7 +87,8 @@ bash download_example_data.sh
 ### Package Structure
 
 Sindbad.jl includes a core Sindbad package in the root of the repository, and several sub-repositories in the lib directory.
-The packages are as follows
+
+The packages are as follows:
 
 - Sindbad: a core package in the root that includes definition of sindbad models and variables, and functions needed for internal model executions
 - SindbadData: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils
@@ -90,7 +98,7 @@ The packages are as follows
 - SindbadOptimization: includes the optimization schemes and functions to optimize the model, and has dev dependency on SindbadTEM and SindbadMetrics
 - SindbadSetup: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on Sindbad and SindbadUtils
 - SindbadTEM: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and and has dev dependency on Sindbad, SindbadSetup, and SindbadUtils
-- SindbadUtils: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only. 
+- SindbadUtils: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only
 
 ### Using Sindbad in your example
 
