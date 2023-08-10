@@ -1,11 +1,16 @@
 module SindbadSetup
-using CodeTracking
-using CSV: CSV
-using JSON: parsefile, json
-using Dates
 
-include("getConfiguration.jl")
-include("prepExperiment.jl")
-include("setupExperiment.jl")
+    using Sindbad
+    using CodeTracking
+    using CSV: CSV
+    using Dates
+    @reexport using Infiltrator
+    using JSON: parsefile, json
+    @reexport using JLD2: @save
+    @reexport using Sindbad
+    @reexport using SindbadUtils
+
+    include("getConfiguration.jl")
+    include("setupInfo.jl")
 
 end # module SindbadSetup

@@ -77,10 +77,30 @@ Before running the experiments, download the example by running the following sc
 bash download_example_data.sh
 ````
 
+### Package Structure
+
+Sindbad.jl includes a core Sindbad package in the root of the repository, and several sub-repositories in the lib directory.
+The packages are as follows
+
+- Sindbad: a core package in the root that includes definition of sindbad models and variables, and functions needed for internal model executions
+- SindbadData: includes functions to load the forcing and observation data, and has dev dependency on SindbadUtils
+- SindbadExperiment: includes the dev dependencies on all other Sindbad packages that can be used to run an experiment and save the experiment outputs
+- SindbadHybrid: includes the dev dependencies on SindbadTEM, SindbadMetrics, SindbadSetup, and SindbadUtils as well as external ML libraries to do hybrid modeling
+- SindbadMetrics: includes the calculation of loss metrics and has dependency on SindbadUtils
+- SindbadOptimization: includes the optimization schemes and functions to optimize the model, and has dev dependency on SindbadTEM and SindbadMetrics
+- SindbadSetup: includes the setup of sindbad model structure and info from the json settings, and has dev dependency on Sindbad and SindbadUtils
+- SindbadTEM: includes the main functions to run SINDBAD Terrestrial Ecosystem Model, and and has dev dependency on Sindbad, SindbadSetup, and SindbadUtils
+- SindbadUtils: includes utility functions that are used in other Sindbad lib packages, which has no dev dependency on other lib packages and Sindbad info, and is dependent on external libraries only. 
+
 ### Using Sindbad in your example
 
 Sindbad is divided into following sub-packages which can be imported in your example with
 ```using $PACKAGE```
-- Sindbad: pacckage including core models and setup of SINDBAD experiment
-- SindbadTEM: package to run SINDABD experiment in the forward mode
-- SindbadOptimization: package to carry out paramater optimization and invesion
+
+For example 
+
+```using SindbadExperiment```
+
+allows to run the full experiment.
+
+Other smaller packages can be imported and put together to build an experiment workflow as needed

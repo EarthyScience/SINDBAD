@@ -4,7 +4,7 @@ export getParameters
 export prepNumericHelpers
 export replaceCommaSeparatorParams
 export setNumberType
-export setupExperiment
+export setupInfo
 
 """
     changeModelOrder(info::NamedTuple, selModels::AbstractArray)
@@ -1341,11 +1341,11 @@ end
 
 
 """
-    setupExperiment(info::NamedTuple)
+    setupInfo(info::NamedTuple)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
-function setupExperiment(info::NamedTuple)
+function setupInfo(info::NamedTuple)
     @info "SetupExperiment: setting Numeric Helpers..."
     info = setNumericHelpers(info)
     @info "SetupExperiment: setting Output Helpers..."

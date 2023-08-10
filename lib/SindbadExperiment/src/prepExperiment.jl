@@ -19,7 +19,7 @@ function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
 
     @info "prepExperimentForward: setup experiment..."
-    info = setupExperiment(info)
+    info = setupInfo(info)
     return info
 end
 
@@ -56,7 +56,7 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
 
     @info "prepExperimentForward: setup output..."
     @info "\n----------------------------------------------\n"
-    output = setupOutput(info, forcing.helpers)
+    output = prepTEMOut(info, forcing.helpers)
     return info, forcing, output
 end
 

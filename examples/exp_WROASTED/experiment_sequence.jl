@@ -175,7 +175,7 @@ for domain ∈ sites
 
     out_info = getOutputFileInfo(info)
 
-    output = setupOutput(info, forcing.helpers)
+    output = prepTEMOut(info, forcing.helpers)
     saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(true))
     saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(false))
 

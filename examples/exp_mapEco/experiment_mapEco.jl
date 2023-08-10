@@ -9,11 +9,11 @@ experiment_json = "../exp_mapEco/settings_mapEco/experiment.json";
 
 info = getConfiguration(experiment_json);
 
-info = setupExperiment(info);
+info = setupInfo(info);
 
 forcing = getForcing(info);
 
-output = setupOutput(info, forcing.helpers);
+output = prepTEMOut(info, forcing.helpers);
 
 outcubes = runTEMYAX(forcing,
     output,

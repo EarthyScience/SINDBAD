@@ -5,7 +5,7 @@ using SindbadTEM
 Sindbad.toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
-info = setupExperiment(info);
+info = setupInfo(info);
 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
