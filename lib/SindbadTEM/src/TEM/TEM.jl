@@ -1,6 +1,0 @@
-include("runModels.jl")
-include("prepTEM.jl")
-include("runTEMLand.jl")
-include("runTEMArray.jl")
-include("runTEMYax.jl")
-include("spinupTEM.jl")

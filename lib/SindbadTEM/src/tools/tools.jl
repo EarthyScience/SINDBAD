@@ -1,5 +1,0 @@
-include("runExperiment.jl")
-include("utilsTEM.jl")
-include("deriveSpinupForcing.jl")
-include("setupOutput.jl")
-include("saveOutput.jl")
