@@ -3,8 +3,11 @@ using InteractiveUtils
 using Reexport: @reexport
 @reexport using Sindbad
 @reexport using SindbadTEM
+@reexport using SindbadUtils
+@reexport using SindbadMetrics
+
 using CMAEvolutionStrategy: minimize, xbest
-using Dates
+# using Dates
 # using DifferentialEquations
 using ForwardDiff
 using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
@@ -18,20 +21,19 @@ using NLopt: NLopt
 
 using RecursiveArrayTools
 
-using TableOperations: select
-using Tables: columntable, matrix
-using TypedTables: Table
-using StatsBase: mean, percentile, cor, corspearman
+# using TableOperations: select
+# using Tables: columntable, matrix
+# using TypedTables: Table
 
-using JLD2: @save
+# using JLD2: @save
 
-using YAXArrays
-using YAXArrayBase
-using YAXArrays: savecube
-using YAXArrayBase: getdata
+# using YAXArrays
+# using YAXArrayBase
+# using YAXArrays: savecube
+# using YAXArrayBase: getdata
 
 using Infiltrator  # to allow @infiltrate for debugging
 
-include("optimization/optimization.jl")
+include("optimization.jl")
 
 end
