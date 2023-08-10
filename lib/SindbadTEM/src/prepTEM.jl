@@ -159,7 +159,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     loc_space_names = Tuple(first.(loc_space_maps[1]))
     loc_space_inds = Tuple([Tuple(last.(loc_space_map)) for loc_space_map ∈ loc_space_maps])
 
-    forcing_nt_array = getKeyedArrayWithNames(forcing)
+    forcing_nt_array = getForcingNamedTuple(forcing.data, forcing.variables)
 
     # get the output things
     variables = output.variables

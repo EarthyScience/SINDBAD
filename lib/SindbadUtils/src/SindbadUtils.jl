@@ -1,10 +1,12 @@
 module SindbadUtils
 
     using Crayons
+    using DataStructures
+    using Dates
     using Logging
     using Reexport: @reexport
     @reexport using NaNStatistics
-    using StatsBase: mean, rle, sample
+    @reexport using StatsBase: mean, rle, sample, sum
     @reexport using TypedTables: Table
 
     include("getArrayView.jl")

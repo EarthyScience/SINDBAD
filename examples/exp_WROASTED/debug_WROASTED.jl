@@ -20,7 +20,7 @@ optimize_it = false
 path_output = nothing
 
 parallelization_lib = "threads"
-model_array_type = "staticarray"
+model_array_type = "static_array"
 replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
