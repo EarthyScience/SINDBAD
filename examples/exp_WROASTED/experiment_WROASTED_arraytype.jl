@@ -1,5 +1,5 @@
 using Revise
-using SindbadOptimization
+using SindbadExperiment
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
