@@ -10,7 +10,7 @@
     "time": {
       "date_begin": "2006-01-01",
       "date_end": "2013-12-31",
-      "temporal_resolution": "t_day",
+      "temporal_resolution": "day",
       "timesteps_in_day": 1,
       "timesteps_in_year": 365
     }

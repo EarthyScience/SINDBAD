@@ -16,7 +16,7 @@ returns a list of models reordered according to orders provided in model_structu
 - USE WITH EXTREME CAUTION AS CHANGING ORDER MAY RESULT IN MODEL INCONSISTENCY
 """
 function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
-    all_sindbad_models = sindbad_models
+    all_sindbad_models = [sindbad_models...]
     checkSelectedModels(all_sindbad_models, selected_models)
     # get orders of fixed models that cannot be changed
     order_getPools = findfirst(e -> e == :getPools, all_sindbad_models)
@@ -209,7 +209,7 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.experiment.basics.time.temporal_resolution == "t_day"
+    if info.experiment.basics.time.temporal_resolution == "day"
         timestep = Day(1)
         time_range = Date(info.experiment.basics.time.date_begin):Day(1):Date(info.experiment.basics.time.date_end)
     elseif info.experiment.basics.time.temporal_resolution == "hour"
@@ -1024,7 +1024,7 @@ end
 a helper function to get the type for spinup mode
 """
 function getTypeInstanceForSpinupMode(option_name::String)
-    opt_ss = join(titlecase.(split(option_name,"_")))
+    opt_ss = join(uppercasefirst.(split(option_name,"_")))
     struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
     return struct_instance
 end
@@ -1041,7 +1041,7 @@ function getTypeInstancesForRunFlags(option_name::Symbol, option_value)
     if option_value
         structname = "Do"*opt_ss
     else
-        structname = "Dont"*opt_ss
+        structname = "DoNot"*opt_ss
     end
     struct_instance = getfield(SindbadSetup, Symbol(structname))()
     return struct_instance

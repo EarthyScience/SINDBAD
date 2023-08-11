@@ -27,22 +27,22 @@
     "WUE,WUEatOnehPa",
     "WUE,κ"
   ],
-  "multi_constraint_method": "sum",
+  "multi_constraint_method": "cost_sum",
   "multi_objective_algorithm": false,
   "observational_constraints": ["gpp", "runoff", "evapotranspiration", "tws"],
   "observations": {
     "default_cost": {
-      "aggr_order": "timespace",
+      "aggr_func": "nanmean",
+      "aggr_obs": false,
+      "aggr_order": "time_space",
       "area_weight": false,
-      "cost_metric": "nseinv",
+      "cost_metric": "NSE_inv",
       "cost_weight": 1.0,
       "data_path": null,
       "min_data_points": 1,
-      "spatial_aggr": "cat",
-      "spatial_cost_aggr": "spatial",
-      "temporal_aggr": "month",
-      "temporal_aggr_func": "mean",
-      "temporal_aggr_obs": false
+      "spatial_data_aggr": "concat_data",
+      "spatial_cost_aggr": "spatially_variable",
+      "temporal_data_aggr": "month"
     },
     "default_observation": {
       "additive_unit_conversion": false,
@@ -63,9 +63,8 @@
     "variables": {
       "evapotranspiration": {
         "cost_options": {
-          "cost_metric": "nseinv",
-          "temporal_aggr": "month",
-          "temporal_aggr_func": "mean",
+          "cost_metric": "NSE_inv",
+          "temporal_data_aggr": "month",
           "temporal_aggr_obs": false
         },
         "data": {
@@ -89,10 +88,8 @@
       },
       "gpp": {
         "cost_options": {
-          "cost_metric": "nseinv",
-          "temporal_aggr": "month_msc",
-          "temporal_aggr_func": "nanmean",
-          "temporal_aggr_obs": false
+          "cost_metric": "NSE_inv",
+          "temporal_data_aggr": "month_msc"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -113,10 +110,8 @@
       },
       "runoff": {
         "cost_options": {
-          "cost_metric": "nseinv",
-          "temporal_aggr": "month_msc",
-          "temporal_aggr_func": "nanmean",
-          "temporal_aggr_obs": false
+          "cost_metric": "NSE_inv",
+          "temporal_data_aggr": "month_msc"
         },
         "data": {
           "bounds": [-100.0, 100.0],
@@ -132,10 +127,8 @@
       },
       "tws": {
         "cost_options": {
-          "cost_metric": "pcor2inv",
-          "temporal_aggr": "month_anomaly",
-          "temporal_aggr_func": "nanmean",
-          "temporal_aggr_obs": false
+          "cost_metric": "pcor2_inv",
+          "temporal_data_aggr": "month_anomaly"
         },
         "data": {
           "bounds": [0.0, 100.0],

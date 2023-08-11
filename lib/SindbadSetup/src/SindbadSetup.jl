@@ -9,6 +9,7 @@ module SindbadSetup
     @reexport using JLD2: @save
     @reexport using Sindbad
     @reexport using SindbadUtils
+    @reexport using SindbadMetrics
 
     include("runtimeDispatchTypes.jl")
     include("getConfiguration.jl")

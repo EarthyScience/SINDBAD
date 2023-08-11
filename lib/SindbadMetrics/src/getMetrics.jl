@@ -6,62 +6,62 @@ export getLossVector
 export getModelOutputView
 
 """
-    aggregateData(dat, cost_option, Val{:timespace})
+    aggregateData(dat, cost_option, ::TimeSpace)
 
 DOCSTRING
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `nothing`: DESCRIPTION
+- `::TimeSpace`: DESCRIPTION
 """
-function aggregateData(dat, cost_option, ::Val{:timespace})
-    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+function aggregateData(dat, cost_option, ::TimeSpace)
+    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
     return dat
 end
 
 """
-    aggregateData(dat, cost_option, Val{:spacetime})
+    aggregateData(dat, cost_option, ::SpaceTime)
 
 DOCSTRING
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `nothing`: DESCRIPTION
+- `::SpaceTime`: DESCRIPTION
 """
-function aggregateData(dat, cost_option, ::Val{:spacetime})
+function aggregateData(dat, cost_option, ::SpaceTime)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
-    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
 
 """
-    combineLoss(loss_vector::AbstractArray, Val{:sum})
+    combineLoss(loss_vector::AbstractArray, ::CostSum)
 
 return the total of cost of each constraint as the overall cost
 """
-function combineLoss(loss_vector::AbstractArray, ::Val{:sum})
+function combineLoss(loss_vector::AbstractArray, ::CostSum)
     return sum(loss_vector)
 end
 
 
 """
-    combineLoss(loss_vector::AbstractArray, Val{:minimum})
+    combineLoss(loss_vector::AbstractArray, ::CostMinimum)
 
 return the minimum of cost of each constraint as the overall cost
 """
-function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
+function combineLoss(loss_vector::AbstractArray, ::CostMinimum)
     return minimum(loss_vector)
 end
 
 """
-    combineLoss(loss_vector::AbstractArray, Val{:maximum})
+    combineLoss(loss_vector::AbstractArray, ::CostMaximum)
 
 return the maximum of cost of each constraint as the overall cost
 """
-function combineLoss(loss_vector::AbstractArray, ::Val{:maximum})
+function combineLoss(loss_vector::AbstractArray, ::CostMaximum)
     return maximum(loss_vector)
 end
 
@@ -232,15 +232,15 @@ function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
 end
 
 """
-    spatialAggregation(dat, _, Val{:cat})
+    spatialAggregation(dat, _, ::SpatiallyVariable)
 
 DOCSTRING
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::SpatiallyVariable`: DESCRIPTION
 """
-function spatialAggregation(dat, _, ::Val{:cat})
+function spatialAggregation(dat, _, ::SpatiallyVariable)
     return dat
 end

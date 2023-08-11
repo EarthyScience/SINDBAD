@@ -1,5 +1,6 @@
 export cCycleBase_GSI, adjustPackPoolComponents
 
+struct CCycleBaseGSI end
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
     c_τ_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
@@ -44,7 +45,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A_array)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A_array)])
 
-    c_model = Val(:cCycleBase_GSI)
+    c_model = CCycleBaseGSI()
 
 
     ## pack land variables
@@ -88,7 +89,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function adjustPackPoolComponents(land, helpers, ::Val{:cCycleBase_GSI})
+function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
     @unpack_land (cVeg,
         cLit,
         cSoil,

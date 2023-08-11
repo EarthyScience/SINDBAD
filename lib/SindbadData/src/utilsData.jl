@@ -1,5 +1,4 @@
 export AllNaN
-export getCombinedVariableInfo
 export mapCleanData
 export subsetAndProcessYax
 
@@ -73,38 +72,6 @@ function cleanData(_data, _data_fill, _data_info, ::Val{T}) where {T}
         _data = clamp(_data, first(bounds), last(bounds))
     end
     return T(_data)
-end
-
-
-
-"""
-    getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
-
-combines the property values of the default with the properties set for the particular variable
-
-"""
-function getCombinedVariableInfo(default_info::NamedTuple, var_info::NamedTuple)
-    combined_info = (;)
-    default_fields = propertynames(default_info)
-    var_fields = propertynames(var_info)
-    all_fields = Tuple(unique([default_fields..., var_fields...]))
-    for var_field ∈ all_fields
-        field_value = nothing
-        if hasproperty(default_info, var_field)
-            field_value = getfield(default_info, var_field)
-        else
-            field_value = getfield(var_info, var_field)
-        end
-        if hasproperty(var_info, var_field)
-            var_prop = getfield(var_info, var_field)
-            if !isnothing(var_prop) && length(var_prop) > 0
-                field_value = getfield(var_info, var_field)
-            end
-        end
-        combined_info = setTupleField(combined_info,
-            (var_field, field_value))
-    end
-    return combined_info
 end
 
 

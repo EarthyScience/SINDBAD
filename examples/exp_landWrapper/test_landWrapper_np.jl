@@ -69,38 +69,18 @@ forcing_one_timestep,
 land_init_space[1],
 tem_with_types.helpers,
 tem_with_types.models,
-tem_with_types.spinup, Val(:true));
-
-
-@time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_types.helpers,
-tem_with_types.models,
 tem_with_types.spinup, DoRunSpinup());
 
-
 @time land_spin_now = runSpinup(info.tem.models.forward,
 loc_forcings[1],
 forcing_one_timestep,
 land_init_space[1],
 tem_with_types.helpers,
 tem_with_types.models,
-tem_with_types.spinup, DontRunSpinup());
+tem_with_types.spinup, DoNotRunSpinup());
 
 
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);
-
-# function nanmean(a;dims=:)
-#     init = (0,0.0)
-#     r = foldl(a;init,dims) do (n,s),b
-#         isnan(b) ? (n,s) : (n+1,s+b)
-#     end
-#     @show r
-#     last.(r)/first.(r)
-# end
-
 
 @time lw_timeseries = runTEM(forcing, info);
 
