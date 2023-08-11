@@ -51,7 +51,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     forcing_nt_array,
@@ -61,36 +61,36 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_outputs,
     land_init_space,
     loc_space_inds,
-    tem_with_vals)
+    tem_with_types)
 
 @time land_spin_now = runSpinup(info.tem.models.forward,
 loc_forcings[1],
 forcing_one_timestep,
 land_init_space[1],
-tem_with_vals.helpers,
-tem_with_vals.models,
-tem_with_vals.spinup, Val(:true));
-
-
-@time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_vals.helpers,
-tem_with_vals.models,
-tem_with_vals.spinup, DoRunSpinup());
+tem_with_types.helpers,
+tem_with_types.models,
+tem_with_types.spinup, Val(:true));
 
 
 @time land_spin_now = runSpinup(info.tem.models.forward,
 loc_forcings[1],
 forcing_one_timestep,
 land_init_space[1],
-tem_with_vals.helpers,
-tem_with_vals.models,
-tem_with_vals.spinup, DontRunSpinup());
+tem_with_types.helpers,
+tem_with_types.models,
+tem_with_types.spinup, DoRunSpinup());
 
 
-@time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals);
+@time land_spin_now = runSpinup(info.tem.models.forward,
+loc_forcings[1],
+forcing_one_timestep,
+land_init_space[1],
+tem_with_types.helpers,
+tem_with_types.models,
+tem_with_types.spinup, DontRunSpinup());
+
+
+@time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);
 
 # function nanmean(a;dims=:)
 #     init = (0,0.0)
@@ -106,7 +106,7 @@ tem_with_vals.spinup, DontRunSpinup());
 
 land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals);
+@time lw_timeseries_vec = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_types);
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
@@ -126,10 +126,10 @@ tbl_params = Sindbad.getParameters(info.tem.models.forward,
 
 defaults = tbl_params.default;
 
-@time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_vals, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 

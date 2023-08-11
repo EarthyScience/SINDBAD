@@ -21,15 +21,15 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_with_vals,
+tem_with_types,
 forcing_one_timestep = prepTEM(forcing, info);
 
-tem_helpers = tem_with_vals.helpers;
-tem_spinup = tem_with_vals.spinup;
-tem_models = tem_with_vals.models;
-tem_variables = tem_with_vals.variables;
+tem_helpers = tem_with_types.helpers;
+tem_spinup = tem_with_types.spinup;
+tem_models = tem_with_types.models;
+tem_variables = tem_with_types.variables;
 tem_optim = info.optim;
-forward = tem_with_vals.models.forward;
+forward = tem_with_types.models.forward;
 
 
 

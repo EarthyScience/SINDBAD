@@ -14,7 +14,6 @@ module SindbadOptimization
     using SindbadTEM
     using SindbadMetrics
 
-    include("optimizationTypes.jl")
     include("optimizer.jl")
     include("optimizeTEM.jl")
     include("optimizeTEMYax.jl")

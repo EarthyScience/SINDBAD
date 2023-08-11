@@ -25,7 +25,7 @@ output = prepTEMOut(info, forcing.helpers);
 
 GC.gc()
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
     forcing_nt_array,
@@ -35,7 +35,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_outputs,
     land_init_space,
     loc_space_inds,
-    tem_with_vals)
+    tem_with_types)
 
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
@@ -46,7 +46,7 @@ for x ∈ 1:10
         loc_outputs,
         land_init_space,
         loc_space_inds,
-        tem_with_vals)
+        tem_with_types)
 end
 
 getLossVector(obs_array, output_array, info.optim.cost_options)
@@ -57,7 +57,7 @@ getLossVector(obs_array, output_array, info.optim.cost_options)
 ds = forcing.data[1];
 using Plots
 plotdat = output_array;
-out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)

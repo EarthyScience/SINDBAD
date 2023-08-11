@@ -21,7 +21,7 @@ land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArrayWithNames(observations);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 
 
 @time runTEM!(info.tem.models.forward,
@@ -32,14 +32,14 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_outputs,
     land_init_space,
     loc_space_inds,
-    tem_with_vals)
+    tem_with_types)
 
 using GLMakie
 using Colors
 Makie.inline!(false)
 lines(1:10)
 
-out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
 names_pair = Dict(out_vars .=> 1:4)
 
 var_name = Observable(1)
