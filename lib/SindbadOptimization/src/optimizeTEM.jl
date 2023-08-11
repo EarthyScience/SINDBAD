@@ -1,242 +1,5 @@
-export combineLoss
-export filterCommonNaN
-export filterConstraintMinimumDatapoints
-export getData
-export getLocObs!
-export getLoss
-export getLossVector
-export getModelOutputView
 export optimizeTEM
-
-"""
-    aggregateData(dat, cost_option, Val{:time_space})
-
-DOCSTRING
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `nothing`: DESCRIPTION
-"""
-function aggregateData(dat, cost_option, ::Val{:time_space})
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
-    return dat
-end
-
-"""
-    aggregateData(dat, cost_option, Val{:space_time})
-
-DOCSTRING
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-- `nothing`: DESCRIPTION
-"""
-function aggregateData(dat, cost_option, ::Val{:space_time})
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
-    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
-    return dat
-end
-
-"""
-    combineLoss(loss_vector::AbstractArray, Val{:sum})
-
-return the total of cost of each constraint as the overall cost
-"""
-function combineLoss(loss_vector::AbstractArray, ::Val{:sum})
-    return sum(loss_vector)
-end
-
-
-"""
-    combineLoss(loss_vector::AbstractArray, Val{:minimum})
-
-return the minimum of cost of each constraint as the overall cost
-"""
-function combineLoss(loss_vector::AbstractArray, ::Val{:minimum})
-    return minimum(loss_vector)
-end
-
-"""
-    combineLoss(loss_vector::AbstractArray, Val{:maximum})
-
-return the maximum of cost of each constraint as the overall cost
-"""
-function combineLoss(loss_vector::AbstractArray, ::Val{:maximum})
-    return maximum(loss_vector)
-end
-
-
-"""
-    combineLoss(loss_vector::AbstractArray, percentile_value::T)
-
-return the percentile_value^th percentile of cost of each constraint as the overall cost
-"""
-function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
-    return percentile(loss_vector, percentile_value)
-end
-
-"""
-    filterCommonNaN(y, yσ, ŷ)
-
-return model and obs data filtering for the common nan
-
-# Arguments:
-- `y`: observation data
-- `yσ`: observational uncertainty data
-- `ŷ`: model simulation data/estimate
-"""
-function filterCommonNaN(y, yσ, ŷ, idxs)
-    return y[idxs], yσ[idxs], ŷ[idxs]
-end
-
-
-"""
-    filterConstraintMinimumDatapoints(obs_array, cost_options)
-
-remove all the variables that have less than minimum datapoints from being used in the optimization
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function filterConstraintMinimumDatapoints(observations, cost_options)
-    cost_options_filtered = cost_options
-    foreach(cost_options_filtered) do cost_option
-        obs_ind_start = cost_option.obs_ind
-        min_points = cost_option.min_data_points
-        var_name = cost_option.variable
-        y = observations[obs_ind_start]
-        yσ = observations[obs_ind_start+1]
-        idxs = Array(.!isnan.(y .* yσ))
-        # @show size(idxs)
-        # cost_option
-        # cost_option.valids = idxs
-        total_points = sum(idxs)
-        if total_points < min_points
-            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
-            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
-            # push!(cost_metrics, )
-        end
-    end
-    cost_metrics = cost_options_filtered.cost_metric
-    cost_metr_types  = map(a -> getfield(SindbadMetrics, valToSymbol(a))(), cost_metrics)
-    cost_options_filtered.cost_metric .= cost_metr_types
-    # @show cost_metrics
-    # @set cost_options_filtered.cost_metric = cost_metrics
-    return cost_options_filtered
-end
-
-"""
-    getData(model_output::landWrapper, observations, cost_option)
-
-DOCSTRING
-
-# Arguments:
-- `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-"""
-function getData(model_output::landWrapper, observations, cost_option)
-    obs_ind = cost_option.obs_ind
-    mod_field = cost_option.mod_field
-    mod_subfield = cost_option.mod_subfield
-    ŷField = getproperty(model_output, mod_field)
-    ŷ = getproperty(ŷField, mod_subfield)
-    y = observations[obs_ind]
-    yσ = observations[obs_ind+1]
-    if size(ŷ, 2) == 1
-        ŷ = getModelOutputView(ŷ)
-        y = y[:]
-        yσ = yσ[:]
-    end
-    # @show size(ŷ), size(y), size(yσ)
-    # @show typeof(ŷ), typeof(y), typeof(yσ)
-    # ymask = observations[obs_ind + 2]
-
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    if cost_option.temporal_aggr_obs
-        y = aggregateData(y, cost_option, cost_option.aggr_order)
-        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    end
-    return (y, yσ, ŷ)
-end
-
-"""
-    getData(model_output::AbstractArray, observations, cost_option)
-
-DOCSTRING
-
-# Arguments:
-- `model_output`: a collection of SINDBAD model output time series as a preallocated array
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
-"""
-function getData(model_output::AbstractArray, observations, cost_option)
-    obs_ind = cost_option.obs_ind
-    ŷ = model_output[cost_option.mod_ind]
-    if size(ŷ, 2) == 1
-        ŷ = getModelOutputView(ŷ)
-    end
-    y = observations[obs_ind]
-    yσ = observations[obs_ind+1]
-    # ymask = observations[obs_ind + 2]
-
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
-
-    if cost_option.temporal_aggr_obs
-        y = aggregateData(y, cost_option, cost_option.aggr_order)
-        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    end
-    return (y, yσ, ŷ)
-end
-
-"""
-    getLocObs!(obs_array, Val{obs_vars}, Val{s_names}, loc_obs, s_locs)
-
-DOCSTRING
-
-# Arguments:
-- `obs_array`: an array of all observation variables for all locations
-- `loc_obs`: a NT of observations for a given location to be used as reference to overwrite using @set
-- `s_locs`: name and values of the location/space dimensions
-- `Val{obs_vars}`: a Val dispatch to generate the code based on the list of observation variables
-- `Val{s_names}`: a Val dispatch to generate the code based on names the location/space dimensions
-"""
-@generated function getLocObs!(
-    obs_array,
-    loc_obs,
-    s_locs,
-    ::Val{obs_vars},
-    ::Val{s_names}) where {obs_vars,s_names}
-    output = quote end
-    foreach(obs_vars) do obsv
-        push!(output.args, Expr(:(=), :d, Expr(:., :obs_array, QuoteNode(obsv))))
-        s_ind = 1
-        foreach(s_names) do s_name
-            expr = Expr(:(=),
-                :d,
-                Expr(:call,
-                    :view,
-                    Expr(:parameters,
-                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
-                    :d))
-            push!(output.args, expr)
-            return s_ind += 1
-        end
-        return push!(output.args,
-            Expr(:(=),
-                :loc_obs,
-                Expr(:macrocall,
-                    Symbol("@set"),
-                    :(),
-                    Expr(:(=), Expr(:., :loc_obs, QuoteNode(obsv)), :d)))) #= none:1 =#
-    end
-    return output
-end
+export getLoss
 
 """
     getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
@@ -361,87 +124,6 @@ function getLoss(
 end
 
 """
-    getLossVector(observations, model_output, cost_options)
-
-returns a vector of losses for variables in info.cost_options.observational_constraints
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output`: a collection of SINDBAD model output time series, either as a preallocated array or as a time series of stacked land NT
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function getLossVector(observations, model_output, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        @debug "$(cost_option.variable)"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        idxs = (.!isnan.(y .* yσ .* ŷ))
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, idxs)
-        # @debug @time metr = loss(y, yσ, ŷ, lossMetric)
-        metr = loss(y, yσ, ŷ, lossMetric)
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        # @info "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
-        metr
-    end
-    # println("-------------------")
-    return loss_vector
-end
-
-
-"""
-    getModelOutputView(mod_dat)
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat)
-    return mod_dat[:]
-end
-
-"""
-    getModelOutputView(mod_dat::AbstractArray{T, 2})
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
-    return @view mod_dat[:, 1]
-end
-
-"""
-    getModelOutputView(mod_dat::AbstractArray{T, 3})
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
-    return @view mod_dat[:, 1, :]
-end
-
-"""
-    getModelOutputView(mod_dat::AbstractArray{T, 4})
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
-    return @view mod_dat[:, 1, :, :]
-end
-
-"""
-    spatialAggregation(dat, _, Val{:cat})
-
-DOCSTRING
-
-# Arguments:
-- `dat`: a data array/vector to aggregate
-- `_`: unused argument
-- `nothing`: DESCRIPTION
-"""
-function spatialAggregation(dat, _, ::Val{:cat})
-    return dat
-end
-
-"""
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:array})
 
 DOCSTRING
@@ -460,7 +142,7 @@ function optimizeTEM(forcing::NamedTuple,
     tem = info.tem
     optim = info.optim
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = Sindbad.getParameters(tem.models.forward,
+    tbl_params = getParameters(tem.models.forward,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 
@@ -522,7 +204,7 @@ function optimizeTEM(forcing::NamedTuple,
     tem = info.tem
     optim = info.optim
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = Sindbad.getParameters(tem.models.forward,
+    tbl_params = getParameters(tem.models.forward,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 
@@ -581,7 +263,7 @@ function optimizeTEM(forcing::NamedTuple,
     tem = info.tem
     optim = info.optim
     # get the subset of parameters table that consists of only optimized parameters
-    tbl_params = Sindbad.getParameters(tem.models.forward,
+    tbl_params = getParameters(tem.models.forward,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 

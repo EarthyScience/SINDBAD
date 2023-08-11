@@ -3,7 +3,7 @@ using Reexport: @reexport
 @reexport using DataStructures: DataStructures
 using DocStringExtensions
 @reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
-using InteractiveUtils
+@reexport using InteractiveUtils
 using Parameters
 @reexport using Reexport
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray

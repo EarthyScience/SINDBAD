@@ -3,7 +3,6 @@ using Revise
 # using SindbadUtils
 # using SindbadData
 # using SindbadTEM
-# using SindbadUtils
 # using SindbadMetrics
 # using SindbadOptimization
 # @time using SindbadOptimization
@@ -100,7 +99,7 @@ cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_opti
 @time getLossVector(obs_array, lw_timeseries_vec, cost_options) #|> sum
 
 
-tbl_params = Sindbad.getParameters(info.tem.models.forward,
+tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
     info.optim.model_parameters_to_optimize)
 
