@@ -8,9 +8,9 @@ DOCSTRING
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `seq`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::DoStoreSpinup`: DESCRIPTION
 """
-function addSpinupLog(land, seq, ::Val{true}) # when history is true
+function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
     n_repeat = 1
     for _seq in seq
         n_repeat = n_repeat + _seq["n_repeat"]
@@ -27,20 +27,20 @@ DOCSTRING
 
 # Arguments:
 - `land`: sindbad land
-- `Val{false}`: indicates not to store the spinup history
+- `::DontStoreSpinup`: indicates not to store the spinup history
 """
-function addSpinupLog(land, _, ::Val{false}) # when history is false
+function addSpinupLog(land, _, ::DontStoreSpinup) # when history is false
     spinuplog = nothing
     @pack_land spinuplog => land.states
     return land
 end
 
 """
-    debugModel(land_one, Val{:(true)})
+    debugModel(land_one, DoDebugModel)
 
 DOCSTRING
 """
-function debugModel(land_one, ::Val{:true}) # print land when debug model is true/on
+function debugModel(land_one, ::DoDebugModel) # print land when debug model is true/on
     Sindbad.eval(:(error_catcher = []))
     push!(Sindbad.error_catcher, land_one)
     tcPrint(land_one)
@@ -49,16 +49,16 @@ end
 
 
 """
-    debugModel(_, Val{:(false)})
+    debugModel(_, ::DontDebugModel)
 
 DOCSTRING
 """
-function debugModel(_, ::Val{:false}) # do nothing debug model is false/off
+function debugModel(_, ::DontDebugModel) # do nothing debug model is false/off
     return nothing
 end
 
 """
-    runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
+    runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
 
 DOCSTRING
 
@@ -70,7 +70,7 @@ DOCSTRING
 - `loc_space_map`: DESCRIPTION
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 """
-function runOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
+function runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
     loc_forcing, loc_output = getLocData(forcing, output_array, loc_space_map)
     forcing_one_timestep = getForcingForTimeStep(loc_forcing, 1)
     land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init,
@@ -188,7 +188,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     @info "     producing model output with one location and one time step for preallocating local, threaded, and spatial data"
     loc_forcing, loc_output = getLocData(forcing_nt_array, output_array, loc_space_maps[1]) #312
     loc_space_maps = loc_space_maps[allNans.==false]
-    forcing_one_timestep, land_one = runOneLocation(selected_models, forcing_nt_array, output_array, land_init,
+    forcing_one_timestep, land_one = runTEMOneLocation(selected_models, forcing_nt_array, output_array, land_init,
         loc_space_maps[1], new_tem)
     land_one = addSpinupLog(land_one, new_tem.spinup.sequence, new_tem.helpers.run.spinup.store_spinup)
 

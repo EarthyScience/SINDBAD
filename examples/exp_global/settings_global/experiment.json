@@ -10,14 +10,13 @@
     "time": {
       "date_begin": "2001-01-01",
       "date_end": "2005-12-31",
-      "temporal_resolution": "day",
+      "temporal_resolution": "t_day",
       "timesteps_in_day": 1,
       "timesteps_in_year": 365
     }
   },
   "exe_rules": {
     "data_type": "Float32",
-    "forward_diff": false,
     "input_array_type": "keyed_array",
     "input_data_backend": "netcdf",
     "model_array_type": "static_array",
@@ -39,7 +38,8 @@
       "save_spinup": false,
       "spinup_TEM": true,
       "store_spinup": false
-    }
+    },
+    "use_forward_diff": false
   },
   "model_output": {
     "all": true,
@@ -83,7 +83,7 @@
       {
         "forcing": "all_years",
         "n_repeat": 1,
-        "spinup_mode": "forward",
+        "spinup_mode": "all_forward_models",
         "stop_function": null
       }
     ]

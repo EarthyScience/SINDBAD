@@ -13,21 +13,12 @@ function throwError(forcing, land, msg, water_balance, total_water, total_water_
     end
     error(msg)
 end
-
-function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::Val{:true}, ::Val{:true}) # when catch_model_errors is true and run_optimization is true -> never check for errors during optimization
-    return nothing
-end
-
-function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::Val{:false}, ::Val{:true}) # when catch_model_errors is true and run_optimization is false -> never check for errors when catch_model_errors is false
-    return nothing
-end
-
-function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::Val{:false}, ::Val{:false}) # when catch_model_errors is true and run_optimization is false -> never check for errors when catch_model_errors is false
+function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::DontCatchModelErrors) # when catch_model_errors is false
     return nothing
 end
 
 
-function checkWaterBalanceError(forcing, land, water_balance, tolerance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration, ::Val{:true}, ::Val{:false}) # when catch_model_errors is true and run_optimization is false
+function checkWaterBalanceError(forcing, land, water_balance, tolerance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration, ::DoCatchModelErrors) # when catch_model_errors is true
     if isnan(water_balance)
         throwError(forcing, land, "water balance is nan", water_balance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration)
     end
@@ -49,7 +40,7 @@ function compute(p_struct::waterBalance_simple, forcing, land, helpers)
     dS = total_water - total_water_prev
     water_balance = precip - runoff - evapotranspiration - dS
 
-    checkWaterBalanceError(forcing, land, water_balance, tolerance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration, helpers.run.catch_model_errors, helpers.run.run_optimization)
+    checkWaterBalanceError(forcing, land, water_balance, tolerance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration, helpers.run.catch_model_errors)
 
     ## pack land variables
     @pack_land water_balance => land.states

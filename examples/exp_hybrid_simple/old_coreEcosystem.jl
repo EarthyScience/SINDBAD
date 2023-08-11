@@ -21,7 +21,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_with_vals,
+tem_with_types,
 forcing_one_timestep = prepTEM(forcing, info);
 
 
@@ -34,15 +34,15 @@ forcing_one_timestep = prepTEM(forcing, info);
     loc_outputs,
     land_init_space,
     forcing_one_timestep,
-    tem_with_vals)
+    tem_with_types)
 
 
-tem_helpers = tem_with_vals.helpers;
-tem_spinup = tem_with_vals.spinup;
-tem_models = tem_with_vals.models;
-tem_variables = tem_with_vals.variables;
+tem_helpers = tem_with_types.helpers;
+tem_spinup = tem_with_types.spinup;
+tem_models = tem_with_types.models;
+tem_variables = tem_with_types.variables;
 tem_optim = info.optim;
-forward = tem_with_vals.models.forward;
+forward = tem_with_types.models.forward;
 
 
 getLoss(tbl_params.default,
@@ -51,7 +51,7 @@ getLoss(tbl_params.default,
     output,
     obs_array,
     tbl_params,
-    tem_with_vals,
+    tem_with_types,
     tem_optim,
     loc_space_inds,
     loc_forcings,
@@ -228,7 +228,7 @@ CHUNK_SIZE = 8
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
 
-gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
+gradDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
 mods = Tuple(updateModelParametersType(tbl_params, forward, gradDefs));
 dual_land = reDoOneLocation1(loc_land_init, mods, tem_helpers, loc_forcing, forcing_one_timestep);
 

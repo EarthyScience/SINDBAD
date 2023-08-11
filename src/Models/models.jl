@@ -9,12 +9,19 @@ using StatsBase: mean
 @metadata bounds (nothing, nothing) Tuple
 @metadata units "" String
 export describe, bounds, units
+export DoCatchModelErrors
+export DontCatchModelErrors
 
 export sindbad_models
 # export LandEcosystem
+# define dispatch structs for catching model errors
+struct DoCatchModelErrors end
+struct DontCatchModelErrors end
 
 ## Define SINDBAD supertype
 abstract type LandEcosystem end
+
+
 
 ## fallback functions for instantiate, precompute, compute and update. 
 ## These functions here make the corresponding functions in the model (approaches) optional

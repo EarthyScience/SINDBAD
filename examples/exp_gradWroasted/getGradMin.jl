@@ -17,7 +17,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = getKeyedArray(observations);
 
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 
 
 @time runTEM!(info.tem.models.forward,
@@ -28,7 +28,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_outputs,
     land_init_space,
     loc_space_inds,
-    tem_with_vals)
+    tem_with_types)
 
 # @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = Sindbad.getParameters(info.tem.models.forward,
@@ -51,7 +51,7 @@ function l1(p)
         output_array,
         obs_array,
         tbl_params,
-        tem_with_vals,
+        tem_with_types,
         info.optim.cost_options,
         info.optim.multi_constraint_method,
         loc_space_inds,

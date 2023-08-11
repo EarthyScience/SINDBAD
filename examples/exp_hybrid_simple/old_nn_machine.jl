@@ -102,7 +102,7 @@ function nn_machine(nn_args, x_args, xfeatures, info, forc, obs_array, sites_f, 
         loc_forcings,
         loc_outputs,
         land_init_space,
-        tem_with_vals,
+        tem_with_types,
         forcing_one_timestep = prepTEM(forcing, info)
         out_data = output_array
 
