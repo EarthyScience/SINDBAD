@@ -207,21 +207,21 @@ function loadSpinup(_, tem_spinup, ::DoLoadSpinup) # when load_spinup is true
 end
 
 """
-    loadSpinup(land, _, ::DontLoadSpinup)
+    loadSpinup(land, _, ::DoNotLoadSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `_`: unused argument
-- `::DontLoadSpinup`: DESCRIPTION
+- `::DoNotLoadSpinup`: DESCRIPTION
 """
-function loadSpinup(land, _, ::DontLoadSpinup) # when load_spinup is false
+function loadSpinup(land, _, ::DoNotLoadSpinup) # when load_spinup is false
     return land
 end
 
 """
-    runSpinup(_, _, _, land, _, _, _, ::DontRunSpinup)
+    runSpinup(_, _, _, land, _, _, _, ::DoNotRunSpinup)
 
 DOCSTRING
 
@@ -233,9 +233,9 @@ DOCSTRING
 - `_`: unused argument
 - `_`: unused argument
 - `_`: unused argument
-- `DontRunSpinup`: a dispatch to not run spinup
+- `DoNotRunSpinup`: a dispatch to not run spinup
 """
-function runSpinup(_, _, _, land, _, _, _, ::DontRunSpinup) # dont do the spinup
+function runSpinup(_, _, _, land, _, _, _, ::DoNotRunSpinup) # dont do the spinup
     return land
 end
 
@@ -829,16 +829,16 @@ function saveSpinup(land, tem_spinup, ::DoSaveSpinup) # save the spinup
 end
 
 """
-    saveSpinup(_, _, ::DontSaveSpinup)
+    saveSpinup(_, _, ::DoNotSaveSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `_`: unused argument
 - `_`: unused argument
-- `::DontSaveSpinup`: DESCRIPTION
+- `::DoNotSaveSpinup`: DESCRIPTION
 """
-function saveSpinup(_, _, ::DontSaveSpinup) # dont save the spinup
+function saveSpinup(_, _, ::DoNotSaveSpinup) # dont save the spinup
     return nothing
 end
 
@@ -859,16 +859,16 @@ function setSpinupLog(land, log_index, ::DoStoreSpinup)
 end
 
 """
-    setSpinupLog(land, _, ::DontStoreSpinup)
+    setSpinupLog(land, _, ::DoNotStoreSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `_`: unused argument
-- `::DontStoreSpinup`: DESCRIPTION
+- `::DoNotStoreSpinup`: DESCRIPTION
 """
-function setSpinupLog(land, _, ::DontStoreSpinup)
+function setSpinupLog(land, _, ::DoNotStoreSpinup)
     return land
 end
 

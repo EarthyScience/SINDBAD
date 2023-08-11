@@ -1,33 +1,65 @@
-export mse
-export nmae1r
-export nnse
-export nnseinv
-export nnseσ
-export nnseσinv
-export nse
-export nseinv
-export nseσ
-export nseσinv
-export pcor
-export pcor2
-export pcor2inv
-export scor
-export scor2
-export scor2inv
+# ------------------------- metric -------------------------
 
-struct mse end
-struct nmae1r end
-struct nnse end
-struct nnseinv end
-struct nnseσ end
-struct nnseσinv end
-struct nse end
-struct nseinv end
-struct nseσ end
-struct nseσinv end
-struct pcor end
-struct pcor2 end
-struct pcor2inv end
-struct scor end
-struct scor2 end
-struct scor2inv end
+export MSE
+export NMAE1R
+export NNSE
+export NNSEInv
+export NNSEσ
+export NNSEσInv
+export NSE
+export NSEInv
+export NSEσ
+export NSEσInv
+export Pcor
+export Pcor2
+export Pcor2Inv
+export Scor
+export Scor2
+export Scor2Inv
+
+struct MSE end
+struct NMAE1R end
+struct NNSE end
+struct NNSEInv end
+struct NNSEσ end
+struct NNSEσInv end
+struct NSE end
+struct NSEInv end
+struct NSEσ end
+struct NSEσInv end
+struct Pcor end
+struct Pcor2 end
+struct Pcor2Inv end
+struct Scor end
+struct Scor2 end
+struct Scor2Inv end
+
+# ------------------------- loss calculation -------------------------
+
+export SpaceTime
+export TimeSpace
+
+struct SpaceTime end
+struct TimeSpace end
+
+export DoAggrObs
+export DoNotAggrObs
+export DoAreaWeight
+export DoNotAreaWeight
+
+struct DoAggrObs end
+struct DoNotAggrObs end
+struct DoAreaWeight end
+struct DoNotAreaWeight end
+
+export ConcatData
+export CostMaximum
+export CostMinimum
+export CostSum
+export SpatiallyVariable
+
+struct ConcatData end
+struct CostMaximum end
+struct CostMinimum end
+struct CostSum end
+struct SpatiallyVariable end

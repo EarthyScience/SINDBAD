@@ -107,7 +107,7 @@ function getForcing(info::NamedTuple)
     f_dimension = nothing
     num_type = Val{info.tem.helpers.numbers.num_type}()
     incubes = map(forcing_variables) do k
-        vinfo = getCombinedVariableInfo(default_info, info.forcing.variables[k])
+        vinfo = getCombinedNamedTuple(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
         nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
         @info "     source_var: $(vinfo.source_variable)"

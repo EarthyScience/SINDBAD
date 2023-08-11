@@ -10,13 +10,13 @@ using StatsBase: mean
 @metadata units "" String
 export describe, bounds, units
 export DoCatchModelErrors
-export DontCatchModelErrors
+export DoNotCatchModelErrors
 
 export sindbad_models
 # export LandEcosystem
 # define dispatch structs for catching model errors
 struct DoCatchModelErrors end
-struct DontCatchModelErrors end
+struct DoNotCatchModelErrors end
 
 ## Define SINDBAD supertype
 abstract type LandEcosystem end

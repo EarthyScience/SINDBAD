@@ -79,7 +79,7 @@ forcing_one_timestep,
 land_init_space[1],
 tem_with_types.helpers,
 tem_with_types.models,
-tem_with_types.spinup, DontRunSpinup());
+tem_with_types.spinup, DoNotRunSpinup());
 
 
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);

@@ -9,7 +9,7 @@ export getModelOutputView
 export optimizeTEM
 
 """
-    aggregateData(dat, cost_option, Val{:timespace})
+    aggregateData(dat, cost_option, Val{:time_space})
 
 DOCSTRING
 
@@ -18,14 +18,14 @@ DOCSTRING
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 - `nothing`: DESCRIPTION
 """
-function aggregateData(dat, cost_option, ::Val{:timespace})
-    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+function aggregateData(dat, cost_option, ::Val{:time_space})
+    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
     return dat
 end
 
 """
-    aggregateData(dat, cost_option, Val{:spacetime})
+    aggregateData(dat, cost_option, Val{:space_time})
 
 DOCSTRING
 
@@ -34,9 +34,9 @@ DOCSTRING
 - `cost_option`: information for a observation constraint on how it should be used to calcuate the loss/metric of model performance
 - `nothing`: DESCRIPTION
 """
-function aggregateData(dat, cost_option, ::Val{:spacetime})
+function aggregateData(dat, cost_option, ::Val{:space_time})
     dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
-    dat = temporalAggregation(dat, cost_option.temporal_aggregator, cost_option.temporal_aggr_type)
+    dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
 
