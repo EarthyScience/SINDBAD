@@ -203,7 +203,7 @@ for site_index in sites
             println("plot obs-model => site: $domain, variable: $v")
             lossMetric = var_row.cost_metric
             loss_name = valToSymbol(lossMetric)
-            if loss_name in (:nnseinv, :nseinv)
+            if loss_name in (:NNSE_inv, :NSE_inv)
                 lossMetric = Val(:nse)
             end
             ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")

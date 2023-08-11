@@ -3,7 +3,7 @@ export runTEM!
 export locTEM!
 
 """
-    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, ::DontSpinupTEM)
+    coreTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land_init, tem_helpers, _, _, ::DoNotSpinupTEM)
 
 core SINDBAD function that includes the precompute, spinup, and time loop of the model run
 
@@ -17,7 +17,7 @@ core SINDBAD function that includes the precompute, spinup, and time loop of the
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `_`: unused argument
-- `::DontSpinupTEM`: a type to dispatch without spinup
+- `::DoNotSpinupTEM`: a type to dispatch without spinup
 """
 function coreTEM!(
     selected_models,
@@ -28,7 +28,7 @@ function coreTEM!(
     tem_helpers,
     _,
     _,
-    ::DontSpinupTEM) # without spinup
+    ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -298,7 +298,7 @@ end
 
 
 """
-    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, ::DontDebugModel)
+    timeLoopTEM!(selected_models, loc_forcing, forcing_one_timestep, loc_output, land, tem_helpers, ::DoNotDebugModel)
 
 time loop of the model run where forcing for the time step is used to run model compute function, whose output are assigned to preallocated output array
 
@@ -309,7 +309,7 @@ time loop of the model run where forcing for the time step is used to run model 
 - `loc_output`: an output array/view for a single location
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `::DontDebugModel`: a type dispatching for the models should NOT be debugged and run for only ALL time steps
+- `::DoNotDebugModel`: a type dispatching for the models should NOT be debugged and run for only ALL time steps
 """
 function timeLoopTEM!(
     selected_models,
@@ -318,7 +318,7 @@ function timeLoopTEM!(
     loc_output,
     land,
     tem_helpers,
-    ::DontDebugModel) # do not debug the models
+    ::DoNotDebugModel) # do not debug the models
     num_timesteps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     for ts ∈ 1:num_timesteps
         f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)

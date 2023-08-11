@@ -2,7 +2,7 @@ export coreTEM
 export runTEM
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, _, _, Val{:(false)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, _, _, DoNotSpinupTEM)
 
 DOCSTRING
 
@@ -14,7 +14,7 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `DoNotSpinupTEM`: DESCRIPTION
 """
 function coreTEM(
     selected_models,
@@ -24,7 +24,7 @@ function coreTEM(
     tem_helpers,
     _,
     _,
-    ::Val{:false}) # without spinup
+    ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -39,7 +39,7 @@ function coreTEM(
 end
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, Val{:(true)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
 
 DOCSTRING
 
@@ -51,7 +51,7 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `DoSpinupTEM`: DESCRIPTION
 """
 function coreTEM(
     selected_models,
@@ -61,7 +61,7 @@ function coreTEM(
     tem_helpers,
     tem_models,
     tem_spinup,
-    ::Val{:true}) # with spinup
+    ::DoSpinupTEM) # with spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -86,7 +86,7 @@ end
 
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, Val{:(false)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, ::DoNotSpinupTEM)
 
 DOCSTRING
 
@@ -99,7 +99,7 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::DoNotSpinupTEM`: DESCRIPTION
 """
 function coreTEM(
     selected_models,
@@ -110,7 +110,7 @@ function coreTEM(
     tem_helpers,
     _,
     _,
-    ::Val{:false}) # without spinup
+    ::DoNotSpinupTEM) # without spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -126,7 +126,7 @@ function coreTEM(
 end
 
 """
-    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, Val{:(true)})
+    coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
 
 DOCSTRING
 
@@ -139,7 +139,7 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::DoSpinupTEM`: DESCRIPTION
 """
 function coreTEM(
     selected_models,
@@ -150,7 +150,7 @@ function coreTEM(
     tem_helpers,
     tem_models,
     tem_spinup,
-    ::Val{:true}) # with spinup
+    ::DoSpinupTEM) # with spinup
 
     land_prec = precomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
 
@@ -232,7 +232,7 @@ function runTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, Val{:(false)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, ::DoNotDebugModel)
 
 time loop of the model run where forcing for the time step is used to run model compute function, in which land has been preallocated as a vector
 
@@ -243,7 +243,7 @@ time loop of the model run where forcing for the time step is used to run model 
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `Val{:false}`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
+- `::DoNotDebugModel`: a flag indicating that the models should NOT be debugged and run for only ALL time steps
 """
 function timeLoopTEM(
     selected_models,
@@ -252,7 +252,7 @@ function timeLoopTEM(
     land_time_series,
     land,
     tem_helpers,
-    ::Val{:false}) # do not debug the models
+    ::DoNotDebugModel) # do not debug the models
     num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     for ts = 1:num_timesteps
         f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
@@ -263,7 +263,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, Val{:(true)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land, tem_helpers, ::DoDebugModel})
 
 time loop of the model run where forcing for ONE time step is used to run model compute function, and display debugging information on allocations and time, in which land has been preallocated as a vector
 
@@ -274,7 +274,7 @@ time loop of the model run where forcing for ONE time step is used to run model 
 - `land_time_series`: a vector (=length of time dimension) of SINDBAD land after the model define, precompute, and compute have been run for a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `Val{:true}`: a flag indicating that the models should be debugged and run for only one time step
+- `::DoDebugModel`: a flag indicating that the models should be debugged and run for only one time step
 """
 function timeLoopTEM(
     selected_models,
@@ -283,7 +283,7 @@ function timeLoopTEM(
     land_time_series,
     land,
     tem_helpers,
-    ::Val{:true}) # debug the models
+    ::DoDebugModel) # debug the models
     timeLoopTEM(
         selected_models,
         forcing,
@@ -295,7 +295,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, Val{:(false)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoNotDebugModel)
 
 DOCSTRING
 
@@ -305,7 +305,7 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `::DoNotDebugModel`: DESCRIPTION
 """
 function timeLoopTEM(
     selected_models,
@@ -313,7 +313,7 @@ function timeLoopTEM(
     forcing_one_timestep,
     land,
     tem_helpers,
-    ::Val{:false}) # do not debug the models
+    ::DoNotDebugModel) # do not debug the models
     num_timesteps = getForcingTimeSize(forcing, tem_helpers.vals.forc_vars)
     land_time_series = map(1:num_timesteps) do ts
         f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
@@ -324,7 +324,7 @@ function timeLoopTEM(
 end
 
 """
-    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, Val{:(true)})
+    timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoDebugModel)
 
 DOCSTRING
 
@@ -334,7 +334,7 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `::DoDebugModel`: DESCRIPTION
 """
 function timeLoopTEM(
     selected_models,
@@ -342,7 +342,7 @@ function timeLoopTEM(
     forcing_one_timestep,
     land,
     tem_helpers,
-    ::Val{:true}) # debug the models
+    ::DoDebugModel) # debug the models
     @info "\nforc\n"
     @time f_ts = getForcingForTimeStep(forcing, forcing_one_timestep, 1, tem_helpers.vals.forc_vars)
     @info "\n-------------\n"

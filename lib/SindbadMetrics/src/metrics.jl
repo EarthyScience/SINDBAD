@@ -1,11 +1,11 @@
 export loss
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::mse)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
 
 mean squared error
 
-``mse = {|y - ŷ|}^2``
+``MSE = {|y - ŷ|}^2``
 
 # Arguments:
 - `y`: observation data
@@ -13,16 +13,16 @@ mean squared error
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::mse)
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::MSE)
     return mean(abs2.(y .- ŷ))
 end
 
 """
-    loss(y, yσ, ŷ, ::nmae1r)
+    loss(y, yσ, ŷ, ::NMAE1R)
 
 Relative normalized model absolute error
 
-``nmae1r = \\frac{(|y - ŷ|)}{one(eltype(ŷ)) + y}``
+``NMAE1R = \\frac{(|y - ŷ|)}{one(eltype(ŷ)) + y}``
 
 # Arguments:
 - `y`: observation data
@@ -30,15 +30,15 @@ Relative normalized model absolute error
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y, yσ, ŷ, ::nmae1r)
+function loss(y, yσ, ŷ, ::NMAE1R)
     μ_y = mean(y)
     μ_ŷ = mean(ŷ)
-    nmae1r = abs(μ_ŷ - μ_y) / (one(eltype(ŷ)) + μ_y)
-    return nmae1r
+    NMAE1R = abs(μ_ŷ - μ_y) / (one(eltype(ŷ)) + μ_y)
+    return NMAE1R
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor)
 
 DOCSTRING
 
@@ -48,12 +48,12 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor)
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor)
     return corspearman(y, ŷ)
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor2)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2)
 
 DOCSTRING
 
@@ -63,13 +63,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor2)
-    scor = loss(y, yσ, ŷ, scor())
-    return scor * scor
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2)
+    Scor = loss(y, yσ, ŷ, Scor())
+    return Scor * Scor
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor2inv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2Inv)
 
 DOCSTRING
 
@@ -79,13 +79,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::scor2inv)
-    scor2inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, scor2())
-    return scor2inv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2Inv)
+    Scor2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Scor2())
+    return Scor2Inv
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor)
 
 DOCSTRING
 
@@ -95,12 +95,12 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor)
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor)
     return cor(y, ŷ)
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor2)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
 
 DOCSTRING
 
@@ -110,13 +110,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor2)
-    pcor = loss(y, yσ, ŷ, pcor())
-    return pcor * pcor
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
+    Pcor = loss(y, yσ, ŷ, Pcor())
+    return Pcor * Pcor
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor2inv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2Inv)
 
 DOCSTRING
 
@@ -126,13 +126,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::pcor2inv)
-    pcor2inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, pcor2())
-    return pcor2inv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2Inv)
+    Pcor2Inv = one(eltype(ŷ)) - loss(y, yσ, ŷ, Pcor2())
+    return Pcor2Inv
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseσ)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσ)
 
 DOCSTRING
 
@@ -142,16 +142,16 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseσ)
-    nse =
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσ)
+    NSE =
         one(eltype(ŷ)) .-
         sum(abs2.((y .- ŷ) ./ yσ)) /
         sum(abs2.((y .- mean(y)) ./ yσ))
-    return nse
+    return NSE
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseσinv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσInv)
 
 DOCSTRING
 
@@ -161,13 +161,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseσinv)
-    nseinv = one(eltype(ŷ)) - loss(y, yσ, ŷ, nseσ())
-    return nseinv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσInv)
+    NSEInv = one(eltype(ŷ)) - loss(y, yσ, ŷ, NSEσ())
+    return NSEInv
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseσ)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
 
 DOCSTRING
 
@@ -177,14 +177,14 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseσ)
-    nse_v = loss(y, yσ, ŷ, :nseσ())
-    nnse = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - nse_v)
-    return nnse
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
+    NSE_v = loss(y, yσ, ŷ, :NSEσ())
+    NNSE = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - NSE_v)
+    return NNSE
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseσinv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσInv)
 
 DOCSTRING
 
@@ -194,13 +194,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseσinv)
-    nnseinv = one(eltype(ŷ)) - loss(y, yσ, ŷ, nnseσ())
-    return nnseinv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσInv)
+    NNSEInv = one(eltype(ŷ)) - loss(y, yσ, ŷ, NNSEσ())
+    return NNSEInv
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nse)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSE)
 
 DOCSTRING
 
@@ -210,13 +210,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nse)
-    nse = one(eltype(ŷ)) .- sum(abs2.((y .- ŷ))) / sum(abs2.((y .- mean(y))))
-    return nse
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSE)
+    NSE = one(eltype(ŷ)) .- sum(abs2.((y .- ŷ))) / sum(abs2.((y .- mean(y))))
+    return NSE
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseinv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEInv)
 
 DOCSTRING
 
@@ -226,13 +226,13 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nseinv)
-    nseinv = one(eltype(ŷ)) - loss(y, yσ, ŷ, nse())
-    return nseinv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEInv)
+    NSEInv = one(eltype(ŷ)) - loss(y, yσ, ŷ, NSE())
+    return NSEInv
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnse)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE)
 
 DOCSTRING
 
@@ -240,16 +240,16 @@ DOCSTRING
 - `y`: observation data
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
-- ::nnse: DESCRIPTION
+- ::NNSE: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnse)
-    nse_v = loss(y, yσ, ŷ, nse())
-    nnse = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - nse_v)
-    return nnse
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE)
+    NSE_v = loss(y, yσ, ŷ, NSE())
+    NNSE = one(eltype(ŷ)) / (one(eltype(ŷ)) + one(eltype(ŷ)) - NSE_v)
+    return NNSE
 end
 
 """
-    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseinv)
+    loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEInv)
 
 DOCSTRING
 
@@ -259,7 +259,7 @@ DOCSTRING
 - `ŷ`: model simulation data/estimate
 - `nothing`: DESCRIPTION
 """
-function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::nnseinv)
-    nnseinv = one(eltype(ŷ)) - loss(y, yσ, ŷ, nnse())
-    return nnseinv
+function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEInv)
+    NNSEInv = one(eltype(ŷ)) - loss(y, yσ, ŷ, NNSE())
+    return NNSEInv
 end

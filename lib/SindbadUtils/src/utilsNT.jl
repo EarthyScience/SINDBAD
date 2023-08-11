@@ -1,4 +1,5 @@
 export dictToNamedTuple
+export getCombinedNamedTuple
 export removeEmptyTupleFields
 export setTupleField
 export setTupleSubfield
@@ -41,6 +42,37 @@ function dictToNamedTuple(d::AbstractDict)
     end
     dTuple = NamedTuple{Tuple(Symbol.(keys(d)))}(values(d))
     return dTuple
+end
+
+
+"""
+    getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
+
+combines the property values of the base NT with the properties set for the particular field from priority NT
+
+"""
+function getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
+    combined_nt = (;)
+    base_fields = propertynames(base_nt)
+    var_fields = propertynames(priority_nt)
+    all_fields = Tuple(unique([base_fields..., var_fields...]))
+    for var_field ∈ all_fields
+        field_value = nothing
+        if hasproperty(base_nt, var_field)
+            field_value = getfield(base_nt, var_field)
+        else
+            field_value = getfield(priority_nt, var_field)
+        end
+        if hasproperty(priority_nt, var_field)
+            var_prop = getfield(priority_nt, var_field)
+            if !isnothing(var_prop) && length(var_prop) > 0
+                field_value = getfield(priority_nt, var_field)
+            end
+        end
+        combined_nt = setTupleField(combined_nt,
+            (var_field, field_value))
+    end
+    return combined_nt
 end
 
 """

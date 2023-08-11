@@ -45,7 +45,7 @@
     "WUE,WUEatOnehPa",
     "WUE,κ"
   ],
-  "multi_constraint_method": "sum",
+  "multi_constraint_method": "cost_sum",
   "multi_objective_algorithm": false,
   "observational_constraints": [
     "gpp",
@@ -55,16 +55,16 @@
   ],
   "observations": {
     "default_cost": {
-      "aggr_order": "timespace",
+      "aggr_func": "nanmean",
+      "aggr_obs": false,
+      "aggr_order": "time_space",
       "area_weight": false,
-      "cost_metric": "mse",
+      "cost_metric": "MSE",
       "cost_weight": 1.0,
       "min_data_points": 1,
-      "spatial_aggr": "cat",
-      "spatial_cost_aggr": "spatial",
-      "temporal_aggr": "t_day",
-      "temporal_aggr_func": "nanmean",
-      "temporal_aggr_obs": false
+      "spatial_data_aggr": "concat_data",
+      "spatial_cost_aggr": "spatially_variable",
+      "temporal_data_aggr": "day"
     },
     "default_observation": {
       "additive_unit_conversion": false,
@@ -85,8 +85,8 @@
     "variables": {
       "agb": {
         "cost_options": {
-          "cost_metric": "nmae1r",
-          "temporal_aggr": "mean",
+          "cost_metric": "NMAE1R",
+          "temporal_data_aggr": "mean",
           "temporal_aggr_obs": true
         },
         "data": {
@@ -106,7 +106,7 @@
       },
       "evapotranspiration": {
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "MSE"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -133,7 +133,7 @@
       },
       "gpp": {
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "MSE"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -157,8 +157,8 @@
       },
       "ndvi": {
         "cost_options": {
-          "cost_metric": "mse",
-          "temporal_aggr": "day_anomaly",
+          "cost_metric": "MSE",
+          "temporal_data_aggr": "day_anomaly",
           "temporal_aggr_obs": true
         },
         "data": {
@@ -178,7 +178,7 @@
       },
       "nee": {
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "MSE"
         },
         "data": {
           "bounds": [-100.0, 100.0],
@@ -202,7 +202,7 @@
       },
       "reco": {
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "MSE"
         },
         "data": {
           "bounds": [0.0, 100.0],
@@ -226,7 +226,7 @@
       },
       "transpiration": {
         "cost_options": {
-          "cost_metric": "mse"
+          "cost_metric": "MSE"
         },
         "data": {
           "bounds": [0.0, 100.0],

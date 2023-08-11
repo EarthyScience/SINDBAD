@@ -100,7 +100,7 @@ foreach(costOpt) do var_row
     v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
     loss_name = valToSymbol(lossMetric)
-    if loss_name in (:nnseinv, :nseinv)
+    if loss_name in (:NNSE_inv, :NSE_inv)
         lossMetric = Val(:nse)
     end
     (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
