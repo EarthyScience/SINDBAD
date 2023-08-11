@@ -44,7 +44,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_with_vals,
+tem_with_types,
 forcing_one_timestep = prepTEM(forcing, info);
 # neural network design
 
@@ -107,12 +107,12 @@ function pixel_run!(output_array,
         forcing_one_timestep)
 end
 
-tem_helpers = tem_with_vals.helpers;
-tem_spinup = tem_with_vals.spinup;
-tem_models = tem_with_vals.models;
-tem_variables = tem_with_vals.variables;
+tem_helpers = tem_with_types.helpers;
+tem_spinup = tem_with_types.spinup;
+tem_models = tem_with_types.models;
+tem_variables = tem_with_types.variables;
 tem_optim = info.optim;
-forward = tem_with_vals.models.forward;
+forward = tem_with_types.models.forward;
 
 site_location = loc_space_maps[1];
 loc_forcing, loc_output, loc_obs =

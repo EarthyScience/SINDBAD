@@ -93,7 +93,7 @@ loc_space_inds,
 loc_forcings,
 loc_outputs,
 land_init_space,
-tem_with_vals,
+tem_with_types,
 forcing_one_timestep = prepTEM(forcing, info);
 
 
@@ -105,7 +105,7 @@ forcing_one_timestep = prepTEM(forcing, info);
     loc_outputs,
     land_init_space,
     forcing_one_timestep,
-    tem_with_vals)
+    tem_with_types)
 
 
 ml_baseline = ml_nn(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
@@ -142,12 +142,12 @@ function pixel_run!(output,
         forcing_one_timestep)
 end
 
-tem_helpers = tem_with_vals.helpers;
-tem_spinup = tem_with_vals.spinup;
-tem_models = tem_with_vals.models;
-tem_variables = tem_with_vals.variables;
+tem_helpers = tem_with_types.helpers;
+tem_spinup = tem_with_types.spinup;
+tem_models = tem_with_types.models;
+tem_variables = tem_with_types.variables;
 tem_optim = info.optim;
-forward = tem_with_vals.models.forward;
+forward = tem_with_types.models.forward;
 
 site_location = loc_space_maps[1]
 loc_forcing, loc_output, loc_obs =
@@ -293,7 +293,7 @@ return (; obs_synt,
     tem_models,
     tem_optim,
     tem_spinup,
-    tem_with_vals,
+    tem_with_types,
     forcing_one_timestep
 )
 # end

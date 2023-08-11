@@ -2,44 +2,6 @@
 export getArrayView
 
 """
-    getArrayView(a::AbstractArray{<:Real, 2}, inds::AbstractArray)
-
-DOCSTRING
-"""
-function getArrayView(a::AbstractArray{<:Real,2}, inds::AbstractArray)
-    # @show inds, length(inds), typeof(inds)
-    return view(a, :, inds...)
-end
-
-"""
-    getArrayView(a::AbstractArray{<:Real, 3}, inds::AbstractArray)
-
-DOCSTRING
-"""
-function getArrayView(a::AbstractArray{<:Real,3}, inds::AbstractArray)
-    # @show inds, length(inds), typeof(inds)
-    if length(inds) == 1
-        view(a, :, :, inds...)
-    else
-        view(a, :, inds...)
-    end
-end
-
-"""
-    getArrayView(a::AbstractArray{<:Real, 4}, inds::AbstractArray)
-
-DOCSTRING
-"""
-function getArrayView(a::AbstractArray{<:Real,4}, inds::AbstractArray)
-    # @show size(a), inds, typeof(inds)
-    if length(inds) == 1
-        view(a, :, :, :, inds...)
-    else
-        view(a, :, :, inds...)
-    end
-end
-
-"""
     getArrayView(a::AbstractArray{<:Real, 2}, inds::Tuple{Int64})
 
 DOCSTRING

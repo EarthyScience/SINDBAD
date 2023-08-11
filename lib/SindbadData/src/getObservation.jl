@@ -140,5 +140,5 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, Symbol(string(v) * "_mask"))
     end
     @info "\n----------------------------------------------\n"
-    return (; data=obscubes, dims=indims, variables=Tuple(varnames_all))
+    return (; data=getInputArrayOfType(obscubes, Val(Symbol(info.experiment.exe_rules.input_array_type))), dims=indims, variables=Tuple(varnames_all))
 end

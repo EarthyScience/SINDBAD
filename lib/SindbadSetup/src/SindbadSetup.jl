@@ -10,6 +10,7 @@ module SindbadSetup
     @reexport using Sindbad
     @reexport using SindbadUtils
 
+    include("runtimeDispatchTypes.jl")
     include("getConfiguration.jl")
     include("setupOptimInfo.jl")
     include("setupInfo.jl")

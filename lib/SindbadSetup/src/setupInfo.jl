@@ -104,23 +104,25 @@ end
 
 
 """
-    convertRunFlagsToVal(info)
+    convertRunFlagsToTypes(info)
 
-DOCSTRING
+converts the model running related flags to types for dispatch
 """
-function convertRunFlagsToVal(info)
+function convertRunFlagsToTypes(info)
     new_run = (;)
-    dr = info.experiment.flags
+    dr = deepcopy(info.experiment.flags)
     for pr in propertynames(dr)
         prf = getfield(dr, pr)
-        prtoset = Val(prf)
+        prtoset = nothing
         if isa(prf, NamedTuple)
             st = (;)
             for prs in propertynames(prf)
                 prsf = getfield(prf, prs)
-                st = setTupleField(st, (prs, Val(prsf)))
+                st = setTupleField(st, (prs, getTypeInstancesForRunFlags(prs, prsf)))
             end
             prtoset = st
+        else
+            prtoset = getTypeInstancesForRunFlags(pr, prf)
         end
         new_run = setTupleField(new_run, (pr, prtoset))
     end
@@ -207,7 +209,7 @@ function generateDatesInfo(info::NamedTuple)
         end
         tmpDates = setTupleField(tmpDates, (timeProp, propVal))
     end
-    if info.experiment.basics.time.temporal_resolution == "day"
+    if info.experiment.basics.time.temporal_resolution == "t_day"
         timestep = Day(1)
         time_range = Date(info.experiment.basics.time.date_begin):Day(1):Date(info.experiment.basics.time.date_end)
     elseif info.experiment.basics.time.temporal_resolution == "hour"
@@ -608,12 +610,11 @@ sets info.tem.variables as the union of variables to write and store from model_
 DOCSTRING
 """
 function getLoopingInfo(info::NamedTuple)
-    run_vals = convertRunFlagsToVal(info)
+    run_vals = convertRunFlagsToTypes(info)
     run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
-    # run_info = setTupleField(run_info, (:loop, (;)))
-    run_info = setTupleField(run_info, (:forward_diff, Val(info.experiment.exe_rules.forward_diff)))
-    run_info = setTupleField(run_info,
-        (:parallelization, Val(Symbol(info.experiment.exe_rules.parallelization))))
+    run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
+    parallelization = titlecase(info.experiment.exe_rules.parallelization)
+    run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
     return run_info
 end
 
@@ -923,20 +924,15 @@ function getRestartFilePath(info::NamedTuple)
     return info
 end
 
-"""
-    getSpinupAndForwardModels(info::NamedTuple, selModelsOrdered::AbstractArray)
-
-sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run.
-
-  - allows for a faster spinup if some models can be turned off
-  - relies on use4spinup flag in model_structure
-  - by design, the spinup models should be subset of forward models
-"""
 
 """
     getSpinupAndForwardModels(info::NamedTuple)
 
-DOCSTRING
+sets the spinup and forward subfields of info.tem.models to select a separated set of model for spinup and forward run.
+
+  - allows for a faster spinup if some models can be turned off
+  - relies on use_in_spinup flag in model_structure
+  - by design, the spinup models should be subset of forward models
 """
 function getSpinupAndForwardModels(info::NamedTuple)
     sel_appr_forward = ()
@@ -951,12 +947,12 @@ function getSpinupAndForwardModels(info::NamedTuple)
         sel_approach_func = getTypedModel(Symbol(sel_approach), info.tem.helpers.numbers.sNT)
         # sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
         sel_appr_forward = (sel_appr_forward..., sel_approach_func)
-        if :use4spinup in propertynames(modInfo)
-            use4spinup = modInfo.use4spinup
+        if :use_in_spinup in propertynames(modInfo)
+            use_in_spinup = modInfo.use_in_spinup
         else
-            use4spinup = default_model.use4spinup
+            use_in_spinup = default_model.use_in_spinup
         end
-        if use4spinup == true
+        if use_in_spinup == true
             push!(is_spinup, 1)
         else
             push!(is_spinup, 0)
@@ -1019,6 +1015,36 @@ function getTypedModel(model, sNT)
         model_instance = model_obj(param_vals...)
     end
     return model_instance
+end
+
+
+"""
+    getTypeInstanceForSpinupMode(mode_name)
+
+a helper function to get the type for spinup mode
+"""
+function getTypeInstanceForSpinupMode(option_name::String)
+    opt_ss = join(titlecase.(split(option_name,"_")))
+    struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
+    return struct_instance
+end
+
+
+"""
+    getTypeInstancesForRunFlags(option_name, option_value)
+
+a helper function to get the type for run related flags
+"""
+function getTypeInstancesForRunFlags(option_name::Symbol, option_value)
+    opt_s = string(option_name)
+    opt_ss = join(uppercasefirst.(split(opt_s,"_")))
+    if option_value
+        structname = "Do"*opt_ss
+    else
+        structname = "Dont"*opt_ss
+    end
+    struct_instance = getfield(SindbadSetup, Symbol(structname))()
+    return struct_instance
 end
 
 """
@@ -1343,6 +1369,45 @@ end
 """
     setupInfo(info::NamedTuple)
 
+uses the configuration info and processes information for spinup
+"""
+function setSpinupInfo(info)
+    info = getRestartFilePath(info)
+    infospin = info.experiment.model_spinup
+    # change spinup sequence dispatch variables to Val, get the temporal aggregators
+    seqq = infospin.sequence
+    for seq in seqq
+        for kk in keys(seq)
+            if kk == "forcing"
+                skip_aggregation = false
+                if startswith(kk, info.tem.helpers.dates.temporal_resolution)
+                    skip_aggregation = true
+                end
+                aggregator = createTimeAggregator(info.tem.helpers.dates.range, seq[kk], mean, skip_aggregation)
+                seq["aggregator"] = aggregator
+                seq["aggregator_type"] = TimeNoDiff()
+                if occursin("_year", seq[kk])
+                    seq["aggregator"] = vcat(aggregator[1].indices...)
+                    seq["aggregator_type"] = TimeIndexed()
+                end
+            end
+            if kk == "spinup_mode"
+                seq[kk] = getTypeInstanceForSpinupMode(seq[kk])
+            end
+            if seq[kk] isa String
+                seq[kk] = Symbol(seq[kk])
+            end
+        end
+    end
+
+    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
+    info = setTupleSubfield(info, :tem, (:spinup, infospin))
+    return info
+end
+
+"""
+    setupInfo(info::NamedTuple)
+
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function setupInfo(info::NamedTuple)
@@ -1367,7 +1432,7 @@ function setupInfo(info::NamedTuple)
             info.tem...,
             models=(; selected_models=Table((; model=[selected_models...])))))
     info = getSpinupAndForwardModels(info)
-    @info "SetupExperiment: saving selected models code..."
+    @info "SetupExperiment:         ....saving selected models code..."
     _ = parseSaveCode(info)
 
     # add information related to model run
@@ -1375,44 +1440,17 @@ function setupInfo(info::NamedTuple)
     run_info = getLoopingInfo(info)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
-    info = getRestartFilePath(info)
-    infospin = info.experiment.model_spinup
-
-    # change spinup sequence dispatch variables to Val, get the temporal aggregators
-    seqq = infospin.sequence
-    for seq in seqq
-        for kk in keys(seq)
-            if kk == "forcing"
-                is_model_timestep = false
-                if startswith(kk, info.tem.helpers.dates.temporal_resolution)
-                    is_model_timestep = true
-                end
-                aggregator = createTimeAggregator(info.tem.helpers.dates.range, Val(Symbol(seq[kk])), mean, is_model_timestep)
-                seq["aggregator"] = aggregator
-                seq["aggregator_type"] = Val(:no_diff)
-                if occursin("_year", seq[kk])
-                    seq["aggregator"] = vcat(aggregator[1].indices...)
-                    seq["aggregator_type"] = Val(:indexed)
-                end
-            end
-            if seq[kk] isa String
-                seq[kk] = Val(Symbol(seq[kk]))
-            end
-        end
-    end
-
-    infospin = setTupleField(infospin, (:sequence, dictToNamedTuple.([seqq...])))
-    info = setTupleSubfield(info, :tem, (:spinup, infospin))
-    if getBool(info.experiment.flags.run_optimization) || getBool(info.tem.helpers.run.calc_cost)
-        @info "SetupExperiment: setting Optimization info..."
+    info = setSpinupInfo(info)
+    if info.experiment.flags.run_optimization || info.experiment.flags.calc_cost
+        @info "SetupExperiment: setting Optimization and Observation info..."
         info = setupOptimization(info)
     end
     # adjust the model variable list for different model spinupTEM
     sel_vars = nothing
     if info.experiment.flags.run_optimization
         sel_vars = info.optim.variables.store
-    elseif getBool(info.tem.helpers.run.calc_cost)
-        if getBool(info.experiment.flags.run_forward)
+    elseif info.experiment.flags.calc_cost
+        if info.experiment.flags.run_forward
             sel_vars = getVariableGroups(
                 union(String.(keys(info.experiment.model_output.variables)),
                     info.optim.variables.model)
@@ -1427,3 +1465,4 @@ function setupInfo(info::NamedTuple)
     @info "\n----------------------------------------------\n"
     return info
 end
+

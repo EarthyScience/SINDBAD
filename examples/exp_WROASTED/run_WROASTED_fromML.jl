@@ -82,28 +82,28 @@ for site_index in sites
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
-            Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-            Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
@@ -169,7 +169,7 @@ for site_index in sites
         ## run the model
 
 
-        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
+        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_types, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(output_array,
             models_with_matlab_params,
             forcing_nt_array,
@@ -178,7 +178,7 @@ for site_index in sites
             loc_outputs,
             land_init_space,
             forcing_one_timestep,
-            tem_with_vals)
+            tem_with_types)
 
         outcubes = output_array
 
@@ -194,7 +194,7 @@ for site_index in sites
         # some plots for model simulations from JL and matlab versions
         ds = forcing.data[1]
         opt_dat = outcubes
-        out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+        out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
         costOpt = info.optim.cost_options
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
@@ -256,7 +256,7 @@ for site_index in sites
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
 
-            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
+            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_types, forcing_one_timestep =
                 prepTEM(models_with_matlab_params,
                     forcing_nt_array,
                     info.tem,
@@ -270,10 +270,10 @@ for site_index in sites
                 loc_outputs,
                 land_init_space,
                 forcing_one_timestep,
-                tem_with_vals)
+                tem_with_types)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+            out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
                 def_var = output_array[o][:, :, 1, 1]

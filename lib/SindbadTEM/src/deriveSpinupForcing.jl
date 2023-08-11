@@ -32,7 +32,7 @@ export getForcingForTimePeriod
 #     foreach(forc_vars) do forc
 #         push!(output.args, Expr(:(=), :v, Expr(:., :forcing, QuoteNode(forc))))
 #         push!(output.args, quote
-#             d = in(:time, AxisKeys.dimnames(v)) ? temporalAggregation(v, :aggregator, Val(:no_diff)) : v
+#             d = in(:time, AxisKeys.dimnames(v)) ? temporalAggregation(v, :aggregator, ::TimeNoDiff) : v
 #         end)
 #         return push!(output.args,
 #             Expr(:(=),
@@ -47,41 +47,6 @@ export getForcingForTimePeriod
 
 
 """
-    getTimeAggregatedForcing(forcing, time_aggregator)
-
-DOCSTRING
-"""
-function getTimeAggregatedForcing(forcing, time_aggregator)
-    sub_forcing = map(forcing) do v
-        vtmp = v
-        if in(:time, AxisKeys.dimnames(v))
-            vtmp = v[time=1:length(time_aggregator[1].indices)]
-            v = temporalAggregation(v, time_aggregator, Val(:no_diff))
-            vtmp .= v
-        end
-        vtmp
-    end
-    return sub_forcing
-end
-
-"""
-    getForcingForTimePeriod(forcing, tperiod::Vector{Int64})
-
-DOCSTRING
-"""
-function getForcingForTimePeriod(forcing, tperiod::Vector{Int64})
-    sub_forcing = map(forcing) do v
-        in(:time, AxisKeys.dimnames(v)) ? v[time=tperiod] : v
-    end
-    return sub_forcing
-end
-
-"""
-getSpinupForcing(forcing, tem, ::Val{:full})
-Set the spinup forcing as full input forcing.
-"""
-
-"""
     getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, Val{:no_diff})
 
 DOCSTRING
@@ -91,20 +56,23 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `TimeNoDiff`: DESCRIPTION
 """
-function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:no_diff})
-    return getTimeAggregatedForcing(forcing, time_aggregator)
+function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeNoDiff)
+    sub_forcing = map(forcing) do v
+        vtmp = v
+        if in(:time, AxisKeys.dimnames(v))
+            vtmp = v[time=1:length(time_aggregator[1].indices)]
+            v = temporalAggregation(v, time_aggregator, TimeNoDiff())
+            vtmp .= v
+        end
+        vtmp
+    end
+    return sub_forcing
 end
 
-
 """
-getSpinupForcing(forcing, tem, ::Val{:full})
-Set the spinup forcing as full input forcing.
-"""
-
-"""
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, Val{:indexed})
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
 
 DOCSTRING
 
@@ -113,21 +81,20 @@ DOCSTRING
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `time_aggregator`: DESCRIPTION
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `TimeIndexed`: DESCRIPTION
 """
-function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::Val{:indexed})
-    return getForcingForTimePeriod(forcing, time_aggregator)
+function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
+    sub_forcing = map(forcing) do v
+        in(:time, AxisKeys.dimnames(v)) ? v[time=time_aggregator] : v
+    end
+    return sub_forcing
 end
 
-"""
-getSpinupForcing(forcing, tem)
-A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method}).
-"""
 
 """
     getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
 
-DOCSTRING
+A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method})
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -139,7 +106,7 @@ function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
     spinup_forcing = (;)
     for seq ∈ spin_seq
         forc = getfield(seq, :forcing)
-        forc_name = valToSymbol(forc)
+        forc_name = forc
         if forc_name ∉ keys(spinup_forcing)
             spinup_forc = getSpinupForcing(forcing, forcing_one_timestep, seq.aggregator, tem_helpers, seq.aggregator_type)
             spinup_forcing = setTupleField(spinup_forcing, (forc_name, spinup_forc))

@@ -76,7 +76,7 @@
       "min_data_points": 1,
       "spatial_aggr": "cat",
       "spatial_cost_aggr": "spatial",
-      "temporal_aggr": "day",
+      "temporal_aggr": "t_day",
       "temporal_aggr_func": "mean",
       "temporal_aggr_obs": false
     },

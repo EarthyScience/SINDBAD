@@ -19,7 +19,7 @@ forcing = getForcing(info);
 
 GC.gc()
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info);
+forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 @time runTEM!(info.tem.models.forward,
     forcing_nt_array,
     loc_forcings,
@@ -28,7 +28,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     loc_outputs,
     land_init_space,
     loc_space_inds,
-    tem_with_vals)
+    tem_with_types)
 
 ds = forcing.data[1];
 using CairoMakie, AlgebraOfGraphics, DataFrames, Dates

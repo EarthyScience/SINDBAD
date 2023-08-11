@@ -78,18 +78,18 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
 
 
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_vals, forcing_one_timestep =
+    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_types, forcing_one_timestep =
         prepTEM(forcing, info)
 
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
     spinupforc = :day_msc
-    sel_forcing = getSpinupForcing(loc_forcing, tem_with_vals.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_vals)
+    sel_forcing = getSpinupForcing(loc_forcing, tem_with_types.helpers, Val(spinupforc))
+    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_types)
     theforcing = getfield(spinup_forcing, spinupforc)
 
-    spinup_models = tem_with_vals.models.forward[tem_with_vals.models.is_spinup]
+    spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
     # for sel_pool in (:cEco_TWS,)
     # for sel_pool in (:cEco,)
     # for sel_pool in (:TWS,)
@@ -112,8 +112,8 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             land_for_s = SindbadTEM.runSpinup(spinup_models,
                 theforcing,
                 land_for_s,
-                tem_with_vals.helpers,
-                tem_with_vals.spinup,
+                tem_with_types.helpers,
+                tem_with_types.spinup,
                 land_type,
                 forcing_one_timestep,
                 Val(:spinup))
@@ -126,8 +126,8 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
         @time out_sp_nl = SindbadTEM.runSpinup(spinup_models,
             theforcing,
             deepcopy(land_for_s),
-            tem_with_vals.helpers,
-            tem_with_vals.spinup,
+            tem_with_types.helpers,
+            tem_with_types.spinup,
             land_type,
             forcing_one_timestep,
             Val(sp_method))
@@ -143,8 +143,8 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                 out_sp_exp = SindbadTEM.runSpinup(spinup_models,
                     theforcing,
                     out_sp_exp,
-                    tem_with_vals.helpers,
-                    tem_with_vals.spinup,
+                    tem_with_types.helpers,
+                    tem_with_types.spinup,
                     land_type,
                     forcing_one_timestep,
                     Val(sp))
@@ -157,8 +157,8 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                 out_sp_exp_nl = SindbadTEM.runSpinup(spinup_models,
                     theforcing,
                     out_sp_exp_nl,
-                    tem_with_vals.helpers,
-                    tem_with_vals.spinup,
+                    tem_with_types.helpers,
+                    tem_with_types.spinup,
                     land_type,
                     forcing_one_timestep,
                     Val(sp))
