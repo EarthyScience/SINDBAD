@@ -3,11 +3,6 @@ export getSpinupInfo
 export runSpinup
 export spinupTEM
 export timeLoopTEMSpinup
-export DoRunSpinup
-export DontRunSpinup
-
-struct DoRunSpinup end
-struct DontRunSpinup end
 
 struct RunSpinup_TWS{M,F,T,I,O}
     models::M
@@ -137,7 +132,7 @@ DOCSTRING
 - `spinup_info`: DESCRIPTION
 - `t`: DESCRIPTION
 """
-function getDeltaPool(pool_dat::AbstractArray, spinup_info, t::Any)
+function getDeltaPool(pool_dat::AbstractArray, spinup_info, _)
     land = spinup_info.land
     tem_helpers = spinup_info.tem_helpers
     spinup_models = spinup_info.spinup_models
@@ -195,16 +190,16 @@ end
 
 
 """
-    loadSpinup(_, tem_spinup, Val{true})
+    loadSpinup(_, tem_spinup, ::DoLoadSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `_`: unused argument
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::DoLoadSpinup`: DESCRIPTION
 """
-function loadSpinup(_, tem_spinup, ::Val{true}) # when load_spinup is true
+function loadSpinup(_, tem_spinup, ::DoLoadSpinup) # when load_spinup is true
     @info "spinupTEM:: loading spinup data from $(tem_spinup.paths.restart_file_in)..."
     restart_data = load(tem_spinup.paths.restart_file_in)
     land = restart_data["land"]
@@ -212,21 +207,21 @@ function loadSpinup(_, tem_spinup, ::Val{true}) # when load_spinup is true
 end
 
 """
-    loadSpinup(land, _, Val{false})
+    loadSpinup(land, _, ::DontLoadSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::DontLoadSpinup`: DESCRIPTION
 """
-function loadSpinup(land, _, ::Val{false}) # when load_spinup is false
+function loadSpinup(land, _, ::DontLoadSpinup) # when load_spinup is false
     return land
 end
 
 """
-    runSpinup(_, _, _, land, _, _, _, Val{:(false)})
+    runSpinup(_, _, _, land, _, _, _, ::DontRunSpinup)
 
 DOCSTRING
 
@@ -238,19 +233,15 @@ DOCSTRING
 - `_`: unused argument
 - `_`: unused argument
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `DontRunSpinup`: a dispatch to not run spinup
 """
-function runSpinup(_, _, _, land, _, _, _, ::Val{:false}) # dont do the spinup
-    return land
-end
-
 function runSpinup(_, _, _, land, _, _, _, ::DontRunSpinup) # dont do the spinup
     return land
 end
 
 
 """
-    runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, Val{:(true)})
+    runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::DoRunSpinup)
 
 DOCSTRING
 
@@ -262,45 +253,14 @@ DOCSTRING
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::DoRunSpinup`: DESCRIPTION
 """
-function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::Val{:true}) # do the spinup
-    spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
-    seq_index = 1
-    log_index = 1
-    for spin_seq ∈ tem_spinup.sequence
-        forc_name = valToSymbol(spin_seq.forcing)
-        n_repeat = spin_seq.n_repeat
-        spinup_mode = spin_seq.spinup_mode
-        sel_forcing = spinup_forcing[forc_name]
-        # sel_forcing = getSpinupForcing(forcing, forcing_one_timestep, spin_seq.aggregator, tem_helpers, spin_seq.aggregator_type)
-        spinup_models = selected_models
-        if spinup_mode == :spinup
-            spinup_models = selected_models[tem_models.is_spinup]
-        end
-        for loop_index ∈ 1:n_repeat
-            @debug "     sequence: $(seq_index), spinup_mode: $(spinup_mode), forcing: $(forc_name), Loop: $(loop_index)/$(n_repeat)"
-            land = runSpinup(spinup_models,
-                sel_forcing,
-                forcing_one_timestep,
-                land,
-                tem_helpers,
-                tem_spinup,
-                spinup_mode)
-            land = setSpinupLog(land, log_index, tem_helpers.run.spinup.store_spinup)
-            log_index += 1
-        end
-        seq_index += 1
-    end
-    return land
-end
-
 function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::DoRunSpinup) # do the spinup
     spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
     for spin_seq ∈ tem_spinup.sequence
-        forc_name = valToSymbol(spin_seq.forcing)
+        forc_name = spin_seq.forcing
         n_repeat = spin_seq.n_repeat
         spinup_mode = spin_seq.spinup_mode
         sel_forcing = spinup_forcing[forc_name]
@@ -328,12 +288,12 @@ end
 
 
 """
-runSpinup(spinup_models, spinup_forcing, land, tem, ::Val{:spinup})
-do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :spinup, only the models chosen as use4spinup in model_structure.json are run.
+runSpinup(spinup_models, spinup_forcing, land, tem, ::spinup)
+do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :spinup, only the models chosen as use_in_spinup in model_structure.json are run.
 """
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:spinup})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, SelSpinupModels)
 
 DOCSTRING
 
@@ -344,7 +304,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::SelSpinupModels`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -353,7 +313,7 @@ function runSpinup(
     land,
     tem_helpers,
     _,
-    ::Val{:spinup})
+    ::SelSpinupModels)
     land = timeLoopTEMSpinup(spinup_models,
         spinup_forcing,
         forcing_one_timestep,
@@ -363,12 +323,12 @@ function runSpinup(
 end
 
 """
-runSpinup(spinup_models, spinup_forcing, land, tem, ::Val{:forward})
+runSpinup(spinup_models, spinup_forcing, land, tem, ::forward})
 do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :forward, all the models chosen in model_structure.json are run.
 """
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:forward})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::AllForwardModels)
 
 DOCSTRING
 
@@ -379,7 +339,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::AllForwardModels`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -388,7 +348,7 @@ function runSpinup(
     land,
     tem_helpers,
     _,
-    ::Val{:forward})
+    ::AllForwardModels)
     land = timeLoopTEMSpinup(spinup_models,
         spinup_forcing,
         forcing_one_timestep,
@@ -399,7 +359,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_TWS})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionTWS)
 
 DOCSTRING
 
@@ -410,7 +370,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::NlsolveFixedpointTrustregionTWS`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -419,7 +379,7 @@ function runSpinup(
     land,
     tem_helpers,
     _,
-    ::Val{:nlsove_fixedpoint_trustregion_TWS})
+    ::NlsolveFixedpointTrustregionTWS)
     TWS_spin = RunSpinup_TWS(spinup_models, spinup_forcing, tem_helpers, land, forcing_one_timestep)
     r = fixedpoint(TWS_spin, Vector(deepcopy(land.pools.TWS)); method=:trust_region)
     TWS = r.zero
@@ -430,7 +390,7 @@ function runSpinup(
 end
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionCEcoTWS)
 
 DOCSTRING
 
@@ -441,7 +401,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::NlsolveFixedpointTrustregionCEcoTWS`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -450,7 +410,7 @@ function runSpinup(
     land,
     tem_helpers,
     _,
-    ::Val{:nlsove_fixedpoint_trustregion_cEco_TWS})
+    ::NlsolveFixedpointTrustregionCEcoTWS)
     cEco_TWS_spin = RunSpinup_cEco_TWS(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep, Vector(deepcopy(land.pools.TWS)))
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     # r = fixedpoint(cEco_TWS_spin, p_init; method=:trust_region)
@@ -474,7 +434,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, Val{:nlsove_fixedpoint_trustregion_cEco})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionCEco)
 
 DOCSTRING
 
@@ -485,7 +445,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::NlsolveFixedpointTrustregionCEco`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -494,7 +454,7 @@ function runSpinup(
     land,
     tem_helpers,
     _,
-    ::Val{:nlsove_fixedpoint_trustregion_cEco})
+    ::NlsolveFixedpointTrustregionCEco)
     cEco_spin = RunSpinup_cEco(spinup_models, spinup_forcing, tem_helpers, deepcopy(land), forcing_one_timestep)
     p_init = log.(Vector(deepcopy(land.pools.cEco)))
     r = fixedpoint(cEco_spin, p_init; method=:trust_region)
@@ -508,7 +468,7 @@ end
 
 
 """
-    runSpinup(_, _, _, land, helpers, _, Val{:ηScaleAH})
+    runSpinup(_, _, _, land, helpers, _, ::EtaScaleAH)
 
 scale the carbon pools using the scalars from cCycleBase
 
@@ -519,9 +479,9 @@ scale the carbon pools using the scalars from cCycleBase
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::EtaScaleAH`: DESCRIPTION
 """
-function runSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleAH})
+function runSpinup(_, _, _, land, helpers, _, ::EtaScaleAH)
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -552,7 +512,7 @@ end
 
 
 """
-    runSpinup(_, _, _, land, helpers, _, Val{:ηScaleA0H})
+    runSpinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
 
 scale the carbon pools using the scalars from cCycleBase
 
@@ -563,9 +523,9 @@ scale the carbon pools using the scalars from cCycleBase
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `helpers`: DESCRIPTION
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `EtaScaleA0H`: DESCRIPTION
 """
-function runSpinup(_, _, _, land, helpers, _, ::Val{:ηScaleA0H})
+function runSpinup(_, _, _, land, helpers, _, ::EtaScaleA0H)
     @unpack_land cEco ∈ land.pools
     cEco_prev = copy(cEco)
     ηH = land.wCycleBase.o_one
@@ -601,7 +561,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, Val{:ODE_AutoTsit5_Rodas5})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, ::ODEAutoTsit5Rodas5)
 
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl
 
@@ -612,7 +572,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::ODEAutoTsit5Rodas5`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -621,7 +581,7 @@ function runSpinup(
     land,
     tem_helpers,
     tem_spinup,
-    ::Val{:ODE_AutoTsit5_Rodas5})
+    ::ODEAutoTsit5Rodas5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(
             spinup_models,
@@ -645,7 +605,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, Val{:ODE_DP5})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, ::ODEDP5)
 
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 
@@ -656,7 +616,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::ODEDP5`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -665,7 +625,7 @@ function runSpinup(
     land,
     tem_helpers,
     tem_spinup,
-    ::Val{:ODE_DP5})
+    ::ODEDP5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(
             spinup_models,
@@ -690,7 +650,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, Val{:ODE_Tsit5})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, ::ODETsit5)
 
 do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 
@@ -701,7 +661,7 @@ do/run the spinup using ODE solver and Tsit5 method of DifferentialEquations.jl.
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::ODETsit5`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -710,7 +670,7 @@ function runSpinup(
     land,
     tem_helpers,
     tem_spinup,
-    ::Val{:ODE_Tsit5})
+    ::ODETsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(
             spinup_models,
@@ -734,7 +694,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, Val{:SSP_DynamicSS_Tsit5})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, ::SSPDynamicSSTsit5)
 
 do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of DifferentialEquations.jl
 
@@ -745,7 +705,7 @@ do/run the spinup using SteadyState solver and DynamicSS with Tsit5 method of Di
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::SSPDynamicSSTsit5`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -754,7 +714,7 @@ function runSpinup(
     land,
     tem_helpers,
     tem_spinup,
-    ::Val{:SSP_DynamicSS_Tsit5})
+    ::SSPDynamicSSTsit5)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(
             spinup_models,
@@ -775,7 +735,7 @@ end
 
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, Val{:SSP_SSRootfind})
+    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, tem_spinup, ::SSPSSRootfind)
 
 do/run the spinup using SteadyState solver and SSRootfind method of DifferentialEquations.jl
 
@@ -786,7 +746,7 @@ do/run the spinup using SteadyState solver and SSRootfind method of Differential
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::SSPSSRootfind`: DESCRIPTION
 """
 function runSpinup(
     spinup_models,
@@ -795,7 +755,7 @@ function runSpinup(
     land,
     tem_helpers,
     tem_spinup,
-    ::Val{:SSP_SSRootfind})
+    ::SSPSSRootfind)
     for sel_pool ∈ tem_spinup.differential_eqn.pools
         p_info = getSpinupInfo(
             spinup_models,
@@ -852,16 +812,16 @@ function spinupTEM(
 end
 
 """
-    saveSpinup(land, tem_spinup, Val{:(true)})
+    saveSpinup(land, tem_spinup, ::DoSaveSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `nothing`: DESCRIPTION
+- `::DoSaveSpinup`: DESCRIPTION
 """
-function saveSpinup(land, tem_spinup, ::Val{:true}) # save the spinup
+function saveSpinup(land, tem_spinup, ::DoSaveSpinup) # save the spinup
     spin_file = tem_spinup.paths.restart_file_out
     @info "spinupTEM:: saving spinup data to $(spin_file)..."
     @save spin_file land
@@ -869,46 +829,46 @@ function saveSpinup(land, tem_spinup, ::Val{:true}) # save the spinup
 end
 
 """
-    saveSpinup(_, _, Val{:(false)})
+    saveSpinup(_, _, ::DontSaveSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `_`: unused argument
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::DontSaveSpinup`: DESCRIPTION
 """
-function saveSpinup(_, _, ::Val{:false}) # dont save the spinup
+function saveSpinup(_, _, ::DontSaveSpinup) # dont save the spinup
     return nothing
 end
 
 
 """
-    setSpinupLog(land, log_index, Val{:(true)})
+    setSpinupLog(land, log_index, ::DoStoreSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `log_index`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::DoStoreSpinup`: DESCRIPTION
 """
-function setSpinupLog(land, log_index, ::Val{:true})
+function setSpinupLog(land, log_index, ::DoStoreSpinup)
     land.states.spinuplog[log_index] = land.pools
     return land
 end
 
 """
-    setSpinupLog(land, _, Val{:(false)})
+    setSpinupLog(land, _, ::DontStoreSpinup)
 
 DOCSTRING
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::DontStoreSpinup`: DESCRIPTION
 """
-function setSpinupLog(land, _, ::Val{:false})
+function setSpinupLog(land, _, ::DontStoreSpinup)
     return land
 end
 

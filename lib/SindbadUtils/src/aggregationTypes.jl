@@ -1,0 +1,85 @@
+# ---------------- temporal aggregation ---------------
+export getTimeAggregatorTypeInstance
+export TimeMean
+export TimeDay
+export TimeDayAnomaly
+export TimeDayIAV
+export TimeDayMSC
+export TimeDayMSCAnomaly
+export TimeMonth
+export TimeMonthAnomaly
+export TimeMonthIAV
+export TimeMonthMSC
+export TimeMonthMSCAnomaly
+export TimeYear
+export TimeYearAnomaly
+export TimeAllYears
+export TimeFirstYear
+export TimeRandomYear
+export TimeShuffleYears
+export TimeNoDiff
+export TimeDiff
+export TimeIndexed
+
+struct TimeMean end
+struct TimeDay end
+struct TimeDayAnomaly end
+struct TimeDayIAV end
+struct TimeDayMSC end
+struct TimeDayMSCAnomaly end
+struct TimeMonth end
+struct TimeMonthAnomaly end
+struct TimeMonthIAV end
+struct TimeMonthMSC end
+struct TimeMonthMSCAnomaly end
+struct TimeYear end
+struct TimeYearAnomaly end
+struct TimeAllYears end
+struct TimeFirstYear end
+struct TimeRandomYear end
+struct TimeShuffleYears end
+
+struct TimeNoDiff end
+struct TimeDiff end
+struct TimeIndexed end
+struct TimeSizedArray end
+
+function getTimeAggregatorTypeInstance(aggr::String)
+    if aggr == "mean"
+        return TimeMean()
+    elseif aggr == "t_day"
+        return TimeDay()
+    elseif aggr == "day_anomaly"
+        return TimeDayAnomaly()
+    elseif aggr == "day_iav"
+        return TimeDayIAV()
+    elseif aggr == "day_msc"
+        return TimeDayMSC()
+    elseif aggr == "day_msc_anomaly"
+        return TimeDayMSCAnomaly()
+    elseif aggr == "month"
+        return TimeMonth()
+    elseif aggr == "day_anomaly"
+        return TimeMonthAnomaly()
+    elseif aggr == "day_iav"
+        return TimeMonthIAV()
+    elseif aggr == "day_msc"
+        return TimeMonthMSC()
+    elseif aggr == "day_msc_anomaly"
+        return TimeMonthMSCAnomaly()
+    elseif aggr == "year"
+        return TimeYear()
+    elseif aggr == "year_anomaly"
+        return TimeYearAnomaly()
+    elseif aggr == "all_years"
+        return TimeAllYears()
+    elseif aggr == "first_year"
+        return TimeFirstYear()
+    elseif aggr == "random_year"
+        return TimeRandomYear()
+    elseif aggr == "shuffle_years"
+        return TimeShuffleYears()
+    else
+        return TimeDay()
+    end
+end

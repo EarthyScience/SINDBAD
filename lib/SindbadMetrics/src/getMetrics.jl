@@ -1,8 +1,6 @@
 export combineLoss
 export filterCommonNaN
-export filterConstraintMinimumDatapoints
 export getData
-export getLocObs!
 export getLoss
 export getLossVector
 export getModelOutputView
@@ -92,33 +90,6 @@ function filterCommonNaN(y, yσ, ŷ)
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
-
-"""
-    filterConstraintMinimumDatapoints(obs_array, cost_options)
-
-remove all the variables that have less than minimum datapoints from being used in the optimization
-
-# Arguments:
-- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-"""
-function filterConstraintMinimumDatapoints(observations, cost_options)
-    cost_options_filtered = cost_options
-    foreach(cost_options) do cost_option
-        obs_ind_start = cost_option.obs_ind
-        min_points = cost_option.min_data_points
-        var_name = cost_option.variable
-        y = observations[obs_ind_start]
-        yσ = observations[obs_ind_start+1]
-        idxs = (.!isnan.(y .* yσ))
-        total_points = sum(idxs)
-        if total_points < min_points
-            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
-            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
-        end
-    end
-    return cost_options_filtered
-end
 
 """
     getData(model_output::landWrapper, observations, cost_option)

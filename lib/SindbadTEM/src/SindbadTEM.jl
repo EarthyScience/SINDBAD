@@ -1,6 +1,5 @@
 module SindbadTEM
 
-    using Accessors
     using AxisKeys
     using ComponentArrays
     using InteractiveUtils
@@ -8,6 +7,7 @@ module SindbadTEM
     using Pkg
     using ProgressMeter
     using SindbadSetup
+    @reexport using Accessors
     @reexport using SindbadSetup
     using ThreadPools
     using YAXArrays
