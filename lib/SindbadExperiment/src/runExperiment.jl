@@ -58,7 +58,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = observations.data
-        # obs_array = getKeyedArray(observations)
+        # obs_array = observations.data
         setLogLevel(:warn)
         optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)

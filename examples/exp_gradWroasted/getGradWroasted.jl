@@ -1,7 +1,7 @@
 using Revise
 using ForwardDiff
 
-using SindbadOptimization
+using SindbadExperiment
 toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
@@ -12,7 +12,7 @@ forcing = getForcing(info);
 # Sindbad.eval(:(error_catcher = []));
 
 observations = getObservation(info, forcing.helpers);
-obs_array = getKeyedArray(observations);
+obs_array = observations.data;
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 

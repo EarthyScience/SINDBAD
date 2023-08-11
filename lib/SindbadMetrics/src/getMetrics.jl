@@ -222,7 +222,7 @@ function getLossVector(observations, model_output, cost_options)
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
-        # @info "$(cost_option.variable) => $(valToSymbol(lossMetric)): $(metr)"
+        # @info "$(cost_option.variable) => $(lossMetric): $(metr)"
         metr
     end
     # println("-------------------")
