@@ -1,5 +1,5 @@
 using Revise
-using SindbadOptimization
+using SindbadExperiment
 using Dates
 using Plots
 toggleStackTraceNT()
@@ -70,7 +70,7 @@ for site_index in sites
     if !isfile(data_path)
         continue
     end
-    nc = SindbadTEM.NetCDF.open(data_path)
+    nc = SindbadData.NetCDF.open(data_path)
     y_dist = nc.gatts["last_disturbance_on"]
 
     nrepeat_d = nothing
@@ -82,28 +82,28 @@ for site_index in sites
     sequence = nothing
     if isnothing(nrepeat_d)
         sequence = [
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
             Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d < 0
         sequence = [
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
             Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d == 0
         sequence = [
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
             Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
         ]
     elseif nrepeat_d > 0
         sequence = [
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
             Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-            Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+            Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
         ]
     else
         error("cannot determine the repeat for disturbance")
@@ -183,10 +183,10 @@ for site_index in sites
         outcubes = output_array
 
         observations = getObservation(info, forcing.helpers)
-        obs_array = getKeyedArray(observations)
+        obs_array = observations.data
 
         # open the matlab simulation data
-        # nc_ml = SindbadTEM.NetCDF.open(ml_data_file);
+        # nc_ml = SindbadData.NetCDF.open(ml_data_file);
 
         varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :c_eco_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :c_eco_k_f_soilT => "fT", :c_eco_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF", :root_water_efficiency => "p_rootFrac_fracRoot2SoilD")
 
@@ -202,13 +202,13 @@ for site_index in sites
             @show "plot obs", v
             println("plot obs-model => site: $domain, variable: $v")
             lossMetric = var_row.cost_metric
-            loss_name = valToSymbol(lossMetric)
-            if loss_name in (:NNSE_inv, :NSE_inv)
-                lossMetric = Val(:nse)
+            loss_name = lossMetric
+            if loss_name in (:NNSEInv, :NSEInv)
+                lossMetric = NSE()
             end
             ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
             @show ml_data_file
-            nc_ml = SindbadTEM.NetCDF.open(ml_data_file)
+            nc_ml = SindbadData.NetCDF.open(ml_data_file)
             ml_dat = nc_ml[varib_dict[v]][:]
             if v == :agb
                 ml_dat = nc_ml[varib_dict[v]][1, 2, :]
@@ -237,7 +237,7 @@ for site_index in sites
             vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric))")
+            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(lossMetric)")
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v)_$(forcing_set).png")
         end
@@ -283,7 +283,7 @@ for site_index in sites
                 if v in keys(varib_dict)
                     ml_data_file = joinpath(ml_data_path, "FLUXNET2015_daily_$(domain)_FLUXNET_$(varib_dict[v]).nc")
                     @show ml_data_file
-                    nc_ml = SindbadTEM.NetCDF.open(ml_data_file)
+                    nc_ml = SindbadData.NetCDF.open(ml_data_file)
                     ml_dat = nc_ml[varib_dict[v]]
                 end
                 if size(def_var, 2) == 1

@@ -4,8 +4,8 @@ using Revise
 # using SindbadData
 # using SindbadTEM
 # using SindbadMetrics
-# using SindbadOptimization
-# @time using SindbadOptimization
+# using SindbadExperiment
+# @time using SindbadExperiment
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()

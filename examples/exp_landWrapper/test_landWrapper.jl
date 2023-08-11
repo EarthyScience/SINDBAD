@@ -1,5 +1,5 @@
 using Revise
-@time using SindbadOptimization
+@time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
