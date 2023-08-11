@@ -62,7 +62,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
         setLogLevel(:warn)
         optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
-        Sindbad.CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
+        CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
     end
     return run_output
@@ -80,7 +80,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
     observations = getObservation(info, forcing.helpers)
-    obs_array = observations.data
+    obs_array = getArray(observations)
 
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."
@@ -116,10 +116,10 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
     run_output = nothing
-    if getBool(info.tem.helpers.run.run_optimization)
+    if getBool(info.experiment.flags.run_optimization)
         run_output = runExperiment(info, forcing, output, Val(:opti))
     end
-    if getBool(info.tem.helpers.run.calc_cost) && !getBool(info.tem.helpers.run.run_optimization)
+    if getBool(info.experiment.flags.calc_cost) && !getBool(info.experiment.flags.run_optimization)
         run_output = runExperiment(info, forcing, Val(:cost))
     end
     return run_output

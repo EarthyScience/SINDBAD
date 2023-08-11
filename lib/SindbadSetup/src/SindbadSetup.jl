@@ -2,8 +2,8 @@ module SindbadSetup
 
     using Sindbad
     using CodeTracking
-    using CSV: CSV
-    using Dates
+    @reexport using CSV: CSV
+    @reexport using Dates
     @reexport using Infiltrator
     using JSON: parsefile, json
     @reexport using JLD2: @save
