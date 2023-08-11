@@ -3,7 +3,7 @@ using ForwardDiff
 
 using SindbadTEM
 using SindbadTEM: timeLoopForward
-using SindbadOptimization
+using SindbadExperiment
 #using AxisKeys: KeyedArray as KA
 #using Lux, Zygote, Optimisers, ComponentArrays, NNlib
 #using Random
