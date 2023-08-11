@@ -112,7 +112,7 @@ function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, he
     return nothing
 end
 
-function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DontCatchModelErrors) #when check is off/false
+function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
     return nothing
 end
 

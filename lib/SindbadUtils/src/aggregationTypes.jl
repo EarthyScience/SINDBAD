@@ -47,7 +47,7 @@ struct TimeSizedArray end
 function getTimeAggregatorTypeInstance(aggr::String)
     if aggr == "mean"
         return TimeMean()
-    elseif aggr == "t_day"
+    elseif aggr == "day"
         return TimeDay()
     elseif aggr == "day_anomaly"
         return TimeDayAnomaly()

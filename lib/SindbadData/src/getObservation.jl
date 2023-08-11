@@ -31,7 +31,7 @@ function getAllConstraintData(nc, data_path, default_info, v_info, data_sub_fiel
     end
     if get_it_from_path
         v_info_var = getfield(v_info, data_sub_field)
-        v_info_sub = getCombinedVariableInfo(default_info, v_info_var)
+        v_info_sub = getCombinedNamedTuple(default_info, v_info_var)
         data_path_sub = getAbsDataPath(info, v_info_sub.data_path)
         nc_sub = nc
         nc_sub, yax_sub = getYaxFromSource(nc_sub, data_path, data_path_sub, v_info_sub.source_variable, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
