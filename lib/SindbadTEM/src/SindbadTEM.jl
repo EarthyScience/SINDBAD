@@ -4,9 +4,9 @@ module SindbadTEM
     using ComponentArrays
     using InteractiveUtils
     using NLsolve
-    using Pkg
     using ProgressMeter
     using SindbadSetup
+    @reexport using Pkg
     @reexport using Accessors
     @reexport using SindbadSetup
     using ThreadPools
@@ -21,5 +21,6 @@ module SindbadTEM
     include("runTEMArray.jl")
     include("runTEMYax.jl")
     include("spinupTEM.jl")
+    include("updateParameters.jl")
 
 end # module SindbadTEM

@@ -119,7 +119,7 @@ develop_f =
         # using StatsPlots
         # plot(d)
 
-        tbl_params = Sindbad.getParameters(tem.models.forward, optim.model_parameter_default,
+        tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
             optim.model_parameters_to_optimize)
         # get the default and bounds
         default_values = tem.helpers.numbers.sNT.(tbl_params.default)

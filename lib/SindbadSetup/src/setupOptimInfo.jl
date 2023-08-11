@@ -3,7 +3,6 @@ export getCostOptions
 export setupOptimization
 
 
-
 """
     checkOptimizedParametersInModels(info::NamedTuple)
 
@@ -77,9 +76,8 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     all_options = []
     push!(all_options, varlist)
     prop_names = keys(all_costs[1])
-    props_to_keep = (:cost_metric, :area_weight, :cost_weight, :aggr_obs, :aggr_order, :min_data_points, :spatial_data_aggr, :spatial_cost_aggr, )
-    tcPrint(prop_names)
-    for (pn, prop) ∈ enumerate(prop_names)
+    props_to_keep = (:cost_metric, :area_weight, :cost_weight, :temporal_data_aggr, :aggr_obs, :aggr_order, :min_data_points, :spatial_data_aggr, :spatial_cost_aggr, :aggr_func,)
+    for (pn, prop) ∈ enumerate(props_to_keep)
         vValues = []
         for vn ∈ eachindex(varlist)
             sel_opt=all_costs[vn]
@@ -88,8 +86,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
                 sel_value = number_helpers.sNT(sel_value)
             elseif sel_value isa Bool
                 sel_value=getTypeInstanceForOptimizationFlags(prop, sel_value, "Do")
-            elseif sel_value isa String && (prop ∉ (:aggr_func, :cost_metric, :temporal_data_aggr))
-                @show prop
+            elseif sel_value isa String && (prop ∉ (:aggr_func, :temporal_data_aggr))
                 sel_value = getTypeInstanceForCostMetric(sel_value)
             end
             push!(vValues, sel_value)
@@ -136,151 +133,11 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     push!(all_options, agg_type)
     push!(all_options, number_helpers.sNT.(zero(mod_ind)))
     push!(all_options, [Any for _ in 1:length(obs_ind)])
-    tcPrint(all_options)
     all_props = [:variable, props_to_keep..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr, :temporal_aggr_type, :loss, :valids]
-    @show all_props
     return Table((; Pair.(all_props, all_options)...))
 
-    # return all_costs
-    #     # push!(all_options, varlist)
-    # for (pn, prop) ∈ enumerate(default_names)
-    #     default_prop = default_values[pn]
-    #     if (default_prop isa Number) && !(default_prop isa Bool)
-    #         default_prop = number_helpers.sNT(default_prop)
-    #     end
-    #     vValues = []
-    #     # vValues = typeof(default_prop)[]
-    #     for v ∈ varlist
-    #         optvar = getfield(getfield(optInfo.observations.variables, v), :cost_options)
-    #         sel_value = default_prop
-    #         if hasproperty(optvar, prop)
-    #             tmpValue = getfield(optvar, prop)
-    #             if (tmpValue isa Number) && !(tmpValue isa Bool)
-    #                 tmpValue = number_helpers.sNT(tmpValue)
-    #             end
-    #             sel_value = tmpValue
-    #         end
-    #         push!(vValues, sel_value)
-    #         if prop == :temporal_data_aggr
-    #             t_a = vValues[end]
-    #             to_push_type = TimeNoDiff()
-    #             if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
-    #                 to_push_type = TimeDiff()
-    #             end
-    #             push!(agg_type, to_push_type)
-    #             push!(time_aggrs, vValues[end])
-    #         end
-    #         if prop == :aggr_func
-    #             push!(aggr_funcs, vValues[end])
-    #         end
-    #     end
-    #     push!(all_options, vValues)
-    # end
-    # mod_vars = varibInfo.model
-    # mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
-    # mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
-    # mod_ind = collect(1:length(varlist))
-    # obs_ind = [i + 2 * (i - 1) for i in mod_ind]
-
-    # agg_indices = []
-    # for (i, _aggr) in enumerate(time_aggrs)
-    #     aggr_func = getAggrFunc(aggr_funcs[i])
-    #     _aggrName = string(_aggr)
-    #     skip_aggregation = false
-    #     if startswith(_aggrName, dates_helpers.temporal_resolution)
-    #         skip_aggregation = true
-    #     end
-    #     aggInd = createTimeAggregator(dates_helpers.range, _aggr, aggr_func, skip_aggregation)
-    #     push!(agg_indices, aggInd)
-    # end
-    # push!(all_options, 1:length(obs_ind))
-    # push!(all_options, obs_ind)
-    # push!(all_options, mod_ind)
-    # push!(all_options, mod_field)
-    # push!(all_options, mod_subfield)
-    # push!(all_options, agg_indices)
-    # push!(all_options, agg_type)
-    # push!(all_options, number_helpers.sNT.(zero(mod_ind)))
-    # push!(all_options, [Any for _ in 1:length(obs_ind)])
-    # return Table((; Pair.([:variable, default_names..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type, :loss, :valids], all_options)...))
 end
 
-# function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
-#     default_names = Symbol.(keys(optInfo.observations.default_cost))
-#     default_values = values(optInfo.observations.default_cost)
-#     # default_values = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
-
-#     varlist = Symbol.(optInfo.observational_constraints)
-#     all_options = []
-#     agg_type = []
-#     time_aggrs = []
-#     aggr_funcs = []
-
-#     for v ∈ varlist
-#         combined_props = getCombinedNamedTuple(default_info, getfield(getfield(optInfo.observations.variables, v), :cost_options))
-#     end
-#         push!(all_options, varlist)
-#     for (pn, prop) ∈ enumerate(default_names)
-#         default_prop = default_values[pn]
-#         if (default_prop isa Number) && !(default_prop isa Bool)
-#             default_prop = number_helpers.sNT(default_prop)
-#         end
-#         vValues = []
-#         # vValues = typeof(default_prop)[]
-#         for v ∈ varlist
-#             optvar = getfield(getfield(optInfo.observations.variables, v), :cost_options)
-#             sel_value = default_prop
-#             if hasproperty(optvar, prop)
-#                 tmpValue = getfield(optvar, prop)
-#                 if (tmpValue isa Number) && !(tmpValue isa Bool)
-#                     tmpValue = number_helpers.sNT(tmpValue)
-#                 end
-#                 sel_value = tmpValue
-#             end
-#             push!(vValues, sel_value)
-#             if prop == :temporal_data_aggr
-#                 t_a = vValues[end]
-#                 to_push_type = TimeNoDiff()
-#                 if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
-#                     to_push_type = TimeDiff()
-#                 end
-#                 push!(agg_type, to_push_type)
-#                 push!(time_aggrs, vValues[end])
-#             end
-#             if prop == :aggr_func
-#                 push!(aggr_funcs, vValues[end])
-#             end
-#         end
-#         push!(all_options, vValues)
-#     end
-#     mod_vars = varibInfo.model
-#     mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
-#     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
-#     mod_ind = collect(1:length(varlist))
-#     obs_ind = [i + 2 * (i - 1) for i in mod_ind]
-
-#     agg_indices = []
-#     for (i, _aggr) in enumerate(time_aggrs)
-#         aggr_func = getAggrFunc(aggr_funcs[i])
-#         _aggrName = string(_aggr)
-#         skip_aggregation = false
-#         if startswith(_aggrName, dates_helpers.temporal_resolution)
-#             skip_aggregation = true
-#         end
-#         aggInd = createTimeAggregator(dates_helpers.range, _aggr, aggr_func, skip_aggregation)
-#         push!(agg_indices, aggInd)
-#     end
-#     push!(all_options, 1:length(obs_ind))
-#     push!(all_options, obs_ind)
-#     push!(all_options, mod_ind)
-#     push!(all_options, mod_field)
-#     push!(all_options, mod_subfield)
-#     push!(all_options, agg_indices)
-#     push!(all_options, agg_type)
-#     push!(all_options, number_helpers.sNT.(zero(mod_ind)))
-#     push!(all_options, [Any for _ in 1:length(obs_ind)])
-#     return Table((; Pair.([:variable, default_names..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type, :loss, :valids], all_options)...))
-# end
 
 """
     getConstraintNames(optim::NamedTuple)
@@ -313,7 +170,6 @@ a helper function to get the type for spinup mode
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = join(uppercasefirst.(split(option_name,"_")))
-    @show opt_ss
     struct_instance = getfield(SindbadMetrics, Symbol(opt_ss))()
     return struct_instance
 end
@@ -379,11 +235,11 @@ function setupOptimization(info::NamedTuple)
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
         algo_method = options.package * "_" * options.method
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(algo_method))))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getfield(SindbadSetup, Symbol(algo_method))()))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, Val(Symbol(optim_algorithm))))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getfield(SindbadSetup, Symbol(optim_algorithm))()))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))

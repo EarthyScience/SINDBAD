@@ -1,5 +1,6 @@
 export combineLoss
 export filterCommonNaN
+export filterConstraintMinimumDatapoints
 export getData
 export getLoss
 export getLossVector
@@ -17,7 +18,7 @@ DOCSTRING
 """
 function aggregateData(dat, cost_option, ::TimeSpace)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     return dat
 end
 
@@ -32,7 +33,7 @@ DOCSTRING
 - `::SpaceTime`: DESCRIPTION
 """
 function aggregateData(dat, cost_option, ::SpaceTime)
-    dat = spatialAggregation(dat, cost_option, cost_option.spatial_aggr)
+    dat = spatialAggregation(dat, cost_option, cost_option.spatial_data_aggr)
     dat = temporalAggregation(dat, cost_option.temporal_aggr, cost_option.temporal_aggr_type)
     return dat
 end
@@ -91,6 +92,44 @@ function filterCommonNaN(y, yσ, ŷ)
 end
 
 
+
+"""
+    filterConstraintMinimumDatapoints(obs_array, cost_options)
+
+remove all the variables that have less than minimum datapoints from being used in the optimization
+
+# Arguments:
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+"""
+function filterConstraintMinimumDatapoints(observations, cost_options)
+    cost_options_filtered = cost_options
+    foreach(cost_options_filtered) do cost_option
+        obs_ind_start = cost_option.obs_ind
+        min_points = cost_option.min_data_points
+        var_name = cost_option.variable
+        y = observations[obs_ind_start]
+        yσ = observations[obs_ind_start+1]
+        idxs = Array(.!isnan.(y .* yσ))
+        # @show size(idxs)
+        # cost_option
+        # cost_option.valids = idxs
+        total_points = sum(idxs)
+        if total_points < min_points
+            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
+            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
+            # push!(cost_metrics, )
+        end
+    end
+    # cost_metrics = cost_options_filtered.cost_metric
+    # cost_metr_types  = map(a -> getfield(SindbadMetrics, valToSymbol(a))(), cost_metrics)
+    # cost_options_filtered.cost_metric .= cost_metr_types
+    # @show cost_metrics
+    # @set cost_options_filtered.cost_metric = cost_metrics
+    return cost_options_filtered
+end
+
+
 """
     getData(model_output::landWrapper, observations, cost_option)
 
@@ -120,10 +159,8 @@ function getData(model_output::landWrapper, observations, cost_option)
 
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
-    if cost_option.temporal_aggr_obs
-        y = aggregateData(y, cost_option, cost_option.aggr_order)
-        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    end
+    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+
     return (y, yσ, ŷ)
 end
 
@@ -149,11 +186,18 @@ function getData(model_output::AbstractArray, observations, cost_option)
 
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
-    if cost_option.temporal_aggr_obs
-        y = aggregateData(y, cost_option, cost_option.aggr_order)
-        yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
-    end
+    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
     return (y, yσ, ŷ)
+end
+
+function aggregateObsData(y, yσ, cost_option, ::DoAggrObs)
+    y = aggregateData(y, cost_option, cost_option.aggr_order)
+    yσ = aggregateData(yσ, cost_option, cost_option.aggr_order)
+    return y, yσ
+end
+
+function aggregateObsData(y, yσ, _, ::DoNotAggrObs)
+    return y, yσ
 end
 
 """
@@ -198,7 +242,7 @@ end
 
 function getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
     inds = ntuple(_->Colon(),N)
-    inds = map(size(_data)) do _
+    inds = map(size(_dat)) do _
         Colon()
     end
     @view _dat[inds...]
@@ -232,15 +276,15 @@ function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
 end
 
 """
-    spatialAggregation(dat, _, ::SpatiallyVariable)
+    spatialAggregation(dat, _, ::ConcatData)
 
 DOCSTRING
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
 - `_`: unused argument
-- `::SpatiallyVariable`: DESCRIPTION
+- `::ConcatData`: DESCRIPTION
 """
-function spatialAggregation(dat, _, ::SpatiallyVariable)
+function spatialAggregation(dat, _, ::ConcatData)
     return dat
 end

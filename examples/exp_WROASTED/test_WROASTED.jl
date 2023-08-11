@@ -66,7 +66,7 @@ obs_array = observations.data;
 optimized_models = info.tem.models.forward;
 
 if getBool(info.tem.helpers.run.run_optimization)
-    tbl_params = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
         info.optim.model_parameters_to_optimize)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
