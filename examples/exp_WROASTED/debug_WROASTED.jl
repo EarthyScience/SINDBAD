@@ -44,7 +44,7 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 nrepeat = 200
 
 data_path = getAbsDataPath(info, path_input)
-nc = SindbadTEM.NetCDF.open(data_path);
+nc = SindbadData.NetCDF.open(data_path);
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
@@ -56,25 +56,25 @@ end
 sequence = nothing
 if isnothing(nrepeat_d)
     sequence = [
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d < 0
     sequence = [
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d == 0
     sequence = [
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d > 0
     sequence = [
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
         Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
     ]
 else
     error("cannot determine the repeat for disturbance")

@@ -1,5 +1,5 @@
 using Revise
-using SindbadOptimization
+using SindbadExperiment
 
 # TODO add to SindbadOptimization
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains

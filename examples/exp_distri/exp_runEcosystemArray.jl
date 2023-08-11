@@ -10,7 +10,7 @@ info = setupInfo(info);
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 
-obs_array = getKeyedArray(observations);
+obs_array = observations.data;
 
 forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
 
