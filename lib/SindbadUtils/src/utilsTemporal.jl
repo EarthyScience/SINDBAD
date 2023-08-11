@@ -479,7 +479,7 @@ a helper function to instantiate an array from the TimeAggregatorViewInstance fo
 """
 function getTimeAggrArray(_dat::AbstractArray{<:Any,N}) where N
     inds = ntuple(_->Colon(),N)
-    inds = map(size(_data)) do _
+    inds = map(size(_dat)) do _
         Colon()
     end
     _dat[inds...]

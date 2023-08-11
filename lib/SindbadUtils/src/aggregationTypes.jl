@@ -59,13 +59,13 @@ function getTimeAggregatorTypeInstance(aggr::String)
         return TimeDayMSCAnomaly()
     elseif aggr == "month"
         return TimeMonth()
-    elseif aggr == "day_anomaly"
+    elseif aggr == "month_anomaly"
         return TimeMonthAnomaly()
-    elseif aggr == "day_iav"
+    elseif aggr == "month_iav"
         return TimeMonthIAV()
-    elseif aggr == "day_msc"
+    elseif aggr == "month_msc"
         return TimeMonthMSC()
-    elseif aggr == "day_msc_anomaly"
+    elseif aggr == "month_msc_anomaly"
         return TimeMonthMSCAnomaly()
     elseif aggr == "year"
         return TimeYear()

@@ -13,7 +13,7 @@ sites = 1:205
 forcing_set = "erai"
 do_debug_figs = false
 do_forcing_figs = false
-site_info = Sindbad.CSV.File(
+site_info = CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
 info = nothing
@@ -137,7 +137,7 @@ for site_index in sites
     forcing = getForcing(info)
 
     ### update the model parameters with values from matlab optimization
-    tbl_params = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
         info.optim.model_parameters_to_optimize)
     opt_params = tbl_params.optim
@@ -162,7 +162,7 @@ for site_index in sites
         models_with_matlab_params = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
 
-        tbl_params_2 = Sindbad.getParameters(models_with_matlab_params,
+        tbl_params_2 = getParameters(models_with_matlab_params,
             info.optim.model_parameter_default,
             info.optim.model_parameters_to_optimize)
 

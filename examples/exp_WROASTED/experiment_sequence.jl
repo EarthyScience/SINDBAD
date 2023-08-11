@@ -85,7 +85,7 @@ for domain ∈ sites
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    tbl_params = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
         info.optim.model_parameters_to_optimize)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
