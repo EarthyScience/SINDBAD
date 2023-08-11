@@ -8,7 +8,7 @@ toggleStackTraceNT()
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "erai"
-site_info = Sindbad.CSV.File(
+site_info = CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
 domain = string(site_info[site_index][2])
@@ -127,7 +127,7 @@ for o_set in opti_set
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    tbl_params = Sindbad.getParameters(info.tem.models.forward,
+    tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
         info.optim.model_parameters_to_optimize)
     optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)

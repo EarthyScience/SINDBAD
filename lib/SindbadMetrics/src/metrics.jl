@@ -111,8 +111,8 @@ DOCSTRING
 - `nothing`: DESCRIPTION
 """
 function loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
-    Pcor = loss(y, yσ, ŷ, Pcor())
-    return Pcor * Pcor
+    pcor = loss(y, yσ, ŷ, Pcor())
+    return pcor * pcor
 end
 
 """

@@ -30,7 +30,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
     tem_with_types)
 
 # @time out_params = runExperimentOpti(experiment_json);  
-tbl_params = Sindbad.getParameters(info.tem.models.forward,
+tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
     info.optim.model_parameters_to_optimize);
 
