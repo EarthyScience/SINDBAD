@@ -47,7 +47,7 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
 
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
 
-    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, forcing_one_timestep =
+    forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_types, forcing_one_timestep =
         prepTEM(forcing, info)
     @time runTEM!(output_array,
         info.tem.models.forward,
@@ -57,7 +57,7 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
         loc_outputs,
         land_init_space,
         forcing_one_timestep,
-        tem_with_vals)
+        tem_with_types)
     # some plots
     ds = forcing.data[1]
     opt_dat = output_array

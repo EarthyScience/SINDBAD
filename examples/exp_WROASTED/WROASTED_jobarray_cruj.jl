@@ -49,28 +49,28 @@ end
 sequence = nothing
 if isnothing(nrepeat_d)
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d < 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleAH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d == 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d > 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode": "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
     ]
 else
     error("cannot determine the repeat for disturbance")
@@ -137,7 +137,7 @@ for o_set in opti_set
     observations = getObservation(info, forcing.helpers)
     obs_array = getKeyedArray(observations)
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info)
     @time runTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
@@ -146,7 +146,7 @@ for o_set in opti_set
         loc_outputs,
         land_init_space,
         loc_space_inds,
-        tem_with_vals)
+        tem_with_types)
 
     # some plots
     ds = forcing.data[1]
@@ -216,7 +216,7 @@ for o_set in opti_set
     forcing = getForcing(info)
 
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_vals = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info)
     @time runTEM!(optimized_models,
         forcing_nt_array,
         loc_forcings,
@@ -225,10 +225,10 @@ for o_set in opti_set
         loc_outputs,
         land_init_space,
         loc_space_inds,
-        tem_with_vals)
+        tem_with_types)
 
     # save the outcubes
-    out_vars = valToSymbol(tem_with_vals.helpers.vals.output_vars)
+    out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
     out_info = getOutputFileInfo(info)
     saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(true))
     saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(false))

@@ -36,41 +36,21 @@ function checkOptimizedParametersInModels(info::NamedTuple)
 end
 
 """
-    getAggrFunc(Val{:mean})
+    getAggrFunc(func_name::String)
 
-DOCSTRING
+return a function for a given name to aggregate
 """
-function getAggrFunc(::Val{:mean})
-    return mean
+function getAggrFunc(func_name::String)
+    if func_name == "nanmean"
+        return nanmean
+    elseif func_name == "nansum"
+        return nansum
+    elseif func_name == "sum"
+        return sum
+    else func_name == "mean"
+        return mean
+    end
 end
-
-"""
-    getAggrFunc(Val{:sum})
-
-DOCSTRING
-"""
-function getAggrFunc(::Val{:sum})
-    return sum
-end
-
-"""
-    getAggrFunc(Val{:nanmean})
-
-DOCSTRING
-"""
-function getAggrFunc(::Val{:nanmean})
-    return nanmean
-end
-
-"""
-    getAggrFunc(Val{:nansum})
-
-DOCSTRING
-"""
-function getAggrFunc(::Val{:nansum})
-    return nansum
-end
-
 
 
 """
@@ -86,8 +66,8 @@ DOCSTRING
 """
 function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
     defNames = Symbol.(keys(optInfo.observations.default_cost))
-    vals = values(optInfo.observations.default_cost)
-    defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
+    defValues = values(optInfo.observations.default_cost)
+    # defValues = [v isa String ? Val(Symbol(v)) : v for v ∈ vals]
 
     varlist = Symbol.(optInfo.observational_constraints)
     all_options = []
@@ -105,26 +85,26 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
         # vValues = typeof(defProp)[]
         for v ∈ varlist
             optvar = getfield(getfield(optInfo.observations.variables, v), :cost_options)
+            sel_value = defProp
             if hasproperty(optvar, prop)
                 tmpValue = getfield(optvar, prop)
                 if (tmpValue isa Number) && !(tmpValue isa Bool)
                     tmpValue = number_helpers.sNT(tmpValue)
                 end
-                push!(vValues, tmpValue isa String ? Val(Symbol(tmpValue)) : tmpValue)
-            else
-                push!(vValues, defProp)
+                sel_value = tmpValue
             end
+            push!(vValues, sel_value)
             if prop == :temporal_aggr
-                t_a = string(valToSymbol(vValues[end]))
-                to_push_type = Val(:no_diff)
+                t_a = vValues[end]
+                to_push_type = TimeNoDiff()
                 if endswith(t_a, "_anomaly") || endswith(t_a, "_iav")
-                    to_push_type = Val(:diff)
+                    to_push_type = TimeDiff()
                 end
                 push!(agg_type, to_push_type)
-                push!(time_aggrs, valToSymbol(vValues[end]))
+                push!(time_aggrs, vValues[end])
             end
             if prop == :temporal_aggr_func
-                push!(aggr_funcs, valToSymbol(vValues[end]))
+                push!(aggr_funcs, vValues[end])
             end
         end
         push!(all_options, vValues)
@@ -137,13 +117,13 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
 
     agg_indices = []
     for (i, _aggr) in enumerate(time_aggrs)
-        aggr_func = getAggrFunc(Val(aggr_funcs[i]))
+        aggr_func = getAggrFunc(aggr_funcs[i])
         _aggrName = string(_aggr)
-        is_model_timestep = false
+        skip_aggregation = false
         if startswith(_aggrName, dates_helpers.temporal_resolution)
-            is_model_timestep = true
+            skip_aggregation = true
         end
-        aggInd = createTimeAggregator(dates_helpers.range, Val(_aggr), aggr_func, is_model_timestep)
+        aggInd = createTimeAggregator(dates_helpers.range, _aggr, aggr_func, skip_aggregation)
         push!(agg_indices, aggInd)
     end
     push!(all_options, 1:length(obs_ind))
@@ -154,7 +134,8 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     push!(all_options, agg_indices)
     push!(all_options, agg_type)
     push!(all_options, number_helpers.sNT.(zero(mod_ind)))
-    return Table((; Pair.([:variable, defNames..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type, :loss], all_options)...))
+    push!(all_options, [Any for _ in 1:length(obs_ind)])
+    return Table((; Pair.([:variable, defNames..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggregator, :temporal_aggr_type, :loss, :valids], all_options)...))
 end
 
 """

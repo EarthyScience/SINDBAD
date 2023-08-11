@@ -6,9 +6,11 @@ module SindbadUtils
     using Logging
     using Reexport: @reexport
     @reexport using NaNStatistics
+    using StaticArraysCore
     @reexport using StatsBase: mean, rle, sample, sum
     @reexport using TypedTables: Table
 
+    include("aggregationTypes.jl")
     include("getArrayView.jl")
     include("utils.jl")
     include("utilsNT.jl")

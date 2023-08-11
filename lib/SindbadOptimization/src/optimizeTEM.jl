@@ -88,8 +88,7 @@ return model and obs data filtering for the common nan
 - `yσ`: observational uncertainty data
 - `ŷ`: model simulation data/estimate
 """
-function filterCommonNaN(y, yσ, ŷ)
-    idxs = (.!isnan.(y .* yσ .* ŷ))
+function filterCommonNaN(y, yσ, ŷ, idxs)
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
@@ -105,19 +104,28 @@ remove all the variables that have less than minimum datapoints from being used 
 """
 function filterConstraintMinimumDatapoints(observations, cost_options)
     cost_options_filtered = cost_options
-    foreach(cost_options) do cost_option
+    foreach(cost_options_filtered) do cost_option
         obs_ind_start = cost_option.obs_ind
         min_points = cost_option.min_data_points
         var_name = cost_option.variable
         y = observations[obs_ind_start]
         yσ = observations[obs_ind_start+1]
-        idxs = (.!isnan.(y .* yσ))
+        idxs = Array(.!isnan.(y .* yσ))
+        # @show size(idxs)
+        # cost_option
+        # cost_option.valids = idxs
         total_points = sum(idxs)
         if total_points < min_points
             cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
             @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
+            # push!(cost_metrics, )
         end
     end
+    cost_metrics = cost_options_filtered.cost_metric
+    cost_metr_types  = map(a -> getfield(SindbadMetrics, valToSymbol(a))(), cost_metrics)
+    cost_options_filtered.cost_metric .= cost_metr_types
+    # @show cost_metrics
+    # @set cost_options_filtered.cost_metric = cost_metrics
     return cost_options_filtered
 end
 
@@ -368,7 +376,8 @@ function getLossVector(observations, model_output, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        idxs = (.!isnan.(y .* yσ .* ŷ))
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, idxs)
         # @debug @time metr = loss(y, yσ, ŷ, lossMetric)
         metr = loss(y, yσ, ŷ, lossMetric)
         if isnan(metr)
@@ -462,7 +471,7 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_vals = prepTEM(forcing, info)
+    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_types = prepTEM(forcing, info)
 
     cost_function =
         x -> getLoss(x,
@@ -474,7 +483,7 @@ function optimizeTEM(forcing::NamedTuple,
             loc_outputs,
             land_init_space,
             loc_space_inds,
-            tem_with_vals,
+            tem_with_types,
             observations,
             tbl_params,
             cost_options,
@@ -524,7 +533,7 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
+    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_types = prepTEM(forcing, info)
 
 
     cost_function =
@@ -533,7 +542,7 @@ function optimizeTEM(forcing::NamedTuple,
             loc_forcings[1],
             forcing_one_timestep,
             land_init_space[1],
-            tem_with_vals,
+            tem_with_types,
             observations,
             tbl_params,
             cost_options,
@@ -583,7 +592,7 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_vals = prepTEM(forcing, info)
+    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_types = prepTEM(forcing, info)
 
     land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
 
@@ -594,7 +603,7 @@ function optimizeTEM(forcing::NamedTuple,
             forcing_one_timestep,
             land_timeseries,
             land_init_space[1],
-            tem_with_vals,
+            tem_with_types,
             observations,
             tbl_params,
             cost_options,

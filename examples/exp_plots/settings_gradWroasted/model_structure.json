@@ -1,7 +1,7 @@
 {
   "default_model": {
     "order": 0,
-    "use4spinup": true
+    "use_in_spinup": true
   },
   "models": {
     "ambientCO2": {
@@ -183,7 +183,7 @@
     },
     "waterBalance": {
       "approach": "simple",
-      "use4spinup": false
+      "use_in_spinup": false
     },
     "wCycle": {
       "approach": "components"
