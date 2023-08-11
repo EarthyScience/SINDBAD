@@ -13,7 +13,7 @@ function throwError(forcing, land, msg, water_balance, total_water, total_water_
     end
     error(msg)
 end
-function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::DontCatchModelErrors) # when catch_model_errors is false
+function checkWaterBalanceError(_, _, _, _, _, _, _, _, _, _, ::DoNotCatchModelErrors) # when catch_model_errors is false
     return nothing
 end
 

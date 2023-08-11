@@ -23,57 +23,65 @@ struct Optimization_GCMAES_FD end
 struct Optimization_MultistartOptimization end
 struct Optimization_NelderMead end
 
+# ------------------------- loss calculation -------------------------
+
+export IsMultiObjectiveAlgorithm
+export IsNotMultiObjectiveAlgorithm
+
+struct IsMultiObjectiveAlgorithm end
+struct IsNotMultiObjectiveAlgorithm end
+
 # ------------------------- running flags -------------------------
 
 export DoCalcCost
-export DontCalcCost
+export DoNotCalcCost
 export DoDebugModel
-export DontDebugModel
+export DoNotDebugModel
 export DoUseForwardDiff
-export DontUseForwardDiff
+export DoNotUseForwardDiff
 export DoInlineUpdate
-export DontInlineUpdate
+export DoNotInlineUpdate
 export DoRunForward
-export DontRunForward
+export DoNotRunForward
 export DoRunOptimization
-export DontRunOptimization
+export DoNotRunOptimization
 export DoSaveInfo
-export DontSaveInfo
+export DoNotSaveInfo
 export DoLoadSpinup
-export DontLoadSpinup
+export DoNotLoadSpinup
 export DoSaveSpinup
-export DontSaveSpinup
+export DoNotSaveSpinup
 export DoSpinupTEM
-export DontSpinupTEM
+export DoNotSpinupTEM
 export DoStoreSpinup
-export DontStoreSpinup
+export DoNotStoreSpinup
 export DoRunSpinup
-export DontRunSpinup
+export DoNotRunSpinup
 
 struct DoCalcCost end
-struct DontCalcCost end
+struct DoNotCalcCost end
 struct DoDebugModel end
-struct DontDebugModel end
+struct DoNotDebugModel end
 struct DoInlineUpdate end
-struct DontInlineUpdate end
+struct DoNotInlineUpdate end
 struct DoRunForward end
-struct DontRunForward end
+struct DoNotRunForward end
 struct DoRunOptimization end
-struct DontRunOptimization end
+struct DoNotRunOptimization end
 struct DoSaveInfo end
-struct DontSaveInfo end
+struct DoNotSaveInfo end
 struct DoLoadSpinup end
-struct DontLoadSpinup end
+struct DoNotLoadSpinup end
 struct DoSaveSpinup end
-struct DontSaveSpinup end
+struct DoNotSaveSpinup end
 struct DoRunSpinup end
-struct DontRunSpinup end
+struct DoNotRunSpinup end
 struct DoSpinupTEM end
-struct DontSpinupTEM end
+struct DoNotSpinupTEM end
 struct DoStoreSpinup end
-struct DontStoreSpinup end
+struct DoNotStoreSpinup end
 struct DoUseForwardDiff end
-struct DontUseForwardDiff end
+struct DoNotUseForwardDiff end
 
 # ------------------------- spinup methods -------------------------
 

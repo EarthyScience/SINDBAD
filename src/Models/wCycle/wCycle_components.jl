@@ -24,7 +24,7 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     # always pack land tws before calling the adjust method
     @pack_land (groundW, snowW, soilW, surfaceW, TWS) => land.pools
 
-    land = adjust_and_pack_main_pool(land, helpers, land.wCycleBase.w_model)
+    land = adjustPackMainPool(land, helpers, land.wCycleBase.w_model)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)

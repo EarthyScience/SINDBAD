@@ -27,9 +27,9 @@ DOCSTRING
 
 # Arguments:
 - `land`: sindbad land
-- `::DontStoreSpinup`: indicates not to store the spinup history
+- `::DoNotStoreSpinup`: indicates not to store the spinup history
 """
-function addSpinupLog(land, _, ::DontStoreSpinup) # when history is false
+function addSpinupLog(land, _, ::DoNotStoreSpinup) # when history is false
     spinuplog = nothing
     @pack_land spinuplog => land.states
     return land
@@ -49,11 +49,11 @@ end
 
 
 """
-    debugModel(_, ::DontDebugModel)
+    debugModel(_, ::DoNotDebugModel)
 
 DOCSTRING
 """
-function debugModel(_, ::DontDebugModel) # do nothing debug model is false/off
+function debugModel(_, ::DoNotDebugModel) # do nothing debug model is false/off
     return nothing
 end
 
