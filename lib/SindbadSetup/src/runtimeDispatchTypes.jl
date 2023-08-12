@@ -1,27 +1,27 @@
 # ------------------------- optimization algorithm -------------------------
-export CMAEvolutionStrategy_CMAES
-export Evolutionary_CMAES
-export Optim_LBFGS
-export Optim_BFGS
-export Optimization_BBO_adaptive
-export Optimization_BFGS
-export Optimization_Fminbox_GradientDescent_FD
-export Optimization_GCMAES
-export Optimization_GCMAES_FD
-export Optimization_MultistartOptimization
-export Optimization_NelderMead
+export CMAEvolutionStrategyCMAES
+export EvolutionaryCMAES
+export OptimLBFGS
+export OptimBFGS
+export OptimizationBBOadaptive
+export OptimizationBFGS
+export OptimizationFminboxGradientDescentFD
+export OptimizationGCMAESDef
+export OptimizationGCMAESFD
+export OptimizationMultistartOptimization
+export OptimizationNelderMead
 
-struct CMAEvolutionStrategy_CMAES end
-struct Evolutionary_CMAES end
-struct Optim_LBFGS end
-struct Optim_BFGS end
-struct Optimization_BBO_adaptive end
-struct Optimization_BFGS end
-struct Optimization_Fminbox_GradientDescent_FD end
-struct Optimization_GCMAES end
-struct Optimization_GCMAES_FD end
-struct Optimization_MultistartOptimization end
-struct Optimization_NelderMead end
+struct CMAEvolutionStrategyCMAES end
+struct EvolutionaryCMAES end
+struct OptimLBFGS end
+struct OptimBFGS end
+struct OptimizationBBOadaptive end
+struct OptimizationBFGS end
+struct OptimizationFminboxGradientDescentFD end
+struct OptimizationGCMAESDef end
+struct OptimizationGCMAESFD end
+struct OptimizationMultistartOptimization end
+struct OptimizationNelderMead end
 
 # ------------------------- loss calculation -------------------------
 
@@ -111,9 +111,13 @@ struct SelSpinupModels end
 struct SSPDynamicSSTsit5 end
 struct SSPSSRootfind end
 
-# ------------------------- parallelization -------------------------
+# ------------------------- parallelization and model output-------------------------
+export DoOutputAll
+export DontOutputAll
 export UseQbmapParallelization
 export UseThreadsParallelization
 
+struct DoOutputAll end
+struct DontOutputAll end
 struct UseQbmapParallelization end
 struct UseThreadsParallelization end

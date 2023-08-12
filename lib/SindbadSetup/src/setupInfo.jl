@@ -1,6 +1,8 @@
 export getInitPools
 export getInitStates
 export getParameters
+export getTypeInstanceForFlags
+export getTypeInstanceForNamedOptions
 export prepNumericHelpers
 export replaceCommaSeparatorParams
 export setNumberType
@@ -118,11 +120,11 @@ function convertRunFlagsToTypes(info)
             st = (;)
             for prs in propertynames(prf)
                 prsf = getfield(prf, prs)
-                st = setTupleField(st, (prs, getTypeInstancesForRunFlags(prs, prsf)))
+                st = setTupleField(st, (prs, getTypeInstanceForFlags(prs, prsf)))
             end
             prtoset = st
         else
-            prtoset = getTypeInstancesForRunFlags(pr, prf)
+            prtoset = getTypeInstanceForFlags(pr, prf)
         end
         new_run = setTupleField(new_run, (pr, prtoset))
     end
@@ -599,35 +601,26 @@ end
 
 
 """
-    getLoopingInfo(info)
+    getModelRunInfo(info::NamedTuple)
 
-sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved.
+sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
-
-"""
-    getLoopingInfo(info::NamedTuple)
-
-DOCSTRING
-"""
-function getLoopingInfo(info::NamedTuple)
+function getModelRunInfo(info::NamedTuple)
+    if info.experiment.flags.run_optimization
+        info = @set info.experiment.flags.catch_model_errors = false
+    end
     run_vals = convertRunFlagsToTypes(info)
-    run_info = (; run_vals..., (output_all = Val(info.experiment.model_output.all)))
+    run_info = (; run_vals..., (output_all = getTypeInstanceForFlags(:output_all, info.experiment.model_output.all, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
     parallelization = titlecase(info.experiment.exe_rules.parallelization)
     run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
     return run_info
 end
 
-
 """
     getNumberType(t::String)
+
 A helper function to get the number type from the specified string
-"""
-
-"""
-    getNumberType(t::String)
-
-DOCSTRING
 """
 function getNumberType(t::String)
     ttype = eval(Meta.parse(t))
@@ -636,13 +629,8 @@ end
 
 """
     getNumberType(t::DataType)
+
 A helper function to get the number type from the specified string
-"""
-
-"""
-    getNumberType(t::DataType)
-
-DOCSTRING
 """
 function getNumberType(t::DataType)
     return t
@@ -1019,11 +1007,29 @@ end
 
 
 """
-    getTypeInstanceForSpinupMode(mode_name)
+    getTypeInstanceForFlags(mode_name)
 
-a helper function to get the type for spinup mode
+a helper function to get the type for boolean flags. In this, the names are converted to string, split by "_", and prefixed to generate a true and false case type
 """
-function getTypeInstanceForSpinupMode(option_name::String)
+function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do")
+    opt_s = string(option_name)
+    opt_ss = join(uppercasefirst.(split(opt_s,"_")))
+    if option_value
+        structname = opt_pref*opt_ss
+    else
+        structname = opt_pref*"Not"*opt_ss
+    end
+    struct_instance = getfield(SindbadSetup, Symbol(structname))()
+    return struct_instance
+end
+
+
+"""
+    getTypeInstanceForNamedOptions(::String)
+
+a helper function to get the type for named option with string values. In this, the string is split by "_" and join after capitalizing the first letter
+"""
+function getTypeInstanceForNamedOptions(option_name::String)
     opt_ss = join(uppercasefirst.(split(option_name,"_")))
     struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
     return struct_instance
@@ -1031,19 +1037,12 @@ end
 
 
 """
-    getTypeInstancesForRunFlags(option_name, option_value)
+    getTypeInstanceForNamedOptions(option_name::Symbol)
 
-a helper function to get the type for run related flags
+a helper function to get the type for named option with string values. In this, the option name is converted to string, and the function for string type is called
 """
-function getTypeInstancesForRunFlags(option_name::Symbol, option_value)
-    opt_s = string(option_name)
-    opt_ss = join(uppercasefirst.(split(opt_s,"_")))
-    if option_value
-        structname = "Do"*opt_ss
-    else
-        structname = "DoNot"*opt_ss
-    end
-    struct_instance = getfield(SindbadSetup, Symbol(structname))()
+function getTypeInstanceForNamedOptions(option_name::Symbol)
+    getTypeInstanceForNamedOptions(string(option_name))
     return struct_instance
 end
 
@@ -1392,7 +1391,7 @@ function setSpinupInfo(info)
                 end
             end
             if kk == "spinup_mode"
-                seq[kk] = getTypeInstanceForSpinupMode(seq[kk])
+                seq[kk] = getTypeInstanceForNamedOptions(seq[kk])
             end
             if seq[kk] isa String
                 seq[kk] = Symbol(seq[kk])
@@ -1436,8 +1435,8 @@ function setupInfo(info::NamedTuple)
     _ = parseSaveCode(info)
 
     # add information related to model run
-    @info "SetupExperiment: setting Mapping info..."
-    run_info = getLoopingInfo(info)
+    @info "SetupExperiment: setting running flags..."
+    run_info = getModelRunInfo(info)
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., run=run_info)))
     @info "SetupExperiment: setting Spinup Info..."
     info = setSpinupInfo(info)

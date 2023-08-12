@@ -3,7 +3,7 @@ export runExperimentOpti
 
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, output, Val{:forward})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunForward)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 
@@ -11,9 +11,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::DoRunForward`: DESCRIPTION
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:forward})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunForward)
     print("-------------------Forward Run Mode---------------------------\n")
 
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
@@ -31,7 +31,7 @@ end
 
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, output, Val{:opti})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 
@@ -39,9 +39,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::DoRunOptimization`: DESCRIPTION
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opti})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
@@ -69,16 +69,17 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::Val{:opt
 end
 
 """
-    runExperiment(info::NamedTuple, forcing::NamedTuple, Val{:cost})
+    runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `nothing`: DESCRIPTION
+- `::DoCalcCost`: DESCRIPTION
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Val{:cost})
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
+    setLogLevel()
     observations = getObservation(info, forcing.helpers)
     obs_array = getArray(observations)
 
@@ -101,8 +102,9 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
+    setLogLevel()
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, output, Val(:forward))
+    run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_forward)
     saveOutCubes(info, run_output, output)
     return run_output
 end
@@ -116,11 +118,11 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
     run_output = nothing
-    if getBool(info.experiment.flags.run_optimization)
-        run_output = runExperiment(info, forcing, output, Val(:opti))
+    if info.experiment.flags.run_optimization
+        run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_optimization)
     end
-    if getBool(info.experiment.flags.calc_cost) && !getBool(info.experiment.flags.run_optimization)
-        run_output = runExperiment(info, forcing, Val(:cost))
+    if info.experiment.flags.calc_cost && !info.experiment.flags.run_optimization
+        run_output = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
     end
     return run_output
 end
