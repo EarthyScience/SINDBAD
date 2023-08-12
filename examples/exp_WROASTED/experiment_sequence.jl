@@ -177,11 +177,11 @@ for domain ∈ sites
     out_info = getOutputFileInfo(info)
 
     output = prepTEMOut(info, forcing.helpers)
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
