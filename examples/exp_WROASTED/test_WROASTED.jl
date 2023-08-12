@@ -99,7 +99,7 @@ foreach(costOpt) do var_row
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     v = vinfo["standard_name"]
     lossMetric = var_row.cost_metric
-    loss_name = lossMetric
+    loss_name = nameof(typeof(lossMetric))
     if loss_name in (:NNSEInv, :NSEInv)
         lossMetric = NSE()
     end
@@ -123,7 +123,7 @@ foreach(costOpt) do var_row
     metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
     metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
     plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(lossMetric)")
+    plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
     plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
     savefig(joinpath(info.output.figure, "wroasted_$(domain)_$(v).png"))
 end

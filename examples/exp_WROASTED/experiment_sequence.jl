@@ -127,7 +127,7 @@ for domain ∈ sites
         v = vinfo["standard_name"]
         @show "plot obs", v
         lossMetric = var_row.cost_metric
-        loss_name = nameof(lossMetric)
+        loss_name = nameof(typeof(lossMetric))
         if loss_name in (:NNSEInv, :NSEInv)
             lossMetric = NSE()
         end
@@ -146,7 +146,7 @@ for domain ∈ sites
         obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
         plot(xdata, obs_var[tspan]; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(lossMetric)")
+        plot!(xdata, def_var[tspan, 1, 1, 1], lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
         plot!(xdata, opt_var[tspan, 1, 1, 1]; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
         ylabel!("$(vinfo["standard_name"])")
         savefig(fig_prefix * "_$(v).png")
