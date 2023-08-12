@@ -7,7 +7,6 @@ module SindbadTEM
     using ProgressMeter
     using SindbadSetup
     @reexport using Pkg
-    @reexport using Accessors
     @reexport using SindbadSetup
     using ThreadPools
     using YAXArrays

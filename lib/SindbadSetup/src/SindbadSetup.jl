@@ -1,6 +1,7 @@
 module SindbadSetup
 
     using Sindbad
+    @reexport using Accessors
     using CodeTracking
     @reexport using CSV: CSV
     @reexport using Dates

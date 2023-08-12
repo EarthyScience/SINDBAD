@@ -1,7 +1,7 @@
 export optimizer
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::CMAEvolutionStrategy_CMAES)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::CMAEvolutionStrategyCMAES)
 
 Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
 
@@ -11,14 +11,14 @@ Optimize model parameters using CMAES method of CMAEvolutionStrategy.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `CMAEvolutionStrategy_CMAES`: optimization package and algorithm
+- `CMAEvolutionStrategyCMAES`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::CMAEvolutionStrategy_CMAES)
+    ::CMAEvolutionStrategyCMAES)
     results = minimize(cost_function,
         default_values,
         1;
@@ -32,7 +32,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Evolutionary_CMAES)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::EvolutionaryCMAES)
 
 Optimize model parameters using CMAES method of Evolutionary.jl package
 
@@ -42,14 +42,14 @@ Optimize model parameters using CMAES method of Evolutionary.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Evolutionary_CMAES`: optimization package and algorithm
+- `EvolutionaryCMAES`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Evolutionary_CMAES)
+    ::EvolutionaryCMAES)
     optim_results = Evolutionary.optimize(cost_function,
         Evolutionary.BoxConstraints(lower_bounds, upper_bounds),
         default_values,
@@ -62,7 +62,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optim_LBFGS)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimLBFGS)
 
 Optimize model parameters using LBFGS method of Optim.jl package
 
@@ -72,14 +72,14 @@ Optimize model parameters using LBFGS method of Optim.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optim_LBFGS`: optimization package and algorithm
+- `OptimLBFGS`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optim_LBFGS)
+    ::OptimLBFGS)
     results = optimize(cost_function,
         default_values,
         LBFGS(),
@@ -90,7 +90,7 @@ function optimizer(cost_function,
     optim_para = if results.ls_success
         results.minimizer
     else
-        @warn "Optim_LBFGS did not converge. Returning default as optimized parameters"
+        @warn "OptimLBFGS did not converge. Returning default as optimized parameters"
         default
     end
     return optim_para
@@ -98,7 +98,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optim_BFGS)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimBFGS)
 
 Optimize model parameters using BFGS method of Optim.jl package
 
@@ -108,19 +108,19 @@ Optimize model parameters using BFGS method of Optim.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optim_BFGS`: optimization package and algorithm
+- `OptimBFGS`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optim_BFGS)
+    ::OptimBFGS)
     results = optimize(cost_function, default_values, BFGS(; initial_stepnorm=0.001))
     optim_para = if results.ls_success
         results.minimizer
     else
-        @warn "Optim_BFGS did not converge. Returning default as optimized parameters"
+        @warn "OptimBFGS did not converge. Returning default as optimized parameters"
         default
     end
     return optim_para
@@ -128,7 +128,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_BBO_adaptive)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationBBOadaptive)
 
 Optimize model parameters using Black Box Optimization method of Optimization.jl package
 
@@ -138,14 +138,14 @@ Optimize model parameters using Black Box Optimization method of Optimization.jl
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_BBO_adaptive`: optimization package and algorithm
+- `OptimizationBBOadaptive`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_BBO_adaptive)
+    ::OptimizationBBOadaptive)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values; lb=lower_bounds, ub=upper_bounds)
     optim_para = solve(optim_prob, BBO_adaptive_de_rand_1_bin_radiuslimited())
@@ -154,7 +154,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_BFGS)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationBFGS)
 
 Optimize model parameters using BFGS method of Optimization.jl package
 
@@ -164,14 +164,14 @@ Optimize model parameters using BFGS method of Optimization.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_BFGS`: optimization package and algorithm
+- `OptimizationBFGS`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_BFGS)
+    ::OptimizationBFGS)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values)
     optim_para = solve(optim_prob, BFGS(; initial_stepnorm=0.001))
@@ -180,7 +180,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_Fminbox_GradientDescent_FD)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationFminboxGradientDescentFD)
 
 Optimize model parameters using Fminbox_GradientDescent method of Optimization.jl package
 
@@ -190,14 +190,14 @@ Optimize model parameters using Fminbox_GradientDescent method of Optimization.j
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_Fminbox_GradientDescent_FD`: optimization package and algorithm
+- `OptimizationFminboxGradientDescentFD`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_Fminbox_GradientDescent_FD)
+    ::OptimizationFminboxGradientDescentFD)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_cost_fd = OptimizationFunction(optim_cost, Optimization.AutoForwardDiff())
     optim_prob = OptimizationProblem(optim_cost_fd, default_values; lb=lower_bounds,
@@ -208,7 +208,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_GCMAES)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationGCMAESDef)
 
 Optimize model parameters using GCMAES method of Optimization.jl package
 
@@ -218,14 +218,14 @@ Optimize model parameters using GCMAES method of Optimization.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_GCMAES`: optimization package and algorithm
+- `OptimizationGCMAESDef`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_GCMAES)
+    ::OptimizationGCMAESDef)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_cost_f = OptimizationFunction(optim_cost)
     optim_prob = OptimizationProblem(optim_cost_f, default_values; lb=lower_bounds, ub=upper_bounds)
@@ -235,7 +235,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_GCMAES_FD)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationGCMAESFD)
 
 Optimize model parameters using GCMAES method of Optimization.jl package with automatic forward difference
 
@@ -245,14 +245,14 @@ Optimize model parameters using GCMAES method of Optimization.jl package with au
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_GCMAES_FD`: optimization package and algorithm
+- `OptimizationGCMAESFD`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_GCMAES_FD)
+    ::OptimizationGCMAESFD)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_cost_f = OptimizationFunction(optim_cost, Optimization.AutoForwardDiff())
     optim_prob = OptimizationProblem(optim_cost_f, default_values; lb=lower_bounds, ub=upper_bounds)
@@ -262,7 +262,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_MultistartOptimization)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationMultistartOptimization)
 
 Optimize model parameters using MultistartOptimization method of Optimization.jl package
 
@@ -272,14 +272,14 @@ Optimize model parameters using MultistartOptimization method of Optimization.jl
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_MultistartOptimization`: optimization package and algorithm
+- `OptimizationMultistartOptimization`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_MultistartOptimization)
+    ::OptimizationMultistartOptimization)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values; lb=lower_bounds, ub=upper_bounds)
     optim_para = solve(optim_prob, MultistartOptimization.TikTak(100), NLopt.LD_LBFGS())
@@ -288,7 +288,7 @@ end
 
 
 """
-    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::Optimization_NelderMead)
+    optimizer(cost_function, default_values, lower_bounds, upper_bounds, algo_options, ::OptimizationNelderMead)
 
 Optimize model parameters using NelderMead method of Optimization.jl package
 
@@ -298,14 +298,14 @@ Optimize model parameters using NelderMead method of Optimization.jl package
 - `lower_bounds`: a vector of lower bounds of parameters
 - `upper_bounds`: a vector of upper bounds of parameters
 - `algo_options`: a set of options specific for a given optimization algorithm
-- `Optimization_NelderMead`: optimization package and algorithm
+- `OptimizationNelderMead`: optimization package and algorithm
 """
 function optimizer(cost_function,
     default_values,
     lower_bounds,
     upper_bounds,
     algo_options,
-    ::Optimization_NelderMead)
+    ::OptimizationNelderMead)
     optim_cost = (p, tmp=nothing) -> cost_function(p)
     optim_prob = OptimizationProblem(optim_cost, default_values)
     optim_para = solve(optim_prob, NelderMead())
