@@ -202,7 +202,7 @@ for site_index in sites
             @show "plot obs", v
             println("plot obs-model => site: $domain, variable: $v")
             lossMetric = var_row.cost_metric
-            loss_name = lossMetric
+            loss_name = nameof(typeof(lossMetric))
             if loss_name in (:NNSEInv, :NSEInv)
                 lossMetric = NSE()
             end
@@ -237,7 +237,7 @@ for site_index in sites
             vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
             v = vinfo["standard_name"]
             plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(lossMetric)")
+            plot!(xdata, ml_dat, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=3, label="matlab ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric)))")
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v)_$(forcing_set).png")
         end
