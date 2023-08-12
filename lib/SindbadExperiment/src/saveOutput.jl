@@ -67,9 +67,9 @@ end
 DOCSTRING
 """
 function getOutputFileInfo(info)
-    global_info = getGlobalAttributesForOutCubes(info)
+    global_metadata = getGlobalAttributesForOutCubes(info)
     file_prefix = joinpath(info.output.data, info.experiment.basics.name * "_" * info.experiment.basics.domain)
-    out_file_info = (; global_info=global_info, file_prefix=file_prefix)
+    out_file_info = (; global_metadata=global_metadata, file_prefix=file_prefix)
     return out_file_info
 end
 
@@ -194,7 +194,7 @@ DOCSTRING
 - `data_dim`: DESCRIPTION
 - `variable_name`: DESCRIPTION
 - `catalog_name`: DESCRIPTION
-- `t_step`: DESCRIPTION
+- `t_step`: a string for time step of the model run to be used in the units attribute of variables
 """
 function getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
     data_prop = getVariableInfo(catalog_name, t_step)
@@ -205,55 +205,50 @@ function getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_st
     return data_yax
 end
 
+
 """
-    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:true})
+    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoSaveSingleFile)
 
 saves the output variables from the run as one file
-"""
-
-"""
-    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, Val{:(true)})
-
-DOCSTRING
 
 # Arguments:
-- `data_path_base`: DESCRIPTION
-- `global_info`: DESCRIPTION
-- `var_pairs`: DESCRIPTION
-- `data`: DESCRIPTION
-- `data_dims`: DESCRIPTION
-- `out_format`: DESCRIPTION
-- `t_step`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `data_path_base`: base path of the output file including the directory and file prefix
+- `global_metadata`: a collection of  global metadata information to write to the output file
+- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
+- `data`: data to be written to file
+- `data_dims`: a vector of dimension of data for each variable to be written to a file
+- `out_format`: format of the output file
+- `t_step`: a string for time step of the model run to be used in the units attribute of variables
+- `::DoSaveSingleFile`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:true})
+function saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoSaveSingleFile)
     @info "saving one file for all variables"
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
     all_yax = Tuple(getYaxForVariable.(data, data_dims, variable_names, catalog_names, Ref(t_step)))
     data_path = data_path_base * "_all_variables.$(out_format)"
     @info data_path
-    ds_new = YAXArrays.Dataset(; (; zip(variable_names, all_yax)...)..., properties=global_info)
+    ds_new = YAXArrays.Dataset(; (; zip(variable_names, all_yax)...)..., properties=global_metadata)
     savedataset(ds_new, path=data_path, append=true, overwrite=true)
     return nothing
 end
 
 """
-    saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, Val{:(false)})
+    saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoNotSaveSingleFile)
 
 saves the output variables from the run as one file per variable
 
 # Arguments:
-- `data_path_base`: DESCRIPTION
-- `global_info`: DESCRIPTION
-- `var_pairs`: DESCRIPTION
-- `data`: DESCRIPTION
-- `data_dims`: DESCRIPTION
-- `out_format`: DESCRIPTION
-- `t_step`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `data_path_base`: base path of the output file including the directory and file prefix
+- `global_metadata`: a collection of  global metadata information to write to the output file
+- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
+- `data`: data to be written to file
+- `data_dims`: a vector of dimension of data for each variable to be written to a file
+- `out_format`: format of the output file
+- `t_step`: a string for time step of the model run to be used in the units attribute of variables
+- `::DoNotSaveSingleFile`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, out_format, t_step, ::Val{:false})
+function saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoNotSaveSingleFile)
     @info "saving one file per variable"
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
@@ -263,7 +258,7 @@ function saveOutCubes(data_path_base, global_info, var_pairs, data, data_dims, o
         data_yax = getYaxForVariable(data[vn], data_dims[vn], variable_name, catalog_name, t_step)
         data_path = data_path_base * "_$(variable_name).$(out_format)"
         @info "saving $(data_path)"
-        ds_new = YAXArrays.Dataset(; (variable_name => data_yax,)..., properties=global_info)
+        ds_new = YAXArrays.Dataset(; (variable_name => data_yax,)..., properties=global_metadata)
         savedataset(ds_new, path=data_path, overwrite=true)
     end
     return nothing
@@ -277,10 +272,10 @@ saves the output variables from the run from the information in info
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `out_cubes`: DESCRIPTION
-- `output`: DESCRIPTION
+- `out_cubes`: a collection of output data to be written to file
+- `output`: output NT consisting of all output related information such as dimension and names
 """
 function saveOutCubes(info, out_cubes, output)
     out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_info, output.variables, out_cubes, output.dims, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, Val(info.experiment.model_output.save_single_file))
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, output.variables, out_cubes, output.dims, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
 end

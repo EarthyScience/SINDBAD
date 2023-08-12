@@ -213,7 +213,7 @@ for site_index in sites
             if v == :agb
                 ml_dat = nc_ml[varib_dict[v]][1, 2, :]
             elseif v == :ndvi
-                ml_dat = ml_dat .- SindbadTEM.Statistics.mean(ml_dat)
+                ml_dat = ml_dat .- mean(ml_dat)
             end
             (obs_var, obs_σ, jl_dat) = getData(opt_dat, obs_array, var_row)
             obs_var_TMP = obs_var[:, 1, 1, 1]

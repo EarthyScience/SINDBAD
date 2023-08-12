@@ -8,7 +8,7 @@ computeTEM(models, forcing, land, tem_helpers, ::Val{:false})
 """
 
 """
-    computeTEM(models, forcing, land, tem_helpers, Val{:(true)})
+    computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel)
 
 DOCSTRING
 
@@ -17,9 +17,9 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `::DoDebugModel`: DESCRIPTION
 """
-function computeTEM(models, forcing, land, tem_helpers, ::Val{:true}) # debug the models
+function computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
         @show typeof(model)
@@ -32,7 +32,7 @@ computeTEM(models, forcing, land, tem_helpers)
 """
 
 """
-    computeTEM(models, forcing, land, tem_helpers, Val{:(false)})
+    computeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel)
 
 DOCSTRING
 
@@ -41,9 +41,9 @@ DOCSTRING
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `nothing`: DESCRIPTION
+- `::DoNotDebugModel`: DESCRIPTION
 """
-function computeTEM(models, forcing, land, tem_helpers, ::Val{:false}) # do not debug the models 
+function computeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel) # do not debug the models 
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, tem_helpers)
     end
@@ -64,7 +64,7 @@ DOCSTRING
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
-function computeTEM(models, forcing, land, tem_helpers) # do not debug the models 
+function computeTEM(models, forcing, land, tem_helpers) 
     return foldlUnrolled(models; init=land) do _land, model
         _land = Models.compute(model, forcing, _land, tem_helpers)
     end

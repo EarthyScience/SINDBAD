@@ -611,6 +611,7 @@ function getModelRunInfo(info::NamedTuple)
     end
     run_vals = convertRunFlagsToTypes(info)
     run_info = (; run_vals..., (output_all = getTypeInstanceForFlags(:output_all, info.experiment.model_output.all, "Do")))
+    run_info = setTupleField(run_info, (:save_single_file, getTypeInstanceForFlags(:save_single_file, info.experiment.model_output.save_single_file, "Do")))
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
     parallelization = titlecase(info.experiment.exe_rules.parallelization)
     run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
