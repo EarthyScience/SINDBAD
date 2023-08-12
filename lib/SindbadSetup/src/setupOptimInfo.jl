@@ -85,7 +85,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
             if (sel_value isa Number) && !(sel_value isa Bool)
                 sel_value = number_helpers.sNT(sel_value)
             elseif sel_value isa Bool
-                sel_value=getTypeInstanceForOptimizationFlags(prop, sel_value, "Do")
+                sel_value=getTypeInstanceForFlags(prop, sel_value, "Do")
             elseif sel_value isa String && (prop ∉ (:aggr_func, :temporal_data_aggr))
                 sel_value = getTypeInstanceForCostMetric(sel_value)
             end
@@ -164,42 +164,13 @@ end
 
 
 """
-    getTypeInstanceForSpinupMode(mode_name)
+    getTypeInstanceForNamedOptions(mode_name)
 
 a helper function to get the type for spinup mode
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = join(uppercasefirst.(split(option_name,"_")))
     struct_instance = getfield(SindbadMetrics, Symbol(opt_ss))()
-    return struct_instance
-end
-
-"""
-    getTypeInstanceForSpinupMode(mode_name)
-
-a helper function to get the type for spinup mode
-"""
-function getTypeInstanceForOptimizationOptions(option_name::String)
-    opt_ss = join(uppercasefirst.(split(option_name,"_")))
-    struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
-    return struct_instance
-end
-
-
-"""
-    getTypeInstanceForSpinupMode(mode_name)
-
-a helper function to get the type for spinup mode
-"""
-function getTypeInstanceForOptimizationFlags(option_name::Symbol, option_value, opt_pref="Do")
-    opt_s = string(option_name)
-    opt_ss = join(uppercasefirst.(split(opt_s,"_")))
-    if option_value
-        structname = opt_pref*opt_ss
-    else
-        structname = opt_pref*"Not"*opt_ss
-    end
-    struct_instance = getfield(SindbadSetup, Symbol(structname))()
     return struct_instance
 end
 
@@ -217,7 +188,7 @@ function setupOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optim, (:observational_constraints, info.optimization.observational_constraints))
     info = setTupleSubfield(info,
         :optim,
-        (:multi_constraint_method, getTypeInstanceForOptimizationOptions(info.optimization.multi_constraint_method)))
+        (:multi_constraint_method, getTypeInstanceForNamedOptions(info.optimization.multi_constraint_method)))
 
     # check and set the list of parameters to be optimized
     checkOptimizedParametersInModels(info)
@@ -225,7 +196,7 @@ function setupOptimization(info::NamedTuple)
 
     # set algorithm related options
     tmp_algorithm = (;)
-    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForOptimizationFlags(:multi_objective_algorithm, info.optimization.multi_objective_algorithm, "Is")))
+    tmp_algorithm = setTupleField(tmp_algorithm, (:multi_objective_algorithm, getTypeInstanceForFlags(:multi_objective_algorithm, info.optimization.multi_objective_algorithm, "Is")))
     optim_algorithm = info.optimization.algorithm
     if endswith(optim_algorithm, ".json")
         options_path = optim_algorithm
@@ -235,11 +206,11 @@ function setupOptimization(info::NamedTuple)
         options = parsefile(options_path; dicttype=DataStructures.OrderedDict)
         options = dictToNamedTuple(options)
         algo_method = options.package * "_" * options.method
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getfield(SindbadSetup, Symbol(algo_method))()))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getfield(SindbadSetup, Symbol(optim_algorithm))()))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))

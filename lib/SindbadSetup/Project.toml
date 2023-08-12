@@ -4,6 +4,7 @@ authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
 version = "0.1.0"
 
 [deps]
+Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CodeTracking = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
