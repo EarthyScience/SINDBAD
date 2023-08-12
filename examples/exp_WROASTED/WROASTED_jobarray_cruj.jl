@@ -169,7 +169,7 @@ for o_set in opti_set
         if v == :agb
             ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
         elseif v == :ndvi
-            ml_dat = ml_dat .- SindbadTEM.Statistics.mean(ml_dat)
+            ml_dat = ml_dat .- mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
@@ -229,12 +229,13 @@ for o_set in opti_set
 
     # save the outcubes
     out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
+    output = prepTEMOut(info, forcing.helpers)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, Val(false))
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(true))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, out_vars, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, Val(false))
 
 
     # plot the debug figures
