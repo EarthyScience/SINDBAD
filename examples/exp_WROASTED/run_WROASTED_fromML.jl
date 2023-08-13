@@ -195,7 +195,7 @@ for site_index in sites
         ds = forcing.data[1]
         opt_dat = outcubes
         out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
-        costOpt = info.optim.cost_options
+        costOpt = prepCostOptions(obs_array, info.optim.cost_options)
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
             v = var_row.variable

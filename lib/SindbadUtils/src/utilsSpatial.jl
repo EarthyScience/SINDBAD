@@ -11,7 +11,7 @@ function getSpatialSubset(ss, v)
         for ssn ∈ ssname
             ss_r = getproperty(ss, ssn)
             ss_range = ss_r[1]:ss_r[2]
-            v = spatialSubset(v, ss_range, Val(ssn))
+            v = spatialSubset(v, ss_range, getfield(SindbadUtils, ssn)())
         end
     end
     return v
@@ -19,113 +19,113 @@ end
 
 
 """
-    spatialSubset(v, ss_range, Val{:site})
+    spatialSubset(v, ss_range, ::Spacesite)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spacesite`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:site})
+function spatialSubset(v, ss_range, ::Spacesite)
     return v[site=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:lat})
+    spatialSubset(v, ss_range, ::Spacelat)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spacelat`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:lat})
+function spatialSubset(v, ss_range, ::Spacelat)
     return v[lat=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:latitude})
+    spatialSubset(v, ss_range, ::Spacelatitude)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spacelatitude`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:latitude})
+function spatialSubset(v, ss_range, ::Spacelatitude)
     return v[latitude=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:lon})
+    spatialSubset(v, ss_range, ::Spacelon)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spacelon`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:lon})
+function spatialSubset(v, ss_range, ::Spacelon)
     return v[lon=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:longitude})
+    spatialSubset(v, ss_range, ::Spacelongitude)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spacelongitude`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:longitude})
+function spatialSubset(v, ss_range, ::Spacelongitude)
     return v[longitude=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:id})
+    spatialSubset(v, ss_range, ::Spaceid)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::Spaceid`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:id})
+function spatialSubset(v, ss_range, ::Spaceid)
     return v[id=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:Id})
+    spatialSubset(v, ss_range, ::SpaceId)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::SpaceId`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:Id})
+function spatialSubset(v, ss_range, ::SpaceId)
     return v[Id=ss_range]
 end
 
 """
-    spatialSubset(v, ss_range, Val{:ID})
+    spatialSubset(v, ss_range, ::SpaceID)
 
 
 
 # Arguments:
 - `v`: DESCRIPTION
 - `ss_range`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::SpaceID`: DESCRIPTION
 """
-function spatialSubset(v, ss_range, ::Val{:ID})
+function spatialSubset(v, ss_range, ::SpaceID)
     return v[ID=ss_range]
 end

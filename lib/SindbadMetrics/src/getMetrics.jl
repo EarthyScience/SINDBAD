@@ -1,6 +1,6 @@
 export combineLoss
 export filterCommonNaN
-export filterConstraintMinimumDatapoints
+export prepCostOptions
 export getData
 export getLoss
 export getLossVector
@@ -66,7 +66,6 @@ function combineLoss(loss_vector::AbstractArray, ::CostMaximum)
     return maximum(loss_vector)
 end
 
-
 """
     combineLoss(loss_vector::AbstractArray, percentile_value::T)
 
@@ -74,6 +73,21 @@ return the percentile_value^th percentile of cost of each constraint as the over
 """
 function combineLoss(loss_vector::AbstractArray, percentile_value::T) where {T<:Real}
     return percentile(loss_vector, percentile_value)
+end
+
+"""
+    filterCommonNaN(y, yσ, ŷ, idxs)
+
+return model and obs data filtering for the common nan
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `idxs`: model simulation data/estimate
+"""
+function filterCommonNaN(y, yσ, ŷ, idxs)
+    return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
 """
@@ -94,7 +108,7 @@ end
 
 
 """
-    filterConstraintMinimumDatapoints(obs_array, cost_options)
+    prepCostOptions(obs_array, cost_options)
 
 remove all the variables that have less than minimum datapoints from being used in the optimization
 
@@ -102,33 +116,33 @@ remove all the variables that have less than minimum datapoints from being used 
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function filterConstraintMinimumDatapoints(observations, cost_options)
-    cost_options_filtered = cost_options
-    foreach(cost_options_filtered) do cost_option
-        obs_ind_start = cost_option.obs_ind
-        min_points = cost_option.min_data_points
-        var_name = cost_option.variable
+function prepCostOptions(observations, cost_options)
+    valids=[]
+    is_valid = []
+    vars = cost_options.variable
+    obs_inds = cost_options.obs_ind
+    min_data_points = cost_options.min_data_points
+    for vi in eachindex(vars)
+        obs_ind_start = obs_inds[vi]
+        min_point = min_data_points[vi]
         y = observations[obs_ind_start]
         yσ = observations[obs_ind_start+1]
         idxs = Array(.!isnan.(y .* yσ))
-        # @show size(idxs)
-        # cost_option
-        # cost_option.valids = idxs
-        total_points = sum(idxs)
-        if total_points < min_points
-            cost_options_filtered = filter(row -> row.variable !== var_name, cost_options_filtered)
-            @warn "$(cost_option.variable) => $(total_points) available data points < $(min_points) minimum points. Removing the constraint."
-            # push!(cost_metrics, )
+        total_point = sum(idxs)
+        if total_point < min_point
+            push!(is_valid, false)
+        else
+            push!(is_valid, true)
         end
+        push!(valids, idxs)
     end
-    # cost_metrics = cost_options_filtered.cost_metric
-    # cost_metr_types  = map(a -> getfield(SindbadMetrics, valToSymbol(a))(), cost_metrics)
-    # cost_options_filtered.cost_metric .= cost_metr_types
-    # @show cost_metrics
-    # @set cost_options_filtered.cost_metric = cost_metrics
-    return cost_options_filtered
+    cost_options = setTupleField(cost_options, (:valids, valids))
+    cost_options = setTupleField(cost_options, (:is_valid, is_valid))
+    cost_options = dropFields(cost_options, (:min_data_points, :temporal_data_aggr, :aggr_func,))
+    cost_option_table = Table(cost_options)
+    cost_options_table_filtered = filter(row -> row.is_valid === true , cost_option_table)
+    return cost_options_table_filtered
 end
-
 
 """
     getData(model_output::landWrapper, observations, cost_option)
@@ -153,8 +167,6 @@ function getData(model_output::landWrapper, observations, cost_option)
         y = y[:]
         yσ = yσ[:]
     end
-    # @show size(ŷ), size(y), size(yσ)
-    # @show typeof(ŷ), typeof(y), typeof(yσ)
     # ymask = observations[obs_ind + 2]
 
     ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
@@ -216,7 +228,7 @@ function getLossVector(observations, model_output, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)
