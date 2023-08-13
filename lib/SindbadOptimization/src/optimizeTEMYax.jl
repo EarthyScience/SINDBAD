@@ -46,7 +46,7 @@ DOCSTRING
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: DESCRIPTION
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `optim`: DESCRIPTION
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss

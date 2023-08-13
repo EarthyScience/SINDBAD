@@ -1,7 +1,6 @@
 export booleanizeArray
 export doNothing
 export getAbsDataPath
-export getBool
 export isInvalid
 export landWrapper
 export nonUnique
@@ -97,25 +96,6 @@ end
 
 
 """
-    getBool(var::Bool)
-
-DOCSTRING
-"""
-function getBool(var::Bool)
-    return var
-end
-
-"""
-    getBool(var)
-
-DOCSTRING
-"""
-function getBool(var)
-    return valToSymbol(var)
-end
-
-
-"""
     isInvalid(num)
 
 DOCSTRING
@@ -148,7 +128,7 @@ end
 """
     replaceInvalid(_data, _data_fill)
 
-DOCSTRING
+replace invalid number with a replace/fill value
 """
 function replaceInvalid(_data, _data_fill)
     _data = isInvalid(_data) ? _data_fill : _data
@@ -159,7 +139,7 @@ end
 """
     setLogLevel()
 
-DOCSTRING
+change the display level to Info
 """
 function setLogLevel()
     logger = ConsoleLogger(stderr, Logging.Info)
@@ -167,11 +147,11 @@ function setLogLevel()
 end
 
 """
-    setLogLevel(log_level)
+    setLogLevel(log_level::Symbol)
 
-DOCSTRING
+change the display level to specifed level input level
 """
-function setLogLevel(log_level)
+function setLogLevel(log_level::Symbol)
     logger = ConsoleLogger(stderr, Logging.Info)
     if log_level == :debug
         logger = ConsoleLogger(stderr, Logging.Debug)
