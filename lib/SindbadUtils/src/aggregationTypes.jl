@@ -1,48 +1,49 @@
-# ---------------- temporal aggregation ---------------
 export getTimeAggregatorTypeInstance
-export TimeMean
+export TimeAllYears
+export TimeArray
 export TimeDay
 export TimeDayAnomaly
 export TimeDayIAV
 export TimeDayMSC
 export TimeDayMSCAnomaly
+export TimeDiff
+export TimeFirstYear
+export TimeIndexed
+export TimeMean
 export TimeMonth
 export TimeMonthAnomaly
 export TimeMonthIAV
 export TimeMonthMSC
 export TimeMonthMSCAnomaly
-export TimeYear
-export TimeYearAnomaly
-export TimeAllYears
-export TimeFirstYear
+export TimeNoDiff
 export TimeRandomYear
 export TimeShuffleYears
-export TimeNoDiff
-export TimeDiff
-export TimeIndexed
+export TimeSizedArray
+export TimeYear
+export TimeYearAnomaly
 
-struct TimeMean end
+struct TimeAllYears end
+struct TimeArray end
 struct TimeDay end
 struct TimeDayAnomaly end
 struct TimeDayIAV end
 struct TimeDayMSC end
 struct TimeDayMSCAnomaly end
+struct TimeDiff end
+struct TimeFirstYear end
+struct TimeIndexed end
+struct TimeMean end
 struct TimeMonth end
 struct TimeMonthAnomaly end
 struct TimeMonthIAV end
 struct TimeMonthMSC end
 struct TimeMonthMSCAnomaly end
-struct TimeYear end
-struct TimeYearAnomaly end
-struct TimeAllYears end
-struct TimeFirstYear end
+struct TimeNoDiff end
 struct TimeRandomYear end
 struct TimeShuffleYears end
-
-struct TimeNoDiff end
-struct TimeDiff end
-struct TimeIndexed end
 struct TimeSizedArray end
+struct TimeYear end
+struct TimeYearAnomaly end
 
 function getTimeAggregatorTypeInstance(aggr::String)
     if aggr == "mean"

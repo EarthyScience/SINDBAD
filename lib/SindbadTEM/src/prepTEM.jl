@@ -132,7 +132,7 @@ DOCSTRING
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: DESCRIPTION
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """

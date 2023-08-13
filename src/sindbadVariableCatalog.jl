@@ -27,7 +27,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :autoRespirationAirT__auto_respiration_f_airT => orD(
         :standard_name => "auto_respiration_f_airT",
-        :long_name => "air_temperature_effect_auto_respiration",
+        :long_name => "air_temperature_effect_autotrophic_respiration",
         :units => "scalar",
         :land_field => "autoRespirationAirT",
         :description => "effect of air temperature on autotrophic respiration. 0: no decomposition, >1 increase in decomposition rate"
@@ -646,7 +646,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :long_name => "snow_sublimation",
         :units => "mm/time",
         :land_field => "fluxes",
-        :description => "total land precipitation including snow and rain"
+        :description => "sublimation of the snow"
     ),
     :fluxes__surface_runoff => orD(
         :standard_name => "surface_runoff",
@@ -1452,7 +1452,7 @@ end
 """
     defaultVariableInfo(string_key = false)
 
-DOCSTRING
+a central helper function to get the default information of a sindbad variable as a dictionary
 """
 function defaultVariableInfo(string_key=false)
     if string_key
@@ -1478,12 +1478,12 @@ end
 """
     displayVariableDict(dk, dv, exist = true)
 
-DOCSTRING
+a helper function to display the variable information in a dict form. This also allow for direct pasting when an unknown variable is queried
 
 # Arguments:
-- `dk`: DESCRIPTION
-- `dv`: DESCRIPTION
-- `exist`: DESCRIPTION
+- `dk`: a variable to use as the key
+- `dv`: a variable to use as the key
+- `exist`: whether the display is for an entry that exists or not
 """
 function displayVariableDict(dk, dv, exist=true)
     print("\n\n")
@@ -1509,7 +1509,11 @@ end
 """
     getFullVariableKey(var_field::String, var_sfield::String)
 
-DOCSTRING
+returns a symbol with field__subfield of land to be used as a key for an entry in variable catalog
+
+# Arguments:
+- `var_field`: land field of the variable
+- `var_sfield`: land subfield of the variable
 """
 function getFullVariableKey(var_field::String, var_sfield::String)
     return Symbol(var_field * "__" * var_sfield)
@@ -1517,20 +1521,9 @@ end
 
 
 """
-    getStandardVariableCatalog(info)
-
-DOCSTRING
-"""
-function getStandardVariableCatalog(info)
-    variCat = parsefile(joinpath(info.experiment_root, "../../lib/SindbadTEM/src/tools/sindbadVariables.json"), dicttype=Dict)
-    return variCat
-end
-
-
-"""
     getVariableCatalogFromLand(land)
 
-DOCSTRING
+a helper function to tentatively build a default variable catalog by parsing the fields and subfields of land. This is now a legacy function because it is not recommended way to generate a new catalog. The current catalog (sindbad_variables) has finalized entries, and new entries to the catalog should to be added there directly
 """
 function getVariableCatalogFromLand(land)
     default_varib = defaultVariableInfo()
@@ -1541,7 +1534,6 @@ function getVariableCatalogFromLand(land)
         lsf = propertynames(getproperty(land, lf))
         for lsff in lsf
             keyname = Symbol(string(lf) * "__" * string(lsff))
-            # keyname = string(lsff) * "__" * string(lf)
             push!(varnames, keyname)
         end
     end
@@ -1607,7 +1599,7 @@ end
 """
     whatIs(var_name::String)
 
-DOCSTRING
+a helper function to return the information of a SINDBAD variable
 """
 function whatIs(var_name::String)
     if startswith(var_name, "land")
@@ -1624,7 +1616,7 @@ end
 """
     whatIs(var_field::String, var_sfield::String)
 
-DOCSTRING
+a helper function to return the information of a SINDBAD variable
 """
 function whatIs(var_field::String, var_sfield::String)
     var_full = getFullVariableKey(var_field, var_sfield)
@@ -1636,7 +1628,7 @@ end
 """
     whatIs(var_field::Symbol, var_sfield::Symbol)
 
-DOCSTRING
+a helper function to return the information of a SINDBAD variable
 """
 function whatIs(var_field::Symbol, var_sfield::Symbol)
     var_full = getFullVariableKey(string(var_field), string(var_sfield))
