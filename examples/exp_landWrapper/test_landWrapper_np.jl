@@ -63,13 +63,6 @@ tem_with_types.helpers,
 tem_with_types.models,
 tem_with_types.spinup, DoRunSpinup());
 
-@time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_types.helpers,
-tem_with_types.models,
-tem_with_types.spinup, DoNotRunSpinup());
 
 
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);
@@ -82,8 +75,9 @@ land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dat
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
-obs_array = observations.data;
+obs_array = [Array(_o) for _o in observations.data];
 cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
+
 
 # @profview getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, output_array, cost_options) # |> sum

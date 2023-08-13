@@ -53,17 +53,17 @@ end
 
 
 """
-    getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
+    getCostOptions(optInfo::NamedTuple, vars_info, number_helpers, dates_helpers)
 
-DOCSTRING
+
 
 # Arguments:
 - `optInfo`: DESCRIPTION
-- `varibInfo`: DESCRIPTION
+- `vars_info`: DESCRIPTION
 - `number_helpers`: DESCRIPTION
 - `dates_helpers`: DESCRIPTION
 """
-function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_helpers)
+function getCostOptions(optInfo::NamedTuple, vars_info, number_helpers, dates_helpers)
 
     varlist = Symbol.(optInfo.observational_constraints)
     # all_options = []
@@ -78,7 +78,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     prop_names = keys(all_costs[1])
     props_to_keep = (:cost_metric, :area_weight, :cost_weight, :temporal_data_aggr, :aggr_obs, :aggr_order, :min_data_points, :spatial_data_aggr, :spatial_cost_aggr, :aggr_func,)
     for (pn, prop) ∈ enumerate(props_to_keep)
-        vValues = []
+        prop_array = []
         for vn ∈ eachindex(varlist)
             sel_opt=all_costs[vn]
             sel_value = sel_opt[prop]
@@ -89,7 +89,7 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
             elseif sel_value isa String && (prop ∉ (:aggr_func, :temporal_data_aggr))
                 sel_value = getTypeInstanceForCostMetric(sel_value)
             end
-            push!(vValues, sel_value)
+            push!(prop_array, sel_value)
             if prop == :temporal_data_aggr
                 t_a = sel_value
                 to_push_type = TimeNoDiff()
@@ -104,10 +104,10 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
             end
         end
         if prop in props_to_keep
-            push!(all_options, vValues)
+            push!(all_options, prop_array)
         end
     end
-    mod_vars = varibInfo.model
+    mod_vars = vars_info.model
     mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
@@ -116,9 +116,9 @@ function getCostOptions(optInfo::NamedTuple, varibInfo, number_helpers, dates_he
     agg_indices = []
     for (i, _aggr) in enumerate(time_aggrs)
         aggr_func = getAggrFunc(aggr_funcs[i])
-        _aggrName = string(_aggr)
+        _aggr_name = string(_aggr)
         skip_aggregation = false
-        if startswith(_aggrName, dates_helpers.temporal_resolution)
+        if startswith(_aggr_name, dates_helpers.temporal_resolution)
             skip_aggregation = true
         end
         aggInd = createTimeAggregator(dates_helpers.range, _aggr, aggr_func, skip_aggregation)
@@ -142,24 +142,23 @@ end
 """
     getConstraintNames(optim::NamedTuple)
 
-- obsVariables: a list of observation variables that will be used to calculate cost
-- optimVariables: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
+- obs_vars: a list of observation variables that will be used to calculate cost
+- optim_vars: a dictionary of model variables (with land subfields and sub-sub fields) to compare against the observations
 - storeVariables: a dictionary of model variables for which the time series will be stored in memory after the forward run
 
 """
 function getConstraintNames(optim::NamedTuple)
-    obsVariables = Symbol.(optim.observational_constraints)
-    modelVariables = String[]
-    optimVariables = (;)
-    for v ∈ obsVariables
+    obs_vars = Symbol.(optim.observational_constraints)
+    model_vars = String[]
+    optim_vars = (;)
+    for v ∈ obs_vars
         vinfo = getproperty(optim.observations.variables, v)
-        push!(modelVariables, vinfo.model_full_var)
+        push!(model_vars, vinfo.model_full_var)
         vf, vvar = Symbol.(split(vinfo.model_full_var, "."))
-        optimVariables = setTupleField(optimVariables, (v, tuple(vf, vvar)))
+        optim_vars = setTupleField(optim_vars, (v, tuple(vf, vvar)))
     end
-    # optimVariables = getVariableGroups(modelVariables)
-    storeVariables = getVariableGroups(modelVariables)
-    return obsVariables, optimVariables, storeVariables, modelVariables
+    store_vars = getVariableGroups(model_vars)
+    return obs_vars, optim_vars, store_vars, model_vars
 end
 
 
@@ -178,7 +177,7 @@ end
 """
     setupOptimization(info::NamedTuple)
 
-DOCSTRING
+
 """
 function setupOptimization(info::NamedTuple)
     info = setTupleField(info, (:optim, (;)))
@@ -210,21 +209,21 @@ function setupOptimization(info::NamedTuple)
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options.options))
     else
         options = (;)
-        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(algo_method)))
+        tmp_algorithm = setTupleField(tmp_algorithm, (:method, getTypeInstanceForNamedOptions(info.optimization.algorithm)))
         tmp_algorithm = setTupleField(tmp_algorithm, (:options, options))
     end
     info = setTupleSubfield(info, :optim, (:algorithm, tmp_algorithm))
 
     # get the variables to be used during optimization
-    obsVars, optimVars, storeVars, modelVars = getConstraintNames(info.optimization)
-    varibInfo = (;)
-    varibInfo = setTupleField(varibInfo, (:obs, obsVars))
-    varibInfo = setTupleField(varibInfo, (:optim, optimVars))
-    varibInfo = setTupleField(varibInfo, (:store, storeVars))
-    varibInfo = setTupleField(varibInfo, (:model, modelVars))
-    info = setTupleSubfield(info, :optim, (:variables, (varibInfo)))
-    costOpt = getCostOptions(info.optimization, varibInfo, info.tem.helpers.numbers, info.tem.helpers.dates)
-    info = setTupleSubfield(info, :optim, (:cost_options, costOpt))
+    obs_vars, optim_vars, store_vars, model_vars = getConstraintNames(info.optimization)
+    vars_info = (;)
+    vars_info = setTupleField(vars_info, (:obs, obs_vars))
+    vars_info = setTupleField(vars_info, (:optim, optim_vars))
+    vars_info = setTupleField(vars_info, (:store, store_vars))
+    vars_info = setTupleField(vars_info, (:model, model_vars))
+    info = setTupleSubfield(info, :optim, (:variables, (vars_info)))
+    cost_options = getCostOptions(info.optimization, vars_info, info.tem.helpers.numbers, info.tem.helpers.dates)
+    info = setTupleSubfield(info, :optim, (:cost_options, cost_options))
 
     return info
 end

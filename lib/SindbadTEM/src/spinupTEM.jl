@@ -34,7 +34,7 @@ end
 """
     cEco_spin::RunSpinup_cEco(pout, p)
 
-DOCSTRING
+
 """
 function (cEco_spin::RunSpinup_cEco)(pout, p)
     land = cEco_spin.land
@@ -60,7 +60,7 @@ end
 """
     cEco_TWS_spin::RunSpinup_cEco_TWS(pout, p)
 
-DOCSTRING
+
 """
 function (cEco_TWS_spin::RunSpinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
@@ -97,7 +97,7 @@ end
 """
     TWS_spin::RunSpinup_TWS(pout, p)
 
-DOCSTRING
+
 """
 function (TWS_spin::RunSpinup_TWS)(pout, p)
     land = TWS_spin.land
@@ -125,7 +125,7 @@ helper function to run the spinup models and return the delta in a given pool ov
 """
     getDeltaPool(pool_dat::AbstractArray, spinup_info, t)
 
-DOCSTRING
+
 
 # Arguments:
 - `pool_dat`: DESCRIPTION
@@ -159,7 +159,7 @@ helper function to create a NamedTuple with all the variables needed to run the 
 """
     getSpinupInfo(spinup_models, spinup_forcing, forcing_one_timestep, land, spinup_pool_name, tem_helpers, tem_spinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
@@ -192,7 +192,7 @@ end
 """
     loadSpinup(_, tem_spinup, ::DoLoadSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `_`: unused argument
@@ -209,7 +209,7 @@ end
 """
     loadSpinup(land, _, ::DoNotLoadSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
@@ -223,7 +223,7 @@ end
 """
     runSpinup(_, _, _, land, _, _, _, ::DoNotRunSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `_`: unused argument
@@ -243,7 +243,7 @@ end
 """
     runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::DoRunSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -295,7 +295,7 @@ do/run the spinup and update the state using a simple timeloop through the input
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, SelSpinupModels)
 
-DOCSTRING
+
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
@@ -323,33 +323,33 @@ function runSpinup(
 end
 
 """
-runSpinup(spinup_models, spinup_forcing, land, tem, ::forward})
+runSpinup(all_models, spinup_forcing, land, tem, ::AllForwardModels})
 do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :forward, all the models chosen in model_structure.json are run.
 """
 
 """
-    runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::AllForwardModels)
+    runSpinup(all_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::AllForwardModels)
 
-DOCSTRING
+
 
 # Arguments:
-- `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
+- `all_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
 - `spinup_forcing`: a selected/sliced/computed forcing time series for running the spinup sequence for a location
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
-- `::AllForwardModels`: DESCRIPTION
+- `::AllForwardModels`: a dispatch type of run all models
 """
 function runSpinup(
-    spinup_models,
+    all_models,
     spinup_forcing,
     forcing_one_timestep,
     land,
     tem_helpers,
     _,
     ::AllForwardModels)
-    land = timeLoopTEMSpinup(spinup_models,
+    land = timeLoopTEMSpinup(all_models,
         spinup_forcing,
         forcing_one_timestep,
         land,
@@ -361,7 +361,7 @@ end
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionTWS)
 
-DOCSTRING
+
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
@@ -392,7 +392,7 @@ end
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionCEcoTWS)
 
-DOCSTRING
+
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
@@ -436,7 +436,7 @@ end
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, ::NlsolveFixedpointTrustregionCEco)
 
-DOCSTRING
+
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup
@@ -477,7 +477,7 @@ scale the carbon pools using the scalars from cCycleBase
 - `_`: unused argument
 - `_`: unused argument
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: DESCRIPTION
+- `helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `::EtaScaleAH`: DESCRIPTION
 """
@@ -521,7 +521,7 @@ scale the carbon pools using the scalars from cCycleBase
 - `_`: unused argument
 - `_`: unused argument
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: DESCRIPTION
+- `helpers`: helper NT with necessary objects for model run and type consistencies
 - `_`: unused argument
 - `EtaScaleA0H`: DESCRIPTION
 """
@@ -781,7 +781,7 @@ end
 """
     spinupTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup)
 
-The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using runSpinup functions for different spinup methods
+The main spinup function that handles the spinup method based on inputs from spinup.json. Either the spinup is loaded or/and run using runSpinup functions for different spinup methods.
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -814,7 +814,7 @@ end
 """
     saveSpinup(land, tem_spinup, ::DoSaveSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
@@ -831,7 +831,7 @@ end
 """
     saveSpinup(_, _, ::DoNotSaveSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `_`: unused argument
@@ -846,7 +846,7 @@ end
 """
     setSpinupLog(land, log_index, ::DoStoreSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
@@ -861,7 +861,7 @@ end
 """
     setSpinupLog(land, _, ::DoNotStoreSpinup)
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: SINDBAD NT input to the spinup of TEM during which subfield(s) of pools are overwritten
@@ -874,14 +874,9 @@ end
 
 
 """
-runSpinup(spinup_models, spinup_forcing, land, tem)
-do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land/land is overwritten with every iteration. Only the state at the end is returned.
-"""
-
-"""
     timeLoopTEMSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers)
 
-DOCSTRING
+do/run the time loop of the spinup models to update the pool. Note that, in this function, the time series is not stored and the land/land is overwritten with every iteration. Only the state at the end is returned
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup

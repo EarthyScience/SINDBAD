@@ -9,7 +9,7 @@ export getModelOutputView
 """
     aggregateData(dat, cost_option, ::TimeSpace)
 
-DOCSTRING
+
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
@@ -25,7 +25,7 @@ end
 """
     aggregateData(dat, cost_option, ::SpaceTime)
 
-DOCSTRING
+
 
 # Arguments:
 - `dat`: a data array/vector to aggregate
@@ -133,7 +133,7 @@ end
 """
     getData(model_output::landWrapper, observations, cost_option)
 
-DOCSTRING
+
 
 # Arguments:
 - `model_output`: a collection of SINDBAD model output time series as a time series of stacked land NT
@@ -167,7 +167,7 @@ end
 """
     getData(model_output::AbstractArray, observations, cost_option)
 
-DOCSTRING
+
 
 # Arguments:
 - `model_output`: a collection of SINDBAD model output time series as a preallocated array
@@ -232,7 +232,7 @@ end
 """
     getModelOutputView(mod_dat::AbstractArray{T, 2})
 
-DOCSTRING
+
 """
 function getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
     dim = 1
@@ -247,7 +247,7 @@ end
 """
     spatialAggregation(dat, _, ::ConcatData)
 
-DOCSTRING
+
 
 # Arguments:
 - `dat`: a data array/vector to aggregate

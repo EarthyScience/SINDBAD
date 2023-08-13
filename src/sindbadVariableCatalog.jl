@@ -1430,7 +1430,7 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
 """
     checkDisplayVariableDict(var_full)
 
-DOCSTRING
+
 """
 function checkDisplayVariableDict(var_full)
     sind_var_names = keys(sindbad_variables)

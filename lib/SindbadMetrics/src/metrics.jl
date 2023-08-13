@@ -40,7 +40,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -55,7 +55,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -71,7 +71,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Scor2Inv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -87,7 +87,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -102,7 +102,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -118,7 +118,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::Pcor2Inv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -134,7 +134,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσ)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -153,7 +153,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEσInv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -169,7 +169,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσ)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -186,7 +186,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEσInv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -202,7 +202,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSE)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -218,7 +218,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NSEInv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -234,7 +234,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSE)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data
@@ -251,7 +251,7 @@ end
 """
     loss(y::AbstractArray, yσ::AbstractArray, ŷ::AbstractArray, ::NNSEInv)
 
-DOCSTRING
+
 
 # Arguments:
 - `y`: observation data

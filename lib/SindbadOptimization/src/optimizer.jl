@@ -24,8 +24,7 @@ function optimizer(cost_function,
         1;
         lower=lower_bounds,
         upper=upper_bounds,
-        multi_threading=algo_options.multi_threading,
-        maxfevals=algo_options.maxfevals)
+        algo_options...)
     optim_para = xbest(results)
     return optim_para
 end

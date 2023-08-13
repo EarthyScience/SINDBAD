@@ -58,8 +58,8 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = observations.data;
-@time getLossVector(obs_array, output_default, info.optim.cost_options)
+obs_array = [Array(_o) for _o in observations.data];
+@time getLossVector(obs_array2, output_default, info.optim.cost_options)
 
 @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 

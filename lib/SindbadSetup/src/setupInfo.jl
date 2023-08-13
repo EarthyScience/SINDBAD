@@ -25,65 +25,64 @@ function changeModelOrder(info::NamedTuple, selected_models::AbstractArray)
     order_cCycle = findfirst(e -> e == :cCycle, all_sindbad_models)
 
     # get the new orders and models from model_structure.json
-    newOrders = Int64[]
-    newModels = (;)
+    new_orders = Int64[]
+    new_models = (;)
     order_changed_warn = true
     for sm ∈ selected_models
-        modInfo = getfield(info.model_structure.models, sm)
-        if :order in propertynames(modInfo)
-            push!(newOrders, modInfo.order)
-            newModels = setTupleField(newModels, (sm, modInfo.order))
-            if modInfo.order <= order_getPools
+        model_info = getfield(info.model_structure.models, sm)
+        if :order in propertynames(model_info)
+            push!(new_orders, model_info.order)
+            new_models = setTupleField(new_models, (sm, model_info.order))
+            if model_info.order <= order_getPools
                 error(
-                    "The model order for $(sm) is set at $(modInfo.order). Any order earlier than or same as getPools ($order_getPools) is not permitted."
+                    "The model order for $(sm) is set at $(model_info.order). Any order earlier than or same as getPools ($order_getPools) is not permitted."
                 )
             end
-            if modInfo.order >= order_cCycle
+            if model_info.order >= order_cCycle
                 error(
-                    "The model order for $(sm) is set at $(modInfo.order). Any order later than or same as cCycle ($order_cCycle) is not permitted."
+                    "The model order for $(sm) is set at $(model_info.order). Any order later than or same as cCycle ($order_cCycle) is not permitted."
                 )
             end
             if order_changed_warn
                 @warn " changeModelOrder:: Model order has been changed through model_structure.json. Make sure that model structure is consistent by accessing the model list in info.tem.models.selected_models and comparing it with sindbad_models"
                 order_changed_warn = false
             end
-            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, all_sindbad_models)), new: $(modInfo.order)"
+            @warn "     $(sm) order:: old: $(findfirst(e->e==sm, all_sindbad_models)), new: $(model_info.order)"
         end
     end
 
     #check for duplicates in the order
-    if length(newOrders) != length(unique(newOrders))
-        nun = nonUnique(newOrders)
+    if length(new_orders) != length(unique(new_orders))
+        nun = nonUnique(new_orders)
         error(
             "There are duplicates in the order [$(nun)] set in model_structure.json. Cannot set the same order for different models."
         )
     end
 
     # sort the orders
-    newOrders = sort(newOrders; rev=true)
+    new_orders = sort(new_orders; rev=true)
 
     # create re-ordered list of full models
-    fullModels_reordered = deepcopy(all_sindbad_models)
-    for new_order ∈ newOrders
+    full_models_reordered = deepcopy(all_sindbad_models)
+    for new_order ∈ new_orders
         sm = nothing
-        for nm ∈ keys(newModels)
-            if getproperty(newModels, nm) == new_order
+        for nm ∈ keys(new_models)
+            if getproperty(new_models, nm) == new_order
                 sm = nm
             end
         end
-        old_order = findfirst(e -> e == sm, fullModels_reordered)
+        old_order = findfirst(e -> e == sm, full_models_reordered)
         # get the models without the model to be re-ordered
-        tmp = filter!(e -> e ≠ sm, fullModels_reordered)
+        tmp = filter!(e -> e ≠ sm, full_models_reordered)
         # insert the re-ordered model to the right place
         if old_order >= new_order
             insert!(tmp, new_order, sm)
         else
             insert!(tmp, new_order - 1, sm)
         end
-        fullModels_reordered = deepcopy(tmp)
+        full_models_reordered = deepcopy(tmp)
     end
-    return fullModels_reordered
-    #todo make sure that this function is functioning correctly before deploying it
+    return full_models_reordered
 end
 
 
@@ -133,59 +132,59 @@ end
 
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:view})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:view})
 
-DOCSTRING
+
 
 # Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
+- `input_values`: DESCRIPTION
+- `pool_array`: DESCRIPTION
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:view})
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:view})
     if ismain
-        num_type.(inVals)
+        num_type.(input_values)
     else
-        @view poolArray[[indx...]]
+        @view pool_array[[indx...]]
     end
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:array})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:array})
 
-DOCSTRING
+
 
 # Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
+- `input_values`: DESCRIPTION
+- `pool_array`: DESCRIPTION
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:array})
-    return num_type.(inVals)
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:array})
+    return num_type.(input_values)
 end
 
 """
-    createArrayofType(inVals, poolArray, num_type, indx, ismain, Val{:static_array})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:static_array})
 
-DOCSTRING
+
 
 # Arguments:
-- `inVals`: DESCRIPTION
-- `poolArray`: DESCRIPTION
+- `input_values`: DESCRIPTION
+- `pool_array`: DESCRIPTION
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function createArrayofType(inVals, poolArray, num_type, indx, ismain, ::Val{:static_array})
-    return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
-    # return SVector{length(inVals)}(num_type(ix) for ix ∈ inVals)
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:static_array})
+    return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
+    # return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
 end
 
 
@@ -198,36 +197,26 @@ fills info.tem.helpers.dates with date and time related fields needed in the mod
 """
     generateDatesInfo(info::NamedTuple)
 
-DOCSTRING
+
 """
 function generateDatesInfo(info::NamedTuple)
-    tmpDates = (;)
-    timeData = getfield(info.experiment.basics, :time)
-    timeProps = propertynames(timeData)
-    for timeProp ∈ timeProps
-        propVal = getfield(timeData, timeProp)
-        if propVal isa Number
-            propVal = info.tem.helpers.numbers.sNT(propVal)
+    tmp_dates = (;)
+    time_info = getfield(info.experiment.basics, :time)
+    time_props = propertynames(time_info)
+    for time_prop ∈ time_props
+        prop_val = getfield(time_info, time_prop)
+        if prop_val isa Number
+            prop_val = info.tem.helpers.numbers.sNT(prop_val)
         end
-        tmpDates = setTupleField(tmpDates, (timeProp, propVal))
+        tmp_dates = setTupleField(tmp_dates, (time_prop, prop_val))
     end
-    if info.experiment.basics.time.temporal_resolution == "day"
-        timestep = Day(1)
-        time_range = Date(info.experiment.basics.time.date_begin):Day(1):Date(info.experiment.basics.time.date_end)
-    elseif info.experiment.basics.time.temporal_resolution == "hour"
-        timestep = Month(1)
-        time_range =
-            Date(info.experiment.basics.time.date_begin):Hour(1):Date(info.experiment.basics.time.date_end)
-    else
-        error(
-            "Sindbad only supports hourly and daily simulation. Change time.timestep in model_run.json"
-        )
-    end
-    tmpDates = setTupleField(tmpDates, (:temporal_resolution, info.experiment.basics.time.temporal_resolution))
-    tmpDates = setTupleField(tmpDates, (:timestep, timestep))
-    tmpDates = setTupleField(tmpDates, (:range, time_range))
-    tmpDates = setTupleField(tmpDates, (:size, length(time_range)))
-    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmpDates)))
+    timestep = getfield(Dates, Symbol(titlecase(info.experiment.basics.time.temporal_resolution)))(1)
+    time_range = Date(info.experiment.basics.time.date_begin):timestep:Date(info.experiment.basics.time.date_end)
+    tmp_dates = setTupleField(tmp_dates, (:temporal_resolution, info.experiment.basics.time.temporal_resolution))
+    tmp_dates = setTupleField(tmp_dates, (:timestep, timestep))
+    tmp_dates = setTupleField(tmp_dates, (:range, time_range))
+    tmp_dates = setTupleField(tmp_dates, (:size, length(time_range)))
+    info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., dates=tmp_dates)))
     return info
 end
 
@@ -241,216 +230,216 @@ generates the info.tem.helpers.pools and info.pools. The first one is used in th
 """
     generatePoolsInfo(info::NamedTuple)
 
-DOCSTRING
+
 """
 function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
-    tmpStates = (;)
-    hlpStates = (;)
-    arrayType = Symbol(info.experiment.exe_rules.model_array_type)
+    tmp_states = (;)
+    hlp_states = (;)
+    array_type = Symbol(info.experiment.exe_rules.model_array_type)
 
     for element ∈ elements
-        valsTuple = (;)
-        valsTuple = setTupleField(valsTuple, (:zix, (;)))
-        valsTuple = setTupleField(valsTuple, (:self, (;)))
-        valsTuple = setTupleField(valsTuple, (:all_components, (;)))
+        vals_tuple = (;)
+        vals_tuple = setTupleField(vals_tuple, (:zix, (;)))
+        vals_tuple = setTupleField(vals_tuple, (:self, (;)))
+        vals_tuple = setTupleField(vals_tuple, (:all_components, (;)))
         elSymbol = Symbol(element)
-        tmpElem = (;)
-        hlpElem = (;)
-        tmpStates = setTupleField(tmpStates, (elSymbol, (;)))
-        hlpStates = setTupleField(hlpStates, (elSymbol, (;)))
-        poolData = getfield(getfield(info.model_structure.pools, element), :components)
-        # arrayType = Symbol(getfield(getfield(info.model_structure.pools, element), :arraytype))
+        tmp_elem = (;)
+        hlp_elem = (;)
+        tmp_states = setTupleField(tmp_states, (elSymbol, (;)))
+        hlp_states = setTupleField(hlp_states, (elSymbol, (;)))
+        pool_info = getfield(getfield(info.model_structure.pools, element), :components)
+        # array_type = Symbol(getfield(getfield(info.model_structure.pools, element), :arraytype))
         nlayers = Int64[]
-        layerThicknesses = info.tem.helpers.numbers.num_type[]
+        layer_thicknesses = info.tem.helpers.numbers.num_type[]
         layer = Int64[]
         inits = info.tem.helpers.numbers.num_type[]
-        subPoolName = Symbol[]
-        mainPoolName = Symbol[]
-        mainPools =
+        sub_pool_name = Symbol[]
+        main_pool_name = Symbol[]
+        main_pools =
             Symbol.(keys(getfield(getfield(info.model_structure.pools, element),
                 :components)))
-        layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName =
-            getPoolInformation(mainPools,
-                poolData,
-                layerThicknesses,
+        layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name =
+            getPoolInformation(main_pools,
+                pool_info,
+                layer_thicknesses,
                 nlayers,
                 layer,
                 inits,
-                subPoolName,
-                mainPoolName;
+                sub_pool_name,
+                main_pool_name;
                 num_type=info.tem.helpers.numbers.sNT)
 
         # set empty tuple fields
-        tpl_fields = (:components, :zix, :initValues, :layerThickness)
+        tpl_fields = (:components, :zix, :initial_values, :layer_thickness)
         for _tpl ∈ tpl_fields
-            tmpElem = setTupleField(tmpElem, (_tpl, (;)))
+            tmp_elem = setTupleField(tmp_elem, (_tpl, (;)))
         end
-        hlpElem = setTupleField(hlpElem, (:layerThickness, (;)))
-        hlpElem = setTupleField(hlpElem, (:zix, (;)))
-        hlpElem = setTupleField(hlpElem, (:components, (;)))
-        hlpElem = setTupleField(hlpElem, (:all_components, (;)))
-        hlpElem = setTupleField(hlpElem, (:zeros, (;)))
-        hlpElem = setTupleField(hlpElem, (:ones, (;)))
-        hlpElem = setTupleField(hlpElem, (:vals, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:layer_thickness, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:zix, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:components, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:all_components, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:zeros, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:ones, (;)))
+        hlp_elem = setTupleField(hlp_elem, (:vals, (;)))
 
         # main pools
-        for mainPool ∈ mainPoolName
+        for main_pool ∈ main_pool_name
             zix = Int[]
-            initValues = info.tem.helpers.numbers.num_type[]
+            initial_values = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
-            for (ind, par) ∈ enumerate(subPoolName)
-                if startswith(String(par), String(mainPool))
+            for (ind, par) ∈ enumerate(sub_pool_name)
+                if startswith(String(par), String(main_pool))
                     push!(zix, ind)
-                    push!(components, subPoolName[ind])
-                    push!(initValues, inits[ind])
+                    push!(components, sub_pool_name[ind])
+                    push!(initial_values, inits[ind])
                 end
             end
-            initValues = createArrayofType(initValues,
+            initial_values = createArrayofType(initial_values,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
+                Val(array_type))
 
             zix = Tuple(zix)
 
-            tmpElem = setTupleSubfield(tmpElem, :components, (mainPool, Tuple(components)))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (mainPool, zix))
-            tmpElem = setTupleSubfield(tmpElem, :initValues, (mainPool, initValues))
-            hlpElem = setTupleSubfield(hlpElem, :zix, (mainPool, zix))
-            hlpElem = setTupleSubfield(hlpElem, :components, (mainPool, Tuple(components)))
-            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+            tmp_elem = setTupleSubfield(tmp_elem, :components, (main_pool, Tuple(components)))
+            tmp_elem = setTupleSubfield(tmp_elem, :zix, (main_pool, zix))
+            tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (main_pool, initial_values))
+            hlp_elem = setTupleSubfield(hlp_elem, :zix, (main_pool, zix))
+            hlp_elem = setTupleSubfield(hlp_elem, :components, (main_pool, Tuple(components)))
+            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
-            # onetyped = ones(length(initValues))
-            hlpElem = setTupleSubfield(hlpElem,
+                Val(array_type))
+            # onetyped = ones(length(initial_values))
+            hlp_elem = setTupleSubfield(hlp_elem,
                 :zeros,
-                (mainPool, onetyped .* info.tem.helpers.numbers.𝟘))
-            hlpElem = setTupleSubfield(hlpElem, :ones, (mainPool, onetyped))
-            # hlpElem = setTupleSubfield(hlpElem, :zeros, (mainPool, zeros(initValues)))
+                (main_pool, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlp_elem = setTupleSubfield(hlp_elem, :ones, (main_pool, onetyped))
+            # hlp_elem = setTupleSubfield(hlp_elem, :zeros, (main_pool, zeros(initial_values)))
         end
 
         # subpools
-        uniqueSubPools = Symbol[]
-        for _sp ∈ subPoolName
-            if _sp ∉ uniqueSubPools
-                push!(uniqueSubPools, _sp)
+        unique_sub_pools = Symbol[]
+        for _sp ∈ sub_pool_name
+            if _sp ∉ unique_sub_pools
+                push!(unique_sub_pools, _sp)
             end
         end
-        for subPool ∈ uniqueSubPools
+        for sub_pool ∈ unique_sub_pools
             zix = Int[]
-            initValues = info.tem.helpers.numbers.num_type[]
+            initial_values = info.tem.helpers.numbers.num_type[]
             components = Symbol[]
             ltck = info.tem.helpers.numbers.num_type[]
-            for (ind, par) ∈ enumerate(subPoolName)
-                if par == subPool
+            for (ind, par) ∈ enumerate(sub_pool_name)
+                if par == sub_pool
                     push!(zix, ind)
-                    push!(initValues, inits[ind])
-                    push!(components, subPoolName[ind])
-                    push!(ltck, layerThicknesses[ind])
+                    push!(initial_values, inits[ind])
+                    push!(components, sub_pool_name[ind])
+                    push!(ltck, layer_thicknesses[ind])
                 end
             end
             zix = Tuple(zix)
-            initValues = createArrayofType(initValues,
+            initial_values = createArrayofType(initial_values,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
-            tmpElem = setTupleSubfield(tmpElem, :components, (subPool, Tuple(components)))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (subPool, zix))
-            tmpElem = setTupleSubfield(tmpElem, :initValues, (subPool, initValues))
-            tmpElem = setTupleSubfield(tmpElem, :layerThickness, (subPool, Tuple(ltck)))
-            hlpElem = setTupleSubfield(hlpElem, :layerThickness, (subPool, Tuple(ltck)))
-            hlpElem = setTupleSubfield(hlpElem, :zix, (subPool, zix))
-            hlpElem = setTupleSubfield(hlpElem, :components, (subPool, Tuple(components)))
-            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+                Val(array_type))
+            tmp_elem = setTupleSubfield(tmp_elem, :components, (sub_pool, Tuple(components)))
+            tmp_elem = setTupleSubfield(tmp_elem, :zix, (sub_pool, zix))
+            tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (sub_pool, initial_values))
+            tmp_elem = setTupleSubfield(tmp_elem, :layer_thickness, (sub_pool, Tuple(ltck)))
+            hlp_elem = setTupleSubfield(hlp_elem, :layer_thickness, (sub_pool, Tuple(ltck)))
+            hlp_elem = setTupleSubfield(hlp_elem, :zix, (sub_pool, zix))
+            hlp_elem = setTupleSubfield(hlp_elem, :components, (sub_pool, Tuple(components)))
+            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
-            # onetyped = ones(length(initValues))
-            hlpElem = setTupleSubfield(hlpElem, :zeros,
-                (subPool, onetyped .* info.tem.helpers.numbers.𝟘))
-            hlpElem = setTupleSubfield(hlpElem, :ones, (subPool, onetyped))
+                Val(array_type))
+            # onetyped = ones(length(initial_values))
+            hlp_elem = setTupleSubfield(hlp_elem, :zeros,
+                (sub_pool, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlp_elem = setTupleSubfield(hlp_elem, :ones, (sub_pool, onetyped))
         end
 
         ## combined pools
-        combinePools = (getfield(getfield(info.model_structure.pools, element), :combine))
-        doCombine = true
-        tmpElem = setTupleField(tmpElem, (:combine, (; docombine=true, pool=Symbol(combinePools))))
-        if doCombine
-            combinedPoolName = Symbol.(combinePools)
-            create = Symbol[combinedPoolName]
+        combine_pools = (getfield(getfield(info.model_structure.pools, element), :combine))
+        do_combine = true
+        tmp_elem = setTupleField(tmp_elem, (:combine, (; docombine=true, pool=Symbol(combine_pools))))
+        if do_combine
+            combined_pool_name = Symbol.(combine_pools)
+            create = Symbol[combined_pool_name]
             components = Symbol[]
-            for _sp ∈ subPoolName
+            for _sp ∈ sub_pool_name
                 if _sp ∉ components
                     push!(components, _sp)
                 end
             end
-            # components = Set(Symbol.(subPoolName))
-            initValues = inits
-            initValues = createArrayofType(initValues,
+            # components = Set(Symbol.(sub_pool_name))
+            initial_values = inits
+            initial_values = createArrayofType(initial_values,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
-            zix = collect(1:1:length(mainPoolName))
+                Val(array_type))
+            zix = collect(1:1:length(main_pool_name))
             zix = Tuple(zix)
 
-            tmpElem = setTupleSubfield(tmpElem, :components, (combinedPoolName, Tuple(components)))
-            tmpElem = setTupleSubfield(tmpElem, :zix, (combinedPoolName, zix))
-            tmpElem = setTupleSubfield(tmpElem, :initValues, (combinedPoolName, initValues))
-            hlpElem = setTupleSubfield(hlpElem, :zix, (combinedPoolName, zix))
-            onetyped = createArrayofType(initValues .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
+            tmp_elem = setTupleSubfield(tmp_elem, :components, (combined_pool_name, Tuple(components)))
+            tmp_elem = setTupleSubfield(tmp_elem, :zix, (combined_pool_name, zix))
+            tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (combined_pool_name, initial_values))
+            hlp_elem = setTupleSubfield(hlp_elem, :zix, (combined_pool_name, zix))
+            onetyped = createArrayofType(initial_values .* info.tem.helpers.numbers.𝟘 .+ info.tem.helpers.numbers.𝟙,
                 Nothing[],
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(arrayType))
-            all_components = Tuple([_k for _k in keys(tmpElem.zix) if _k !== combinedPoolName])
-            hlpElem = setTupleSubfield(hlpElem, :all_components, (combinedPoolName, all_components))
-            valsTuple = setTupleSubfield(valsTuple, :zix, (combinedPoolName, Val(hlpElem.zix)))
-            valsTuple = setTupleSubfield(valsTuple, :self, (combinedPoolName, Val(combinedPoolName)))
-            valsTuple = setTupleSubfield(valsTuple, :all_components, (combinedPoolName, Val(all_components)))
-            hlpElem = setTupleField(hlpElem, (:vals, valsTuple))
-            hlpElem = setTupleSubfield(hlpElem, :components, (combinedPoolName, Tuple(components)))
-            # onetyped = ones(length(initValues))
-            hlpElem = setTupleSubfield(hlpElem,
+                Val(array_type))
+            all_components = Tuple([_k for _k in keys(tmp_elem.zix) if _k !== combined_pool_name])
+            hlp_elem = setTupleSubfield(hlp_elem, :all_components, (combined_pool_name, all_components))
+            vals_tuple = setTupleSubfield(vals_tuple, :zix, (combined_pool_name, Val(hlp_elem.zix)))
+            vals_tuple = setTupleSubfield(vals_tuple, :self, (combined_pool_name, Val(combined_pool_name)))
+            vals_tuple = setTupleSubfield(vals_tuple, :all_components, (combined_pool_name, Val(all_components)))
+            hlp_elem = setTupleField(hlp_elem, (:vals, vals_tuple))
+            hlp_elem = setTupleSubfield(hlp_elem, :components, (combined_pool_name, Tuple(components)))
+            # onetyped = ones(length(initial_values))
+            hlp_elem = setTupleSubfield(hlp_elem,
                 :zeros,
-                (combinedPoolName, onetyped .* info.tem.helpers.numbers.𝟘))
-            hlpElem = setTupleSubfield(hlpElem, :ones, (combinedPoolName, onetyped))
+                (combined_pool_name, onetyped .* info.tem.helpers.numbers.𝟘))
+            hlp_elem = setTupleSubfield(hlp_elem, :ones, (combined_pool_name, onetyped))
         else
-            create = Symbol.(uniqueSubPools)
+            create = Symbol.(unique_sub_pools)
         end
 
         # check if additional variables exist
         if hasproperty(getfield(info.model_structure.pools, element), :state_variables)
             state_variables = getfield(getfield(info.model_structure.pools, element), :state_variables)
-            tmpElem = setTupleField(tmpElem, (:state_variables, state_variables))
+            tmp_elem = setTupleField(tmp_elem, (:state_variables, state_variables))
         end
         arraytype = :view
         if hasproperty(info.experiment.exe_rules, :model_array_type)
             arraytype = Symbol(info.experiment.exe_rules.model_array_type)
         end
-        tmpElem = setTupleField(tmpElem, (:arraytype, arraytype))
-        tmpElem = setTupleField(tmpElem, (:create, create))
-        tmpStates = setTupleField(tmpStates, (elSymbol, tmpElem))
-        hlpStates = setTupleField(hlpStates, (elSymbol, hlpElem))
+        tmp_elem = setTupleField(tmp_elem, (:arraytype, arraytype))
+        tmp_elem = setTupleField(tmp_elem, (:create, create))
+        tmp_states = setTupleField(tmp_states, (elSymbol, tmp_elem))
+        hlp_states = setTupleField(hlp_states, (elSymbol, hlp_elem))
     end
     hlp_new = (;)
-    # tcPrint(hlpStates)
-    eleprops = propertynames(hlpStates)
+    # tcPrint(hlp_states)
+    eleprops = propertynames(hlp_states)
     if :carbon in eleprops && :water in eleprops
-        for prop ∈ propertynames(hlpStates.carbon)
-            cfield = getproperty(hlpStates.carbon, prop)
-            wfield = getproperty(hlpStates.water, prop)
+        for prop ∈ propertynames(hlp_states.carbon)
+            cfield = getproperty(hlp_states.carbon, prop)
+            wfield = getproperty(hlp_states.water, prop)
             cwfield = (; cfield..., wfield...)
             if prop == :vals
                 cwfield = (;)
@@ -465,17 +454,17 @@ function generatePoolsInfo(info::NamedTuple)
             hlp_new = setTupleField(hlp_new, (prop, cwfield))
         end
     elseif :carbon in eleprops && :water ∉ eleprops
-        hlp_new = hlpStates.carbon
+        hlp_new = hlp_states.carbon
     elseif :carbon ∉ eleprops && :water in eleprops
-        hlp_new = hlpStates.water
+        hlp_new = hlp_states.water
     else
-        hlp_new = hlpStates
+        hlp_new = hlp_states
     end
-    # hlt_new = setTupleField(hlp_new, (:vals, hlpStates.vals))
-    info = (; info..., pools=tmpStates)
-    # info = (; info..., tem=(; info.tem..., pools=tmpStates))
+    # hlt_new = setTupleField(hlp_new, (:vals, hlp_states.vals))
+    info = (; info..., pools=tmp_states)
+    # info = (; info..., tem=(; info.tem..., pools=tmp_states))
     info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_new)))
-    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlpStates)))
+    # info = (; info..., tem=(; info.tem..., helpers=(; info.tem.helpers..., pools=hlp_states)))
     return info
 end
 
@@ -489,49 +478,49 @@ returns a named tuple with initial pool variables as subfields that is used in o
 """
     getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
-DOCSTRING
+
 """
 function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
-    initPools = (;)
+    init_pools = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)
-        arrayType = getfield(props, :arraytype)
-        toCreate = getfield(props, :create)
-        initVals = getfield(props, :initValues)
-        for tocr ∈ toCreate
-            inVals = deepcopy(getfield(initVals, tocr))
-            initPools = setTupleField(initPools,
+        array_type = getfield(props, :arraytype)
+        var_to_create = getfield(props, :create)
+        initial_values = getfield(props, :initial_values)
+        for tocr ∈ var_to_create
+            input_values = deepcopy(getfield(initial_values, tocr))
+            init_pools = setTupleField(init_pools,
                 (tocr,
-                    createArrayofType(inVals,
+                    createArrayofType(input_values,
                         Nothing[],
                         tem_helpers.numbers.sNT,
                         nothing,
                         true,
-                        Val(arrayType))))
+                        Val(array_type))))
         end
-        tocombine = getfield(getfield(info_pools, element), :combine)
-        if tocombine.docombine
-            combinedPoolName = tocombine.pool
-            zixT = getfield(props, :zix)
-            components = keys(zixT)
-            poolArray = getfield(initPools, combinedPoolName)
+        to_combine = getfield(getfield(info_pools, element), :combine)
+        if to_combine.docombine
+            combined_pool_name = to_combine.pool
+            zix_pool = getfield(props, :zix)
+            components = keys(zix_pool)
+            pool_array = getfield(init_pools, combined_pool_name)
             for component ∈ components
-                if component != combinedPoolName
-                    indx = getfield(zixT, component)
-                    inVals = deepcopy(getfield(initVals, component))
-                    compdat = createArrayofType(inVals,
-                        poolArray,
+                if component != combined_pool_name
+                    indx = getfield(zix_pool, component)
+                    input_values = deepcopy(getfield(initial_values, component))
+                    compdat = createArrayofType(input_values,
+                        pool_array,
                         tem_helpers.numbers.sNT,
                         indx,
                         false,
-                        Val(arrayType))
-                    # compdat::AbstractArray = @view poolArray[indx]
-                    initPools = setTupleField(initPools, (component, compdat))
+                        Val(array_type))
+                    # compdat::AbstractArray = @view pool_array[indx]
+                    init_pools = setTupleField(init_pools, (component, compdat))
                 end
             end
         end
     end
-    return initPools
+    return init_pools
 end
 
 """
@@ -543,60 +532,60 @@ returns a named tuple with initial state variables as subfields that is used in 
 """
     getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
 
-DOCSTRING
+
 """
 function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
-    initStates = (;)
+    initial_states = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)
-        toCreate = getfield(props, :create)
-        addVars = getfield(props, :state_variables)
-        initVals = getfield(props, :initValues)
-        arrayType = getfield(props, :arraytype)
-        for tocr ∈ toCreate
-            for avk ∈ keys(addVars)
-                avv = getproperty(addVars, avk)
+        var_to_create = getfield(props, :create)
+        additional_state_vars = getfield(props, :state_variables)
+        initial_values = getfield(props, :initial_values)
+        array_type = getfield(props, :arraytype)
+        for tocr ∈ var_to_create
+            for avk ∈ keys(additional_state_vars)
+                avv = getproperty(additional_state_vars, avk)
                 Δtocr = Symbol(string(avk) * string(tocr))
                 vals =
-                    zero(getfield(initVals, tocr)) .+ tem_helpers.numbers.𝟙 *
+                    zero(getfield(initial_values, tocr)) .+ tem_helpers.numbers.𝟙 *
                                                       tem_helpers.numbers.sNT(avv)
                 newvals = createArrayofType(vals,
                     Nothing[],
                     tem_helpers.numbers.sNT,
                     nothing,
                     true,
-                    Val(arrayType))
-                initStates = setTupleField(initStates, (Δtocr, newvals))
+                    Val(array_type))
+                initial_states = setTupleField(initial_states, (Δtocr, newvals))
             end
         end
-        tocombine = getfield(getfield(info_pools, element), :combine)
-        if tocombine.docombine
-            combinedPoolName = Symbol(tocombine.pool)
-            for avk ∈ keys(addVars)
-                avv = getproperty(addVars, avk)
-                ΔcombinedPoolName = Symbol(string(avk) * string(combinedPoolName))
-                zixT = getfield(props, :zix)
-                components = keys(zixT)
-                ΔpoolArray = getfield(initStates, ΔcombinedPoolName)
+        to_combine = getfield(getfield(info_pools, element), :combine)
+        if to_combine.docombine
+            combined_pool_name = Symbol(to_combine.pool)
+            for avk ∈ keys(additional_state_vars)
+                avv = getproperty(additional_state_vars, avk)
+                Δ_combined_pool_name = Symbol(string(avk) * string(combined_pool_name))
+                zix_pool = getfield(props, :zix)
+                components = keys(zix_pool)
+                Δ_pool_array = getfield(initial_states, Δ_combined_pool_name)
                 for component ∈ components
-                    if component != combinedPoolName
-                        Δcomponent = Symbol(string(avk) * string(component))
-                        indx = getfield(zixT, component)
-                        Δcompdat = createArrayofType((zero(getfield(initVals, component)) .+ tem_helpers.numbers.𝟙) .*
+                    if component != combined_pool_name
+                        Δ_component = Symbol(string(avk) * string(component))
+                        indx = getfield(zix_pool, component)
+                        Δ_compdat = createArrayofType((zero(getfield(initial_values, component)) .+ tem_helpers.numbers.𝟙) .*
                                                      tem_helpers.numbers.sNT(avv),
-                            ΔpoolArray,
+                            Δ_pool_array,
                             tem_helpers.numbers.sNT,
                             indx,
                             false,
-                            Val(arrayType))
-                        # Δcompdat::AbstractArray = @view ΔpoolArray[indx]
-                        initStates = setTupleField(initStates, (Δcomponent, Δcompdat))
+                            Val(array_type))
+                        # Δ_compdat::AbstractArray = @view Δ_pool_array[indx]
+                        initial_states = setTupleField(initial_states, (Δ_component, Δ_compdat))
                     end
                 end
             end
         end
     end
-    return initStates
+    return initial_states
 end
 
 
@@ -648,29 +637,29 @@ gets the ordered list of selected models from info.model_structure.models
 function getOrderedSelectedModels(info::NamedTuple, selected_models::AbstractArray)
     all_sindbad_models_reordered = changeModelOrder(info, selected_models)
     checkSelectedModels(all_sindbad_models_reordered, selected_models)
-    selModelsOrdered = []
+    order_selected_models = []
     for msm ∈ all_sindbad_models_reordered
         if msm in selected_models
-            push!(selModelsOrdered, msm)
+            push!(order_selected_models, msm)
         end
     end
 
-    return selModelsOrdered
+    return order_selected_models
 end
 
 """
-    getParameters(selectedModels)
+    getParameters(selected_models)
 
-DOCSTRING
+
 """
-function getParameters(selectedModels)
-    default = [flatten(selectedModels)...]
-    constrains = metaflatten(selectedModels, Models.bounds)
+function getParameters(selected_models)
+    default = [flatten(selected_models)...]
+    constrains = metaflatten(selected_models, Models.bounds)
     nbounds = length(constrains)
     lower = [constrains[i][1] for i ∈ 1:nbounds]
     upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selectedModels)...]
+    name = [fieldnameflatten(selected_models)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selected_models)...]
     model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
     name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
     approach_func = [getfield(Models, m) for m ∈ model_approach]
@@ -688,18 +677,18 @@ end
 
 
 """
-    getParameters(selectedModels, model_parameter_default)
+    getParameters(selected_models, model_parameter_default)
 
 retrieve all model parameters
 """
-function getParameters(selectedModels, model_parameter_default)
-    default = [flatten(selectedModels)...]
-    constrains = metaflatten(selectedModels, Models.bounds)
+function getParameters(selected_models, model_parameter_default)
+    default = [flatten(selected_models)...]
+    constrains = metaflatten(selected_models, Models.bounds)
     nbounds = length(constrains)
     lower = [constrains[i][1] for i ∈ 1:nbounds]
     upper = [constrains[i][2] for i ∈ 1:nbounds]
-    name = [fieldnameflatten(selectedModels)...] # SVector(flatten(x))
-    model_approach = [parentnameflatten(selectedModels)...]
+    name = [fieldnameflatten(selected_models)...] # SVector(flatten(x))
+    model_approach = [parentnameflatten(selected_models)...]
     model = [Symbol(supertype(getproperty(Models, m))) for m ∈ model_approach]
     name_full = [join((model[i], name[i]), ".") for i ∈ 1:nbounds]
     approach_func = [getfield(Models, m) for m ∈ model_approach]
@@ -724,38 +713,38 @@ function getParameters(selectedModels, model_parameter_default)
 end
 
 """
-    getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
+    getParameters(selected_models, model_parameter_default, opt_parameter::Vector)
 
-DOCSTRING
+
 
 # Arguments:
-- `selectedModels`: DESCRIPTION
+- `selected_models`: DESCRIPTION
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selectedModels, model_parameter_default, opt_parameter::Vector)
+function getParameters(selected_models, model_parameter_default, opt_parameter::Vector)
     opt_parameter = replaceCommaSeparatorParams(opt_parameter)
-    paramstbl = getParameters(selectedModels, model_parameter_default)
-    return filter(row -> row.name_full in opt_parameter, paramstbl)
+    tbl_parameters = getParameters(selected_models, model_parameter_default)
+    return filter(row -> row.name_full in opt_parameter, tbl_parameters)
 end
 
 """
-    getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
+    getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
-- `selectedModels`: DESCRIPTION
+- `selected_models`: DESCRIPTION
 - `model_parameter_default`: DESCRIPTION
 - `opt_parameter`: DESCRIPTION
 """
-function getParameters(selectedModels, model_parameter_default, opt_parameter::NamedTuple)
+function getParameters(selected_models, model_parameter_default, opt_parameter::NamedTuple)
     param_list = replaceCommaSeparatorParams(keys(opt_parameter))
-    paramstbl = getParameters(selectedModels, model_parameter_default, param_list)
-    pTable = filter(row -> row.name_full in param_list, paramstbl)
-    new_dist = pTable.dist
-    new_p_dist = pTable.p_dist
-    new_is_ml = pTable.is_ml
+    tbl_parameters = getParameters(selected_models, model_parameter_default, param_list)
+    tbl_parameters_filtered = filter(row -> row.name_full in param_list, tbl_parameters)
+    new_dist = tbl_parameters_filtered.dist
+    new_p_dist = tbl_parameters_filtered.p_dist
+    new_is_ml = tbl_parameters_filtered.is_ml
     pInd = 1
     for pp ∈ param_list
         p_ = opt_parameter[pInd]
@@ -771,88 +760,88 @@ function getParameters(selectedModels, model_parameter_default, opt_parameter::N
         end
         pInd = pInd + 1
     end
-    pTable.is_ml .= new_is_ml
-    pTable.dist .= new_dist
-    pTable.p_dist .= new_p_dist
-    return pTable
+    tbl_parameters_filtered.is_ml .= new_is_ml
+    tbl_parameters_filtered.dist .= new_dist
+    tbl_parameters_filtered.p_dist .= new_p_dist
+    return tbl_parameters_filtered
 end
 
 
 """
-    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename="", num_type=Float64)
+    getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename="", num_type=Float64)
 
 A helper function to get the information of each pools from info.model_structure.pools and puts them into arrays of information needed to instantiate pool variables.
 """
 
 """
-    getPoolInformation(mainPools, poolData, layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName; prename = , num_type = Float64)
+    getPoolInformation(main_pools, pool_info, layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name; prename = , num_type = Float64)
 
-DOCSTRING
+
 
 # Arguments:
-- `mainPools`: DESCRIPTION
-- `poolData`: DESCRIPTION
-- `layerThicknesses`: DESCRIPTION
+- `main_pools`: DESCRIPTION
+- `pool_info`: DESCRIPTION
+- `layer_thicknesses`: DESCRIPTION
 - `nlayers`: DESCRIPTION
 - `layer`: DESCRIPTION
 - `inits`: DESCRIPTION
-- `subPoolName`: DESCRIPTION
-- `mainPoolName`: DESCRIPTION
+- `sub_pool_name`: DESCRIPTION
+- `main_pool_name`: DESCRIPTION
 - `prename`: DESCRIPTION
 - `num_type`: DESCRIPTION
 """
-function getPoolInformation(mainPools,
-    poolData,
-    layerThicknesses,
+function getPoolInformation(main_pools,
+    pool_info,
+    layer_thicknesses,
     nlayers,
     layer,
     inits,
-    subPoolName,
-    mainPoolName;
+    sub_pool_name,
+    main_pool_name;
     prename="",
     num_type=Float64)
-    for mainPool ∈ mainPools
+    for main_pool ∈ main_pools
         prefix = prename
-        poolInfo = getproperty(poolData, mainPool)
-        if !isa(poolInfo, NamedTuple)
-            if isa(poolInfo[1], Number)
-                lenpool = poolInfo[1]
-                # layerThickNess = repeat([nothing], lenpool)
-                layerThickNess = num_type.(poolInfo[1])
+        main_pool_info = getproperty(pool_info, main_pool)
+        if !isa(main_pool_info, NamedTuple)
+            if isa(main_pool_info[1], Number)
+                lenpool = main_pool_info[1]
+                # layer_thickness = repeat([nothing], lenpool)
+                layer_thickness = num_type.(main_pool_info[1])
             else
-                lenpool = length(poolInfo[1])
-                layerThickNess = num_type.(poolInfo[1])
+                lenpool = length(main_pool_info[1])
+                layer_thickness = num_type.(main_pool_info[1])
             end
 
-            append!(layerThicknesses, layerThickNess)
+            append!(layer_thicknesses, layer_thickness)
             append!(nlayers, fill(1, lenpool))
             append!(layer, collect(1:lenpool))
-            append!(inits, fill(num_type(poolInfo[2]), lenpool))
+            append!(inits, fill(num_type(main_pool_info[2]), lenpool))
 
             if prename == ""
-                append!(subPoolName, fill(mainPool, lenpool))
-                append!(mainPoolName, fill(mainPool, lenpool))
+                append!(sub_pool_name, fill(main_pool, lenpool))
+                append!(main_pool_name, fill(main_pool, lenpool))
             else
-                append!(subPoolName, fill(Symbol(String(prename) * string(mainPool)), lenpool))
-                append!(mainPoolName, fill(Symbol(String(prename)), lenpool))
+                append!(sub_pool_name, fill(Symbol(String(prename) * string(main_pool)), lenpool))
+                append!(main_pool_name, fill(Symbol(String(prename)), lenpool))
             end
         else
-            prefix = prename * String(mainPool)
-            subPools = propertynames(poolInfo)
-            layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName =
-                getPoolInformation(subPools,
-                    poolInfo,
-                    layerThicknesses,
+            prefix = prename * String(main_pool)
+            sub_pools = propertynames(main_pool_info)
+            layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name =
+                getPoolInformation(sub_pools,
+                    main_pool_info,
+                    layer_thicknesses,
                     nlayers,
                     layer,
                     inits,
-                    subPoolName,
-                    mainPoolName;
+                    sub_pool_name,
+                    main_pool_name;
                     prename=prefix,
                     num_type=num_type)
         end
     end
-    return layerThicknesses, nlayers, layer, inits, subPoolName, mainPoolName
+    return layer_thicknesses, nlayers, layer, inits, sub_pool_name, main_pool_name
 end
 
 """
@@ -924,20 +913,20 @@ sets the spinup and forward subfields of info.tem.models to select a separated s
   - by design, the spinup models should be subset of forward models
 """
 function getSpinupAndForwardModels(info::NamedTuple)
-    sel_appr_forward = ()
-    sel_appr_spinup = ()
+    selected_approach_forward = ()
+    selected_approach_spinup = ()
     is_spinup = Int64[]
-    selModelsOrdered = info.tem.models.selected_models.model
+    order_selected_models = info.tem.models.selected_models.model
     default_model = getfield(info.model_structure, :default_model)
-    for sm ∈ selModelsOrdered
-        modInfo = getfield(info.model_structure.models, sm)
-        modAppr = modInfo.approach
-        sel_approach = String(sm) * "_" * modAppr
-        sel_approach_func = getTypedModel(Symbol(sel_approach), info.tem.helpers.numbers.sNT)
-        # sel_approach_func = getfield(Sindbad.Models, Symbol(sel_approach))()
-        sel_appr_forward = (sel_appr_forward..., sel_approach_func)
-        if :use_in_spinup in propertynames(modInfo)
-            use_in_spinup = modInfo.use_in_spinup
+    for sm ∈ order_selected_models
+        model_info = getfield(info.model_structure.models, sm)
+        selected_approach = model_info.approach
+        selected_approach = String(sm) * "_" * selected_approach
+        selected_approach_func = getTypedModel(Symbol(selected_approach), info.tem.helpers.numbers.sNT)
+        # selected_approach_func = getfield(Sindbad.Models, Symbol(selected_approach))()
+        selected_approach_forward = (selected_approach_forward..., selected_approach_func)
+        if :use_in_spinup in propertynames(model_info)
+            use_in_spinup = model_info.use_in_spinup
         else
             use_in_spinup = default_model.use_in_spinup
         end
@@ -953,10 +942,10 @@ function getSpinupAndForwardModels(info::NamedTuple)
     # update the parameters of the approaches if a parameter value has been added from the experiment configuration
     if hasproperty(info, :parameters)
         if !isempty(info.parameters)
-            original_params_forward = getParameters(sel_appr_forward)
+            original_params_forward = getParameters(selected_approach_forward)
             input_params = info.parameters
             updated_params = setInputParameters(original_params_forward, input_params)
-            updated_appr_forward = updateModelParameters(updated_params, sel_appr_forward)
+            updated_approach_forward = updateModelParameters(updated_params, selected_approach_forward)
 
             info = (;
                 info...,
@@ -964,7 +953,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
                     info.tem...,
                     models=(;
                         info.tem.models...,
-                        forward=updated_appr_forward,
+                        forward=updated_approach_forward,
                         is_spinup=is_spinup)))
         end
     else
@@ -974,7 +963,7 @@ function getSpinupAndForwardModels(info::NamedTuple)
                 info.tem...,
                 models=(;
                     info.tem.models...,
-                    forward=sel_appr_forward,
+                    forward=selected_approach_forward,
                     is_spinup=is_spinup)))
     end
     return info
@@ -1048,13 +1037,13 @@ function getTypeInstanceForNamedOptions(option_name::Symbol)
 end
 
 """
-    getVariableGroups(varList::AbstractArray)
+    getVariableGroups(var_list::AbstractArray)
 
 get named tuple for variables groups from list of variables. Assumes that the entries in the list follow subfield.variablename of model output (land
 """
-function getVariableGroups(varList::AbstractArray)
+function getVariableGroups(var_list::AbstractArray)
     var_dict = Dict()
-    for var ∈ varList
+    for var ∈ var_list
         var_l = String(var)
         vf = split(var_l, ".")[1]
         vvar = split(var_l, ".")[2]
@@ -1078,8 +1067,8 @@ end
 sets info.tem.variables as the union of variables to write and store from model_run[.json]. These are the variables for which the time series will be filtered and saved
 """
 function getVariablesToStore(info::NamedTuple)
-    writeStoreVars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
-    info = (; info..., tem=(; info.tem..., variables=writeStoreVars))
+    write_store_vars = getVariableGroups(collect(propertynames(info.experiment.model_output.variables)))
+    info = (; info..., tem=(; info.tem..., variables=write_store_vars))
     return info
 end
 
@@ -1278,7 +1267,7 @@ end
 """
     replaceCommaSeparatorParams(p_names_list)
 
-DOCSTRING
+
 """
 function replaceCommaSeparatorParams(p_names_list)
     o_p_names_list = []
@@ -1292,7 +1281,7 @@ end
 """
     splitRenameParam(_p::Symbol, _splitter)
 
-DOCSTRING
+
 """
 function splitRenameParam(_p::Symbol, _splitter)
     p_string = String(_p)
@@ -1302,7 +1291,7 @@ end
 """
     splitRenameParam(p_string::String, _splitter)
 
-DOCSTRING
+
 """
 function splitRenameParam(p_string::String, _splitter)
     p_name = strip(p_string)
@@ -1328,7 +1317,7 @@ updates the model parameters based on input from params.json
 """
     setInputParameters(original_table::Table, updated_table::Table)
 
-DOCSTRING
+
 """
 function setInputParameters(original_table::Table, updated_table::Table)
     upoTable = copy(original_table)

@@ -45,6 +45,11 @@ struct TimeSizedArray end
 struct TimeYear end
 struct TimeYearAnomaly end
 
+
+function getTimeAggregatorTypeInstance(aggr::Symbol)
+    return getTimeAggregatorTypeInstance(string(aggr))
+end
+
 function getTimeAggregatorTypeInstance(aggr::String)
     if aggr == "mean"
         return TimeMean()

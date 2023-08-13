@@ -4,7 +4,7 @@ export getLoss
 """
     getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
-DOCSTRING
+
 
 # Arguments:
 - `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
@@ -42,7 +42,7 @@ end
 """
     getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
-DOCSTRING
+
 
 # Arguments:
 - `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
@@ -76,7 +76,7 @@ end
 """
     getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multiconstraint_method)
 
-DOCSTRING
+
 
 # Arguments:
 - `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
@@ -126,7 +126,7 @@ end
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:array})
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -188,7 +188,7 @@ end
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_stacked})
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -247,7 +247,7 @@ end
 """
     optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_timeseries})
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations

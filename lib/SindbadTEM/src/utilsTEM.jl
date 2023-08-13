@@ -9,7 +9,7 @@ export getNumberOfTimeSteps
 """
     fillLocOutput!(ar, val, ts::Int64)
 
-DOCSTRING
+
 
 # Arguments:
 - `ar`: DESCRIPTION
@@ -25,7 +25,7 @@ end
 """
     getForcingForTimeStep(forcing, forcing_t, ts, Val{forc_vars})
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -54,7 +54,7 @@ end
 """
     getForcingForTimeStep(forcing::NamedTuple, forcing_t, ts::Int64)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -72,7 +72,7 @@ end
 """
     getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
 
-DOCSTRING
+
 """
 function getForcingForTimeStep(forcing::NamedTuple, ts::Int64)
     map(forcing) do v
@@ -84,7 +84,7 @@ end
 """
     getForcingNamedTuple(input_data, forcing_names)
 
-DOCSTRING
+
 """
 function getForcingNamedTuple(input_data, forcing_names)
     return (; Pair.(forcing_names, input_data)...)
@@ -95,7 +95,7 @@ end
 """
     getForcingTimeSize(forcing::NamedTuple)
 
-DOCSTRING
+
 """
 function getForcingTimeSize(forcing::NamedTuple)
     forcingTimeSize = 1
@@ -110,7 +110,7 @@ end
 """
     getForcingTimeSize(forcing, Val{forc_vars})
 
-DOCSTRING
+
 """
 @generated function getForcingTimeSize(forcing, ::Val{forc_vars}) where {forc_vars}
     output = quote
@@ -132,7 +132,7 @@ end
 """
     getLocData(forcing, output_array, loc_space_map)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -155,7 +155,7 @@ end
 """
     getLocForcing!(forcing, loc_forcing, s_locs, Val{forc_vars}, Val{s_names})
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -199,7 +199,7 @@ end
 """
     getLocOutput!(output_array, loc_output, ar_inds)
 
-DOCSTRING
+
 
 # Arguments:
 - `output_array`: an output array/view for ALL locations
@@ -216,7 +216,7 @@ end
 """
     getLocOutputView(ar, val::AbstractVector, ts::Int64)
 
-DOCSTRING
+
 
 # Arguments:
 - `ar`: DESCRIPTION
@@ -230,7 +230,7 @@ end
 """
     getLocOutputView(ar, val::Real, ts::Int64)
 
-DOCSTRING
+
 
 # Arguments:
 - `ar`: DESCRIPTION
@@ -245,7 +245,7 @@ end
 """
     getNumberOfTimeSteps(incubes, time_name)
 
-DOCSTRING
+
 """
 function getNumberOfTimeSteps(incubes, time_name)
     i1 = findfirst(c -> YAXArrays.Axes.findAxis(time_name, c) !== nothing, incubes)
@@ -256,7 +256,7 @@ end
 """
     setOutputForTimeStep!(outputs, land, ts, Val{output_vars})
 
-DOCSTRING
+
 
 # Arguments:
 - `outputs`: DESCRIPTION
@@ -293,7 +293,7 @@ end
 """
     viewCopyYax(xout, xin)
 
-DOCSTRING
+
 
 # Arguments:
 - `xout`: DESCRIPTION
