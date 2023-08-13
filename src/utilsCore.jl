@@ -47,7 +47,7 @@ end
 """
     addToElem(v::SVector, Δv, v_zero, ind::Int)
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -67,7 +67,7 @@ end
 """
     addToElem(v::AbstractVector, Δv, _, _, ind::Int)
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -84,7 +84,7 @@ end
 """
     addToEachElem(v::SVector, Δv::Real)
 
-DOCSTRING
+
 """
 function addToEachElem(v::SVector, Δv::Real)
     v = v .+ Δv
@@ -94,7 +94,7 @@ end
 """
     addToEachElem(v::AbstractVector, Δv::Real)
 
-DOCSTRING
+
 """
 function addToEachElem(v::AbstractVector, Δv::Real)
     v .= v .+ Δv
@@ -104,7 +104,7 @@ end
 """
     addVec(v::SVector, Δv::SVector)
 
-DOCSTRING
+
 """
 function addVec(v::SVector, Δv::SVector)
     v = v + Δv
@@ -114,7 +114,7 @@ end
 """
     addVec(v::AbstractVector, Δv::AbstractVector)
 
-DOCSTRING
+
 """
 function addVec(v::AbstractVector, Δv::AbstractVector)
     v .= v .+ Δv
@@ -147,7 +147,7 @@ end
 """
     DocStringExtensions.format(abbrv::BoundFields, buf, doc)
 
-DOCSTRING
+
 
 # Arguments:
 - `abbrv`: DESCRIPTION
@@ -397,7 +397,7 @@ end
 """
     processPackLand(ex)
 
-DOCSTRING
+
 """
 function processPackLand(ex)
     rename, ex = if ex.args[1] == :(=)
@@ -456,7 +456,7 @@ end
 """
     processUnpackForcing(ex)
 
-DOCSTRING
+
 """
 function processUnpackForcing(ex)
     rename, ex = if ex.head == :(=)
@@ -490,7 +490,7 @@ end
 """
     processUnpackLand(ex)
 
-DOCSTRING
+
 """
 function processUnpackLand(ex)
     rename, ex = if ex.head == :(=)
@@ -549,7 +549,7 @@ end
 """
     repElem(v::AbstractVector, v_elem, _, _, ind::Int)
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -566,7 +566,7 @@ end
 """
     repElem(v::SVector, v_elem, v_zero, v_one, ind::Int)
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -600,7 +600,7 @@ end
 """
     repVec(v::AbstractVector, v_new)
 
-DOCSTRING
+
 """
 function repVec(v::AbstractVector, v_new)
     v .= v_new
@@ -610,7 +610,7 @@ end
 """
     repVec(v::SVector, v_new)
 
-DOCSTRING
+
 """
 function repVec(v::SVector, v_new)
     n_0 = zero(first(v))
@@ -621,11 +621,11 @@ end
 """
     setComponents(land, helpers, Val{s_main}, Val{s_comps}, Val{zix})
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: DESCRIPTION
+- `helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
@@ -680,7 +680,7 @@ end
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: DESCRIPTION
+- `helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
@@ -735,7 +735,7 @@ end
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `helpers`: DESCRIPTION
+- `helpers`: helper NT with necessary objects for model run and type consistencies
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION

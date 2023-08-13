@@ -282,7 +282,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         cEco_prev[zix] = Ct
         # CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
         # POOLS CALCULATIONS
-        out = runForward(selectedModels, forcing, out, modelnames, helpers)
+        out = runForward(selected_models, forcing, out, modelnames, helpers)
         # FEED fCt
         # fCt[zix, :] = cEco[zix, :]
         fCt = cEco
@@ -290,7 +290,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     # make the fx consistent with the pools
     cEco = sCt
     cEco_prev = sCt
-    out = runForward(selectedModels, forcing, out, modelnames, helpers)
+    out = runForward(selected_models, forcing, out, modelnames, helpers)
 
     ## pack land variables
     @pack_land cEco => land.pools

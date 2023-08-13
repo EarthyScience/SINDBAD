@@ -3,7 +3,7 @@ export getSpatialSubset
 """
     getSpatialSubset(ss, v)
 
-DOCSTRING
+
 """
 function getSpatialSubset(ss, v)
     if !isnothing(ss)
@@ -21,7 +21,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:site})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -35,7 +35,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:lat})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -49,7 +49,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:latitude})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -63,7 +63,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:lon})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -77,7 +77,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:longitude})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -91,7 +91,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:id})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -105,7 +105,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:Id})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION
@@ -119,7 +119,7 @@ end
 """
     spatialSubset(v, ss_range, Val{:ID})
 
-DOCSTRING
+
 
 # Arguments:
 - `v`: DESCRIPTION

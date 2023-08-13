@@ -69,7 +69,7 @@ extract a matrix with columns:
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     cost_options = optim.cost_options
-    optimVars = optim.variables.optim
+    optim_vars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
         y = getproperty(obs_array, obsV)
@@ -95,10 +95,10 @@ function getPredAndObsVector(observations::NamedTuple,
     optim::NamedTuple;
     removeNaN=true)
     cost_options = optim.cost_options
-    optimVars = optim.variables.optim
+    optim_vars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
-        mod_variable = getfield(optimVars, obsV)
+        mod_variable = getfield(optim_vars, obsV)
         #TODO care for equal size
         (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         [vec(y) vec(yσ) vec(ŷ)]

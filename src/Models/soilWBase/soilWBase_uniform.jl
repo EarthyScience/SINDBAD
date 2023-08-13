@@ -19,8 +19,8 @@ function define(p_struct::soilWBase_uniform, forcing, land, helpers)
     wWP = zero(land.pools.soilW)
     wSat = zero(land.pools.soilW)
 
-    soilDepths = helpers.pools.layerThickness.soilW
-    # soilDepths = helpers.pools.layerThickness.soilW
+    soilDepths = helpers.pools.layer_thickness.soilW
+    # soilDepths = helpers.pools.layer_thickness.soilW
 
     kSat = sp_kSat
     soil_kFC = sp_kFC

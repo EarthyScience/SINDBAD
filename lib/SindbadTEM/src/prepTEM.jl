@@ -3,7 +3,7 @@ export prepTEM
 """
     addSpinupLog(land, seq, Val{true})
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
@@ -23,7 +23,7 @@ end
 """
     addSpinupLog(land, _, Val{false})
 
-DOCSTRING
+
 
 # Arguments:
 - `land`: sindbad land
@@ -38,7 +38,7 @@ end
 """
     debugModel(land_one, DoDebugModel)
 
-DOCSTRING
+
 """
 function debugModel(land_one, ::DoDebugModel) # print land when debug model is true/on
     Sindbad.eval(:(error_catcher = []))
@@ -51,7 +51,7 @@ end
 """
     debugModel(_, ::DoNotDebugModel)
 
-DOCSTRING
+
 """
 function debugModel(_, ::DoNotDebugModel) # do nothing debug model is false/off
     return nothing
@@ -60,7 +60,7 @@ end
 """
     runTEMOneLocation(selected_models, forcing, output_array::AbstractArray, land_init, loc_space_map, tem)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -88,7 +88,7 @@ prepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 """
     prepTEM(forcing::NamedTuple, info::NamedTuple)
 
-DOCSTRING
+
 """
 function prepTEM(forcing::NamedTuple, info::NamedTuple)
     @info "prepTEM: preparing to run terrestrial ecosystem model (TEM)"
@@ -106,7 +106,7 @@ prepTEM(output, selected_models, forcing::NamedTuple, tem::NamedTuple)
 """
     prepTEM(selected_models, forcing::NamedTuple, info::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -127,7 +127,7 @@ helpPrepTEM(output, forcing::NamedTuple, tem::NamedTuple)
 """
     helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
