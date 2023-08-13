@@ -53,25 +53,23 @@ end
 
 
 """
-    getCostOptions(optInfo::NamedTuple, vars_info, number_helpers, dates_helpers)
+    getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates_helpers)
 
 
 
 # Arguments:
-- `optInfo`: DESCRIPTION
+- `optim_info`: DESCRIPTION
 - `vars_info`: DESCRIPTION
 - `number_helpers`: DESCRIPTION
 - `dates_helpers`: DESCRIPTION
 """
-function getCostOptions(optInfo::NamedTuple, vars_info, number_helpers, dates_helpers)
-
-    varlist = Symbol.(optInfo.observational_constraints)
-    # all_options = []
+function getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates_helpers)
+    varlist = Symbol.(optim_info.observational_constraints)
     agg_type = []
     time_aggrs = []
     aggr_funcs = []
     all_costs = map(varlist) do v
-        getCombinedNamedTuple(optInfo.observations.default_cost, getfield(getfield(optInfo.observations.variables, v), :cost_options))
+        getCombinedNamedTuple(optim_info.observations.default_cost, getfield(getfield(optim_info.observations.variables, v), :cost_options))
     end
     all_options = []
     push!(all_options, varlist)
@@ -124,18 +122,14 @@ function getCostOptions(optInfo::NamedTuple, vars_info, number_helpers, dates_he
         aggInd = createTimeAggregator(dates_helpers.range, _aggr, aggr_func, skip_aggregation)
         push!(agg_indices, aggInd)
     end
-    push!(all_options, 1:length(obs_ind))
     push!(all_options, obs_ind)
     push!(all_options, mod_ind)
     push!(all_options, mod_field)
     push!(all_options, mod_subfield)
     push!(all_options, agg_indices)
     push!(all_options, agg_type)
-    push!(all_options, number_helpers.sNT.(zero(mod_ind)))
-    push!(all_options, [Any for _ in 1:length(obs_ind)])
-    all_props = [:variable, props_to_keep..., :ind, :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr, :temporal_aggr_type, :loss, :valids]
-    return Table((; Pair.(all_props, all_options)...))
-
+    all_props = [:variable, props_to_keep..., :obs_ind, :mod_ind, :mod_field, :mod_subfield, :temporal_aggr, :temporal_aggr_type]
+    return (; Pair.(all_props, all_options)...)
 end
 
 
@@ -168,7 +162,7 @@ end
 a helper function to get the type for spinup mode
 """
 function getTypeInstanceForCostMetric(option_name::String)
-    opt_ss = join(uppercasefirst.(split(option_name,"_")))
+    opt_ss = toUpperCaseFirst(option_name)
     struct_instance = getfield(SindbadMetrics, Symbol(opt_ss))()
     return struct_instance
 end
@@ -224,6 +218,5 @@ function setupOptimization(info::NamedTuple)
     info = setTupleSubfield(info, :optim, (:variables, (vars_info)))
     cost_options = getCostOptions(info.optimization, vars_info, info.tem.helpers.numbers, info.tem.helpers.dates)
     info = setTupleSubfield(info, :optim, (:cost_options, cost_options))
-
     return info
 end

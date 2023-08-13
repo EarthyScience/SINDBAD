@@ -93,7 +93,7 @@
         },
         "data": {
           "bounds": [0.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMsc.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
           "standard_name": "Gross Primary Productivity",
           "sindbad_unit": "gC m-2 day-1",
           "source_unit": "gC m-2 day-1",
@@ -104,7 +104,7 @@
         "sel_mask": null,
         "unc": {
           "bounds": [0.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMsc.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
           "source_variable": "GPP_mad"
         }
       },
@@ -115,7 +115,7 @@
         },
         "data": {
           "bounds": [-100.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthMSC.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthMsc.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc",
           "standard_name": "Runoff",
           "sindbad_unit": "mm day-1",
           "source_unit": "mm day-1",
@@ -132,7 +132,7 @@
         },
         "data": {
           "bounds": [0.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MscNv02CRI_2005-2013.nc",
           "standard_name": "Terrestrial water storage",
           "sindbad_unit": "mm",
           "source_to_sindbad_unit": 10.0,
@@ -144,7 +144,7 @@
         "sel_mask": null,
         "unc": {
           "bounds": [-500, 500],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MscNv02CRI_2005-2013.nc",
           "source_variable": "uncertainty"
         }
       }

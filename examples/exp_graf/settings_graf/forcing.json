@@ -34,7 +34,7 @@
     },
     "fAPAR": {
       "bounds": [0.0, 1.0],
-      "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviriMSC.FVC.2005-2013.nc",
+      "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviriMsc.FVC.2005-2013.nc",
       "standard_name": "fAPAR from ndvi",
       "sindbad_unit": "-",
       "source_product": "ERA5",
