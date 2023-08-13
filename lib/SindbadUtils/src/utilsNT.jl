@@ -1,4 +1,5 @@
 export dictToNamedTuple
+export dropFields
 export getCombinedNamedTuple
 export removeEmptyTupleFields
 export setTupleField
@@ -26,7 +27,6 @@ function collectColorForTypes(d; c_olor=true)
 end
 
 
-
 """
     dictToNamedTuple(d::AbstractDict)
 
@@ -44,6 +44,20 @@ function dictToNamedTuple(d::AbstractDict)
     return dTuple
 end
 
+
+"""
+    dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}})
+
+removes the list of fields from a given named tuple
+
+# Arguments:
+- `namedtuple`: a namedtuple to remove the fields from
+- `names`: a tuple of names to be removed
+"""
+function dropFields(namedtuple::NamedTuple, names::Tuple{Vararg{Symbol}}) 
+    keepnames = Base.diff_names(Base._nt_names(namedtuple), names)
+   return NamedTuple{keepnames}(namedtuple)
+end
 
 """
     getCombinedNamedTuple(base_nt::NamedTuple, priority_nt::NamedTuple)
