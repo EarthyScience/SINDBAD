@@ -10,7 +10,7 @@ computeTEM(models, forcing, land, tem_helpers, ::Val{:false})
 """
     computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel)
 
-DOCSTRING
+
 
 # Arguments:
 - `models`: DESCRIPTION
@@ -34,7 +34,7 @@ computeTEM(models, forcing, land, tem_helpers)
 """
     computeTEM(models, forcing, land, tem_helpers, ::DoNotDebugModel)
 
-DOCSTRING
+
 
 # Arguments:
 - `models`: DESCRIPTION
@@ -56,7 +56,7 @@ computeTEM(models, forcing, land, tem_helpers)
 """
     computeTEM(models, forcing, land, tem_helpers)
 
-DOCSTRING
+
 
 # Arguments:
 - `models`: DESCRIPTION
@@ -73,7 +73,7 @@ end
 """
     definePrecomputeTEM(models, forcing, land, tem_helpers)
 
-DOCSTRING
+
 
 # Arguments:
 - `models`: DESCRIPTION
@@ -91,7 +91,7 @@ end
 """
     foldlUnrolled(f, x::Tuple{Vararg{Any, N}}; init)
 
-DOCSTRING
+
 
 # Arguments:
 - `f`: DESCRIPTION
@@ -106,7 +106,7 @@ end
 """
     foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init)
 
-DOCSTRING
+
 
 # Arguments:
 - `f`: DESCRIPTION
@@ -121,7 +121,7 @@ end
 """
     precomputeTEM(models, forcing, land, tem_helpers)
 
-DOCSTRING
+
 
 # Arguments:
 - `models`: DESCRIPTION

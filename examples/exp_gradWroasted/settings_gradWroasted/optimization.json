@@ -2,13 +2,14 @@
   "algorithm": "CMAEvolutionStrategy_CMAES",
   "land_output_type": "array",
   "model_parameter_default": {
-    "distribution": ["normal", [0, 1]],
+    "distribution": ["normal", [0.0, 1.0]],
     "is_ml": false
   },
   "model_parameters_to_optimize": {
     "autoRespiration,RMN": null,
     "autoRespiration,YG": null,
     "autoRespirationAirT,Q10": null,
+    "cCycleBase,c_remain": null,
     "cCycleBase,c_τ_LitFast": null,
     "cCycleBase,c_τ_LitSlow": null,
     "cCycleBase,c_τ_Root": null,
@@ -29,6 +30,7 @@
     "cFlow,slope_reserve_to_leaf_root": null,
     "cTauSoilT,Q10": null,
     "cTauSoilW,Wopt": null,
+    "drainage,dos_exp": null,
     "evaporation,k_evaporation": null,
     "evaporation,α": null,
     "fAPAR,kEffExt": null,
@@ -49,6 +51,7 @@
     "runoffSaturationExcess,β": null,
     "snowMelt,melt_Rn": null,
     "snowMelt,melt_T": null,
+    "transpirationSupply,k_transpiration": null,
     "treeFraction,constant_frac_tree": null,
     "WUE,WUEatOnehPa": null,
     "WUE,κ": null
@@ -58,8 +61,11 @@
   "observational_constraints": [
     "gpp",
     "nee",
+    "reco",
     "transpiration",
-    "evapotranspiration"
+    "evapotranspiration",
+    "agb",
+    "ndvi"
   ],
   "observations": {
     "default_cost": {
@@ -77,7 +83,7 @@
     "default_observation": {
       "additive_unit_conversion": false,
       "bounds": null,
-      "data_path": "../data/fluxnet_cube/fluxnet_observations.zarr",
+      "data_path": "../data/BE-Vie.1979.2017.daily.nc",
       "is_categorical": false,
       "standard_name": null,
       "sindbad_unit": null,
@@ -92,23 +98,16 @@
     "variables": {
       "agb": {
         "cost_options": {
-          "cost_metric": "NMAE1R",
-          "temporal_data_aggr": "mean",
-          "aggr_obs": true
+          "cost_metric": "NMAE1R"
         },
         "data": {
           "bounds": [0.0, 100000.0],
           "standard_name": "Above-ground biomass",
           "sindbad_unit": "gC m-2",
           "source_unit": "gC m-2",
-          "source_variable": "agb"
+          "source_variable": "agb_merged"
         },
-        "model_full_var": "deriveVariables.aboveground_biomass",
-        "unc": {
-          "bounds": [0.0, 400.0],
-          "data_path": null,
-          "source_variable": "nee_σ"
-        }
+        "model_full_var": "deriveVariables.aboveground_biomass"
       },
       "evapotranspiration": {
         "cost_options": {
@@ -121,14 +120,19 @@
           "sindbad_unit": "mm day-1",
           "source_to_sindbad_unit": 0.4081632653,
           "source_unit": "MJ m-2 d-1",
-          "source_variable": "evapotranspiration"
+          "source_variable": "LE"
         },
         "model_full_var": "fluxes.evapotranspiration",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "LE_QC_merged"
+        },
         "unc": {
           "bounds": [0.0, 100.0],
           "data_path": null,
           "source_to_sindbad_unit": 0.4081632653,
-          "source_variable": "le_σ"
+          "source_variable": "LE_RANDUNC"
         }
       },
       "gpp": {
@@ -140,13 +144,18 @@
           "standard_name": "Gross Primary Productivity",
           "sindbad_unit": "gC m-2 day-1",
           "source_unit": "gC m-2 day-1",
-          "source_variable": "gpp"
+          "source_variable": "GPP_NT"
         },
         "model_full_var": "fluxes.gpp",
-        "unc": {
-          "bounds": [0.0, 100.0],
+        "qflag": {
+          "bounds": [0.85, 1.0],
           "data_path": null,
-          "source_variable": "nee_σ"
+          "source_variable": "GPP_QC_NT_merged"
+        },
+        "unc": {
+          "bounds": [0.0, 400.0],
+          "data_path": null,
+          "source_variable": "NEE_RANDUNC"
         }
       },
       "ndvi": {
@@ -157,17 +166,12 @@
         },
         "data": {
           "bounds": [0.0, 1.0],
-          "standard_name": "kNDVI",
+          "standard_name": "mergedNDVI_MCD43A",
           "sindbad_unit": "adimensional",
           "source_unit": "adimensional",
-          "source_variable": "ndvi"
+          "source_variable": "mergedNDVI_MCD43A"
         },
-        "model_full_var": "states.fAPAR",
-        "unc": {
-          "bounds": [0.0, 1.0],
-          "data_path": null,
-          "source_variable": "nee_σ"
-        }
+        "model_full_var": "states.fAPAR"
       },
       "nee": {
         "cost_options": {
@@ -178,14 +182,34 @@
           "standard_name": "Net Ecosystem Exchange",
           "sindbad_unit": "gC m-2 day-1",
           "source_unit": "gC m-2 day-1",
-          "source_variable": "nee"
+          "source_variable": "NEE"
         },
         "model_full_var": "fluxes.nee",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "NEE_QC_merged"
+        },
         "unc": {
           "bounds": [0.0, 400.0],
           "data_path": null,
-          "source_variable": "nee_σ"
+          "source_variable": "NEE_RANDUNC"
         }
+      },
+      "nirv": {
+        "cost_options": {
+          "cost_metric": "scor2_inv",
+          "temporal_data_aggr": "day_anomaly",
+          "aggr_obs": true
+        },
+        "data": {
+          "bounds": [0.0, 1.0],
+          "standard_name": "Near Infrared Reflectance",
+          "sindbad_unit": "adimensional",
+          "source_unit": "-",
+          "source_variable": "NIRv_MCD43A"
+        },
+        "model_full_var": "fluxes.gpp"
       },
       "reco": {
         "cost_options": {
@@ -196,13 +220,18 @@
           "standard_name": "Ecosystem Respiration",
           "sindbad_unit": "gC m-2 day-1",
           "source_unit": "gC m-2 day-1",
-          "source_variable": "reco"
+          "source_variable": "RECO_NT"
         },
         "model_full_var": "fluxes.eco_respiration",
-        "unc": {
-          "bounds": [0.0, 100.0],
+        "qflag": {
+          "bounds": [0.85, 1.0],
           "data_path": null,
-          "source_variable": "nee_σ"
+          "source_variable": "RECO_QC_NT_merged"
+        },
+        "unc": {
+          "bounds": [0.0, 400.0],
+          "data_path": null,
+          "source_variable": "NEE_RANDUNC"
         }
       },
       "transpiration": {
@@ -214,14 +243,19 @@
           "standard_name": "transpiration",
           "sindbad_unit": "mm day-1",
           "source_unit": "mm day-1",
-          "source_variable": "transpiration"
+          "source_variable": "T_NT_TEA"
         },
         "model_full_var": "fluxes.transpiration",
+        "qflag": {
+          "bounds": [0.85, 1.0],
+          "data_path": null,
+          "source_variable": "LE_QC_merged"
+        },
         "unc": {
           "bounds": [0.0, 100.0],
           "data_path": null,
           "source_to_sindbad_unit": 0.4081632653,
-          "source_variable": "le_σ"
+          "source_variable": "LE_RANDUNC"
         }
       }
     }

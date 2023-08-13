@@ -19,6 +19,7 @@
     "space_time_type": "spatiotemporal"
   },
   "sel_mask": null,
+  "sel_mask_var": null,
   "subset": {
     "site": [1, 10]
   },

@@ -19,6 +19,7 @@
     "space_time_type": "spatiotemporal"
   },
   "sel_mask": null,
+  "sel_mask_var": null,
   "variables": {
     "CLAY": {
       "bounds": [0.0, 1.0],

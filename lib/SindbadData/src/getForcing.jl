@@ -3,7 +3,7 @@ export getForcing
 """
     collectForcingSizes(info, in_yax)
 
-DOCSTRING
+
 """
 function collectForcingSizes(info, in_yax)
     time_dim_name = Symbol(info.forcing.data_dimension.time)
@@ -26,7 +26,7 @@ end
 """
     collectForcingHelpers(info, f_sizes, f_dimensions)
 
-DOCSTRING
+
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
@@ -49,7 +49,7 @@ end
 """
     getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
 
-DOCSTRING
+
 
 # Arguments:
 - `incubes`: DESCRIPTION
@@ -78,7 +78,7 @@ end
 """
     getForcing(info::NamedTuple)
 
-DOCSTRING
+
 """
 function getForcing(info::NamedTuple)
     nc = nothing
@@ -93,7 +93,7 @@ function getForcing(info::NamedTuple)
     if :sel_mask ∈ keys(info.forcing)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, "mask", info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.sel_mask_var, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
             forcing_mask = booleanizeArray(forcing_mask)
         end
     end

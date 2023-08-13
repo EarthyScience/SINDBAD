@@ -4,7 +4,7 @@ export runTEM
 """
     coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, _, _, DoNotSpinupTEM)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -41,7 +41,7 @@ end
 """
     coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -88,7 +88,7 @@ end
 """
     coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, _, _, ::DoNotSpinupTEM)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -128,7 +128,7 @@ end
 """
     coreTEM(selected_models, forcing, forcing_one_timestep, land_time_series, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -177,7 +177,7 @@ end
 """
     runTEM(forcing::NamedTuple, info::NamedTuple)
 
-DOCSTRING
+
 """
 function runTEM(forcing::NamedTuple, info::NamedTuple)
     forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem = prepTEM(forcing, info)
@@ -188,7 +188,7 @@ end
 """
     runTEM(selected_models::Tuple, forcing::NamedTuple, forcing_one_timestep, land_init::NamedTuple, tem::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -210,7 +210,7 @@ end
 """
     runTEM(selected_models::Tuple, forcing::NamedTuple, forcing_one_timestep, land_time_series, land_init::NamedTuple, tem::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -297,7 +297,7 @@ end
 """
     timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoNotDebugModel)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure
@@ -326,7 +326,7 @@ end
 """
     timeLoopTEM(selected_models, forcing, forcing_one_timestep, land, tem_helpers, ::DoDebugModel)
 
-DOCSTRING
+
 
 # Arguments:
 - `selected_models`: a tuple of all models selected in the given model structure

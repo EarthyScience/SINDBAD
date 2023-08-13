@@ -1,5 +1,7 @@
 export soilProperties_Saxton1986, unsatK, soilParamsSaxton1986
 
+struct kSaxton1986 end
+
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton1986{T1,T2,T3,TN} <: soilProperties
     ψFC::T1 = 33.0 | (30.0, 35.0) | "matric potential at field capacity" | "kPa"
@@ -51,7 +53,7 @@ function define(p_struct::soilProperties_Saxton1986, forcing, land, helpers)
     sp_θSat = zero(land.pools.soilW)
     sp_ψSat = zero(land.pools.soilW)
 
-    unsat_k_model = Val(:kSaxton1986)
+    unsat_k_model = kSaxton1986()
 
     ## pack land variables
     @pack_land begin
@@ -116,7 +118,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
 
 # Extended help
 """
-function unsatK(land, helpers, sl, ::Val{:kSaxton1986})
+function unsatK(land, helpers, sl, ::kSaxton1986)
     @unpack_land begin
         (st_CLAY, st_SAND) ∈ land.soilTexture
         soil_layer_thickness ∈ land.soilWBase

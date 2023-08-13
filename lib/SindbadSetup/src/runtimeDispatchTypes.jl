@@ -113,14 +113,14 @@ struct SSPSSRootfind end
 
 # ------------------------- parallelization and model output-------------------------
 export DoOutputAll
-export DontOutputAll
+export DoNotOutputAll
 export DoSaveSingleFile
 export DoNotSaveSingleFile
 export UseQbmapParallelization
 export UseThreadsParallelization
 
 struct DoOutputAll end
-struct DontOutputAll end
+struct DoNotOutputAll end
 struct DoSaveSingleFile end
 struct DoNotSaveSingleFile end
 struct UseQbmapParallelization end

@@ -96,7 +96,7 @@ end
 """
     removeEmptyTupleFields(tpl::NamedTuple)
 
-DOCSTRING
+
 """
 function removeEmptyTupleFields(tpl::NamedTuple)
     indx = findall(x -> x != NamedTuple(), values(tpl))
@@ -108,7 +108,7 @@ end
 """
     setTupleSubfield(out, fieldname, vals)
 
-DOCSTRING
+
 
 # Arguments:
 - `out`: DESCRIPTION

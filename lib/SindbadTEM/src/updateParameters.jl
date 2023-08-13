@@ -5,7 +5,7 @@ export updateModelParametersType
 """
     updateModelParameters(tbl_params::Table, selected_models::Tuple)
 
-DOCSTRING
+
 """
 function updateModelParameters(tbl_params::Table, selected_models::Tuple)
     function filtervar(var, modelName, tbl_params, approachx)

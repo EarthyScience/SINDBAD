@@ -3,7 +3,7 @@ export getObservation
 """
     getAllConstraintData(nc, data_path, default_info, v_info, data_sub_field, info; yax = nothing, use_data_sub = true)
 
-DOCSTRING
+
 
 # Arguments:
 - `nc`: DESCRIPTION
@@ -64,7 +64,7 @@ getObservation(info, forcing.helpers)
 """
     getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
 
-DOCSTRING
+
 """
 function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
     data_path = info.optimization.observations.default_observation.data_path
