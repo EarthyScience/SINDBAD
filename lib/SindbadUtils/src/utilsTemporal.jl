@@ -420,11 +420,11 @@ end
 a helper functio to easily switch the array type for indices of the TimeAggregator object
 """
 function getTypeOfTimeIndexArray(_type=:array)
-    if _type == :array
-        return Val(:array)
-    else
-        return Val(_type)
+    time_type = TimeArray()
+    if _type == :sized_array
+        time_type = TimeSizedArray()
     end
+    return time_type
 end
 
 
@@ -453,23 +453,23 @@ end
 
 
 """
-    getTimeArray(ar, Val{:sized_array})
+    getTimeArray(ar, ::TimeSizedArray)
 
 a helper function to get the array of indices as static array
 """
-function getTimeArray(ar, ::Val{:sized_array})
+function getTimeArray(ar, ::TimeSizedArray)
     return SizedArray{Tuple{size(ar)...},eltype(ar)}(ar)
 end
 
+
 """
-    getTimeArray(ar, Val{:array})
+    getTimeArray(ar, ::TimeArray)
 
 a helper function to get the array of indices as normal array
 """
-function getTimeArray(ar, ::Val{:array})
+function getTimeArray(ar, ::TimeArray)
     return ar
 end
-
 
 
 """
@@ -486,23 +486,6 @@ function getTimeAggrArray(_dat::AbstractArray{<:Any,N}) where N
 end
 
 
-# # works for everything for which aggregator is needed
-# """
-#     temporalAggregation(dat::AxisKeys.KeyedArray, temporal_aggregator::TimeAggregator, dim = 1)
-
-# a temporal aggregation function to aggregate the data using a given aggregator when the input data is a KeyedArray
-
-# # Arguments:
-# - `dat`: a data array/vector to aggregate
-# - `temporal_aggregator`: a type defining the aggregation time target
-# - `dim`: the dimension along which the aggregation should be done
-# """
-# function temporalAggregation(dat, temporal_aggregator::TimeAggregator, dim=1)
-#     dat = view(dat, temporal_aggregator, dim=dim)
-#     return dat
-# end
-
-# works for everything for which aggregator is needed
 """
     temporalAggregation(dat::AbstractArray, temporal_aggregator::TimeAggregator, dim = 1)
 
@@ -577,34 +560,3 @@ function temporalAggregation(dat, temporal_aggregators, ::TimeDiff)
     dat_agg_to_remove = temporalAggregation(dat, last(temporal_aggregators))
     return dat_agg .- dat_agg_to_remove
 end
-
-
-# function getTimeAggrArray(_dat::AbstractArray{T,2}) where {T}
-#     return _dat[:, :]
-# end
-
-# function getTimeAggrArray(_dat::AbstractArray{<:Any,N}) where N
-#     inds = ntuple(_->Colon(),N)
-#     inds = map(size(_data)) do _
-#         Colon()
-#     end
-#     _dat[inds...]
-# end
-
-# """
-#     getTimeAggrArray(_dat::AbstractArray{T, 3})
-
-# DOCSTRING
-# """
-# function getTimeAggrArray(_dat::AbstractArray{T,3}) where {T}
-#     return _dat[:, :, :]
-# end
-
-# """
-#     getTimeAggrArray(_dat::AbstractArray{T, 4})
-
-# DOCSTRING
-# """
-# function getTimeAggrArray(_dat::AbstractArray{T,4}) where {T}
-#     return _dat[:, :, :, :]
-# end

@@ -6,7 +6,7 @@ experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 sYear = "1979"
 eYear = "2017"
 
-domain = "DE-RuS"
+domain = "DE-Hai"
 # domain = "MY-PSO"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
