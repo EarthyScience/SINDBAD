@@ -43,8 +43,12 @@
     "cCycleBase": {
       "approach": "GSI"
     },
+    "cCycleConsistency": {
+      "approach": "simple"
+    },
     "cCycleDisturbance": {
-      "approach": "WROASTED"
+      "approach": "WROASTED",
+      "use_in_spinup": false
     },
     "cFlow": {
       "approach": "GSI"
@@ -72,6 +76,9 @@
     },
     "cTauVegProperties": {
       "approach": "none"
+    },
+    "deriveVariables": {
+      "approach": "simple"
     },
     "drainage": {
       "approach": "dos"
@@ -214,9 +221,7 @@
           "Old": [1, 1000.0]
         }
       },
-      "state_variables": {
-        "Δ": 0.0
-      }
+      "state_variables": {}
     },
     "water": {
       "combine": "TWS",

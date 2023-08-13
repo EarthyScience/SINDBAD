@@ -31,7 +31,7 @@ Base.getproperty(s::landWrapper, aggr_func::Symbol) = GroupView(aggr_func, getfi
 """
     Base.getproperty(g::GroupView, aggr_func::Symbol)
 
-DOCSTRING
+
 """
 function Base.getproperty(g::GroupView, aggr_func::Symbol)
     allarrays = getfield(g, :s)
@@ -49,7 +49,7 @@ Base.getindex(o::landWrapper, s::Symbol) = getproperty(o, s)
 """
     Base.propertynames(o::GroupView)
 
-DOCSTRING
+
 """
 function Base.propertynames(o::GroupView)
     return propertynames(first(getfield(o, :s))[getfield(o, :groupname)])
@@ -62,7 +62,7 @@ Base.getindex(o::GroupView, i::Symbol) = getproperty(o, i)
 """
     booleanizeArray(_array)
 
-DOCSTRING
+
 """
 function booleanizeArray(_array)
     _data_fill = 0.0
@@ -85,7 +85,7 @@ end
 """
     getAbsDataPath(info, data_path)
 
-DOCSTRING
+
 """
 function getAbsDataPath(info, data_path)
     if !isabspath(data_path)
@@ -98,7 +98,7 @@ end
 """
     isInvalid(num)
 
-DOCSTRING
+
 """
 function isInvalid(_data)
     return isnothing(_data) || ismissing(_data) || isnan(_data) || isinf(_data)

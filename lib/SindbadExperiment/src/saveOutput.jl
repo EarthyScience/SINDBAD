@@ -7,7 +7,7 @@ export getVariableInfo
 """
     getGlobalAttributesForOutCubes(info)
 
-DOCSTRING
+
 """
 function getGlobalAttributesForOutCubes(info)
     os = Sys.iswindows() ? "Windows" : Sys.isapple() ?
@@ -64,7 +64,7 @@ end
 """
     getOutputFileInfo(info)
 
-DOCSTRING
+
 """
 function getOutputFileInfo(info)
     global_metadata = getGlobalAttributesForOutCubes(info)
@@ -99,7 +99,7 @@ end
 """
     getVariableInfo(vari_b, t_step = day)
 
-DOCSTRING
+
 """
 function getVariableInfo(vari_b, t_step="day")
     vname = getVarFull(vari_b)
@@ -109,7 +109,7 @@ end
 """
     getVariableInfo(vari_b::Symbol, t_step = day)
 
-DOCSTRING
+
 """
 function getVariableInfo(vari_b::Symbol, t_step="day")
     catalog = sindbad_variables
@@ -187,7 +187,7 @@ end
 """
     getYaxForVariable(data_out, data_dim, variable_name, catalog_name, t_step)
 
-DOCSTRING
+
 
 # Arguments:
 - `data_out`: DESCRIPTION

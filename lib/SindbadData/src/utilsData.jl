@@ -55,7 +55,7 @@ end
 """
     cleanData(_data, _data_fill, _data_info, Val{T})
 
-DOCSTRING
+
 
 # Arguments:
 - `_data`: data to clean
@@ -78,7 +78,7 @@ end
 """
     getDataDims(c, mappinginfo)
 
-DOCSTRING
+
 """
 function getDataDims(c, mappinginfo)
     inax = []
@@ -91,7 +91,7 @@ end
 """
     getDimPermutation(datDims, permDims)
 
-DOCSTRING
+
 """
 function getDimPermutation(datDims, permDims)
     new_dim = Int[]
@@ -108,7 +108,7 @@ end
 """
     getInputArrayOfType(input_data, nothing::Val{:array})
 
-DOCSTRING
+
 """
 function getInputArrayOfType(input_data, ::Val{:array})
     array_data = map(input_data) do c
@@ -120,7 +120,7 @@ end
 """
     getInputArrayOfType(input_data, nothing::Val{:keyed_array})
 
-DOCSTRING
+
 """
 function getInputArrayOfType(input_data, ::Val{:keyed_array})
     keyed_array_data = map(input_data) do c
@@ -133,7 +133,7 @@ end
 """
     getInputArrayOfType(input_data, nothing::Val{:named_dims_array})
 
-DOCSTRING
+
 """
 function getInputArrayOfType(input_data, ::Val{:named_dims_array})
     named_array_data = map(input_data) do c
@@ -146,7 +146,7 @@ end
 """
     getInputArrayOfType(input_data, nothing::Val{:yaxarray})
 
-DOCSTRING
+
 """
 function getInputArrayOfType(input_data, ::Val{:yaxarray})
     return input_data
@@ -174,7 +174,7 @@ end
 """
     getTargetDimensionOrder(info)
 
-DOCSTRING
+
 """
 function getTargetDimensionOrder(info)
     tar_dims = nothing
@@ -191,7 +191,7 @@ end
 """
     getYaxFromSource(nc, data_path, data_path_v, source_variable, info, Val{:netcdf})
 
-DOCSTRING
+
 
 # Arguments:
 - `nc`: DESCRIPTION
@@ -226,7 +226,7 @@ end
 """
     getYaxFromSource(nc, data_path, data_path_v, source_variable, _, Val{:zarr})
 
-DOCSTRING
+
 
 # Arguments:
 - `nc`: DESCRIPTION
@@ -245,7 +245,7 @@ end
 """
     loadDataFile(data_path)
 
-DOCSTRING
+
 """
 function loadDataFile(data_path)
     if endswith(data_path, ".nc")
@@ -261,7 +261,7 @@ end
 """
     loadDataFromPath(nc, data_path, data_path_v, source_variable)
 
-DOCSTRING
+
 
 # Arguments:
 - `nc`: DESCRIPTION
@@ -282,7 +282,7 @@ end
 """
     mapCleanData(_data, _data_qc, _data_fill, bounds_qc, _data_info, Val{T})
 
-DOCSTRING
+
 
 # Arguments:
 - `_data`: DESCRIPTION
@@ -305,7 +305,7 @@ end
 """
     subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, Val{num_type}; clean_data = true, fill_nan = false, yax_qc = nothing, bounds_qc = nothing)
 
-DOCSTRING
+
 
 # Arguments:
 - `yax`: DESCRIPTION

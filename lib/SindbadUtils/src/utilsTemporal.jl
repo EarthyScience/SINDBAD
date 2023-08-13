@@ -21,7 +21,7 @@ end
 """
     TimeAggregatorViewInstance{T, N, D, P, AV <: TimeAggregator}
 
-DOCSTRING
+
 
 # Fields:
 - `parent::P`: the parent data
@@ -87,9 +87,9 @@ end
 
 
 """
-    createTimeAggregator(date_vector, t_step::Symbol, aggr_func = mean, skip_aggregation = false)
+    createTimeAggregator(date_vector, t_step, aggr_func = mean, skip_aggregation = false)
 
-DOCSTRING
+a function to create a temporal aggregation struct for a given time step 
 
 # Arguments:
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
@@ -97,7 +97,7 @@ DOCSTRING
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
-function createTimeAggregator(date_vector, t_step::String, aggr_func=mean, skip_aggregation=false)
+function createTimeAggregator(date_vector, t_step, aggr_func=mean, skip_aggregation=false)
     return createTimeAggregator(date_vector, getTimeAggregatorTypeInstance(t_step), aggr_func, skip_aggregation)
 end
 

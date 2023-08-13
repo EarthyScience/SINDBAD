@@ -4,7 +4,7 @@ export runTEMYAX
 """
     TEMYax(args; land_init::NamedTuple, tem::NamedTuple, selected_models::Tuple, forcing_variables::AbstractArray)
 
-DOCSTRING
+
 
 # Arguments:
 - `args`: DESCRIPTION
@@ -37,7 +37,7 @@ end
 """
     runTEMYAX(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, selected_models::Tuple; max_cache = 1.0e9)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
@@ -81,7 +81,7 @@ end
 """
     unpackYaxForward(args; tem::NamedTuple, forcing_variables::AbstractArray)
 
-DOCSTRING
+
 
 # Arguments:
 - `args`: DESCRIPTION
