@@ -90,7 +90,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------\n")
     # @time run_output = output.data
-    loss_vector = getLossVector(obs_array, output_array, info.optim.cost_options)
+    loss_vector = getLossVector(obs_array, output_array, prepCostOptions(obs_array, info.optim.cost_options))
     @info loss_vector
     return loss_vector
 end

@@ -10,7 +10,7 @@ module SindbadUtils
     @reexport using StatsBase: mean, rle, sample, sum
     @reexport using TypedTables: Table
 
-    include("aggregationTypes.jl")
+    include("utilsTypes.jl")
     include("getArrayView.jl")
     include("utils.jl")
     include("utilsNT.jl")

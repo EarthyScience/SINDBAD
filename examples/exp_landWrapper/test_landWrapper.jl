@@ -61,38 +61,10 @@ forcing_one_timestep,
 land_init_space[1],
 tem_with_types.helpers,
 tem_with_types.models,
-tem_with_types.spinup, Val(:true));
-
-
-@time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_types.helpers,
-tem_with_types.models,
 tem_with_types.spinup, DoRunSpinup());
 
 
-@time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_types.helpers,
-tem_with_types.models,
-tem_with_types.spinup, DoNotRunSpinup());
-
-
 @time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);
-
-# function nanmean(a;dims=:)
-#     init = (0,0.0)
-#     r = foldl(a;init,dims) do (n,s),b
-#         isnan(b) ? (n,s) : (n+1,s+b)
-#     end
-#     @show r
-#     last.(r)/first.(r)
-# end
-
 
 @time lw_timeseries = runTEM(forcing, info);
 
@@ -103,7 +75,7 @@ land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dat
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data];
-cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
+cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 # @profview getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, output_array, cost_options) # |> sum

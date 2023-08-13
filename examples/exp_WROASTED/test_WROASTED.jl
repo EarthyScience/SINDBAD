@@ -59,7 +59,7 @@ forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs,
 
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data];
-@time getLossVector(obs_array2, output_default, info.optim.cost_options)
+@time getLossVector(obs_array, output_default, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
@@ -90,7 +90,7 @@ forcing = getForcing(info);
 ds = forcing.data[1];
 opt_dat = output_array;
 def_dat = output_default;
-costOpt = info.optim.cost_options;
+costOpt = prepCostOptions(obs_array, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 foreach(costOpt) do var_row
     v = var_row.variable

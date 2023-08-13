@@ -995,7 +995,6 @@ function getTypedModel(model, sNT)
     return model_instance
 end
 
-
 """
     getTypeInstanceForFlags(mode_name)
 
@@ -1003,11 +1002,9 @@ a helper function to get the type for boolean flags. In this, the names are conv
 """
 function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do")
     opt_s = string(option_name)
-    opt_ss = join(uppercasefirst.(split(opt_s,"_")))
-    if option_value
-        structname = opt_pref*opt_ss
-    else
-        structname = opt_pref*"Not"*opt_ss
+    structname = toUpperCaseFirst(opt_s, opt_pref)
+    if !option_value
+        structname = toUpperCaseFirst(opt_s, opt_pref*"Not")
     end
     struct_instance = getfield(SindbadSetup, Symbol(structname))()
     return struct_instance
@@ -1020,7 +1017,7 @@ end
 a helper function to get the type for named option with string values. In this, the string is split by "_" and join after capitalizing the first letter
 """
 function getTypeInstanceForNamedOptions(option_name::String)
-    opt_ss = join(uppercasefirst.(split(option_name,"_")))
+    opt_ss = toUpperCaseFirst(option_name,"_")
     struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
     return struct_instance
 end

@@ -8,6 +8,7 @@ export replaceInvalid
 export setLogLevel
 export tabularizeList
 export toggleStackTraceNT
+export toUpperCaseFirst
 export valToSymbol
 
 """
@@ -187,6 +188,16 @@ function toggleStackTraceNT(toggle=true)
         eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = Base.show(io::IO, nt::Type{<:NTuple})))
     end
     return nothing
+end
+
+
+"""
+    toUpperCaseFirst(s, prefix=")
+
+returns the uppercase first string with _ removed and prefix at the beginning
+"""
+function toUpperCaseFirst(s::String, prefix="")
+    return prefix * join(uppercasefirst.(split(s,"_")))
 end
 
 

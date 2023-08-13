@@ -1,7 +1,7 @@
 export prepTEM
 
 """
-    addSpinupLog(land, seq, Val{true})
+    addSpinupLog(land, seq, ::DoStoreSpinup)
 
 
 
@@ -21,7 +21,7 @@ function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
 end
 
 """
-    addSpinupLog(land, _, Val{false})
+    addSpinupLog(land, _, ::DoNotStoreSpinup)
 
 
 

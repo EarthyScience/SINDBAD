@@ -115,7 +115,7 @@ for domain ∈ sites
     ds = forcing.data[1]
     opt_dat = output_array
     def_dat = output_default
-    costOpt = info.optim.cost_options
+    costOpt = prepCostOptions(obs_array, info.optim.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 

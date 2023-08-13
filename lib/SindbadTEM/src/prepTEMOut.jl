@@ -207,7 +207,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sizedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sized_array})
 
 
 
@@ -219,7 +219,7 @@ end
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:sizedarray})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:sized_array})
     outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
     sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, sized_array
@@ -246,7 +246,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyedarray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyed_array})
 
 
 
@@ -258,17 +258,17 @@ end
 - `forcing_helpers`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyedarray})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyed_array})
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres=0)
 
-    keyedarray = []
-    # keyedarray = outarray
+    keyed_array = []
+    # keyed_array = outarray
     outdims = []
     for (_di, _dim) in enumerate(outdims_pairs)
         d_to_push = _dim
-        push!(keyedarray, KeyedArray(outarray[_di]; _dim...))
+        push!(keyed_array, KeyedArray(outarray[_di]; _dim...))
         if length(_dim) > 2
             if length(last(_dim[2])) == 1
                 d_to_push = []
@@ -280,7 +280,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
         end
         push!(outdims, Tuple(d_to_push))
     end
-    return outdims, keyedarray
+    return outdims, keyed_array
 end
 
 
