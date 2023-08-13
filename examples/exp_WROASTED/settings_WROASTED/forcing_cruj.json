@@ -10,7 +10,7 @@
     "data_path": "../data/BE-Vie.1979.2017.daily.nc",
     "depth_dimension": null,
     "is_categorical": false,
-    "name_short": null,
+    "standard_name": null,
     "sindbad_unit": null,
     "source_product": "FLUXNET",
     "source_to_sindbad_unit": 1,
@@ -22,14 +22,14 @@
   "variables": {
     "ambient_CO2": {
       "bounds": [200, 500],
-      "name_short": "ambient_CO2",
+      "standard_name": "ambient_CO2",
       "sindbad_unit": "ppm",
       "source_unit": "ppm",
       "source_variable": "atmCO2_SCRIPPS_global"
     },
     "CLAY": {
       "bounds": [0.0, 100.0],
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -40,7 +40,7 @@
     "dist_intensity": {
       "bounds": [-0.001, 1.1],
       "is_categorical": true,
-      "name_short": "isDisturbed flag for disturbance",
+      "standard_name": "isDisturbed flag for disturbance",
       "sindbad_unit": null,
       "source_product": "Besnard2018",
       "source_unit": null,
@@ -48,7 +48,7 @@
     },
     "ORGM": {
       "bounds": [0.0, 100.0],
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.0,
@@ -58,7 +58,7 @@
     },
     "PAR": {
       "bounds": [0, 50],
-      "name_short": "Photosynthetically active radiation (=Rg*.5)",
+      "standard_name": "Photosynthetically active radiation (=Rg*.5)",
       "sindbad_unit": "MJ m-2 d-1",
       "source_to_sindbad_unit": 0.5,
       "source_unit": "MJ m-2 d-1",
@@ -66,35 +66,35 @@
     },
     "Rain": {
       "bounds": [0, 300],
-      "name_short": "Rain",
+      "standard_name": "Rain",
       "sindbad_unit": "mm d-1",
       "source_unit": "mm d-1",
       "source_variable": "P_cJRAv22_gfld"
     },
     "Rg": {
       "bounds": [0.0, 100.0],
-      "name_short": "Global Radiation",
+      "standard_name": "Global Radiation",
       "sindbad_unit": "MJ m-2 d-1",
       "source_unit": "MJ m-2 d-1",
       "source_variable": "SW_IN_cJRAv22_gfld"
     },
     "RgPot": {
       "bounds": [0.0, 100.0],
-      "name_short": "Potential Global Radiation",
+      "standard_name": "Potential Global Radiation",
       "sindbad_unit": "MJ m-2 d-1",
       "source_unit": "MJ m-2 d-1",
       "source_variable": "SW_IN_POT_ONEFlux"
     },
     "Rn": {
       "bounds": [0.0, 100.0],
-      "name_short": "Net radiation",
+      "standard_name": "Net radiation",
       "sindbad_unit": "MJ m-2 d-1",
       "source_unit": "MJ m-2 d-1",
       "source_variable": "NETRAD_cJRAv22_gfld"
     },
     "SAND": {
       "bounds": [0.0, 100.0],
-      "name_short": "SAND",
+      "standard_name": "SAND",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -104,7 +104,7 @@
     },
     "SILT": {
       "bounds": [0.0, 100.0],
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -114,21 +114,21 @@
     },
     "Tair": {
       "bounds": [-80.0, 60.0],
-      "name_short": "Tair",
+      "standard_name": "Tair",
       "sindbad_unit": "°C",
       "source_unit": "°C",
       "source_variable": "TA_cJRAv22_gfld"
     },
     "TairDay": {
       "bounds": [-80.0, 60.0],
-      "name_short": "TairDay",
+      "standard_name": "TairDay",
       "sindbad_unit": "°C",
       "source_unit": "°C",
       "source_variable": "TA_DayTime_cJRAv22_gfld"
     },
     "VPD": {
       "bounds": [0.01, 100.0],
-      "name_short": "Vapor pressure deficit",
+      "standard_name": "Vapor pressure deficit",
       "sindbad_unit": "kPa",
       "source_to_sindbad_unit": 0.001,
       "source_unit": "Pa",
@@ -136,7 +136,7 @@
     },
     "VPDDay": {
       "bounds": [0.01, 100.0],
-      "name_short": "Vapor pressure deficit Day",
+      "standard_name": "Vapor pressure deficit Day",
       "sindbad_unit": "kPa",
       "source_to_sindbad_unit": 0.001,
       "source_unit": "Pa",
