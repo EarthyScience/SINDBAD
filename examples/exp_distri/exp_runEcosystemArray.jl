@@ -1,8 +1,8 @@
 using Revise
 # using YAXArrays
 using SindbadTEM
-
-Sindbad.toggleStackTraceNT()
+using SindbadExperiment
+toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
 info = getConfiguration(experiment_json);
 info = setupInfo(info);

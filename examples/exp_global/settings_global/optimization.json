@@ -49,7 +49,7 @@
       "bounds": null,
       "data_path": null,
       "is_categorical": false,
-      "name_short": null,
+      "standard_name": null,
       "sindbad_unit": null,
       "source_product": "Global",
       "source_to_sindbad_unit": 1.0,
@@ -68,7 +68,7 @@
         "data": {
           "bounds": [0.0, 100.0],
           "data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.LE.RS.EBC-ALL.MLM-ALL.METEO-NONE.720_360.monthly.2005-2013.nc",
-          "name_short": "Evapotranspiration",
+          "standard_name": "Evapotranspiration",
           "sindbad_unit": "mm day-1",
           "source_to_sindbad_unit": 1,
           "source_unit": "mm d-1",
@@ -91,7 +91,7 @@
         "data": {
           "bounds": [0.0, 100.0],
           "data_path": "../data/graf/opt.2d.m.Africa.month.FLUXCOM.GPP.RS.FP-ALL.MLM-ALL.METEO-NONE.720_360.8daily.2005-2013.nc",
-          "name_short": "Gross Primary Productivity",
+          "standard_name": "Gross Primary Productivity",
           "sindbad_unit": "gC m-2 day-1",
           "source_unit": "gC m-2 day-1",
           "source_variable": "GPP",
@@ -112,7 +112,7 @@
         "data": {
           "bounds": [-100.0, 100.0],
           "data_path": "../data/graf/opt.2d.m.Africa.month.GRUN_v1_GSWP3_WGS84_05_2005_2013.nc",
-          "name_short": "Runoff",
+          "standard_name": "Runoff",
           "sindbad_unit": "mm day-1",
           "source_unit": "mm day-1",
           "source_variable": "Runoff",
@@ -128,7 +128,7 @@
         "data": {
           "bounds": [0.0, 100.0],
           "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
-          "name_short": "Terrestrial water storage",
+          "standard_name": "Terrestrial water storage",
           "sindbad_unit": "mm",
           "source_to_sindbad_unit": 10.0,
           "source_unit": "cm",

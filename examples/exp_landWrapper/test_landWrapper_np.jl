@@ -1,11 +1,4 @@
 using Revise
-# using Sindbad
-# using SindbadUtils
-# using SindbadData
-# using SindbadTEM
-# using SindbadMetrics
-# using SindbadExperiment
-# @time using SindbadExperiment
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
