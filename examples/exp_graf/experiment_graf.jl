@@ -47,7 +47,7 @@ for x ∈ 1:10
         tem_with_types)
 end
 
-getLossVector(obs_array, output_array, info.optim.cost_options)
+getLossVector(obs_array, output_array, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

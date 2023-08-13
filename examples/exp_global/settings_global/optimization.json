@@ -127,7 +127,7 @@
         },
         "data": {
           "bounds": [0.0, 100.0],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MscNv02CRI_2005-2013.nc",
           "standard_name": "Terrestrial water storage",
           "sindbad_unit": "mm",
           "source_to_sindbad_unit": 10.0,
@@ -139,7 +139,7 @@
         "sel_mask": null,
         "unc": {
           "bounds": [-500, 500],
-          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MSCNv02CRI_2005-2013.nc",
+          "data_path": "../data/graf/opt.2d.m.Africa.monthAnomaly.nearestresampledmonthly.GRCTellus.JPL.200204_202207.GLO.RL06M.MscNv02CRI_2005-2013.nc",
           "source_variable": "uncertainty"
         }
       }

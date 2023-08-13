@@ -146,7 +146,7 @@ function optimizeTEM(forcing::NamedTuple,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 
-    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
+    cost_options = prepCostOptions(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tem.helpers.numbers.sNT.(tbl_params.default)
@@ -208,7 +208,7 @@ function optimizeTEM(forcing::NamedTuple,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 
-    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
+    cost_options = prepCostOptions(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tem.helpers.numbers.sNT.(tbl_params.default)
@@ -267,7 +267,7 @@ function optimizeTEM(forcing::NamedTuple,
         optim.model_parameter_default,
         optim.model_parameters_to_optimize)
 
-    cost_options = filterConstraintMinimumDatapoints(observations, optim.cost_options)
+    cost_options = prepCostOptions(observations, optim.cost_options)
 
     # get the default and bounds
     default_values = tem.helpers.numbers.sNT.(tbl_params.default)

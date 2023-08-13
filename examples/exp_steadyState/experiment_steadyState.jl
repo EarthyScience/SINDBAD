@@ -121,7 +121,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
 
 
         # sel_pool = :TWS
-        sp_method = Symbol("nlsove_fixedpoint_trustregion_$(string(sel_pool))")
+        sp_method = Symbol("nlsolve_fixedpoint_trustregion_$(string(sel_pool))")
         @show "NL_solve"
         @time out_sp_nl = SindbadTEM.runSpinup(spinup_models,
             theforcing,
