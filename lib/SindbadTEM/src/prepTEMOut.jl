@@ -9,7 +9,7 @@ create the initial out named tuple with subfields for pools, states, and all sel
 """
     createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `info_pools`: DESCRIPTION
@@ -17,9 +17,9 @@ DOCSTRING
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 """
 function createLandInit(info_pools::NamedTuple, tem_helpers::NamedTuple, tem_models::NamedTuple)
-    initPools = getInitPools(info_pools, tem_helpers)
-    initStates = getInitStates(info_pools, tem_helpers)
-    out = (; fluxes=(;), pools=initPools, states=initStates)::NamedTuple
+    init_pools = getInitPools(info_pools, tem_helpers)
+    initial_states = getInitStates(info_pools, tem_helpers)
+    out = (; fluxes=(;), pools=init_pools, states=initial_states)::NamedTuple
     sortedModels = sort([_sm for _sm ∈ tem_models.selected_models.model])
     for model ∈ sortedModels
         out = setTupleField(out, (model, (;)))
@@ -30,7 +30,7 @@ end
 """
     getPoolSize(info_pools::NamedTuple, poolName::Symbol)
 
-DOCSTRING
+
 """
 function getPoolSize(info_pools::NamedTuple, poolName::Symbol)
     poolsize = nothing
@@ -50,7 +50,7 @@ end
 """
     getDepthDimensionSizeName(vname::Symbol, info::NamedTuple, land_init::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `vname`: DESCRIPTION
@@ -104,7 +104,7 @@ end
 """
     getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -132,7 +132,7 @@ end
 """
     getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -181,7 +181,7 @@ end
 """
     getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:array})
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -209,7 +209,7 @@ end
 """
     getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sizedarray})
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -228,7 +228,7 @@ end
 """
     getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:marray})
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -248,7 +248,7 @@ end
 """
     getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyedarray})
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -287,7 +287,7 @@ end
 """
     getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres = 1)
 
-DOCSTRING
+
 
 # Arguments:
 - `datavars`: DESCRIPTION
@@ -337,7 +337,7 @@ end
 """
     getOutArrayType(num_type, forwardDiff)
 
-DOCSTRING
+
 """
 function getOutArrayType(num_type, forwardDiff)
     return num_type
@@ -346,7 +346,7 @@ end
 """
     getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
 
-DOCSTRING
+
 """
 function getOrderedOutputList(varlist::AbstractArray, var_o::Symbol)
     for var ∈ varlist
@@ -365,7 +365,7 @@ get a namedTuple with field and subfields vectors for extracting data from land
 """
     getVariableFields(datavars)
 
-DOCSTRING
+
 """
 function getVariableFields(datavars)
     vf = Symbol[]
@@ -381,7 +381,7 @@ end
 """
     setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
@@ -437,7 +437,7 @@ end
 """
     prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
 
-DOCSTRING
+
 """
 function prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple)
     return setupBaseOutput(info, forcing_helpers, info.tem.helpers)
@@ -446,7 +446,7 @@ end
 """
     prepTEMOut(info::NamedTuple, forcing_helpers::NamedTuple, tem_helpers::NamedTuple)
 
-DOCSTRING
+
 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
@@ -460,7 +460,7 @@ end
 """
     setupOptiOutput(info::NamedTuple, output::NamedTuple)
 
-DOCSTRING
+
 """
 function setupOptiOutput(info::NamedTuple, output::NamedTuple)
     params = info.optim.model_parameters_to_optimize

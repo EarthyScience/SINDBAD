@@ -74,7 +74,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
     prepExperimentOpti(sindbad_experiment::String; replace_info = nothing)
 
-DOCSTRING
+
 """
 function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     @info "\n----------------------------------------------\n"

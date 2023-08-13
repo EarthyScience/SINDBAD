@@ -3,7 +3,7 @@ export optimizeTEMYax
 """
     unpackYaxOpti(args; forcing_variables::AbstractArray)
 
-DOCSTRING
+
 """
 function unpackYaxOpti(args; forcing_variables::AbstractArray)
     nforc = length(forcing_variables)
@@ -16,7 +16,7 @@ end
 """
     optimizeYax(args; out::NamedTuple, tem::NamedTuple, optim::NamedTuple, forcing_variables::AbstractArray, obs_variables::AbstractArray)
 
-DOCSTRING
+
 
 # Arguments:
 - `args`: DESCRIPTION
@@ -42,7 +42,7 @@ end
 """
     optimizeTEMYax(forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, optim::NamedTuple, observations::NamedTuple; max_cache = 1.0e9)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations

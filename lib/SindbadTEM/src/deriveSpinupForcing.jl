@@ -1,5 +1,4 @@
 export getSpinupForcing
-export getForcingForTimePeriod
 
 # @generated function getForcingForTimePeriod(
 #     forcing,
@@ -47,16 +46,16 @@ export getForcingForTimePeriod
 
 
 """
-    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, Val{:no_diff})
+    getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeNoDiff)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
-- `time_aggregator`: DESCRIPTION
+- `time_aggregator`: time aggregator instances to do the temporal aggregation of forcing data
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `TimeNoDiff`: DESCRIPTION
+- `::TimeNoDiff`: a type dispatch to use the temporal aggregator of SindbadUtils
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeNoDiff)
     sub_forcing = map(forcing) do v
@@ -74,14 +73,14 @@ end
 """
     getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
 
-DOCSTRING
+
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
-- `time_aggregator`: DESCRIPTION
+- `time_aggregator`: time aggregator instances to do the temporal aggregation of forcing data
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
-- `TimeIndexed`: DESCRIPTION
+- `::TimeIndexed`: a type dispatch to just slice the time series using index
 """
 function getSpinupForcing(forcing, forcing_one_timestep, time_aggregator, tem_helpers, ::TimeIndexed)
     sub_forcing = map(forcing) do v
@@ -94,12 +93,12 @@ end
 """
     getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)
 
-A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::Val{:forcing_derivation_method})
+A function to prepare the spinup forcing. Returns a NamedTuple with subfields for different forcings needed in different spinup sequences. All spinup forcings are derived from the main input forcing using the other getSpinupForcing(forcing, tem, ::ForcingDerivationMethod})
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
-- `spin_seq`: DESCRIPTION
+- `spin_seq`: a sequence of information to carry out spinup at different steps with information on models to use, forcing, stopping critera, etc.
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function getSpinupForcing(forcing, forcing_one_timestep, spin_seq, tem_helpers)

@@ -16,7 +16,7 @@ function define(p_struct::soilWBase_smax2Layer, forcing, land, helpers)
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
-    soil_layer_thickness = helpers.pools.layerThickness.soilW
+    soil_layer_thickness = helpers.pools.layer_thickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 2 
     if n_soilW != 2
         error("soilWBase_smax2Layer needs eactly 2 soil layers in model_structure.json.")

@@ -183,7 +183,7 @@ for site_index in sites
         outcubes = output_array
 
         observations = getObservation(info, forcing.helpers)
-        obs_array = observations.data
+        obs_array = [Array(_o) for _o in observations.data]
 
         # open the matlab simulation data
         # nc_ml = SindbadData.NetCDF.open(ml_data_file);

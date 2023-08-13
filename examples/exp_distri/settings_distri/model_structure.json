@@ -77,6 +77,9 @@
     "cTauVegProperties": {
       "approach": "none"
     },
+    "deriveVariables": {
+      "approach": "simple"
+    },
     "drainage": {
       "approach": "dos"
     },

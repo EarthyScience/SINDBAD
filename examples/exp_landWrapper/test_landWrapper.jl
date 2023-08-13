@@ -102,7 +102,7 @@ land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dat
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
-obs_array = observations.data;
+obs_array = [Array(_o) for _o in observations.data];
 cost_options = filterConstraintMinimumDatapoints(obs_array, info.optim.cost_options);
 
 # @profview getLossVector(obs_array, output_array, cost_options) # |> sum
