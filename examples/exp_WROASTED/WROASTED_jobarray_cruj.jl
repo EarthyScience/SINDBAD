@@ -94,7 +94,7 @@ parallelization_lib = "threads"
 exp_main = "wroasted_no_unc_nnse_np"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
-# opti_set = (:set1,)
+opti_set = (:set1,)
 optimize_it = true;
 for o_set in opti_set
     path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"

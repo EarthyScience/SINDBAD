@@ -10,7 +10,7 @@
     "data_path": null,
     "depth_dimension": null,
     "is_categorical": false,
-    "name_short": null,
+    "standard_name": null,
     "sindbad_unit": null,
     "source_product": "FLUXNET",
     "source_to_sindbad_unit": 1.0,
@@ -23,7 +23,7 @@
     "CLAY": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.CLYPPT.mean.nc",
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -34,7 +34,7 @@
     "fAPAR": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviriMSC.FVC.2005-2013.nc",
-      "name_short": "fAPAR from ndvi",
+      "standard_name": "fAPAR from ndvi",
       "sindbad_unit": "-",
       "source_product": "ERA5",
       "source_unit": "-",
@@ -44,7 +44,7 @@
     "frac_vegetation": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.seviri.FVC.2005-2013.nc",
-      "name_short": "vegFrac",
+      "standard_name": "vegFrac",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_unit": "-",
@@ -54,7 +54,7 @@
     "ORGM": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.OCSTHA.mean.nc",
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.0,
@@ -65,7 +65,7 @@
     "PAR": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.ssrd.2005-2013.nc",
-      "name_short": "Photosynthetically active radiation (=Rg*.5)",
+      "standard_name": "Photosynthetically active radiation (=Rg*.5)",
       "sindbad_unit": "MJ m-2",
       "source_product": "ERA5",
       "source_to_sindbad_unit": 0.5,
@@ -76,7 +76,7 @@
     "PET": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.PET_PT.2005-2013.nc",
-      "name_short": "PET",
+      "standard_name": "PET",
       "sindbad_unit": "mm d-1",
       "source_product": "ERA5",
       "source_unit": "mm d-1",
@@ -86,7 +86,7 @@
     "PsurfDay": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.sp.2005-2013.nc",
-      "name_short": "surface pressure",
+      "standard_name": "surface pressure",
       "sindbad_unit": "kPa",
       "source_product": "ERA5",
       "source_to_sindbad_unit": 0.001,
@@ -97,7 +97,7 @@
     "Rain": {
       "bounds": [0.0, 1000.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.tp.2005-2013.nc",
-      "name_short": "Rain",
+      "standard_name": "Rain",
       "sindbad_unit": "mm d-1",
       "source_product": "ERA5",
       "source_unit": "mm d-1",
@@ -107,7 +107,7 @@
     "Rg": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.ssrd.2005-2013.nc",
-      "name_short": "Global Radiation",
+      "standard_name": "Global Radiation",
       "sindbad_unit": "MJ m-2",
       "source_product": "ERA5",
       "source_unit": "MJ m-2",
@@ -117,7 +117,7 @@
     "RgPot": {
       "bounds": [0.0, 600.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.Rgpot.Rpot.2005-2013.nc",
-      "name_short": "Potential Global Radiation",
+      "standard_name": "Potential Global Radiation",
       "sindbad_unit": "MJ m-2",
       "source_product": "ERA5",
       "source_to_sindbad_unit": 0.08640003041,
@@ -128,7 +128,7 @@
     "Rn": {
       "bounds": [0.0, 500.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.snr.2005-2013.nc",
-      "name_short": "Net radiation",
+      "standard_name": "Net radiation",
       "sindbad_unit": "MJ m-2",
       "source_product": "ERA5",
       "source_unit": "MJ m-2",
@@ -138,7 +138,7 @@
     "SAND": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.SNDPPT.mean.nc",
-      "name_short": "SAND",
+      "standard_name": "SAND",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -149,7 +149,7 @@
     "SILT": {
       "bounds": [0.0, 1.0],
       "data_path": "../data/graf/opt.2d.m.Africa.soilgrids.SLTPPT.mean.nc",
-      "name_short": "CLAY",
+      "standard_name": "CLAY",
       "sindbad_unit": "-",
       "source_product": "soilgrids",
       "source_to_sindbad_unit": 0.01,
@@ -161,7 +161,7 @@
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m.2005-2013.nc",
-      "name_short": "Tair",
+      "standard_name": "Tair",
       "sindbad_unit": "°C",
       "source_product": "ERA5",
       "source_to_sindbad_unit": -273.15,
@@ -173,7 +173,7 @@
       "additive_unit_conversion": true,
       "bounds": [-80.0, 60.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.t2m_daytime_mean.2005-2013.nc",
-      "name_short": "TairDay",
+      "standard_name": "TairDay",
       "sindbad_unit": "°C",
       "source_product": "ERA5",
       "source_to_sindbad_unit": -273.15,
@@ -184,7 +184,7 @@
     "VPD": {
       "bounds": [0.0, 10.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.vpd.2005-2013.nc",
-      "name_short": "Vapor pressure deficit Day",
+      "standard_name": "Vapor pressure deficit Day",
       "sindbad_unit": "kPa",
       "source_product": "ERA5",
       "source_to_sindbad_unit": 0.1,
@@ -195,7 +195,7 @@
     "VPDDay": {
       "bounds": [0.0, 100.0],
       "data_path": "../data/graf/opt.2d.m.Africa.gapfld.era5.vpd_daytime_mean.2005-2013.nc",
-      "name_short": "Vapor pressure deficit Day",
+      "standard_name": "Vapor pressure deficit Day",
       "sindbad_unit": "kPa",
       "source_product": "ERA5",
       "source_to_sindbad_unit": 0.1,

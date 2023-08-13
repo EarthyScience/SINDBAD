@@ -19,7 +19,6 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameters_to_optimize);
 
 # covariates
-# rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
 function cube_to_KA(c)
     namesCube = YAXArrayBase.dimnames(c)
     return KeyedArray(Array(c.data); Tuple(k => getproperty(c, k) for k ∈ namesCube)...)

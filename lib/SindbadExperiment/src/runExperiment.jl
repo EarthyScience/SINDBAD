@@ -1,3 +1,4 @@
+export runExperimentCost
 export runExperimentForward
 export runExperimentOpti
 
@@ -45,7 +46,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
     println("-------------------Optimization Mode---------------------------\n")
     observations = getObservation(info, forcing.helpers)
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
-
+    setLogLevel(:warn)
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
         run_output = optimizeTEMYax(forcing,
@@ -58,13 +59,13 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
     else
         @info "runExperiment: do spatial optimization..."
         obs_array = observations.data
-        # obs_array = observations.data
         setLogLevel(:warn)
         optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
     end
+    setLogLevel()
     return run_output
 end
 
@@ -117,13 +118,18 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    run_output = nothing
-    if info.experiment.flags.run_optimization
-        run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_optimization)
-    end
-    if info.experiment.flags.calc_cost && !info.experiment.flags.run_optimization
-        run_output = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
-    end
+    run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_optimization)
     return run_output
 end
 
+
+"""
+    runExperimentOpti(sindbad_experiment::String; replace_info = nothing)
+
+uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
+"""
+function runExperimentCost(sindbad_experiment::String; replace_info=nothing)
+    info, forcing, _ = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
+    run_output = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
+    return run_output
+end
