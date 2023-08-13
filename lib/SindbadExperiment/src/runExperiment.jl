@@ -11,7 +11,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: DESCRIPTION
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunForward`: DESCRIPTION
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunForward)
@@ -39,7 +39,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `output`: DESCRIPTION
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunOptimization`: DESCRIPTION
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
