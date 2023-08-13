@@ -217,62 +217,31 @@ function getLossVector(observations, model_output, cost_options)
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
-        # @debug @time metr = loss(y, yσ, ŷ, lossMetric)
-        metr = loss(y, yσ, ŷ, lossMetric)
+        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
             metr = oftype(metr, 1e19)
         end
-        # @info "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
+        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
         metr
     end
-    # println("-------------------")
+    @debug "\n-------------------\n"
     return loss_vector
 end
 
-
-"""
-    getModelOutputView(mod_dat)
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat)
-    return mod_dat[:]
-end
-
-
-function getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
-    inds = ntuple(_->Colon(),N)
-    inds = map(size(_dat)) do _
-        Colon()
-    end
-    @view _dat[inds...]
-end
 
 """
     getModelOutputView(mod_dat::AbstractArray{T, 2})
 
 DOCSTRING
 """
-function getModelOutputView(mod_dat::AbstractArray{T,2}) where {T}
-    return @view mod_dat[:, 1]
-end
-
-"""
-    getModelOutputView(mod_dat::AbstractArray{T, 3})
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat::AbstractArray{T,3}) where {T}
-    return @view mod_dat[:, 1, :]
-end
-
-"""
-    getModelOutputView(mod_dat::AbstractArray{T, 4})
-
-DOCSTRING
-"""
-function getModelOutputView(mod_dat::AbstractArray{T,4}) where {T}
-    return @view mod_dat[:, 1, :, :]
+function getModelOutputView(_dat::AbstractArray{<:Any,N}) where N
+    dim = 1
+    inds = map(size(_dat)) do _
+        ind = dim == 2 ? 1 : Colon()
+        dim += 1
+        ind
+    end
+    @view _dat[inds...]
 end
 
 """
