@@ -58,12 +58,12 @@
       "aggr_func": "nanmean",
       "aggr_obs": false,
       "aggr_order": "time_space",
-      "area_weight": false,
       "cost_metric": "NSE_inv",
       "cost_weight": 1.0,
       "min_data_points": 1,
       "spatial_data_aggr": "concat_data",
       "spatial_cost_aggr": "spatially_variable",
+      "spatial_weight": false,
       "temporal_data_aggr": "day"
     },
     "default_observation": {
@@ -81,6 +81,7 @@
     },
     "use_quality_flag": true,
     "use_uncertainty": false,
+    "use_spatial_weight": false,
     "variables": {
       "agb": {
         "cost_options": {

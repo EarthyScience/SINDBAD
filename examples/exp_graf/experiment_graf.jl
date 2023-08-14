@@ -9,6 +9,7 @@ replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => optimize_it,
+    "experiment.flags.catch_model_errors" => true,
     "experiment.flags.spinup.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.flags.spinup.run_spinup" => true);
@@ -47,6 +48,7 @@ for x ∈ 1:10
         tem_with_types)
 end
 
+# setLogLevel(:debug)
 getLossVector(obs_array, output_array, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
