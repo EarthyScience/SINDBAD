@@ -44,13 +44,13 @@ struct TimeSpace end
 
 export DoAggrObs
 export DoNotAggrObs
-export DoAreaWeight
-export DoNotAreaWeight
+export DoSpatialWeight
+export DoNotSpatialWeight
 
 struct DoAggrObs end
 struct DoNotAggrObs end
-struct DoAreaWeight end
-struct DoNotAreaWeight end
+struct DoSpatialWeight end
+struct DoNotSpatialWeight end
 
 export ConcatData
 export CostMaximum

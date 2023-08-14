@@ -74,7 +74,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates
     all_options = []
     push!(all_options, varlist)
     prop_names = keys(all_costs[1])
-    props_to_keep = (:cost_metric, :area_weight, :cost_weight, :temporal_data_aggr, :aggr_obs, :aggr_order, :min_data_points, :spatial_data_aggr, :spatial_cost_aggr, :aggr_func,)
+    props_to_keep = (:cost_metric, :spatial_weight, :cost_weight, :temporal_data_aggr, :aggr_obs, :aggr_order, :min_data_points, :spatial_data_aggr, :spatial_cost_aggr, :aggr_func,)
     for (pn, prop) ∈ enumerate(props_to_keep)
         prop_array = []
         for vn ∈ eachindex(varlist)
@@ -109,7 +109,7 @@ function getCostOptions(optim_info::NamedTuple, vars_info, number_helpers, dates
     mod_field = [Symbol(split(_a, ".")[1]) for _a in mod_vars]
     mod_subfield = [Symbol(split(_a, ".")[2]) for _a in mod_vars]
     mod_ind = collect(1:length(varlist))
-    obs_ind = [i + 2 * (i - 1) for i in mod_ind]
+    obs_ind = [i + 3 * (i - 1) for i in mod_ind]
 
     agg_indices = []
     for (i, _aggr) in enumerate(time_aggrs)
