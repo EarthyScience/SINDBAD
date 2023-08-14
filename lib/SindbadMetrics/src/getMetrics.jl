@@ -87,6 +87,7 @@ return model and obs data filtering for the common nan
 - `idxs`: model simulation data/estimate
 """
 function filterCommonNaN(y, yσ, ŷ, idxs)
+    # idxs = (.!isnan.(y .* yσ .* ŷ)) # TODO this has to be run because landWrapper produces a vector. So, dispatch with the inefficient versions without idxs argument
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
@@ -176,16 +177,16 @@ function aggregateObsData(y, yσ, _, ::DoNotAggrObs)
 end
 
 """
-    getLossVector(observations, model_output, cost_options)
+    getLossVector(observations, model_output::AbstractArray, cost_options)
 
 returns a vector of losses for variables in info.cost_options.observational_constraints
 
 # Arguments:
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
-- `model_output`: a collection of SINDBAD model output time series, either as a preallocated array or as a time series of stacked land NT
+- `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
-function getLossVector(observations, model_output, cost_options)
+function getLossVector(observations, model_output::AbstractArray, cost_options)
     loss_vector = map(cost_options) do cost_option
         @debug "$(cost_option.variable)"
         lossMetric = cost_option.cost_metric
@@ -203,6 +204,34 @@ function getLossVector(observations, model_output, cost_options)
     return loss_vector
 end
 
+
+"""
+    getLossVector(observations, model_output::landWrapper, cost_options)
+
+returns a vector of losses for variables in info.cost_options.observational_constraints
+
+# Arguments:
+- `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
+- `model_output:::landWrapper`: a collection of SINDBAD model output as a time series of stacked land NT
+- `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
+"""
+function getLossVector(observations, model_output::landWrapper, cost_options)
+    loss_vector = map(cost_options) do cost_option
+        @debug "$(cost_option.variable)"
+        lossMetric = cost_option.cost_metric
+        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
+        @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
+        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+        if isnan(metr)
+            metr = oftype(metr, 1e19)
+        end
+        @debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
+        metr
+    end
+    @debug "\n-------------------\n"
+    return loss_vector
+end
 
 """
     getModelOutputView(mod_dat::AbstractArray{T, 2})

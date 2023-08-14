@@ -44,10 +44,10 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
+    setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
     obs_array = [Array(_o) for _o in observations.data];
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
-    setLogLevel(:warn)
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
         run_output = optimizeTEMYax(forcing,
@@ -59,9 +59,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
             max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
-        setLogLevel(:warn)
-        land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.optimization.land_output_type, "LandOut"))()
-        optim_params = optimizeTEM(forcing, obs_array, info, land_output_type)
+        optim_params = optimizeTEM(forcing, obs_array, info, info.tem.helpers.run.land_output_type)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
