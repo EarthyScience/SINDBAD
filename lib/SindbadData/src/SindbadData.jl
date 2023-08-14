@@ -11,6 +11,7 @@ module SindbadData
     using YAXArrayBase
     using Zarr
 
+    include("inputTypes.jl")
     include("utilsData.jl")
     include("getForcing.jl")
     include("getObservation.jl")

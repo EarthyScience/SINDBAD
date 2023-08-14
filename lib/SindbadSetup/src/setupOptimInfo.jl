@@ -163,7 +163,7 @@ a helper function to get the type for spinup mode
 """
 function getTypeInstanceForCostMetric(option_name::String)
     opt_ss = toUpperCaseFirst(option_name)
-    struct_instance = getfield(SindbadMetrics, Symbol(opt_ss))()
+    struct_instance = getfield(SindbadMetrics, opt_ss)()
     return struct_instance
 end
 

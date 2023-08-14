@@ -124,7 +124,7 @@ function getLoss(
 end
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:array})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutArray)
 
 
 
@@ -132,12 +132,12 @@ end
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `nothing`: DESCRIPTION
+- `::LandOutArray`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
     info::NamedTuple,
-    ::Val{:array})
+    ::LandOutArray)
 
     tem = info.tem
     optim = info.optim
@@ -186,7 +186,7 @@ end
 
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_stacked})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutStacked)
 
 
 
@@ -194,12 +194,12 @@ end
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `Val{:land_stacked}`: a value to indicate that the time loop of the model will stack the land as a time series when runTEM is called
+- `::LandOutStacked`: a value to indicate that the time loop of the model will stack the land as a time series when runTEM is called
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
     info::NamedTuple,
-    ::Val{:land_stacked})
+    ::LandOutStacked)
 
     tem = info.tem
     optim = info.optim
@@ -245,7 +245,7 @@ end
 
 
 """
-    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, Val{:land_timeseries})
+    optimizeTEM(forcing::NamedTuple, observations, info::NamedTuple, ::LandOutTimeseries)
 
 
 
@@ -253,12 +253,12 @@ end
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `nothing`: DESCRIPTION
+- `::LandOutTimeseries`: DESCRIPTION
 """
 function optimizeTEM(forcing::NamedTuple,
     observations,
     info::NamedTuple,
-    ::Val{:land_timeseries})
+    ::LandOutTimeseries)
 
     tem = info.tem
     optim = info.optim
