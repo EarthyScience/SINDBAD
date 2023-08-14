@@ -77,6 +77,7 @@ observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data];
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
+# setLogLevel(:debug)
 # @profview getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, output_array, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries_prep, cost_options) # |> sum
