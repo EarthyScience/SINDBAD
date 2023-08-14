@@ -93,9 +93,9 @@ function getForcing(info::NamedTuple)
 
     forcing_mask = nothing
     if :sel_mask ∈ keys(info.forcing)
-        if !isnothing(info.forcing.sel_mask)
-            mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.sel_mask_var, info, data_backend)
+        if !isnothing(info.forcing.forcing_mask.data_path)
+            mask_path = getAbsDataPath(info, info.forcing.forcing_mask.data_path)
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.forcing_mask.source_variable, info, data_backend)
             forcing_mask = booleanizeArray(forcing_mask)
         end
     end

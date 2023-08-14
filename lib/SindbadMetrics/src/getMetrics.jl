@@ -38,6 +38,44 @@ function aggregateData(dat, cost_option, ::SpaceTime)
     return dat
 end
 
+
+"""
+    applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
+
+return model and obs data after applying the area weight
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `idxs`: model simulation data/estimate
+- `::DoSpatialWeight`: type dispatch for doing area weight
+"""
+function applySpatialWeight(y, yσ, ŷ, cost_option, ::DoSpatialWeight)
+    yweight = observations[cost_option.obs_ind+3]
+    y .= y .* yweight
+    yσ .= yσ .* yweight
+    ŷ .= ŷ .* yweight
+    return y, yσ, ŷ
+end
+
+
+"""
+    applySpatialWeight(y, yσ, ŷ, cost_option, ::DoNotSpatialWeight)
+
+return model and obs data without applying the area weight
+
+# Arguments:
+- `y`: observation data
+- `yσ`: observational uncertainty data
+- `ŷ`: model simulation data/estimate
+- `idxs`: model simulation data/estimate
+- `::DoNotSpatialWeight`: type dispatch for doing area weight
+"""
+function applySpatialWeight(y, yσ, ŷ, _, ::DoNotSpatialWeight)
+    return y, yσ, ŷ
+end
+
 """
     combineLoss(loss_vector::AbstractArray, ::CostSum)
 
@@ -102,7 +140,8 @@ return model and obs data filtering for the common nan
 - `ŷ`: model simulation data/estimate
 """
 function filterCommonNaN(y, yσ, ŷ)
-    idxs = (.!isnan.(y .* yσ .* ŷ))
+    @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
+    idxs = (.!isInvalid.(y .* yσ .* ŷ))
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
 
@@ -192,6 +231,7 @@ function getLossVector(observations, model_output::AbstractArray, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
@@ -221,6 +261,7 @@ function getLossVector(observations, model_output::landWrapper, cost_options)
         lossMetric = cost_option.cost_metric
         (y, yσ, ŷ) = getData(model_output, observations, cost_option)
         @debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
+        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
         (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ)
         metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
         if isnan(metr)
@@ -269,7 +310,7 @@ function prepCostOptions(observations, cost_options)
         min_point = min_data_points[vi]
         y = observations[obs_ind_start]
         yσ = observations[obs_ind_start+1]
-        idxs = Array(.!isnan.(y .* yσ))
+        idxs = Array(.!isInvalid.(y .* yσ))
         total_point = sum(idxs)
         if total_point < min_point
             push!(is_valid, false)

@@ -18,8 +18,10 @@
     "source_variable": null,
     "space_time_type": "spatiotemporal"
   },
-  "sel_mask": null,
-  "sel_mask_var": null,
+  "forcing_mask": {
+    "data_path": null,
+    "source_variable": null
+  },
   "variables": {
     "ambient_CO2": {
       "bounds": [200.0, 500.0],

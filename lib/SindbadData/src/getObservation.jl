@@ -41,6 +41,8 @@ function getAllConstraintData(nc, data_backend, data_path, default_info, v_info,
             @info "     no \"$(data_sub_field)\" field OR use_quality_flag=false in optimization settings"
         elseif data_sub_field == :unc
             @info "     no \"$(data_sub_field)\" field OR use_uncertainty=false in optimization settings"
+        elseif data_sub_field == :weight
+            @info "     no \"$(data_sub_field)\" field OR use_spatial_weight=false in optimization settings"
         else
             @info "     no \"$(data_sub_field)\" field OR sel_mask=null in optimization settings"
         end
@@ -110,6 +112,8 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         # get uncertainty data and add to observations. Set to value of 1 when :unc field is not given for a data stream or all are turned off by setting info.optimization.observations.use_uncertainty to false
         nc_unc, yax_unc, vinfo_unc, bounds_unc = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :unc, info; yax=yax, use_data_sub=info.optimization.observations.use_uncertainty)
 
+        nc_wgt, yax_wgt, vinfo_wgt, bounds_wgt = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :weight, info; yax=yax, use_data_sub=info.optimization.observations.use_spatial_weight)
+
         _, yax_mask_v, vinfo_mask, bounds_mask = getAllConstraintData(nc, data_backend, data_path, default_info, vinfo, :sel_mask, info; yax=yax)
         yax_mask_v = booleanizeArray(yax_mask_v)
         if !isnothing(yax_mask)
@@ -121,12 +125,15 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         cyax = subsetAndProcessYax(yax, yax_mask, tar_dims, vinfo_data, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing unc"
         cyax_unc = subsetAndProcessYax(yax_unc, yax_mask, tar_dims, vinfo_unc, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
+        @info "   harmonizing weight"
+        cyax_wgt = subsetAndProcessYax(yax_wgt, yax_mask, tar_dims, vinfo_wgt, info, num_type; fill_nan=true, yax_qc=cyax_qc, bounds_qc=bounds_qc)
         @info "   harmonizing mask"
         yax_mask_v = subsetAndProcessYax(yax_mask_v, yax_mask_v, tar_dims, vinfo_mask, info, num_type_bool; clean_data=false)
 
         push!(obscubes, cyax)
         push!(obscubes, cyax_unc)
         push!(obscubes, yax_mask_v)
+        push!(obscubes, cyax_wgt)
         @info " \n"
     end
     @info "getObservation: getting observation dimensions..."
@@ -139,6 +146,7 @@ function getObservation(info::NamedTuple, forcing_helpers::NamedTuple)
         push!(varnames_all, v)
         push!(varnames_all, Symbol(string(v) * "_σ"))
         push!(varnames_all, Symbol(string(v) * "_mask"))
+        push!(varnames_all, Symbol(string(v) * "_weight"))
     end
     input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
     @info "\n----------------------------------------------\n"
