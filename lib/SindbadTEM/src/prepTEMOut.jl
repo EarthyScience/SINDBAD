@@ -130,7 +130,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, _, land_init, _, nothing::Val{:yaxarray})
+    getOutDimsArrays(datavars, info, _, land_init, _, ::OutputYaxArray)
 
 
 
@@ -140,9 +140,9 @@ end
 - `_`: unused argument
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::OutputYaxArray`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, _, land_init, forcing_helpers, ::Val{:yaxarray})
+function getOutDimsArrays(datavars, info, _, land_init, forcing_helpers, ::OutputYaxArray)
     outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers);
     info.forcing.data_dimension.time
     space_dims = Symbol.(info.forcing.data_dimension.space)
@@ -179,7 +179,7 @@ end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:array})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputArray)
 
 
 
@@ -189,9 +189,9 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::OutputArray`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:array})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputArray)
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers)
@@ -207,7 +207,7 @@ function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helper
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:sized_array})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputSizedArray)
 
 
 
@@ -217,16 +217,16 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::OutputSizedArray`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:sized_array})
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputSizedArray)
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, OutputArray())
     sized_array = SizedArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, sized_array
 end
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:marray})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputMarray)
 
 
 
@@ -236,17 +236,17 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::OutputMarray`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:marray})
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(:array))
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputMarray)
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, OutputArray())
     marray = MArray{Tuple{size(outarray)...},eltype(outarray)}(undef)
     return outdims, marray
 end
 
 
 """
-    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val{:keyed_array})
+    getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputKeyedArray)
 
 
 
@@ -256,9 +256,9 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `land_init`: initial SINDBAD land with all fields and subfields
 - `forcing_helpers`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::OutputKeyedArray`: DESCRIPTION
 """
-function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::Val{:keyed_array})
+function getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, ::OutputKeyedArray)
     forcing_sizes = forcing_helpers.sizes
     outarray = getNumericArrays(datavars, info, tem_helpers, land_init, forcing_sizes)
     outdims_pairs = getOutDimsPairs(datavars, info, land_init, forcing_helpers; dthres=0)
@@ -408,7 +408,8 @@ function setupBaseOutput(info::NamedTuple, forcing_helpers::NamedTuple, tem_help
     output_tuple = (;)
     output_tuple = setTupleField(output_tuple, (:land_init, land_init))
     @info "     prepTEMOut: getting output dimension and arrays..."
-    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, Val(Symbol(info.experiment.model_output.output_array_type)))
+    output_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.model_output.output_array_type, "Output"))()
+    outdims, outarray = getOutDimsArrays(datavars, info, tem_helpers, land_init, forcing_helpers, output_array_type)
     output_tuple = setTupleField(output_tuple, (:dims, outdims))
     output_tuple = setTupleField(output_tuple, (:data, outarray))
 

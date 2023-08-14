@@ -106,11 +106,11 @@ function getDimPermutation(datDims, permDims)
 end
 
 """
-    getInputArrayOfType(input_data, nothing::Val{:array})
+    getInputArrayOfType(input_data, ::InputArray})
 
 
 """
-function getInputArrayOfType(input_data, ::Val{:array})
+function getInputArrayOfType(input_data, ::InputArray)
     array_data = map(input_data) do c
         Array(c.data)
     end
@@ -118,11 +118,11 @@ function getInputArrayOfType(input_data, ::Val{:array})
 end
 
 """
-    getInputArrayOfType(input_data, nothing::Val{:keyed_array})
+    getInputArrayOfType(input_data, ::InputKeyedArray})
 
 
 """
-function getInputArrayOfType(input_data, ::Val{:keyed_array})
+function getInputArrayOfType(input_data, ::InputKeyedArray)
     keyed_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
         KeyedArray(Array(c.data); t_dims...)
@@ -131,11 +131,11 @@ function getInputArrayOfType(input_data, ::Val{:keyed_array})
 end
 
 """
-    getInputArrayOfType(input_data, nothing::Val{:named_dims_array})
+    getInputArrayOfType(input_data, ::InputNamedDimsArray})
 
 
 """
-function getInputArrayOfType(input_data, ::Val{:named_dims_array})
+function getInputArrayOfType(input_data, ::InputNamedDimsArray)
     named_array_data = map(input_data) do c
         t_dims = getSindbadDims(c)
         NamedDimsArray(Array(c.data); t_dims...)
@@ -144,11 +144,11 @@ function getInputArrayOfType(input_data, ::Val{:named_dims_array})
 end
 
 """
-    getInputArrayOfType(input_data, nothing::Val{:yaxarray})
+    getInputArrayOfType(input_data, ::InputYaxArray})
 
 
 """
-function getInputArrayOfType(input_data, ::Val{:yaxarray})
+function getInputArrayOfType(input_data, ::InputYaxArray)
     return input_data
 end
 
@@ -189,7 +189,7 @@ function getTargetDimensionOrder(info)
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, Val{:netcdf})
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
 
 
 
@@ -199,9 +199,9 @@ end
 - `data_path_v`: DESCRIPTION
 - `source_variable`: DESCRIPTION
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
-- `nothing`: DESCRIPTION
+- `::BackendNetcdf`: DESCRIPTION
 """
-function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::Val{:netcdf})
+function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::BackendNetcdf)
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     v = nc[source_variable]
     ax = map(NCDatasets.dimnames(v)) do dn
@@ -224,7 +224,7 @@ function getYaxFromSource(nc, data_path, data_path_v, source_variable, info, ::V
 end
 
 """
-    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, Val{:zarr})
+    getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
 
 
 
@@ -234,9 +234,9 @@ end
 - `data_path_v`: DESCRIPTION
 - `source_variable`: DESCRIPTION
 - `_`: unused argument
-- `nothing`: DESCRIPTION
+- `::BackendZarr`: DESCRIPTION
 """
-function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::Val{:zarr})
+function getYaxFromSource(nc, data_path, data_path_v, source_variable, _, ::BackendZarr)
     nc = loadDataFromPath(nc, data_path, data_path_v, source_variable)
     yax = nc[source_variable]
     return nc, yax

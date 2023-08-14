@@ -1,6 +1,9 @@
-# ------------------------- optimization algorithm -------------------------
+# ------------------------- optimization TEM and algorithm -------------------------
 export CMAEvolutionStrategyCMAES
 export EvolutionaryCMAES
+export LandOutArray
+export LandOutStacked
+export LandOutTimeseries
 export OptimLBFGS
 export OptimBFGS
 export OptimizationBBOadaptive
@@ -13,6 +16,9 @@ export OptimizationNelderMead
 
 struct CMAEvolutionStrategyCMAES end
 struct EvolutionaryCMAES end
+struct LandOutArray end
+struct LandOutStacked end
+struct LandOutTimeseries end
 struct OptimLBFGS end
 struct OptimBFGS end
 struct OptimizationBBOadaptive end
@@ -111,7 +117,8 @@ struct SelSpinupModels end
 struct SSPDynamicSSTsit5 end
 struct SSPSSRootfind end
 
-# ------------------------- parallelization and model output-------------------------
+# ------------------------- parallelization and model output options-------------------------
+
 export DoOutputAll
 export DoNotOutputAll
 export DoSaveSingleFile
@@ -125,3 +132,28 @@ struct DoSaveSingleFile end
 struct DoNotSaveSingleFile end
 struct UseQbmapParallelization end
 struct UseThreadsParallelization end
+
+# ------------------------- model array types for internal model variables -------------------------
+
+export ModelArrayArray
+export ModelArrayStaticArray
+export ModelArrayView
+
+struct ModelArrayArray end
+struct ModelArrayStaticArray end
+struct ModelArrayView end
+
+
+# ------------------------- output array types preallocated arrays -------------------------
+
+export OutputArray
+export OutputKeyedArray
+export OutputMarray
+export OutputSizedArray
+export OutputYaxArray
+
+struct OutputArray end
+struct OutputKeyedArray end
+struct OutputMarray end
+struct OutputSizedArray end
+struct OutputYaxArray end

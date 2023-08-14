@@ -39,10 +39,11 @@ for (i, tj) ∈ enumerate(tjs)
     forcing_one_timestep = prepTEM(forcing, info)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
+    spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
 
     spinupforc = :day_msc
-    sel_forcing = getSpinupForcing(loc_forcing, tem_with_types.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_types)
+    sel_forcing = getfield(spinup_forcing, spinupforc)
+
 
     land_init = land_init_space[1]
     land_type = typeof(land_init)
@@ -50,7 +51,7 @@ for (i, tj) ∈ enumerate(tjs)
 
     spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
     cInit = deepcopy(getfield(land_init.pools, sel_pool))
-    sp = :ODE_Tsit5
+    sp = ODETsit5()
     @show "ODE_Init", tj
     @time out_sp_ode = SindbadTEM.runSpinup(spinup_models,
         getfield(spinup_forcing, spinupforc),
@@ -59,11 +60,11 @@ for (i, tj) ∈ enumerate(tjs)
         tem_with_types.spinup,
         land_type,
         forcing_one_timestep,
-        Val(sp))
+        sp)
 
     out_sp_ode_init = deepcopy(out_sp_ode)
     @show "Exp_Init", tj
-    sp = :spinup
+    sp = selSpinupModels()
     out_sp_exp = land_init
     @time for nl ∈ 1:Int(tem_with_types.spinup.differential_eqn.time_jump)
         out_sp_exp = SindbadTEM.runSpinup(spinup_models,
@@ -72,8 +73,7 @@ for (i, tj) ∈ enumerate(tjs)
             tem_with_types.helpers,
             tem_with_types.spinup,
             land_type,
-            forcing_one_timestep,
-            Val(sp))
+            forcing_one_timestep)
     end
     out_sp_exp_init = deepcopy(out_sp_exp)
     expSol[:, i] = getfield(out_sp_ode_init.pools, sel_pool)
