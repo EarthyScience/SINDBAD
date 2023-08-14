@@ -255,7 +255,15 @@ end
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
 - `::DoRunSpinup`: DESCRIPTION
 """
-function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_helpers, tem_models, tem_spinup, ::DoRunSpinup) # do the spinup
+function runSpinup(
+    selected_models,
+    forcing,
+    forcing_one_timestep,
+    land,
+    tem_helpers,
+    tem_models,
+    tem_spinup,
+    ::DoRunSpinup) # do the spinup
     spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_spinup.sequence, tem_helpers)
     seq_index = 1
     log_index = 1
@@ -286,16 +294,10 @@ function runSpinup(selected_models, forcing, forcing_one_timestep, land, tem_hel
     return land
 end
 
-
-"""
-runSpinup(spinup_models, spinup_forcing, land, tem, ::spinup)
-do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :spinup, only the models chosen as use_in_spinup in model_structure.json are run.
-"""
-
 """
     runSpinup(spinup_models, spinup_forcing, forcing_one_timestep, land, tem_helpers, _, SelSpinupModels)
 
-
+do/run the spinup and update the state using a simple timeloop through the input models given in spinup_models. In case of :spinup, only the models chosen as use_in_spinup in model_structure.json are run.
 
 # Arguments:
 - `spinup_models`: a tuple of a subset of all models in the given model structure that is selected for spinup

@@ -64,7 +64,8 @@ function getForcingNamedTuple(incubes, f_sizes, f_dimensions, info)
     @debug "     ::variable names::"
     forcing_variables = keys(info.forcing.variables)
     f_helpers = collectForcingHelpers(info, f_sizes, f_dimensions)
-    typed_cubes = getInputArrayOfType(incubes, Val(Symbol(info.experiment.exe_rules.input_array_type)))
+    input_array_type = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_array_type, "Input"))()
+    typed_cubes = getInputArrayOfType(incubes, input_array_type)
     @info "\n----------------------------------------------\n"
     forcing = (;
         data=typed_cubes,
@@ -85,15 +86,16 @@ function getForcing(info::NamedTuple)
     data_path = info.forcing.default_forcing.data_path
     if !isnothing(data_path)
         data_path = getAbsDataPath(info, data_path)
-        @info " default_data_path: $(data_path)"
+        @info "getForcing: default_data_path: $(data_path)"
         nc = loadDataFile(data_path)
     end
+    data_backend = getfield(SindbadData, toUpperCaseFirst(info.experiment.exe_rules.input_data_backend, "Backend"))()
 
     forcing_mask = nothing
     if :sel_mask ∈ keys(info.forcing)
         if !isnothing(info.forcing.sel_mask)
             mask_path = getAbsDataPath(info, info.forcing.sel_mask)
-            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.sel_mask_var, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
+            _, forcing_mask = getYaxFromSource(nothing, mask_path, nothing, info.forcing.sel_mask_var, info, data_backend)
             forcing_mask = booleanizeArray(forcing_mask)
         end
     end
@@ -109,7 +111,7 @@ function getForcing(info::NamedTuple)
     incubes = map(forcing_variables) do k
         vinfo = getCombinedNamedTuple(default_info, info.forcing.variables[k])
         data_path_v = getAbsDataPath(info, getfield(vinfo, :data_path))
-        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, Val(Symbol(info.experiment.exe_rules.input_data_backend)))
+        nc, yax = getYaxFromSource(nc, data_path, data_path_v, vinfo.source_variable, info, data_backend)
         @info "     source_var: $(vinfo.source_variable)"
         incube = subsetAndProcessYax(yax, forcing_mask, tar_dims, vinfo, info, num_type)
         @info "     sindbad_var: $(k)\n "
