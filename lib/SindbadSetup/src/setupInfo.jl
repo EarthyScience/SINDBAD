@@ -132,7 +132,7 @@ end
 
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:view})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
 
 
 
@@ -142,9 +142,9 @@ end
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::ModelArrayView`: DESCRIPTION
 """
-function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:view})
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayView)
     if ismain
         num_type.(input_values)
     else
@@ -153,7 +153,7 @@ function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::V
 end
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:array})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayArray)
 
 
 
@@ -163,14 +163,14 @@ end
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::ModelArrayArray`: DESCRIPTION
 """
-function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:array})
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayArray)
     return num_type.(input_values)
 end
 
 """
-    createArrayofType(input_values, pool_array, num_type, indx, ismain, Val{:static_array})
+    createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayStaticArray)
 
 
 
@@ -180,9 +180,9 @@ end
 - `num_type`: DESCRIPTION
 - `indx`: DESCRIPTION
 - `ismain`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `::ModelArrayStaticArray`: DESCRIPTION
 """
-function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::Val{:static_array})
+function createArrayofType(input_values, pool_array, num_type, indx, ismain, ::ModelArrayStaticArray)
     return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
     # return SVector{length(input_values)}(num_type(ix) for ix ∈ input_values)
 end
@@ -236,7 +236,7 @@ function generatePoolsInfo(info::NamedTuple)
     elements = keys(info.model_structure.pools)
     tmp_states = (;)
     hlp_states = (;)
-    array_type = Symbol(info.experiment.exe_rules.model_array_type)
+    model_array_type = getfield(SindbadSetup, toUpperCaseFirst(info.experiment.exe_rules.model_array_type, "ModelArray"))()
 
     for element ∈ elements
         vals_tuple = (;)
@@ -249,7 +249,6 @@ function generatePoolsInfo(info::NamedTuple)
         tmp_states = setTupleField(tmp_states, (elSymbol, (;)))
         hlp_states = setTupleField(hlp_states, (elSymbol, (;)))
         pool_info = getfield(getfield(info.model_structure.pools, element), :components)
-        # array_type = Symbol(getfield(getfield(info.model_structure.pools, element), :arraytype))
         nlayers = Int64[]
         layer_thicknesses = info.tem.helpers.numbers.num_type[]
         layer = Int64[]
@@ -300,7 +299,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
 
             zix = Tuple(zix)
 
@@ -314,7 +313,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem,
                 :zeros,
@@ -349,7 +348,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
             tmp_elem = setTupleSubfield(tmp_elem, :components, (sub_pool, Tuple(components)))
             tmp_elem = setTupleSubfield(tmp_elem, :zix, (sub_pool, zix))
             tmp_elem = setTupleSubfield(tmp_elem, :initial_values, (sub_pool, initial_values))
@@ -362,7 +361,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
             # onetyped = ones(length(initial_values))
             hlp_elem = setTupleSubfield(hlp_elem, :zeros,
                 (sub_pool, onetyped .* info.tem.helpers.numbers.𝟘))
@@ -389,7 +388,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
             zix = collect(1:1:length(main_pool_name))
             zix = Tuple(zix)
 
@@ -402,7 +401,7 @@ function generatePoolsInfo(info::NamedTuple)
                 info.tem.helpers.numbers.sNT,
                 nothing,
                 true,
-                Val(array_type))
+                model_array_type)
             all_components = Tuple([_k for _k in keys(tmp_elem.zix) if _k !== combined_pool_name])
             hlp_elem = setTupleSubfield(hlp_elem, :all_components, (combined_pool_name, all_components))
             vals_tuple = setTupleSubfield(vals_tuple, :zix, (combined_pool_name, Val(hlp_elem.zix)))
@@ -484,7 +483,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
     init_pools = (;)
     for element ∈ propertynames(info_pools)
         props = getfield(info_pools, element)
-        array_type = getfield(props, :arraytype)
+        model_array_type = getfield(SindbadSetup, toUpperCaseFirst(string(getfield(props, :arraytype)), "ModelArray"))()
         var_to_create = getfield(props, :create)
         initial_values = getfield(props, :initial_values)
         for tocr ∈ var_to_create
@@ -496,7 +495,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         tem_helpers.numbers.sNT,
                         nothing,
                         true,
-                        Val(array_type))))
+                        model_array_type)))
         end
         to_combine = getfield(getfield(info_pools, element), :combine)
         if to_combine.docombine
@@ -513,7 +512,7 @@ function getInitPools(info_pools::NamedTuple, tem_helpers::NamedTuple)
                         tem_helpers.numbers.sNT,
                         indx,
                         false,
-                        Val(array_type))
+                        model_array_type)
                     # compdat::AbstractArray = @view pool_array[indx]
                     init_pools = setTupleField(init_pools, (component, compdat))
                 end
@@ -541,7 +540,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
         var_to_create = getfield(props, :create)
         additional_state_vars = getfield(props, :state_variables)
         initial_values = getfield(props, :initial_values)
-        array_type = getfield(props, :arraytype)
+        model_array_type = getfield(SindbadSetup, toUpperCaseFirst(string(getfield(props, :arraytype)), "ModelArray"))()
         for tocr ∈ var_to_create
             for avk ∈ keys(additional_state_vars)
                 avv = getproperty(additional_state_vars, avk)
@@ -554,7 +553,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                     tem_helpers.numbers.sNT,
                     nothing,
                     true,
-                    Val(array_type))
+                    model_array_type)
                 initial_states = setTupleField(initial_states, (Δtocr, newvals))
             end
         end
@@ -577,7 +576,7 @@ function getInitStates(info_pools::NamedTuple, tem_helpers::NamedTuple)
                             tem_helpers.numbers.sNT,
                             indx,
                             false,
-                            Val(array_type))
+                            model_array_type)
                         # Δ_compdat::AbstractArray = @view Δ_pool_array[indx]
                         initial_states = setTupleField(initial_states, (Δ_component, Δ_compdat))
                     end
@@ -1006,7 +1005,7 @@ function getTypeInstanceForFlags(option_name::Symbol, option_value, opt_pref="Do
     if !option_value
         structname = toUpperCaseFirst(opt_s, opt_pref*"Not")
     end
-    struct_instance = getfield(SindbadSetup, Symbol(structname))()
+    struct_instance = getfield(SindbadSetup, structname)()
     return struct_instance
 end
 
@@ -1017,8 +1016,8 @@ end
 a helper function to get the type for named option with string values. In this, the string is split by "_" and join after capitalizing the first letter
 """
 function getTypeInstanceForNamedOptions(option_name::String)
-    opt_ss = toUpperCaseFirst(option_name,"_")
-    struct_instance = getfield(SindbadSetup, Symbol(opt_ss))()
+    opt_ss = toUpperCaseFirst(option_name)
+    struct_instance = getfield(SindbadSetup, opt_ss)()
     return struct_instance
 end
 

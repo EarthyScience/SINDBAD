@@ -60,7 +60,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
     else
         @info "runExperiment: do spatial optimization..."
         setLogLevel(:warn)
-        optim_params = optimizeTEM(forcing, obs_array, info, Val(Symbol(info.optimization.land_output_type)))
+        land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.optimization.land_output_type, "LandOut"))()
+        optim_params = optimizeTEM(forcing, obs_array, info, land_output_type)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
         run_output = optim_params.optim
