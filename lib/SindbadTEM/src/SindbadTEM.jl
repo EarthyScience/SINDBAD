@@ -21,5 +21,6 @@ module SindbadTEM
     include("runTEMYax.jl")
     include("spinupTEM.jl")
     include("updateParameters.jl")
+    include("runSpatial.jl")
 
 end # module SindbadTEM

@@ -30,6 +30,7 @@ function get_loc_loss(
     return t_loss
 end
 
+
 """
 loc_loss(up_params,
     forward,
@@ -163,3 +164,40 @@ function gradsBatch!(loss_function::Function, up_params_now, f_grads, xbatch, si
         next!(p; showvalues=[(:site_name, site_name)])
     end
 end
+
+
+tem = (;
+    tem_helpers,
+    tem_models,
+    tem_spinup,
+    tem_run_spinup = tem_helpers.run.spinup.spinup_TEM,
+)
+
+optim = (;
+    cost_options,
+    multiconstraint_method
+)
+
+data = (;
+    loc_forcing,
+    forcing_one_timestep,
+    allocated_output = loc_output
+)
+
+inits = (;
+    selected_models,
+    land_init
+)
+function getSiteLossTEM(inits, data, data_optim, tem, optim) 
+    coreTEM!(inits.selected_models, data..., inits.land_init, tem...)
+    lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
+    t_loss = combineLossArray(lossVec, optim.multiconstraint_method)
+    return t_loss
+end
+
+loc_forcing, loc_output, loc_obs = getLocDataObsN(output_array, forc, obs_array, site_location)
+
+
+inits = (; inits..., approaches = new_apps)
+data = (; allocated_output = out_data, site_forcings)
+return getSiteLoss(inits, data, data_optim, tem)
