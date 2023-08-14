@@ -190,8 +190,8 @@ function createTimeAggregator(date_vector, ::TimeDayMsc, aggr_func=mean, skip_ag
     days = dayofyear.(date_vector)
     daysMsc = unique(days)
     days_ind = [getTimeArray(findall(==(dd), days), getTypeOfTimeIndexArray()) for dd in daysMsc]
-    dayMsc_agg = TimeAggregator(days_ind, aggr_func)
-    return [dayMsc_agg,]
+    dat_msc_agg = TimeAggregator(days_ind, aggr_func)
+    return [dat_msc_agg,]
 end
 
 """
@@ -206,9 +206,9 @@ a function to create a temporal aggregation struct for anomalies of daily mean s
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
 function createTimeAggregator(date_vector, ::TimeDayMscAnomaly, aggr_func=mean, skip_aggregation=false)
-    dayMsc_agg = createTimeAggregator(date_vector, TimeDayMsc(), aggr_func, skip_aggregation)
+    dat_msc_agg = createTimeAggregator(date_vector, TimeDayMsc(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
-    return [dayMsc_agg[1], mean_agg[1]]
+    return [dat_msc_agg[1], mean_agg[1]]
 end
 
 """
@@ -283,8 +283,8 @@ a function to create a temporal aggregation struct for mean seasonal cycle of mo
 function createTimeAggregator(date_vector, ::TimeMonthMsc, aggr_func=mean, skip_aggregation=false)
     months = month.(date_vector)
     monthsMsc = unique(months)
-    t_monthMsc_agg = TimeAggregator([getTimeArray(findall(==(mm), months), getTypeOfTimeIndexArray()) for mm in monthsMsc], aggr_func)
-    return [t_monthMsc_agg,]
+    t_month_msc_agg = TimeAggregator([getTimeArray(findall(==(mm), months), getTypeOfTimeIndexArray()) for mm in monthsMsc], aggr_func)
+    return [t_month_msc_agg,]
 end
 
 """
@@ -299,9 +299,9 @@ a function to create a temporal aggregation struct for anomalies of mean seasona
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
 function createTimeAggregator(date_vector, ::TimeMonthMscAnomaly, aggr_func=mean, skip_aggregation=false)
-    t_monthMsc_agg = createTimeAggregator(date_vector, TimeMonthMsc(), aggr_func, skip_aggregation)
+    t_month_msc_agg = createTimeAggregator(date_vector, TimeMonthMsc(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
-    return [t_monthMsc_agg[1], mean_agg[1]]
+    return [t_month_msc_agg[1], mean_agg[1]]
 end
 
 """
