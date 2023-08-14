@@ -192,12 +192,12 @@ end
 
 
 """
-    toUpperCaseFirst(s, prefix=")
+    toUpperCaseFirst(s::String, prefix=")
 
-returns the uppercase first string with _ removed and prefix at the beginning
+returns the uppercase first Symbol from input string with _ removed and prefix at the beginning
 """
 function toUpperCaseFirst(s::String, prefix="")
-    return prefix * join(uppercasefirst.(split(s,"_")))
+    return Symbol(prefix * join(uppercasefirst.(split(s,"_"))))
 end
 
 

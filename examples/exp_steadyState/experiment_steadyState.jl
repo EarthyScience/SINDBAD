@@ -81,12 +81,11 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
     loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_space, tem_with_types, forcing_one_timestep =
         prepTEM(forcing, info)
 
+    spinup_forcing = getSpinupForcing(forcing, forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
 
     loc_forcing, loc_output = getLocData(output_array, forcing_nt_array, loc_space_maps[1])
 
     spinupforc = :day_msc
-    sel_forcing = getSpinupForcing(loc_forcing, tem_with_types.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, tem_with_types)
     theforcing = getfield(spinup_forcing, spinupforc)
 
     spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
@@ -116,12 +115,12 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                 tem_with_types.spinup,
                 land_type,
                 forcing_one_timestep,
-                Val(:spinup))
+                SelSpinupModels())
         end
 
 
         # sel_pool = :TWS
-        sp_method = Symbol("nlsolve_fixedpoint_trustregion_$(string(sel_pool))")
+        sp_method = getfield(SindbadSetup, toUpperCaseFirst("nlsolve_fixedpoint_trustregion_$(string(sel_pool))"))()
         @show "NL_solve"
         @time out_sp_nl = SindbadTEM.runSpinup(spinup_models,
             theforcing,
@@ -130,14 +129,14 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
             tem_with_types.spinup,
             land_type,
             forcing_one_timestep,
-            Val(sp_method))
+            sp_method)
 
 
         for tj ∈ tjs
             land = deepcopy(land_space[1])
 
             @show "Exp_Init"
-            sp = :spinup
+            sp = SelSpinupModels()
             out_sp_exp = deepcopy(land_for_s)
             @time for nl ∈ 1:tj
                 out_sp_exp = SindbadTEM.runSpinup(spinup_models,
@@ -147,11 +146,10 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                     tem_with_types.spinup,
                     land_type,
                     forcing_one_timestep,
-                    Val(sp))
+                    sp)
             end
 
             @show "Exp_NL"
-            sp = :spinup
             out_sp_exp_nl = deepcopy(out_sp_nl)
             @time for nl ∈ 1:tj
                 out_sp_exp_nl = SindbadTEM.runSpinup(spinup_models,
@@ -161,7 +159,7 @@ for model_array_type ∈ ("static_array", "array") #, "static_array")
                     tem_with_types.spinup,
                     land_type,
                     forcing_one_timestep,
-                    Val(sp))
+                    sp)
             end
             if sel_pool in (:cEco_TWS,)
                 plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, model_array_type, out_path)

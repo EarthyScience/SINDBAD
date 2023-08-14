@@ -53,7 +53,7 @@ end
 
 function getTimeAggregatorTypeInstance(aggr::String)
     uc_first = toUpperCaseFirst(aggr, "Time")
-    return getfield(SindbadUtils, Symbol(uc_first))()
+    return getfield(SindbadUtils, uc_first)()
 end
 
 # -------------------------------- spatial subset --------------------------------

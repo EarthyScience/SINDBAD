@@ -35,7 +35,8 @@ function optimizeYax(args...;
     output, forcing, observation = unpackYaxOpti(args; forcing_variables)
     forcing = (; Pair.(forcing_variables, forcing)...)
     observation = (; Pair.(obs_variables, observation)...)
-    params = optimizeTEM(forcing, observation, info, Val(:land_stacked))
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.optimization.land_output_type, "LandOut"))
+    params = optimizeTEM(forcing, observation, info, land_output_type)
     return output[:] = params.optim
 end
 

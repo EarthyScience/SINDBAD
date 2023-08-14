@@ -138,7 +138,7 @@ function locTEM!(
 end
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, Val{:threads})
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, ::UseThreadsParallelization)
 
 parallelize SINDBAD TEM using threads as backend
 
@@ -188,7 +188,7 @@ function parallelizeTEM!(
 end
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, Val{:qbmap})
+    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, ::UseQbmapParallelization)
 
 parallelize SINDBAD TEM using qbmap as backend
 
