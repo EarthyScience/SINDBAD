@@ -603,6 +603,8 @@ function getModelRunInfo(info::NamedTuple)
     run_info = setTupleField(run_info, (:use_forward_diff, run_vals.use_forward_diff))
     parallelization = titlecase(info.experiment.exe_rules.parallelization)
     run_info = setTupleField(run_info, (:parallelization, getfield(SindbadSetup, Symbol("Use"*parallelization*"Parallelization"))()))
+    land_output_type = getfield(SindbadSetup, toUpperCaseFirst(info.optimization.land_output_type, "LandOut"))()
+    run_info = setTupleField(run_info, (:land_output_type, land_output_type))
     return run_info
 end
 

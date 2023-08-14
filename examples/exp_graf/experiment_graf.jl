@@ -52,24 +52,44 @@ getLossVector(obs_array, output_array, prepCostOptions(obs_array, info.optim.cos
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
 
+
+
 ds = forcing.data[1];
-using Plots
 plotdat = output_array;
 out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
     vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
     vname = vinfo["standard_name"]
+    println("plot output-model => domain: $domain, variable: $vname")
     pd = plotdat[i]
     if size(pd, 2) == 1
-        heatmap(pd[:, 1, :])
+        heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
         # Colorbar(fig[1, 2], obj)
         savefig(joinpath(info.output.figure, "afr2d_$(vname).png"))
     else
         for ll ∈ 1:size(pd, 2)
-            heatmap(pd[:, 1, :])
+            heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
             savefig(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"))
         end
     end
+end
+
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+forc_vars = forcing.variables
+for (o, v) in enumerate(forc_vars)
+    println("plot forc-model => domain: $domain, variable: $v")
+    def_var = forcing.data[o]
+    plot_data=nothing
+    xdata = [info.tem.helpers.dates.range...]
+    if size(def_var, 1) !== length(xdata)
+        xdata = 1:size(def_var, 1)
+        plot_data =  def_var[:]
+        plot_data = reshape(plot_data, (1,length(plot_data)))
+    else
+        plot_data =  def_var[:,:]
+    end
+    heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isnan.(plot_data)))", size=(2000, 1000))
+    savefig(joinpath(info.output.figure, "forc_afr2d_$v.png"))
 end
