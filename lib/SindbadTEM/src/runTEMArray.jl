@@ -39,7 +39,7 @@ function coreTEM!(
         loc_output,
         land_prec,
         tem_helpers,
-        tem_helpers.vals.debug_model)
+        tem_helpers.run.debug_model)
     return nothing
 end
 
@@ -249,9 +249,9 @@ a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locatio
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment    
 """
 function runTEM!(forcing::NamedTuple, info::NamedTuple)
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_types = prepTEM(forcing, info)
-    runTEM!(tem_with_types.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_types)
-    return output_array
+    run_helpers = prepTEM(forcing, info)
+    runTEM!(run_helpers.tem_with_types.models.forward, run_helpers.forcing_nt_array, run_helpers.loc_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.loc_space_inds, run_helpers.tem_with_types)
+    return run_helpers.output_array
 end
 
 """

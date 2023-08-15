@@ -30,29 +30,29 @@ for site_index in sites
     domain = string(site_info[site_index][2])
 
     experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-    sYear = nothing
-    eYear = nothing
+    begin_year = nothing
+    end_year = nothing
     ml_main_dir = nothing
     if forcing_set == "erai"
         dataset = "ERAinterim.v2"
-        sYear = "1979"
-        eYear = "2017"
+        begin_year = "1979"
+        end_year = "2017"
         ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/"
     else
         dataset = "CRUJRA.v2_2"
-        sYear = "1901"
-        eYear = "2019"
+        begin_year = "1901"
+        end_year = "2019"
         ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
     end
     ml_param_file = joinpath(ml_main_dir, "sindbad_raw_set1/fluxnetBGI2021.BRK15.DD", dataset, domain, "optimization", "optimized_Params_FLUXNET_pcmaes_FLUXNET2015_daily_$(domain).json")
-    ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(sYear).$(eYear).daily.nc")
+    ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
 
     ml_data_path = joinpath(ml_main_dir, "sindbad_raw_set1/fluxnetBGI2021.BRK15.DD", dataset, domain, "modelOutput")
     if do_debug_figs
         ml_data_path = joinpath(ml_main_dir, "sindbad_raw_set1PF/fluxnetBGI2021.BRK15.DD", dataset, domain, "modelOutput")
     end
 
-    path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc")
+    path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc")
 
     path_observation = path_input
     forcing_config = "forcing_$(forcing_set).json"
@@ -76,7 +76,7 @@ for site_index in sites
     nrepeat_d = nothing
     if y_dist !== "undisturbed"
         y_disturb = year(Date(y_dist))
-        y_start = Meta.parse(sYear)
+        y_start = Meta.parse(begin_year)
         nrepeat_d = y_start - y_disturb
     end
     sequence = nothing
@@ -112,12 +112,12 @@ for site_index in sites
 
 
     parallelization_lib = "threads"
-    replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+    replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.optimization" => "optimization_1_1.json",
         "experiment.basics.config_files.forcing" => forcing_config,
         "experiment.basics.domain" => domain,
         "forcing.default_forcing.data_path" => path_input,
-        "experiment.basics.time.date_end" => eYear * "-12-31",
+        "experiment.basics.time.date_end" => end_year * "-12-31",
         "experiment.flags.run_optimization" => false,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.spinup.save_spinup" => false,
@@ -169,21 +169,21 @@ for site_index in sites
         ## run the model
 
 
-        forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_types, forcing_one_timestep = prepTEM(models_with_matlab_params, forcing, info)
-        @time runTEM!(output_array,
-            models_with_matlab_params,
-            forcing_nt_array,
-            loc_space_inds,
-            loc_forcings,
-            loc_outputs,
-            land_init_space,
-            forcing_one_timestep,
-            tem_with_types)
+        run_helpers = prepTEM(models_with_matlab_params, forcing, info)
+        @time runTEM!(models_with_matlab_params,
+            run_helpers.forcing_nt_array,
+            run_helpers.loc_forcings,
+            run_helpers.forcing_one_timestep,
+            run_helpers.output_array,
+            run_helpers.loc_outputs,
+            run_helpers.land_init_space,
+            run_helpers.loc_space_inds,
+            run_helpers.tem_with_types)
 
-        outcubes = output_array
+        outcubes = run_helpers.output_array
 
         observations = getObservation(info, forcing.helpers)
-        obs_array = [Array(_o) for _o in observations.data]
+        obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
 
         # open the matlab simulation data
         # nc_ml = SindbadData.NetCDF.open(ml_data_file);
@@ -194,7 +194,7 @@ for site_index in sites
         # some plots for model simulations from JL and matlab versions
         ds = forcing.data[1]
         opt_dat = outcubes
-        out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
+        out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
         costOpt = prepCostOptions(obs_array, info.optim.cost_options)
         default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
         foreach(costOpt) do var_row
@@ -256,27 +256,24 @@ for site_index in sites
             # note that this will modify information from json with the replace_info
             forcing = getForcing(info)
 
-            forcing_nt_array, output_array, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_types, forcing_one_timestep =
-                prepTEM(models_with_matlab_params,
-                    forcing_nt_array,
-                    info.tem,
-                    info.tem.helpers)
-            linit = land_init_space[1]
-            @time runTEM!(output_array,
-                models_with_matlab_params,
-                forcing_nt_array,
-                loc_space_inds,
-                loc_forcings,
-                loc_outputs,
-                land_init_space,
-                forcing_one_timestep,
-                tem_with_types)
+            run_helpers = prepTEM(models_with_matlab_params,
+                    forcing,
+                    info)                                
+            runTEM!(models_with_matlab_params,
+                run_helpers.forcing_nt_array,
+                run_helpers.loc_forcings,
+                run_helpers.forcing_one_timestep,
+                run_helpers.output_array,
+                run_helpers.loc_outputs,
+                run_helpers.land_init_space,
+                run_helpers.loc_space_inds,
+                run_helpers.tem_with_types)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-            out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
+            out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
             for (o, v) in enumerate(out_vars)
                 println("plot dbg-model => site: $domain, variable: $v")
-                def_var = output_array[o][:, :, 1, 1]
+                def_var = run_helpers.output_array[o][:, :, 1, 1]
                 xdata = [info.tem.helpers.dates.range...][debug_span]
                 vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
                 ml_dat = nothing

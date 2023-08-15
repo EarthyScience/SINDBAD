@@ -34,7 +34,7 @@ function coreTEM(
         forcing_one_timestep,
         land_prec,
         tem_helpers,
-        tem_helpers.vals.debug_model)
+        tem_helpers.run.debug_model)
     return land_time_series
 end
 
@@ -121,7 +121,7 @@ function coreTEM(
         land_time_series,
         land_prec,
         tem_helpers,
-        tem_helpers.vals.debug_model)
+        tem_helpers.run.debug_model)
     return nothing
 end
 
@@ -180,8 +180,8 @@ end
 
 """
 function runTEM(forcing::NamedTuple, info::NamedTuple)
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem = prepTEM(forcing, info)
-    land_time_series = coreTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    run_helpers = prepTEM(forcing, info)
+    land_time_series = coreTEM(info.tem.models.forward, run_helpers.loc_forcing, run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types.helpers, run_helpers.tem_with_types.models, run_helpers.tem_with_types.spinup, run_helpers.tem_with_types.helpers.run.spinup.spinup_TEM)
     return landWrapper(land_time_series)
 end
 
@@ -280,7 +280,7 @@ function timeLoopTEM(
     selected_models,
     forcing,
     forcing_one_timestep,
-    land_time_series,
+    _,
     land,
     tem_helpers,
     ::DoDebugModel) # debug the models

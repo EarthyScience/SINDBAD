@@ -5,8 +5,8 @@
       "model_structure": "model_structure.json",
       "optimization": "optimization.json"
     },
-    "domain": "FLUXNET",
-    "name": "WROASTED",
+    "domain": "FLUXNET_Site",
+    "name": "SteadyState",
     "time": {
       "date_begin": "2000-01-01",
       "date_end": "2017-12-31",
