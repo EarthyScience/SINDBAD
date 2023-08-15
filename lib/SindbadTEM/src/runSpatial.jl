@@ -71,7 +71,7 @@ function space_run!(
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
         
-        loc_forcing, loc_output, _ =
+        loc_forcing, loc_output, loc_obs =
             getLocDataObsN(data.allocated_output, data.forcing, data_optim.obs, site_location)
 
         new_approaches = updateModelParametersType(tblParams, inits.selected_models, new_params)
