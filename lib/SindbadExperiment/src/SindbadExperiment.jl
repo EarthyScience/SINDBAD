@@ -12,7 +12,6 @@ module SindbadExperiment
     using YAXArrays
     using Zarr
 
-    include("prepExperiment.jl")
     include("runExperiment.jl")
     include("saveOutput.jl")
 

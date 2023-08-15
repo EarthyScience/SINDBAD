@@ -183,7 +183,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     forcing_one_timestep, land_one = runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem_with_types)
     debugModel(land_one, tem.helpers.run.debug_model)
 
-    run_helpers = (; loc_forcing=loc_forcing, forcing_one_timestep=forcing_one_timestep, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcing=loc_forcing, forcing_one_timestep=forcing_one_timestep, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, output=output, tem_with_types=tem_with_types)
     return run_helpers
 end
 
