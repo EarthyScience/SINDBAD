@@ -1,5 +1,6 @@
 using Revise
 using SindbadTEM
+using SindbadData
 using Plots
 using Accessors
 toggleStackTraceNT()
