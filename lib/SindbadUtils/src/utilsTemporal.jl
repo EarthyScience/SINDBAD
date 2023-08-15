@@ -305,35 +305,35 @@ function createTimeAggregator(date_vector, ::TimeMonthMscAnomaly, aggr_func=mean
 end
 
 """
-    createTimeAggregator(date_vector, ::TimeYear, aggr_func = mean, skip_aggregation = false)
+    createTimeAggregator(date_vector, ::Timend_year, aggr_func = mean, skip_aggregation = false)
 
 a function to create a temporal aggregation struct for annual time series
 
 # Arguments:
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeYear`: a type defining the aggregation time target
+- `::Timend_year`: a type defining the aggregation time target
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
-function createTimeAggregator(date_vector, ::TimeYear, aggr_func=mean, skip_aggregation=false)
+function createTimeAggregator(date_vector, ::Timend_year, aggr_func=mean, skip_aggregation=false)
     stepvectime = getTimeArray(getIndicesForTimeGroups(year.(date_vector)), getTypeOfTimeIndexArray())
     year_agg = TimeAggregator(stepvectime, aggr_func)
     return [year_agg,]
 end
 
 """
-    createTimeAggregator(date_vector, ::TimeYearAnomaly, aggr_func = mean, skip_aggregation = false)
+    createTimeAggregator(date_vector, ::Timend_yearAnomaly, aggr_func = mean, skip_aggregation = false)
 
 a function to create a temporal aggregation struct for anomalies of annual time series
 
 # Arguments:
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeYearAnomaly`: a type defining the aggregation time target
+- `::Timend_yearAnomaly`: a type defining the aggregation time target
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
-function createTimeAggregator(date_vector, ::TimeYearAnomaly, aggr_func=mean, skip_aggregation=false)
-    year_agg = createTimeAggregator(date_vector, TimeYear(), aggr_func, skip_aggregation)
+function createTimeAggregator(date_vector, ::Timend_yearAnomaly, aggr_func=mean, skip_aggregation=false)
+    year_agg = createTimeAggregator(date_vector, Timend_year(), aggr_func, skip_aggregation)
     mean_agg = createTimeAggregator(date_vector, TimeMean(), aggr_func)
     return [year_agg[1], mean_agg[1]]
 end
@@ -394,17 +394,17 @@ function createTimeAggregator(date_vector, ::TimeRandomYear, aggr_func=mean, ski
 end
 
 """
-    createTimeAggregator(date_vector, ::TimeShuffleYears, aggr_func = mean, skip_aggregation = false)
+    createTimeAggregator(date_vector, ::TimeShufflend_years, aggr_func = mean, skip_aggregation = false)
 
 a function to create a temporal aggregation struct for shuffling the years of the data
 
 # Arguments:
 - `date_vector`: a vector of datetime objects that determine the index of the array to be aggregated
-- `::TimeShuffleYears`: a type defining the aggregation time target
+- `::TimeShufflend_years`: a type defining the aggregation time target
 - `aggr_func`: a function to use for aggregation, defaults to mean
 - `skip_aggregation`: a flag indicating if the aggregation target is the same as the input data and the aggregation can be skipped, defaults to false
 """
-function createTimeAggregator(date_vector, ::TimeShuffleYears, aggr_func=mean, skip_aggregation=false)
+function createTimeAggregator(date_vector, ::TimeShufflend_years, aggr_func=mean, skip_aggregation=false)
     years = year.(date_vector)
     unique_years = unique(years)
     shuffled_unique_years = sample(unique_years, length(unique_years), replace=false)
