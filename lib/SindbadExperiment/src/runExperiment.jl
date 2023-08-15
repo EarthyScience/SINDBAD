@@ -1,6 +1,28 @@
+export prepExperiment
+export runExperiment
 export runExperimentCost
 export runExperimentForward
 export runExperimentOpti
+
+"""
+    prepExperiment(sindbad_experiment::String; replace_info = nothing)
+
+prepares info, forcing and output NT for the experiment
+"""
+function prepExperiment(sindbad_experiment::String; replace_info=nothing)
+    @info "\n----------------------------------------------\n"
+
+    @info "prepExperiment: getting experiment info..."
+    info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
+
+    @info "\n----------------------------------------------\n"
+    @info "prepExperiment: get forcing namedtuple..."
+    forcing = getForcing(info)
+
+    @info "\n----------------------------------------------\n"
+
+    return info, forcing
+end
 
 
 """
@@ -14,16 +36,15 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunForward`: DESCRIPTION
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunForward)
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunForward)
     print("-------------------Forward Run Mode---------------------------\n")
 
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
-        run_output = runTEMYAX(forcing,
-            output,
-            info.tem,
-            info.tem.models.forward;
-            max_cache=info.experiment.exe_rules.yax_max_cache)
+        run_output = runTEMYax(
+            info.tem.models.forward,
+            forcing,
+            info.tem)
     else
         run_output = runTEM!(forcing, info)
     end
@@ -42,16 +63,14 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
 - `::DoRunOptimization`: DESCRIPTION
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOptimization)
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
     setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
-    additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
+    additionaldims = setdiff(keys(forcing.helpers.sizes), info.forcing.data_dimension.time)
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
         run_output = optimizeTEMYax(forcing,
-            output,
             info.tem,
             info.optim,
             observations,
@@ -59,6 +78,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
             max_cache=info.experiment.exe_rules.yax_max_cache)
     else
         @info "runExperiment: do spatial optimization..."
+        obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
         optim_params = optimizeTEM(forcing, obs_array, info, info.tem.helpers.run.land_output_type)
         optim_file_prefix = joinpath(info.output.optim, info.experiment.basics.name * "_" * info.experiment.basics.domain)
         CSV.write(optim_file_prefix * "_model_parameters_to_optimize.csv", optim_params)
@@ -102,8 +122,8 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     setLogLevel()
-    info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_forward)
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
     saveOutCubes(info, run_output, output)
     return run_output
 end
@@ -115,8 +135,8 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentOpti(sindbad_experiment::String; replace_info=nothing)
-    info, forcing, output = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
-    run_output = runExperiment(info, forcing, output, info.tem.helpers.run.run_optimization)
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
+    run_output = runExperiment(info, forcing, info.tem.helpers.run.run_optimization)
     return run_output
 end
 
@@ -127,7 +147,7 @@ end
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
 function runExperimentCost(sindbad_experiment::String; replace_info=nothing)
-    info, forcing, _ = prepExperimentForward(sindbad_experiment; replace_info=replace_info)
+    info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.calc_cost)
     return run_output
 end

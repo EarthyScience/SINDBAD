@@ -15,7 +15,7 @@ forcing = getForcing(info);
 
 output = prepTEMOut(info, forcing.helpers);
 
-outcubes = runTEMYAX(forcing,
+outcubes = runTEMYax(forcing,
     output,
     info.tem,
     info.tem.models.forward;
