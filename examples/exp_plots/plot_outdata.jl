@@ -2,7 +2,6 @@ using Revise
 using ForwardDiff
 
 using SindbadTEM
-using SindbadTEM: timeLoopForward
 using SindbadExperiment
 #using AxisKeys: KeyedArray as KA
 #using Lux, Zygote, Optimisers, ComponentArrays, NNlib
@@ -10,7 +9,7 @@ using SindbadExperiment
 toggleStackTraceNT()
 #Random.seed!(7)
 
-experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
+experiment_json = "../exp_plots/settings_plots/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
 forcing = getForcing(info);
@@ -19,27 +18,27 @@ forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = getKeyedArrayWithNames(observations);
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 using GLMakie
 using Colors
 Makie.inline!(false)
 lines(1:10)
 
-out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
+out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 names_pair = Dict(out_vars .=> 1:4)
 
 var_name = Observable(1)

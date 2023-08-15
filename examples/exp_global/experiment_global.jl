@@ -21,39 +21,39 @@ forcing = getForcing(info);
 
 GC.gc()
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
-        forcing_nt_array,
-        loc_forcings,
-        forcing_one_timestep,
-        output_array,
-        loc_outputs,
-        land_init_space,
-        loc_space_inds,
-        tem_with_types)
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
 end
 
 @profview runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 # @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

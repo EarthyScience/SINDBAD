@@ -18,10 +18,10 @@ export TimeMonthMsc
 export TimeMonthMscAnomaly
 export TimeNoDiff
 export TimeRandomYear
-export TimeShuffleYears
+export TimeShufflend_years
 export TimeSizedArray
-export TimeYear
-export TimeYearAnomaly
+export Timend_year
+export Timend_yearAnomaly
 
 struct TimeAllYears end
 struct TimeArray end
@@ -41,10 +41,10 @@ struct TimeMonthMsc end
 struct TimeMonthMscAnomaly end
 struct TimeNoDiff end
 struct TimeRandomYear end
-struct TimeShuffleYears end
+struct TimeShufflend_years end
 struct TimeSizedArray end
-struct TimeYear end
-struct TimeYearAnomaly end
+struct Timend_year end
+struct Timend_yearAnomaly end
 
 
 function getTimeAggregatorTypeInstance(aggr::Symbol)
