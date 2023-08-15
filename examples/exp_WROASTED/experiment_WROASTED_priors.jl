@@ -4,7 +4,6 @@ using SindbadExperiment
 # TODO add to SindbadOptimization
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains
 
-# using Cthulhu
 using BenchmarkTools
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"

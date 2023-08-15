@@ -1,7 +1,6 @@
 using Revise
 using ForwardDiff
 
-using SindbadTEM
 using SindbadExperiment
 #using AxisKeys: KeyedArray as KA
 #using Lux, Zygote, Optimisers, ComponentArrays, NNlib
