@@ -1,6 +1,4 @@
 using Revise
-# using YAXArrays
-using SindbadTEM
 using SindbadExperiment
 toggleStackTraceNT()
 experiment_json = "../exp_distri/settings_distri/experiment.json"
