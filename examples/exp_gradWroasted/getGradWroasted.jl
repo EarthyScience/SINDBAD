@@ -1,7 +1,8 @@
 using Revise
 using ForwardDiff
 
-using SindbadExperiment
+using SindbadTEM
+using SindbadMetrics
 toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
