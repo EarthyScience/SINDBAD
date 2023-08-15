@@ -12,7 +12,7 @@ info = getConfiguration(experiment_json);
 info = setupInfo(info);
 forcing = getForcing(info);
 
-outcubes = runTEMYAX(forcing,
+outcubes = runTEMYax(forcing,
     output,
     info.tem,
     info.tem.models.forward;
