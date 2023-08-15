@@ -30,68 +30,25 @@ function scaledParams(up_params_now, tblParams, xbatch, idx)
     return site_name, scaled_params
 end
 
-"""
-gradsBatch!(
-    loss_function::Function,
-    f_grads,
-    up_params_now,
-    xbatch,
-    sites_f,
-    out_data_cache,
-    forc,
-    obs_synt,
-    forward,
-    tblParams,
-    loc_land_init,
-    site_location,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    tem_optim,
-    f_one; logging=true)
-"""
-function gradsBatch!(
-    loss_function::Function,
-    f_grads,
-    up_params_now,
-    xbatch,
-    sites_f,
-    land_init_space,
-    out_data_cache,
-    forc,
-    obs_synt,
-    forward,
-    tblParams,
-    tem_helpers,
-    tem_spinup,
-    tem_models,
-    tem_optim,
-    f_one; logging=true)
+function gradsBatch!(loss_function::Function, up_params_now, f_grads, xbatch, sites_f, data, data_optim,
+    tem, tblParams, land_init_space, approaches, optim, forcing_one_timestep; logging=true)
 
-    p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
+    p = Progress(length(xbatch); desc="Computing batch grads...", offset=1, color=:yellow, enabled=logging)
     for idx ∈ eachindex(xbatch)
 
         site_name, new_vals = scaledParams(up_params_now, tblParams, xbatch, idx)
         site_location = name_to_id(site_name, sites_f)
-        loc_land_init = land_init_space[site_location[1][2]]
+        init_land = land_init_space[site_location[1][2]]
 
-        gg = ForwardDiffGrads(
-            loss_function,
-            new_vals,
-            loc_land_init,
-            site_location,
-            out_data_cache,
-            forc,
-            obs_synt,
-            forward,
-            tblParams,
-            tem_helpers,
-            tem_spinup,
-            tem_models,
-            tem_optim,
-            f_one)
+        loc_output, loc_forcing, loc_obs = getLocDataObsN(data..., data_optim.site_obs, site_location) # check output order in original definition
 
+        inits = (; selected_models = approaches, init_land)
+        data_optim = (; site_obs = loc_obs, )
+        data_cache = (; loc_forcing, forcing_one_timestep, allocated_output = DiffCache.(loc_output))
+
+        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim, tem, tblParams, optim)
         f_grads[:, idx] = gg
+
         next!(p; showvalues=[(:site_name, site_name)])
     end
 end
