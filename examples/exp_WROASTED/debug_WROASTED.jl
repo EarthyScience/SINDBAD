@@ -1,5 +1,6 @@
 using Revise
 using SindbadTEM
+using SindbadData
 toggleStackTraceNT()
 using Dates
 using Plots
@@ -97,7 +98,6 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
