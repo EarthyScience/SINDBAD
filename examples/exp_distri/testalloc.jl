@@ -70,7 +70,7 @@ macro pack_land(outparams::Expr)
 end
 b = 12.0
 
-macro fuck_it(forc)
+macro test_it(forc)
     # @show forcing_nt_array, QuoteNode(forc)
     return Expr(Symbol("@set"),
         :(),
@@ -81,7 +81,7 @@ macro fuck_it(forc)
             :v)) #= none:1 =#
 end
 ts = 5
-@fuck_it :tair
+@test_it :tair
 function test_nt(out::NamedTuple, nt::Int64)
     for t ∈ 1:nt
         b = rand()#+out.fluxes.b

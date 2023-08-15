@@ -53,7 +53,7 @@ function runTEMYAX(forcing::NamedTuple,
     max_cache=1e9)
     incubes = forcing.data
     indims = forcing.dims
-    innames = get_indim_symbiols
+    # innames = get_indim_symbiols
     forcing_variables = collect(forcing.variables)
     outdims = output.dims
     land_init = deepcopy(output.land_init)
