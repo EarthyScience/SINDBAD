@@ -189,7 +189,7 @@ inits = (;
     land_init
 )
 function getSiteLossTEM(inits, data, data_optim, tem, optim) 
-    coreTEM!(inits.selected_models, data..., inits.land_init, tem...)
+    coreTEM!(inits..., data..., tem...)
     lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
     t_loss = combineLossArray(lossVec, optim.multiconstraint_method)
     return t_loss
