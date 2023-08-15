@@ -14,20 +14,21 @@ forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = prepTEMOut(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data];
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 # @time out_params = runExperimentOpti(experiment_json);  
 tbl_params = getParameters(info.tem.models.forward,
@@ -38,106 +39,92 @@ tbl_params = getParameters(info.tem.models.forward,
 function g_loss(x,
     mods,
     forcing_nt_array,
-    op,
-    obs_array,
-    tbl_params,
-    info_tem,
-    info_optim,
-    loc_space_inds,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    forcing_one_timestep)
+    loc_space_inds,
+    tem_with_types,
+    observations,
+    tbl_params,
+    cost_options,
+    multi_constraint_method)
     l = getLoss(x,
         mods,
         forcing_nt_array,
-        op,
-        obs_array,
-        tbl_params,
-        info_tem,
-        info_optim,
-        loc_space_inds,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        forcing_one_timestep)
+        loc_space_inds,
+        tem_with_types,
+        observations,
+        tbl_params,
+        cost_options,
+        multi_constraint_method)
     return l
 end
-rand_m = rand(info.tem.helpers.numbers.num_type);
-# op = prepTEMOut(info, forcing.helpers);
 
 mods = info.tem.models.forward;
-for _ in 1:10
-    lo_ss = g_loss(tbl_params.default,
-        mods,
-        forcing_nt_array,
-        op,
-        obs_array,
-        tbl_params,
-        tem_with_types,
-        info.optim,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        forcing_one_timestep)
-    @show lo_ss
-end
-
-for _ in 1:10
-    lo_ss = g_loss(tbl_params.default,
-        mods,
-        forcing_nt_array,
-        op,
-        obs_array,
-        tbl_params,
-        tem_with_types,
-        info.optim,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        forcing_one_timestep)
-    @show lo_ss
-end
-
-dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tbl_params.default);
-newmods = updateModelParametersType(tbl_params, mods, dualDefs);
+g_loss(tbl_params.default,
+    mods,
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types,
+    obs_array,
+    tbl_params,
+    cost_options,
+    info.optim.multi_constraint_method)
 
 function l1(p)
     return g_loss(p,
         mods,
-        forcing_nt_array,
-        op,
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types,
         obs_array,
         tbl_params,
-        tem_with_types,
-        info.optim,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        forcing_one_timestep)
+        cost_options,
+        info.optim.multi_constraint_method)
 end
+l1(tbl_params.default)
+rand_m = rand()
+dualDefs = ForwardDiff.Dual{info.tem.helpers.numbers.num_type}.(tbl_params.default);
+newmods = updateModelParametersType(tbl_params, mods, dualDefs);
+
 function l2(p)
     return g_loss(p,
         newmods,
-        forcing_nt_array,
-        op,
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types,
         obs_array,
         tbl_params,
-        tem_with_types,
-        info.optim,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        forcing_one_timestep)
+        cost_options,
+        info.optim.multi_constraint_method)
+
 end
 
 
-op = prepTEMOut(info, forcing.helpers);
-# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,10}}(undef, size(od)) for od in output_array];
+# op = prepTEMOut(info, forcing.helpers);
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
 
 # @time grad = ForwardDiff.gradient(l1, tbl_params.default)

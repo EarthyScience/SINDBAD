@@ -2,7 +2,7 @@ export optimizeTEM
 export getLoss
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem, observations, tbl_params, cost_options, multi_constraint_method)
 
 
 
@@ -17,7 +17,7 @@ export getLoss
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
+- `multi_constraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
@@ -30,17 +30,17 @@ function getLoss(
     observations,
     tbl_params,
     cost_options,
-    multiconstraint_method)
+    multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_timeseries, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
     @debug loss_vector
-    return combineLoss(loss_vector, multiconstraint_method)
+    return combineLoss(loss_vector, multi_constraint_method)
 end
 
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multiconstraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing, forcing_one_timestep, land_init, tem, observations, tbl_params, cost_options, multi_constraint_method)
 
 
 
@@ -54,7 +54,7 @@ end
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
+- `multi_constraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
@@ -66,15 +66,15 @@ function getLoss(
     observations,
     tbl_params,
     cost_options,
-    multiconstraint_method)
+    multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     land_wrapper_timeseries = runTEM(updated_models, forcing, forcing_one_timestep, land_init, tem)
     loss_vector = getLossVector(observations, land_wrapper_timeseries, cost_options)
-    return combineLoss(loss_vector, multiconstraint_method)
+    return combineLoss(loss_vector, multi_constraint_method)
 end
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multiconstraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multi_constraint_method)
 
 
 
@@ -92,7 +92,7 @@ end
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
-- `multiconstraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
+- `multi_constraint_method`: a method determining how the vector of losses should/not be combined to produce the loss number or vector as required by the selected optimization algorithm
 """
 function getLoss(
     param_vector::AbstractArray,
@@ -108,7 +108,7 @@ function getLoss(
     observations,
     tbl_params,
     cost_options,
-    multiconstraint_method)
+    multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     runTEM!(updated_models,
         forcing_nt_array,
@@ -120,7 +120,7 @@ function getLoss(
         loc_space_inds,
         tem)
     loss_vector = getLossVector(observations, output_array, cost_options)
-    return combineLoss(loss_vector, multiconstraint_method)
+    return combineLoss(loss_vector, multi_constraint_method)
 end
 
 """
@@ -153,19 +153,19 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, _, _, tem_with_types = prepTEM(forcing, info)
+    run_helpers = prepTEM(forcing, info)
 
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
-            forcing_nt_array,
-            loc_forcings,
-            forcing_one_timestep,
-            output_array,
-            loc_outputs,
-            land_init_space,
-            loc_space_inds,
-            tem_with_types,
+            run_helpers.forcing_nt_array,
+            run_helpers.loc_forcings,
+            run_helpers.forcing_one_timestep,
+            run_helpers.output_array,
+            run_helpers.loc_outputs,
+            run_helpers.land_init_space,
+            run_helpers.loc_space_inds,
+            run_helpers.tem_with_types,
             observations,
             tbl_params,
             cost_options,
@@ -215,15 +215,15 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_types = prepTEM(forcing, info)
+    run_helpers = prepTEM(forcing, info)
 
 
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
-            loc_forcings[1],
+            run_helpers.loc_forcing,
             forcing_one_timestep,
-            land_init_space[1],
+            run_helpers.land_one,
             tem_with_types,
             observations,
             tbl_params,
@@ -274,17 +274,16 @@ function optimizeTEM(forcing::NamedTuple,
     lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
     upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-    _, loc_forcings, forcing_one_timestep, _, loc_outputs, land_init_space, _, _, _, tem_with_types = prepTEM(forcing, info)
+    run_helpers = prepTEM(forcing, info)
 
-    land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size)
 
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
-            loc_forcings[1],
-            forcing_one_timestep,
-            land_timeseries,
-            land_init_space[1],
+            run_helpers.loc_forcing,
+            run_helpers.forcing_one_timestep,
+            run_helpers.land_timeseries,
+            run_helpers.land_one,
             tem_with_types,
             observations,
             tbl_params,

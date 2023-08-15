@@ -8,8 +8,8 @@ using Distributions, PDMats, DistributionFits, Turing, MCMCChains
 using BenchmarkTools
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
 path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 forcing_config = "forcing_erai.json"
@@ -20,10 +20,10 @@ path_output = nothing
 # t
 domain = "DE-Hai"
 parallelization_lib = "threads"
-replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
-    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
     "experiment.flags.spinup.save_spinup" => false,
@@ -41,20 +41,20 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 observations = getObservation(info, forcing.helpers);
-obs_array = getKeyedArrayWithNames(observations);
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
@@ -126,7 +126,8 @@ develop_f =
         lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
         upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-        forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info)
+        run_helpers = prepTEM(forcing, info)
+
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
         pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
@@ -148,17 +149,17 @@ develop_f =
 
             updated_models = updateModelParameters(tbl_params, tem.models.forward, popt)
             # TODO run model with updated parameters
-            runTEM!(output_array,
-                output.land_init,
-                updated_models,
-                forcing,
-                loc_space_inds,
-                loc_forcings,
-                loc_outputs,
-                land_init_space,
-                forcing_one_timestep,
-                tem_with_types)
 
+            @time runTEM!(updated_models,
+                run_helpers.forcing_nt_array,
+                run_helpers.loc_forcings,
+                run_helpers.forcing_one_timestep,
+                run_helpers.output_array,
+                run_helpers.loc_outputs,
+                run_helpers.land_init_space,
+                run_helpers.loc_space_inds,
+                run_helpers.tem_with_types)
+        
             # get predictions and observations
             model_output = (; Pair.(output_variables, output)...)
             pred_obs, is_finite_obs = getPredAndObsVector(observations, model_output, optim)

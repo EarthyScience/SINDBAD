@@ -40,7 +40,6 @@ function (cEco_spin::RunSpinup_cEco)(pout, p)
     land = cEco_spin.land
     helpers = cEco_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
@@ -66,11 +65,9 @@ function (cEco_TWS_spin::RunSpinup_cEco_TWS)(pout, p)
     land = cEco_TWS_spin.land
     helpers = cEco_TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     pout .= exp.(p)
 
-    @unpack_land 𝟘 ∈ helpers.numbers
     cEco = land.pools.cEco
     for (lc, l) in enumerate(zix.cEco)
         @rep_elem pout[l] => (cEco, lc, :cEco)
@@ -103,7 +100,6 @@ function (TWS_spin::RunSpinup_TWS)(pout, p)
     land = TWS_spin.land
     helpers = TWS_spin.tem_helpers
     zix = helpers.pools.zix
-    @unpack_land 𝟘 ∈ helpers.numbers
 
     TWS = land.pools.TWS
     for (lc, l) in enumerate(zix.TWS)
@@ -593,7 +589,7 @@ function runSpinup(
             Symbol(sel_pool),
             tem_helpers,
             tem_spinup)
-        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
+        tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
         maxIter = tem_spinup.differential_eqn.time_jump
@@ -637,7 +633,7 @@ function runSpinup(
             Symbol(sel_pool),
             tem_helpers,
             tem_spinup)
-        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
+        tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
         maxIter = tem_spinup.differential_eqn.time_jump
@@ -682,7 +678,7 @@ function runSpinup(
             Symbol(sel_pool),
             tem_helpers,
             tem_spinup)
-        tspan = (tem_helpers.numbers.𝟘, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
+        tspan = (0.0, tem_helpers.numbers.sNT(tem_spinup.differential_eqn.time_jump))
         init_pool = deepcopy(getfield(p_info.land[:pools], p_info.pool))
         ode_prob = ODEProblem(getDeltaPool, init_pool, tspan, p_info)
         # maxIter = tem_spinup.differential_eqn.time_jump

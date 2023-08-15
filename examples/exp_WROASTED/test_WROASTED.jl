@@ -3,8 +3,8 @@ using SindbadExperiment
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
 domain = "DE-Hai"
 # domain = "MY-PSO"
@@ -19,11 +19,11 @@ path_output = nothing
 
 parallelization_lib = "threads"
 model_array_type = "static_array"
-replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
     "forcing.default_forcing.data_path" => path_input,
-    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
     "experiment.flags.spinup.save_spinup" => false,
@@ -43,22 +43,22 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data];
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 @time getLossVector(obs_array, output_default, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
@@ -77,18 +77,18 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 @time runTEM!(optimized_models,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 # some plots
 ds = forcing.data[1];
-opt_dat = output_array;
+opt_dat = run_helpers.output_array;
 def_dat = output_default;
 costOpt = prepCostOptions(obs_array, info.optim.cost_options);
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
