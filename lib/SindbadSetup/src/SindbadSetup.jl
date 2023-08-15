@@ -14,6 +14,7 @@ module SindbadSetup
 
     include("runtimeDispatchTypes.jl")
     include("getConfiguration.jl")
+    include("setupExperimentInfo.jl")
     include("setupOptimInfo.jl")
     include("setupInfo.jl")
 
