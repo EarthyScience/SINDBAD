@@ -1,6 +1,7 @@
 export AllNaN
 export mapCleanData
 export subsetAndProcessYax
+export cube_to_KA
 
 """
     AllNaN <: YAXArrays.DAT.ProcFilter
@@ -355,3 +356,10 @@ function subsetAndProcessYax(yax, forcing_mask, tar_dims, _data_info, info, ::Va
     return yax
 end
 
+"""
+cube_to_KA(c)
+"""
+function cube_to_KA(c)
+    t_dims = getSindbadDims(c);
+    return KeyedArray(Array(c.data); t_dims...)
+end
