@@ -1,49 +1,10 @@
-export getExperimentInfo
 export prepExperimentForward
 export prepExperimentOpti
-
-
-"""
-    getExperimentInfo(sindbad_experiment::String; replace_info = nothing)
-
-A helper function just to get info after experiment has been loaded and modified
-"""
-function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
-    @info "prepExperimentForward: load configurations..."
-    info = getConfiguration(sindbad_experiment; replace_info=deepcopy(replace_info))
-
-    @info "prepExperimentForward: setup experiment..."
-    info = setupInfo(info)
-    return info
-end
-
-
-function saveInfo(info, ::DoSaveInfo)
-    @info "prepExperimentForward: saving info..."
-    @save joinpath(info.tem.helpers.output.settings, "info.jld2") info
-    return nothing
-end
-
-function saveInfo(::DoNotSaveInfo)
-    return nothing
-end
-
-
-function setDebugErrorCatcher(::DoCatchModelErrors)
-    @info "prepExperimentForward: setting error catcher..."
-    Sindbad.eval(:(error_catcher = []))
-    return nothing
-end
-
-function setDebugErrorCatcher(::DoNotCatchModelErrors)
-    return nothing
-end
-
 
 """
     prepExperimentForward(sindbad_experiment::String; replace_info = nothing)
 
-uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
+prepares info, forcing and output NT for the forward experiment
 """
 function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "\n----------------------------------------------\n"
@@ -51,8 +12,6 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
     @info "prepExperimentForward: getting experiment info..."
     info = getExperimentInfo(sindbad_experiment; replace_info=replace_info)
 
-    saveInfo(info, info.tem.helpers.run.save_info)
-    setDebugErrorCatcher(info.tem.helpers.run.catch_model_errors)
 
     @info "\n----------------------------------------------\n"
     @info "prepExperimentForward: get forcing data..."
@@ -67,14 +26,9 @@ function prepExperimentForward(sindbad_experiment::String; replace_info=nothing)
 end
 
 """
-prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
-uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation.
-"""
-
-"""
     prepExperimentOpti(sindbad_experiment::String; replace_info = nothing)
 
-
+prepares info, forcing, output, and observation NT for the forward experiment
 """
 function prepExperimentOpti(sindbad_experiment::String; replace_info=nothing)
     @info "\n----------------------------------------------\n"
