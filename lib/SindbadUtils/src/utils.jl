@@ -185,6 +185,7 @@ function toggleStackTraceNT(toggle=true)
         eval(:(Base.show(io::IO, nt::Type{<:Tuple}) = print(io, "T")))
         eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = print(io, "NT")))
     else
+        #TODO this does not seem to restore the base show to default
         eval(:(Base.show(io::IO, nt::Type{<:NTuple}) = Base.show(io::IO, nt::Type{<:NTuple})))
     end
     return nothing

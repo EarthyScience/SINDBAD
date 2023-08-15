@@ -3,8 +3,8 @@ using Revise
 using Plots
 toggleStackTraceNT()
 experiment_json = "../exp_landWrapper/settings_landWrapper/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
 domain = "DE-Hai"
 # domain = "MY-PSO"
@@ -19,11 +19,11 @@ path_output = nothing
 
 parallelization_lib = "threads"
 model_array_type = "static_array"
-replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
     "experiment.basics.config_files.forcing" => forcing_config,
     "experiment.basics.domain" => domain,
     "forcing.default_forcing.data_path" => path_input,
-    "experiment.basics.time.date_end" => eYear * "-12-31",
+    "experiment.basics.time.date_end" => end_year * "-12-31",
     "experiment.flags.run_optimization" => optimize_it,
     "experiment.flags.calc_cost" => true,
     "experiment.flags.spinup.save_spinup" => false,
@@ -43,43 +43,43 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 
 forcing = getForcing(info);
 
-forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info);
+run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
 @time land_spin_now = runSpinup(info.tem.models.forward,
-loc_forcings[1],
-forcing_one_timestep,
-land_init_space[1],
-tem_with_types.helpers,
-tem_with_types.models,
-tem_with_types.spinup, DoRunSpinup());
+    run_helpers.loc_forcing,
+    run_helpers.forcing_one_timestep,
+    run_helpers.land_one,
+    run_helpers.tem_with_types.helpers,
+    run_helpers.tem_with_types.models,
+    run_helpers.tem_with_types.spinup, DoRunSpinup());
 
 
-@time lw_timeseries_prep = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types);
+@time lw_timeseries_prep = runTEM(info.tem.models.forward, run_helpers.loc_forcing, run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types);
 
 @time lw_timeseries = runTEM(forcing, info);
 
-land_timeseries = Vector{typeof(land_init_space[1])}(undef, info.tem.helpers.dates.size);
+land_timeseries = Vector{typeof(run_helpers.land_one)}(undef, info.tem.helpers.dates.size);
 
-@time lw_timeseries_vec = runTEM(info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_types);
+@time lw_timeseries_vec = runTEM(info.tem.models.forward, run_helpers.loc_forcing, run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types);
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data];
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 # setLogLevel(:debug)
-# @profview getLossVector(obs_array, output_array, cost_options) # |> sum
-@time getLossVector(obs_array, output_array, cost_options) # |> sum
+# @profview getLossVector(obs_array, run_helpers.output_array, cost_options) # |> sum
+@time getLossVector(obs_array, run_helpers.output_array, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries_prep, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries, cost_options) # |> sum
 @time getLossVector(obs_array, lw_timeseries_vec, cost_options) #|> sum
@@ -91,10 +91,10 @@ tbl_params = getParameters(info.tem.models.forward,
 
 defaults = tbl_params.default;
 
-@time getLoss(defaults, info.tem.models.forward, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.forcing_nt_array, run_helpers.loc_forcings, run_helpers.forcing_one_timestep, run_helpers.output_array, run_helpers.loc_outputs, run_helpers.land_init_space, run_helpers.loc_space_inds, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_init_space[1], tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcing, run_helpers.forcing_one_timestep, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
-@time getLoss(defaults, info.tem.models.forward, loc_forcings[1], forcing_one_timestep, land_timeseries, land_init_space[1], tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
+@time getLoss(defaults, info.tem.models.forward, run_helpers.loc_forcing, run_helpers.forcing_one_timestep, land_timeseries, run_helpers.land_one, run_helpers.tem_with_types, obs_array, tbl_params, cost_options, info.optim.multi_constraint_method)
 
 

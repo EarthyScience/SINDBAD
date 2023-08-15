@@ -46,7 +46,7 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, output, ::DoRunOpt
     println("-------------------Optimization Mode---------------------------\n")
     setLogLevel(:warn)
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data];
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
     if isempty(additionaldims)
         @info "runExperiment: do optimization per pixel..."
@@ -81,7 +81,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     setLogLevel()
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data];
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
     println("-------------------Cost Calculation Mode---------------------------\n")
     @info "runExperiment: do forward run..."
     println("----------------------------------------------\n")
