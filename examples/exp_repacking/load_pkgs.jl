@@ -3,6 +3,8 @@ using SindbadTEM
 using YAXArrays
 using HybridSindbad
 using SindbadVisuals
+using ForwardDiff
+using PreallocationTools
 
 experiment_json = "../exp_repacking/settings_repacking/experiment.json"
 info = getConfiguration(experiment_json);
@@ -77,7 +79,34 @@ inits = (;
     land_init
 );
 
+data_optim = (;
+    site_obs = loc_obs,
+);
+
+cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
+optim = (;
+    cost_options= cost_options,
+    multiconstraint_method = info.optim.multi_constraint_method
+);
+
 @time pixel_run!(inits, data, tem);
+
+@time getSiteLossTEM(inits, data, data_optim, tem, optim)
+
+data_cache = (;
+    loc_forcing,
+    forcing_one_timestep,
+    allocated_output = DiffCache.(loc_output)
+);
+
+@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, tbl_params, optim)
+
+kwargs = (;
+    inits, data_cache, data_optim, tem, tbl_params, optim
+    );
+    
+ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+
 
 b_data = (; allocated_output = op.data, forc, obs);
 
