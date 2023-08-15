@@ -11,7 +11,7 @@ function getSpatialSubset(ss, v)
         for ssn ∈ ssname
             ss_r = getproperty(ss, ssn)
             ss_range = ss_r[1]:ss_r[2]
-            ss_typeName = Symbol("Space" * ssn)
+            ss_typeName = Symbol("Space" * string(ssn))
             v = spatialSubset(v, ss_range, getfield(SindbadUtils, ss_typeName)())
         end
     end

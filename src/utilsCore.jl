@@ -76,7 +76,7 @@ end
 - `_`: unused argument
 - `ind`: DESCRIPTION
 """
-function addToElem(v::AbstractVector, Δv, _, _, ind::Int)
+function addToElem(v::AbstractVector, Δv, _, ind::Int)
     v[ind] = v[ind] + Δv
     return v
 end
@@ -282,7 +282,7 @@ end
 returns the indices of a view for a subArray
 """
 function getZix(dat::SubArray)
-    return first(parentindices(dat))
+    return Tuple(first(parentindices(dat)))
 end
 
 
@@ -292,7 +292,7 @@ end
 returns the indices of a view for a subArray
 """
 function getZix(dat::SubArray, zixhelpersPool)
-    return first(parentindices(dat))
+    return Tuple(first(parentindices(dat)))
 end
 
 """

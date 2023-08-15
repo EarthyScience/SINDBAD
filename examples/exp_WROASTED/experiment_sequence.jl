@@ -5,8 +5,8 @@ using Plots
 using SindbadData
 toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
 sites = ("FI-Sod", "DE-Hai", "CA-TP1", "AU-DaP", "AT-Neu")
 # sites = ("AU-DaP", "AT-Neu")
@@ -22,10 +22,10 @@ for domain ∈ sites
 
 
     parallelization_lib = "threads"
-    replace_info = Dict("experiment.basics.time.date_begin" => sYear * "-01-01",
+    replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.forcing" => forcing_config,
         "experiment.basics.domain" => domain,
-        "experiment.basics.time.date_end" => eYear * "-12-31",
+        "experiment.basics.time.date_end" => end_year * "-12-31",
         "experiment.flags.run_optimization" => optimize_it,
         "experiment.flags.calc_cost" => true,
         "experiment.flags.spinup.save_spinup" => false,
@@ -97,23 +97,23 @@ for domain ∈ sites
 
 
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info)
+    run_helpers = prepTEM(forcing, info)
 
     @time runTEM!(optimized_models,
-        forcing_nt_array,
-        loc_forcings,
-        forcing_one_timestep,
-        output_array,
-        loc_outputs,
-        land_init_space,
-        loc_space_inds,
-        tem_with_types)
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
 
     # some plots
     ds = forcing.data[1]
-    opt_dat = output_array
+    opt_dat = run_helpers.output_array
     def_dat = output_default
     costOpt = prepCostOptions(obs_array, info.optim.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
@@ -159,36 +159,36 @@ for domain ∈ sites
     forcing = getForcing(info)
 
 
-    forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, loc_space_maps, loc_space_names, tem_with_types = prepTEM(forcing, info)
+    run_helpers = prepTEM(forcing, info)
 
     @time runTEM!(optimized_models,
-        forcing_nt_array,
-        loc_forcings,
-        forcing_one_timestep,
-        output_array,
-        loc_outputs,
-        land_init_space,
-        loc_space_inds,
-        tem_with_types)
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
 
     # save the outcubes
-    out_vars = valToSymbol(tem_with_types.helpers.vals.output_vars)
+    out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 
     out_info = getOutputFileInfo(info)
 
     output = prepTEMOut(info, forcing.helpers)
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
     fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(out_vars)
-        def_var = output_array[o][:, :, 1, 1]
+        def_var = run_helpers.output_array[o][:, :, 1, 1]
         vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
         xdata = [info.tem.helpers.dates.range...]

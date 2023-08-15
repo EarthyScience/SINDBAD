@@ -24,7 +24,7 @@ kwargs_fixed = (;
 );
 
 site_location = syn.loc_space_maps[1]
-loc_land_init = syn.land_init_space[1];
+loc_land_init = syn.run_helpers.land_one;
 
 loc_forcing_test, _, loc_obs_test =
     getLocDataObsN(syn.out_data,

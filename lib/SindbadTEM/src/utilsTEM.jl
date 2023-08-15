@@ -2,6 +2,8 @@ export getForcingForTimeStep
 export getForcingNamedTuple
 export getForcingTimeSize
 export getLocData
+export getLocForcingData
+export getLocOutputData
 export getLocForcing!
 export getLocOutput!
 export getNumberOfTimeSteps
@@ -129,6 +131,7 @@ end
     end)
     return output
 end
+
 """
     getLocData(forcing, output_array, loc_space_map)
 
@@ -140,16 +143,44 @@ end
 - `loc_space_map`: DESCRIPTION
 """
 function getLocData(forcing, output_array, loc_space_map)
+    loc_forcing = getLocForcingData(forcing, loc_space_map)
+    loc_output = getLocOutputData(output_array, loc_space_map)
+    return loc_forcing, loc_output
+end
+
+
+"""
+    getLocForcingData(forcing, output_array, loc_space_map)
+
+
+
+# Arguments:
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `loc_space_map`: DESCRIPTION
+"""
+function getLocForcingData(forcing, loc_space_map)
     loc_forcing = map(forcing) do a
         view(a; loc_space_map...)
     end
-    # ar_inds = last.(loc_space_map)
-    ar_inds = Tuple(last.(loc_space_map))
+    return loc_forcing
+end
 
+
+"""
+    getLocOutputData(forcing, output_array, loc_space_map)
+
+
+
+# Arguments:
+- `output_array`: an output array/view for ALL locations
+- `loc_space_map`: DESCRIPTION
+"""
+function getLocOutputData(output_array, loc_space_map)
+    ar_inds = Tuple(last.(loc_space_map))
     loc_output = map(output_array) do a
         getArrayView(a, ar_inds)
     end
-    return loc_forcing, loc_output
+    return loc_output
 end
 
 """
