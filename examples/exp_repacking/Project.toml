@@ -1,6 +1,8 @@
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 HybridSindbad = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
+PreallocationTools = "d236fae5-4411-538c-8e31-a6e3d9e00b46"
 SindbadData = "772b809f-5329-4bfd-a2e9-cc4714ce84b1"
 SindbadTEM = "f6108451-10cb-42fa-b0c1-67671cf08f15"
 SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
