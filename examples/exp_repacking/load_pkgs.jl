@@ -6,9 +6,13 @@ using SindbadVisuals
 using ForwardDiff
 using PreallocationTools
 
+toggleStackTraceNT()
+
 experiment_json = "../exp_repacking/settings_repacking/experiment.json"
-info = getConfiguration(experiment_json);
-info = setupInfo(info);
+#info = getConfiguration(experiment_json);
+#info = setupInfo(info);
+
+info = getExperimentInfo(experiment_json);
 
 tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
@@ -26,26 +30,33 @@ obs = (; Pair.(observations.variables, observations.data)...);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = prepTEMOut(info, forcing.helpers);
 
-forcing_nt_array,
-loc_forcings,
-forcing_one_timestep,
-output_array,
-loc_outputs,
-land_init_space,
-loc_space_inds,
-loc_space_maps,
-loc_space_names,
-tem_with_types = prepTEM(forcing, info);
+# forcing_nt_array,
+# loc_forcings,
+# forcing_one_timestep,
+# output_array,
+# loc_outputs,
+# land_init_space,
+# loc_space_inds,
+# loc_space_maps,
+# loc_space_names,
+# tem_with_types = prepTEM(forcing, info);
 
-@time runTEM!(info.tem.models.forward,
-    forcing_nt_array,
-    loc_forcings,
-    forcing_one_timestep,
-    output_array,
-    loc_outputs,
-    land_init_space,
-    loc_space_inds,
-    tem_with_types)
+run_helpers = prepTEM(forcing, info);
+
+# argsTEM = (;
+#     forcing_nt_array = run_helpers.forcing_nt_array,
+#     loc_forcings = run_helpers.loc_forcing,
+#     forcing_one_timestep = run_helpers.forcing_one_timestep,
+#     output_array = run_helpers.output_array,
+#     loc_outputs = run_helpers.loc_outputs,
+#     land_init_space = run_helpers.land_init_space,
+#     loc_space_inds = run_helpers.loc_space_inds,
+#     tem_with_types = run_helpers.tem_with_types
+# );
+
+# @time runTEM!(info.tem.models.forward, argsTEM...)
+
+tem_with_types = run_helpers.tem_with_types;
 
 tem = (;
     tem_helpers = tem_with_types.helpers,
@@ -56,9 +67,11 @@ tem = (;
 
 data = (;
     forcing,
-    forcing_one_timestep,
-    allocated_output = output_array
+    forcing_one_timestep =run_helpers.forcing_one_timestep,
+    allocated_output = run_helpers.output_array
     );
+loc_space_maps = run_helpers.loc_space_maps;
+land_init_space = run_helpers.land_init_space;
 
 site_location = loc_space_maps[1]    
 loc_land_init = land_init_space[1];
@@ -70,7 +83,7 @@ land_init = land_init_space[site_location[1][2]];
 
 data = (;
     loc_forcing,
-    forcing_one_timestep,
+    forcing_one_timestep =run_helpers.forcing_one_timestep,
     allocated_output = loc_output
 );
 
@@ -95,7 +108,7 @@ optim = (;
 
 data_cache = (;
     loc_forcing,
-    forcing_one_timestep,
+    forcing_one_timestep =run_helpers.forcing_one_timestep,
     allocated_output = DiffCache.(loc_output)
 );
 
@@ -105,7 +118,7 @@ kwargs = (;
     inits, data_cache, data_optim, tem, tbl_params, optim
     );
     
-ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
 
 
 b_data = (; allocated_output = op.data, forc, obs);
