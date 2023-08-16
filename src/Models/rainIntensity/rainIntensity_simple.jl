@@ -23,7 +23,7 @@ end
 stores the time series of rainfall intensity
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

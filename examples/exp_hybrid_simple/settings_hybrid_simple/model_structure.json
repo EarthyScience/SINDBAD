@@ -1,7 +1,7 @@
 {
   "default_model": {
     "order": 0,
-    "use4spinup": true
+    "use_in_spinup": true
   },
   "models": {
     "ambientCO2": {
@@ -12,9 +12,6 @@
     },
     "autoRespirationAirT": {
       "approach": "Q10"
-    },
-    "capillaryFlow": {
-      "approach": "VanDijk2010"
     },
     "cAllocation": {
       "approach": "GSI"
@@ -28,14 +25,17 @@
     "cAllocationRadiation": {
       "approach": "gpp"
     },
-    "cAllocationTreeFraction": {
-      "approach": "Friedlingstein1999"
-    },
     "cAllocationSoilT": {
       "approach": "gpp"
     },
     "cAllocationSoilW": {
       "approach": "gpp"
+    },
+    "cAllocationTreeFraction": {
+      "approach": "Friedlingstein1999"
+    },
+    "capillaryFlow": {
+      "approach": "VanDijk2010"
     },
     "cCycle": {
       "approach": "GSI"
@@ -43,12 +43,12 @@
     "cCycleBase": {
       "approach": "GSI"
     },
-    "cCycleConsistency":{
+    "cCycleConsistency": {
       "approach": "simple"
     },
     "cCycleDisturbance": {
       "approach": "WROASTED",
-      "use4spinup": false
+      "use_in_spinup": false
     },
     "cFlow": {
       "approach": "GSI"
@@ -95,9 +95,6 @@
     "gpp": {
       "approach": "coupled"
     },
-    "gppPotential": {
-      "approach": "Monteith"
-    },
     "gppAirT": {
       "approach": "CASA"
     },
@@ -109,6 +106,9 @@
     },
     "gppDirRadiation": {
       "approach": "none"
+    },
+    "gppPotential": {
+      "approach": "Monteith"
     },
     "gppSoilW": {
       "approach": "Stocker2020"
@@ -134,11 +134,11 @@
     "rainSnow": {
       "approach": "Tair"
     },
-    "rootWaterEfficiency": {
-      "approach": "expCvegRoot"
-    },
     "rootMaximumDepth": {
       "approach": "fracSoilD"
+    },
+    "rootWaterEfficiency": {
+      "approach": "expCvegRoot"
     },
     "rootWaterUptake": {
       "approach": "proportion"
@@ -164,11 +164,11 @@
     "snowMelt": {
       "approach": "TairRn"
     },
-    "soilTexture": {
-      "approach": "forcing"
-    },
     "soilProperties": {
       "approach": "Saxton2006"
+    },
+    "soilTexture": {
+      "approach": "forcing"
     },
     "soilWBase": {
       "approach": "uniform"
@@ -187,32 +187,21 @@
     },
     "waterBalance": {
       "approach": "simple",
-      "use4spinup": false
-    },
-    "wCycleBase": {
-      "approach": "simple"
+      "use_in_spinup": false
     },
     "wCycle": {
       "approach": "components"
+    },
+    "wCycleBase": {
+      "approach": "simple"
     },
     "WUE": {
       "approach": "expVPDDayCo2"
     }
   },
   "pools": {
-    "water": {
-      "components": {
-        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
-        "groundW": [1, 1000.0],
-        "snowW": [1, 0.01],
-        "surfaceW": [1, 0.01]
-      },
-      "combine": "TWS",
-      "state_variables": {
-        "Δ": 0.0
-      }
-    },
     "carbon": {
+      "combine": "cEco",
       "components": {
         "cVeg": {
           "Root": [1, 25.0],
@@ -229,8 +218,19 @@
           "Old": [1, 1000.0]
         }
       },
-      "combine": "cEco",
       "state_variables": {}
+    },
+    "water": {
+      "combine": "TWS",
+      "components": {
+        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+        "groundW": [1, 1000.0],
+        "snowW": [1, 0.01],
+        "surfaceW": [1, 0.01]
+      },
+      "state_variables": {
+        "Δ": 0.0
+      }
     }
   }
 }

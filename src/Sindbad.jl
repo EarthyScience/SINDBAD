@@ -1,24 +1,15 @@
 module Sindbad
 using Reexport: @reexport
-using CodeTracking
-using Crayons
-using DataStructures: DataStructures
-using InteractiveUtils
+@reexport using DataStructures: DataStructures
 using DocStringExtensions
+@reexport using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
+@reexport using InteractiveUtils
 using Parameters
+@reexport using Reexport
 @reexport using StaticArraysCore: StaticArray, SVector, MArray, SizedArray
-using Dates
-using ForwardDiff
-using JLD2
-using JSON: parsefile, json
-using CSV: CSV
-using TypedTables: Table, @Select
-using Flatten: flatten, metaflatten, fieldnameflatten, parentnameflatten
 
-@reexport using PrettyPrinting: pprint
-
-include("tools/tools.jl")
+include("utilsCore.jl")
+include("sindbadVariableCatalog.jl")
 include("Models/models.jl")
 @reexport using .Models
-
 end

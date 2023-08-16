@@ -24,7 +24,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     # snowmelt [mm/day] is calculated as a simple function of temperature & radiation & scaled with the snow covered fraction
     # @show Tair, melt_T
     tmp_T = Tair * melt_T
-    tmp_Rn = max_0(Rn * melt_Rn)
+    tmp_Rn = maxZero(Rn * melt_Rn)
     potential_snow_melt = (tmp_T + tmp_Rn) * frac_snow
 
     # potential snow melt if T > 0.0 deg C
@@ -32,7 +32,7 @@ function compute(p_struct::snowMelt_TairRn, forcing, land, helpers)
     snow_melt = min(totalS(snowW, ΔsnowW), potential_snow_melt)
 
     # divide snowmelt loss equally from all layers
-    ΔsnowW = add_to_each_elem(ΔsnowW, -snow_melt / n_snowW)
+    ΔsnowW = addToEachElem(ΔsnowW, -snow_melt / n_snowW)
 
     # a Water Balance Pool variable that tracks how much water is still "available"
     WBP = WBP + snow_melt
@@ -74,7 +74,7 @@ end
 instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0°C. instantiate the potential snow melt based on temperature & net radiation on days with Tair > 0.0 °C
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

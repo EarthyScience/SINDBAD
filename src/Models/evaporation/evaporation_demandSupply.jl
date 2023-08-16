@@ -19,8 +19,8 @@ function compute(p_struct::evaporation_demandSupply, forcing, land, helpers)
         z_zero ∈ land.wCycleBase
     end
     # calculate potential soil evaporation
-    PET_evaporation = max_0(PET * α)
-    evaporationSupply = max_0(k_evaporation * (soilW[1] + ΔsoilW[1]))
+    PET_evaporation = maxZero(PET * α)
+    evaporationSupply = maxZero(k_evaporation * (soilW[1] + ΔsoilW[1]))
 
     # calculate the soil evaporation as a fraction of scaling parameter & PET
     evaporation = min(PET_evaporation, evaporationSupply)
@@ -64,7 +64,7 @@ end
 calculates the bare soil evaporation from demand-supply limited approach. 
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

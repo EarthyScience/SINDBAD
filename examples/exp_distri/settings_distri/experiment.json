@@ -1,10 +1,94 @@
 {
-  "name": "WROASTED",
-  "domain": "FLUXNET",
-  "configuration_files": {
-    "forcing": "forcing.json",
-    "model_structure": "model_structure.json",
-    "model_run": "model_run.json",
-    "optimization": "optimization.json"
+  "basics": {
+    "config_files": {
+      "forcing": "forcing.json",
+      "model_structure": "model_structure.json",
+      "optimization": "optimization.json"
+    },
+    "domain": "FLUXNET",
+    "name": "Distributed",
+    "time": {
+      "date_begin": "2005-01-01",
+      "date_end": "2017-12-31",
+      "temporal_resolution": "day",
+      "timesteps_in_day": 1,
+      "timesteps_in_year": 365.0
+    }
+  },
+  "exe_rules": {
+    "data_type": "Float32",
+    "input_array_type": "keyed_array",
+    "input_data_backend": "zarr",
+    "model_array_type": "static_array",
+    "parallelization": "threads",
+    "tolerance": 1.0e-3,
+    "yax_max_cache": 2e9
+  },
+  "flags": {
+    "calc_cost": true,
+    "catch_model_errors": false,
+    "debug_model": false,
+    "inline_update": false,
+    "run_forward": true,
+    "run_optimization": true,
+    "save_info": true,
+    "spinup": {
+      "load_spinup": false,
+      "run_spinup": true,
+      "save_spinup": false,
+      "spinup_TEM": true,
+      "store_spinup": false
+    },
+    "use_forward_diff": false
+  },
+  "model_output": {
+    "all": false,
+    "depth_dimensions": {
+      "d_cEco": 8,
+      "d_snow": "snowW",
+      "d_soil": "soilW"
+    },
+    "format": "nc",
+    "output_array_type": "array",
+    "path": null,
+    "save_single_file": false,
+    "variables": {
+      "fluxes.evapotranspiration": null,
+      "fluxes.gpp": null,
+      "fluxes.runoff": null,
+      "fluxes.surface_runoff": null,
+      "fluxes.transpiration": null,
+      "pools.snowW": "d_snow",
+      "pools.soilW": "d_soil",
+      "states.water_balance": null
+    }
+  },
+  "model_spinup": {
+    "differential_eqn": {
+      "absolute_tolerance": 1e-2,
+      "pools": [
+        "cEco"
+      ],
+      "relative_tolerance": 1e-2,
+      "time_jump": 200.0
+    },
+    "paths": {
+      "restart_file_in": null,
+      "restart_file_out": null
+    },
+    "sequence": [
+      {
+        "forcing": "day_msc",
+        "n_repeat": 100,
+        "spinup_mode": "all_forward_models",
+        "stop_function": null
+      },
+      {
+        "forcing": "all_years",
+        "n_repeat": 1,
+        "spinup_mode": "all_forward_models",
+        "stop_function": null
+      }
+    ]
   }
 }

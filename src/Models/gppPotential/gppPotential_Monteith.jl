@@ -24,7 +24,7 @@ end
 set the potential GPP based on radiation use efficiency
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

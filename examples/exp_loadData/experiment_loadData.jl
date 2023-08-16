@@ -1,28 +1,28 @@
 using Revise
 using Sindbad
 
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "exp_loadData/settings_loadData/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
 path_observation = path_input
-forcingConfig = "forcing_erai.json"
+forcing_config = "forcing_erai.json"
 optimize_it = false
 path_output = nothing
 domain = "DE-Hai"
 
-replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
-    "experiment.configuration_files.forcing" => forcingConfig,
-    "experiment.domain" => domain,
-    "model_run.time.end_date" => eYear * "-12-31",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => false,
-    "model_run.flags.spinup.save_spinup" => true,
-    "model_run.flags.spinup.load_spinup" => true,
+replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
+    "experiment.basics.config_files.forcing" => forcing_config,
+    "experiment.basics.domain" => domain,
+    "experiment.basics.time.date_end" => end_year * "-12-31",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.calc_cost" => false,
+    "experiment.flags.spinup.save_spinup" => true,
+    "experiment.flags.spinup.load_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
-    "model_run.output.path" => path_output,
-    "optimization.constraints.default_constraint.data_path" => path_observation);
+    "experiment.model_output.path" => path_output,
+    "optimization.observations.default_observation.data_path" => path_observation);
 
 run_output = runExperiment(experiment_json; replace_info=replace_info);
 
@@ -33,6 +33,6 @@ run_output = runExperiment(experiment_jld2); #this one will only work if the rep
 
 # one can load info directly from file and run the experiment by skipping the get configuration by continuing with
 info = Sindbad.load("info.jld2")["info"];
-info, forcing = getForcing(info)
+forcing = getForcing(info)
 
-output = setupOutput(info)
+

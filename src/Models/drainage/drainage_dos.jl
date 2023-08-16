@@ -38,8 +38,8 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
 
     ## calculate drainage
     for sl ∈ 1:(length(land.pools.soilW)-1)
-        soilW_sl = min(max_0(soilW[sl] + ΔsoilW[sl]), wSat[sl])
-        drain_fraction = clamp_01(((soilW_sl) / wSat[sl])^(dos_exp * soil_β[sl]))
+        soilW_sl = min(maxZero(soilW[sl] + ΔsoilW[sl]), wSat[sl])
+        drain_fraction = clampZeroOne(((soilW_sl) / wSat[sl])^(dos_exp * soil_β[sl]))
         drainage_tmp = drain_fraction * (soilW_sl)
         max_drain = wSat[sl] - wFC[sl]
         lossCap = min(soilW_sl, max_drain)
@@ -86,7 +86,7 @@ end
 downward flow of moisture [drainage] in soil layers based on exponential function of soil moisture degree of saturation
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

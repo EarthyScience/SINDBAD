@@ -91,7 +91,7 @@ end
 Compute effect of vegetation type on turnover rates [k]
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

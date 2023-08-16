@@ -24,14 +24,14 @@ function compute(p_struct::gppAirT_CASA, forcing, land, helpers)
     TC1 = o_one / Tp1
     T1 =
         TC1 / ((o_one + exp(ToptA * (Topt - Texp - TairDay))) *
-        (o_one + exp(ToptA * (-Topt - Texp + TairDay))))
+               (o_one + exp(ToptA * (-Topt - Texp + TairDay))))
 
     # second half of the response curve
     Tp2 = o_one / ((o_one + exp(ToptB * (-Texp))) * (o_one + exp(ToptB * (-Texp))))
     TC2 = o_one / Tp2
     T2 =
         TC2 / ((o_one + exp(ToptB * (Topt - Texp - TairDay))) *
-        (o_one + exp(ToptB * (-Topt - Texp + TairDay))))
+               (o_one + exp(ToptB * (-Topt - Texp + TairDay))))
 
     # get the scalar
     gpp_f_airT = TairDay >= Topt ? T2 : T1
@@ -45,7 +45,7 @@ end
 temperature stress for gpp_potential based on CASA & Potter
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

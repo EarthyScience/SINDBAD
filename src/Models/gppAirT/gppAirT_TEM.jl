@@ -30,7 +30,7 @@ function compute(p_struct::gppAirT_TEM, forcing, land, helpers)
     pTmax = TairDay - Tmax
     pTScGPP = pTmin * pTmax / ((pTmin * pTmax) - (TairDay - Topt)^t_two)
     TScGPP = (TairDay > Tmax) || (TairDay < Tmin) ? z_zero : pTScGPP
-    gpp_f_airT = clamp_01(TScGPP)
+    gpp_f_airT = clampZeroOne(TScGPP)
 
     ## pack land variables
     @pack_land gpp_f_airT => land.gppAirT
@@ -41,7 +41,7 @@ end
 temperature stress for gpp_potential based on TEM
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

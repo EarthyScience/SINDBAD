@@ -36,7 +36,7 @@ function compute(p_struct::gppDiffRadiation_GSI, forcing, land, helpers)
     f_prev = gpp_f_cloud_prev
     Rg = Rg * MJ_to_W # multiplied by a scalar to covert MJ/m2/day to W/m2
     fR = (o_one - fR_τ) * f_prev + fR_τ * (o_one / (o_one + exp(-fR_slope * (Rg - fR_base))))
-    gpp_f_cloud = clamp_01(fR)
+    gpp_f_cloud = clampZeroOne(fR)
     gpp_f_cloud_prev = gpp_f_cloud
 
     ## pack land variables
@@ -48,7 +48,7 @@ end
 cloudiness scalar [radiation diffusion] on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -34,7 +34,7 @@ end
 sets the value of fAPAR as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

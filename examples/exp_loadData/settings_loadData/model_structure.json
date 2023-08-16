@@ -1,11 +1,7 @@
 {
-  "1.c": "This json defines the structure of SINDBAD model run by setting 1) path of coreTEM and models 2) user selected",
-  "2.c": "approaches 3) structure of water and carbon pools",
-  "3.c": "If approaches are not set here, a default of dummy (blank/empty) will be used",
-  "4.c": "If structure of carbon pools are changed, make sure to be consistent in size (nLayers) with params of cCycleBase approaches",
   "default_model": {
     "order": 0,
-    "use4spinup": true
+    "use_in_spinup": true
   },
   "models": {
     "ambientCO2": {
@@ -16,9 +12,6 @@
     },
     "autoRespirationAirT": {
       "approach": "Q10"
-    },
-    "capillaryFlow": {
-      "approach": "VanDijk2010"
     },
     "cAllocation": {
       "approach": "GSI"
@@ -32,24 +25,27 @@
     "cAllocationRadiation": {
       "approach": "gpp"
     },
-    "cAllocationTreeFraction": {
-      "approach": "Friedlingstein1999"
-    },
     "cAllocationSoilT": {
       "approach": "gpp"
     },
     "cAllocationSoilW": {
       "approach": "gpp"
     },
+    "cAllocationTreeFraction": {
+      "approach": "Friedlingstein1999"
+    },
+    "capillaryFlow": {
+      "approach": "VanDijk2010"
+    },
     "cCycle": {
       "approach": "simple"
     },
-    "cCycleConsistency": {
-      "approach": "simple",
-      "use4spinup": false
-    },
     "cCycleBase": {
       "approach": "GSI"
+    },
+    "cCycleConsistency": {
+      "approach": "simple",
+      "use_in_spinup": false
     },
     "cCycleDisturbance": {
       "approach": "WROASTED"
@@ -99,9 +95,6 @@
     "gpp": {
       "approach": "coupled"
     },
-    "gppPotential": {
-      "approach": "Monteith"
-    },
     "gppAirT": {
       "approach": "CASA"
     },
@@ -113,6 +106,9 @@
     },
     "gppDirRadiation": {
       "approach": "none"
+    },
+    "gppPotential": {
+      "approach": "Monteith"
     },
     "gppSoilW": {
       "approach": "Stocker2020"
@@ -138,11 +134,11 @@
     "rainSnow": {
       "approach": "Tair"
     },
-    "rootWaterEfficiency": {
-      "approach": "expCvegRoot"
-    },
     "rootMaximumDepth": {
       "approach": "fracSoilD"
+    },
+    "rootWaterEfficiency": {
+      "approach": "expCvegRoot"
     },
     "rootWaterUptake": {
       "approach": "proportion"
@@ -168,11 +164,11 @@
     "snowMelt": {
       "approach": "TairRn"
     },
-    "soilTexture": {
-      "approach": "forcing"
-    },
     "soilProperties": {
       "approach": "Saxton2006"
+    },
+    "soilTexture": {
+      "approach": "forcing"
     },
     "soilWBase": {
       "approach": "uniform"
@@ -191,30 +187,21 @@
     },
     "waterBalance": {
       "approach": "simple",
-      "use4spinup": false
-    },
-    "wCycleBase": {
-      "approach": "simple"
+      "use_in_spinup": false
     },
     "wCycle": {
       "approach": "combined"
+    },
+    "wCycleBase": {
+      "approach": "simple"
     },
     "WUE": {
       "approach": "expVPDDayCo2"
     }
   },
   "pools": {
-    "water": {
-      "components": {
-        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
-        "groundW": [1, 1000.0],
-        "snowW": [1, 0.01],
-        "surfaceW": [1, 0.01]
-      },
-      "combine": "TWS",
-      "state_variables": { "Δ": 0.0 }
-    },
     "carbon": {
+      "combine": "cEco",
       "components": {
         "cVeg": {
           "Root": [1, 25.0],
@@ -231,8 +218,21 @@
           "Old": [1, 1000.0]
         }
       },
-      "combine": "cEco",
-      "state_variables": { "Δ": 0.0 }
+      "state_variables": {
+        "Δ": 0.0
+      }
+    },
+    "water": {
+      "combine": "TWS",
+      "components": {
+        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+        "groundW": [1, 1000.0],
+        "snowW": [1, 0.01],
+        "surfaceW": [1, 0.01]
+      },
+      "state_variables": {
+        "Δ": 0.0
+      }
     }
   }
 }

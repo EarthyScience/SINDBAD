@@ -41,11 +41,11 @@ function compute(p_struct::gppAirT_GSI, forcing, land, helpers)
     ## calculate variables
     f_c_prev = gpp_f_airT_c
     fT_c = f_smooth(f_c_prev, Tair, fT_c_τ, fT_c_slope, fT_c_base)
-    cScGPP = clamp_01(fT_c)
+    cScGPP = clampZeroOne(fT_c)
 
     f_h_prev = gpp_f_airT_h
     fT_h = f_smooth(f_h_prev, Tair, fT_h_τ, -fT_h_slope, fT_h_base)
-    hScGPP = clamp_01(fT_h)
+    hScGPP = clampZeroOne(fT_h)
 
     gpp_f_airT = min(cScGPP, hScGPP)
 
@@ -61,7 +61,7 @@ end
 temperature stress on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

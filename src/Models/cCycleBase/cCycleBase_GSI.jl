@@ -1,5 +1,6 @@
-export cCycleBase_GSI, adjust_and_pack_pool_components
+export cCycleBase_GSI, adjustPackPoolComponents
 
+struct CCycleBaseGSI end
 #! format: off
 @bounds @describe @units @with_kw struct cCycleBase_GSI{T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13} <: cCycleBase
     c_τ_Root::T1 = 1.0 | (0.05, 3.3) | "turnover rate of root carbon pool" | "yr-1"
@@ -35,7 +36,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     end
     ## instantiate variables
     C_to_N_cVeg = zero(cEco) #sujan
-    # C_to_N_cVeg[getzix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
+    # C_to_N_cVeg[getZix(land.pools.cVeg, helpers.pools.zix.cVeg)] .= p_C_to_N_cVeg
     c_eco_k_base = zero(cEco)
     c_τ_eco = zero(cEco)
 
@@ -44,7 +45,7 @@ function define(p_struct::cCycleBase_GSI, forcing, land, helpers)
     c_taker = Tuple([ind[1] for ind ∈ findall(>(z_zero), c_flow_A_array)])
     c_giver = Tuple([ind[2] for ind ∈ findall(>(z_zero), c_flow_A_array)])
 
-    c_model = Val(:cCycleBase_GSI)
+    c_model = CCycleBaseGSI()
 
 
     ## pack land variables
@@ -71,7 +72,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @rep_elem c_τ_SoilSlow => (c_τ_eco, 7, :cEco)
     @rep_elem c_τ_SoilOld => (c_τ_eco, 8, :cEco)
 
-    vegZix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    vegZix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ eachindex(vegZix)
         @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
     end
@@ -88,7 +89,7 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     return land
 end
 
-function adjust_and_pack_pool_components(land, helpers, ::Val{:cCycleBase_GSI})
+function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
     @unpack_land (cVeg,
         cLit,
         cSoil,
@@ -164,7 +165,7 @@ end
 Compute carbon to nitrogen ratio & annual turnover rates
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

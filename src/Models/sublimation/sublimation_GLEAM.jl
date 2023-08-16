@@ -46,7 +46,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     #PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
     tmp = α * Rn * (Δ / (Δ + γ)) / λ
 
-    PTtermSub = max_0(tmp)
+    PTtermSub = maxZero(tmp)
     # PTterm = (fei.Δ / (fei.Δ+fei.γ)) / fei.λ
 
     # Then sublimation [mm/day] is calculated in GLEAM using a P.T. equation
@@ -87,7 +87,7 @@ end
 instantiates the Priestley-Taylor term for sublimation following GLEAM. computes sublimation following GLEAM
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

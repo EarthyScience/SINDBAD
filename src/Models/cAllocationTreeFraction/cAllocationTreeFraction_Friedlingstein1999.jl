@@ -19,7 +19,7 @@ function define(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, l
 end
 
 function setCAlloc(c_allocation, cAllocValue, landPool, zixPools, helpers)
-    zix = getzix(landPool, zixPools)
+    zix = getZix(landPool, zixPools)
     for ix ∈ eachindex(zix)
         @rep_elem cAllocValue * c_allocation[zix[ix]] => (c_allocation, zix[ix], :cEco)
     end
@@ -38,15 +38,15 @@ function compute(p_struct::cAllocationTreeFraction_Friedlingstein1999, forcing, 
     end
     # the allocation fractions according to the partitioning to root/wood/leaf - represents plant level allocation
     r0 = z_zero
-    for ix ∈ getzix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
+    for ix ∈ getZix(land.pools.cVegRoot, helpers.pools.zix.cVegRoot)
         r0 = r0 + c_allocation[ix]
     end
     s0 = z_zero
-    for ix ∈ getzix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
+    for ix ∈ getZix(land.pools.cVegWood, helpers.pools.zix.cVegWood)
         s0 = s0 + c_allocation[ix]
     end
     l0 = z_zero
-    for ix ∈ getzix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
+    for ix ∈ getZix(land.pools.cVegLeaf, helpers.pools.zix.cVegLeaf)
         l0 = l0 + c_allocation[ix]
     end     # this is to below ground root fine+coarse
 
@@ -81,7 +81,7 @@ end
 adjust the allocation coefficients according to the fraction of trees to herbaceous & fine to coarse root partitioning
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

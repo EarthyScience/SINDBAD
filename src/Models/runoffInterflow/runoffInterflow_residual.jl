@@ -31,7 +31,7 @@ end
 interflow as a fraction of the available water balance pool
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

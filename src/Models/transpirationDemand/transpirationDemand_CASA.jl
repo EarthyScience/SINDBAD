@@ -12,7 +12,7 @@ function compute(p_struct::transpirationDemand_CASA, forcing, land, helpers)
         PET ∈ land.fluxes
         (z_zero, o_one) ∈ land.wCycleBase
     end
-    VMC = clamp_01(sum(PAW) / sum(wAWC))
+    VMC = clampZeroOne(sum(PAW) / sum(wAWC))
     RDR = (o_one + mean(soil_α)) / (o_one + mean(soil_α) * (VMC^mean(soil_β)))
     transpiration_demand = percolation + (PET - percolation) * RDR
 

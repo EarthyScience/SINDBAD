@@ -45,7 +45,7 @@ end
 Compute soil texture effects on turnover rates [k] of cMicSoil
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
