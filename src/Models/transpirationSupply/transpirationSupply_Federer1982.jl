@@ -26,7 +26,7 @@ end
 calculate the supply limited transpiration as a function of max rate parameter & avaialable water
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

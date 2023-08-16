@@ -21,7 +21,7 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992, forcing, land,
     tmp_smaxVeg = sum(wSat)
     tmp_SoilTotal = sum(soilW)
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β)
+    tmp_SatExFrac = clampZeroOne((tmp_SoilTotal / tmp_smaxVeg)^β)
 
     sat_excess_runoff = WBP * tmp_SatExFrac
 
@@ -40,7 +40,7 @@ end
 saturation excess runoff using original Bergström method
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

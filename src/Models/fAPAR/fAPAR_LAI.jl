@@ -26,7 +26,7 @@ end
 sets the value of fAPAR as a function of LAI
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

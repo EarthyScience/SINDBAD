@@ -5,7 +5,7 @@ using Documenter
 
 makedocs(;
     #modules=[Sindbad],
-    #authors="lazarusA <lazarus.alon@gmail.com> and contributors",
+    #authors="SINDBAD <sindbad.pirates@bgc-jena.mpg.de> and contributors",
     #repo="https://git.bgc-jena.mpg.de/sindbad/Sindbad.jl/blob/{commit}{path}#{line}",
     sitename="Sindbad.jl",
     format=Documenter.HTML(; prettyurls=true),

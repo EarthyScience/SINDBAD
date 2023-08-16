@@ -20,11 +20,11 @@ kwargs_fixed = (;
     tem_spinup=syn.tem_spinup,
     tem_models=syn.tem_models,
     tem_optim=syn.tem_optim,
-    f_one=syn.f_one
+    forcing_one_timestep=syn.forcing_one_timestep
 );
 
 site_location = syn.loc_space_maps[1]
-loc_land_init = syn.land_init_space[1];
+loc_land_init = syn.run_helpers.land_one;
 
 loc_forcing_test, _, loc_obs_test =
     getLocDataObsN(syn.out_data,
@@ -32,9 +32,9 @@ loc_forcing_test, _, loc_obs_test =
 
 # this does one gradient calculation for one site.        
 fdiff_grads(loc_loss,
-    syn.tblParams.default,
+    syn.tbl_params.default,
     syn.forward,
-    syn.tblParams,
+    syn.tbl_params,
     loc_obs_test,
     loc_forcing_test,
     loc_land_init,
@@ -60,7 +60,7 @@ grads_batch!(f_grads, inst_params_new, xbatch,
     syn.obs_synt,
     syn.sites_f,
     syn.forward,
-    syn.tblParams,
+    syn.tbl_params,
     syn.land_init_space,
     loc_loss,
     kwargs_fixed
@@ -77,17 +77,16 @@ x_args = (;
 nn_args = (;
     n_bs_feat=length(syn.xfeatures.features),
     n_neurons=32,
-    n_params=sum(syn.tblParams.is_ml),
+    n_params=sum(syn.tbl_params.is_ml),
     extra_layer=2,
     nn_opt=Optimisers.Adam()
 );
 
 experiment_json = "../exp_hybrid_simple/settings_hybrid/experiment.json";
 info = getExperimentInfo(experiment_json);
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem, info.tem.models.forward);
-output = setupOutput(info);
-forc = getKeyedArrayWithNames(forcing);
+
 
 # this one does all the training
 train_losses = nn_machine(nn_args, x_args,
@@ -97,7 +96,7 @@ train_losses = nn_machine(nn_args, x_args,
     syn.obs_synt,
     syn.sites_f,
     syn.forward,
-    syn.tblParams,
+    syn.tbl_params,
     info.tem,
     loc_loss,
     kwargs_fixed; nepochs=3);

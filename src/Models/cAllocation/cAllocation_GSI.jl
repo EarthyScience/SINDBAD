@@ -12,7 +12,7 @@ function define(p_struct::cAllocation_GSI, forcing, land, helpers)
     cVeg_nzix = eltype(land.pools.cEco)[]
     cpI = 1
     for cpName ∈ cVeg_names
-        zix = getzix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
+        zix = getZix(getfield(land.pools, cpName), getfield(helpers.pools.zix, cpName))
         nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_zix, zix)
         push!(cVeg_nzix, nZix)

@@ -30,10 +30,10 @@ function compute(p_struct::gppDemand_min, forcing, land, helpers)
 
     # @show gpp_f_airT, gpp_f_vpd, gpp_climate_stressors
     # set 3d scalar matrix with current scalars
-    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_airT, gpp_climate_stressors, gpp_climate_stressors, 1)
-    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_vpd, gpp_climate_stressors, gpp_climate_stressors, 2)
-    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_light, gpp_climate_stressors, gpp_climate_stressors, 3)
-    gpp_climate_stressors = rep_elem(gpp_climate_stressors, gpp_f_cloud, gpp_climate_stressors, gpp_climate_stressors, 4)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_airT, gpp_climate_stressors, gpp_climate_stressors, 1)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_vpd, gpp_climate_stressors, gpp_climate_stressors, 2)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_light, gpp_climate_stressors, gpp_climate_stressors, 3)
+    gpp_climate_stressors = repElem(gpp_climate_stressors, gpp_f_cloud, gpp_climate_stressors, gpp_climate_stressors, 4)
 
     # compute the minumum of all the scalars
     gpp_f_climate = minimum(gpp_climate_stressors)

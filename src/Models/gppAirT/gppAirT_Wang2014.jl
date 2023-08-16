@@ -13,7 +13,7 @@ function compute(p_struct::gppAirT_Wang2014, forcing, land, helpers)
     @unpack_land (z_zero, o_one) ∈ land.wCycleBase
 
     ## calculate variables
-    gpp_f_airT = clamp_01(TairDay / Tmax)
+    gpp_f_airT = clampZeroOne(TairDay / Tmax)
 
     ## pack land variables
     @pack_land gpp_f_airT => land.gppAirT
@@ -24,7 +24,7 @@ end
 temperature stress on gpp_potential based on Wang2014
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

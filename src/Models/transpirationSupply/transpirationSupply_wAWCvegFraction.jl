@@ -25,7 +25,7 @@ end
 calculate the supply limited transpiration as the minimum of fraction of total AWC & the actual available moisture; scaled by vegetated fractions
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

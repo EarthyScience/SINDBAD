@@ -1,5 +1,7 @@
 export soilProperties_Saxton2006, unsatK, soilParamsSaxton2006
 
+struct kSaxton2006 end
+
 #! format: off
 @bounds @describe @units @with_kw struct soilProperties_Saxton2006{T1,T2,T3,T4,T5,TN} <: soilProperties
     DF::T1 = 1.0 | (0.9, 1.3) | "Density correction factor" | ""
@@ -78,7 +80,7 @@ function define(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     sp_ψSat = zero(land.pools.soilW)
 
     # generate the function handle to calculate soil hydraulic property
-    unsat_k_model = Val(:kSaxton2006)
+    unsat_k_model = kSaxton2006()
 
     ## pack land variables
     @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP, n2, n3, unsat_k_model) => land.soilProperties
@@ -118,7 +120,7 @@ end
 assigns the soil hydraulic properties based on Saxton; 2006 to land.soilProperties.sp_
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
@@ -187,7 +189,7 @@ calculates the soil hydraulic conductivity for a given moisture based on Saxton;
  - This function is a part of pSoil; but making the looking up table & setting the soil  properties is handled by soilWBase [by calling this function]
  - is also used by all approaches depending on kUnsat within time loop of coreTEM
 """
-function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
+function unsatK(land, helpers, sl, ::kSaxton2006)
     @unpack_land begin
         (n2, n3) ∈ land.soilProperties
         (soil_β, kSat, wSat) ∈ land.soilWBase
@@ -199,7 +201,7 @@ function unsatK(land, helpers, sl, ::Val{:kSaxton2006})
     ## calculate variables
     wSat = wSat[sl]
     θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat
-    θ_dos = clamp_01(θ_dos)
+    θ_dos = clampZeroOne(θ_dos)
     β = soil_β[sl]
     kSat = kSat[sl]
     λ = o_one / β

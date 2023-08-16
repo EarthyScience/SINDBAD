@@ -55,7 +55,7 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992VegFractionPFT, 
     tmp_SoilTotal = sum(soilW + ΔsoilW)
 
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = min_1((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
+    tmp_SatExFrac = minOne((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
     sat_excess_runoff = WBP * tmp_SatExFrac
     # update water balance pool
     WBP = WBP - sat_excess_runoff
@@ -72,7 +72,7 @@ end
 saturation excess runoff using Bergström method with parameter scaled by vegetation fraction and PFT
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
