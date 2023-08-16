@@ -148,12 +148,12 @@ struct ModelArrayView end
 
 export OutputArray
 export OutputKeyedArray
-export OutputMarray
+export OutputMArray
 export OutputSizedArray
 export OutputYaxArray
 
 struct OutputArray end
 struct OutputKeyedArray end
-struct OutputMarray end
+struct OutputMArray end
 struct OutputSizedArray end
 struct OutputYaxArray end
