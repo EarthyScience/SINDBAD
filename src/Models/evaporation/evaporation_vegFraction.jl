@@ -22,7 +22,7 @@ function compute(p_struct::evaporation_vegFraction, forcing, land, helpers)
 
     # multiply equilibrium PET with αSoil & [1.0 - frac_vegetation] to get potential soil evap
     tmp = PET * α * (o_one - frac_vegetation)
-    PET_evaporation = max_0(tmp)
+    PET_evaporation = maxZero(tmp)
 
     # scale the potential with the a fraction of available water & get the minimum of the current moisture
     evaporation = min(PET_evaporation, k_evaporation * (soilW[1] + ΔsoilW[1]))
@@ -67,7 +67,7 @@ end
 calculates the bare soil evaporation from 1-frac_vegetation & PET soil
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

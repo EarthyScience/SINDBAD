@@ -21,7 +21,7 @@ function compute(p_struct::gppVPD_expco2, forcing, land, helpers)
 
     ## calculate variables
     fVPD_VPD = exp(κ * -VPDDay * (ambient_CO2 / Ca0)^-Cκ)
-    gpp_f_vpd = clamp_01(fVPD_VPD)
+    gpp_f_vpd = clampZeroOne(fVPD_VPD)
 
     ## pack land variables
     @pack_land gpp_f_vpd => land.gppVPD
@@ -32,7 +32,7 @@ end
 VPD stress on gpp_potential based on Maekelae2008 and with co2 effect
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

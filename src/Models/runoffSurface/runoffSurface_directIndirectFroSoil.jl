@@ -71,7 +71,7 @@ end
 assumes surface runoff is the sum of direct fraction of overland runoff and indirect fraction of surface water storage. Direct fraction is additionally dependent on frozen fraction of the grid
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

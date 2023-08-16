@@ -15,7 +15,7 @@ function compute(p_struct::gppAirT_MOD17, forcing, land, helpers)
 
     ## calculate variables
     tsc = TairDay / ((o_one - Tmin) * (Tmax - Tmin)) #@needscheck: if the equation reflects the original implementation
-    gpp_f_airT = clamp_01(tsc)
+    gpp_f_airT = clampZeroOne(tsc)
 
     ## pack land variables
     @pack_land gpp_f_airT => land.gppAirT
@@ -26,7 +26,7 @@ end
 temperature stress on gpp_potential based on GPP - MOD17 model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

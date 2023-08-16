@@ -64,7 +64,7 @@ end
 separates the rain & snow based on temperature threshold
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

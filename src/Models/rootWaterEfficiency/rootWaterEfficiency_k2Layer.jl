@@ -50,7 +50,7 @@ end
 sets the maximum fraction of water that root can uptake from soil layers as calibration parameter; hard coded for 2 soil layers
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

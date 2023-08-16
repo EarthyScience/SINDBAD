@@ -2,19 +2,6 @@ export wCycle_components
 
 struct wCycle_components <: wCycle end
 
-function define(p_struct::wCycle_components, forcing, land, helpers)
-    ## unpack variables
-    @unpack_land begin
-        (groundW, snowW, soilW, surfaceW, TWS) ∈ land.pools
-    end
-
-    # TWS = zero(TWS)
-
-    # @pack_land begin
-    #     TWS => land.pools
-    # end
-    return land
-end
 
 function compute(p_struct::wCycle_components, forcing, land, helpers)
     ## unpack variables
@@ -27,17 +14,17 @@ function compute(p_struct::wCycle_components, forcing, land, helpers)
     total_water_prev = totalS(soilW) + totalS(groundW) + totalS(surfaceW) + totalS(snowW)
 
     ## update variables
-    groundW = add_vec(groundW, ΔgroundW)
-    snowW = add_vec(snowW, ΔsnowW)
-    soilW = add_vec(soilW, ΔsoilW)
-    surfaceW = add_vec(surfaceW, ΔsurfaceW)
+    groundW = addVec(groundW, ΔgroundW)
+    snowW = addVec(snowW, ΔsnowW)
+    soilW = addVec(soilW, ΔsoilW)
+    surfaceW = addVec(surfaceW, ΔsurfaceW)
 
-    # set_main_from_component_pool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
+    # setMainFromComponentPool(land, helpers, helpers.pools.vals.self.TWS, helpers.pools.vals.all_components.TWS, helpers.pools.vals.zix.TWS)
 
     # always pack land tws before calling the adjust method
     @pack_land (groundW, snowW, soilW, surfaceW, TWS) => land.pools
 
-    land = adjust_and_pack_main_pool(land, helpers, land.wCycleBase.w_model)
+    land = adjustPackMainPool(land, helpers, land.wCycleBase.w_model)
 
     # reset moisture changes to zero
     for l in eachindex(ΔsnowW)

@@ -1,75 +1,61 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadExperiment
 
-# TODO add to OptimizeSindbad
+# TODO add to SindbadOptimization
 using Distributions, PDMats, DistributionFits, Turing, MCMCChains
-# using Cthulhu
+
 using BenchmarkTools
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
 path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-path_input = "../data/BE-Vie.1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "/Net/Groups/BGI/scratch/skoirala/sindbad.jl/examples/data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
+forcing_config = "forcing_erai.json"
 path_observation = path_input
 optimize_it = true
 optimize_it = false
 path_output = nothing
 # t
 domain = "DE-Hai"
-pl = "threads"
-replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
-    "experiment.configuration_files.forcing" => forcingConfig,
-    "experiment.domain" => domain,
-    "model_run.time.end_date" => eYear * "-12-31",
-    "model_run.flags.run_optimization" => optimize_it,
-    "model_run.flags.run_forward_and_cost" => true,
-    "model_run.flags.spinup.save_spinup" => false,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.run_spinup" => true,
-    "model_run.flags.debug_model" => false,
-    "model_run.flags.spinup.do_spinup" => true,
+parallelization_lib = "threads"
+replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
+    "experiment.basics.config_files.forcing" => forcing_config,
+    "experiment.basics.domain" => domain,
+    "experiment.basics.time.date_end" => end_year * "-12-31",
+    "experiment.flags.run_optimization" => optimize_it,
+    "experiment.flags.calc_cost" => true,
+    "experiment.flags.spinup.save_spinup" => false,
+    "experiment.flags.debug_model" => false,
+    "experiment.flags.spinup.spinup_TEM" => true,
+    "experiment.flags.debug_model" => false,
+    "experiment.flags.spinup.run_spinup" => true,
     "forcing.default_forcing.data_path" => path_input,
-    "model_run.output.path" => path_output,
-    "model_run.mapping.parallelization" => pl,
-    "optimization.constraints.default_constraint.data_path" => path_observation);
+    "experiment.model_output.path" => path_output,
+    "experiment.exe_rules.parallelization" => parallelization_lib,
+    "optimization.observations.default_observation.data_path" => path_observation);
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
-
-output = setupOutput(info);
-
-forc = getKeyedArrayWithNames(forcing);
-linit = createLandInit(info.pools, info.tem.helpers, info.tem.models);
+forcing = getForcing(info);
 
 #Sindbad.eval(:(error_catcher = []))    
-loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-    prepRunEcosystem(output, forc, info.tem);
-@time runEcosystem!(output.data,
-    info.tem.models.forward,
-    forc,
-    tem_with_vals,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
+run_helpers = prepTEM(forcing, info);
 
-observations = getObservation(info);
-obs = getKeyedArrayWithNames(observations);
+@time runTEM!(info.tem.models.forward,
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
-@time outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
+observations = getObservation(info, forcing.helpers);
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+
+@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
 
 """
@@ -82,11 +68,11 @@ extract a matrix with columns:
 """
 function getObsAndUnc(obs::NamedTuple, optim::NamedTuple; removeNaN=true)
     cost_options = optim.cost_options
-    optimVars = optim.variables.optim
+    optim_vars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
-        y = getproperty(obs, obsV)
-        yσ = getproperty(obs, Symbol(string(obsV) * "_σ"))
+        y = getproperty(obs_array, obsV)
+        yσ = getproperty(obs_array, Symbol(string(obsV) * "_σ"))
         [vec(y) vec(yσ)]
     end
     resM = vcat(res...)
@@ -108,12 +94,12 @@ function getPredAndObsVector(observations::NamedTuple,
     optim::NamedTuple;
     removeNaN=true)
     cost_options = optim.cost_options
-    optimVars = optim.variables.optim
+    optim_vars = optim.variables.optim
     res = map(cost_options) do var_row
         obsV = var_row.variable
-        mod_variable = getfield(optimVars, obsV)
+        mod_variable = getfield(optim_vars, obsV)
         #TODO care for equal size
-        (y, yσ, ŷ) = getDataArray(model_output, observations, obsV, mod_variable)
+        (y, yσ, ŷ) = getData(model_output, observations, obsV, mod_variable)
         [vec(y) vec(yσ) vec(ŷ)]
     end
     resM = vcat(res...)
@@ -121,64 +107,58 @@ function getPredAndObsVector(observations::NamedTuple,
     #TODO do with fewer allocations
 end
 
-outcubes = runExperimentOpti(experiment_json; replace_info=replace_info);
-pred_obs, is_finite_obs = getObsAndUnc(obs, info.optim)
+out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
+pred_obs, is_finite_obs = getObsAndUnc(obs_array, info.optim)
 
 develop_f =
     () -> begin
-        #tbl = getParameters(info.tem.models.forward, info.optim.optimized_parameters);
-        #code run from @infiltrate in optimizeModelArray
+        #tbl = getParameters(info.tem.models.forward, info.optim.model_parameters_to_optimize);
+        #code run from @infiltrate in optimizeTEM
         # d = shifloNormal(2,5)
         # using StatsPlots
         # plot(d)
 
-        tblParams = Sindbad.getParameters(tem.models.forward, optim.default_parameter,
-            optim.optimized_parameters)
+        tbl_params = getParameters(tem.models.forward, optim.model_parameter_default,
+            optim.model_parameters_to_optimize)
         # get the default and bounds
-        default_values = tem.helpers.numbers.sNT.(tblParams.default)
-        lower_bounds = tem.helpers.numbers.sNT.(tblParams.lower)
-        upper_bounds = tem.helpers.numbers.sNT.(tblParams.upper)
+        default_values = tem.helpers.numbers.sNT.(tbl_params.default)
+        lower_bounds = tem.helpers.numbers.sNT.(tbl_params.lower)
+        upper_bounds = tem.helpers.numbers.sNT.(tbl_params.upper)
 
-        loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-            prepRunEcosystem(output.data,
-                output.land_init,
-                tem.models.forward,
-                forc, tem)
+        run_helpers = prepTEM(forcing, info)
+
         priors_opt = shifloNormal.(lower_bounds, upper_bounds)
         x = default_values
-        pred_obs, is_finite_obs = getObsAndUnc(obs, optim)
+        pred_obs, is_finite_obs = getObsAndUnc(obs_array, optim)
 
         #TODO get y and sigmay beforehand and construct MvNormal
 
-        #priors_opt, dObs, is_finite_obs
-        #output, tem.models.forward, forcing, tem, loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one, loc_forcing, loc_output
-        #output_variables, optim
-        m_sesamfit = Turing.@model function sesamfit(obs, ::Type{T}=Float64) where {T}
+        m_sesamfit = Turing.@model function sesamfit(obs_array, ::Type{T}=Float64) where {T}
             #assumptions/priors
             local popt = Vector{T}(undef, length(priors_opt))
             #popt_unscaled = Vector{T}(undef, length(popt_dist))
-            #pl =  Vector{T}(undef, length(srl2))
+            #parallelization_lib =  Vector{T}(undef, length(srl2))
             #local (i,r) = first(enumerate(priors_opt))
             for (i, r) ∈ enumerate(priors_opt)
                 popt[i] ~ r
             end
             local is_priorcontext = DynamicPPL.leafcontext(__context__) == Turing.PriorContext()
             #
-            # tblParams.optim .= popt  # TODO replace mutation
+            # tbl_params.optim .= popt  # TODO replace mutation
 
-            newApproaches = updateModelParameters(tblParams, tem.models.forward, popt)
+            updated_models = updateModelParameters(tbl_params, tem.models.forward, popt)
             # TODO run model with updated parameters
-            runEcosystem!(output.data,
-                output.land_init,
-                newApproaches,
-                forcing,
-                tem_with_vals,
-                loc_space_inds,
-                loc_forcings,
-                loc_outputs,
-                land_init_space,
-                f_one)
 
+            @time runTEM!(updated_models,
+                run_helpers.forcing_nt_array,
+                run_helpers.loc_forcings,
+                run_helpers.forcing_one_timestep,
+                run_helpers.output_array,
+                run_helpers.loc_outputs,
+                run_helpers.land_init_space,
+                run_helpers.loc_space_inds,
+                run_helpers.tem_with_types)
+        
             # get predictions and observations
             model_output = (; Pair.(output_variables, output)...)
             pred_obs, is_finite_obs = getPredAndObsVector(observations, model_output, optim)

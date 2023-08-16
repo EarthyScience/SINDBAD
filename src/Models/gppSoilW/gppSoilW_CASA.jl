@@ -36,7 +36,7 @@ function compute(p_struct::gppSoilW_CASA, forcing, land, helpers)
 
     We = Bwe + OmBweOPET * sum(PAW) #@needscheck: originally, transpiration was used here but that does not make sense, as it is not calculated yet for this time step. This has been replaced by sum of plant available water.
 
-    gpp_f_soilW = clamp_01((Tair > z_zero) & (PET > z_zero) ? We : gpp_f_soilW_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
+    gpp_f_soilW = clampZeroOne((Tair > z_zero) & (PET > z_zero) ? We : gpp_f_soilW_prev) # use the current We if the temperature and PET are favorable, else use the previous one.
 
     gpp_f_soilW_prev = gpp_f_soilW
 
@@ -49,7 +49,7 @@ end
 soil moisture stress on gpp_potential based on base stress and relative ratio of PET and PAW (CASA)
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

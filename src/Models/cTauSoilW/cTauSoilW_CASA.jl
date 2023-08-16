@@ -58,7 +58,7 @@ function compute(p_struct::cTauSoilW_CASA, forcing, land, helpers)
     # WHEN PET IS 0; SET THE BGME TO THE PREVIOUS TIME STEPS VALUE
     ndxn = (PET <= 0.0)
     BGME[ndxn] = pBGME[ndxn]
-    BGME = max_0(min_1(BGME))
+    BGME = maxZero(minOne(BGME))
     # FEED IT TO THE STRUCTURE
     fsoilW = BGME
     # set the same moisture stress to all carbon pools
@@ -73,7 +73,7 @@ end
 Compute effect of soil moisture on soil decomposition as modelled in CASA [BGME - below grounf moisture effect]. The below ground moisture effect; taken directly from the century model; uses soil moisture from the previous month to determine a scalar that is then used to determine the moisture effect on below ground carbon fluxes. BGME is dependent on PET; Rainfall. This approach is designed to work for Rainfall & PET values at the monthly time step & it is necessary to scale it to meet that criterion.
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -39,7 +39,7 @@ end
 set all precip to rain
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

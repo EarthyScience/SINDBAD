@@ -15,7 +15,7 @@ function compute(p_struct::gppVPD_MOD17, forcing, land, helpers)
 
     ## calculate variables
     vsc = (VPDmax - VPDDay) / (VPDmax - VPDmin)
-    gpp_f_vpd = clamp_01(vsc)
+    gpp_f_vpd = clampZeroOne(vsc)
 
     ## pack land variables
     @pack_land gpp_f_vpd => land.gppVPD
@@ -26,7 +26,7 @@ end
 VPD stress on gpp_potential based on MOD17 model
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

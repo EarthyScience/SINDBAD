@@ -41,7 +41,7 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
-    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ zix
 
         # compute maintenance & growth respiration terms for each vegetation pool
@@ -49,13 +49,13 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
 
         # scalars of maintenance respiration for models A; B & C
         # km is the maintenance respiration coefficient [d-1]
-        k_respiration_maintain_ix = min_1(one(eltype(C_to_N_cVeg)) / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
+        k_respiration_maintain_ix = minOne(one(eltype(C_to_N_cVeg)) / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
         k_respiration_maintain_su_ix = k_respiration_maintain[ix] * YG
 
         # maintenance respiration first: R_m = km * C
         RA_M_ix = k_respiration_maintain_ix * cEco[ix]
         # no negative maintenance respiration
-        RA_M_ix = max_0(RA_M_ix)
+        RA_M_ix = maxZero(RA_M_ix)
         if helpers.pools.components.cEco[ix] == :cVegReserve
             if (cEco[ix] - RA_M_ix) < land.cCycleBase.c_remain
                 RA_M_ix = zero(RA_M_ix)
@@ -67,7 +67,7 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
         RA_G_ix = (one(YG) - YG) * (gpp * c_allocation[ix] - RA_M_ix)
 
         # no negative growth respiration
-        RA_G_ix = max_0(RA_G_ix)
+        RA_G_ix = maxZero(RA_G_ix)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
@@ -89,7 +89,7 @@ end
 Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL A - maintenance respiration is given priority [check Fig.1 of the paper].
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

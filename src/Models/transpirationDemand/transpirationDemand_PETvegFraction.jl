@@ -26,7 +26,7 @@ end
 calculate the climate driven demand for transpiration as a function of PET & α for vegetation; & vegetation fraction
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

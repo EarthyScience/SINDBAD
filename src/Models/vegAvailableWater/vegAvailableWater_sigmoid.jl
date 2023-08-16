@@ -42,9 +42,9 @@ function compute(p_struct::vegAvailableWater_sigmoid, forcing, land, helpers)
     for sl ∈ eachindex(soilW)
         θ_dos = (soilW[sl] + ΔsoilW[sl]) / wSat[sl]
         θ_fc_dos = wFC[sl] / wSat[sl]
-        tmpSoilWStress = clamp_01(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
+        tmpSoilWStress = clampZeroOne(o_one / (o_one + exp(-exp_factor * soil_β[sl] * (θ_dos - θ_fc_dos))))
         @rep_elem tmpSoilWStress => (soilWStress, sl, :soilW)
-        maxWater = clamp_01(soilW[sl] + ΔsoilW[sl] - wWP[sl])
+        maxWater = clampZeroOne(soilW[sl] + ΔsoilW[sl] - wWP[sl])
         PAW_sl = root_water_efficiency[sl] * maxWater * tmpSoilWStress
         @rep_elem PAW_sl => (PAW, sl, :soilW)
     end
@@ -58,7 +58,7 @@ end
 calculate the actual amount of water that is available for plants
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
