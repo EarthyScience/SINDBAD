@@ -232,11 +232,11 @@ for o_set in opti_set
     out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
     output = prepTEMOut(info, forcing.helpers)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
-    saveOutCubes(out_info.file_prefix, out_info.global_metadata, output.variables, run_helpers.output_array, output.dims, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures

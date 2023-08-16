@@ -34,7 +34,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `::DoRunForward`: DESCRIPTION
+- `::DoRunForward`: a type dispatch for forward run
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunForward)
     print("-------------------Forward Run Mode---------------------------\n")
@@ -61,7 +61,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `::DoRunOptimization`: DESCRIPTION
+- `::DoRunOptimization`: a type dispatch for running optimization
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunOptimization)
     println("-------------------Optimization Mode---------------------------\n")
@@ -96,7 +96,7 @@ uses the configuration read from the json files, and consolidates and sets info 
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
-- `::DoCalcCost`: DESCRIPTION
+- `::DoCalcCost`: a type dispatch for calculating cost
 """
 function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     setLogLevel()
@@ -108,9 +108,8 @@ function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoCalcCost)
     @time output_array = runTEM!(forcing, info)
     @info "runExperiment: calculate cost..."
     println("----------------------------------------------\n")
-    # @time run_output = output.data
     loss_vector = getLossVector(obs_array, output_array, prepCostOptions(obs_array, info.optim.cost_options))
-    @info loss_vector
+    println(Pair.(info.optim.observational_constraints,  loss_vector))
     return loss_vector
 end
 
@@ -124,7 +123,9 @@ function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     setLogLevel()
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
-    saveOutCubes(info, run_output, output)
+    @info "runExperimentForward: preparing output info for writing output..."
+    output = prepTEMOut(info, forcing.helpers);
+    saveOutCubes(info, run_output, output.dims, output.variables)
     return run_output
 end
 
@@ -142,7 +143,7 @@ end
 
 
 """
-    runExperimentOpti(sindbad_experiment::String; replace_info = nothing)
+    runExperimentCost(sindbad_experiment::String; replace_info = nothing)
 
 uses the configuration read from the json files, and consolidates and sets info fields needed for model simulation
 """
