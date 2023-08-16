@@ -1,6 +1,6 @@
 module SindbadTEM
 
-    using AxisKeys
+    import AxisKeys
     using ComponentArrays
     using InteractiveUtils
     using NLsolve
