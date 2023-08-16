@@ -48,9 +48,7 @@ function space_run!(
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
         
-        loc_forcing, loc_output, loc_obs =
-            getLocDataObsN(b_data..., site_location)
-
+        loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data..., site_location)
         new_approaches = updateModelParametersType(tbl_params, selected_models, new_params)
         inits = (; selected_models=new_approaches, land_init=loc_land_init)
         data = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)

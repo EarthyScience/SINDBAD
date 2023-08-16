@@ -17,6 +17,24 @@ function ForwardDiffGrads(loss_function::Function, vals::AbstractArray, kwargs..
 end
 
 """
+    ForwardDiff_grads(loss_function::Function, vals::AbstractArray, kwargs...; CHUNK_SIZE = 42)
+
+Wraps a multi-input argument function to be used by ForwardDiff.
+
+    - loss_function :: The loss function to be used by ForwardDiff
+    - vals :: Gradient evaluation `values`
+    - CHUNK_SIZE :: https://juliadiff.org/ForwardDiff.jl/dev/user/advanced/#Configuring-Chunk-Size
+    - kwargs :: keyword arguments needed by the loss_function
+"""
+function ForwardDiffGradsCfg(loss_function::Function, vals::AbstractArray, kwargs...; CHUNK_SIZE = 12)
+    out = similar(vals)
+    loss_tmp(x) = loss_function(x, kwargs...)
+    cfg = ForwardDiff.GradientConfig(loss_tmp, vals, ForwardDiff.Chunk{CHUNK_SIZE}());
+    ForwardDiff.gradient!(out, loss_tmp, vals, cfg)
+    return out
+end
+
+"""
     scaledParams(up_params_now, xbatch, idx)
 
 Returns:
