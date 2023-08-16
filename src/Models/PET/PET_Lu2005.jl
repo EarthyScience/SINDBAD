@@ -67,7 +67,7 @@ function compute(p_struct::PET_Lu2005, forcing, land, helpers)
     G = G_base * (ΔTair) / Δt
     G = z_zero #@needscheck: current G is set to zero because the original formula looked at tomorrow's temperature, and we only have today and yesterday's data available during a model run
     PET = (α * (Δ / (Δ + γ)) * (Rn - G)) / λ
-    PET = max_0(PET)
+    PET = maxZero(PET)
 
     Tair_prev = Tair
 
@@ -80,7 +80,7 @@ end
 Calculates the value of land.fluxes.PET from the forcing variables
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

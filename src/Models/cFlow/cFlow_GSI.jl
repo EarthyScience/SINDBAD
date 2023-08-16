@@ -46,7 +46,7 @@ function define(p_struct::cFlow_GSI, forcing, land, helpers)
         k_shedding_leaf=findall((aSrc .== :cVegLeaf) .* (aTrg .== :cLitFast) .== true)[1],
         k_shedding_root=findall((aSrc .== :cVegRoot) .* (aTrg .== :cLitFast) .== true)[1])
 
-    # tcprint(c_flow_A_vec_ind)
+    # tcPrint(c_flow_A_vec_ind)
     c_flow_A_vec = one.(eltype(land.pools.cEco).(zero([c_taker...])))
 
     if land.pools.cEco isa SVector
@@ -103,9 +103,9 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
 
     # calculate the flow rate for exchange with reserve pools based on the slopes
     # get the flow & shedding rates
-    leaf_root_to_reserve = min_1(max_0(-slope_eco_stressor) * slope_leaf_root_to_reserve) # * (cVeg_growth < z_zero)
-    reserve_to_leaf_root = min_1(max_0(slope_eco_stressor) * slope_reserve_to_leaf_root) # * (cVeg_growth > 0.0)
-    shedding_rate = min_1(max_0(-slope_eco_stressor) * k_shedding)
+    leaf_root_to_reserve = minOne(maxZero(-slope_eco_stressor) * slope_leaf_root_to_reserve) # * (cVeg_growth < z_zero)
+    reserve_to_leaf_root = minOne(maxZero(slope_eco_stressor) * slope_reserve_to_leaf_root) # * (cVeg_growth > 0.0)
+    shedding_rate = minOne(maxZero(-slope_eco_stressor) * k_shedding)
 
     # set the Leaf & Root to Reserve flow rate as the same
     leaf_to_reserve = leaf_root_to_reserve # should it be divided by 2?
@@ -124,9 +124,9 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     # adjust the outflow rate from the flow pools
 
     # # get the indices of leaf & root
-    # cVegLeafzix = getzix(land.pools.cVegLeaf)
-    # cVegRootzix = getzix(land.pools.cVegRoot)
-    # cVegReservezix = getzix(land.pools.cVegReserve)
+    # cVegLeafzix = getZix(land.pools.cVegLeaf)
+    # cVegRootzix = getZix(land.pools.cVegRoot)
+    # cVegReservezix = getZix(land.pools.cVegReserve)
 
     # c_eco_k[cVegLeafzix] .= min.((c_eco_k[cVegLeafzix] .+ k_shedding_leaf .+ leaf_to_reserve), o_one)
     # leaf_to_reserve_frac = leaf_to_reserve ./ (c_eco_k[cVegLeafzix])
@@ -154,12 +154,12 @@ function compute(p_struct::cFlow_GSI, forcing, land, helpers)
     reserve_to_leaf_frac = getFrac(Re2L_i, c_eco_k_f_sum)
     reserve_to_root_frac = getFrac(Re2R_i, c_eco_k_f_sum)
 
-    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_leaf)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_root)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.leaf_to_reserve)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
-    c_flow_A_vec = rep_elem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
+    c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_leaf)
+    c_flow_A_vec = repElem(c_flow_A_vec, reserve_to_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.reserve_to_root)
+    c_flow_A_vec = repElem(c_flow_A_vec, leaf_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.leaf_to_reserve)
+    c_flow_A_vec = repElem(c_flow_A_vec, root_to_reserve_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.root_to_reserve)
+    c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_leaf_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_leaf)
+    c_flow_A_vec = repElem(c_flow_A_vec, k_shedding_root_frac, c_flow_A_vec, c_flow_A_vec, c_flow_A_vec_ind.k_shedding_root)
     # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_leaf] = c_flow_A_vec
     # c_flow_A_vec[c_flow_A_vec_ind.reserve_to_root] = reserve_to_root_frac
     # c_flow_A_vec[c_flow_A_vec_ind.leaf_to_reserve] = leaf_to_reserve_frac
@@ -203,7 +203,7 @@ end
 Precomputations for the transfers between carbon pools based on GSI method. combine all the effects that change the transfers between carbon pools based on GSI method
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

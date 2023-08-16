@@ -59,7 +59,7 @@ end
 calculates the depletion of groundwater to the surface water
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -9,13 +9,11 @@ experiment_json = "exp_Africa/settings_Africa/experiment.json"
 
 info = getConfiguration(experiment_json);
 
-info = setupExperiment(info);
-info, forcing = getForcing(info);
+info = setupInfo(info);
+forcing = getForcing(info);
 
-output = setupOutput(info);
-
-outcubes = mapRunEcosystem(forcing,
+outcubes = runTEMYax(forcing,
     output,
     info.tem,
     info.tem.models.forward;
-    max_cache=info.model_run.rules.yax_max_cache);
+    max_cache=info.experiment.exe_rules.yax_max_cache);

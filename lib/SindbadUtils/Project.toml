@@ -1,0 +1,15 @@
+name = "SindbadUtils"
+uuid = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
+authors = ["dr-ko <skoirala@bgc-jena.mpg.de>"]
+version = "0.1.0"
+
+[deps]
+Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+NaNStatistics = "b946abbf-3ea7-4610-9019-9858bfdeaf2d"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TypedTables = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"

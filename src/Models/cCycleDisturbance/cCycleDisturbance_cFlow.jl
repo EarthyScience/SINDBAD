@@ -9,7 +9,7 @@ function define(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         (c_giver, c_taker) ∈ land.cCycleBase
         (z_zero, o_one) ∈ land.wCycleBase
     end
-    zix_veg_all = Tuple(vcat(getzix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
+    zix_veg_all = Tuple(vcat(getZix(getfield(land.pools, :cVeg), helpers.pools.zix.cVeg)...))
     c_lose_to_zix_vec = []
     for zixVeg ∈ zix_veg_all
         c_lose_to_zix = c_taker[[(c_giver .== zixVeg)...]]
@@ -40,7 +40,7 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         for zixVeg ∈ zix_veg_all
             cLoss = z_zero# do not lose carbon if reserve pool
             if helpers.pools.components.cEco[zixVeg] !== :cVegReserve
-                cLoss = max_0(cEco[zixVeg] - c_remain) * dist_intensity
+                cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
             end
             @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
             c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
@@ -52,7 +52,7 @@ function compute(p_struct::cCycleDisturbance_cFlow, forcing, land, helpers)
         end
         ## pack land variables
         @pack_land cEco => land.pools
-        land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
+        land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     end
     return land
 end
@@ -61,7 +61,7 @@ end
 move all vegetation carbon pools except reserve to respective flow target when there is disturbance
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

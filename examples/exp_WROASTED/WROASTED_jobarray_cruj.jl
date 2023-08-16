@@ -1,78 +1,76 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadExperiment
 using Dates
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 
 # site_index = 1
 site_index = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 # site_index = Base.parse(Int, ARGS[1])
 forcing_set = "cruj"
-site_info = Sindbad.CSV.File(
+site_info = CSV.File(
     "/Net/Groups/BGI/work_3/sindbad/project/progno/sindbad-wroasted/sandbox/sb_wroasted/fluxnet_sites_info/site_info_$(forcing_set).csv";
     header=false);
 domain = string(site_info[site_index][2])
 
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
 path_input = nothing
-sYear = nothing
-eYear = nothing
+begin_year = nothing
+end_year = nothing
 ml_main_dir = nothing
 if forcing_set == "erai"
     dataset = "ERAinterim.v2"
-    sYear = "1979"
-    eYear = "2017"
+    begin_year = "1979"
+    end_year = "2017"
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/sopt_sets_wroasted/"
 else
     dataset = "CRUJRA.v2_2"
-    sYear = "1901"
-    eYear = "2019"
+    begin_year = "1901"
+    end_year = "2019"
     ml_main_dir = "/Net/Groups/BGI/scratch/skoirala/cruj_sets_wroasted/"
 end
-ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(sYear).$(eYear).daily.nc")
-path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(sYear).$(eYear).daily.nc");
+ml_data_file = joinpath(ml_main_dir, "sindbad_processed_sets/set1/fluxnetBGI2021.BRK15.DD", dataset, "data", "$(domain).$(begin_year).$(end_year).daily.nc")
+path_input = joinpath("/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data", dataset, "daily/$(domain).$(begin_year).$(end_year).daily.nc");
 path_observation = path_input;
 
 nrepeat = 200
 
 
 ## get the spinup sequence
-nc = ForwardSindbad.NetCDF.open(path_input)
+nc = SindbadData.NetCDF.open(path_input)
 y_dist = nc.gatts["last_disturbance_on"]
 
 nrepeat_d = nothing
 if y_dist !== "undisturbed"
     y_disturb = year(Date(y_dist))
-    y_start = Meta.parse(sYear)
+    y_start = Meta.parse(begin_year)
     nrepeat_d = y_start - y_disturb
 end
 sequence = nothing
 if isnothing(nrepeat_d)
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d < 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleAH", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_AH", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d == 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
     ]
 elseif nrepeat_d > 0
     sequence = [
-        Dict("spinup_mode" => "spinup", "forcing" => "full", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat),
-        Dict("spinup_mode" => "ηScaleA0H", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => 1),
-        Dict("spinup_mode" => "spinup", "forcing" => "recycleMSC", "stop_function" => nothing, "n_repeat" => nrepeat_d),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "all_years", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat),
+        Dict("spinup_mode" => "eta_scale_A0H", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => 1),
+        Dict("spinup_mode" => "sel_spinup_models", "forcing" => "day_msc", "stop_function" => nothing, "n_repeat" => nrepeat_d),
     ]
 else
     error("cannot determine the repeat for disturbance")
@@ -91,86 +89,79 @@ opti_sets = Dict(
     :set10 => ["agb", "ndvi", "nirv"],
 )
 
-forcingConfig = "forcing_$(forcing_set).json";
-pl = "threads"
-exp_main = "wroasted_no_unc_nnse"
+forcing_config = "forcing_$(forcing_set).json";
+parallelization_lib = "threads"
+exp_main = "wroasted_no_unc_nnse_np"
 
 opti_set = (:set1, :set2, :set3, :set4, :set5, :set6, :set7, :set9, :set10,)
-# opti_set = (:set1,)
+opti_set = (:set1,)
 optimize_it = true;
 for o_set in opti_set
     path_output = "/Net/Groups/BGI/scratch/skoirala/$(exp_main)_sjindbad/$(forcing_set)/$(o_set)"
 
     exp_name = "$(exp_main)_$(forcing_set)_$(o_set)"
 
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
-        "experiment.configuration_files.forcing" => forcingConfig,
-        "experiment.domain" => domain,
-        "experiment.name" => exp_name,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => optimize_it,
-        "model_run.flags.run_forward_and_cost" => true,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.spinup.run_spinup" => true,
-        "model_run.flags.debug_model" => false,
-        "model_run.flags.spinup.do_spinup" => true,
-        "model_run.spinup.sequence" => sequence,
+    replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
+        "experiment.basics.config_files.forcing" => forcing_config,
+        "experiment.basics.domain" => domain,
+        "experiment.basics.name" => exp_name,
+        "experiment.basics.time.date_end" => end_year * "-12-31",
+        "experiment.flags.run_optimization" => optimize_it,
+        "experiment.flags.calc_cost" => true,
+        "experiment.flags.spinup.save_spinup" => false,
+        "experiment.flags.catch_model_errors" => true,
+        "experiment.flags.spinup.spinup_TEM" => true,
+        "experiment.flags.debug_model" => false,
+        "experiment.flags.spinup.run_spinup" => true,
+        "experiment.model_spinup.sequence" => sequence,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
+        "experiment.model_output.path" => path_output,
+        "experiment.exe_rules.parallelization" => parallelization_lib,
         "optimization.algorithm" => "opti_algorithms/CMAEvolutionStrategy_CMAES_10000.json",
-        "optimization.constraints.default_constraint.data_path" => path_observation,
-        "optimization.variables_to_constrain" => opti_sets[o_set],)
+        "optimization.observations.default_observation.data_path" => path_observation,
+        "optimization.observational_constraints" => opti_sets[o_set],)
 
-    @time outcubes = runExperimentForward(experiment_json; replace_info=replace_info)
-    @time outparams = runExperimentOpti(experiment_json; replace_info=replace_info)
+    @time output_default = runExperimentForward(experiment_json; replace_info=replace_info)
+    @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info)
 
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
 
-    tblParams = Sindbad.getParameters(info.tem.models.forward,
-        info.optim.default_parameter,
-        info.optim.optimized_parameters)
-    new_models = updateModelParameters(tblParams, info.tem.models.forward, outparams)
+    tbl_params = getParameters(info.tem.models.forward,
+        info.optim.model_parameter_default,
+        info.optim.model_parameters_to_optimize)
+    optimized_models = updateModelParameters(tbl_params, info.tem.models.forward, opt_params)
 
-    info, forcing = getForcing(info)
-    forc = getKeyedArrayWithNames(forcing)
+    forcing = getForcing(info)
 
-    output = setupOutput(info)
+    observations = getObservation(info, forcing.helpers)
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
 
-    observations = getObservation(info)
-    obs = getKeyedArray(observations)
+    run_helpers = prepTEM(forcing, info)
 
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output,
-            forc,
-            info.tem)
-    @time runEcosystem!(output.data,
-        new_models,
-        forc,
-        tem_with_vals,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
-
+    @time runTEM!(optimized_models,
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
 
     # some plots
     ds = forcing.data[1]
-    opt_dat = output.data
-    def_dat = outcubes
-    out_vars = output.variables
-    costOpt = info.optim.cost_options
+    opt_dat = run_helpers.output_array
+    def_dat = output_default
+    costOpt = prepCostOptions(obs_array, info.optim.cost_options)
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 
     # load matlab wroasted results
-    nc_ml = ForwardSindbad.NetCDF.open(ml_data_file)
+    nc_ml = SindbadData.NetCDF.open(ml_data_file)
 
     varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :nirv => "gpp")
 
-    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.name * "_" * info.experiment.domain)
+    fig_prefix = joinpath(info.output.figure, "eval_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
 
     foreach(costOpt) do var_row
         v = var_row.variable
@@ -179,18 +170,18 @@ for o_set in opti_set
         if v == :agb
             ml_dat = nc_ml[varib_dict[v]][1, 1, 2, :]
         elseif v == :ndvi
-            ml_dat = ml_dat .- ForwardSindbad.Statistics.mean(ml_dat)
+            ml_dat = ml_dat .- mean(ml_dat)
         end
         v = (var_row.mod_field, var_row.mod_subfield)
-        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
         lossMetric = var_row.cost_metric
-        loss_name = valToSymbol(lossMetric)
-        if loss_name in (:nnseinv, :nseinv)
-            lossMetric = Val(:nse)
+        loss_name = nameof(typeof(lossMetric))
+        if loss_name in (:NNSEInv, :NSEInv)
+            lossMetric = NSE()
         end
-        (obs_var, obs_σ, def_var) = getDataArray(def_dat, obs, var_row)
-        (_, _, opt_var) = getDataArray(opt_dat, obs, var_row)
+        (obs_var, obs_σ, def_var) = getData(def_dat, obs_array, var_row)
+        (_, _, opt_var) = getData(opt_dat, obs_array, var_row)
         obs_var_TMP = obs_var[:, 1, 1, 1]
         non_nan_index = findall(x -> !isnan(x), obs_var_TMP)
         if length(non_nan_index) < 2
@@ -204,7 +195,7 @@ for o_set in opti_set
         def_var = def_var[tspan, 1, 1, 1]
         opt_var = opt_var[tspan, 1, 1, 1]
 
-        xdata = [info.tem.helpers.dates.vector[tspan]...]
+        xdata = [info.tem.helpers.dates.range[tspan]...]
         obs_var_n, obs_σ_n, ml_dat_n = filterCommonNaN(obs_var, obs_σ, ml_dat)
         obs_var_n, obs_σ_n, def_var_n = filterCommonNaN(obs_var, obs_σ, def_var)
         obs_var_n, obs_σ_n, opt_var_n = filterCommonNaN(obs_var, obs_σ, opt_var)
@@ -212,7 +203,7 @@ for o_set in opti_set
         metr_def = loss(obs_var_n, obs_σ_n, def_var_n, lossMetric)
         metr_opt = loss(obs_var_n, obs_σ_n, opt_var_n, lossMetric)
         plot(xdata, obs_var; label="obs", seriestype=:scatter, mc=:black, ms=4, lw=0, ma=0.65, left_margin=1Plots.cm)
-        plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(valToSymbol(lossMetric)), $(forcing_set), $(o_set)")
+        plot!(xdata, def_var, lw=1.5, ls=:dash, left_margin=1Plots.cm, legend=:outerbottom, legendcolumns=4, label="def ($(round(metr_def, digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"])) -> $(nameof(typeof(lossMetric))), $(forcing_set), $(o_set)")
         plot!(xdata, opt_var; label="opt ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
         plot!(xdata, ml_dat; label="matlab ($(round(metr_ml, digits=2)))", lw=1.5, ls=:dash)
         savefig(fig_prefix * "_$(v)_$(forcing_set).png")
@@ -220,52 +211,50 @@ for o_set in opti_set
 
 
     ### redo the forward run to save all output variables
-    replace_info["model_run.flags.run_forward_and_cost"] = false
-    replace_info["model_run.flags.run_optimization"] = false
+    replace_info["experiment.flags.calc_cost"] = false
+    replace_info["experiment.flags.run_optimization"] = false
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
-    info, forcing = getForcing(info)
-    forc = getKeyedArrayWithNames(forcing)
-    output = setupOutput(info)
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output,
-            forc,
-            info.tem)
-    @time runEcosystem!(output.data,
-        new_models,
-        forc,
-        tem_with_vals,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
+    forcing = getForcing(info)
+
+
+    run_helpers = prepTEM(forcing, info)
+    @time runTEM!(optimized_models,
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
 
     # save the outcubes
-
+    out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+    output = prepTEMOut(info, forcing.helpers)
     out_info = getOutputFileInfo(info)
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "zarr", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "zarr", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(true))
-    saveOutCubes(out_info.file_prefix, out_info.global_info, output.variables, output.data, output.dims, "nc", info.model_run.time.model_time_step, Val(false))
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoSaveSingleFile())
+    saveOutCubes(out_info.file_prefix, out_info.global_metadata, run_helpers.output_array, output.dims, output.variables, "nc", info.experiment.basics.time.temporal_resolution, DoNotSaveSingleFile())
 
 
     # plot the debug figures
     default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
-    out_vars = output.variables
-    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.name * "_" * info.experiment.domain)
+    out_vars = out_vars
+    fig_prefix = joinpath(info.output.figure, "debug_" * info.experiment.basics.name * "_" * info.experiment.basics.domain)
     for (o, v) in enumerate(out_vars)
-        def_var = output.data[o][:, :, 1, 1]
-        vinfo = getVariableInfo(v, info.model_run.time.model_time_step)
+        def_var = run_helpers.output_array[o][:, :, 1, 1]
+        vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
         v = vinfo["standard_name"]
-        xdata = [info.tem.helpers.dates.vector...]
+        xdata = [info.tem.helpers.dates.range...]
         if size(def_var, 2) == 1
-            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
+            plot(xdata, def_var[:, 1]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, 1]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]) ($(vinfo["units"]))", left_margin=1Plots.cm)
             ylabel!("$(vinfo["standard_name"])", font=(20, :green))
             savefig(fig_prefix * "_$(v)_$(forcing_set).png")
         else
-            for ll ∈ 1:size(def_var, 2)
-                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(ForwardSindbad.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
+            foreach(axes(def_var, 2)) do ll
+                plot(xdata, def_var[:, ll]; label="optim_forw ($(round(SindbadTEM.mean(def_var[:, ll]), digits=2)))", size=(2000, 1000), title="$(vinfo["long_name"]), layer $(ll),  ($(vinfo["units"]))", left_margin=1Plots.cm)
                 ylabel!("$(vinfo["standard_name"])", font=(20, :green))
                 savefig(fig_prefix * "_$(v)_$(ll)_$(forcing_set).png")
             end

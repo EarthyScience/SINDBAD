@@ -83,7 +83,7 @@ end
 calculates the delay coefficient of first 60 days as a precomputation based on Orth et al. 2013 & as it is used in Trautmannet al. 2018. calculates the base runoff based on Orth et al. 2013 & as it is used in Trautmannet al. 2018
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

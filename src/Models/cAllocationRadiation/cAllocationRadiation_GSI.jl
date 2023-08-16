@@ -46,7 +46,7 @@ end
 radiation effect on decomposition/mineralization using GSI method
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

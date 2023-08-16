@@ -32,18 +32,18 @@ function define(p_struct::cCycleConsistency_simple, forcing, land, helpers)
 end
 
 """
-cry_and_die(land, msg)
+throwError(land, msg)
 display and error msg and stop when there is inconsistency
 """
-function cry_and_die(land, msg)
-    tcprint(land)
+function throwError(land, msg)
+    tcPrint(land)
     if hasproperty(Sindbad, :error_catcher)
         push!(Sindbad.error_catcher, land)
     end
     error(msg)
 end
 
-function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
+function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoCatchModelErrors) #when check is on
     ## unpack land variables
     @unpack_land begin
         c_allocation ∈ land.states
@@ -54,64 +54,70 @@ function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
     end
 
     # check allocation
-    if helpers.run.catch_model_errors
-        for i in eachindex(c_allocation)
-            if c_allocation[i] < z_zero
-                cry_and_die(land, "negative values in carbon_allocation at index $(i). Cannot continue")
-            end
+    for i in eachindex(c_allocation)
+        if c_allocation[i] < z_zero
+            throwError(land, "negative values in carbon_allocation at index $(i). Cannot continue")
         end
-
-        for i in eachindex(c_allocation)
-            if c_allocation[i] > o_one
-                cry_and_die(land, "carbon_allocation larger than one at index $(i). Cannot continue")
-            end
-        end
-
-        if !isapprox(sum(c_allocation), o_one; atol=tolerance)
-            cry_and_die(land, "cAllocation does not sum to 1. Cannot continue")
-        end
-
-        # Check carbon flow vector
-        # check if any of the off-diagonal values of flow vector is negative
-        for i in eachindex(c_flow_A_vec)
-            if c_flow_A_vec[i] < z_zero
-                cry_and_die(land, "negative value in flow vector at index $(i). Cannot continue")
-            end
-        end
-
-        # check if any of the off-diagonal values of flow vector is larger than 1.
-        for i in eachindex(c_flow_A_vec)
-            if c_flow_A_vec[i] > o_one
-                cry_and_die(land, "flow is greater than one in flow vector at index $(i). Cannot continue")
-            end
-        end
-
-        # check if the flow to different pools add up to 1
-        # below the diagonal
-        # the sum of A per column below the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
-
-        for (i, giv) in enumerate(giver_upper_unique)
-            s = z_zero
-            for ind in giver_upper_indices[i]
-                s = s + c_flow_A_vec[ind]
-            end
-            if (s - o_one) > helpers.numbers.tolerance
-                cry_and_die(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
-            end
-        end
-
-        for (i, giv) in enumerate(giver_lower_unique)
-            s = z_zero
-            for ind in giver_lower_indices[i]
-                s = s + c_flow_A_vec[ind]
-            end
-            if (s - o_one) > helpers.numbers.tolerance
-                cry_and_die(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
-            end
-        end
-
     end
 
+    for i in eachindex(c_allocation)
+        if c_allocation[i] > o_one
+            throwError(land, "carbon_allocation larger than one at index $(i). Cannot continue")
+        end
+    end
+
+    if !isapprox(sum(c_allocation), o_one; atol=tolerance)
+        throwError(land, "cAllocation does not sum to 1. Cannot continue")
+    end
+
+    # Check carbon flow vector
+    # check if any of the off-diagonal values of flow vector is negative
+    for i in eachindex(c_flow_A_vec)
+        if c_flow_A_vec[i] < z_zero
+            throwError(land, "negative value in flow vector at index $(i). Cannot continue")
+        end
+    end
+
+    # check if any of the off-diagonal values of flow vector is larger than 1.
+    for i in eachindex(c_flow_A_vec)
+        if c_flow_A_vec[i] > o_one
+            throwError(land, "flow is greater than one in flow vector at index $(i). Cannot continue")
+        end
+    end
+
+    # check if the flow to different pools add up to 1
+    # below the diagonal
+    # the sum of A per column below the diagonals is always < 1. The tolerance allows for small overshoot over 1, but this may result in a negative carbon pool if frequent
+
+    for (i, giv) in enumerate(giver_upper_unique)
+        s = z_zero
+        for ind in giver_upper_indices[i]
+            s = s + c_flow_A_vec[ind]
+        end
+        if (s - o_one) > helpers.numbers.tolerance
+            throwError(land, "sum of giver flow greater than one in upper cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+        end
+    end
+
+    for (i, giv) in enumerate(giver_lower_unique)
+        s = z_zero
+        for ind in giver_lower_indices[i]
+            s = s + c_flow_A_vec[ind]
+        end
+        if (s - o_one) > helpers.numbers.tolerance
+            throwError(land, "sum of giver flow greater than one in lower cFlow vector for $(info.tem.helpers.pools.components.cEco[giv]) pool. Cannot continue.")
+        end
+    end
+
+    return nothing
+end
+
+function checkCcycleErrors(p_struct::cCycleConsistency_simple, forcing, land, helpers, ::DoNotCatchModelErrors) #when check is off/false
+    return nothing
+end
+
+function compute(p_struct::cCycleConsistency_simple, forcing, land, helpers)
+    checkCcycleErrors(p_struct, forcing, land, helpers, helpers.run.catch_model_errors)
     return land
 end
 

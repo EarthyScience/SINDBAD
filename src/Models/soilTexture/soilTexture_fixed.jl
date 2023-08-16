@@ -44,7 +44,7 @@ end
 sets the soil texture properties as constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -29,7 +29,7 @@ end
 light saturation scalar [light effect] on gpp_potential based on Maekelae2008
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

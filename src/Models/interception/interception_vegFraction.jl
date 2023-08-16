@@ -33,7 +33,7 @@ end
 computes canopy interception evaporation as a fraction of vegetation cover
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
