@@ -13,6 +13,7 @@ function getExperimentInfo(sindbad_experiment::String; replace_info=nothing)
     info = setupInfo(info)
     saveInfo(info, info.tem.helpers.run.save_info)
     setDebugErrorCatcher(info.tem.helpers.run.catch_model_errors)
+    @info "\n------------------------------------------------\n"
     return info
 end
 
