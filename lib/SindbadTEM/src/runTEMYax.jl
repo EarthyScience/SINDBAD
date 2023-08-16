@@ -19,14 +19,14 @@ function TEMYax(args...;
     forcing_one_timestep,
     land_init::NamedTuple,
     tem::NamedTuple,
-    out_variables)
-    outputs, inputs = unpackYaxForward(args; out_variables, forcing_variables)
+    out_vars)
+    outputs, inputs = unpackYaxForward(args; out_vars, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
 
     land_out = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
 
     i = 1
-    foreach(out_variables) do var_pair
+    foreach(out_vars) do var_pair
         data = land_out[first(var_pair)][last(var_pair)]
             viewCopyYax(outputs[i], data)
             i += 1
@@ -59,7 +59,7 @@ function runTEMYax(
     run_helpers = prepTEM(forcing, info)
     outdims = run_helpers.output.dims
     land_one = deepcopy(run_helpers.land_one)
-    out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+    out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
     #additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
     #nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
     # @show "I am here"
@@ -71,7 +71,7 @@ function runTEMYax(
         tem=run_helpers.tem_with_types,
         selected_models=selected_models,
         forcing_variables=forcing_variables,
-        out_variables = out_variables,
+        out_vars = out_vars,
         indims=indims,
         outdims=outdims,
         max_cache=info.experiment.exe_rules.yax_max_cache,
@@ -92,9 +92,9 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing_variables`: DESCRIPTION
 """
-function unpackYaxForward(args; out_variables::NamedTuple, forcing_variables::AbstractArray)
+function unpackYaxForward(args; out_vars::NamedTuple, forcing_variables::AbstractArray)
     nin = length(forcing_variables)
-    nout = length(out_variables)
+    nout = length(out_vars)
     outputs = args[1:nout]
     inputs = args[(nout+1):(nout+nin)]
     return outputs, inputs

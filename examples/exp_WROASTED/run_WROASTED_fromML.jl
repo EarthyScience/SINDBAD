@@ -109,8 +109,6 @@ for site_index in sites
         error("cannot determine the repeat for disturbance")
     end
 
-
-
     parallelization_lib = "threads"
     replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
         "experiment.basics.config_files.optimization" => "optimization_1_1.json",
@@ -168,7 +166,6 @@ for site_index in sites
 
         ## run the model
 
-
         run_helpers = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(models_with_matlab_params,
             run_helpers.forcing_nt_array,
@@ -185,11 +182,7 @@ for site_index in sites
         observations = getObservation(info, forcing.helpers)
         obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
 
-        # open the matlab simulation data
-        # nc_ml = SindbadData.NetCDF.open(ml_data_file);
-
         varib_dict = Dict(:gpp => "gpp", :nee => "NEE", :transpiration => "tranAct", :evapotranspiration => "evapTotal", :ndvi => "fAPAR", :agb => "cEco", :reco => "cRECO", :soilW => "wSoil", :gpp_f_soilW => "SMScGPP", :gpp_f_vpd => "VPDScGPP", :gpp_climate_stressors => "scall", :AoE => "AoE", :eco_respiration => "cRECO", :c_allocation => "cAlloc", :fAPAR => "fAPAR", :cEco => "cEco", :PAW => "pawAct", :transpiration_supply => "tranSup", :c_eco_k => "p_cTauAct_k", :auto_respiration => "cRA", :hetero_respiration => "cRH", :runoff => "roTotal", :base_runoff => "roBase", :gw_recharge => "gwRec", :c_eco_k_f_soilT => "fT", :c_eco_k_f_soilW => "p_cTaufwSoil_fwSoil", :snow_melt => "snowMelt", :groundW => "wGW", :snowW => "wSnow", :frac_snow => "wSnowFrac", :c_eco_influx => "cEcoInflux", :c_eco_efflux => "cEcoEfflux", :c_eco_out => "cEcoOut", :c_eco_flow => "cEcoFlow", :leaf_to_reserve_frac => "L2ReF", :root_to_reserve_frac => "R2ReF", :reserve_to_leaf_frac => "Re2L", :reserve_to_root_frac => "Re2R", :k_shedding_leaf_frac => "k_LshedF", :k_shedding_root_frac => "k_RshedF", :root_water_efficiency => "p_rootFrac_fracRoot2SoilD")
-
 
         # some plots for model simulations from JL and matlab versions
         ds = forcing.data[1]
@@ -241,11 +234,6 @@ for site_index in sites
             plot!(xdata, jl_dat; label="julia ($(round(metr_opt, digits=2)))", lw=1.5, ls=:dash)
             savefig("examples/exp_WROASTED/tmp_figs_comparison/wroasted_$(domain)_$(v)_$(forcing_set).png")
         end
-        # end
-        # end
-
-
-
 
         if do_debug_figs
             ##plot more diagnostic figures for sindbad jl

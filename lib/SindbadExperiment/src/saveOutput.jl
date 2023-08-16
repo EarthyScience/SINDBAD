@@ -127,14 +127,14 @@ saves the output variables from the run as one file
 # Arguments:
 - `data_path_base`: base path of the output file including the directory and file prefix
 - `global_metadata`: a collection of  global metadata information to write to the output file
-- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `data`: data to be written to file
 - `data_dims`: a vector of dimension of data for each variable to be written to a file
+- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `out_format`: format of the output file
 - `t_step`: a string for time step of the model run to be used in the units attribute of variables
 - `::DoSaveSingleFile`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoSaveSingleFile)
+function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoSaveSingleFile)
     @info "saving one file for all variables"
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
@@ -154,14 +154,14 @@ saves the output variables from the run as one file per variable
 # Arguments:
 - `data_path_base`: base path of the output file including the directory and file prefix
 - `global_metadata`: a collection of  global metadata information to write to the output file
-- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `data`: data to be written to file
 - `data_dims`: a vector of dimension of data for each variable to be written to a file
+- `var_pairs`: a tuple of pairs of sindbad variables to write including the field and subfield of land as the first and last element
 - `out_format`: format of the output file
 - `t_step`: a string for time step of the model run to be used in the units attribute of variables
 - `::DoNotSaveSingleFile`: DESCRIPTION
 """
-function saveOutCubes(data_path_base, global_metadata, var_pairs, data, data_dims, out_format, t_step, ::DoNotSaveSingleFile)
+function saveOutCubes(data_path_base, global_metadata, data, data_dims, var_pairs, out_format, t_step, ::DoNotSaveSingleFile)
     @info "saving one file per variable"
     catalog_names = getVarFull.(var_pairs)
     variable_names = getUniqueVarNames(var_pairs)
@@ -186,9 +186,10 @@ saves the output variables from the run from the information in info
 # Arguments:
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `out_cubes`: a collection of output data to be written to file
-- `output`: output NT consisting of all output related information such as dimension and names
+- `out_dims`: output dimensions with list of dimensions for each variable pair
+- `out_vars`: output variable name pairs with field and subfield
 """
-function saveOutCubes(info, out_cubes, output)
+function saveOutCubes(info, out_cubes, out_dims, out_vars)
     out_file_info = getOutputFileInfo(info)
-    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, output.variables, out_cubes, output.dims, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
+    saveOutCubes(out_file_info.file_prefix, out_file_info.global_metadata, out_cubes, out_dims, out_vars, info.experiment.model_output.format, info.experiment.basics.time.temporal_resolution, info.tem.helpers.run.save_single_file)
 end
