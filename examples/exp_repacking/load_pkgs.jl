@@ -43,18 +43,24 @@ op = prepTEMOut(info, forcing.helpers);
 
 run_helpers = prepTEM(forcing, info);
 
-# argsTEM = (;
-#     forcing_nt_array = run_helpers.forcing_nt_array,
-#     loc_forcings = run_helpers.loc_forcing,
-#     forcing_one_timestep = run_helpers.forcing_one_timestep,
-#     output_array = run_helpers.output_array,
-#     loc_outputs = run_helpers.loc_outputs,
-#     land_init_space = run_helpers.land_init_space,
-#     loc_space_inds = run_helpers.loc_space_inds,
-#     tem_with_types = run_helpers.tem_with_types
-# );
+argsTEM = (;
+     forcing_nt_array = run_helpers.forcing_nt_array,
+     loc_forcings = run_helpers.loc_forcing,
+     forcing_one_timestep = run_helpers.forcing_one_timestep,
+     output_array = run_helpers.output_array,
+     loc_outputs = run_helpers.loc_outputs,
+     land_init_space = run_helpers.land_init_space,
+     loc_space_inds = run_helpers.loc_space_inds,
+     tem_with_types = run_helpers.tem_with_types
+ );
 
-# @time runTEM!(info.tem.models.forward, argsTEM...)
+ # @time runTEM!(info.tem.models.forward, argsTEM...) # error 
+ #=
+ ERROR: TaskFailedException
+
+    nested task error: The function `Base.propertynames` was overloaded for type `AxisKeys.KeyedArray{Float32, 1, NamedDims.NamedDimsArray{(:depth_soilGrids,), Float32, 1, SubArray{Float32, 1, Matrix{Float32}, T, true}}, Base.RefValue{Vector{Int64}}}`.
+    Please make sure `ConstructionBase.setproperties` is also overloaded for this type.
+ =#
 
 tem_with_types = run_helpers.tem_with_types;
 
@@ -106,9 +112,11 @@ optim = (;
 
 @time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
+CHUNK_SIZE = 12;
 data_cache = (;
     loc_forcing,
     forcing_one_timestep =run_helpers.forcing_one_timestep,
+#    allocated_output = DiffCache.(loc_output, (CHUNK_SIZE,)),
     allocated_output = DiffCache.(loc_output)
 );
 
@@ -121,7 +129,7 @@ kwargs = (;
 @time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
 
 
-b_data = (; allocated_output = op.data, forc, obs);
+
 
 # load available covariates
 
@@ -146,6 +154,13 @@ sites_parameters = ml_baseline(xfeatures)
 cov_sites = xfeatures.site
 cov_sites = setdiff!(cov_sites, ["AR-SLiu"])
 
+forcing_one_timestep =run_helpers.forcing_one_timestep
+
+#sites_parameters .= tbl_params.default
+
+op = prepTEMOut(info, forcing.helpers);
+b_data = (; allocated_output = op.data, forc, obs);
+
 space_run!(
     info.tem.models.forward,
     sites_parameters,
@@ -159,18 +174,6 @@ space_run!(
 )
 
 
-# tempo = string.(forc.Tair.time);
-# out_names = info.optimization.observational_constraints
-# plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
-
-
-
-
-# optim
-
-
-
-# optim = (;
-#     cost_options,
-#     multiconstraint_method
-# )
+tempo = string.(forc.Tair.time);
+out_names = info.optimization.observational_constraints
+plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
