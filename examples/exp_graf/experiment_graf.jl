@@ -20,7 +20,6 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # 
 forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
-output = prepTEMOut(info, forcing.helpers);
 
 GC.gc()
 
@@ -53,6 +52,7 @@ getLossVector(obs_array, run_helpers.output_array, prepCostOptions(obs_array, in
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
+@time out_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
 
 
 
