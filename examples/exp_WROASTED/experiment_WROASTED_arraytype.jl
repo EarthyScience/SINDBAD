@@ -1,91 +1,65 @@
 using Revise
-using Sindbad
-using ForwardSindbad
-using OptimizeSindbad
+using SindbadTEM
+using SindbadData
 using Plots
-noStackTrace()
+toggleStackTraceNT()
 experiment_json = "../exp_WROASTED/settings_WROASTED/experiment.json"
-sYear = "1979"
-eYear = "2017"
+begin_year = "1979"
+end_year = "2017"
 
-# path_input = "/Net/Groups/BGI/scratch/skoirala/wroasted/fluxNet_0.04_CLIFF/fluxnetBGI2021.BRK15.DD/data/ERAinterim.v2/daily/DE-Hai.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
-# path_input = "../data/DE-2.1979.2017.daily.nc"
-# forcingConfig = "forcing_DE-2.json"
-# path_input = "../data/BE-Vie.1979.2017.daily.nc"
-# forcingConfig = "forcing_erai.json"
 domain = "AU-DaP"
 path_input = "../data/fn/$(domain).1979.2017.daily.nc"
-forcingConfig = "forcing_erai.json"
+forcing_config = "forcing_erai.json"
 
 path_observation = path_input
-optimize_it = true
-# optimize_it = false
+optimize_it = false
 path_output = nothing
-plt = plot(; legend=:outerbottom, size=(2000, 1000))
+var_select = (:pools => :cEco)
+var_name = "$(first(var_select))_$(last(var_select))"
+plt = plot(; legend=:outerbottom, size=(2000, 1000), title="$var_name")
 lt = (:solid, :dash, :dot)
-pl = "threads"
-arraymethod = "view"
+parallelization_lib = "threads"
+model_array_type = "view"
 info = nothing
-for (i, arraymethod) in enumerate(("array", "view", "staticarray"))
-    replace_info = Dict("model_run.time.start_date" => sYear * "-01-01",
-        "experiment.configuration_files.forcing" => forcingConfig,
-        "experiment.domain" => domain,
-        "model_run.time.end_date" => eYear * "-12-31",
-        "model_run.flags.run_optimization" => false,
-        "model_run.flags.run_forward_and_cost" => false,
-        "model_run.flags.spinup.save_spinup" => false,
-        "model_run.flags.catch_model_errors" => true,
-        "model_run.flags.spinup.run_spinup" => false,
-        "model_run.flags.debug_model" => false,
-        "model_run.rules.model_array_type" => arraymethod,
-        "model_run.flags.spinup.do_spinup" => true,
+for (i, model_array_type) in enumerate(("array", "view", "static_array"))
+    replace_info = Dict("experiment.basics.time.date_begin" => begin_year * "-01-01",
+        "experiment.basics.config_files.forcing" => forcing_config,
+        "experiment.basics.domain" => domain,
+        "experiment.basics.time.date_end" => end_year * "-12-31",
+        "experiment.flags.run_optimization" => false,
+        "experiment.flags.calc_cost" => false,
+        "experiment.flags.spinup.save_spinup" => false,
+        "experiment.flags.catch_model_errors" => true,
+        "experiment.flags.spinup.spinup_TEM" => false,
+        "experiment.flags.debug_model" => false,
+        "experiment.exe_rules.model_array_type" => model_array_type,
+        "experiment.flags.spinup.run_spinup" => true,
         "forcing.default_forcing.data_path" => path_input,
-        "model_run.output.path" => path_output,
-        "model_run.mapping.parallelization" => pl,
-        "optimization.constraints.default_constraint.data_path" => path_observation)
+        "experiment.model_output.path" => path_output,
+        "experiment.exe_rules.parallelization" => parallelization_lib,
+        "optimization.observations.default_observation.data_path" => path_observation)
 
     info = getExperimentInfo(experiment_json; replace_info=replace_info) # note that this will modify information from json with the replace_info
-
-    info, forcing = getForcing(info)
-
-    output = setupOutput(info)
-
-    forc = getKeyedArrayWithNames(forcing)
-
+    forcing = getForcing(info)
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
-
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output, forc, info.tem)
-    @time runEcosystem!(output.data,
-        info.tem.models.forward,
-        forc,
-        tem_with_vals,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
-    # some plots
+    run_helpers = prepTEM(forcing, info)
+    @time runTEM!(info.tem.models.forward,
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types)
     ds = forcing.data[1]
-    opt_dat = output.data
-    plot!(opt_dat[3][end, :, 1, 1];
+    opt_dat = run_helpers.output_array
+    out_vars = run_helpers.out_vars
+    sel_var_index = findall(x->first(x) == first(var_select) && last(x) == last(var_select), out_vars)[1]
+    plot!(opt_dat[sel_var_index][end, :, 1, 1];
         linewidth=5,
         ls=lt[i],
-        label=arraymethod)
-    # plot(def_var; label="def", size=(2000, 1000), title=v)
-    #     plot!(opt_var; label="opt")
-    #     if v in obsMod
-    #         obsv = obsVar[findall(obsMod .== v)[1]]
-    #         @show "plot obs", v
-    #         obs_var = getfield(obs, obsv)[tspan, 1, 1, 1]
-    #         plot!(obs_var; label="obs")
-    #         # title(obsv)
-    #     end
-    # end
+        label=model_array_type)
+    
 end
-savefig(joinpath(info.output.figure, "tmp.png"))
-#     savefig("wroasted_$(domain)_$(v).png")
-# using JuliaFormatter
-# format(".", MinimalStyle(), margin=100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true, trailing_comma=false)
-# format(".", margin = 100, always_for_in=true, for_in_replacement="∈", format_docstrings=true, yas_style_nesting=true, import_to_using=true, remove_extra_newlines=true)
+savefig(joinpath(info.output.figure, "compare_model_array_types_$(var_name).png"))

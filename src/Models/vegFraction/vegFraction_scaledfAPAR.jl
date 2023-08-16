@@ -16,7 +16,7 @@ function compute(p_struct::vegFraction_scaledfAPAR, forcing, land, helpers)
     end
 
     ## calculate variables
-    frac_vegetation = min_1(fAPAR * fAPARscale)
+    frac_vegetation = minOne(fAPAR * fAPARscale)
 
     ## pack land variables
     @pack_land frac_vegetation => land.states
@@ -27,7 +27,7 @@ end
 sets the value of frac_vegetation by scaling the fAPAR value
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -22,7 +22,7 @@ end
 sets the value of LAI as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

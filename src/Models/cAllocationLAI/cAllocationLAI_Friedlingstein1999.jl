@@ -28,7 +28,7 @@ end
 LAI effect on allocation based on light limitation from Friedlingstein1999
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

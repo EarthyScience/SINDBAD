@@ -37,8 +37,8 @@ function compute(p_struct::rootWaterEfficiency_k2fvegFraction, forcing, land, he
     ## calculate variables
     # check if the number of soil layers & number of elements in soil
     # the scaling parameters can be > 1 but k1_root_water_efficiency needs to be <= 1
-    k1_root_water_efficiency = min_1(frac_vegetation * k1_scale) # the fraction of water that a root can uptake from the 1st soil layer
-    k2_root_water_efficiency = min_1(frac_vegetation * k2_scale) # the fraction of water that a root can uptake from the 1st soil layer
+    k1_root_water_efficiency = minOne(frac_vegetation * k1_scale) # the fraction of water that a root can uptake from the 1st soil layer
+    k2_root_water_efficiency = minOne(frac_vegetation * k2_scale) # the fraction of water that a root can uptake from the 1st soil layer
     # set the properties
     # 1st Layer
     @rep_elem k1_root_water_efficiency => (root_water_efficiency, 1, :soilW)
@@ -54,7 +54,7 @@ end
 sets the maximum fraction of water that root can uptake from soil layers as function of vegetation fraction
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

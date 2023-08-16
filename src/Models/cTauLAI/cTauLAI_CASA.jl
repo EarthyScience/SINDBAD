@@ -60,7 +60,7 @@ function compute(p_struct::cTauLAI_CASA, forcing, land, helpers)
     p_LAI13 = LAI13
     # Calculate sum of δLAI over the year
     dLAI = diff(LAI13)
-    dLAI = max_0(dLAI)
+    dLAI = maxZero(dLAI)
     dLAIsum = sum(dLAI)
     # Calculate average & minimum LAI
     LAIsum = sum(LAI13_next)
@@ -101,7 +101,7 @@ end
 calc LAI stressor on τ. Compute the seasonal cycle of litter fall & root litter "fall" based on LAI variations. Necessarily in precomputation mode
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

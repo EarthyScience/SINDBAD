@@ -22,7 +22,7 @@ end
 sets the value of ambient_CO2 as a constant
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

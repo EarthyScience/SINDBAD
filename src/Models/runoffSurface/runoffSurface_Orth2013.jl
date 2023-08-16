@@ -76,7 +76,7 @@ end
 calculates the delay coefficient of first 60 days as a precomputation. calculates the base runoff
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

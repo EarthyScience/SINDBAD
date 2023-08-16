@@ -1,5 +1,6 @@
-export wCycleBase_simple, adjust_and_pack_pool_components
+export wCycleBase_simple, adjustPackPoolComponents
 
+struct WCycleBaseSimple end
 
 #! format: off
 @bounds @describe @units @with_kw struct wCycleBase_simple{T1,T2} <: wCycleBase
@@ -30,7 +31,7 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
         n_surfaceW = oftype(first(land.pools.surfaceW), length(land.pools.surfaceW))
         @pack_land n_surfaceW => land.wCycleBase
     end
-    w_model = Val(:wCycleBase_simple)
+    w_model = WCycleBaseSimple()
     @pack_land begin
         (w_model, o_one, z_zero) => land.wCycleBase
     end
@@ -38,7 +39,7 @@ function define(p_struct::wCycleBase_simple, forcing, land, helpers)
 end
 
 
-function adjust_and_pack_pool_components(land, helpers, ::Val{:wCycleBase_simple})
+function adjustPackPoolComponents(land, helpers, ::WCycleBaseSimple)
     @unpack_land TWS ∈ land.pools
     zix = helpers.pools.zix
     if hasproperty(land.pools, :groundW)
@@ -76,7 +77,7 @@ function adjust_and_pack_pool_components(land, helpers, ::Val{:wCycleBase_simple
     return land
 end
 
-function adjust_and_pack_main_pool(land, helpers, ::Val{:wCycleBase_simple})
+function adjustPackMainPool(land, helpers, ::WCycleBaseSimple)
     @unpack_land TWS ∈ land.pools
     zix = helpers.pools.zix
 

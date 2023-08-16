@@ -34,7 +34,7 @@ function compute(p_struct::cCycle_CASA, forcing, land, helpers)
     ## compute losses
     c_eco_out = min.(cEco, cEco * c_eco_k)
     ## gains to vegetation
-    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     c_eco_npp = gpp .* c_allocation[zix] .- c_eco_efflux[zix]
     c_eco_influx[zix] .= c_eco_npp
     ## flows & losses
@@ -184,7 +184,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     # p.autoRespiration.YG = 1.0
     # end
     ## ORDER OF CALCULATIONS [1 to the end of pools]
-    zixVec = getzix(cEco, helpers.pools.zix.cEco)
+    zixVec = getZix(cEco, helpers.pools.zix.cEco)
     # BUT, we sort from left to right [veg to litter to soil] & prioritize
     # without loops
     kmoves = 0
@@ -222,7 +222,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     ## solve it for each pool individually
     for zix ∈ zixVecOrder
         # general k loss
-        cLossRate[zix, :] = clamp_01(p_cTau_k[zix]) #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
+        cLossRate[zix, :] = clampZeroOne(p_cTau_k[zix]) #1 replaced by 0.9999 to avoid having denom in line 140 > 0.
         # so that pools are not NaN
         if any(zix == helpers.pools.zix.cVeg)
             # additional losses [RA] in veg pools
@@ -282,7 +282,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
         cEco_prev[zix] = Ct
         # CREATE A YEARLY TIME SERIES OF THE POOLS EXCHANGE TO USE IN THE NEXT
         # POOLS CALCULATIONS
-        out = runForward(selectedModels, forcing, out, modelnames, helpers)
+        out = runForward(selected_models, forcing, out, modelnames, helpers)
         # FEED fCt
         # fCt[zix, :] = cEco[zix, :]
         fCt = cEco
@@ -290,7 +290,7 @@ function spin_cCycle_CASA(forcing, land, helpers, NI2E)
     # make the fx consistent with the pools
     cEco = sCt
     cEco_prev = sCt
-    out = runForward(selectedModels, forcing, out, modelnames, helpers)
+    out = runForward(selected_models, forcing, out, modelnames, helpers)
 
     ## pack land variables
     @pack_land cEco => land.pools

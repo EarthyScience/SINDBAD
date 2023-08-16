@@ -34,7 +34,7 @@ function compute(p_struct::groundWSoilWInteraction_gradientNeg, forcing, land, h
     tmp = max(tmp, -(soilW[end] + ΔsoilW[end]), -sum(groundW + ΔgroundW))
 
     # -> set all the positive values (from groundwater to soil) to zero
-    gw_capillary_flux = min_0(tmp)
+    gw_capillary_flux = minZero(tmp)
 
     # adjust the delta storages
     ΔgroundW .= ΔgroundW .- gw_capillary_flux / n_groundW
@@ -79,7 +79,7 @@ end
 calculates a buffer storage that doesn't give water to the soil when the soil dries up; while the soil gives water to the groundW when the soil is wet but the groundW low; the groundW is only recharged by soil moisture
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

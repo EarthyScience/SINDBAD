@@ -26,7 +26,7 @@ function compute(p_struct::PET_PriestleyTaylor1972, forcing, land, helpers)
     Lhv = (Lhv_1 * exp(Lhv_2 * Tair) - Lhv_3) # MJ kg-1
     γ = γ_1 / γ_2 # hPa C-1 [psychometric constant]
     PET = PET_1 * Δ / (Δ + γ) * Rn / Lhv
-    PET = max_0(PET)
+    PET = maxZero(PET)
 
     ## pack land variables
     @pack_land PET => land.fluxes
@@ -37,7 +37,7 @@ end
 Calculates the value of land.fluxes.PET from the forcing variables
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

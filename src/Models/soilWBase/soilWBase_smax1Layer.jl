@@ -15,7 +15,7 @@ function define(p_struct::soilWBase_smax1Layer, forcing, land, helpers)
     end
     ## precomputations/check
     # get the soil thickness & root distribution information from input
-    soil_layer_thickness = helpers.pools.layerThickness.soilW
+    soil_layer_thickness = helpers.pools.layer_thickness.soilW
     # check if the number of soil layers and number of elements in soil thickness arrays are the same & are equal to 1 
     if n_soilW != 1
         error(["soilWBase_smax1Layer needs eactly 1 soil layer in model_structure.json."])
@@ -57,7 +57,7 @@ end
 defines the maximum soil water content of 1 soil layer as fraction of the soil depth defined in the model_structure.json based on the TWS model for the Northern Hemisphere
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

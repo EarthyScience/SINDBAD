@@ -28,7 +28,7 @@ function compute(p_struct::runoffSaturationExcess_Bergstroem1992MixedVegFraction
     β_veg = max(β_min, berg) # do this?
 
     # calculate land runoff from incoming water & current soil moisture
-    tmp_SatExFrac = clamp_01((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
+    tmp_SatExFrac = clampZeroOne((tmp_SoilTotal / tmp_smaxVeg)^β_veg)
     sat_excess_runoff = WBP * tmp_SatExFrac
 
     # update water balance
@@ -46,7 +46,7 @@ end
 saturation excess runoff using Bergström method with separate berg parameters for vegetated and non-vegetated fractions
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

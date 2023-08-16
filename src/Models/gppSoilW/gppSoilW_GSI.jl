@@ -32,10 +32,10 @@ function compute(p_struct::gppSoilW_GSI, forcing, land, helpers)
         (z_zero, o_one) ∈ land.wCycleBase
     end
 
-    actAWC = max_0(totalS(soilW) - sum_WP)
-    SM_nor = min_1(actAWC / sum_wAWC)
+    actAWC = maxZero(totalS(soilW) - sum_WP)
+    SM_nor = minOne(actAWC / sum_wAWC)
     gpp_f_soilW = (o_one - fW_τ) * gpp_f_soilW_prev + fW_τ * (o_one / (o_one + exp(-fW_slope * (SM_nor - fW_base))))
-    gpp_f_soilW = clamp_01(gpp_f_soilW)
+    gpp_f_soilW = clampZeroOne(gpp_f_soilW)
     gpp_f_soilW_prev = gpp_f_soilW
 
     ## pack land variables
@@ -47,7 +47,7 @@ end
 soil moisture stress on gpp_potential based on GSI implementation of LPJ
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

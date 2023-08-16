@@ -1,7 +1,7 @@
 {
   "default_model": {
     "order": 0,
-    "use4spinup": true
+    "use_in_spinup": true
   },
   "models": {
     "ambientCO2": {
@@ -28,9 +28,6 @@
     "gpp": {
       "approach": "coupled"
     },
-    "gppPotential": {
-      "approach": "Monteith"
-    },
     "gppAirT": {
       "approach": "CASA"
     },
@@ -42,6 +39,9 @@
     },
     "gppDirRadiation": {
       "approach": "none"
+    },
+    "gppPotential": {
+      "approach": "Monteith"
     },
     "gppSoilW": {
       "approach": "Stocker2020"
@@ -64,11 +64,11 @@
     "rainSnow": {
       "approach": "rain"
     },
-    "rootWaterEfficiency": {
-      "approach": "constant"
-    },
     "rootMaximumDepth": {
       "approach": "fracSoilD"
+    },
+    "rootWaterEfficiency": {
+      "approach": "constant"
     },
     "rootWaterUptake": {
       "approach": "proportion"
@@ -88,11 +88,11 @@
     "runoffSurface": {
       "approach": "all"
     },
-    "soilTexture": {
-      "approach": "forcing"
-    },
     "soilProperties": {
       "approach": "Saxton2006"
+    },
+    "soilTexture": {
+      "approach": "forcing"
     },
     "soilWBase": {
       "approach": "uniform"
@@ -103,21 +103,21 @@
     "transpirationSupply": {
       "approach": "wAWC"
     },
+    "vegAvailableWater": {
+      "approach": "sigmoid"
+    },
     "vegFraction": {
       "approach": "forcing",
       "order": 12
     },
-    "vegAvailableWater": {
-      "approach": "sigmoid"
-    },
     "waterBalance": {
-      "approach": "simple"
-    },
-    "wCycleBase": {
       "approach": "simple"
     },
     "wCycle": {
       "approach": "components"
+    },
+    "wCycleBase": {
+      "approach": "simple"
     },
     "WUE": {
       "approach": "expVPDDayCo2"
@@ -125,34 +125,16 @@
   },
   "pools": {
     "water": {
+      "combine": "TWS",
       "components": {
         "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
         "groundW": [1, 1000.0],
         "snowW": [1, 0.01],
         "surfaceW": [1, 0.01]
       },
-      "combine": "TWS",
-      "state_variables": { "Δ": 0.0 }
-    },
-    "carbon": {
-      "components": {
-        "cVeg": {
-          "Root": [1, 25.0],
-          "Wood": [1, 25.0],
-          "Leaf": [1, 25.0],
-          "Reserve": [1, 10.0]
-        },
-        "cLit": {
-          "Fast": [1, 100.0],
-          "Slow": [1, 250.0]
-        },
-        "cSoil": {
-          "Slow": [1, 500.0],
-          "Old": [1, 1000.0]
-        }
-      },
-      "combine": "cEco",
-      "state_variables": { "Δ": 0.0 }
+      "state_variables": {
+        "Δ": 0.0
+      }
     }
   }
 }

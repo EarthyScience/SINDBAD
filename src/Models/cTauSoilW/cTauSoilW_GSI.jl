@@ -38,7 +38,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     ## for the litter pools; only use the top layer"s moisture
     soilW_top = min(frac2perc * soilW[1] / wSat[1], frac2perc)
     soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
-    cLitZix = getzix(land.pools.cLit, helpers.pools.zix.cLit)
+    cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
     for l_zix ∈ cLitZix
         @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
     end
@@ -47,7 +47,7 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     soilW_all = min(frac2perc * sum(soilW) / sum(wSat), frac2perc)
     soilW_all_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
-    cSoilZix = getzix(land.pools.cSoil, helpers.pools.zix.cSoil)
+    cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
     for s_zix ∈ cSoilZix
         @rep_elem soilW_all_sc => (c_eco_k_f_soilW, s_zix, :cEco)
     end
@@ -77,7 +77,7 @@ end
 calculate the moisture stress for cTau based on temperature stressor function of CASA & Potter
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

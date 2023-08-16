@@ -18,7 +18,7 @@ function define(p_struct::cAllocation_Friedlingstein1999, forcing, land, helpers
     cVeg_nzix = []
     cVeg_zix = []
     for cpName ∈ cVeg_names
-        zix = getzix(getfield(land.pools.carbon, cpName), helpers.pools.zix, cpName)
+        zix = getZix(getfield(land.pools, cpName), helpers.pools.zix, cpName)
         nZix = oftype(first(c_allocation), length(zix))
         push!(cVeg_nzix, nZix)
         push!(cVeg_zix, zix)
@@ -75,7 +75,7 @@ end
 compute the fraction of npp that is allocated to the different plant organs following the scheme of Friedlingstein et al 1999. Check cAlloc_Friedlingstein1999 for details.
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

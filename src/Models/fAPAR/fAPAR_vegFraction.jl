@@ -24,7 +24,7 @@ end
 sets the value of fAPAR as a linear function of vegetation fraction
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

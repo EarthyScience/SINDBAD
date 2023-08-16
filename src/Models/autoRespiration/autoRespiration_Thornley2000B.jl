@@ -42,7 +42,7 @@ function compute(p_struct::autoRespiration_Thornley2000B, forcing, land, helpers
     # adjust nitrogen efficiency rate of maintenance respiration to the current
     # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
-    zix = getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
     for ix ∈ zix
 
         # compute maintenance & growth respiration terms for each vegetation pool
@@ -50,7 +50,7 @@ function compute(p_struct::autoRespiration_Thornley2000B, forcing, land, helpers
 
         # scalars of maintenance respiration for models A; B & C
         # km is the maintenance respiration coefficient [d-1]
-        k_respiration_maintain_ix = min_1(o_one / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
+        k_respiration_maintain_ix = minOne(o_one / C_to_N_cVeg[ix] * RMN * auto_respiration_f_airT)
         k_respiration_maintain_su_ix = k_respiration_maintain[ix] * YG
 
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
@@ -60,8 +60,8 @@ function compute(p_struct::autoRespiration_Thornley2000B, forcing, land, helpers
         RA_M_ix = k_respiration_maintain_ix * (cEco[ix] + YG * gpp * c_allocation[ix])
 
         # no negative growth or maintenance respiration
-        RA_G_ix = max_0(RA_G_ix)
-        RA_M_ix = max_0(RA_M_ix)
+        RA_G_ix = maxZero(RA_G_ix)
+        RA_M_ix = maxZero(RA_M_ix)
 
         # total respiration per pool: R_a = R_m + R_g
         cEcoEfflux_ix = RA_M_ix + RA_G_ix
@@ -83,7 +83,7 @@ end
 Estimate autotrophic respiration as maintenance + growth respiration according to Thornley & Cannell [2000]: MODEL B - growth respiration is given priority [check Fig.1 of the paper].
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

@@ -54,7 +54,7 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     end
 
     ## gains to vegetation
-    for zv ∈ getzix(land.pools.cVeg, helpers.pools.zix.cVeg)
+    for zv ∈ getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
         c_eco_npp_zv = gpp * c_allocation[zv] - c_eco_efflux[zv]
         @rep_elem c_eco_npp_zv => (c_eco_npp, zv, :cEco)
         @rep_elem c_eco_npp_zv => (c_eco_influx, zv, :cEco)
@@ -100,8 +100,8 @@ function compute(p_struct::cCycle_GSI, forcing, land, helpers)
     @rep_vec cEco_prev => cEco
     @pack_land cEco => land.pools
 
-    land = adjust_and_pack_pool_components(land, helpers, land.cCycleBase.c_model)
-    # set_component_from_main_pool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
+    land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
+    # setComponentFromMainPool(land, helpers, helpers.pools.vals.self.cEco, helpers.pools.vals.all_components.cEco, helpers.pools.vals.zix.cEco)
 
     ## pack land variables
     @pack_land begin

@@ -1,139 +1,125 @@
 using Revise
 using ForwardDiff
 
-using Sindbad
-using ForwardSindbad
-using ForwardSindbad: timeLoopForward
-using OptimizeSindbad
-#using AxisKeys: KeyedArray as KA
-#using Lux, Zygote, Optimisers, ComponentArrays, NNlib
-#using Random
-noStackTrace()
-#Random.seed!(7)
+using SindbadTEM
+using SindbadMetrics
+toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
 info = getExperimentInfo(experiment_json);#; replace_info=replace_info); # note that this will modify information from json with the replace_info
 
-info, forcing = getForcing(info);
+forcing = getForcing(info);
 
 # Sindbad.eval(:(error_catcher = []));
-land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-output = setupOutput(info);
-forc = getKeyedArrayWithNames(forcing);
-observations = getObservation(info);
-obs = getKeyedArray(observations);
 
-@time loc_space_maps,
-loc_space_names,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-tem_with_vals,
-f_one = prepRunEcosystem(output, forc, info.tem);
+observations = getObservation(info, forcing.helpers);
+obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+cost_options = prepCostOptions(obs_array, info.optim.cost_options);
+
+run_helpers = prepTEM(forcing, info);
 
 
-@time runEcosystem!(output.data,
-    info.tem.models.forward,
-    forc,
-    tem_with_vals,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
+@time runTEM!(info.tem.models.forward,
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
 
-# @time outcubes = runExperimentOpti(experiment_json);  
-tblParams = getParameters(info.tem.models.forward,
-    info.optim.default_parameter,
-    info.optim.optimized_parameters);
+# @time out_params = runExperimentOpti(experiment_json);  
+tbl_params = getParameters(info.tem.models.forward,
+    info.optim.model_parameter_default,
+    info.optim.model_parameters_to_optimize);
 
-# @time outcubes = runExperimentOpti(experiment_json);  
+# @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
-    forc,
-    op,
-    obs,
-    tblParams,
-    info_tem,
-    info_optim,
-    loc_space_inds,
+    forcing_nt_array,
     loc_forcings,
+    forcing_one_timestep,
+    output_array,
     loc_outputs,
     land_init_space,
-    f_one)
-    l = getLossGradient(x,
+    loc_space_inds,
+    tem_with_types,
+    observations,
+    tbl_params,
+    cost_options,
+    multi_constraint_method)
+    l = getLoss(x,
         mods,
-        forc,
-        op,
-        obs,
-        tblParams,
-        info_tem,
-        info_optim,
-        loc_space_inds,
+        forcing_nt_array,
         loc_forcings,
+        forcing_one_timestep,
+        output_array,
         loc_outputs,
         land_init_space,
-        f_one)
+        loc_space_inds,
+        tem_with_types,
+        observations,
+        tbl_params,
+        cost_options,
+        multi_constraint_method)
     return l
 end
-op = setupOutput(info);
 
 mods = info.tem.models.forward;
-g_loss(tblParams.default,
+g_loss(tbl_params.default,
     mods,
-    forc,
-    op,
-    obs,
-    tblParams,
-    tem_with_vals,
-    info.optim,
-    loc_space_inds,
-    loc_forcings,
-    loc_outputs,
-    land_init_space,
-    f_one)
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types,
+    obs_array,
+    tbl_params,
+    cost_options,
+    info.optim.multi_constraint_method)
 
 function l1(p)
     return g_loss(p,
         mods,
-        forc,
-        op,
-        obs,
-        tblParams,
-        tem_with_vals,
-        info.optim,
-        loc_space_inds,
-        loc_forcings,
-        loc_outputs,
-        land_init_space,
-        f_one)
+        run_helpers.forcing_nt_array,
+        run_helpers.loc_forcings,
+        run_helpers.forcing_one_timestep,
+        run_helpers.output_array,
+        run_helpers.loc_outputs,
+        run_helpers.land_init_space,
+        run_helpers.loc_space_inds,
+        run_helpers.tem_with_types,
+        obs_array,
+        tbl_params,
+        cost_options,
+        info.optim.multi_constraint_method)
 end
-l1(tblParams.default)
+l1(tbl_params.default)
 
 
-p_vec = tblParams.default;
+p_vec = tbl_params.default;
 CHUNK_SIZE = length(p_vec)
 CHUNK_SIZE = 10
 
 cfg = ForwardDiff.GradientConfig(l1, p_vec, ForwardDiff.Chunk{CHUNK_SIZE}());
 
-op = setupOutput(info);
-op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in op.data];
-op = (; op..., data=op_dat);
-
-# op = setupOutput(info);
-# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_vals.helpers.numbers.num_type},tem_with_vals.helpers.numbers.num_type,10}}(undef, size(od)) for od in op.data];
+# op = prepTEMOut(info, forcing.helpers);
+# output_array = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}}(undef, size(od)) for od in run_helpers.output_array];
+output_array = [Array{Any}(undef, size(od)) for od in run_helpers.output_array];
 # op = (; op..., data=op_dat);
+# output_array = op_dat;
 
-@time _,
-_,
-loc_space_inds,
-loc_forcings,
-loc_outputs,
-land_init_space,
-tem_with_vals,
-f_one = prepRunEcosystem(op, forc, info.tem);
+dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
+mods = updateModelParametersType(tbl_params, mods, dualDefs);
+
+
+# op = prepTEMOut(info, forcing.helpers);
+# op_dat = [Array{ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),tem_with_types.helpers.numbers.num_type},tem_with_types.helpers.numbers.num_type,10}}(undef, size(od)) for od in run_helpers.output_array];
+# op = (; op..., data=op_dat);
 
 
 @time grad = ForwardDiff.gradient(l1, p_vec, cfg)

@@ -22,7 +22,7 @@ forcing, timesteps = getforcing()
     values = [rand(100), rand(100), rand(100)]
     forcing = Table((; zip(variables, values)...))
     timesteps = length(forcing)
-    outTime = runModels(forcing, models, timesteps)
+    outTime = computeTEM(forcing, models, timesteps)
 
     @test m1.Tair_thres == 0.5
     @test m2.melt_T == 3.0

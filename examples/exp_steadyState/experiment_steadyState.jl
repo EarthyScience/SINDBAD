@@ -1,217 +1,190 @@
 using Revise
-using Sindbad
-using ForwardSindbad
+using SindbadTEM
+using SindbadData
 using Plots
-noStackTrace()
-
-experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
-for tj ∈ (10, 100, 1000, 10000)
-    # tj = 10000
-    replace_info = Dict("spinup.differential_eqn.time_jump" => tj,
-        "spinup.differential_eqn.relative_tolerance" => 1e-2,
-        "spinup.differential_eqn.absolute_tolerance" => 1,
-        "model_run.rules.model_array_type" => "array",
-        "model_run.flags.debug_model" => false)
-
-    info = getConfiguration(experiment_json; replace_info=replace_info)
-    info = setupExperiment(info)
-    info, forcing = getForcing(info)
-    output = setupOutput(info)
-
-    forc = getKeyedArrayWithNames(forcing)
-
-    loc_space_maps, loc_space_names, loc_space_inds, loc_forcings, loc_outputs, land_init_space, tem_with_vals, f_one =
-        prepRunEcosystem(output, forc, info.tem)
-
-    loc_forcing, loc_output = getLocData(output.data, forc, loc_space_maps[1])
-
-    spinupforc = :recycleMSC
-    sel_forcing = getSpinupForcing(loc_forcing, info.tem.helpers, Val(spinupforc))
-    spinup_forcing = getSpinupForcing(loc_forcing, info.tem)
-
-    land_init = deepcopy(land_init_space[1])
-    land_type = typeof(land_init)
-    sel_pool = :cEco
-
-    spinup_models = info.tem.models.forward[info.tem.models.is_spinup]
-    plt = plot(; legend=:outerbottom, legendcolumns=3, yscale=:log10, size=(2000, 1000))
-
-    plot!(getfield(land_init.pools, sel_pool);
+using Accessors
+toggleStackTraceNT()
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+function plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname, plot_elem, plot_var, tj, model_array_type, out_path)
+    plot_elem = string(plot_elem)
+    if plot_var == :cEco
+        plt = plot(; legend=:outerbottom, legendcolumns=4, size=(1800, 1200), yscale=:log10, left_margin=1Plots.cm)
+        ylims!(0.00000001, 1e9)
+    else
+        plt = plot(; legend=:outerbottom, legendcolumns=4, size=(1800, 1200), left_margin=1Plots.cm)
+        ylims!(10, 2000)
+    end
+    plot!(getfield(land.pools, plot_var);
         linewidth=5,
-        title="Steady State Solution - jump => $(tj)",
-        xaxis="Pool Turnover",
-        yaxis="C",
-        label="Init",
-        yscale=:log10)
+        xaxis="Pool",
+        label="Init")
 
-    sp = :ODE_Tsit5
-    @show "ODE_Init"
-    @time out_sp_ode = ForwardSindbad.doSpinup(spinup_models,
-        getfield(spinup_forcing, spinupforc),
-        deepcopy(land_init),
-        info.tem.helpers,
-        info.tem.spinup,
-        land_type,
-        f_one,
-        Val(sp))
-    out_sp_ode_init = deepcopy(out_sp_ode)
-
-    @show "Exp_Init"
-    sp = :spinup
-    out_sp_exp = land_init
-    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp = ForwardSindbad.doSpinup(spinup_models,
-            getfield(spinup_forcing, spinupforc),
-            deepcopy(out_sp_exp),
-            info.tem.helpers,
-            info.tem.spinup,
-            land_type,
-            f_one,
-            Val(sp))
-    end
-    out_sp_exp_init = deepcopy(out_sp_exp)
-
-    sp = :ODE_Tsit5
-    @show "ODE_Exp"
-    @time out_sp_ode_exp = ForwardSindbad.doSpinup(spinup_models,
-        getfield(spinup_forcing, spinupforc),
-        deepcopy(out_sp_exp),
-        info.tem.helpers,
-        info.tem.spinup,
-        land_type,
-        f_one,
-        Val(sp))
-
-    @show "Exp_ODE"
-    sp = :spinup
-    out_sp_exp_ode = out_sp_ode
-    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_ode = ForwardSindbad.doSpinup(spinup_models,
-            getfield(spinup_forcing, spinupforc),
-            deepcopy(out_sp_exp_ode),
-            info.tem.helpers,
-            info.tem.spinup,
-            land_type,
-            f_one,
-            Val(sp))
-    end
-
-    plot!(getfield(out_sp_ode_init.pools, sel_pool); linewidth=5, label="ODE_Init", yscale=:log10) # legend=false
-    plot!(getfield(out_sp_ode_exp.pools, sel_pool); linewidth=5, label="ODE_Exp", yscale=:log10) # legend=false
-    plot!(getfield(out_sp_exp_init.pools, sel_pool);
+    plot!(getfield(out_sp_exp.pools, plot_var);
+        linewidth=5,
+        label="Exp_Init")
+    # title="SU: $(plot_elem) - $(plot_var):: jump => $(tj), $(model_array_type)")
+    plot!(getfield(out_sp_exp_nl.pools, plot_var);
         linewidth=5,
         ls=:dash,
-        label="Exp_Init",
-        yscale=:log10) # legend=false
-    plot!(getfield(out_sp_exp_ode.pools, sel_pool);
-        linewidth=5,
-        ls=:dash,
-        label="Exp_ODE",
-        yscale=:log10) # legend=false
-
-    using NLsolve, ComponentArrays
-
-    struct Spinupper{M,F,T,I,L,O}
-        models::M
-        forcing::F
-        tem_helpers::T
-        land_init::I
-        land_type::L
-        f_one::O
-    end
-
-    function (s::Spinupper)(pout, p)
-        pout .= exp.(p)# .* s.pooldiff
-        # s.land_init.pools.TWS .= pout.TWS
-        s.land_init.pools.cEco .= pout.cEco
-        update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type,
-            s.f_one)
-        # pout.TWS .= update_init.pools.TWS
-        pout.cEco .= update_init.pools.cEco
-        pout .= log.(pout)# ./ s.pooldiff
-        return nothing
-        # pout .= exp.(p)# .* s.pooldiff
-        # tmp = s.land_init.pools.TWS;
-        # helpers = s.tem_helpers;
-
-        # @rep_vec tmp => pout.TWS
-        # s = @set s.land_init.pools.TWS = tmp
-
-        # tmp = s.land_init.pools.cEco
-        # s = @set s.land_init.pools.cEco = tmp
-
-        # @rep_vec tmp => pout.cEco
-        # s = @set s.land_init.pools.cEco = tmp
-
-        # update_init = loopTimeSpinup(s.models, s.forcing, s.land_init, s.tem_helpers, s.land_type, s.f_one)
-
-        # pout = @set pout.TWS = update_init.pools.TWS
-        # pout = @set pout.cEco = update_init.pools.cEco
-        # pout .= log.(pout)# ./ s.pooldiff
-    end
-
-    function doSpinup(spinup_models,
-        spinup_forcing,
-        land_init,
-        tem_helpers,
-        _,
-        land_type,
-        f_one,
-        ::Val{:nlsolve})
-        s = Spinupper(spinup_models, spinup_forcing, tem_helpers, deepcopy(land_init), land_type, f_one)
-        mypools = ComponentArray((
-            cEco = deepcopy(land_init.pools.cEco)))
-        # mypools = ComponentArray((TWS=deepcopy(land_init.pools.TWS),
-        # cEco=deepcopy(land_init.pools.cEco)))
-        mypools .= log.(mypools)
-        r = fixedpoint(s, mypools; method=:trust_region)
-
-        res = exp.(r.zero)
-        li = deepcopy(s.land_init)
-        cEco = res.cEco
-        # TWS = res.TWS
-        @pack_land cEco => li.pools
-        # @pack_land TWS => li.pools
-        return li
-    end
-
-    @show "NL_solve"
-    @time out_sp_nl = doSpinup(spinup_models,
-        getfield(spinup_forcing, spinupforc),
-        deepcopy(land_init),
-        info.tem.helpers,
-        info.tem.spinup,
-        land_type,
-        f_one,
-        Val(:nlsolve))
-
-    xtl = land_init.cCycleBase.c_τ_eco
-    xtname = info.tem.helpers.pools.components.cEco
-    plot!(getfield(out_sp_nl.pools, sel_pool);
+        label="Exp_NL")
+    plot!(getfield(out_sp_nl.pools, plot_var);
         linewidth=5,
         ls=:dot,
         label="NL_Solve",
-        xticks=(1:length(xtl), string.(xtname) .* "\n" .* string.(xtl)),
-        rotation=45) # legend=false
+        xticks=(1:length(xtname) |> collect, string.(xtname)),
+        rotation=45)
 
-    @show "Exp_NL"
-    sp = :spinup
-    out_sp_exp_nl = out_sp_nl
-    @time for nl ∈ 1:Int(info.tem.spinup.differential_eqn.time_jump)
-        out_sp_exp_nl = ForwardSindbad.doSpinup(spinup_models,
-            getfield(spinup_forcing, spinupforc),
-            deepcopy(out_sp_exp_nl),
-            info.tem.helpers,
-            info.tem.spinup,
-            land_type,
-            f_one,
-            Val(sp))
+    savefig(joinpath(out_path, "$(string(plot_var))_sin_explicit_$(plot_elem)_$(model_array_type)_tj-$(tj).png"))
+    return nothing
+end
+
+function get_xtick_names(info, land_for_s, look_at)
+    xtname = []
+    xtl = nothing
+    if look_at == :cEco
+        xtl = land_for_s.cCycleBase.c_τ_eco
     end
-    plot!(getfield(out_sp_exp_nl.pools, sel_pool);
-        linewidth=5,
-        ls=:dash,
-        label="Exp_NL",
-        yscale=:log10) # legend=false
+    for (i, comp) ∈ enumerate(getfield(info.tem.helpers.pools.components, look_at))
+        zix = getfield(info.tem.helpers.pools.zix, comp)
+        for iz in eachindex(zix)
+            if look_at == :cEco
+                push!(xtname, string(comp) * "\n" * string(xtl[i]))
+            else
+                push!(xtname, string(comp) * "_$(iz)")
+            end
+        end
+    end
+    return xtname
+end
+experiment_json = "../exp_steadyState/settings_steadyState/experiment.json"
+out_sp_exp = nothing
+model_array_type = "static_array"
+tjs = (1, 100, 1_000, 10_000)
+# tjs = (1000,)
+# tjs = (10_000,)
+nLoop_pre_spin = 10
+# for model_array_type ∈ ("static_array",)
+# for model_array_type ∈ ("array",) #, "static_array")
+setLogLevel(:warn)
+for model_array_type ∈ ("static_array", "array") #, "static_array")
+    replace_info = Dict("spinup.differential_eqn.time_jump" => 1,
+        "spinup.differential_eqn.relative_tolerance" => 1e-2,
+        "spinup.differential_eqn.absolute_tolerance" => 1,
+        "experiment.exe_rules.model_array_type" => model_array_type,
+        "experiment.flags.debug_model" => false)
 
-    savefig("comp_methods_eachpool_$(string(sel_pool))_tj-$(tj).png")
+    info = getConfiguration(experiment_json; replace_info=replace_info)
+    info = setupInfo(info)
+    forcing = getForcing(info)
+
+
+
+
+    run_helpers = prepTEM(forcing, info);
+
+    forcing_nt_array = run_helpers.forcing_nt_array;
+    loc_forcings = run_helpers.loc_forcings;
+    forcing_one_timestep = run_helpers.forcing_one_timestep;
+    output_array = run_helpers.output_array;
+    loc_outputs = run_helpers.loc_outputs;
+    land_init_space = run_helpers.land_init_space;
+    loc_space_inds = run_helpers.loc_space_inds;
+    tem_with_types = run_helpers.tem_with_types;
+
+    spinup_forcing = getSpinupForcing(run_helpers.loc_forcing, forcing_one_timestep, tem_with_types.spinup.sequence, tem_with_types.helpers)
+
+
+    spinupforc = :day_msc
+    theforcing = getfield(spinup_forcing, spinupforc)
+
+    spinup_models = tem_with_types.models.forward[tem_with_types.models.is_spinup]
+    out_path = info.output.figure
+    for sel_pool in (:cEco_TWS,)
+    # for sel_pool in (:cEco,)
+    # for sel_pool in (:TWS,)
+    # for sel_pool in (:cEco,)
+        # for sel_pool in (:TWS, :cEco, :cEco_TWS)
+
+        look_at = sel_pool
+
+        if sel_pool in (:cEco_TWS,)
+            look_at = :cEco
+        end
+        land_for_s = deepcopy(run_helpers.land_one)
+        land_type = typeof(land_for_s)
+
+        xtname_c = get_xtick_names(info, land_for_s, :cEco)
+        xtname_w = get_xtick_names(info, land_for_s, :TWS)
+        # spinup_models,
+        # spinup_forcing,
+        # forcing_one_timestep,
+        # land,
+        # Symbol(sel_pool),
+        # tem_helpers,
+        # tem_spinup)
+
+        @time for nl ∈ 1:nLoop_pre_spin
+            land_for_s = SindbadTEM.runSpinup(
+                spinup_models,
+                theforcing,
+                forcing_one_timestep,
+                land_for_s,
+                tem_with_types.helpers,
+                tem_with_types.spinup,
+                SelSpinupModels())
+        end
+
+
+        # sel_pool = :TWS
+        sp_method = getfield(SindbadSetup, toUpperCaseFirst("nlsolve_fixedpoint_trustregion_$(string(sel_pool))"))()
+        @show "NL_solve"
+        @time out_sp_nl = SindbadTEM.runSpinup(
+            spinup_models,
+            theforcing,
+            forcing_one_timestep,
+            deepcopy(land_for_s),
+            tem_with_types.helpers,
+            tem_with_types.spinup,
+            sp_method)
+
+
+        for tj ∈ tjs
+            land = deepcopy(run_helpers.land_one)
+
+            @show "Exp_Init"
+            sp = SelSpinupModels()
+            out_sp_exp = deepcopy(land_for_s)
+            @time for nl ∈ 1:tj
+                out_sp_exp = SindbadTEM.runSpinup(
+                    spinup_models,
+                    theforcing,
+                    forcing_one_timestep,
+                    out_sp_exp,
+                    tem_with_types.helpers,
+                    tem_with_types.spinup,
+                    sp)
+            end
+
+            @show "Exp_NL"
+            out_sp_exp_nl = deepcopy(out_sp_nl)
+            @time for nl ∈ 1:tj
+                out_sp_exp_nl = SindbadTEM.runSpinup(spinup_models,
+                    theforcing,
+                    forcing_one_timestep,
+                    out_sp_exp_nl,
+                    tem_with_types.helpers,
+                    tem_with_types.spinup,
+                    sp)
+            end
+            if sel_pool in (:cEco_TWS,)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, sel_pool, :cEco, tj, model_array_type, out_path)
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, sel_pool, :TWS, tj, model_array_type, out_path)
+            elseif sel_pool == :cEco
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_c, :C, :cEco, tj, model_array_type, out_path)
+            else
+                plot_and_save(land, out_sp_exp, out_sp_exp_nl, out_sp_nl, xtname_w, :W, :TWS, tj, model_array_type, out_path)
+            end
+        end
+    end
+
 end

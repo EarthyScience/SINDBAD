@@ -37,7 +37,7 @@ end
 sets the maximum rooting depth as a fraction of total soil depth. rootMaximumDepth_fracSoilD
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 

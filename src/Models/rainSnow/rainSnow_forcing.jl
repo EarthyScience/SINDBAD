@@ -57,7 +57,7 @@ end
 stores the time series of rainfall and snowfall from forcing & scale snowfall if SF_scale parameter is optimized
 
 # Parameters
-$(PARAMFIELDS)
+$(SindbadParameters)
 
 ---
 
