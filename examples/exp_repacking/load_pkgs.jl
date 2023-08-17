@@ -128,9 +128,6 @@ kwargs = (;
     
 @time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
 
-
-
-
 # load available covariates
 
 # rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
@@ -159,8 +156,74 @@ forcing_one_timestep =run_helpers.forcing_one_timestep
 #sites_parameters .= tbl_params.default
 
 op = prepTEMOut(info, forcing.helpers);
-b_data = (; allocated_output = op.data, forc, obs);
 
+b_data = (; allocated_output = op.data, forcing=forc);
+data_optim = (;
+    obs = obs,
+);
+
+xbatch = cov_sites[1:4]
+
+f_grads = zeros(Float32, n_params, length(xbatch))
+x_feat = xfeatures(; site=xbatch) 
+
+gradsBatch!(
+    siteLossInner,
+    f_grads,
+    sites_parameters,
+    info.tem.models.forward,
+    xbatch,
+    sites_f,
+    b_data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true)
+
+
+#sites = xfeatures.site
+flat, re, opt_state = destructureNN(ml_baseline)
+n_params = length(ml_baseline[end].bias)
+
+∇params =  get∇params(siteLossInner,
+    xfeatures,
+    n_params,
+    re,
+    flat,
+    info.tem.models.forward,
+    xbatch,
+    sites_f,
+    b_data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true);
+    
+isnan.(∇params) |> sum
+
+history_loss = train(
+    ml_baseline,
+    siteLossInner,
+    xfeatures[site=1:8],
+    info.tem.models.forward,
+    sites_f,
+    b_data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim
+    );
+
+
+    
 space_run!(
     info.tem.models.forward,
     sites_parameters,
