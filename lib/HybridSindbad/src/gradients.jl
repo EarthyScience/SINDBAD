@@ -1,6 +1,10 @@
 export ForwardDiffGrads
 export gradsBatch!
 export newVals
+export get∇params
+export train
+export get_site_losses
+export destructureNN
 
 """
     ForwardDiff_grads(loss_function::Function, vals::AbstractArray, kwargs...)
@@ -11,6 +15,7 @@ Wraps a multi-input argument function to be used by ForwardDiff.
     - vals :: Gradient evaluation `values`
     - kwargs :: keyword arguments needed by the loss_function
 """
+#@everywhere 
 function ForwardDiffGrads(loss_function::Function, vals::AbstractArray, kwargs...)
     loss_tmp(x) = loss_function(x, kwargs...)
     return ForwardDiff.gradient(loss_tmp, vals)
@@ -48,25 +53,209 @@ function scaledParams(up_params_now, tblParams, xbatch, idx)
     return site_name, scaled_params
 end
 
-function gradsBatch!(loss_function::Function, up_params_now, f_grads, xbatch, sites_f, data, data_optim,
-    tem, tblParams, land_init_space, approaches, optim, forcing_one_timestep; logging=true)
+function gradsBatch!(
+    loss_function::Function,
+    f_grads,
+    up_params_now,
+    approaches,
+    xbatch,
+    sites_f,
+    data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true)
 
-    p = Progress(length(xbatch); desc="Computing batch grads...", offset=1, color=:yellow, enabled=logging)
+    p = Progress(length(xbatch); desc="Computing batch grads...", offset=0, color=:yellow, enabled=logging)
     for idx ∈ eachindex(xbatch)
 
-        site_name, new_vals = scaledParams(up_params_now, tblParams, xbatch, idx)
+        site_name, new_vals = scaledParams(up_params_now, tbl_params, xbatch, idx)
         site_location = name_to_id(site_name, sites_f)
-        init_land = land_init_space[site_location[1][2]]
+        land_init = land_init_space[site_location[1][2]]
+        loc_forcing, loc_output, loc_obs  = getLocDataObsN(data.allocated_output, data.forcing, data_optim.obs, site_location) # check output order in original definition
 
-        loc_output, loc_forcing, loc_obs = getLocDataObsN(data..., data_optim.site_obs, site_location) # check output order in original definition
-
-        inits = (; selected_models = approaches, init_land)
-        data_optim = (; site_obs = loc_obs, )
+        inits = (; selected_models = approaches, land_init)
+        data_optim_now = (; site_obs = loc_obs, )
         data_cache = (; loc_forcing, forcing_one_timestep, allocated_output = DiffCache.(loc_output))
 
-        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim, tem, tblParams, optim)
+        gg = ForwardDiffGrads(loss_function, new_vals, inits, data_cache, data_optim_now, tem, tbl_params, optim)
         f_grads[:, idx] = gg
 
         next!(p; showvalues=[(:site_name, site_name)])
     end
+end
+
+function get∇params(
+    loss_function::Function,
+    xfeatures,
+    n_params,
+    re,
+    flat,
+    approaches,
+    xbatch,
+    sites_f,
+    data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true)
+
+    f_grads = zeros(Float32, n_params, length(xbatch))
+    x_feat = xfeatures(; site=xbatch)
+    inst_params, pb = Zygote.pullback((x, p) -> re(p)(x), x_feat, flat)
+
+
+    gradsBatch!(loss_function,
+        f_grads,
+        inst_params,
+        approaches,
+        xbatch,
+        sites_f,
+        data,
+        data_optim,
+        tbl_params, 
+        land_init_space,
+        forcing_one_timestep,
+        tem,
+        optim;
+        logging=logging
+        )
+
+    _, ∇params = pb(f_grads)
+    return ∇params
+end
+
+"""
+    destructureNN(model; nn_opt=Optimisers.Adam())
+"""
+function destructureNN(model; nn_opt=Optimisers.Adam())
+    flat, re = Optimisers.destructure(model)
+    opt_state = Optimisers.setup(nn_opt, flat)
+    return flat, re, opt_state
+end
+
+
+"""
+    train(init_model::Flux.Chain, loss_function::Function, xfeatures, kwargs...;
+        nepochs=2, opt = Optimisers.Adam(), bs_seed = 123, bs = 4, shuffle=true)
+"""
+function train(
+    init_model::Flux.Chain,
+    loss_function::Function,
+    xfeatures,
+    approaches,
+    sites_f,
+    data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    nepochs=2,
+    opt = Optimisers.Adam(),
+    bs_seed = 123,
+    bs = 4,
+    shuffle=true
+    )
+
+    sites = xfeatures.site
+    flat, re, opt_state = destructureNN(init_model; nn_opt = opt)
+    n_params = length(init_model[end].bias)
+
+    xbatches = batch_shuffle(sites, bs; seed=123)
+    new_sites = reduce(vcat, xbatches)
+    tot_loss = fill(NaN32, length(new_sites), nepochs)
+
+    for epoch ∈ 1:nepochs
+        p = Progress(nepochs; desc="Computing epochs...", offset=3)
+        xbatches = shuffle ? batch_shuffle(sites, bs; seed=epoch + bs_seed) : xbatches
+
+        for (batch_id, xbatch) ∈ enumerate(xbatches)
+            ∇params = get∇params(
+                loss_function,
+                xfeatures,
+                n_params,
+                re,
+                flat,
+                approaches,
+                xbatch,
+                sites_f,
+                data,
+                data_optim,
+                tbl_params, 
+                land_init_space,
+                forcing_one_timestep,
+                tem,
+                optim
+            )
+
+            opt_state, flat = Optimisers.update(opt_state, flat, ∇params)
+            next!(p; showvalues=[(:epoch, epoch), (:batch_id, batch_id)])
+        end
+
+        up_params_now = re(flat)(xfeatures(; site=new_sites))
+        loss_now = get_site_losses(
+            loss_function,
+            up_params_now,
+            approaches,
+            new_sites,
+            sites_f,
+            data,
+            data_optim,
+            tbl_params,
+            land_init_space,
+            forcing_one_timestep,
+            tem,
+            optim; logging=true
+            )
+
+        tot_loss[:, epoch] = loss_now
+    end
+    return tot_loss, re, flat
+end
+
+function get_site_losses(
+    loss_function::Function,
+    up_params_now,
+    approaches,
+    new_sites,
+    sites_f,
+    data,
+    data_optim,
+    tbl_params,
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true
+    )
+
+    tot_loss = fill(NaN32, length(new_sites))
+    p = Progress(length(new_sites); desc="Computing site losses...", color=:yellow, enabled=logging)
+
+    for idx ∈ eachindex(new_sites)
+        site_name, new_vals = scaledParams(up_params_now,  tbl_params, new_sites, idx)
+        site_location = name_to_id(site_name, sites_f)
+        land_init = land_init_space[site_location[1][2]]
+
+        loc_forcing, loc_output, loc_obs  = getLocDataObsN(data.allocated_output, data.forcing, data_optim.obs, site_location)
+        
+        @show minimum(loc_forcing[1]), sum(.!isnan.(loc_obs[1]))
+
+        inits = (; selected_models = approaches, land_init)
+        data_optim_now = (; site_obs = loc_obs, )
+        data_tmp = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)
+
+        loss_site = loss_function(new_vals, inits, data_tmp, data_optim_now, tem, tbl_params, optim)
+        tot_loss[idx] = loss_site
+        next!(p; showvalues=[(:site_name, site_name)])
+    end
+    return tot_loss
 end
