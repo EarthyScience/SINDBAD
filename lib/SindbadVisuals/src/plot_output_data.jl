@@ -126,7 +126,7 @@ function plot_output(output, obs, out_names, cov_sites, sites_f, tempo)
         ygridstyle = :dashdot)
 
     plt = lines!(ax, v_site; color = cmap[1])
-    scatter!(ax, data_site; color =:black, markersize = 8)
+    scatter!(ax, data_site; color =(:grey50, 0.5), markersize = 8, strokewidth=0.5, strokecolor=:white)
 
     ax.xticks = (slice_dates, tempo[slice_dates])
     ax.xticklabelrotation = π / 4
