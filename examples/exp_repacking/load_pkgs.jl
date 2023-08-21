@@ -5,6 +5,7 @@ using HybridSindbad
 using SindbadVisuals
 using ForwardDiff
 using PreallocationTools
+using GLMakie
 
 toggleStackTraceNT()
 
@@ -30,18 +31,42 @@ obs = (; Pair.(observations.variables, observations.data)...);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = prepTEMOut(info, forcing.helpers);
 
-# forcing_nt_array,
-# loc_forcings,
-# forcing_one_timestep,
-# output_array,
-# loc_outputs,
-# land_init_space,
-# loc_space_inds,
-# loc_space_maps,
-# loc_space_names,
-# tem_with_types = prepTEM(forcing, info);
-
 run_helpers = prepTEM(forcing, info);
+
+@time runTEM!(info.tem.models.forward,
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types)
+
+
+o1 = run_helpers.output_array[1];
+out1 = reshape(o1, (:, size(o1,3)))
+heatmap(out1)
+
+lines(out1[:,2])
+
+# notvalid = [sum(isnan.(out1[:,i])) for i in 1:205]
+# rmindxs = findall(x->x>size(out1, 1)-2, notvalid)
+# forc.Tair.site[rmindxs]
+# # do not include
+# nogood = [
+#     "AR-SLu",
+#     "CA-Obs",
+#     "DE-Lkb",
+#     "SJ-Blv",
+#     "US-ORv"];
+
+# #heatmap(out1)
+# lines(forc.VPD(site = "CA-Obs"))
+# forc.SILT(site = "CA-Obs")
+
+# forc.VPD(site = "CA-Obs")
+
 
 argsTEM = (;
      forcing_nt_array = run_helpers.forcing_nt_array,
@@ -53,14 +78,6 @@ argsTEM = (;
      loc_space_inds = run_helpers.loc_space_inds,
      tem_with_types = run_helpers.tem_with_types
  );
-
- # @time runTEM!(info.tem.models.forward, argsTEM...) # error 
- #=
- ERROR: TaskFailedException
-
-    nested task error: The function `Base.propertynames` was overloaded for type `AxisKeys.KeyedArray{Float32, 1, NamedDims.NamedDimsArray{(:depth_soilGrids,), Float32, 1, SubArray{Float32, 1, Matrix{Float32}, T, true}}, Base.RefValue{Vector{Int64}}}`.
-    Please make sure `ConstructionBase.setproperties` is also overloaded for this type.
- =#
 
 tem_with_types = run_helpers.tem_with_types;
 
@@ -79,8 +96,8 @@ data = (;
 loc_space_maps = run_helpers.loc_space_maps;
 land_init_space = run_helpers.land_init_space;
 
-site_location = loc_space_maps[1]    
-loc_land_init = land_init_space[1];
+site_location = loc_space_maps[3]    
+loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
     getLocDataObsN(op.data, forc, obs, site_location);
@@ -109,6 +126,9 @@ optim = (;
 );
 
 @time pixel_run!(inits, data, tem);
+
+lines(data.allocated_output[1][:,1])
+
 
 @time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
@@ -223,7 +243,8 @@ history_loss = train(
     );
 
 
-    
+new_params = getParamsAct(up_params(; site=site_name), tbl_params)
+
 space_run!(
     info.tem.models.forward,
     sites_parameters,

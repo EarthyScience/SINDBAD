@@ -35,6 +35,7 @@ function space_run!(
     sites_f,
     land_init_space,
     b_data,
+    obs,
     cov_sites,
     forcing_one_timestep,
     tem
@@ -43,12 +44,12 @@ function space_run!(
     p = Progress(size(cov_sites,1))
     for site_index ∈ eachindex(cov_sites)
         site_name = cov_sites[site_index]
-        new_params = getParamsAct(up_params(; site=site_name), tbl_params)
+        new_params = up_params(; site=site_name)
 
         site_location = name_to_id(site_name, sites_f)
         loc_land_init = land_init_space[site_location[1][2]]
         
-        loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data..., site_location)
+        loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data.allocated_output, b_data.forcing, obs, site_location)
         new_approaches = updateModelParametersType(tbl_params, selected_models, new_params)
         inits = (; selected_models=new_approaches, land_init=loc_land_init)
         data = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)
