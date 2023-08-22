@@ -213,7 +213,8 @@ function train(
             land_init_space,
             forcing_one_timestep,
             tem,
-            optim; logging=true
+            optim;
+            logging=true
             )
 
         tot_loss[:, epoch] = loss_now
@@ -247,11 +248,20 @@ function get_site_losses(
 
         loc_forcing, loc_output, loc_obs  = getLocDataObsN(data.allocated_output, data.forcing, data_optim.obs, site_location)
         
-        @show minimum(loc_forcing[1]), sum(.!isnan.(loc_obs[1]))
+        #@show minimum(loc_forcing[1]), sum(.!isnan.(loc_obs[1]))
 
-        inits = (; selected_models = approaches, land_init)
-        data_optim_now = (; site_obs = loc_obs, )
-        data_tmp = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)
+        inits = (;
+            selected_models = approaches,
+            land_init,
+            )
+        data_optim_now = (;
+            site_obs = loc_obs,
+            )
+        data_tmp = (;
+            loc_forcing,
+            forcing_one_timestep,
+            allocated_output = loc_output,
+            )
 
         loss_site = loss_function(new_vals, inits, data_tmp, data_optim_now, tem, tbl_params, optim)
         tot_loss[idx] = loss_site
