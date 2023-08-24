@@ -1,6 +1,7 @@
 module HybridSindbad
 
-using Distributed: @everywhere
+using Distributed: @distributed, @sync
+using SharedArrays: SharedArray
 
 using Reexport: @reexport
 #@everywhere 
