@@ -1,5 +1,5 @@
 module SindbadTEM
-
+    using Distributed: @distributed, @sync
     import AxisKeys
     using ComponentArrays
     using InteractiveUtils

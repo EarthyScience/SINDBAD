@@ -2,6 +2,7 @@ export pixel_run!
 export getLocDataObsN
 export getParamsAct
 export space_run!
+export space_run_distributed!
 
 function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
     loc_forcing = map(forcing) do a
@@ -56,5 +57,37 @@ function space_run!(
 
         pixel_run!(inits, data, tem)
         next!(p)
+    end
+end
+
+function space_run_distributed!(
+    selected_models,
+    up_params,
+    tbl_params,
+    sites_f,
+    land_init_space,
+    b_data,
+    obs,
+    cov_sites,
+    forcing_one_timestep,
+    tem
+)
+    #p = Progress(size(cov_sites,1))
+
+    @sync @distributed for site_index ∈ eachindex(cov_sites)
+
+        site_name = cov_sites[site_index]
+        new_params = up_params(; site=site_name)
+
+        site_location = name_to_id(site_name, sites_f)
+        loc_land_init = land_init_space[site_location[1][2]]
+        
+        loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data.allocated_output, b_data.forcing, obs, site_location)
+        new_approaches = updateModelParametersType(tbl_params, selected_models, new_params)
+        inits = (; selected_models=new_approaches, land_init=loc_land_init)
+        data = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)
+
+        pixel_run!(inits, data, tem)
+     #   next!(p)
     end
 end
