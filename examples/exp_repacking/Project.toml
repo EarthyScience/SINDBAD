@@ -1,5 +1,6 @@
 [deps]
 AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+Dagger = "d58978e5-989f-55fb-8d15-ea34adc7bf54"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 HybridSindbad = "eb1d8004-2d42-4eef-b369-ed0645c101e8"
@@ -10,3 +11,4 @@ SindbadUtils = "a2ad09c8-73f9-4387-ada0-5c5a8c58f8ab"
 SindbadVisuals = "49d56b06-c9ff-43e2-9c93-8639e8c3cbdc"
 YAXArrayBase = "90b8fcef-0c2d-428d-9c56-5f86629e9d14"
 YAXArrays = "c21b50f5-aa40-41ea-b809-c0f5e47bfa5c"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
