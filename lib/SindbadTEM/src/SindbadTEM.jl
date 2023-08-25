@@ -1,10 +1,10 @@
 module SindbadTEM
-    using Distributed: @distributed, @sync
+    using Distributed: @distributed, @sync, @everywhere, pmap
     import AxisKeys
     using ComponentArrays
     using InteractiveUtils
     using NLsolve
-    using ProgressMeter
+    @everywhere using ProgressMeter
     using SindbadSetup
     @reexport using Pkg
     @reexport using SindbadSetup
