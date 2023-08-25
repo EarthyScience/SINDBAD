@@ -9,6 +9,7 @@ addprocs()
     using YAXArrays, YAXArrayBase
     using AxisKeys
     using Random
+    using ProgressMeter
 end
 
 experiment_json = "../exp_repacking/settings_repacking/experiment.json"
@@ -77,11 +78,13 @@ space_run!(
     cov_sites,
     forcing_one_timestep,
     tem
-)
+);
 
-b_data_distri = (; allocated_output = op.data, forcing=forc);
+op_d = prepTEMOut(info, forcing.helpers);
 
-@time space_run_distributed!(
+b_data_distri = (; allocated_output = SharedArray.(op_d.data), forcing=forc);
+
+space_run_distributed!(
     info.tem.models.forward,
     params_bounded,
     tbl_params,
@@ -92,10 +95,12 @@ b_data_distri = (; allocated_output = op.data, forcing=forc);
     cov_sites,
     forcing_one_timestep,
     tem
-)
+);
 
 
-# using GLMakie
-# lines(b_data_distri.allocated_output[1][:,:,3][:,1]; linewidth=0.6)
-# lines!(b_data.allocated_output[1][:,:,3][:,1]; linestyle=:dot, linewidth = 0.5)
-# current_figure()
+using GLMakie
+#lines(b_data.allocated_output[1][:,:,3][:,1]; linestyle=:dot, linewidth = 0.5)
+lines(b_data_distri.allocated_output[2][:,:,3][:,1]; linewidth=0.6)
+current_figure()
+
+heatmap(b_data.allocated_output[1][:,1,:])

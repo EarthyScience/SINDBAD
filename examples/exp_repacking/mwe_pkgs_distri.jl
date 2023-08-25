@@ -85,16 +85,21 @@ optim = (;
     multiconstraint_method = info.optim.multi_constraint_method
 );
 
-@time pixel_run!(inits, data, tem);
-
-
-@time getSiteLossTEM(inits, data, data_optim, tem, optim)
-
-@sync @distributed for i in 1:16
-    r = getSiteLossTEM(inits, data, data_optim, tem, optim)
-    @show r
+@everywhere begin
+    inits_d = $inits
+    data_d = $data
+    tem_d = $tem
+    data_optim_d = $data_optim
+    optim_d = $optim
 end
 
+@time pixel_run!(inits_d, data_d, tem_d);
+
+
+@time getSiteLossTEM(inits_d, data_d, data_optim_d, tem_d, optim_d)
+
+loc_forcing, loc_output, loc_obs =
+    getLocDataObsN(SharedArray.(op.data), forc, obs_synt, site_location);
 
 CHUNK_SIZE = 12;
 data_cache = (;
@@ -104,16 +109,78 @@ data_cache = (;
     allocated_output = DiffCache.(loc_output)
 );
 
-@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, tbl_params, optim)
-
-@sync @distributed for i in 1:16
-    r_in = siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, tbl_params, optim)
-    @show r_in
-end
-
+@time siteLossInner(tbl_params.default, inits_d, data_cache, data_optim_d, tem_d, tbl_params, optim_d)
 
 kwargs = (;
-    inits, data_cache, data_optim, tem, tbl_params, optim
+    inits_d, data_cache, data_optim_d, tem_d, tbl_params, optim_d
     );
+
+@everywhere begin
+    kwargs_d = $ kwargs
+end
     
 @time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
+
+# load available covariates
+
+# rsync -avz user@atacama:/Net/Groups/BGI/work_1/scratch/lalonso/fluxnet_covariates.zarr ~/examples/data/fluxnet_cube
+sites_f = forc.Tair.site
+c = Cube(joinpath(@__DIR__, "../data/fluxnet_cube/fluxnet_covariates.zarr"));
+xfeatures = cube_to_KA(c)
+
+# RU-Ha1, IT-PT1, US-Me5
+sites = xfeatures.site
+sites = [s for s ∈ sites]
+nogood = [
+    "AR-SLu",
+    "CA-Obs",
+    "DE-Lkb",
+    "SJ-Blv",
+    "US-ORv"];
+sites = setdiff(sites, nogood)
+
+# machine learning parameters baseline
+n_bs_feat = length(xfeatures.features)
+n_neurons = 32
+n_params = sum(tbl_params.is_ml)
+
+ml_baseline = DenseNN(n_bs_feat, n_neurons, n_params; extra_hlayers=2, seed=523)
+sites_parameters = ml_baseline(xfeatures)
+#params_bounded = getParamsAct.(sites_parameters, tbl_params)
+cov_sites = xfeatures.site
+
+forcing_one_timestep =run_helpers.forcing_one_timestep
+
+#sites_parameters .= tbl_params.default
+
+op = prepTEMOut(info, forcing.helpers);
+
+b_data = (; allocated_output = op.data, forcing=forc);
+
+data_optim = (;
+    obs = obs_synt,
+);
+
+xbatch = cov_sites[1:4]
+
+f_grads = SharedArray{Float32}(n_params, length(xbatch))
+
+x_feat = xfeatures(; site=xbatch) 
+
+gradsBatchDistributed!(
+    siteLossInner,
+    f_grads,
+    sites_parameters,
+    info.tem.models.forward,
+    xbatch,
+    sites_f,
+    b_data,
+    data_optim,
+    tbl_params, 
+    land_init_space,
+    forcing_one_timestep,
+    tem,
+    optim;
+    logging=true)
+
+
