@@ -245,7 +245,8 @@ function train(
     opt = Optimisers.Adam(),
     bs_seed = 123,
     bs = 4,
-    shuffle=true
+    shuffle=true,
+    name="test_hybrid_seq",
     )
 
     sites = xfeatures.site
@@ -299,7 +300,7 @@ function train(
             optim;
             logging=true
             )
-
+        jldsave(joinpath(@__DIR__, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
         tot_loss[:, epoch] = loss_now
         next!(p; showvalues=[(:epoch, epoch)])
     end
@@ -327,7 +328,8 @@ function trainDistributed(
     opt = Optimisers.Adam(),
     bs_seed = 123,
     bs = 4,
-    shuffle=true
+    shuffle=true,
+    name="test_hybrid_distri",
     )
 
     sites = xfeatures.site
@@ -380,7 +382,7 @@ function trainDistributed(
             optim;
             logging=true
             )
-
+        jldsave(joinpath(@__DIR__, "$(name)_epoch_$(epoch).jld2"); loss = loss_now, re=re, flat=flat)
         tot_loss[:, epoch] = loss_now
         next!(p; showvalues=[(:epoch, epoch)])
     end
