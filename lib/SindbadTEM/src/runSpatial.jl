@@ -74,7 +74,7 @@ function space_run_distributed!(
 )
     #p = Progress(size(cov_sites,1))
 
-    @sync @distributed for site_index ∈ eachindex(cov_sites)
+    @showprogress @distributed for site_index ∈ eachindex(cov_sites)
 
         site_name = cov_sites[site_index]
         new_params = up_params(; site=site_name)
