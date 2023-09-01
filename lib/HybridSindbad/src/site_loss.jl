@@ -23,7 +23,7 @@ export siteLossInner
     multiconstraint_method
     );
 """
-function getSiteLossTEM(inits, data, data_optim, tem, optim) 
+function getSiteLossTEM(inits, data, data_optim, tem, optim)
     coreTEM!(inits..., data..., tem...)
     lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
     t_loss = combineLoss(lossVec, optim.multiconstraint_method)
@@ -58,9 +58,9 @@ end
     )
 
 """
-function siteLossInner(new_params, inits, data_cache, data_optim, tem, tbl_params, optim)
+function siteLossInner(new_params, inits, data_cache, data_optim, tem, param_to_index, optim)
     out_data = get_tmp.(data_cache.allocated_output, (new_params,))
-    new_apps = updateModelParametersType(tbl_params, inits.selected_models, new_params)
+    new_apps = updateModelParametersType(param_to_index, inits.selected_models, new_params)
     inits = (; selected_models = new_apps, land_init = inits.land_init)
     data = (; data_cache..., allocated_output = out_data)
     return getSiteLossTEM(inits, data, data_optim, tem, optim)
