@@ -8,8 +8,8 @@
     "domain": "Global",
     "name": "OptimDomain",
     "time": {
-      "date_begin": "2001-01-01",
-      "date_end": "2005-12-31",
+      "date_begin": "2015-01-01",
+      "date_end": "2019-12-31",
       "temporal_resolution": "day",
       "timesteps_in_day": 1,
       "timesteps_in_year": 365
