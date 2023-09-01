@@ -22,8 +22,8 @@ computeTEM(models, forcing, land, tem_helpers, ::Val{:false})
 function computeTEM(models, forcing, land, tem_helpers, ::DoDebugModel) # debug the models
     otype = typeof(land)
     return foldlUnrolled(models; init=land) do _land, model
-        @show typeof(model)
-        @time _land = Models.compute(model, forcing, _land, tem_helpers)::otype
+        #@show typeof(model)
+        _land = Models.compute(model, forcing, _land, tem_helpers)::otype
     end
 end
 
@@ -113,10 +113,11 @@ end
 - `x`: DESCRIPTION
 - `init`: DESCRIPTION
 """
-@generated function foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem,N}; init) where {N}
-    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:N]
+@generated function foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init) where {N}
+    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:65]
     return Expr(:block, exes...)
 end
+
 
 """
     precomputeTEM(models, forcing, land, tem_helpers)
