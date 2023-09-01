@@ -2,12 +2,14 @@ module SindbadTEM
     using Distributed: @distributed, @sync, @everywhere, pmap
     import AxisKeys
     using ComponentArrays
+    using ConstructionBase
     using InteractiveUtils
     using NLsolve
-    @everywhere using ProgressMeter
+    using ProgressMeter
     using SindbadSetup
     @reexport using Pkg
     @reexport using SindbadSetup
+
     using ThreadPools
     using YAXArrays
 

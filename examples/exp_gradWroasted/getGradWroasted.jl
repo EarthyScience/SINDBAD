@@ -1,8 +1,8 @@
-using Revise
 using ForwardDiff
-
 using SindbadTEM
-using SindbadMetrics
+using SindbadData
+using SindbadTEM.SindbadMetrics
+
 toggleStackTraceNT()
 
 experiment_json = "../exp_gradWroasted/settings_gradWroasted/experiment.json"
@@ -15,6 +15,7 @@ forcing = getForcing(info);
 observations = getObservation(info, forcing.helpers);
 obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
+
 
 run_helpers = prepTEM(forcing, info);
 
@@ -34,6 +35,35 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameter_default,
     info.optim.model_parameters_to_optimize);
 
+function getLoss2(
+    param_vector::AbstractArray,
+    base_models,
+    forcing_nt_array,
+    loc_forcings,
+    forcing_one_timestep,
+    output_array,
+    loc_outputs,
+    land_init_space,
+    loc_space_inds,
+    tem,
+    observations,
+    tbl_params,
+    cost_options,
+    multi_constraint_method)
+    updated_models = updateModelParametersType(tbl_params, base_models, param_vector)
+    runTEM!(updated_models,
+        forcing_nt_array,
+        loc_forcings,
+        forcing_one_timestep,
+        output_array,
+        loc_outputs,
+        land_init_space,
+        loc_space_inds,
+        tem)
+    loss_vector = getLossVector(observations, output_array, cost_options)
+    return combineLoss(loss_vector, multi_constraint_method)
+end
+
 # @time out_params = runExperimentOpti(experiment_json);  
 function g_loss(x,
     mods,
@@ -49,7 +79,7 @@ function g_loss(x,
     tbl_params,
     cost_options,
     multi_constraint_method)
-    l = getLoss(x,
+    l = getLoss2(x,
         mods,
         forcing_nt_array,
         loc_forcings,
@@ -67,7 +97,9 @@ function g_loss(x,
 end
 
 mods = info.tem.models.forward;
-g_loss(tbl_params.default,
+#mods = [m for m in mods];
+
+@time g_loss(tbl_params.default,
     mods,
     run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
@@ -115,6 +147,21 @@ output_array = [Array{Any}(undef, size(od)) for od in run_helpers.output_array];
 
 dualDefs = ForwardDiff.Dual{ForwardDiff.Tag{typeof(l1),info.tem.helpers.numbers.num_type},info.tem.helpers.numbers.num_type,CHUNK_SIZE}.(tbl_params.default);
 mods = updateModelParametersType(tbl_params, mods, dualDefs);
+
+@time g_loss(tbl_params.default,
+    mods,
+    run_helpers.forcing_nt_array,
+    run_helpers.loc_forcings,
+    run_helpers.forcing_one_timestep,
+    run_helpers.output_array,
+    run_helpers.loc_outputs,
+    run_helpers.land_init_space,
+    run_helpers.loc_space_inds,
+    run_helpers.tem_with_types,
+    obs_array,
+    tbl_params,
+    cost_options,
+    info.optim.multi_constraint_method)
 
 
 # op = prepTEMOut(info, forcing.helpers);

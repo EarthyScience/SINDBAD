@@ -12,7 +12,7 @@ toggleStackTraceNT()
 # obs_synt = out_synt();
 
 
-experiment_json = "../exp_repacking/settings_repacking/experiment.json"
+experiment_json = "../exp_medium/settings_medium/experiment.json"
 #info = getConfiguration(experiment_json);
 #info = setupInfo(info);
 
@@ -36,6 +36,7 @@ land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = prepTEMOut(info, forcing.helpers);
 
 run_helpers = prepTEM(forcing, info);
+
 land_init_space = run_helpers.land_init_space;
 
 tem_with_types = run_helpers.tem_with_types;
@@ -105,7 +106,7 @@ optim = (;
 
 @time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
-CHUNK_SIZE = 12;
+CHUNK_SIZE = 13;
 data_cache = (;
     loc_forcing,
     forcing_one_timestep =run_helpers.forcing_one_timestep,
