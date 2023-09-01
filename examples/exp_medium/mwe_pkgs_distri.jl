@@ -1,16 +1,22 @@
-using SindbadData
-using SindbadTEM
-using YAXArrays
-using HybridSindbad
-using SindbadVisuals
-using ForwardDiff
-using PreallocationTools
-using GLMakie
+using Distributed
+using SharedArrays
+addprocs()
+
+@everywhere begin
+    using SindbadData
+    using SindbadTEM
+    using HybridSindbad
+    using ForwardDiff
+    using PreallocationTools
+end
+
 
 toggleStackTraceNT()
-# include("gen_obs.jl")
-# obs_synt = out_synt();
+include("gen_obs.jl");
 
+obs_synt_single = out_synt()
+
+@everywhere obs_synt = $obs_synt_single
 
 experiment_json = "../exp_repacking/settings_repacking/experiment.json"
 #info = getConfiguration(experiment_json);
@@ -23,20 +29,15 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameters_to_optimize);
 
 forcing = getForcing(info);
- observations = getObservation(info, forcing.helpers);
+observations = getObservation(info, forcing.helpers);
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
 
-#obs_array = getKeyedArrayWithNames(observations);
-#obsv = getKeyedArray(observations);
-
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
-
 op = prepTEMOut(info, forcing.helpers);
 
 run_helpers = prepTEM(forcing, info);
-land_init_space = run_helpers.land_init_space;
 
 tem_with_types = run_helpers.tem_with_types;
 
@@ -59,7 +60,7 @@ site_location = loc_space_maps[3]
 loc_land_init = land_init_space[3];
 
 loc_forcing, loc_output, loc_obs =
-    getLocDataObsN(op.data, forc, obs, site_location); # obs_synt
+    getLocDataObsN(op.data, forc, obs_synt, site_location);
 
 land_init = land_init_space[site_location[1][2]];
 
@@ -69,11 +70,8 @@ data = (;
     allocated_output = loc_output
 );
 
-models = info.tem.models.forward;
-#models = [m for m in models];
-
 inits = (;
-    selected_models = models,
+    selected_models = info.tem.models.forward,
     land_init
 );
 
@@ -81,29 +79,27 @@ data_optim = (;
     site_obs = loc_obs,
 );
 
-
 cost_options = prepCostOptions(loc_obs, info.optim.cost_options);
 optim = (;
     cost_options= cost_options,
     multiconstraint_method = info.optim.multi_constraint_method
 );
 
-@time pixel_run!(inits, data, tem);
+@everywhere begin
+    inits_d = $inits
+    data_d = $data
+    tem_d = $tem
+    data_optim_d = $data_optim
+    optim_d = $optim
+end
 
-@time coreTEM!(inits..., data..., tem...)
-
-#@code_warntype coreTEM!(inits..., data..., tem...)
-# setLogLevel()
-# setLogLevel(:debug)
-
-#lines(data.allocated_output[1][:,1])
+@time pixel_run!(inits_d, data_d, tem_d);
 
 
-# type unstable 
-# land_spin
-# loss_vector
+@time getSiteLossTEM(inits_d, data_d, data_optim_d, tem_d, optim_d)
 
-@time getSiteLossTEM(inits, data, data_optim, tem, optim)
+loc_forcing, loc_output, loc_obs =
+    getLocDataObsN(SharedArray.(op.data), forc, obs_synt, site_location);
 
 CHUNK_SIZE = 12;
 data_cache = (;
@@ -113,22 +109,17 @@ data_cache = (;
     allocated_output = DiffCache.(loc_output)
 );
 
-param_to_index = param_indices(models, tbl_params)
-
-@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
-
-#siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
+@time siteLossInner(tbl_params.default, inits_d, data_cache, data_optim_d, tem_d, tbl_params, optim_d)
 
 kwargs = (;
-    inits, data_cache, data_optim, tem, param_to_index, optim
+    inits_d, data_cache, data_optim_d, tem_d, tbl_params, optim_d
     );
+
+@everywhere begin
+    kwargs_d = $ kwargs
+end
     
-println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
 @time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
-
-
-# ForwardDiff.gradient(f, x)
 
 # load available covariates
 
@@ -172,10 +163,11 @@ data_optim = (;
 
 xbatch = cov_sites[1:4]
 
-f_grads = zeros(Float32, n_params, length(xbatch))
+f_grads = SharedArray{Float32}(n_params, length(xbatch))
+
 x_feat = xfeatures(; site=xbatch) 
 
-gradsBatch!(
+gradsBatchDistributed!(
     siteLossInner,
     f_grads,
     sites_parameters,
@@ -192,62 +184,3 @@ gradsBatch!(
     logging=true)
 
 
-#sites = xfeatures.site
-flat, re, opt_state = destructureNN(ml_baseline)
-n_params = length(ml_baseline[end].bias)
-
-∇params =  get∇params(siteLossInner,
-    xfeatures,
-    n_params,
-    re,
-    flat,
-    info.tem.models.forward,
-    xbatch,
-    sites_f,
-    b_data,
-    data_optim,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    tem,
-    optim;
-    logging=true);
-    
-#isnan.(∇params) |> sum
-
-history_loss = train(
-    ml_baseline,
-    siteLossInner,
-    xfeatures,
-    info.tem.models.forward,
-    sites_f,
-    b_data,
-    data_optim,
-    tbl_params, 
-    land_init_space,
-    forcing_one_timestep,
-    tem,
-    optim;
-    nepochs=10,
-    bs = 8,
-    );
-
-
-# new_params = getParamsAct(up_params(; site=site_name), tbl_params)
-
-# space_run!(
-#     info.tem.models.forward,
-#     sites_parameters,
-#     tbl_params,
-#     sites_f,
-#     land_init_space,
-#     b_data,
-#     cov_sites,
-#     forcing_one_timestep,
-#     tem
-# )
-
-
-# tempo = string.(forc.Tair.time);
-# out_names = info.optimization.observational_constraints
-# plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
