@@ -92,7 +92,7 @@
       "approach": "Saxton2006"
     },
     "soilTexture": {
-      "approach": "forcing"
+      "approach": "fixed"
     },
     "soilWBase": {
       "approach": "uniform"

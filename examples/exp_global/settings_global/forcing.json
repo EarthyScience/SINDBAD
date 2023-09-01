@@ -56,7 +56,7 @@
     },
     "PsurfDay": {
       "bounds": [0.0, 600.0],
-      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PsurfDay.3dim.opti904.nc",
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PsurfDay.2dim.opti904.nc",
       "standard_name": "surface pressure",
       "sindbad_unit": "kPa",
       "source_product": "ERA5",

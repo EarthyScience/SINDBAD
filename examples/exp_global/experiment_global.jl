@@ -1,7 +1,7 @@
 using Revise
 @time using Sindbad
 @time using SindbadTEM
-# @time using SindbadExperiment
+@time using SindbadExperiment
 toggleStackTraceNT()
 domain = "global";
 optimize_it = true;
