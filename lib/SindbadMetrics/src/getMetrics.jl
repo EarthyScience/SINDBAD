@@ -140,7 +140,7 @@ return model and obs data filtering for the common nan
 - `ŷ`: model simulation data/estimate
 """
 function filterCommonNaN(y, yσ, ŷ)
-    @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
+    # @debug sum(isInvalid.(y)), sum(isInvalid.(yσ)), sum(isInvalid.(ŷ))
     idxs = (.!isInvalid.(y .* yσ .* ŷ))
     return y[idxs], yσ[idxs], ŷ[idxs]
 end
@@ -199,9 +199,9 @@ function getData(model_output::AbstractArray, observations, cost_option)
     yσ = observations[obs_ind+1]
     # ymask = observations[obs_ind + 2]
 
-    ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
+    #ŷ = aggregateData(ŷ, cost_option, cost_option.aggr_order)
 
-    y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
+    #y, yσ = aggregateObsData(y, yσ,cost_option, cost_option.aggr_obs)
     return (y, yσ, ŷ)
 end
 

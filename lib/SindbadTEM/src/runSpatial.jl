@@ -9,7 +9,7 @@ function getLocDataObsN(outcubes, forcing, obs, loc_space_map)
         return view(a; loc_space_map...)
     end
     loc_obs = map(obs) do a
-        return view(a; loc_space_map...)
+        return Array(view(a; loc_space_map...))
     end
     ar_inds = Tuple(last.(loc_space_map))
     loc_output = map(outcubes) do a
