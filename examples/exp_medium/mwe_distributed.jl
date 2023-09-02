@@ -21,7 +21,7 @@ addprocs()
 # using Random
 # Random.seed!(123)
 # ar = rand(7,5)
-# using HybridSindbad: ForwardDiffGrads
+# using SindbadML: ForwardDiffGrads
 # f_loss(x, a, b, c) = a*x[1]^2 + sum(b[:,c])*x[2]
 # args = (; a=2, b = ar, c = 1)
 
@@ -31,7 +31,7 @@ addprocs()
 
 
 @everywhere using ForwardDiff
-@everywhere using HybridSindbad: ForwardDiffGrads
+@everywhere using SindbadML: ForwardDiffGrads
 using Random
 Random.seed!(123)
 ar = rand(7,5)

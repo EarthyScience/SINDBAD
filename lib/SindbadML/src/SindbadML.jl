@@ -1,4 +1,4 @@
-module HybridSindbad
+module SindbadML
 
 using Distributed: @distributed, @sync
 using SharedArrays: SharedArray
@@ -24,4 +24,4 @@ include("nn_dense.jl")
 include("site_loss.jl")
 include("gradients.jl")
 
-end # module HybridSindbad
+end # module SindbadML
