@@ -154,7 +154,7 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
     colors_types = collectColorForTypes(d; c_olor=c_olor)
     lc = nothing
     tt = "\t"
-    for k ∈ keys(d)
+    for k ∈ sort(keys(d))
         # lc = colors_types[typeof(d[k])]
         if d[k] isa NamedTuple
             tt = ""
@@ -176,7 +176,6 @@ function tcPrint(d, df=1; c_olor=true, t_ype=true, istop=true)
                 if tp == "::NT"
                     tp = "::Tuple"
                 end
-
             else
                 tt = repeat("\t", df)
                 tp = ""
