@@ -131,7 +131,7 @@ update pools and states in sublimation_GLEAM
 
 *References*
  - Miralles; D. G.; De Jeu; R. A. M.; Gash; J. H.; Holmes; T. R. H.  & Dolman, A. J. (2011). An application of GLEAM to estimating global evaporation.  Hydrology & Earth System Sciences Discussions, 8[1].
-
+ - Murphy, D. M., & Koop, T. (2005). Review of the vapour pressures of ice and supercooled water for atmospheric applications. Quarterly Journal of the Royal Meteorological Society: A journal of the atmospheric sciences, applied meteorology and physical oceanography, 131(608), 1539-1565. https://patarnott.com/atms360/pdf_atms360/class2017/VaporPressureIce_SupercooledH20_Murphy.pdf
 *Versions*
  - 1.0 on 18.11.2019 [ttraut]: cleaned up the code  
 
