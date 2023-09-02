@@ -17,10 +17,10 @@ function compute(p_struct::WUE_VPDDay, forcing, land, helpers)
     end
     ## calculate variables
     # "WUEat1hPa"
-    AoE = WUEatOnehPa * o_one / sqrt(kpa_to_hpa * (VPDDay + tolerance))
+    WUE = WUEatOnehPa * o_one / sqrt(kpa_to_hpa * (VPDDay + tolerance))
 
     ## pack land variables
-    @pack_land AoE => land.WUE
+    @pack_land WUE => land.WUE
     return land
 end
 
@@ -40,7 +40,7 @@ Estimate wue using WUE_VPDDay
  - forcing.VPDDay: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.AoE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+ - land.WUE.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
 
 ---
 

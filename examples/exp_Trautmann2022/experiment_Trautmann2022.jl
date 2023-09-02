@@ -3,18 +3,18 @@ using Revise
 @time using SindbadTEM
 @time using SindbadExperiment
 toggleStackTraceNT()
-domain = "global";
+domain = "Trautmann2022_global";
 optimize_it = true;
 optimize_it = false;
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => true,
+    "experiment.flags.calc_cost" => false,
     "experiment.flags.spinup.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.flags.spinup.run_spinup" => true);
 
-experiment_json = "../exp_global/settings_global/experiment.json";
+experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 forcing = getForcing(info);
