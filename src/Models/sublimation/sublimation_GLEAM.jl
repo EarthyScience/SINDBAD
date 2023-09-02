@@ -41,8 +41,7 @@ function compute(p_struct::sublimation_GLEAM, forcing, land, helpers)
     T = TairDay + deg_to_k
 
     # from Diego miralles: The majority of the parameters I use in GLEAM come from the equations in Murphy & Koop [2005] here attached. The slope of the vapour pressure over ice versus temperature curve (Δ) is obtained from eq. (7). You may want to do this derivative yourself because my calculus is not as good as it used to; what I get is:
-
-    Δ = ( Δ_1 / T^t_two +  Δ_2/ (T - Δ_3)) * exp(Δ_4 - Δ_1 / T + Δ_1 * log(T) - Δ_3 * T)
+    Δ = ( Δ_1 / (T^t_two) +  Δ_2/ (T - Δ_3)) * exp(Δ_4 - Δ_1 / T + Δ_2 * log(T) - Δ_3 * T)
 
     # That you can convert from [Pa/K] to [kPa/K] by multiplying times 0.001.
     Δ = Δ * pa_to_kpa
