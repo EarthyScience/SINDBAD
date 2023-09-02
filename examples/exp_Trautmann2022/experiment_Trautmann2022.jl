@@ -4,7 +4,7 @@ using Revise
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
-domain = "Trautmann2022_global";
+domain = "Global";
 optimize_it = true;
 optimize_it = false;
 

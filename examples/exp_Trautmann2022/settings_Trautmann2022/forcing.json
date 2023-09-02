@@ -22,6 +22,9 @@
     "data_path": null,
     "source_variable": null
   },
+  "subset": {
+    "id": [1, 904]
+  },
   "variables": {
     "AWC": {
       "bounds": [0.0, 10000.0],
