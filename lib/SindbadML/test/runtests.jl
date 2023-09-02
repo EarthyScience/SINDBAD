@@ -1,7 +1,7 @@
-using HybridSindbad
+using SindbadML
 using Test
 
-@testset "HybridSindbad.jl" begin
+@testset "SindbadML.jl" begin
     list = string.('a':'d')
     @test shuffle_list(list) == ["a", "d", "b", "c"]
     @test shuffle_list(list; seed = 312) == ["c", "b", "d", "a"]
@@ -17,8 +17,8 @@ using Test
     @test size(m2(rand(Float32, 5))) == (2,)
     dense_flat = DenseFlattened(m2)
     @test typeof(dense_flat[1]) <: AbstractArray
-    @test typeof(dense_flat[2]) <: HybridSindbad.Optimisers.Restructure
-    @test typeof(dense_flat[3]) <: HybridSindbad.Optimisers.Leaf
+    @test typeof(dense_flat[2]) <: SindbadML.Optimisers.Restructure
+    @test typeof(dense_flat[3]) <: SindbadML.Optimisers.Leaf
 
     # ForwardDiff_grads
     f_loss(x, a, b) = a*x[1]^2 + b*x[2]
