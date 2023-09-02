@@ -11,15 +11,15 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "PET",
         :description => "air temperature in the previous time step"
     ),
-    :WUE__AoE => orD(
-        :standard_name => "AoE",
+    :WUE__WUE => orD(
+        :standard_name => "WUE",
         :long_name => "assimilation_over_evaporation",
         :units => "gC/mmH2O",
         :land_field => "WUE",
         :description => "water use efficiency of the ecosystem"
     ),
-    :WUE__AoENoCO2 => orD(
-        :standard_name => "AoENoCO2",
+    :WUE__WUENoCO2 => orD(
+        :standard_name => "WUENoCO2",
         :long_name => "assimilation_over_evaporation_without_co2_effect",
         :units => "gC/mmH2O",
         :land_field => "WUE",

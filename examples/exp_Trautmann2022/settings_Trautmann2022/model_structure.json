@@ -7,53 +7,34 @@
     "ambientCO2": {
       "approach": "constant"
     },
-    "capillaryFlow": {
-      "approach": "VanDijk2010"
-    },
-    "drainage": {
-      "approach": "dos"
-    },
     "evaporation": {
-      "approach": "fAPAR"
+      "approach": "vegFraction"
     },
     "evapotranspiration": {
       "approach": "sum"
     },
+    "EVI": {
+      "approach": "forcing",
+      "order": 14
+    },
     "fAPAR": {
-      "approach": "vegFraction"
+      "approach": "EVI",
+      "order": 16
     },
     "getPools": {
       "approach": "simple"
     },
     "gpp": {
-      "approach": "coupled"
-    },
-    "gppAirT": {
-      "approach": "CASA"
-    },
-    "gppDemand": {
-      "approach": "mult"
-    },
-    "gppDiffRadiation": {
-      "approach": "none"
-    },
-    "gppDirRadiation": {
-      "approach": "none"
-    },
-    "gppPotential": {
-      "approach": "Monteith"
-    },
-    "gppSoilW": {
-      "approach": "Stocker2020"
-    },
-    "gppVPD": {
-      "approach": "PRELES"
-    },
-    "groundWRecharge": {
-      "approach": "dos"
+      "approach": "transpirationWUE"
     },
     "groundWSoilWInteraction": {
-      "approach": "VanDijk2010"
+      "approach": "gradient"
+    },
+    "groundWSurfaceWInteraction": {
+      "approach": "fracGroundW"
+    },
+    "interception": {
+      "approach": "vegFraction"
     },
     "percolation": {
       "approach": "WBP"
@@ -68,7 +49,7 @@
       "approach": "fracSoilD"
     },
     "rootWaterEfficiency": {
-      "approach": "constant"
+      "approach": "k2Layer"
     },
     "rootWaterUptake": {
       "approach": "proportion"
@@ -83,32 +64,36 @@
       "approach": "Sat"
     },
     "runoffSaturationExcess": {
-      "approach": "Bergstroem1992"
+      "approach": "Bergstroem1992VegFraction"
     },
     "runoffSurface": {
-      "approach": "all"
+      "approach": "directIndirect"
     },
-    "soilProperties": {
-      "approach": "Saxton2006"
-    },
-    "soilTexture": {
-      "approach": "fixed"
+    "snowFraction": {
+      "approach": "HTESSEL"
     },
     "soilWBase": {
-      "approach": "uniform"
+      "approach": "smax2fRD4"
+    },
+    "sublimation": {
+      "approach": "GLEAM"
     },
     "transpiration": {
-      "approach": "coupled"
+      "approach": "demandSupply",
+      "order": 51
+    },
+    "transpirationDemand": {
+      "approach": "PETfAPAR"
     },
     "transpirationSupply": {
       "approach": "wAWC"
     },
     "vegAvailableWater": {
-      "approach": "sigmoid"
+      "approach": "rootWaterEfficiency"
     },
     "vegFraction": {
-      "approach": "forcing",
-      "order": 12
+      "approach": "scaledEVI",
+      "order": 15
     },
     "waterBalance": {
       "approach": "simple"
@@ -127,7 +112,7 @@
     "water": {
       "combine": "TWS",
       "components": {
-        "soilW": [[50.0, 200.0, 750.0, 1000.0], 100.0],
+        "soilW": [[4.0, 1000.0], 100.0],
         "groundW": [1, 1000.0],
         "snowW": [1, 0.01],
         "surfaceW": [1, 0.01]
