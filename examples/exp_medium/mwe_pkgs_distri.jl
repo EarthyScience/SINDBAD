@@ -5,7 +5,7 @@ addprocs()
 @everywhere begin
     using SindbadData
     using SindbadTEM
-    using HybridSindbad
+    using SindbadML
     using ForwardDiff
     using PreallocationTools
 end

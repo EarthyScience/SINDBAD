@@ -1,5 +1,5 @@
 using ForwardDiff
-using HybridSindbad
+using SindbadML
 using PreallocationTools
 #using Flux, Optimisers, Zygote
 using Statistics
