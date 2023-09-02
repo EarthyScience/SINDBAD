@@ -1,7 +1,7 @@
 using SindbadData
 using SindbadTEM
 using YAXArrays
-#using HybridSindbad
+#using SindbadML
 using SindbadVisuals
 using ForwardDiff
 using PreallocationTools
