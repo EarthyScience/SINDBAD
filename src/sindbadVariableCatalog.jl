@@ -13,14 +13,14 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
     ),
     :WUE__WUE => orD(
         :standard_name => "WUE",
-        :long_name => "assimilation_over_evaporation",
+        :long_name => "ecosystem_water_use_efficiency",
         :units => "gC/mmH2O",
         :land_field => "WUE",
         :description => "water use efficiency of the ecosystem"
     ),
     :WUE__WUENoCO2 => orD(
         :standard_name => "WUENoCO2",
-        :long_name => "assimilation_over_evaporation_without_co2_effect",
+        :long_name => "ecosystem_water_use_efficiency_without_co2_effect",
         :units => "gC/mmH2O",
         :land_field => "WUE",
         :description => "water use efficiency of the ecosystem without CO2 effect"
