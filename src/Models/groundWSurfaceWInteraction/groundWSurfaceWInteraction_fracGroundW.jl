@@ -1,14 +1,14 @@
-export groundWsurfaceWInteraction_fracWgw
+export groundWSurfaceWInteraction_fracGroundW
 
 #! format: off
-@bounds @describe @units @with_kw struct groundWsurfaceWInteraction_fracWgw{T1} <: groundWsurfaceWInteraction
-    kGW2Surf::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction"
+@bounds @describe @units @with_kw struct groundWSurfaceWInteraction_fracGroundW{T1} <: groundWSurfaceWInteraction
+    k_groundW_to_surfaceW::T1 = 0.5 | (0.0001, 0.999) | "scale parameter for drainage from wGW to wSurf" | "fraction"
 end
 #! format: on
 
-function compute(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
+function compute(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack parameters
-    @unpack_groundWsurfaceWInteraction_fracWgw p_struct
+    @unpack_groundWSurfaceWInteraction_fracGroundW p_struct
 
     ## unpack land variables
     @unpack_land begin
@@ -18,21 +18,21 @@ function compute(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, he
     end
 
     ## calculate variables
-    GW2Surf = kGW2Surf * sum(groundW + ΔgroundW)
+    groundW_to_surfaceW = k_groundW_to_surfaceW * totalS(groundW, ΔgroundW)
 
     # update the delta storages
-    ΔgroundW .= ΔgroundW .- GW2Surf / n_groundW
-    ΔsurfaceW .= ΔsurfaceW .+ GW2Surf / n_surfaceW
+    ΔgroundW = addToEachElem(ΔgroundW, -groundW_to_surfaceW / n_groundW)
+    ΔsurfaceW = addToEachElem(ΔsurfaceW, groundW_to_surfaceW / n_surfaceW)
 
     ## pack land variables
     @pack_land begin
-        GW2Surf => land.fluxes
+        groundW_to_surfaceW => land.fluxes
         (ΔsurfaceW, ΔgroundW) => land.states
     end
     return land
 end
 
-function update(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, helpers)
+function update(p_struct::groundWSurfaceWInteraction_fracGroundW, forcing, land, helpers)
     ## unpack variables
     @unpack_land begin
         (groundW, surfaceW) ∈ land.pools
@@ -56,7 +56,7 @@ function update(p_struct::groundWsurfaceWInteraction_fracWgw, forcing, land, hel
 end
 
 @doc """
-calculates the depletion of groundwater to the surface water
+calculates the depletion of groundwater to the surface water as a fraction of groundwater storage
 
 # Parameters
 $(SindbadParameters)
@@ -64,7 +64,7 @@ $(SindbadParameters)
 ---
 
 # compute:
-Water exchange between surface and groundwater using groundWsurfaceWInteraction_fracWgw
+Water exchange between surface and groundwater using groundWSurfaceWInteraction_fracGroundW
 
 *Inputs*
  - land.pools.groundW: groundwater storage
@@ -76,7 +76,7 @@ Water exchange between surface and groundwater using groundWsurfaceWInteraction_
 
 # update
 
-update pools and states in groundWsurfaceWInteraction_fracWgw
+update pools and states in groundWSurfaceWInteraction_fracGroundW
 
  - land.pools.groundW
  - land.pools.surfaceW
@@ -93,4 +93,4 @@ update pools and states in groundWsurfaceWInteraction_fracWgw
 *Created by:*
  - ttraut
 """
-groundWsurfaceWInteraction_fracWgw
+groundWSurfaceWInteraction_fracGroundW

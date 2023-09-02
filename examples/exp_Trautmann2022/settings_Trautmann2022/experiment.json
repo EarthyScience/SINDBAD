@@ -6,7 +6,7 @@
       "optimization": "optimization.json"
     },
     "domain": "Global",
-    "name": "OptimDomain",
+    "name": "Trautmann2022_Opti",
     "time": {
       "date_begin": "2015-01-01",
       "date_end": "2019-12-31",
@@ -54,15 +54,9 @@
     "save_single_file": true,
     "variables": {
       "fluxes.evapotranspiration": null,
-      "fluxes.gpp": null,
       "fluxes.runoff": null,
       "fluxes.surface_runoff": null,
       "fluxes.transpiration": null,
-      "gppAirT.gpp_f_airT": null,
-      "gppDemand.gpp_demand": null,
-      "gppDemand.gpp_f_climate": null,
-      "gppPotential.gpp_potential": null,
-      "gppVPD.gpp_f_vpd": null,
       "pools.soilW": "d_soil",
       "states.fAPAR": null,
       "states.water_balance": null
@@ -82,7 +76,7 @@
     "sequence": [
       {
         "forcing": "all_years",
-        "n_repeat": 1,
+        "n_repeat": 3,
         "spinup_mode": "all_forward_models",
         "stop_function": null
       }

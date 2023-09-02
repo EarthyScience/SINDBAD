@@ -18,6 +18,10 @@ function define(p_struct::soilWBase_smax2fRD4, forcing, land, helpers)
         soilW ∈ land.pools
         n_soilW ∈ land.wCycleBase
     end
+    rootwater_capacities = ones(typeof(smax1), 4)
+    if soilW isa SVector
+        rootwater_capacities = SVector{4}(rootwater_capacities)
+    end
 
     ## precomputations/check
     # get the soil thickness & root distribution information from input
@@ -33,7 +37,7 @@ function define(p_struct::soilWBase_smax2fRD4, forcing, land, helpers)
     wWP = zero(soilW)
 
     ## pack land variables
-    @pack_land (soil_layer_thickness, wSat, wFC, wWP, n_soilW) => land.soilWBase
+    @pack_land (soil_layer_thickness, wSat, wFC, wWP, n_soilW, rootwater_capacities) => land.soilWBase
     return land
 end
 
@@ -42,31 +46,31 @@ function compute(p_struct::soilWBase_smax2fRD4, forcing, land, helpers)
     @unpack_soilWBase_smax2fRD4 p_struct
 
     ## unpack land variables
-    @unpack_land (soil_layer_thickness, wSat, wFC, wWP) ∈ land.soilWBase
+    @unpack_land (soil_layer_thickness, wSat, wFC, wWP, rootwater_capacities) ∈ land.soilWBase
     @unpack_forcing (AWC, RDeff, RDmax, SWCmax) ∈ forcing
 
     ## calculate variables
     # get the rooting depth data & scale them
-    p_RD[1] = RDmax[1] * scaleFan
-    p_RD[2] = RDeff[1] * scaleYang
-    p_RD[3] = SWCmax[1] * scaleWang
-    # for the Tian data; fill the NaN gaps with smaxTian
-    AWC[isnan(AWC)] = smaxTian
-    p_RD[4] = AWC[1] * scaleTian
+    rootwater_capacities = repElem(rootwater_capacities, RDmax[1] * scaleFan, rootwater_capacities, rootwater_capacities, 1)
+    rootwater_capacities = repElem(rootwater_capacities, RDeff[1] * scaleYang, rootwater_capacities, rootwater_capacities, 2)
+    rootwater_capacities = repElem(rootwater_capacities, SWCmax[1] * scaleWang, rootwater_capacities, rootwater_capacities, 3)
+    AWC_tmp = isnan(AWC) ? smaxTian : AWC
+    rootwater_capacities = repElem(rootwater_capacities, AWC_tmp * scaleTian, rootwater_capacities, rootwater_capacities, 4)
 
     # set the properties for each soil layer
     # 1st layer
-    wSat[1] = smax1 * soil_layer_thickness[1]
-    wFC[1] = smax1 * soil_layer_thickness[1]
+    @rep_elem smax1 * soil_layer_thickness[1] => (wSat, 1, :soilW)
+    @rep_elem smax1 * soil_layer_thickness[1] => (wFC, 1, :soilW)
+
     # 2nd layer - fill in by linaer combination of the RD data
-    wSat[2] = sum(p_RD)
-    wFC[2] = sum(p_RD)
+    @rep_elem sum(rootwater_capacities) => (wSat, 2, :soilW)
+    @rep_elem sum(rootwater_capacities) => (wFC, 2, :soilW)
 
     # get the plant available water available (all the water is plant available)
     wAWC = wSat
 
     ## pack land variables
-    @pack_land (AWC, p_RD, wAWC, wFC, wSat, wWP) => land.soilWBase
+    @pack_land (wAWC, wFC, wSat) => land.soilWBase
     return land
 end
 
@@ -89,7 +93,7 @@ Distribution of soil hydraulic properties over depth using soilWBase_smax2fRD4
  - helpers.pools.: soil layers & depths
 
 *Outputs*
- - land.soilWBase.p_RD: the 4 scaled RD datas [pix, zix]
+ - land.soilWBase.rootwater_capacities: the 4 scaled RD datas
  - land.soilWBase.p_nsoilLayers
  - land.soilWBase.soil_layer_thickness
  - land.soilWBase.wAWC: = land.soilWBase.wSat
