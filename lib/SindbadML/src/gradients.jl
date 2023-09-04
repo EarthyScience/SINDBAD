@@ -144,7 +144,7 @@ function get∇params(
     forcing_one_timestep,
     tem,
     optim;
-    logging=true)
+    logging=false)
 
     f_grads = zeros(Float32, n_params, length(xbatch))
     x_feat = xfeatures(; site=xbatch)
