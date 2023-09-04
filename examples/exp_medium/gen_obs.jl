@@ -8,7 +8,7 @@ using SindbadVisuals
 
 # setup experiment
 function out_synt()
-    experiment_json = "../exp_repacking/settings_repacking/experiment.json"
+    experiment_json = "../exp_medium/settings_medium/experiment.json"
     info = getExperimentInfo(experiment_json);
     tbl_params = getParameters(info.tem.models.forward,
         info.optim.model_parameter_default,
@@ -96,11 +96,14 @@ function out_synt()
 
     # do the run with the original bounded parameters
     params_bounded = getParamsAct.(sites_parameters, tbl_params)
-    models = [m for m in info.tem.models.forward]
+    #models = [m for m in info.tem.models.forward]
+    models = info.tem.models.forward
+    param_to_index =  param_indices(models, tbl_params)
+
     space_run!(
         models,
         params_bounded,
-        tbl_params,
+        param_to_index,
         sites_f,
         land_init_space,
         b_data,
