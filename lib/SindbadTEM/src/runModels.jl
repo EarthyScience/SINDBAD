@@ -12,10 +12,13 @@ struct LongTuple{T <: Tuple}
     end
     function LongTuple(args...)
         n = 6
-        # TODO, not divisable by n
-        nt = length(args) ÷ n
+        s = length(args)
+        nt = s ÷ n
+        r = mod(s,n)
+        nt = r == 0 ? nt : nt + 1
         idx = 1
         tup = ntuple(nt) do i
+            n = r != 0 && i==nt ? r : n
             t = ntuple(x -> args[x+idx-1], n)
             idx += n
             return t
