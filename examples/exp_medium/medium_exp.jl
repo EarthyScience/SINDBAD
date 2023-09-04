@@ -33,9 +33,12 @@ obs = (; Pair.(observations.variables, observations.data)...);
 
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 
+
 op = prepTEMOut(info, forcing.helpers);
 
 run_helpers = prepTEM(forcing, info);
+
+
 
 land_init_space = run_helpers.land_init_space;
 
@@ -71,6 +74,8 @@ data = (;
 );
 
 models = info.tem.models.forward;
+models = LongTuple(models...)
+
 #models = [m for m in models];
 
 inits = (;
@@ -91,7 +96,13 @@ optim = (;
 
 @time pixel_run!(inits, data, tem);
 
-@time coreTEM!(inits..., data..., tem...)
+@profview_allocs coreTEM!(inits..., data..., tem...)
+
+
+@allocated coreTEM!(inits..., data..., tem...)
+
+
+
 
 #@code_warntype coreTEM!(inits..., data..., tem...)
 # setLogLevel()
@@ -118,6 +129,7 @@ param_to_index = param_indices(models, tbl_params)
 
 @time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
+siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 #siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
 kwargs = (;
@@ -229,7 +241,7 @@ history_loss = train(
     forcing_one_timestep,
     tem,
     optim;
-    nepochs=10,
+    nepochs=3,
     bs = 8,
     );
 
@@ -252,3 +264,4 @@ history_loss = train(
 # tempo = string.(forc.Tair.time);
 # out_names = info.optimization.observational_constraints
 # plot_output(op, obs, out_names, cov_sites, sites_f, tempo)
+
