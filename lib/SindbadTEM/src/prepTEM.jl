@@ -272,4 +272,3 @@ function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
     land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
     return forcing_one_timestep, land_one
 end
-x
