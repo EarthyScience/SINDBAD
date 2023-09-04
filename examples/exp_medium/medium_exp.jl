@@ -74,7 +74,7 @@ data = (;
 );
 
 models = info.tem.models.forward;
-models = LongTuple(models...)
+models = LongTuple(models...);
 
 #models = [m for m in models];
 
