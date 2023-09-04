@@ -25,6 +25,7 @@ export siteLossInner
 """
 function getSiteLossTEM(inits, data, data_optim, tem, optim)
     coreTEM!(inits..., data..., tem...)
+    @code_warntype getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
     lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
     t_loss = combineLoss(lossVec, optim.multiconstraint_method)
     return t_loss
