@@ -32,7 +32,7 @@ end
 function space_run!(
     selected_models,
     up_params,
-    tbl_params,
+    param_to_index,
     sites_f,
     land_init_space,
     b_data,
@@ -51,7 +51,7 @@ function space_run!(
         loc_land_init = land_init_space[site_location[1][2]]
         
         loc_forcing, loc_output, loc_obs = getLocDataObsN(b_data.allocated_output, b_data.forcing, obs, site_location)
-        new_approaches = updateModelParametersType(tbl_params, selected_models, new_params)
+        new_approaches = updateModelParametersType(param_to_index, selected_models, new_params)
         inits = (; selected_models=new_approaches, land_init=loc_land_init)
         data = (; loc_forcing, forcing_one_timestep, allocated_output = loc_output)
 

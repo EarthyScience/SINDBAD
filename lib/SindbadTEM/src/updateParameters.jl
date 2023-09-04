@@ -203,3 +203,22 @@ function updateModelParametersType(param_to_index, selected_models, pVector)
           ConstructionBase.setproperties(model,varsreplace)
     end
 end
+
+@generated function
+    updateModelParametersType(param_to_index,selected_models::M,pVector) where M
+          ex = Expr(:block)
+          rets = Expr(:tuple)
+          ft = fieldtypes(M)
+          for i in eachindex(ft)
+                modelname = QuoteNode(nameof(ft[i]))
+                vn = Symbol("____internv_$i")
+                push!(ex.args,:(model = selected_models[$i]))
+                push!(ex.args,:(modelmap = param_to_index[$modelname]))
+                push!(ex.args,:(varsreplace =
+                map(Base.Fix1(getindex,pVector),modelmap)))
+                            push!(ex.args,:($vn = ConstructionBase.setproperties(model,varsreplace)))
+                push!(rets.args,vn)
+          end
+          push!(ex.args,rets)
+          ex
+    end

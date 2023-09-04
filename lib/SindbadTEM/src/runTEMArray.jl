@@ -322,8 +322,8 @@ function timeLoopTEM!(
     num_timesteps = getForcingTimeSize(loc_forcing, tem_helpers.vals.forc_vars)
     for ts ∈ 1:num_timesteps
         f_ts = getForcingForTimeStep(loc_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
-        land = computeTEM(selected_models, f_ts, land, tem_helpers)
-        setOutputForTimeStep!(loc_output, land, ts, tem_helpers.vals.output_vars)
+        computeTEM(selected_models, f_ts, land, tem_helpers)
+        setOutputForTimeStep!(loc_output, land[], ts, tem_helpers.vals.output_vars)
     end
     return nothing
 end
