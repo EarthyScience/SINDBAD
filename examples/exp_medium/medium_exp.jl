@@ -96,13 +96,11 @@ optim = (;
 
 @time pixel_run!(inits, data, tem);
 
-@profview_allocs coreTEM!(inits..., data..., tem...)
+# @profview_allocs coreTEM!(inits..., data..., tem...)
 
+@code_warntype coreTEM!(inits..., data..., tem...)
 
-@allocated coreTEM!(inits..., data..., tem...)
-
-
-
+@time coreTEM!(inits..., data..., tem...)
 
 #@code_warntype coreTEM!(inits..., data..., tem...)
 # setLogLevel()
@@ -115,7 +113,7 @@ optim = (;
 # land_spin
 # loss_vector
 
-@time getSiteLossTEM(inits, data, data_optim, tem, optim)
+getSiteLossTEM(inits, data, data_optim, tem, optim)
 
 CHUNK_SIZE = 13;
 data_cache = (;
