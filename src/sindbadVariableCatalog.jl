@@ -11,16 +11,16 @@ sindbad_variables = orD{Symbol,orD{Symbol,String}}(
         :land_field => "PET",
         :description => "air temperature in the previous time step"
     ),
-    :WUE__AoE => orD(
-        :standard_name => "AoE",
-        :long_name => "assimilation_over_evaporation",
+    :WUE__WUE => orD(
+        :standard_name => "WUE",
+        :long_name => "ecosystem_water_use_efficiency",
         :units => "gC/mmH2O",
         :land_field => "WUE",
         :description => "water use efficiency of the ecosystem"
     ),
-    :WUE__AoENoCO2 => orD(
-        :standard_name => "AoENoCO2",
-        :long_name => "assimilation_over_evaporation_without_co2_effect",
+    :WUE__WUENoCO2 => orD(
+        :standard_name => "WUENoCO2",
+        :long_name => "ecosystem_water_use_efficiency_without_co2_effect",
         :units => "gC/mmH2O",
         :land_field => "WUE",
         :description => "water use efficiency of the ecosystem without CO2 effect"
@@ -1645,11 +1645,11 @@ function getVariableInfo(vari_b::Symbol, t_step="day")
             o_varib[var_field_str] = field_value
         end
     end
-    if isnothing(o_varib["standard_name"])
-        o_varib["standard_name"] = split(vari_b, "__")[1]
+    if isempty(o_varib["standard_name"])
+        o_varib["standard_name"] = split(string(vari_b), "__")[2]
     end
-    if isnothing(o_varib["description"])
-        o_varib["description"] = ""
+    if isempty(o_varib["description"])
+        o_varib["description"] = split(string(vari_b), "__")[2] * "_" * split(string(vari_b), "__")[1]
     end
     return Dict(o_varib)
 end

@@ -81,7 +81,7 @@ Root water uptake (extract water from soil) using rootWaterUptake_proportion
 *Inputs*
  - land.fluxes.transpiration: actual transpiration
  - land.pools.soilW: soil moisture
- - land.states.PAW: plant available water [pix, zix]
+ - land.states.PAW: plant available water
 
 *Outputs*
  - land.states.root_water_uptake: moisture uptake from each soil layer [nPix, nZix of soilW]

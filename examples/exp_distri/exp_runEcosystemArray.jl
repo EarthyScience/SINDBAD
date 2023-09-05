@@ -13,13 +13,10 @@ obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for 
 run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 @time output_default = runExperimentForward(experiment_json);

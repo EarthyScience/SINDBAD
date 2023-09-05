@@ -1,26 +1,24 @@
 using Revise
+@time using Sindbad
+@time using SindbadTEM
 @time using SindbadExperiment
 using Plots
 toggleStackTraceNT()
-domain = "africa";
+domain = "Global";
 optimize_it = true;
-# optimize_it = false;
+optimize_it = false;
 
 replace_info_spatial = Dict("experiment.basics.domain" => domain * "_spatial",
-    "experiment.basics.config_files.forcing" => "forcing.json",
     "experiment.flags.run_optimization" => optimize_it,
-    "experiment.flags.calc_cost" => optimize_it,
-    "experiment.flags.catch_model_errors" => true,
+    "experiment.flags.calc_cost" => false,
     "experiment.flags.spinup.spinup_TEM" => true,
     "experiment.flags.debug_model" => false,
     "experiment.flags.spinup.run_spinup" => true);
 
-experiment_json = "../exp_graf/settings_graf/experiment.json";
+experiment_json = "../exp_Trautmann2022/settings_Trautmann2022/experiment.json";
 
 info = getExperimentInfo(experiment_json; replace_info=replace_info_spatial); # note that this will modify information from json with the replace_info
 forcing = getForcing(info);
-observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
 
 GC.gc()
 
@@ -42,12 +40,7 @@ for x ∈ 1:10
         run_helpers.tem_with_types)
 end
 
-# setLogLevel(:debug)
-# getLossVector(obs_array, run_helpers.output_array, prepCostOptions(obs_array, info.optim.cost_options))
-
-@time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);
-@time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
-# @time out_cost = runExperimentCost(experiment_json; replace_info=replace_info_spatial);
+@time output_default = runExperimentForward(experiment_json; replace_info=replace_info_spatial);  
 
 
 ds = forcing.data[1];
@@ -63,12 +56,12 @@ for i ∈ eachindex(out_vars)
     if size(pd, 2) == 1
         heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
         # Colorbar(fig[1, 2], obj)
-        savefig(joinpath(info.output.figure, "afr2d_$(vname).png"))
+        savefig(joinpath(info.output.figure, "glob_$(vname).png"))
     else
         foreach(axes(pd, 2)) do ll
             heatmap(pd[:, ll, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
-            savefig(joinpath(info.output.figure, "afr2d_$(vname)_$(ll).png"))
+            savefig(joinpath(info.output.figure, "glob_$(vname)_$(ll).png"))
         end
     end
 end
@@ -87,6 +80,9 @@ for (o, v) in enumerate(forc_vars)
     else
         plot_data =  def_var[:,:]
     end
-    heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isInvalid.(plot_data)))", size=(2000, 1000))
-    savefig(joinpath(info.output.figure, "forc_afr2d_$v.png"))
+    heatmap(plot_data; title="$(v):: mean = $(round(SindbadTEM.mean(def_var), digits=2)), nans=$(sum(isnan.(plot_data)))", size=(2000, 1000))
+    savefig(joinpath(info.output.figure, "forc_glob_$v.png"))
 end
+
+
+# @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);

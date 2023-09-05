@@ -2,7 +2,7 @@ using Revise
 using SindbadTEM
 toggleStackTraceNT()
 
-domain = "africa";
+domain = "Africa";
 optimize_it = true;
 optimize_it = false;
 
@@ -21,21 +21,34 @@ GC.gc()
 
 run_helpers = prepTEM(forcing, info);
 @time runTEM!(info.tem.models.forward,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 ds = forcing.data[1];
-using CairoMakie, AlgebraOfGraphics, DataFrames, Dates
-
-using Statistics
 plotdat = run_helpers.output_array;
-# pd = mean(plotdat[1], dims=1)
-fig, ax, obj = heatmap(mean(plotdat[1]; dims=1)[1, 1, :, :])
-Colorbar(fig[1, 2], obj)
-save(joinpath(info.output.figure, "africa_gpp.png"), fig)
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
+out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
+for i ∈ eachindex(out_vars)
+    v = out_vars[i]
+    vinfo = getVariableInfo(v, info.experiment.basics.time.temporal_resolution)
+    vname = vinfo["standard_name"]
+    println("plot output-model => domain: $domain, variable: $vname")
+    pd = plotdat[i]
+    if size(pd, 2) == 1
+        dt = mean(pd[:, 1, :, :], dims=1)[1, :, :]
+        @show size(dt)
+        heatmap(dt; title="$(vname)" , size=(2000, 1000))
+        # Colorbar(fig[1, 2], obj)
+        savefig(joinpath(info.output.figure, "glob_$(vname).png"))
+    else
+        foreach(axes(pd, 2)) do ll
+            dt = mean(pd[:, ll, :, :], dims=1)[1, :, :]
+            heatmap(dt; title="$(vname)" , size=(2000, 1000))
+            # Colorbar(fig[1, 2], obj)
+            savefig(joinpath(info.output.figure, "africa_spatial_$(vname)_$(ll).png"))
+        end
+    end
+end
