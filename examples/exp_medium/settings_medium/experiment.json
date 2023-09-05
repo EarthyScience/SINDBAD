@@ -36,7 +36,7 @@
       "load_spinup": false,
       "run_spinup": true,
       "save_spinup": false,
-      "spinup_TEM": true,
+      "spinup_TEM": false,
       "store_spinup": false
     },
     "use_forward_diff": false
