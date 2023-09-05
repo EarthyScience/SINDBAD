@@ -85,11 +85,4 @@ for (o, v) in enumerate(forc_vars)
 end
 
 
-# @profview runTEM!(info.tem.models.forward,
-#     run_helpers.loc_forcings,
-#     run_helpers.forcing_one_timestep,
-#     run_helpers.loc_outputs,
-#     run_helpers.land_init_space,
-#     run_helpers.tem_with_types)
-
 # @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
