@@ -24,6 +24,7 @@ export siteLossInner
     );
 """
 function getSiteLossTEM(inits, data, data_optim, tem, optim)
+    #@code_warntype coreTEM!(inits..., data..., tem...)
     coreTEM!(inits..., data..., tem...)
     @code_warntype getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
     lossVec = getLossVector(data_optim.site_obs, data.allocated_output, optim.cost_options)
@@ -61,7 +62,6 @@ end
 """
 function siteLossInner(new_params, inits, data_cache, data_optim, tem, param_to_index, optim)
     out_data = get_tmp.(data_cache.allocated_output, (new_params,))
-    #@code_warntype updateModelParametersType(param_to_index, inits.selected_models, new_params)
     new_apps = updateModelParametersType(param_to_index, inits.selected_models, new_params)
     inits = (; selected_models = new_apps, land_init = inits.land_init)
     data = (; data_cache..., allocated_output = out_data)

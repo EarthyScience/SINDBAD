@@ -29,7 +29,10 @@ end
 
 Base.map(f, arg::LongTuple) = LongTuple(map(tup-> map(f, tup), arg.data))
 
-Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
+@inline Base.foreach(f, arg::LongTuple) = foreach(tup-> foreach(f, tup), arg.data)
+
+#Base.foreach(f, arg::LongTuple, args...) = foreach(tup-> foreach((x)-> f(x, args...), tup), arg.data)
+
 
 """
 computeTEM(models, forcing, land, tem_helpers, ::Val{:false})
@@ -112,10 +115,10 @@ function computeTEM(models, forcing, _land, tem_helpers)
     #     _land = Models.compute(model, forcing, _land, tem_helpers)
     # end
     # return _land
-    foreach(models) do model
-        _land[] = Models.compute(model, forcing, _land[], tem_helpers)
+    return reduce_lt(models, init=_land) do model, _land
+        #@code_warntype Models.precompute(model, forcing, _land[], tem_helpers)
+        return Models.compute(model, forcing, _land, tem_helpers)
     end
-    return _land[]
 end
 
 """
@@ -151,6 +154,17 @@ end
     return Expr(:block, exes...)
 end
 
+@generated function reduce_lt(f, x::LongTuple{<: Tuple{Vararg{Any,N}}}; init) where {N}
+    exes = []
+    for i in 1:N
+        N2 = i==N ? 5 : 6
+        for j in 1:N2
+            push!(exes, :(init = f(x.data[$i][$j], init)))
+        end
+    end
+    return Expr(:block, exes...)
+end
+
 """
     foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init)
 
@@ -161,10 +175,10 @@ end
 - `x`: DESCRIPTION
 - `init`: DESCRIPTION
 """
-@generated function foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init) where {N}
-    exes = Any[:(init = f(init, x[$i])) for i ∈ 1:65]
-    return Expr(:block, exes...)
-end
+# @generated function foldlUnrolled(f, x::Array{Sindbad.Models.LandEcosystem, N}; init) where {N}
+#     exes = Any[:(init = f(init, x[$i])) for i ∈ 1:65]
+#     return Expr(:block, exes...)
+# end
 
 
 """
@@ -179,10 +193,11 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function precomputeTEM(models, forcing, _land, tem_helpers)
-    foreach(models) do model
-        _land[] = Models.precompute(model, forcing, _land[], tem_helpers)
+    #_land = Ref(land)
+    return reduce_lt(models, init=_land) do model, _land
+        #@code_warntype Models.precompute(model, forcing, _land[], tem_helpers)
+        return Models.precompute(model, forcing, _land, tem_helpers)
     end
-    return _land
 end
 
 
