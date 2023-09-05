@@ -96,6 +96,27 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
     end
     ## calculate variables
     # calculate & set the soil hydraulic properties for each layer
+    # for sl in eachindex(sp_α)
+    #     (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = calcPropsSaxton2006(p_struct, land, helpers, sl)
+    #     @rep_elem α => (sp_α, sl, :soilW)
+    #     @rep_elem β => (sp_β, sl, :soilW)
+    #     @rep_elem kFC => (sp_kFC, sl, :soilW)
+    #     @rep_elem θFC => (sp_θFC, sl, :soilW)
+    #     @rep_elem ψFC => (sp_ψFC, sl, :soilW)
+    #     @rep_elem kWP => (sp_kWP, sl, :soilW)
+    #     @rep_elem θWP => (sp_θWP, sl, :soilW)
+    #     @rep_elem ψWP => (sp_ψWP, sl, :soilW)
+    #     @rep_elem kSat => (sp_kSat, sl, :soilW)
+    #     @rep_elem θSat => (sp_θSat, sl, :soilW)
+    #     @rep_elem ψSat => (sp_ψSat, sl, :soilW)
+    # end
+    sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat = innner_sax(p_struct, land, helpers, sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat)
+    ## pack land variables
+    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
+    return land
+end
+
+function innner_sax(p_struct, land, helpers, sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat)
     for sl in eachindex(sp_α)
         (α, β, kSat, θSat, ψSat, kFC, θFC, ψFC, kWP, θWP, ψWP) = calcPropsSaxton2006(p_struct, land, helpers, sl)
         @rep_elem α => (sp_α, sl, :soilW)
@@ -110,10 +131,7 @@ function precompute(p_struct::soilProperties_Saxton2006, forcing, land, helpers)
         @rep_elem θSat => (sp_θSat, sl, :soilW)
         @rep_elem ψSat => (sp_ψSat, sl, :soilW)
     end
-
-    ## pack land variables
-    @pack_land (sp_kFC, sp_kSat, sp_kWP, sp_α, sp_β, sp_θFC, sp_θSat, sp_θWP, sp_ψFC, sp_ψSat, sp_ψWP) => land.soilProperties
-    return land
+    return sp_α, sp_β, sp_kFC, sp_θFC, sp_ψFC, sp_kWP, sp_θWP, sp_ψWP, sp_kSat, sp_θSat, sp_ψSat
 end
 
 @doc """

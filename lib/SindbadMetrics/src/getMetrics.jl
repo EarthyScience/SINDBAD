@@ -301,6 +301,7 @@ remove all the variables that have less than minimum datapoints from being used 
 """
 function prepCostOptions(observations, cost_options)
     valids=[]
+    cost = []
     is_valid = []
     vars = cost_options.variable
     obs_inds = cost_options.obs_ind
@@ -317,10 +318,13 @@ function prepCostOptions(observations, cost_options)
         else
             push!(is_valid, true)
         end
+        push!(cost, zero(eltype(y)))
         push!(valids, idxs)
     end
+    cost = [_c for _c  in cost]
     cost_options = setTupleField(cost_options, (:valids, valids))
     cost_options = setTupleField(cost_options, (:is_valid, is_valid))
+    cost_options = setTupleField(cost_options, (:cost, cost))
     cost_options = dropFields(cost_options, (:min_data_points, :temporal_data_aggr, :aggr_func,))
     cost_option_table = Table(cost_options)
     cost_options_table_filtered = filter(row -> row.is_valid === true , cost_option_table)
