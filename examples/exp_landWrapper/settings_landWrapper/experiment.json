@@ -94,7 +94,7 @@
       "states.root_water_efficiency": "d_soil",
       "states.transpiration_supply": null,
       "states.water_balance": null,
-      "WUE.AoE": null
+      "WUE.WUE": null
     }
   },
   "model_spinup": {
