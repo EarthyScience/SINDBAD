@@ -26,7 +26,7 @@
   },
   "flags": {
     "calc_cost": true,
-    "catch_model_errors": false,
+    "catch_model_errors": true,
     "debug_model": false,
     "inline_update": false,
     "run_forward": true,
@@ -67,6 +67,7 @@
       "pools.soilW": "d_soil",
       "pools.surfaceW": "d_surface",
       "states.fAPAR": null,
+      "states.EVI": null,
       "states.water_balance": null
     }
   },

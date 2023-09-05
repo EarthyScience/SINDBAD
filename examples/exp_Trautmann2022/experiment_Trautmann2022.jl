@@ -25,24 +25,18 @@ GC.gc()
 run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 for x ∈ 1:10
     @time runTEM!(info.tem.models.forward,
-        run_helpers.forcing_nt_array,
         run_helpers.loc_forcings,
         run_helpers.forcing_one_timestep,
-        run_helpers.output_array,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
-        run_helpers.loc_space_inds,
         run_helpers.tem_with_types)
 end
 
@@ -51,6 +45,7 @@ end
 
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
+default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
     v = out_vars[i]
@@ -63,8 +58,8 @@ for i ∈ eachindex(out_vars)
         # Colorbar(fig[1, 2], obj)
         savefig(joinpath(info.output.figure, "glob_$(vname).png"))
     else
-        for ll ∈ 1:size(pd, 2)
-            heatmap(pd[:, 1, :]; title="$(vname)" , size=(2000, 1000))
+        foreach(axes(pd, 2)) do ll
+            heatmap(pd[:, ll, :]; title="$(vname)" , size=(2000, 1000))
             # Colorbar(fig[1, 2], obj)
             savefig(joinpath(info.output.figure, "glob_$(vname)_$(ll).png"))
         end
@@ -91,13 +86,10 @@ end
 
 
 # @profview runTEM!(info.tem.models.forward,
-#     run_helpers.forcing_nt_array,
 #     run_helpers.loc_forcings,
 #     run_helpers.forcing_one_timestep,
-#     run_helpers.output_array,
 #     run_helpers.loc_outputs,
 #     run_helpers.land_init_space,
-#     run_helpers.loc_space_inds,
 #     run_helpers.tem_with_types)
 
 # @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info_spatial);
