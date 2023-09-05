@@ -143,13 +143,23 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
         loc_space_maps[1], tem_with_types, LandOutArray())
     debugModel(land_one, tem.helpers.run.debug_model)
 
+    # loc_forcing = getLocForcingData(forcing, loc_space_map)
+    # loc_output = getLocOutputData(output_array, loc_space_map)
     # collect local data and create copies
     @info "     preallocating local, threaded, and spatial data"
-    loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
-    loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
+    loc_forcings = map([loc_space_maps...]) do lsm
+        getLocForcingData(forcing_nt_array, lsm)
+    end
+    loc_outputs = map([loc_space_maps...]) do lsm
+        getLocOutputData(output_array, lsm)
+    end
+
+    # loc_forcings = Tuple([loc_forcing for _ ∈ 1:Threads.nthreads()])
+    # loc_outputs = Tuple([loc_output for _ ∈ 1:Threads.nthreads()])
     land_init_space = Tuple([deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)])
 
-    run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    run_helpers = (; loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers
 end
 
