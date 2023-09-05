@@ -30,8 +30,8 @@ end
 - `::DoNotStoreSpinup`: indicates not to store the spinup history
 """
 function addSpinupLog(land, _, ::DoNotStoreSpinup) # when history is false
-    spinuplog = nothing
-    @pack_land spinuplog => land.states
+    #spinuplog = nothing
+    #@pack_land spinuplog => land.states
     return land
 end
 
@@ -147,7 +147,7 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
     @info "     preallocating local, threaded, and spatial data"
     loc_forcings = [loc_forcing for _ ∈ 1:Threads.nthreads()]
     loc_outputs = [loc_output for _ ∈ 1:Threads.nthreads()]
-    land_init_space = [Ref(deepcopy(land_one)) for _ ∈ 1:length(loc_space_maps)]
+    land_init_space = [deepcopy(land_one) for _ ∈ 1:length(loc_space_maps)]
 
     run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
     return run_helpers

@@ -94,13 +94,14 @@ optim = (;
     multiconstraint_method = info.optim.multi_constraint_method
 );
 
-@time pixel_run!(inits, data, tem);
+pixel_run!(inits, data, tem);
+
+@code_warntype pixel_run!(inits, data, tem);
 
 # @profview_allocs coreTEM!(inits..., data..., tem...)
+@time coreTEM!(inits..., data..., tem...)
 
 @code_warntype coreTEM!(inits..., data..., tem...)
-
-@time coreTEM!(inits..., data..., tem...)
 
 #@code_warntype coreTEM!(inits..., data..., tem...)
 # setLogLevel()
@@ -112,8 +113,11 @@ optim = (;
 # type unstable 
 # land_spin
 # loss_vector
+@time  getSiteLossTEM(inits, data, data_optim, tem, optim)
 
-getSiteLossTEM(inits, data, data_optim, tem, optim)
+
+
+@code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
 
 CHUNK_SIZE = 13;
 data_cache = (;
@@ -123,11 +127,14 @@ data_cache = (;
     allocated_output = DiffCache.(loc_output)
 );
 
+models = info.tem.models.forward;
 param_to_index = param_indices(models, tbl_params)
 
-@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
+models = LongTuple(models...);
 
-siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
+@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
+
+@code_warntype siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 #siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
 kwargs = (;
