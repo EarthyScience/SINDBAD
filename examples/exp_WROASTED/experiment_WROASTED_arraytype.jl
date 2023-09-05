@@ -44,13 +44,10 @@ for (i, model_array_type) in enumerate(("array", "view", "static_array"))
     linit = createLandInit(info.pools, info.tem.helpers, info.tem.models)
     run_helpers = prepTEM(forcing, info)
     @time runTEM!(info.tem.models.forward,
-        run_helpers.forcing_nt_array,
         run_helpers.loc_forcings,
         run_helpers.forcing_one_timestep,
-        run_helpers.output_array,
         run_helpers.loc_outputs,
         run_helpers.land_init_space,
-        run_helpers.loc_space_inds,
         run_helpers.tem_with_types)
     ds = forcing.data[1]
     opt_dat = run_helpers.output_array

@@ -2,8 +2,8 @@ export fAPAR_EVI
 
 #! format: off
 @bounds @describe @units @with_kw struct fAPAR_EVI{T1} <: fAPAR
-    EVI_to_fAPAR_c::T1 = -0.09 | (-0.2, 0.3) | "intercept of the linear function" | ""
-    EVI_to_fAPAR_m::T1 = 0.8 | (0.5, 5) | "slope of the linear function" | ""
+    EVI_to_fAPAR_c::T1 = 0.0 | (-0.2, 0.3) | "intercept of the linear function" | ""
+    EVI_to_fAPAR_m::T1 = 1.0 | (0.5, 5) | "slope of the linear function" | ""
 end
 #! format: on
 
