@@ -168,13 +168,10 @@ for site_index in sites
 
         run_helpers = prepTEM(models_with_matlab_params, forcing, info)
         @time runTEM!(models_with_matlab_params,
-            run_helpers.forcing_nt_array,
             run_helpers.loc_forcings,
             run_helpers.forcing_one_timestep,
             run_helpers.output_array,
-            run_helpers.loc_outputs,
             run_helpers.land_init_space,
-            run_helpers.loc_space_inds,
             run_helpers.tem_with_types)
 
         outcubes = run_helpers.output_array
@@ -248,13 +245,10 @@ for site_index in sites
                     forcing,
                     info)                                
             runTEM!(models_with_matlab_params,
-                run_helpers.forcing_nt_array,
                 run_helpers.loc_forcings,
                 run_helpers.forcing_one_timestep,
-                run_helpers.output_array,
                 run_helpers.loc_outputs,
                 run_helpers.land_init_space,
-                run_helpers.loc_space_inds,
                 run_helpers.tem_with_types)
 
             default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
