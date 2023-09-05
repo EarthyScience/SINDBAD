@@ -93,7 +93,7 @@ end
 
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, ::UseThreadsParallelization)
+    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_models, tem_spinup, ::UseThreadsParallelization)
 
 parallelize SINDBAD TEM using threads as backend
 
@@ -106,7 +106,7 @@ parallelize SINDBAD TEM using threads as backend
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 - `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
 - `tem_spinup`: a NT with information/instruction on spinning up the TEM
-- `::UseQbmapParallelization`: type defining dispatch for threads based parallelization
+- `::UseThreadsParallelization`: type defining dispatch for threads based parallelization
 """
 function parallelizeTEM!(
     selected_models,
@@ -134,7 +134,7 @@ function parallelizeTEM!(
 end
 
 """
-    parallelizeTEM!(selected_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem_helpers, tem_models, tem_spinup, ::UseQbmapParallelization)
+    parallelizeTEM!(selected_models, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_helpers, tem_models, tem_spinup, ::UseQbmapParallelization)
 
 parallelize SINDBAD TEM using qbmap as backend
 
@@ -192,7 +192,7 @@ function runTEM!(forcing::NamedTuple, info::NamedTuple)
 end
 
 """
-    runTEM!(selected_models, forcing_nt_array::NamedTuple, loc_forcings, forcing_one_timestep, output_array::AbstractArray, loc_outputs, land_init_space, loc_space_inds, tem_with_types::NamedTuple)
+    runTEM!(selected_models, forcing_nt_array::NamedTuple, loc_forcings, forcing_one_timestep, loc_outputs, land_init_space, tem_with_types::NamedTuple)
 
 a function to run SINDBAD Terrestrial Ecosystem Model that simulates all locations and time using preallocated array as model data backend, with precomputed helper objects for efficient runs during optimization
 
