@@ -36,11 +36,7 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
     percolation = WBP
     toAllocate = percolation
     if toAllocate > z_zero
-        for sl ∈ eachindex(land.pools.soilW)
-            allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
-            @add_to_elem allocated => (ΔsoilW, sl, :soilW)
-            toAllocate = toAllocate - allocated
-        end
+        ΔsoilW, toAllocate = inner_toAlloc(land.pools.soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
     end
     WBP = abs(toAllocate) > tolerance ? toAllocate : z_zero
 
@@ -51,6 +47,15 @@ function compute(p_struct::percolation_WBP, forcing, land, helpers)
         ΔsoilW => land.states
     end
     return land
+end
+
+function inner_toAlloc(land_pools_soilW, wSat, soilW, ΔsoilW, toAllocate, helpers)
+    for sl ∈ eachindex(land_pools_soilW)
+        allocated = min(wSat[sl] - (soilW[sl] + ΔsoilW[sl]), toAllocate)
+        @add_to_elem allocated => (ΔsoilW, sl, :soilW)
+        toAllocate = toAllocate - allocated
+    end
+    return ΔsoilW, toAllocate
 end
 
 function update(p_struct::percolation_WBP, forcing, land, helpers)

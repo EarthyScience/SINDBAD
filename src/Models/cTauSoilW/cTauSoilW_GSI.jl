@@ -39,23 +39,35 @@ function compute(p_struct::cTauSoilW_GSI, forcing, land, helpers)
     soilW_top = min(frac2perc * soilW[1] / wSat[1], frac2perc)
     soilW_top_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_top)
     cLitZix = getZix(land.pools.cLit, helpers.pools.zix.cLit)
-    for l_zix ∈ cLitZix
-        @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
-    end
+
+    c_eco_k_f_soilW = inner_c_eco_lit(cLitZix, soilW_top_sc, c_eco_k_f_soilW, helpers)
 
     ## repeat for the soil pools; using all soil moisture layers
     soilW_all = min(frac2perc * sum(soilW) / sum(wSat), frac2perc)
     soilW_all_sc = fSoilW_cTau(o_one, WoptA, WoptB, Wexp, Wopt, soilW_all)
 
     cSoilZix = getZix(land.pools.cSoil, helpers.pools.zix.cSoil)
-    for s_zix ∈ cSoilZix
-        @rep_elem soilW_all_sc => (c_eco_k_f_soilW, s_zix, :cEco)
-    end
+    c_eco_k_f_soilW = inner_c_eco_soil(cSoilZix, soilW_all_sc, c_eco_k_f_soilW, helpers)
 
     ## pack land variables
     @pack_land c_eco_k_f_soilW => land.cTauSoilW
     return land
 end
+
+function inner_c_eco_lit(cLitZix, soilW_top_sc, c_eco_k_f_soilW, helpers)
+    for l_zix ∈ cLitZix
+        @rep_elem soilW_top_sc => (c_eco_k_f_soilW, l_zix, :cEco)
+    end
+    return c_eco_k_f_soilW
+end
+
+function inner_c_eco_soil(cSoilZix, soilW_all_sc, c_eco_k_f_soilW, helpers)
+    for s_zix ∈ cSoilZix
+        @rep_elem soilW_all_sc => (c_eco_k_f_soilW, s_zix, :cEco)
+    end
+    return c_eco_k_f_soilW
+end
+
 
 function fSoilW_cTau(o_one, A, B, wExp, wOpt, wSoil)
     # first half of the response curve

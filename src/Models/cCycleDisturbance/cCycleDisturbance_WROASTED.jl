@@ -42,21 +42,26 @@ function compute(p_struct::cCycleDisturbance_WROASTED, forcing, land, helpers)
         (z_zero, o_one) ∈ land.wCycleBase
     end
     if dist_intensity > z_zero
-        for zixVeg ∈ zix_veg_all
-            cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
-            @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
-            c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
-            for tZ ∈ eachindex(c_lose_to_zix)
-                tarZix = c_lose_to_zix[tZ]
-                toGain = cLoss / length(c_lose_to_zix)
-                @add_to_elem toGain => (cEco, tarZix, :cEco)
-            end
-        end
+        cEco = nested_inner(zix_veg_all, cEco, c_remain, dist_intensity, c_lose_to_zix_vec, helpers)
         @pack_land cEco => land.pools
         land = adjustPackPoolComponents(land, helpers, land.cCycleBase.c_model)
     end
     ## pack land variables
     return land
+end
+
+function nested_inner(zix_veg_all, cEco, c_remain, dist_intensity, c_lose_to_zix_vec, helpers)
+    for zixVeg ∈ zix_veg_all
+        cLoss = maxZero(cEco[zixVeg] - c_remain) * dist_intensity
+        @add_to_elem -cLoss => (cEco, zixVeg, :cEco)
+        c_lose_to_zix = c_lose_to_zix_vec[zixVeg]
+        for tZ ∈ eachindex(c_lose_to_zix)
+            tarZix = c_lose_to_zix[tZ]
+            toGain = cLoss / length(c_lose_to_zix)
+            @add_to_elem toGain => (cEco, tarZix, :cEco)
+        end
+    end
+    return cEco
 end
 
 @doc """
