@@ -1645,11 +1645,11 @@ function getVariableInfo(vari_b::Symbol, t_step="day")
             o_varib[var_field_str] = field_value
         end
     end
-    if isnothing(o_varib["standard_name"])
-        o_varib["standard_name"] = split(vari_b, "__")[1]
+    if isempty(o_varib["standard_name"])
+        o_varib["standard_name"] = split(string(vari_b), "__")[2]
     end
-    if isnothing(o_varib["description"])
-        o_varib["description"] = ""
+    if isempty(o_varib["description"])
+        o_varib["description"] = split(string(vari_b), "__")[2] * "_" * split(string(vari_b), "__")[1]
     end
     return Dict(o_varib)
 end

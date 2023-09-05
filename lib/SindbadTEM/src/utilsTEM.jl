@@ -184,21 +184,21 @@ function getLocOutputData(output_array, loc_space_map)
 end
 
 """
-    getLocForcing!(forcing, loc_forcing, s_locs, Val{forc_vars}, Val{s_names})
+    getLocForcing!(forcing, loc_forcing, loc_space_ind, Val{forc_vars}, Val{s_names})
 
 
 
 # Arguments:
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `loc_forcing`: a forcing time series set for a single location
-- `s_locs`: DESCRIPTION
+- `loc_space_ind`: DESCRIPTION
 - `nothing`: DESCRIPTION
 - `nothing`: DESCRIPTION
 """
 @generated function getLocForcing!(
     forcing,
     loc_forcing,
-    s_locs,
+    loc_space_ind,
     ::Val{forc_vars},
     ::Val{s_names}) where {forc_vars,s_names}
     output = quote end
@@ -211,7 +211,7 @@ end
                 Expr(:call,
                     :view,
                     Expr(:parameters,
-                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :s_locs, s_ind))),
+                        Expr(:call, :(=>), QuoteNode(s_name), Expr(:ref, :loc_space_ind, s_ind))),
                     :d))
             push!(output.args, expr)
             s_ind += 1
@@ -243,6 +243,24 @@ function getLocOutput!(output_array, loc_output, ar_inds)
     end
     return nothing
 end
+
+"""
+    getLocOutput!(output_array, loc_output, ar_inds)
+
+
+
+# Arguments:
+- `output_array`: an output array/view for ALL locations
+- `ar_inds`: DESCRIPTION
+"""
+function getLocOutput!(output_array, ar_inds)
+    loc_output = map(output_array) do a
+        getArrayView(a, ar_inds)
+    end
+    return loc_output
+end
+
+
 
 """
     getLocOutputView(ar, val::AbstractVector, ts::Int64)
@@ -290,10 +308,10 @@ end
 
 
 # Arguments:
-- `outputs`: DESCRIPTION
+- `outputs`: vector of model output vectors
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
-- `ts`: DESCRIPTION
-- `nothing`: DESCRIPTION
+- `ts`: time step
+- `::Val{output_vars}`: a dispatch for vals of the output variables to generate the function
 """
 function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {output_vars}
     if @generated

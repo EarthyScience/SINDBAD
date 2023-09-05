@@ -22,6 +22,9 @@
     "data_path": null,
     "source_variable": null
   },
+  "subset": {
+    "id": [1, 476]
+  },
   "variables": {
     "CLAY": {
       "bounds": [0.0, 1.0],
