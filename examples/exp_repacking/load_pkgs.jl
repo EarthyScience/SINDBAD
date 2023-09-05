@@ -71,6 +71,8 @@ data = (;
 
 models = info.tem.models.forward;
 #models = [m for m in models];
+models = LongTuple(models...);
+
 
 inits = (;
     selected_models = models,
@@ -88,11 +90,13 @@ optim = (;
     multiconstraint_method = info.optim.multi_constraint_method
 );
 
+pixel_run!(inits, data, tem);
+
 @time pixel_run!(inits, data, tem);
 
 @time coreTEM!(inits..., data..., tem...)
 
-#@code_warntype coreTEM!(inits..., data..., tem...)
+@code_warntype coreTEM!(inits..., data..., tem...)
 # setLogLevel()
 # setLogLevel(:debug)
 
@@ -112,10 +116,12 @@ data_cache = (;
 #    allocated_output = DiffCache.(loc_output, (CHUNK_SIZE,)),
     allocated_output = DiffCache.(loc_output)
 );
+models = info.tem.models.forward;
+param_to_index = param_indices(models, tbl_params);
 
-param_to_index = param_indices(models, tbl_params)
+@profview siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
-@time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
+@code_warntype siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
 #siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
@@ -127,6 +133,7 @@ println("Hola hola!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 @time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
 
+@time ForwardDiffGrads(siteLossInner, tbl_params.default, kwargs...)
 
 # ForwardDiff.gradient(f, x)
 

@@ -37,7 +37,19 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
     end
 
     ## calculate drainage
-    for sl ∈ 1:(length(land.pools.soilW)-1)
+    drainage, ΔsoilW = inner_drain(land.pools.soilW, soilW, ΔsoilW, drainage, wSat,dos_exp, soil_β, wFC, tolerance, z_zero, helpers)
+
+    @rep_elem z_zero => (drainage, lastindex(drainage), :soilW)
+    ## pack land variables
+    @pack_land begin
+        drainage => land.fluxes
+        ΔsoilW => land.states
+    end
+    return land
+end
+
+function inner_drain(land_pools_soilW, soilW, ΔsoilW, drainage, wSat,dos_exp, soil_β, wFC, tolerance, z_zero, helpers)
+    for sl ∈ 1:(length(land_pools_soilW)-1)
         soilW_sl = min(maxZero(soilW[sl] + ΔsoilW[sl]), wSat[sl])
         drain_fraction = clampZeroOne(((soilW_sl) / wSat[sl])^(dos_exp * soil_β[sl]))
         drainage_tmp = drain_fraction * (soilW_sl)
@@ -50,13 +62,7 @@ function compute(p_struct::drainage_dos, forcing, land, helpers)
         @add_to_elem -tmp => (ΔsoilW, sl, :soilW)
         @add_to_elem tmp => (ΔsoilW, sl + 1, :soilW)
     end
-    @rep_elem z_zero => (drainage, lastindex(drainage), :soilW)
-    ## pack land variables
-    @pack_land begin
-        drainage => land.fluxes
-        ΔsoilW => land.states
-    end
-    return land
+    return drainage, ΔsoilW
 end
 
 function update(p_struct::drainage_dos, forcing, land, helpers)

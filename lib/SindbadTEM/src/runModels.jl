@@ -110,13 +110,15 @@ end
 - `tem_helpers`: helper NT with necessary objects for model run and type consistencies
 """
 function computeTEM(models, forcing, _land, tem_helpers) 
-    # _land = Ref(land)
-    # foreach(models) do model
-    #     _land = Models.compute(model, forcing, _land, tem_helpers)
-    # end
-    # return _land
+    #i = 1
     return reduce_lt(models, init=_land) do model, _land
-        #@code_warntype Models.precompute(model, forcing, _land[], tem_helpers)
+        # if i>=55
+        #     @code_warntype Models.compute(model, forcing, _land, tem_helpers)
+        # end
+        # if i==65
+        #     error()
+        # end
+        # i+=1
         return Models.compute(model, forcing, _land, tem_helpers)
     end
 end
@@ -195,7 +197,6 @@ end
 function precomputeTEM(models, forcing, _land, tem_helpers)
     #_land = Ref(land)
     return reduce_lt(models, init=_land) do model, _land
-        #@code_warntype Models.precompute(model, forcing, _land[], tem_helpers)
         return Models.precompute(model, forcing, _land, tem_helpers)
     end
 end
