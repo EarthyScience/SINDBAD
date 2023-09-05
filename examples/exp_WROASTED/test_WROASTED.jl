@@ -46,13 +46,10 @@ forcing = getForcing(info);
 run_helpers = prepTEM(forcing, info);
 
 @time runTEM!(info.tem.models.forward,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
@@ -77,13 +74,10 @@ info = getExperimentInfo(experiment_json; replace_info=replace_info); # note tha
 forcing = getForcing(info);
 
 @time runTEM!(optimized_models,
-    run_helpers.forcing_nt_array,
     run_helpers.loc_forcings,
     run_helpers.forcing_one_timestep,
-    run_helpers.output_array,
     run_helpers.loc_outputs,
     run_helpers.land_init_space,
-    run_helpers.loc_space_inds,
     run_helpers.tem_with_types)
 
 # some plots

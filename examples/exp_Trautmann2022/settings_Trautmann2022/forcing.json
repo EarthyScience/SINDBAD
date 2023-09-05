@@ -27,7 +27,7 @@
   },
   "variables": {
     "AWC": {
-      "bounds": [0.0, 10000.0],
+      "bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.awc_tian.2dim.opti904.nc",
       "standard_name": "AWC",
       "sindbad_unit": "mm",
@@ -83,14 +83,14 @@
       "source_variable": "PET"
     },
     "PsurfDay": {
-      "bounds": [0.0, 600.0],
-      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.PsurfDay.2dim.opti904.nc",
+      "bounds": [90.0, 600.0],
+      "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.sp.2dim.opti904.nc",
       "standard_name": "surface pressure",
       "sindbad_unit": "kPa",
       "source_product": "ERA5 sp under ssrd < 0.5",
       "source_to_sindbad_unit": 0.001,
       "source_unit": "pa",
-      "source_variable": "PsurfDay"
+      "source_variable": "sp"
     },
     "Rain": {
       "bounds": [0.0, 1000.0],
@@ -102,7 +102,7 @@
       "source_variable": "Rain"
     },
 		"RDeff": {
-			"bounds": [0, 10000.0],
+			"bounds": [10.0, 10000.0],
 			"data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.rdeff_yang.2dim.opti904.nc",
 			"standard_name": "RDeff",
       "sindbad_unit": "mm",
@@ -113,7 +113,7 @@
 			"space_time_type": "spatial"
 		},
 		"RDmax": {
-			"bounds": [0, 10000.0],
+			"bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.rdmax_fan.2dim.opti904.nc",
 			"standard_name": "RDmax",
       "sindbad_unit": "mm",
@@ -153,7 +153,7 @@
       "source_variable": "Rn"
     },
     "SWCmax": {
-      "bounds": [0.0, 10000.0],
+      "bounds": [10.0, 10000.0],
       "data_path": "/Net/Groups/BGI/people/hlee/sindbad/data/input/VEGPP_1519/opti904/VEGPP_1519.smax_wang.2dim.opti904.nc",
       "standard_name": "max_available_water_capacity",
       "sindbad_unit": "mm",
