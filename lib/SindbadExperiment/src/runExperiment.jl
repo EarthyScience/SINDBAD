@@ -34,9 +34,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 - `info`: a SINDBAD NT that includes all information needed for setup and execution of an experiment
 - `forcing`: a forcing NT that contains the forcing time series set for ALL locations
 - `output`: an output NT including the data arrays, as well as information of variables and dimensions
-- `::DoRunForward`: a type dispatch for forward run
+- `::Union{DoRunForward, DoNotRunOptimization}`: a type dispatch for forward run when it is true, or when optimization is false
 """
-function runExperiment(info::NamedTuple, forcing::NamedTuple, ::DoRunForward)
+function runExperiment(info::NamedTuple, forcing::NamedTuple, ::Union{DoRunForward, DoNotRunOptimization})
     print("-------------------Forward Run Mode---------------------------\n")
 
     additionaldims = setdiff(keys(forcing.helpers.sizes), [:time])
