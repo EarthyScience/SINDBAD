@@ -225,24 +225,32 @@ returns a vector of losses for variables in info.cost_options.observational_cons
 - `model_output::AbstractArray`: a collection of SINDBAD model output time series as a preallocated array
 - `cost_options`: a table listing each observation constraint and how it should be used to calcuate the loss/metric of model performance
 """
+function getLossVector2(observations, model_output, cost_options)
+    return [0,0,0]
+end
+
 function getLossVector(observations, model_output, cost_options)
-    loss_vector = map(cost_options) do cost_option
-        #@debug "$(cost_option.variable)"
-        lossMetric = cost_option.cost_metric
-        (y, yσ, ŷ) = getData(model_output, observations, cost_option)
-        #@debug "size y, yσ, ŷ", size(y), size(yσ), size(ŷ)
-        (y, yσ, ŷ) = applySpatialWeight(y, yσ, ŷ, cost_option, cost_option.spatial_weight)
-        (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
-        metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
-        if isnan(metr)
-            metr = oftype(metr, 1e19)
-        end
-        #@debug "$(cost_option.variable) => $(nameof(typeof(lossMetric))): $(metr)"
-        metr
-    end
-    #@debug "\n-------------------\n"
+    loss_vector = [innner_loss(cost_option, model_output, observations) for cost_option in cost_options]
     return loss_vector
 end
+
+function innner_loss(cost_option, model_output, observations)
+    lossMetric = cost_option.cost_metric
+    obs_ind = cost_option.obs_ind
+    ŷ = model_output[cost_option.mod_ind]
+    if size(ŷ, 2) == 1
+        ŷ = getModelOutputView(ŷ)
+    end
+    y = observations[obs_ind]
+    yσ = observations[obs_ind+1]
+    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, cost_option.valids)
+    metr = loss(y, yσ, ŷ, lossMetric) * cost_option.cost_weight
+    if isnan(metr)
+        metr = oftype(metr, 1e19)
+    end
+    return metr
+end
+
 
 
 """

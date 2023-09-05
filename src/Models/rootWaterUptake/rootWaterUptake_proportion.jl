@@ -33,11 +33,7 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
     PAWTotal = sum(PAW)
     # extract from top to bottom
     if PAWTotal > z_zero
-        for sl ∈ eachindex(land.pools.soilW)
-            uptakeProportion = maxZero(PAW[sl] / PAWTotal)
-            @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)
-            @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
-        end
+        root_water_uptake, ΔsoilW = inner_uptake(land.pools.soilW, toUptake, PAW, PAWTotal, root_water_uptake, ΔsoilW, helpers)
     end
     # pack land variables
     @pack_land begin
@@ -45,6 +41,15 @@ function compute(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
         ΔsoilW => land.states
     end
     return land
+end
+
+function inner_uptake(land_pools_soilW, toUptake, PAW, PAWTotal, root_water_uptake, ΔsoilW, helpers)
+    for sl ∈ eachindex(land_pools_soilW)
+        uptakeProportion = maxZero(PAW[sl] / PAWTotal)
+        @rep_elem toUptake * uptakeProportion => (root_water_uptake, sl, :soilW)
+        @add_to_elem -root_water_uptake[sl] => (ΔsoilW, sl, :soilW)
+    end
+    return root_water_uptake, ΔsoilW
 end
 
 function update(p_struct::rootWaterUptake_proportion, forcing, land, helpers)
