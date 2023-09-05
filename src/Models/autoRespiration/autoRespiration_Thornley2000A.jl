@@ -42,8 +42,27 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
     # model time step
     RMN = RMN / helpers.dates.timesteps_in_day
     zix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
-    for ix ∈ zix
 
+    c_eco_efflux, k_respiration_maintain, k_respiration_maintain_su, auto_respiration_maintain, auto_respiration_growth =
+        inner_res(
+            zix, C_to_N_cVeg, RMN, auto_respiration_f_airT, YG, cEco,
+            c_allocation, gpp, c_eco_efflux, k_respiration_maintain, k_respiration_maintain_su,
+            auto_respiration_maintain, auto_respiration_growth, land.cCycleBase.c_remain, helpers
+            )
+
+    ## pack land variables
+    @pack_land begin
+        (k_respiration_maintain, k_respiration_maintain_su) => land.autoRespiration
+        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
+    end
+    return land
+end
+
+function inner_res(zix, C_to_N_cVeg, RMN, auto_respiration_f_airT, YG, cEco,
+        c_allocation, gpp, c_eco_efflux, k_respiration_maintain, k_respiration_maintain_su,
+        auto_respiration_maintain, auto_respiration_growth, c_remain, helpers)
+
+     for ix ∈ zix
         # compute maintenance & growth respiration terms for each vegetation pool
         # according to MODEL A - maintenance respiration is given priority
 
@@ -57,12 +76,10 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
         # no negative maintenance respiration
         RA_M_ix = maxZero(RA_M_ix)
         if helpers.pools.components.cEco[ix] == :cVegReserve
-            if (cEco[ix] - RA_M_ix) < land.cCycleBase.c_remain
+            if (cEco[ix] - RA_M_ix) < c_remain #land.cCycleBase.c_remain
                 RA_M_ix = zero(RA_M_ix)
             end
         end
-
-
         # growth respiration: R_g = (1.0 - YG) * (GPP * allocationToPool - R_m)
         RA_G_ix = (one(YG) - YG) * (gpp * c_allocation[ix] - RA_M_ix)
 
@@ -77,12 +94,7 @@ function compute(p_struct::autoRespiration_Thornley2000A, forcing, land, helpers
         @rep_elem RA_M_ix => (auto_respiration_maintain, ix, :cEco)
         @rep_elem RA_G_ix => (auto_respiration_growth, ix, :cEco)
     end
-    ## pack land variables
-    @pack_land begin
-        (k_respiration_maintain, k_respiration_maintain_su) => land.autoRespiration
-        (auto_respiration_growth, auto_respiration_maintain, c_eco_efflux) => land.states
-    end
-    return land
+    return c_eco_efflux, k_respiration_maintain, k_respiration_maintain_su, auto_respiration_maintain, auto_respiration_growth
 end
 
 @doc """

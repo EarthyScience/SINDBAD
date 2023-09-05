@@ -115,9 +115,8 @@ pixel_run!(inits, data, tem);
 # loss_vector
 @time  getSiteLossTEM(inits, data, data_optim, tem, optim)
 
-
-
 @code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
+
 
 CHUNK_SIZE = 13;
 data_cache = (;

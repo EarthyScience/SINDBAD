@@ -73,20 +73,30 @@ function precompute(p_struct::cCycleBase_GSI, forcing, land, helpers)
     @rep_elem c_τ_SoilOld => (c_τ_eco, 8, :cEco)
 
     vegZix = getZix(land.pools.cVeg, helpers.pools.zix.cVeg)
-    for ix ∈ eachindex(vegZix)
-        @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
-    end
 
-    for i ∈ eachindex(c_eco_k_base)
-        tmp = o_one - (exp(-c_τ_eco[i])^(o_one / helpers.dates.timesteps_in_year))
-        @rep_elem tmp => (c_eco_k_base, i, :cEco)
-    end
+    C_to_N_cVeg = inner_veg(vegZix, p_C_to_N_cVeg, C_to_N_cVeg, helpers)
+    c_eco_k_base = inner_tmp(c_eco_k_base, o_one, c_τ_eco, helpers)
 
     ## pack land variables
     @pack_land begin
         (C_to_N_cVeg, c_τ_eco, c_eco_k_base, ηA, ηH) => land.cCycleBase
     end
     return land
+end
+
+function inner_tmp(c_eco_k_base, o_one, c_τ_eco, helpers)
+    for i ∈ eachindex(c_eco_k_base)
+        tmp = o_one - (exp(-c_τ_eco[i])^(o_one / helpers.dates.timesteps_in_year))
+        @rep_elem tmp => (c_eco_k_base, i, :cEco)
+    end
+    return c_eco_k_base
+end
+
+function inner_veg(vegZix, p_C_to_N_cVeg, C_to_N_cVeg, helpers)
+    for ix ∈ eachindex(vegZix)
+        @rep_elem p_C_to_N_cVeg[ix] => (C_to_N_cVeg, vegZix[ix], :cEco)
+    end
+    return C_to_N_cVeg
 end
 
 function adjustPackPoolComponents(land, helpers, ::CCycleBaseGSI)
