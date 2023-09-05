@@ -6,6 +6,14 @@ export groundWSoilWInteraction_VanDijk2010
 end
 #! format: on
 
+function define(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
+    ## in case groundWReacharge is not selected in the model structure, instantiate the variable with zero
+    gw_recharge = land.wCycleBase.z_zero
+    ## pack land variables
+    @pack_land gw_recharge => land.fluxes
+    return land
+end
+
 function compute(p_struct::groundWSoilWInteraction_VanDijk2010, forcing, land, helpers)
     ## unpack parameters
     @unpack_groundWSoilWInteraction_VanDijk2010 p_struct

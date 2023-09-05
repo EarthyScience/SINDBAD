@@ -11,10 +11,10 @@ function compute(p_struct::WUE_constant, forcing, land, helpers)
     @unpack_WUE_constant p_struct
 
     ## calculate variables
-    AoE = constant_WUE
+    WUE = constant_WUE
 
     ## pack land variables
-    @pack_land AoE => land.WUE
+    @pack_land WUE => land.WUE
     return land
 end
 
@@ -32,7 +32,7 @@ Estimate wue using WUE_constant
 *Inputs*
 
 *Outputs*
- - land.WUE.AoE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
+ - land.WUE.WUE: water use efficiency - ratio of assimilation &  transpiration fluxes [gC/mmH2O]
 
 ---
 

@@ -74,20 +74,18 @@ function getLoss(
 end
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multi_constraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem, observations, tbl_params, cost_options, multi_constraint_method)
 
 
 
 # Arguments:
 - `param_vector`: a vector of model parameter values, with the size of model_parameters_to_optimize, to run the TEM.
 - `base_models`: a Tuple of selected SINDBAD models in the given model structure, the parameter(s) of which are optimized
-- `forcing_nt_array`: a forcing NT that contains the forcing time series set for ALL locations, with each variable as an instantiated array in memory
 - `loc_forcings`: a collection of copies of forcings for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `forcing_one_timestep`: a forcing NT for a single location and a single time step
 - `output_array`: an output array/view for ALL locations
 - `loc_outputs`: a collection of copies of outputs for several locations that are replicated for the number of threads. A safety feature against data race, that ensures that each thread only accesses one object at any given moment
 - `land_init_space`: a collection of initial SINDBAD land for each location. This (rather inefficient) approach is necessary to ensure that the subsequent locations do not overwrite the model pools and states (arrays) of preceding lcoations
-- `loc_space_inds`: a collection of spatial indices/pairs of indices used to loop through space in parallelization
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `observations`: a NT or a vector of arrays of observations, their uncertainties, and mask to use for calculation of performance metric/loss
 - `tbl_params`: a table of SINDBAD model parameters selected for the optimization
@@ -97,13 +95,11 @@ end
 function getLoss(
     param_vector::AbstractArray,
     base_models,
-    forcing_nt_array,
     loc_forcings,
     forcing_one_timestep,
     output_array,
     loc_outputs,
     land_init_space,
-    loc_space_inds,
     tem,
     observations,
     tbl_params,
@@ -111,13 +107,10 @@ function getLoss(
     multi_constraint_method)
     updated_models = updateModelParameters(tbl_params, base_models, param_vector)
     runTEM!(updated_models,
-        forcing_nt_array,
         loc_forcings,
         forcing_one_timestep,
-        output_array,
         loc_outputs,
         land_init_space,
-        loc_space_inds,
         tem)
     loss_vector = getLossVector(observations, output_array, cost_options)
     return combineLoss(loss_vector, multi_constraint_method)
@@ -158,13 +151,11 @@ function optimizeTEM(forcing::NamedTuple,
     cost_function =
         x -> getLoss(x,
             tem.models.forward,
-            run_helpers.forcing_nt_array,
             run_helpers.loc_forcings,
             run_helpers.forcing_one_timestep,
             run_helpers.output_array,
             run_helpers.loc_outputs,
             run_helpers.land_init_space,
-            run_helpers.loc_space_inds,
             run_helpers.tem_with_types,
             observations,
             tbl_params,
