@@ -74,7 +74,7 @@ function getLoss(
 end
 
 """
-    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, loc_space_inds, tem, observations, tbl_params, cost_options, multi_constraint_method)
+    getLoss(param_vector::AbstractArray, base_models, forcing_nt_array, loc_forcings, forcing_one_timestep, output_array, loc_outputs, land_init_space, tem, observations, tbl_params, cost_options, multi_constraint_method)
 
 
 
