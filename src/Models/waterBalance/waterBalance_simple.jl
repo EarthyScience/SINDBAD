@@ -15,8 +15,8 @@ end
 
 function throwError(forcing, land, msg, water_balance, total_water, total_water_prev, WBP, precip, runoff, evapotranspiration)
     msg = "water balance error: $msg :: water_balance: $(water_balance), total_water: $(total_water), total_water_prev: $(total_water_prev), WBP: $(WBP), precip: $(precip), runoff: $(runoff), evapotranspiration: $(evapotranspiration)"
-    tcPrint(land)
-    tcPrint(forcing)
+    @show land
+    @show forcing
     println(msg)
     if hasproperty(Sindbad, :error_catcher)
         push!(Sindbad.error_catcher, land)

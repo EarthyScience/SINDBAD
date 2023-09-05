@@ -35,12 +35,12 @@ function compute(p_struct::WUE_Medlyn2011, forcing, land, helpers)
     # umol_to_gC = 1e-06 * 0.012011 * 1000 * 86400 / (86400 * 0.018015); #/(86400 = s to day * .018015 = molecular weight of water) for a guessed fix of the units of water not sure what it should be because the unit of A/E is not clearif A is converted to gCm-2d-1 E should be converted from kg to g?
     # umol_to_gC = 12 * 100/(18 * 1000)
     ciNoCO2 = g1 / (g1 + sqrt(VPDDay)) # RHS eqn 13 in corrigendum
-    AoENoCO2 = umol_to_gC * PsurfDay / (DwDc * (VPDDay + g1 * sqrt(VPDDay))) # eqn 14 #? gC/mol of H2o?
-    AoE = AoENoCO2 * ζ * ambient_CO2
+    WUENoCO2 = umol_to_gC * PsurfDay / (DwDc * (VPDDay + g1 * sqrt(VPDDay))) # eqn 14 #? gC/mol of H2o?
+    WUE = WUENoCO2 * ζ * ambient_CO2
     ci = ciNoCO2 * ambient_CO2
 
     ## pack land variables
-    @pack_land (AoE, AoENoCO2, ci, ciNoCO2) => land.WUE
+    @pack_land (WUE, WUENoCO2, ci, ciNoCO2) => land.WUE
     return land
 end
 
@@ -60,9 +60,9 @@ Estimate wue using WUE_Medlyn2011
  - forcing.VPDDay: daytime mean VPD [kPa]
 
 *Outputs*
- - land.WUE.AoE: water use efficiency A/E [gC/mmH2O] with ambient co2
+ - land.WUE.WUE: water use efficiency A/E [gC/mmH2O] with ambient co2
  - land.WUE.ci: internal co2 with ambient co2
- - land.WUE.AoENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
+ - land.WUE.WUENoCO2: instantiated A/E [gC/mmH2O] without ambient co2
  - land.WUE.ciNoCO2: instantiated internal co2 scalar without ambient co2
 
 ---
