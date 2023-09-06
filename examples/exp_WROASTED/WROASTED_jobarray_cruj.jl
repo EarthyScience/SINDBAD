@@ -135,7 +135,7 @@ for o_set in opti_set
     forcing = getForcing(info)
 
     observations = getObservation(info, forcing.helpers)
-    obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow.
+    obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow.
 
     run_helpers = prepTEM(forcing, info)
 
