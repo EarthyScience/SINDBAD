@@ -55,7 +55,7 @@ run_helpers = prepTEM(forcing, info);
 @time output_default = runExperimentForward(experiment_json; replace_info=replace_info);
 
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 @time getLossVector(obs_array, output_default, prepCostOptions(obs_array, info.optim.cost_options))
 
 @time opt_params = runExperimentOpti(experiment_json; replace_info=replace_info);
