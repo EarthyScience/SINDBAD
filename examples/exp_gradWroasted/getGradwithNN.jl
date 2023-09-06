@@ -15,7 +15,7 @@ forcing = getForcing(info);
 land_init = createLandInit(info.pools, info.tem.helpers, info.tem.models);
 op = prepTEMOut(info, forcing.helpers);
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 run_helpers = prepTEM(forcing, info);
