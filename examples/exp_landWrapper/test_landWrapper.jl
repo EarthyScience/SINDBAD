@@ -65,7 +65,7 @@ land_timeseries = Vector{typeof(run_helpers.land_one)}(undef, info.tem.helpers.d
 
 # calculate the losses
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 cost_options = prepCostOptions(obs_array, info.optim.cost_options);
 
 # setLogLevel(:debug)

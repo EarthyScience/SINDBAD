@@ -219,6 +219,34 @@ function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, t
 end
 
 
+
+"""
+    helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutArray)
+
+
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `output`: an output NT including the data arrays, as well as information of variables and dimensions
+- `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `::LandOutYAXArray`: a dispatch for preparing TEM for using yax array for model output
+"""
+function helpPrepTEM(selected_models, forcing::NamedTuple, output::NamedTuple, tem::NamedTuple, tem_helpers::NamedTuple, ::LandOutYAXArray)
+
+    # get the output things
+    _, _, loc_space_names = getSpatialInfo(forcing, output)
+
+    # generate vals for dispatch of forcing and output
+    tem_with_types = getTEMVals(forcing, output, loc_space_names, tem, tem_helpers);
+    land_init = output.land_init
+
+    run_helpers = (; land_init=land_init, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    # run_helpers = (; forcing_nt_array=forcing_nt_array, loc_forcing=loc_forcing, loc_forcings=loc_forcings, forcing_one_timestep=forcing_one_timestep, output_array=output_array, loc_outputs=loc_outputs, land_init_space=land_init_space, land_one=land_one, loc_space_inds=loc_space_inds, loc_space_maps=loc_space_maps, loc_space_names=loc_space_names, out_dims=output.dims, out_vars=output.variables, tem_with_types=tem_with_types)
+    return run_helpers
+end
+
 """
     prepTEM(forcing::NamedTuple, info::NamedTuple)
 
