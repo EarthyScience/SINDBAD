@@ -2,6 +2,51 @@ export runTEMYax
 
 
 """
+    coreTEMYax(selected_models, forcing, forcing_one_timestep, land_init, tem_helpers, tem_models, tem_spinup, ::DoSpinupTEM)
+
+
+
+# Arguments:
+- `selected_models`: a tuple of all models selected in the given model structure
+- `forcing`: a forcing NT that contains the forcing time series set for ALL locations
+- `land_init`: initial SINDBAD land with all fields and subfields
+- `tem_helpers`: helper NT with necessary objects for model run and type consistencies
+- `tem_models`: a NT with lists and information on selected forward and spinup SINDBAD models
+- `tem_spinup`: a NT with information/instruction on spinning up the TEM
+"""
+function coreTEMYax(
+    selected_models,
+    forcing,
+    land_init,
+    tem_helpers,
+    tem_models,
+    tem_spinup)
+
+    forcing_one_timestep = getForcingForTimeStep(forcing, 1)
+
+    land_prec = definePrecomputeTEM(selected_models, forcing_one_timestep, land_init, tem_helpers)
+
+    land_spin = spinupTEM(
+        selected_models,
+        forcing,
+        forcing_one_timestep,
+        land_prec,
+        tem_helpers,
+        tem_models,
+        tem_spinup)
+
+    land_time_series = timeLoopTEM(
+        selected_models,
+        forcing,
+        forcing_one_timestep,
+        land_spin,
+        tem_helpers,
+        tem_helpers.run.debug_model)
+    return land_time_series
+end
+
+
+"""
     TEMYax(args; land_init::NamedTuple, tem::NamedTuple, selected_models::Tuple, forcing_variables::AbstractArray)
 
 
@@ -16,17 +61,15 @@ export runTEMYax
 function TEMYax(args...;
     selected_models::Tuple,
     forcing_variables::AbstractArray,
-    forcing_one_timestep,
     land_init::NamedTuple,
-    tem::NamedTuple,
-    out_vars)
-    outputs, inputs = unpackYaxForward(args; out_vars, forcing_variables)
+    out_variables,
+    tem::NamedTuple)
+    outputs, inputs = unpackYaxForward(args; out_variables, forcing_variables)
     forcing = (; Pair.(forcing_variables, inputs)...)
-
-    land_out = coreTEM(selected_models, forcing, forcing_one_timestep, land_init, tem.helpers, tem.models, tem.spinup, tem.helpers.run.spinup.spinup_TEM)
+    land_out = coreTEMYax(selected_models, forcing, land_init, tem.helpers, tem.models, tem.spinup)
 
     i = 1
-    foreach(out_vars) do var_pair
+    foreach(out_variables) do var_pair
         data = land_out[first(var_pair)][last(var_pair)]
             viewCopyYax(outputs[i], data)
             i += 1
@@ -46,38 +89,34 @@ end
 - `max_cache`: DESCRIPTION
 """
 function runTEMYax(
-    selected_models::Tuple;
+    selected_models::Tuple,
     forcing::NamedTuple,
     info::NamedTuple)
 
     # forcing/input information
-    incubes = forcing.data
-    indims = forcing.dims
-    forcing_variables = collect(forcing.variables)
-
+    incubes = forcing.data;
+    indims = forcing.dims;
+    forcing_variables = collect(forcing.variables);
+    
     # information for running model
-    run_helpers = prepTEM(forcing, info)
-    outdims = run_helpers.output.dims
-    land_one = deepcopy(run_helpers.land_one)
-    out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
-    #additionaldims = setdiff(keys(tem.helpers.run.loop),[:time])
-    #nthreads = 1 ? !isempty(additionaldims) : Threads.nthreads()
+    run_helpers = prepTEM(forcing, info);
+    outdims = run_helpers.out_dims;
+    land_init = deepcopy(run_helpers.land_init);
+    out_variables = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars);
     # @show "I am here"
     # @show indims
     # @show outdims
     outcubes = mapCube(TEMYax,
         (incubes...,);
-        land_init=land_one,
-        tem=run_helpers.tem_with_types,
         selected_models=selected_models,
         forcing_variables=forcing_variables,
-        out_vars = out_vars,
+        out_variables = out_variables,
+        land_init=land_init,
+        tem=run_helpers.tem_with_types,
         indims=indims,
         outdims=outdims,
         max_cache=info.experiment.exe_rules.yax_max_cache,
-        ispar=false,
-        #nthreads = [1],
-    )
+        ispar=false)
     return outcubes
 end
 
@@ -92,10 +131,33 @@ end
 - `tem`: a nested NT with necessary information of helpers, models, and spinup needed to run SINDBAD TEM and models
 - `forcing_variables`: DESCRIPTION
 """
-function unpackYaxForward(args; out_vars::NamedTuple, forcing_variables::AbstractArray)
+function unpackYaxForward(args; out_variables::NamedTuple, forcing_variables::AbstractArray)
     nin = length(forcing_variables)
-    nout = length(out_vars)
+    nout = length(out_variables)
     outputs = args[1:nout]
     inputs = args[(nout+1):(nout+nin)]
     return outputs, inputs
+end
+
+
+
+"""
+    viewCopyYax(xout, xin)
+
+
+
+# Arguments:
+- `xout`: DESCRIPTION
+- `xin`: DESCRIPTION
+"""
+function viewCopyYax(xout, xin)
+    if ndims(xout) == ndims(xin)
+        for i ∈ eachindex(xin)
+            xout[i] = xin[i][1]
+        end
+    else
+        for i ∈ CartesianIndices(xin)
+            xout[:, i] .= xin[i]
+        end
+    end
 end
