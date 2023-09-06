@@ -50,7 +50,7 @@ run_helpers = prepTEM(forcing, info);
     run_helpers.tem_with_types)
 
 observations = getObservation(info, forcing.helpers);
-obs_array = [Array(_o) for _o in observations.data]; # TODO: neccessary now for performance because view of keyedarray is slow
+obs_array = [Array(_o) for _o in observations.data]; # TODO: necessary now for performance because view of keyedarray is slow
 
 @time out_params = runExperimentOpti(experiment_json; replace_info=replace_info);
 
