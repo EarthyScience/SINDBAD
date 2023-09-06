@@ -337,25 +337,3 @@ function setOutputForTimeStep!(outputs, land, ts, ::Val{output_vars}) where {out
         end
     end
 end
-
-
-"""
-    viewCopyYax(xout, xin)
-
-
-
-# Arguments:
-- `xout`: DESCRIPTION
-- `xin`: DESCRIPTION
-"""
-function viewCopyYax(xout, xin)
-    if ndims(xout) == ndims(xin)
-        for i ∈ eachindex(xin)
-            xout[i] = xin[i][1]
-        end
-    else
-        for i ∈ CartesianIndices(xin)
-            xout[:, i] .= xin[i]
-        end
-    end
-end
