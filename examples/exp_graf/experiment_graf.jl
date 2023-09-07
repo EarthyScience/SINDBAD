@@ -52,6 +52,7 @@ end
 
 ds = forcing.data[1];
 plotdat = run_helpers.output_array;
+# plotdat = output_default;
 default(titlefont=(20, "times"), legendfontsize=18, tickfont=(15, :blue))
 out_vars = valToSymbol(run_helpers.tem_with_types.helpers.vals.output_vars)
 for i ∈ eachindex(out_vars)
