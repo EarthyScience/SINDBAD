@@ -152,10 +152,10 @@ export OutputArray
 export OutputKeyedArray
 export OutputMArray
 export OutputSizedArray
-export OutputYaxArray
+export OutputYAXArray
 
 struct OutputArray end
 struct OutputKeyedArray end
 struct OutputMArray end
 struct OutputSizedArray end
-struct OutputYaxArray end
+struct OutputYAXArray end
