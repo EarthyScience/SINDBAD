@@ -121,6 +121,9 @@ uses the configuration read from the json files, and consolidates and sets info 
 """
 function runExperimentForward(sindbad_experiment::String; replace_info=nothing)
     setLogLevel()
+    replace_info = deepcopy(replace_info)
+    replace_info["experiment.flags.run_optimization"] = false
+    replace_info["experiment.flags.calc_cost"] = false
     info, forcing = prepExperiment(sindbad_experiment; replace_info=replace_info)
     run_output = runExperiment(info, forcing, info.tem.helpers.run.run_forward)
     @info "runExperimentForward: preparing output info for writing output..."

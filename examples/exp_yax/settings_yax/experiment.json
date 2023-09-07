@@ -49,7 +49,7 @@
       "d_soil": "soilW"
     },
     "format": "zarr",
-    "output_array_type": "array",
+    "output_array_type": "YAXArray",
     "path": "africa",
     "save_single_file": true,
     "variables": {
