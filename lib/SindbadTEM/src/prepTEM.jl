@@ -8,14 +8,28 @@ export prepTEM
 # Arguments:
 - `land`: a core SINDBAD NT that contains all variables for a given time step that is overwritten at every timestep
 - `seq`: DESCRIPTION
+- `::DoStoreSpinup`: DESCRIPTION
 """
-function addSpinupLog(land, seq) # when history is true
+function addSpinupLog(land, seq, ::DoStoreSpinup) # when history is true
     n_repeat = 1
     for _seq in seq
-        n_repeat = n_repeat + _seq["n_repeat"]
+        n_repeat = n_repeat + _seq.n_repeat
     end
     spinuplog = Vector{typeof(land.pools)}(undef, n_repeat)
     @pack_land spinuplog => land.states
+    return land
+end
+
+"""
+    addSpinupLog(land, _, ::DoNotStoreSpinup)
+
+
+
+# Arguments:
+- `land`: sindbad land
+- `::DoNotStoreSpinup`: indicates not to store the spinup history
+"""
+function addSpinupLog(land, _, ::DoNotStoreSpinup) # when history is false
     return land
 end
 
@@ -297,6 +311,6 @@ function runTEMOneLocationCore(selected_models, loc_forcing, land_init, tem)
         tem.helpers)
     land_one = computeTEM(selected_models, forcing_one_timestep, land_prec, tem.helpers)
     land_one = removeEmptyTupleFields(land_one)
-    land_one = addSpinupLog(land_one, tem.spinup.sequence)
+    land_one = addSpinupLog(land_one, tem.spinup.sequence, tem.helpers.run.spinup.store_spinup)
     return forcing_one_timestep, land_one
 end
