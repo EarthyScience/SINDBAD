@@ -889,8 +889,9 @@ function timeLoopTEMSpinup(
     forcing_one_timestep,
     land,
     tem_helpers)
-    num_timesteps = getForcingTimeSize(spinup_forcing, tem_helpers.vals.forc_vars)
-    for ts ∈ 1:num_timesteps
+    # num_timesteps = getForcingTimeSize(spinup_forcing, tem_helpers.vals.forc_vars)
+    for ts ∈ eachindex(spinup_forcing[1])
+        # f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts)
         f_ts = getForcingForTimeStep(spinup_forcing, forcing_one_timestep, ts, tem_helpers.vals.forc_vars)
         land = computeTEM(spinup_models, f_ts, land, tem_helpers)
     end
