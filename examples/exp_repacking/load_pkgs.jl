@@ -23,7 +23,8 @@ tbl_params = getParameters(info.tem.models.forward,
     info.optim.model_parameters_to_optimize);
 
 forcing = getForcing(info);
- observations = getObservation(info, forcing.helpers);
+observations = getObservation(info, forcing.helpers);
+
 
 forc = (; Pair.(forcing.variables, forcing.data)...);
 obs = (; Pair.(observations.variables, observations.data)...);
@@ -97,116 +98,116 @@ optim = (;
     multiconstraint_method = info.optim.multi_constraint_method
 );
 
-function get_metric_debug(cost_option)
-    return getfield(cost_option, :cost_metric)
-end
+# function get_metric_debug(cost_option)
+#     return getfield(cost_option, :cost_metric)
+# end
 
-@code_warntype get_metric_debug(new_options[1])
-
-
-pixel_run!(inits, data, tem);
-
-@time pixel_run!(inits, data, tem);
-
-@time coreTEM!(inits..., data..., tem...)
-
-@code_warntype coreTEM!(inits..., data..., tem...)
-# setLogLevel()
-# setLogLevel(:debug)
-
-#lines(data.allocated_output[1][:,1])
+# @code_warntype get_metric_debug(new_options[1])
 
 
-# type unstable 
-# land_spin
-# loss_vector
+# pixel_run!(inits, data, tem);
 
-@time getSiteLossTEM(inits, data, data_optim, tem, optim)
+# @time pixel_run!(inits, data, tem);
 
+# @time coreTEM!(inits..., data..., tem...)
 
-@code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
+# @code_warntype coreTEM!(inits..., data..., tem...)
+# # setLogLevel()
+# # setLogLevel(:debug)
 
-cost_option = new_options[1];
-
-_lossMetric = SindbadTEM.SindbadSetup.SindbadMetrics.get_metric(cost_option) #cost_option.cost_metric # bad
-_obs_ind = cost_option.obs_ind
-_mod_ind = cost_option.mod_ind
-_valids = cost_option.valids
-_weight = cost_option.cost_weight
-
-function innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
-    ŷ = model_output[_mod_ind]
-    #if size(ŷ, 2) == 1
-    ŷ = getModelOutputView(ŷ)
-    #end
-    y = observations[_obs_ind]
-    yσ = observations[_obs_ind+1]
-    (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
-    #@code_warntype loss(y, yσ, ŷ, _lossMetric)
-    metr = loss(y, yσ, ŷ, _lossMetric) # * _weight
-    if isnan(metr)
-        metr = oftype(metr, 1e19)
-    end
-    return metr
-end
-
-function get_valids(y, _valids)
-    return y[_valids]
-end
-
-function base_ys(observations, _obs_ind)
-    y = observations[_obs_ind]
-    return y
-end
-
-function apply_valids(y, _valids)
-    return y[_valids]
-end
-
-function combo_base(observations, _obs_ind, _valids)
-    y_new = apply_valids(observations[_obs_ind], _valids)
-    return y_new
-end
+# #lines(data.allocated_output[1][:,1])
 
 
-@code_warntype apply_valids(loc_obs[_obs_ind], _valids)
+# # type unstable 
+# # land_spin
+# # loss_vector
 
-@code_warntype combo_base(loc_obss, _obs_ind, _valids)
-
-@code_warntype select_ar(loc_obs_2, indx, _valids)
-
-innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
-
-@code_warntype innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
+# @time getSiteLossTEM(inits, data, data_optim, tem, optim)
 
 
-function get_ŷ2(model_output, _mod_ind)
-    ŷ = model_output[_mod_ind]
-    if size(ŷ, 2) == 1
-        ŷ_new = getModelOutputView(ŷ)
-    end
-    return ŷ_new
-end
+# @code_warntype getSiteLossTEM(inits, data, data_optim, tem, optim)
 
-@inline function get_ŷ4(ŷ)
-    if size(ŷ, 2) == 1
-        return @view ŷ[:,1]
-    else
-        return ŷ
-    end
-end
+# cost_option = new_options[1];
 
-@code_warntype get_ŷ2(loc_output, _mod_ind)
+# _lossMetric = SindbadTEM.SindbadSetup.SindbadMetrics.get_metric(cost_option) #cost_option.cost_metric # bad
+# _obs_ind = cost_option.obs_ind
+# _mod_ind = cost_option.mod_ind
+# _valids = cost_option.valids
+# _weight = cost_option.cost_weight
 
-@code_warntype get_ŷ4(loc_output[_mod_ind])
+# function innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, model_output, observations)
+#     ŷ = model_output[_mod_ind]
+#     #if size(ŷ, 2) == 1
+#     ŷ = getModelOutputView(ŷ)
+#     #end
+#     y = observations[_obs_ind]
+#     yσ = observations[_obs_ind+1]
+#     (y, yσ, ŷ) = filterCommonNaN(y, yσ, ŷ, _valids)
+#     #@code_warntype loss(y, yσ, ŷ, _lossMetric)
+#     metr = loss(y, yσ, ŷ, _lossMetric) # * _weight
+#     if isnan(metr)
+#         metr = oftype(metr, 1e19)
+#     end
+#     return metr
+# end
+
+# function get_valids(y, _valids)
+#     return y[_valids]
+# end
+
+# function base_ys(observations, _obs_ind)
+#     y = observations[_obs_ind]
+#     return y
+# end
+
+# function apply_valids(y, _valids)
+#     return y[_valids]
+# end
+
+# function combo_base(observations, _obs_ind, _valids)
+#     y_new = apply_valids(observations[_obs_ind], _valids)
+#     return y_new
+# end
 
 
-@code_warntype getModelOutputView(loc_output[1])
+# @code_warntype apply_valids(loc_obs[_obs_ind], _valids)
 
-getModelOutputView(loc_output[1])
+# @code_warntype combo_base(loc_obss, _obs_ind, _valids)
 
-tw = loc_output[1]
-@view tw[:,1]
+# @code_warntype select_ar(loc_obs_2, indx, _valids)
+
+# innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
+
+# @code_warntype innner_loss2(_lossMetric, _obs_ind, _mod_ind, _valids, _weight, loc_output, loc_obs)
+
+
+# function get_ŷ2(model_output, _mod_ind)
+#     ŷ = model_output[_mod_ind]
+#     if size(ŷ, 2) == 1
+#         ŷ_new = getModelOutputView(ŷ)
+#     end
+#     return ŷ_new
+# end
+
+# @inline function get_ŷ4(ŷ)
+#     if size(ŷ, 2) == 1
+#         return @view ŷ[:,1]
+#     else
+#         return ŷ
+#     end
+# end
+
+# @code_warntype get_ŷ2(loc_output, _mod_ind)
+
+# @code_warntype get_ŷ4(loc_output[_mod_ind])
+
+
+# @code_warntype getModelOutputView(loc_output[1])
+
+# getModelOutputView(loc_output[1])
+
+# tw = loc_output[1]
+# @view tw[:,1]
 
 CHUNK_SIZE = 12;
 data_cache = (;
@@ -220,7 +221,7 @@ param_to_index = param_indices(models, tbl_params);
 
 @time siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
 
-siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim);
+siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
 #siteLossInner(tbl_params.default, inits, data_cache, data_optim, tem, param_to_index, optim)
 
